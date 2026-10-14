@@ -707,10 +707,21 @@ while Robin decides distribution, before any hosted release.
   Original with no request; no purchases, paid jobs or second implementation owner; the Hush's composition and the
   voice casting untouched); C-88 (no second run of the chain or the matrix with Ensemble); C-87 (no deployment before
   VA-1 and the matrix). The rights question stays Robin's and must be settled before the hosted release.
-- **Status:** done in the build, 2026-10-14: 114 of the game's 117 songs have a ready recording (the pilots and 112 of
-  the 115). Three (`playhouse`, `sb_road`, `sa_kasane`) fail only the handover level at one measured moment and play
-  Original until Robin decides. Not listened to by anyone yet; the rights question open (docs/MUSIC_PERFORMANCE.md,
-  VALIDATION.md "MT-2").
+- **Decided 2026-10-14.** Robin: "Definitely include every track. Add the remaining 3". The three that failed only the
+  handover level at one measured moment (`playhouse` 1.52 LU below both performances, `sb_road` 2.31 below, `sa_kasane`
+  1.04 above; the limits 1.5 and 1.0 unchanged) are admitted on Robin's waiver, recorded in the manifest
+  (`waivers.gameMixCalibrated`, accepted by the build only from Robin, only for that check, only with the loudness
+  calibrated) and in their reports. Robin also passed on Astra's report that cinder, yn_vents, yn_north and hall_w3 had
+  MP3s only, and asked that every song have a full-track player.
+- **What Astra's report found:** nine songs had been admitted with one encoding only, not reported as such: four with
+  MP3 only (their Opus failed MT-1's alignment rule by a sample or a few at single windows) and five with Opus only
+  (their MP3 cycle decoded 12 samples long: the MP3 length fault, fixed in the renderer but not in songs made before
+  it). Fixed: the five re-rendered with the guard; the alignment rule made what it was meant to be (the median window at
+  no shift, none beyond 8 samples, the exact length checked apart), which passes the four Opus files and changes no
+  other verdict. Every track now offers both, and the unit test checks it.
+- **Status:** done in the build, 2026-10-14: **all 117 songs have a ready recording in Ogg Opus and MP3** (three on
+  Robin's waiver). Full-track players for every song on `docs/music/ensemble/listen_all.html`. Not listened to by
+  anyone yet; the rights question open (docs/MUSIC_PERFORMANCE.md, VALIDATION.md "MT-2").
 
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a

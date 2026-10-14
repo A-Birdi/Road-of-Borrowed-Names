@@ -283,7 +283,7 @@
       "nearest": 172.84,
       "chromium": 172.84
      },
-     "maxErr": 6.762202440998814e-8,
+     "maxErr": 6.762202440998814e-08,
      "seams": [
       {
        "at": 10.117792,
@@ -331,7 +331,7 @@
       "nearest": 159.07,
       "chromium": 159.07
      },
-     "maxErr": 8.321533277797145e-8,
+     "maxErr": 8.321533277797145e-08,
      "seams": [
       {
        "at": 1.05,
@@ -367,7 +367,7 @@
       "nearest": 159.07,
       "chromium": 159.07
      },
-     "maxErr": 8.321533277797145e-8,
+     "maxErr": 8.321533277797145e-08,
      "seams": [
       {
        "at": 1.05,
@@ -403,7 +403,7 @@
       "nearest": 159.07,
       "chromium": 159.07
      },
-     "maxErr": 8.321533277797145e-8,
+     "maxErr": 8.321533277797145e-08,
      "seams": [
       {
        "at": 1.05,
@@ -439,7 +439,7 @@
       "nearest": 159.07,
       "chromium": 159.07
      },
-     "maxErr": 8.321533277797145e-8,
+     "maxErr": 8.321533277797145e-08,
      "seams": [
       {
        "at": 1.05,
@@ -475,7 +475,7 @@
       "nearest": 159.07,
       "chromium": 159.07
      },
-     "maxErr": 8.321533277797145e-8,
+     "maxErr": 8.321533277797145e-08,
      "seams": [
       {
        "at": 1.05,
@@ -511,7 +511,7 @@
       "nearest": 159.07,
       "chromium": 159.07
      },
-     "maxErr": 8.321533277797145e-8,
+     "maxErr": 8.321533277797145e-08,
      "seams": [
       {
        "at": 1.05,
@@ -547,7 +547,7 @@
       "nearest": 159.07,
       "chromium": 159.07
      },
-     "maxErr": 8.321533277797145e-8,
+     "maxErr": 8.321533277797145e-08,
      "seams": [
       {
        "at": 1.05,
@@ -583,7 +583,7 @@
       "nearest": 159.07,
       "chromium": 159.07
      },
-     "maxErr": 8.321533277797145e-8,
+     "maxErr": 8.321533277797145e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1027,7 +1027,7 @@
       "nearest": 172.79,
       "chromium": 172.79
      },
-     "maxErr": 7.201837616836645e-8,
+     "maxErr": 7.201837616836645e-08,
      "seams": [
       {
        "at": 10.117792,
@@ -1075,7 +1075,7 @@
       "nearest": 159.15,
       "chromium": 159.15
      },
-     "maxErr": 6.312466755933843e-8,
+     "maxErr": 6.312466755933843e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1111,7 +1111,7 @@
       "nearest": 159.15,
       "chromium": 159.15
      },
-     "maxErr": 6.312466755933843e-8,
+     "maxErr": 6.312466755933843e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1147,7 +1147,7 @@
       "nearest": 159.15,
       "chromium": 159.15
      },
-     "maxErr": 6.312466755933843e-8,
+     "maxErr": 6.312466755933843e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1183,7 +1183,7 @@
       "nearest": 159.15,
       "chromium": 159.15
      },
-     "maxErr": 6.312466755933843e-8,
+     "maxErr": 6.312466755933843e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1219,7 +1219,7 @@
       "nearest": 159.15,
       "chromium": 159.15
      },
-     "maxErr": 6.312466755933843e-8,
+     "maxErr": 6.312466755933843e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1255,7 +1255,7 @@
       "nearest": 159.15,
       "chromium": 159.15
      },
-     "maxErr": 6.312466755933843e-8,
+     "maxErr": 6.312466755933843e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1291,7 +1291,7 @@
       "nearest": 159.15,
       "chromium": 159.15
      },
-     "maxErr": 6.312466755933843e-8,
+     "maxErr": 6.312466755933843e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1327,7 +1327,7 @@
       "nearest": 159.15,
       "chromium": 159.15
      },
-     "maxErr": 6.312466755933843e-8,
+     "maxErr": 6.312466755933843e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1973,5 +1973,25 @@
    "onsetOk": true,
    "onsetCriterion": "MT-1 envelope: peak at least 3x the correlation 40 ms away"
   }
+ },
+ "waiver": {
+  "by": "Robin",
+  "date": "2026-10-14",
+  "words": "Definitely include every track. Add the remaining 3",
+  "scope": "the handover level at one of the two moments measured, outside MT-1's limits (1.5 LU below / 1.0 LU above both performances alone); every other check passed",
+  "loudnessCalibrated": true,
+  "evidence": "gameMixCalibrated",
+  "handovers": [
+   {
+    "at": 20.3,
+    "bumpLu": 0.65,
+    "dipLu": -0.24
+   },
+   {
+    "at": 26.4,
+    "bumpLu": -1.15,
+    "dipLu": 1.52
+   }
+  ]
  }
 }

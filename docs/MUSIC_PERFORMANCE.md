@@ -206,9 +206,15 @@ The runtime already played a non-looping entry's first file only.
   controls themselves. Every report was judged again from its recorded measurements (`verify.mjs --rejudge-onsets`):
   no song that had passed failed.
 - An MP3 whose length ends within 12 samples of an MP3 frame decoded up to 12 samples long (LAME's padding record was
-  short; hall_w3's cycle): `render.py` gives such a file a few more samples of guard (`guard_extra`). An Opus file
-  whose local check finds a window fitting 1 dB better shifted (the codec's phase in a high band) is encoded again at
-  192, then 256 kbit/s (`package.py`; four files).
+  short; hall_w3's cycle): `render.py` gives such a file a few more samples of guard (`guard_extra`).
+- **Alignment** (`verify.mjs`): a window fits at no shift when its error there is within 1 dB of its best (MT-1's
+  test); the median window must, and no window may fit best more than 8 samples away. The exact length is checked
+  apart. What it guards against is a recording misplaced in time (a codec's delay or padding mishandled: one offset at
+  every window and a wrong length). MT-1's rule refused any window fitting better shifted, and Opus codes the phase of
+  some tonal passages a sample or a few off at single windows, at every rate tried up to 510 kbit/s: four songs had
+  been admitted with MP3 only. Under this rule those four Opus files pass and no other verdict changes; five files of
+  the 464 have such windows, the largest shift 6 samples (0.13 ms). Every Opus file is at 160 kbit/s; `package.py`
+  checks it locally with libopus, the decoder browsers use.
 - The cached Original (`stems.mjs`) and verify's own render of the same first pass agree within 0.00001 LU and 0.00001
   in peak (five songs measured both ways).
 
@@ -252,8 +258,8 @@ and a start between frames is honoured by interpolation. The runtime therefore s
 ## MT-2 results
 
 From Chromium (Playwright's headless shell) on the development machine, not a device; every figure is in the song's
-report. **114 of the game's 117 songs have a ready recording** (the two pilots and 112 of MT-2's 115). Over MT-2's
-115 songs (74,630 notes, 465 MB of Opus and MP3; 473 MB with the pilots):
+report. **All 117 of the game's songs have a ready recording in Ogg Opus and MP3** (the two pilots and MT-2's 115;
+three on Robin's waiver, below). Over MT-2's 115 songs (74,630 notes, 486 MB; 495 MB with the pilots):
 
 | Check | Result |
 |---|---|
@@ -265,22 +271,32 @@ report. **114 of the game's 117 songs have a ready recording** (the two pilots a
 | Cycle against the score's period | ≤ 0.156 ppm |
 | Loudness through the game graph | within 0.1 LU of the Original (trims −13.71 to +5.56 dB); MP3 within 0.34 LU at the same trim; peaks ≤ 0.751 |
 | Onsets | every song at z ≥ 4 with its control failing (69 on MT-1's envelope, 46 on the band flux) |
+| Formats | every track in both: Opus first, MP3 for a browser without it (the unit test checks it) |
 | Handovers (equal power) | median worst block 0.12 LU below both performances, 90th percentile 0.64 |
 
-**Three songs play their Original:** `playhouse` (Footlights), `sb_road` and `sa_kasane` pass every check but the
+**Three songs on Robin's waiver:** `playhouse` (Footlights), `sb_road` and `sa_kasane` pass every check but the
 handover level at one of the two moments measured: 1.52 and 2.31 LU below both performances alone (limit 1.5), and
 1.04 LU above (limit 1.0). The recordings are not at fault: at that instant the two performances, the same notes on
 different instruments, are partly out of phase (or in phase), which any fixed crossfade turns into a short dip (or
-bump) for its 200 ms. The limits stay; whether to admit these three is Robin's to decide.
+bump) for its 200 ms. The limits stay; Robin admitted the three ("Definitely include every track. Add the remaining
+3", 2026-10-14). The manifest records the waiver (`waivers.gameMixCalibrated`: by, date, words, scope); the build
+accepts a waiver only from Robin, only for that check and only where the loudness calibration passed.
 
-**Listening:** `docs/music/ensemble/listen_all.html` plays every recording's own files from the checkout, with
-Original/Ensemble comparisons from the cue's start for ten songs (the main menu theme among them).
+**A correction.** The first MT-2 report said every track was in Opus and MP3. It was not: verify admits a track with
+whichever encodings pass, and nine had one only (four MP3, five Opus) until Astra noticed. They were fixed (above), and
+the unit test now requires both for every ready track.
+
+**Listening:** `docs/music/ensemble/listen_all.html`, from the checkout: a **full-track player** for every song (the
+recording as the game plays it, from the cue's start through the first pass and five seconds into its repeat, or the
+whole of a one-shot, rendered by the game's own graph at its trim; Ogg Opus 96 kbit/s in `listen/full/`), links to
+each song's files in both encodings, and Original/Ensemble comparisons from the cue's start for ten songs (the main
+menu theme first).
 
 ## What this is not
 
 - **MT-2's recordings have not been heard by anyone.** Their voices for the new instruments and their balance were
-  chosen and measured, not judged by ear. `docs/music/ensemble/listen_all.html` plays every recording from the
-  checkout, with Original/Ensemble comparisons for ten songs; anything Robin hears wrong is a later round.
+  chosen and measured, not judged by ear. `docs/music/ensemble/listen_all.html` has a full-track player for every
+  song, from the checkout, and Original/Ensemble comparisons for ten; anything Robin hears wrong is a later round.
 - **The pilots were listened to on the captures, not yet in the game.** Robin heard the excerpts on the captures page (the
   game's own code rendering both performances through its graph; `docs/music/ensemble/listen.html`) on 2026-10-12:
   "It sounds great, nice job". That covers how the recordings and the switches sound in those excerpts. Hearing them

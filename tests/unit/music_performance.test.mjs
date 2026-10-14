@@ -101,6 +101,26 @@ export default async (t) => {
       unproven.evidence.repeatedLoopVerified = false;
       t.ok(trackProblems(unproven, getSong(unproven.songId), root).some((q) => /repeatedLoopVerified/.test(q)), 'manifest: a track without its evidence is left out');
     }
+    // (MT-2) every ready track offers both encodings (Astra's report: four songs had been admitted with MP3 only, five
+    // with Opus only)
+    for (const tr of man.tracks.filter((x) => x.releaseStatus === 'ready')) {
+      const kinds = (k) => (tr.assets[k] || []).map((a) => path.extname(a.relativeUrl)).sort().join(',');
+      t.ok(kinds('firstPass') === '.mp3,.opus' && (!tr.timeline.loop || kinds('steadyLoop') === '.mp3,.opus'), 'manifest: ' + tr.songId + ' offers Opus and MP3 (' + kinds('firstPass') + (tr.timeline.loop ? ' / ' + kinds('steadyLoop') : '') + ')');
+    }
+    // (MT-2) Robin's waiver: only the handover level, only by Robin, with the words and the loudness calibrated
+    const wv = man.tracks.find((x) => x.waivers && x.waivers.gameMixCalibrated);
+    if (wv) {
+      const c = () => JSON.parse(JSON.stringify(wv));
+      t.ok(!trackProblems(wv, getSong(wv.songId), root).length, 'manifest: ' + wv.songId + ' admitted on Robin\'s waiver of the handover level');
+      const a = c(); delete a.waivers;
+      t.ok(trackProblems(a, getSong(a.songId), root).some((q) => /gameMixCalibrated/.test(q)), 'manifest: without the waiver it is left out');
+      const b = c(); b.waivers.gameMixCalibrated.by = 'the lead';
+      t.ok(trackProblems(b, getSong(b.songId), root).some((q) => /waiver/.test(q)), 'manifest: a waiver not given by Robin is refused');
+      const d = c(); d.waivers.decodedAlignmentVerified = d.waivers.gameMixCalibrated; d.evidence.decodedAlignmentVerified = false;
+      t.ok(trackProblems(d, getSong(d.songId), root).some((q) => /decodedAlignmentVerified/.test(q)), 'manifest: no other evidence can be waived');
+      const e = c(); e.waivers.gameMixCalibrated.loudnessCalibrated = false;
+      t.ok(trackProblems(e, getSong(e.songId), root).some((q) => /waiver/.test(q)), 'manifest: a waiver needs the loudness calibrated');
+    }
     // (MT-2) a ready cue that does not loop: one file covering the score, its own evidence
     const oneShot = man.tracks.find((x) => x.releaseStatus === 'ready' && x.timeline && x.timeline.loop === false);
     if (oneShot) {

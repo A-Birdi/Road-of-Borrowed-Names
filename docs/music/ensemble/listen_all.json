@@ -123,5 +123,709 @@
     "seconds": 20
    }
   ]
+ },
+ "fullTracks": {
+  "snowbell": {
+   "file": "listen/full/snowbell.opus",
+   "seconds": 99.5,
+   "from": "457f42da8cfdce600de84ea45b8836a93486666870648eca65edc7ce65ec34f2",
+   "bytes": 1505878
+  },
+  "battle_keepers": {
+   "file": "listen/full/battle_keepers.opus",
+   "seconds": 76.579,
+   "from": "9933f9a90df1c114dc8fd05eb11850a012e319ee814014e8973f3aef4f3b9563",
+   "bytes": 1015180
+  },
+  "mill": {
+   "file": "listen/full/mill.opus",
+   "seconds": 88.333,
+   "from": "1967f675374ef40cf0a60a3e917661694363e3b158a78b9b0e4a61abf490c337",
+   "bytes": 1275796
+  },
+  "victory": {
+   "file": "listen/full/victory.opus",
+   "seconds": 12,
+   "from": "85568aa18ec709a439e9e8d7230965264082cb8cc419a0253b053d81b856300c",
+   "bytes": 111255
+  },
+  "prologue": {
+   "file": "listen/full/prologue.opus",
+   "seconds": 54,
+   "from": "75486b9b9322f8233b3b99c68f65dbd54b3be44cd489805a33d7b247e44366b8",
+   "bytes": 649397
+  },
+  "sg_lighthouse": {
+   "file": "listen/full/sg_lighthouse.opus",
+   "seconds": 92.273,
+   "from": "cbc10f5ff4449f8e3c2422c80f989bfb95dff216e074205244d6b7ca2d511efa",
+   "bytes": 1252346
+  },
+  "cinder": {
+   "file": "listen/full/cinder.opus",
+   "seconds": 92.857,
+   "from": "50d900cff98919d706402c6884621af2a730655e7c6260a86ce38e7649f8f184",
+   "bytes": 1273931
+  },
+  "boss_hush": {
+   "file": "listen/full/boss_hush.opus",
+   "seconds": 69.615,
+   "from": "1ff1cab00a5d2128be7b0ca4ffe97ef88826c487634608bfb267fb9e79b7078f",
+   "bytes": 845153
+  },
+  "boss": {
+   "file": "listen/full/boss.opus",
+   "seconds": 78.043,
+   "from": "3d4889d884c13f748cf1f2e4ff62a3eede51dbd983ebb496a7f100cc06a1df53",
+   "bytes": 1131877
+  },
+  "boss_cr": {
+   "file": "listen/full/boss_cr.opus",
+   "seconds": 72.2,
+   "from": "47db2ed6cf5161c402117805fa3649c957499047a07ed0f04f5b1fa95a5c43e6",
+   "bytes": 865479
+  },
+  "boss_lanternfall": {
+   "file": "listen/full/boss_lanternfall.opus",
+   "seconds": 73.108,
+   "from": "13bf6112bb5f9de6519a93d148464906367133a10f0bc6c9a0912e3fb0d40791",
+   "bytes": 955699
+  },
+  "boss_cinder": {
+   "file": "listen/full/boss_cinder.opus",
+   "seconds": 75.986,
+   "from": "5e03ced0adf7e8c89c0b13fab24cfa0a8224f3614f2dcb830a11140ea919c787",
+   "bytes": 1017771
+  },
+  "boss_ko": {
+   "file": "listen/full/boss_ko.opus",
+   "seconds": 72.651,
+   "from": "a63587f570a4ab06ce02a2f3785792738cb3bdfccc56d3f724be7c0b1d46b5a3",
+   "bytes": 871727
+  },
+  "battle_yn": {
+   "file": "listen/full/battle_yn.opus",
+   "seconds": 73.571,
+   "from": "b2ba215edd3ddbebedda373fc427f6dbf400f8551bb030638ace3ca4e1cbba44",
+   "bytes": 1039889
+  },
+  "boss_snowbell": {
+   "file": "listen/full/boss_snowbell.opus",
+   "seconds": 75,
+   "from": "49d1667d0a26cb29a95216eb716837c47f6e3b90f188516f8566825c5c01b5cb",
+   "bytes": 1053807
+  },
+  "boss_keepers": {
+   "file": "listen/full/boss_keepers.opus",
+   "seconds": 74.041,
+   "from": "59b74412c2043fec0ca9c9284ef3d2e94c6f95057c924b4e711c7a39932b35ec",
+   "bytes": 915048
+  },
+  "yn_kettle": {
+   "file": "listen/full/yn_kettle.opus",
+   "seconds": 71.755,
+   "from": "7a18fe9acaececa08dedd42c2495a2854fdb8e7b3a729c66d53a03594e2f5f37",
+   "bytes": 853462
+  },
+  "battle_cr": {
+   "file": "listen/full/battle_cr.opus",
+   "seconds": 74.153,
+   "from": "de2f3cfaf54ce116a31771cfeb6514cf7ea65c05ed26b6d9f4e0206c5c90c386",
+   "bytes": 1075553
+  },
+  "battle_still": {
+   "file": "listen/full/battle_still.opus",
+   "seconds": 73,
+   "from": "98c37bd350b6d0907e409875f26d0bbebc9baddc471b1cba2050c2015fe3ad38",
+   "bytes": 996552
+  },
+  "battle_ko": {
+   "file": "listen/full/battle_ko.opus",
+   "seconds": 74.744,
+   "from": "c03dd189c26205dbce3e02af8700e9c1d2674db5b0cece54ffeb61e88d4ea8f5",
+   "bytes": 1038206
+  },
+  "battle_lanternfall": {
+   "file": "listen/full/battle_lanternfall.opus",
+   "seconds": 75.345,
+   "from": "9078df6a2c81fef399fb4b3778bc63343450a24e855497ab57392e8c918d6b98",
+   "bytes": 1032566
+  },
+  "boss_understage": {
+   "file": "listen/full/boss_understage.opus",
+   "seconds": 75,
+   "from": "19743eb85b74d0fa2f4162c50bf5ac1784dd6bc7ce5802b7a91e1b77c4f4b95d",
+   "bytes": 958963
+  },
+  "boss_saltglass": {
+   "file": "listen/full/boss_saltglass.opus",
+   "seconds": 77,
+   "from": "3c0885852c7627c2bf7261782f1dc09c8c7ab3deb50c528c21050bc4c73b2cd3",
+   "bytes": 1054710
+  },
+  "boss_atlas": {
+   "file": "listen/full/boss_atlas.opus",
+   "seconds": 68.913,
+   "from": "1d802d80cb29162a6d3a380492d1442d63ee0e0bf458134c627c77fa1e07323a",
+   "bytes": 947743
+  },
+  "boss_manybridge": {
+   "file": "listen/full/boss_manybridge.opus",
+   "seconds": 75.986,
+   "from": "db386499f66ea1f59b92cca8d2d9387f7c7f449d107395dc7c8a58fc7f8e100b",
+   "bytes": 1006588
+  },
+  "battle_snowbell": {
+   "file": "listen/full/battle_snowbell.opus",
+   "seconds": 77.857,
+   "from": "5bd6df575c28677b0b2ca0a706ce85d43909b17015ffd2ba2d9cf946572078c6",
+   "bytes": 1047563
+  },
+  "battle_cinder": {
+   "file": "listen/full/battle_cinder.opus",
+   "seconds": 80.556,
+   "from": "7511ae7fee1105d13a03dac7284bc04bebfed9f406ecf7d894e60d73c1ee01d0",
+   "bytes": 1101714
+  },
+  "battle_manybridge": {
+   "file": "listen/full/battle_manybridge.opus",
+   "seconds": 80.556,
+   "from": "57ec09afaff7777350fe30438578505cb42aa26abf68aafc8a1210b3ad70f00e",
+   "bytes": 1121646
+  },
+  "battle_atlas": {
+   "file": "listen/full/battle_atlas.opus",
+   "seconds": 72.5,
+   "from": "ce9ea2677c0f576b168ad5f7e2b421a263b354af0309803324f55b39ccc5fd6f",
+   "bytes": 995313
+  },
+  "co_festival": {
+   "file": "listen/full/co_festival.opus",
+   "seconds": 91.897,
+   "from": "300a79b970cf9c239f67601d4aec5850e281bfb4a96e49fd60bcd014a49203ce",
+   "bytes": 1318119
+  },
+  "atlas": {
+   "file": "listen/full/atlas.opus",
+   "seconds": 89.808,
+   "from": "4ea5bed0590321a03cd5eeea8c1c6b87212e93e43523ad78f2dce34212cf13d9",
+   "bytes": 1295073
+  },
+  "road": {
+   "file": "listen/full/road.opus",
+   "seconds": 153.571,
+   "from": "dcb3bbff5e40c2c8baca6dfc14f5f41ddb9a71eeeb5d4e0ca7315e9efaa8054b",
+   "bytes": 2078854
+  },
+  "sa_road_home": {
+   "file": "listen/full/sa_road_home.opus",
+   "seconds": 153.571,
+   "from": "4aa11503a6954440908d26d9666e97700be57fc453fc79b137ca8985667900a2",
+   "bytes": 2224874
+  },
+  "playhouse": {
+   "file": "listen/full/playhouse.opus",
+   "seconds": 74.153,
+   "from": "2635443758ee3560c898fdcf5f03f0b04f19c6c32cd6d34ac2074ef9de7ebaf0",
+   "bytes": 1045524
+  },
+  "finale": {
+   "file": "listen/full/finale.opus",
+   "seconds": 109.348,
+   "from": "17e17b3712e4c5487d6f6a5075c6aedf82744e3d9c333c7a9199476ed1702509",
+   "bytes": 1367924
+  },
+  "battle_saltglass": {
+   "file": "listen/full/battle_saltglass.opus",
+   "seconds": 83.462,
+   "from": "7c613a0382c2ea380a5e918de45e5ad8238317c18fd8082569ba745f898f22cd",
+   "bytes": 1114377
+  },
+  "saltglass": {
+   "file": "listen/full/saltglass.opus",
+   "seconds": 101.923,
+   "from": "d24dc87532ae5c795b7d05f5695c35192ce9b663caac4ab0f9afb0d45cb40392",
+   "bytes": 1354090
+  },
+  "reedwake": {
+   "file": "listen/full/reedwake.opus",
+   "seconds": 98.75,
+   "from": "b23df0e356de00c0bc1cd3cf5f49659bb8a4015124a35e33b56fe6f234b8f9a6",
+   "bytes": 1363819
+  },
+  "lanternfall": {
+   "file": "listen/full/lanternfall.opus",
+   "seconds": 105,
+   "from": "7c2bed47e9c4616f0d035ef177fd8c48d8f238c7d2d62a65f90b31caf501c465",
+   "bytes": 1510471
+  },
+  "credits": {
+   "file": "listen/full/credits.opus",
+   "seconds": 129.429,
+   "from": "faf4d4c6548cd12a3e94bed96dd8cdbd848298488004cda338c39e7973abb8de",
+   "bytes": 1757280
+  },
+  "observatory": {
+   "file": "listen/full/observatory.opus",
+   "seconds": 111.667,
+   "from": "d40aa0cf80c6f0e51c37d7b9e1c2c515d96f6d231d839fdfa16054b237d4dc2b",
+   "bytes": 1568970
+  },
+  "co_road": {
+   "file": "listen/full/co_road.opus",
+   "seconds": 93.696,
+   "from": "08544a2d3ea970c90a621950c46e8276b363a2bf9f2b0711dd0c32f380371629",
+   "bytes": 1324464
+  },
+  "festival": {
+   "file": "listen/full/festival.opus",
+   "seconds": 73,
+   "from": "f1b501b5dbb8a16bf4063cf85de8b0dcad9297efcb0fc18fe817865e47a33d79",
+   "bytes": 1041069
+  },
+  "lf_town_after": {
+   "file": "listen/full/lf_town_after.opus",
+   "seconds": 78.846,
+   "from": "8723dbc0d95ed936a9e8b648dcfb75ce98d161b3b04b7d6141a9d93ac35fe149",
+   "bytes": 1030250
+  },
+  "sg_road": {
+   "file": "listen/full/sg_road.opus",
+   "seconds": 125,
+   "from": "629c5dd773d4350b08cf1f7b46796e1640ec80f9f381390ecbbbf2596e012ede",
+   "bytes": 1700538
+  },
+  "manybridge": {
+   "file": "listen/full/manybridge.opus",
+   "seconds": 77.857,
+   "from": "fca56be8f3e4ef1ab9dc84f81d4632eabe5d548492faaffabd59098207237b0a",
+   "bytes": 1153127
+  },
+  "battle": {
+   "file": "listen/full/battle.opus",
+   "seconds": 86.6,
+   "from": "b86a4c7d80fbb0306f4dd9e0fec2214bba32a3fab134f6fe2d1e61230c9aab21",
+   "bytes": 1208056
+  },
+  "inn": {
+   "file": "listen/full/inn.opus",
+   "seconds": 92.273,
+   "from": "a0e0fd6e76da0430a7926be745e76f6f94b2419c69fc07bc1409239964ced47c",
+   "bytes": 1307204
+  },
+  "lf_road": {
+   "file": "listen/full/lf_road.opus",
+   "seconds": 86.6,
+   "from": "d86e016a31710a329e24ec882d398bcfdeb4f895f99070b90980e7825fdf48c6",
+   "bytes": 1115030
+  },
+  "ending": {
+   "file": "listen/full/ending.opus",
+   "seconds": 121.364,
+   "from": "818516ab41901fb900f43a0b2a31df3f15ee582a302e2e5cc9391b709533d617",
+   "bytes": 1535456
+  },
+  "co_fire": {
+   "file": "listen/full/co_fire.opus",
+   "seconds": 85,
+   "from": "93ee8723272e8b5ac03cdf60ed34f15cbf288527603147c50a6e0262169c2a8c",
+   "bytes": 1185351
+  },
+  "kiln": {
+   "file": "listen/full/kiln.opus",
+   "seconds": 96.429,
+   "from": "00efdcbc70c97f553823f8ff375264a6bddb0b4391d6b962024d4551efed4927",
+   "bytes": 1346205
+  },
+  "quiet_road": {
+   "file": "listen/full/quiet_road.opus",
+   "seconds": 114.714,
+   "from": "e7107da7b2340111309f0e0e79c41dcd025029842072aae648582690953ba59e",
+   "bytes": 1456276
+  },
+  "cloudroad": {
+   "file": "listen/full/cloudroad.opus",
+   "seconds": 93.696,
+   "from": "8d5b149f38ca56691651cfe35e2e9c4fa119c550ccdf5b3fa9436f663a0afeec",
+   "bytes": 1377338
+  },
+  "wonder": {
+   "file": "listen/full/wonder.opus",
+   "seconds": 80.789,
+   "from": "f2eb91fa90e05dc5caf6ed7b68b0ebc33f1eed8068ac916bdd3bf5c643f6c248",
+   "bytes": 1080784
+  },
+  "steamhollow": {
+   "file": "listen/full/steamhollow.opus",
+   "seconds": 90,
+   "from": "5ae16d4452f66a89e426862b77c9ab6fc803b7016ada34986755322b9fa49fd3",
+   "bytes": 1331070
+  },
+  "sa_road": {
+   "file": "listen/full/sa_road.opus",
+   "seconds": 83.462,
+   "from": "bcadc43b96d22095df9fe5125da2be78bc7f3ec24d9bd93108b410385f25a895",
+   "bytes": 1161184
+  },
+  "lf_flood": {
+   "file": "listen/full/lf_flood.opus",
+   "seconds": 96.429,
+   "from": "2fc5314f301ec73f0cdbf65b33d604841c75de5d04772cc6f92769f4a326ee13",
+   "bytes": 1304656
+  },
+  "sea": {
+   "file": "listen/full/sea.opus",
+   "seconds": 72.826,
+   "from": "de6256454d6efbbac176cebc3d2068573ed6c52434f0a840aede0bd0b76b76d0",
+   "bytes": 1064173
+  },
+  "sb_road": {
+   "file": "listen/full/sb_road.opus",
+   "seconds": 85,
+   "from": "6cfe09b115f58d23f0875fab4d9a24f5d95c741546f97c6deec346160ed22b99",
+   "bytes": 1111891
+  },
+  "still_archive": {
+   "file": "listen/full/still_archive.opus",
+   "seconds": 101,
+   "from": "1ac5a223b0eb34e4eba054366e5d9d554293d51b055449d8362036d321a614b2",
+   "bytes": 1446567
+  },
+  "companion_suzu": {
+   "file": "listen/full/companion_suzu.opus",
+   "seconds": 65,
+   "from": "35084a589f4be0cc068234d0b4ce1a8fe902b0ac3ff7d1871f9cbe8177129ff4",
+   "bytes": 827753
+  },
+  "sazanami": {
+   "file": "listen/full/sazanami.opus",
+   "seconds": 79.286,
+   "from": "a085868efe48ae3a5d96a77d9ab37d025ba4b38be53dcc43e88b5578da8e718e",
+   "bytes": 1013990
+  },
+  "companion_nao": {
+   "file": "listen/full/companion_nao.opus",
+   "seconds": 58.333,
+   "from": "26feec02d279098356b87b11bf6f5e2b2136767ceb9d21356d723d451b64363a",
+   "bytes": 755520
+  },
+  "title": {
+   "file": "listen/full/title.opus",
+   "seconds": 106.818,
+   "from": "e13b81942b18e113fbca86a56ab59f6dd1985fe46263b8380ab86a9db2580182",
+   "bytes": 1411578
+  },
+  "lf_bell": {
+   "file": "listen/full/lf_bell.opus",
+   "seconds": 58.333,
+   "from": "50a04d2820b8407c688570ae50c6d87423fab7c9a71ef8921ec0e79b5e8f3b7f",
+   "bytes": 823555
+  },
+  "companion_mio": {
+   "file": "listen/full/companion_mio.opus",
+   "seconds": 73.571,
+   "from": "849f83e43b2db780afffd2b65020bbfb7724043488c31fd2a9257198e866392a",
+   "bytes": 984231
+  },
+  "departure": {
+   "file": "listen/full/departure.opus",
+   "seconds": 111.667,
+   "from": "cde60d08d01837664fb07c9b0613ac304b029475723b4109b4ad21fde02ef5df",
+   "bytes": 1465103
+  },
+  "drowned_archive": {
+   "file": "listen/full/drowned_archive.opus",
+   "seconds": 121.364,
+   "from": "91f5f25a854d77b640547a0b41bb64ab70c487461c1fd6c9651a1cf04959f7b5",
+   "bytes": 1773288
+  },
+  "sg_letters": {
+   "file": "listen/full/sg_letters.opus",
+   "seconds": 53,
+   "from": "842ad15ade1fd378d3f37febe877689417bf434e7c7b24e45e9d58fee3217e2c",
+   "bytes": 752088
+  },
+  "reedwake_night": {
+   "file": "listen/full/reedwake_night.opus",
+   "seconds": 85,
+   "from": "3b97b546f469d31a43292784d47de26fcef8ade618592f8677f8c2d607926990",
+   "bytes": 1136493
+  },
+  "mystery": {
+   "file": "listen/full/mystery.opus",
+   "seconds": 88.478,
+   "from": "8c3abda3d98432383ef6aca4fa7d773ce7119d01c13512f2d93af776fc871562",
+   "bytes": 1187568
+  },
+  "sorrow": {
+   "file": "listen/full/sorrow.opus",
+   "seconds": 104.31,
+   "from": "0e70b5c5fd029f9ff3e934490279dd8b69b081885c510edbb1cdf96a0a557a3a",
+   "bytes": 1325465
+  },
+  "fireworks": {
+   "file": "listen/full/fireworks.opus",
+   "seconds": 92.273,
+   "from": "9c5a7ec9bb0b3d091965b2031ad649db76c2f7841ce3d3a50b26b5f571c06a5a",
+   "bytes": 1314178
+  },
+  "keepers": {
+   "file": "listen/full/keepers.opus",
+   "seconds": 107,
+   "from": "7231bbbbe2f3f546931037c655270ac01ddbba648824b3e34b25440c8a0c2929",
+   "bytes": 1481378
+  },
+  "sb_snowlight": {
+   "file": "listen/full/sb_snowlight.opus",
+   "seconds": 104.31,
+   "from": "366bbdee955c0b9d42e5b0df85a922b663956e94b11fa41a8af16d1eb155aff6",
+   "bytes": 1454617
+  },
+  "companion_ren": {
+   "file": "listen/full/companion_ren.opus",
+   "seconds": 80.789,
+   "from": "1ba90aec10969d27f3193f1228c83a9faa87232d875f440c04d2e477f352d831",
+   "bytes": 1025456
+  },
+  "co_terraces": {
+   "file": "listen/full/co_terraces.opus",
+   "seconds": 85,
+   "from": "547c987e9ba7c6e981097690bf4423ccbfa6c707a6e15c4512a21468567ef1e2",
+   "bytes": 1108948
+  },
+  "as_festival": {
+   "file": "listen/full/as_festival.opus",
+   "seconds": 79.286,
+   "from": "7083c48bbe8c75e4c717761ef8f33658da21c95fab8326ba068af860d7fdb6ff",
+   "bytes": 1242506
+  },
+  "sb_lamp": {
+   "file": "listen/full/sb_lamp.opus",
+   "seconds": 61.842,
+   "from": "8f34e3774d7084f340fe822f01965c94c1a36a598ae87155622a9f545b43fc8b",
+   "bytes": 904665
+  },
+  "lf_records": {
+   "file": "listen/full/lf_records.opus",
+   "seconds": 88.478,
+   "from": "1c8637f682845004112bbb4085185d2212013ba3b53336c01414b5dcc4ae32b5",
+   "bytes": 1334847
+  },
+  "ko_garden": {
+   "file": "listen/full/ko_garden.opus",
+   "seconds": 82.143,
+   "from": "0b9a5f0d53b88a9977e298699162d0b7cf9b443d9f3b0fcd59bed18ed6802a11",
+   "bytes": 1115030
+  },
+  "hall_w4": {
+   "file": "listen/full/hall_w4.opus",
+   "seconds": 83,
+   "from": "6b621cba0b86c0f8b240a40a88241a5d576f611a23aff122e0cdab5b354281a1",
+   "bytes": 1314594
+  },
+  "co_assembly": {
+   "file": "listen/full/co_assembly.opus",
+   "seconds": 101,
+   "from": "72e83d5b1b6cd08d5cb111f348a026b5033eb782914004617ce1a5e27c5102ef",
+   "bytes": 1386756
+  },
+  "sa_toya": {
+   "file": "listen/full/sa_toya.opus",
+   "seconds": 96.429,
+   "from": "0e67096dd8067e6d640565b5b4c7c014a8534a442e64f176103a3ce07da7aa72",
+   "bytes": 1353988
+  },
+  "kotonoha": {
+   "file": "listen/full/kotonoha.opus",
+   "seconds": 91.667,
+   "from": "026fd87f1efedb94219e399b140f74db4952a90c8ddf191fc91a8ed71d72613f",
+   "bytes": 1313893
+  },
+  "sg_confession": {
+   "file": "listen/full/sg_confession.opus",
+   "seconds": 96.429,
+   "from": "4856b7ef8594d1bef1509d585acd5b339f15cbdef67fd0de2a1e7e48f8852bed",
+   "bytes": 1202921
+  },
+  "sa_memories": {
+   "file": "listen/full/sa_memories.opus",
+   "seconds": 104.31,
+   "from": "b1071db99658c6aac02ddf13fb7d6161c04c9ca9ac924a878da63a435b83c73e",
+   "bytes": 1530254
+  },
+  "hush": {
+   "file": "listen/full/hush.opus",
+   "seconds": 101,
+   "from": "00fbd45ee7594ad19b90992e3bfba19a21b7672ee3401bdf575b8c9f76ae358d",
+   "bytes": 1326476
+  },
+  "belltower": {
+   "file": "listen/full/belltower.opus",
+   "seconds": 101,
+   "from": "5b0c4a12766bf28a4a4c9d248e393885a8927e25b5f9ff32ab8132c8453244f7",
+   "bytes": 1348984
+  },
+  "sb_blizzard": {
+   "file": "listen/full/sb_blizzard.opus",
+   "seconds": 63.182,
+   "from": "b2038f91512c3d004e624cfcdbe03286659f757ca81353f4b4f8b1be11b94916",
+   "bytes": 889447
+  },
+  "kr_vigil": {
+   "file": "listen/full/kr_vigil.opus",
+   "seconds": 77,
+   "from": "38ee0dfdc56ca292d45bbca1a651661180a751001cb04d07fc2d9efc1aa50ccf",
+   "bytes": 1087554
+  },
+  "undercroft": {
+   "file": "listen/full/undercroft.opus",
+   "seconds": 85,
+   "from": "1a782b5b3e076339961a4bc857ec3a7bda2102ee898de16cb4f1314de70a4900",
+   "bytes": 1133661
+  },
+  "hall_w8": {
+   "file": "listen/full/hall_w8.opus",
+   "seconds": 125,
+   "from": "b3db7e199c84b560cbb61f6628c413472ae76b322bcdbc89fd08de609bfe1494",
+   "bytes": 1786261
+  },
+  "ashihara": {
+   "file": "listen/full/ashihara.opus",
+   "seconds": 79.286,
+   "from": "da6db1a35623691191cdcd58c5aa593e77c0bb6c470151bb81ff417505c5ce54",
+   "bytes": 1241239
+  },
+  "hall_w2": {
+   "file": "listen/full/hall_w2.opus",
+   "seconds": 91.667,
+   "from": "3cb00283d0c38558ad54ce4a35c312cd5fcfaa31ab61e7690fc2e65fb5c17732",
+   "bytes": 1486853
+  },
+  "sa_kasane": {
+   "file": "listen/full/sa_kasane.opus",
+   "seconds": 101,
+   "from": "c97bcd6025a0b157ae4b28a8ef20ddb8c1db69ca8f9d08ac07b7d6c2b81bf5ef",
+   "bytes": 1497866
+  },
+  "understage": {
+   "file": "listen/full/understage.opus",
+   "seconds": 80.789,
+   "from": "659f9d233e003661a17ed80f1a21ad0645f60d82986d8eacac7180fa13907026",
+   "bytes": 981213
+  },
+  "kr_cave": {
+   "file": "listen/full/kr_cave.opus",
+   "seconds": 89.706,
+   "from": "bebe06af87f73d6946dd7d7b8040a65e21fab162965f9d7c5fc62d083e7f75ac",
+   "bytes": 1197448
+  },
+  "hall_w9": {
+   "file": "listen/full/hall_w9.opus",
+   "seconds": 109,
+   "from": "f178aab9ad9e484557376b7b6a8a76536468ffed6ff4f99645cf0e8bb3d18041",
+   "bytes": 1545998
+  },
+  "hall_w3": {
+   "file": "listen/full/hall_w3.opus",
+   "seconds": 99.545,
+   "from": "7b95481999540b8e8611180f7c67ba0292e95fb9900061326a4e49911fab5991",
+   "bytes": 1370380
+  },
+  "kr_hall": {
+   "file": "listen/full/kr_hall.opus",
+   "seconds": 92.273,
+   "from": "d4d2b4e73f7c5e69cd53b334a4523f7a5cd7307af6ce31d6d078f87564a6a1f2",
+   "bytes": 1329222
+  },
+  "hall_w1": {
+   "file": "listen/full/hall_w1.opus",
+   "seconds": 87.105,
+   "from": "b73df7646ceffb23fa3294dc34a2e436bc5e8cdd56dca30a3be021208ab10a15",
+   "bytes": 1251475
+  },
+  "hall_w6": {
+   "file": "listen/full/hall_w6.opus",
+   "seconds": 89.324,
+   "from": "4146507e0ee555feb21450f6e3bcef60a356e27b46d8ede2bb2448408f3c1767",
+   "bytes": 1194696
+  },
+  "hall_w7": {
+   "file": "listen/full/hall_w7.opus",
+   "seconds": 105.645,
+   "from": "6bd5ed638bd1f3b7ba8d4143dfe04c4edcb52db19fb869a3912b0c0f85d21ffc",
+   "bytes": 1573093
+  },
+  "hall_w5": {
+   "file": "listen/full/hall_w5.opus",
+   "seconds": 94.143,
+   "from": "abc946497df93f7f5d3f971f10af885b662d36c925a92f8578aafc085ec48553",
+   "bytes": 1403967
+  },
+  "cr_pass": {
+   "file": "listen/full/cr_pass.opus",
+   "seconds": 99.545,
+   "from": "563563a8a4f6051930bbd64c74e681ab9ec1b445c0031912480c59cf958615a7",
+   "bytes": 1570756
+  },
+  "yn_vents": {
+   "file": "listen/full/yn_vents.opus",
+   "seconds": 95,
+   "from": "75e2cd5282e021ee07ada55181a494b59ddb0ca1f978d1d8801e12cdc1bd60ad",
+   "bytes": 1407514
+  },
+  "yn_evening": {
+   "file": "listen/full/yn_evening.opus",
+   "seconds": 91.667,
+   "from": "531afa2d9628cd564c7628f828b1611d34938de3cc85d872c605be99db027757",
+   "bytes": 1363066
+  },
+  "ko_roots": {
+   "file": "listen/full/ko_roots.opus",
+   "seconds": 65,
+   "from": "b1c7c55c5de2f7279a725e61e388e511162688ec10fbab101c58c8ff1848a7f5",
+   "bytes": 892191
+  },
+  "sa_thin": {
+   "file": "listen/full/sa_thin.opus",
+   "seconds": 75.909,
+   "from": "f2fa7118ed3de3f56716e053b8054675442ecab6ab74385c46b9514e8cd8dc58",
+   "bytes": 1135120
+  },
+  "sg_counter": {
+   "file": "listen/full/sg_counter.opus",
+   "seconds": 53,
+   "from": "f4746d1b7cfa2f3a735f13daa14317df5eddfd6501ddbc3cd2e4861c7be5e684",
+   "bytes": 854768
+  },
+  "hall": {
+   "file": "listen/full/hall.opus",
+   "seconds": 102.5,
+   "from": "8fbdc90b767d13aaeeae6b9e54784dae153c7a5706641edb3676167456edffe6",
+   "bytes": 1565909
+  },
+  "hall_w10": {
+   "file": "listen/full/hall_w10.opus",
+   "seconds": 102.5,
+   "from": "abca335f5c623179c50f5c3a103ca49706c49ed918a844938b7df91d6533ab07",
+   "bytes": 1548559
+  },
+  "cr_hut": {
+   "file": "listen/full/cr_hut.opus",
+   "seconds": 69,
+   "from": "1fbd19ab7e9ef10992275a4cc1799fafeda8618b61deba1839fdfdcaef541936",
+   "bytes": 1036821
+  },
+  "sa_drone": {
+   "file": "listen/full/sa_drone.opus",
+   "seconds": 109,
+   "from": "82e2ec334c6b66ad8eddc76c82bc340b5997576144330b83aba018ed38f78f85",
+   "bytes": 1597044
+  },
+  "yn_north": {
+   "file": "listen/full/yn_north.opus",
+   "seconds": 137.414,
+   "from": "9331c039362b1aa4a029fe1088c8922731fd37fad73b3a1479c22fc6ee63c703",
+   "bytes": 2105025
+  }
  }
 }

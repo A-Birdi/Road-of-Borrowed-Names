@@ -21,6 +21,12 @@ const URL_RE = /^\.\/assets\/music\/ensemble\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_.-
 const TYPES = { opus: 'audio/ogg; codecs="opus"', ogg: 'audio/ogg', mp3: 'audio/mpeg', flac: 'audio/flac', wav: 'audio/wav' };
 const MIMES = ['audio/mpeg', 'audio/ogg', 'audio/opus', 'audio/wav', 'audio/flac'];
 const EVIDENCE = ['scoreCompatibleWithCurrentBuild', 'scoreEventsPreserved', 'decodedAlignmentVerified', 'firstPassSeamVerified', 'repeatedLoopVerified', 'gameMixCalibrated', 'distributionProvenanceRecorded'];
+// (MT-2) Robin may admit a recording whose only failed check is the handover level (gameMixCalibrated with its
+// loudness calibration passed): `waivers.gameMixCalibrated` = { by: 'Robin', date, words, scope, loudnessCalibrated: true }.
+// No other evidence can be waived.
+export const WAIVABLE = ['gameMixCalibrated'];
+export const waived = (t, k) => WAIVABLE.includes(k) && !!t && !!t.waivers && !!t.waivers[k] && t.waivers[k].by === 'Robin'
+  && typeof t.waivers[k].words === 'string' && t.waivers[k].words.length > 0 && t.waivers[k].loudnessCalibrated === true;
 // (MT-2) a cue that does not loop is one file, the whole score with its decay (layout single_pass): no seam, no repeat
 const EVIDENCE_ONCE = ['scoreCompatibleWithCurrentBuild', 'scoreEventsPreserved', 'decodedAlignmentVerified', 'oneShotPlacementVerified', 'gameMixCalibrated', 'distributionProvenanceRecorded'];
 
@@ -72,7 +78,8 @@ export function trackProblems(t, score, root) {
   if (m.roomBaked !== true) p.push('roomBaked (the game adds no room to a recording)');
   if (m.userVolumeBaked !== false) p.push('userVolumeBaked');
   const ev = t.evidence || {};
-  for (const k of score.loop ? EVIDENCE : EVIDENCE_ONCE) if (ev[k] !== true) p.push('evidence ' + k);
+  for (const k of score.loop ? EVIDENCE : EVIDENCE_ONCE) if (ev[k] !== true && !waived(t, k)) p.push('evidence ' + k);
+  for (const k of Object.keys(t.waivers || {})) if (!waived(t, k)) p.push('waiver ' + k + ' not accepted (only gameMixCalibrated, by Robin, with words and the loudness calibrated)');
   if (!Array.isArray(ev.reportPaths) || !ev.reportPaths.length) p.push('evidence reportPaths');
   else for (const r of ev.reportPaths) if (!fs.existsSync(path.join(root, r))) p.push('report missing: ' + r);
   const as = t.assets;

@@ -2,11 +2,14 @@
 //
 //   node tools/music/ensemble/listen_all.mjs        (RB_PAGE=<built page with the catalog>)
 //
-// Writes docs/music/ensemble/listen_all.html: every ready song with its recording's own files (from
-// assets/music/ensemble/, as the game fetches them; no new copies), what it is made of and how it measured, and, for a
-// few songs chosen to cover the new voices, a 20 s comparison from the cue's start, Original then Ensemble, rendered
-// offline by the game's own code through its own graph at default volumes (as capture.mjs did for the pilots) and
-// encoded to Ogg Opus 96 kbit/s in docs/music/ensemble/listen/mt2/. Opened from the checkout, it needs no server.
+// Writes docs/music/ensemble/listen_all.html: every ready song with a full-track player (Robin, 2026-10-14: the whole
+// song as the game plays it: the recording from the cue's start through its first pass and 5 s into its repeat, or the
+// whole of a cue that does not loop, rendered offline by the game's own code through its own graph at default volumes
+// and the song's trim; Ogg Opus 96 kbit/s in docs/music/ensemble/listen/full/), links to the recording's own files in
+// both formats (from assets/music/ensemble/, as the game fetches them), what it is made of and how it measured; and,
+// for a few songs chosen to cover the new voices, a 20 s comparison from the cue's start, Original then Ensemble
+// (docs/music/ensemble/listen/mt2/). Opened from the checkout, it needs no server. A full track is rendered again only
+// when its song's files change (listen_all.json keeps what each was rendered from).
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -17,7 +20,10 @@ import { load } from '../../../tests/lib/load.mjs';
 // the comparison songs: the main menu (Robin's report), one of each new kind of sound, the one-shots
 const COMPARE = ['title', 'road', 'mill', 'prologue', 'victory', 'cinder', 'sg_lighthouse', 'inn', 'ending', 'boss_hush'];
 const OUT = path.join(root, 'docs/music/ensemble/listen/mt2');
+const FULL = path.join(root, 'docs/music/ensemble/listen/full');
 fs.mkdirSync(OUT, { recursive: true });
+fs.mkdirSync(FULL, { recursive: true });
+const prevJson = (() => { try { return JSON.parse(fs.readFileSync(path.join(root, 'docs/music/ensemble/listen_all.json'), 'utf8')); } catch (e) { return {}; } })();
 const RB = load(['core', 'audio'], { __RB_TEST__: true });
 const songs = RB.audio.songList();
 const man = JSON.parse(fs.readFileSync(path.join(root, 'assets/music/ensemble/manifest.json'), 'utf8'));
@@ -60,6 +66,46 @@ for (const id of COMPARE.filter((x) => ready.includes(x))) {
     console.log(id, key, fs.statSync(path.join(OUT, name)).size, 'bytes');
   }
 }
+// ---- full tracks: the recording alone through the game graph, from the cue's start (16-bit PCM in 10 s pieces)
+const full = {};
+const PREV = (prevJson && prevJson.fullTracks) || {};
+for (const id of ready) {
+  const e = await p.evaluate((id) => { const e = RB.audio.ensembleCatalog.songs[id], f = e.formats[0]; return { loop: e.loop, D: e.durationSec, end: (f.first.end - f.first.start) / f.first.rate, from: f.first.sha256 }; }, id);
+  const seconds = +(e.loop ? e.D + 5 : e.end).toFixed(3), name = id + '.opus';
+  if (PREV[id] && PREV[id].from === e.from && PREV[id].seconds === seconds && fs.existsSync(path.join(FULL, name))) { full[id] = PREV[id]; continue; }
+  const meta = await p.evaluate(async ([id, s]) => {
+    const e = RB.audio.ensembleCatalog.songs[id], f = e.formats[0];
+    for (const u of [f.first.url, f.loop && f.loop.url].filter(Boolean)) if (!window.__mt.bufs[u]) await window.__mtDecode(u, [48000]);
+    const bufs = { first: window.__mt.bufs[f.first.url], loop: f.loop ? window.__mt.bufs[f.loop.url] : null };
+    const out = await RB.audio.renderEnsembleOffline(id, bufs, s + 0.05, { entry: e, fmt: f, original: false, mix: 0, from: 0 });
+    window.__mt.full = out;
+    for (const u of [f.first.url, f.loop && f.loop.url].filter(Boolean)) delete window.__mt.bufs[u]; // (memory)
+    return { frames: out.length, sr: out.sampleRate };
+  }, [id, seconds]);
+  const tmp = path.join(FULL, '.tmp.wav'), fd = fs.openSync(tmp, 'w'), n = meta.frames;
+  const hdr = Buffer.alloc(44);
+  hdr.write('RIFF', 0); hdr.writeUInt32LE(36 + n * 4, 4); hdr.write('WAVE', 8); hdr.write('fmt ', 12); hdr.writeUInt32LE(16, 16);
+  hdr.writeUInt16LE(1, 20); hdr.writeUInt16LE(2, 22); hdr.writeUInt32LE(meta.sr, 24); hdr.writeUInt32LE(meta.sr * 4, 28); hdr.writeUInt16LE(4, 32); hdr.writeUInt16LE(16, 34);
+  hdr.write('data', 36); hdr.writeUInt32LE(n * 4, 40);
+  fs.writeSync(fd, hdr);
+  const CH = meta.sr * 10;
+  for (let a = 0; a < n; a += CH) {
+    const b64 = await p.evaluate(([a, m]) => {
+      const o = window.__mt.full, L = o.getChannelData(0), R = o.getChannelData(1), k = Math.min(m, o.length - a), x = new Int16Array(k * 2);
+      for (let i = 0; i < k; i++) { x[2 * i] = Math.max(-32768, Math.min(32767, Math.round(L[a + i] * 32767))); x[2 * i + 1] = Math.max(-32768, Math.min(32767, Math.round(R[a + i] * 32767))); }
+      const u = new Uint8Array(x.buffer); let t = ''; for (let i = 0; i < u.length; i += 32768) t += String.fromCharCode.apply(null, u.subarray(i, i + 32768)); return btoa(t);
+    }, [a, CH]);
+    fs.writeSync(fd, Buffer.from(b64, 'base64'));
+  }
+  fs.closeSync(fd);
+  await p.evaluate(() => { window.__mt.full = null; });
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', tmp, '-ss', '0.05', '-fflags', '+bitexact', '-flags:a', '+bitexact', '-c:a', 'libopus', '-b:a', '96k', path.join(FULL, name)]);
+  fs.unlinkSync(tmp);
+  full[id] = { file: 'listen/full/' + name, seconds, from: e.from, bytes: fs.statSync(path.join(FULL, name)).size };
+  console.log('full', id, seconds + ' s', full[id].bytes, 'bytes');
+}
+// (a full track for a song no longer ready is removed)
+for (const f of fs.readdirSync(FULL)) if (f.endsWith('.opus') && !full[f.replace(/\.opus$/, '')]) fs.unlinkSync(path.join(FULL, f));
 await browser.close();
 srv.close();
 
@@ -83,6 +129,8 @@ h1 { font-size: 1.6rem; margin: 0 0 .3rem; } h2 { font-size: 1.2rem; margin: 2re
 .song .t { font-weight: bold; } .muted { color: var(--muted); font-size: .9rem; }
 .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: .5rem; }
 .pair > div { display: grid; gap: .2rem; min-width: 0; }
+.pair > .wide { grid-column: 1 / -1; }
+.files a { color: var(--accent); }
 .chip { display: inline-block; background: var(--chip); border-radius: 3px; padding: 0 .35rem; margin: 0 .2rem .2rem 0; font-size: .85rem; }
 audio { width: 100%; }
 </style></head><body><main>
@@ -91,10 +139,11 @@ audio { width: 100%; }
 (Snowbell, the Keepers' Road battle) were heard by Robin on 2026-10-12 (<a href="listen.html">their captures</a>). The others were
 made the same way, with each part's balance set by measurement against the Original and voices chosen by the lead for the
 instruments the pilots did not use; nobody has heard them yet. What each is made of is listed under it.</p>
-<p class="muted">Each song's players are the recording's own files, as the game fetches them (Ogg Opus): the first pass from the cue's
-start to its join, then the steady cycle that repeats (a cue that does not loop is one file). They play at the level they were
-mastered at; in the game a measured trim matches the Original's loudness (shown). The comparisons below were rendered by the
-game's own code through its own audio graph. Measurements: <code>docs/music/ensemble/qa/&lt;song&gt;.json</code>.</p>`;
+<p class="muted">Each song's player is its <b>full track</b>: the recording as the game plays it, from the cue's start through the whole
+first pass and five seconds on into its repeat (a cue that does not loop: the whole of it), rendered by the game's own code through its
+own audio graph at the default volumes and the song's trim. In the game the repeat goes on for as long as the cue lasts. Under it are the
+recording's own files in both formats, as the game fetches them (Ogg Opus first; MP3 for a browser without Opus). Both are the
+same Ensemble recording. Measurements: <code>docs/music/ensemble/qa/&lt;song&gt;.json</code>.</p>`;
 html += '\n<h2>Original and Ensemble side by side (20 s from the cue\'s start)</h2>';
 for (const id of Object.keys(clips)) {
   const s = songs.find((x) => x.id === id);
@@ -105,17 +154,17 @@ for (const s of songs) {
   const t = tracks.find((x) => x.songId === s.id);
   if (!t) continue;
   const q = qa(s.id), tr = q && q.render && q.render.treatment, opus = (k) => (t.assets[k] || []).find((a) => /\.opus$/.test(a.relativeUrl));
-  const first = opus('firstPass'), loop = opus('steadyLoop');
+  const first = opus('firstPass'), loop = opus('steadyLoop'), ft = full[s.id];
+  const fileLinks = ['firstPass', 'steadyLoop'].flatMap((k) => (t.assets[k] || []).map((a) => `<a href="${esc(rel(a.relativeUrl))}">${k === 'firstPass' ? (loop ? 'first pass' : 'the cue') : 'cycle'} (${a.relativeUrl.endsWith('.opus') ? 'Opus' : 'MP3'})</a>`)).join(' · ');
   const chips = tr ? Object.entries(tr.instruments || {}).map(([g, e]) => `<span class="chip">${esc(g)} → ${esc(e)}</span>`).join('') + Object.entries(tr.percussion || {}).map(([g, e]) => `<span class="chip">stroke ${esc(g)} → ${esc(e)}</span>`).join('') : '';
-  const meta = [PILOTS.includes(s.id) ? 'pilot (SC-1 balance; heard by Robin)' : 'balance measured against the Original', tr && tr.room ? 'room ' + tr.room.seconds + ' s' : null, tr && tr.echo ? 'the game\'s echo' : null, 'trim ' + (t.mix.gainDb >= 0 ? '+' : '') + t.mix.gainDb.toFixed(2) + ' dB'].filter(Boolean).join(' · ');
+  const meta = [PILOTS.includes(s.id) ? 'pilot (SC-1 balance; heard by Robin)' : 'balance measured against the Original', tr && tr.room ? 'room ' + tr.room.seconds + ' s' : null, tr && tr.echo ? 'the game\'s echo' : null, 'trim ' + (t.mix.gainDb >= 0 ? '+' : '') + t.mix.gainDb.toFixed(2) + ' dB', t.waivers ? 'admitted by Robin (handover level)' : null].filter(Boolean).join(' · ');
   html += `\n<div class="song"><span class="t">${esc(s.title)}</span><span class="muted">${esc(s.id)} · ${esc(meta)}</span><div>${chips}</div><div class="pair">`
-    + (first ? `<div><span class="muted">${loop ? 'First pass, to ' + ((first.playableEndFrame - first.playableStartFrame) / first.sampleRate).toFixed(1) + ' s' : 'The whole cue'}</span><audio controls preload="none" src="${esc(rel(first.relativeUrl))}"></audio></div>` : '')
-    + (loop ? `<div><span class="muted">Steady cycle, ${((loop.playableEndFrame - loop.playableStartFrame) / loop.sampleRate).toFixed(1)} s</span><audio controls preload="none" src="${esc(rel(loop.relativeUrl))}"></audio></div>` : '')
-    + '</div></div>';
+    + (ft ? `<div class="wide"><span class="muted">Full track, ${ft.seconds.toFixed(1)} s${loop ? ' (into its repeat)' : ''}</span><audio controls preload="none" src="${esc(ft.file)}"></audio></div>` : '')
+    + `</div><span class="muted files">Files: ${fileLinks}</span></div>`;
 }
 if (notReady.length) html += '\n<h2>Playing their Original</h2>\n<p class="muted">No ready recording: ' + notReady.map((s) => esc(s.title) + ' (' + esc(s.id) + ')').join(', ') + '. Their reports say why.</p>';
 html += '\n</main></body></html>\n';
 fs.writeFileSync(path.join(root, 'docs/music/ensemble/listen_all.html'), html);
-fs.writeFileSync(path.join(root, 'docs/music/ensemble/listen_all.json'), JSON.stringify({ generatedBy: 'tools/music/ensemble/listen_all.mjs', renderedIn: 'Chromium (Playwright headless), offline, through the game\'s own audio graph at default volumes', listenedTo: null, comparisons: clips }, null, 1) + '\n');
+fs.writeFileSync(path.join(root, 'docs/music/ensemble/listen_all.json'), JSON.stringify({ generatedBy: 'tools/music/ensemble/listen_all.mjs', renderedIn: 'Chromium (Playwright headless), offline, through the game\'s own audio graph at default volumes', listenedTo: null, comparisons: clips, fullTracks: full }, null, 1) + '\n');
 if (errors.length) console.log('page errors:', errors.slice(0, 3));
-console.log('songs on the page', tracks.length, 'comparisons', Object.keys(clips).length);
+console.log('songs on the page', tracks.length, 'full tracks', Object.keys(full).length, 'comparisons', Object.keys(clips).length);

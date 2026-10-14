@@ -283,7 +283,7 @@
       "nearest": 179.48,
       "chromium": 179.48
      },
-     "maxErr": 5.960464477539063e-8,
+     "maxErr": 5.960464477539063e-08,
      "seams": [
       {
        "at": 11.05,
@@ -331,7 +331,7 @@
       "nearest": 166.18,
       "chromium": 166.18
      },
-     "maxErr": 5.960798038204877e-8,
+     "maxErr": 5.960798038204877e-08,
      "seams": [
       {
        "at": 1.05,
@@ -367,7 +367,7 @@
       "nearest": 166.18,
       "chromium": 166.18
      },
-     "maxErr": 5.960798038204877e-8,
+     "maxErr": 5.960798038204877e-08,
      "seams": [
       {
        "at": 1.05,
@@ -403,7 +403,7 @@
       "nearest": 166.18,
       "chromium": 166.18
      },
-     "maxErr": 5.960798038204877e-8,
+     "maxErr": 5.960798038204877e-08,
      "seams": [
       {
        "at": 1.05,
@@ -439,7 +439,7 @@
       "nearest": 166.18,
       "chromium": 166.18
      },
-     "maxErr": 5.960798038204877e-8,
+     "maxErr": 5.960798038204877e-08,
      "seams": [
       {
        "at": 1.05,
@@ -475,7 +475,7 @@
       "nearest": 166.18,
       "chromium": 166.18
      },
-     "maxErr": 5.960798038204877e-8,
+     "maxErr": 5.960798038204877e-08,
      "seams": [
       {
        "at": 1.05,
@@ -511,7 +511,7 @@
       "nearest": 166.18,
       "chromium": 166.18
      },
-     "maxErr": 5.960798038204877e-8,
+     "maxErr": 5.960798038204877e-08,
      "seams": [
       {
        "at": 1.05,
@@ -547,7 +547,7 @@
       "nearest": 166.18,
       "chromium": 166.18
      },
-     "maxErr": 5.960798038204877e-8,
+     "maxErr": 5.960798038204877e-08,
      "seams": [
       {
        "at": 1.05,
@@ -583,7 +583,7 @@
       "nearest": 166.18,
       "chromium": 166.18
      },
-     "maxErr": 5.960798038204877e-8,
+     "maxErr": 5.960798038204877e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1028,7 +1028,7 @@
       "nearest": 175.44,
       "chromium": 175.44
      },
-     "maxErr": 5.961687967561224e-8,
+     "maxErr": 5.961687967561224e-08,
      "seams": [
       {
        "at": 11.05,
@@ -1076,7 +1076,7 @@
       "nearest": 162.15,
       "chromium": 162.15
      },
-     "maxErr": 5.9604701729849e-8,
+     "maxErr": 5.9604701729849e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1112,7 +1112,7 @@
       "nearest": 162.15,
       "chromium": 162.15
      },
-     "maxErr": 5.9604701729849e-8,
+     "maxErr": 5.9604701729849e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1148,7 +1148,7 @@
       "nearest": 162.15,
       "chromium": 162.15
      },
-     "maxErr": 5.9604701729849e-8,
+     "maxErr": 5.9604701729849e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1184,7 +1184,7 @@
       "nearest": 162.15,
       "chromium": 162.15
      },
-     "maxErr": 5.9604701729849e-8,
+     "maxErr": 5.9604701729849e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1220,7 +1220,7 @@
       "nearest": 162.15,
       "chromium": 162.15
      },
-     "maxErr": 5.9604701729849e-8,
+     "maxErr": 5.9604701729849e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1256,7 +1256,7 @@
       "nearest": 162.15,
       "chromium": 162.15
      },
-     "maxErr": 5.9604701729849e-8,
+     "maxErr": 5.9604701729849e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1292,7 +1292,7 @@
       "nearest": 162.15,
       "chromium": 162.15
      },
-     "maxErr": 5.9604701729849e-8,
+     "maxErr": 5.9604701729849e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1328,7 +1328,7 @@
       "nearest": 162.15,
       "chromium": 162.15
      },
-     "maxErr": 5.9604701729849e-8,
+     "maxErr": 5.9604701729849e-08,
      "seams": [
       {
        "at": 1.05,
@@ -1955,5 +1955,25 @@
    "onsetOk": true,
    "onsetCriterion": "MT-1 envelope: peak at least 4 SD above every lag 25-50 ms away (the 3x test not met)"
   }
+ },
+ "waiver": {
+  "by": "Robin",
+  "date": "2026-10-14",
+  "words": "Definitely include every track. Add the remaining 3",
+  "scope": "the handover level at one of the two moments measured, outside MT-1's limits (1.5 LU below / 1.0 LU above both performances alone); every other check passed",
+  "loudnessCalibrated": true,
+  "evidence": "gameMixCalibrated",
+  "handovers": [
+   {
+    "at": 20.3,
+    "bumpLu": -1.49,
+    "dipLu": 2.31
+   },
+   {
+    "at": 26.4,
+    "bumpLu": 0.45,
+    "dipLu": -0.02
+   }
+  ]
  }
 }

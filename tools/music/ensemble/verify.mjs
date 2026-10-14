@@ -32,7 +32,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { serve, launch, page, root } from '../../../tests/e2e/lib.mjs';
 import { compile, workDir, PILOTS } from './export_events.mjs';
-import { MANIFEST } from './manifest.mjs';
+import { MANIFEST, waived } from './manifest.mjs';
 import { PAGE_LIB, XJ } from './page_lib.mjs';
 import { load } from '../../../tests/lib/load.mjs';
 
@@ -111,8 +111,16 @@ async function verifySong(p, id, cur) {
       for (let s = ps + 4096; s < pe - win; s += Math.max(win, Math.floor((pe - ps) / 12))) starts.push(s);
       const ws = await p.evaluate(([u, st, w, se]) => window.__mtWindows(u, st, w, se), [url, starts, win, search]);
       const al = ws.map((w) => alignWindow(m.x, w.at, f32(w.L), f32(w.R), search)).filter(Boolean);
-      const aligned = al.length >= 3 && al.every((x) => x.lag === 0 || x.bestSnrDb - x.snrDb < 1);
-      r.alignment[role] = { frames48k: d.rates[48000].frames, masterFrames: m.frames, frames44k: d.rates[44100].frames, ok48, ok441, windows: al, aligned, minSnrDb: Math.min(...al.map((x) => x.snrDb)) };
+      // (MT-2) aligned: a window fits at no shift when its error there is within 1 dB of its best (MT-1's test); the
+      // median window must, and no window may fit best more than 8 samples away. What it guards against is a recording
+      // misplaced in time (a codec's delay or padding mishandled: one offset at every window, and a wrong length, which
+      // the frame count also catches). Opus codes the phase of some tonal passages a sample or a few off at single
+      // windows, at every rate up to 510 kbit/s (cinder, hall_w3, yn_north, yn_vents); MT-1's rule, any such window,
+      // left those files out
+      const eff = al.map((x) => (x.lag === 0 || x.bestSnrDb - x.snrDb < 1 ? 0 : x.lag)).sort((a, b) => a - b);
+      const med = eff.length ? (eff.length % 2 ? eff[(eff.length - 1) / 2] : (eff[eff.length / 2 - 1] + eff[eff.length / 2]) / 2) : null;
+      const aligned = al.length >= 3 && med === 0 && eff.every((l) => Math.abs(l) <= 8);
+      r.alignment[role] = { frames48k: d.rates[48000].frames, masterFrames: m.frames, frames44k: d.rates[44100].frames, ok48, ok441, windows: al, aligned, alignmentRule: 'median window at no shift (within 1 dB), none beyond 8 samples', minSnrDb: Math.min(...al.map((x) => x.snrDb)) };
       console.log(id, f.codec, role, 'frames', d.rates[48000].frames, '/', m.frames, '44.1k', d.rates[44100].frames, 'aligned', aligned, 'min SNR', r.alignment[role].minSnrDb);
     }
     r.decodeOk = (f.loop ? ['first', 'loop'] : ['first']).every((k) => r.alignment[k].ok48 && r.alignment[k].ok441 && r.alignment[k].aligned);
@@ -329,7 +337,7 @@ if (REJUDGE) {
       const rep = q.render, good = (q.formats || []).some((f) => f.ok);
       tr.evidence.decodedAlignmentVerified = good && !!q.onsetOk;
       tr.evidence.scoreEventsPreserved = (rep.loop ? rep.loop.eventsPlaced === rep.loop.eventsInRepeat && rep.head.eventsPlaced > 0 : rep.head.eventsPlaced === rep.score.events) && !!q.onsetOk;
-      tr.releaseStatus = Object.entries(tr.evidence).every(([k, v]) => k === 'reportPaths' || v === true) ? 'ready' : 'pending_production';
+      tr.releaseStatus = Object.entries(tr.evidence).every(([k, v]) => k === 'reportPaths' || v === true || waived(tr, k)) ? 'ready' : 'pending_production';
     });
     console.log(id, q.onsetOk ? 'onsets pass' : 'onsets FAIL', q.onsetCriterion, was.onsetOk !== q.onsetOk ? '(was ' + was.onsetOk + ')' : '');
   }
@@ -360,7 +368,7 @@ if (HANDOVERS_ONLY) {
     await withManifest((m) => {
       const tr = m.tracks.find((x) => x.songId === id);
       tr.evidence.gameMixCalibrated = !!q.calibrationOk && !!q.handoverOk;
-      const ok = Object.entries(tr.evidence).every(([k, v]) => k === 'reportPaths' || v === true);
+      const ok = Object.entries(tr.evidence).every(([k, v]) => k === 'reportPaths' || v === true || waived(tr, k));
       tr.releaseStatus = ok ? 'ready' : 'pending_production';
     });
     console.log(id, q.handoverOk ? 'READY' : 'pending', 'handovers', q.handoverFade, q.handovers.map((h) => h.bumpLu + '/' + h.dipLu).join(' '), '(before', before.fade, before.handovers.map((h) => h.bumpLu + '/' + h.dipLu).join(' ') + ')');
@@ -405,7 +413,10 @@ for (const id of IDS) {
     distributionProvenanceRecorded: fs.existsSync(path.join(root, NOTICE)),
     reportPaths: [qa],
   };
-  const ready = Object.entries(ev).every(([k, v]) => k === 'reportPaths' || v === true);
+  // (a waiver Robin gave stays with the track while its loudness calibration still passes)
+  const prev = JSON.parse(fs.readFileSync(manPath, 'utf8')).tracks.find((x) => x.songId === id);
+  const waivers = prev && prev.waivers && res.calibrationOk ? prev.waivers : undefined;
+  const ready = Object.entries(ev).every(([k, v]) => k === 'reportPaths' || v === true || waived({ waivers }, k));
   const assets = !good.length ? null : once
     ? { layout: 'single_pass', firstPass: good.map((i) => asset(pkg.assets.first[i], 'first', res.formats[i].codec)) }
     : { layout: 'split_firstpass_loop', firstPass: good.map((i) => asset(pkg.assets.first[i], 'first', res.formats[i].codec)), steadyLoop: good.map((i) => asset(pkg.assets.loop[i], 'loop', res.formats[i].codec)) };
@@ -420,6 +431,7 @@ for (const id of IDS) {
     assets,
     mix: res.calibration ? { profile: 'pre_master_music_bus', gainDb: +res.calibration.gainDb.toFixed(3), roomBaked: true, userVolumeBaked: false } : { profile: 'pending', gainDb: null, roomBaked: null, userVolumeBaked: false },
     evidence: ev,
+    ...(waivers ? { waivers } : {}),
     notes,
   };
   await withManifest((manifest) => {

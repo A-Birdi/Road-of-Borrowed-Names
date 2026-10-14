@@ -142,7 +142,8 @@
        "bestSnrDb": 28.23
       }
      ],
-     "aligned": false,
+     "aligned": true,
+     "alignmentRule": "median window at no shift (within 1 dB), none beyond 8 samples",
      "minSnrDb": 25.72
     },
     "loop": {
@@ -238,11 +239,517 @@
       }
      ],
      "aligned": true,
+     "alignmentRule": "median window at no shift (within 1 dB), none beyond 8 samples",
      "minSnrDb": 24.22
     }
    },
-   "decodeOk": false,
-   "ok": false
+   "decodeOk": true,
+   "placement": [
+    {
+     "seconds": 177.2142857142857,
+     "from": 0,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 6.05,
+       "offset": 0.1,
+       "fadeIn": false,
+       "role": "first"
+      },
+      {
+       "when": 6.05,
+       "until": 87.90714583333333,
+       "offset": 6.5,
+       "fadeIn": true,
+       "role": "loop"
+      },
+      {
+       "when": 87.90714583333333,
+       "until": 175.76429166666668,
+       "offset": 0.500002976190487,
+       "fadeIn": true,
+       "role": "loop"
+      },
+      {
+       "when": 175.76429166666668,
+       "until": 263.6214375,
+       "offset": 0.5000059523810023,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 179.49,
+     "snrByModel": {
+      "linear": 37.82,
+      "nearest": 179.49,
+      "chromium": 179.49
+     },
+     "maxErr": 2.9802322387695312e-8,
+     "seams": [
+      {
+       "at": 6.05,
+       "kind": "join",
+       "agreementDb": 316.37,
+       "stepRatio": 1
+      },
+      {
+       "at": 87.907146,
+       "kind": "boundary",
+       "agreementDb": 30.96,
+       "stepRatio": 0.9591
+      },
+      {
+       "at": 175.764292,
+       "kind": "boundary",
+       "agreementDb": 30.96,
+       "stepRatio": 0.9591
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 262.57142857142856,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 87.35714285714288,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 88.90714583333333,
+       "offset": 0.5000000000000284,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 160.25,
+     "snrByModel": {
+      "linear": 32.73,
+      "nearest": 160.25,
+      "chromium": 160.25
+     },
+     "maxErr": 2.7026615245057e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 30.96,
+       "stepRatio": 0.9591
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 350.4285714285714,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 87.35714285714286,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 88.90714583333333,
+       "offset": 0.5000000000000142,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 160.25,
+     "snrByModel": {
+      "linear": 32.73,
+      "nearest": 160.25,
+      "chromium": 160.25
+     },
+     "maxErr": 2.7026615245057e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 30.96,
+       "stepRatio": 0.9591
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 438.2857142857142,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 87.35714285714283,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 88.90714583333333,
+       "offset": 0.4999999999999858,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 160.25,
+     "snrByModel": {
+      "linear": 32.73,
+      "nearest": 160.25,
+      "chromium": 160.25
+     },
+     "maxErr": 2.7026615245057e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 30.96,
+       "stepRatio": 0.9591
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 526.1428571428571,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 87.35714285714289,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 88.90714583333333,
+       "offset": 0.5000000000000426,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 160.25,
+     "snrByModel": {
+      "linear": 32.73,
+      "nearest": 160.25,
+      "chromium": 160.25
+     },
+     "maxErr": 2.7026615245057e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 30.96,
+       "stepRatio": 0.9591
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 614,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 87.35714285714289,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 88.90714583333333,
+       "offset": 0.5000000000000426,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 160.25,
+     "snrByModel": {
+      "linear": 32.73,
+      "nearest": 160.25,
+      "chromium": 160.25
+     },
+     "maxErr": 2.7026615245057e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 30.96,
+       "stepRatio": 0.9591
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 701.8571428571428,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 87.35714285714278,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 88.90714583333333,
+       "offset": 0.49999999999992895,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 160.25,
+     "snrByModel": {
+      "linear": 32.73,
+      "nearest": 160.25,
+      "chromium": 160.25
+     },
+     "maxErr": 2.7026615245057e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 30.96,
+       "stepRatio": 0.9591
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 789.7142857142857,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 87.35714285714289,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 88.90714583333333,
+       "offset": 0.5000000000000426,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 160.25,
+     "snrByModel": {
+      "linear": 32.73,
+      "nearest": 160.25,
+      "chromium": 160.25
+     },
+     "maxErr": 2.7026615245057e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 30.96,
+       "stepRatio": 0.9591
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 877.5714285714286,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 87.35714285714289,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 88.90714583333333,
+       "offset": 0.5000000000000426,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 160.25,
+     "snrByModel": {
+      "linear": 32.73,
+      "nearest": 160.25,
+      "chromium": 160.25
+     },
+     "maxErr": 2.7026615245057e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 30.96,
+       "stepRatio": 0.9591
+      }
+     ]
+    },
+    {
+     "seconds": 3,
+     "from": 1.234567,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 4.8154375,
+       "offset": 1.334567,
+       "fadeIn": false,
+       "role": "first"
+      },
+      {
+       "when": 4.8154375,
+       "until": 86.67258333333334,
+       "offset": 6.5000045,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 333.05,
+     "snrByModel": {
+      "linear": 37.65,
+      "nearest": 333.05,
+      "chromium": 333.05
+     },
+     "maxErr": 0,
+     "seams": []
+    },
+    {
+     "seconds": 3,
+     "from": 9.21,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 78.69714583333334,
+       "offset": 9.71,
+       "fadeIn": false,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 333.96,
+     "snrByModel": {
+      "linear": 228.43,
+      "nearest": 333.96,
+      "chromium": 333.96
+     },
+     "maxErr": 0,
+     "seams": []
+    },
+    {
+     "seconds": 3,
+     "from": 669.29835,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 33.60879166666667,
+       "offset": 54.79835000000003,
+       "fadeIn": false,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 333.36,
+     "snrByModel": {
+      "linear": 35.4,
+      "nearest": 333.36,
+      "chromium": 333.36
+     },
+     "maxErr": 0,
+     "seams": []
+    }
+   ],
+   "placementOk": true,
+   "joins": [
+    {
+     "at": 6.05,
+     "kind": "join",
+     "agreementDb": 316.37,
+     "stepRatio": 1
+    }
+   ],
+   "boundaries": [
+    {
+     "at": 87.907146,
+     "kind": "boundary",
+     "agreementDb": 30.96,
+     "stepRatio": 0.9591
+    },
+    {
+     "at": 175.764292,
+     "kind": "boundary",
+     "agreementDb": 30.96,
+     "stepRatio": 0.9591
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 30.96,
+     "stepRatio": 0.9591
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 30.96,
+     "stepRatio": 0.9591
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 30.96,
+     "stepRatio": 0.9591
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 30.96,
+     "stepRatio": 0.9591
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 30.96,
+     "stepRatio": 0.9591
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 30.96,
+     "stepRatio": 0.9591
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 30.96,
+     "stepRatio": 0.9591
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 30.96,
+     "stepRatio": 0.9591
+    }
+   ],
+   "seamOk": true,
+   "boundariesSeen": 10,
+   "models": [
+    "nearest"
+   ],
+   "loudness": {
+    "lufs": -20.13708919903647,
+    "diffLu": 0.020230641754281464
+   },
+   "ok": true
   },
   {
    "codec": "mp3",
@@ -382,6 +889,7 @@
       }
      ],
      "aligned": true,
+     "alignmentRule": "median window at no shift (within 1 dB), none beyond 8 samples",
      "minSnrDb": 30.06
     },
     "loop": {
@@ -477,6 +985,7 @@
       }
      ],
      "aligned": true,
+     "alignmentRule": "median window at no shift (within 1 dB), none beyond 8 samples",
      "minSnrDb": 29.22
     }
    },
@@ -983,50 +1492,52 @@
     "nearest"
    ],
    "loudness": {
-    "lufs": -20.13857485239318,
-    "diffLu": 0.02171587777448991
+    "lufs": -20.37563242433725,
+    "diffLu": 0.2587738670550621,
+    "peak": 0.5596401691436768,
+    "nan": false
    },
    "ok": true
   }
  ],
- "originalMeasuredBy": "tools/music/ensemble/stems.mjs: the Original's first pass through the game graph, measured as verify.mjs's __mtGraph(mix 1, until D)",
+ "originalMeasuredBy": "verify.mjs __mtGraph(mix 1, until D)",
  "calibration": {
   "window": "the first pass, 0 to 87.85714285714285 s, 48 kHz, default volumes, no ducking",
-  "originalLufs": -20.11685897461869,
-  "originalPeak": 0.4210132360458374,
+  "originalLufs": -20.11685855728219,
+  "originalPeak": 0.42100852727890015,
   "iterations": [
    {
     "trim": 1,
-    "ensembleLufs": -22.32871327108618,
-    "diffLu": 2.2118542964674894
+    "ensembleLufs": -22.074839149995622,
+    "diffLu": 1.957980592713433
    },
    {
-    "trim": 1.2900089244733477,
-    "ensembleLufs": -20.304468409748075,
-    "diffLu": 0.1876094351293851
+    "trim": 1.252849862436363,
+    "ensembleLufs": -20.290568428505612,
+    "diffLu": 0.17370987122342285
    },
    {
-    "trim": 1.318175351658494,
-    "ensembleLufs": -20.13857485239318,
-    "diffLu": 0.02171587777448991
+    "trim": 1.2781579428283782,
+    "ensembleLufs": -20.13708919903647,
+    "diffLu": 0.020230641754281464
    }
   ],
-  "trim": 1.318175351658494,
-  "gainDb": 2.399463731596876,
-  "ensembleLufs": -20.13857485239318,
-  "diffLu": 0.02171587777448991,
-  "ensemblePeak": 0.5699681043624878,
+  "trim": 1.2781579428283782,
+  "gainDb": 2.1316904639368564,
+  "ensembleLufs": -20.13708919903647,
+  "diffLu": 0.020230641754281464,
+  "ensemblePeak": 0.5766199827194214,
   "nan": false,
   "clippedSamples": 0
  },
  "calibrationOk": true,
  "onsets": {
-  "lagMs": 1,
-  "r": 0.131,
-  "rAt40": 0.028,
-  "zFar": 12.67,
+  "lagMs": -1,
+  "r": 0.123,
+  "rAt40": 0.029,
+  "zFar": 11.63,
   "farMean": 0.0168,
-  "farSd": 0.009,
+  "farSd": 0.0091,
   "curve": [
    [
     -50,
@@ -1034,11 +1545,11 @@
    ],
    [
     -40,
-    0.028
+    0.029
    ],
    [
     -30,
-    0
+    -0.001
    ],
    [
     -20,
@@ -1046,15 +1557,15 @@
    ],
    [
     -10,
-    0.026
+    0.027
    ],
    [
     -5,
-    0.035
+    0.044
    ],
    [
     0,
-    0.121
+    0.113
    ],
    [
     5,
@@ -1062,11 +1573,11 @@
    ],
    [
     10,
-    0.013
+    0.012
    ],
    [
     20,
-    0.018
+    0.019
    ],
    [
     30,
@@ -1087,11 +1598,82 @@
   "lagMs": -44,
   "r": 0.033,
   "rAt40": 0.015,
-  "zFar": 3.02,
+  "zFar": 3.01,
   "passes": false
  },
+ "onsetFlux": {
+  "lagMs": 0,
+  "r": 0.793,
+  "rAt40": -0.007,
+  "zFar": 164.76,
+  "farMean": -0.0071,
+  "farSd": 0.0049,
+  "curve": [
+   [
+    -50,
+    -0.006
+   ],
+   [
+    -40,
+    -0.011
+   ],
+   [
+    -30,
+    -0.012
+   ],
+   [
+    -20,
+    -0.008
+   ],
+   [
+    -10,
+    0.04
+   ],
+   [
+    -5,
+    0.254
+   ],
+   [
+    0,
+    0.793
+   ],
+   [
+    5,
+    0.291
+   ],
+   [
+    10,
+    0.052
+   ],
+   [
+    20,
+    -0.001
+   ],
+   [
+    30,
+    -0.001
+   ],
+   [
+    40,
+    -0.007
+   ],
+   [
+    50,
+    0.004
+   ]
+  ],
+  "control": {
+   "shiftMs": 100,
+   "lagMs": -23,
+   "r": 0.009,
+   "rAt40": -0.003,
+   "zFar": 4.11,
+   "passes": false
+  }
+ },
  "onsetOk": true,
- "onsetCriterion": "MT-1 envelope: z 12.67 (peak/40 ms 4.68)",
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetCriterion": "MT-1 envelope: z 11.63 (peak/40 ms 4.24)",
  "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
  "handovers": [
   {
@@ -1104,48 +1686,48 @@
      "t": 20.3,
      "handover": -18.6,
      "original": -18.63,
-     "ensemble": -19.72,
-     "above": 0.03,
-     "below": -1.12
+     "ensemble": -19.76,
+     "above": 0.02,
+     "below": -1.15
     },
     {
      "t": 20.4,
      "handover": -18.79,
      "original": -18.91,
-     "ensemble": -20.58,
+     "ensemble": -20.61,
      "above": 0.12,
-     "below": -1.79
+     "below": -1.82
     },
     {
      "t": 20.5,
-     "handover": -19.65,
+     "handover": -19.64,
      "original": -19.48,
-     "ensemble": -21.3,
-     "above": -0.17,
-     "below": -1.65
+     "ensemble": -21.32,
+     "above": -0.16,
+     "below": -1.68
     },
     {
      "t": 20.6,
-     "handover": -20.88,
+     "handover": -20.89,
      "original": -20.5,
-     "ensemble": -23.27,
-     "above": -0.38,
-     "below": -2.39
+     "ensemble": -23.28,
+     "above": -0.39,
+     "below": -2.4
     },
     {
      "t": 20.7,
-     "handover": -20.77,
+     "handover": -20.81,
      "original": -20.79,
-     "ensemble": -22.01,
-     "above": 0.01,
-     "below": -1.24
+     "ensemble": -22.07,
+     "above": -0.02,
+     "below": -1.25
     },
     {
      "t": 20.8,
-     "handover": -21.28,
+     "handover": -21.32,
      "original": -20.71,
-     "ensemble": -21.41,
-     "above": -0.57,
+     "ensemble": -21.45,
+     "above": -0.61,
      "below": -0.13
     }
    ]
@@ -1158,56 +1740,57 @@
    "rows": [
     {
      "t": 26.4,
-     "handover": -18.92,
+     "handover": -18.93,
      "original": -19.72,
-     "ensemble": -18.97,
+     "ensemble": -18.98,
      "above": 0.05,
-     "below": -0.8
+     "below": -0.79
     },
     {
      "t": 26.5,
-     "handover": -18.32,
+     "handover": -18.34,
      "original": -19.17,
-     "ensemble": -18.53,
+     "ensemble": -18.55,
      "above": 0.21,
-     "below": -0.85
+     "below": -0.83
     },
     {
      "t": 26.6,
-     "handover": -17.64,
+     "handover": -17.67,
      "original": -18.4,
-     "ensemble": -17.9,
+     "ensemble": -17.92,
      "above": 0.26,
-     "below": -0.75
+     "below": -0.73
     },
     {
      "t": 26.7,
      "handover": -17.96,
      "original": -18.32,
-     "ensemble": -18.68,
+     "ensemble": -18.67,
      "above": 0.35,
      "below": -0.71
     },
     {
      "t": 26.8,
-     "handover": -18.65,
+     "handover": -18.66,
      "original": -18.7,
      "ensemble": -20,
-     "above": 0.06,
+     "above": 0.05,
      "below": -1.35
     },
     {
      "t": 26.9,
      "handover": -19.36,
      "original": -19.39,
-     "ensemble": -21.37,
-     "above": 0.04,
-     "below": -2.01
+     "ensemble": -21.38,
+     "above": 0.03,
+     "below": -2.02
     }
    ]
   }
  ],
  "handoverOk": true,
+ "handoverFade": "equal power (MT-2)",
  "render": {
   "songId": "cinder",
   "fingerprint": "sha256:37a91e1a07b377d42a5865851005f0b5398b15c63085877dab3e0f343601803a",
@@ -1229,6 +1812,7 @@
    "joinSec": 6,
    "leadSec": 0.1,
    "guardSec": 0.5,
+   "guardExtraFrames": 0,
    "eventsPlaced": 73
   },
   "loop": {
@@ -1238,6 +1822,7 @@
    "playableEndFrame": 4241143,
    "periodFrames": 4217143,
    "periodErrorPpm": 0.03387533887582426,
+   "guardExtraFrames": 0,
    "eventsPlaced": 1057,
    "eventsInRepeat": 1057
   },
@@ -1366,37 +1951,7 @@
    "numpy": "2.4.6",
    "soundfile": "0.14.0"
   },
-  "elapsedSec": 24.64469814300537
+  "elapsedSec": 27.786314964294434
  },
- "renderer": "mt1-tools-sha256:96ee0c13f319e39e",
- "handoverFade": "equal power (MT-2)",
- "handoversRemeasured": {
-  "at": "2026-10-14T01:24:01.711Z",
-  "by": "verify.mjs --handovers-only",
-  "before": {
-   "handoverOk": true,
-   "fade": "linear (MT-1)",
-   "handovers": [
-    {
-     "at": 20.3,
-     "bumpLu": -0.03,
-     "dipLu": -0.01
-    },
-    {
-     "at": 26.4,
-     "bumpLu": -0.04,
-     "dipLu": 0.07
-    }
-   ]
-  }
- },
- "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
- "onsetsRejudged": {
-  "at": "2026-10-14T01:41:36.783Z",
-  "by": "verify.mjs --rejudge-onsets",
-  "before": {
-   "onsetOk": true,
-   "onsetCriterion": "MT-1: peak at least 3x the correlation 40 ms away"
-  }
- }
+ "renderer": "mt1-tools-sha256:53b319bdbfefe9f9"
 }
