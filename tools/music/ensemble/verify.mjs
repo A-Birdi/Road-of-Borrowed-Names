@@ -40,6 +40,9 @@ const ids = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 // --fresh-original: render the Original's first pass here even when stems.mjs measured it; --with-muted-original: keep
 // the Original's (muted) player in the Ensemble's loudness renders, as MT-1 did
 const FRESH = process.argv.includes('--fresh-original'), SKIP_MUTED = !process.argv.includes('--with-muted-original');
+// --handovers-only: measure the handovers again on the current build (its fade), from the published files, the trim
+// already calibrated and the Original as stems.mjs measured it; the report and the manifest's gameMixCalibrated change
+const HANDOVERS_ONLY = process.argv.includes('--handovers-only');
 const IDS = ids.length ? ids : PILOTS;
 const QA = 'docs/music/ensemble/qa';
 const NOTICE = 'assets/music/ensemble/NOTICE.md';
@@ -215,7 +218,12 @@ async function verifySong(p, id, cur) {
     r.ok = Math.abs(r.loudness.diffLu) <= 0.5 && !e2.nan && e2.peak <= 1;
     console.log(id, r.codec, 'at the same trim', e2.integrated.toFixed(2), 'LUFS (', r.loudness.diffLu.toFixed(2), 'LU)');
   }
-  // 5. handovers mid-phrase: Original -> Ensemble at H1, back at H2 (render times)
+  await handoverCheck(p, out, id, entry, fi0, D, final.trim, momO, momE);
+  return out;
+}
+
+// 5. handovers mid-phrase: Original -> Ensemble at H1, back at H2 (render times); writes out.handover*
+async function handoverCheck(p, out, id, entry, fi0, D, trim, momO, momE) {
   // (MT-2: a cue shorter than 32 s, the victory sting is 6 s, has no room for MT-1's fixed times; its handovers go
   // where the two performances, each alone, are steadiest and closest in level over the blocks a fade touches (one in
   // each half), so the check measures the fade and not two different envelopes passing a fixed time)
@@ -238,7 +246,7 @@ async function verifySong(p, id, cur) {
     placed = 'steadiest moments of a short cue (' + H1 + ' s, ' + H2 + ' s)';
   }
   out.handoverTimes = placed;
-  const ho = await p.evaluate(([i, e, k, s, t, a, b]) => window.__mtGraph(i, e, k, s, { mix: 1, trim: t, momentary: true, handovers: [{ at: a, to: 'ensemble' }, { at: b, to: 'original' }] }), [id, entry, fi0, H2 + 4, final.trim, H1, H2]);
+  const ho = await p.evaluate(([i, e, k, s, t, a, b]) => window.__mtGraph(i, e, k, s, { mix: 1, trim: t, momentary: true, handovers: [{ at: a, to: 'ensemble' }, { at: b, to: 'original' }] }), [id, entry, fi0, H2 + 4, trim, H1, H2]);
   // each 400 ms block touching a fade, against the same block of each performance alone (same render clock): a fade
   // that summed badly would rise above both or sink below both
   const at = (arr, t) => { const m = arr.find((x) => Math.abs(x.t - t) < 1e-6); return m ? m.lufs : null; };
@@ -252,7 +260,7 @@ async function verifySong(p, id, cur) {
   });
   out.handoverOk = out.handovers.every((h) => h.blocks >= 4 && h.bumpLu <= 1 && h.dipLu <= 1.5);
   console.log(id, 'handovers', out.handovers.map((h) => `above both ${h.bumpLu.toFixed(2)} LU, below both ${h.dipLu.toFixed(2)} LU over ${h.blocks} blocks`).join('; '));
-  return out;
+  out.handoverFade = await p.evaluate(() => (RB.audio._.powerCurve ? 'equal power (MT-2)' : 'linear (MT-1)'));
 }
 
 const sha = (f) => crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
@@ -295,6 +303,39 @@ async function withManifest(fn) {
     fs.writeFileSync(tmp, JSON.stringify(manifest, null, 2) + '\n');
     fs.renameSync(tmp, manPath);
   } finally { fs.rmdirSync(lock); }
+}
+if (HANDOVERS_ONLY) {
+  for (const id of IDS) {
+    const qaf = path.join(root, QA, id + '.json'), q = JSON.parse(fs.readFileSync(qaf, 'utf8'));
+    const t = JSON.parse(fs.readFileSync(manPath, 'utf8')).tracks.find((x) => x.songId === id);
+    if (!t || !t.assets || !q.calibration) { console.log(id, 'skipped: no calibrated recording'); continue; }
+    const D = cur[id].score.length;
+    const ref = (a) => ({ url: a.relativeUrl, sha256: a.sha256, bytes: a.encodedBytes, rate: a.sampleRate, frames: a.decodedFrames, start: a.playableStartFrame, end: a.playableEndFrame });
+    const entry = { releaseStatus: 'ready', fingerprint: t.scoreFingerprint, durationSec: t.timeline.durationSec, loop: t.timeline.loop, loopStartSec: t.timeline.loopStartSec, trim: q.calibration.trim,
+      formats: t.assets.firstPass.map((a, i) => ({ codec: path.extname(a.relativeUrl).slice(1), first: ref(a), loop: t.assets.steadyLoop ? ref(t.assets.steadyLoop[i]) : null })) };
+    const fi0 = 0;
+    for (const r of [entry.formats[fi0].first, entry.formats[fi0].loop].filter(Boolean)) await p.evaluate(([u]) => window.__mtDecode(u, [48000]), [r.url]);
+    const ofile = path.join(workDir(), id, 'original.json');
+    const oj = fs.existsSync(ofile) ? JSON.parse(fs.readFileSync(ofile, 'utf8')) : null;
+    const momO = oj && oj.fingerprint === cur[id].fingerprint ? oj.momentary
+      : (await p.evaluate(([i, e, k, s]) => window.__mtGraph(i, e, k, s, { mix: 1, until: s - 0.05, momentary: true }), [id, entry, fi0, D + 0.05])).momentary;
+    const momE = (await p.evaluate(([i, e, k, s, tr]) => window.__mtGraph(i, e, k, s, { mix: 0, original: false, trim: tr, until: s - 0.05, momentary: true }), [id, entry, fi0, D + 0.05, q.calibration.trim])).momentary;
+    const before = { handoverOk: q.handoverOk, fade: q.handoverFade || 'linear (MT-1)', handovers: (q.handovers || []).map((h) => ({ at: h.at, bumpLu: h.bumpLu, dipLu: h.dipLu })) };
+    await handoverCheck(p, q, id, entry, fi0, D, q.calibration.trim, momO, momE);
+    q.handoversRemeasured = { at: new Date().toISOString(), by: 'verify.mjs --handovers-only', before };
+    fs.writeFileSync(qaf, JSON.stringify(q, null, 1));
+    await withManifest((m) => {
+      const tr = m.tracks.find((x) => x.songId === id);
+      tr.evidence.gameMixCalibrated = !!q.calibrationOk && !!q.handoverOk;
+      const ok = Object.entries(tr.evidence).every(([k, v]) => k === 'reportPaths' || v === true);
+      tr.releaseStatus = ok ? 'ready' : 'pending_production';
+    });
+    console.log(id, q.handoverOk ? 'READY' : 'pending', 'handovers', q.handoverFade, q.handovers.map((h) => h.bumpLu + '/' + h.dipLu).join(' '), '(before', before.fade, before.handovers.map((h) => h.bumpLu + '/' + h.dipLu).join(' ') + ')');
+  }
+  if (errors.length) console.log('page errors:', errors.slice(0, 5));
+  await browser.close();
+  srv.close();
+  process.exit(0);
 }
 for (const id of IDS) {
   const res = await verifySong(p, id, cur[id]);

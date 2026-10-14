@@ -40,9 +40,15 @@ variations, its loop count and its room. Its output gain is closed and so is the
 no note is struck twice. Only the current cue is kept warm. The cost is measured (MT-T39, below).
 
 **A handover is scheduled on the audio clock.** It happens at least 120 ms ahead, on the next beat if that comes within
-0.6 s. It is a complementary linear crossfade of 200 ms on all three gains: the recording's, the Original's output and
-the room's return. The two performances are the same score, so they are correlated: a linear fade keeps their sum, and
-an equal-power one would bulge. Changes of mind retarget a fade from where its gains are. Repeated choices do nothing.
+0.6 s. It is a complementary **equal-power** crossfade of 200 ms (sine and cosine) on all three gains: the recording's,
+the Original's output and the room's return. Changes of mind retarget a fade from where its gains are (a gain at v
+continues along the same curve from asin v), so the pair stays complementary. Repeated choices do nothing.
+*MT-1 used a linear fade*, reasoning that the two performances, being the same score, are correlated. MT-2 measured
+it: over 200 ms windows through the game graph the two are uncorrelated (Snowbell median correlation −0.01, the mill
++0.02, 5th–95th percentiles about ±0.5), so a linear fade sagged about 3 dB at its middle. Re-measured with the
+equal-power fade, Snowbell's worst handover block went from 0.72 LU below both performances to 0.05 LU; Playhouse Row's
+"Footlights" (`playhouse`), which failed MT-1's limit at 2.36 LU below, to 1.52. The 50 ms crossfades between a recording's own segments
+stay linear: there the two sides are the same music.
 
 **The recording's layout.** Each format has two files:
 

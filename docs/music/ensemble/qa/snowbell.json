@@ -1592,112 +1592,112 @@
   {
    "at": 20.3,
    "blocks": 6,
-   "bumpLu": -0.18,
-   "dipLu": -0.05,
+   "bumpLu": 0.04,
+   "dipLu": -0.62,
    "rows": [
     {
      "t": 20.3,
-     "handover": -21.31,
+     "handover": -21.15,
      "original": -21.12,
      "ensemble": -21.77,
-     "above": -0.18,
-     "below": -0.46
+     "above": -0.03,
+     "below": -0.62
     },
     {
      "t": 20.4,
-     "handover": -20.53,
+     "handover": -19.39,
      "original": -20.58,
      "ensemble": -18.8,
-     "above": -1.73,
-     "below": -0.05
+     "above": -0.59,
+     "below": -1.19
     },
     {
      "t": 20.5,
-     "handover": -19.09,
+     "handover": -17.98,
      "original": -20.36,
      "ensemble": -17.4,
-     "above": -1.68,
-     "below": -1.28
+     "above": -0.58,
+     "below": -2.38
     },
     {
      "t": 20.6,
-     "handover": -18.3,
+     "handover": -17.36,
      "original": -20.2,
      "ensemble": -16.68,
-     "above": -1.62,
-     "below": -1.9
+     "above": -0.67,
+     "below": -2.84
     },
     {
      "t": 20.7,
-     "handover": -18.16,
+     "handover": -17.3,
      "original": -20.86,
      "ensemble": -16.85,
-     "above": -1.31,
-     "below": -2.71
+     "above": -0.45,
+     "below": -3.56
     },
     {
      "t": 20.8,
-     "handover": -18.46,
+     "handover": -18.19,
      "original": -21.47,
      "ensemble": -18.23,
-     "above": -0.23,
-     "below": -3.01
+     "above": 0.04,
+     "below": -3.28
     }
    ]
   },
   {
    "at": 26.4,
    "blocks": 6,
-   "bumpLu": -0.07,
-   "dipLu": 0.72,
+   "bumpLu": 0.3,
+   "dipLu": 0.05,
    "rows": [
     {
      "t": 26.4,
-     "handover": -18.22,
+     "handover": -18.14,
      "original": -18.8,
      "ensemble": -18.15,
-     "above": -0.07,
-     "below": -0.58
+     "above": 0.01,
+     "below": -0.66
     },
     {
      "t": 26.5,
-     "handover": -18.37,
+     "handover": -17.85,
      "original": -18.76,
      "ensemble": -17.96,
-     "above": -0.41,
-     "below": -0.39
+     "above": 0.11,
+     "below": -0.91
     },
     {
      "t": 26.6,
-     "handover": -18.68,
+     "handover": -17.96,
      "original": -18.66,
      "ensemble": -18.26,
-     "above": -0.42,
-     "below": 0.02
+     "above": 0.3,
+     "below": -0.7
     },
     {
      "t": 26.7,
-     "handover": -18.26,
+     "handover": -17.6,
      "original": -18.45,
      "ensemble": -17.54,
-     "above": -0.72,
-     "below": -0.19
+     "above": -0.06,
+     "below": -0.85
     },
     {
      "t": 26.8,
-     "handover": -18.91,
+     "handover": -18.23,
      "original": -18.13,
      "ensemble": -18.18,
-     "above": -0.77,
-     "below": 0.72
+     "above": -0.1,
+     "below": 0.05
     },
     {
      "t": 26.9,
-     "handover": -18.39,
+     "handover": -18.22,
      "original": -18.2,
      "ensemble": -18.47,
-     "above": -0.2,
-     "below": -0.07
+     "above": -0.03,
+     "below": -0.24
     }
    ]
   }
@@ -1808,5 +1808,27 @@
   },
   "elapsedSec": 16.258057594299316
  },
- "renderer": "mt1-tools-sha256:522264f6ae4ab505"
+ "renderer": "mt1-tools-sha256:522264f6ae4ab505",
+ "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
+ "handoverFade": "equal power (MT-2)",
+ "handoversRemeasured": {
+  "at": "2026-10-14T00:15:40.643Z",
+  "by": "verify.mjs --handovers-only",
+  "before": {
+   "handoverOk": true,
+   "fade": "linear (MT-1)",
+   "handovers": [
+    {
+     "at": 20.3,
+     "bumpLu": -0.18,
+     "dipLu": -0.05
+    },
+    {
+     "at": 26.4,
+     "bumpLu": -0.07,
+     "dipLu": 0.72
+    }
+   ]
+  }
+ }
 }

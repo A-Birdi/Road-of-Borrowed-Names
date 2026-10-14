@@ -23,7 +23,8 @@
  *    before the user's music volume, the ducking and the master chain, as the Original does, with its own room baked in
  *    (it never reaches the game's music room), at a calibrated trim.
  *  - A handover is scheduled on the audio clock: at least LEAD ahead, on the next beat if one comes within BEAT_WAIT,
- *    then a complementary (linear) crossfade of XF seconds: the two performances are the same score and correlated.
+ *    then a complementary equal-power crossfade of XF seconds (MT-2: the two performances, the same score on different
+ *    instruments, are uncorrelated over a fade; MT-1's linear fade sagged about 3 dB at its middle).
  *  - Loading never holds up play: Original sounds at once; the recording replaces it when it is ready and still wanted
  *    (a generation check after every await). Nothing is fetched for Original, with music off or muted, for a song
  *    without an eligible recording, or in a standalone file: copy. Files are same-origin, in the music directory,
@@ -474,14 +475,38 @@ RB.audio = RB.audio || {};
     note('start', { song: c.id, at: +T.toFixed(4), e: +clk.e.toFixed(4), pos: +clk.pos.toFixed(4), cycle: clk.cycle });
     return true;
   }
+  // the handover's fade shape (MT-2): equal power. The two performances are the same score but different instruments,
+  // and over a fade's 200 ms they are uncorrelated (measured: median correlation about 0, spread +-0.5), so a linear
+  // fade sagged about 3 dB at its middle; sine and cosine keep the sum's power. A gain at v moving to 1 follows
+  // sin(a0 + (pi/2 - a0) x) with a0 = asin v; moving to 0, sin(a0 (1 - x)): a complementary pair stays complementary
+  // when a fade under way is retargeted from where it is.
+  const CURVE_N = 65;
+  function powerCurve(v, to) {
+    const a0 = Math.asin(Math.min(1, Math.max(0, v))), c = new Float32Array(CURVE_N);
+    for (let i = 0; i < CURVE_N; i++) {
+      const x = i / (CURVE_N - 1);
+      c[i] = to >= 1 ? Math.sin(a0 + (Math.PI / 2 - a0) * x) : Math.sin(a0 * (1 - x));
+    }
+    c[CURVE_N - 1] = to >= 1 ? 1 : 0;
+    return c;
+  }
+  _.powerCurve = powerCurve;
   // a gain moved from where it is now to `to` over [T, T + XF] (retargeting a fade under way holds its value)
   function rampAt(param, to, T) {
     const now = st.ctx.currentTime;
-    const v = param.value;
+    const v = param.value, at = Math.max(now, T);
     param.cancelScheduledValues(now);
     param.setValueAtTime(v, now);
-    param.setValueAtTime(v, Math.max(now, T));
-    param.linearRampToValueAtTime(to, Math.max(now, T) + XF);
+    try {
+      if (at > now) param.setValueAtTime(v, at);
+      param.setValueCurveAtTime(powerCurve(v, to), at, XF);
+    } catch (e) {
+      // (a browser refusing the curve fades linearly, as before)
+      param.cancelScheduledValues(now);
+      param.setValueAtTime(v, now);
+      param.setValueAtTime(v, at);
+      param.linearRampToValueAtTime(to, at + XF);
+    }
   }
   function handover(c, to) {
     const p = c.player;
@@ -604,9 +629,10 @@ RB.audio = RB.audio || {};
         p.out.gain.value = mix;
         for (const h of opts.handovers || []) {
           const e = h.to === 'ensemble';
+          // (the same equal-power fade as in play)
           for (const [prm, v] of [[c.gain.gain, e ? 1 : 0], [p.out.gain, e ? 0 : 1], [g.revGate.gain, e ? 0 : 1]]) {
             prm.setValueAtTime(1 - v, h.at);
-            prm.linearRampToValueAtTime(v, h.at + XF);
+            prm.setValueCurveAtTime(powerCurve(1 - v, v), h.at, XF);
           }
         }
         p.pump(seconds);
