@@ -4284,7 +4284,7 @@ had none of their own. Robin: "Yes, please do so."
   played with each companion and with none. Also **U** `fixtures_campaign` 573/0 (older saves load unchanged),
   `foundations` 67/0, `cases` 194/0, `fieldweave` 390/0, `guardians` 66/0, `records` 261/0, `equip` 466/0, and the
   workers' chapter suites (mb, mp_ch4, kr_ch7, ko_ch9, ko_side, sea_*, cr_ch10, yn_ch11, living_world, town, returns,
-  dialect_kansai: all 0 failed as they reported and as re-run where noted). **Whole unit suite:** running when this was written; its result is recorded in the next commit.
+  dialect_kansai: 0 failed in the workers' own runs; the whole suite below covers them on the final content). **Whole unit suite** (`node tests/run-unit.mjs`, after the build, on the final content): **54,213 passed, 0 failed**.
 - **B** `node tests/e2e/keepsakes.mjs` on the new build: **33/33** (counts read from the journey: every entry and region
   of a twelve-chapter journey).
 - **Looked at (lead):** all 46 road keepsakes' art rendered by the built game on one sheet; each reads at ×3.
