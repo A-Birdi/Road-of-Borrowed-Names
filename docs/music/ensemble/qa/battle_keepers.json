@@ -1590,112 +1590,112 @@
   {
    "at": 20.3,
    "blocks": 6,
-   "bumpLu": -0.04,
-   "dipLu": 0,
+   "bumpLu": 0.02,
+   "dipLu": -0.14,
    "rows": [
     {
      "t": 20.3,
-     "handover": -17.52,
+     "handover": -17.48,
      "original": -17.48,
      "ensemble": -18.47,
-     "above": -0.04,
-     "below": -0.94
+     "above": 0,
+     "below": -0.98
     },
     {
      "t": 20.4,
-     "handover": -17.83,
+     "handover": -17.41,
      "original": -17.43,
      "ensemble": -18.56,
-     "above": -0.4,
-     "below": -0.72
+     "above": 0.02,
+     "below": -1.14
     },
     {
      "t": 20.5,
-     "handover": -19.37,
+     "handover": -18.64,
      "original": -18.39,
      "ensemble": -20.12,
-     "above": -0.98,
-     "below": -0.75
+     "above": -0.25,
+     "below": -1.48
     },
     {
      "t": 20.6,
-     "handover": -19.72,
+     "handover": -18.94,
      "original": -17.57,
      "ensemble": -20.07,
-     "above": -2.15,
-     "below": -0.35
+     "above": -1.37,
+     "below": -1.13
     },
     {
      "t": 20.7,
-     "handover": -19.41,
+     "handover": -18.73,
      "original": -17.29,
      "ensemble": -19.46,
-     "above": -2.13,
-     "below": -0.04
+     "above": -1.45,
+     "below": -0.72
     },
     {
      "t": 20.8,
-     "handover": -18.81,
+     "handover": -18.67,
      "original": -17.41,
      "ensemble": -18.81,
-     "above": -1.4,
-     "below": 0
+     "above": -1.26,
+     "below": -0.14
     }
    ]
   },
   {
    "at": 26.4,
    "blocks": 6,
-   "bumpLu": -0.11,
-   "dipLu": 0.36,
+   "bumpLu": 0.02,
+   "dipLu": 0.01,
    "rows": [
     {
      "t": 26.4,
-     "handover": -18.97,
+     "handover": -18.9,
      "original": -17.29,
      "ensemble": -18.89,
-     "above": -1.68,
-     "below": 0.08
+     "above": -1.61,
+     "below": 0.01
     },
     {
      "t": 26.5,
-     "handover": -19.86,
+     "handover": -19.28,
      "original": -17.72,
      "ensemble": -19.51,
-     "above": -2.14,
-     "below": 0.36
+     "above": -1.56,
+     "below": -0.22
     },
     {
      "t": 26.6,
-     "handover": -19.93,
+     "handover": -19.14,
      "original": -18.07,
      "ensemble": -19.77,
-     "above": -1.86,
-     "below": 0.16
+     "above": -1.06,
+     "below": -0.63
     },
     {
      "t": 26.7,
-     "handover": -19.49,
+     "handover": -18.77,
      "original": -18.29,
      "ensemble": -19.77,
-     "above": -1.21,
-     "below": -0.27
+     "above": -0.48,
+     "below": -1
     },
     {
      "t": 26.8,
-     "handover": -19.37,
+     "handover": -18.73,
      "original": -18.54,
      "ensemble": -20.84,
-     "above": -0.83,
-     "below": -1.46
+     "above": -0.2,
+     "below": -2.1
     },
     {
      "t": 26.9,
-     "handover": -17.26,
+     "handover": -17.13,
      "original": -17.15,
      "ensemble": -19.86,
-     "above": -0.11,
-     "below": -2.6
+     "above": 0.02,
+     "below": -2.72
     }
    ]
   }
@@ -1841,5 +1841,27 @@
   },
   "elapsedSec": 33.56591081619263
  },
- "renderer": "mt1-tools-sha256:522264f6ae4ab505"
+ "renderer": "mt1-tools-sha256:522264f6ae4ab505",
+ "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
+ "handoverFade": "equal power (MT-2)",
+ "handoversRemeasured": {
+  "at": "2026-10-14T01:20:54.748Z",
+  "by": "verify.mjs --handovers-only",
+  "before": {
+   "handoverOk": true,
+   "fade": "linear (MT-1)",
+   "handovers": [
+    {
+     "at": 20.3,
+     "bumpLu": -0.04,
+     "dipLu": 0
+    },
+    {
+     "at": 26.4,
+     "bumpLu": -0.11,
+     "dipLu": 0.36
+    }
+   ]
+  }
+ }
 }

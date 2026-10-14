@@ -207,6 +207,15 @@ def echo(x, delay, fb, mix, circular):
     return y
 
 
+def guard_extra(n):
+    """(MT-2) Frames to add to a file's trailing guard so its MP3 decodes to its exact length: with FFmpeg's libmp3lame
+    (delay 1105) a length whose (n + 1105) mod 1152 falls in the last 12 frames of an MP3 frame was decoded up to 12 frames
+    long (its padding record short), measured on hall_w3's cycle and confirmed for other lengths. The guard is music past
+    the playable span, so a few more frames of it change nothing that plays."""
+    r = (n + 1105) % 1152
+    return (1152 - r + 8) if r >= 1136 else 0
+
+
 def room(audio, sends, ir, wet, circular):
     out = audio.copy()
     n = len(audio)
@@ -292,8 +301,9 @@ def convert(id):
         T = math.ceil((over / SR + room_s + echo_tail + 1.0) * 2) / 2
         fE = fD + round(T * SR)
         NH = Z + fE + G
+        gx = guard_extra(NH); NH += gx
         head, in_head = place(NH, Z, lambda n: True)
-        head[Z + fE:] *= np.linspace(1, 0, G, dtype=np.float32)[:, None]
+        head[Z + fE:] *= np.linspace(1, 0, G + gx, dtype=np.float32)[:, None]
         peak = float(np.abs(head).max())
         scale = 10 ** (-1 / 20) / peak
         head *= scale
@@ -301,7 +311,7 @@ def convert(id):
         sf.write(d / 'head.wav', head, SR, subtype='FLOAT')
         if (d / 'loop.wav').exists():
             (d / 'loop.wav').unlink()
-        rep_head = {'file': 'head.wav', 'frames': NH, 'playableStartFrame': Z, 'playableEndFrame': Z + fE, 'endSec': fE / SR, 'tailSec': T, 'leadSec': LEAD, 'guardSec': GUARD, 'eventsPlaced': in_head}
+        rep_head = {'file': 'head.wav', 'frames': NH, 'playableStartFrame': Z, 'playableEndFrame': Z + fE, 'endSec': fE / SR, 'tailSec': T, 'leadSec': LEAD, 'guardSec': GUARD, 'guardExtraFrames': gx, 'eventsPlaced': in_head}
         rep_loop, rep_join, in_cycle, part_cycle, ppm = None, None, None, {}, None
         assert in_head == len(events), 'every event placed once'
     else:
@@ -323,6 +333,7 @@ def convert(id):
         assert fJ + G < fD, 'the join must fall inside the first pass'
         # ---- the head: the first pass from silence, [ -LEAD, J + GUARD )
         NH = Z + fJ + G
+        hx = guard_extra(NH); NH += hx
         head, in_head = place(NH, Z, lambda n: True)
         # ---- the steady cycle: every event of the repeat, modulo the period
         cyc = np.zeros((Nper, 2), np.float64); csend = np.zeros_like(cyc)
@@ -358,12 +369,13 @@ def convert(id):
         peak = float(max(np.abs(head).max(), np.abs(cyc).max()))
         scale = min(1.0, 10 ** (-1 / 20) / peak) if pilot else 10 ** (-1 / 20) / peak
         head *= scale; cyc *= scale
-        loop_asset = np.concatenate([cyc[Nper - G:], cyc, cyc[:G]]).astype(np.float32)
+        lx = guard_extra(Nper + 2 * G)
+        loop_asset = np.concatenate([cyc[Nper - G:], cyc, cyc[:G + lx]]).astype(np.float32)
         assert np.isfinite(head).all() and np.isfinite(loop_asset).all()
         sf.write(d / 'head.wav', head, SR, subtype='FLOAT')
         sf.write(d / 'loop.wav', loop_asset, SR, subtype='FLOAT')
-        rep_head = {'file': 'head.wav', 'frames': NH, 'playableStartFrame': Z, 'playableEndFrame': Z + fJ, 'joinSec': fJ / SR, 'leadSec': LEAD, 'guardSec': GUARD, 'eventsPlaced': in_head}
-        rep_loop = {'file': 'loop.wav', 'frames': len(loop_asset), 'playableStartFrame': G, 'playableEndFrame': G + Nper, 'periodFrames': Nper, 'periodErrorPpm': ppm, 'eventsPlaced': in_cycle, 'eventsInRepeat': len(events) - loop_idx}
+        rep_head = {'file': 'head.wav', 'frames': NH, 'playableStartFrame': Z, 'playableEndFrame': Z + fJ, 'joinSec': fJ / SR, 'leadSec': LEAD, 'guardSec': GUARD, 'guardExtraFrames': hx, 'eventsPlaced': in_head}
+        rep_loop = {'file': 'loop.wav', 'frames': len(loop_asset), 'playableStartFrame': G, 'playableEndFrame': G + Nper, 'periodFrames': Nper, 'periodErrorPpm': ppm, 'guardExtraFrames': lx, 'eventsPlaced': in_cycle, 'eventsInRepeat': len(events) - loop_idx}
         rep_join = {'cycleFrame': h, 'settleSec': H, 'longestOverhangSec': over / SR, 'residualDb': join_db}
         assert in_cycle == len(events) - loop_idx, 'every event of the repeat placed once'
     # per-part levels: a pilot's cycle (before the room) against SC-1's whole-render figures (a sanity check, not a

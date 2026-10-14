@@ -1668,118 +1668,118 @@
   }
  },
  "onsetOk": true,
- "onsetCriterion": "MT-1 envelope: peak at least 4 SD above every lag 25-50 ms away (the 3x test not met)",
+ "onsetCriterion": "MT-1 envelope: z 10.18 (peak/40 ms 2.9)",
  "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
  "handovers": [
   {
    "at": 20.3,
    "blocks": 6,
-   "bumpLu": -0.09,
-   "dipLu": 0.46,
+   "bumpLu": 0.17,
+   "dipLu": -0.08,
    "rows": [
     {
      "t": 20.3,
-     "handover": -17.97,
+     "handover": -17.89,
      "original": -17.88,
      "ensemble": -17.97,
-     "above": -0.09,
-     "below": -0.01
+     "above": -0.01,
+     "below": -0.08
     },
     {
      "t": 20.4,
-     "handover": -17.42,
+     "handover": -16.68,
      "original": -17.04,
      "ensemble": -16.7,
-     "above": -0.72,
-     "below": 0.38
+     "above": 0.02,
+     "below": -0.36
     },
     {
      "t": 20.5,
-     "handover": -16.7,
+     "handover": -15.91,
      "original": -16.24,
      "ensemble": -16.08,
-     "above": -0.62,
-     "below": 0.46
+     "above": 0.17,
+     "below": -0.34
     },
     {
      "t": 20.6,
-     "handover": -16.51,
+     "handover": -15.75,
      "original": -16.38,
      "ensemble": -15.74,
-     "above": -0.77,
-     "below": 0.14
+     "above": -0.01,
+     "below": -0.62
     },
     {
      "t": 20.7,
-     "handover": -16.52,
+     "handover": -15.8,
      "original": -16.54,
      "ensemble": -15.57,
-     "above": -0.95,
-     "below": -0.02
+     "above": -0.24,
+     "below": -0.74
     },
     {
      "t": 20.8,
-     "handover": -16.64,
+     "handover": -16.46,
      "original": -17.02,
      "ensemble": -16.55,
-     "above": -0.09,
-     "below": -0.38
+     "above": 0.09,
+     "below": -0.56
     }
    ]
   },
   {
    "at": 26.4,
    "blocks": 6,
-   "bumpLu": -0.04,
-   "dipLu": 0.58,
+   "bumpLu": 0.23,
+   "dipLu": -0.09,
    "rows": [
     {
      "t": 26.4,
-     "handover": -16.16,
+     "handover": -16.12,
      "original": -16.64,
      "ensemble": -16.12,
-     "above": -0.04,
-     "below": -0.48
+     "above": 0,
+     "below": -0.52
     },
     {
      "t": 26.5,
-     "handover": -16.67,
+     "handover": -16.14,
      "original": -16.54,
      "ensemble": -16.29,
-     "above": -0.38,
-     "below": 0.13
+     "above": 0.15,
+     "below": -0.4
     },
     {
      "t": 26.6,
-     "handover": -16.88,
+     "handover": -16.2,
      "original": -16.57,
      "ensemble": -16.42,
-     "above": -0.46,
-     "below": 0.31
+     "above": 0.23,
+     "below": -0.37
     },
     {
      "t": 26.7,
-     "handover": -18.11,
+     "handover": -17.22,
      "original": -17.62,
      "ensemble": -16.78,
-     "above": -1.33,
-     "below": 0.48
+     "above": -0.44,
+     "below": -0.4
     },
     {
      "t": 26.8,
-     "handover": -18.81,
+     "handover": -17.85,
      "original": -18.23,
      "ensemble": -16.74,
-     "above": -2.07,
-     "below": 0.58
+     "above": -1.11,
+     "below": -0.39
     },
     {
      "t": 26.9,
-     "handover": -18.41,
+     "handover": -18.21,
      "original": -18.29,
      "ensemble": -16.57,
-     "above": -1.84,
-     "below": 0.12
+     "above": -1.64,
+     "below": -0.09
     }
    ]
   }
@@ -1966,5 +1966,35 @@
   },
   "elapsedSec": 99.45311546325684
  },
- "renderer": "mt1-tools-sha256:96ee0c13f319e39e"
+ "renderer": "mt1-tools-sha256:96ee0c13f319e39e",
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetsRejudged": {
+  "at": "2026-10-14T01:41:36.973Z",
+  "by": "verify.mjs --rejudge-onsets",
+  "before": {
+   "onsetOk": true,
+   "onsetCriterion": "MT-1 envelope: peak at least 4 SD above every lag 25-50 ms away (the 3x test not met)"
+  }
+ },
+ "handoverFade": "equal power (MT-2)",
+ "handoversRemeasured": {
+  "at": "2026-10-14T01:49:00.998Z",
+  "by": "verify.mjs --handovers-only",
+  "before": {
+   "handoverOk": true,
+   "fade": "linear (MT-1)",
+   "handovers": [
+    {
+     "at": 20.3,
+     "bumpLu": -0.09,
+     "dipLu": 0.46
+    },
+    {
+     "at": 26.4,
+     "bumpLu": -0.04,
+     "dipLu": 0.58
+    }
+   ]
+  }
+ }
 }

@@ -1668,7 +1668,7 @@
   }
  },
  "onsetOk": true,
- "onsetCriterion": "MT-1 envelope: peak at least 4 SD above every lag 25-50 ms away (the 3x test not met)",
+ "onsetCriterion": "MT-1 envelope: z 6.49 (peak/40 ms 2.94)",
  "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
  "handovers": [
   {
@@ -1939,5 +1939,14 @@
   },
   "elapsedSec": 54.95302128791809
  },
- "renderer": "mt1-tools-sha256:96ee0c13f319e39e"
+ "renderer": "mt1-tools-sha256:96ee0c13f319e39e",
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetsRejudged": {
+  "at": "2026-10-14T01:41:37.325Z",
+  "by": "verify.mjs --rejudge-onsets",
+  "before": {
+   "onsetOk": true,
+   "onsetCriterion": "MT-1 envelope: peak at least 4 SD above every lag 25-50 ms away (the 3x test not met)"
+  }
+ }
 }

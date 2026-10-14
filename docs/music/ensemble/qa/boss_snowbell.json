@@ -1675,118 +1675,118 @@
   }
  },
  "onsetOk": true,
- "onsetCriterion": "MT-1 envelope: peak at least 3x the correlation 40 ms away",
+ "onsetCriterion": "MT-1 envelope: z 6.73 (peak/40 ms 3.63)",
  "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
  "handovers": [
   {
    "at": 20.3,
    "blocks": 6,
-   "bumpLu": -0.03,
-   "dipLu": -0.04,
+   "bumpLu": 0.26,
+   "dipLu": -0.09,
    "rows": [
     {
      "t": 20.3,
-     "handover": -15.15,
+     "handover": -15.09,
      "original": -15.12,
      "ensemble": -15.19,
-     "above": -0.03,
-     "below": -0.04
+     "above": 0.03,
+     "below": -0.09
     },
     {
      "t": 20.4,
-     "handover": -15.1,
+     "handover": -14.51,
      "original": -15.28,
      "ensemble": -14.75,
-     "above": -0.35,
-     "below": -0.18
+     "above": 0.23,
+     "below": -0.76
     },
     {
      "t": 20.5,
-     "handover": -15.42,
+     "handover": -14.63,
      "original": -15.98,
      "ensemble": -14.69,
-     "above": -0.73,
-     "below": -0.57
+     "above": 0.05,
+     "below": -1.35
     },
     {
      "t": 20.6,
-     "handover": -15.83,
+     "handover": -14.97,
      "original": -16.56,
      "ensemble": -15.24,
-     "above": -0.59,
-     "below": -0.73
+     "above": 0.26,
+     "below": -1.58
     },
     {
      "t": 20.7,
-     "handover": -15.32,
+     "handover": -14.6,
      "original": -16.51,
      "ensemble": -14.86,
-     "above": -0.47,
-     "below": -1.18
+     "above": 0.26,
+     "below": -1.9
     },
     {
      "t": 20.8,
-     "handover": -15.17,
+     "handover": -15,
      "original": -16.41,
      "ensemble": -15.07,
-     "above": -0.1,
-     "below": -1.24
+     "above": 0.07,
+     "below": -1.42
     }
    ]
   },
   {
    "at": 26.4,
    "blocks": 6,
-   "bumpLu": -0.28,
-   "dipLu": 0.45,
+   "bumpLu": -0.07,
+   "dipLu": 0.01,
    "rows": [
     {
      "t": 26.4,
-     "handover": -15.45,
+     "handover": -15.39,
      "original": -15.17,
      "ensemble": -15.41,
-     "above": -0.28,
-     "below": 0.03
+     "above": -0.22,
+     "below": -0.03
     },
     {
      "t": 26.5,
-     "handover": -15.86,
+     "handover": -15.23,
      "original": -14.84,
      "ensemble": -15.55,
-     "above": -1.02,
-     "below": 0.32
+     "above": -0.39,
+     "below": -0.32
     },
     {
      "t": 26.6,
-     "handover": -15.66,
+     "handover": -14.97,
      "original": -14.74,
      "ensemble": -15.21,
-     "above": -0.92,
-     "below": 0.45
+     "above": -0.23,
+     "below": -0.24
     },
     {
      "t": 26.7,
-     "handover": -15.4,
+     "handover": -14.76,
      "original": -14.68,
      "ensemble": -15.28,
-     "above": -0.72,
-     "below": 0.12
+     "above": -0.07,
+     "below": -0.52
     },
     {
      "t": 26.8,
-     "handover": -15.63,
+     "handover": -15.01,
      "original": -14.86,
      "ensemble": -15.33,
-     "above": -0.77,
-     "below": 0.3
+     "above": -0.15,
+     "below": -0.32
     },
     {
      "t": 26.9,
-     "handover": -15.57,
+     "handover": -15.49,
      "original": -15.47,
      "ensemble": -15.29,
-     "above": -0.28,
-     "below": 0.09
+     "above": -0.2,
+     "below": 0.01
     }
    ]
   }
@@ -2016,5 +2016,35 @@
   },
   "elapsedSec": 70.13861894607544
  },
- "renderer": "mt1-tools-sha256:96ee0c13f319e39e"
+ "renderer": "mt1-tools-sha256:96ee0c13f319e39e",
+ "handoverFade": "equal power (MT-2)",
+ "handoversRemeasured": {
+  "at": "2026-10-14T01:40:58.117Z",
+  "by": "verify.mjs --handovers-only",
+  "before": {
+   "handoverOk": true,
+   "fade": "linear (MT-1)",
+   "handovers": [
+    {
+     "at": 20.3,
+     "bumpLu": -0.03,
+     "dipLu": -0.04
+    },
+    {
+     "at": 26.4,
+     "bumpLu": -0.28,
+     "dipLu": 0.45
+    }
+   ]
+  }
+ },
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetsRejudged": {
+  "at": "2026-10-14T01:41:36.884Z",
+  "by": "verify.mjs --rejudge-onsets",
+  "before": {
+   "onsetOk": true,
+   "onsetCriterion": "MT-1 envelope: peak at least 3x the correlation 40 ms away"
+  }
+ }
 }

@@ -69,21 +69,35 @@ def package(id):
         ps, pe = rep[key]['playableStartFrame'], rep[key]['playableEndFrame']
         out['assets'][role] = []
         for f in FORMATS:
-            with tempfile.TemporaryDirectory() as tdir:
-                tmp = Path(tdir) / ('x.' + f['ext'])
-                ffmpeg('-i', str(d / rep[key]['file']), '-fflags', '+bitexact', '-flags:a', '+bitexact', *f['args'], str(tmp))  # (reproducible bytes: no random stream serial)
-                b = tmp.read_bytes()
-                sha = hashlib.sha256(b).hexdigest()
-                name = f'{id}.{role}.{sha[:16]}.{f["ext"]}'
-                shutil.copyfile(tmp, dest / name)
-            dec = decode(dest / name, sr)
-            starts = sorted(set([ps, max(ps, pe - 8192), (ps + pe) // 2] + list(range(ps, pe - 8192, max(8192, (pe - ps) // 12)))))
-            al = align(master, dec, starts)
+            # (MT-2) an Opus file whose local check finds a window fitting 1 dB better at a shift (the codec's phase in
+            # a high band; hall_w3's first pass at 160 kbit/s) is encoded again at a higher rate, and the first clean
+            # encoding kept; the rate used is recorded
+            rates = ['160k', '192k', '256k'] if f['codec'] == 'opus' else [None]
+            for rate in rates:
+                args = list(f['args'])
+                if rate:
+                    args[args.index('-b:a') + 1] = rate
+                with tempfile.TemporaryDirectory() as tdir:
+                    tmp = Path(tdir) / ('x.' + f['ext'])
+                    ffmpeg('-i', str(d / rep[key]['file']), '-fflags', '+bitexact', '-flags:a', '+bitexact', *args, str(tmp))  # (reproducible bytes: no random stream serial)
+                    b = tmp.read_bytes()
+                    sha = hashlib.sha256(b).hexdigest()
+                    name = f'{id}.{role}.{sha[:16]}.{f["ext"]}'
+                    shutil.copyfile(tmp, dest / name)
+                dec = decode(dest / name, sr)
+                starts = sorted(set([ps, max(ps, pe - 8192), (ps + pe) // 2] + list(range(ps, pe - 8192, max(8192, (pe - ps) // 12)))))
+                al = align(master, dec, starts)
+                clean = all(x['lag'] == 0 or x['bestSnrDb'] - x['snrDb'] < 1 for x in al)
+                if clean or rate == rates[-1]:
+                    break
+                (dest / name).unlink()
+                print(id, role, f['codec'], rate, 'a window fits better shifted: encoding again', flush=True)
             lags = sorted(set(x['lag'] for x in al))
             item = {
                 'codec': f['codec'], 'mimeType': f['mime'], 'file': f'{id}/{name}', 'sha256': sha, 'encodedBytes': len(b),
                 'sampleRate': sr, 'channels': 2, 'masterFrames': len(master), 'playableStartFrame': ps, 'playableEndFrame': pe,
                 'ffmpegDecodedFrames': len(dec), 'ffmpegLags': lags, 'ffmpegMinSnrDb': min(x['snrDb'] for x in al), 'ffmpegChecks': al,
+                'bitrate': args[args.index('-b:a') + 1],
             }
             out['assets'][role].append(item)
             print(id, role, f['codec'], len(b), 'bytes', 'frames', len(dec), 'of', len(master), 'lags', lags, 'min SNR', item['ffmpegMinSnrDb'], flush=True)

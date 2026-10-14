@@ -1670,124 +1670,124 @@
   }
  },
  "onsetOk": true,
- "onsetCriterion": "MT-1 envelope: peak at least 3x the correlation 40 ms away",
+ "onsetCriterion": "MT-1 envelope: z 7.3 (peak/40 ms 4.17)",
  "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
  "handovers": [
   {
    "at": 20.3,
    "blocks": 6,
-   "bumpLu": -0.03,
-   "dipLu": 1.67,
+   "bumpLu": 0.02,
+   "dipLu": 0.42,
    "rows": [
     {
      "t": 20.3,
-     "handover": -21.17,
+     "handover": -21.12,
      "original": -21.14,
      "ensemble": -21.35,
-     "above": -0.03,
-     "below": -0.18
+     "above": 0.02,
+     "below": -0.23
     },
     {
      "t": 20.4,
-     "handover": -21.74,
+     "handover": -21.03,
      "original": -21.31,
      "ensemble": -20.43,
-     "above": -1.31,
-     "below": 0.43
+     "above": -0.59,
+     "below": -0.29
     },
     {
      "t": 20.5,
-     "handover": -22.55,
+     "handover": -21.51,
      "original": -21.63,
      "ensemble": -20.75,
-     "above": -1.8,
-     "below": 0.92
+     "above": -0.77,
+     "below": -0.12
     },
     {
      "t": 20.6,
-     "handover": -23.47,
+     "handover": -22.22,
      "original": -21.8,
      "ensemble": -21.37,
-     "above": -2.1,
-     "below": 1.67
+     "above": -0.85,
+     "below": 0.42
     },
     {
      "t": 20.7,
-     "handover": -19.34,
+     "handover": -18.84,
      "original": -20.5,
      "ensemble": -18.4,
-     "above": -0.93,
-     "below": -1.16
+     "above": -0.44,
+     "below": -1.66
     },
     {
      "t": 20.8,
-     "handover": -18.47,
+     "handover": -18.38,
      "original": -19.65,
      "ensemble": -18.4,
-     "above": -0.07,
-     "below": -1.18
+     "above": 0.02,
+     "below": -1.27
     }
    ]
   },
   {
    "at": 26.4,
    "blocks": 6,
-   "bumpLu": -0.04,
-   "dipLu": 0.5,
+   "bumpLu": 0.58,
+   "dipLu": -0.3,
    "rows": [
     {
      "t": 26.4,
-     "handover": -18.27,
+     "handover": -18.19,
      "original": -19.1,
      "ensemble": -18.24,
-     "above": -0.04,
-     "below": -0.83
+     "above": 0.04,
+     "below": -0.91
     },
     {
      "t": 26.5,
-     "handover": -17.71,
+     "handover": -17.1,
      "original": -18.4,
      "ensemble": -17.37,
-     "above": -0.35,
-     "below": -0.69
+     "above": 0.27,
+     "below": -1.31
     },
     {
      "t": 26.6,
-     "handover": -17.26,
+     "handover": -16.58,
      "original": -17.99,
      "ensemble": -16.92,
-     "above": -0.34,
-     "below": -0.73
+     "above": 0.35,
+     "below": -1.42
     },
     {
      "t": 26.7,
-     "handover": -17.9,
+     "handover": -17.11,
      "original": -18.25,
      "ensemble": -17.52,
-     "above": -0.37,
-     "below": -0.36
+     "above": 0.41,
+     "below": -1.14
     },
     {
      "t": 26.8,
-     "handover": -19.97,
+     "handover": -18.86,
      "original": -19.43,
      "ensemble": -19.46,
-     "above": -0.53,
-     "below": 0.5
+     "above": 0.58,
+     "below": -0.6
     },
     {
      "t": 26.9,
-     "handover": -20.48,
+     "handover": -20.18,
      "original": -20.29,
      "ensemble": -20.48,
-     "above": -0.19,
-     "below": -0.01
+     "above": 0.11,
+     "below": -0.3
     }
    ]
   }
  ],
- "handoverOk": false,
- "handoverFade": "linear (MT-1)",
+ "handoverOk": true,
+ "handoverFade": "equal power (MT-2)",
  "render": {
   "songId": "reedwake",
   "fingerprint": "sha256:f66f6010925d0bd475c5aa3128b80c36d978611918fec29de492df78b9187701",
@@ -1938,5 +1938,34 @@
   },
   "elapsedSec": 27.525336265563965
  },
- "renderer": "mt1-tools-sha256:96ee0c13f319e39e"
+ "renderer": "mt1-tools-sha256:96ee0c13f319e39e",
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetsRejudged": {
+  "at": "2026-10-14T01:41:37.078Z",
+  "by": "verify.mjs --rejudge-onsets",
+  "before": {
+   "onsetOk": true,
+   "onsetCriterion": "MT-1 envelope: peak at least 3x the correlation 40 ms away"
+  }
+ },
+ "handoversRemeasured": {
+  "at": "2026-10-14T01:53:18.000Z",
+  "by": "verify.mjs --handovers-only",
+  "before": {
+   "handoverOk": false,
+   "fade": "linear (MT-1)",
+   "handovers": [
+    {
+     "at": 20.3,
+     "bumpLu": -0.03,
+     "dipLu": 1.67
+    },
+    {
+     "at": 26.4,
+     "bumpLu": -0.04,
+     "dipLu": 0.5
+    }
+   ]
+  }
+ }
 }

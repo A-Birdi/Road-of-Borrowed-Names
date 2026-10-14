@@ -43,6 +43,8 @@ const FRESH = process.argv.includes('--fresh-original'), SKIP_MUTED = !process.a
 // --handovers-only: measure the handovers again on the current build (its fade), from the published files, the trim
 // already calibrated and the Original as stems.mjs measured it; the report and the manifest's gameMixCalibrated change
 const HANDOVERS_ONLY = process.argv.includes('--handovers-only');
+// --rejudge-onsets: decide the onset test again from the measurements a report already holds (no browser needed)
+const REJUDGE = process.argv.includes('--rejudge-onsets');
 const IDS = ids.length ? ids : PILOTS;
 const QA = 'docs/music/ensemble/qa';
 const NOTICE = 'assets/music/ensemble/NOTICE.md';
@@ -199,15 +201,7 @@ async function verifySong(p, id, cur) {
   // of the peak while the peak still stands well clear of the misaligned lags as a whole. A peak within 15 ms passes
   // with MT-1's test or, failing it, at least 4 standard deviations above every lag 25-50 ms away.)
   // (and a second detector, band-wise energy flux above the low notes: page_lib.mjs __mtFlux; the same rule)
-  const sharp = onset.r >= 3 * Math.max(0, onset.rAt40), clear = onset.zFar >= 4;
-  const passes = (o) => Math.abs(o.lagMs) <= 15 && o.r >= 0.03 && (o.r >= 3 * Math.max(0, o.rAt40) || o.zFar >= 4);
-  // the negative control must fail: the same test on the Ensemble's envelope shifted 100 ms
-  out.onsetControl = { shiftMs: 100, lagMs: control.lagMs, r: control.r, rAt40: control.rAt40, zFar: control.zFar, passes: passes(control) };
-  out.onsetFlux = Object.assign({}, flux, { control: { shiftMs: 100, lagMs: fluxControl.lagMs, r: fluxControl.r, rAt40: fluxControl.rAt40, zFar: fluxControl.zFar, passes: passes(fluxControl) } });
-  const envOk = passes(onset) && !out.onsetControl.passes, fluxOk = passes(flux) && !out.onsetFlux.control.passes;
-  out.onsetOk = envOk || fluxOk;
-  out.onsetCriterion = envOk ? (sharp ? 'MT-1 envelope: peak at least 3x the correlation 40 ms away' : 'MT-1 envelope: peak at least 4 SD above every lag 25-50 ms away (the 3x test not met)')
-    : fluxOk ? 'band flux: ' + (flux.r >= 3 * Math.max(0, flux.rAt40) ? 'peak at least 3x the correlation 40 ms away' : 'peak at least 4 SD above every lag 25-50 ms away') + ' (the MT-1 envelope did not pass)' : 'failed';
+  judgeOnsets(out, onset, control, flux, fluxControl);
   console.log(id, 'Original', orig.integrated.toFixed(2), 'LUFS; Ensemble', final.ensembleLufs.toFixed(2), 'at', db(final.trim).toFixed(2), 'dB; onset lag', onset.lagMs, 'ms (r', onset.r, 'r at 40 ms', onset.rAt40, 'z far', onset.zFar + '); flux lag', flux.lagMs, 'ms (r', flux.r, 'z far', flux.zFar + ')', out.onsetCriterion);
   for (let fi = 0; fi < fmts.length; fi++) {
     const r = out.formats[fi];
@@ -220,6 +214,22 @@ async function verifySong(p, id, cur) {
   }
   await handoverCheck(p, out, id, entry, fi0, D, final.trim, momO, momE);
   return out;
+}
+
+// the onset decision (MT-2): a detector passes when its peak is within 15 ms of zero, r >= 0.03 and the peak stands
+// 4 SD above every lag 25-50 ms away; its negative control (the Ensemble's envelope 100 ms late) must not pass the same
+// rule. MT-1's other branch (r >= 3x the correlation 40 ms away) is recorded but no longer decides: on sparse cues it
+// admitted the controls themselves (sa_thin, cr_hut: controls at z 2.3-3.0 passed it), so it does not discriminate.
+// Either detector (MT-1's broadband envelope, the band flux) may pass.
+function judgeOnsets(out, onset, control, flux, fluxControl) {
+  const passes = (o) => !!o && Math.abs(o.lagMs) <= 15 && o.r >= 0.03 && (o.zFar || 0) >= 4;
+  const ratio = (o) => +(o.r / Math.max(1e-9, Math.abs(o.rAt40))).toFixed(2);
+  out.onsetControl = { shiftMs: 100, lagMs: control.lagMs, r: control.r, rAt40: control.rAt40, zFar: control.zFar, passes: passes(control) };
+  if (flux) out.onsetFlux = Object.assign({}, flux, { control: { shiftMs: 100, lagMs: fluxControl.lagMs, r: fluxControl.r, rAt40: fluxControl.rAt40, zFar: fluxControl.zFar, passes: passes(fluxControl) } });
+  const envOk = passes(onset) && !out.onsetControl.passes, fluxOk = !!flux && passes(flux) && !out.onsetFlux.control.passes;
+  out.onsetOk = envOk || fluxOk;
+  out.onsetRule = 'peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass';
+  out.onsetCriterion = envOk ? 'MT-1 envelope: z ' + onset.zFar + ' (peak/40 ms ' + ratio(onset) + ')' : fluxOk ? 'band flux: z ' + flux.zFar + ' (the MT-1 envelope did not pass)' : 'failed';
 }
 
 // 5. handovers mid-phrase: Original -> Ensemble at H1, back at H2 (render times); writes out.handover*
@@ -303,6 +313,29 @@ async function withManifest(fn) {
     fs.writeFileSync(tmp, JSON.stringify(manifest, null, 2) + '\n');
     fs.renameSync(tmp, manPath);
   } finally { fs.rmdirSync(lock); }
+}
+if (REJUDGE) {
+  for (const id of IDS) {
+    const qaf = path.join(root, QA, id + '.json'), q = JSON.parse(fs.readFileSync(qaf, 'utf8'));
+    if (!q.onsets || !q.onsetControl) { console.log(id, 'skipped: no onset measurements with a control'); continue; }
+    const was = { onsetOk: q.onsetOk, onsetCriterion: q.onsetCriterion };
+    const fc = q.onsetFlux ? q.onsetFlux.control : null;
+    judgeOnsets(q, q.onsets, q.onsetControl, q.onsetFlux ? Object.assign({}, q.onsetFlux, { control: undefined }) : null, fc);
+    if (was.onsetOk !== q.onsetOk || was.onsetCriterion !== q.onsetCriterion) q.onsetsRejudged = { at: new Date().toISOString(), by: 'verify.mjs --rejudge-onsets', before: was };
+    fs.writeFileSync(qaf, JSON.stringify(q, null, 1));
+    await withManifest((m) => {
+      const tr = m.tracks.find((x) => x.songId === id);
+      if (!tr) return;
+      const rep = q.render, good = (q.formats || []).some((f) => f.ok);
+      tr.evidence.decodedAlignmentVerified = good && !!q.onsetOk;
+      tr.evidence.scoreEventsPreserved = (rep.loop ? rep.loop.eventsPlaced === rep.loop.eventsInRepeat && rep.head.eventsPlaced > 0 : rep.head.eventsPlaced === rep.score.events) && !!q.onsetOk;
+      tr.releaseStatus = Object.entries(tr.evidence).every(([k, v]) => k === 'reportPaths' || v === true) ? 'ready' : 'pending_production';
+    });
+    console.log(id, q.onsetOk ? 'onsets pass' : 'onsets FAIL', q.onsetCriterion, was.onsetOk !== q.onsetOk ? '(was ' + was.onsetOk + ')' : '');
+  }
+  await browser.close();
+  srv.close();
+  process.exit(0);
 }
 if (HANDOVERS_ONLY) {
   for (const id of IDS) {

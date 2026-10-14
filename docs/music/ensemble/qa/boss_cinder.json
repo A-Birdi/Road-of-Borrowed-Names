@@ -1668,118 +1668,118 @@
   }
  },
  "onsetOk": true,
- "onsetCriterion": "band flux: peak at least 3x the correlation 40 ms away (the MT-1 envelope did not pass)",
+ "onsetCriterion": "band flux: z 61.71 (the MT-1 envelope did not pass)",
  "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
  "handovers": [
   {
    "at": 20.3,
    "blocks": 6,
-   "bumpLu": -0.07,
-   "dipLu": 0.22,
+   "bumpLu": 0.38,
+   "dipLu": 0.05,
    "rows": [
     {
      "t": 20.3,
-     "handover": -15.26,
+     "handover": -15.24,
      "original": -15.19,
      "ensemble": -17.21,
-     "above": -0.07,
-     "below": -1.94
+     "above": -0.04,
+     "below": -1.97
     },
     {
      "t": 20.4,
-     "handover": -15.45,
+     "handover": -14.86,
      "original": -15.24,
      "ensemble": -15.75,
-     "above": -0.22,
-     "below": -0.3
+     "above": 0.38,
+     "below": -0.89
     },
     {
      "t": 20.5,
-     "handover": -15.87,
+     "handover": -15.12,
      "original": -15.65,
      "ensemble": -15.37,
-     "above": -0.5,
-     "below": 0.22
+     "above": 0.25,
+     "below": -0.53
     },
     {
      "t": 20.6,
-     "handover": -15.61,
+     "handover": -14.91,
      "original": -15.46,
      "ensemble": -14.83,
-     "above": -0.78,
-     "below": 0.14
+     "above": -0.08,
+     "below": -0.55
     },
     {
      "t": 20.7,
-     "handover": -15.55,
+     "handover": -14.89,
      "original": -15.38,
      "ensemble": -14.72,
-     "above": -0.84,
-     "below": 0.17
+     "above": -0.17,
+     "below": -0.49
     },
     {
      "t": 20.8,
-     "handover": -15.76,
+     "handover": -15.66,
      "original": -15.51,
      "ensemble": -15.6,
-     "above": -0.25,
-     "below": 0.15
+     "above": -0.15,
+     "below": 0.05
     }
    ]
   },
   {
    "at": 26.4,
    "blocks": 6,
-   "bumpLu": -0.14,
-   "dipLu": 0.83,
+   "bumpLu": 0.03,
+   "dipLu": 0.36,
    "rows": [
     {
      "t": 26.4,
-     "handover": -16.23,
+     "handover": -16.17,
      "original": -15.29,
      "ensemble": -16.17,
-     "above": -0.94,
-     "below": 0.07
+     "above": -0.88,
+     "below": 0
     },
     {
      "t": 26.5,
-     "handover": -16.73,
+     "handover": -16.29,
      "original": -15.7,
      "ensemble": -15.93,
-     "above": -1.03,
-     "below": 0.8
+     "above": -0.59,
+     "below": 0.36
     },
     {
      "t": 26.6,
-     "handover": -16.79,
+     "handover": -16.26,
      "original": -15.96,
      "ensemble": -15.76,
-     "above": -1.03,
-     "below": 0.83
+     "above": -0.51,
+     "below": 0.31
     },
     {
      "t": 26.7,
-     "handover": -16.89,
+     "handover": -16.35,
      "original": -16.47,
      "ensemble": -15.99,
-     "above": -0.9,
-     "below": 0.42
+     "above": -0.36,
+     "below": -0.12
     },
     {
      "t": 26.8,
-     "handover": -16.64,
+     "handover": -16.19,
      "original": -16.23,
      "ensemble": -16.23,
-     "above": -0.41,
-     "below": 0.41
+     "above": 0.03,
+     "below": -0.04
     },
     {
      "t": 26.9,
-     "handover": -15.83,
+     "handover": -15.76,
      "original": -15.69,
      "ensemble": -16.05,
-     "above": -0.14,
-     "below": -0.22
+     "above": -0.07,
+     "below": -0.29
     }
    ]
   }
@@ -1999,5 +1999,35 @@
   },
   "elapsedSec": 104.02540183067322
  },
- "renderer": "mt1-tools-sha256:96ee0c13f319e39e"
+ "renderer": "mt1-tools-sha256:96ee0c13f319e39e",
+ "handoverFade": "equal power (MT-2)",
+ "handoversRemeasured": {
+  "at": "2026-10-14T01:36:55.726Z",
+  "by": "verify.mjs --handovers-only",
+  "before": {
+   "handoverOk": true,
+   "fade": "linear (MT-1)",
+   "handovers": [
+    {
+     "at": 20.3,
+     "bumpLu": -0.07,
+     "dipLu": 0.22
+    },
+    {
+     "at": 26.4,
+     "bumpLu": -0.14,
+     "dipLu": 0.83
+    }
+   ]
+  }
+ },
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetsRejudged": {
+  "at": "2026-10-14T01:41:36.853Z",
+  "by": "verify.mjs --rejudge-onsets",
+  "before": {
+   "onsetOk": true,
+   "onsetCriterion": "band flux: peak at least 3x the correlation 40 ms away (the MT-1 envelope did not pass)"
+  }
+ }
 }

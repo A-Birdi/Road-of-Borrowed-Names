@@ -1,0 +1,1398 @@
+{
+ "songId": "yn_north",
+ "generatedBy": "tools/music/ensemble/verify.mjs",
+ "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.37 Safari/537.36",
+ "fingerprint": "sha256:b0f2b641bc69e48a159e6bb00ba828d8c67bcd1f0636b9ec29c22b8164602b47",
+ "renderFingerprint": "sha256:b0f2b641bc69e48a159e6bb00ba828d8c67bcd1f0636b9ec29c22b8164602b47",
+ "formats": [
+  {
+   "codec": "opus",
+   "decode": {
+    "first": {
+     "url": "./assets/music/ensemble/yn_north/yn_north.first.79f0794735736973.opus",
+     "bytes": 125360,
+     "rates": {
+      "44100": {
+       "frames": 202859,
+       "channels": 2,
+       "sampleRate": 44100,
+       "finite": true,
+       "peak": 0.8069201707839966
+      },
+      "48000": {
+       "frames": 220800,
+       "channels": 2,
+       "sampleRate": 48000,
+       "finite": true,
+       "peak": 0.80670166015625
+      }
+     }
+    },
+    "loop": {
+     "url": "./assets/music/ensemble/yn_north/yn_north.loop.e8ecda63310299b6.opus",
+     "bytes": 4690422,
+     "rates": {
+      "44100": {
+       "frames": 5883548,
+       "channels": 2,
+       "sampleRate": 44100,
+       "finite": true,
+       "peak": 0.8960468173027039
+      },
+      "48000": {
+       "frames": 6403862,
+       "channels": 2,
+       "sampleRate": 48000,
+       "finite": true,
+       "peak": 0.897369384765625
+      }
+     }
+    }
+   },
+   "alignment": {
+    "first": {
+     "frames48k": 220800,
+     "masterFrames": 220800,
+     "frames44k": 202859,
+     "ok48": true,
+     "ok441": true,
+     "windows": [
+      {
+       "at": 4800,
+       "lag": 0,
+       "snrDb": 39.44,
+       "bestSnrDb": 39.44
+      },
+      {
+       "at": 188608,
+       "lag": -1,
+       "snrDb": 31.52,
+       "bestSnrDb": 32.4
+      },
+      {
+       "at": 8896,
+       "lag": 0,
+       "snrDb": 39.19,
+       "bestSnrDb": 39.19
+      },
+      {
+       "at": 24896,
+       "lag": 0,
+       "snrDb": 39.63,
+       "bestSnrDb": 39.63
+      },
+      {
+       "at": 40896,
+       "lag": 0,
+       "snrDb": 38.76,
+       "bestSnrDb": 38.76
+      },
+      {
+       "at": 56896,
+       "lag": 0,
+       "snrDb": 38.05,
+       "bestSnrDb": 38.05
+      },
+      {
+       "at": 72896,
+       "lag": 0,
+       "snrDb": 39.23,
+       "bestSnrDb": 39.23
+      },
+      {
+       "at": 88896,
+       "lag": 0,
+       "snrDb": 38.61,
+       "bestSnrDb": 38.61
+      },
+      {
+       "at": 104896,
+       "lag": 0,
+       "snrDb": 39.25,
+       "bestSnrDb": 39.25
+      },
+      {
+       "at": 120896,
+       "lag": 0,
+       "snrDb": 39.05,
+       "bestSnrDb": 39.05
+      },
+      {
+       "at": 136896,
+       "lag": 0,
+       "snrDb": 38.51,
+       "bestSnrDb": 38.51
+      },
+      {
+       "at": 152896,
+       "lag": 0,
+       "snrDb": 36.57,
+       "bestSnrDb": 36.57
+      },
+      {
+       "at": 168896,
+       "lag": 0,
+       "snrDb": 31.23,
+       "bestSnrDb": 31.23
+      },
+      {
+       "at": 184896,
+       "lag": -1,
+       "snrDb": 31.08,
+       "bestSnrDb": 31.92
+      }
+     ],
+     "aligned": true,
+     "minSnrDb": 31.08
+    },
+    "loop": {
+     "frames48k": 6403862,
+     "masterFrames": 6403862,
+     "frames44k": 5883548,
+     "ok48": true,
+     "ok441": true,
+     "windows": [
+      {
+       "at": 24000,
+       "lag": 0,
+       "snrDb": 38.77,
+       "bestSnrDb": 38.77
+      },
+      {
+       "at": 6371670,
+       "lag": -1,
+       "snrDb": 30.4,
+       "bestSnrDb": 31.46
+      },
+      {
+       "at": 28096,
+       "lag": 0,
+       "snrDb": 40,
+       "bestSnrDb": 40
+      },
+      {
+       "at": 557751,
+       "lag": 0,
+       "snrDb": 42.07,
+       "bestSnrDb": 42.07
+      },
+      {
+       "at": 1087406,
+       "lag": 0,
+       "snrDb": 41.27,
+       "bestSnrDb": 41.27
+      },
+      {
+       "at": 1617061,
+       "lag": -1,
+       "snrDb": 32.08,
+       "bestSnrDb": 32.3
+      },
+      {
+       "at": 2146716,
+       "lag": 0,
+       "snrDb": 31.95,
+       "bestSnrDb": 31.95
+      },
+      {
+       "at": 2676371,
+       "lag": -1,
+       "snrDb": 30.91,
+       "bestSnrDb": 32.16
+      },
+      {
+       "at": 3206026,
+       "lag": 0,
+       "snrDb": 40.71,
+       "bestSnrDb": 40.71
+      },
+      {
+       "at": 3735681,
+       "lag": 0,
+       "snrDb": 41.25,
+       "bestSnrDb": 41.25
+      },
+      {
+       "at": 4265336,
+       "lag": 0,
+       "snrDb": 40.57,
+       "bestSnrDb": 40.57
+      },
+      {
+       "at": 4794991,
+       "lag": -1,
+       "snrDb": 31.34,
+       "bestSnrDb": 31.54
+      },
+      {
+       "at": 5324646,
+       "lag": 0,
+       "snrDb": 31.6,
+       "bestSnrDb": 31.6
+      },
+      {
+       "at": 5854301,
+       "lag": -1,
+       "snrDb": 30.65,
+       "bestSnrDb": 31.94
+      }
+     ],
+     "aligned": false,
+     "minSnrDb": 30.4
+    }
+   },
+   "decodeOk": false,
+   "ok": false
+  },
+  {
+   "codec": "mp3",
+   "decode": {
+    "first": {
+     "url": "./assets/music/ensemble/yn_north/yn_north.first.f5b2f943d9c648bf.mp3",
+     "bytes": 111764,
+     "rates": {
+      "44100": {
+       "frames": 202859,
+       "channels": 2,
+       "sampleRate": 44100,
+       "finite": true,
+       "peak": 0.7843250632286072
+      },
+      "48000": {
+       "frames": 220800,
+       "channels": 2,
+       "sampleRate": 48000,
+       "finite": true,
+       "peak": 0.784698486328125
+      }
+     }
+    },
+    "loop": {
+     "url": "./assets/music/ensemble/yn_north/yn_north.loop.ffaa9d74546f9e67.mp3",
+     "bytes": 3203156,
+     "rates": {
+      "44100": {
+       "frames": 5883548,
+       "channels": 2,
+       "sampleRate": 44100,
+       "finite": true,
+       "peak": 0.8635933995246887
+      },
+      "48000": {
+       "frames": 6403862,
+       "channels": 2,
+       "sampleRate": 48000,
+       "finite": true,
+       "peak": 0.86517333984375
+      }
+     }
+    }
+   },
+   "alignment": {
+    "first": {
+     "frames48k": 220800,
+     "masterFrames": 220800,
+     "frames44k": 202859,
+     "ok48": true,
+     "ok441": true,
+     "windows": [
+      {
+       "at": 4800,
+       "lag": 0,
+       "snrDb": 30.47,
+       "bestSnrDb": 30.47
+      },
+      {
+       "at": 188608,
+       "lag": 0,
+       "snrDb": 30.47,
+       "bestSnrDb": 30.47
+      },
+      {
+       "at": 8896,
+       "lag": 0,
+       "snrDb": 30.51,
+       "bestSnrDb": 30.51
+      },
+      {
+       "at": 24896,
+       "lag": 0,
+       "snrDb": 30.49,
+       "bestSnrDb": 30.49
+      },
+      {
+       "at": 40896,
+       "lag": 0,
+       "snrDb": 30.47,
+       "bestSnrDb": 30.47
+      },
+      {
+       "at": 56896,
+       "lag": 0,
+       "snrDb": 30.49,
+       "bestSnrDb": 30.49
+      },
+      {
+       "at": 72896,
+       "lag": 0,
+       "snrDb": 30.5,
+       "bestSnrDb": 30.5
+      },
+      {
+       "at": 88896,
+       "lag": 0,
+       "snrDb": 30.5,
+       "bestSnrDb": 30.5
+      },
+      {
+       "at": 104896,
+       "lag": 0,
+       "snrDb": 30.48,
+       "bestSnrDb": 30.48
+      },
+      {
+       "at": 120896,
+       "lag": 0,
+       "snrDb": 30.48,
+       "bestSnrDb": 30.48
+      },
+      {
+       "at": 136896,
+       "lag": 0,
+       "snrDb": 30.47,
+       "bestSnrDb": 30.47
+      },
+      {
+       "at": 152896,
+       "lag": 0,
+       "snrDb": 30.48,
+       "bestSnrDb": 30.48
+      },
+      {
+       "at": 168896,
+       "lag": 0,
+       "snrDb": 30.5,
+       "bestSnrDb": 30.5
+      },
+      {
+       "at": 184896,
+       "lag": 0,
+       "snrDb": 30.46,
+       "bestSnrDb": 30.46
+      }
+     ],
+     "aligned": true,
+     "minSnrDb": 30.46
+    },
+    "loop": {
+     "frames48k": 6403862,
+     "masterFrames": 6403862,
+     "frames44k": 5883548,
+     "ok48": true,
+     "ok441": true,
+     "windows": [
+      {
+       "at": 24000,
+       "lag": 0,
+       "snrDb": 30.43,
+       "bestSnrDb": 30.43
+      },
+      {
+       "at": 6371670,
+       "lag": 0,
+       "snrDb": 30.48,
+       "bestSnrDb": 30.48
+      },
+      {
+       "at": 28096,
+       "lag": 0,
+       "snrDb": 30.46,
+       "bestSnrDb": 30.46
+      },
+      {
+       "at": 557751,
+       "lag": 0,
+       "snrDb": 30.49,
+       "bestSnrDb": 30.49
+      },
+      {
+       "at": 1087406,
+       "lag": 0,
+       "snrDb": 30.47,
+       "bestSnrDb": 30.47
+      },
+      {
+       "at": 1617061,
+       "lag": 0,
+       "snrDb": 30.46,
+       "bestSnrDb": 30.46
+      },
+      {
+       "at": 2146716,
+       "lag": 0,
+       "snrDb": 30.47,
+       "bestSnrDb": 30.47
+      },
+      {
+       "at": 2676371,
+       "lag": 0,
+       "snrDb": 30.45,
+       "bestSnrDb": 30.45
+      },
+      {
+       "at": 3206026,
+       "lag": 0,
+       "snrDb": 30.49,
+       "bestSnrDb": 30.49
+      },
+      {
+       "at": 3735681,
+       "lag": 0,
+       "snrDb": 30.49,
+       "bestSnrDb": 30.49
+      },
+      {
+       "at": 4265336,
+       "lag": 0,
+       "snrDb": 30.5,
+       "bestSnrDb": 30.5
+      },
+      {
+       "at": 4794991,
+       "lag": 0,
+       "snrDb": 30.45,
+       "bestSnrDb": 30.45
+      },
+      {
+       "at": 5324646,
+       "lag": 0,
+       "snrDb": 30.48,
+       "bestSnrDb": 30.48
+      },
+      {
+       "at": 5854301,
+       "lag": 0,
+       "snrDb": 30.46,
+       "bestSnrDb": 30.46
+      }
+     ],
+     "aligned": true,
+     "minSnrDb": 30.43
+    }
+   },
+   "decodeOk": true,
+   "placement": [
+    {
+     "seconds": 266.32758620689657,
+     "from": 0,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 4.05,
+       "offset": 0.1,
+       "fadeIn": false,
+       "role": "first"
+      },
+      {
+       "when": 4.05,
+       "until": 132.46379166666668,
+       "offset": 4.5,
+       "fadeIn": true,
+       "role": "loop"
+      },
+      {
+       "when": 132.46379166666668,
+       "until": 264.87758333333335,
+       "offset": 0.49999856321838365,
+       "fadeIn": true,
+       "role": "loop"
+      },
+      {
+       "when": 264.87758333333335,
+       "until": 397.291375,
+       "offset": 0.4999971264367673,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 185.34,
+     "snrByModel": {
+      "linear": 42.43,
+      "nearest": 185.34,
+      "chromium": 185.2
+     },
+     "maxErr": 6.664831103441585e-8,
+     "seams": [
+      {
+       "at": 4.05,
+       "kind": "join",
+       "agreementDb": 60.94,
+       "stepRatio": 1
+      },
+      {
+       "at": 132.463792,
+       "kind": "boundary",
+       "agreementDb": 46.8,
+       "stepRatio": 0.999
+      },
+      {
+       "at": 264.877583,
+       "kind": "boundary",
+       "agreementDb": 46.8,
+       "stepRatio": 0.999
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 396.2413793103449,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 131.91379310344834,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 133.46379166666668,
+       "offset": 0.5000000000000568,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 170.51,
+     "snrByModel": {
+      "linear": 69.66,
+      "nearest": 170.51,
+      "chromium": 170.51
+     },
+     "maxErr": 5.228927660933152e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 46.8,
+       "stepRatio": 0.999
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 528.6551724137931,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 131.9137931034483,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 133.46379166666668,
+       "offset": 0.5000000000000284,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 170.51,
+     "snrByModel": {
+      "linear": 69.66,
+      "nearest": 170.51,
+      "chromium": 170.51
+     },
+     "maxErr": 5.228927660933152e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 46.8,
+       "stepRatio": 0.999
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 661.0689655172414,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 131.91379310344826,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 133.46379166666668,
+       "offset": 0.4999999999999716,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 170.51,
+     "snrByModel": {
+      "linear": 69.66,
+      "nearest": 170.51,
+      "chromium": 170.51
+     },
+     "maxErr": 5.228927660933152e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 46.8,
+       "stepRatio": 0.999
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 793.4827586206897,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 131.91379310344826,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 133.46379166666668,
+       "offset": 0.4999999999999716,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 170.51,
+     "snrByModel": {
+      "linear": 69.66,
+      "nearest": 170.51,
+      "chromium": 170.51
+     },
+     "maxErr": 5.228927660933152e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 46.8,
+       "stepRatio": 0.999
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 925.896551724138,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 131.91379310344837,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 133.46379166666668,
+       "offset": 0.5000000000000853,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 170.51,
+     "snrByModel": {
+      "linear": 69.66,
+      "nearest": 170.51,
+      "chromium": 170.51
+     },
+     "maxErr": 5.228927660933152e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 46.8,
+       "stepRatio": 0.999
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 1058.3103448275863,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 131.91379310344826,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 133.46379166666668,
+       "offset": 0.4999999999999716,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 170.51,
+     "snrByModel": {
+      "linear": 69.66,
+      "nearest": 170.51,
+      "chromium": 170.51
+     },
+     "maxErr": 5.228927660933152e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 46.8,
+       "stepRatio": 0.999
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 1190.7241379310346,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 131.91379310344826,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 133.46379166666668,
+       "offset": 0.4999999999999716,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 170.51,
+     "snrByModel": {
+      "linear": 69.66,
+      "nearest": 170.51,
+      "chromium": 170.51
+     },
+     "maxErr": 5.228927660933152e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 46.8,
+       "stepRatio": 0.999
+      }
+     ]
+    },
+    {
+     "seconds": 2.5,
+     "from": 1323.137931034483,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 1.05,
+       "offset": 131.91379310344837,
+       "fadeIn": false,
+       "role": "loop"
+      },
+      {
+       "when": 1.05,
+       "until": 133.46379166666668,
+       "offset": 0.5000000000000853,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 170.51,
+     "snrByModel": {
+      "linear": 69.66,
+      "nearest": 170.51,
+      "chromium": 170.51
+     },
+     "maxErr": 5.228927660933152e-8,
+     "seams": [
+      {
+       "at": 1.05,
+       "kind": "boundary",
+       "agreementDb": 46.8,
+       "stepRatio": 0.999
+      }
+     ]
+    },
+    {
+     "seconds": 3,
+     "from": 1.234567,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 2.8154375,
+       "offset": 1.334567,
+       "fadeIn": false,
+       "role": "first"
+      },
+      {
+       "when": 2.8154375,
+       "until": 131.22922916666667,
+       "offset": 4.5000045,
+       "fadeIn": true,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 179.98,
+     "snrByModel": {
+      "linear": 31.61,
+      "nearest": 179.98,
+      "chromium": 179.98
+     },
+     "maxErr": 1.1998276123211707e-8,
+     "seams": [
+      {
+       "at": 2.815437,
+       "kind": "join",
+       "agreementDb": 60.94,
+       "stepRatio": 1
+      }
+     ]
+    },
+    {
+     "seconds": 3,
+     "from": 7.21,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 125.25379166666667,
+       "offset": 7.71,
+       "fadeIn": false,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 343.68,
+     "snrByModel": {
+      "linear": 226.23,
+      "nearest": 343.68,
+      "chromium": 343.68
+     },
+     "maxErr": 0,
+     "seams": []
+    },
+    {
+     "seconds": 3,
+     "from": 1008.7322482758622,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": 50.62810416666667,
+       "offset": 82.33569655172414,
+       "fadeIn": false,
+       "role": "loop"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 344.25,
+     "snrByModel": {
+      "linear": 21.95,
+      "nearest": 344.25,
+      "chromium": 344.25
+     },
+     "maxErr": 0,
+     "seams": []
+    }
+   ],
+   "placementOk": true,
+   "joins": [
+    {
+     "at": 4.05,
+     "kind": "join",
+     "agreementDb": 60.94,
+     "stepRatio": 1
+    },
+    {
+     "at": 2.815437,
+     "kind": "join",
+     "agreementDb": 60.94,
+     "stepRatio": 1
+    }
+   ],
+   "boundaries": [
+    {
+     "at": 132.463792,
+     "kind": "boundary",
+     "agreementDb": 46.8,
+     "stepRatio": 0.999
+    },
+    {
+     "at": 264.877583,
+     "kind": "boundary",
+     "agreementDb": 46.8,
+     "stepRatio": 0.999
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 46.8,
+     "stepRatio": 0.999
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 46.8,
+     "stepRatio": 0.999
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 46.8,
+     "stepRatio": 0.999
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 46.8,
+     "stepRatio": 0.999
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 46.8,
+     "stepRatio": 0.999
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 46.8,
+     "stepRatio": 0.999
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 46.8,
+     "stepRatio": 0.999
+    },
+    {
+     "at": 1.05,
+     "kind": "boundary",
+     "agreementDb": 46.8,
+     "stepRatio": 0.999
+    }
+   ],
+   "seamOk": true,
+   "boundariesSeen": 10,
+   "models": [
+    "nearest"
+   ],
+   "loudness": {
+    "lufs": -23.177405224118335,
+    "diffLu": -1.825618127782036e-7
+   },
+   "ok": true
+  }
+ ],
+ "originalMeasuredBy": "tools/music/ensemble/stems.mjs: the Original's first pass through the game graph, measured as verify.mjs's __mtGraph(mix 1, until D)",
+ "calibration": {
+  "window": "the first pass, 0 to 132.41379310344828 s, 48 kHz, default volumes, no ducking",
+  "originalLufs": -23.177405406680148,
+  "originalPeak": 0.174170583486557,
+  "iterations": [
+   {
+    "trim": 1,
+    "ensembleLufs": -11.042937917263247,
+    "diffLu": -12.1344674894169
+   },
+   {
+    "trim": 0.2473299020660009,
+    "ensembleLufs": -21.60576387803041,
+    "diffLu": -1.5716415286497387
+   },
+   {
+    "trim": 0.206392802952766,
+    "ensembleLufs": -23.177405224118335,
+    "diffLu": -1.825618127782036e-7
+   }
+  ],
+  "trim": 0.206392802952766,
+  "gainDb": -13.70610901806664,
+  "ensembleLufs": -23.177405224118335,
+  "diffLu": -1.825618127782036e-7,
+  "ensemblePeak": 0.11593300104141235,
+  "nan": false,
+  "clippedSamples": 0
+ },
+ "calibrationOk": true,
+ "onsets": {
+  "lagMs": 50,
+  "r": 0.199,
+  "rAt40": 0.192,
+  "zFar": 1.87,
+  "farMean": 0.1355,
+  "farSd": 0.0342,
+  "curve": [
+   [
+    -50,
+    0.193
+   ],
+   [
+    -40,
+    0.192
+   ],
+   [
+    -30,
+    0.15
+   ],
+   [
+    -20,
+    0.131
+   ],
+   [
+    -10,
+    0.123
+   ],
+   [
+    -5,
+    0.164
+   ],
+   [
+    0,
+    0.11
+   ],
+   [
+    5,
+    0.187
+   ],
+   [
+    10,
+    0.08
+   ],
+   [
+    20,
+    0.114
+   ],
+   [
+    30,
+    0.121
+   ],
+   [
+    40,
+    0.16
+   ],
+   [
+    50,
+    0.199
+   ]
+  ]
+ },
+ "onsetControl": {
+  "shiftMs": 100,
+  "lagMs": -50,
+  "r": 0.2,
+  "rAt40": 0.154,
+  "zFar": 2.08,
+  "passes": false
+ },
+ "onsetFlux": {
+  "lagMs": 3,
+  "r": 0.511,
+  "rAt40": 0.115,
+  "zFar": 4.73,
+  "farMean": 0.1093,
+  "farSd": 0.0849,
+  "curve": [
+   [
+    -50,
+    0.101
+   ],
+   [
+    -40,
+    0.078
+   ],
+   [
+    -30,
+    0.007
+   ],
+   [
+    -20,
+    0.085
+   ],
+   [
+    -10,
+    0.16
+   ],
+   [
+    -5,
+    0.217
+   ],
+   [
+    0,
+    0.397
+   ],
+   [
+    5,
+    0.443
+   ],
+   [
+    10,
+    0.219
+   ],
+   [
+    20,
+    0.307
+   ],
+   [
+    30,
+    0.193
+   ],
+   [
+    40,
+    0.115
+   ],
+   [
+    50,
+    0.138
+   ]
+  ],
+  "control": {
+   "shiftMs": 100,
+   "lagMs": -50,
+   "r": 0.156,
+   "rAt40": 0.077,
+   "zFar": 1.85,
+   "passes": false
+  }
+ },
+ "onsetOk": true,
+ "onsetCriterion": "band flux: z 4.73 (the MT-1 envelope did not pass)",
+ "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
+ "handovers": [
+  {
+   "at": 20.3,
+   "blocks": 6,
+   "bumpLu": -0.03,
+   "dipLu": 0.14,
+   "rows": [
+    {
+     "t": 20.3,
+     "handover": -21.07,
+     "original": -21.04,
+     "ensemble": -22.53,
+     "above": -0.03,
+     "below": -1.46
+    },
+    {
+     "t": 20.4,
+     "handover": -21.33,
+     "original": -21.26,
+     "ensemble": -22.61,
+     "above": -0.08,
+     "below": -1.28
+    },
+    {
+     "t": 20.5,
+     "handover": -21.72,
+     "original": -21.26,
+     "ensemble": -22.75,
+     "above": -0.46,
+     "below": -1.03
+    },
+    {
+     "t": 20.6,
+     "handover": -22.12,
+     "original": -21.09,
+     "ensemble": -22.82,
+     "above": -1.03,
+     "below": -0.7
+    },
+    {
+     "t": 20.7,
+     "handover": -22.52,
+     "original": -21.2,
+     "ensemble": -22.93,
+     "above": -1.32,
+     "below": -0.41
+    },
+    {
+     "t": 20.8,
+     "handover": -22.9,
+     "original": -20.8,
+     "ensemble": -22.76,
+     "above": -2.09,
+     "below": 0.14
+    }
+   ]
+  },
+  {
+   "at": 26.4,
+   "blocks": 6,
+   "bumpLu": 0.05,
+   "dipLu": 0.64,
+   "rows": [
+    {
+     "t": 26.4,
+     "handover": -23.48,
+     "original": -25.78,
+     "ensemble": -23.53,
+     "above": 0.05,
+     "below": -2.3
+    },
+    {
+     "t": 26.5,
+     "handover": -23.97,
+     "original": -25.53,
+     "ensemble": -23.38,
+     "above": -0.59,
+     "below": -1.56
+    },
+    {
+     "t": 26.6,
+     "handover": -24.73,
+     "original": -25.4,
+     "ensemble": -23.53,
+     "above": -1.2,
+     "below": -0.67
+    },
+    {
+     "t": 26.7,
+     "handover": -25.25,
+     "original": -25.75,
+     "ensemble": -23.36,
+     "above": -1.89,
+     "below": -0.49
+    },
+    {
+     "t": 26.8,
+     "handover": -25.87,
+     "original": -25.23,
+     "ensemble": -23.51,
+     "above": -2.36,
+     "below": 0.64
+    },
+    {
+     "t": 26.9,
+     "handover": -25.91,
+     "original": -25.82,
+     "ensemble": -23.35,
+     "above": -2.56,
+     "below": 0.09
+    }
+   ]
+  }
+ ],
+ "handoverOk": true,
+ "handoverFade": "equal power (MT-2)",
+ "render": {
+  "songId": "yn_north",
+  "fingerprint": "sha256:b0f2b641bc69e48a159e6bb00ba828d8c67bcd1f0636b9ec29c22b8164602b47",
+  "sourceHead": "e83b43f45e2c4c89a18ff558505f85e1e822c7a9",
+  "sampleRate": 48000,
+  "score": {
+   "durationSec": 132.41379310344828,
+   "loop": true,
+   "loopStartSec": 0,
+   "loopIdx": 0,
+   "events": 36,
+   "periodSec": 132.41379310344828
+  },
+  "head": {
+   "file": "head.wav",
+   "frames": 220800,
+   "playableStartFrame": 4800,
+   "playableEndFrame": 196800,
+   "joinSec": 4,
+   "leadSec": 0.1,
+   "guardSec": 0.5,
+   "guardExtraFrames": 0,
+   "eventsPlaced": 2
+  },
+  "loop": {
+   "file": "loop.wav",
+   "frames": 6403862,
+   "playableStartFrame": 24000,
+   "playableEndFrame": 6379862,
+   "periodFrames": 6355862,
+   "periodErrorPpm": -0.010850694498465428,
+   "guardExtraFrames": 0,
+   "eventsPlaced": 36,
+   "eventsInRepeat": 36
+  },
+  "join": {
+   "cycleFrame": 192000,
+   "settleSec": 4,
+   "longestOverhangSec": 0.48070833333333335,
+   "residualDb": -135.33908678666037
+  },
+  "master": {
+   "peakBeforeScale": 0.13226190209388733,
+   "scale": 6.7385310813168475,
+   "format": "WAV float32, unfaded"
+  },
+  "parts": {
+   "lead": {
+    "gain": 8.406727012434542,
+    "rms": 0.04809478708656075,
+    "measured": {
+     "originalKmsDb": -25.22866885838315,
+     "ensembleUnitKmsDb": -43.7212077586279,
+     "gain": 8.406727012434542,
+     "gainDb": 18.49253890024475
+    }
+   },
+   "low": {
+    "gain": 1.1313661534608737,
+    "rms": 0.01471843096395705,
+    "measured": {
+     "originalKmsDb": -37.392239288901195,
+     "ensembleUnitKmsDb": -38.46430292927734,
+     "gain": 1.1313661534608737,
+     "gainDb": 1.0720636403761443
+    }
+   }
+  },
+  "balanceCheckAgainstSc1": null,
+  "treatment": {
+   "voices": "SC-1 (rs1.py fork) and MT-2's additions",
+   "instruments": {
+    "shinobue": "shinobue_color",
+    "bowed": "cello"
+   },
+   "percussion": {},
+   "gains": "measured: each part at the Original part's K-weighted level over the first pass (stems.mjs)",
+   "room": {
+    "seconds": 1.7,
+    "wet": 0.17
+   },
+   "echo": null,
+   "filters": "HP 32 Hz, LP 11 kHz (2nd-order Butterworth)"
+  },
+  "tools": {
+   "fluidsynth": "2.3.4",
+   "soundFont": "TimGM6mb.sf2",
+   "soundFontSha256": "c5378b62028c920cb11e4803327983fee2f2cdff5dc89c708e39da417e51c854",
+   "numpy": "2.4.6",
+   "soundfile": "0.14.0"
+  },
+  "elapsedSec": 11.596909046173096
+ },
+ "renderer": "mt1-tools-sha256:85c74c73f09b7f72",
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetsRejudged": {
+  "at": "2026-10-14T01:41:37.734Z",
+  "by": "verify.mjs --rejudge-onsets",
+  "before": {
+   "onsetOk": true,
+   "onsetCriterion": "band flux: peak at least 3x the correlation 40 ms away (the MT-1 envelope did not pass)"
+  }
+ }
+}

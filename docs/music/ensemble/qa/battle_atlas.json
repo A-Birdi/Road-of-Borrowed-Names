@@ -1670,118 +1670,118 @@
   }
  },
  "onsetOk": true,
- "onsetCriterion": "MT-1 envelope: peak at least 3x the correlation 40 ms away",
+ "onsetCriterion": "MT-1 envelope: z 6.09 (peak/40 ms 6.1)",
  "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
  "handovers": [
   {
    "at": 20.3,
    "blocks": 6,
-   "bumpLu": -0.03,
-   "dipLu": 0.15,
+   "bumpLu": 0.27,
+   "dipLu": -0.4,
    "rows": [
     {
      "t": 20.3,
-     "handover": -17.96,
+     "handover": -17.92,
      "original": -17.93,
      "ensemble": -18.31,
-     "above": -0.03,
-     "below": -0.35
+     "above": 0.02,
+     "below": -0.4
     },
     {
      "t": 20.4,
-     "handover": -19.15,
+     "handover": -18.7,
      "original": -18.74,
      "ensemble": -19.31,
-     "above": -0.41,
-     "below": -0.16
+     "above": 0.03,
+     "below": -0.6
     },
     {
      "t": 20.5,
-     "handover": -20.33,
+     "handover": -19.62,
      "original": -19.44,
      "ensemble": -20.17,
-     "above": -0.89,
-     "below": 0.15
+     "above": -0.18,
+     "below": -0.55
     },
     {
      "t": 20.6,
-     "handover": -21.91,
+     "handover": -20.93,
      "original": -20.26,
      "ensemble": -21.79,
-     "above": -1.65,
-     "below": 0.12
+     "above": -0.67,
+     "below": -0.87
     },
     {
      "t": 20.7,
-     "handover": -19.4,
+     "handover": -18.88,
      "original": -19.47,
      "ensemble": -19.15,
-     "above": -0.25,
-     "below": -0.07
+     "above": 0.27,
+     "below": -0.59
     },
     {
      "t": 20.8,
-     "handover": -17.93,
+     "handover": -17.84,
      "original": -18.54,
      "ensemble": -17.86,
-     "above": -0.07,
-     "below": -0.61
+     "above": 0.01,
+     "below": -0.7
     }
    ]
   },
   {
    "at": 26.4,
    "blocks": 6,
-   "bumpLu": -0.04,
-   "dipLu": 0.78,
+   "bumpLu": 0.04,
+   "dipLu": 0.07,
    "rows": [
     {
      "t": 26.4,
-     "handover": -16.96,
+     "handover": -16.87,
      "original": -17.14,
      "ensemble": -16.91,
-     "above": -0.04,
-     "below": -0.18
+     "above": 0.04,
+     "below": -0.27
     },
     {
      "t": 26.5,
-     "handover": -17.16,
+     "handover": -16.64,
      "original": -17.06,
      "ensemble": -16.67,
-     "above": -0.48,
-     "below": 0.1
+     "above": 0.03,
+     "below": -0.42
     },
     {
      "t": 26.6,
-     "handover": -17.1,
+     "handover": -16.48,
      "original": -16.86,
      "ensemble": -16.43,
-     "above": -0.67,
-     "below": 0.24
+     "above": -0.05,
+     "below": -0.38
     },
     {
      "t": 26.7,
-     "handover": -18.24,
+     "handover": -17.45,
      "original": -17.19,
      "ensemble": -17.46,
-     "above": -1.06,
-     "below": 0.78
+     "above": -0.26,
+     "below": -0.01
     },
     {
      "t": 26.8,
-     "handover": -19.29,
+     "handover": -18.42,
      "original": -18.28,
      "ensemble": -18.62,
-     "above": -1.02,
-     "below": 0.68
+     "above": -0.14,
+     "below": -0.2
     },
     {
      "t": 26.9,
-     "handover": -17.98,
+     "handover": -17.83,
      "original": -17.76,
      "ensemble": -17.38,
-     "above": -0.6,
-     "below": 0.22
+     "above": -0.44,
+     "below": 0.07
     }
    ]
   }
@@ -1978,5 +1978,35 @@
   },
   "elapsedSec": 37.877665758132935
  },
- "renderer": "mt1-tools-sha256:96ee0c13f319e39e"
+ "renderer": "mt1-tools-sha256:96ee0c13f319e39e",
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetsRejudged": {
+  "at": "2026-10-14T01:41:36.999Z",
+  "by": "verify.mjs --rejudge-onsets",
+  "before": {
+   "onsetOk": true,
+   "onsetCriterion": "MT-1 envelope: peak at least 3x the correlation 40 ms away"
+  }
+ },
+ "handoverFade": "equal power (MT-2)",
+ "handoversRemeasured": {
+  "at": "2026-10-14T01:51:05.306Z",
+  "by": "verify.mjs --handovers-only",
+  "before": {
+   "handoverOk": true,
+   "fade": "linear (MT-1)",
+   "handovers": [
+    {
+     "at": 20.3,
+     "bumpLu": -0.03,
+     "dipLu": 0.15
+    },
+    {
+     "at": 26.4,
+     "bumpLu": -0.04,
+     "dipLu": 0.78
+    }
+   ]
+  }
+ }
 }

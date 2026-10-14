@@ -448,110 +448,110 @@
   "passes": false
  },
  "onsetOk": true,
- "onsetCriterion": "MT-1: peak at least 3x the correlation 40 ms away",
+ "onsetCriterion": "MT-1 envelope: z 10 (peak/40 ms 9.25)",
  "handoverTimes": "steadiest moments of a short cue (1.45 s, 4.6 s)",
  "handovers": [
   {
    "at": 1.45,
    "blocks": 5,
-   "bumpLu": -0.38,
-   "dipLu": 0.57,
+   "bumpLu": 0.19,
+   "dipLu": -0.09,
    "rows": [
     {
      "t": 1.5,
-     "handover": -18.46,
+     "handover": -18.22,
      "original": -18.31,
      "ensemble": -17.75,
-     "above": -0.71,
-     "below": 0.15
+     "above": -0.47,
+     "below": -0.09
     },
     {
      "t": 1.6,
-     "handover": -19.2,
+     "handover": -18.41,
      "original": -18.63,
      "ensemble": -18.19,
-     "above": -1.01,
-     "below": 0.57
+     "above": -0.22,
+     "below": -0.22
     },
     {
      "t": 1.7,
-     "handover": -19.47,
+     "handover": -18.63,
      "original": -19.04,
      "ensemble": -18.57,
-     "above": -0.9,
-     "below": 0.43
+     "above": -0.06,
+     "below": -0.41
     },
     {
      "t": 1.8,
-     "handover": -19.72,
+     "handover": -18.83,
      "original": -19.36,
      "ensemble": -18.99,
-     "above": -0.72,
-     "below": 0.36
+     "above": 0.16,
+     "below": -0.52
     },
     {
      "t": 1.9,
-     "handover": -19.41,
+     "handover": -18.84,
      "original": -19.34,
      "ensemble": -19.03,
-     "above": -0.38,
-     "below": 0.07
+     "above": 0.19,
+     "below": -0.5
     }
    ]
   },
   {
    "at": 4.6,
    "blocks": 6,
-   "bumpLu": -0.04,
-   "dipLu": 0.37,
+   "bumpLu": 0.45,
+   "dipLu": -0.48,
    "rows": [
     {
      "t": 4.6,
-     "handover": -20.12,
+     "handover": -20.07,
      "original": -21.34,
      "ensemble": -20.08,
-     "above": -0.04,
-     "below": -1.22
+     "above": 0.01,
+     "below": -1.27
     },
     {
      "t": 4.7,
-     "handover": -21.48,
+     "handover": -20.93,
      "original": -21.61,
      "ensemble": -21.07,
-     "above": -0.41,
-     "below": -0.13
+     "above": 0.14,
+     "below": -0.68
     },
     {
      "t": 4.8,
-     "handover": -22,
+     "handover": -21.21,
      "original": -21.83,
      "ensemble": -21.46,
-     "above": -0.54,
-     "below": 0.17
+     "above": 0.25,
+     "below": -0.62
     },
     {
      "t": 4.9,
-     "handover": -22.34,
+     "handover": -21.49,
      "original": -21.94,
      "ensemble": -21.97,
-     "above": -0.4,
-     "below": 0.37
+     "above": 0.45,
+     "below": -0.48
     },
     {
      "t": 5,
-     "handover": -22.52,
+     "handover": -21.71,
      "original": -21.94,
      "ensemble": -22.78,
-     "above": -0.58,
-     "below": -0.25
+     "above": 0.23,
+     "below": -1.07
     },
     {
      "t": 5.1,
-     "handover": -22.14,
+     "handover": -21.93,
      "original": -21.96,
      "ensemble": -23.68,
-     "above": -0.17,
-     "below": -1.54
+     "above": 0.04,
+     "below": -1.75
     }
    ]
   }
@@ -675,5 +675,35 @@
   },
   "elapsedSec": 1.583177089691162
  },
- "renderer": "mt1-tools-sha256:96ee0c13f319e39e"
+ "renderer": "mt1-tools-sha256:96ee0c13f319e39e",
+ "handoverFade": "equal power (MT-2)",
+ "handoversRemeasured": {
+  "at": "2026-10-14T01:21:43.535Z",
+  "by": "verify.mjs --handovers-only",
+  "before": {
+   "handoverOk": true,
+   "fade": "linear (MT-1)",
+   "handovers": [
+    {
+     "at": 1.45,
+     "bumpLu": -0.38,
+     "dipLu": 0.57
+    },
+    {
+     "at": 4.6,
+     "bumpLu": -0.04,
+     "dipLu": 0.37
+    }
+   ]
+  }
+ },
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetsRejudged": {
+  "at": "2026-10-14T01:41:36.757Z",
+  "by": "verify.mjs --rejudge-onsets",
+  "before": {
+   "onsetOk": true,
+   "onsetCriterion": "MT-1: peak at least 3x the correlation 40 ms away"
+  }
+ }
 }

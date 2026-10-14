@@ -1673,118 +1673,118 @@
   }
  },
  "onsetOk": true,
- "onsetCriterion": "MT-1 envelope: peak at least 3x the correlation 40 ms away",
+ "onsetCriterion": "MT-1 envelope: z 7.53 (peak/40 ms 11)",
  "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
  "handovers": [
   {
    "at": 20.3,
    "blocks": 6,
-   "bumpLu": -0.24,
-   "dipLu": 1,
+   "bumpLu": -0.15,
+   "dipLu": 0.23,
    "rows": [
     {
      "t": 20.3,
-     "handover": -16.74,
+     "handover": -16.7,
      "original": -16.68,
      "ensemble": -16.29,
-     "above": -0.45,
-     "below": 0.06
+     "above": -0.4,
+     "below": 0.02
     },
     {
      "t": 20.4,
-     "handover": -16.78,
+     "handover": -16.1,
      "original": -16.21,
      "ensemble": -15.92,
-     "above": -0.86,
-     "below": 0.57
+     "above": -0.18,
+     "below": -0.11
     },
     {
      "t": 20.5,
-     "handover": -16.53,
+     "handover": -15.76,
      "original": -15.53,
      "ensemble": -15.5,
-     "above": -1.03,
-     "below": 1
+     "above": -0.27,
+     "below": 0.23
     },
     {
      "t": 20.6,
-     "handover": -15.95,
+     "handover": -15.27,
      "original": -15.33,
      "ensemble": -14.99,
-     "above": -0.96,
-     "below": 0.62
+     "above": -0.28,
+     "below": -0.06
     },
     {
      "t": 20.7,
-     "handover": -15.56,
+     "handover": -14.96,
      "original": -14.95,
      "ensemble": -14.81,
-     "above": -0.75,
-     "below": 0.61
+     "above": -0.16,
+     "below": 0.02
     },
     {
      "t": 20.8,
-     "handover": -14.8,
+     "handover": -14.71,
      "original": -14.56,
      "ensemble": -14.74,
-     "above": -0.24,
-     "below": 0.07
+     "above": -0.15,
+     "below": -0.03
     }
    ]
   },
   {
    "at": 26.4,
    "blocks": 6,
-   "bumpLu": -0.03,
-   "dipLu": 0.59,
+   "bumpLu": 0.07,
+   "dipLu": 0.05,
    "rows": [
     {
      "t": 26.4,
-     "handover": -15.59,
+     "handover": -15.55,
      "original": -15.67,
      "ensemble": -15.56,
-     "above": -0.03,
-     "below": -0.08
+     "above": 0.01,
+     "below": -0.12
     },
     {
      "t": 26.5,
-     "handover": -16.57,
+     "handover": -16.07,
      "original": -16.14,
      "ensemble": -16.15,
-     "above": -0.43,
-     "below": 0.41
+     "above": 0.07,
+     "below": -0.08
     },
     {
      "t": 26.6,
-     "handover": -17.01,
+     "handover": -16.32,
      "original": -16.53,
      "ensemble": -16.32,
-     "above": -0.69,
-     "below": 0.48
+     "above": -0.01,
+     "below": -0.2
     },
     {
      "t": 26.7,
-     "handover": -17.05,
+     "handover": -16.36,
      "original": -16.49,
      "ensemble": -15.89,
-     "above": -1.15,
-     "below": 0.56
+     "above": -0.47,
+     "below": -0.13
     },
     {
      "t": 26.8,
-     "handover": -16.3,
+     "handover": -15.76,
      "original": -15.71,
      "ensemble": -15.45,
-     "above": -0.85,
-     "below": 0.59
+     "above": -0.31,
+     "below": 0.05
     },
     {
      "t": 26.9,
-     "handover": -15.1,
+     "handover": -15,
      "original": -15,
      "ensemble": -14.75,
-     "above": -0.35,
-     "below": 0.1
+     "above": -0.25,
+     "below": 0
     }
    ]
   }
@@ -1959,5 +1959,35 @@
   },
   "elapsedSec": 48.540364265441895
  },
- "renderer": "mt1-tools-sha256:96ee0c13f319e39e"
+ "renderer": "mt1-tools-sha256:96ee0c13f319e39e",
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetsRejudged": {
+  "at": "2026-10-14T01:41:36.901Z",
+  "by": "verify.mjs --rejudge-onsets",
+  "before": {
+   "onsetOk": true,
+   "onsetCriterion": "MT-1 envelope: peak at least 3x the correlation 40 ms away"
+  }
+ },
+ "handoverFade": "equal power (MT-2)",
+ "handoversRemeasured": {
+  "at": "2026-10-14T01:42:39.966Z",
+  "by": "verify.mjs --handovers-only",
+  "before": {
+   "handoverOk": true,
+   "fade": "linear (MT-1)",
+   "handovers": [
+    {
+     "at": 20.3,
+     "bumpLu": -0.24,
+     "dipLu": 1
+    },
+    {
+     "at": 26.4,
+     "bumpLu": -0.03,
+     "dipLu": 0.59
+    }
+   ]
+  }
+ }
 }

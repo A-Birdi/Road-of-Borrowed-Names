@@ -1091,118 +1091,118 @@
   "passes": false
  },
  "onsetOk": true,
- "onsetCriterion": "MT-2: peak at least 4 SD above every lag 25-50 ms away (MT-1's 3x test not met)",
+ "onsetCriterion": "MT-1 envelope: z 4.25 (peak/40 ms 2.1)",
  "handoverTimes": "MT-1 fixed times (20.3 s, 26.4 s)",
  "handovers": [
   {
    "at": 20.3,
    "blocks": 6,
-   "bumpLu": -0.12,
-   "dipLu": 0.76,
+   "bumpLu": -0.09,
+   "dipLu": 0.1,
    "rows": [
     {
      "t": 20.3,
-     "handover": -16.14,
+     "handover": -16.11,
      "original": -16.02,
      "ensemble": -17.9,
-     "above": -0.12,
-     "below": -1.76
+     "above": -0.09,
+     "below": -1.79
     },
     {
      "t": 20.4,
-     "handover": -16.71,
+     "handover": -16.37,
      "original": -15.98,
      "ensemble": -17.15,
-     "above": -0.73,
-     "below": -0.45
+     "above": -0.39,
+     "below": -0.78
     },
     {
      "t": 20.5,
-     "handover": -17.51,
+     "handover": -16.86,
      "original": -16.49,
      "ensemble": -16.94,
-     "above": -1.02,
-     "below": 0.57
+     "above": -0.37,
+     "below": -0.08
     },
     {
      "t": 20.6,
-     "handover": -17.68,
+     "handover": -17.01,
      "original": -16.33,
      "ensemble": -17.13,
-     "above": -1.35,
-     "below": 0.55
+     "above": -0.67,
+     "below": -0.12
     },
     {
      "t": 20.7,
-     "handover": -17.96,
+     "handover": -17.29,
      "original": -16.67,
      "ensemble": -17.2,
-     "above": -1.29,
-     "below": 0.76
+     "above": -0.63,
+     "below": 0.1
     },
     {
      "t": 20.8,
-     "handover": -17.29,
+     "handover": -17.03,
      "original": -16.5,
      "ensemble": -17.26,
-     "above": -0.79,
-     "below": 0.02
+     "above": -0.53,
+     "below": -0.24
     }
    ]
   },
   {
    "at": 26.4,
    "blocks": 6,
-   "bumpLu": -0.05,
-   "dipLu": 1.12,
+   "bumpLu": 0.04,
+   "dipLu": 0.46,
    "rows": [
     {
      "t": 26.4,
-     "handover": -17.83,
+     "handover": -17.74,
      "original": -17.78,
      "ensemble": -17.79,
-     "above": -0.05,
-     "below": 0.04
+     "above": 0.04,
+     "below": -0.05
     },
     {
      "t": 26.5,
-     "handover": -18.35,
+     "handover": -17.81,
      "original": -17.57,
      "ensemble": -17.5,
-     "above": -0.85,
-     "below": 0.78
+     "above": -0.31,
+     "below": 0.23
     },
     {
      "t": 26.6,
-     "handover": -18.91,
+     "handover": -18.23,
      "original": -17.94,
      "ensemble": -17.48,
-     "above": -1.43,
-     "below": 0.97
+     "above": -0.75,
+     "below": 0.28
     },
     {
      "t": 26.7,
-     "handover": -18.75,
+     "handover": -18.08,
      "original": -17.63,
      "ensemble": -17.41,
-     "above": -1.33,
-     "below": 1.12
+     "above": -0.67,
+     "below": 0.46
     },
     {
      "t": 26.8,
-     "handover": -18.84,
+     "handover": -18.26,
      "original": -17.91,
      "ensemble": -17.22,
-     "above": -1.62,
-     "below": 0.93
+     "above": -1.04,
+     "below": 0.35
     },
     {
      "t": 26.9,
-     "handover": -18.54,
+     "handover": -18.46,
      "original": -18.25,
      "ensemble": -17.5,
-     "above": -1.05,
-     "below": 0.29
+     "above": -0.97,
+     "below": 0.21
     }
    ]
   }
@@ -1365,5 +1365,35 @@
   },
   "elapsedSec": 26.404472589492798
  },
- "renderer": "mt1-tools-sha256:96ee0c13f319e39e"
+ "renderer": "mt1-tools-sha256:96ee0c13f319e39e",
+ "handoverFade": "equal power (MT-2)",
+ "handoversRemeasured": {
+  "at": "2026-10-14T01:22:41.134Z",
+  "by": "verify.mjs --handovers-only",
+  "before": {
+   "handoverOk": true,
+   "fade": "linear (MT-1)",
+   "handovers": [
+    {
+     "at": 20.3,
+     "bumpLu": -0.12,
+     "dipLu": 0.76
+    },
+    {
+     "at": 26.4,
+     "bumpLu": -0.05,
+     "dipLu": 1.12
+    }
+   ]
+  }
+ },
+ "onsetRule": "peak within 15 ms, r >= 0.03, z >= 4 against lags 25-50 ms; the 100 ms control must not pass",
+ "onsetsRejudged": {
+  "at": "2026-10-14T01:41:36.774Z",
+  "by": "verify.mjs --rejudge-onsets",
+  "before": {
+   "onsetOk": true,
+   "onsetCriterion": "MT-2: peak at least 4 SD above every lag 25-50 ms away (MT-1's 3x test not met)"
+  }
+ }
 }
