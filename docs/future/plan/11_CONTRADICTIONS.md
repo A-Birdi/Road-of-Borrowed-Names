@@ -802,6 +802,11 @@ and implementation."
   Nya for Mochi, generate it using a female model, any one is fine. Just keep it playful". Mochi's ニャー is a sourced
   CC0 or public-domain meow when one's terms can be confirmed; otherwise the AV-bright AivisSpeech voice says it in its
   upbeat style, labelled as generated.
+- **Robin, later:** "I noticed we don't have companion voice auditions in va-2. I should've clarified them. Cover each
+  companion with the same scope as the player: 60 total lines. Amend that to the existing va-2 plan for proper full
+  review". Added: for each of Nao, Mio, Ren and Suzu, five of their own lines (one per mood), three sets of two candidate
+  voices at High and Low (60 each, 240 in all); Qwen3-TTS VoiceDesign, with Suzu's third set on AivisSpeech (Robin's
+  engine for bubbly, high-energy female voices); cast by fit, no pitch tied to Nao's and Ren's they/them.
 
 ### C-94 · Roadside Keepsakes on the whole twelve-chapter road
 **Decided** (2026-10-14). Robin: "Side note, there are only 6 Keepsakes still? We've added much more content to allow

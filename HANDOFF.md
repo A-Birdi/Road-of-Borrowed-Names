@@ -376,7 +376,8 @@
     **VA-2 (Robin, 2026-10-14, C-93):** Robin chose the voice approach (narrator: an AivisSpeech model with a directed
     tone; player: Voice A and B, each High and Low; NPCs: Qwen3-TTS, with AivisSpeech for bubbly feminine voices and
     VOICEVOX Nemo for middle-aged men only; supernatural speakers treated; a neutral word for the player's name in
-    recordings) and asked for casting samples in one gallery file: 60 player, 14 narrator and one line per NPC (281).
+    recordings) and asked for casting samples in one gallery file: 60 player, 240 companion (60 each for Nao, Mio,
+    Ren and Suzu, added the same day), 14 narrator and one line per NPC (281).
     Ready to run on Robin's PC (the engines cannot run in the cloud): `docs/future/voice/va2/HANDOFF_VA2.md`,
     `tools/voice/va2/`. Robin's unticked NPC choices stand (C-93). **No implementation in the game's speech until
     Robin's decisions on the samples.** Robin's later answers (C-93): the Hush needs no voice; the supernatural

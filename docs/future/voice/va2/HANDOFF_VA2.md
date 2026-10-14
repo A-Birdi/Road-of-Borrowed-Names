@@ -27,6 +27,7 @@ short: make the casting samples Robin asked for, exactly and only these, and one
 | Section | Takes | Engine | What Robin decides |
 | --- | ---: | --- | --- |
 | 1 · Player voices | 60 | Qwen3-TTS VoiceDesign | Three sets, each a Voice A and a Voice B at High and Low pitch (the same take moved ±2 semitones, formants kept), five moods (neutral, happy, sad, frustrated, excited) on the player's own lines. Robin picks a set. |
+| 1b · Companions | 240 (60 each) | Qwen3-TTS VoiceDesign; Suzu's third set AivisSpeech | For each of Nao, Mio, Ren and Suzu: three sets, each two candidate voices (A, B) at High and Low, five moods on the companion's own lines. Robin picks one voice per companion. |
 | 2 · Narrator | 14 | AivisSpeech | Seven different female models you choose (N1–N7), each reading one line Directed-Neutral and Directed-Energetic. Robin picks one. |
 | 3 · NPCs | one per NPC (281) | as cast per NPC (Mochi the cat: a sourced meow, not a voice) | One line each with the engine and settings in the plan: Qwen3-TTS VoiceDesign for most, AivisSpeech (slots AV-girl, AV-teen, AV-bright, AV-sweet, AV-showy) for bubbly, high-energy feminine voices, VOICEVOX Nemo (slots NM-A, NM-B, NM-C) for middle-aged men only; supernatural speakers with a treatment. Robin ticks what is disliked; the rest stands. |
 
@@ -53,7 +54,9 @@ the rest and say exactly what and why in the summary.
      (free models only; read each model's licence and record it: it must allow use in a free, distributed game with
      credit). For each: `normal` style id, and `upbeat` if the model has a brighter style (テンション高め, 上機嫌,
      喜び…), else null (the job then uses the neutral style with stronger inflection and says so).
-   - **AV slots:** a model and speaker for each `want`; distinct from the seven narrators where possible.
+   - **AV slots:** a model and speaker for each `want`; distinct from the seven narrators where possible. AV-suzu-A and
+     AV-suzu-B are Suzu's own (her third set): two different models suited to a travelling performer, distinct from
+     every other slot and narrator; record a `calm` style id too where the model has one (her sad line uses it).
    - **NM slots:** NM-A is the Nemo voice Robin preferred in VA-1 for the middle-aged man (VA-1's casting file for
      `voicevox_nemo`, role `npc08`, and Robin's VA-1 notes); NM-B and NM-C two other Nemo male voices.
    - **Mochi's meow (`sounds.cat_meow`):** Robin, 2026-10-14: "source a basic cat meow for Mochi". Find one basic,

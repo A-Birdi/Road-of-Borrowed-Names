@@ -802,7 +802,8 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - Done: Robin's voice decisions recorded verbatim (narrator AivisSpeech with a directed tone; player Voice A/B each
     High and Low; NPCs Qwen3-TTS with AivisSpeech for bubbly feminine voices and VOICEVOX Nemo for middle-aged men
     only; no trailing consonants or breathiness; supernatural treatments; a neutral word for the player's name in
-    recordings); the plan (60 player, 14 narrator, 281 NPC takes, every text a line the game says), the NPC casting
+    recordings); the plan (60 player, 240 companion (60 each, added at Robin's request), 14 narrator, 281 NPC takes,
+    every text a line the game says), the NPC casting
     table with evidence per NPC, the renderer for the free local engines (clean-ending check, formant-kept High/Low,
     treatments, −20 LUFS), the one-file gallery, the handoff for Robin's PC.
   - Robin's later answers (C-93): no voice for the Hush; the supernatural treatments stand; Mochi's ニャー a sourced

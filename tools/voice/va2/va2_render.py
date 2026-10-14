@@ -11,7 +11,7 @@ PC; the cloud environment that wrote this cannot run them). Free, local engines 
     va2_voices.json), not a voice.
 
     python va2_render.py voices  --voices va2_voices.json --out <work>       list the engines' speakers, check the file
-    python va2_render.py render  --plan <plan> --voices va2_voices.json --out <work> [--only player,narrator,npc]
+    python va2_render.py render  --plan <plan> --voices va2_voices.json --out <work> [--only player,companion,narrator,npc]
                                  [--engines qwen_design,aivis,nemo] [--ids ID,ID] [--limit N]
     python va2_render.py render  ... --mock                                   synthetic audio: tests the job, not voices
 
@@ -285,7 +285,7 @@ def check_voices(v):
     models = [((nar.get(n) or {}).get('modelUuid') or (nar.get(n) or {}).get('modelName')) for n in nar]
     if len(set(models)) != len(models):
         p.append('the seven narrator candidates must be seven different models')
-    for k in ['AV-girl', 'AV-teen', 'AV-bright', 'AV-sweet', 'AV-showy']:
+    for k in ['AV-girl', 'AV-teen', 'AV-bright', 'AV-sweet', 'AV-showy', 'AV-suzu-A', 'AV-suzu-B']:
         if not ((v.get('aivis') or {}).get('slots') or {}).get(k):
             p.append('aivis slot ' + k + ' not chosen')
     for k, snd in (v.get('sounds') or {}).items():
@@ -308,7 +308,7 @@ def cmd_render(a):
     os.makedirs(os.path.join(a.out, 'clips'), exist_ok=True)
     rpath = os.path.join(a.out, 'results.json')
     res = jload(rpath) if os.path.exists(rpath) else {'schemaVersion': 'rbn-va2-results-1', 'plan': plan['builtFrom'], 'takes': {}}
-    only = set(a.only.split(',')) if a.only else {'player', 'narrator', 'npc'}
+    only = set(a.only.split(',')) if a.only else {'player', 'companion', 'narrator', 'npc'}
     engines = set(a.engines.split(',')) if a.engines else {'qwen_design', 'aivis', 'nemo', 'sound'}
     ids = set(a.ids.split(',')) if a.ids else None
     eng = {'mock': Mock()}
@@ -316,7 +316,7 @@ def cmd_render(a):
         eng['qwen'] = Qwen(voices.get('qwen') or {})
         eng['aivis'] = VoicevoxFamily((voices.get('aivis') or {}).get('url', 'http://127.0.0.1:10101'), 'aivis')
         eng['nemo'] = VoicevoxFamily((voices.get('nemo') or {}).get('url', 'http://127.0.0.1:50121'), 'nemo')
-    takes = [t for s in ('player', 'narrator', 'npc') if s in only for t in plan['sections'][s]['takes']]
+    takes = [t for s in ('player', 'companion', 'narrator', 'npc') if s in only and s in plan['sections'] for t in plan['sections'][s]['takes']]
     # one engine at a time (the heavy one last), so only one model is loaded at once
     order = {'sound': 0, 'aivis': 1, 'nemo': 2, 'qwen_design': 3}
     takes = sorted([t for t in takes if t['voiceSpec']['engine'] in engines and (ids is None or t['id'] in ids)], key=lambda t: order[t['voiceSpec']['engine']])

@@ -16,31 +16,243 @@
  "aivis": {
   "url": "http://127.0.0.1:10101",
   "narrators": {
-   "N1": { "modelName": null, "modelUuid": null, "modelVersion": null, "speakerName": null, "styles": { "normal": null, "upbeat": null }, "licence": null, "credit": null, "why": null },
-   "N2": { "modelName": null, "modelUuid": null, "modelVersion": null, "speakerName": null, "styles": { "normal": null, "upbeat": null }, "licence": null, "credit": null, "why": null },
-   "N3": { "modelName": null, "modelUuid": null, "modelVersion": null, "speakerName": null, "styles": { "normal": null, "upbeat": null }, "licence": null, "credit": null, "why": null },
-   "N4": { "modelName": null, "modelUuid": null, "modelVersion": null, "speakerName": null, "styles": { "normal": null, "upbeat": null }, "licence": null, "credit": null, "why": null },
-   "N5": { "modelName": null, "modelUuid": null, "modelVersion": null, "speakerName": null, "styles": { "normal": null, "upbeat": null }, "licence": null, "credit": null, "why": null },
-   "N6": { "modelName": null, "modelUuid": null, "modelVersion": null, "speakerName": null, "styles": { "normal": null, "upbeat": null }, "licence": null, "credit": null, "why": null },
-   "N7": { "modelName": null, "modelUuid": null, "modelVersion": null, "speakerName": null, "styles": { "normal": null, "upbeat": null }, "licence": null, "credit": null, "why": null }
+   "N1": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N2": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N3": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N4": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N5": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N6": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N7": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   }
   },
   "slots": {
-   "AV-girl": { "want": "an energetic young girl (a child), bright and bouncy", "modelName": null, "modelUuid": null, "speakerName": null, "styles": { "normal": null, "upbeat": null, "calm": null }, "licence": null, "credit": null, "why": null },
-   "AV-teen": { "want": "a lively teenage girl", "modelName": null, "modelUuid": null, "speakerName": null, "styles": { "normal": null, "upbeat": null, "calm": null }, "licence": null, "credit": null, "why": null },
-   "AV-bright": { "want": "a bright, bubbly young woman (a cheerful shopkeeper or helper)", "modelName": null, "modelUuid": null, "speakerName": null, "styles": { "normal": null, "upbeat": null, "calm": null }, "licence": null, "credit": null, "why": null },
-   "AV-sweet": { "want": "a sweet, gentle but energetic young woman (not breathy)", "modelName": null, "modelUuid": null, "speakerName": null, "styles": { "normal": null, "upbeat": null, "calm": null }, "licence": null, "credit": null, "why": null },
-   "AV-showy": { "want": "a high-energy performer or announcer woman", "modelName": null, "modelUuid": null, "speakerName": null, "styles": { "normal": null, "upbeat": null, "calm": null }, "licence": null, "credit": null, "why": null }
+   "AV-girl": {
+    "want": "an energetic young girl (a child), bright and bouncy",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "AV-teen": {
+    "want": "a lively teenage girl",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "AV-bright": {
+    "want": "a bright, bubbly young woman (a cheerful shopkeeper or helper)",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "AV-sweet": {
+    "want": "a sweet, gentle but energetic young woman (not breathy)",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "AV-showy": {
+    "want": "a high-energy performer or announcer woman",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "AV-suzu-A": {
+    "want": "Suzu, the travelling performer (set 3, voice A): a projecting, energetic stage voice; a model distinct from the narrators and the other slots",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "AV-suzu-B": {
+    "want": "Suzu, the travelling performer (set 3, voice B): a warmer, huskier, witty voice; a model distinct from AV-suzu-A",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   }
   }
  },
  "sounds": {
-  "cat_meow": { "want": "one basic, clean domestic cat meow (about 0.5–1.5 s) for Mochi; CC0 or public domain only, confirmed on the recording's own page", "file": null, "title": null, "url": null, "author": null, "licence": null, "sha256": null }
+  "cat_meow": {
+   "want": "one basic, clean domestic cat meow (about 0.5–1.5 s) for Mochi; CC0 or public domain only, confirmed on the recording's own page",
+   "file": null,
+   "title": null,
+   "url": null,
+   "author": null,
+   "licence": null,
+   "sha256": null
+  }
  },
  "nemo": {
   "url": "http://127.0.0.1:50121",
   "slots": {
-   "NM-A": { "want": "the Nemo voice Robin preferred in VA-1 for the middle-aged man (npc08): warm, ordinary", "speakerName": null, "styles": { "normal": null }, "licence": null, "credit": null, "why": null },
-   "NM-B": { "want": "another Nemo male voice, gruffer and lower", "speakerName": null, "styles": { "normal": null }, "licence": null, "credit": null, "why": null },
-   "NM-C": { "want": "another Nemo male voice, brisker and lighter (a clerk)", "speakerName": null, "styles": { "normal": null }, "licence": null, "credit": null, "why": null }
+   "NM-A": {
+    "want": "the Nemo voice Robin preferred in VA-1 for the middle-aged man (npc08): warm, ordinary",
+    "speakerName": null,
+    "styles": {
+     "normal": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "NM-B": {
+    "want": "another Nemo male voice, gruffer and lower",
+    "speakerName": null,
+    "styles": {
+     "normal": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "NM-C": {
+    "want": "another Nemo male voice, brisker and lighter (a clerk)",
+    "speakerName": null,
+    "styles": {
+     "normal": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   }
   }
  }
 }

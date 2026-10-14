@@ -4317,6 +4317,11 @@ Robin's PC: `docs/future/voice/va2/HANDOFF_VA2.md`. **No voice was generated or 
   model, any one is fine. Just keep it playful": without a confirmed recording, the AV-bright AivisSpeech voice says it
   in its upbeat style, labelled as generated in the gallery. Self-test (`--mock`): the sourced path (0.8 s, clean) and
   the fallback path (`--mock-unsourced`: the AivisSpeech take, 0.65 s, −20.0 LUFS, the gallery's label) both made.
+- **The companions, added (Robin, 2026-10-14: "Cover each companion with the same scope as the player: 60 total
+  lines"):** 240 takes, 60 for each of Nao, Mio, Ren and Suzu (five of their own lines checked to be theirs, one per mood;
+  three sets of two candidate voices at High and Low; Suzu's third set AivisSpeech with her own two slots). Self-test
+  (`--mock`): the 240 made, 0 failed; the gallery's new section 2 with 48 picks; the whole gallery (595 takes) with no
+  take missing and no sideways scroll at 1280 and 390 px.
 - **Not done:** the recordings, on Robin's PC; Robin's picks; anything in the game's speech.
 
 ## AR-1 — the illustrations' art pass (Robin's report, 2026-10-13; implemented provisionally, internally reviewed)

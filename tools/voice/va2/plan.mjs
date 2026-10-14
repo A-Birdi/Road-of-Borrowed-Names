@@ -5,7 +5,8 @@
 //   2. the narrator: seven female AivisSpeech candidates, each Directed-Neutral and Directed-Energetic: 14 takes;
 //   3. every NPC who speaks: one sentence each, the engine and settings chosen by the lead from Robin's rules
 //      (docs/future/voice/va2/npc_casting.json): about 281 takes.
-// Nothing else: no companions, no whole-game lines. Every text is a line the game really says (its key is checked).
+//   1b. the four companions (added at Robin's request the same day): the player's scope for each, 4 × 60 = 240 takes;
+// Nothing else: no whole-game lines. Every text is a line the game really says (its key is checked).
 // The spoken text is the line without furigana or the learner's spaces; names are given as their own kana (the game's
 // furigana), since an engine's dictionary does not know Manybridge is やおばし.
 //
@@ -102,6 +103,106 @@ function playerSection() {
   return { sets: PLAYER_SETS, pitchSemitones: PITCH, moods: MOOD, texts, takes };
 }
 
+// ---- 1b. the companions (Robin, 2026-10-14: "Cover each companion with the same scope as the player: 60 total lines") ---
+// For each companion: five of their own lines, one per mood; three sets, each two candidate voices (A the lighter,
+// brighter reading of the character, B the lower, warmer one), each at High and Low: 3 × 2 × 2 × 5 = 60 takes. Cast by
+// fit, never by a pitch rule tied to pronouns (Nao and Ren are they/them). Qwen3-TTS VoiceDesign as for the player;
+// Suzu's third set is AivisSpeech, the engine Robin found best for "bubbly / high energy female voices". Suzu's lines
+// are her standard ones (with the Kansai option on, the same voice reads her Kansai versions).
+const COMPANIONS = [
+  { id: 'nao', name: 'Nao', lines: [
+    { mood: 'neutral', scene: 'rw.nao_first', plain: '配達人のナオ。嵐で足止め。で、これ。' },
+    { mood: 'happy', scene: 'cs.talk_parcel', plain: '名前のない宛名でも、届くところには届く。……気分がいいな。' },
+    { mood: 'sad', scene: 'sg.ch2_end', plain: '届けるべきじゃないと思った。今も、半分はそう思ってる。' },
+    { mood: 'frustrated', scene: 'sg.road_inland_closed', plain: 'は？一本道だったぞ。……道が、自分の行き先を忘れてる。' },
+    { mood: 'excited', scene: 'lf.after_town', plain: '……うるさい。すごくうるさい。最高じゃん。' },
+  ], sets: [
+    { set: 1, label: 'Set 1: two androgynous readings',
+      A: 'A courier in their early twenties; a light, clear, androgynous voice; quick, wry and dry, warm underneath; casual Tokyo Japanese.',
+      B: 'A courier in their mid twenties; a lower, slightly husky androgynous voice; laconic and guarded, warm underneath; casual Tokyo Japanese.' },
+    { set: 2, label: 'Set 2: two readings leaning masculine',
+      A: 'A young man in his early twenties, a bright tenor; brisk, streetwise and quick-witted, dry humour; casual Tokyo Japanese.',
+      B: 'A man in his mid twenties, a low baritone; terse, steady and watchful, dry humour; casual Tokyo Japanese.' },
+    { set: 3, label: 'Set 3: two readings leaning feminine',
+      A: 'A young woman in her early twenties, a clear alto with a tomboyish edge; quick, blunt and wry; casual Tokyo Japanese.',
+      B: 'A woman in her mid twenties, a low, husky alto; cool and laconic, quietly kind; casual Tokyo Japanese.' },
+  ] },
+  { id: 'mio', name: 'Mio', lines: [
+    { mood: 'neutral', scene: 'cs.view_window', plain: '紙がとても薄いですね。破らないように、気をつけます。' },
+    { mood: 'happy', scene: 'hall.w2.f1_first', plain: '狐の嫁入り！子供の頃、窓から狐を探したわ。' },
+    { mood: 'sad', scene: 'sg.da_boss_after', plain: '静かなほうが傷つかない……。その気持ちが少し分かるのが、嫌。' },
+    { mood: 'frustrated', scene: 'sg.da_boss', plain: '片付ける？人の手紙を？……失礼ですが、あなたの規定、間違っています。' },
+    { mood: 'excited', scene: 'sg.genzo_wind', plain: '髪がぐちゃぐちゃ！……でも、いい風！' },
+  ], sets: [
+    { set: 1, label: 'Set 1: bright and capable, warm and reassuring',
+      A: 'A young woman in her early twenties, an apothecary; a bright, clear mezzo; warm, attentive and capable; polite standard Japanese.',
+      B: 'A woman in her mid twenties, an apothecary; a warm, rounded alto; calm, confident and reassuring; polite standard Japanese.' },
+    { set: 2, label: 'Set 2: lively, and grounded',
+      A: 'A young woman around twenty, an apothecary; a light, lively soprano; cheerful, quick and sincere; polite standard Japanese.',
+      B: 'A woman in her twenties, an apothecary; a steady mid-low voice; grounded and kind with a little dry humour; polite standard Japanese.' },
+    { set: 3, label: 'Set 3: precise, and older-sisterly',
+      A: 'A young woman in her twenties, an apothecary; a clear, precise voice like a young doctor; brisk and kind; polite standard Japanese.',
+      B: 'A woman in her late twenties, an apothecary; a mature, warm voice like a dependable older sister; patient and firm; polite standard Japanese.' },
+  ] },
+  { id: 'ren', name: 'Ren', lines: [
+    { mood: 'neutral', scene: 'cs.parcel_shelf', plain: '道が変わっても、宛名は残る。灯の名と似ています。' },
+    { mood: 'happy', scene: 'rw.mr_lantern', plain: '……ありがとう。灯りが一つともると、道が一つ思い出す。先生の口癖です。' },
+    { mood: 'sad', scene: 'sg.fuku_plate', plain: '名を返せば、名に付いていたものも戻る。……分かっていたはずなのに。' },
+    { mood: 'frustrated', scene: 'yn.ren_evening', plain: '……古い決まりを、軽く見ないでください。それしか残っていない人もいるんです！' },
+    { mood: 'excited', scene: 'yn.toki', plain: '百八！……全部、名前があるんですか？' },
+  ], sets: [
+    { set: 1, label: 'Set 1: two androgynous readings',
+      A: 'A lantern keeper around twenty; a soft, clear androgynous tenor-alto; earnest, formal and gentle; polite standard Japanese.',
+      B: 'A lantern keeper in their mid twenties; a low, calm androgynous voice; measured and reverent, quietly humorous; polite standard Japanese.' },
+    { set: 2, label: 'Set 2: two readings leaning masculine',
+      A: 'A young man around twenty, a lantern keeper; a light, gentle tenor; formal, earnest and a little shy; polite standard Japanese.',
+      B: 'A young man in his twenties, a lantern keeper; a mellow baritone; calm, thoughtful and dignified; polite standard Japanese.' },
+    { set: 3, label: 'Set 3: two readings leaning feminine',
+      A: 'A young woman around twenty, a lantern keeper; a clear, cool alto; formal, precise and gentle; polite standard Japanese.',
+      B: 'A young woman in her twenties, a lantern keeper; a low, velvety alto; serene and measured; polite standard Japanese.' },
+  ] },
+  { id: 'suzu', name: 'Suzu', lines: [
+    { mood: 'neutral', scene: 'cs.talk_parcel', plain: '役は残って、役者は替わる。舞台と同じよ。' },
+    { mood: 'happy', scene: 'kr.kikyo_first', plain: '語りの同業ね！舞台は違うけど、話は合いそう。' },
+    { mood: 'sad', scene: 'co.works_sign', plain: '……トモエさん。名前、初めて知った。二十年も経って。' },
+    { mood: 'frustrated', scene: 'mp.manbe_first', plain: '役者から役を取るなんて、一番残酷なことよ。……黙っていられないわ。' },
+    { mood: 'excited', scene: 'rw.suzu_first', plain: 'さあさあ、旅のお方！嵐の夜の不思議な話、聞いていかない？お代は笑顔ひとつ！' },
+  ], sets: [
+    { set: 1, label: 'Set 1: a bright stage voice, and a husky one',
+      A: 'A travelling performer in her twenties; a bright, projecting stage voice; quick comic timing, warm and playful; standard Japanese with a performer\'s flair.',
+      B: 'A travelling performer in her late twenties; a rich, husky alto; theatrical, teasing and worldly, warm underneath; standard Japanese.' },
+    { set: 2, label: 'Set 2: a sparkling barker, and a smoky raconteur',
+      A: 'A young street performer in her early twenties; a lively, sparkling soprano; a barker\'s energy, cheeky and bright; standard Japanese.',
+      B: 'A storyteller in her late twenties; a smoky, low mezzo; dry wit and an easy, knowing warmth; standard Japanese.' },
+    { set: 3, label: 'Set 3: AivisSpeech (Robin: best for bubbly, high-energy female voices)', aivis: { A: 'AV-suzu-A', B: 'AV-suzu-B' },
+      A: 'AivisSpeech slot AV-suzu-A: a projecting, energetic stage voice.', B: 'AivisSpeech slot AV-suzu-B: a warmer, huskier, witty voice.' },
+  ] },
+];
+// AivisSpeech has no free-text direction: the mood is its style and inflection
+const AIVIS_MOOD = {
+  neutral: { style: 'normal', params: { speedScale: 1.0, intonationScale: 1.0, tempoDynamicsScale: 1.0 } },
+  happy: { style: 'upbeat', params: { speedScale: 1.03, intonationScale: 1.2, tempoDynamicsScale: 1.1 } },
+  sad: { style: 'calm', params: { speedScale: 0.94, intonationScale: 0.9, tempoDynamicsScale: 0.9 } },
+  frustrated: { style: 'normal', params: { speedScale: 1.05, intonationScale: 1.3, tempoDynamicsScale: 1.15 } },
+  excited: { style: 'upbeat', params: { speedScale: 1.08, intonationScale: 1.4, tempoDynamicsScale: 1.2 } },
+};
+function companionSection() {
+  const out = { companions: [], takes: [], pitchSemitones: PITCH, aivisMood: AIVIS_MOOD };
+  COMPANIONS.forEach((c, ci) => {
+    const texts = c.lines.map((p) => { const l = line(p.scene, p.plain); if (l && !(l.who === c.id || (l.who === 'comp' && new RegExp('comp=' + c.id + '\\b').test(l.if || '')))) fail(c.id + ': ' + l.key + ' is not their line'); return l ? Object.assign({ mood: p.mood }, lineOut(l)) : null; }).filter(Boolean);
+    if (texts.length !== 5) fail(c.id + ': five mood lines wanted, ' + texts.length + ' found');
+    out.companions.push({ id: c.id, name: c.name, sets: c.sets, texts });
+    for (const s of c.sets) for (const v of ['A', 'B']) for (const t of texts) {
+      const base = 'C-' + c.id + '-' + s.set + v + '-' + t.mood;
+      const spec = s.aivis
+        ? { engine: 'aivis', aivisSlot: s.aivis[v], style: AIVIS_MOOD[t.mood].style, params: AIVIS_MOOD[t.mood].params }
+        : { engine: 'qwen_design', description: s[v] + ' ' + CLEAN, instruct: s[v] + ' ' + MOOD[t.mood] + ' ' + CLEAN, seed: 20000 + 1000 * ci + 100 * s.set + (v === 'A' ? 10 : 20) };
+      for (const p of ['high', 'low']) out.takes.push({ id: base + '-' + p, section: 'companion', companion: c.id, set: s.set, voice: v, pitch: p, semitones: PITCH[p], mood: t.mood, source: base, line: t.key, voiceSpec: spec });
+    }
+  });
+  return out;
+}
+
 // ---- 2. the narrator ------------------------------------------------------------------------------------------------
 // One line read both ways by each candidate, so the seven voices are compared on the same words.
 const NARR_LINE = { scene: 'mb.arrive', plain: '運河の上に、橋が次から次へと架かっている。八百の橋の町、八百橋だ。' };
@@ -189,9 +290,9 @@ const FX = {
   ghost: 'A soft reverb and a slight, slow waver in pitch.',
   ember: 'Warm with a little grit (gentle saturation) and a small room.',
 };
-const sections = { player: playerSection(), narrator: narratorSection(), npc: npcSection() };
+const sections = { player: playerSection(), companion: companionSection(), narrator: narratorSection(), npc: npcSection() };
 const lineTexts = {};
-for (const t of [...sections.player.takes, ...sections.narrator.takes, ...sections.npc.takes]) {
+for (const t of [...sections.player.takes, ...sections.companion.takes, ...sections.narrator.takes, ...sections.npc.takes]) {
   const l = byKey.get(t.line);
   if (l && !lineTexts[t.line]) lineTexts[t.line] = lineOut(l);
 }
@@ -201,7 +302,7 @@ const plan = {
   schemaVersion: 'rbn-va2-plan-1',
   purpose: 'casting samples for Robin\'s choices (C-93): not a final cast, not game audio, not whole-game generation',
   builtFrom: { branch: 'claude/stoic-sagan-n3jvgk', commit, by: 'tools/voice/va2/plan.mjs' },
-  counts: { player: sections.player.takes.length, narrator: sections.narrator.takes.length, npc: sections.npc.takes.length },
+  counts: { player: sections.player.takes.length, companion: sections.companion.takes.length, narrator: sections.narrator.takes.length, npc: sections.npc.takes.length },
   engines: {
     qwen_design: { model: 'Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign', package: 'qwen-tts (PyPI, Apache-2.0)', language: 'Japanese', note: 'The voice is designed from the description; the mood is added to the same instruction; the seed is fixed per voice.' },
     aivis: { engine: 'AivisSpeech Engine on 127.0.0.1:10101', note: 'Concrete models, speakers and styles for the narrator candidates N1–N7 and the AV-* slots are chosen on the PC and recorded in va2_voices.json.' },

@@ -5,8 +5,8 @@ every recording embedded (it plays opened on its own, offline, from anywhere: no
     python va2_gallery.py --plan <va2_plan.json> --out <work> [--html <file>]
 
 Sections, clearly labelled: 1 · The player's voices (three sets: A-High, A-Low, B-High, B-Low, five moods each);
-2 · The narrator (seven candidates, Directed-Neutral and Directed-Energetic); 3 · Every NPC (one line each, with the
-engine, voice and settings chosen); 4 · How these were made. Picks, "I dislike this" ticks and notes stay in the
+2 · The companions (the same scope for each of the four); 3 · The narrator (seven candidates, Directed-Neutral and
+Directed-Energetic); 4 · Every NPC (one line each, with the engine, voice and settings chosen); 5 · How these were made. Picks, "I dislike this" ticks and notes stay in the
 browser (localStorage) and come out as text with "Copy my decisions" or "Save my decisions"; nothing is sent anywhere.
 """
 import argparse
@@ -112,10 +112,10 @@ button{font:inherit;padding:6px 14px;border-radius:6px;border:1px solid var(--ac
     if mock:
         h.append('<p class="mockwarn">TEST BUILD: these are synthetic tones from the job\'s self-test, not voices. Do not review.</p>')
     c = plan['counts']
-    h.append('<p>' + str(c['player']) + ' player takes · ' + str(c['narrator']) + ' narrator takes · ' + str(c['npc']) + ' NPC takes. '
-             'Pick a player set and a narrator; in the NPC list tick <b>I dislike this</b> where a choice is wrong, with a note if you like: '
+    h.append('<p>' + str(c['player']) + ' player takes · ' + str(c.get('companion', 0)) + ' companion takes · ' + str(c['narrator']) + ' narrator takes · ' + str(c['npc']) + ' NPC takes. '
+             'Pick a player set, a voice for each companion and a narrator; in the NPC list tick <b>I dislike this</b> where a choice is wrong, with a note if you like: '
              'anything you leave unticked will be used as it is. Your picks are kept in this browser; <b>Copy my decisions</b> gives them back as text.</p>')
-    h.append('<nav><a href="#player">1 · Player voices</a><a href="#narrator">2 · Narrator</a><a href="#npcs">3 · NPCs</a><a href="#method">4 · How these were made</a></nav>')
+    h.append('<nav><a href="#player">1 · Player voices</a><a href="#companions">2 · Companions</a><a href="#narrator">3 · Narrator</a><a href="#npcs">4 · NPCs</a><a href="#method">5 · How these were made</a></nav>')
 
     # ---- 1. player ------------------------------------------------------------------------------------------------
     P = plan['sections']['player']
@@ -134,9 +134,40 @@ button{font:inherit;padding:6px 14px;border-radius:6px;border:1px solid var(--ac
                  '<label><input type="checkbox" data-k="playerA' + str(s['set']) + '"> its Voice A only</label><label><input type="checkbox" data-k="playerB' + str(s['set']) + '"> its Voice B only</label></div>'
                  '<textarea data-k="playerNote' + str(s['set']) + '" placeholder="Notes on set ' + str(s['set']) + ' (High or Low preferred, anything off…)"></textarea></div>')
 
-    # ---- 2. narrator ----------------------------------------------------------------------------------------------
+    # ---- 2. companions -----------------------------------------------------------------------------------------------
+    CS = plan['sections'].get('companion')
+    if CS:
+        h.append('<h2 id="companions">2 · The companions</h2><p>The player\'s scope for each companion: three sets, each two candidate voices '
+                 '(A the lighter, brighter reading of the character, B the lower, warmer one), each at High and Low (the same take moved ' +
+                 E(str(CS['pitchSemitones']['high'])) + ' semitones with its character kept), five moods on the companion\'s own lines. Cast by fit; '
+                 'Nao and Ren are they/them and no pitch is tied to that. Pick one voice per companion, or note a set and voice.</p>')
+        h.append('<p class="small">Jump to: ' + ' · '.join('<a href="#comp-%s">%s</a>' % (E(c['id']), E(c['name'])) for c in CS['companions']) + '</p>')
+        for c in CS['companions']:
+            h.append('<h3 id="comp-' + E(c['id']) + '">' + E(c['name']) + '</h3>')
+            if c['id'] == 'suzu':
+                h.append('<p class="small mute">Suzu\'s lines here are her standard ones; with the Kansai option on, the same voice reads her Kansai versions.</p>')
+            for s in c['sets']:
+                h.append('<div class="card"><h3>' + E(s['label']) + '</h3><p class="small"><b>A:</b> ' + E(s['A']) + '<br><b>B:</b> ' + E(s['B']) + '</p><div class="wrap"><table>'
+                         '<tr><th>Mood and line</th><th>A-High</th><th>A-Low</th><th>B-High</th><th>B-Low</th></tr>')
+                for t in c['texts']:
+                    row = '<tr><td><b>' + E(t['mood'].capitalize()) + '</b>' + jp(lines[t['key']]) + '</td>'
+                    for v, p in (('A', 'high'), ('A', 'low'), ('B', 'high'), ('B', 'low')):
+                        row += '<td>' + audio('C-%s-%d%s-%s-%s' % (c['id'], s['set'], v, t['mood'], p)) + '</td>'
+                    h.append(row + '</tr>')
+                r0 = T.get('C-%s-%dA-neutral-high' % (c['id'], s['set'])) or {}
+                if r0.get('engine') == 'aivis':
+                    h.append('</table></div><p class="small mute">' + E(settings(r0, None)) + '</p><div class="pick">')
+                else:
+                    h.append('</table></div><div class="pick">')
+                for v in ('A', 'B'):
+                    for p in ('high', 'low'):
+                        val = '%d%s-%s' % (s['set'], v, p)
+                        h.append('<label><input type="radio" name="comp_' + E(c['id']) + '" value="' + val + '"> ' + E(c['name']) + ': set ' + str(s['set']) + ' ' + v + '-' + p.capitalize() + '</label>')
+                h.append('</div><textarea data-k="compNote_' + E(c['id']) + '_' + str(s['set']) + '" placeholder="Notes on ' + E(c['name']) + ', set ' + str(s['set']) + '"></textarea></div>')
+
+    # ---- 3. narrator ----------------------------------------------------------------------------------------------
     N = plan['sections']['narrator']
-    h.append('<h2 id="narrator">2 · The narrator</h2><p>Seven AivisSpeech voices, each reading the same line two ways: <b>Directed-Neutral</b> '
+    h.append('<h2 id="narrator">3 · The narrator</h2><p>Seven AivisSpeech voices, each reading the same line two ways: <b>Directed-Neutral</b> '
              '(' + E(N['deliveries']['neutral']['note']) + ') and <b>Directed-Energetic</b> (' + E(N['deliveries']['energetic']['note']) + ').</p>')
     if N.get('text'):
         h.append('<div class="card">' + jp(lines[N['text']['key']]) + '</div>')
@@ -155,7 +186,7 @@ button{font:inherit;padding:6px 14px;border-radius:6px;border:1px solid var(--ac
     for n in S['npcs']:
         reg = REGION.get((n.get('regions') or ['?'])[0], 'Elsewhere')
         groups.setdefault(reg, []).append(n)
-    h.append('<h2 id="npcs">3 · Every NPC who speaks</h2><p>One line each, read neutrally unless the character is never neutral (a child who is always excited, '
+    h.append('<h2 id="npcs">4 · Every NPC who speaks</h2><p>One line each, read neutrally unless the character is never neutral (a child who is always excited, '
              'say). The engine and settings are the lead\'s choice from your rules: Qwen3-TTS for most, AivisSpeech for bubbly, high-energy feminine voices, '
              'VOICEVOX Nemo only for middle-aged men; supernatural speakers have a treatment. <b>Tick what you dislike</b>; the rest stands.</p>')
     h.append('<p class="small">Jump to: ' + ' · '.join('<a href="#r-%d">%s</a>' % (i, E(g)) for i, g in enumerate(ORDER + ['Elsewhere']) if g in groups) + '</p>')
@@ -180,7 +211,7 @@ button{font:inherit;padding:6px 14px;border-radius:6px;border:1px solid var(--ac
                      '<textarea data-k="npcNote_' + E(n['id']) + '" placeholder="What is wrong (optional)"></textarea></div></div>')
 
     # ---- 4. method ------------------------------------------------------------------------------------------------
-    h.append('<h2 id="method">4 · How these were made</h2><div class="card small"><p><b>Clean endings:</b> ' + E(plan['clean']['check']) + ' A ⚑ marks a take the check still flagged.</p>'
+    h.append('<h2 id="method">5 · How these were made</h2><div class="card small"><p><b>Clean endings:</b> ' + E(plan['clean']['check']) + ' A ⚑ marks a take the check still flagged.</p>'
              '<p><b>Loudness:</b> ' + E(plan['loudness']) + '</p><p><b>Treatments for supernatural speakers:</b></p><ul>' +
              ''.join('<li><b>' + E(k) + '</b>: ' + E(v) + '</li>' for k, v in plan['fx'].items()) + '</ul>'
              '<p><b>Engines:</b> ' + E(json.dumps(res.get('engines', {}), ensure_ascii=False)) + '</p><p><b>Names</b> are spoken from the game\'s own furigana. '
@@ -194,6 +225,7 @@ document.querySelectorAll('input[data-k],textarea[data-k]').forEach(el=>{const k
 document.querySelectorAll('input[data-dis]').forEach(el=>{const k='dis_'+el.dataset.dis;el.checked=!!st[k];el.addEventListener('change',()=>{st[k]=el.checked;save()})});
 document.addEventListener('play',e=>{document.querySelectorAll('audio').forEach(a=>{if(a!==e.target)a.pause()})},true);
 function text(){const L=['VA-2 decisions'];L.push('Player set: '+(st.playerSet||'(none picked)'));for(const s of [1,2,3]){if(st['playerA'+s])L.push('  Voice A from set '+s);if(st['playerB'+s])L.push('  Voice B from set '+s);if(st['playerNote'+s])L.push('  Set '+s+' note: '+st['playerNote'+s])}
+for(const c of ['nao','mio','ren','suzu']){L.push(c.charAt(0).toUpperCase()+c.slice(1)+': '+(st['comp_'+c]?'set '+st['comp_'+c]:'(none picked)'));for(const s of [1,2,3]){const n=st['compNote_'+c+'_'+s];if(n)L.push('  set '+s+' note: '+n)}}
 L.push('Narrator: '+(st.narrator||'(none picked)'));for(const k in st)if(k.startsWith('narrNote')&&st[k])L.push('  '+k.slice(8)+' note: '+st[k]);
 const dis=Object.keys(st).filter(k=>k.startsWith('dis_')&&st[k]).map(k=>k.slice(4));L.push('NPCs disliked ('+dis.length+'): '+(dis.join(', ')||'none'));
 for(const k in st)if(k.startsWith('npcNote_')&&st[k])L.push('  '+k.slice(8)+': '+st[k]);L.push('Everything not disliked stands as made.');return L.join('\\n')}
