@@ -194,6 +194,9 @@ RB.state = (function () {
   function give(s, id, n) {
     s.inv[id] = (s.inv[id] || 0) + (n == null ? 1 : n);
     if (s.inv[id] <= 0) delete s.inv[id];
+    // an item that is also a catalogued keepsake is recorded as found, for the journey being played only (the quest
+    // guide's simulated states and other copies never are)
+    if ((n == null || n > 0) && RB.discovery && RB.discovery.fromItem && RB.game && RB.game.s === s) RB.discovery.fromItem(s, id);
   }
   function take(s, id, n) {
     const item = RB.content.items[id];

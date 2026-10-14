@@ -722,6 +722,86 @@ while Robin decides distribution, before any hosted release.
 - **Status:** done in the build, 2026-10-14: **all 117 songs have a ready recording in Ogg Opus and MP3** (three on
   Robin's waiver). Full-track players for every song on `docs/music/ensemble/listen_all.html`. Not listened to by
   anyone yet; the rights question open (docs/MUSIC_PERFORMANCE.md, VALIDATION.md "MT-2").
+- **The rights question, 2026-10-14.** Robin: "GPL-2 rights can be recorded as open source, as per its requirements?
+  Nothing private here. If I'm misunderstanding, again, let me know what you mean." The lead's reading, given back to
+  Robin to confirm before any file says so: the Ensemble recordings (only those: not the game, its code or the
+  Original music) would be published under the GPL-2 like the sound bank in them, with its notice and licence text
+  beside them and the means to make them again (the scores' event exports and `tools/music/ensemble/` are in the
+  repository; the bank is named with its checksum and where it is published). Anyone could then copy and change
+  those recordings on the same terms. Not yet applied: `assets/music/ensemble/NOTICE.md` still says the question is
+  open.
+
+### C-93 · VA-2: the voices Robin chose, and casting samples before anything is built
+**Decided** (2026-10-14), after Robin's own listening to VA-1's audition (C-91). Robin's words:
+> "I'm thinking for the narrator, use one of the AivisSpeech models with a directed tone.
+> Player A/B should have two separate A/B voices; a higher and lower pitch options for each of their voices,
+> respectively.
+> NPCs in general should use a mix of the instruction-capable Qwen3-TTS and AivisSpeech models. Qwen3-TTS captures
+> emotion, intonation, and pronunciation very well. Critically though, lines need to not have trailing consonants or
+> overly-breathy sounds that delay words in odd ways. The Qwen3 model captures a lot of what makes spoken japanese
+> sound as good as it does. AivisSpeech is a close second, which captures some of the more bubbly / high energy female
+> voices. VOICEVOX Nemo had really only done better than some of the others for the Middle-aged Man voicelines, and
+> could be considered for those exclusively.
+> When addressing the player's name, use a neutral placeholder word, since these are pre-recorded(?). In the event
+> it's something simple like "Robin..." for the whole line, "You..." would be best; a direct addressing of the player,
+> with the relevant Anata / Kimi / etc. word used depending on relation to the speaker, per japanese etiquette. If it
+> can generate the line on the spot, similarly to the desktop voice packs, then it can read aloud the player's name.
+> I don't quite know what you mean by "how a scene sounds when its speakers come from different models" - I can only
+> assume that the narrator fills in directly unspoken lines. If an NPC is actually speaking, their dedicated voice
+> should be the one speaking."
+
+and for the samples: five player lines (neutral, happy, sad, frustrated, excited) as A-High, A-Low, B-High and B-Low,
+"for three different sets of High/Low pitches, totaling 60 voiced lines for the player. I'll pick which is best from
+those"; "7 distinct narrator candidates, exploring different female AivisSpeech models/characters … Directed-Neutral
+… and a secondary Directed-Energetic, if possible, for each, totaling 14"; for NPCs, "I'll leave it up to you to
+decide what settings to use and with what model for each, based on the NPC's characteristics … one sentence read
+aloud per NPC … It should read as neutral across the board, unless it's something like a child who is always excited
+or happy … If I dislike any choices per an NPC, I'll let you know; record that anything I don't note as disliked
+should be authoritative to use those model/settings"; "all supernatural entities like this should sound as such … The
+Hush should sound foreboding, at minimum … The Mill Echo could probably do with having a slight reverb/echo"; "Provide
+me all examples/candidates in a single file, like the Audition Gallery for VA-1, limited to what was specified here.
+Clearly label each section." And: "Only when I make the proper decisions will you be allowed to begin full development
+and implementation."
+- **The casting rules** (Robin's): the narrator one AivisSpeech model, Directed-Neutral first, Directed-Energetic as a
+  second delivery; the player a Voice A and a Voice B, each with a higher and a lower pitch; NPCs Qwen3-TTS by default,
+  AivisSpeech for bubbly, high-energy feminine voices, VOICEVOX Nemo for middle-aged men only; supernatural speakers
+  treated to sound so; no trailing consonants or breathiness that delay words.
+- **NPC choices stand unless Robin dislikes them.** Each NPC's engine and settings in the samples become the cast for
+  that NPC unless Robin marks it disliked; a disliked one is recast and heard again.
+- **The player's name** (115 lines name the traveller): a prepared recording says a neutral word in its place, and a
+  line that is only the name ("Robin…") becomes the speaker's natural way to say "you" to the traveller (あなた, 君,
+  お前… by their relation, per Japanese manners), chosen per speaker when the lines are recorded. The words on screen
+  keep the name. The device voice reads lines live, so it says the name as today. The prepared voices cannot: they
+  are recordings made in advance, and making speech in the browser would need an engine running beside the game,
+  which the standing rules (one offline file, no server) do not allow.
+- **Scenes with speakers from different models** (the lead's question answered): Robin's reading is the rule (the
+  narrator speaks narration; a speaking person always in their own voice). What the lead meant was the sound, not
+  who speaks: engines differ in level, room and pauses, so lines from different models in one conversation are
+  levelled to one loudness, trimmed the same way and given the same pauses, so the voices sound as if in the same
+  room.
+- **The samples (VA-2):** 60 player takes (three sets, each a pair of designed Qwen3-TTS voices, High and Low the same
+  take moved two semitones with the formants kept), 14 narrator takes (seven AivisSpeech models), one take per NPC
+  (about 281), every text a line the game says, no companion and nothing else; in one gallery file that plays on its
+  own, with picks, "I dislike this" ticks and notes. The engines cannot run in the cloud environment (their model hosts
+  are refused, no GPU, about 2 GB of disk), so the job runs on Robin's PC: `tools/voice/va2/`, handoff
+  `docs/future/voice/va2/HANDOFF_VA2.md`. Free, local engines only; no paid service, no final cast, no game audio.
+- **Not yet:** any change to the game's speech, the casting record, the production estimate's figures or any
+  whole-game recording. Those begin only after Robin's decisions on the samples (and, for a paid batch, a separate
+  approval of the estimate: C-91).
+
+### C-94 · Roadside Keepsakes on the whole twelve-chapter road
+**Decided** (2026-10-14). Robin: "Side note, there are only 6 Keepsakes still? We've added much more content to allow
+more Keepsakes - might have been forgotten when developing new areas." The lead found the catalogue knew only the six
+original regions (twelve keepsakes there, four companion mementos), while the expansion gave fourteen things it called
+keepsakes (the nine old guardians' gifts, the iroha print, the tide-stone rubbing, the "Fish Street" name slip, the
+Lantern of the Hundred, the planting hat) as satchel items the catalogue never listed, and the plan's road events and
+sealed spots promised keepsakes (06_WORLD W5, W6). Robin: "Yes, please do so."
+- **What changes:** the fourteen become catalogue entries recorded when their item is given (and on load for a save
+  that already holds one); the page knows every region of the twelve-chapter road, the Hall and Ashihara Shinden;
+  each new chapter gets about two Roadside Keepsakes of its own, findable by a journey already past it; a unit test
+  keeps an item called a keepsake from being left out again.
+- **Unchanged:** finding one never depends on how something was solved or on help asked for; keepsakes do not carry
+  into New Game+ (C-66); the items themselves do what they did.
 
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a

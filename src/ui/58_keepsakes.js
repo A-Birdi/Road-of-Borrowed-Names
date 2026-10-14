@@ -26,16 +26,28 @@ RB.ui.keepsakes = (function () {
   const I = (n) => RB.ui.folio.icon(n);
   const j = (t) => (t ? RB.ui.jhtml(t) : '');
   const K = () => RB.content.keepsakes;
-  // the regions of the road, in the order they are reached; a keepsake's
+  // the regions of the road, in the twelve-chapter story's order; a keepsake's
   // `region` names one (or several); others may be added (addRegion)
   const REGIONS = [
     { id: 'reedwake', en: 'Reedwake', jp: '{葦|あし}ノ{瀬|せ}', maps: ['rw.', 'lq.'] },
     { id: 'saltglass', en: 'Saltglass', jp: '{潮|しお}{硝子|がらす}', maps: ['sg.'] },
+    { id: 'manybridge', en: 'Manybridge', jp: '{八百橋|やおばし}', maps: ['mb.'], ed: 2 },
+    { id: 'blockprint', en: 'Blockprint and Playhouse Rows', jp: '{版木|はんぎ} の {通|とお}り と {芝居|しばい} の {通|とお}り', maps: ['mp.'], ed: 2 },
     { id: 'cinder', en: 'Cinder Orchard', jp: '{灰実|はいみ} の {里|さと}', maps: ['co.'] },
     { id: 'snowbell', en: 'Snowbell', jp: '{雪鈴|ゆきすず}', maps: ['sb.'] },
+    { id: 'keepers_road', en: 'The Keepers\' Road', jp: '{灯守|ひもり} の {道|みち}', maps: ['kr.'], ed: 2 },
     { id: 'lanternfall', en: 'Lanternfall', jp: '{灯落|ひおち}', maps: ['lf.'] },
+    { id: 'kotonoha', en: 'Kotonoha and the sea', jp: '{言|こと}の{葉|は}{島|じま} と {海|うみ}', maps: ['ko.', 'sea.', 'sz.', 'el.'], ed: 2 },
+    { id: 'cloudroad', en: 'The Cloudroad', jp: '{雲路|くもじ}', maps: ['cr.'], ed: 2 },
+    { id: 'steamhollow', en: 'Steamhollow', jp: '{湯|ゆ}ノ{谷|たに}', maps: ['yn.'], ed: 2 },
     { id: 'archive_road', en: 'The Still Archive', jp: '{静寂|しじま} の {書庫|しょこ}', maps: ['sa.'] },
+    { id: 'hall', en: 'The Hall of a Hundred Tales', jp: '{百物語|ひゃくものがたり} の {館|やかた}', maps: ['hall.'], ed: 2 },
+    { id: 'ashihara', en: 'Ashihara Shinden', jp: '{葦原|あしはら}{新田|しんでん}', maps: ['as.'], ed: 2 },
   ];
+  // an entry or a region marked `ed: 2` belongs to the twelve-chapter road: a six-chapter journey neither shows nor
+  // counts it
+  const edOk = (s, x) => !x || !x.ed || (RB.edition ? RB.edition.of(s) : 1) >= x.ed;
+  const regionsFor = (s) => REGIONS.filter((r) => edOk(s, r));
   function addRegion(def) { const i = REGIONS.findIndex((r) => r.id === def.id); if (i >= 0) REGIONS[i] = def; else REGIONS.push(def); }
   const regionOf = (id) => REGIONS.find((r) => r.id === id) || null;
   function regionKnown(s, id) {
@@ -46,14 +58,14 @@ RB.ui.keepsakes = (function () {
   const found = (s, id) => !!(s.discovery && s.discovery.keepsakes && s.discovery.keepsakes[id]);
   const regionsOfK = (k) => [].concat(k.region || []);
   // every entry except companion mementos, which belong to Shared Journey
-  const roadIds = () => Object.keys(K()).filter((id) => K()[id].category !== 'shared');
+  const roadIds = (s) => Object.keys(K()).filter((id) => K()[id].category !== 'shared' && edOk(s, K()[id]));
   // a memento names its companion as `comp` (or `companion`); one without a name belongs to any
   const compOf = (k) => k.comp || k.companion || null;
   const sharedIds = (s) => Object.keys(K()).filter((id) => K()[id].category === 'shared' && (!compOf(K()[id]) || compOf(K()[id]) === s.comp));
   function counts(s) {
-    const ids = roadIds();
-    const known = REGIONS.filter((r) => regionKnown(s, r.id));
-    return { found: ids.filter((id) => found(s, id)).length, total: ids.length, regions: known.length, regionTotal: REGIONS.length };
+    const ids = roadIds(s), regions = regionsFor(s);
+    const known = regions.filter((r) => regionKnown(s, r.id));
+    return { found: ids.filter((id) => found(s, id)).length, total: ids.length, regions: known.length, regionTotal: regions.length };
   }
 
   // ---- pixel art at whole-number sizes ------------------------------------------------------------------
@@ -92,9 +104,9 @@ RB.ui.keepsakes = (function () {
     const disp = d.display && K()[d.display] && found(s, d.display) ? d.display : null;
     h += '<div class="ks-display"><span class="lab">On display</span>' + (disp ? '<button type="button" class="ks-disp" data-ks-sel="' + disp + '"><span class="ks-slot" data-art="' + disp + '"></span>' + j(K()[disp].name.jp) + ' <span class="en">' + esc(K()[disp].name.en) + '</span></button>' : '<span class="muted">Nothing on display. Choose a keepsake and put it on display.</span>') + '</div>';
     // by region: known regions first (in road order), each with its found and unfound entries
-    const ids = roadIds();
+    const ids = roadIds(s);
     const unknownIds = [];
-    for (const r of REGIONS) {
+    for (const r of regionsFor(s)) {
       const here = ids.filter((id) => regionsOfK(K()[id]).indexOf(r.id) >= 0);
       if (!here.length) continue;
       if (!regionKnown(s, r.id) && !here.some((id) => found(s, id))) { unknownIds.push(...here); continue; }

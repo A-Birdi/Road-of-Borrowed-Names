@@ -103,7 +103,17 @@ RB.discovery = (function () {
     RB.bus.emit('keepsake:found', { id });
     return true;
   }
-  return { keepsake };
+  // A keepsake that is also an item (its entry names `item`): recorded when a scene gives that item (`!give`).
+  function itemKeepsake(itemId) {
+    const K = RB.content.keepsakes || {};
+    for (const id in K) if (K[id] && K[id].item === itemId) return id;
+    return null;
+  }
+  function fromItem(s, itemId) {
+    const id = itemKeepsake(itemId);
+    return id ? keepsake(s, id, { kind: 'item', id: itemId }) : false;
+  }
+  return { keepsake, itemKeepsake, fromItem };
 })();
 
 // conditions: keepsake.id, bond>=trusted (by stage id), memory.id

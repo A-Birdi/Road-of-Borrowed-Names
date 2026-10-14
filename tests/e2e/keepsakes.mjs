@@ -38,7 +38,8 @@ async function start(o = {}) {
 const openPage = async () => { await p.evaluate(() => { if (RB.ui.menu.isOpen()) RB.ui.menu.close(); RB.ui.menu.open('keepsakes'); }); await p.waitForSelector('.ks-page'); };
 const closeMenu = () => p.evaluate(() => { if (RB.ui.menu.isOpen()) RB.ui.menu.close(); });
 const pageText = () => p.evaluate(() => { const r = document.querySelector('.folio') || document.body; const c = r.cloneNode(true); c.querySelectorAll('rt').forEach((x) => x.remove()); return c.textContent.replace(/\s+/g, ' '); });
-const reg = () => p.evaluate(() => { const K = RB.content.keepsakes; return Object.keys(K).map((id) => ({ id, en: K[id].name.en, cat: K[id].category || null, region: K[id].region })); });
+// the registry as this journey sees it: entries of a later edition than the journey's are neither shown nor counted (KS-1)
+const reg = () => p.evaluate(() => { const K = RB.content.keepsakes, ed = RB.edition.of(RB.game.s); return Object.keys(K).filter((id) => !K[id].ed || ed >= K[id].ed).map((id) => ({ id, en: K[id].name.en, cat: K[id].category || null, region: K[id].region })); });
 const solveF1 = (how) => p.evaluate((how) => {
   const s = RB.game.s, FW = RB.fieldweave;
   if (how === 'assisted') { FW.weave(s, 'f1', 'screen', 'mamoru', { mode: 'choice', assisted: true, firstTry: false, mistakes: 2 }); FW.act(s, 'f1', 'clamp'); }
@@ -54,7 +55,10 @@ const solveF1 = (how) => p.evaluate((how) => {
   const road = all.filter((k) => k.cat !== 'shared');
   await openPage();
   let tx = await pageText();
-  assert(tx.indexOf('0 of ' + road.length + ' found') >= 0 && /1 of 6 regions known/.test(tx), 'counts: 0 of ' + road.length + ' found, 1 of 6 regions known');
+  // the journey's own counts (a twelve-chapter journey has the whole road's entries and regions: KS-1)
+  const ct = await p.evaluate(() => RB.ui.keepsakes.counts(RB.game.s));
+  assert(ct.total === road.length, 'the count is every entry this journey can find (' + ct.total + ')');
+  assert(tx.indexOf('0 of ' + ct.total + ' found') >= 0 && tx.indexOf('1 of ' + ct.regionTotal + ' regions known') >= 0, 'counts: 0 of ' + ct.total + ' found, 1 of ' + ct.regionTotal + ' regions known');
   const leaked = all.filter((k) => tx.indexOf(k.en) >= 0).map((k) => k.en);
   assert(!leaked.length, 'no keepsake name appears before it is found' + (leaked.length ? ' (' + leaked.join(', ') + ')' : ''));
   assert(/Reedwake/.test(tx) && !/Saltglass|Cinder Orchard|Snowbell|Lanternfall|Still Archive/.test(tx), 'only the visited region is named');
