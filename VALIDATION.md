@@ -4336,6 +4336,75 @@ between clicks, so a slow poll could miss it. The check now also watches every f
 holding at k = 1 is caught; with motion on, the same watcher reports the morning shot as presenting at k < 1, as it
 should): 3/3 passes alone; the full suite on this build **121/0**.
 
+## MT-2 — the Ensemble for every song (Robin, 2026-10-13; C-92)
+
+Robin asked why Settings said Ensemble covered two tracks, and chose: all 115 remaining tracks now, Ogg Opus and MP3,
+the TimGM6mb sound bank while the rights question is decided ("Yes, carry on"). Method and design:
+docs/MUSIC_PERFORMANCE.md "MT-2"; the reports: docs/music/ensemble/qa/<song>.json. Evidence, kept apart by kind:
+
+- **Implemented:** the renderer generalised (`tools/music/ensemble/rs1.py`, `render.py`: voices for every instrument
+  and stroke, each part's balance measured against the Original's, the game's echo, rooms by kind of cue, one-shot
+  cues as one file, a trailing guard that keeps MP3 lengths exact); `stems.mjs` (the Original's parts and whole from
+  one render); `package.py` (an Opus file that fits better shifted is encoded again at a higher rate);
+  `verify.mjs` (one-shots, a cached Original, a second onset detector and a negative control, steady handover points
+  for a cue under 32 s, `--handovers-only`, `--rejudge-onsets`, a locked manifest write); `produce.sh`; the runtime's
+  handover fade made equal-power (`src/audio/22_ensemble.js`, and its offline renderer); the Settings line says
+  "every track" at full coverage; 115 recordings in two formats (473 MB with the pilots).
+- **The method's checks (U/B, measured):**
+  - the generalised renderer gives the pilots the same samples as MT-1's code, bit for bit, run in the same session
+    (both differ from the shipped pilot masters by −118 to −127 dB: FluidSynth's run-to-run variation);
+  - the measured part balance against SC-1's on the pilots: within ±2.3 dB per part, most within ±1 dB;
+  - the cached Original measurement (stems.mjs's render) against verify's own render of the same first pass, on five
+    songs measured both ways (four bosses and Snowbell's MT-1 calibration): within 0.00001 LU and 0.00001 in peak (not
+    bit for bit: the extra channels change Chromium's rendering in the last digits).
+- **B (measured in Chromium, Playwright's headless shell 1194, Linux; not a device)** `tools/music/ensemble/produce.sh`
+  for all 115 songs, then `verify.mjs --handovers-only` for the 36 songs (the pilots among them) measured before the
+  fade changed, and `--rejudge-onsets` for every report. **114 of 117 songs ready**: the two pilots and 112 of the 115.
+  Over the 115 MT-2 songs (74,630 notes):
+  - decoded lengths exact at 48 kHz and in proportion at 44.1 kHz; no shift against the masters (coding SNR at no
+    shift ≥ 19.9 dB Opus, ≥ 27.8 dB MP3; four Opus files needed a higher rate to be clean: hall_w3, yn_vents, yn_north);
+  - the game's own scheduler against a model of the decoded files ≥ 154.1 dB (bit-exact), from the cue's start through
+    the join and ten cycle boundaries and from odd starting points; seams: agreement ≥ 16.9 dB, no sample step larger
+    than either side (ratio ≤ 1.0001); the first pass and the cycle past the join ≤ −125.8 dB apart in the masters;
+    cycles within 0.156 ppm of the score's period;
+  - loudness through the game graph within 0.1 LU of the Original over the first pass (trims −13.71 to +5.56 dB), the
+    MP3 within 0.34 LU at the same trim, peaks ≤ 0.751, no NaN;
+  - onsets: every song passes at z ≥ 4 with its 100 ms control failing (69 on MT-1's envelope, 46 on the band flux;
+    band-flux lags −1 to +6 ms);
+  - handovers (equal-power): median worst block 0.12 LU below both performances, 90th percentile 0.64.
+- **Not ready, playing their Original:** `playhouse` (Footlights), `sb_road` and `sa_kasane` pass every check but the
+  handover level at one of the two moments measured: 1.52 and 2.31 LU below both performances alone (limit 1.5), and
+  1.04 above (limit 1.0). The cause is the moment, not the recording: at that instant the two performances, the same
+  notes on different instruments, are partly out of phase (or in phase), which any fixed crossfade turns into a dip
+  (or a bump) for the fade's 200 ms. Not loosened; for Robin to decide.
+- **Found and changed on the way:**
+  - MT-1's linear handover assumed the two performances correlated; measured, they are not (median correlation about
+    0 over 200 ms windows, ±0.5), so a linear fade sagged about 3 dB in its middle. Now equal-power: Snowbell's worst
+    block 0.72 → 0.05 LU below; finale and reedwake, which had failed, pass.
+  - MT-1's 1 ms onset envelope follows the ripple of sustained low notes: the prologue's peak sat at +1 ms but only at
+    z 3.7. A band-flux envelope (above 400 Hz, 10 ms windows) gives z 50 there.
+  - MT-1's sharpness rule (peak ≥ 3× the correlation 40 ms away) passed the negative controls of two sparse cues; it
+    no longer decides (z ≥ 4 does); re-judged from the recorded measurements, no song that passed fails.
+  - LAME's padding record was short for a file ending within 12 samples of an MP3 frame (hall_w3's cycle decoded 12
+    samples long): such a file now gets a few more samples of guard.
+  - MT-1's fixed handover times do not fit a 6 s sting: a cue under 32 s has its handovers at its steadiest moments.
+- **B** `node tests/e2e/music_performance.mjs` on the final build (114 recordings embedded) — **25/25**: MT-1's register
+  (a song without a recording now made by taking `road` out of the page's catalog; after the Keepers' Road battle the
+  map's own recording takes over) and MT-2's: coverage (the build offers exactly the manifest's ready recordings: 114
+  of 117), the main menu theme with its recording, and the victory sting (one file, no cycle, it rings on past the
+  score, one completion, lets go on its own, a song started meanwhile undisturbed). The first run, before the one-shot
+  fix: 23/25 (the battle test still expected the map's music to have no recording; the victory test found the cut
+  decay).
+- **U** `node tests/run-unit.mjs music_performance` — 388/0 (every manifest track against its files and score, the
+  one-shot entries' gate, layout and evidence); the whole unit run 53,733/0.
+- **B, the audio regressions:** `audio_instruments`, `audio_zones`, `audio.check` pass; `audio_suite` 4/5: its
+  `battle_presentation` failed one cadence check (the battle scene's clock 1.154× during the opening lines against
+  0.999× while choosing) while the listening page's renders ran on the same machine; run alone, 13/13.
+- **Listening:** none. Nobody has heard an MT-2 recording. `docs/music/ensemble/listen_all.html` plays every
+  recording from the checkout, with Original/Ensemble comparisons for ten songs (the main menu theme among them).
+- **Not done:** listening (Robin's); any device or browser but Chromium on Linux; the hosted release (C-87) and the
+  TimGM6mb rights decision before it; the three songs above.
+
 ## AR-2 — animation, framing and staging at the game's real picture sizes (Robin, 2026-10-13; implemented provisionally, internally reviewed)
 
 Robin: "Any other illustration odditiea that might have made it in? Animations, framing etc". Worked under AC-1

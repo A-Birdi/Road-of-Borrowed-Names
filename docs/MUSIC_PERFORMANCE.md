@@ -99,7 +99,10 @@ wanted and still the same cue (a generation check after every wait). Nothing is 
 - A recording of a different score (by fingerprint) is refused before anything is downloaded.
 
 **Completion stays the sequencer's.** A one-shot's `audio:songend` is emitted once, by the Original. Nothing here
-emits it, and a recording arriving after its cue ended plays nothing.
+emits it, and a recording arriving after its cue ended plays nothing. (MT-2) At a one-shot's natural end a sounding
+recording plays out its own file, which holds the score's decay, as the Original's notes and room ring on; the room's
+return reopens at once for what follows, and the decoded files are held until the file ends. Before MT-2 nothing
+tested this (no one-shot had a recording) and the recording was cut at the score's end.
 
 ## The catalog and the page's policy (tools/build.mjs)
 
@@ -180,7 +183,7 @@ the Original part's level: `stems.mjs` renders the Original's first pass in Chro
 before its pan, room and echo, and `render.py` gives the Ensemble part the same K-weighted level (BS.1770's filter,
 over the same first pass). Checked on the pilots: the measured balance is within ±2.3 dB of SC-1's, part by part,
 most parts within ±1 dB (the rest is SC-1's ear). The same render gives the whole Original through the game graph,
-which the calibration then uses instead of rendering it again.
+which the calibration then uses instead of rendering it again (they agree within 0.00001 LU).
 
 **Room and echo.** Battles and bosses take SC-1's battle room (1.35 s, 0.14 wet), the Snowbell songs its Snowbell room
 (1.85 s, 0.19), the rest rs1's default (1.7 s, 0.17). A score with an echo (`echo`, the tracks' `dl` sends) gets the
@@ -197,8 +200,17 @@ The runtime already played a non-looping entry's first file only.
   MT-1's 1 ms broadband frames also follow the ripple of sustained low notes, so on a slow cue its curve oscillates and
   its peak, though at the right lag, can stand out too little (the prologue: +1 ms, z 3.7). The band-flux envelope
   (energy above 400 Hz in three bands over 10 ms windows) finds the same lag clearly (the prologue: +1 ms, r 0.53,
-  z 50). A song passes with either detector at a lag within 15 ms (MT-1's 3× rule, or 4 SD above every lag 25–50 ms
-  away), and that detector's control must fail.
+  z 50). **The rule:** a detector passes when its peak is within 15 ms, r ≥ 0.03 and it stands 4 SD above every lag
+  25–50 ms away; its control must not pass the same rule; either detector may pass. MT-1's other branch (peak ≥ 3× the
+  correlation 40 ms away) is still recorded but no longer decides: on two sparse cues (sa_thin, cr_hut) it passed the
+  controls themselves. Every report was judged again from its recorded measurements (`verify.mjs --rejudge-onsets`):
+  no song that had passed failed.
+- An MP3 whose length ends within 12 samples of an MP3 frame decoded up to 12 samples long (LAME's padding record was
+  short; hall_w3's cycle): `render.py` gives such a file a few more samples of guard (`guard_extra`). An Opus file
+  whose local check finds a window fitting 1 dB better shifted (the codec's phase in a high band) is encoded again at
+  192, then 256 kbit/s (`package.py`; four files).
+- The cached Original (`stems.mjs`) and verify's own render of the same first pass agree within 0.00001 LU and 0.00001
+  in peak (five songs measured both ways).
 
 **Testing scope (Robin's C-88).** Both performances are tested by MT-1's own suite, its unit test, the recordings'
 measurements and the audio suites. The twelve-chapter chain and the full matrix run at the default, Original, and
@@ -236,6 +248,33 @@ about 8 % less.
 
 The scheduler model is how Chromium reads a source, measured with a ramp buffer: the offset is rounded to a frame,
 and a start between frames is honoured by interpolation. The runtime therefore starts every segment on a frame.
+
+## MT-2 results
+
+From Chromium (Playwright's headless shell) on the development machine, not a device; every figure is in the song's
+report. **114 of the game's 117 songs have a ready recording** (the two pilots and 112 of MT-2's 115). Over MT-2's
+115 songs (74,630 notes, 465 MB of Opus and MP3; 473 MB with the pilots):
+
+| Check | Result |
+|---|---|
+| Decoded length (48 kHz / 44.1 kHz) | exactly the master's frames / the same seconds |
+| Alignment against the masters | no shift; coding SNR at no shift ≥ 19.9 dB (Opus), ≥ 27.8 dB (MP3) |
+| The scheduler against its model | ≥ 154.1 dB (bit-exact), the cue's start through ten boundaries and odd starts |
+| Seams | agreement ≥ 16.9 dB; no step larger than either side (ratio ≤ 1.0001) |
+| First pass and cycle past the join (masters) | ≤ −125.8 dB apart |
+| Cycle against the score's period | ≤ 0.156 ppm |
+| Loudness through the game graph | within 0.1 LU of the Original (trims −13.71 to +5.56 dB); MP3 within 0.34 LU at the same trim; peaks ≤ 0.751 |
+| Onsets | every song at z ≥ 4 with its control failing (69 on MT-1's envelope, 46 on the band flux) |
+| Handovers (equal power) | median worst block 0.12 LU below both performances, 90th percentile 0.64 |
+
+**Three songs play their Original:** `playhouse` (Footlights), `sb_road` and `sa_kasane` pass every check but the
+handover level at one of the two moments measured: 1.52 and 2.31 LU below both performances alone (limit 1.5), and
+1.04 LU above (limit 1.0). The recordings are not at fault: at that instant the two performances, the same notes on
+different instruments, are partly out of phase (or in phase), which any fixed crossfade turns into a short dip (or
+bump) for its 200 ms. The limits stay; whether to admit these three is Robin's to decide.
+
+**Listening:** `docs/music/ensemble/listen_all.html` plays every recording's own files from the checkout, with
+Original/Ensemble comparisons from the cue's start for ten songs (the main menu theme among them).
 
 ## What this is not
 

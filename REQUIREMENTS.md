@@ -764,6 +764,20 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     sequence, volume and book suites pass on the final build (sailing's touch tap hardened after one timing failure).
   - Open: Robin's review.
 
+- [~] XP118 MT-2, the Ensemble for every song (Robin, 2026-10-13, C-92: "All 115 now", Ogg Opus and MP3, TimGM6mb
+  while the rights are decided). docs/MUSIC_PERFORMANCE.md "MT-2"; VALIDATION.md "MT-2".
+  - Done: the renderer for every instrument and stroke (voices chosen by the lead, listed), each part's balance
+    measured against the Original's (±2.3 dB of SC-1's on the pilots), the game's echo, rooms by kind of cue, one-shot
+    cues as one file; every song produced and measured in Chromium (`produce.sh`, `verify.mjs`): **114 of 117 ready**
+    and in the build (B `verify.mjs`, reports in docs/music/ensemble/qa/; U `music_performance`; B `music_performance`).
+  - Changed on the evidence: the handover crossfade is equal-power (the two performances measured uncorrelated); a
+    one-shot's recording plays out its decay at the score's end (it was cut); a second onset detector, a negative
+    control and a stricter onset rule (z ≥ 4); exact MP3 lengths (guard) and a higher Opus rate where a file fit
+    better shifted; a cue under 32 s measured at its steadiest moments.
+  - **Not done:** `playhouse`, `sb_road`, `sa_kasane` play Original (the handover level at one measured moment: 1.52,
+    2.31 LU below, 1.04 above; Robin to decide). **Not listened to by anyone** (`docs/music/ensemble/listen_all.html`
+    for Robin). Chromium on Linux only; no device. The hosted release (C-87) and the TimGM6mb rights decision before it.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

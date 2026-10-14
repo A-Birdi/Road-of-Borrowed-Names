@@ -1,0 +1,127 @@
+{
+ "generatedBy": "tools/music/ensemble/listen_all.mjs",
+ "renderedIn": "Chromium (Playwright headless), offline, through the game's own audio graph at default volumes",
+ "listenedTo": null,
+ "comparisons": {
+  "title": [
+   {
+    "key": "original",
+    "file": "listen/mt2/title.original.opus",
+    "seconds": 20
+   },
+   {
+    "key": "ensemble",
+    "file": "listen/mt2/title.ensemble.opus",
+    "seconds": 20
+   }
+  ],
+  "road": [
+   {
+    "key": "original",
+    "file": "listen/mt2/road.original.opus",
+    "seconds": 20
+   },
+   {
+    "key": "ensemble",
+    "file": "listen/mt2/road.ensemble.opus",
+    "seconds": 20
+   }
+  ],
+  "mill": [
+   {
+    "key": "original",
+    "file": "listen/mt2/mill.original.opus",
+    "seconds": 20
+   },
+   {
+    "key": "ensemble",
+    "file": "listen/mt2/mill.ensemble.opus",
+    "seconds": 20
+   }
+  ],
+  "prologue": [
+   {
+    "key": "original",
+    "file": "listen/mt2/prologue.original.opus",
+    "seconds": 20
+   },
+   {
+    "key": "ensemble",
+    "file": "listen/mt2/prologue.ensemble.opus",
+    "seconds": 20
+   }
+  ],
+  "victory": [
+   {
+    "key": "original",
+    "file": "listen/mt2/victory.original.opus",
+    "seconds": 7
+   },
+   {
+    "key": "ensemble",
+    "file": "listen/mt2/victory.ensemble.opus",
+    "seconds": 7
+   }
+  ],
+  "cinder": [
+   {
+    "key": "original",
+    "file": "listen/mt2/cinder.original.opus",
+    "seconds": 20
+   },
+   {
+    "key": "ensemble",
+    "file": "listen/mt2/cinder.ensemble.opus",
+    "seconds": 20
+   }
+  ],
+  "sg_lighthouse": [
+   {
+    "key": "original",
+    "file": "listen/mt2/sg_lighthouse.original.opus",
+    "seconds": 20
+   },
+   {
+    "key": "ensemble",
+    "file": "listen/mt2/sg_lighthouse.ensemble.opus",
+    "seconds": 20
+   }
+  ],
+  "inn": [
+   {
+    "key": "original",
+    "file": "listen/mt2/inn.original.opus",
+    "seconds": 20
+   },
+   {
+    "key": "ensemble",
+    "file": "listen/mt2/inn.ensemble.opus",
+    "seconds": 20
+   }
+  ],
+  "ending": [
+   {
+    "key": "original",
+    "file": "listen/mt2/ending.original.opus",
+    "seconds": 20
+   },
+   {
+    "key": "ensemble",
+    "file": "listen/mt2/ending.ensemble.opus",
+    "seconds": 20
+   }
+  ],
+  "boss_hush": [
+   {
+    "key": "original",
+    "file": "listen/mt2/boss_hush.original.opus",
+    "seconds": 20
+   },
+   {
+    "key": "ensemble",
+    "file": "listen/mt2/boss_hush.ensemble.opus",
+    "seconds": 20
+   }
+  ]
+ }
+}

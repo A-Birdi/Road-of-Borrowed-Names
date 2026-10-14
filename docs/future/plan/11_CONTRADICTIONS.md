@@ -707,7 +707,10 @@ while Robin decides distribution, before any hosted release.
   Original with no request; no purchases, paid jobs or second implementation owner; the Hush's composition and the
   voice casting untouched); C-88 (no second run of the chain or the matrix with Ensemble); C-87 (no deployment before
   VA-1 and the matrix). The rights question stays Robin's and must be settled before the hosted release.
-- **Status:** in progress (MT-2).
+- **Status:** done in the build, 2026-10-14: 114 of the game's 117 songs have a ready recording (the pilots and 112 of
+  the 115). Three (`playhouse`, `sb_road`, `sa_kasane`) fail only the handover level at one measured moment and play
+  Original until Robin decides. Not listened to by anyone yet; the rights question open (docs/MUSIC_PERFORMANCE.md,
+  VALIDATION.md "MT-2").
 
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
