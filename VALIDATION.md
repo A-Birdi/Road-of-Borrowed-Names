@@ -4357,7 +4357,7 @@ every song have a full-track player.
   accepts a waiver only from Robin, only for that check, only with the loudness calibrated.
 - **Now: all 117 songs ready, every one in Ogg Opus and MP3** (495 MB). **U** `music_performance` 528/0 (adds: every
   ready track offers both encodings; the waiver accepted, and refused without it, from anyone but Robin, for any other
-  evidence, or without the loudness calibrated). **B** `music_performance` on this build: running when this was written; its result is recorded in the next commit.
+  evidence, or without the loudness calibrated). **B** `node tests/e2e/music_performance.mjs` on this build: **25/0** (coverage "117 of 117 (every song)"; the title and the victory sting play their recordings; Chromium headless, Linux).
 - **Full-track players:** `docs/music/ensemble/listen_all.html`, one per song: the recording as the game plays it,
   from the cue's start through the first pass and 5 s into its repeat (the whole of a one-shot), rendered offline by the
   game's own graph at default volumes and the song's trim (Opus 96 kbit/s, `listen/full/`, 138 MB); under it, links to
