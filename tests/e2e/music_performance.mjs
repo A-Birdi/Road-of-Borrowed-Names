@@ -44,6 +44,7 @@ async function open(o = {}) {
           segments: (c.segs || []).map((r) => ({ when: r.when, until: r.until, offset: r.offset, role: r.role, fadeIn: r.fadeIn })) },
         player: p && { id: p.song.id, anchor0: p.anchor0, cycle: p.cycle, idx: p.idx, out: p.out.gain.value, stopping: !!p.stopping },
         revGate: _.st.g && _.st.g.revGate.gain.value, mem: RB.audio.ensembleMemory(), err: _.st.lastError, log: P.log.slice(-8).map((x) => x.k + (x.why ? ':' + x.why : '')),
+        ringing: P.ringing && { id: P.ringing.id, state: P.ringing.state, segs: P.ringing.segs.length, gain: P.ringing.gain && P.ringing.gain.gain.value },
       };
     };
   });
@@ -542,7 +543,7 @@ await test('MT-T05/T42 a Keepers\' Road battle: battle_keepers, the battle\'s ow
   await ensembleOn(p, 'battle_keepers', 5000);
   await p.click('.folio-bset [data-folio-close]');
   await p.waitForTimeout(600);
-  // step back from the fight: the map's music (no recording) returns as Original, the battle's recording released
+  // step back from the fight: the map's music returns (MT-2: with its own recording), the battle's recording released
   await p.waitForSelector('[data-flee]', { timeout: 10000 });
   await p.click('[data-flee]');
   await p.waitForSelector('.csheet .pbtn');
@@ -550,7 +551,11 @@ await test('MT-T05/T42 a Keepers\' Road battle: battle_keepers, the battle\'s ow
   await p.waitForFunction(() => window.__res === 'flee' && RB.game.mode() === 'world', null, { timeout: 15000 });
   await p.waitForTimeout(1200);
   c = await cue(p);
-  assert(c.song !== 'battle_keepers' && c.cue && c.cue.id === c.song && !c.cue.active && c.status.state === 'unsupported', 'after the battle the map\'s music is Original (it has no recording): ' + JSON.stringify({ song: c.song, cue: c.cue, s: c.status }));
+  // (MT-2: the map's music has its own recording now: its own cue takes over, the battle's recording released)
+  assert(c.song !== 'battle_keepers' && c.cue && c.cue.id === c.song && c.cue.want === 'ensemble' && c.status.pref === 'ensemble', 'after the battle the map\'s own cue: ' + JSON.stringify({ song: c.song, cue: c.cue, s: c.status }));
+  await ensembleOn(p, c.song, 20000);
+  c = await cue(p);
+  assert(c.cue.id === c.song && c.cue.active && c.status.state === 'ensemble', 'the map\'s recording sounds: ' + JSON.stringify({ cue: c.cue, s: c.status }));
   assert(!errors.length, 'page errors: ' + errors.join(' | '));
   await p.context().close();
 });
@@ -617,9 +622,29 @@ await test('MT2-T03 a cue that does not loop (the victory sting): one file, no s
   let c = await cue(p);
   assert(c.cue.segs === 1 && c.cue.segments[0].role === 'first' && c.cue.segments[0].until == null && c.cue.horizon == null, 'one segment, no cycle scheduled: ' + JSON.stringify(c.cue.segments));
   assert(music.length >= 1 && music.every((u) => /victory\.first\./.test(u)), 'only the single file was fetched: ' + JSON.stringify(music));
-  // it plays out: past the score and its decay the segment has ended and nothing else was scheduled
-  await until(p, () => { const c = window.__cue(); return c.cue && c.cue.segs === 0; }, null, 20000);
+  // the score ends (the sequencer's one completion): the recording plays out its own decay, then lets go
+  const ends = [];
+  await p.evaluate(() => { window.__ends = []; RB.bus.on('audio:songend', (e) => window.__ends.push(e.id)); });
+  await until(p, () => !RB.audio.currentSong(), null, 15000);
+  await until(p, () => window.__cue().revGate > 0.99, null, 2000); // (the room's return reopens over about 0.3 s)
   c = await cue(p);
+  assert(!c.cue && c.ringing && c.ringing.id === 'victory' && c.ringing.state === 'ringing' && c.ringing.segs === 1 && c.ringing.gain > 0.99 && c.revGate > 0.99, 'at the score\'s end the recording rings on, the room\'s return open for what follows: ' + JSON.stringify({ r: c.ringing, rg: c.revGate }));
+  await until(p, () => !window.__cue().ringing, null, 15000);
+  c = await cue(p);
+  ends.push(...(await p.evaluate(() => window.__ends)));
+  assert(ends.length === 1 && ends[0] === 'victory' && c.mem.inflight === 0, 'one completion, and the recording let go when its file ended: ' + JSON.stringify({ ends, mem: c.mem }));
+  // the next song while the sting rings out (as the Original's ended notes ring under it): its own cue starts, the
+  // ringing recording still lets go on its own
+  await p.evaluate(() => RB.audio.playSong('victory', { fade: 0 }));
+  await ensembleOn(p, 'victory', 15000);
+  await until(p, () => !!window.__cue().ringing, null, 15000);
+  await p.evaluate(() => RB.audio.playSong('title', { fade: 0 }));
+  await ensembleOn(p, 'title', 20000);
+  c = await cue(p);
+  assert(c.cue.id === 'title' && c.revGate < 0.01 && c.player.id === 'title', 'the next song\'s recording sounds while the sting rings out: ' + JSON.stringify({ cue: c.cue, r: c.ringing }));
+  await until(p, () => !window.__cue().ringing, null, 15000);
+  c = await cue(p);
+  assert(c.cue.id === 'title' && c.cue.active && c.status.state === 'ensemble', 'the sting let go on its own, the title untouched: ' + JSON.stringify({ cue: c.cue, s: c.status }));
   assert(!errors.length && !c.err, 'no page or engine error: ' + errors.join(' | '));
   await p.context().close();
 });

@@ -53,6 +53,7 @@ RB.audio = RB.audio || {};
   const P = (_.perf = {
     pref: 'original',
     cue: null, // { player, id, gen, entry, fmt, bufs, segs, horizon, timer, gain, trim, active, want, state, retries, at }
+    ringing: null, // (MT-2) an ended one-shot's recording playing out its decay
     gen: 0,
     cache: new Map(), // sha256 -> { buffer, bytes, used, refs }
     inflight: new Map(), // sha256 -> Promise<AudioBuffer>
@@ -331,9 +332,16 @@ RB.audio = RB.audio || {};
     adopt(p);
     refresh(false);
   });
-  // the cue stopped (stopSong, or a one-shot's natural end): its recording goes with it
-  _.hooks.cueStop.push((fade) => {
-    if (P.cue) release(P.cue, fade);
+  // the cue stopped (stopSong, or a one-shot's natural end): its recording goes with it; but at a one-shot's natural
+  // end (MT-2) a sounding recording plays out its own file, which holds the score's decay (the Original's notes and
+  // room ring on too); a stop meanwhile fades it
+  _.hooks.cueStop.push((fade, why) => {
+    const c = P.cue;
+    if (c && why === 'end' && c.active && c.entry && !c.entry.loop && c.segs && c.segs.length) ringOut(c);
+    else {
+      if (c) release(c, fade);
+      if (P.ringing && why !== 'end') { release(P.ringing, fade); P.ringing = null; }
+    }
     P.cue = null;
     announce();
   });
@@ -428,6 +436,7 @@ RB.audio = RB.audio || {};
       const i = c.segs.indexOf(rec);
       if (i >= 0) c.segs.splice(i, 1);
       try { s.disconnect(); g.disconnect(); } catch (e) { /* ignore */ }
+      if (c.state === 'ringing' && !c.segs.length) finishRing(c);
     };
     c.segs.push(rec);
     return rec;
@@ -559,8 +568,33 @@ RB.audio = RB.audio || {};
     c.segs = [];
     c.horizon = null;
   }
+  // (MT-2) a one-shot's natural end with its recording sounding: the recording plays out (its file runs past the score
+  // with the decay), the cue lets go of everything else at once (as release does: no more loading, the warm Original's
+  // room sends stopped and the room's return reopened for what comes next); the decoded files stay held until it ends
+  function ringOut(c) {
+    c.gen = -1;
+    if (c.abort) { try { c.abort.abort(); } catch (e) { /* ignore */ } }
+    const ctx = c.gain ? c.gain.context : st.ctx;
+    clearTimeout(c.timer);
+    if (ctx && ctx.state !== 'closed') {
+      try { c.player.wet.gain.cancelScheduledValues(ctx.currentTime); c.player.wet.gain.setTargetAtTime(0, ctx.currentTime, 0.01); } catch (e) { /* ignore */ }
+      if (st.g && st.ctx === ctx) { st.g.revGate.gain.cancelScheduledValues(ctx.currentTime); st.g.revGate.gain.setTargetAtTime(1, ctx.currentTime + 0.05, 0.05); }
+    }
+    c.state = 'ringing';
+    if (P.ringing && P.ringing !== c) release(P.ringing, 0.05);
+    P.ringing = c;
+    note('ring', { song: c.id });
+  }
+  function finishRing(c) {
+    for (const r of c.fmt ? [c.fmt.first, c.fmt.loop] : []) { const h = r && P.cache.get(r.sha256); if (h && h.refs > 0) h.refs--; }
+    try { c.gain.disconnect(); c.trim.disconnect(); } catch (e) { /* ignore */ }
+    c.active = false;
+    c.state = 'released';
+    if (P.ringing === c) P.ringing = null;
+  }
   // a cue ends (a song change, a stop, a one-shot's end): its recording fades with it, its warm Original says nothing
   function release(c, fade) {
+    if (c.state === 'released') return;
     c.gen = -1;
     if (c.abort) { try { c.abort.abort(); } catch (e) { /* ignore */ } }
     const ctx = c.gain ? c.gain.context : st.ctx; // (the cue's own context, which may not be the current one)

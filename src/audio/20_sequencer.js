@@ -588,7 +588,7 @@ RB.audio = RB.audio || {};
         if (p === cur) {
           cur = null;
           st.wantSong = null;
-          for (const f of _.hooks.cueStop) { try { f(0); } catch (e) { st.lastError = String(e && e.message); } }
+          for (const f of _.hooks.cueStop) { try { f(0, 'end'); } catch (e) { st.lastError = String(e && e.message); } }
           if (RB.bus) RB.bus.emit('audio:songend', { id: p.song.id });
         }
       }
