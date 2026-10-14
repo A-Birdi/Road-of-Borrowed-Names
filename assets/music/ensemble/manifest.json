@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "runtimeEnabled": true,
-  "coverage": "35 of 117 songs: snowbell, battle_keepers, mill, victory, prologue, sg_lighthouse, cinder, boss_hush, boss, boss_cr, boss_lanternfall, boss_cinder, boss_ko, battle_yn, boss_snowbell, boss_keepers, yn_kettle, battle_cr, battle_still, battle_ko, battle_lanternfall, boss_understage, boss_saltglass, boss_atlas, boss_manybridge, battle_snowbell, battle_cinder, battle_manybridge, battle_atlas, co_festival, atlas, road, sa_road_home, battle_saltglass, saltglass. Every other song plays its Original.",
+  "coverage": "40 of 117 songs: snowbell, battle_keepers, mill, victory, prologue, sg_lighthouse, cinder, boss_hush, boss, boss_cr, boss_lanternfall, boss_cinder, boss_ko, battle_yn, boss_snowbell, boss_keepers, yn_kettle, battle_cr, battle_still, battle_ko, battle_lanternfall, boss_understage, boss_saltglass, boss_atlas, boss_manybridge, battle_snowbell, battle_cinder, battle_manybridge, battle_atlas, co_festival, atlas, road, sa_road_home, battle_saltglass, saltglass, lanternfall, credits, observatory, co_road, festival. Every other song plays its Original.",
   "tracks": [
     {
       "songId": "snowbell",
@@ -3132,6 +3132,431 @@
         ]
       },
       "notes": "MT-2: the SC-1 treatment carried to this score (first-pass realisation; voices, measured part balance, room and echo in docs/music/ensemble/qa/reedwake.json render.treatment), rendered by tools/music/ensemble at 48 kHz: a first pass to 6.000 s and one circular steady cycle, with guards. Machine-checked in Chromium only; not yet listened to by anyone."
+    },
+    {
+      "songId": "lanternfall",
+      "releaseStatus": "ready",
+      "fingerprintVersion": "mt1-score-v1",
+      "scoreFingerprint": "sha256:5fbe83091e046a9066fbacc6572aec8a226b281c92bcd95b1aa7064e549502b4",
+      "referenceCommit": "eedb2030423b14d36780d973c59f76fd59d19e30",
+      "rendererRevision": "mt1-tools-sha256:96ee0c13f319e39e",
+      "timeline": {
+        "durationSec": 100,
+        "loop": true,
+        "loopStartSec": 0
+      },
+      "assets": {
+        "layout": "split_firstpass_loop",
+        "firstPass": [
+          {
+            "relativeUrl": "./assets/music/ensemble/lanternfall/lanternfall.first.7c2bed47e9c4616f.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "7c2bed47e9c4616f0d035ef177fd8c48d8f238c7d2d62a65f90b31caf501c465",
+            "encodedBytes": 128017,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 268800,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 244800
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/lanternfall/lanternfall.first.8ec5f6e093ba0a89.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "8ec5f6e093ba0a893c50a2684dc3383ae8e34452444f044331626bf4a5df37bb",
+            "encodedBytes": 135956,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 268800,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 244800
+          }
+        ],
+        "steadyLoop": [
+          {
+            "relativeUrl": "./assets/music/ensemble/lanternfall/lanternfall.loop.a1dd14443fd0505d.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "a1dd14443fd0505d34c3b35e6355d91daf7ac9bd2d22ccd349898dd76761e145",
+            "encodedBytes": 2385878,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 4848000,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 4824000,
+            "loopStartFrame": 24000
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/lanternfall/lanternfall.loop.6204a68d14479d64.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "6204a68d14479d64a65256111f59aac0ec4097d2b0fbe5883e27825737b068ee",
+            "encodedBytes": 2425556,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 4848000,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 4824000,
+            "loopStartFrame": 24000
+          }
+        ]
+      },
+      "mix": {
+        "profile": "pre_master_music_bus",
+        "gainDb": 0.45,
+        "roomBaked": true,
+        "userVolumeBaked": false
+      },
+      "evidence": {
+        "scoreCompatibleWithCurrentBuild": true,
+        "scoreEventsPreserved": true,
+        "decodedAlignmentVerified": true,
+        "firstPassSeamVerified": true,
+        "repeatedLoopVerified": true,
+        "gameMixCalibrated": true,
+        "distributionProvenanceRecorded": true,
+        "reportPaths": [
+          "docs/music/ensemble/qa/lanternfall.json"
+        ]
+      },
+      "notes": "MT-2: the SC-1 treatment carried to this score (first-pass realisation; voices, measured part balance, room and echo in docs/music/ensemble/qa/lanternfall.json render.treatment), rendered by tools/music/ensemble at 48 kHz: a first pass to 5.000 s and one circular steady cycle, with guards. Machine-checked in Chromium only; not yet listened to by anyone."
+    },
+    {
+      "songId": "credits",
+      "releaseStatus": "ready",
+      "fingerprintVersion": "mt1-score-v1",
+      "scoreFingerprint": "sha256:d73c75c45af561e69ce3481e0ee7d22fea2d697330eab840909c7f9787db00cb",
+      "referenceCommit": "eedb2030423b14d36780d973c59f76fd59d19e30",
+      "rendererRevision": "mt1-tools-sha256:96ee0c13f319e39e",
+      "timeline": {
+        "durationSec": 124.42857142857144,
+        "loop": true,
+        "loopStartSec": 0
+      },
+      "assets": {
+        "layout": "split_firstpass_loop",
+        "firstPass": [
+          {
+            "relativeUrl": "./assets/music/ensemble/credits/credits.first.faf4d4c6548cd12a.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "faf4d4c6548cd12a3e94bed96dd8cdbd848298488004cda338c39e7973abb8de",
+            "encodedBytes": 140480,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 316800,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 292800
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/credits/credits.first.d6c3e4a8d95ad958.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "d6c3e4a8d95ad9588b81948d13895885d786c90fee6180c2316103d1f0177aef",
+            "encodedBytes": 159572,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 316800,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 292800
+          }
+        ],
+        "steadyLoop": [
+          {
+            "relativeUrl": "./assets/music/ensemble/credits/credits.loop.c6862eb4eb09e60a.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "c6862eb4eb09e60a3f69d84f2b4fde0f683a10eb9a60e26e0f767adbbd7d45f4",
+            "encodedBytes": 2772794,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 6020571,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 5996571,
+            "loopStartFrame": 24000
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/credits/credits.loop.7172610da472518a.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "7172610da472518aa71d597aa692877a12281aa595ecc2de84d50b822c6669c1",
+            "encodedBytes": 3011924,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 6020571,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 5996571,
+            "loopStartFrame": 24000
+          }
+        ]
+      },
+      "mix": {
+        "profile": "pre_master_music_bus",
+        "gainDb": 3.43,
+        "roomBaked": true,
+        "userVolumeBaked": false
+      },
+      "evidence": {
+        "scoreCompatibleWithCurrentBuild": true,
+        "scoreEventsPreserved": true,
+        "decodedAlignmentVerified": true,
+        "firstPassSeamVerified": true,
+        "repeatedLoopVerified": true,
+        "gameMixCalibrated": true,
+        "distributionProvenanceRecorded": true,
+        "reportPaths": [
+          "docs/music/ensemble/qa/credits.json"
+        ]
+      },
+      "notes": "MT-2: the SC-1 treatment carried to this score (first-pass realisation; voices, measured part balance, room and echo in docs/music/ensemble/qa/credits.json render.treatment), rendered by tools/music/ensemble at 48 kHz: a first pass to 6.000 s and one circular steady cycle, with guards. Machine-checked in Chromium only; not yet listened to by anyone."
+    },
+    {
+      "songId": "observatory",
+      "releaseStatus": "ready",
+      "fingerprintVersion": "mt1-score-v1",
+      "scoreFingerprint": "sha256:f50b28c8d475f17f60b5030218ab99bdb5dd73abea4d8a28af80b76be52c6a27",
+      "referenceCommit": "eedb2030423b14d36780d973c59f76fd59d19e30",
+      "rendererRevision": "mt1-tools-sha256:96ee0c13f319e39e",
+      "timeline": {
+        "durationSec": 106.66666666666667,
+        "loop": true,
+        "loopStartSec": 0
+      },
+      "assets": {
+        "layout": "split_firstpass_loop",
+        "firstPass": [
+          {
+            "relativeUrl": "./assets/music/ensemble/observatory/observatory.first.d40aa0cf80c6f0e5.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "d40aa0cf80c6f0e51c37d7b9e1c2c515d96f6d231d839fdfa16054b237d4dc2b",
+            "encodedBytes": 269777,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 580800,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 556800
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/observatory/observatory.first.2d56a6024b3a06fe.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "2d56a6024b3a06fecddfa5e0bceae2325bc009b32e202500a5e3e0087f508faa",
+            "encodedBytes": 292052,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 580800,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 556800
+          }
+        ],
+        "steadyLoop": [
+          {
+            "relativeUrl": "./assets/music/ensemble/observatory/observatory.loop.4622e24badc64330.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "4622e24badc6433054105b145d23d2d822774c228c0025a8214d6c629f8f73bc",
+            "encodedBytes": 2493678,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 5168000,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 5144000,
+            "loopStartFrame": 24000
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/observatory/observatory.loop.76c4a66c03b9ed1a.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "76c4a66c03b9ed1ad2802beebfaf5bbcf0ce527619e067a7d95ca20e54523313",
+            "encodedBytes": 2585684,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 5168000,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 5144000,
+            "loopStartFrame": 24000
+          }
+        ]
+      },
+      "mix": {
+        "profile": "pre_master_music_bus",
+        "gainDb": 2.592,
+        "roomBaked": true,
+        "userVolumeBaked": false
+      },
+      "evidence": {
+        "scoreCompatibleWithCurrentBuild": true,
+        "scoreEventsPreserved": true,
+        "decodedAlignmentVerified": true,
+        "firstPassSeamVerified": true,
+        "repeatedLoopVerified": true,
+        "gameMixCalibrated": true,
+        "distributionProvenanceRecorded": true,
+        "reportPaths": [
+          "docs/music/ensemble/qa/observatory.json"
+        ]
+      },
+      "notes": "MT-2: the SC-1 treatment carried to this score (first-pass realisation; voices, measured part balance, room and echo in docs/music/ensemble/qa/observatory.json render.treatment), rendered by tools/music/ensemble at 48 kHz: a first pass to 11.500 s and one circular steady cycle, with guards. Machine-checked in Chromium only; not yet listened to by anyone."
+    },
+    {
+      "songId": "co_road",
+      "releaseStatus": "ready",
+      "fingerprintVersion": "mt1-score-v1",
+      "scoreFingerprint": "sha256:acbe78db4e03ec533135a65423d242bf7199e9c0137e4ad81833cbc0280a0d8d",
+      "referenceCommit": "eedb2030423b14d36780d973c59f76fd59d19e30",
+      "rendererRevision": "mt1-tools-sha256:96ee0c13f319e39e",
+      "timeline": {
+        "durationSec": 88.69565217391306,
+        "loop": true,
+        "loopStartSec": 5.217391304347826
+      },
+      "assets": {
+        "layout": "split_firstpass_loop",
+        "firstPass": [
+          {
+            "relativeUrl": "./assets/music/ensemble/co_road/co_road.first.08544a2d3ea970c9.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "08544a2d3ea970c90a621950c46e8276b363a2bf9f2b0711dd0c32f380371629",
+            "encodedBytes": 282862,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 567235,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 543235
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/co_road/co_road.first.3acac03a1a0c3d4d.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "3acac03a1a0c3d4d09465847011dec8d6a326b85dc552918c45741590b8291a3",
+            "encodedBytes": 285140,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 567235,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 543235
+          }
+        ],
+        "steadyLoop": [
+          {
+            "relativeUrl": "./assets/music/ensemble/co_road/co_road.loop.97ea44eee21d925c.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "97ea44eee21d925c16a318c7b91aabd850db427c6aca6c29c79cf6125c9547c5",
+            "encodedBytes": 1963036,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 4054957,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 4030957,
+            "loopStartFrame": 24000
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/co_road/co_road.loop.53329f483a10a661.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "53329f483a10a66190692303dd1eef80f1576d9d1e4e00a0257aca50efde6951",
+            "encodedBytes": 2028692,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 4054957,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 4030957,
+            "loopStartFrame": 24000
+          }
+        ]
+      },
+      "mix": {
+        "profile": "pre_master_music_bus",
+        "gainDb": 0.542,
+        "roomBaked": true,
+        "userVolumeBaked": false
+      },
+      "evidence": {
+        "scoreCompatibleWithCurrentBuild": true,
+        "scoreEventsPreserved": true,
+        "decodedAlignmentVerified": true,
+        "firstPassSeamVerified": true,
+        "repeatedLoopVerified": true,
+        "gameMixCalibrated": true,
+        "distributionProvenanceRecorded": true,
+        "reportPaths": [
+          "docs/music/ensemble/qa/co_road.json"
+        ]
+      },
+      "notes": "MT-2: the SC-1 treatment carried to this score (first-pass realisation; voices, measured part balance, room and echo in docs/music/ensemble/qa/co_road.json render.treatment), rendered by tools/music/ensemble at 48 kHz: a first pass to 11.217 s and one circular steady cycle, with guards. Machine-checked in Chromium only; not yet listened to by anyone."
+    },
+    {
+      "songId": "festival",
+      "releaseStatus": "ready",
+      "fingerprintVersion": "mt1-score-v1",
+      "scoreFingerprint": "sha256:b225b052cbfe0cf3ecb5ed11247c6b147d2944db34d4c78ca8a2595fc602ceb1",
+      "referenceCommit": "357ed3cd7aa2f6af97128cfdbb523d94455ec0ed",
+      "rendererRevision": "mt1-tools-sha256:96ee0c13f319e39e",
+      "timeline": {
+        "durationSec": 68,
+        "loop": true,
+        "loopStartSec": 4
+      },
+      "assets": {
+        "layout": "split_firstpass_loop",
+        "firstPass": [
+          {
+            "relativeUrl": "./assets/music/ensemble/festival/festival.first.f1b501b5dbb8a16b.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "f1b501b5dbb8a16bf4063cf85de8b0dcad9297efcb0fc18fe817865e47a33d79",
+            "encodedBytes": 248034,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 508800,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 484800
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/festival/festival.first.b7487695d0d2fec6.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "b7487695d0d2fec6e861d20032f36f448fefa3fa83c051ffdb743834fb3db3f2",
+            "encodedBytes": 255764,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 508800,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 484800
+          }
+        ],
+        "steadyLoop": [
+          {
+            "relativeUrl": "./assets/music/ensemble/festival/festival.loop.bd4ed46d024710b6.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "bd4ed46d024710b62b8b18fecda1e5ebc94a1fd714ccc9a6b7143f49f6481d9f",
+            "encodedBytes": 1497359,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 3120000,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 3096000,
+            "loopStartFrame": 24000
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/festival/festival.loop.e9f916333d4d2dbf.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "e9f916333d4d2dbfaa9fdc33dc292afda30109775982b86d58e3fee29ecd80cb",
+            "encodedBytes": 1561556,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 3120000,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 3096000,
+            "loopStartFrame": 24000
+          }
+        ]
+      },
+      "mix": {
+        "profile": "pre_master_music_bus",
+        "gainDb": 1.396,
+        "roomBaked": true,
+        "userVolumeBaked": false
+      },
+      "evidence": {
+        "scoreCompatibleWithCurrentBuild": true,
+        "scoreEventsPreserved": true,
+        "decodedAlignmentVerified": true,
+        "firstPassSeamVerified": true,
+        "repeatedLoopVerified": true,
+        "gameMixCalibrated": true,
+        "distributionProvenanceRecorded": true,
+        "reportPaths": [
+          "docs/music/ensemble/qa/festival.json"
+        ]
+      },
+      "notes": "MT-2: the SC-1 treatment carried to this score (first-pass realisation; voices, measured part balance, room and echo in docs/music/ensemble/qa/festival.json render.treatment), rendered by tools/music/ensemble at 48 kHz: a first pass to 10.000 s and one circular steady cycle, with guards. Machine-checked in Chromium only; not yet listened to by anyone."
     }
   ]
 }
