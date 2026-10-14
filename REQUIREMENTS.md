@@ -774,9 +774,12 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     one-shot's recording plays out its decay at the score's end (it was cut); a second onset detector, a negative
     control and a stricter onset rule (z ≥ 4); exact MP3 lengths (guard) and a higher Opus rate where a file fit
     better shifted; a cue under 32 s measured at its steadiest moments.
-  - **Not done:** `playhouse`, `sb_road`, `sa_kasane` play Original (the handover level at one measured moment: 1.52,
-    2.31 LU below, 1.04 above; Robin to decide). **Not listened to by anyone** (`docs/music/ensemble/listen_all.html`
-    for Robin). Chromium on Linux only; no device. The hosted release (C-87) and the TimGM6mb rights decision before it.
+  - Follow-up (Robin, 2026-10-14, "Definitely include every track"; Astra's report): **all 117 songs ready, every one in
+    Opus and MP3** (nine had been admitted with one encoding: fixed; U checks both for every track); `playhouse`,
+    `sb_road`, `sa_kasane` admitted on Robin's waiver of the handover level (recorded in the manifest); a full-track
+    player for every song on `docs/music/ensemble/listen_all.html`.
+  - **Not done:** **not listened to by anyone** (the listening page is for Robin). Chromium on Linux only; no device.
+    The hosted release (C-87) and the TimGM6mb rights decision before it.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

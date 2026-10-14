@@ -4338,6 +4338,34 @@ should): 3/3 passes alone; the full suite on this build **121/0**.
 
 ## MT-2 — the Ensemble for every song (Robin, 2026-10-13; C-92)
 
+**Follow-up, 2026-10-14 (supersedes the counts below where they differ).** Robin: "Definitely include every track. Add
+the remaining 3", passing on Astra's report that cinder, yn_vents, yn_north and hall_w3 had MP3s only, and asking that
+every song have a full-track player.
+- **What the report found, and that this record had missed:** nine tracks had been admitted with one encoding only
+  (verify admits a track with whichever encodings pass): cinder, yn_vents, yn_north and hall_w3 with MP3 only (their
+  Opus files failed MT-1's alignment rule by 1 to 6 samples at single windows; climbing to 510 kbit/s did not clear
+  them), sg_lighthouse, inn, title, fireworks and kr_hall with Opus only (their MP3 cycles decoded 12 samples long:
+  the MP3 length fault, rendered before the guard existed). The line below that every song passed in "Opus and MP3"
+  was wrong for these nine.
+- **Fixed:** the five re-rendered with the guard and verified with both encodings; the alignment rule now checks what
+  it is for (the median window at no shift within 1 dB, none beyond 8 samples; the exact length checked apart): applied
+  to all 464 files' recorded windows, it changes only those four Opus files' verdicts (fail → pass); five files have a
+  window fitting best shifted, by at most 6 samples (0.13 ms). The four re-made at 160 kbit/s (one rate again) and
+  verified with both encodings. `package.py` checks Opus locally with libopus, as browsers decode it.
+- **Admitted on Robin's waiver:** playhouse, sb_road, sa_kasane (the handover level only; every other check passed;
+  the limits unchanged). The manifest records it (`waivers.gameMixCalibrated`: by, date, words, scope); the build
+  accepts a waiver only from Robin, only for that check, only with the loudness calibrated.
+- **Now: all 117 songs ready, every one in Ogg Opus and MP3** (495 MB). **U** `music_performance` 528/0 (adds: every
+  ready track offers both encodings; the waiver accepted, and refused without it, from anyone but Robin, for any other
+  evidence, or without the loudness calibrated). **B** `music_performance` on this build: running when this was written; its result is recorded in the next commit.
+- **Full-track players:** `docs/music/ensemble/listen_all.html`, one per song: the recording as the game plays it,
+  from the cue's start through the first pass and 5 s into its repeat (the whole of a one-shot), rendered offline by the
+  game's own graph at default volumes and the song's trim (Opus 96 kbit/s, `listen/full/`, 138 MB); under it, links to
+  the song's four game files. Checked: 117 full-track and 20 comparison players, 464 file links, none missing; no
+  sideways scroll at 1280 and 390 px. Not listened to by anyone.
+
+*As first recorded (2026-10-14, early):*
+
 Robin asked why Settings said Ensemble covered two tracks, and chose: all 115 remaining tracks now, Ogg Opus and MP3,
 the TimGM6mb sound bank while the rights question is decided ("Yes, carry on"). Method and design:
 docs/MUSIC_PERFORMANCE.md "MT-2"; the reports: docs/music/ensemble/qa/<song>.json. Evidence, kept apart by kind:

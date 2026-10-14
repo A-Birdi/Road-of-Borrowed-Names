@@ -354,14 +354,17 @@
     switches, the volume's 160 × 90 pages (now 320 × 180 with the sheet's line), two unpainted places. VALIDATION.md
     "AR-2", REQUIREMENTS.md XP117, pairs in `docs/screenshots/ar2/`. Robin's review open.
     **MT-2 (Robin, 2026-10-13, C-92: "All 115 now", Opus + MP3, TimGM6mb while the rights are decided):** every song
-    the game plays was recorded in the Ensemble treatment and measured; **114 of 117 are ready and in the build**.
+    the game plays was recorded in the Ensemble treatment and measured; **all 117 are ready and in the build, in Opus
+    and MP3** (2026-10-14: Robin admitted the last three on a waiver of the handover level, "Definitely include every
+    track"; Astra's report that nine songs had one encoding only was fixed).
     `tools/music/ensemble/produce.sh <song>` makes one (export, stems, render, package, verify). Voices for the new
     instruments are the lead's choice, each part balanced against the Original's by measurement; nobody has heard
     them yet: `docs/music/ensemble/listen_all.html` is for Robin. Changed on the evidence: the handover is now an
     equal-power crossfade (the two performances are uncorrelated); a one-shot's recording plays out its decay; the
-    onset test has a second detector, a negative control and the rule z ≥ 4. **Open, for Robin:** `playhouse`,
-    `sb_road` and `sa_kasane` fail only the handover level at one measured moment and play Original; listening; the
-    TimGM6mb rights before any hosted release. docs/MUSIC_PERFORMANCE.md, VALIDATION.md "MT-2", REQUIREMENTS.md XP118.
+    onset test has a second detector, a negative control and the rule z ≥ 4; the alignment rule checks the median
+    window. `docs/music/ensemble/listen_all.html` has a full-track player for every song. **Open, for Robin:**
+    listening; the TimGM6mb rights before any hosted release. docs/MUSIC_PERFORMANCE.md, VALIDATION.md "MT-2",
+    REQUIREMENTS.md XP118.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
