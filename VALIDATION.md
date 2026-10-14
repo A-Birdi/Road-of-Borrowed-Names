@@ -4258,6 +4258,59 @@ automated path (every other sheet of its kind has one). The hook now names the b
 old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The later attempts are recorded under
 "The expansion, P17".
 
+## KS-1 — Roadside Keepsakes on the whole twelve-chapter road (Robin, 2026-10-14; C-94)
+
+Robin: "there are only 6 Keepsakes still? We've added much more content to allow more Keepsakes". Found: the catalogue
+knew the six original regions only (12 road keepsakes, 4 companion mementos); 22 items described themselves as
+keepsakes but were satchel items the catalogue never listed (the expansion's 14 and 8 older ones); the six new chapters
+had none of their own. Robin: "Yes, please do so."
+- **Implemented:** `src/content/zzzz_keepsakes/` (00_items.js and 05_items_six.js: the 22 item keepsakes with art,
+  hints, where and how; 10_mb_mp.js, 20_kr_ko.js, 30_cr_yn.js: two new keepsakes per new chapter, written by three
+  workers to one contract and reviewed by the lead); `RB.discovery.fromItem` and `RB.state.give` (recorded when the
+  item is given to the journey being played, never for a copy such as the quest guide's simulations); the page's 14
+  regions in story order, filtered by the journey's edition, and a held keepsake item counted as found without
+  writing into the save (`src/ui/58_keepsakes.js`); New Game+'s found record includes held keepsake items
+  (`src/engine/05b_foundations.js`). 46 road keepsakes now. Integration: the review ledger (115 lines self-reviewed;
+  one phrase corrected), the scene manifest, the font subsets made again from the checked sources (all seven
+  checksums matched) and the handwriting data and readings for 枡, 蒔 and 檜 (檜 given its own reading).
+- **Placement for journeys already past a chapter** (Robin's own included): each new keepsake is a first talk option
+  on a person who is always there after the chapter, or a spot on a place, offered until found.
+- **U** `node tests/run-unit.mjs keepsakes_road` **240/0**: every item described as a keepsake is catalogued, each
+  belongs to one entry; every entry complete and its art on the 32 × 32 grid; ≥ 2 per chapter region (the Hall and
+  Ashihara Shinden ≥ 1); a six-chapter journey sees only its 6 regions; given → recorded once with its notice, a copy
+  records nothing, taking away records nothing; a journey from before holding or wearing the items shows them found
+  and loading records nothing; a six-chapter save loads exactly as written; New Game+ carries them; each of the 12
+  chapter keepsakes is recorded by a scene, placed on a map, offered only until found, and recorded when its scene is
+  played with each companion and with none. Also **U** `fixtures_campaign` 573/0 (older saves load unchanged),
+  `foundations` 67/0, `cases` 194/0, `fieldweave` 390/0, `guardians` 66/0, `records` 261/0, `equip` 466/0, and the
+  workers' chapter suites (mb, mp_ch4, kr_ch7, ko_ch9, ko_side, sea_*, cr_ch10, yn_ch11, living_world, town, returns,
+  dialect_kansai: all 0 failed as they reported and as re-run where noted). **Whole unit suite:** running when this was written; its result is recorded in the next commit.
+- **B** `node tests/e2e/keepsakes.mjs` on the new build: **33/33** (counts read from the journey: every entry and region
+  of a twelve-chapter journey).
+- **Looked at (lead):** all 46 road keepsakes' art rendered by the built game on one sheet; each reads at ×3.
+- **Not done:** Robin's look in play; the complete browser run on this build.
+
+## VA-2 — casting samples for Robin's voice decisions (Robin, 2026-10-14; C-93) — prepared, not run
+
+Robin's decisions and the sample request are in C-93, verbatim. The engines (AivisSpeech, Qwen3-TTS, VOICEVOX Nemo)
+cannot run in the cloud environment (their model hosts are refused; no GPU; about 2 GB of disk), so the job runs on
+Robin's PC: `docs/future/voice/va2/HANDOFF_VA2.md`. **No voice was generated or heard here.**
+- **Prepared:** `tools/voice/va2/plan.mjs` → `docs/future/voice/va2/va2_plan.json` (60 player takes: three sets of
+  designed Qwen3-TTS voices, A and B, High and Low ±2 semitones, five moods on the player's own lines; 14 narrator takes:
+  seven AivisSpeech models chosen on the PC, Directed-Neutral and Directed-Energetic on one line; 281 NPC takes from
+  `npc_casting.json`: engine, voice and settings per NPC with the evidence for each, neutral unless always excited or
+  happy; names spoken from the game's furigana); `va2_audio.py` (the clean-ending check and trim, PSOLA pitch with the
+  formants kept, seven supernatural treatments, −20 LUFS); `va2_render.py` (the three engines, resume, the record of
+  every try); `va2_gallery.py` (one HTML file with every recording inside, sections labelled, picks, dislike ticks and
+  notes, "Copy my decisions").
+- **Self-test here, synthetic audio (`--mock`; tests the job, says nothing about voices):** the whole plan, 355 takes
+  made, 0 failed, in 120 s; a second run makes nothing again; every take at −20.0 LUFS; pitch moves measured on a
+  synthetic voice (180 Hz → 202 Hz at +2, 160 Hz at −2); the clean check flagged and trimmed a take with 0.39 s of lead-in
+  and 0.34 s of tail; all seven treatments ran without NaN; the gallery (Chromium, headless shell, Linux) at 1280 and 390 px:
+  no sideways scroll, every player present, a clip decodes; the Opus rate set to about 58 kbit/s (the self-test gallery
+  measured 28.6 MB at the first setting).
+- **Not done:** the recordings, on Robin's PC; Robin's picks; anything in the game's speech.
+
 ## AR-1 — the illustrations' art pass (Robin's report, 2026-10-13; implemented provisionally, internally reviewed)
 
 Robin, with three captures of the hosted page's travel volume (Otoha from the front, Otoha from behind, Ren): "The

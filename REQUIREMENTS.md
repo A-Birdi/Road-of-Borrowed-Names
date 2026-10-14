@@ -781,6 +781,33 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - **Not done:** **not listened to by anyone** (the listening page is for Robin). Chromium on Linux only; no device.
     The hosted release (C-87) and the TimGM6mb rights decision before it.
 
+- [~] XP119 KS-1, Roadside Keepsakes on the whole twelve-chapter road (Robin, 2026-10-14: "there are only 6
+  Keepsakes still? … might have been forgotten when developing new areas"; "Yes, please do so"; C-94). VALIDATION.md "KS-1".
+  - Done: the catalogue lists every item that calls itself a keepsake (22: the nine guardians' gifts, the iroha
+    print, the tide-stone rubbing, the "Fish Street" slip, the Lantern of the Hundred, the planting hat, and eight from
+    the six-chapter and Koharuno roads), each recorded when given (`RB.state.give` for the journey being played:
+    scenes, quest and battle rewards) and counted as found while a journey from before holds or wears it (a save is
+    never written into on load); the page knows the 14 regions of the twelve-chapter road (the Hall and Ashihara
+    Shinden included) and shows a six-chapter journey only its own; twelve new Roadside Keepsakes, two for each new
+    chapter (Manybridge, Blockprint and Playhouse Rows, the Keepers' Road, Kotonoha and the sea, the Cloudroad,
+    Steamhollow), each with pixel art, a name with readings, where and how, two hints, companion lines for all four
+    and Suzu's Kansai, findable by a journey already past its chapter; New Game+ carries the found record (C-66).
+    46 road keepsakes in all (12 before). The language ledger, scene manifest, font subsets and handwriting data
+    follow the new lines (枡, 蒔, 檜).
+  - Checks: U `keepsakes_road` (every item called a keepsake catalogued; complete entries; art on the grid; ≥ 2 per
+    chapter region; edition filter; recorded on give, never for a copy; held items found without writing to the
+    save; each chapter keepsake's scene placed, offered until found, and recording it when played with each companion
+    and alone); B `tests/e2e/keepsakes.mjs` on the new build. Not done: Robin's look at the new keepsakes in play.
+- [~] XP120 VA-2, the casting samples Robin asked for (2026-10-14; C-93). docs/future/voice/va2/; VALIDATION.md "VA-2".
+  - Done: Robin's voice decisions recorded verbatim (narrator AivisSpeech with a directed tone; player Voice A/B each
+    High and Low; NPCs Qwen3-TTS with AivisSpeech for bubbly feminine voices and VOICEVOX Nemo for middle-aged men
+    only; no trailing consonants or breathiness; supernatural treatments; a neutral word for the player's name in
+    recordings); the plan (60 player, 14 narrator, 281 NPC takes, every text a line the game says), the NPC casting
+    table with evidence per NPC, the renderer for the free local engines (clean-ending check, formant-kept High/Low,
+    treatments, −20 LUFS), the one-file gallery, the handoff for Robin's PC.
+  - Not done: the recordings themselves (the engines cannot run in the cloud environment; the job runs on Robin's
+    PC); Robin's picks; anything in the game's speech (C-93: only after Robin's decisions).
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

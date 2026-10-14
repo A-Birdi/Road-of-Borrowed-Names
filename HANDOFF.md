@@ -366,6 +366,22 @@
     listening; the TimGM6mb rights before any hosted release. docs/MUSIC_PERFORMANCE.md, VALIDATION.md "MT-2",
     REQUIREMENTS.md XP118.
 
+    **KS-1 (Robin, 2026-10-14, C-94: "only 6 Keepsakes still?"; "Yes, please do so"):** the Keepsakes page now covers
+    the whole twelve-chapter road: 46 road keepsakes in 14 regions (12 in 6 before). The 22 items that call
+    themselves keepsakes are catalogued (recorded when given; counted while a journey from before holds them; loading
+    never writes into a save), and each new chapter has two of its own, findable after the chapter
+    (`src/content/zzzz_keepsakes/`). Guard: `tests/unit/keepsakes_road.test.mjs`. VALIDATION.md "KS-1",
+    REQUIREMENTS.md XP119.
+
+    **VA-2 (Robin, 2026-10-14, C-93):** Robin chose the voice approach (narrator: an AivisSpeech model with a directed
+    tone; player: Voice A and B, each High and Low; NPCs: Qwen3-TTS, with AivisSpeech for bubbly feminine voices and
+    VOICEVOX Nemo for middle-aged men only; supernatural speakers treated; a neutral word for the player's name in
+    recordings) and asked for casting samples in one gallery file: 60 player, 14 narrator and one line per NPC (281).
+    Ready to run on Robin's PC (the engines cannot run in the cloud): `docs/future/voice/va2/HANDOFF_VA2.md`,
+    `tools/voice/va2/`. Robin's unticked NPC choices stand (C-93). **No implementation in the game's speech until
+    Robin's decisions on the samples.** The TimGM6mb GPL-2 reading is with Robin to confirm (C-92). VALIDATION.md
+    "VA-2", REQUIREMENTS.md XP120.
+
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
     "P18 — Plan B", "LP-1" and "VA-1".

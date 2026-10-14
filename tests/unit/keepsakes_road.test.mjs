@@ -8,7 +8,7 @@
 //    twelve-chapter regions and entries;
 //  - giving the item records the keepsake for the journey being played (scenes, quest rewards, battle rewards all go
 //    through RB.state.give), and never for a copy (the quest guide's simulations);
-//  - a save that already holds such an item has it recorded on load, quietly;
+//  - a journey from before that already holds such an item shows it as found, without loading ever writing into a save;
 //  - each chapter's own keepsakes (ks_*) are given by a scene that records them, placed where a journey already past
 //    the chapter can still find them, and the scene really records them when played.
 import { load } from '../lib/load.mjs';
@@ -85,15 +85,25 @@ export default async (t) => {
   S.give(live, 'rw_ribbon', -1);
   t.ok(!live.discovery.keepsakes.rw_ribbon, 'taking an item away records nothing');
 
-  // ---- a save that already holds one has it recorded on load, quietly ----------------------------------------------------------
+  // ---- a journey from before that already holds one shows it as found, and loading never writes into the save ----------
   const old = S.newCampaign({ edition: 2 });
   old.inv.lw_iroha_print = 1; old.inv.hall_lantern = 1; old.equip = Object.assign(old.equip || {}, { cosmetic: 'gd_yn_keepsake' });
-  delete old.inv.gd_yn_keepsake;
-  const n0 = events.length;
-  const m = RB.save.migrate(old);
-  t.ok(['lw_iroha_print', 'hall_lantern', 'gd_yn_keepsake'].every((id) => m.discovery.keepsakes[id] && m.discovery.keepsakes[id].how.recorded === 'on load'), 'held and worn keepsake items are recorded on load');
-  t.eq(events.length, n0, 'without a notice');
-  t.ok(!m.discovery.keepsakes.as_kasa, 'an item not held is not recorded');
+  const was = JSON.stringify(old);
+  const m = RB.save.migrate(JSON.parse(was));
+  t.ok(!Object.keys(m.discovery.keepsakes).length, 'loading records nothing (a save is never written into on load)');
+  t.ok(['lw_iroha_print', 'hall_lantern', 'gd_yn_keepsake'].every((id) => UIK.found(m, id)), 'held and worn keepsake items show as found');
+  t.ok(!UIK.found(m, 'as_kasa'), 'an item not held does not');
+  t.eq(UIK.counts(m).found, 3, 'and they are counted');
+  const six = S.newCampaign({ edition: 1 });
+  six.inv.rw_ribbon = 1;
+  const six0 = JSON.stringify(six.discovery) + JSON.stringify(six.awarded || {});
+  const m6 = RB.save.migrate(six);
+  t.eq(JSON.stringify(m6.discovery) + JSON.stringify(m6.awarded || {}), six0, 'a six-chapter save is left exactly as it was written');
+  // New Game+ keeps the catalogue's found record (C-66), held keepsake items included
+  {
+    const ng = RB.ngplus.carry(m, { edition: 2 });
+    t.ok(['lw_iroha_print', 'hall_lantern', 'gd_yn_keepsake'].every((id) => ng.records && ng.records.found && ng.records.found[id]), 'New Game+ carries them in the found record');
+  }
 
   // ---- each chapter's own keepsakes: given by a scene, findable after the chapter, recorded when played -----------------------
   const own = road.filter((id) => /^ks_/.test(id));

@@ -197,7 +197,7 @@ kr_kumazo[happy]: {米|こめ} を {量|はか}って も いい し 、 {棚|�
 ?(comp=nao) comp: {木|き} の {匂|にお}い の する {礼|れい} か 。 …… {悪|わる}く ない {届|とど}け{物|もの} だ 。 || A thank-you that smells of wood. …Not a bad thing to have delivered.
 ?(comp=mio) comp[smile]: {杉|すぎ} の {香|かお}り 。 …… {気持|きも}ち が {落|お}ち{着|つ}く {匂|にお}い です ね 。 || The scent of cedar. …A calming smell, isn't it.
 ?(comp=ren) comp[smile]: {灯|ひ} の {道|みち} の {杉|すぎ} です ね 。 …… {灯|ひ} を {守|まも}って いた の は 、 {灯守|ひもり} だけ じゃ なかった ん です 。 || Cedar from the lamps' road. …It wasn't only the keepers who looked after the lights.
-?(comp=suzu) comp[laugh]: {木|き} の {匂|にお}い 、 {檜舞台|ひのきぶたい} を {思|おも}い{出|だ}す わ 。 {杉|すぎ} も {負|ま}けて ない けど ね 。 || The smell of wood takes me back to the big cypress stage. Cedar holds its own, though.
+?(comp=suzu) comp[laugh]: {木|き} の {匂|にお}い 、 {檜|ひのき}{舞台|ぶたい} を {思|おも}い{出|だ}す わ 。 {杉|すぎ} も {負|ま}けて ない けど ね 。 || The smell of wood takes me back to the big cypress stage. Cedar holds its own, though.
 !hook cs_keepsake ks_kr_masu
 narr: {杉|すぎ} の {枡|ます} を もらった 。 || You receive a cedar masu.
 
@@ -262,8 +262,8 @@ narr: {小|ちい}さな {大漁旗|たいりょうばた} を もらった 。 
   // ---- Suzu's lines in Kansai-ben (src/lang/85_dialect.js; docs/dialect/suzu_kansai.md) -----------------------------
   if (RB.dialect && RB.dialect.add) RB.dialect.add('kansai', `
 @ zzzz_keepsakes/20_kr_ko [kr.ks_kumazo_masu]
-= {木|き} の {匂|にお}い 、 {檜舞台|ひのきぶたい} を {思|おも}い{出|だ}す わ 。 {杉|すぎ} も {負|ま}けて ない けど ね 。 || The smell of wood takes me back to the big cypress stage. Cedar holds its own, though.
-> {木|き} の {匂|にお}い 、 {檜舞台|ひのきぶたい} を {思|おも}い{出|だ}す わ 。 {杉|すぎ} も {負|ま}けて へん けど な 。 || The smell of wood takes me back to the big cypress stage. Cedar holds its own, mind.
+= {木|き} の {匂|にお}い 、 {檜|ひのき}{舞台|ぶたい} を {思|おも}い{出|だ}す わ 。 {杉|すぎ} も {負|ま}けて ない けど ね 。 || The smell of wood takes me back to the big cypress stage. Cedar holds its own, though.
+> {木|き} の {匂|にお}い 、 {檜|ひのき}{舞台|ぶたい} を {思|おも}い{出|だ}す わ 。 {杉|すぎ} も {負|ま}けて へん けど な 。 || The smell of wood takes me back to the big cypress stage. Cedar holds its own, mind.
 @ zzzz_keepsakes/20_kr_ko [kr.ks_ruin_striker]
 = {次|つぎ} の {役者|やくしゃ} の ため に 、 {楽屋|がくや} に {置|お}いて いく {小道具|こどうぐ} ね 。 …… {受|う}け{取|と}ったら 、 {次|つぎ} は あなた の {番|ばん} よ 。 || A prop left in the dressing room for the next actor. …Once you've picked it up, you're on.
 > {次|つぎ} の {役者|やくしゃ} の ため に 、 {楽屋|がくや} に {置|お}いて いく {小道具|こどうぐ} や な 。 …… {受|う}け{取|と}ったら 、 {次|つぎ} は あんた の {番|ばん} や で 。 || A prop left in the dressing room for the next actor. …Once you've picked it up, you're on.

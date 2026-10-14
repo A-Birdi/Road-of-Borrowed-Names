@@ -2927,6 +2927,120 @@
   "jp": "「{小|こ}ぜり 。 {合図|あいず} の {鈴|すず} が {鳴|な}って から 、 {上|あ}げる 。 {上|あ}がったら 、 {留|と}め{金|がね} で {止|と}める 。 {次|つぎ} の {芝居|しばい} まで に 、 {誰|だれ} か {直|なお}して くれ ！」",
   "en": "\"Small lift. Raise it after the cue bell rings. Once it's up, hold it with the catch. Somebody fix it before the next show!\""
  },
+ "scene:mp.ks_fan_tomi#1bt9q9d": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "あら 、 {来|き}て くれた の ね 。 ちょうど よかった わ 。",
+  "en": "Oh, you've come. Perfect timing."
+ },
+ "scene:mp.ks_fan_tomi#146btc0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{川開|かわびら}き の {団扇|うちわ} よ 。 {宗兵衛|そうべえ} さん の {刷|す}り{場|ば} で {刷|す}って もらった の 。 {手伝|てつだ}って くれた {人|ひと} に 、 {一本|いっぽん} ずつ {配|くば}って いる の よ 。",
+  "en": "The Opening's fans. Sōbē's press printed them for us. I'm giving one to everyone who helped."
+ },
+ "scene:mp.ks_fan_tomi#1957da1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{表|おもて} は {花火|はなび} 、 {裏|うら} は {世話役|せわやく} と {手伝|てつだ}い の {名前|なまえ} 。",
+  "en": "Fireworks on the front. On the back, the names of the committee and the helpers."
+ },
+ "scene:mp.ks_fan_tomi#zn71pi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "…… ほら 、 ここ 。 あなた たち の {名前|なまえ} も 、 ちゃんと {刷|す}って ある わ 。",
+  "en": "…Look, here. Your names are printed too."
+ },
+ "scene:mp.ks_fan_tomi#1y3z6p4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "…… ほら 、 ここ 。 あなた の {名前|なまえ} も 、 ちゃんと {刷|す}って ある わ 。",
+  "en": "…Look, here. Your name is printed too."
+ },
+ "scene:mp.ks_fan_tomi#99kzqe": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{浴衣|ゆかた} は {返|かえ}して もらった けど 、 これ は {返|かえ}さなくて いい の 。 {来年|らいねん} の {夏|なつ} も 、 これ で {扇|あお}いで ちょうだい 。",
+  "en": "The yukata had to come back, but this one is yours to keep. Fan yourself with it next summer too."
+ },
+ "scene:mp.ks_fan_tomi#1ywbkrp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{裏|うら} に {名前|なまえ} 、 か 。 …… {差出人|さしだしにん} の {欄|らん} みたい だ な 。",
+  "en": "Names on the back, eh. …Like the sender's line on a letter."
+ },
+ "scene:mp.ks_fan_tomi#1ojmqz7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{熱|ねつ} の ある {子|こ} を 、 これ で {扇|あお}いで あげられます ね 。 {薬箱|くすりばこ} に {入|い}れて おきます 。",
+  "en": "I can fan a child with a fever with this. I'll keep it in my medicine chest."
+ },
+ "scene:mp.ks_fan_tomi#1qyn7r5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{花火|はなび} は {消|き}えて も 、 {刷|す}った {花火|はなび} は {消|き}えません ね 。",
+  "en": "Fireworks fade, but printed fireworks don't."
+ },
+ "scene:mp.ks_fan_tomi#xm2c2t": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{楽屋|がくや} で は 、 {団扇|うちわ} が ない と {困|こま}る の よ 。 {夏|なつ} の {舞台|ぶたい} は {暑|あつ}い から 。",
+  "en": "In the dressing room, you're lost without a fan. Summer stages are hot."
+ },
+ "scene:mp.ks_fan_tomi#1cuurpz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{川開|かわびら}き の {団扇|うちわ} を もらった 。",
+  "en": "You receive the Opening's fan."
+ },
+ "scene:mp.ks_type_case#1c75rhe": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{古|ふる}い {活字|かつじ} の {箱|はこ} 。 {空|から} の {仕切|しき}り の {中|なか} に 、 {一|ひと}つ だけ 、 {活字|かつじ} が {残|のこ}って いる 。",
+  "en": "An old type case. Among its empty compartments, a single piece of type remains."
+ },
+ "scene:mp.ks_type_case#3h3309": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{字|じ} は {鏡|かがみ} に {映|うつ}した よう に {彫|ほ}って ある 。 {活字|かつじ} だ から 。 {読|よ}む と 、 「{名|な}」 。",
+  "en": "The character is cut as if in a mirror, as type always is. It reads 名: \"name\"."
+ },
+ "scene:mp.ks_type_case#197vkjv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "「 {名前|なまえ} は {重|おも}い 」 と 、 {奈落|ならく} は {言|い}った 。 でも {手|て} に {取|と}る と 、 {小|ちい}さくて {軽|かる}い 。",
+  "en": "\"Names are heavy,\" the Understage said. But in your hand it is small, and light."
+ },
+ "scene:mp.ks_type_case#jv88hn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{重|おも}い もん か 。 {手紙|てがみ} {一通|いっつう} より {軽|かる}い ぞ 。",
+  "en": "Heavy? It's lighter than a single letter."
+ },
+ "scene:mp.ks_type_case#12vlkvh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "こんな に {小|ちい}さい {字|じ} {一|ひと}つ が 、 {誰|だれ} か の {名前|なまえ} に なる の ね 。",
+  "en": "One little letter like this becomes part of somebody's name."
+ },
+ "scene:mp.ks_type_case#10dpp2c": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{名前|なまえ} は {重荷|おもに} では ありません 。 …… ほら 、 こんな に {軽|かる}い 。",
+  "en": "Names are not burdens. …See? This light."
+ },
+ "scene:mp.ks_type_case#1i2sw2g": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "{軽|かる}くて も 、 {小|ちい}さくて も 、 {名前|なまえ} は {名前|なまえ} よ 。 {番付|ばんづけ} の {隅|すみ} の {小|ちい}さな {字|じ} でも ね 。",
+  "en": "Light or small, a name is a name. Even in small letters in the corner of a playbill."
+ },
+ "scene:mp.ks_type_case#1nrvt7k": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
+  "jp": "「{名|な}」 の {活字|かつじ} を {見|み}つけた 。",
+  "en": "You find the type for 名."
+ },
  "challenges:mp.ghost_date#qiqmqy": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",

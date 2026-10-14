@@ -2,8 +2,8 @@
  * already gave (a ribbon, Mochi's bell, Asahi's glass earrings, Asa's straw hat, the ferry clerk's cap, the bell
  * fragment, Tsuzuri's bookmark) and one comes from the Koharuno road (the kakishibu tenugui); like the expansion's
  * fourteen (00_items.js) they were satchel items the catalogue never listed. Each entry names its item, so it is
- * recorded when the item is given (src/engine/05_state.js give(), for the journey being played) and on load for a save
- * that already holds it. The items themselves are unchanged. */
+ * recorded when the item is given (src/engine/05_state.js give(), for the journey being played) and counted as found
+ * while a journey from before this change holds or wears it. The items themselves are unchanged. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {

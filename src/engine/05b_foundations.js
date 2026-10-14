@@ -168,6 +168,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // the keepsake catalogue's found record (C-66): what the journey found, kept as a record, never as items
     const ks = from.discovery && from.discovery.keepsakes;
     if (isObj(ks)) for (const id in ks) if (!rec.found[id]) rec.found[id] = { t: (ks[id] && ks[id].t) || 0 };
+    // and a keepsake that is an item the journey held or wore without its finding being recorded (KS-1)
+    const KS = (RB.content && RB.content.keepsakes) || {}, worn = Object.values(from.equip || {});
+    for (const id in KS) if (KS[id] && KS[id].item && !rec.found[id] && ((from.inv && from.inv[KS[id].item] > 0) || worn.indexOf(KS[id].item) >= 0)) rec.found[id] = { t: 0 };
     s.seq = clone(isObj(from.seq) ? from.seq : {});
     // pastime records (lead's decision F-03): shiritori's results with each companion, the fishing journal's fish
     // and personal milestones, the practice tallies. Kept pages, displays and activity progress start fresh, as do

@@ -174,11 +174,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return true;
   };
   // Manybridge: Ichi (Exchange district by his house, or Sen's register, or Yoshi's old letters: one list)
-  firstTalk('mb.exchange', 'mb_ichi', { if: 'mb1_done&!keepsake.ks_mb_cord', scene: 'mb.ks_cord_ichi' });
+  firstTalk('mb.exchange', 'mb_ichi', { if: 'mb1_done&!keepsake.ks_mb_cord&!seen.mb.ks_cord_ichi', scene: 'mb.ks_cord_ichi' });
   // Manybridge: the porters' office shelf beside the canal board (the room is theirs; Take works outside after the story)
   sceneWhile('mb.porters', 'shelf', 10, 2, 'mb.ks_token_shelf', 'mb1_done&!keepsake.ks_mb_token');
   // Playhouse Row: Tomi at the festival hall (open from the festival's end)
-  firstTalk('mp.festhall', 'mp_tomi_h', { if: 'mb2_done&!keepsake.ks_mp_fan', scene: 'mp.ks_fan_tomi' });
+  firstTalk('mp.festhall', 'mp_tomi_h', { if: 'mb2_done&!keepsake.ks_mp_fan&!seen.mp.ks_fan_tomi', scene: 'mp.ks_fan_tomi' });
   // the bottom of the Understage: the old type case by the west wall
   sceneWhile('mp.bottom', 'mp_typecase', 2, 2, 'mp.ks_type_case', 'mb2_done&!keepsake.ks_mp_type');
 

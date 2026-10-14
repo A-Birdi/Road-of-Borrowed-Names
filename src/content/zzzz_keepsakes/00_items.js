@@ -2,9 +2,10 @@
  * added much more content to allow more Keepsakes"). The expansion gave fourteen things it calls keepsakes (the nine
  * old guardians' gifts, the iroha print, the tide-stone rubbing, the "Fish Street" name slip, the Lantern of the
  * Hundred and the planting hat) as satchel items only; the catalogue (src/ui/58_keepsakes.js) never listed them.
- * Here each becomes a catalogue entry naming its item (`item`): RB.discovery.fromItem records it when a scene gives
- * the item (src/engine/70_script.js `!give`), and a save that already holds it has it recorded on load (below), so
- * nothing found before this change is lost. The items themselves are unchanged (what they do, where they come from).
+ * Here each becomes a catalogue entry naming its item (`item`): RB.discovery.fromItem records it when the item is
+ * given to the journey being played (src/engine/05_state.js give(): scenes, quest and battle rewards), and the page
+ * counts it as found while a journey from before this change holds or wears it (src/ui/58_keepsakes.js; loading a save
+ * never writes into it), so nothing found before is lost. The items themselves are unchanged (what they do, where they come from).
  * The new chapters' own Roadside Keepsakes are in the files after this one. Every entry here is twelve-chapter
  * (`ed: 2`): the guardians, the Hall and Ashihara Shinden belong to it. */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -220,20 +221,4 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
   });
 
-  // a save that already holds one of these items has it recorded as found (quietly: no notice on load; `how` says so)
-  function backfill(st) {
-    const d = st.discovery;
-    if (!d || !d.keepsakes) return;
-    const worn = Object.values(st.equip || {});
-    for (const id in KS) {
-      const k = KS[id];
-      if (!k || !k.item || d.keepsakes[id]) continue;
-      if (!((st.inv && st.inv[k.item] > 0) || worn.indexOf(k.item) >= 0)) continue;
-      d.keepsakes[id] = { t: Date.now(), map: null, how: { kind: 'item', id: k.item, recorded: 'on load' } };
-      if (!st.awarded) st.awarded = {};
-      if (!st.awarded['keepsake:' + id]) st.awarded['keepsake:' + id] = Date.now();
-    }
-  }
-  if (RB.save && RB.save.addMigration) RB.save.addMigration(backfill);
-  C.keepsakeBackfill = backfill;
 })(RB.content);

@@ -796,10 +796,12 @@ original regions (twelve keepsakes there, four companion mementos), while the ex
 keepsakes (the nine old guardians' gifts, the iroha print, the tide-stone rubbing, the "Fish Street" name slip, the
 Lantern of the Hundred, the planting hat) as satchel items the catalogue never listed, and the plan's road events and
 sealed spots promised keepsakes (06_WORLD W5, W6). Robin: "Yes, please do so."
-- **What changes:** the fourteen become catalogue entries recorded when their item is given (and on load for a save
-  that already holds one); the page knows every region of the twelve-chapter road, the Hall and Ashihara Shinden;
-  each new chapter gets about two Roadside Keepsakes of its own, findable by a journey already past it; a unit test
-  keeps an item called a keepsake from being left out again.
+- **What changes:** the fourteen, and eight more the six-chapter road and the Koharuno road call keepsakes (a ribbon,
+  Mochi's bell, Asahi's earrings, Asa's hat, the ferry cap, the bell fragment, Tsuzuri's bookmark, the kakishibu cloth),
+  become catalogue entries, recorded when their item is given and counted as found while a journey from before holds
+  or wears it (loading a save never writes into it); the page knows every region of the twelve-chapter road, the Hall
+  and Ashihara Shinden; each new chapter gets two Roadside Keepsakes of its own (twelve), findable by a journey already
+  past it; a unit test keeps an item called a keepsake from being left out again.
 - **Unchanged:** finding one never depends on how something was solved or on help asked for; keepsakes do not carry
   into New Game+ (C-66); the items themselves do what they did.
 

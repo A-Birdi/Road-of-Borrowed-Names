@@ -2,7 +2,9 @@
  * every keepsake in the one registry RB.content.keepsakes (field puzzles,
  * choice milestones and cases define their own entries there; companion
  * mementos carry category 'shared'). What has been found is historical
- * (s.discovery.keepsakes), never the current inventory.
+ * (s.discovery.keepsakes), never the current inventory, except that an
+ * entry naming an item counts as found while a journey from before it was
+ * catalogued (KS-1) holds or wears that item.
  *
  *   - collected entries: original pixel art (whole-number zoom, never
  *     blurred), name with reading, description, where and how, the
@@ -55,7 +57,10 @@ RB.ui.keepsakes = (function () {
     if (!r) return true; // a region this page does not know the maps of: shown by name once anything there is found
     return Object.keys(s.visited || {}).some((m) => r.maps.some((p) => m.indexOf(p) === 0));
   }
-  const found = (s, id) => !!(s.discovery && s.discovery.keepsakes && s.discovery.keepsakes[id]);
+  // found: recorded when it was found (historical), or, for a keepsake that is an item (KS-1), the item already held or
+  // worn by a journey from before such keepsakes were recorded (loading a save never writes into it)
+  const held = (s, k) => !!(k && k.item && ((s.inv && s.inv[k.item] > 0) || Object.values(s.equip || {}).indexOf(k.item) >= 0));
+  const found = (s, id) => !!(s.discovery && s.discovery.keepsakes && s.discovery.keepsakes[id]) || held(s, K()[id]);
   const regionsOfK = (k) => [].concat(k.region || []);
   // every entry except companion mementos, which belong to Shared Journey
   const roadIds = (s) => Object.keys(K()).filter((id) => K()[id].category !== 'shared' && edOk(s, K()[id]));
@@ -174,10 +179,10 @@ RB.ui.keepsakes = (function () {
     return m.find((x) => x.ref === 'keepsake:' + k.id || (k.source && (x.ref === k.source.kind + ':' + k.source.id))) || null;
   }
   function detail(el, s, id, api) {
-    const k = Object.assign({ id }, K()[id]), rec = s.discovery.keepsakes[id], got = !!rec;
+    const k = Object.assign({ id }, K()[id]), rec = s.discovery.keepsakes[id] || null, got = found(s, id);
     let h = '';
     if (got) {
-      const place = rec.map && RB.content.maps[rec.map] ? RB.content.maps[rec.map].name : null;
+      const place = rec && rec.map && RB.content.maps[rec.map] ? RB.content.maps[rec.map].name : null;
       h += '<div class="ks-big"><span class="ks-slot-big"></span><div class="ks-zoom" role="group" aria-label="Zoom">' +
         [2, 4, 8].map((z) => '<button type="button" class="pbtn quiet" data-ks-zoom="' + z + '" aria-pressed="' + (zoom === z) + '">×' + z + '</button>').join('') + '</div></div>' +
         '<h3 class="ks-name">' + j(k.name.jp) + ' <span class="en">' + esc(k.name.en) + '</span></h3>' +
