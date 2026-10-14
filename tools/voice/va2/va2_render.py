@@ -16,7 +16,7 @@ PC; the cloud environment that wrote this cannot run them). Free, local engines 
 Each take: the engine's audio → the clean-ending check (a Qwen take with a long lead-in or unvoiced tail is made again
 with the next seed, at most three tries, the cleanest kept; AivisSpeech and Nemo give the same audio every time, so
 theirs is only recorded) → trimmed to its speech → for the player, moved to High or Low (PSOLA, formants kept) → the
-supernatural treatment if any → −20 LUFS → Ogg Opus 48 kHz mono in <work>/clips/, with <work>/results.json recording
+supernatural treatment if any → −20 LUFS → Ogg Opus 48 kHz mono (about 58 kbit/s) in <work>/clips/, with <work>/results.json recording
 what was sent, which voice, every try and every measurement. A take whose request is unchanged is not made again.
 Nothing here is a final cast, game audio or whole-game generation (C-93).
 """
@@ -221,7 +221,7 @@ def make(take, plan, voices, eng, out, mock, cache):
         x = A.fx(x, spec['fx'])
     y, lev = A.level(x)
     rel = os.path.join('clips', take['id'] + '.opus')
-    sf.write(os.path.join(out, rel), y.astype(np.float32), A.SR, format='OGG', subtype='OPUS', compression_level=0.5)
+    sf.write(os.path.join(out, rel), y.astype(np.float32), A.SR, format='OGG', subtype='OPUS', compression_level=0.8)  # about 58 kbit/s: transparent for speech, keeps the gallery near 12 MB
     final = A.clean_measure(y)
     return {'id': take['id'], 'section': take['section'], 'engine': e, 'mock': bool(mock), 'request': sha(req), 'textSent': text,
             'voice': voice, 'tries': tries, 'kept': tries[-1] if e != 'qwen_design' else next((t for t in tries if t.get('seed') == voice.get('seed')), None),

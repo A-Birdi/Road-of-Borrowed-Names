@@ -51,7 +51,7 @@ prefix where there is one; otherwise it is the story region with the most lines.
 | Effect | none 253 · spirit 10 · hollow 6 · echo_light 4 · ghost 4 · ancient 2 · hush 1 · ember 1 |
 | Age | elderly 76 · adult 89 · young adult 41 · middle-aged 32 · child 27 · teen 3 · ageless 13 |
 | Presentation | masculine 133 · feminine 115 · androgynous 33 |
-| Delivery | neutral 267 · cheerful 8 · excited 6 |
+| Delivery | neutral 267 · happy 8 · excited 6 |
 
 - **Aivis (18).**
   - AV-girl: Mame, Miyo, Chiyo, Hinata, Kei, Nana, Mina, Koma, Momo (the Hall).
@@ -64,7 +64,9 @@ prefix where there is one; otherwise it is the story region with the most lines.
   - NM-B, gruffer: Bunta, Daigo, Nobu, Tetsuji, Kumazō, Tahei.
   - NM-C, clerk: Tokiwa, Registrar Tadashi.
 - **Non-neutral delivery (14).** Mame, Miyo, Kotarō, Kanta, Kai and Riku are excited. Tobi, Chiyo, Hinata, Kei, Nana,
-  Mina, Koma and Momo are cheerful. Each one's lines are nearly all exclamations or smiles.
+  Mina, Koma and Momo are happy. Each one's lines are nearly all exclamations or smiles. The delivery words are the
+  moods `tools/voice/va2/plan.mjs` already knows; it has no "cheerful". For Aivis, the delivery only labels the
+  gallery; the upbeat style carries the mood.
 
 ## Supernatural speakers and their presets
 
