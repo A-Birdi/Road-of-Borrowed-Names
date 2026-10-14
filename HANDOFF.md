@@ -262,7 +262,7 @@
     the build only while their score fingerprint matches; the director in `src/audio/22_ensemble.js` keeps the
     Original warm and hands over on the audio clock both ways. Design, results and limits: `docs/MUSIC_PERFORMANCE.md`;
     decision F-145; captures: `docs/music/ensemble/listen.html` (Robin listened, 2026-10-12: "It sounds great, nice job"; not yet heard in the game on a device); the
-    rights question (TimGM6mb, GPL-2) is Robin's. Tests: `tests/unit/music_performance.test.mjs`,
+    recordings are GPL-2 like their sound bank (Robin, 2026-10-14, C-92; `assets/music/ensemble/NOTICE.md`). Tests: `tests/unit/music_performance.test.mjs`,
     `tests/e2e/music_performance.mjs`; the chain and the full matrix run at Original only, never again with Ensemble
     (Robin's C-88). A new recording: the five steps in that doc, then rebuild.
     **LP-1 (Robin, 2026-10-12): the Ledger lagged in Firefox.** Fixed without changing its look (VALIDATION.md "LP-1"):
@@ -363,7 +363,7 @@
     equal-power crossfade (the two performances are uncorrelated); a one-shot's recording plays out its decay; the
     onset test has a second detector, a negative control and the rule z ≥ 4; the alignment rule checks the median
     window. `docs/music/ensemble/listen_all.html` has a full-track player for every song. **Open, for Robin:**
-    listening; the TimGM6mb rights before any hosted release. docs/MUSIC_PERFORMANCE.md, VALIDATION.md "MT-2",
+    listening. The recordings are GPL-2 (Robin, 2026-10-14). docs/MUSIC_PERFORMANCE.md, VALIDATION.md "MT-2",
     REQUIREMENTS.md XP118.
 
     **KS-1 (Robin, 2026-10-14, C-94: "only 6 Keepsakes still?"; "Yes, please do so"):** the Keepsakes page now covers
@@ -379,8 +379,9 @@
     recordings) and asked for casting samples in one gallery file: 60 player, 14 narrator and one line per NPC (281).
     Ready to run on Robin's PC (the engines cannot run in the cloud): `docs/future/voice/va2/HANDOFF_VA2.md`,
     `tools/voice/va2/`. Robin's unticked NPC choices stand (C-93). **No implementation in the game's speech until
-    Robin's decisions on the samples.** The TimGM6mb GPL-2 reading is with Robin to confirm (C-92). VALIDATION.md
-    "VA-2", REQUIREMENTS.md XP120.
+    Robin's decisions on the samples.** Robin's later answers (C-93): the Hush needs no voice; the supernatural
+    treatments are right; Mochi's ニャー is a sourced CC0 or public-domain meow (sourced on the PC); no voice is
+    generated live; one loudness for every line. VALIDATION.md "VA-2", REQUIREMENTS.md XP120.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md

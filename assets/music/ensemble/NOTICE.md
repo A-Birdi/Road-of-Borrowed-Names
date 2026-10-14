@@ -34,9 +34,22 @@ sting) has one file. Each comes in two encodings (Ogg Opus, and MP3 for browsers
 - **Software** used to make them, not distributed: FluidSynth (system library), NumPy, SciPy, soundfile, FFmpeg
   (libopus, libmp3lame).
 
-## Open question for the project owner
+## Licence of these recordings (Robin, 2026-10-14; C-92)
 
-Whether distributing recordings rendered with a GPL-2 sound bank carries obligations for these files is a rights
-question this note does not settle. Robin let MT-2 go on with the same bank while deciding ("Yes, carry on",
-2026-10-13); the decision is to be made before any hosted release. No licence is chosen or declared for these recordings here; the bank's terms and
-attribution are recorded so the question can be reviewed before the files are published.
+The Ensemble recordings in this folder (the `.opus` and `.mp3` files in each song's folder) are released under the
+**GNU General Public License, version 2** (`notes/GPL-2.txt`), the licence of the sound bank whose samples they
+contain. Robin: "Gpl-2 sounds right, no issue". This covers these recordings only: it declares nothing for the game,
+its code or the Original music the game plays itself, and chooses no licence for the project.
+
+What is needed to make them again, as the GPL asks of anyone who distributes them:
+
+- **The composition and its first pass:** the game's own score, `src/audio/` (each song's score fingerprint is in
+  `manifest.json`), exported by `tools/music/ensemble/export_events.mjs`.
+- **The rendering:** `tools/music/ensemble/` (`stems.mjs`, `render.py`, `rs1.py`, `package.py`, `verify.mjs`,
+  `produce.sh`), with each song's measured settings and treatment in `docs/music/ensemble/qa/<song>.json`.
+- **The sound bank:** `TimGM6mb.sf2`, 5,969,788 bytes, SHA-256
+  `c5378b62028c920cb11e4803327983fee2f2cdff5dc89c708e39da417e51c854`, as packaged by Debian (`timgm6mb-soundfont`
+  1.3-5; upstream: MuseScore, https://github.com/musescore/musescore-old/commit/90c33ef9d87b3f5ff92efd3b07d89eb455fb1fef);
+  its copyright and licence are in `notes/TimGM6mb_Copyright_and_Licence.txt`.
+
+When the recordings are published with the hosted game (C-87), these are published with them.

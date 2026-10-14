@@ -32,6 +32,9 @@
    "AV-showy": { "want": "a high-energy performer or announcer woman", "modelName": null, "modelUuid": null, "speakerName": null, "styles": { "normal": null, "upbeat": null, "calm": null }, "licence": null, "credit": null, "why": null }
   }
  },
+ "sounds": {
+  "cat_meow": { "want": "one basic, clean domestic cat meow (about 0.5–1.5 s) for Mochi; CC0 or public domain only, confirmed on the recording's own page", "file": null, "title": null, "url": null, "author": null, "licence": null, "sha256": null }
+ },
  "nemo": {
   "url": "http://127.0.0.1:50121",
   "slots": {

@@ -4309,6 +4309,11 @@ Robin's PC: `docs/future/voice/va2/HANDOFF_VA2.md`. **No voice was generated or 
   and 0.34 s of tail; all seven treatments ran without NaN; the gallery (Chromium, headless shell, Linux) at 1280 and 390 px:
   no sideways scroll, every player present, a clip decodes; the Opus rate set to about 58 kbit/s (the self-test gallery
   measured 28.6 MB at the first setting).
+- **Robin's later answers (2026-10-14, C-93):** the Hush needs no voice or lines (it has none); the supernatural
+  treatments stand; Mochi's two lines (ニャー) become a sourced CC0 or public-domain cat meow rather than a voice
+  (`engine: "sound"`; sourced on the PC with its page, author, licence and SHA-256 recorded; skipped, and shown as
+  such, if no recording's terms can be confirmed: every sound archive is refused from the cloud environment); no live
+  generation; one loudness for every line. Self-test of the sound path (`--mock`): Mochi's take made, 0.8 s, clean.
 - **Not done:** the recordings, on Robin's PC; Robin's picks; anything in the game's speech.
 
 ## AR-1 — the illustrations' art pass (Robin's report, 2026-10-13; implemented provisionally, internally reviewed)
@@ -4416,6 +4421,10 @@ every song have a full-track player.
   game's own graph at default volumes and the song's trim (Opus 96 kbit/s, `listen/full/`, 138 MB); under it, links to
   the song's four game files. Checked: 117 full-track and 20 comparison players, 464 file links, none missing; no
   sideways scroll at 1280 and 390 px. Not listened to by anyone.
+
+- **The rights question, decided (Robin, 2026-10-14):** "Gpl-2 sounds right, no issue". The recordings are GPL-2,
+  declared in `assets/music/ensemble/NOTICE.md` with what is needed to make them again (the sound bank identified by its
+  SHA-256, c5378b62…e51c854). Recorded, not a test.
 
 *As first recorded (2026-10-14, early):*
 

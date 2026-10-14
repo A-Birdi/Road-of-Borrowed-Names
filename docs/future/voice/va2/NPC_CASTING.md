@@ -47,7 +47,7 @@ prefix where there is one; otherwise it is the story region with the most lines.
 
 | | |
 |---|---|
-| Engine | qwen_design 251 · aivis 18 · nemo 12 |
+| Engine | qwen_design 250 · aivis 18 · nemo 12 · sound 1 (Mochi's meow) |
 | Effect | none 253 · spirit 10 · hollow 6 · echo_light 4 · ghost 4 · ancient 2 · hush 1 · ember 1 |
 | Age | elderly 76 · adult 89 · young adult 41 · middle-aged 32 · child 27 · teen 3 · ageless 13 |
 | Presentation | masculine 133 · feminine 115 · androgynous 33 |
@@ -107,7 +107,8 @@ prefix where there is one; otherwise it is the story region with the most lines.
      `summary.genderNotStated`.
    - Tobi is cast as a boy because Tobi uses 僕.
    - "bun" hair is not proof of a woman in this game: Ujie, who is he/him, wears one.
-9. **Mochi the cat only says ニャー.** A recorded cat sound would serve better than any TTS voice.
+9. **Mochi the cat only says ニャー.** Robin, 2026-10-14: "You can source a basic cat meow for Mochi and other animals
+   who may use it." Mochi is now `engine: "sound"`: a CC0 or public-domain meow sourced on the PC, not a voice.
 10. **Samples outside 8–45 characters.**
     - Mochi (4) and Kichibei (49) have only those lines.
     - Ushio (11) has a single line.

@@ -122,6 +122,13 @@ function narratorSection() {
     choose: 'Seven distinct adult female AivisSpeech models (AIVMX, free on AivisHub or already installed), one candidate per model: a calm, clear storyteller is the target. Prefer different timbres (warm low, clear mid, light high, mature, soft, crisp, rich). Use the default Anneli model as one of them if installed. Each model\'s licence must allow use in a free, distributed game with credit; record it.', takes };
 }
 
+// ---- sourced sounds (Robin, 2026-10-14) -------------------------------------------------------------------------------
+const SOUNDS = {
+  cat_meow: { for: 'Mochi (rw.mochi_find, rw.mochi_home: ニャー), and any cat that meows later',
+    want: 'one basic, clean domestic cat meow, about 0.5–1.5 s, no background noise, no other animal or voice',
+    licence: 'CC0 or public domain only, as stated on the recording\'s own page (for example a Wikimedia Commons file page); record the URL, author, licence and SHA-256; a recording whose terms cannot be confirmed is not used' },
+};
+
 // ---- 3. the NPCs ----------------------------------------------------------------------------------------------------
 function npcSection() {
   const f = process.env.VA2_NPC_CASTING || path.join(DIR, 'npc_casting.json');
@@ -149,6 +156,10 @@ function npcSection() {
       if (!n.nemoSlot) fail('NPC ' + n.id + ': nemo without a slot');
       if (n.profile && n.profile.age !== 'middle_aged') fail('NPC ' + n.id + ': Nemo is for middle-aged men only (Robin)');
       Object.assign(spec, { nemoSlot: n.nemoSlot, style: n.style || 'normal', params: n.params || {} });
+    } else if (n.engine === 'sound') {
+      // an animal that only makes its sound (Robin: "source a basic cat meow for Mochi"): a real recording, not a voice
+      if (!SOUNDS[n.sound]) fail('NPC ' + n.id + ': unknown sound ' + n.sound);
+      spec.sound = n.sound;
     } else fail('NPC ' + n.id + ': unknown engine ' + n.engine);
     if (n.fx) spec.fx = n.fx;
     npcs.push({ id: n.id, name: n.name, lines: n.lines, regions: n.regions, profile: n.profile, delivery: n.delivery || 'neutral', fx: n.fx || null, fxWhy: n.fxWhy || null, why: n.why });
@@ -189,8 +200,10 @@ const plan = {
     qwen_design: { model: 'Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign', package: 'qwen-tts (PyPI, Apache-2.0)', language: 'Japanese', note: 'The voice is designed from the description; the mood is added to the same instruction; the seed is fixed per voice.' },
     aivis: { engine: 'AivisSpeech Engine on 127.0.0.1:10101', note: 'Concrete models, speakers and styles for the narrator candidates N1–N7 and the AV-* slots are chosen on the PC and recorded in va2_voices.json.' },
     nemo: { engine: 'VOICEVOX Nemo engine (VOICEVOX API; port to verify, 50121 assumed)', note: 'Middle-aged men only (Robin). NM-A is the voice Robin preferred in VA-1 for the middle-aged man; NM-B and NM-C are other Nemo male voices.' },
+    sound: { note: 'A sourced recording, not speech: an animal that only makes its sound. The file and its licence are recorded in va2_voices.json → sounds.' },
   },
   fx: FX,
+  sounds: SOUNDS,
   clean: { rule: CLEAN, check: 'After each take: the time before the first voiced sound and the unvoiced tail after the last are measured; a take with more than 0.20 s of sound before the voice or 0.18 s of tail is made again with the next seed (at most three tries, the cleanest kept). Silence is trimmed to 60 ms each side; the tail keeps up to 100 ms of unvoiced sound so a devoiced です still ends naturally.' },
   loudness: 'Every take is set to −20 LUFS (integrated), peaks under −1 dBFS, 48 kHz mono, after any fx.',
   lines: lineTexts,

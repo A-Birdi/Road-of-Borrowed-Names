@@ -3,7 +3,7 @@
  "purpose": "casting samples for Robin's choices (C-93): not a final cast, not game audio, not whole-game generation",
  "builtFrom": {
   "branch": "claude/stoic-sagan-n3jvgk",
-  "commit": "b51387920b8f23f899762cdefd20853cefdbf906",
+  "commit": "fee0a85e4d4e7cd75765620296fd642500aaac6a",
   "by": "tools/voice/va2/plan.mjs"
  },
  "counts": {
@@ -25,6 +25,9 @@
   "nemo": {
    "engine": "VOICEVOX Nemo engine (VOICEVOX API; port to verify, 50121 assumed)",
    "note": "Middle-aged men only (Robin). NM-A is the voice Robin preferred in VA-1 for the middle-aged man; NM-B and NM-C are other Nemo male voices."
+  },
+  "sound": {
+   "note": "A sourced recording, not speech: an animal that only makes its sound. The file and its licence are recorded in va2_voices.json → sounds."
   }
  },
  "fx": {
@@ -35,6 +38,13 @@
   "hollow": "A voice from an object or a place: narrowed to 300–3,400 Hz with a short slapback.",
   "ghost": "A soft reverb and a slight, slow waver in pitch.",
   "ember": "Warm with a little grit (gentle saturation) and a small room."
+ },
+ "sounds": {
+  "cat_meow": {
+   "for": "Mochi (rw.mochi_find, rw.mochi_home: ニャー), and any cat that meows later",
+   "want": "one basic, clean domestic cat meow, about 0.5–1.5 s, no background noise, no other animal or voice",
+   "licence": "CC0 or public domain only, as stated on the recording's own page (for example a Wikimedia Commons file page); record the URL, author, licence and SHA-256; a recording whose terms cannot be confirmed is not used"
+  }
  },
  "clean": {
   "rule": "Clear articulation; every word ends cleanly; no breathiness, no trailing sounds.",
@@ -4611,9 +4621,10 @@
     "npcCount": 281,
     "totalLines": 3859,
     "byEngine": {
-     "qwen_design": 251,
+     "qwen_design": 250,
      "aivis": 18,
-     "nemo": 12
+     "nemo": 12,
+     "sound": 1
     },
     "byFx": {
      "none": 253,
@@ -5416,7 +5427,7 @@
      "delivery": "neutral",
      "fx": null,
      "fxWhy": null,
-     "why": "Her only lines are a meow; Qwen can try a soft meow, but a recorded cat sound effect would serve better (flagged)."
+     "why": "Robin, 2026-10-14: \"You can source a basic cat meow for Mochi and other animals who may use it.\" A real recorded meow (CC0 or public domain, sourced on the PC), not a voice."
     },
     {
      "id": "echo",
@@ -12682,10 +12693,8 @@
      "line": "rw.mochi_find#ec559bab6c",
      "delivery": "neutral",
      "voiceSpec": {
-      "engine": "qwen_design",
-      "description": "A small house cat. Render one short, soft, natural-sounding meow, light and high, not a human word. Clear articulation; every word ends cleanly; no breathiness, no trailing sounds.",
-      "instruct": "A small house cat. Render one short, soft, natural-sounding meow, light and high, not a human word. Clear articulation; every word ends cleanly; no breathiness, no trailing sounds. Speak in a natural, neutral conversational tone.",
-      "seed": 5011
+      "engine": "sound",
+      "sound": "cat_meow"
      }
     },
     {

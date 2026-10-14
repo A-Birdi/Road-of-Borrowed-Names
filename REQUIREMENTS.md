@@ -779,7 +779,7 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     `sb_road`, `sa_kasane` admitted on Robin's waiver of the handover level (recorded in the manifest); a full-track
     player for every song on `docs/music/ensemble/listen_all.html`.
   - **Not done:** **not listened to by anyone** (the listening page is for Robin). Chromium on Linux only; no device.
-    The hosted release (C-87) and the TimGM6mb rights decision before it.
+    The hosted release (C-87). The recordings are GPL-2 (Robin, 2026-10-14; `assets/music/ensemble/NOTICE.md`).
 
 - [~] XP119 KS-1, Roadside Keepsakes on the whole twelve-chapter road (Robin, 2026-10-14: "there are only 6
   Keepsakes still? … might have been forgotten when developing new areas"; "Yes, please do so"; C-94). VALIDATION.md "KS-1".
@@ -805,6 +805,8 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     recordings); the plan (60 player, 14 narrator, 281 NPC takes, every text a line the game says), the NPC casting
     table with evidence per NPC, the renderer for the free local engines (clean-ending check, formant-kept High/Low,
     treatments, −20 LUFS), the one-file gallery, the handoff for Robin's PC.
+  - Robin's later answers (C-93): no voice for the Hush; the supernatural treatments stand; Mochi's ニャー a sourced
+    CC0 or public-domain meow, not a voice (sourced on the PC); no live generation; one loudness for every line.
   - Not done: the recordings themselves (the engines cannot run in the cloud environment; the job runs on Robin's
     PC); Robin's picks; anything in the game's speech (C-93: only after Robin's decisions).
 

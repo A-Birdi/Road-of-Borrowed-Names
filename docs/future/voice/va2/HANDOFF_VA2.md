@@ -8,7 +8,7 @@ generated nothing.
 **Your authority is Robin's message of 2026-10-14**, quoted in `docs/future/plan/11_CONTRADICTIONS.md` **C-93**. In
 short: make the casting samples Robin asked for, exactly and only these, and one gallery file for Robin to listen to.
 
-- **Allowed:** free, local engines that VA-1 already set up on this PC (AivisSpeech, the VOICEVOX Nemo engine,
+- **Allowed:** one CC0 or public-domain cat meow for Mochi (below); free, local engines that VA-1 already set up on this PC (AivisSpeech, the VOICEVOX Nemo engine,
   Qwen3-TTS through the `qwen-tts` Python package); free downloads from their official sources of what this needs
   in addition: the **Qwen3-TTS 1.7B VoiceDesign** model (Hugging Face `Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign`,
   Apache-2.0) and **free AivisSpeech models from AivisHub** for the narrator candidates and the AV slots; pip packages
@@ -28,7 +28,7 @@ short: make the casting samples Robin asked for, exactly and only these, and one
 | --- | ---: | --- | --- |
 | 1 · Player voices | 60 | Qwen3-TTS VoiceDesign | Three sets, each a Voice A and a Voice B at High and Low pitch (the same take moved ±2 semitones, formants kept), five moods (neutral, happy, sad, frustrated, excited) on the player's own lines. Robin picks a set. |
 | 2 · Narrator | 14 | AivisSpeech | Seven different female models you choose (N1–N7), each reading one line Directed-Neutral and Directed-Energetic. Robin picks one. |
-| 3 · NPCs | one per NPC (about 281) | as cast per NPC | One line each with the engine and settings in the plan: Qwen3-TTS VoiceDesign for most, AivisSpeech (slots AV-girl, AV-teen, AV-bright, AV-sweet, AV-showy) for bubbly, high-energy feminine voices, VOICEVOX Nemo (slots NM-A, NM-B, NM-C) for middle-aged men only; supernatural speakers with a treatment. Robin ticks what is disliked; the rest stands. |
+| 3 · NPCs | one per NPC (281) | as cast per NPC (Mochi the cat: a sourced meow, not a voice) | One line each with the engine and settings in the plan: Qwen3-TTS VoiceDesign for most, AivisSpeech (slots AV-girl, AV-teen, AV-bright, AV-sweet, AV-showy) for bubbly, high-energy feminine voices, VOICEVOX Nemo (slots NM-A, NM-B, NM-C) for middle-aged men only; supernatural speakers with a treatment. Robin ticks what is disliked; the rest stands. |
 
 Do not change the plan's texts, voices descriptions, seeds or settings. If something cannot be made as planned, make
 the rest and say exactly what and why in the summary.
@@ -56,6 +56,13 @@ the rest and say exactly what and why in the summary.
    - **AV slots:** a model and speaker for each `want`; distinct from the seven narrators where possible.
    - **NM slots:** NM-A is the Nemo voice Robin preferred in VA-1 for the middle-aged man (VA-1's casting file for
      `voicevox_nemo`, role `npc08`, and Robin's VA-1 notes); NM-B and NM-C two other Nemo male voices.
+   - **Mochi's meow (`sounds.cat_meow`):** Robin, 2026-10-14: "source a basic cat meow for Mochi". Find one basic,
+     clean domestic cat meow (about 0.5–1.5 s, nothing else in it) released **CC0 or public domain, as stated on the
+     recording's own page** (a Wikimedia Commons file page states it; other sources only if their page states CC0 or
+     public domain for that file). Download it into `_va2_samples\sounds\`, and record `file` (relative to
+     va2_voices.json), `title`, `url`, `author`, `licence` and `sha256`. If no recording's terms can be confirmed,
+     leave it null: Mochi's take is then skipped and the gallery says so. Never record a cat, a voice or anything else
+     yourself, and never use a recording with attribution, share-alike or non-commercial terms here.
    - Re-run `voices` until it prints "va2_voices.json: ready".
 5. **Smoke test:** `python tools\voice\va2\va2_render.py render --plan docs\future\voice\va2\va2_plan.json --voices
    va2_voices.json --out _va2_samples\work --ids P1A-neutral-high,N1-neutral,<one NPC id of each engine> ` and listen

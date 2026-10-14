@@ -728,8 +728,10 @@ while Robin decides distribution, before any hosted release.
   Original music) would be published under the GPL-2 like the sound bank in them, with its notice and licence text
   beside them and the means to make them again (the scores' event exports and `tools/music/ensemble/` are in the
   repository; the bank is named with its checksum and where it is published). Anyone could then copy and change
-  those recordings on the same terms. Not yet applied: `assets/music/ensemble/NOTICE.md` still says the question is
-  open.
+  those recordings on the same terms. **Decided** the same day, Robin: "Gpl-2 sounds right, no issue". Applied in
+  `assets/music/ensemble/NOTICE.md` (the recordings only; the game, its code and the Original music declare no licence
+  there, and no project-wide licence is chosen). At the hosted release (C-87) the means to make them again are to be
+  published with them, as GPL-2 asks of anyone distributing them.
 
 ### C-93 · VA-2: the voices Robin chose, and casting samples before anything is built
 **Decided** (2026-10-14), after Robin's own listening to VA-1's audition (C-91). Robin's words:
@@ -788,6 +790,14 @@ and implementation."
 - **Not yet:** any change to the game's speech, the casting record, the production estimate's figures or any
   whole-game recording. Those begin only after Robin's decisions on the samples (and, for a paid batch, a separate
   approval of the estimate: C-91).
+- **Robin's answers, later on 2026-10-14:** "The Hush does not need a voice or lines, in that case." (It has none; its
+  one speaking agent, the Tide Clerk, keeps the foreboding treatment.) "Good choice on other supernatural speakers."
+  "You can source a basic cat meow for Mochi and other animals who may use it." (Mochi's two lines, ニャー, are a
+  sourced CC0 or public-domain meow, not a voice; any later cat uses the same; the goat's 「メェ～」 in Snowbell is
+  inside narration, so the narrator reads it.) "No need for the generative new voices. The current agreed plan is
+  best." (The lead's reading: no voice generated live in the game, for the player's name or anything else; the
+  recordings with a neutral word stand, and the device voice keeps reading the name.) "The equalized loudness is
+  best. Good decision." (Every prepared line levelled to one loudness and trimmed alike.)
 
 ### C-94 · Roadside Keepsakes on the whole twelve-chapter road
 **Decided** (2026-10-14). Robin: "Side note, there are only 6 Keepsakes still? We've added much more content to allow

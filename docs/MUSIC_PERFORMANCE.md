@@ -306,8 +306,9 @@ menu theme first).
   next format or to Original.
 - **Not deployed.** The hosted page is updated only after the whole project's gate (C-87). Its deploy must copy
   `assets/music/ensemble/` beside the page and keep files an older page still names.
-- **The rights question is open.** The sampled voices come from TimGM6mb (GPL-2). `assets/music/ensemble/NOTICE.md`
-  records the provenance and the retained notices. No licence is chosen for the recordings, and whether distributing
-  them carries obligations is for Robin.
+- **The recordings are GPL-2** (Robin, 2026-10-14, C-92: "Gpl-2 sounds right, no issue"). The sampled voices come from
+  TimGM6mb (GPL-2); `assets/music/ensemble/NOTICE.md` declares the licence for the recordings only (not the game, its
+  code or the Original music), lists what is needed to make them again (the score, `tools/music/ensemble/`, the sound
+  bank with its checksum) and keeps the retained notices. At the hosted release those are published with them.
 - **A recording repeats itself.** The Original draws fresh small variations of timing and velocity each cycle; the
   recording repeats its first-pass realisation. The notes, rhythms and form are the same.

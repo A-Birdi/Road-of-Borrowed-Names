@@ -49,6 +49,8 @@ def main():
         r = T.get(tid)
         if not r:
             return '<span class="missing">not made</span>'
+        if r.get('skipped'):
+            return '<span class="missing">not made: ' + E(r['skipped']) + '</span>'
         with open(os.path.join(a.out, r['file']), 'rb') as f:
             b64 = base64.b64encode(f.read()).decode('ascii')
         f = r.get('final') or {}
@@ -64,6 +66,10 @@ def main():
         if not r:
             return ''
         v = r.get('voice') or {}
+        if r.get('skipped'):
+            return ''
+        if r['engine'] == 'sound':
+            return 'A sourced recording, not a voice · ' + ' · '.join(str(x) for x in [v.get('title') or v.get('file'), v.get('author'), v.get('licence'), v.get('url')] if x)
         if r['engine'] == 'qwen_design':
             s = 'Qwen3-TTS VoiceDesign · seed ' + str(v.get('seed'))
         else:

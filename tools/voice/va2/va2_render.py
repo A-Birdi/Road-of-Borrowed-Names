@@ -6,7 +6,9 @@ PC; the cloud environment that wrote this cannot run them). Free, local engines 
     the same instruction, a fixed seed per voice);
   - AivisSpeech Engine (127.0.0.1:10101) with the AIVMX models chosen for the narrator candidates N1–N7 and the AV-*
     slots in va2_voices.json;
-  - the VOICEVOX Nemo engine (VOICEVOX API) with the voices chosen for the NM-* slots (middle-aged men only).
+  - the VOICEVOX Nemo engine (VOICEVOX API) with the voices chosen for the NM-* slots (middle-aged men only);
+  - for an animal that only makes its sound (Mochi's ニャー), a sourced CC0 or public-domain recording (`sounds` in
+    va2_voices.json), not a voice.
 
     python va2_render.py voices  --voices va2_voices.json --out <work>       list the engines' speakers, check the file
     python va2_render.py render  --plan <plan> --voices va2_voices.json --out <work> [--only player,narrator,npc]
@@ -183,7 +185,24 @@ def make(take, plan, voices, eng, out, mock, cache):
     text = line['textNamesKana']
     req = {'engine': e, 'text': text, 'spec': spec, 'pitch': take.get('semitones', 0)}
     tries = []
-    if e == 'qwen_design':
+    if e == 'sound':
+        # a sourced recording (an animal's sound, not speech): its file and licence come from va2_voices.json → sounds
+        sid = spec['sound']
+        if mock:
+            t = np.arange(int(0.8 * A.SR)) / A.SR
+            f = 550 + 350 * np.sin(np.pi * t / 0.8)
+            x0 = 0.2 * np.sin(2 * np.pi * np.cumsum(f) / A.SR) * np.sin(np.pi * t / 0.8)
+            voice = {'sound': sid, 'mock': True}
+        else:
+            snd = (voices.get('sounds') or {}).get(sid) or {}
+            path = os.path.join(voices.get('_dir', '.'), snd['file'])
+            x0, sr0 = sf.read(path, dtype='float64')
+            x0 = A.to48k(x0, sr0)
+            voice = {'sound': sid, **{k: snd.get(k) for k in ('file', 'url', 'author', 'licence', 'sha256', 'title')}}
+        m = A.clean_measure(x0)
+        tries.append({'pre': r3(m['pre']), 'tail': r3(m['tail']), 'voiced': m['voiced'], 'clean': A.is_clean(m)})
+        x = A.trim(x0, m) if m['voiced'] else x0
+    elif e == 'qwen_design':
         src_key = take.get('source') or take['id']
         if src_key in cache:
             x, tries, used = cache[src_key]
@@ -267,6 +286,9 @@ def check_voices(v):
     for k in ['AV-girl', 'AV-teen', 'AV-bright', 'AV-sweet', 'AV-showy']:
         if not ((v.get('aivis') or {}).get('slots') or {}).get(k):
             p.append('aivis slot ' + k + ' not chosen')
+    for k, snd in (v.get('sounds') or {}).items():
+        if snd and snd.get('file') and not (snd.get('licence') and snd.get('url')):
+            p.append('sound ' + k + ': licence or source not recorded')
     for k in ['NM-A', 'NM-B', 'NM-C']:
         if not ((v.get('nemo') or {}).get('slots') or {}).get(k):
             p.append('nemo slot ' + k + ' not chosen')
@@ -276,6 +298,7 @@ def check_voices(v):
 def cmd_render(a):
     plan = jload(a.plan)
     voices = jload(a.voices) if a.voices and os.path.exists(a.voices) else {}
+    voices['_dir'] = os.path.dirname(os.path.abspath(a.voices)) if a.voices else '.'
     if not a.mock:
         prob = [x for x in check_voices(voices) if not (a.engines and all(e == 'qwen_design' for e in a.engines.split(',')))]
         if prob:
@@ -284,7 +307,7 @@ def cmd_render(a):
     rpath = os.path.join(a.out, 'results.json')
     res = jload(rpath) if os.path.exists(rpath) else {'schemaVersion': 'rbn-va2-results-1', 'plan': plan['builtFrom'], 'takes': {}}
     only = set(a.only.split(',')) if a.only else {'player', 'narrator', 'npc'}
-    engines = set(a.engines.split(',')) if a.engines else {'qwen_design', 'aivis', 'nemo'}
+    engines = set(a.engines.split(',')) if a.engines else {'qwen_design', 'aivis', 'nemo', 'sound'}
     ids = set(a.ids.split(',')) if a.ids else None
     eng = {'mock': Mock()}
     if not a.mock:
@@ -293,7 +316,7 @@ def cmd_render(a):
         eng['nemo'] = VoicevoxFamily((voices.get('nemo') or {}).get('url', 'http://127.0.0.1:50121'), 'nemo')
     takes = [t for s in ('player', 'narrator', 'npc') if s in only for t in plan['sections'][s]['takes']]
     # one engine at a time (the heavy one last), so only one model is loaded at once
-    order = {'aivis': 0, 'nemo': 1, 'qwen_design': 2}
+    order = {'sound': 0, 'aivis': 1, 'nemo': 2, 'qwen_design': 3}
     takes = sorted([t for t in takes if t['voiceSpec']['engine'] in engines and (ids is None or t['id'] in ids)], key=lambda t: order[t['voiceSpec']['engine']])
     cache, done, failed, t0 = {}, 0, [], time.time()
     for t in takes:
@@ -302,6 +325,11 @@ def cmd_render(a):
         prev = res['takes'].get(t['id'])
         req = sha({'engine': t['voiceSpec']['engine'], 'text': plan['lines'][t['line']]['textNamesKana'], 'spec': t['voiceSpec'], 'pitch': t.get('semitones', 0)})
         if prev and prev.get('request') == req and os.path.exists(os.path.join(a.out, prev['file'])) and prev.get('mock') == bool(a.mock):
+            continue
+        spec = t['voiceSpec']
+        if spec['engine'] == 'sound' and not a.mock and not ((voices.get('sounds') or {}).get(spec['sound']) or {}).get('file'):
+            res['takes'][t['id']] = {'id': t['id'], 'section': t['section'], 'engine': 'sound', 'skipped': 'no verified CC0 or public-domain recording of ' + spec['sound'] + ' was found'}
+            print('%-28s skipped: no sourced %s' % (t['id'], spec['sound']))
             continue
         try:
             res['takes'][t['id']] = make(t, plan, voices, eng, a.out, a.mock, cache)
@@ -316,7 +344,7 @@ def cmd_render(a):
             jsave(rpath, res)
     res['engines'] = {'aivis': eng['aivis'].version() if 'aivis' in eng and not a.mock else None, 'nemo': eng['nemo'].version() if 'nemo' in eng and not a.mock else None,
                       'qwen': (voices.get('qwen') or {}).get('model'), 'mock': bool(a.mock)}
-    res['voices'] = voices
+    res['voices'] = {k: v for k, v in voices.items() if k != '_dir'}
     res['lastRun'] = {'at': time.strftime('%Y-%m-%dT%H:%M:%S'), 'made': done, 'failed': failed, 'seconds': round(time.time() - t0, 1)}
     jsave(rpath, res)
     print('made', done, 'failed', len(failed), 'in', round(time.time() - t0), 's ->', rpath)
