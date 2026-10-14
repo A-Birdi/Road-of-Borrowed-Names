@@ -51,7 +51,9 @@ def main():
             return '<span class="missing">not made</span>'
         with open(os.path.join(a.out, r['file']), 'rb') as f:
             b64 = base64.b64encode(f.read()).decode('ascii')
-        flag = '' if (r.get('kept') or {}).get('clean', True) else ' <span class="flag" title="the clean-ending check flagged this take">⚑</span>'
+        f = r.get('final') or {}
+        bad = (f.get('pre') or 0) > 0.20 or (f.get('tail') or 0) > 0.18
+        flag = ' <span class="flag" title="after trimming, this take still has sound before the voice or an unvoiced tail">⚑</span>' if bad else ''
         return ('<div class="clip"><audio controls preload="none" src="data:audio/ogg;base64,' + b64 + '"></audio>' +
                 ('<span class="lab">' + E(label) + '</span>' if label else '') + flag + '</div>')
 
@@ -85,7 +87,7 @@ nav a{color:var(--acc);text-decoration:none;font-weight:600}
 .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:10px 0}
 table{border-collapse:collapse;width:100%}td,th{border-top:1px solid var(--line);padding:8px 6px;vertical-align:top;text-align:left}
 .wrap{overflow-x:auto}.clip{display:flex;align-items:center;gap:6px;flex-wrap:wrap}audio{height:32px;max-width:260px}
-.lab{font-size:.8rem;color:var(--mute)}.flag{color:var(--flag)}.missing{color:var(--flag);font-size:.85rem}
+.lab{font-size:.8rem;color:var(--mute)}td audio{width:100%;max-width:210px;min-width:150px}td:first-child{min-width:170px}a{color:var(--acc)}.flag{color:var(--flag)}.missing{color:var(--flag);font-size:.85rem}
 .pick{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:.5rem 0}textarea{width:100%;min-height:2.2em;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px}
 .npc{display:grid;grid-template-columns:minmax(150px,1.1fr) minmax(220px,2fr) minmax(200px,1.4fr);gap:10px;border-top:1px solid var(--line);padding:10px 0}
 .npc>div{min-width:0}.npc .who b{display:block}.tag{display:inline-block;font-size:.75rem;border:1px solid var(--line);border-radius:10px;padding:0 7px;margin:2px 4px 0 0;color:var(--mute)}

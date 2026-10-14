@@ -116,7 +116,11 @@ export default async (t) => {
     t.ok(scenes.length >= 1, id + ': a scene records it');
     const where = scenes.map(placed).find(Boolean);
     t.ok(!!where, id + ': the scene is placed on a map (' + (where ? where.map : 'nowhere') + ')');
-    t.ok(where && new RegExp('!keepsake\\.' + id + '\\b').test(where.cond), id + ': offered only until it is found');
+    // offered only until found: either the placement's own condition says so, or the scene branches on it (a place
+    // that otherwise just describes itself)
+    const guard = new RegExp('!keepsake\\.' + id + '\\b');
+    const inScene = scenes.some((sid) => (C.scenes[sid].cmds || []).some((c) => c.op === 'if' && guard.test(String(c.args && c.args[0]))));
+    t.ok(where && (guard.test(where.cond) || inScene), id + ': offered only until it is found');
     t.ok(K[id].ed === 2, id + ': twelve-chapter only');
   }
 

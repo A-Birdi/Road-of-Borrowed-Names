@@ -8,16 +8,19 @@
  *                  Living World's places share one talk list, so the option is added to that list in place).
  *     ks_mb_token  a found thing: the porters' canal board, where the city's first barge went where it was told
  *                  (stage 1 of the chapter). After the chapter the board has new tokens; the old ones wait in a box
- *                  on the porters' shelf (a silent prop given a scene), Fujiya's wisteria barge among them.
+ *                  on the porters' shelf (a silent prop, examinable while the keepsake waits), Fujiya's wisteria
+ *                  barge among them.
  *   Blockprint and Playhouse Rows
  *     ks_mp_fan    a person's thanks: Tomi of the festival committee gives every helper a fan from the Opening of
  *                  the River, printed on Sōbē's press, the helpers' names on its back. Her first talk option at the
  *                  festival hall once the chapter is over (`mb2_done`).
  *     ks_mp_type   a found thing: "Names are heavy," the Understage said. After the festival, one piece of type, 名,
- *                  is left in an old type case at the bottom of the Understage (a silent prop given a scene).
- * Every condition is the chapter's own end (every finished playthrough has it), so a save already past these chapters
- * can still claim each one, once (the keepsake is then recorded and the option falls away). This file only adds to
- * maps defined earlier and loads after every chapter and after the Living World (zzz_living). */
+ *                  is left in an old type case at the bottom of the Understage (a silent prop, examinable while the
+ *                  keepsake waits).
+ * Every condition is the chapter's own end (every finished playthrough has it) and the keepsake not yet recorded, so a
+ * save already past these chapters can still claim each one, once (then the option or the spot falls away). This file
+ * only adds to maps defined earlier, on tiles that already hold the prop or person (nothing new blocks a path), and
+ * loads after every chapter and after the Living World (zzz_living). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
@@ -28,7 +31,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
   const OUT = '#2a2024';
   const disc = (g, cx, cy, r, c) => { for (let y = -r; y <= r; y++) { const w = Math.floor(Math.sqrt(r * r - y * y)); R(g, cx - w, cy + y, w * 2 + 1, 1, c); } };
-  const ring = (g, cx, cy, r, c) => { for (let a = 0; a < 64; a++) { const t = a / 64 * Math.PI * 2; R(g, Math.round(cx + Math.cos(t) * r), Math.round(cy + Math.sin(t) * r), 1, 1, c); } };
   const shadow = (g, w) => R(g, 16 - (w >> 1), 28, w, 1, 'rgba(0,0,0,0.22)');
   const def = (id, d) => { KS[id] = Object.assign({ id, ed: 2 }, d); };
 
@@ -46,19 +48,26 @@ var RB = (globalThis.RB = globalThis.RB || {});
       shadow(g, 26);
       // the cord: one S-shaped wave from left to right, twisted red and cream, the knot at its middle
       const f = (x) => Math.round(15 - 6 * Math.sin((x - 4) / 23 * Math.PI * 2));
-      const span = (x) => { const a = f(x), b = f(Math.min(27, x + 1)); return [Math.min(a, b) - 1, Math.max(a, b)]; };
-      for (let x = 4; x <= 27; x++) { const [t, b] = span(x); R(g, x, t - 1, 1, b - t + 3, OUT); }
+      const cord = new Map(), key = (x, y) => x + ',' + y;
       for (let x = 4; x <= 27; x++) {
-        const [t, b] = span(x);
-        for (let y = t; y <= b; y++) R(g, x, y, 1, 1, (x + y) % 3 === 0 ? '#e8d8b0' : (x + y) % 3 === 1 ? '#c84a3a' : '#a83a2e');
+        const a = f(x), b = f(Math.min(27, x + 1));
+        for (let y = Math.min(a, b) - 1; y <= Math.max(a, b); y++) cord.set(key(x, y), (x + y) % 3 === 0 ? '#e8d8b0' : (x + y) % 3 === 1 ? '#c84a3a' : '#a83a2e');
       }
-      // the frayed ends
-      R(g, 1, 13, 3, 5, OUT); R(g, 2, 14, 1, 1, '#e8d8b0'); R(g, 1, 16, 2, 1, '#c84a3a'); R(g, 3, 15, 1, 1, '#c84a3a');
-      R(g, 28, 13, 3, 5, OUT); R(g, 29, 14, 1, 1, '#c84a3a'); R(g, 29, 16, 2, 1, '#e8d8b0'); R(g, 28, 15, 1, 1, '#c84a3a');
-      // the one knot: Musubi Bridge
+      // its outline: every pixel beside the cord that is not the cord
+      for (const k of cord.keys()) {
+        const [x, y] = k.split(',').map(Number);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (!cord.has(key(x + dx, y + dy))) R(g, x + dx, y + dy, 1, 1, OUT);
+      }
+      for (const [k, c] of cord) { const [x, y] = k.split(',').map(Number); R(g, x, y, 1, 1, c); }
+      // the loose fibres at both ends
+      for (const [x, y, c] of [[2, 12, '#e8d8b0'], [1, 11, '#e8d8b0'], [2, 13, '#c84a3a'], [1, 14, '#c84a3a'], [2, 15, '#e8d8b0'], [1, 16, '#e8d8b0'],
+        [29, 13, '#e8d8b0'], [30, 12, '#e8d8b0'], [29, 15, '#c84a3a'], [30, 15, '#c84a3a'], [29, 16, '#e8d8b0'], [30, 17, '#e8d8b0']]) R(g, x, y, 1, 1, c);
+      // the one knot (Musubi Bridge): a lump on the cord, its wraps crossing it
       disc(g, 16, 15, 4, OUT); disc(g, 16, 15, 3, '#c84a3a');
-      R(g, 14, 13, 4, 1, '#e8d8b0'); R(g, 13, 14, 1, 2, '#e8d8b0'); R(g, 15, 15, 3, 1, '#e8d8b0');
-      R(g, 15, 17, 4, 1, '#a83a2e'); R(g, 18, 14, 1, 3, '#a83a2e'); R(g, 14, 12, 2, 1, '#fff0d8');
+      for (let i = 0; i < 5; i++) R(g, 14 + i, 13 + i, 1, 1, '#e8d8b0');
+      for (let i = 0; i < 3; i++) R(g, 14 + i, 15 + i, 1, 1, '#e8d8b0');
+      R(g, 17, 13, 1, 1, '#a83a2e'); R(g, 18, 14, 1, 2, '#a83a2e'); R(g, 13, 15, 1, 1, '#a83a2e');
+      R(g, 15, 12, 2, 1, '#fff0d8'); // the shine
     },
   });
   def('ks_mb_token', {
@@ -75,11 +84,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the hull, side on: a flat-bottomed barge, wider at the gunwale
       for (let y = 16; y <= 24; y++) { const i = Math.max(0, y - 17); R(g, 3 + i, y, 26 - i * 2, 1, OUT); }
       for (let y = 17; y <= 23; y++) { const i = y - 17; R(g, 4 + i, y, 24 - i * 2, 1, y === 17 ? '#e8c890' : y < 20 ? '#c89a60' : y < 22 ? '#a87a48' : '#8a6038'); }
-      R(g, 5, 19, 22, 1, '#b08650'); // a plank seam
+      R(g, 6, 19, 20, 1, '#b08650'); // a plank seam
       // the cargo: a rice bale lying on the deck, tied twice
       R(g, 9, 9, 14, 8, OUT); R(g, 8, 10, 16, 6, OUT);
       R(g, 9, 10, 14, 6, '#d8c07a'); R(g, 10, 10, 12, 1, '#f0e0a0'); R(g, 9, 14, 14, 2, '#c0a660');
-      R(g, 12, 9, 1, 8, '#7a5a30'); R(g, 19, 9, 1, 8, '#7a5a30');
+      R(g, 12, 10, 1, 6, '#7a5a30'); R(g, 19, 10, 1, 6, '#7a5a30');
       for (const [x, y] of [[10, 12], [15, 11], [17, 13], [21, 12]]) R(g, x, y, 1, 1, '#b89a50'); // straw
       // the brand: a wisteria flower burned into the side
       R(g, 14, 18, 5, 1, '#4a2e22');
@@ -100,21 +109,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     art(g) {
       shadow(g, 14);
-      // the bamboo handle
-      R(g, 14, 20, 4, 8, OUT); R(g, 15, 20, 2, 7, '#c8a868'); R(g, 15, 20, 1, 7, '#e0c888'); R(g, 15, 24, 2, 1, '#a88848');
       // the round face: indigo paper on fine ribs, a cream binding at the rim
-      disc(g, 16, 11, 10, OUT); disc(g, 16, 11, 9, '#2e4a7a');
-      for (let k = -3; k <= 3; k++) for (let i = 0; i < 15; i++) R(g, Math.round(16 + k * 2.4 * i / 15), 19 - i, 1, 1, '#3a5888');
-      ring(g, 16, 11, 9, '#e8dcc0');
+      disc(g, 16, 11, 10, OUT); disc(g, 16, 11, 9, '#e8dcc0'); disc(g, 16, 11, 8, '#2e4a7a');
+      for (let k = -3; k <= 3; k++) for (let i = 0; i < 15; i++) {
+        const x = Math.round(16 + k * 2.4 * i / 15), y = 19 - i;
+        if ((x - 16) * (x - 16) + (y - 11) * (y - 11) <= 56) R(g, x, y, 1, 1, '#3a5888');
+      }
       // the printed firework: a bloom of three rings of sparks, and a small blue one below it
       for (let a = 0; a < 12; a++) {
         const t = a / 12 * Math.PI * 2;
-        R(g, Math.round(17 + Math.cos(t) * 2.5), Math.round(9 + Math.sin(t) * 2.5), 1, 1, '#f8e8a0');
-        R(g, Math.round(17 + Math.cos(t) * 4.5), Math.round(9 + Math.sin(t) * 4.5), 1, 1, '#f0a050');
-        R(g, Math.round(17 + Math.cos(t + 0.26) * 6.2), Math.round(9 + Math.sin(t + 0.26) * 6.2), 1, 1, '#e85a4a');
+        R(g, Math.round(16 + Math.cos(t) * 2), Math.round(10 + Math.sin(t) * 2), 1, 1, '#f8e8a0');
+        R(g, Math.round(16 + Math.cos(t) * 3.8), Math.round(10 + Math.sin(t) * 3.8), 1, 1, '#f0a050');
+        R(g, Math.round(16 + Math.cos(t + 0.26) * 5.5), Math.round(10 + Math.sin(t + 0.26) * 5.5), 1, 1, '#e85a4a');
       }
-      R(g, 16, 8, 2, 2, '#fff4c8');
-      for (const [x, y] of [[10, 14], [12, 14], [11, 13], [11, 15], [9, 16], [13, 16]]) R(g, x, y, 1, 1, '#a8d8f0');
+      R(g, 15, 9, 2, 2, '#fff4c8');
+      for (const [x, y] of [[12, 13], [10, 15], [14, 15], [12, 17], [11, 14], [13, 14], [11, 16], [13, 16]]) R(g, x, y, 1, 1, '#a8d8f0');
+      // the bamboo handle, below the face
+      R(g, 14, 21, 4, 7, OUT); R(g, 15, 21, 2, 6, '#c8a868'); R(g, 15, 21, 1, 6, '#e0c888'); R(g, 15, 24, 2, 1, '#a88848');
     },
   });
   // 名 ("name") as a glyph on a 10 × 10 grid, mirrored as type is cut
@@ -153,16 +164,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
     else n.talk = [opt].concat(n.talk ? [{ scene: n.talk }] : []);
     return true;
   };
-  // give an existing, silent prop a scene (only if it has none), as src/content/zz_cases.js sceneFor
-  const sceneFor = (map, p, x, y, scene) => { const m = M(map); const pr = m && (m.props || []).find((q) => q.p === p && q.x === x && q.y === y); if (pr && !pr.scene) pr.scene = scene; return !!pr; };
+  // give an existing, silent prop a scene while `cond` holds (as src/content/zz_cases.js sceneFor, but conditioned):
+  // a spot laid over it that draws nothing and blocks nothing (pet_look, src/content/pets/40_tanuki.js), added after
+  // it, so it is what you examine there while the condition holds; otherwise the prop stays as silent as it was
+  const sceneWhile = (map, p, x, y, scene, cond) => {
+    const m = M(map), pr = m && (m.props || []).find((q) => q.p === p && q.x === x && q.y === y);
+    if (!pr || pr.scene || !RB.props || !RB.props.P.pet_look) return false;
+    m.props.push({ p: 'pet_look', x, y, scene, if: cond });
+    return true;
+  };
   // Manybridge: Ichi (Exchange district by his house, or Sen's register, or Yoshi's old letters: one list)
   firstTalk('mb.exchange', 'mb_ichi', { if: 'mb1_done&!keepsake.ks_mb_cord', scene: 'mb.ks_cord_ichi' });
   // Manybridge: the porters' office shelf beside the canal board (the room is theirs; Take works outside after the story)
-  sceneFor('mb.porters', 'shelf', 10, 2, 'mb.ks_token_shelf');
+  sceneWhile('mb.porters', 'shelf', 10, 2, 'mb.ks_token_shelf', 'mb1_done&!keepsake.ks_mb_token');
   // Playhouse Row: Tomi at the festival hall (open from the festival's end)
   firstTalk('mp.festhall', 'mp_tomi_h', { if: 'mb2_done&!keepsake.ks_mp_fan', scene: 'mp.ks_fan_tomi' });
   // the bottom of the Understage: the old type case by the west wall
-  sceneFor('mp.bottom', 'mp_typecase', 2, 2, 'mp.ks_type_case');
+  sceneWhile('mp.bottom', 'mp_typecase', 2, 2, 'mp.ks_type_case', 'mb2_done&!keepsake.ks_mp_type');
 
   RB.lex.add(RB.lex.parseTable(`
 団扇|うちわ|n|I|a round fan (flat, on a handle: the summer festival kind)
@@ -191,10 +209,7 @@ narr: {橋|はし} を {数|かぞ}える {紐|ひも} を もらった 。 || Y
 
 @scene mb.ks_token_shelf
 # Staged: you bend to the shelf by the canal board; a box of old tokens, the porters' note on its lid; you pick out
-# the one with the wisteria brand (a choice); your companion's word. With it already taken, you look at the box.
-?(!mb1_done) narr: {棚|たな} に 、 {荷札|にふだ} の {束|たば} と {縄|なわ} が {並|なら}んで いる 。 || On the shelf: bundles of cargo tags and coils of rope.
-?(!mb1_done) !end
-!if keepsake.ks_mb_token -> have
+# the one with the wisteria brand (a choice: left there, it waits for another day); your companion's word.
 !gesture pc bend 10,2 hold
 narr: {棚|たな} の {上|うえ} に {小|ちい}さな {箱|はこ} 。 {運河|うんが} の {盤|ばん} の {古|ふる}い {駒|こま} が 、 たくさん {入|はい}って いる 。 || A small box on the shelf, full of old tokens from the canal board.
 narr: {蓋|ふた} に {貼|は}り{紙|がみ} 。 「 {盤|ばん} の {駒|こま} を {新|あたら}しく した 。 {古|ふる}い の は 、 {欲|ほ}しい {人|ひと} に やる 。 ―― {荷運|にはこ}び{屋|や} 」 || A note on the lid: "The board has new tokens. The old ones go to anyone who wants them. — The porters"
@@ -209,10 +224,6 @@ narr: {一|ひと}つ だけ 、 {藤|ふじ} の {花|はな} の {印|しる�
 ?(comp=suzu) comp[laugh]: {台本|だいほん} {通|どお}り の {役者|やくしゃ} の 、 {最初|さいしょ} の {舞台|ぶたい} ね 。 いい {記念|きねん} よ 。 || The actor who sticks to the script, and its first performance. A fine memento.
 !hook cs_keepsake ks_mb_token
 narr: {舟|ふね} の {駒|こま} を {一|ひと}つ もらった 。 || You take a barge token.
-!end
-:have
-!gesture pc observe 10,2
-narr: {箱|はこ} の {駒|こま} は 、 {少|すこ}し ずつ {減|へ}って いる 。 {子供|こども} たち が {持|も}って いく らしい 。 || The box is slowly emptying. The children seem to be taking them.
 
 @scene mp.ks_fan_tomi
 # Staged: Tomi among the summer's stall games; she takes a fan from the committee's stack and shows you the back,
@@ -234,14 +245,10 @@ mp_tomi: {浴衣|ゆかた} は {返|かえ}して もらった けど 、 こ�
 narr: {川開|かわびら}き の {団扇|うちわ} を もらった 。 || You receive the Opening's fan.
 
 @scene mp.ks_type_case
-# Staged: down at the bottom of the Understage, now lit; you bend to the old type case by the west wall and take out
-# the one piece of type left in it; your companion's word; you look at it in your hand. Before the festival's end the
-# pit is too dark to see into; with it already taken, the case is empty.
-?(!mb2_done) narr: {古|ふる}い {活字|かつじ} の {箱|はこ} 。 {暗|くら}くて 、 {中|なか} は よく {見|み}えない 。 || An old type case. It's too dark to see inside.
-?(!mb2_done) !end
-!if keepsake.ks_mp_type -> have
+# Staged: down at the bottom of the Understage, lit now the names are back; you bend to the old type case by the west
+# wall and take out the one piece of type left in it; your companion's word; you look at it in your hand.
 !gesture pc bend 2,2 hold
-narr: {古|ふる}い {活字|かつじ} の {箱|はこ} 。 {仕切|しき}り は どれ も {空|から} だ が 、 {一|ひと}つ だけ {活字|かつじ} が {残|のこ}って いる 。 || An old type case. Every compartment is empty but one, where a single piece of type remains.
+narr: {古|ふる}い {活字|かつじ} の {箱|はこ} 。 {空|から} の {仕切|しき}り の {中|なか} に 、 {一|ひと}つ だけ 、 {活字|かつじ} が {残|のこ}って いる 。 || An old type case. Among its empty compartments, a single piece of type remains.
 narr: {字|じ} は {鏡|かがみ} に {映|うつ}した よう に {彫|ほ}って ある 。 {活字|かつじ} だ から 。 {読|よ}む と 、 「{名|な}」 。 || The character is cut as if in a mirror, as type always is. It reads 名: "name".
 narr: 「 {名前|なまえ} は {重|おも}い 」 と 、 {奈落|ならく} は {言|い}った 。 でも {手|て} に {取|と}る と 、 {小|ちい}さくて {軽|かる}い 。 || "Names are heavy," the Understage said. But in your hand it is small, and light.
 ?(comp=nao) comp: {重|おも}い もん か 。 {手紙|てがみ} {一通|いっつう} より {軽|かる}い ぞ 。 || Heavy? It's lighter than a single letter.
@@ -252,10 +259,6 @@ narr: 「 {名前|なまえ} は {重|おも}い 」 と 、 {奈落|ならく} 
 !prop pc woodblock
 !gesture pc check prop=woodblock
 narr: 「{名|な}」 の {活字|かつじ} を {見|み}つけた 。 || You find the type for 名.
-!end
-:have
-!gesture pc observe 2,2
-narr: {古|ふる}い {活字|かつじ} の {箱|はこ} 。 {仕切|しき}り は 、 もう どれ も {空|から} だ 。 || The old type case. Every compartment is empty now.
 `, 'zzzz_keepsakes/10_mb_mp');
 
   // Suzu's Kansai-ben for her lines above (src/lang/85_dialect.js; docs/dialect/suzu_kansai.md)

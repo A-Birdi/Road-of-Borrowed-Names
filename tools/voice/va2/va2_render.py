@@ -307,7 +307,8 @@ def cmd_render(a):
             res['takes'][t['id']] = make(t, plan, voices, eng, a.out, a.mock, cache)
             done += 1
             r = res['takes'][t['id']]
-            print('%-28s %-11s %5.2fs  tries %d  %s' % (t['id'], r['engine'], r['seconds'], len(r['tries']), 'clean' if (r['kept'] or {}).get('clean') else 'FLAGGED'))
+            f = r['final']
+            print('%-28s %-11s %5.2fs  tries %d  %s' % (t['id'], r['engine'], r['seconds'], len(r['tries']), 'clean' if (f['pre'] or 0) <= A.MAX_PRE and (f['tail'] or 0) <= A.MAX_TAIL else 'FLAGGED after trim'))
         except Exception as ex:  # noqa: BLE001
             failed.append((t['id'], str(ex)[:200]))
             print('FAILED', t['id'], str(ex)[:200])

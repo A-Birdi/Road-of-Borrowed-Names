@@ -19,7 +19,7 @@ import { RB, allLines } from '../lines.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..', '..');
 const DIR = path.join(root, 'docs/future/voice/va2');
-const OUT = path.join(DIR, 'va2_plan.json');
+const OUT = process.env.VA2_PLAN_OUT || path.join(DIR, 'va2_plan.json'); // (the env overrides are for the job's self-test)
 const errors = [];
 const fail = (m) => errors.push(m);
 const sha = (s) => crypto.createHash('sha256').update(s, 'utf8').digest('hex');
@@ -124,7 +124,7 @@ function narratorSection() {
 
 // ---- 3. the NPCs ----------------------------------------------------------------------------------------------------
 function npcSection() {
-  const f = path.join(DIR, 'npc_casting.json');
+  const f = process.env.VA2_NPC_CASTING || path.join(DIR, 'npc_casting.json');
   if (!fs.existsSync(f)) { fail('missing ' + path.relative(root, f)); return { npcs: [], takes: [] }; }
   const cast = JSON.parse(fs.readFileSync(f, 'utf8'));
   const takes = [], npcs = [];
@@ -158,7 +158,7 @@ function npcSection() {
   const want = [...speakers].filter((w) => !['narr', 'comp', 'pc', 'nao', 'mio', 'ren', 'suzu'].includes(w));
   const have = new Set(npcs.map((n) => n.id));
   const missing = want.filter((w) => !have.has(w));
-  if (missing.length) fail('NPCs without a take: ' + missing.join(', '));
+  if (missing.length && !process.env.VA2_ALLOW_PARTIAL) fail('NPCs without a take: ' + missing.join(', '));
   return { rules: cast.rules, summary: cast.summary, npcs, takes };
 }
 

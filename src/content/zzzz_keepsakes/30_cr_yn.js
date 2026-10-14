@@ -14,19 +14,35 @@
  *                   found in a place.
  * Placement, retroactive (a save already past these chapters finds them): a guarded first talk option on someone who
  * always stands where the condition says (Sumi in the Barrier office and Kihachi at his stall have no Living World
- * routine, `after` or pin), and a scene for a prop that had none (the hut's west stone lantern; the descent's vent by
- * the board). The talk options need the chapter done, so they never stand in front of the chapter's own story; they run
- * once (the keepsake is then recorded). This file loads after every chapter and after zzz_living. */
+ * routine, `after` or pin), and a scene, while the same condition holds, for a prop that had none (the hut's west stone
+ * lantern; the descent's vent by the board), laid over it as a spot that draws and blocks nothing. Every placement
+ * needs the chapter done, so none stands in front of the chapter's own story, and each holds only until the keepsake
+ * is recorded. This file loads after every chapter and after zzz_living. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
   'use strict';
   const KS = C.keepsakes;
   const M = (id) => C.maps[id];
-  // a guarded talk option in front of a person's list (the pattern of src/content/zz_cases.js `firstTalk`)
-  const firstTalk = (map, id, opt) => { const m = M(map); const n = m && (m.npcs || []).find((q) => q.id === id); if (!n) return false; n.talk = [opt].concat(typeof n.talk === 'string' ? [{ scene: n.talk }] : n.talk || []); return true; };
-  // give an existing, silent prop a scene (only if it has none; the pattern of zz_cases.js `sceneFor`)
-  const sceneFor = (map, p, x, y, scene) => { const m = M(map); const pr = m && (m.props || []).find((q) => q.p === p && q.x === x && q.y === y && !q.if); if (pr && !pr.scene) pr.scene = scene; return !!(pr && pr.scene === scene); };
+  // a guarded talk option at the head of a person's list (the pattern of src/content/zz_cases.js `firstTalk`), changed in
+  // place, so a list shared with anything else stays one list
+  const firstTalk = (map, id, opt) => {
+    const m = M(map), n = m && (m.npcs || []).find((q) => q.id === id);
+    if (!n) return false;
+    if (Array.isArray(n.talk)) n.talk.unshift(opt);
+    else n.talk = [opt].concat(n.talk ? [{ scene: n.talk }] : []);
+    return true;
+  };
+  // give an existing, silent prop a scene while `cond` holds (zz_cases.js `sceneFor`, conditioned): a spot laid over it
+  // that draws nothing and blocks nothing (pet_look, src/content/pets/40_tanuki.js), added after it, so it is what you
+  // examine there while the condition holds; otherwise the prop stays as silent as it was
+  if (RB.props && RB.props.P && !RB.props.P.pet_look) RB.props.P.pet_look = { id: 'pet_look', w: 1, h: 1, block: false, draw() {}, draw2() {} };
+  const sceneWhile = (map, p, x, y, scene, cond) => {
+    const m = M(map), pr = m && (m.props || []).find((q) => q.p === p && q.x === x && q.y === y && !q.if);
+    if (!pr || pr.scene) return false;
+    m.props.push({ p: 'pet_look', x, y, scene, if: cond });
+    return true;
+  };
 
   // ---- pixel art: 32×32, whole pixels only ------------------------------------------------------------------------
   const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
@@ -79,10 +95,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     art(g) {
       shadow(g, 18);
-      // the red cord: a loop through the bell's eye, one side broken and frayed
-      R(g, 13, 3, 1, 5, '#b83a2e'); R(g, 14, 2, 4, 1, '#b83a2e'); R(g, 18, 3, 1, 2, '#b83a2e'); R(g, 14, 3, 1, 1, '#d8604a');
-      R(g, 19, 5, 1, 1, '#d8604a'); R(g, 17, 5, 1, 1, '#d8604a'); // the frayed ends
-      R(g, 14, 7, 5, 3, OUT); R(g, 15, 8, 3, 1, '#9a7428'); R(g, 16, 8, 1, 1, OUT); // the eye
+      // the red cord: a loop up from the bell's knob, broken on one side, its end frayed
+      [[15, 7], [14, 6], [14, 5], [14, 4], [15, 3], [16, 2], [17, 2], [18, 3], [19, 4]].forEach(([x, y]) => R(g, x, y, 1, 1, '#b83a2e'));
+      R(g, 15, 4, 1, 1, '#d8604a'); R(g, 20, 5, 1, 1, '#d8604a'); R(g, 19, 6, 1, 1, '#d8604a'); // its light side, the frayed end
+      R(g, 14, 8, 5, 3, OUT); R(g, 15, 8, 3, 2, '#d8b050'); R(g, 15, 8, 1, 1, '#f4dc88'); // the knob
       // the bell: a brass ball, lit from the upper left
       disc(g, 16, 18, 8, OUT); disc(g, 16, 18, 7, '#c8a040');
       for (let y = 19; y <= 24; y++) { const w = Math.floor(Math.sqrt(49 - (y - 18) * (y - 18))); R(g, 16 - w + 2, y, w * 2 - 1, 1, '#a8842e'); }
@@ -133,18 +149,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     art(g) {
       shadow(g, 26);
-      // the paper it is folded in, opened flat, its corners turned under
-      R(g, 3, 18, 26, 9, OUT); R(g, 4, 19, 24, 7, '#f4ecd8'); R(g, 4, 19, 24, 1, '#fffaf0'); R(g, 4, 25, 24, 1, '#ddd2b8');
-      R(g, 4, 19, 2, 2, '#ddd2b8'); R(g, 26, 19, 2, 2, '#ddd2b8'); R(g, 4, 24, 2, 2, '#ddd2b8'); R(g, 26, 24, 2, 2, '#ddd2b8');
-      // the crust heaped on it: white, pale yellow, a little sulphur, a few glints
-      for (let y = 13; y <= 21; y++) { const w = Math.floor(Math.sqrt(64 - (21 - y) * (21 - y))); R(g, 16 - w - 1, y, w * 2 + 3, 1, OUT); }
-      for (let y = 14; y <= 21; y++) { const w = Math.floor(Math.sqrt(49 - (21 - y) * (21 - y))); R(g, 16 - w, y, w * 2 + 1, 1, y < 17 ? '#fbf8ec' : '#efe8d0'); }
-      [[12, 18], [15, 16], [19, 19], [21, 17], [10, 20], [17, 20], [14, 21]].forEach(([x, y]) => R(g, x, y, 2, 1, '#e8dc98'));
-      [[13, 19], [18, 17], [20, 20], [16, 18]].forEach(([x, y]) => R(g, x, y, 1, 1, '#d4bc50'));
-      [[14, 15], [18, 15], [11, 17]].forEach(([x, y]) => R(g, x, y, 1, 1, '#ffffff'));
-      // the last of the steam over it
-      [[13, 11], [12, 10], [12, 9], [13, 8], [13, 7], [12, 6]].forEach(([x, y], i) => R(g, x, y, 1, 1, 'rgba(240,240,236,' + (0.75 - i * 0.08) + ')'));
-      [[19, 10], [20, 9], [20, 8], [19, 7], [19, 6], [20, 5], [20, 4]].forEach(([x, y], i) => R(g, x, y, 1, 1, 'rgba(240,240,236,' + (0.7 - i * 0.07) + ')'));
+      // the paper it was folded in, opened flat: a square seen at a slant, a crease across it
+      for (let y = 17; y <= 27; y++) { const w = 13 - Math.abs(y - 22) * 2; R(g, 15 - w, y, w * 2 + 3, 1, OUT); }
+      for (let y = 18; y <= 26; y++) { const w = 13 - Math.abs(y - 22) * 2; R(g, 17 - w, y, w * 2 - 1, 1, y < 22 ? '#fbf4e2' : '#ece0c4'); }
+      R(g, 5, 22, 22, 1, '#d8caa8');
+      // the crust on it: a jagged white lump, crystal faces catching the light, sulphur-yellow in its hollows
+      const rows = [[10, [[19, 19]]], [11, [[18, 20]]], [12, [[12, 12], [17, 21]]], [13, [[11, 13], [15, 21]]], [14, [[10, 22]]], [15, [[10, 23]]],
+        [16, [[9, 23]]], [17, [[8, 22]]], [18, [[8, 23]]], [19, [[9, 22]]], [20, [[10, 21]]]];
+      for (const [y, spans] of rows) for (const [a, b] of spans) R(g, a - 1, y - 1, b - a + 3, 3, OUT);
+      for (const [y, spans] of rows) for (const [a, b] of spans) R(g, a, y, b - a + 1, 1, y < 15 ? '#fdfcf4' : y < 18 ? '#f0eedc' : '#dcd8bc');
+      for (let i = 0; i < 5; i++) R(g, 13 + i, 15 + i, 1, 1, '#ffffff'); // a crystal face's edge
+      R(g, 19, 12, 1, 3, '#ffffff'); R(g, 12, 13, 1, 1, '#ffffff');
+      [[15, 14, 2], [20, 16, 2], [10, 17, 2], [16, 19, 3], [21, 19, 1], [12, 16, 1]].forEach(([x, y, w]) => R(g, x, y, w, 1, '#e8d064'));
+      [[17, 17], [11, 19], [20, 14], [14, 18]].forEach(([x, y]) => R(g, x, y, 1, 1, '#c8a838'));
     },
   });
 
@@ -152,14 +169,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Sumi stands at her table in the Barrier office in every state (no `if`, no routine); her own talk after the story
   // is cr.sumi_after
   firstTalk('cr.barrier_office', 'cr_sumi', { if: 'cr_done&!keepsake.ks_cr_brush', scene: 'cr.ks_sumi' });
-  // the stone lantern west of the couriers' hut door (the hut has no interior; the path runs in front, y 12–13)
-  sceneFor('cr.hut', 'kr_toro', 9, 11, 'cr.ks_bell');
+  // the stone lantern west of the couriers' hut door, silent until now (the hut has no interior; the path runs in front,
+  // y 12–13)
+  sceneWhile('cr.hut', 'kr_toro', 9, 11, 'cr.ks_bell', 'cr_done&!keepsake.ks_cr_bell');
   // Kihachi at his geta stall in the upper town in every state (no `if`, no routine)
   firstTalk('yn.upper', 'yn_kihachi', { if: 'yn_done&!keepsake.ks_yn_geta', scene: 'yn.ks_kihachi' });
-  // the vent beside the bath-keepers' board on the Steaming Slope (the board: 7,7; Yohei gathers here: 9,6)
-  sceneFor('yn.descent', 'yn_steam', 8, 6, 'yn.ks_yunohana');
+  // the vent beside the bath-keepers' board on the Steaming Slope, silent until now (the board: 7,7; Yohei, while his
+  // road event waits, stands at 9,6)
+  sceneWhile('yn.descent', 'yn_steam', 8, 6, 'yn.ks_yunohana', 'yn_done&!keepsake.ks_yn_yunohana');
 
+  // words of the scenes below that no lexicon had yet (the rest are the chapters' own)
   RB.lex.add(RB.lex.parseTable(`
+書き直す|かきなおす|v5s|I|to write again, to rewrite
+大きさ|おおきさ|n|E|size
+そのまま||adv|E|as it is, just as it was
+カラン||adv|I|karan: the clack of a wooden geta on stone (onomatopoeia)
+コロン||adv|I|koron: the clop that answers karan, a geta's second step (onomatopoeia)
 `), 'keepsakes');
 
   RB.script.add(`
@@ -173,7 +198,7 @@ cr_sumi: {台|だい} に 、 {書|か}き{直|なお}す ため の {筆|ふで
 !prop cr_sumi brush
 !gesture cr_sumi handover pc
 !gesture pc receive cr_sumi
-cr_sumi: {消|き}えた {名前|なまえ} を {取|と}り{戻|もど}した {筆|ふで} です もの 。 {番所|ばんしょ} の {台|だい} で {眠|ねむ}らせて おく の は 、 もったいない わ 。 どうぞ 、 {旅|たび} に {連|つ}れて いって ください 。 || It's the brush that won back a name that had faded. It would be a waste to leave it asleep on the office table. Please, take it travelling with you.
+cr_sumi: {消|き}えた {名前|なまえ} を {取|と}り{戻|もど}した {筆|ふで} です から 。 {番所|ばんしょ} の {台|だい} で {眠|ねむ}らせて おく の は 、 もったいない わ 。 どうぞ 、 {旅|たび} に {連|つ}れて いって ください 。 || It's the brush that won back a name that had faded. It would be a waste to leave it asleep on the office table. Please, take it travelling with you.
 ?(comp=nao) comp: …… {名前|なまえ} を {書|か}く {筆|ふで} か 。 {郵便屋|ゆうびんや} に は 、 {一番|いちばん} {大事|だいじ} な {道具|どうぐ} だ 。 {宛名|あてな} が {読|よ}めなきゃ 、 {手紙|てがみ} は どこ に も {着|つ}かない 。 || …A brush for writing names. For a postman there's no tool more important. If nobody can read the address, a letter gets nowhere.
 ?(comp=mio) comp[smile]: {薬|くすり} の ラベル も 、 {筆|ふで} {一本|いっぽん} で {正|ただ}しく なります 。 {名前|なまえ} も 、 {同|おな}じ です ね 。 || One brush can put a medicine label right. Names too, it seems.
 ?(comp=ren) comp[think]: {灯守|ひもり} は 、 {名前|なまえ} を {声|こえ} で {呼|よ}びます 。 {筆|ふで} は 、 {名前|なまえ} を {紙|かみ} の {上|うえ} で {呼|よ}ぶ の です ね 。 || Lamp-keepers call names aloud. A brush calls them on paper.
@@ -183,13 +208,11 @@ cr_sumi: {消|き}えた {名前|なまえ} を {取|と}り{戻|もど}した {
 narr: {関所|せきしょ} の {筆|ふで} を もらった 。 || You receive the Barrier's brush.
 
 @scene cr.ks_bell
-# The stone lantern beside the couriers' hut. After the story the snow has drawn back from its foot, and a courier's
-# bell lies there (a real custom: Edo's town couriers tied a bell to the letter box). Whose, nobody can say. Before the
-# story's end, and once it is found, the lantern is only a lantern.
-!if keepsake.ks_cr_bell -> after
-!if !cr_done -> before
+# The stone lantern beside the couriers' hut, after the story (before it, and once the bell is found, the lantern is
+# silent again). The snow has drawn back from its foot, and a courier's bell lies there (a real custom: Edo's town
+# couriers tied a bell to the letter box). Whose, nobody can say.
 !gesture pc bend 9,11 hold
-narr: {小屋|こや} の {前|まえ} の {石|いし} の {灯籠|とうろう} 。 {足元|あしもと} の {雪|ゆき} が 、 {少|すこ}し {解|と}けて いる 。 || The stone lantern in front of the hut. The snow at its foot has melted back a little.
+narr: {小屋|こや} の {前|まえ} の {石|いし} の {灯籠|とうろう} 。 {足元|あしもと} の {雪|ゆき} が 、 {少|すこ}し {溶|と}けて いる 。 || The stone lantern in front of the hut. The snow at its foot has melted back a little.
 narr: {雪|ゆき} の {下|した} から 、 {小|ちい}さな {真鍮|しんちゅう} の {鈴|すず} が {出|で}て きた 。 {切|き}れた {赤|あか}い {紐|ひも} が {付|つ}いて いて 、 {継|つ}ぎ{飛脚|びきゃく} の {印|しるし} が {彫|ほ}って ある 。 || Out from under the snow comes a small brass bell on a broken red cord, the relay's emblem cut into it.
 narr: {飛脚|ひきゃく} は 、 {状箱|じょうばこ} に {鈴|すず} を {付|つ}けて {走|はし}った 。 {鈴|すず} の {音|おと} で 、 {次|つぎ} の {宿|しゅく} は {飛脚|ひきゃく} が {来|く}る と {分|わ}かる 。 （{本当|ほんとう} の {習|なら}わし ） || Couriers ran with a bell tied to the letter box; at its sound, the next station knew a courier was coming. (A real custom.)
 !prop pc bell
@@ -202,12 +225,7 @@ narr: {誰|だれ} の {鈴|すず} だった の か は 、 {分|わ}からな
 !hook cs_keepsake ks_cr_bell
 !gesture pc check prop=bell
 narr: {飛脚|ひきゃく} の {鈴|すず} を {見|み}つけた 。 || You find a courier's bell.
-!end
-:before
-narr: {小屋|こや} の {前|まえ} の {石|いし} の {灯籠|とうろう} 。 {足元|あしもと} まで 、 {雪|ゆき} に {埋|う}まって いる 。 || The stone lantern in front of the hut, buried in snow to its foot.
-!end
-:after
-narr: {小屋|こや} の {前|まえ} の {石|いし} の {灯籠|とうろう} 。 {雪|ゆき} は 、 もう {足元|あしもと} に しか {残|のこ}って いない 。 || The stone lantern in front of the hut. The snow lingers only round its foot now.
+!refresh
 
 @scene yn.ks_kihachi
 # After the story: Kihachi heard your step on the red bridge the night the valley walked out in yukata (yn.walk) and
@@ -217,7 +235,7 @@ yn_kihachi: …… あの {晩|ばん} 、 {赤|あか}い {橋|はし} の {上
 yn_kihachi: {急|いそ}いで いない 、 いい {音|おと} だった 。 {音|おと} を {聞|き}けば 、 {足|あし} の {大|おお}きさ も {分|わ}かる 。 …… それ で 、 {一足|いっそく} {作|つく}って おいた 。 || An unhurried sound. A good one. From the sound I can tell the size of the foot, too. …So I made you a pair.
 !gesture yn_kihachi handover pc
 !gesture pc receive yn_kihachi
-yn_kihachi: {桐|きり} の {台|だい} に 、 {藍|あい} の {鼻緒|はなお} だ 。 {持|も}って いけ 。 {金|かね} は {要|い}らん 。 {谷|たに} の {足音|あしおと} を {揃|そろ}えて くれた {礼|れい} だ 。 || Paulownia, with indigo thongs. Take them. I don't want money. It's thanks for getting the valley's footsteps in step.
+yn_kihachi: {桐|きり} の {台|だい} に 、 {藍|あい} の {鼻緒|はなお} だ 。 {持|も}って いけ 。 お{代|だい} は {要|い}らん 。 {谷|たに} の {足音|あしおと} を {揃|そろ}えて くれた {礼|れい} だ 。 || Paulownia, with indigo thongs. Take them. No charge. It's thanks for getting the valley's footsteps in step.
 ?(comp=nao&seen.yn.kihachi) comp[smirk]: {俺|おれ} の {足音|あしおと} は ？ まだ 、 {出口|でぐち} を {探|さが}して いる か 。 || And my footsteps? Still looking for the exit?
 ?(comp=nao&seen.yn.kihachi) yn_kihachi: いや 。 もう {探|さが}して いない 。 …… あんた の は 、 {今度|こんど} {来|き}た {時|とき} に {作|つく}る 。 || No. Not any more. …Yours I'll make next time you come.
 ?(comp=nao&!seen.yn.kihachi) comp[smirk]: {下駄|げた} じゃ {走|はし}れない な 。 …… {走|はし}らない {日|ひ} の ため の {物|もの} か 。 || Can't run in geta. …They're for the days you don't run, then.
@@ -228,10 +246,9 @@ yn_kihachi: {桐|きり} の {台|だい} に 、 {藍|あい} の {鼻緒|は�
 narr: {桐|きり} の {下駄|げた} を もらった 。 || You receive a pair of paulownia geta.
 
 @scene yn.ks_yunohana
-# The vent beside the bath-keepers' board on the Steaming Slope. Once the valley has agreed, the steam here runs thin
-# and even, and yu-no-hana crusts its rim (real spring towns gather it as bath powder): a pinch, by the board's rule.
-!if keepsake.ks_yn_yunohana -> after
-!if !yn_done -> before
+# The vent beside the bath-keepers' board on the Steaming Slope, after the story (before it, and once the pinch is
+# taken, the vent is silent again). Once the valley has agreed, the steam here runs thin and even, and yu-no-hana
+# crusts its rim (real spring towns gather it as bath powder): a pinch, by the board's rule.
 !gesture pc observe 8,6
 narr: {湯気|ゆげ} の {穴|あな} 。 {今|いま} は {湯気|ゆげ} が {薄|うす}く 、 {静|しず}か に {上|あ}がって いる 。 {縁|ふち} に 、 {白|しろ}い {湯|ゆ}の{花|はな} が {付|つ}いて いる 。 || A steam vent. The steam rises thin and quiet now. White yu-no-hana crusts its rim.
 narr: {湯守|ゆもり} の {札|ふだ} に よれば 、 {湯気|ゆげ} が {薄|うす}い {時|とき} は 、 {取|と}って も いい 。 || By the bath-keepers' board, when the steam is thin you may gather it.
@@ -242,18 +259,13 @@ narr: {湯守|ゆもり} の {札|ふだ} に よれば 、 {湯気|ゆげ} が 
 !gesture pc bend 8,6 hold
 narr: {指|ゆび} で {少|すこ}し だけ {取|と}って 、 {紙|かみ} に {包|つつ}んだ 。 {卵|たまご} の よう な 、 {谷|たに} の {匂|にお}い が する 。 || You take a little with your fingers and fold it into paper. It smells of the valley: of eggs.
 ?(comp=nao) comp: {旅|たび} の {途中|とちゅう} でも 、 {湯|ゆ} に {入|い}れれば {谷|たに} の {湯|ゆ} に なる って わけ か 。 …… {軽|かる}い {荷物|にもつ} だ 。 || So even out on the road, put it in the water and it's the valley's spring. …Light to carry.
-?(comp=mio) comp[smile]: {肌|はだ} が {滑|なめ}らか に なる だけ で 、 {病気|びょうき} は {治|なお}りません よ 。 キクエ さん の {札|ふだ} の とおり 。 …… でも 、 いい {匂|にお}い 。 || It only smooths the skin; it won't cure anything. Just as Kikue's labels say. …It does smell nice, though.
+?(comp=mio) comp[smile]: {肌|はだ} が {滑|なめ}らか に なる だけ で 、 {病気|びょうき} は {治|なお}りません よ 。 キクエ さん の {札|ふだ} に も 、 そう {書|か}いて あります 。 …… でも 、 いい {匂|にお}い 。 || It only smooths the skin; it won't cure anything. Kikue's labels say so too. …It does smell nice, though.
 ?(comp=ren) comp[smile]: {湯気|ゆげ} が {静|しず}か です 。 {釜|かま}の{主|ぬし} が 、 よく {眠|ねむ}って いる の でしょう 。 || The steam is calm. The Kettle Below must be sleeping soundly.
 ?(comp=suzu) comp[laugh]: {白|しろ}い わ ね 。 {舞台|ぶたい} の {白粉|おしろい} みたい 。 …… {顔|かお} に は {塗|ぬ}らない けど 。 || So white. Like stage face powder. …Not that I'd put it on my face.
 !hook cs_keepsake ks_yn_yunohana
 !gesture pc check prop=paper
 narr: {湯|ゆ}の{花|はな} を {見|み}つけた 。 || You find yu-no-hana.
-!end
-:before
-narr: {湯気|ゆげ} の {穴|あな} 。 {今|いま} は {白|しろ}い {湯気|ゆげ} が {濃|こ}く 、 {強|つよ}く {噴|ふ}き{出|だ}して いる 。 {札|ふだ} の {言|い}う とおり 、 {近|ちか}づかない {方|ほう} が いい 。 || A steam vent, blowing thick and white just now. As the board says, best keep back.
-!end
-:after
-narr: {湯気|ゆげ} の {穴|あな} 。 {縁|ふち} の {湯|ゆ}の{花|はな} は 、 {少|すこ}し ずつ また {育|そだ}って いる 。 || A steam vent. The yu-no-hana round its rim is slowly growing again.
+!refresh
 `, 'zzzz_keepsakes/30_cr_yn');
 
   // Suzu's Kansai-ben for her lines above (src/lang/85_dialect.js; docs/dialect/suzu_kansai.md)
