@@ -384,6 +384,9 @@
     treatments are right; Mochi's ニャー is a sourced CC0 or public-domain meow (sourced on the PC), else a playful
     female AivisSpeech voice; no voice is
     generated live; one loudness for every line. VALIDATION.md "VA-2", REQUIREMENTS.md XP120.
+    **Run on Robin's PC on 2026-10-15:** 595 of 595 samples made (`docs/future/voice/va2/run/RUN_SUMMARY.md`); the
+    gallery is with Robin; Mochi's meow is the CC0 recording Robin picked. Waiting for Robin's picks (C-93); do not
+    re-run or change the samples.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md

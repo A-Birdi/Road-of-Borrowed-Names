@@ -809,8 +809,9 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - Robin's later answers (C-93): no voice for the Hush; the supernatural treatments stand; Mochi's ニャー a sourced
     CC0 or public-domain meow, not a voice (sourced on the PC), or, if none can be confirmed, a playful female
     AivisSpeech voice saying it; no live generation; one loudness for every line.
-  - Not done: the recordings themselves (the engines cannot run in the cloud environment; the job runs on Robin's
-    PC); Robin's picks; anything in the game's speech (C-93: only after Robin's decisions).
+  - Run on Robin's PC (2026-10-15): 595 of 595 samples made, records in `docs/future/voice/va2/run/` (checked here:
+    the plan's 595 take ids, none mocked); the gallery is with Robin.
+  - Not done: Robin's picks; anything in the game's speech (C-93: only after Robin's decisions).
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

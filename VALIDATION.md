@@ -4322,7 +4322,14 @@ Robin's PC: `docs/future/voice/va2/HANDOFF_VA2.md`. **No voice was generated or 
   three sets of two candidate voices at High and Low; Suzu's third set AivisSpeech with her own two slots). Self-test
   (`--mock`): the 240 made, 0 failed; the gallery's new section 2 with 48 picks; the whole gallery (595 takes) with no
   take missing and no sideways scroll at 1280 and 390 px.
-- **Not done:** the recordings, on Robin's PC; Robin's picks; anything in the game's speech.
+- **Run on Robin's PC (2026-10-15, by the local VA-2 worker; records pushed in `2309342`, `docs/future/voice/va2/run/`):**
+  595 of 595 takes made, 0 failed (player 60, companions 240, narrator 14, NPCs 281: 530 Qwen3-TTS VoiceDesign, 52
+  AivisSpeech, 12 VOICEVOX Nemo, Mochi's CC0 meow that Robin chose); eight takes still flagged by the clean-ending check
+  after trimming, and the style fallbacks, are listed in `RUN_SUMMARY.md`; the gallery (33.9 MB) is on Robin's PC, not
+  in the repository. **Checked here (records only, 2026-10-15):** `results.json` holds exactly the plan's 595 take ids,
+  none missing or extra, none mocked, no local paths. Nothing was heard here; every voice choice in `va2_voices.json` is
+  the worker's provisional pick, not Robin's casting.
+- **Not done:** Robin's picks; anything in the game's speech.
 
 ## AR-1 — the illustrations' art pass (Robin's report, 2026-10-13; implemented provisionally, internally reviewed)
 
