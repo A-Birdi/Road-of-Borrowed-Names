@@ -4361,6 +4361,12 @@ Chromium, Linux), 2026-10-15.
   turns it off and is on by default. Seen in captures at 1280 and 390 px. Not tried: a real device voice's own
   positions (no voice here).
 - **(d)** The start's voices wait on Robin's VA-2 picks (C-93); nothing else was changed in the opening.
+- **Regression run on the PT-1 build (2026-10-15):** B `speech_mark`, `settings_access`, `audio_levels`, `audio.check`,
+  `play_ui`, `settings`, `battle_settings` (10/0), `dialect_kansai`, `folio`, `book` (15/0), `ledger`, `learning_ui`
+  (15/0), `story_ch1 F mio` (31 checks): all pass. The whole unit suite first gave 54,216 passed, 10 failed: all ten in
+  `book_type`, the font subsets' coverage, because two regular expressions in the new files held the letters À…ɏ as
+  literal characters (a range for accented English letters) and ɏ is in no embedded font. Written as escapes, nothing
+  new reaches the fonts: `book_type` 60/0, `speech_align` 13/0, `speech_mark` all pass on the rebuilt page.
 
 ## RV-1 — register and conversational naturalness, reviewed in context (Robin, 2026-10-15; C-95) — report, no rewrite
 

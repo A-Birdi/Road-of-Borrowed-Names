@@ -26,7 +26,7 @@ RB.ui.speechMark = (function () {
   // the English line's words as spans, numbered like RB.jp.speech.enWords (the same pattern over the same text)
   function wrapEnglish(el) {
     if (!el || el.querySelector('.ew')) return;
-    const re = /[A-Za-z0-9À-ɏ'’]+(?:-[A-Za-z0-9À-ɏ'’]+)*/g;
+    const re = /[A-Za-z0-9\u00C0-\u024F'\u2019]+(?:-[A-Za-z0-9\u00C0-\u024F'\u2019]+)*/g;
     let n = 0;
     const walk = (node) => {
       for (const c of Array.from(node.childNodes)) {

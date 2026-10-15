@@ -38,7 +38,7 @@ RB.jp.speech = (function () {
     return best ? best.i : null;
   }
   const SMALL = 'ゃゅょぁぃぅぇぉゎャュョァィゥェォヮ';
-  const beats = (rd) => [...String(rd || '')].filter((c) => /[ぁ-ー]/.test(c) && SMALL.indexOf(c) < 0).length;
+  const beats = (rd) => [...String(rd || '')].filter((c) => /[\u3041-\u30FC]/.test(c) && SMALL.indexOf(c) < 0).length;
   // about 7.5 beats a second at rate 1 (a measured average of Japanese device voices); a comma, a full stop and an
   // ellipsis add a pause (a slower voice pauses longer too)
   function timeline(tokens, rate) {
@@ -61,8 +61,8 @@ RB.jp.speech = (function () {
   }
 
   // ---- English ----------------------------------------------------------------------------------------------------
-  const WORD = /[A-Za-z0-9À-ɏ'’]+(?:-[A-Za-z0-9À-ɏ'’]+)*/g;
-  const fold = (w) => w.normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const WORD = /[A-Za-z0-9\u00C0-\u024F'\u2019]+(?:-[A-Za-z0-9\u00C0-\u024F'\u2019]+)*/g;
+  const fold = (w) => w.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   function stem(w) {
     let s = fold(String(w)).toLowerCase().replace(/[’']s$/, '').replace(/[^a-z0-9]/g, '');
     if (s.length > 4) s = s.replace(/ies$/, 'y').replace(/ied$/, 'y');
