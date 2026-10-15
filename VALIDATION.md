@@ -4366,7 +4366,8 @@ Chromium, Linux), 2026-10-15.
   (15/0), `story_ch1 F mio` (31 checks): all pass. The whole unit suite first gave 54,216 passed, 10 failed: all ten in
   `book_type`, the font subsets' coverage, because two regular expressions in the new files held the letters À…ɏ as
   literal characters (a range for accented English letters) and ɏ is in no embedded font. Written as escapes, nothing
-  new reaches the fonts: `book_type` 60/0, `speech_align` 13/0, `speech_mark` all pass on the rebuilt page.
+  new reaches the fonts: `book_type` 60/0, `speech_align` 13/0, `speech_mark` all pass on the rebuilt page. The whole
+  unit suite again, after the fix: **54,226 passed, 0 failed** (U).
 
 ## RV-1 — register and conversational naturalness, reviewed in context (Robin, 2026-10-15; C-95) — report, no rewrite
 
