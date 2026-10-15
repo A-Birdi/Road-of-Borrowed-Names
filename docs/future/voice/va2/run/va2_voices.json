@@ -8,176 +8,212 @@
   "why: one line on why this voice fits the slot. Nobody has heard these: say 'not yet heard' until Robin has."
  ],
  "qwen": {
-  "model": "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
-  "revision": null,
-  "device": null,
-  "licence": "Apache-2.0 (model card)"
+  "model": "<project>\\_va2_samples\\models\\Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+  "revision": "5ecdb67327fd37bb2e042aab12ff7391903235d3",
+  "device": "cuda:0",
+  "licence": "Apache-2.0 (model card)",
+  "modelId": "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign"
  },
  "aivis": {
   "url": "http://127.0.0.1:10101",
   "narrators": {
    "N1": {
-    "modelName": null,
-    "modelUuid": null,
-    "modelVersion": null,
-    "speakerName": null,
+    "modelName": "みちのくあいり",
+    "modelUuid": "1b2830f4-8cf1-4184-a0d9-3a1bace3a844",
+    "modelVersion": "1.0.0",
+    "speakerName": "みちのくあいり",
     "styles": {
-     "normal": null,
-     "upbeat": null
+     "normal": 1717361472,
+     "upbeat": 1717361478
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified 9f329209d12b",
+    "credit": "みちのくあいり (AivisHub), credit optional under ACML 1.0",
+    "why": "Official model described as a calm, cute female voice: a clear, settled storyteller. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard."
    },
    "N2": {
-    "modelName": null,
-    "modelUuid": null,
-    "modelVersion": null,
-    "speakerName": null,
+    "modelName": "ほのか(~現実20代女子AIボイチェン~リアボVC公式モデル)",
+    "modelUuid": "59f96896-64d2-4378-830a-4d5feb3d81aa",
+    "modelVersion": "1.0.0",
+    "speakerName": "ほのか(~現実20代女子AIボイチェン~リアボVC公式モデル)",
     "styles": {
-     "normal": null,
-     "upbeat": null
+     "normal": 808373280,
+     "upbeat": 808373282
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified 9416a13da3a8",
+    "credit": "「声は(x.com/dopoiro)のAI」 (requested by the publisher); ACML 1.0 credit otherwise optional",
+    "why": "A natural woman in her twenties (rights bought from the voice provider): a realistic, unaffected narrator. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard."
    },
    "N3": {
-    "modelName": null,
-    "modelUuid": null,
-    "modelVersion": null,
-    "speakerName": null,
+    "modelName": "わかな(現実20代女子AIボイチェン@リアボVC公式モデル)",
+    "modelUuid": "f83c385c-829b-40c4-8c11-639027e61636",
+    "modelVersion": "1.0.0",
+    "speakerName": "わかな(現実20代女子AIボイチェン@リアボVC公式モデル)",
     "styles": {
-     "normal": null,
-     "upbeat": null
+     "normal": 1138003200,
+     "upbeat": 1138003202
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified 859078ca2e28",
+    "credit": "「声は(x.com/dopoiro)のAI」 (requested by the publisher); ACML 1.0 credit otherwise optional",
+    "why": "Another natural woman in her twenties, a different provider voice from N2. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard."
    },
    "N4": {
-    "modelName": null,
-    "modelUuid": null,
-    "modelVersion": null,
-    "speakerName": null,
+    "modelName": "すみれ(現実20代女子AIボイチェン@リアボVC公式モデル)",
+    "modelUuid": "2ff1c526-27d4-4eeb-b069-4207ae5fe259",
+    "modelVersion": "1.0.0",
+    "speakerName": "すみれ(現実20代女子AIボイチェン@リアボVC公式モデル)",
     "styles": {
-     "normal": null,
-     "upbeat": null
+     "normal": 1038680256,
+     "upbeat": 1038680258
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified bbabdf49ee93",
+    "credit": "「声は(x.com/dopoiro)のAI」 (requested by the publisher); ACML 1.0 credit otherwise optional",
+    "why": "A third natural twenties voice of the same series, for contrast with N2/N3. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard."
    },
    "N5": {
-    "modelName": null,
-    "modelUuid": null,
-    "modelVersion": null,
-    "speakerName": null,
+    "modelName": "さつき(現実20代女子AIボイチェン@リアボVC公式モデル)",
+    "modelUuid": "21d8d535-f206-462d-a3bb-05f8252dede7",
+    "modelVersion": "1.0.0",
+    "speakerName": "さつき(現実20代女子AIボイチェン@リアボVC公式モデル)",
     "styles": {
-     "normal": null,
-     "upbeat": null
+     "normal": 1935723904,
+     "upbeat": 1935723906
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified d2708663b114",
+    "credit": "「声は(x.com/dopoiro)のAI」 (requested by the publisher); ACML 1.0 credit otherwise optional",
+    "why": "A fourth natural twenties voice of the same series. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard."
    },
    "N6": {
-    "modelName": null,
-    "modelUuid": null,
-    "modelVersion": null,
-    "speakerName": null,
+    "modelName": "花音",
+    "modelUuid": "a670e6b8-0852-45b2-8704-1bc9862f2fe6",
+    "modelVersion": "1.0.0",
+    "speakerName": "花音",
     "styles": {
-     "normal": null,
+     "normal": 1325133120,
      "upbeat": null
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified 557984929a6a",
+    "credit": "花音 (AivisHub), credit optional under ACML 1.0",
+    "why": "A single-style research model, a different source from N1-N5; no brighter style, so the energetic line uses the neutral style with stronger inflection. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard."
    },
    "N7": {
-    "modelName": null,
-    "modelUuid": null,
-    "modelVersion": null,
-    "speakerName": null,
+    "modelName": "桜音",
+    "modelUuid": "3328da9a-8124-4619-a853-f7fc2f37889f",
+    "modelVersion": "1.0.0",
+    "speakerName": "桜音",
     "styles": {
-     "normal": null,
+     "normal": 376644064,
      "upbeat": null
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified cac25db74477",
+    "credit": "桜音 (AivisHub), credit optional under ACML 1.0",
+    "why": "Another single-style research model; no brighter style (same fallback as N6). agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard."
    }
   },
   "slots": {
    "AV-girl": {
     "want": "an energetic young girl (a child), bright and bouncy",
-    "modelName": null,
-    "modelUuid": null,
-    "speakerName": null,
+    "modelName": "コハク",
+    "modelUuid": "22e8ed77-94fe-4ef2-871f-a86f94e9a579",
+    "speakerName": "コハク",
     "styles": {
-     "normal": null,
+     "normal": 1878365376,
      "upbeat": null,
      "calm": null
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified 3f5c08b52bb8",
+    "credit": "AivisSpeech: コハク (requested by the publisher if credited)",
+    "why": "Official model described as a sweet, kitten-like voice: the youngest-sounding description available (no child model with a permissive licence was found). agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard.",
+    "modelVersion": "1.1.0"
    },
    "AV-teen": {
     "want": "a lively teenage girl",
-    "modelName": null,
-    "modelUuid": null,
-    "speakerName": null,
+    "modelName": "中2",
+    "modelUuid": "9107b8b6-1ed1-43f5-bebe-0de4df4d229d",
+    "speakerName": "中2",
     "styles": {
-     "normal": null,
+     "normal": 604166016,
      "upbeat": null,
      "calm": null
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified e4fd1c287f65",
+    "credit": "中2 (AivisHub), credit optional under ACML 1.0",
+    "why": "A research model named for a fourteen-year-old: a teenage voice. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard.",
+    "modelVersion": "1.0.0"
    },
    "AV-bright": {
     "want": "a bright, bubbly young woman (a cheerful shopkeeper or helper)",
-    "modelName": null,
-    "modelUuid": null,
-    "speakerName": null,
+    "modelName": "まお",
+    "modelUuid": "a59cb814-0083-4369-8542-f51a29e72af7",
+    "speakerName": "まお",
     "styles": {
-     "normal": null,
+     "normal": 888753760,
      "upbeat": null,
-     "calm": null
+     "calm": 888753763
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified f87ccea2e8e2",
+    "credit": "AivisSpeech: まお (requested by the publisher if credited)",
+    "why": "Official model described as a playful, mischievous voice: bright and bubbly. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard.",
+    "modelVersion": "1.2.0"
    },
    "AV-sweet": {
     "want": "a sweet, gentle but energetic young woman (not breathy)",
-    "modelName": null,
-    "modelUuid": null,
-    "speakerName": null,
+    "modelName": "るな",
+    "modelUuid": "4f281e78-eba6-495a-8e50-5c322d02b5b1",
+    "speakerName": "るな",
     "styles": {
-     "normal": null,
+     "normal": 345585728,
      "upbeat": null,
      "calm": null
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified d89da50ca342",
+    "credit": "るな (AivisHub), credit optional under ACML 1.0",
+    "why": "A single-style research model for a sweet, gentle young woman. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard.",
+    "modelVersion": "1.0.0"
    },
    "AV-showy": {
     "want": "a high-energy performer or announcer woman",
-    "modelName": null,
-    "modelUuid": null,
-    "speakerName": null,
+    "modelName": "凛音エル",
+    "modelUuid": "f5017410-fbb5-49e1-97cb-e785f42e15f5",
+    "speakerName": "凛音エル",
     "styles": {
-     "normal": null,
-     "upbeat": null,
+     "normal": 1388823424,
+     "upbeat": 1388823427,
      "calm": null
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified e7ac9e2636f5",
+    "credit": "凛音エル (AivisHub), credit optional under ACML 1.0",
+    "why": "An AI-character voice with a Happy style for a high-energy performer or announcer. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard.",
+    "modelVersion": "1.0.0"
+   },
+   "AV-suzu-A": {
+    "want": "Suzu, the travelling performer (set 3, voice A): a projecting, energetic stage voice; a model distinct from the narrators and the other slots",
+    "modelName": "もえ(現実20代女子AIボイチェン@リアボVC公式モデル)",
+    "modelUuid": "9a7feb22-b6f3-4f79-92d9-26849e063fa1",
+    "speakerName": "もえ(現実20代女子AIボイチェン@リアボVC公式モデル)",
+    "styles": {
+     "normal": 113804960,
+     "upbeat": 113804962,
+     "calm": null
+    },
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified 0798eb70b4fa",
+    "credit": "「声は(x.com/dopoiro)のAI」 (requested by the publisher); ACML 1.0 credit otherwise optional",
+    "why": "Suzu set 3 voice A: a natural twenties voice with a happy style for a projecting performer; distinct from every narrator and slot. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard.",
+    "modelVersion": "1.0.0"
+   },
+   "AV-suzu-B": {
+    "want": "Suzu, the travelling performer (set 3, voice B): a warmer, huskier, witty voice; a model distinct from AV-suzu-A",
+    "modelName": "かりん(現実20代女子AIボイチェン@リアボVC公式モデル)",
+    "modelUuid": "18972473-ca36-4e06-a33a-5cc14adba0c4",
+    "speakerName": "かりん(現実20代女子AIボイチェン@リアボVC公式モデル)",
+    "styles": {
+     "normal": 2110072448,
+     "upbeat": 2110072450,
+     "calm": null
+    },
+    "licence": "ACML 1.0: allows use in a free, distributed game (and commercial use) outside its prohibitions; credit optional unless the publisher asks; checksum verified 7857eacb3a88",
+    "credit": "「声は(x.com/dopoiro)のAI」 (requested by the publisher); ACML 1.0 credit otherwise optional",
+    "why": "Suzu set 3 voice B: another natural twenties voice, distinct from voice A and every other slot; no calm style, so her sad line uses the neutral style. agent-provisional (local Claude worker, 2026-10-15), chosen from AivisHub metadata; not yet heard.",
+    "modelVersion": "1.0.0"
    }
   }
  },
@@ -271,35 +307,35 @@
   "slots": {
    "NM-A": {
     "want": "the Nemo voice Robin preferred in VA-1 for the middle-aged man (npc08): warm, ordinary",
-    "speakerName": null,
+    "speakerName": "VOICEVOX Nemo 男声2",
     "styles": {
-     "normal": null
+     "normal": 10000
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "VOICEVOX Nemo terms (https://voicevox.hiroshiba.jp/nemo/term/): commercial and non-commercial use with the credit; no machine-learning use",
+    "credit": "VOICEVOX Nemo",
+    "why": "Warm, ordinary middle-aged man: the mid-pitched, even Nemo male voice (predicted ~138 Hz, 8.1 morae/s in VA-1). Robin named no Nemo npc08 preference in VA-1, so this is provisional. agent-provisional, not yet heard."
    },
    "NM-B": {
     "want": "another Nemo male voice, gruffer and lower",
-    "speakerName": null,
+    "speakerName": "VOICEVOX Nemo 男声3",
     "styles": {
-     "normal": null
+     "normal": 10002
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "VOICEVOX Nemo terms (https://voicevox.hiroshiba.jp/nemo/term/): commercial and non-commercial use with the credit; no machine-learning use",
+    "credit": "VOICEVOX Nemo",
+    "why": "Gruffer and lower: the lowest Nemo male voice (~133 Hz). agent-provisional, not yet heard."
    },
    "NM-C": {
     "want": "another Nemo male voice, brisker and lighter (a clerk)",
-    "speakerName": null,
+    "speakerName": "VOICEVOX Nemo 男声1",
     "styles": {
-     "normal": null
+     "normal": 10001
     },
-    "licence": null,
-    "credit": null,
-    "why": null
+    "licence": "VOICEVOX Nemo terms (https://voicevox.hiroshiba.jp/nemo/term/): commercial and non-commercial use with the credit; no machine-learning use",
+    "credit": "VOICEVOX Nemo",
+    "why": "Brisker and lighter (a clerk): the lightest, fastest Nemo male voice (~153 Hz, ~10 morae/s). agent-provisional, not yet heard."
    }
   }
  },
- "_note": "Filled locally on 2026-10-14 for sounds.cat_meow only (Mochi). Every voice slot is still to be chosen by the full VA-2 run."
+ "_note": "Agent-provisional audition choices for VA-2 (2026-10-15), not Robin-approved casting. Mochi's cat_meow is Robin's pick (2026-10-14)."
 }
