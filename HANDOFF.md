@@ -388,6 +388,16 @@
     gallery is with Robin; Mochi's meow is the CC0 recording Robin picked. Waiting for Robin's picks (C-93); do not
     re-run or change the samples.
 
+    **RV-1 (Robin, 2026-10-15, C-95): register and naturalness reviewed before whole-game voice production, a report,
+    not a rewrite.** `docs/review/register/REGISTER_REVIEW.md` (six decisions for Robin, D1–D6: Mio's register toward
+    the player along the road; the lines any companion says, which Ren cannot voice; the player's register to
+    companions; Suzu's Kansai keeping politeness and 〜てん; teaching voices in character speech; word help that names
+    the wrong word), `FINDINGS.md` / `findings.json` (304 findings, 80 fix before recording; 112 lines to keep).
+    **Do not rewrite until Robin decides.** Then: corrections in the game's lines and Kansai table only; the ledger,
+    tests and `tools/review/` again; the recording plan rebuilt from the corrected lines (companions attributed
+    through branches; reading hints where spacing removal joins words) before any full-game batch. VALIDATION.md
+    "RV-1", REQUIREMENTS.md XP121.
+
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
     "P18 — Plan B", "LP-1" and "VA-1".

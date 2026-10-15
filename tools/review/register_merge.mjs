@@ -2,6 +2,8 @@
 //   --findings <dir>   the readers' JSON files (one per part of the road)
 //   --lines <file>     lines.json from tools/review/register_extract.mjs (the same build)
 //   --wordhelp <file>  the output of tools/review/wordhelp_check.mjs
+//   --joined <file>    the output of tools/review/joined_readings.mjs --json (spoken text that joins words into a
+//                      compound read differently), reviewed by hand: entries with "keep": true are listed, others dropped
 //   --out <dir>        writes findings.json (everything, with ids) and FINDINGS.md (every finding, by part of the road)
 // Each reader's finding is checked against the line it names: the key must exist and its text must be the line's
 // (a finding that cannot be matched is kept, marked unmatched, and listed apart). Nothing in the game is changed.
@@ -11,6 +13,7 @@ import path from 'node:path';
 const a = process.argv.slice(2), opt = (k) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : null; };
 const lines = JSON.parse(fs.readFileSync(opt('--lines'), 'utf8'));
 const wordhelp = JSON.parse(fs.readFileSync(opt('--wordhelp'), 'utf8'));
+const joined = opt('--joined') ? JSON.parse(fs.readFileSync(opt('--joined'), 'utf8')).filter((j) => j.keep) : [];
 const OUT = opt('--out');
 fs.mkdirSync(OUT, { recursive: true });
 
@@ -88,6 +91,18 @@ for (const s of sharedList) {
   s.misfit = [...new Set(misfit)];
 }
 
+// ---- automated, checked by hand: spoken text that joins two words into a compound read differently ---------------------
+for (const j of joined) {
+  const l = byKey.get(j.key);
+  auto.push({
+    part: 'auto', key: j.key, scene: l.scene, file: l.file + ':' + l.line, speaker: l.speaker, addressee: null, text: l.plain, en: l.en,
+    kansai: null, category: 'other', severity: j.severity || 'consider',
+    why: 'The spoken text drops the learner spacing, so ' + j.joined + ' (meant ' + j.meant + ') can be read as ' + j.as + '. ' + (j.note || ''),
+    direction: j.direction || 'Give the recording text the game\'s reading at this seam (kana, or a pause mark), or reword so the words do not join.',
+    frozen: l.frozen.length ? l.frozen.join(',') : 'none', matched: true, source: 'auto:joined_reading',
+  });
+}
+
 // ---- ids, in the order of the road ----------------------------------------------------------------------------------
 const all = findings.concat(auto);
 const seen = new Set();
@@ -103,7 +118,7 @@ merged.forEach((x, i) => { x.id = 'RV-' + String(i + 1).padStart(4, '0'); });
 const count = (arr, f) => arr.reduce((m, x) => ((m[f(x)] = (m[f(x)] || 0) + 1), m), {});
 const summary = {
   lines: lines.length, parts, readerFindings: findings.length, unmatched: findings.filter((x) => !x.matched).length,
-  autoKansai: auto.length, sharedTexts: sharedList.length, sharedMisfit: sharedList.filter((s) => s.misfit.length).length,
+  autoKansai: auto.filter((x) => x.source === 'auto:kansai_register').length, autoJoined: joined.length, sharedTexts: sharedList.length, sharedMisfit: sharedList.filter((s) => s.misfit.length).length,
   bySeverity: count(merged, (x) => x.severity), byCategory: count(merged, (x) => x.category),
   frozenTouched: merged.filter((x) => x.frozen !== 'none').length, wordhelpCases: wordhelp.cases.length,
   wordhelpTokens: wordhelp.cases.reduce((n, c) => n + c.tokens, 0),
@@ -121,13 +136,15 @@ const md = ['# RV-1 findings, line by line', '',
   'do not change; a correction applies to the game\'s line and is reconciled before the full recording).', ''];
 const order = (x) => SEV.indexOf(x.severity);
 for (const p of parts.map((p) => p.part).concat(['auto'])) {
-  const xs = merged.filter((x) => x.part === p && x.source === (p === 'auto' ? 'auto:kansai_register' : 'reader')).sort((u, v) => order(u) - order(v));
+  for (const src of p === 'auto' ? ['auto:kansai_register', 'auto:joined_reading'] : ['reader']) {
+  const xs = merged.filter((x) => x.part === p && x.source === src).sort((u, v) => order(u) - order(v));
   if (!xs.length) continue;
-  md.push('## ' + (p === 'auto' ? 'Automated: Suzu\'s Kansai lines that change her politeness' : 'Part ' + p.replace(/^p(\d+)_/, '$1 · ').replace(/-/g, ', ')), '');
+  md.push('## ' + (src === 'auto:kansai_register' ? 'Automated: Suzu\'s Kansai lines that change her politeness' : src === 'auto:joined_reading' ? 'Automated, checked by hand: spoken text that joins words into a compound read differently' : 'Part ' + p.replace(/^p(\d+)_/, '$1 · ').replace(/-/g, ', ')), '');
   md.push('| id | sev | category | speaker → addressee | line | why | direction |', '|---|---|---|---|---|---|---|');
   for (const x of xs) md.push('| ' + x.id + (x.matched ? '' : ' (unmatched)') + (x.frozen !== 'none' ? ' · ' + x.frozen : '') + ' | ' + SEVW[x.severity] + ' | ' + x.category + ' | ' + esc(x.speaker) + (x.addressee ? ' → ' + esc(x.addressee) : '') +
     ' | `' + esc(x.key) + '`<br>' + esc(x.text) + (x.kansai ? '<br>Kansai: ' + esc(x.kansai) : '') + '<br>*' + esc(x.en) + '* | ' + esc(x.why) + ' | ' + esc(x.direction) + ' |');
   md.push('');
+  }
 }
 md.push('## Lines several companions say (automated)', '', 'Each text below is said by whichever of the listed companions travels with you. "Fits less well" names the',
   'companions whose usual register the line does not match (heuristic: polite forms for Nao and Suzu; plain, unmarked speech for Ren, who',

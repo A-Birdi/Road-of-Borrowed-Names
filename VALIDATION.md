@@ -4331,6 +4331,32 @@ Robin's PC: `docs/future/voice/va2/HANDOFF_VA2.md`. **No voice was generated or 
   the worker's provisional pick, not Robin's casting.
 - **Not done:** Robin's picks; anything in the game's speech.
 
+## RV-1 — register and conversational naturalness, reviewed in context (Robin, 2026-10-15; C-95) — report, no rewrite
+
+What kind of check: **R** (review by reading), by Claude agents, not native speakers (C-26: none available); the
+automated parts are tool outputs, listed with their commands. No unit or browser test applies: no game file changed.
+- **Read:** `node tools/review/register_extract.mjs --out <dir>` on the build at `acf21ee`: 9,335 spoken scene lines
+  (8,257 lines, 918 player choices; 1,046 with a Kansai version) in 2,189 scenes, 287 speakers, as whole exchanges with
+  companion lines attributed through the scenes' branches; 14 parts in story order, one reader each, every scene read
+  (scenes read per part recorded in `findings.json`); the brief: `docs/review/register/BRIEF.md`.
+- **Merged and matched:** `node tools/review/register_merge.mjs …` → `docs/review/register/findings.json` and
+  `FINDINGS.md`: 286 reader findings, every one matched to its line (0 unmatched), plus the automated lists (21
+  Kansai-politeness lines, 11 of them already found by the readers; 9 recording-text seams, 1 already found): 304 in
+  all (fix 80, consider 169, support 55); 112 preserve notes.
+- **Automated:** `node tools/review/wordhelp_check.mjs --lines <lines.json>`: 130,325 tokens looked up the way the
+  word-help panel does; 33 cases where a kana word is explained as another word (250 tokens; かい as 回 71, やめる as
+  止む 41, つく as 着く 39 …); `node tools/review/joined_readings.mjs`: 17 seams found, 9 kept after reading each
+  (今朝 for {今|いま} {朝|あさ}; 部分, 回数 traps).
+- **Spot-checked by the lead against the source:** the councillor's two names (タミ in ch5, ヤエ in four Cloudroad lines
+  and the journal), 綱/鐘, 顔色が変わりました, the player's polite Lanternfall banter, Nao's single 私, Mio's polite ending
+  block, the shared Hall lines (no companion branch), the Kansai 〜たねん lines (11), Ren's 先生 (7 lines, Reedwake) and
+  師匠 (85), Kansai うち (94) and 私 (6), and Mio's polite share by region (e.g. Saltglass 8/68, Cinder Orchard 135/151,
+  Lanternfall 16/87, Cloudroad 43/46). All as the readers described.
+- **Untouched:** the VA-1 audition corpus, the VA-2 plan and samples, the VA-2 run (12 findings touch sampled lines;
+  the samples stay, the game's corrected line is what a full batch would record).
+- **Not done:** Robin's decisions (D1–D6, and which findings to take); any correction; the recording plan's companion
+  attribution through branches (`tools/voice/fullgame_count.mjs` uses the line's own condition only).
+
 ## AR-1 — the illustrations' art pass (Robin's report, 2026-10-13; implemented provisionally, internally reviewed)
 
 Robin, with three captures of the hosted page's travel volume (Otoha from the front, Otoha from behind, Ren): "The

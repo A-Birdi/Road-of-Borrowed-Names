@@ -38,7 +38,9 @@ The register has these parts:
 
 | # | Question | Label |
 |---|---|---|
-| — | Nothing is waiting. Robin authorised the whole expansion without consulting (C-81); the lead's own decisions are logged in part F | — |
+| C-95 | Register and naturalness review (RV-1): which findings to correct before the full-game recording | Open |
+| C-93 | VA-2: Robin's picks from the casting gallery, after the run on Robin's PC | Open |
+| — | Nothing else is waiting. Robin authorised the whole expansion without consulting (C-81); the lead's own decisions are logged in part F | — |
 
 ---
 
@@ -823,6 +825,26 @@ sealed spots promised keepsakes (06_WORLD W5, W6). Robin: "Yes, please do so."
   past it; a unit test keeps an item called a keepsake from being left out again.
 - **Unchanged:** finding one never depends on how something was solved or on help asked for; keepsakes do not carry
   into New Game+ (C-66); the items themselves do what they did.
+
+### C-95 · Register and conversational naturalness, reviewed in context before whole-game voice production
+**Open: the report is ready; Robin decides what is corrected** (2026-10-15). Robin: "Before whole-game voice
+production, review conversational naturalness and register in context—not just grammatical correctness. The script
+should retain both natural polite conversation and casual Japanese where the relationship and situation support it. Do
+not convert everyone to casual speech or remove character-specific politeness. Review complete exchanges, including who
+is being addressed. Check that ordinary banter does not become unnecessarily literary or explanatory, and that casual
+contractions and marked character expressions have appropriate learner support. Keep standard Japanese versus dialect
+separate from polite versus casual. Do not impose speech patterns solely from a character's age or gender. Report
+concrete scene/line examples that need attention before rewriting. Do not change the frozen audition text or restart
+the current local voice comparison. Any approved script corrections should be reconciled before the eventual full-game
+recording batch."
+- **Done (RV-1):** a report, not a rewrite: [docs/review/register/REGISTER_REVIEW.md](../../review/register/REGISTER_REVIEW.md)
+  (the patterns and the examples to decide on) and `FINDINGS.md` / `findings.json` (every finding, keyed to its line).
+  No game line, Kansai line, word-help entry, VA-1 audition text or VA-2 sample text was changed; the VA-1 and VA-2
+  runs are untouched.
+- **Waiting for Robin:** which findings (or which kinds) to correct. Then the corrections are made in the game's lines,
+  the language ledger and Kansai table follow, and before the full-game recording batch the recording plan is rebuilt
+  from the corrected lines (a line already sampled in VA-1 or VA-2 keeps its frozen audition text; the batch records the
+  corrected line).
 
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a

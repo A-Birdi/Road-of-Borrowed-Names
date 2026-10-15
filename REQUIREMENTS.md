@@ -812,6 +812,16 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - Run on Robin's PC (2026-10-15): 595 of 595 samples made, records in `docs/future/voice/va2/run/` (checked here:
     the plan's 595 take ids, none mocked); the gallery is with Robin.
   - Not done: Robin's picks; anything in the game's speech (C-93: only after Robin's decisions).
+- [~] XP121 RV-1, register and conversational naturalness reviewed in context before whole-game voice production
+  (Robin, 2026-10-15; C-95). docs/review/register/REGISTER_REVIEW.md; VALIDATION.md "RV-1".
+  - Done (R, review by reading; no game line changed): every spoken scene line (9,335, the player's choices and
+    Suzu's Kansai lines included) read as whole exchanges by 14 readers against Robin's criteria; 304 findings
+    (80 fix before recording, 169 consider, 55 support only), each matched to its line; automated checks of word help
+    (33 wrong explanations, 250 tokens), Suzu's Kansai politeness (21 lines), lines several companions say (116 texts)
+    and recording text that joins words (9); six decisions for Robin (D1–D6) and 112 lines to keep; tools in
+    `tools/review/`. The VA-1 audition text, the VA-2 plan and samples and the VA-2 run are untouched.
+  - Not done: Robin's decisions; any correction (and then the ledger, the Kansai table and the recording plan rebuilt
+    from the corrected lines before the full-game batch).
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
