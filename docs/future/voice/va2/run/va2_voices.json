@@ -1,0 +1,305 @@
+{
+ "schemaVersion": "rbn-va2-voices-1",
+ "howToFill": [
+  "Copy this file to va2_voices.json in the work folder and fill it on the machine that runs the engines.",
+  "Start AivisSpeech and the VOICEVOX Nemo engine, then run: python va2_render.py voices --voices va2_voices.json --out <work>. It lists every installed speaker and style with its id (also saved as speakers_aivis.json and speakers_nemo.json) and says what is still missing here.",
+  "styles: the style ids of ONE speaker of ONE model. 'normal' is its neutral style (ノーマル / 通常 / Normal); 'upbeat' its brightest (テンション高め, 上機嫌, 喜び, 元気…) or null if it has none; 'calm' (落ち着き, 穏やか…) or null.",
+  "licence: the model's licence as its AivisHub page or AIVM metadata states it (for example ACML 1.0, CC0, a custom licence), and whether it allows use in a free, distributed game with credit. A model whose terms do not allow that is not used.",
+  "why: one line on why this voice fits the slot. Nobody has heard these: say 'not yet heard' until Robin has."
+ ],
+ "qwen": {
+  "model": "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+  "revision": null,
+  "device": null,
+  "licence": "Apache-2.0 (model card)"
+ },
+ "aivis": {
+  "url": "http://127.0.0.1:10101",
+  "narrators": {
+   "N1": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N2": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N3": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N4": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N5": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N6": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "N7": {
+    "modelName": null,
+    "modelUuid": null,
+    "modelVersion": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   }
+  },
+  "slots": {
+   "AV-girl": {
+    "want": "an energetic young girl (a child), bright and bouncy",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "AV-teen": {
+    "want": "a lively teenage girl",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "AV-bright": {
+    "want": "a bright, bubbly young woman (a cheerful shopkeeper or helper)",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "AV-sweet": {
+    "want": "a sweet, gentle but energetic young woman (not breathy)",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "AV-showy": {
+    "want": "a high-energy performer or announcer woman",
+    "modelName": null,
+    "modelUuid": null,
+    "speakerName": null,
+    "styles": {
+     "normal": null,
+     "upbeat": null,
+     "calm": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   }
+  }
+ },
+ "sounds": {
+  "cat_meow": {
+   "want": "one basic, clean domestic cat meow (about 0.5–1.5 s) for Mochi; CC0 or public domain only, confirmed on the recording's own page",
+   "file": "sounds/commons_niaou_noise_reduced.flac",
+   "title": "File:2015-11-24.νιαούρισμα.Νιάου.noise reduced.flac",
+   "url": "https://commons.wikimedia.org/wiki/File:2015-11-24.%CE%BD%CE%B9%CE%B1%CE%BF%CF%8D%CF%81%CE%B9%CF%83%CE%BC%CE%B1.%CE%9D%CE%B9%CE%AC%CE%BF%CF%85.noise_reduced.flac",
+   "author": "Tsester (Wikimedia Commons user)",
+   "licence": "CC0 1.0 (Creative Commons Zero, Public Domain Dedication), stated on the file page as {{self|cc-zero}}; attribution not required",
+   "sha256": "5672d956e6eee58e4d5c54f645ed38df480e77693a95cd537b5464145c68fae0",
+   "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/7/74/2015-11-24.%CE%BD%CE%B9%CE%B1%CE%BF%CF%8D%CF%81%CE%B9%CF%83%CE%BC%CE%B1.%CE%9D%CE%B9%CE%AC%CE%BF%CF%85.noise_reduced.flac",
+   "commonsSha1": "388c9382d4bc4a704ed9223eece8e0add3e232b1 (matches the downloaded file)",
+   "retrieved": "2026-10-14",
+   "recording": "A domestic cat (adult female, about 6-7 years old, per the page) recorded at home on 2015-11-24, noise-reduced by the uploader.",
+   "measured": {
+    "file": "commons_niaou_noise_reduced.flac",
+    "format": "FLAC/PCM_16",
+    "sampleRate": 48000,
+    "channels": 1,
+    "seconds": 1.155,
+    "peakDbfs": -18.7,
+    "noiseFloorDbfs": -84.2,
+    "signalToFloorDb": 65.6,
+    "clippedSamples": 0,
+    "events": [
+     {
+      "from": 0.16,
+      "to": 0.94,
+      "seconds": 0.78
+     }
+    ]
+   },
+   "why": "One clean meow of 0.78 s, nothing else in it, background about -84 dBFS, no clipped samples, already 48 kHz mono; chosen by Robin by ear.",
+   "chosenBy": "Robin, 2026-10-14, by listening (recording A of three CC0 candidates)",
+   "alternates": [
+    {
+     "file": "sounds/commons_meow_of_a_siamese_cat_freemaster2.wav",
+     "title": "File:Meow of a Siamese cat - freemaster2.wav",
+     "url": "https://commons.wikimedia.org/wiki/File:Meow_of_a_Siamese_cat_-_freemaster2.wav",
+     "author": "freemaster2 (via Freesound sound 66518; Commons licence review 2014-03-31)",
+     "licence": "CC0 1.0, stated on the file page as {{Cc-zero}}",
+     "sha256": "c5ae80383913b599b697bdb03481807dce908b44497f68583183530c6490f9d4",
+     "measured": {
+      "file": "commons_meow_of_a_siamese_cat_freemaster2.wav",
+      "format": "WAV/PCM_16",
+      "sampleRate": 44100,
+      "channels": 1,
+      "seconds": 1.517,
+      "peakDbfs": 0,
+      "noiseFloorDbfs": -83.3,
+      "signalToFloorDb": 83.3,
+      "clippedSamples": 35,
+      "events": [
+       {
+        "from": 0.04,
+        "to": 1.05,
+        "seconds": 1.01
+       }
+      ]
+     },
+     "note": "one clean 1.01 s meow, but its peaks clip (35 samples at full scale)"
+    },
+    {
+     "file": "sounds/commons_maullido_de_gata_hembra_joven.ogg",
+     "title": "File:Maullido de gata hembra joven.ogg",
+     "url": "https://commons.wikimedia.org/wiki/File:Maullido_de_gata_hembra_joven.ogg",
+     "author": "George Miquilena (Wikimedia Commons user)",
+     "licence": "CC0 1.0, stated on the file page as {{self|Cc-zero}}",
+     "sha256": "dfe040906e879e92ea0521717a304786e0694a47b436c8faf7e773aa46b5bbf2",
+     "measured": {
+      "file": "commons_maullido_de_gata_hembra_joven.ogg",
+      "format": "OGG/VORBIS",
+      "sampleRate": 44100,
+      "channels": 2,
+      "seconds": 1.152,
+      "peakDbfs": -4.6,
+      "noiseFloorDbfs": -17.8,
+      "signalToFloorDb": 13.3,
+      "clippedSamples": 0,
+      "events": []
+     },
+     "note": "a young female cat; loud from first to last 100 ms and loudest at the end, so probably cut off mid-meow with no quiet edge to trim"
+    }
+   ]
+  }
+ },
+ "nemo": {
+  "url": "http://127.0.0.1:50121",
+  "slots": {
+   "NM-A": {
+    "want": "the Nemo voice Robin preferred in VA-1 for the middle-aged man (npc08): warm, ordinary",
+    "speakerName": null,
+    "styles": {
+     "normal": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "NM-B": {
+    "want": "another Nemo male voice, gruffer and lower",
+    "speakerName": null,
+    "styles": {
+     "normal": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   },
+   "NM-C": {
+    "want": "another Nemo male voice, brisker and lighter (a clerk)",
+    "speakerName": null,
+    "styles": {
+     "normal": null
+    },
+    "licence": null,
+    "credit": null,
+    "why": null
+   }
+  }
+ },
+ "_note": "Filled locally on 2026-10-14 for sounds.cat_meow only (Mochi). Every voice slot is still to be chosen by the full VA-2 run."
+}
