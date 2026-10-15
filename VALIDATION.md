@@ -4331,6 +4331,37 @@ Robin's PC: `docs/future/voice/va2/HANDOFF_VA2.md`. **No voice was generated or 
   the worker's provisional pick, not Robin's casting.
 - **Not done:** Robin's picks; anything in the game's speech.
 
+## PT-1 — a new learner's first play (a coworker's notes, relayed by Robin, 2026-10-15)
+
+The notes, verbatim: "The start was confusing - needs voices (wip)"; "When the voiced lines are spoken, highlight the
+spoken word in Japanese and the English counterpart(s) in the sentence prominently"; "The UI volume was crazy loud";
+"Settings are not prominently displayed in the menu / hard to find". Checks on the built index.html (headless
+Chromium, Linux), 2026-10-15.
+- **(a) Volume, B `node tests/e2e/audio_levels.mjs`:** effects and music rendered offline through the game's mix at
+  the game's default volumes, approximate LUFS. Before (the previous build, the same test): confirm −21.7 against title
+  music −28 integrated; answer_right −17.8, discover −16.8, levelup −13.7 against area music −17.6 integrated; 13
+  checks failed. After the trims: every interface effect at or under −31.2 (title music −30.0 at the game's default
+  music volume), every feedback effect at or under −26.1 (area music −19.6), levelup −21.4 (area music's loudest
+  −16.6); all pass. Not heard by a person here.
+- **(b) Settings, B `node tests/e2e/settings_access.mjs`:** 22 checks at 1280×800 and 390×844 (touch): the title lists
+  Settings; on the map a Settings button at the top right, at least 44 px, named Settings (a gear on the phone), opens
+  Settings and Escape returns to the map; inside the Ledger, Settings beside Close at the top (left of it, same row),
+  opens Settings and closing it leaves the Ledger open; Save & Load still works; no page errors. B `folio.mjs` first
+  failed at 390×844 with 200% text (the labelled button made the Ledger's head wrap over the tabs: a tap meant for
+  Words hit it); with the narrow-screen gear it passes. B `book.mjs` (selector updated), `ledger.mjs`, `play_ui.mjs`,
+  `settings.mjs`, `ui.mjs`, `title_ledger.mjs`: all pass.
+- **(c) The spoken word, U `node tests/run-unit.mjs speech_align`:** 13 checks: every word of all 13,931 spoken lines
+  is found, in order, in what the voice speaks; a position inside a word names that word; the estimate moves forward
+  and stretches for a slower voice; known pairs (井戸 → well; 鞄, 手紙, 底 → satchel, letter, bottom; 右 → right-hand,
+  not the "…Right." that opens the line; the player's name); no English for particles; 8,074 of 8,417 lines with English
+  have at least one pair; no English word marked twice. **B `node tests/e2e/speech_mark.mjs`** (a stand-in device voice:
+  headless Chromium has none): the mark walks そこ → の → 旅 → 人 → 泥 … 道 → から → 来た → かい in order, "mud" and
+  "road" marked in the English, particles never mark English, the marks clear at the end; with no positions from the
+  voice the estimate walks the line; a new line starts unmarked; English-led marks "hand" and 手; the Settings switch
+  turns it off and is on by default. Seen in captures at 1280 and 390 px. Not tried: a real device voice's own
+  positions (no voice here).
+- **(d)** The start's voices wait on Robin's VA-2 picks (C-93); nothing else was changed in the opening.
+
 ## RV-1 — register and conversational naturalness, reviewed in context (Robin, 2026-10-15; C-95) — report, no rewrite
 
 What kind of check: **R** (review by reading), by Claude agents, not native speakers (C-26: none available); the

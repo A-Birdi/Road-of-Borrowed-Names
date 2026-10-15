@@ -1,0 +1,75 @@
+// Spoken-word highlighting (PT-1c, src/lang/88_speech_align.js): every spoken line's words can be found in what a
+// voice says (so a voice's position always names a word), the estimate moves forward through the words, and the
+// English counterparts are the right ones on known lines (and none for particles and endings).
+import { load } from '../lib/load.mjs';
+
+export default async (t) => {
+  globalThis.__RB_TEST__ = true;
+  const RB = load(['core', 'lang', 'recog', 'audio', 'engine', 'learn', 'ui', 'content', 'atlas'], { __RB_TEST__: true });
+  const S = RB.jp.speech;
+  t.ok(S && typeof S.align === 'function' && typeof S.offsets === 'function', 'RB.jp.speech exists');
+  const vars = { name: 'ロビン' };
+  const render = (jp) => RB.jp.render(jp, { vars, spacing: true, furigana: true }).tokens;
+
+  // ---- every spoken line: each word's reading in order in the spoken text; positions name words in order
+  let lines = 0, missing = 0, backwards = 0;
+  for (const id in RB.content.scenes) {
+    for (const c of RB.content.scenes[id].cmds || []) {
+      if (c.op !== 'say' || !c.jp) continue;
+      lines++;
+      const toks = render(c.jp);
+      const spoken = RB.jp.reading(c.jp, vars);
+      const offs = S.offsets(toks, spoken);
+      const words = toks.filter((x) => !x.punct && String(x.reading || x.surface || '').trim()).length;
+      if (offs.length !== words) missing++;
+      let last = -1;
+      for (const o of offs) { const i = S.tokenAt(offs, o.start); if (i !== o.i || i < last) backwards++; last = i; }
+    }
+  }
+  t.ok(lines > 13000, 'spoken lines checked: ' + lines);
+  t.ok(missing === 0, 'every word of every spoken line is found in what the voice says (' + missing + ' lines short)');
+  t.ok(backwards === 0, 'a position inside a word names that word, in order (' + backwards + ' disagreements)');
+
+  // ---- the estimate: words in order, each after the last, punctuation adds a pause
+  const tk = render('{旅|たび} の {人|ひと} 。 {泥|どろ} だらけ だ ね 。');
+  const tl = S.timeline(tk, 1);
+  t.ok(tl.items.length >= 6 && tl.items.every((x, k) => k === 0 || x.at > tl.items[k - 1].at), 'the estimate moves forward word by word');
+  const slow = S.timeline(tk, 0.5);
+  t.ok(Math.abs(slow.total - tl.total * 2) < 0.6, 'a slower voice stretches the estimate (' + tl.total.toFixed(2) + ' s → ' + slow.total.toFixed(2) + ' s)');
+
+  // ---- English counterparts on known lines
+  const pairs = (jp, en) => {
+    const toks = render(jp);
+    const a = S.align(toks, en, { name: 'Robin' });
+    const out = {};
+    toks.forEach((x, i) => { if (a.map[i].length) out[x.surface] = a.map[i].map((k) => a.words[k].text.toLowerCase().replace(/[^a-z']/g, '')).join(' '); });
+    return out;
+  };
+  const p1 = pairs('{旅芸人|たびげいにん} は {井戸|いど} の {近|ちか}く で {歌|うた}って る 。', 'The performer is singing by the well.');
+  t.ok(p1['井戸'] === 'well', 'well ← 井戸: ' + JSON.stringify(p1));
+  t.ok(!p1['は'] && !p1['の'] && !p1['で'], 'no English for the particles: ' + JSON.stringify(p1));
+  const p2 = pairs('…… {鞄|かばん} の {底|そこ} に 、 {届|とど}けて ない {手紙|てがみ} が {一通|いっつう} ある 。', '…At the bottom of my satchel there\'s one letter I haven\'t delivered.');
+  t.ok(p2['鞄'] === 'satchel' && p2['手紙'] === 'letter' && p2['底'] === 'bottom', 'satchel, letter, bottom: ' + JSON.stringify(p2));
+  // one English word is used once; where two could match, the nearer in the sentence wins
+  const p3 = pairs('…… じゃ 、 {次|つぎ} の {便|びん} が ある から 。 {右|みぎ} の {桟橋|さんばし} は {歩|ある}く な よ 。', '…Right. Got the next run. Stay off the right-hand pier.');
+  t.ok(p3['右'] === 'righthand' && p3['次'] === 'next', 'the right-hand pier, not "Right." at the start: ' + JSON.stringify(p3));
+  // the player's name, as the English shows it
+  const p4 = pairs('$name 、 {鐘|かね} の {決|き}まり 、 {覚|おぼ}えてる よね ？', 'Robin, you remember the bell rules, right?');
+  t.ok(p4['鐘'] === 'bell' && /robin/.test(Object.values(p4).join(' ')), 'the bell, and the name: ' + JSON.stringify(p4));
+
+  // ---- coverage over the game: most lines get at least one pair; no English word is marked twice in a line
+  let withPair = 0, total = 0, twice = 0;
+  for (const id in RB.content.scenes) {
+    for (const c of RB.content.scenes[id].cmds || []) {
+      if (c.op !== 'say' || !c.jp || !c.en || (c.who || 'narr') === 'narr') continue;
+      total++;
+      const toks = render(c.jp);
+      const a = S.align(toks, c.en.replace(/\$name/g, 'Robin'), { name: 'Robin' });
+      const used = a.map.flat();
+      if (used.length) withPair++;
+      if (new Set(used).size !== used.length) twice++;
+    }
+  }
+  t.ok(withPair / total > 0.9, 'lines with at least one Japanese–English pair: ' + withPair + ' / ' + total);
+  t.ok(twice === 0, 'no English word is marked for two Japanese words (' + twice + ')');
+};

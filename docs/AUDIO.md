@@ -503,11 +503,23 @@ schedules notes only 0.2 s ahead.
 minimum retrigger gap (e.g. 35 ms for `text_blip`), and at most 24 effects
 sound at once.
 
+**Levels under the music (PT-1a, 2026-10-15).** A new learner found "the UI volume crazy loud". Measured through the
+mix at the game's default volumes (master 0.8, music 0.55, effects 0.75), the clicks (`confirm`, `cancel`) were about
+7 LU louder than the title music and the answer, discovery and level-up sounds as loud as the area music or louder.
+`_.sfxLevel` (src/audio/40_sfx.js) now trims the interface effects (`confirm` `cancel` −10 dB, `menu_open`
+`menu_close` `save` −9, `page` −5, `quest_update` −10) and the feedback effects (`answer_right` −9, `answer_wrong` −8,
+`recog_ok` −8, `recog_unsure` −7, `discover` −9, `item_get` −8, `reveal` −7, `levelup` −8); battle, world and movement
+effects are unchanged, and the sliders still scale everything. `tests/e2e/audio_levels.mjs` (B) holds the result, in
+approximate LUFS (K-weighted, 400 ms windows): every interface effect peaks no louder than the title music's integrated
+loudness (−30.0), every feedback effect at least 5 LU under the area music's (−19.6), level-up at least 3 LU under the
+area music's loudest moment. Before: 13 of those checks failed; after: none.
+
 ## Voice (`RB.voice`)
 
 - **Local voices only.** It uses only voices with `localService === true` and a `ja*` language, and always sets `utterance.voice` explicitly, so a browser default (possibly a network voice) is never used silently. With no local Japanese voice, `speak()` returns `false`, `onend({spoken:false})` still fires, and `status().note` explains the situation for settings.
 - **No overlap.** `speak()` cancels any previous utterance first. Music is ducked while speaking. The rate is clamped to 0.5–1.5 and `pitch` to 0.5–1.5. Utterance volume = master × voice (0 when muted), and muting cancels speech.
 - **Honest labelling.** The note labels this as device text-to-speech, not recorded voice acting, and not a pronunciation reference.
+- **The spoken word, marked (PT-1c, 2026-10-15).** While a dialogue line is spoken, the word being said is marked in the Japanese and its English counterpart in the translation (src/ui/22_speech_mark.js, src/lang/88_speech_align.js). The position is the voice's own (`speak(text, {onboundary(charIndex)})`, the utterance's boundary events) where it reports one; otherwise an estimate from each word's beats (7.5 a second at rate 1, pauses for punctuation), and a recording can be followed by its clock, the estimate stretched to its length. The English counterpart is a content word whose dictionary meaning names a word of the English line (one English word per Japanese word, the nearer where two could match); particles and endings, and words the English does not name, get no English mark. Settings › Audio › "Highlight each word as it is spoken" (on by default). Checks: `tests/unit/speech_align.test.mjs` (U), `tests/e2e/speech_mark.mjs` (B, with a stand-in device voice: headless Chromium has none).
 
 ## Tests and results
 

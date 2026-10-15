@@ -395,6 +395,9 @@ input[type=text]:focus, select:focus { outline: 2px solid var(--focus); }
 .folio > * { min-width: 0; }
 .folio-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 4px 4px 6px; min-height: var(--tap); position: relative; z-index: 3; }
 .folio-head > .cbtn { flex: none; margin-left: auto; }
+.folio-head > .cbtn + .cbtn { margin-left: 0; } /* the Ledger's Settings sits just left of Close (PT-1b) */
+/* on a narrow screen it is its gear (named for assistive technology), so the head stays one row above the tabs */
+@media (max-width: 520px) { .folio-head > .ledger-set > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
 .folio-head h2 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 1.2em; letter-spacing: 0.02em; color: var(--on-cloth); flex: 0 1 auto; max-width: 60%; }
 .folio-head .meta { color: var(--on-cloth-2); font-size: 0.85em; line-height: 1.25; flex: 1 1 6em; min-width: 0; text-align: right; }
 /* when the line is too narrow (small phone, large text) the meta and Close
@@ -1652,6 +1655,11 @@ body.reduced-motion .cr-route *, body.reduced-motion .cr-sheet * { transition: n
 body.bulb-on .dlg-sheet .jline .jt, body.bulb-on .choice .jline .jt, body.bulb-on .toast .jline .jt,
 body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on .panel .jline .jt { text-decoration-color: var(--jt-line); }
 .dlg-sheet .jline .jt:hover, .dlg-sheet .jline .jt.active, .choice .jline .jt.active, .panel .jline .jt.active { background: rgba(193, 138, 42, 0.2); }
+/* the word being spoken, in the Japanese and in its English (PT-1c, src/ui/22_speech_mark.js): a strong amber mark
+   with an underline, so it reads at a glance; only colour changes (no motion) */
+.dlg-sheet .jline .jt.spk, .dlg-sheet .enline .ew.spk { background: rgba(232, 158, 36, 0.62); box-shadow: inset 0 -0.2em 0 #a2560f, 0 0 0 2px rgba(232, 158, 36, 0.35); border-radius: 3px; color: var(--ink); }
+.dlg-sheet .enline .ew.spk { padding: 0 0.08em; margin: 0 -0.08em; }
+body.high-contrast .dlg-sheet .jline .jt.spk, body.high-contrast .dlg-sheet .enline .ew.spk { background: #ffe14d; color: #000; box-shadow: inset 0 -0.18em 0 #000; }
 
 /* ---- shared cloth button and generic panel (screens not yet rebuilt) ---- */
 .btn {
@@ -2002,7 +2010,9 @@ body.in-panel .atlas-chip, body.in-dialogue .atlas-chip { display: none; }
 @media (max-width: 599px) { .atlas-chip { top: calc(max(8px, env(safe-area-inset-top)) + 52px); max-width: calc(100vw - 16px); } }
 
 /* the Menu tag belongs to exploration; in battle and other modes only Word help stays */
-body:not([data-mode="world"]) .hud .menu-b { display: none; }
+body:not([data-mode="world"]) .hud .menu-b, body:not([data-mode="world"]) .hud .set-b { display: none; }
+/* on a narrow screen the Settings button keeps its gear and its name for assistive technology, not its visible label */
+@media (max-width: 520px) { .hud .set-b .l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
 /* L12, asking back: three ways to ask, over the line (src/ui/20_dialogue.js askBack) */
 .dlg-ask { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; margin-top: 6px; border-radius: 6px; }
 .dlg-ask .dbtn { display: inline-flex; flex-direction: column; align-items: flex-start; min-height: 44px; padding: 4px 10px; }
@@ -11574,6 +11584,143 @@ RB.dialect = (function () {
     addLex, lookupIn, note, stdMarkup, lexAll: () => lexAll.slice(), lexProblems: () => lexProblems.slice(),
     table: (d) => T[d || 'kansai'], templates: (d) => (TPL[d || 'kansai'] || []).slice(), errors: () => errors.slice(), files: () => files.slice(),
   };
+})();
+
+
+/* ==== src/lang/88_speech_align.js ==== */
+/* RB.jp.speech — which word a spoken line is on, and its English counterpart (PT-1c: a new learner asked that "when
+ * the voiced lines are spoken, highlight the spoken word in Japanese and the English counterpart(s) in the sentence").
+ *
+ *   offsets(tokens, spoken)   where each token's reading sits in the text a voice speaks (RB.jp.reading of the line:
+ *                             the tokens' readings in order, which every line in the game satisfies)
+ *   tokenAt(offs, charIndex)  the token a voice's position (a speech "boundary" event) falls in
+ *   timeline(tokens, rate)    an estimate of when each token starts, in seconds, from its beats (morae) and the pauses
+ *                             of its punctuation: used when a voice gives no positions (and scalable to a recording's
+ *                             length)
+ *   enWords(en)               the words of an English line, with their places in the text
+ *   align(tokens, en, opts)   for each token, the English words that render it, or none: a content word whose
+ *                             dictionary meaning names a word of the English line (stems compared), one English word per
+ *                             token, the nearer in the sentence where two could match. Particles, endings and words
+ *                             whose meaning the English does not name get none: an honest blank, never a guess.
+ * Pure functions (no DOM): src/ui/22_speech_mark.js shows them; tests/unit/speech_align.test.mjs holds them. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.jp = RB.jp || {};
+
+RB.jp.speech = (function () {
+  'use strict';
+  function offsets(tokens, spoken) {
+    const out = [];
+    let cur = 0;
+    tokens.forEach((t, i) => {
+      if (!t || t.punct) return;
+      const rd = String(t.reading || t.surface || '');
+      if (!rd.trim()) return;
+      const at = spoken.indexOf(rd, cur);
+      if (at < 0) return;
+      out.push({ i, start: at, end: at + rd.length });
+      cur = at + rd.length;
+    });
+    return out;
+  }
+  function tokenAt(offs, ci) {
+    let best = null;
+    for (const o of offs) { if (o.start <= ci) best = o; else break; }
+    return best ? best.i : null;
+  }
+  const SMALL = 'ゃゅょぁぃぅぇぉゎャュョァィゥェォヮ';
+  const beats = (rd) => [...String(rd || '')].filter((c) => /[ぁ-ー]/.test(c) && SMALL.indexOf(c) < 0).length;
+  // about 7.5 beats a second at rate 1 (a measured average of Japanese device voices); a comma, a full stop and an
+  // ellipsis add a pause (a slower voice pauses longer too)
+  function timeline(tokens, rate) {
+    const per = 1 / (7.5 * (rate || 1));
+    let t = 0;
+    const out = [];
+    tokens.forEach((tk, i) => {
+      if (!tk) return;
+      if (tk.punct) {
+        const s = String(tk.surface || '');
+        t += (/…|‥/.test(s) ? 0.4 : /[。！？!?]/.test(s) ? 0.35 : /[、，,]/.test(s) ? 0.2 : 0) / (rate || 1);
+        return;
+      }
+      const n = beats(tk.reading || tk.surface);
+      if (!n) return;
+      out.push({ i, at: t, dur: n * per });
+      t += n * per;
+    });
+    return { items: out, total: t };
+  }
+
+  // ---- English ----------------------------------------------------------------------------------------------------
+  const WORD = /[A-Za-z0-9À-ɏ'’]+(?:-[A-Za-z0-9À-ɏ'’]+)*/g;
+  const fold = (w) => w.normalize('NFD').replace(/[̀-ͯ]/g, '');
+  function stem(w) {
+    let s = fold(String(w)).toLowerCase().replace(/[’']s$/, '').replace(/[^a-z0-9]/g, '');
+    if (s.length > 4) s = s.replace(/ies$/, 'y').replace(/ied$/, 'y');
+    if (s.length > 4) s = s.replace(/(ing|ed|es|ly)$/, '');
+    if (s.length > 6) s = s.replace(/(er|or)$/, ''); // a doer: traveller, performer, teacher (not letter, corner)
+    if (s.length > 3) s = s.replace(/s$/, '');
+    return s.replace(/(.)\1$/, '$1');
+  }
+  function enWords(en) {
+    const out = [];
+    const text = String(en || '');
+    let m;
+    WORD.lastIndex = 0;
+    while ((m = WORD.exec(text))) out.push({ text: m[0], start: m.index, end: m.index + m[0].length, stems: m[0].split('-').map(stem).filter(Boolean) });
+    return out;
+  }
+  // words a meaning shares with too many sentences to point at anything
+  const STOP = new Set(('the a an to of be is it in on at for and or one do that this with as by up out so not no i you me my we he she ' +
+    'they them his her its your our their there here have has get go come some something someone thing way time what who how just ' +
+    'very more most into from about all any eg etc oneself somebody sth sb make take give put').split(' '));
+  function meaningStems(m) {
+    return String(m || '').replace(/\([^)]*\)/g, ' ').replace(/\[[^\]]*\]/g, ' ').split(/[;,/]|\bor\b/)
+      .flatMap((p) => p.trim().split(/[\s-]+/)).map(stem).filter((w) => w && w.length > 1 && !STOP.has(w));
+  }
+  const FUNCTION_POS = /^(prt|aux|cop|conj|suf|pref)/;
+  function align(tokens, en, opts) {
+    opts = opts || {};
+    const words = enWords(en);
+    const map = tokens.map(() => []);
+    if (!words.length) return { words, map };
+    const look = opts.lookup || ((t) => (RB.jp.lookup ? RB.jp.lookup(t) : null));
+    const nameStems = opts.name ? String(opts.name).split(/[\s-]+/).map(stem).filter(Boolean) : [];
+    const total = tokens.reduce((n, t) => n + String((t && t.surface) || '').length, 0) || 1;
+    const cands = [];
+    let pos = 0;
+    tokens.forEach((t, i) => {
+      const here = pos / total;
+      pos += String((t && t.surface) || '').length;
+      if (!t || t.punct) return;
+      let want = [];
+      if (t.ph) want = nameStems; // the player's name, in the English as it is shown
+      else {
+        let r = null;
+        try { r = look(t, i); } catch (e) { r = null; }
+        const e = r && r.entry;
+        if (!e || r.unknown || FUNCTION_POS.test(e.pos || '')) return;
+        want = meaningStems(e.m).concat(r.gloss ? meaningStems(r.gloss) : []);
+      }
+      if (!want.length) return;
+      const set = new Set(want);
+      const hits = [];
+      words.forEach((w, k) => { if (w.stems.some((s) => s.length > 1 && set.has(s))) hits.push(k); });
+      if (hits.length) cands.push({ i, here, hits });
+    });
+    // the most certain first (fewest candidates), each English word used once, the nearer in the sentence preferred
+    const used = new Set();
+    cands.sort((a, b) => a.hits.length - b.hits.length || a.i - b.i);
+    for (const c of cands) {
+      const free = c.hits.filter((k) => !used.has(k));
+      if (!free.length) continue;
+      const rel = (k) => (words.length > 1 ? k / (words.length - 1) : 0);
+      free.sort((a, b) => Math.abs(rel(a) - c.here) - Math.abs(rel(b) - c.here));
+      used.add(free[0]);
+      map[c.i] = [free[0]];
+    }
+    return { words, map };
+  }
+  return { offsets, tokenAt, timeline, enWords, align, stem, beats };
 })();
 
 
@@ -22669,12 +22816,23 @@ RB.audio = RB.audio || {};
   // --------------------------------------------------------- playback
   const rng = RB.util.rng(24681357);
   // Plays an effect into graph g at time t. Used live and by renderOffline.
+  // Interface and feedback effects sit under the music (a new learner's report, 2026-10-15: "the UI volume was crazy
+  // loud"). Measured through the mix at the game's default volumes, confirm and cancel were about 7 LU louder than the
+  // title music and the answer and discovery sounds as loud as the area music or louder; these trims (dB) put the
+  // clicks under the quietest music and the feedback sounds at least 5 LU under the area music. Battle, world and movement effects are unchanged.
+  // The volume sliders still scale everything; tests/e2e/audio.check.mjs holds the levels.
+  const LEVEL = _.sfxLevel = {
+    confirm: -10, cancel: -10, menu_open: -9, menu_close: -9, save: -9, page: -5,
+    quest_update: -10, answer_right: -9, answer_wrong: -8, recog_ok: -8, recog_unsure: -7,
+    discover: -9, item_get: -8, reveal: -7, levelup: -8,
+  };
   _.sfxPlay = function (g, id, t, opts) {
     const d = X[id];
     if (!d) return false;
     opts = opts || {};
     const c = g.ctx;
-    const out = N.amp(c, clamp(opts.vol == null ? 1 : Number(opts.vol) || 0, 0, 2));
+    const trim = LEVEL[id] ? Math.pow(10, LEVEL[id] / 20) : 1;
+    const out = N.amp(c, clamp(opts.vol == null ? 1 : Number(opts.vol) || 0, 0, 2) * trim);
     out.connect(g.sfx);
     let wet = null;
     if (d.rv) {
@@ -22735,7 +22893,7 @@ RB.audio = RB.audio || {};
  *
  * API: supported(), japaneseVoices(), onChange(cb) -> unsubscribe,
  *      setVoice(voiceURI|null), setRate(0.5..1.5), speak(text, {onend,
- *      onstart, rate, pitch}), cancel(), speaking(), selected(), status().
+ *      onstart, onboundary(charIndex, name), rate, pitch}), cancel(), speaking(), selected(), status().
  * onend({spoken:boolean}) fires when speech finishes or cannot start; it is
  * NOT called for an utterance that was cancelled or superseded. */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -22877,6 +23035,12 @@ RB.voice = RB.voice || {};
     u.onstart = () => {
       if (gen === S.gen && typeof opts.onstart === 'function') {
         try { opts.onstart(); } catch (e) { /* ignore */ }
+      }
+    };
+    // where the voice is (a character offset into the text): word highlighting follows it (src/ui/22_speech_mark.js)
+    u.onboundary = (e) => {
+      if (gen === S.gen && typeof opts.onboundary === 'function') {
+        try { opts.onboundary(e.charIndex, e.name); } catch (err) { /* ignore */ }
       }
     };
     u.onend = () => finish(true);
@@ -59231,7 +59395,8 @@ RB.game = (function () {
       // music performance (MT-1, src/audio/22_ensemble.js): the procedural score, or a recorded Ensemble performance
       // of it where one exists; a device preference (older records lack it: Original)
       musicPerformance: 'original',
-      voice: { auto: false, uri: null, rate: 0.95 }, lightbulb: true, input: 'hand',
+      // highlight: the word being spoken marked in the line and its English (PT-1c; older records lack it: On)
+      voice: { auto: false, uri: null, rate: 0.95, highlight: true }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
       // touch layout (older settings records lack these; the defaults keep the previous layout)
       touchHand: 'right', touchSize: 'normal',
@@ -64710,7 +64875,10 @@ RB.ui.help = (function () {
     if (panel && !pinned) { panel.remove(); panel = null; }
   }
   function isOpen() { return !!panel; }
-  return { init, toggle, register, showFor, hide, enabled, isOpen };
+  // a registered line's tokens and context (src/ui/22_speech_mark.js marks the spoken word by token)
+  const tokensOf = (id) => (reg.get(id) || {}).tokens || null;
+  const ctxOf = (id) => (reg.get(id) || {}).ctx || null;
+  return { init, toggle, register, showFor, hide, enabled, isOpen, tokensOf, ctxOf };
 })();
 
 /* ---- HUD ---------------------------------------------------------------------------
@@ -64728,9 +64896,12 @@ RB.ui.hud = (function () {
       box.setAttribute('role', 'toolbar');
       box.setAttribute('aria-label', 'Game');
       box.innerHTML = '<button class="hbtn bulb" aria-pressed="false" title="Word help (H)">' + I('bulb') + '<span class="l">Word help</span><span class="st" aria-hidden="true"></span></button>' +
-        '<button class="hbtn menu-b" title="The Wayfarer\'s Ledger (C)">' + I('menu') + '<span class="l">Ledger</span></button>';
+        '<button class="hbtn menu-b" title="The Wayfarer\'s Ledger (C)">' + I('menu') + '<span class="l">Ledger</span></button>' +
+        // Settings on the screen itself, not only inside the Ledger (a new learner could not find it: PT-1b)
+        '<button class="hbtn set-b" title="Settings" aria-label="Settings">' + I('settings') + '<span class="l">Settings</span></button>';
       box.querySelector('.bulb').onclick = () => RB.ui.help.toggle();
       box.querySelector('.menu-b').onclick = () => { if (RB.game.mode() === 'world') RB.ui.menu.open(); };
+      box.querySelector('.set-b').onclick = () => { if (RB.game.mode() === 'world') RB.ui.settings.open(); };
       RB.ui.root.appendChild(box);
     }
     box.classList.remove('hidden');
@@ -65175,6 +65346,7 @@ RB.ui.dialogue = (function () {
     // Suzu's Kansai-ben (src/lang/85_dialect.js): what is shown may be her Kansai version; the history
     // and a kept sentence keep the standard line (nothing Kansai is written into the save)
     current = Object.assign({}, RB.dialect ? RB.dialect.line(line.who, line) : line, { src: line });
+    if (RB.ui.speechMark) RB.ui.speechMark.stop();
     showSub = RB.game.settings.secondary === 'always';
     const ch = charInfo(line.who);
     s.backlog.push({ who: line.who, jp: line.jp, en: line.en });
@@ -65350,7 +65522,14 @@ RB.ui.dialogue = (function () {
     if (!current || !current.jp || !RB.voice) return;
     const text = RB.jp && RB.jp.reading ? RB.jp.reading(current.jp, RB.script.jpVars()) : current.jp;
     const ch = RB.content.chars[current.who];
-    RB.voice.speak(text, { pitch: ch && ch.voice ? ch.voice.pitch : 1 });
+    // the word being said, marked in the Japanese and its English (PT-1c; Settings › Audio can turn it off)
+    const mark = RB.ui.speechMark ? RB.ui.speechMark.begin(box, current, text) : null;
+    RB.voice.speak(text, {
+      pitch: ch && ch.voice ? ch.voice.pitch : 1,
+      onstart: mark ? () => mark.start() : undefined,
+      onboundary: mark ? (ci) => mark.at(ci) : undefined,
+      onend: mark ? () => mark.end() : undefined,
+    });
     void force;
   }
 
@@ -65478,6 +65657,7 @@ RB.ui.dialogue = (function () {
     box.classList.add('hidden');
     setTop(false);
     document.body.classList.remove('in-dialogue');
+    if (RB.ui.speechMark) RB.ui.speechMark.stop();
     RB.voice && RB.voice.cancel();
     RB.game.setFastForward(false);
     current = null;
@@ -66473,6 +66653,145 @@ RB.portraitDev = (function () {
     setTimeout(go, 0);
   }
   return { allowed, open, state, LAYOUTS, DPRS, GROUPS };
+})();
+
+
+/* ==== src/ui/22_speech_mark.js ==== */
+/* Spoken-word highlighting (PT-1c: a new learner asked that "when the voiced lines are spoken, highlight the spoken
+ * word in Japanese and the English counterpart(s) in the sentence prominently").
+ *
+ * While a dialogue line is spoken, the word being said is marked in the Japanese line, and the English words that
+ * render it (RB.jp.speech.align) are marked in the translation when it shows. The position comes from the voice
+ * itself when it reports one (a speech "boundary" event: a character offset into what it speaks); a voice that
+ * reports none is followed by an estimate from each word's beats (RB.jp.speech.timeline), and a recording can be
+ * followed the same way, scaled to its length (follow()). Settings › Audio › "Highlight each word as it is spoken"
+ * (settings.voice.highlight; older records lack it: On). Only classes change: no motion, nothing announced, nothing
+ * saved.
+ *
+ *   RB.ui.speechMark.begin(box, line, spoken) → { start(), at(charIndex), follow(getTime, duration), end() } | null
+ *   RB.ui.speechMark.stop()  clears any mark (a new line, the box hidden) */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.ui = RB.ui || {};
+
+RB.ui.speechMark = (function () {
+  'use strict';
+  let cur = null;
+  const S = () => RB.jp && RB.jp.speech;
+  const on = () => !(RB.game.settings && RB.game.settings.voice && RB.game.settings.voice.highlight === false);
+
+  function clear(root) {
+    (root || document).querySelectorAll('.spk').forEach((e) => e.classList.remove('spk'));
+  }
+  // the English line's words as spans, numbered like RB.jp.speech.enWords (the same pattern over the same text)
+  function wrapEnglish(el) {
+    if (!el || el.querySelector('.ew')) return;
+    const re = /[A-Za-z0-9À-ɏ'’]+(?:-[A-Za-z0-9À-ɏ'’]+)*/g;
+    let n = 0;
+    const walk = (node) => {
+      for (const c of Array.from(node.childNodes)) {
+        if (c.nodeType === 3) {
+          const t = c.nodeValue;
+          let m, last = 0;
+          const frag = document.createDocumentFragment();
+          re.lastIndex = 0;
+          while ((m = re.exec(t))) {
+            if (m.index > last) frag.appendChild(document.createTextNode(t.slice(last, m.index)));
+            const s = document.createElement('span');
+            s.className = 'ew';
+            s.dataset.w = String(n++);
+            s.textContent = m[0];
+            frag.appendChild(s);
+            last = m.index + m[0].length;
+          }
+          if (last < t.length) frag.appendChild(document.createTextNode(t.slice(last)));
+          c.replaceWith(frag);
+        } else if (c.nodeType === 1) walk(c);
+      }
+    };
+    walk(el);
+  }
+
+  function begin(box, line, spoken) {
+    stop();
+    if (!on() || !box || !line || !line.jp || !S()) return null;
+    // the spoken line, in the main text or the second line (not the speaker's name above it)
+    const LINE = '.main .jline[data-src], .sub .jline[data-src]';
+    const jl = box.querySelector(LINE);
+    const tokens = jl && RB.ui.help.tokensOf ? RB.ui.help.tokensOf(+jl.dataset.src) : null;
+    if (!tokens) return null;
+    const ctx = RB.ui.help.ctxOf ? RB.ui.help.ctxOf(+jl.dataset.src) : null;
+    const en = RB.game.s && RB.script.enVars ? RB.script.enVars(line.en || '') : line.en || '';
+    const look = ctx && ctx.dia && RB.dialect ? (t, i) => RB.dialect.lookupIn(tokens, i) || RB.jp.lookup(t) : null;
+    const name = RB.game.s && RB.game.s.player ? RB.game.s.player.name : null;
+    const st = {
+      box, tokens,
+      offs: S().offsets(tokens, String(spoken || '')),
+      tl: S().timeline(tokens, (RB.game.settings.voice && RB.game.settings.voice.rate) || 1),
+      al: S().align(tokens, en, { lookup: look, name }),
+      shown: null, events: false, t0: 0, raf: 0, timer: 0, follow: null,
+    };
+    cur = st;
+    const show = (i) => {
+      if (cur !== st || i === st.shown) return;
+      st.shown = i;
+      clear(box);
+      if (i == null) return;
+      const line = box.querySelector(LINE);
+      if (line) line.querySelectorAll('.jt[data-i="' + i + '"]').forEach((e) => e.classList.add('spk'));
+      const ws = st.al.map[i] || [];
+      if (ws.length) {
+        const enEl = box.querySelector('.main .enline, .sub .enline');
+        if (enEl) {
+          wrapEnglish(enEl);
+          for (const k of ws) { const w = enEl.querySelector('.ew[data-w="' + k + '"]'); if (w) w.classList.add('spk'); }
+        }
+      }
+    };
+    const byTime = (t, scale) => {
+      let i = null;
+      for (const it of st.tl.items) { if (it.at * scale <= t) i = it.i; else break; }
+      return i;
+    };
+    const loop = () => {
+      if (cur !== st || st.events) return;
+      if (st.follow) {
+        const t = st.follow.get();
+        show(byTime(t, st.follow.duration && st.tl.total ? st.follow.duration / st.tl.total : 1));
+      } else show(byTime((performance.now() - st.t0) / 1000, 1));
+      st.raf = requestAnimationFrame(loop);
+    };
+    return {
+      start() {
+        if (cur !== st) return;
+        st.t0 = performance.now();
+        show(st.tl.items.length ? st.tl.items[0].i : null);
+        // a voice that reports its position does so at once; one that does not is followed by the estimate
+        st.timer = setTimeout(() => { if (cur === st && !st.events) loop(); }, 300);
+      },
+      at(ci) {
+        if (cur !== st) return;
+        st.events = true;
+        cancelAnimationFrame(st.raf);
+        show(S().tokenAt(st.offs, ci));
+      },
+      // a recording: follow its clock, the estimate stretched to its length
+      follow(getTime, duration) {
+        if (cur !== st) return;
+        st.follow = { get: getTime, duration };
+        st.events = false;
+        loop();
+      },
+      end() { if (cur === st) stop(); },
+    };
+  }
+  function stop() {
+    if (!cur) return;
+    cancelAnimationFrame(cur.raf);
+    clearTimeout(cur.timer);
+    clear(cur.box);
+    cur = null;
+  }
+  return { begin, stop, active: () => !!cur, wrapEnglish };
 })();
 
 
@@ -80404,14 +80723,19 @@ RB.ui.menu = (function () {
     fr = F().frame({ onClose: close, closeLabel: 'Close', book: bookStyle() });
     lastSec = null;
     fr.foot.innerHTML =
-      '<button class="cbtn" data-util="save">' + I('ledger') + '<span>' + RB.ui.label('セーブ・ロード', 'Save & Load') + '</span></button>' +
-      '<button class="cbtn" data-util="settings">' + I('settings') + '<span>' + RB.ui.label('{設定|せってい}', 'Settings') + '</span></button>';
-    fr.foot.onclick = (e) => {
+      '<button class="cbtn" data-util="save">' + I('ledger') + '<span>' + RB.ui.label('セーブ・ロード', 'Save & Load') + '</span></button>';
+    // Settings beside Close, where a reader looks first, rather than in the corner under the book (PT-1b)
+    const setB = RB.ui.el('button', 'cbtn ledger-set');
+    setB.dataset.util = 'settings';
+    setB.setAttribute('aria-label', 'Settings');
+    setB.innerHTML = I('settings') + '<span>' + RB.ui.label('{設定|せってい}', 'Settings') + '</span>';
+    fr.head.insertBefore(setB, fr.head.querySelector('[data-folio-close]'));
+    fr.el.addEventListener('click', (e) => {
       const b = e.target.closest('[data-util]');
-      if (!b) return;
+      if (!b || !fr || !fr.el.contains(b)) return;
       if (b.dataset.util === 'settings') RB.ui.settings.open();
-      else saveSheet();
-    };
+      else if (b.dataset.util === 'save') saveSheet();
+    });
     layer = { el: fr.scrim, name: 'menu' };
     layer.onCancel = back;
     layer.onAction = (act) => { if (act === 'menu') { close(); return true; } return false; };
@@ -82318,6 +82642,8 @@ RB.ui.settings = (function () {
       '<h3>' + I('sound') + ' Japanese voice (optional)</h3><p class="small">' + esc(vs.note || '') + '</p>' +
       (voices.length ? '<div class="field"><label class="lab" for="vsel">Voice</label><select id="vsel" data-voice>' + voices.map((v) => '<option value="' + esc(v.voiceURI) + '"' + (st.voice.uri === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') + '</select></div>' +
         '<div class="field"><label class="switch"><input type="checkbox" role="switch" data-voiceauto' + (st.voice.auto ? ' checked' : '') + '><span>Speak dialogue automatically</span><span class="state">' + (st.voice.auto ? 'On' : 'Off') + '</span></label></div>' +
+        '<div class="field"><label class="switch"><input type="checkbox" role="switch" data-voicehl' + (st.voice.highlight !== false ? ' checked' : '') + '><span>Highlight each word as it is spoken</span><span class="state">' + (st.voice.highlight !== false ? 'On' : 'Off') + '</span></label>' +
+        '<div class="hint">The Japanese word being said, and its English where the translation shows it.</div></div>' +
         slider('voice.rate', 'Speech rate', st.voice.rate, 0.6, 1.3, 0.05, (v) => v.toFixed(2) + '×') : '<p class="note-slip">No Japanese voice is installed on this device, so nothing will be spoken. Everything works without it.</p>') +
       '<p class="muted small">Voices are your device\'s own speech synthesis, labelled as such. They are not recorded actors and not a pronunciation authority.</p>';
   }
@@ -82410,6 +82736,9 @@ RB.ui.settings = (function () {
         focusSame(t);
       } else if (t.matches('[data-voiceauto]')) {
         st.voice.auto = t.checked; await RB.game.saveSettings(); render(); focusSame(t);
+      } else if (t.matches('[data-voicehl]')) {
+        st.voice.highlight = t.checked; if (!t.checked && RB.ui.speechMark) RB.ui.speechMark.stop();
+        await RB.game.saveSettings(); render(); focusSame(t);
       } else if (t.matches('[data-voice]')) {
         st.voice.uri = t.value; RB.game.saveSettings(); RB.voice.speak('こんにちは');
       }
@@ -82430,7 +82759,7 @@ RB.ui.settings = (function () {
   }
   // after a re-render, keep keyboard focus on the equivalent control
   function focusSame(t) {
-    const sel = t.dataset.set ? 'input[data-set="' + t.dataset.set + '"][value="' + CSS.escape(t.value) + '"]' : t.dataset.sw ? '[data-sw="' + t.dataset.sw + '"]' : t.hasAttribute('data-voiceauto') ? '[data-voiceauto]' : null;
+    const sel = t.dataset.set ? 'input[data-set="' + t.dataset.set + '"][value="' + CSS.escape(t.value) + '"]' : t.dataset.sw ? '[data-sw="' + t.dataset.sw + '"]' : t.hasAttribute('data-voiceauto') ? '[data-voiceauto]' : t.hasAttribute('data-voicehl') ? '[data-voicehl]' : null;
     const n = sel && fr && fr.box.querySelector(sel);
     if (n) n.focus({ preventScroll: true });
   }
@@ -82453,7 +82782,7 @@ RB.ui.settings = (function () {
     if (t.matches('input[type=radio][data-set]')) return t.dataset.obj !== 'learn' && !!IN_BATTLE[t.dataset.set];
     if (t.matches('[data-sw]')) return !!IN_BATTLE[t.dataset.sw];
     if (t.matches('[data-range]')) return !!IN_BATTLE[t.dataset.range]; // (sliders apply on input, below)
-    return t.matches('[data-voiceauto], [data-voice], [data-suzu-speech]');
+    return t.matches('[data-voiceauto], [data-voicehl], [data-voice], [data-suzu-speech]');
   }
   // Fixed for the encounter, shown read-only with what they are (they change in the folio's
   // Settings once it is over): the learning and challenge choices, how answers are read, the

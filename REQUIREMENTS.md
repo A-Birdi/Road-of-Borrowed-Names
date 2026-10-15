@@ -822,6 +822,18 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     `tools/review/`. The VA-1 audition text, the VA-2 plan and samples and the VA-2 run are untouched.
   - Not done: Robin's decisions; any correction (and then the ledger, the Kansai table and the recording plan rebuilt
     from the corrected lines before the full-game batch).
+- [~] XP122 PT-1, a new learner's first play (a coworker's notes, relayed by Robin, 2026-10-15). VALIDATION.md "PT-1".
+  - Done: (a) "The UI volume was crazy loud": interface and feedback effects trimmed in the engine to sit under the
+    music, measured at the game's default volumes (B `audio_levels`; sliders and saved settings untouched); (b)
+    "Settings are not prominently displayed in the menu / hard to find": a Settings button on the map beside Word help
+    and the Ledger (a gear on a phone), Settings beside Close at the top of the Ledger, the title's Settings as before
+    (B `settings_access`); (c) "highlight the spoken word in Japanese and the English counterpart(s) in the sentence
+    prominently": the word being said marked in the Japanese line and its English counterpart, following the device
+    voice's positions or an estimate, ready to follow recordings; Settings › Audio switch, on by default (U
+    `speech_align`, B `speech_mark`).
+  - Not done: (d) "The start was confusing - needs voices (wip)": the voices, which wait on Robin's VA-2 picks (C-93).
+    No look at the opening itself beyond that was asked for. A real device voice's own positions were not tried here
+    (headless Chromium has no voice; the browser test uses a stand-in that reports positions as device voices do).
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

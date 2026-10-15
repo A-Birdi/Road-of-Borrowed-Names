@@ -128,6 +128,7 @@ RB.ui.dialogue = (function () {
     // Suzu's Kansai-ben (src/lang/85_dialect.js): what is shown may be her Kansai version; the history
     // and a kept sentence keep the standard line (nothing Kansai is written into the save)
     current = Object.assign({}, RB.dialect ? RB.dialect.line(line.who, line) : line, { src: line });
+    if (RB.ui.speechMark) RB.ui.speechMark.stop();
     showSub = RB.game.settings.secondary === 'always';
     const ch = charInfo(line.who);
     s.backlog.push({ who: line.who, jp: line.jp, en: line.en });
@@ -303,7 +304,14 @@ RB.ui.dialogue = (function () {
     if (!current || !current.jp || !RB.voice) return;
     const text = RB.jp && RB.jp.reading ? RB.jp.reading(current.jp, RB.script.jpVars()) : current.jp;
     const ch = RB.content.chars[current.who];
-    RB.voice.speak(text, { pitch: ch && ch.voice ? ch.voice.pitch : 1 });
+    // the word being said, marked in the Japanese and its English (PT-1c; Settings › Audio can turn it off)
+    const mark = RB.ui.speechMark ? RB.ui.speechMark.begin(box, current, text) : null;
+    RB.voice.speak(text, {
+      pitch: ch && ch.voice ? ch.voice.pitch : 1,
+      onstart: mark ? () => mark.start() : undefined,
+      onboundary: mark ? (ci) => mark.at(ci) : undefined,
+      onend: mark ? () => mark.end() : undefined,
+    });
     void force;
   }
 
@@ -431,6 +439,7 @@ RB.ui.dialogue = (function () {
     box.classList.add('hidden');
     setTop(false);
     document.body.classList.remove('in-dialogue');
+    if (RB.ui.speechMark) RB.ui.speechMark.stop();
     RB.voice && RB.voice.cancel();
     RB.game.setFastForward(false);
     current = null;

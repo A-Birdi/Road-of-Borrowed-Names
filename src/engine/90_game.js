@@ -33,7 +33,8 @@ RB.game = (function () {
       // music performance (MT-1, src/audio/22_ensemble.js): the procedural score, or a recorded Ensemble performance
       // of it where one exists; a device preference (older records lack it: Original)
       musicPerformance: 'original',
-      voice: { auto: false, uri: null, rate: 0.95 }, lightbulb: true, input: 'hand',
+      // highlight: the word being spoken marked in the line and its English (PT-1c; older records lack it: On)
+      voice: { auto: false, uri: null, rate: 0.95, highlight: true }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
       // touch layout (older settings records lack these; the defaults keep the previous layout)
       touchHand: 'right', touchSize: 'normal',

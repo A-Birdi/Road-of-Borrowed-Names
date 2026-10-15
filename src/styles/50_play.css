@@ -9,6 +9,11 @@
 body.bulb-on .dlg-sheet .jline .jt, body.bulb-on .choice .jline .jt, body.bulb-on .toast .jline .jt,
 body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on .panel .jline .jt { text-decoration-color: var(--jt-line); }
 .dlg-sheet .jline .jt:hover, .dlg-sheet .jline .jt.active, .choice .jline .jt.active, .panel .jline .jt.active { background: rgba(193, 138, 42, 0.2); }
+/* the word being spoken, in the Japanese and in its English (PT-1c, src/ui/22_speech_mark.js): a strong amber mark
+   with an underline, so it reads at a glance; only colour changes (no motion) */
+.dlg-sheet .jline .jt.spk, .dlg-sheet .enline .ew.spk { background: rgba(232, 158, 36, 0.62); box-shadow: inset 0 -0.2em 0 #a2560f, 0 0 0 2px rgba(232, 158, 36, 0.35); border-radius: 3px; color: var(--ink); }
+.dlg-sheet .enline .ew.spk { padding: 0 0.08em; margin: 0 -0.08em; }
+body.high-contrast .dlg-sheet .jline .jt.spk, body.high-contrast .dlg-sheet .enline .ew.spk { background: #ffe14d; color: #000; box-shadow: inset 0 -0.18em 0 #000; }
 
 /* ---- shared cloth button and generic panel (screens not yet rebuilt) ---- */
 .btn {
@@ -359,7 +364,9 @@ body.in-panel .atlas-chip, body.in-dialogue .atlas-chip { display: none; }
 @media (max-width: 599px) { .atlas-chip { top: calc(max(8px, env(safe-area-inset-top)) + 52px); max-width: calc(100vw - 16px); } }
 
 /* the Menu tag belongs to exploration; in battle and other modes only Word help stays */
-body:not([data-mode="world"]) .hud .menu-b { display: none; }
+body:not([data-mode="world"]) .hud .menu-b, body:not([data-mode="world"]) .hud .set-b { display: none; }
+/* on a narrow screen the Settings button keeps its gear and its name for assistive technology, not its visible label */
+@media (max-width: 520px) { .hud .set-b .l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
 /* L12, asking back: three ways to ask, over the line (src/ui/20_dialogue.js askBack) */
 .dlg-ask { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; margin-top: 6px; border-radius: 6px; }
 .dlg-ask .dbtn { display: inline-flex; flex-direction: column; align-items: flex-start; min-height: 44px; padding: 4px 10px; }

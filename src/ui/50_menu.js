@@ -86,14 +86,19 @@ RB.ui.menu = (function () {
     fr = F().frame({ onClose: close, closeLabel: 'Close', book: bookStyle() });
     lastSec = null;
     fr.foot.innerHTML =
-      '<button class="cbtn" data-util="save">' + I('ledger') + '<span>' + RB.ui.label('セーブ・ロード', 'Save & Load') + '</span></button>' +
-      '<button class="cbtn" data-util="settings">' + I('settings') + '<span>' + RB.ui.label('{設定|せってい}', 'Settings') + '</span></button>';
-    fr.foot.onclick = (e) => {
+      '<button class="cbtn" data-util="save">' + I('ledger') + '<span>' + RB.ui.label('セーブ・ロード', 'Save & Load') + '</span></button>';
+    // Settings beside Close, where a reader looks first, rather than in the corner under the book (PT-1b)
+    const setB = RB.ui.el('button', 'cbtn ledger-set');
+    setB.dataset.util = 'settings';
+    setB.setAttribute('aria-label', 'Settings');
+    setB.innerHTML = I('settings') + '<span>' + RB.ui.label('{設定|せってい}', 'Settings') + '</span>';
+    fr.head.insertBefore(setB, fr.head.querySelector('[data-folio-close]'));
+    fr.el.addEventListener('click', (e) => {
       const b = e.target.closest('[data-util]');
-      if (!b) return;
+      if (!b || !fr || !fr.el.contains(b)) return;
       if (b.dataset.util === 'settings') RB.ui.settings.open();
-      else saveSheet();
-    };
+      else if (b.dataset.util === 'save') saveSheet();
+    });
     layer = { el: fr.scrim, name: 'menu' };
     layer.onCancel = back;
     layer.onAction = (act) => { if (act === 'menu') { close(); return true; } return false; };

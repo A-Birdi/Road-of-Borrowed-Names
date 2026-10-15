@@ -208,6 +208,8 @@ RB.ui.settings = (function () {
       '<h3>' + I('sound') + ' Japanese voice (optional)</h3><p class="small">' + esc(vs.note || '') + '</p>' +
       (voices.length ? '<div class="field"><label class="lab" for="vsel">Voice</label><select id="vsel" data-voice>' + voices.map((v) => '<option value="' + esc(v.voiceURI) + '"' + (st.voice.uri === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') + '</select></div>' +
         '<div class="field"><label class="switch"><input type="checkbox" role="switch" data-voiceauto' + (st.voice.auto ? ' checked' : '') + '><span>Speak dialogue automatically</span><span class="state">' + (st.voice.auto ? 'On' : 'Off') + '</span></label></div>' +
+        '<div class="field"><label class="switch"><input type="checkbox" role="switch" data-voicehl' + (st.voice.highlight !== false ? ' checked' : '') + '><span>Highlight each word as it is spoken</span><span class="state">' + (st.voice.highlight !== false ? 'On' : 'Off') + '</span></label>' +
+        '<div class="hint">The Japanese word being said, and its English where the translation shows it.</div></div>' +
         slider('voice.rate', 'Speech rate', st.voice.rate, 0.6, 1.3, 0.05, (v) => v.toFixed(2) + '×') : '<p class="note-slip">No Japanese voice is installed on this device, so nothing will be spoken. Everything works without it.</p>') +
       '<p class="muted small">Voices are your device\'s own speech synthesis, labelled as such. They are not recorded actors and not a pronunciation authority.</p>';
   }
@@ -300,6 +302,9 @@ RB.ui.settings = (function () {
         focusSame(t);
       } else if (t.matches('[data-voiceauto]')) {
         st.voice.auto = t.checked; await RB.game.saveSettings(); render(); focusSame(t);
+      } else if (t.matches('[data-voicehl]')) {
+        st.voice.highlight = t.checked; if (!t.checked && RB.ui.speechMark) RB.ui.speechMark.stop();
+        await RB.game.saveSettings(); render(); focusSame(t);
       } else if (t.matches('[data-voice]')) {
         st.voice.uri = t.value; RB.game.saveSettings(); RB.voice.speak('こんにちは');
       }
@@ -320,7 +325,7 @@ RB.ui.settings = (function () {
   }
   // after a re-render, keep keyboard focus on the equivalent control
   function focusSame(t) {
-    const sel = t.dataset.set ? 'input[data-set="' + t.dataset.set + '"][value="' + CSS.escape(t.value) + '"]' : t.dataset.sw ? '[data-sw="' + t.dataset.sw + '"]' : t.hasAttribute('data-voiceauto') ? '[data-voiceauto]' : null;
+    const sel = t.dataset.set ? 'input[data-set="' + t.dataset.set + '"][value="' + CSS.escape(t.value) + '"]' : t.dataset.sw ? '[data-sw="' + t.dataset.sw + '"]' : t.hasAttribute('data-voiceauto') ? '[data-voiceauto]' : t.hasAttribute('data-voicehl') ? '[data-voicehl]' : null;
     const n = sel && fr && fr.box.querySelector(sel);
     if (n) n.focus({ preventScroll: true });
   }
@@ -343,7 +348,7 @@ RB.ui.settings = (function () {
     if (t.matches('input[type=radio][data-set]')) return t.dataset.obj !== 'learn' && !!IN_BATTLE[t.dataset.set];
     if (t.matches('[data-sw]')) return !!IN_BATTLE[t.dataset.sw];
     if (t.matches('[data-range]')) return !!IN_BATTLE[t.dataset.range]; // (sliders apply on input, below)
-    return t.matches('[data-voiceauto], [data-voice], [data-suzu-speech]');
+    return t.matches('[data-voiceauto], [data-voicehl], [data-voice], [data-suzu-speech]');
   }
   // Fixed for the encounter, shown read-only with what they are (they change in the folio's
   // Settings once it is over): the learning and challenge choices, how answers are read, the

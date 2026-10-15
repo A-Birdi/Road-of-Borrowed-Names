@@ -506,7 +506,10 @@ RB.ui.help = (function () {
     if (panel && !pinned) { panel.remove(); panel = null; }
   }
   function isOpen() { return !!panel; }
-  return { init, toggle, register, showFor, hide, enabled, isOpen };
+  // a registered line's tokens and context (src/ui/22_speech_mark.js marks the spoken word by token)
+  const tokensOf = (id) => (reg.get(id) || {}).tokens || null;
+  const ctxOf = (id) => (reg.get(id) || {}).ctx || null;
+  return { init, toggle, register, showFor, hide, enabled, isOpen, tokensOf, ctxOf };
 })();
 
 /* ---- HUD ---------------------------------------------------------------------------
@@ -524,9 +527,12 @@ RB.ui.hud = (function () {
       box.setAttribute('role', 'toolbar');
       box.setAttribute('aria-label', 'Game');
       box.innerHTML = '<button class="hbtn bulb" aria-pressed="false" title="Word help (H)">' + I('bulb') + '<span class="l">Word help</span><span class="st" aria-hidden="true"></span></button>' +
-        '<button class="hbtn menu-b" title="The Wayfarer\'s Ledger (C)">' + I('menu') + '<span class="l">Ledger</span></button>';
+        '<button class="hbtn menu-b" title="The Wayfarer\'s Ledger (C)">' + I('menu') + '<span class="l">Ledger</span></button>' +
+        // Settings on the screen itself, not only inside the Ledger (a new learner could not find it: PT-1b)
+        '<button class="hbtn set-b" title="Settings" aria-label="Settings">' + I('settings') + '<span class="l">Settings</span></button>';
       box.querySelector('.bulb').onclick = () => RB.ui.help.toggle();
       box.querySelector('.menu-b').onclick = () => { if (RB.game.mode() === 'world') RB.ui.menu.open(); };
+      box.querySelector('.set-b').onclick = () => { if (RB.game.mode() === 'world') RB.ui.settings.open(); };
       RB.ui.root.appendChild(box);
     }
     box.classList.remove('hidden');

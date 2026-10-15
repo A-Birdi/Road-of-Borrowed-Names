@@ -225,7 +225,7 @@ await test('Settings switches the Ledger\'s look while it is open', async () => 
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
   await p.evaluate(FIXTURE, 'book');
   await open(p, 'journal');
-  await p.click('.folio-foot [data-util="settings"]');
+  await p.click('.folio [data-util="settings"]');
   await p.waitForTimeout(200);
   await p.evaluate(() => { const t = [...document.querySelectorAll('[data-g], .subbtn, button')].find((e) => /Display/.test(e.textContent) && e.offsetParent); if (t) t.click(); });
   await p.waitForTimeout(200);

@@ -398,6 +398,16 @@
     through branches; reading hints where spacing removal joins words) before any full-game batch. VALIDATION.md
     "RV-1", REQUIREMENTS.md XP121.
 
+    **PT-1 (a coworker's first play as a new learner, relayed by Robin on 2026-10-15):** "The start was confusing - needs
+    voices (wip)"; "When the voiced lines are spoken, highlight the spoken word in Japanese and the English
+    counterpart(s) in the sentence prominently"; "The UI volume was crazy loud"; "Settings are not prominently
+    displayed in the menu / hard to find". Done: interface and feedback effects trimmed under the music (measured,
+    `tests/e2e/audio_levels.mjs`); a Settings button on the map beside Word help and the Ledger, and Settings beside
+    Close inside the Ledger (`tests/e2e/settings_access.mjs`); the word being spoken marked in the Japanese and its
+    English counterpart while a line is voiced, by the device voice now and ready for recordings (Settings › Audio can
+    turn it off; `tests/e2e/speech_mark.mjs`, `tests/unit/speech_align.test.mjs`). The start's confusion is the voices,
+    which wait on Robin's VA-2 picks (C-93). VALIDATION.md "PT-1", REQUIREMENTS.md XP122.
+
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
     "P18 — Plan B", "LP-1" and "VA-1".

@@ -24,6 +24,9 @@
 .folio > * { min-width: 0; }
 .folio-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 4px 4px 6px; min-height: var(--tap); position: relative; z-index: 3; }
 .folio-head > .cbtn { flex: none; margin-left: auto; }
+.folio-head > .cbtn + .cbtn { margin-left: 0; } /* the Ledger's Settings sits just left of Close (PT-1b) */
+/* on a narrow screen it is its gear (named for assistive technology), so the head stays one row above the tabs */
+@media (max-width: 520px) { .folio-head > .ledger-set > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
 .folio-head h2 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 1.2em; letter-spacing: 0.02em; color: var(--on-cloth); flex: 0 1 auto; max-width: 60%; }
 .folio-head .meta { color: var(--on-cloth-2); font-size: 0.85em; line-height: 1.25; flex: 1 1 6em; min-width: 0; text-align: right; }
 /* when the line is too narrow (small phone, large text) the meta and Close

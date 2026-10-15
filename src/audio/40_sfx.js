@@ -361,12 +361,23 @@ RB.audio = RB.audio || {};
   // --------------------------------------------------------- playback
   const rng = RB.util.rng(24681357);
   // Plays an effect into graph g at time t. Used live and by renderOffline.
+  // Interface and feedback effects sit under the music (a new learner's report, 2026-10-15: "the UI volume was crazy
+  // loud"). Measured through the mix at the game's default volumes, confirm and cancel were about 7 LU louder than the
+  // title music and the answer and discovery sounds as loud as the area music or louder; these trims (dB) put the
+  // clicks under the quietest music and the feedback sounds at least 5 LU under the area music. Battle, world and movement effects are unchanged.
+  // The volume sliders still scale everything; tests/e2e/audio.check.mjs holds the levels.
+  const LEVEL = _.sfxLevel = {
+    confirm: -10, cancel: -10, menu_open: -9, menu_close: -9, save: -9, page: -5,
+    quest_update: -10, answer_right: -9, answer_wrong: -8, recog_ok: -8, recog_unsure: -7,
+    discover: -9, item_get: -8, reveal: -7, levelup: -8,
+  };
   _.sfxPlay = function (g, id, t, opts) {
     const d = X[id];
     if (!d) return false;
     opts = opts || {};
     const c = g.ctx;
-    const out = N.amp(c, clamp(opts.vol == null ? 1 : Number(opts.vol) || 0, 0, 2));
+    const trim = LEVEL[id] ? Math.pow(10, LEVEL[id] / 20) : 1;
+    const out = N.amp(c, clamp(opts.vol == null ? 1 : Number(opts.vol) || 0, 0, 2) * trim);
     out.connect(g.sfx);
     let wet = null;
     if (d.rv) {

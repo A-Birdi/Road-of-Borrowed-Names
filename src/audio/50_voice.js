@@ -12,7 +12,7 @@
  *
  * API: supported(), japaneseVoices(), onChange(cb) -> unsubscribe,
  *      setVoice(voiceURI|null), setRate(0.5..1.5), speak(text, {onend,
- *      onstart, rate, pitch}), cancel(), speaking(), selected(), status().
+ *      onstart, onboundary(charIndex, name), rate, pitch}), cancel(), speaking(), selected(), status().
  * onend({spoken:boolean}) fires when speech finishes or cannot start; it is
  * NOT called for an utterance that was cancelled or superseded. */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -154,6 +154,12 @@ RB.voice = RB.voice || {};
     u.onstart = () => {
       if (gen === S.gen && typeof opts.onstart === 'function') {
         try { opts.onstart(); } catch (e) { /* ignore */ }
+      }
+    };
+    // where the voice is (a character offset into the text): word highlighting follows it (src/ui/22_speech_mark.js)
+    u.onboundary = (e) => {
+      if (gen === S.gen && typeof opts.onboundary === 'function') {
+        try { opts.onboundary(e.charIndex, e.name); } catch (err) { /* ignore */ }
       }
     };
     u.onend = () => finish(true);
