@@ -980,6 +980,26 @@ body:not([data-mode="world"]) .hud .co-topic { display: none; }
 .kd-h > svg { width: 1.15em; height: 1.15em; flex: none; color: var(--ink-2); }
 .kd-h .count, .kd-h .kd-limit { margin-left: auto; }
 
+/* LI-7: Known details read clearly. The pin's note is ink on paper while you type (it took the old dark sheet's light
+ * text); each person's note has its own picture beside it (the words were squeezed into the picture's column, one to a
+ * line); the key is set out in groups, each shape drawn as on the diagram with its word. */
+.kd-pinform textarea, .folio .kd-maps select { color: var(--ink); caret-color: var(--ink); background: #fffaf0; border: 1px solid var(--paper-edge); border-radius: 3px; }
+.kd-pinform textarea { font-family: var(--type-latin-reading, inherit); font-size: 1.02em; line-height: 1.45; padding: 0.45em 0.55em; }
+.kd-pinform textarea::placeholder { color: var(--ink-3); }
+.kd-pinform textarea:focus-visible, .folio .kd-maps select:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.kd-list.kd-people li { grid-template-columns: 2.1em minmax(0, 1fr); }
+.kd-list.kd-people .kd-sym.kd-who { width: 1.7em; height: 1.7em; margin-top: 0.1em; }
+.kd-list .kd-state { text-transform: none; letter-spacing: 0.02em; font-variant: small-caps; font-size: 0.86em; }
+.kd-told { margin-top: 0.2em; }
+.kd-onmap { color: var(--ink-3); font-style: italic; }
+.kd-key { margin: 0.6em 0 0.4em; padding: 0.5em 0.7em 0.6em; border: 1px solid var(--rule); border-radius: 3px; background: rgba(255, 252, 240, 0.45);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5em, 1fr)); gap: 0.3em 1.2em; font-size: 0.9em; }
+.kd-key-h { grid-column: 1 / -1; font-family: var(--type-latin-display, inherit); font-variant: small-caps; letter-spacing: 0.06em; font-weight: 600; color: var(--ink-2); }
+.kd-key-t { font-weight: 600; color: var(--ink-2); margin-bottom: 0.15em; }
+.kd-key ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15em; }
+.kd-key li { display: grid; grid-template-columns: 1.35em minmax(0, 1fr); align-items: center; gap: 0.45em; line-height: 1.3; }
+.kd-key .kd-sym { width: 1.35em; height: 1.35em; }
+
 /* ==== src/styles/35_pets.css ==== */
 /* ---- Company › Pet (src/ui/54_company_pet.js) ---------------------------------------------------- */
 .pet-cards { display: grid; gap: 0.5em; }
@@ -39927,7 +39947,7 @@ RB.world = (function () {
       if (x < -4 || y < -8 || x > v.w - 12 || y > v.h - 12) continue;
       const who = personOf(a), was = RB.town.rec(st).lastSeen[who];
       if (was && was.map === W.map.id && Date.now() - was.t < 30000) continue; // (seen here a moment ago)
-      RB.town.seen(st, who, W.map.id);
+      RB.town.seen(st, who, W.map.id, a.fx, a.fy);
     }
   }
   function onScreen(a) {
@@ -42369,8 +42389,34 @@ RB.town = (function () {
     R.notes[k] = Object.assign({ from: asker, t: Date.now() }, ans.note);
     return R.notes[k];
   }
-  // where you last saw someone (kept with the save; the world's own record is per session)
-  function seen(s, person, mapId) { rec(s).lastSeen[person] = { map: mapId, t: Date.now() }; }
+  // where you last saw someone (kept with the save; the world's own record is per session), and the spot on that map
+  // when it is known (LI-7: "not necessarily where in Reedwake")
+  function seen(s, person, mapId, x, y) {
+    const r = { map: mapId, t: Date.now() };
+    if (Number.isFinite(x) && Number.isFinite(y)) { r.x = Math.round(x); r.y = Math.round(y); }
+    rec(s).lastSeen[person] = r;
+  }
+  // A spot on a map in words (English, for the Known details notes): inside a small room; outside the door nearest
+  // it; by a way out; or the part of the map it is in. Without a spot, the map's name.
+  const lowerThe = (t) => String(t).replace(/^The /, 'the ');
+  function spotWords(mapId, x, y) {
+    const def = C().maps[mapId];
+    const name = def && def.name ? def.name.en : String(mapId);
+    if (!def || !Number.isFinite(x) || !Number.isFinite(y)) return 'at ' + lowerThe(name);
+    let m = null;
+    try { m = RB.maps.compile(mapId); } catch (e) { m = null; }
+    if (!m) return 'at ' + lowerThe(name);
+    if (m.w * m.h <= 420) return 'inside ' + lowerThe(name);
+    const exits = (m.exits || []).filter((e) => C().maps[e.to] && C().maps[e.to].name);
+    const d = (e) => Math.hypot(x - (e.x + ((e.w || 1) - 1) / 2), y - (e.y + ((e.h || 1) - 1) / 2));
+    const door = exits.filter((e) => e.door && d(e) <= 6).sort((a, b) => d(a) - d(b))[0];
+    if (door) return 'outside ' + lowerThe(C().maps[door.to].name.en) + ', in ' + lowerThe(name);
+    const way = exits.filter((e) => !e.door && d(e) <= 5).sort((a, b) => d(a) - d(b))[0];
+    if (way) return 'by the way to ' + lowerThe(C().maps[way.to].name.en) + ', in ' + lowerThe(name);
+    const row = y < m.h / 3 ? 'north' : y >= m.h * 2 / 3 ? 'south' : '';
+    const col = x < m.w / 3 ? 'west' : x >= m.w * 2 / 3 ? 'east' : '';
+    return 'in the ' + (row && col ? row + '-' + col : row || col || 'middle') + ' of ' + lowerThe(name);
+  }
 
   // ---- road events (W5) ------------------------------------------------------------------------------------------
   function roadOf(mapId) {
@@ -42488,7 +42534,7 @@ RB.town = (function () {
   };
 
   return {
-    rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, askable, findable, usualPlaces, note, seen,
+    rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, askable, findable, usualPlaces, note, seen, spotWords,
     roadOf, roadEventAt, storyOnArrival, LINES,
     roadDone, unfinished, sealedOn, canOpen, examine, noticed,
   };
@@ -87369,6 +87415,8 @@ RB.ui.known = (function () {
     view: '<path d="M10 2 L19 18 H1 Z" fill="#fff4c8" stroke="' + INK + '" stroke-width="2"/><circle cx="10" cy="13" r="2.5" fill="' + INK + '"/>',
     passage: '<rect x="1" y="4" width="18" height="12" fill="#fff4c8" stroke="' + INK + '" stroke-width="2"/><path d="M4 10 H16 M7 7 L4 10 L7 13 M13 7 L16 10 L13 13" fill="none" stroke="' + INK + '" stroke-width="1.8"/>',
   };
+  // a person, for the People notes and their spots on the diagram
+  const PERSON = '<svg viewBox="0 0 20 20"><circle cx="10" cy="6.2" r="3.6" fill="#e9f0f6" stroke="' + INK + '" stroke-width="1.8"/><path d="M3.5 18.5 C4 12.5 16 12.5 16.5 18.5 Z" fill="#e9f0f6" stroke="' + INK + '" stroke-width="1.8"/></svg>';
   const sym = (inner, label) => '<svg viewBox="0 0 20 20" role="img" aria-label="' + esc(label) + '">' + inner + '</svg>';
   const typeOf = (id) => KN.TYPES.find((t) => t.id === id) || KN.TYPES[0];
   const mapName = (id) => { const m = RB.content.maps[id]; return m && m.name ? m.name.en : id; };
@@ -87415,6 +87463,14 @@ RB.ui.known = (function () {
     list.forEach((e, i) => { if (e.x != null) b += put(e.x, e.y, SHAPE[e.state] || SHAPE.seen, i + 1); });
     pinsL.forEach((p, i) => { b += put(p.x, p.y, PIN[p.type] || PIN.return, 'P' + (i + 1)); });
     if (form) b += '<g transform="translate(' + (form.x * k + 5) + ',' + (form.y * k + 5) + ') scale(' + u + ') translate(-12,-12)"><rect width="24" height="24" fill="none" stroke="#a83e27" stroke-width="3" stroke-dasharray="4 3"/></g>';
+    // the people you last saw here, where you saw them (their names beside them)
+    const R = s.world || {}, seenHere = Object.keys(R.lastSeen || {}).filter((p) => { const l = R.lastSeen[p]; return l && l.map === map && l.x != null; })
+      .sort((a, b) => R.lastSeen[b].t - R.lastSeen[a].t).slice(0, 8);
+    for (const p of seenHere) {
+      const l = R.lastSeen[p], c = RB.content.chars[p], n = c && c.name ? c.name.en : p;
+      b += '<g class="kd-person" transform="translate(' + (l.x * k + 5) + ',' + (l.y * k + 5) + ') scale(' + u * 0.8 + ') translate(-10,-10)">' + PERSON.replace('<svg viewBox="0 0 20 20">', '').replace('</svg>', '') +
+        '<text x="21" y="12" font-size="10" fill="#1f3a52" stroke="#efe3c6" stroke-width="3" paint-order="stroke" font-family="Georgia, serif">' + esc(n) + '</text></g>';
+    }
     if (s.map === map) {
       const px = s.x != null ? s.x : 0, py = s.y != null ? s.y : 0;
       b += '<g transform="translate(' + (px * k + 5) + ',' + (py * k + 5) + ') scale(' + u + ')"><path d="M0 -7 l6 10 h-12 z" fill="#a83e27" stroke="' + INK + '" stroke-width="1.5"/></g>';
@@ -87457,14 +87513,35 @@ RB.ui.known = (function () {
     const t = (p) => Math.max((R.lastSeen[p] || {}).t || 0, (R.notes[p] || {}).t || 0);
     ids.sort((a, b) => t(b) - t(a));
     const nm = (p) => { const c = RB.content.chars[p]; return c && c.name ? c.name.en : p; };
+    const where = (ls) => (RB.town.spotWords ? RB.town.spotWords(ls.map, ls.x, ls.y) : 'at ' + mapName(ls.map));
     return '<h4 class="kd-h">' + I('companion') + ' People <span class="count">' + ids.length + '</span></h4>' +
       '<p class="muted small">Where you last saw them yourself, and what people told you. Notes from then, not where anyone is now.</p>' +
       '<ul class="kd-list kd-people">' + ids.slice(0, 12).map((p) => {
         const ls = R.lastSeen[p], n = R.notes[p];
         const said = n ? '<div class="kd-told"><span class="kd-state">' + esc(KIND_WORD[n.kind] || 'Told') + (n.from ? ' · ' + esc(nm(n.from)) + ' said' : '') + '</span> ' +
           esc(n.line ? n.line.en : n.map ? 'near ' + mapName(n.map) : '') + '</div>' : '';
-        return '<li><div><div class="t">' + esc(nm(p)) + '</div>' + (ls ? '<div class="small">You last saw them at ' + esc(mapName(ls.map)) + '.</div>' : '') + said + '</div></li>';
+        const mark = ls && ls.map === V.map && ls.x != null ? ' <span class="kd-onmap">(on the diagram)</span>' : '';
+        return '<li><span class="kd-sym kd-who" aria-hidden="true">' + PERSON + '</span><div><div class="t">' + esc(nm(p)) + '</div>' +
+          (ls ? '<div class="small">You last saw them ' + esc(where(ls)) + '.' + mark + '</div>' : '') + said + '</div></li>';
       }).join('') + '</ul>';
+  }
+  // the key (LI-7, Robin: "could be a little more clearly organized & structured"): what each shape on the diagram
+  // means, in three groups, each shape drawn as it is on the diagram with its word beside it
+  function keyBlock(s, map) {
+    const row = (svg, word) => '<li><span class="kd-sym" aria-hidden="true">' + svg + '</span><span>' + esc(word) + '</span></li>';
+    const box = (inner) => '<svg viewBox="0 0 20 20">' + inner + '</svg>';
+    const details = ['question', 'barred', 'seen', 'solved', 'opened', 'view', 'unreadable'].map((k) => row(box(SHAPE[k]), KN.STATE_WORD[k]));
+    const pins = KN.TYPES.map((t) => row(box(PIN[t.id]), t.en));
+    const other = [
+      row(box('<path d="M10 3 l7 12 h-14 z" fill="#a83e27" stroke="' + INK + '" stroke-width="1.5"/>'), 'You, when you are on this map'),
+      row(box('<rect x="3" y="3" width="14" height="14" fill="none" stroke="#1f5a92" stroke-width="2.5"/>'), 'A way out: a door or a road'),
+      row(PERSON, 'Someone you last saw here'),
+      row(box('<rect width="20" height="20" fill="#9d8b66"/><rect x="0" y="12" width="20" height="8" fill="#a9c4cf"/>'), 'Walls and solid things; water'),
+    ];
+    return '<div class="kd-key" role="group" aria-label="Key to the diagram"><div class="kd-key-h">Key</div>' +
+      '<div class="kd-key-g"><div class="kd-key-t">Details you found</div><ul>' + details.join('') + '</ul></div>' +
+      '<div class="kd-key-g"><div class="kd-key-t">Your pins (pale)</div><ul>' + pins.join('') + '</ul></div>' +
+      '<div class="kd-key-g"><div class="kd-key-t">On the diagram</div><ul>' + other.join('') + '</ul></div></div>';
   }
   function maps(s) {
     const L = Object.keys(s.visited || {}).filter((id) => RB.content.maps[id]);
@@ -87482,7 +87559,7 @@ RB.ui.known = (function () {
     const list = KN.entries(s, map), pinsL = KN.pins(s, map);
     const sel = '<label class="small" for="kd-map">Map</label> <select id="kd-map" data-k="map">' + L.map((id) => '<option value="' + esc(id) + '"' + (id === map ? ' selected' : '') + '>' + esc(mapName(id)) + (id === s.map ? ' (here)' : '') + '</option>').join('') + '</select>';
     const head = '<h3>' + I('here') + ' ' + esc(mapName(map)) + '</h3><div class="kd-maps">' + sel + '</div>';
-    const dia = '<div class="kd-map">' + diagram(s, map, list, pinsL, V.form && V.form.map === map ? V.form : null) + '</div><p class="muted small">The shapes: ? unexplained · barred · ◇ noted · ✓ solved · dashed arrow opened · eye a view; pins are pale: a house (return here), ? in a square (question), a triangle (view), arrows (passage). Blue outlines are ways out.</p>';
+    const dia = '<div class="kd-map">' + diagram(s, map, list, pinsL, V.form && V.form.map === map ? V.form : null) + '</div>' + keyBlock(s, map);
     const details = '<h4 class="kd-h">' + I('look') + ' Known details <span class="count">' + list.length + '</span></h4>' + listBlock(list);
     const status = V.status ? '<p class="sr" role="status">' + esc(V.status) + '</p>' : '';
     const people = peopleBlock(s);

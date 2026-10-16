@@ -123,7 +123,7 @@ await test('nobody to ask about: talking is plain talking; then "Have you seen�
   await p.evaluate(() => RB.ui.menu.open('known'));
   await p.waitForSelector('.kd-people');
   const kd = await p.evaluate(() => document.querySelector('.kd-people').textContent.replace(/\s+/g, ' '));
-  assert(/Kiyo/.test(kd) && /You last saw them at/.test(kd) && /Not sure · Mame said/.test(kd), 'Known details › People: ' + kd);
+  assert(/Kiyo/.test(kd) && /You last saw them (at|outside|inside|by the way to|in the) /.test(kd) && /Not sure · Mame said/.test(kd), 'Known details › People: ' + kd);
   assert(await p.evaluate(() => /not where anyone is now/.test(document.querySelector('.kd-people').previousElementSibling.textContent)), 'said to be notes, not live');
   await p.evaluate(() => RB.ui.menu.close());
   // Never mind changes nothing

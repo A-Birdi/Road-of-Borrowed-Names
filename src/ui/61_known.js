@@ -134,6 +134,8 @@ RB.ui.known = (function () {
     view: '<path d="M10 2 L19 18 H1 Z" fill="#fff4c8" stroke="' + INK + '" stroke-width="2"/><circle cx="10" cy="13" r="2.5" fill="' + INK + '"/>',
     passage: '<rect x="1" y="4" width="18" height="12" fill="#fff4c8" stroke="' + INK + '" stroke-width="2"/><path d="M4 10 H16 M7 7 L4 10 L7 13 M13 7 L16 10 L13 13" fill="none" stroke="' + INK + '" stroke-width="1.8"/>',
   };
+  // a person, for the People notes and their spots on the diagram
+  const PERSON = '<svg viewBox="0 0 20 20"><circle cx="10" cy="6.2" r="3.6" fill="#e9f0f6" stroke="' + INK + '" stroke-width="1.8"/><path d="M3.5 18.5 C4 12.5 16 12.5 16.5 18.5 Z" fill="#e9f0f6" stroke="' + INK + '" stroke-width="1.8"/></svg>';
   const sym = (inner, label) => '<svg viewBox="0 0 20 20" role="img" aria-label="' + esc(label) + '">' + inner + '</svg>';
   const typeOf = (id) => KN.TYPES.find((t) => t.id === id) || KN.TYPES[0];
   const mapName = (id) => { const m = RB.content.maps[id]; return m && m.name ? m.name.en : id; };
@@ -180,6 +182,14 @@ RB.ui.known = (function () {
     list.forEach((e, i) => { if (e.x != null) b += put(e.x, e.y, SHAPE[e.state] || SHAPE.seen, i + 1); });
     pinsL.forEach((p, i) => { b += put(p.x, p.y, PIN[p.type] || PIN.return, 'P' + (i + 1)); });
     if (form) b += '<g transform="translate(' + (form.x * k + 5) + ',' + (form.y * k + 5) + ') scale(' + u + ') translate(-12,-12)"><rect width="24" height="24" fill="none" stroke="#a83e27" stroke-width="3" stroke-dasharray="4 3"/></g>';
+    // the people you last saw here, where you saw them (their names beside them)
+    const R = s.world || {}, seenHere = Object.keys(R.lastSeen || {}).filter((p) => { const l = R.lastSeen[p]; return l && l.map === map && l.x != null; })
+      .sort((a, b) => R.lastSeen[b].t - R.lastSeen[a].t).slice(0, 8);
+    for (const p of seenHere) {
+      const l = R.lastSeen[p], c = RB.content.chars[p], n = c && c.name ? c.name.en : p;
+      b += '<g class="kd-person" transform="translate(' + (l.x * k + 5) + ',' + (l.y * k + 5) + ') scale(' + u * 0.8 + ') translate(-10,-10)">' + PERSON.replace('<svg viewBox="0 0 20 20">', '').replace('</svg>', '') +
+        '<text x="21" y="12" font-size="10" fill="#1f3a52" stroke="#efe3c6" stroke-width="3" paint-order="stroke" font-family="Georgia, serif">' + esc(n) + '</text></g>';
+    }
     if (s.map === map) {
       const px = s.x != null ? s.x : 0, py = s.y != null ? s.y : 0;
       b += '<g transform="translate(' + (px * k + 5) + ',' + (py * k + 5) + ') scale(' + u + ')"><path d="M0 -7 l6 10 h-12 z" fill="#a83e27" stroke="' + INK + '" stroke-width="1.5"/></g>';
@@ -222,14 +232,35 @@ RB.ui.known = (function () {
     const t = (p) => Math.max((R.lastSeen[p] || {}).t || 0, (R.notes[p] || {}).t || 0);
     ids.sort((a, b) => t(b) - t(a));
     const nm = (p) => { const c = RB.content.chars[p]; return c && c.name ? c.name.en : p; };
+    const where = (ls) => (RB.town.spotWords ? RB.town.spotWords(ls.map, ls.x, ls.y) : 'at ' + mapName(ls.map));
     return '<h4 class="kd-h">' + I('companion') + ' People <span class="count">' + ids.length + '</span></h4>' +
       '<p class="muted small">Where you last saw them yourself, and what people told you. Notes from then, not where anyone is now.</p>' +
       '<ul class="kd-list kd-people">' + ids.slice(0, 12).map((p) => {
         const ls = R.lastSeen[p], n = R.notes[p];
         const said = n ? '<div class="kd-told"><span class="kd-state">' + esc(KIND_WORD[n.kind] || 'Told') + (n.from ? ' · ' + esc(nm(n.from)) + ' said' : '') + '</span> ' +
           esc(n.line ? n.line.en : n.map ? 'near ' + mapName(n.map) : '') + '</div>' : '';
-        return '<li><div><div class="t">' + esc(nm(p)) + '</div>' + (ls ? '<div class="small">You last saw them at ' + esc(mapName(ls.map)) + '.</div>' : '') + said + '</div></li>';
+        const mark = ls && ls.map === V.map && ls.x != null ? ' <span class="kd-onmap">(on the diagram)</span>' : '';
+        return '<li><span class="kd-sym kd-who" aria-hidden="true">' + PERSON + '</span><div><div class="t">' + esc(nm(p)) + '</div>' +
+          (ls ? '<div class="small">You last saw them ' + esc(where(ls)) + '.' + mark + '</div>' : '') + said + '</div></li>';
       }).join('') + '</ul>';
+  }
+  // the key (LI-7, Robin: "could be a little more clearly organized & structured"): what each shape on the diagram
+  // means, in three groups, each shape drawn as it is on the diagram with its word beside it
+  function keyBlock(s, map) {
+    const row = (svg, word) => '<li><span class="kd-sym" aria-hidden="true">' + svg + '</span><span>' + esc(word) + '</span></li>';
+    const box = (inner) => '<svg viewBox="0 0 20 20">' + inner + '</svg>';
+    const details = ['question', 'barred', 'seen', 'solved', 'opened', 'view', 'unreadable'].map((k) => row(box(SHAPE[k]), KN.STATE_WORD[k]));
+    const pins = KN.TYPES.map((t) => row(box(PIN[t.id]), t.en));
+    const other = [
+      row(box('<path d="M10 3 l7 12 h-14 z" fill="#a83e27" stroke="' + INK + '" stroke-width="1.5"/>'), 'You, when you are on this map'),
+      row(box('<rect x="3" y="3" width="14" height="14" fill="none" stroke="#1f5a92" stroke-width="2.5"/>'), 'A way out: a door or a road'),
+      row(PERSON, 'Someone you last saw here'),
+      row(box('<rect width="20" height="20" fill="#9d8b66"/><rect x="0" y="12" width="20" height="8" fill="#a9c4cf"/>'), 'Walls and solid things; water'),
+    ];
+    return '<div class="kd-key" role="group" aria-label="Key to the diagram"><div class="kd-key-h">Key</div>' +
+      '<div class="kd-key-g"><div class="kd-key-t">Details you found</div><ul>' + details.join('') + '</ul></div>' +
+      '<div class="kd-key-g"><div class="kd-key-t">Your pins (pale)</div><ul>' + pins.join('') + '</ul></div>' +
+      '<div class="kd-key-g"><div class="kd-key-t">On the diagram</div><ul>' + other.join('') + '</ul></div></div>';
   }
   function maps(s) {
     const L = Object.keys(s.visited || {}).filter((id) => RB.content.maps[id]);
@@ -247,7 +278,7 @@ RB.ui.known = (function () {
     const list = KN.entries(s, map), pinsL = KN.pins(s, map);
     const sel = '<label class="small" for="kd-map">Map</label> <select id="kd-map" data-k="map">' + L.map((id) => '<option value="' + esc(id) + '"' + (id === map ? ' selected' : '') + '>' + esc(mapName(id)) + (id === s.map ? ' (here)' : '') + '</option>').join('') + '</select>';
     const head = '<h3>' + I('here') + ' ' + esc(mapName(map)) + '</h3><div class="kd-maps">' + sel + '</div>';
-    const dia = '<div class="kd-map">' + diagram(s, map, list, pinsL, V.form && V.form.map === map ? V.form : null) + '</div><p class="muted small">The shapes: ? unexplained · barred · ◇ noted · ✓ solved · dashed arrow opened · eye a view; pins are pale: a house (return here), ? in a square (question), a triangle (view), arrows (passage). Blue outlines are ways out.</p>';
+    const dia = '<div class="kd-map">' + diagram(s, map, list, pinsL, V.form && V.form.map === map ? V.form : null) + '</div>' + keyBlock(s, map);
     const details = '<h4 class="kd-h">' + I('look') + ' Known details <span class="count">' + list.length + '</span></h4>' + listBlock(list);
     const status = V.status ? '<p class="sr" role="status">' + esc(V.status) + '</p>' : '';
     const people = peopleBlock(s);

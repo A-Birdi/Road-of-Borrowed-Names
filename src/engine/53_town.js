@@ -234,8 +234,34 @@ RB.town = (function () {
     R.notes[k] = Object.assign({ from: asker, t: Date.now() }, ans.note);
     return R.notes[k];
   }
-  // where you last saw someone (kept with the save; the world's own record is per session)
-  function seen(s, person, mapId) { rec(s).lastSeen[person] = { map: mapId, t: Date.now() }; }
+  // where you last saw someone (kept with the save; the world's own record is per session), and the spot on that map
+  // when it is known (LI-7: "not necessarily where in Reedwake")
+  function seen(s, person, mapId, x, y) {
+    const r = { map: mapId, t: Date.now() };
+    if (Number.isFinite(x) && Number.isFinite(y)) { r.x = Math.round(x); r.y = Math.round(y); }
+    rec(s).lastSeen[person] = r;
+  }
+  // A spot on a map in words (English, for the Known details notes): inside a small room; outside the door nearest
+  // it; by a way out; or the part of the map it is in. Without a spot, the map's name.
+  const lowerThe = (t) => String(t).replace(/^The /, 'the ');
+  function spotWords(mapId, x, y) {
+    const def = C().maps[mapId];
+    const name = def && def.name ? def.name.en : String(mapId);
+    if (!def || !Number.isFinite(x) || !Number.isFinite(y)) return 'at ' + lowerThe(name);
+    let m = null;
+    try { m = RB.maps.compile(mapId); } catch (e) { m = null; }
+    if (!m) return 'at ' + lowerThe(name);
+    if (m.w * m.h <= 420) return 'inside ' + lowerThe(name);
+    const exits = (m.exits || []).filter((e) => C().maps[e.to] && C().maps[e.to].name);
+    const d = (e) => Math.hypot(x - (e.x + ((e.w || 1) - 1) / 2), y - (e.y + ((e.h || 1) - 1) / 2));
+    const door = exits.filter((e) => e.door && d(e) <= 6).sort((a, b) => d(a) - d(b))[0];
+    if (door) return 'outside ' + lowerThe(C().maps[door.to].name.en) + ', in ' + lowerThe(name);
+    const way = exits.filter((e) => !e.door && d(e) <= 5).sort((a, b) => d(a) - d(b))[0];
+    if (way) return 'by the way to ' + lowerThe(C().maps[way.to].name.en) + ', in ' + lowerThe(name);
+    const row = y < m.h / 3 ? 'north' : y >= m.h * 2 / 3 ? 'south' : '';
+    const col = x < m.w / 3 ? 'west' : x >= m.w * 2 / 3 ? 'east' : '';
+    return 'in the ' + (row && col ? row + '-' + col : row || col || 'middle') + ' of ' + lowerThe(name);
+  }
 
   // ---- road events (W5) ------------------------------------------------------------------------------------------
   function roadOf(mapId) {
@@ -353,7 +379,7 @@ RB.town = (function () {
   };
 
   return {
-    rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, askable, findable, usualPlaces, note, seen,
+    rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, askable, findable, usualPlaces, note, seen, spotWords,
     roadOf, roadEventAt, storyOnArrival, LINES,
     roadDone, unfinished, sealedOn, canOpen, examine, noticed,
   };

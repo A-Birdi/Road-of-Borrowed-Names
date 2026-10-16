@@ -92,3 +92,23 @@
 .kd-h { display: flex; align-items: center; gap: 0.4em; margin: 0.9em 0 0.3em; }
 .kd-h > svg { width: 1.15em; height: 1.15em; flex: none; color: var(--ink-2); }
 .kd-h .count, .kd-h .kd-limit { margin-left: auto; }
+
+/* LI-7: Known details read clearly. The pin's note is ink on paper while you type (it took the old dark sheet's light
+ * text); each person's note has its own picture beside it (the words were squeezed into the picture's column, one to a
+ * line); the key is set out in groups, each shape drawn as on the diagram with its word. */
+.kd-pinform textarea, .folio .kd-maps select { color: var(--ink); caret-color: var(--ink); background: #fffaf0; border: 1px solid var(--paper-edge); border-radius: 3px; }
+.kd-pinform textarea { font-family: var(--type-latin-reading, inherit); font-size: 1.02em; line-height: 1.45; padding: 0.45em 0.55em; }
+.kd-pinform textarea::placeholder { color: var(--ink-3); }
+.kd-pinform textarea:focus-visible, .folio .kd-maps select:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.kd-list.kd-people li { grid-template-columns: 2.1em minmax(0, 1fr); }
+.kd-list.kd-people .kd-sym.kd-who { width: 1.7em; height: 1.7em; margin-top: 0.1em; }
+.kd-list .kd-state { text-transform: none; letter-spacing: 0.02em; font-variant: small-caps; font-size: 0.86em; }
+.kd-told { margin-top: 0.2em; }
+.kd-onmap { color: var(--ink-3); font-style: italic; }
+.kd-key { margin: 0.6em 0 0.4em; padding: 0.5em 0.7em 0.6em; border: 1px solid var(--rule); border-radius: 3px; background: rgba(255, 252, 240, 0.45);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5em, 1fr)); gap: 0.3em 1.2em; font-size: 0.9em; }
+.kd-key-h { grid-column: 1 / -1; font-family: var(--type-latin-display, inherit); font-variant: small-caps; letter-spacing: 0.06em; font-weight: 600; color: var(--ink-2); }
+.kd-key-t { font-weight: 600; color: var(--ink-2); margin-bottom: 0.15em; }
+.kd-key ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15em; }
+.kd-key li { display: grid; grid-template-columns: 1.35em minmax(0, 1fr); align-items: center; gap: 0.45em; line-height: 1.3; }
+.kd-key .kd-sym { width: 1.35em; height: 1.35em; }

@@ -399,7 +399,7 @@ RB.world = (function () {
       if (x < -4 || y < -8 || x > v.w - 12 || y > v.h - 12) continue;
       const who = personOf(a), was = RB.town.rec(st).lastSeen[who];
       if (was && was.map === W.map.id && Date.now() - was.t < 30000) continue; // (seen here a moment ago)
-      RB.town.seen(st, who, W.map.id);
+      RB.town.seen(st, who, W.map.id, a.fx, a.fy);
     }
   }
   function onScreen(a) {
