@@ -152,6 +152,17 @@ const start = (p, map, x, y) => p.evaluate(([map, x, y]) => {
   const words = await p.evaluate(() => { const A = document.querySelector('.folio.book .leaf'); return { contents: [...A.querySelectorAll('h3')].some((h) => /^Contents$/.test(h.textContent.trim())), secs: A.querySelectorAll('h4.index-sec').length, text: document.querySelector('#folio-page').textContent }; });
   assert(!words.contents && words.secs === 3, 'LI-5: Words has its three sections and no empty "Contents" heading: ' + JSON.stringify({ contents: words.contents, secs: words.secs }));
   assert(!/practis/i.test(words.text) && /Practice/.test(words.text), 'LI-5: "Practice", spelt so');
+  const head = await p.evaluate(() => {
+    const h = document.querySelector('.folio.book .leaf h4.index-sec'), jp = h.querySelector('.isec-jp'), row = document.querySelector('.folio.book .leaf .index button');
+    return { jp: jp ? jp.textContent : '', ruby: !!(jp && jp.querySelector('rt')), en: (h.querySelector('.isec-en') || {}).textContent, size: parseFloat(getComputedStyle(jp).fontSize), rowSize: parseFloat(getComputedStyle(row).fontSize), rule: getComputedStyle(h).borderBottomWidth };
+  });
+  assert(/自分/.test(head.jp) && head.ruby && head.en === 'My learning' && head.size > head.rowSize * 1.15 && head.rule === '2px', 'LI-13: a section header is a heading: its Japanese with readings, its English, larger than the entries, ruled: ' + JSON.stringify(head));
+
+  // the Satchel's detail: a drawn icon stands on the page, no circle behind it (LI-10)
+  await p.evaluate(() => { RB.state.give(RB.game.s, 'rw_boots_good'); RB.ui.menu.open('satchel'); });
+  await wait(p, 500);
+  const big = await p.evaluate(() => { const b = document.querySelector('.idetail .ibig'); const cs = getComputedStyle(b); return { img: !!b.querySelector('img.it-ic'), radius: cs.borderTopLeftRadius, border: cs.borderTopWidth, bg: cs.backgroundColor }; });
+  assert(big.img && big.radius === '0px' && big.border === '0px' && /rgba\(0, 0, 0, 0\)|transparent/.test(big.bg), 'LI-10: no circle behind the Satchel\'s drawn icon: ' + JSON.stringify(big));
 
   // the Route chart
   await p.evaluate(() => { const s = RB.game.s; for (const id of Object.keys(RB.content.places)) s.travel[id] = true; RB.ui.menu.open('map'); });
@@ -200,6 +211,24 @@ const start = (p, map, x, y) => p.evaluate(([map, x, y]) => {
   assert(/outside Hana's Teahouse, in Reedwake/.test(kd.text) && kd.wide > 200 && kd.high < 60, 'LI-7: a person\'s note runs across the page and says where in the town: ' + JSON.stringify(kd));
   assert(/You last saw them at Reedwake/.test(kd.mame) && kd.groups === 3, 'LI-7: an older note still names the town; the key has its three groups');
   assert(!errors.length && !requests.length, 'no page errors or network requests: ' + errors.concat(requests).join(' | '));
+  await p.context().close();
+}
+
+// ---- the icon viewer (LI-11): ?dev=items, Reedwake first, the rest behind one button --------------------------------
+{
+  const { p, errors, requests } = await page(b, url + '?dev=items', { viewport: { width: 1280, height: 800 } });
+  await p.waitForSelector('#items-dev .idv-card');
+  const s0 = await p.evaluate(() => RB.itemsDev.state());
+  assert(s0.open && s0.groups.join() === 'rw' && s0.cards === 12 && s0.icons === 48 && !s0.desc, '?dev=items opens on Reedwake\'s 12 items, four sizes each, no descriptions: ' + JSON.stringify(s0));
+  await p.click('[data-idv="later"]');
+  const s1 = await p.evaluate(() => ({ st: RB.itemsDev.state(), all: Object.keys(RB.content.items).length }));
+  assert(s1.st.cards === s1.all && s1.st.groups.length > 10, 'one button shows every place\'s items: ' + JSON.stringify(s1));
+  await p.keyboard.press('Escape');
+  assert(!(await p.evaluate(() => RB.itemsDev.state().open)), 'Escape closes the viewer');
+  const plain = await page(b, url, { viewport: { width: 800, height: 600 } });
+  assert(!(await plain.p.evaluate(() => RB.itemsDev.allowed() || !!document.querySelector('#items-dev'))), 'without ?dev=items there is no viewer');
+  assert(!errors.length && !requests.length && !plain.errors.length, 'no page errors or network requests: ' + errors.concat(requests, plain.errors).join(' | '));
+  await plain.ctx.close();
   await p.context().close();
 }
 

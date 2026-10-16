@@ -337,6 +337,11 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 }
 .folio.book .co-thought h4, .folio.book .leaf h4 { font-variant: small-caps; letter-spacing: 0.06em; font-weight: 600; color: var(--ink-2); }
 .folio.book .co-thought h4 svg, .folio.book .leaf h4 > svg { display: none; }
+/* the Words page's sections in the book: the running head's faces, a size between it and the entries */
+.folio.book .leaf h4.index-sec { font-size: 1em !important; font-variant: normal; letter-spacing: 0; color: var(--ink); margin: 1.6em 0 0.35em; }
+.folio.book .leaf h4.index-sec:first-of-type { margin-top: 0.4em; }
+.folio.book .leaf .index-sec .isec-jp, .folio.book .leaf .index-sec .isec-jp .jline { font-family: var(--type-jp-heading); }
+.folio.book .leaf .index-sec .isec-en { font-family: var(--type-latin-display); }
 .folio.book .co-said .jp { font-size: 1.22em; }
 .folio.book .co-said .en { font-style: italic; }
 .folio.book .co-know { list-style: none; margin-left: 0; }

@@ -30,5 +30,11 @@
 .folio-volume .rb-menu .opt { display: inline-flex; gap: 0.4em; align-items: center; margin: 4px 0 8px; }
 /* K10 (twelve-chapter journeys): the Mementos pages one row below the Journey's, the Words contents in three sections */
 .subnav.sub2 { border-bottom-width: 1px; margin-top: -0.3em; font-size: 0.92em; padding-left: 1.2em; }
-.index-sec { margin: 12px 0 4px; font-size: 0.95em; color: var(--ink-2); font-weight: 600; }
-.index-sec:first-of-type { margin-top: 4px; }
+/* a section of the Words page (My learning, Reference, Practice): a heading of its own, the Japanese and the English,
+ * ruled off, set apart from the entries under it (Robin, 2026-10-16: "make the headers prominent, as they read a
+ * little similarly to the subheaders") */
+.index-sec { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.1em 0.6em; margin: 1.5em 0 0.35em; padding-bottom: 0.3em;
+  border-bottom: 2px solid var(--ink-2); color: var(--ink); font-weight: 600; }
+.index-sec:first-of-type { margin-top: 0.3em; }
+.index-sec .isec-jp { font-size: 1.3em; letter-spacing: 0.08em; }
+.index-sec .isec-en { font-size: 1.12em; font-style: italic; font-weight: 500; color: var(--ink-2); }

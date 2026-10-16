@@ -600,7 +600,7 @@ RB.ui.menu = (function () {
     let list = '<ul class="index">' + subs.map(item).join('') + '</ul>';
     if (grouped(s)) {
       const sec = (id) => WORD_GROUPS[id] || 'reference';
-      list = WORD_SECTIONS.map(([k, en, jp]) => { const xs = subs.filter((x) => sec(x[0]) === k); return xs.length ? '<h4 class="index-sec">' + RB.ui.label(jp, en) + '</h4><ul class="index">' + xs.map(item).join('') + '</ul>' : ''; }).join('');
+      list = WORD_SECTIONS.map(([k, en, jp]) => { const xs = subs.filter((x) => sec(x[0]) === k); return xs.length ? '<h4 class="index-sec"><span class="isec-jp" lang="ja">' + j(jp) + '</span><span class="isec-en">' + esc(en) + '</span></h4><ul class="index">' + xs.map(item).join('') + '</ul>' : ''; }).join('');
     }
     // (in sections, the sections' own headings stand for it: a "Contents" heading over "My learning" read as empty)
     const index = (grouped(s) ? '' : '<h3>Contents</h3>') + list +

@@ -7,7 +7,8 @@ img.it-ic { display: inline-block; image-rendering: pixelated; image-rendering: 
 .it-ic-line svg { width: 80%; height: 80%; }
 .entry > .mark:has(> .it-ic) { width: 32px; height: 32px; margin-top: 0.1em; }
 .folio .entry > .mark > .it-ic { width: 32px; height: 32px; }
-.idetail .ibig:has(> .it-ic) { background: rgba(255, 252, 240, 0.55); }
+/* (a drawn icon stands on the page by itself: no dish behind it, Robin 2026-10-16; the line drawing keeps its circle) */
+.idetail .ibig:has(> .it-ic) { width: auto; height: auto; padding: 0; border: 0; border-radius: 0; background: none; }
 .idetail .ibig > img.it-ic { width: 64px; height: 64px; }
 .as-worn .as-ic { margin-right: 0.35em; width: 32px; height: 32px; }
 
