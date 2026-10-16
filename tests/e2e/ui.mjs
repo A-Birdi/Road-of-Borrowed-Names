@@ -503,7 +503,8 @@ await test('New Game+ carries the learning record and the traveller, not lore, k
   for (let i = 0; i < 400 && !(await p.evaluate(() => RB.game.G.playing === true && !RB.ui.dialogue.isOpen())); i++) {
     if (await p.evaluate(() => RB.ui.dialogue.isOpen())) { said++; await p.evaluate(() => RB.ui.dialogue.advance(true)); }
     // (then the new journey's settings are looked over, ST-1b)
-    if (await p.evaluate(() => RB.ui.settings.reviewing())) await setOut(p);
+    // (the journey begins when the player sets out: its opening is not this test's to read)
+    if (await p.evaluate(() => RB.ui.settings.reviewing())) { await setOut(p); break; }
     await p.waitForTimeout(50);
   }
   assert(said > 0, 'Ren\'s farewell should play');

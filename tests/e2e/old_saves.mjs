@@ -53,7 +53,7 @@ async function farewellThrough(p) {
     if (st.ng && !st.dlg) break;
     if (st.dlg) { lines.push(st.who.replace(/\s+/g, ' ').trim()); await p.evaluate(() => RB.ui.dialogue.advance(true)); }
     // (the new journey's settings are looked over before it begins, ST-1b)
-    else if (await p.evaluate(() => RB.ui.settings.reviewing())) await setOut(p);
+    else if (await p.evaluate(() => RB.ui.settings.reviewing())) { await setOut(p); await p.waitForFunction(() => !!(RB.game.G.playing && RB.game.s && RB.game.s.ngplus)); break; }
     await p.waitForTimeout(60);
   }
   return lines;
