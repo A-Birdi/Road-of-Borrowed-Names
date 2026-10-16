@@ -4331,7 +4331,7 @@ Robin's PC: `docs/future/voice/va2/HANDOFF_VA2.md`. **No voice was generated or 
   the worker's provisional pick, not Robin's casting.
 - **Not done:** Robin's picks; anything in the game's speech.
 
-## LI — the Ledger, items and their slips (Robin, 2026-10-16; LI-1 to LI-9)
+## LI — the Ledger, items and their slips (Robin, 2026-10-16; LI-1 to LI-13)
 
 Robin's message of 2026-10-16, in nine parts:
 - (LI-1) swap what a slot holds from the Satchel;
@@ -4425,6 +4425,71 @@ the captures listed.
     of its working PNGs, committed by mistake, were removed: the baseline is unchanged.
 - **LI-8 (R; nothing runs):** `node tools/voice/reference_count.mjs` counts 8,981 reference recordings (234 kana,
   1,838 kanji reading lists, 6,909 words; 30,119 characters, 28,551 morae), now in PRODUCTION_ESTIMATE.md §1b.
+
+### LI-10 to LI-13 (Robin's second message of 2026-10-16)
+
+Robin asked for four things:
+- (LI-10) no circle behind the item's icon on the Satchel's right page;
+- (LI-11) a `?dev` link to see the icon set;
+- (LI-12) dialogue hover pairs only nouns: "レン と 申します。" marks Ren but not "I'm" for 申します. Particles might
+  take another colour;
+- (LI-13) the Words section headers read too like the entries under them.
+
+Checks on the built index.html (headless Chromium, Linux), 2026-10-16.
+
+- **B `node tests/e2e/ledger_li.mjs`, all pass (43 checks with the LI-10 to LI-13 ones):**
+  - **LI-10:** the Satchel's detail icon has no dish: radius 0, no border, transparent.
+  - **LI-11:**
+    - `?dev=items` opens on Reedwake's 12 items only, at four sizes each (48 icons), with no descriptions.
+    - One button shows all 20 places' 131 items (524 icons); Escape closes the viewer.
+    - Without `?dev=items` there is no viewer.
+  - **LI-13:** a Words section header is a heading: its Japanese with readings and its English, 20.8 px against the
+    entries' 16 px, with a 2 px rule.
+  - **LI-12:**
+    - Pointing at 申します marks "I'm".
+    - Pointing at 行かない marks "go" in amber and "won't" in the grammar colour: blue `rgba(60, 118, 170, 0.26)`
+      with a dotted underline.
+    - Pointing at "won't" marks 行かない in the grammar colour.
+  - No page errors or network requests.
+- **B `speech_mark` (12 checks) and `dialect_kansai` (59 checks):** all pass on the LI-12 build. After the grammar
+  colour's last change, `ledger_li` and `speech_mark` were run again and pass.
+- **U `node tests/run-unit.mjs speech_align`, 25/0.** New cases:
+  - 申します ← "I'm"; です ← the second sentence's "I'm"; の ← "of" or the noun's "'s"; と (quoting a name) has none.
+  - 行かない: "go" and "won't". 行きましょう: "go" and "Shall".
+  - で ← "by"; は has none. 私 の ← "my" (の shares it); だ ← "is".
+  - 食べたい: "eat" and "want"; を has none.
+  - Over the game's 8,417 spoken lines (narration aside):
+    - 8,237 have a word pair and 5,947 a grammar pair;
+    - no English word is marked twice, and no grammar pair reuses a word's English.
+- **U, the whole unit suite on the LI-12 aligner: 54,277 passed, 0 failed.** The grammar colour's CSS changed after
+  that run; the three unit files that read the CSS (`ui_contrast` 63/0, `harmony_raster` 108/0,
+  `voice_audition` 47/0) pass on it.
+- **LI-12 coverage, `node tools/review/align_coverage.mjs`** (13,931 lines with English, narration included; share
+  of each kind of word that marks something):
+
+  | kind | words | before LI-12 | word pair | grammar pair |
+  | --- | ---: | ---: | ---: | ---: |
+  | particle | 64,724 | 0% | – | 19.7% |
+  | noun | 54,807 | not measured | 64.9% | 0.1% |
+  | verb | 36,060 | 30.2% | 42.8% | 7.8% |
+  | adjective | 7,307 | not measured | 49.7% | 11.1% |
+  | auxiliary | 6,148 | 0% | – | 31.8% |
+  | pronoun | 5,050 | 16.2% | 57.2% | – |
+  | conjunction | 221 | not measured | – | 61.1% |
+
+  Lines with any pair: 96.7% before, 98.7% now. The noun rule is unchanged.
+- **R, captures at 1280×800 (by eye):**
+  - 申します ↔ "I'm"; です ↔ "I'm"; の ↔ "of".
+  - 行かない ↔ "go" + "won't"; 行きましょう ↔ "go" + "Shall".
+  - 私 ↔ "my"; だ ↔ "is".
+  - The first captures showed the hovered Japanese word's dotted line in the word-help grey. The grammar rule now
+    outranks it, and the computed style is blue on both sides.
+- **What the grammar tier does not do:**
+  - It is an estimate from the dictionary and a table. It has no parser, so a particle with no English word (は,
+    を, よ, ね as a tag) marks nothing.
+  - Many particles have an English counterpart only sometimes. Only 19.7% of particles pair; the rest have no word
+    they plainly stand for.
+  - Not checked by a native speaker or by Astra.
 
 ## ST-1 — Settings laid out like the Ledger, and the settings reviewed when a journey begins (Robin, 2026-10-15)
 

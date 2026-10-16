@@ -871,8 +871,17 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     - (LI-8) The narrator's reference readings counted and planned in PRODUCTION_ESTIMATE.md §1b (R; nothing
       recorded).
     - (LI-9) Pointing at a word marks its counterpart while Highlight is on (B `ledger_li`).
-  - Not done: the "My Learning", "Reference" line in Robin's message was cut off; asked about it. Nothing here has
-    been seen or heard by a person; captures only.
+    - (LI-10) No dish behind a drawn icon on the Satchel's detail page (B `ledger_li`).
+    - (LI-11) `index.html?dev=items`: every item's icon at four sizes. Only Reedwake's at first, the later places
+      behind one button; descriptions on request (B `ledger_li`).
+    - (LI-12) Hover pairs in two tiers:
+      - words (nouns, verbs, keigo, pronouns) in amber;
+      - grammar (particles, the copula, endings such as ～ない "won't" and ～ましょう "Shall", conjunctions) in blue
+        with a dotted line.
+      - Evidence: U `speech_align` 25/0; B `ledger_li`, `speech_mark`, `dialect_kansai`; coverage in VALIDATION.md "LI".
+    - (LI-13) The Words section headers are headings: larger, ruled, with Japanese and English (B `ledger_li`).
+  - The "My Learning", "Reference" line was not cut off by mistake: Robin meant LI-13. Nothing here has been seen or
+    heard by a person; captures only. The grammar pairs are not checked by a native speaker.
   - Reduced motion is respected throughout (B `ledger_li`).
 
 ## Evidence index (see VALIDATION.md for commands and dates)

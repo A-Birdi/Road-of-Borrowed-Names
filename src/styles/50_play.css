@@ -18,6 +18,13 @@ body.high-contrast .dlg-sheet .jline .jt.spk, body.high-contrast .dlg-sheet .enl
 .dlg-sheet .jline .jt.hov, .dlg-sheet .enline .ew.hov { background: rgba(232, 158, 36, 0.34); box-shadow: inset 0 -0.14em 0 rgba(162, 86, 15, 0.8); border-radius: 3px; }
 .dlg-sheet .enline .ew.hov { padding: 0 0.08em; margin: 0 -0.08em; }
 body.high-contrast .dlg-sheet .jline .jt.hov, body.high-contrast .dlg-sheet .enline .ew.hov { background: #fff3a0; color: #000; box-shadow: inset 0 -0.14em 0 #000; }
+/* a grammar counterpart (a particle, the copula, what an ending adds: LI-12): blue, a dotted line under it, so it is told
+ * apart from a word's counterpart by its line as well as its colour */
+/* (body first: it outranks the word-help underline's colour, body.bulb-on … .jt) */
+body .dlg-sheet .jline .jt.hov2, body .dlg-sheet .enline .ew.hov2 { background: rgba(60, 118, 170, 0.26); border-radius: 3px;
+  text-decoration: underline dotted rgba(28, 74, 120, 0.95); text-decoration-thickness: 0.12em; text-underline-offset: 0.18em; }
+.dlg-sheet .enline .ew.hov2 { padding: 0 0.08em; margin: 0 -0.08em; }
+body.high-contrast .dlg-sheet .jline .jt.hov2, body.high-contrast .dlg-sheet .enline .ew.hov2 { background: #c8e4ff; color: #000; text-decoration-color: #000; }
 
 /* ---- shared cloth button and generic panel (screens not yet rebuilt) ---- */
 .btn {

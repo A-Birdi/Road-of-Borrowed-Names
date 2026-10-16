@@ -435,6 +435,15 @@
       - a moment of the Travel volume has its own sound (`moment`).
     - Dialogue: the strip rises into place (LI-4). Pointing at a word marks its counterpart while Highlight is on
       (LI-9, `src/ui/22_speech_mark.js`).
+    - Pairs in two tiers (LI-12, `src/lang/88_speech_align.js`): `align()` returns `map` (words, amber `.hov`) and
+      `gmap` (grammar, blue dotted `.hov2`).
+      - The tables are `GRAM` (particles, copula, auxiliaries), `FORMS` (what an inflection adds), `TE_AUX`, `EXTRA`
+        (keigo verbs), `NOT_SAID` (no English) and `IRR` (English irregulars, contractions and pronoun cases).
+      - Coverage: `node tools/review/align_coverage.mjs [--samples N] [--grep re]`.
+      - Astra could review the `GRAM` mappings.
+    - Satchel detail icons have no dish (LI-10). The icon viewer is `index.html?dev=items` (LI-11,
+      `src/ui/11z_items_dev.js`; `&all` shows every place). The Words section headers are headings (LI-13,
+      `.index-sec`).
     - Ledger pages: Journey's, Map's and Company's pages are coloured ribbons on the cover by the left page; on a phone
       or without hover they are tags. `bookmarks()`, `src/styles/94_bookmarks.css`.
     - Words and spelling: no empty "Contents"; "Practice" spelled so everywhere a player reads it.

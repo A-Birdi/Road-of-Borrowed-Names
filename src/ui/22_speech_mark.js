@@ -150,13 +150,15 @@ RB.ui.speechMark = (function () {
     const en = RB.game.s && RB.script.enVars ? RB.script.enVars(line.en || '') : line.en || '';
     const look = ctx && ctx.dia && RB.dialect ? (t, i) => RB.dialect.lookupIn(tokens, i) || RB.jp.lookup(t) : null;
     const al = S().align(tokens, en, { lookup: look, name: RB.game.s && RB.game.s.player ? RB.game.s.player.name : null });
-    const back = {};
+    const back = {}, gback = {};
     al.map.forEach((ws, i) => (ws || []).forEach((k) => { back[k] = i; }));
-    hov = { src, box, al, back };
+    (al.gmap || []).forEach((ws, i) => (ws || []).forEach((k) => { gback[k] = i; }));
+    hov = { src, box, al, back, gback };
     return hov;
   }
   const LINE_SEL = '.main .jline[data-src], .sub .jline[data-src]';
-  function hovClear(box) { (box || document).querySelectorAll('.hov').forEach((e) => e.classList.remove('hov')); }
+  // (.hov a word's counterpart, amber; .hov2 a grammar counterpart, blue and dotted: LI-12)
+  function hovClear(box) { (box || document).querySelectorAll('.hov, .hov2').forEach((e) => e.classList.remove('hov', 'hov2')); }
   function hovAt(target) {
     if (!on() || cur) return; // (the spoken mark has the line while a voice speaks)
     const box = target.closest && target.closest('.dlg');
@@ -167,20 +169,24 @@ RB.ui.speechMark = (function () {
     const enEl = box.querySelector('.main .enline, .sub .enline');
     const jt = target.closest('.jline[data-src] .jt[data-i]');
     if (jt && jt.closest(LINE_SEL)) {
-      const ws = p.al.map[+jt.dataset.i] || [];
-      if (!ws.length || !enEl) return;
+      const i = +jt.dataset.i, ws = p.al.map[i] || [], gs = (p.al.gmap || [])[i] || [];
+      if ((!ws.length && !gs.length) || !enEl) return;
       wrapEnglish(enEl);
-      jt.classList.add('hov');
-      for (const k of ws) { const w = enEl.querySelector('.ew[data-w="' + k + '"]'); if (w) w.classList.add('hov'); }
+      jt.classList.add(ws.length ? 'hov' : 'hov2');
+      const mark = (k, cls) => { const w = enEl.querySelector('.ew[data-w="' + k + '"]'); if (w) w.classList.add(cls); };
+      for (const k of ws) mark(k, 'hov');
+      for (const k of gs) mark(k, 'hov2');
       return;
     }
     const ew = target.closest('.ew[data-w]');
     if (ew && enEl && enEl.contains(ew)) {
-      const i = p.back[+ew.dataset.w];
+      const k = +ew.dataset.w;
+      let i = p.back[k], cls = 'hov';
+      if (i == null) { i = p.gback[k]; cls = 'hov2'; }
       if (i == null) return;
-      ew.classList.add('hov');
+      ew.classList.add(cls);
       const jl = box.querySelector(LINE_SEL);
-      if (jl) jl.querySelectorAll('.jt[data-i="' + i + '"]').forEach((e) => e.classList.add('hov'));
+      if (jl) jl.querySelectorAll('.jt[data-i="' + i + '"]').forEach((e) => e.classList.add(cls));
     }
   }
   if (typeof document !== 'undefined') {

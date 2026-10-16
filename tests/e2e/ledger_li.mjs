@@ -1,9 +1,10 @@
-// The Ledger and award round of 2026-10-16 (LI-3 to LI-9), in the built game:
+// The Ledger and award round of 2026-10-16 (LI-3 to LI-13), in the built game:
 //   1. LI-3: a received item's slip shows its drawn icon and name, plays one sound, can be closed at once, and puts a
 //      glowing "new" mark on the Ledger's button; a recorded moment has its own slip and sound; slips slide in with a
 //      gold flare round them;
 //   2. LI-4 / LI-9: the dialogue strip rises into place; pointing at a Japanese word marks its English counterpart (and
-//      the other way), and with the Highlight setting off nothing is marked;
+//      the other way), and with the Highlight setting off nothing is marked; LI-12: a verb ("I'm" for 申します) and an
+//      ending ("won't" for 行かない, in the grammar colour, blue and dotted) pair too;
 //   3. LI-5: Journey's pages are coloured ribbons on the cover by the left page (the page's own buttons, one each);
 //      pointing draws one out with its name; a press turns to that page, which the running head names; the keyboard
 //      turns them too and keeps its place; Save & Load is beside Settings and opens a slip of three choices (Escape
@@ -96,6 +97,37 @@ const start = (p, map, x, y) => p.evaluate(([map, x, y]) => {
   await wait(p, 150);
   assert(await p.evaluate(() => !document.querySelector('.dlg .hov')), 'LI-9: with Highlight off, nothing is marked');
   await p.evaluate(() => { RB.game.settings.voice.highlight = true; });
+
+  // LI-12: a verb, a humble verb and an ending pair too; grammar (particles, the copula, endings) in its own colour
+  await p.mouse.move(2, 2);
+  await p.evaluate(() => {
+    RB.ui.dialogue.say({ sceneId: 'test.li12', who: 'tsuru', jp: 'レン と {申|もう}します 。 {明日|あした} は {行|い}かない 。', en: "I'm Ren. I won't go tomorrow." });
+  });
+  await p.waitForFunction(() => [...document.querySelectorAll('.dlg .main .jline .jt[data-i]')].some((e) => /申/.test(e.textContent)));
+  await wait(p, 400);
+  const marks = () => p.evaluate(() => ({
+    jp: [...document.querySelectorAll('.dlg .jt.hov')].map((e) => e.textContent), en: [...document.querySelectorAll('.dlg .ew.hov')].map((e) => e.textContent),
+    jp2: [...document.querySelectorAll('.dlg .jt.hov2')].map((e) => e.textContent), en2: [...document.querySelectorAll('.dlg .ew.hov2')].map((e) => e.textContent),
+    bg: (document.querySelector('.dlg .ew.hov') && getComputedStyle(document.querySelector('.dlg .ew.hov')).backgroundColor) || '',
+    bg2: (document.querySelector('.dlg .ew.hov2') && getComputedStyle(document.querySelector('.dlg .ew.hov2')).backgroundColor) || '',
+    deco2: (document.querySelector('.dlg .ew.hov2') && getComputedStyle(document.querySelector('.dlg .ew.hov2')).textDecorationStyle) || '',
+  }));
+  pt = await at('.dlg .main .jline .jt[data-i]', '申');
+  await p.mouse.move(pt.x, pt.y);
+  await wait(p, 150);
+  const mo = await marks();
+  assert(mo.en.some((t) => /^I.m$/.test(t)), 'LI-12: pointing at 申します marks "I\'m": ' + JSON.stringify(mo));
+  pt = await at('.dlg .main .jline .jt[data-i]', '行');
+  await p.mouse.move(pt.x, pt.y);
+  await wait(p, 150);
+  const ik = await marks();
+  assert(ik.en.some((t) => t === 'go') && ik.en2.some((t) => /^won.t$/.test(t)), 'LI-12: pointing at 行かない marks "go" and, in the grammar colour, "won\'t": ' + JSON.stringify(ik));
+  assert(ik.bg && ik.bg2 && ik.bg !== ik.bg2 && ik.deco2 === 'dotted', 'LI-12: the grammar colour is its own (blue, dotted underline): ' + JSON.stringify([ik.bg, ik.bg2, ik.deco2]));
+  pt = await at('.dlg .enline .ew', 'won');
+  await p.mouse.move(pt.x, pt.y);
+  await wait(p, 150);
+  const wo = await marks();
+  assert(wo.jp2.some((t) => /行/.test(t)) && wo.en2.some((t) => /^won.t$/.test(t)), 'LI-12: and pointing at "won\'t" marks 行かない in the grammar colour: ' + JSON.stringify(wo));
   assert(!errors.length && !requests.length, 'no page errors or network requests: ' + errors.concat(requests).join(' | '));
   await p.context().close();
 }
