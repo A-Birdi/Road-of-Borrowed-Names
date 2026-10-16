@@ -67,45 +67,45 @@ comp: {間|あいだ} か 。 {配達|はいたつ} で {言|い}えば 、 {半
 !look pc mio
 !look mio pc
 !gesture mio guard
-?(!ch4_done) comp: {少|すこ}し {休|やす}みません か 。 …… {休|やす}み ながら 、 {話|はな}したい こと が あって 。 || Shall we rest a moment? …There's something I'd like to talk about while we do.
-?(ch4_done) comp: {潮硝子|しおがらす} の {頃|ころ} から 、 {聞|き}こう と {思|おも}って いた こと が あります 。 {今|いま} 、 いい です か 。 || There's something I've meant to ask since Saltglass. Is now all right?
+?(!ch4_done) comp: {少|すこ}し {休|やす}まない ？ …… {休|やす}み ながら 、 {話|はな}したい こと が あって 。 || Shall we rest a moment? …There's something I'd like to talk about while we do.
+?(ch4_done) comp: {潮硝子|しおがらす} の {頃|ころ} から 、 {聞|き}こう と {思|おも}ってた こと が ある の 。 {今|いま} 、 いい ？ || There's something I've meant to ask since Saltglass. Is now all right?
 !choice
 * いい よ || Of course. -> talk
 * {今|いま} は いい || Not now. -> later
 :later
 !gesture mio nod pc
-comp[smile]: はい 。 {急|いそ}ぎません 。 {私|わたし} も 、 {急|いそ}がない {練習|れんしゅう} を して います から 。 || All right. No hurry. I'm practicing not hurrying, too.
+comp[smile]: うん 。 {急|いそ}がない 。 {私|わたし} も 、 {急|いそ}がない {練習|れんしゅう} を してる から 。 || All right. No hurry. I'm practicing not hurrying, too.
 !hook co_defer reflect:travel
 !end
 :talk
 !gesture mio size
-comp: {私|わたし} 、 {人|ひと} に {合|あ}わせて {歩|ある}く の が {癖|くせ} なん です 。 {速|はや}い {人|ひと} に は {速|はや}く 、 {遅|おそ}い {人|ひと} に は {遅|おそ}く 。 || I have a habit of matching my pace to whoever I'm with. Fast with the fast, slow with the slow.
+comp: {私|わたし} 、 {人|ひと} に {合|あ}わせて {歩|ある}く の が {癖|くせ} な の 。 {速|はや}い {人|ひと} に は {速|はや}く 、 {遅|おそ}い {人|ひと} に は {遅|おそ}く 。 || I have a habit of matching my pace to whoever I'm with. Fast with the fast, slow with the slow.
 !gesture mio chin
-comp[think]: でも 、 {自分|じぶん} の {速|はや}さ が {分|わ}からなく なる こと が あって 。 …… あなた と {歩|ある}いて いる と 、 {不思議|ふしぎ} と {息|いき} が {切|き}れない んです 。 || But then I lose track of my own pace. …Walking with you, oddly, I don't get out of breath.
+comp[think]: でも 、 {自分|じぶん} の {速|はや}さ が {分|わ}からなく なる こと が あって 。 …… あなた と {歩|ある}いて いる と 、 {不思議|ふしぎ} と {息|いき} が {切|き}れない の 。 || But then I lose track of my own pace. …Walking with you, oddly, I don't get out of breath.
 !gesture mio palm
-comp: {疲|つか}れたら 、 {疲|つか}れた って {言|い}って も いい です か 。 {私|わたし} も 、 あなた も 。 || If I'm tired, may I say so? Both of us, I mean.
+comp: {疲|つか}れたら 、 {疲|つか}れた って {言|い}って も いい ？ {私|わたし} も 、 あなた も 。 || If I'm tired, may I say so? Both of us, I mean.
 !choice
 * {言|い}って ほしい 。 {休|やす}む から || Please do. We'll rest. -> rest
 * {私|わたし} も {言|い}う よ || I'll say so too. -> both
 * {今|いま} の {速|はや}さ で いい || This pace is fine as it is. -> keep
 :rest
 !gesture mio nod pc
-?(seen.sb.quiet_mio) comp[smile]: …… はい 。 {約束|やくそく} です 。 {規則|きそく} {三十三番|さんじゅうさんばん} に します 。 || …All right. A promise. I'll make it rule number thirty-three.
-?(!seen.sb.quiet_mio) comp[smile]: …… はい 。 {約束|やくそく} です 。 {私|わたし} の {決|き}まり に {加|くわ}えて おきます 。 || …All right. A promise. I'll add it to my rules.
+?(seen.sb.quiet_mio) comp[smile]: …… うん 。 {約束|やくそく} 。 {規則|きそく} {三十三番|さんじゅうさんばん} に する 。 || …All right. A promise. I'll make it rule number thirty-three.
+?(!seen.sb.quiet_mio) comp[smile]: …… うん 。 {約束|やくそく} 。 {私|わたし} の {決|き}まり に {加|くわ}えて おく ね 。 || …All right. A promise. I'll add it to my rules.
 !hook co_answer reflect:travel rest
 !goto close
 :both
 !gesture mio laugh
-comp[laugh]: {二人|ふたり} とも {言|い}う 。 …… {薬師|くすし} と して は 、 {一番|いちばん} {安心|あんしん} できる {答|こた}え です 。 || Both of us say it. …As an apothecary, that's the most reassuring answer there is.
+comp[laugh]: {二人|ふたり} とも {言|い}う 。 …… {薬師|くすし} と して は 、 {一番|いちばん} {安心|あんしん} できる {答|こた}え 。 || Both of us say it. …As an apothecary, that's the most reassuring answer there is.
 !hook co_answer reflect:travel both
 !goto close
 :keep
 !gesture mio exhale
-comp: そう です か 。 …… じゃあ 、 この {速|はや}さ を {覚|おぼ}えて おきます 。 {誰|だれ} か に {合|あ}わせた {速|はや}さ じゃ なくて 、 {私|わたし} の {速|はや}さ と して 。 || I see. …Then I'll remember this pace. Not as someone else's pace — as mine.
+comp: そう ね 。 …… じゃあ 、 この {速|はや}さ を {覚|おぼ}えて おく 。 {誰|だれ} か に {合|あ}わせた {速|はや}さ じゃ なくて 、 {私|わたし} の {速|はや}さ と して 。 || I see. …Then I'll remember this pace. Not as someone else's pace — as mine.
 !hook co_answer reflect:travel keep
 :close
 ?(bond>=rhythm) !gesture mio thanks pc
-?(bond>=rhythm) comp[smile]: {誰|だれ} か に {合|あ}わせる ん じゃ なくて 、 {一緒|いっしょ} に {歩|ある}く 。 {似|に}て いる けど 、 {違|ちが}う ん です ね 。 || Not keeping pace with someone — walking together. They're alike, but they aren't the same.
+?(bond>=rhythm) comp[smile]: {誰|だれ} か に {合|あ}わせる ん じゃ なくて 、 {一緒|いっしょ} に {歩|ある}く 。 {似|に}てる けど 、 {違|ちが}う ん だ ね 。 || Not keeping pace with someone — walking together. They're alike, but they aren't the same.
 !hook co_bond reflect:travel
 !hook co_remember reflections reflect_travel reflect:travel
 !hook co_done reflect:travel
@@ -151,7 +151,7 @@ comp: {助|たす}かります 。 {声|こえ} を かけられたら 、 {灯|
 !goto close
 :lost
 !gesture ren listen pc
-comp[surprise]: …… それ は 、 {旅|たび} に {出|で}る {時|とき} に {私|わたし} が {約束|やくそく} した こと です 。 {言|い}い{返|かえ}された の は 、 {初|はじ}めて です ね 。 || …That's the promise I made when we set out. It's the first time anyone has said it back to me.
+comp[surprise]: …… それ は 、 {旅|たび} に {出|で}る {時|とき} に {私|わたし} が {約束|やくそく} した こと です 。 {同|おな}じ {言葉|ことば} を {返|かえ}して もらった の は 、 {初|はじ}めて です ね 。 || …That's the promise I made when we set out. It's the first time anyone has given my words back to me.
 !hook co_answer reflect:travel lost
 :close
 ?(bond>=rhythm) !gesture ren exhale
@@ -268,45 +268,45 @@ comp[laugh]: …… {何|なに} も {起|お}きない {日|ひ} か 。 {配�
 !look pc mio
 !look mio pc
 !gesture mio guard
-?(!ch5_done) comp: {雪鈴|ゆきすず} の {空気|くうき} は 、 {頭|あたま} が はっきり します ね 。 …… {少|すこ}し 、 {聞|き}いて も いい です か 。 || The Snowbell air clears the head, doesn't it. …May I ask you something?
-?(ch5_done) comp: {前|まえ} から {聞|き}きたかった こと が あります 。 {遅|おそ}く なりました けど 、 {今|いま} {聞|き}いて も いい です か 。 || There's something I've wanted to ask for a while. It's late, but may I ask now?
+?(!ch5_done) comp: {雪鈴|ゆきすず} の {空気|くうき} は 、 {頭|あたま} が はっきり する ね 。 …… {少|すこ}し 、 {聞|き}いて も いい ？ || The Snowbell air clears the head, doesn't it. …May I ask you something?
+?(ch5_done) comp: {前|まえ} から {聞|き}きたかった こと が ある の 。 {遅|おそ}く なった けど 、 {今|いま} {聞|き}いて も いい ？ || There's something I've wanted to ask for a while. It's late, but may I ask now?
 !choice
 * いい よ || Of course. -> talk
 * {今|いま} は いい || Not now. -> later
 :later
 !gesture mio nod pc
-comp[smile]: はい 。 また {今度|こんど} 。 {瓶|びん} に {入|い}れて 、 {取|と}って おきます 。 || All right, another time. I'll keep it in a jar.
+comp[smile]: うん 。 また {今度|こんど} 。 {瓶|びん} に {入|い}れて 、 {取|と}って おく ね 。 || All right, another time. I'll keep it in a jar.
 !hook co_defer reflect:keep
 !end
 :talk
 !gesture mio check prop=bottle
-comp: {薬|くすり} の {棚|たな} に は 、 {何|なに} を いつ {作|つく}った か 、 {全部|ぜんぶ} {書|か}いて {残|のこ}します 。 || On a medicine shelf, I write everything down: what I made, and when.
+comp: {薬|くすり} の {棚|たな} に は 、 {何|なに} を いつ {作|つく}った か 、 {全部|ぜんぶ} {書|か}いて {残|のこ}す の 。 || On a medicine shelf, I write everything down: what I made, and when.
 !gesture mio chin
 comp[think]: この {旅|たび} で 、 {一|ひと}つ だけ {書|か}いて {残|のこ}す と したら …… || If I could write down just one thing from this journey…
 !hook co_keep_recall
 !gesture mio palm pc
-comp: あなた は どう です か 。 {何|なに} を {残|のこ}したい ？ || What about you? What would you keep?
+comp: あなた は どう ？ {何|なに} を {残|のこ}したい ？ || What about you? What would you keep?
 !choice
 * {同|おな}じ {日|ひ} を {残|のこ}したい || I'd keep the same day. -> same
 * {別|べつ} の {日|ひ} が ある || There's another day I'd keep. -> other
 * {何|なに} も {起|お}きない {普通|ふつう} の {日|ひ} || The ordinary days, when nothing happened. -> plain
 :same
 !gesture mio laugh
-comp[laugh]: {同|おな}じ {頁|ページ} に {二人|ふたり} で {書|か}く 。 …… {字|じ} が {重|かさ}なって 、 {読|よ}みにくく なり そう です ね 。 || Two of us writing on the same page. …Our writing will overlap and be hard to read.
+comp[laugh]: {同|おな}じ {頁|ページ} に {二人|ふたり} で {書|か}く 。 …… {字|じ} が {重|かさ}なって 、 {読|よ}みにくく なり そう だ ね 。 || Two of us writing on the same page. …Our writing will overlap and be hard to read.
 !hook co_answer reflect:keep same
 !goto close
 :other
 !gesture mio nod pc
-comp[smile]: {教|おし}えて くれなくて も いい です 。 あなた の {棚|たな} に 、 ちゃんと {置|お}いて あげて ください 。 || You needn't tell me. Just make sure it has a place on your own shelf.
+comp[smile]: {教|おし}えて くれなくて も いい よ 。 あなた の {棚|たな} に 、 ちゃんと {置|お}いて あげて 。 || You needn't tell me. Just make sure it has a place on your own shelf.
 !hook co_answer reflect:keep other
 !goto close
 :plain
 !gesture mio exhale
-comp: {何|なに} も {起|お}きない {日|ひ} 。 …… {私|わたし} の {好|す}き な {日|ひ} です 。 {誰|だれ} も {怪我|けが} を しない {日|ひ} 。 || The days when nothing happened. …My favourite kind. The days nobody gets hurt.
+comp: {何|なに} も {起|お}きない {日|ひ} 。 …… {私|わたし} の {好|す}き な {日|ひ} 。 {誰|だれ} も {怪我|けが} を しない {日|ひ} 。 || The days when nothing happened. …My favourite kind. The days nobody gets hurt.
 !hook co_answer reflect:keep plain
 :close
 ?(bond>=trusted&seen.sb.quiet_mio) !gesture mio fidget
-?(bond>=trusted&seen.sb.quiet_mio) comp[shy]: …… これ は 、 ラベル の ない {瓶|びん} に は {入|い}れません 。 ちゃんと {名前|なまえ} を {書|か}いて {置|お}いて おきます 。 || …This won't go in the jar with no label. I'll write its name on it properly.
+?(bond>=trusted&seen.sb.quiet_mio) comp[shy]: …… これ は 、 ラベル の ない {瓶|びん} に は {入|い}れない 。 ちゃんと {名前|なまえ} を {書|か}いて {置|お}いて おく 。 || …This won't go in the jar with no label. I'll write its name on it properly.
 !hook co_bond reflect:keep
 !hook co_remember reflections reflect_keep reflect:keep
 !hook co_done reflect:keep

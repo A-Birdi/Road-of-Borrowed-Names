@@ -96,7 +96,7 @@ hiro: {赤|あか}い リボン の {姉|ねえ}ちゃん が 、 そう {教|�
 ?(comp=suzu) narr: スズ の {手|て} が 、 {色褪|いろあ}せた リボン に {触|ふ}れて 、 すぐ {離|はな}れた 。 || Suzu's hand brushes her faded ribbon, and drops away.
 hiro: {席|せき} を {空|あ}けて おく の は …… {習|なら}わし だ 。 {待|ま}ってる わけ じゃ ない 。 たぶん 。 || Keeping the seat is… a habit. It's not that I'm waiting. Probably.
 !gesture hiro cool pc hold
-hiro: {他|ほか} に {何|なに} か {理由|りゆう} が ある {気|き} が する んだ が 、 {考|かんが}える と {頭|あたま} が {白|しろ}く なる 。 || I feel there's some other reason, but when I try to think about it, my head goes white.
+hiro: {他|ほか} に {何|なに} か {理由|りゆう} が ある {気|き} が する んだ が 、 {考|かんが}える と {頭|あたま} が {真|ま}っ{白|しろ} に なる 。 || I feel there's some other reason, but when I try to think about it, my head goes white.
 ?(comp=suzu) !gesture comp thanks
 ?(comp=suzu) comp[smile]: …… {素敵|すてき} な {習|なら}わし ね 。 ありがとう 、 {話|はな}して くれて 。 || …It's a lovely custom. Thank you for telling us.
 ?(comp=suzu) !gesture hiro listen comp
@@ -166,7 +166,7 @@ suzu: {二十年前|にじゅうねんまえ} 、 {一座|いちざ} で この 
 ?(comp=nao) !gesture comp shake
 ?(comp=nao) comp: …… {里|さと} の {人|ひと} は {誰|だれ} も {覚|おぼ}えて ない 。 {記録|きろく} に も ない 。 || …Nobody here remembers. It isn't in the records.
 ?(comp=mio) !gesture comp guard
-?(comp=mio) comp[worry]: {火事|かじ} …… やっぱり 。 だから {火傷|やけど} の {薬|くすり} が 、 どこ に も ない ん です ね 。 || A fire… I knew it. That's why there's no burn salve anywhere.
+?(comp=mio) comp[worry]: {火事|かじ} …… やっぱり 。 だから {火傷|やけど} の {薬|くすり} が 、 どこ に も ない ん だ ね 。 || A fire… I knew it. That's why there's no burn salve anywhere.
 ?(comp=ren) !gesture comp chin
 ?(comp=ren) comp[think]: {記録|きろく} から も {人|ひと} から も {消|き}えた {火事|かじ} 。 {灯|ひ} の {名|な} と {同|おな}じ {消|き}え{方|かた} です 。 || A fire gone from the records and from people. It vanished the way lantern names do.
 !gesture suzu lowered hold
@@ -229,7 +229,7 @@ hiro[sad]: …… {怒|おこ}ってる か 、 と {聞|き}かれたら 、 {�
 hiro: あんた が {行|い}っちまった こと に 、 だ 。 {母|はは} は {一座|いちざ} と {行|い}った 、 と {聞|き}いた 。 それ から {一座|いちざ} も 、 あんた も {行|い}った 。 {俺|おれ} は {二人|ふたり} {分|ぶん} 、 {待|ま}ってた ん だ 。 || It's that you left. I was told my mother went with the troupe. Then the troupe left, and you with it. I was waiting for two people.
 suzu[sad]: …… うん 。 || …Yes.
 narr: ヒロ は ガラス を {竿|さお} から {外|はず}し 、 {灰|はい} の {中|なか} に そっと {置|お}いた 。 {丸|まる}い {火屋|ほや} が 、 {橙色|だいだいいろ} に {光|ひか}って いる 。 || Hiro breaks the glass from the pipe and lays it gently in the ash. A round lantern globe, glowing orange.
-hiro: {席|せき} は 、 {今年|ことし} も {空|あ}けて おく 。 でも {今年|ことし} は 、 {母|はは} の {名前|なまえ} を {書|か}く 。 {帰|かえ}って くる {人|ひと} の {席|せき} じゃ ない 。 {覚|おぼ}えて いる {人|ひと} の {席|せき} だ 。 || I'll keep the seat free this year too. But this year I'll write her name on it. Not a seat for someone coming back. A seat for someone remembered.
+hiro: {席|せき} は 、 {今年|ことし} も {空|あ}けて おく 。 でも {今年|ことし} は 、 {母|はは} の {名前|なまえ} を {書|か}く 。 {帰|かえ}って くる {人|ひと} の {席|せき} じゃ ない 。 {覚|おぼ}えられて いる {人|ひと} の {席|せき} だ 。 || I'll keep the seat free this year too. But this year I'll write her name on it. Not a seat for someone coming back. A seat for someone remembered.
 hiro: それ と …… あんた は 、 {隣|となり} に {座|すわ}れ 。 {祭|まつ}り {二十回|にじゅっかい} {分|ぶん} 、 {貸|か}して ある 。 {一回|いっかい} ずつ {返|かえ}して もらう 。 || And… you sit next to it. You owe me twenty festivals. You can pay them back one at a time.
 suzu[surprise]: …… {帳簿|ちょうぼ} に 、 {書|か}いて いい ？ || …Can I write that in my book?
 hiro[smirk]: {好|す}き に しろ 。 {線|せん} は {引|ひ}く な よ 。 「 {一部|いちぶ} {返済|へんさい} 」 だ 。 || Suit yourself. Don't cross it out, mind. "Paid in part."
@@ -238,7 +238,7 @@ narr: スズ は {帳簿|ちょうぼ} を {開|ひら}き 、 {震|ふる}え�
 * （ {何|なに} も {言|い}わず に {見守|みまも}る ） || (Say nothing. Let them have this.) -> quiet
 * スズ は 、 これ を {言|い}う ため に {戻|もど}って {来|き}た ん だ 。 || Suzu came back to say this. -> speak
 :speak
-hiro: {分|わ}かってる 。 {二十年|にじゅうねん} {遅|おく}れ でも 、 {来|き}た 。 …… それ は {数|かぞ}える 。 || I know. Twenty years late, but she came. …That counts.
+hiro: {分|わ}かってる 。 {二十年|にじゅうねん} {遅|おく}れ でも 、 {来|き}た 。 …… それ は 、 {勘定|かんじょう} に {入|い}れて おく 。 || I know. Twenty years late, but she came. …That counts.
 !goto after
 :quiet
 narr: {炉|ろ} の {音|おと} だけ が 、 しばらく {続|つづ}いた 。 || For a while there's only the sound of the furnace.
@@ -252,7 +252,7 @@ hiro[sad]: …… {母|はは} の {字|じ} だ 。 {最後|さいご} の {一
 :finish
 ?(comp=suzu) comp: …… $name 。 ありがとう 。 {客席|きゃくせき} に いて くれて 。 || …$name. Thank you. For staying in your seat.
 ?(comp=nao) comp: …… {届|とど}いた な 。 {二十年|にじゅうねん} {遅|おく}れ の {配達|はいたつ} だ 。 {受取人|うけとりにん} の {返事|へんじ} まで 、 {込|こ}み で 。 || …Delivered. Twenty years late. And the recipient wrote back, too.
-?(comp=mio) comp[sad]: …… {本当|ほんとう} の こと は 、 {痛|いた}い 。 でも 、 {痛|いた}い まま に しない 。 ヒロ さん は 、 もう {始|はじ}めて いる んです ね 。 || …The truth hurts. But he's not leaving it hurting. Hiro's already started, hasn't he.
+?(comp=mio) comp[sad]: …… {本当|ほんとう} の こと は 、 {痛|いた}い 。 でも 、 {痛|いた}い まま に しない 。 ヒロ さん は 、 もう {始|はじ}めてる ん だ ね 。 || …The truth hurts. But he's not leaving it hurting. Hiro's already started, hasn't he.
 ?(comp=ren) comp: {名|な} の ない {席|せき} に 、 {名|な} が {入|はい}る 。 …… {今日|きょう} 、 {一番|いちばん} {美|うつく}しい {書|か}き{直|なお}し を {見|み}ました 。 || A name on a nameless seat. …That's the most beautiful rewriting I've seen today.
 !set co_suzu_done
 !quest co_suzu done

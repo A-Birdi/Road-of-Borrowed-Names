@@ -50,7 +50,7 @@ cr_tome: {追分|おいわけ} の {印|いん} は 、 {道|みち} が {二|�
 !set cr_seal1
 !quest cr_seals 0
 ?(comp=nao) comp: {印帳|いんちょう} か 。 {郵便|ゆうびん} の {消印|けしいん} と {同|おな}じ だ な 。 {通|とお}った {証拠|しょうこ} 。 || A seal book. Like a postmark. Proof you passed through.
-?(comp=mio) comp[smile]: {七|なな}つ も ！ {集|あつ}める の 、 {楽|たの}しみ です ね 。 || Seven of them! I'm looking forward to collecting them.
+?(comp=mio) comp[smile]: {七|なな}つ も ！ {集|あつ}める の 、 {楽|たの}しみ だ ね 。 || Seven of them! I'm looking forward to collecting them.
 ?(comp=ren) comp: {灯|ひ} の {名前|なまえ} と 、 {宿|しゅく} の {印|いん} 。 {両方|りょうほう} {揃|そろ}えましょう 。 || The lamps' names and the stations' seals. Let's gather both.
 ?(comp=suzu) comp: {巡業|じゅんぎょう} の {判子|はんこ} {集|あつ}め なら 、 {任|まか}せて 。 {一座|いちざ} で {一番|いちばん} {早|はや}かった の よ 。 || Collecting stamps on tour? Leave it to me. I was the fastest in the company.
 :end
@@ -61,7 +61,7 @@ cr_tome: まあ 、 {七|なな}つ {全部|ぜんぶ} ！ {大杉|おおすぎ}
 cr_tome: その {印帳|いんちょう} は 、 あなた の もの よ 。 {雲路|くもじ} を {全部|ぜんぶ} {歩|ある}いた {証拠|しょうこ} 。 {大事|だいじ} に して ね 。 || The seal book is yours. Proof you walked the whole Cloudroad. Look after it.
 !quest cr_seals done
 ?(comp=nao) comp: …… {大事|だいじ} に しよう 。 {宛先|あてさき} の ない {手紙|てがみ} より 、 ずっと いい 。 || …We'll look after it. Far better than a letter with no address.
-?(comp=mio) comp[smile]: ページ ごと に 、 {思|おも}い{出|で} が あります ね 。 || A memory on every page.
+?(comp=mio) comp[smile]: ページ ごと に 、 {思|おも}い{出|で} が ある ね 。 || A memory on every page.
 ?(comp=ren) comp: {七|なな}つ の {印|いん} と 、 {七|なな}つ の {灯|ひ} 。 {両方|りょうほう} {揃|そろ}いました 。 || Seven seals and seven lamps. Both complete.
 ?(comp=suzu) comp: {判子|はんこ} {帳|ちょう} が {埋|う}まる の って 、 {満員|まんいん} {御礼|おんれい} みたい で {気持|きも}ち いい わ 。 || Filling a stamp book feels like a sold-out house.
 
@@ -72,7 +72,7 @@ cr_otaki: ちょっと {聞|き}いて よ 。 うち の {宿帳|やどちょ�
 cr_otaki: {何日|なんにち} か {前|まえ} に {泊|と}まった {商人|しょうにん} の コウスケ さん が 、 {慌|あわ}てて {出|で}て {行|い}った の 。 {自分|じぶん} の {帳面|ちょうめん} と {間違|まちが}えた ん じゃ ない かしら 。 {坂|さか} の {下|した} へ {下|お}りて {行|い}った わ 。 || Kōsuke the merchant stayed a few days ago and left in a rush. I wonder if he took it for his own notebook. He went off down the hill.
 ?(cr_guestbook_seen) narr: {坂下|さかした} の {飛脚宿|ひきゃくやど} の {机|つくえ} に 、 {松葉|まつば} の {紋|もん} の {帳面|ちょうめん} が あった 。 || On the table at Sakashita's Courier's Inn there was a book with a pine-needle crest.
 ?(comp=nao) comp: {帳面|ちょうめん} の {取|と}り{違|ちが}え は 、 {郵便|ゆうびん} でも よく ある 。 {下|した} の {宿|しゅく} を {当|あ}たろう 。 || Mixing up ledgers happens in the post too. Let's try the stations below.
-?(comp=mio) comp: {帳面|ちょうめん} が ない と 、 {言|い}った {言|い}わない の {喧嘩|けんか} に なります ね 。 {探|さが}しましょう 。 || Without the book it's just one word against the other. Let's look for it.
+?(comp=mio) comp: {帳面|ちょうめん} が ない と 、 {言|い}った {言|い}わない の {喧嘩|けんか} に なる ね 。 {探|さが}そう 。 || Without the book it's just one word against the other. Let's look for it.
 ?(comp=ren) comp: {記録|きろく} が {消|き}える と 、 {話|はなし} だけ が {残|のこ}ります 。 {取|と}り{戻|もど}しましょう 。 || When the record goes, only the stories are left. Let's get it back.
 ?(comp=suzu) comp: {帳簿|ちょうぼ} が ない の は 、 {宿屋|やどや} に は {一大事|いちだいじ} よ 。 わたし なら {寝|ね}られない わ 。 || A missing ledger is a disaster for an inn. I wouldn't sleep a wink.
 !quest cr_guest 0
@@ -82,10 +82,10 @@ cr_otaki: {何日|なんにち} か {前|まえ} に {泊|と}まった {商人|
 !if cr_guest_started -> found
 !set cr_guestbook_seen
 narr: {宿帳|やどちょう} が {二冊|にさつ} 。 {一冊|いっさつ} は {飛脚宿|ひきゃくやど} の もの 。 もう {一冊|いっさつ} の {表紙|ひょうし} に は 、 {松葉|まつば} の {紋|もん} が ある 。 || Two guest books. One is the Courier's Inn's. The other has a pine-needle crest on its cover.
-cr_sono: それ ね 。 {商人|しょうにん} の お{客|きゃく} さん が {置|お}いて {行|い}った の 。 {誰|だれ} の かしら 。 || That one? A merchant left it. I wonder whose it is.
+cr_sono: それ です か 。 {商人|しょうにん} の お{客|きゃく} さん が {置|お}いて {行|い}った んです 。 {誰|だれ} の でしょう 。 || That one? A merchant left it. I wonder whose it is.
 !end
 :found
-cr_sono: {松葉|まつば} の {紋|もん} …… {中山|なかやま} の {松葉屋|まつばや} さん の ね 。 コウスケ さん が {置|お}いて {行|い}った の よ 。 {持|も}って {行|い}って あげて 。 || A pine-needle crest… the Matsuba's, at Nakayama. Kōsuke left it here. Take it back to them.
+cr_sono: {松葉|まつば} の {紋|もん} …… {中山|なかやま} の {松葉屋|まつばや} さん の です ね 。 コウスケ さん が {置|お}いて {行|い}った んです 。 {持|も}って {行|い}って あげて ください 。 || A pine-needle crest… the Matsuba's, at Nakayama. Kōsuke left it here. Take it back to them.
 !give cr_guestbook
 !set cr_guest_found
 !quest cr_guest 1
@@ -105,7 +105,7 @@ cr_otaki: {夜|よる} {遅|おそ}い {人|ひと} は {竹屋|たけや} 、 {
 !take cr_guestbook
 !quest cr_guest done
 ?(comp=nao) comp: {書|か}いて ある こと を {読|よ}めば 、 {喧嘩|けんか} は {半分|はんぶん} {終|お}わる 。 || Read what's written, and half the quarrel's over.
-?(comp=mio) comp[smile]: {両方|りょうほう} {正|ただ}しかった なんて 、 いちばん いい {終|お}わり{方|かた} です 。 || Both being right is the best possible ending.
+?(comp=mio) comp[smile]: {両方|りょうほう} {正|ただ}しかった なんて 、 いちばん いい {終|お}わり{方|かた} だ ね 。 || Both being right is the best possible ending.
 ?(comp=ren) comp: {記録|きろく} が {戻|もど}って 、 {話|はなし} が {一|ひと}つ に なりました 。 || The record's back, and there's only one story now.
 ?(comp=suzu) comp: {帳簿|ちょうぼ} は {嘘|うそ} を つかない 。 {人|ひと} が {読|よ}み{間違|まちが}える だけ よ 。 || A ledger never lies. People just misread it.
 
@@ -260,7 +260,7 @@ cr_sono: {春|はる} に なったら 、 {峠|とうげ} まで {会|あ}い �
 :close
 !quest cr_family done
 ?(comp=nao) comp: {届|とど}いた {便|びん} が 、 また {次|つぎ} へ {行|い}く 。 …… それ で いい 。 || The post that arrived goes on to the next. …That's how it should be.
-?(comp=mio) comp: {重|おも}い こと を {決|き}めました ね 。 {一人|ひとり} で {背負|せお}わない で ください 。 || That was a heavy thing to decide. Don't carry it alone.
+?(comp=mio) comp: {重|おも}い こと を {決|き}めた ね 。 {一人|ひとり} で {背負|せお}わない で 。 || That was a heavy thing to decide. Don't carry it alone.
 ?(comp=ren) comp: ゲンタ さん の {名前|なまえ} が 、 {消|き}えない {所|ところ} に {残|のこ}りました 。 || Genta's name has been left somewhere it won't fade.
 ?(comp=suzu) comp: {五十年|ごじゅうねん} {越|ご}し の {大団円|だいだんえん} 。 {客席|きゃくせき} から {見|み}て いたかった わ 。 || A grand finale fifty years in the making. I'd have liked to watch it from the audience.
 !end
@@ -278,7 +278,7 @@ cr_sono: {飛脚宿|ひきゃくやど} へ ようこそ 。 {祖父|そふ} が
 cr_sono: {祖父|そふ} は 、 ゲンタ と いう {飛脚|ひきゃく} でした 。 …… {坂下|さかした} で は 、 {祖父|そふ} が {金|かね} を {持|も}って {逃|に}げた と {言|い}われて います 。 || My grandfather was a courier called Genta. …In Sakashita they say he ran off with the money.
 cr_sono: {祖母|そぼ} は 、 {祖父|そふ} は {雪|ゆき} の {峠|とうげ} で {谷|たに} へ {落|お}ちた ん だ と {言|い}って いました 。 {逃|に}げる {人|ひと} じゃ ない 、 と 。 …… でも 、 {見|み}た {人|ひと} は {誰|だれ} も いない ん です 。 || My grandmother said he fell into the gorge on the pass in the snow. He wasn't the kind to run, she said. …But nobody saw.
 ?(comp=nao) comp: …… {見|み}た {人|ひと} が いない {話|はなし} が 、 {二|ふた}つ 。 どっち も 、 {本当|ほんとう} と は {限|かぎ}らない 。 || …Two stories, and nobody saw either. Neither is necessarily true.
-?(comp=mio) comp: {待|ま}って いた {人|ひと} の {話|はなし} は 、 {優|やさ}しく なる もの です ね 。 || The stories of the ones left waiting turn kind, don't they.
+?(comp=mio) comp: {待|ま}って いた {人|ひと} の {話|はなし} は 、 {優|やさ}しく なる もの だ ね 。 || The stories of the ones left waiting turn kind, don't they.
 ?(comp=ren) comp: ゲンタ さん の {名前|なまえ} も 、 {灯|ひ} の {名前|なまえ} の よう に 、 {消|き}えかけて いる の かも しれません 。 || Perhaps Genta's name is fading too, like the lamps' names.
 ?(comp=suzu) comp: {同|おな}じ {人|ひと} の {話|はなし} が 、 {宿|やど} ごと に {違|ちが}う 。 {旅回|たびまわ}り の {一座|いちざ} の {噂|うわさ} と {同|おな}じ ね 。 || The same man's story, different at every inn. Just like the rumours about a touring company.
 !quest cr_family 0

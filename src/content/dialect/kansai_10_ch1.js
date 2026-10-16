@@ -87,7 +87,7 @@ RB.dialect.add('kansai', `
 > {次|つぎ} に {会|あ}う とき は 、 {新作|しんさく} {見|み}せたる わ 。 {題名|だいめい} は まだ あらへん けど 、 {主役|しゅやく} は もう {決|き}まってる ねん 。 || Next time we meet, I'll show ya my new piece. No title yet, but I've already cast the lead.
 @ ch1/32_depart:201 [rw.seeoff]
 = {観客|かんきゃく} が いる うち に 、 {格好|かっこう} よく {退場|たいじょう} しましょ 。 || Let's make a stylish exit while we still have an audience.
-> {観客|かんきゃく} が いてる {間|あいだ} に 、 {格好|かっこう} よく {退場|たいじょう} しよう 。 || Let's make a classy exit while we've still got an audience.
+> {観客|かんきゃく} が いてる {間|あいだ} に 、 {格好|かっこう} よく {退場|たいじょう} しましょ 。 || Let's make a classy exit while we've still got an audience.
 @ ch1/32_depart:223 [rw.suzu_after]
 = あら 、 {主役|しゅやく} の お{帰|かえ}り ！ {一座|いちざ} は {先|さき} に {行|い}っちゃった けど 、 {私|わたし} は {村|むら} の {子|こ}ども たち と {新作|しんさく} を {練習中|れんしゅうちゅう} 。 || Oh, the lead returns! My troupe's gone on ahead, but I'm rehearsing a new piece with the village kids.
 > あら 、 {主役|しゅやく} の お{帰|かえ}り や ！ {一座|いちざ} は {先|さき} に {行|い}ってもうた けど 、 うち は {村|むら} の {子|こ}ども たち と {新作|しんさく} を {練習中|れんしゅうちゅう} やねん 。 || Well, look who's back — the lead! My troupe's gone on ahead, but I'm rehearsing a new piece with the village kids.

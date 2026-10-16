@@ -122,7 +122,7 @@ sa_tae: {昨夜|ゆうべ} 、 {鐘|かね} の {音|おと} を {思|おも}い
 !gesture sa_tae lowered
 sa_tae: {誰|だれ} が {鳴|な}らした の か 、 {結局|けっきょく} {分|わ}からず じまい さ 。 || Never did find out who rang it.
 !gesture pc palm sa_tae
-pc: {鳴|な}らした の は 、 トウヤ と いう {人|ひと} です 。 {使|つか}い の 。 {鍵|かぎ} を {持|も}って 、 {自分|じぶん} で {開|あ}けた 。 || The one who rang it was named Tōya. The messenger. He had the key, and he opened it himself.
+pc: {鳴|な}らした の は 、 トウヤ と いう {人|ひと} です 。 {使|つか}い の 。 {鍵|かぎ} を {持|も}って 、 {自分|じぶん} で {開|あ}けた んです 。 || The one who rang it was named Tōya. The messenger. He had the key, and he opened it himself.
 !gesture sa_tae listen pc
 sa_tae[surprise]: …… そう かい 。 あの {子|こ} だった の かい 。 || …Was it. So it was that boy.
 ?(end_kasane_trial) !gesture kasane bow sa_tae

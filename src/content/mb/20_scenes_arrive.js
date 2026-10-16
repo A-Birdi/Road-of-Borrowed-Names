@@ -103,7 +103,7 @@ mb_take: どっち だ よ ！ {札|ふだ} が {真|ま}っ{白|しろ} で 、
 ?(comp=mio) !gesture comp flinch
 ?(comp=mio) comp[surprise]: あっ …… {舟|ふね} の {人|ひと} 、 {大丈夫|だいじょうぶ} ？ …… よかった 、 {怪我|けが} は ない みたい 。 || Oh — is the boatman all right? …Good, he doesn't look hurt.
 ?(comp=ren) !gesture comp observe 25,6
-?(comp=ren) comp[think]: {橋|はし} の {名札|なふだ} が 、 {灯籠|とうろう} の {笠|かさ} と {同|おな}じ {消|き}え{方|かた} を して います 。 {字|じ} だけ が 、 きれい に ない 。 || The bridges' plaques have faded the way the lantern shades did. Only the letters gone, and cleanly.
+?(comp=ren) comp[think]: {橋|はし} の {名札|なふだ} が 、 {灯籠|とうろう} の {笠|かさ} と {同|おな}じ {消|き}え{方|かた} を して います 。 {字|じ} だけ が 、 きれい に {消|き}えて います 。 || The bridges' plaques have faded the way the lantern shades did. Only the letters gone, and cleanly.
 ?(comp=suzu) !gesture comp size
 ?(comp=suzu) comp[smile]: {着|つ}いた わ よ 、 {八百橋|やおばし} ！ …… {町|まち} は {賑|にぎ}やか な のに 、 {橋|はし} が {黙|だま}って いる の ね 。 || Here we are, Manybridge! …The city's as loud as ever, but the bridges have gone quiet.
 !gesture pc point 13,0

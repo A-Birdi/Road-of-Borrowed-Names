@@ -7,22 +7,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.dialect.add('kansai', `
 @ yn/yn.call [yn.call]
 = {湯治場|とうじば} ！ {揉|も}め{事|ごと} {付|つ}き なんて 、 {芝居|しばい} の {筋書|すじが}き みたい ね 。 {行|い}きましょ 。 || A spa town! With a quarrel thrown in. It's like the outline of a play. Let's go.
-> {湯治場|とうじば} ！ {揉|も}め{事|ごと} {付|つ}き なんて 、 {芝居|しばい} の {筋書|すじが}き みたい や な 。 {行|い}こ 。 || A spa town! With a quarrel thrown in. It's like the outline of a play. Let's go.
+> {湯治場|とうじば} ！ {揉|も}め{事|ごと} {付|つ}き なんて 、 {芝居|しばい} の {筋書|すじが}き みたい や な 。 {行|い}きましょ 。 || A spa town! With a quarrel thrown in. It's like the outline of a play. Let's go.
 @ yn/yn.call [yn.call]
 = …… {一座|いちざ} ？ || …A troupe?
 > =
 @ yn/yn.descent_first [yn.descent_first]
 = {客席|きゃくせき} の ない {舞台|ぶたい} みたい 。 …… {下|した} の {賑|にぎ}やか な {方|ほう} へ {行|い}きましょ 。 || Like a stage with no audience. …Let's head for the lively part below.
-> {客席|きゃくせき} の ない {舞台|ぶたい} みたい や 。 …… {下|した} の {賑|にぎ}やか な {方|ほう} へ {行|い}こ 。 || Like a stage with no audience. …Let's head for the lively part below.
+> {客席|きゃくせき} の ない {舞台|ぶたい} みたい や 。 …… {下|した} の {賑|にぎ}やか な {方|ほう} へ {行|い}きましょ 。 || Like a stage with no audience. …Let's head for the lively part below.
 @ yn/yn.yasuke_road [yn.yasuke_road]
 = {声|こえ} が {出|で}る {所|ところ} へ {行|い}きましょ 。 {下|した} の {谷|たに} は 、 きっと うるさい わ よ 。 || Let's go where voices work. The valley down there will be noisy, I'm sure.
-> {声|こえ} が {出|で}る {所|ところ} へ {行|い}こ 。 {下|した} の {谷|たに} は 、 きっと うるさい で 。 || Let's go where voices work. The valley down there will be noisy, I'm sure.
+> {声|こえ} が {出|で}る {所|ところ} へ {行|い}きましょ 。 {下|した} の {谷|たに} は 、 きっと うるさい で 。 || Let's go where voices work. The valley down there will be noisy, I'm sure.
 @ yn/yn.arrive [yn.arrive]
 = いい {町|まち} ！ {呼|よ}び{込|こ}み の {声|こえ} が 、 {一座|いちざ} の {口上|こうじょう} より {大|おお}きい わ 。 || What a town! The touts are louder than a troupe's opening patter.
 > ええ {町|まち} ！ {呼|よ}び{込|こ}み の {声|こえ} が 、 {一座|いちざ} の {口上|こうじょう} より {大|おお}きい わ 。 || What a town! The touts are louder than a troupe's opening patter.
 @ yn/yn.rokubei_first [yn.rokubei_first]
 = {満員|まんいん} の {宿|やど} の {帳場|ちょうば} なら 、 {私|わたし} の {得意|とくい} よ 。 {帳面|ちょうめん} は 、 {任|まか}せて 。 || A full house's front desk is my kind of place. Leave the books to me.
-> {満員|まんいん} の {宿|やど} の {帳場|ちょうば} なら 、 {私|わたし} の {得意|とくい} や で 。 {帳面|ちょうめん} は 、 {任|まか}せとき 。 || A full house's front desk is my kind of place. Leave the books to me.
+> {満員|まんいん} の {宿|やど} の {帳場|ちょうば} なら 、 うち の {得意|とくい} や で 。 {帳面|ちょうめん} は 、 {任|まか}せとき 。 || A full house's front desk is my kind of place. Leave the books to me.
 @ yn/yn.kami_first [yn.kami_first]
 = 「{満室|まんしつ} で ございまして 」 の {後|あと} に 、 {何|なに} も {続|つづ}かない の が 、 {老舗|しにせ} の {断|ことわ}り{方|かた} よ 。 {覚|おぼ}えて おいて 。 || "We are fully booked…" and then nothing after it: that's how an old house says no. Remember it.
 > 「{満室|まんしつ} で ございまして 」 の {後|あと} に 、 {何|なに} も {続|つづ}かへん の が 、 {老舗|しにせ} の {断|ことわ}り{方|かた} や 。 {覚|おぼ}えとき 。 || "We are fully booked…" and then nothing after it: that's how an old house says no. Remember it.
@@ -34,13 +34,13 @@ RB.dialect.add('kansai', `
 > {帳面|ちょうめん} の {仕事|しごと} や な 。 …… ふふ 、 {血|ち} が {騒|さわ}ぐ わ 。 || Ledger work. …Heh. It stirs the blood.
 @ yn/yn.bath_scene [yn.bath_scene]
 = ああ …… {極楽|ごくらく} 、 {極楽|ごくらく} 。 {一度|いちど} {言|い}って みたかった の 。 || Ahh… paradise, paradise. I always wanted to say that.
-> ああ …… {極楽|ごくらく} 、 {極楽|ごくらく} 。 {一回|いっかい} {言|い}うて みたかった ねん 。 || Ahh… paradise, paradise. I always wanted to say that.
+> ああ …… {極楽|ごくらく} 、 {極楽|ごくらく} 。 {一回|いっかい} {言|い}うて みたかってん 。 || Ahh… paradise, paradise. I always wanted to say that.
 @ yn/yn.bath_beat [yn.bath_beat]
 = …… ここ の {湯|ゆ} に 、 ギンノジョウ が {来|き}て いる って {噂|うわさ} 、 {聞|き}いた ？ {八百橋|やおばし} の {芝居町|しばいまち} の 、 {伝説|でんせつ} の {喜劇|きげき} {役者|やくしゃ} よ 。 || …Have you heard the rumour that Ginnojō takes these waters? The legendary comic actor of Manybridge's Playhouse Row.
 > …… ここ の {湯|ゆ} に 、 ギンノジョウ が {来|き}てる って {噂|うわさ} 、 {聞|き}いた ？ {八百橋|やおばし} の {芝居町|しばいまち} の 、 {伝説|でんせつ} の {喜劇|きげき} {役者|やくしゃ} や で 。 || …Have you heard the rumour that Ginnojō takes these waters? The legendary comic actor of Manybridge's Playhouse Row.
 @ yn/yn.bath_beat [yn.bath_beat]
 = {十六|じゅうろく} の {時|とき} 、 {彼|かれ} の {間|ま} の {取|と}り{方|かた} を 、 {毎晩|まいばん} {真似|まね} した の 。 {一座|いちざ} の {皆|みな} に 、 {似|に}て ない って {笑|わら}われた けど 。 || When I was sixteen I copied his timing every night. Everyone in the troupe laughed and said it was nothing like him.
-> {十六|じゅうろく} の {時|とき} 、 {彼|かれ} の {間|ま} の {取|と}り{方|かた} を 、 {毎晩|まいばん} {真似|まね} した ねん 。 {一座|いちざ} の {皆|みな} に 、 {似|に}て へん って {笑|わら}われた けど 。 || When I was sixteen I copied his timing every night. Everyone in the troupe laughed and said it was nothing like him.
+> {十六|じゅうろく} の {時|とき} 、 {彼|かれ} の {間|ま} の {取|と}り{方|かた} を 、 {毎晩|まいばん} {真似|まね} してん 。 {一座|いちざ} の {皆|みな} に 、 {似|に}て へん って {笑|わら}われた けど 。 || When I was sixteen I copied his timing every night. Everyone in the troupe laughed and said it was nothing like him.
 @ yn/yn.bath_beat [yn.bath_beat]
 = もし {会|あ}えたら …… {何|なに} {言|い}おう 。 {湯|ゆ} の {中|なか} で {台詞|せりふ} を {考|かんが}える の 、 {初|はじ}めて よ 。 || If I meet him… what would I say? First time I've ever worked out lines in a bath.
 > もし {会|あ}えたら …… {何|なに} {言|い}お 。 {湯|ゆ} の {中|なか} で {台詞|せりふ} を {考|かんが}える の 、 {初|はじ}めて や 。 || If I meet him… what would I say? First time I've ever worked out lines in a bath.
@@ -58,7 +58,7 @@ RB.dialect.add('kansai', `
 > {拍手|はくしゅ} も {音|おと} や で 。 {谷|たに} で 、 {大|おお}きい の を {聞|き}かせて あげたい わ 。 || Applause is a sound too. I'd like them to hear a big round of it here.
 @ yn/yn.tama [yn.tama]
 = {一|ひと}つ {百文|ひゃくもん} で {売|う}れる わ よ 、 これ 。 …… {冗談|じょうだん} よ 。 {配|くば}りましょう 。 || These would sell for a hundred mon apiece. …Joking. Let's hand them out.
-> {一|ひと}つ {百文|ひゃくもん} で {売|う}れる で 、 これ 。 …… {冗談|じょうだん} や 。 {配|くば}ろ 。 || These would sell for a hundred mon apiece. …Joking. Let's hand them out.
+> {一|ひと}つ {百文|ひゃくもん} で {売|う}れる で 、 これ 。 …… {冗談|じょうだん} や 。 {配|くば}りましょう 。 || These would sell for a hundred mon apiece. …Joking. Let's hand them out.
 @ yn/yn.bridge_quarrel [yn.bridge_quarrel]
 = {幕|まく} を {下|お}ろして ！ {二人|ふたり} と も 、 {客席|きゃくせき} を {見|み}なさい よ 。 {皆|みんな} 、 {怖|こわ}がって いる わ 。 || Bring the curtain down! Both of you, look at your audience. Everyone's frightened.
 > {幕|まく} を {下|お}ろして ！ {二人|ふたり} と も 、 {客席|きゃくせき} を {見|み}て 。 {皆|みんな} 、 {怖|こわ}がってる やん 。 || Bring the curtain down! Both of you, look at your audience. Everyone's frightened.
@@ -67,10 +67,10 @@ RB.dialect.add('kansai', `
 > {奈落|ならく} へ {降|お}りる ん や な 。 {芝居小屋|しばいごや} の {下|した} なら 、 {慣|な}れてる わ 。 || Down into the pit, then. I'm used to the space under a stage.
 @ yn/yn.playhouse_first [yn.playhouse_first]
 = …… {嘘|うそ} 。 あの {幟|のぼり} 。 あれ は …… {私|わたし} の {一座|いちざ} よ 。 || …No. That banner. That's… my troupe.
-> …… {嘘|うそ} や 。 あの {幟|のぼり} 。 あれ は …… {私|わたし} の {一座|いちざ} や 。 || …No. That banner. That's… my troupe.
+> …… {嘘|うそ} や 。 あの {幟|のぼり} 。 あれ は …… うち の {一座|いちざ} や 。 || …No. That banner. That's… my troupe.
 @ yn/yn.troupe_baskets [yn.troupe_baskets]
 = …… {十六|じゅうろく} の {時|とき} の {番付|ばんづけ} 。 {私|わたし} の {名前|なまえ} 、 こんな {下|した} の {方|ほう} に 。 || …The playbill from when I was sixteen. My name, all the way down here.
-> =
+> …… {十六|じゅうろく} の {時|とき} の {番付|ばんづけ} 。 うち の {名前|なまえ} 、 こんな {下|した} の {方|ほう} に 。 || …The playbill from when I was sixteen. My name, all the way down here.
 @ yn/yn.north_first [yn.north_first]
 = {客席|きゃくせき} が {空|から} に なって いく みたい 。 …… でも 、 {舞台|ぶたい} は まだ {終|お}わって ない わ 。 || Like the seats emptying one by one. …But the play isn't over yet.
 > {客席|きゃくせき} が {空|から} に なって いく みたい や 。 …… でも 、 {舞台|ぶたい} は まだ {終|お}わって へん で 。 || Like the seats emptying one by one. …But the play isn't over yet.
@@ -91,7 +91,7 @@ RB.dialect.add('kansai', `
 > {一座|いちざ} {全体|ぜんたい} で {一|ひと}つ の {芝居|しばい} 。 {舞台|ぶたい} の {基本|きほん} や で 。 || The whole company, one play. That's stagecraft one-oh-one.
 @ yn/yn.end [yn.end]
 = {最後|さいご} の {幕|まく} ね 。 …… {相方|あいかた} が いる なら 、 どんな {客|きゃく} の {前|まえ} でも {舞台|ぶたい} に {立|た}てる わ 。 {行|い}きましょ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
-> {最後|さいご} の {幕|まく} や な 。 …… {相方|あいかた} が おる なら 、 どんな {客|きゃく} の {前|まえ} でも {舞台|ぶたい} に {立|た}てる わ 。 {行|い}こ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
+> {最後|さいご} の {幕|まく} や な 。 …… {相方|あいかた} が おる なら 、 どんな {客|きゃく} の {前|まえ} でも {舞台|ぶたい} に {立|た}てる わ 。 {行|い}きましょ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
 @ yn/yn.bunkichi [yn.bunkichi]
 = {台詞|せりふ} が {戻|もど}った {役者|やくしゃ} の {顔|かお} ね 。 {見|み}れば {分|わ}かる わ 。 || That's the face of an actor who's got his lines back. I'd know it anywhere.
 > {台詞|せりふ} が {戻|もど}った {役者|やくしゃ} の {顔|かお} や な 。 {見|み}たら {分|わ}かる わ 。 || That's the face of an actor who's got his lines back. I'd know it anywhere.
@@ -121,7 +121,7 @@ RB.dialect.add('kansai', `
 > =
 @ yn/yn.suzu_evening [yn.suzu_evening]
 = $name 。 {先|さき} に {寝|ね}て て 。 {私|わたし} 、 {少|すこ}し {風|かぜ} に {当|あ}たって くる から 。 || $name. Go to bed. I'm going to get some air.
-> $name 。 {先|さき} に {寝|ね}とき 。 {私|わたし} 、 ちょっと {風|かぜ} に {当|あ}たって くる から 。 || $name. Go to bed. I'm going to get some air.
+> $name 。 {先|さき} に {寝|ね}とき 。 うち 、 ちょっと {風|かぜ} に {当|あ}たって くる から 。 || $name. Go to bed. I'm going to get some air.
 @ yn/yn.suzu_garden [yn.suzu_garden]
 = …… {見|み}つかっちゃった 。 {寝|ね}て て って {言|い}った のに 。 || …Caught. I told you to go to sleep.
 > …… {見|み}つかってもうた 。 {寝|ね}とき って {言|い}うた のに 。 || …Caught. I told you to go to sleep.
@@ -130,10 +130,10 @@ RB.dialect.add('kansai', `
 > ごめんな 。 {心配|しんぱい} させて 。 {笑|わら}って {誤魔化|ごまか}す の 、 {今夜|こんや} は {上手|うま}い こと でけへん かった 。 || I'm sorry I worried you. Tonight I couldn't laugh it off the way I usually do.
 @ yn/yn.suzu_garden [yn.suzu_garden]
 = あの {一座|いちざ} は 、 {私|わたし} の {家|いえ} だった 。 {十六|じゅうろく} で {初|はじ}めて {台詞|せりふ} を もらって 、 コウメ と {二人|ふたり} で {漫才|まんざい} を して 。 {笑|わら}い {声|ごえ} が 、 {毎晩|まいばん} {帰|かえ}る {場所|ばしょ} だった 。 || That troupe was my home. At sixteen I got my first lines, and Koume and I did our double act. The laughter was where I came home to, every night.
-> あの {一座|いちざ} は 、 {私|わたし} の {家|いえ} やった 。 {十六|じゅうろく} で {初|はじ}めて {台詞|せりふ} を もろて 、 コウメ と {二人|ふたり} で {漫才|まんざい} を して 。 {笑|わら}い {声|ごえ} が 、 {毎晩|まいばん} {帰|かえ}る {場所|ばしょ} やった ねん 。 || That troupe was my home. At sixteen I got my first lines, and Koume and I did our double act. The laughter was where I came home to, every night.
+> あの {一座|いちざ} は 、 うち の {家|いえ} やった 。 {十六|じゅうろく} で {初|はじ}めて {台詞|せりふ} を もろて 、 コウメ と {二人|ふたり} で {漫才|まんざい} を して 。 {笑|わら}い {声|ごえ} が 、 {毎晩|まいばん} {帰|かえ}る {場所|ばしょ} やった ん や 。 || That troupe was my home. At sixteen I got my first lines, and Koume and I did our double act. The laughter was where I came home to, every night.
 @ yn/yn.suzu_garden [yn.suzu_garden]
 = {戻|もど}れば 、 {全部|ぜんぶ} {戻|もど}って くる 。 …… それ を 、 {一晩|ひとばん} だけ {想像|そうぞう} したかった の 。 {断|ことわ}る {前|まえ} に 、 ちゃんと 。 || If I went back, I'd have all of it again. …I wanted one night just to imagine it. Properly, before I say no.
-> {戻|もど}ったら 、 {全部|ぜんぶ} {戻|もど}って くる 。 …… それ を 、 {一晩|ひとばん} だけ {想像|そうぞう} したかった ねん 。 {断|ことわ}る {前|まえ} に 、 ちゃんと 。 || If I went back, I'd have all of it again. …I wanted one night just to imagine it. Properly, before I say no.
+> {戻|もど}ったら 、 {全部|ぜんぶ} {戻|もど}って くる 。 …… それ を 、 {一晩|ひとばん} だけ {想像|そうぞう} したかってん 。 {断|ことわ}る {前|まえ} に 、 ちゃんと 。 || If I went back, I'd have all of it again. …I wanted one night just to imagine it. Properly, before I say no.
 @ yn/yn.suzu_garden [yn.suzu_garden]
 = うん 。 {断|ことわ}る 。 …… {次|つぎ} の {幕|まく} の {相方|あいかた} は 、 もう {決|き}めて ある から 。 || Yes. I'm saying no. …I've already chosen my partner for the next act.
 > うん 。 {断|ことわ}る 。 …… {次|つぎ} の {幕|まく} の {相方|あいかた} は 、 もう {決|き}めてる ねん 。 || Yes. I'm saying no. …I've already chosen my partner for the next act.
@@ -151,7 +151,7 @@ RB.dialect.add('kansai', `
 > {十年|じゅうねん} 、 {一座|いちざ} の {帳面|ちょうめん} を {付|つ}けて きた 。 {誰|だれ} に も {見|み}せへん かった 。 {見|み}せへん の が 、 {自慢|じまん} やった 。 || I kept the troupe's books for ten years. I never showed them to anyone. I was proud nobody ever saw them.
 @ yn/yn.suzu_books [yn.suzu_books]
 = {帳尻|ちょうじり} は {合|あ}って いる って 、 {皆|みんな} に {言|い}って きた 。 {本当|ほんとう} は 、 {足|た}りない {分|ぶん} を 、 {私|わたし} の {取|と}り{分|ぶん} から {埋|う}めて いた の 。 {嵐|あらし} の {後|あと} に {残|のこ}った の も 、 {町|まち} ごと の {借金|しゃっきん} を {返|かえ}す ため 。 || I told everyone the books balanced. In truth I was covering the shortfall from my own share. When I stayed behind after the storm, it was to pay off the debts town by town.
-> {帳尻|ちょうじり} は {合|お}うてる って 、 {皆|みんな} に {言|い}うて きた 。 ほんま は 、 {足|た}りへん {分|ぶん} を 、 {私|わたし} の {取|と}り{分|ぶん} から {埋|う}めてた ねん 。 {嵐|あらし} の {後|あと} に {残|のこ}った の も 、 {町|まち} ごと の {借金|しゃっきん} を {返|かえ}す ため や 。 || I told everyone the books balanced. In truth I was covering the shortfall from my own share. When I stayed behind after the storm, it was to pay off the debts town by town.
+> {帳尻|ちょうじり} は {合|お}うてる って 、 {皆|みんな} に {言|い}うて きた 。 ほんま は 、 {足|た}りへん {分|ぶん} を 、 うち の {取|と}り{分|ぶん} から {埋|う}めててん 。 {嵐|あらし} の {後|あと} に {残|のこ}った の も 、 {町|まち} ごと の {借金|しゃっきん} を {返|かえ}す ため や 。 || I told everyone the books balanced. In truth I was covering the shortfall from my own share. When I stayed behind after the storm, it was to pay off the debts town by town.
 @ yn/yn.suzu_books [yn.suzu_books]
 = ごめん 。 {新|あたら}しい {相方|あいかた} が 、 もう {隣|となり} に いる の 。 {今度|こんど} 、 {二人|ふたり} の {芸|げい} を {見|み}に {来|き}て 。 || Sorry. My new partner's right here beside me. Come and see our act some time.
 > ごめん 。 {新|あたら}しい {相方|あいかた} が 、 もう {隣|となり} に おる ねん 。 {今度|こんど} 、 {二人|ふたり} の {芸|げい} を {見|み}に {来|き}て な 。 || Sorry. My new partner's right here beside me. Come and see our act some time.

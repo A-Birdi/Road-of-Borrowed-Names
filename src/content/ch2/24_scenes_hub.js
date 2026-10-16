@@ -700,7 +700,7 @@ comp: {入|はい}る つもり は なかった 。 || I didn't mean to come in
 pc: ここ 、 {知|し}ってる の ？ || You know this place?
 !look comp 2,3
 comp[closed]: イサム って {爺|じい}さん の {家|いえ} だ 。 {手紙|てがみ} を {何度|なんど} か {預|あず}かった 。 {字|じ} が {震|ふる}えて て 、 でも {丁寧|ていねい} で …… 。 || An old man called Isamu lived here. I carried letters for him a few times. His hand shook, but his writing was careful…
-comp: {最後|さいご} の {一通|いっつう} は 、 {灯落|ひおち} の {娘|むすめ} {宛|あて} だった 。 {十年|じゅうねん} {以上|いじょう} {口|くち} を {聞|き}いて ない {娘|むすめ} に 、 {許|ゆる}して くれ って 。 || The last one was to his daughter in Lanternfall. A daughter he hadn't spoken to in over ten years. Asking her to forgive him.
+comp: {最後|さいご} の {一通|いっつう} は 、 {灯落|ひおち} の {娘|むすめ} {宛|あて} だった 。 {十年|じゅうねん} {以上|いじょう} {口|くち} を {利|き}いて ない {娘|むすめ} に 、 {許|ゆる}して くれ って 。 || The last one was to his daughter in Lanternfall. A daughter he hadn't spoken to in over ten years. Asking her to forgive him.
 !look comp pc
 !gesture comp lowered hold
 comp[sad]: {届|とど}けなかった 。 {死|し}に{際|ぎわ} に {許|ゆる}し を {頼|たの}む の は 、 {受|う}け{取|と}る {側|がわ} に {重|おも}すぎる と {思|おも}った 。 {断|ことわ}る {自由|じゆう} の ない {手紙|てがみ} だ 。 || I didn't deliver it. Asking forgiveness on your deathbed puts too much on the one who receives it, I thought. It's a letter she'd have no freedom to refuse.

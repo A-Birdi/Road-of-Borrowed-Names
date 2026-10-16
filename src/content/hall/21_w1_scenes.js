@@ -38,7 +38,8 @@ narr: {道|みち} の {先|さき} に 、 {四|よ}つ{辻|つじ} 。 {灯|�
 @scene hall.w1.f2_first
 !set hall_w1_f2_seen
 narr: {石段|いしだん} の {上|うえ} は 、 {灯籠|とうろう} の {並|なら}ぶ {道|みち} だった 。 {道|みち} は {何度|なんど} も {分|わ}かれて 、 {霧|きり} の {中|なか} へ {消|き}えて いく 。 || Up the steps, a road lined with stone lanterns. It forks again and again and vanishes into the mist.
-?(comp) comp: {札|ふだ} が ある 。 {先|さき} に {読|よ}んで から 、 {歩|ある}こう 。 || There's a card. Let's read it before we walk.
+?(comp&comp!=ren) comp: {札|ふだ} が ある 。 {先|さき} に {読|よ}んで から 、 {歩|ある}こう 。 || There's a card. Let's read it before we walk.
+?(comp=ren) comp: {札|ふだ} が あります 。 {先|さき} に {読|よ}んで から 、 {歩|ある}きましょう 。 || There's a card. Let's read it before we walk.
 
 @scene hall.w1.f3_first
 !set hall_w1_f3_seen
@@ -103,7 +104,8 @@ narr: {道|みち}しるべ 。 {四|よっ}つ の {腕|うで} に 、 {字|�
 !faceplayer hall_traveller
 ?(hall.w1.pat=0) hall_traveller: すみません 。 お{寺|てら} は 、 どちら です か 。 || Excuse me. Which way is the temple?
 ?(hall.w1.pat=1) hall_traveller: すみません 。 {村|むら} は 、 どちら です か 。 || Excuse me. Which way is the village?
-?(comp&!seen.hall.w1.t2_sign) comp: {道|みち}しるべ が すぐ そこ に ある 。 {見|み}て から {答|こた}えて も いい ね 。 || The signpost is right there. We could look before we answer.
+?(comp&!seen.hall.w1.t2_sign&comp!=ren) comp: {道|みち}しるべ が すぐ そこ に ある 。 {見|み}て から {答|こた}えて も いい ね 。 || The signpost is right there. We could look before we answer.
+?(comp=ren&!seen.hall.w1.t2_sign) comp: {道|みち}しるべ が すぐ そこ に あります 。 {見|み}て から {答|こた}えて も いい です ね 。 || The signpost is right there. We could look before we answer.
 !if hall.w1.pat=1 -> p1
 !hook hall_challenge hall.w1.sign0
 !goto after
@@ -133,7 +135,8 @@ narr: {石|いし} に {刻|きざ}んで ある 。 「 {四|よっ}つ の {�
 :after
 !if var._res=0 -> later
 narr: {決|き}まり を {破|やぶ}った {札|ふだ} の {字|じ} が 、 {薄|うす}く {消|き}えて いった 。 || The words on the plaque that broke the rule fade away.
-?(comp) comp: {正|ただ}しい {三|みっ}つ が ある から 、 {違|ちが}う {一|ひと}つ が {分|わ}かる ん だ ね 。 || It's because three are right that the odd one shows.
+?(comp&comp!=ren) comp: {正|ただ}しい {三|みっ}つ が ある から 、 {違|ちが}う {一|ひと}つ が {分|わ}かる ん だ ね 。 || It's because three are right that the odd one shows.
+?(comp=ren) comp: {正|ただ}しい {三|みっ}つ が ある から 、 {違|ちが}う {一|ひと}つ が {分|わ}かる ん です ね 。 || It's because three are right that the odd one shows.
 !set xp_hall_w1_f0_t3
 !hook hall_trial w1 t3
 !refresh
@@ -164,7 +167,8 @@ narr: {札|ふだ} に {道順|みちじゅん} が {書|か}いて ある 。 |
 ?(${both(NOTF, 'hall.w1.pat=0')}) narr: 「 まっすぐ {行|い}って 、 {二|ふた}つ{目|め} の {角|かど} を {左|ひだり} に {曲|ま}がって ください 。 {突|つ}き{当|あ}たり の {灯籠|とうろう} に 、 {火|ひ} を {点|つ}けて ください 。 」 || "Go straight, and turn left at the second corner. Light the lantern at the end of that road."
 ?(${both(EF, 'hall.w1.pat=1')}) narr: 「 まっすぐ いって 、 ひとつめ の かど を みぎ に まがって ください 。 つきあたり の とうろう に 、 ひ を つけて ください 。 」 || "Go straight, and turn right at the first corner. Light the lantern at the end of that road."
 ?(${both(NOTF, 'hall.w1.pat=1')}) narr: 「 まっすぐ {行|い}って 、 {一|ひと}つ{目|め} の {角|かど} を {右|みぎ} に {曲|ま}がって ください 。 {突|つ}き{当|あ}たり の {灯籠|とうろう} に 、 {火|ひ} を {点|つ}けて ください 。 」 || "Go straight, and turn right at the first corner. Light the lantern at the end of that road."
-?(comp&!hall.w1.t4) comp: {角|かど} を {数|かぞ}えながら {行|い}こう 。 || Let's count the corners as we go.
+?(comp&!hall.w1.t4&comp!=ren) comp: {角|かど} を {数|かぞ}えながら {行|い}こう 。 || Let's count the corners as we go.
+?(comp=ren&!hall.w1.t4) comp: {角|かど} を {数|かぞ}えながら {行|い}きましょう 。 || Let's count the corners as we go.
 `;
   // the lanterns at the ends of the three crossings: the card's one takes a flame (west end of the middle crossing in
   // pattern 0, east end of the first crossing in pattern 1)
@@ -177,7 +181,8 @@ narr: {札|ふだ} に {道順|みちじゅん} が {書|か}いて ある 。 |
 !if hall.w1.t4 -> other
 ${pats.map((p) => `!if hall.w1.pat=${p} -> right`).join('\n')}
 narr: {灯籠|とうろう} に {火|ひ} を {近|ちか}づけて も 、 {入|はい}らない 。 {札|ふだ} の {灯籠|とうろう} では ない よう だ 。 || You hold a flame to the lantern, but it won't take. This doesn't seem to be the one on the card.
-?(comp) comp: {角|かど} を {数|かぞ}え{直|なお}して みよう か 。 {入|い}り{口|ぐち} から 、 もう {一度|いちど} 。 || Shall we count the corners again? From the way in, once more.
+?(comp&comp!=ren) comp: {角|かど} を {数|かぞ}え{直|なお}して みよう か 。 {入|い}り{口|ぐち} から 、 もう {一度|いちど} 。 || Shall we count the corners again? From the way in, once more.
+?(comp=ren) comp: {角|かど} を {数|かぞ}え{直|なお}して みましょう か 。 {入|い}り{口|ぐち} から 、 もう {一度|いちど} 。 || Shall we count the corners again? From the way in, once more.
 !end
 :right
 narr: {火|ひ} が {入|はい}った 。 {灯籠|とうろう} の {窓|まど} が 、 {温|あたた}かく {光|ひか}る 。 || The flame takes. The lantern's window glows warm.
@@ -235,11 +240,13 @@ narr: {地図|ちず} の {泉|いずみ} に 、 {小|ちい}さな {印|しる
 !if !xp_hall_w1_f1_asked -> stone
 !if hall.w1.pat=${pat} -> found
 narr: {石|いし} を {動|うご}かして も 、 {乾|かわ}いた {土|つち} だけ 。 {地図|ちず} の {話|はなし} と 、 {場所|ばしょ} が {違|ちが}う よう だ 。 || You move the stone: only dry earth. This doesn't seem to be where the map said.
-?(comp) comp: {地図|ちず} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the map said again?
+?(comp&comp!=ren) comp: {地図|ちず} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the map said again?
+?(comp=ren) comp: {地図|ちず} を 、 もう {一度|いちど} {読|よ}みましょう か 。 || Shall I read the map again?
 !end
 :found
 narr: {石|いし} の {下|した} から 、 {水|みず} が {湧|わ}き{出|だ}した 。 {小|ちい}さな {泉|いずみ} 。 || Water wells up from under the stone. A little spring.
-?(comp) comp: {地図|ちず} の {通|とお}り だ 。 {読|よ}んで 、 {歩|ある}いて 、 {見|み}つけた 。 || Just as the map said. Read it, walked it, found it.
+?(comp&comp!=ren) comp: {地図|ちず} の {通|とお}り だ 。 {読|よ}んで 、 {歩|ある}いて 、 {見|み}つけた 。 || Just as the map said. Read it, walked it, found it.
+?(comp=ren) comp: {地図|ちず} の {通|とお}り です 。 {読|よ}んで 、 {歩|ある}いて 、 {見|み}つけました 。 || Just as the map said. Read it, walked it, found it.
 !set xp_hall_w1_f1_t6
 !hook hall_trial w1 t6
 !refresh
@@ -295,7 +302,8 @@ narr: オタミ の {札|ふだ} 。 {灯|ひ} を {点|つ}ける {順番|じ�
     }
     out += `:wrong
 narr: {火|ひ} が {一瞬|いっしゅん} {燃|も}え{上|あ}がって 、 {消|き}えた 。 {点|つ}いて いた {灯籠|とうろう} も 、 {全部|ぜんぶ} {消|き}えて しまった 。 || The flame flares for a moment and dies, and every lamp that was lit goes out with it.
-?(comp) comp: {順番|じゅんばん} が {違|ちが}った みたい だ 。 {札|ふだ} を もう {一度|いちど} {読|よ}もう 。 || Wrong order, it seems. Let's read the note again.
+?(comp&comp!=ren) comp: {順番|じゅんばん} が {違|ちが}った みたい だ 。 {札|ふだ} を もう {一度|いちど} {読|よ}もう 。 || Wrong order, it seems. Let's read the note again.
+?(comp=ren) comp: {順番|じゅんばん} が {違|ちが}った よう です 。 {札|ふだ} を もう {一度|いちど} {読|よ}みましょう 。 || Wrong order, it seems. Let's read the note again.
 ${reset8}
 !refresh
 !end

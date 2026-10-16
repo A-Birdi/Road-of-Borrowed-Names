@@ -62,7 +62,7 @@ RB.lex.add(RB.lex.parseTable(`
 仲直り|なかなおり|vs|I|making up (after a quarrel)
 長|おさ|n|A|the head (of a village, a town); a chief
 合間|あいま|n|A|a gap, an interval (between things)
-わい||prt|A|sentence ending: emphasis (an old man's way of speaking)
+わい||prt|A|sentence ending: emphasis (an old man's way of speaking)|Old-fashioned; in stories and drama, with わし, a conventional old man's voice. Recognise it; don't copy it.
 重大|じゅうだい|adj-na|A|serious, grave (責任重大: a heavy responsibility)
 幕橋|まくばし|name|E|the Curtain Bridge (Playhouse Row's bridge; fictional)
 戸惑う|とまどう|v5u|A|to be at a loss, to be bewildered

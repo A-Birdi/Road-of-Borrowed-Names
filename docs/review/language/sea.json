@@ -11,10 +11,10 @@
   "jp": "{地図|ちず} に は 、 {点|てん} {一|ひと}つ で {描|か}いて ある {島|しま} だ 。 {来|き}て みる と 、 {点|てん} より は {大|おお}きい な 。",
   "en": "On the chart it's a single dot. Up close it's a bit bigger than a dot."
  },
- "scene:sea.islet_arrive#4w7hvn": {
+ "scene:sea.islet_arrive#h0shil": {
   "status": "self-reviewed",
-  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
-  "jp": "{誰|だれ} も いない {島|しま} です ね 。 …… たまに は 、 いい です 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{誰|だれ} も いない {島|しま} 。 …… たまに は 、 いい ね 。",
   "en": "An island with nobody on it. …Now and then, that's nice."
  },
  "scene:sea.islet_arrive#h0xali": {

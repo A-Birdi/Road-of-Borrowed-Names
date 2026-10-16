@@ -393,7 +393,7 @@ narr: {門|もん} は 、 {定|さだ}め を {正|ただ}しく {読|よ}む {
 narr: {水|みず} の {門|もん} が 、 {音|おと} も なく {引|ひ}いて いく 。 {板|いた} の {橋|はし} が 、 {濡|ぬ}れた {背中|せなか} を {見|み}せた 。 || The gate of water draws back without a sound. The plank bridge shows its wet back.
 narr: カサネ の {貼|は}り{紙|がみ} が 、 {水|みず} を {吸|す}って {剥|は}がれ{落|お}ちた 。 || Kasane's note soaks through and peels away.
 ?(comp=nao) !gesture comp point prop:sign
-?(comp=nao) nao: 「 もし 」 は 「 もし 」 だ 。 「 だけ 」 を {足|た}した の は カサネ だ 。 || "If" means "if". Kasane's the one who added "only".
+?(comp=nao) nao: 「 {求|もと}められれば 」 は 、 「 {求|もと}められた {時|とき} だけ 」 じゃ ない 。 そう {読|よ}んだ の は カサネ だ 。 || "If asked" doesn't mean "only when asked". That was Kasane's reading.
 ?(comp=mio) !gesture comp palm
 ?(comp=mio) mio: {写|うつ}し を {守|まも}る の は 、 {薬|くすり} の {控|ひか}え と {同|おな}じ 。 {患者|かんじゃ} から {薬|くすり} を {取|と}り{上|あ}げる ため じゃ ない 。 || Keeping copies is like keeping a prescription on file. It's not so you can take the medicine off the patient.
 ?(comp=ren) !gesture comp observe prop:sign
@@ -465,7 +465,7 @@ narr: {引|ひ}き{出|だ}し いっぱい の {紙|かみ} 。 {全部|ぜん�
 narr: 「 {返|かえ}して ください 。 やっぱり {覚|おぼ}えて いたい 。 」 「 {孫|まご} が {生|う}まれた ので 、 {夫|おっと} の {声|こえ} を {聞|き}かせたい 。 」 「 {間違|まちが}えました 。 」 || "Please give it back. I'd rather remember, after all." "My grandchild's been born; I want her to hear her grandfather's voice." "I made a mistake."
 narr: どれ に も {同|おな}じ {判|はん} 。 「 {未処理|みしょり} 」 。 いちばん {上|うえ} の {一枚|いちまい} は 、 タエ と いう {人|ひと} の もの だ 。 {五年|ごねん} {前|まえ} の {日付|ひづけ} 。 || Every one bears the same stamp: "Unprocessed". The one on top is from someone called Tae, dated five years ago.
 ?(comp=nao) !gesture comp emphatic
-?(comp=nao) nao[angry]: {定|さだ}め に は 「 {求|もと}め {有|あ}らば {必|かなら}ず {返|かえ}す 」 だ 。 {求|もと}め は 、 ここ に {山|やま} ほど ある 。 || The charter says "whenever asked, shall return". Here's a mountain of asking.
+?(comp=nao) nao[angry]: {定|さだ}め に は 「 {求|もと}め {有|あ}らば {必|かなら}ず {返|かえ}す べし 」 って ある 。 {求|もと}め は 、 ここ に {山|やま} ほど ある 。 || The charter says "whenever asked, shall return". Here's a mountain of asking.
 ?(comp=mio) !gesture comp shake
 ?(comp=mio) mio: {断|ことわ}る の で も なく 、 {返事|へんじ} を しない 。 …… それ が 、 {一番|いちばん} {残酷|ざんこく} な {断|ことわ}り{方|かた} だ よ 。 || Not refusing — just not answering. …That's the cruellest way to say no.
 ?(comp=ren) !gesture comp shake

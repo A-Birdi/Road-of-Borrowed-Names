@@ -14,7 +14,8 @@ RB.script.add(`
 narr: {大|おお}きな {芝居小屋|しばいごや} 。 {赤|あか} と {藍|あい} の のぼり が 、 {川風|かわかぜ} に {揺|ゆ}れて いる 。 || A great playhouse. Red and indigo banners stir in the wind off the river.
 narr: {入|い}り{口|ぐち} の {番付|ばんづけ} に は 、 {役|やく} の {名前|なまえ} の {所|ところ} だけ 、 {白|しろ}い {穴|あな} が {開|あ}いて いる 。 || On the playbill by the entrance, only the names of the parts have gone: white holes where they were.
 ?(comp=suzu) comp[shy]: …… {芝居小屋|しばいごや} の {匂|にお}い 。 {木|き} と 、 {白粉|おしろい} と 、 {埃|ほこり} 。 {久|ひさ}しぶり ね 。 || …The smell of a playhouse. Wood, face powder, dust. It's been a while.
-?(comp!=suzu) comp: {役|やく} の {名前|なまえ} だけ が {消|き}えて いる 。 {役者|やくしゃ} の {名前|なまえ} は {残|のこ}って いる のに 。 || Only the parts' names are gone. The actors' names are still there.
+?(comp!=suzu&comp!=ren) comp: {役|やく} の {名前|なまえ} だけ が {消|き}えて いる 。 {役者|やくしゃ} の {名前|なまえ} は {残|のこ}って いる のに 。 || Only the parts' names are gone. The actors' names are still there.
+?(comp=ren) comp: {役|やく} の {名前|なまえ} だけ が {消|き}えて います 。 {役者|やくしゃ} の {名前|なまえ} は {残|のこ}って いる のに 。 || Only the parts' names are gone. The actors' names are still there.
 
 @scene mp.manbe_first
 !faceplayer
@@ -148,7 +149,9 @@ narr: {客席|きゃくせき} が どっと {沸|わ}いた 。 {八百橋|や�
 ?(comp=suzu) comp[laugh]: …… ありがとう 、 {相方|あいかた} 。 {久|ひさ}しぶり に 、 {舞台|ぶたい} で {笑|わら}った わ 。 {間|ま} の {取|と}り{方|かた} 、 {悪|わる}く ない わ よ 。 || …Thank you, partner. It's been a long time since I laughed on a stage. Your timing's not bad at all.
 ?(comp=suzu) !set mp_ev_suzu_act
 ?(comp!=suzu) mp_genta: いい ツッコミ だった ！ {相方|あいかた} が {治|なお}る まで 、 {代|か}わり を {頼|たの}みたい くらい だ 。 || Great straight work! I'd have you stand in till my partner's better, if I could.
-?(comp!=suzu) comp[laugh]: {意外|いがい} な {才能|さいのう} だ な 。 || An unexpected talent.
+?(comp!=suzu&comp!=ren&comp!=mio) comp[laugh]: {意外|いがい} な {才能|さいのう} だ な 。 || An unexpected talent.
+?(comp=mio) comp[laugh]: {意外|いがい} な {才能|さいのう} ね 。 || An unexpected talent.
+?(comp=ren) comp[laugh]: {意外|いがい} な {才能|さいのう} です ね 。 || An unexpected talent.
 !set mp_manzai_done
 
 @scene mp.genta_after
@@ -160,7 +163,9 @@ mp_genta: {祭|まつ}り の {晩|ばん} の {漫才|まんざい} 、 {大入
 !faceplayer
 mp_saku: …… {僕|ぼく} の {芸名|げいめい} が 、 {思|おも}い{出|だ}せない ん です 。 {舞台|ぶたい} に {立|た}つ と 、 {誰|だれ} として {立|た}てば いい の か 、 {分|わ}からなく なる 。 || …I can't remember my stage name. When I stand on the stage, I don't know who I'm supposed to be standing there as.
 ?(comp=suzu) comp: {名前|なまえ} が なくて も 、 {台詞|せりふ} は {体|からだ} が {覚|おぼ}えて いる わ 。 {一緒|いっしょ} に 、 {読|よ}んで みましょう 。 || Your body remembers the lines, even without the name. Let's read them together.
-?(comp!=suzu) comp: {台詞|せりふ} を {一緒|いっしょ} に {読|よ}んで みません か 。 {名前|なまえ} より {先|さき} に 、 {役|やく} が {戻|もど}る かも しれない 。 || Shall we read your lines together? The part might come back before the name does.
+?(comp!=suzu&comp!=ren&comp!=nao) comp: {台詞|せりふ} を {一緒|いっしょ} に {読|よ}んで みません か 。 {名前|なまえ} より {先|さき} に 、 {役|やく} が {戻|もど}る かも しれない 。 || Shall we read your lines together? The part might come back before the name does.
+?(comp=nao) comp: {台詞|せりふ} 、 {一緒|いっしょ} に {読|よ}んで みる か 。 {名前|なまえ} より {先|さき} に 、 {役|やく} が {戻|もど}る かも しれない 。 || Shall we read your lines together? The part might come back before the name does.
+?(comp=ren) comp: {台詞|せりふ} を {一緒|いっしょ} に {読|よ}んで みません か 。 {名前|なまえ} より {先|さき} に 、 {役|やく} が {戻|もど}る かも しれません 。 || Shall we read your lines together? The part might come back before the name does.
 !quest mp_actor start
 !quest mp_actor 1
 

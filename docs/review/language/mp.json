@@ -155,10 +155,10 @@
   "jp": "…… ツル さん の {言葉|ことば} と 、 {一字|いちじ} も {違|ちが}わない 。 {何百年|なんびゃくねん} {前|まえ} の {版木|はんぎ} が 、 {同|おな}じ こと を {言|い}ってる 。",
   "en": "…Not one word different from what Tsuru said. A block hundreds of years old says exactly the same."
  },
- "scene:mp.oldest_block#1y0stn8": {
+ "scene:mp.oldest_block#ry5p38": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "ツル さん の {言葉|ことば} と 、 {同|おな}じ …… 。 {昔|むかし} の {昔|むかし} から 、 {同|おな}じ こと が あった の ？",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "ツル さん の {言葉|ことば} と 、 {同|おな}じ …… 。 そんな {昔|むかし} から 、 {同|おな}じ こと が あった の ？",
   "en": "The same as Tsuru's words… Has this been happening since long, long ago?"
  },
  "scene:mp.oldest_block#18sn907": {
@@ -347,10 +347,22 @@
   "jp": "いや …… それ は 、 {秘伝|ひでん} で …… 。",
   "en": "Well… that's a secret recipe…"
  },
- "scene:mp.tokube#18zu96i": {
+ "scene:mp.tokube#a28hkw": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "{何|なん} でも {治|なお}る は 、 {何|なに} も {治|なお}らない と {同|おな}じ かも ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "「 {何|なん} でも {治|なお}る 」 って 、 「 {何|なに} も {治|なお}らない 」 の と {同|おな}じ かも ね 。",
+  "en": "\"Cures everything\" might be the same as \"cures nothing\"."
+ },
+ "scene:mp.tokube#1xk4ahi": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "「 {何|なん} でも {治|なお}る 」 って の は 、 「 {何|なに} も {治|なお}らない 」 の と {同|おな}じ かも な 。",
+  "en": "\"Cures everything\" might be the same as \"cures nothing\"."
+ },
+ "scene:mp.tokube#1fudzxa": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "「 {何|なん} でも {治|なお}る 」 と いう の は 、 「 {何|なに} も {治|なお}らない 」 の と {同|おな}じ かも しれません 。",
   "en": "\"Cures everything\" might be the same as \"cures nothing\"."
  },
  "scene:mp.kakeru#1v9y9qu": {
@@ -435,6 +447,12 @@
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
   "jp": "{役|やく} の {名前|なまえ} だけ が {消|き}えて いる 。 {役者|やくしゃ} の {名前|なまえ} は {残|のこ}って いる のに 。",
+  "en": "Only the parts' names are gone. The actors' names are still there."
+ },
+ "scene:mp.playhouse_first#ylo5v5": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{役|やく} の {名前|なまえ} だけ が {消|き}えて います 。 {役者|やくしゃ} の {名前|なまえ} は {残|のこ}って いる のに 。",
   "en": "Only the parts' names are gone. The actors' names are still there."
  },
  "scene:mp.manbe_first#u8dqlq": {
@@ -821,6 +839,18 @@
   "jp": "{意外|いがい} な {才能|さいのう} だ な 。",
   "en": "An unexpected talent."
  },
+ "scene:mp.manzai#hveca": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{意外|いがい} な {才能|さいのう} ね 。",
+  "en": "An unexpected talent."
+ },
+ "scene:mp.manzai#1qx20as": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{意外|いがい} な {才能|さいのう} です ね 。",
+  "en": "An unexpected talent."
+ },
  "scene:mp.genta_after#1exogeq": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
@@ -843,6 +873,18 @@
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
   "jp": "{台詞|せりふ} を {一緒|いっしょ} に {読|よ}んで みません か 。 {名前|なまえ} より {先|さき} に 、 {役|やく} が {戻|もど}る かも しれない 。",
+  "en": "Shall we read your lines together? The part might come back before the name does."
+ },
+ "scene:mp.saku_first#1hpvkr9": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{台詞|せりふ} 、 {一緒|いっしょ} に {読|よ}んで みる か 。 {名前|なまえ} より {先|さき} に 、 {役|やく} が {戻|もど}る かも しれない 。",
+  "en": "Shall we read your lines together? The part might come back before the name does."
+ },
+ "scene:mp.saku_first#15nw2cf": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{台詞|せりふ} を {一緒|いっしょ} に {読|よ}んで みません か 。 {名前|なまえ} より {先|さき} に 、 {役|やく} が {戻|もど}る かも しれません 。",
   "en": "Shall we read your lines together? The part might come back before the name does."
  },
  "scene:mp.saku_rehearse#buy4jq": {
@@ -2104,6 +2146,12 @@
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
   "jp": "{見|み}えて いる のに 、 いない こと に する の か 。 …… {声|こえ} を かけて みよう 。",
   "en": "You can see it, and it counts as not there? …Say something to it."
+ },
+ "scene:mp.kuroko_meet#bk4odt": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{見|み}えて いる のに 、 いない こと に する の です か 。 …… {声|こえ} を かけて みましょう 。",
+  "en": "You can see it, and it counts as not there? …Let's say something to it."
  },
  "scene:mp.kuroko_meet#vz46tn": {
   "status": "self-reviewed",

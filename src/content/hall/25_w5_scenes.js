@@ -26,7 +26,8 @@ narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {夏|なつ} の {�
 @scene hall.w5.f2_first
 !set hall_w5_f2_seen
 narr: {村|むら} の {西|にし} の {外|はず}れ 、 {柳|やなぎ} の {下|した} に {古|ふる}い {井戸|いど} 。 {覗|のぞ}く と 、 {水|みず} が {暗|くら}く {淀|よど}んで いる 。 || At the west end of the village, an old well under a willow. Looking in, the water lies dark and still.
-?(comp) comp: {苦|にが}い {井戸|いど} 、 か 。 {誰|だれ} の せい か より 、 {何|なに} が {理由|りゆう} か を {知|し}りたい ね 。 || The bitter well. Never mind whose fault; I'd like to know what the reason is.
+?(comp&comp!=ren) comp: {苦|にが}い {井戸|いど} 、 か 。 {誰|だれ} の せい か より 、 {何|なに} が {理由|りゆう} か を {知|し}りたい ね 。 || The bitter well. Never mind whose fault; I'd like to know what the reason is.
+?(comp=ren) comp: {苦|にが}い {井戸|いど} 、 です か 。 {誰|だれ} の せい か より 、 {何|なに} が {理由|りゆう} か を {知|し}りたい です ね 。 || The bitter well. Never mind whose fault; I'd like to know what the reason is.
 
 @scene hall.w5.f3_first
 !set hall_w5_f3_seen
@@ -121,7 +122,8 @@ ${who}: {直|なお}った ！ ありがとう 。 || It's fixed! Thank you.
 @scene hall.w5.e_${pr}
 !if ${FIXED(pr)} -> done
 narr: ${EFFECT[pr][0]} || ${EFFECT[pr][1]}
-?(comp) comp: ここ に は 、 {困|こま}った こと が {見|み}えて いる だけ 。 どうして そう なった か 、 {誰|だれ} か に {聞|き}いて みよう 。 || Here the trouble only shows. Let's ask someone why it happens.
+?(comp&comp!=ren) comp: ここ に は 、 {困|こま}った こと が {見|み}えて いる だけ 。 どうして そう なった か 、 {誰|だれ} か に {聞|き}いて みよう 。 || Here the trouble only shows. Let's ask someone why it happens.
+?(comp=ren) comp: ここ に は 、 {困|こま}った こと が {見|み}えて いる だけ です 。 どうして そう なった か 、 {誰|だれ} か に {聞|き}いて みましょう 。 || Here the trouble only shows. Let's ask someone why it happens.
 !end
 :done
 narr: ${EFFECT[pr][2]} || ${EFFECT[pr][3]}
@@ -146,7 +148,8 @@ narr: ${EFFECT[pr][2]} || ${EFFECT[pr][3]}
 !end
 :all
 narr: {困|こま}った こと が 、 {三|みっ}つ とも {直|なお}った 。 {直|なお}した の は 、 {見|み}えて いる {所|ところ} で は なく 、 {理由|りゆう} の {所|ところ} だ 。 || All three troubles are mended, each at its reason rather than where it showed.
-?(comp) comp: {桶|おけ} を {叩|たた}いて も 、 {桶|おけ} は {上|あ}がらない もん ね 。 || Banging the bucket would never have brought it up.
+?(comp&comp!=ren) comp: {桶|おけ} を {叩|たた}いて も 、 {桶|おけ} は {上|あ}がらない もん ね 。 || Banging the bucket would never have brought it up.
+?(comp=ren) comp: {桶|おけ} を {叩|たた}いて も 、 {桶|おけ} は {上|あ}がりません から ね 。 || Banging the bucket would never have brought it up.
 ${K.mark(W, 0, 't2')}
 !end
 :done
@@ -168,7 +171,7 @@ narr: ${CAUSE[c][0]} 。 もう {大丈夫|だいじょうぶ} だ 。 || ${cap(
   out += '\n@scene hall.w5.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {村|むら} の {古|ふる}い {石|いし} に 、 {字|じ} が {刻|きざ}んで ある 。 「 {四|よっ}つ の {言葉|ことば} の うち 、 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 || Carved on an old village stone: "Of the four sayings, one alone is wrong."'],
     task: { 0: 'hall.w5.counter0', 1: 'hall.w5.counter1' },
-    after: ['narr: {間違|まちが}った {言葉|ことば} が 、 {乾|かわ}いた {風|かぜ} に {消|き}えた 。 || The wrong saying blows away on the dry wind.', '?(comp) comp: {理由|りゆう} が {合|あ}わない と 、 {話|はなし} が {全部|ぜんぶ} おかしく なる から ね 。 || When the reason doesn\'t fit, the whole story goes wrong.'],
+    after: ['narr: {間違|まちが}った {言葉|ことば} が 、 {乾|かわ}いた {風|かぜ} に {消|き}えた 。 || The wrong saying blows away on the dry wind.', '?(comp&comp!=ren) comp: {理由|りゆう} が {合|あ}わない と 、 {話|はなし} が {全部|ぜんぶ} おかしく なる から ね 。 || When the reason doesn\'t fit, the whole story goes wrong.', '?(comp=ren) comp: {理由|りゆう} が {合|あ}わない と 、 {話|はなし} が {全部|ぜんぶ} おかしく なります から ね 。 || When the reason doesn\'t fit, the whole story goes wrong.'],
     later: 'narr: {言葉|ことば} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the sayings one by one, then come back.',
     done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
   for (let i = 0; i < 4; i++) {
@@ -218,7 +221,8 @@ narr: {札|ふだ} を もう {一度|いちど} {読|よ}もう 。 どうし�
 !end
 :all
 narr: {四|よっ}つ の {瓶|かめ} が 、 {飲|の}める {物|もの} と {飲|の}めない {物|もの} に {分|わ}けられた 。 || The four jars are sorted: what can be drunk, and what can't.
-?(comp) comp: {東|ひがし} だ から {甘|あま}い 、 {西|にし} だ から {苦|にが}い 、 じゃ ない ん だ ね 。 {理由|りゆう} を {最後|さいご} まで {読|よ}まない と 。 || It's not "east, so sweet" and "west, so bitter". You have to read the reason to the end.
+?(comp&comp!=ren) comp: {東|ひがし} だ から {甘|あま}い 、 {西|にし} だ から {苦|にが}い 、 じゃ ない ん だ ね 。 {理由|りゆう} を {最後|さいご} まで {読|よ}まない と 。 || It's not "east, so sweet" and "west, so bitter". You have to read the reason to the end.
+?(comp=ren) comp: {東|ひがし} だ から {甘|あま}い 、 {西|にし} だ から {苦|にが}い 、 で は ない ん です ね 。 {理由|りゆう} は 、 {最後|さいご} まで {読|よ}む もの です 。 || It's not "east, so sweet" and "west, so bitter". A reason is something you read to the end.
 ${K.mark(W, 1, 't4')}
 !end
 `;
@@ -269,11 +273,13 @@ narr: {記録|きろく} は 、 {西|にし} の {井戸|いど} の {頁|ペ�
 narr: ${FIX6[f][0]} 。 || ${cap(FIX6[f][1])}.
 !if !xp_hall_w5_f1_asked -> unknown
 ${FIX6[f][4] >= 0 ? '!if hall.w5.pat=' + FIX6[f][4] + ' -> right\n' : ''}narr: {記録|きろく} の {理由|りゆう} と は 、 {関係|かんけい} が ない よう だ 。 これ で は 、 {水|みず} は {苦|にが}い まま だ 。 || This has nothing to do with the reason in the record, it seems. The water would stay bitter.
-?(comp) comp: {記録|きろく} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the record said again?
+?(comp&comp!=ren) comp: {記録|きろく} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the record said again?
+?(comp=ren) comp: {記録|きろく} を 、 もう {一度|いちど} {読|よ}みましょう か 。 || Shall I read the record again?
 !end
 ${FIX6[f][4] >= 0 ? `:right
 narr: ${FIX6[f][2]} || ${FIX6[f][3]}
-?(comp) comp: {理由|りゆう} が {分|わ}かれば 、 {直|なお}し {方|かた} も {分|わ}かる 。 {誰|だれ} の せい でも なかった ね 。 || Know the reason and you know the remedy. It was nobody's fault after all.
+?(comp&comp!=ren) comp: {理由|りゆう} が {分|わ}かれば 、 {直|なお}し {方|かた} も {分|わ}かる 。 {誰|だれ} の せい でも なかった ね 。 || Know the reason and you know the remedy. It was nobody's fault after all.
+?(comp=ren) comp: {理由|りゆう} が {分|わ}かれば 、 {直|なお}し {方|かた} も {分|わ}かる 。 {誰|だれ} の せい でも なかった ん です ね 。 || Know the reason and you know the remedy. It was nobody's fault after all.
 ${K.mark(W, 1, 't6')}
 !end
 ` : ''}:unknown
@@ -312,7 +318,8 @@ narr: ${FIX6[f][0]} 。 || ${cap(FIX6[f][1])}.
   out += `
 @scene hall.w5.t8_board
 narr: {井戸替|いどが}え の {仕事|しごと} の {札|ふだ} 。 「 {桶|おけ} {運|はこ}び 、 {綱|つな} {持|も}ち 、 {数|かず} {数|かぞ}え 。 {一人|ひとり} {一|ひと}つ ずつ 。 」 || The well-cleaning's job board: "Hauling buckets, holding the rope, counting. One each."
-?(comp&!hall.w5.t8) comp: {誰|だれ} に {何|なに} が できる か 、 {理由|りゆう} を {聞|き}いて から {決|き}めよう 。 || Let's hear everyone's reasons before we decide who does what.
+?(comp&!hall.w5.t8&comp!=ren) comp: {誰|だれ} に {何|なに} が できる か 、 {理由|りゆう} を {聞|き}いて から {決|き}めよう 。 || Let's hear everyone's reasons before we decide who does what.
+?(comp=ren&!hall.w5.t8) comp: {誰|だれ} に {何|なに} が できる か 、 {理由|りゆう} を {聞|き}いて から {決|き}めましょう 。 || Let's hear everyone's reasons before we decide who does what.
 `;
   for (const g of Object.keys(JOB)) out += `
 @scene hall.w5.tag_${g}
@@ -358,7 +365,8 @@ narr: 「 ${JOB[g][0]} 」 の {札|ふだ} を ${jp} に {渡|わた}した 。
 !end
 :all
 narr: {三|みっ}つ の {仕事|しごと} が 、 それぞれ {合|あ}う {人|ひと} に {決|き}まった 。 || The three jobs have each gone to the one they suit.
-?(comp) comp: できない {理由|りゆう} を {聞|き}けば 、 できる こと も {分|わ}かる 。 {上手|うま}く {分|わ}けられた ね 。 || Hear why someone can't, and you learn what they can. Nicely shared out.
+?(comp&comp!=ren) comp: できない {理由|りゆう} を {聞|き}けば 、 できる こと も {分|わ}かる 。 {上手|うま}く {分|わ}けられた ね 。 || Hear why someone can't, and you learn what they can. Nicely shared out.
+?(comp=ren) comp: できない {理由|りゆう} を {聞|き}けば 、 できる こと も {分|わ}かる 。 {上手|うま}く {分|わ}けられました ね 。 || Hear why someone can't, and you learn what they can. Nicely shared out.
 ${K.mark(W, 2, 't8')}
 !end
 :done
@@ -419,7 +427,7 @@ narr: {井戸|いど} の {水|みず} が 、 {空|そら} を {映|うつ}し�
 narr: {夕方|ゆうがた} 、 {東|ひがし} の {家|いえ} と {西|にし} の {家|いえ} が 、 {同|おな}じ {鍋|なべ} で {夕飯|ゆうはん} を {作|つく}った 。 {水|みず} は 、 {二|ふた}つ の {井戸|いど} から {半分|はんぶん} ずつ 。 || In the evening the east house and the west house cook supper in one pot, with water from both wells, half and half.
 hall_kero: {井|い} の {中|なか} の {蛙|かわず} 、 {大海|たいかい} を {知|し}らず 。 でも 、 {二|ふた}つ の {井戸|いど} の {仲直|なかなお}り は 、 {知|し}って いる よ 。 || The frog in the well knows nothing of the great sea. But it knows two wells making up.
 ?(comp=nao) comp: {両方|りょうほう} から {水|みず} を {汲|く}む 。 {両方|りょうほう} へ {手紙|てがみ} を {届|とど}ける 。 {同|おな}じ こと だ な 。 || Water from both. Letters to both. The same thing.
-?(comp=mio) comp[happy]: から 、 のに 、 おかげ 、 せい 。 {理由|りゆう} の {言|い}い{方|かた} {一|ひと}つ で 、 {喧嘩|けんか} に も {仲直|なかなお}り に も なる のね 。 || Because, even though, thanks to, because of. One way of giving a reason, and it's a quarrel; another, and it's making up.
+?(comp=mio) comp[happy]: {同|おな}じ {鍋|なべ} の {夕飯|ゆうはん} 。 {仲直|なかなお}り の {味|あじ} が する のね 。 || Supper from one pot. It tastes of making up.
 ?(comp=ren) comp: {灯|ひ} が {五|いつ}つ 、 {戻|もど}りました 。 {半分|はんぶん} まで {来|き}ました ね 。 || Five lights back. We're halfway.
 ?(comp=suzu) comp: {第|だい}{五幕|ごまく} 、 {幕|まく} ！ {悪役|あくやく} なし の {大団円|だいだんえん} よ 。 {拍手|はくしゅ} ！ || End of act five! A happy ending with no villain. Applause!
 !sequence hall.w5 end

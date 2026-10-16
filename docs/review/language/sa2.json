@@ -59,10 +59,10 @@
   "jp": "…… {聞|き}こえた 。 {名前|なまえ} だけ は 、 ちゃんと {届|とど}いた 。 …… {一番|いちばん} {大事|だいじ} な {郵便|ゆうびん} だ な 。",
   "en": "…I heard it. My name, at least, got through. …The most important post there is."
  },
- "scene:sa2.hushed#1hcl8n0": {
+ "scene:sa2.hushed#vkp249": {
   "status": "self-reviewed",
-  "ref": "P14 self-review: the last chapter in a twelve-chapter journey (the hushed voice at the Archive's gate and the name called back, the four companions' arc endings at the bridge, the ending's romance moment answered three ways, the name-calling step's look-alikes) and the New Game+ farewell (each companion's unfinished work, the solo version, the road folding back); checked against the lexicon and grammar notes and the companions' existing lines, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the Keepers' Road is 灯守の道 (灯の道 is the Lantern Road); Nao goes to collect the letters (ちゃんと取りに行く), not to 'empty' the shelf",
-  "jp": "…… {聞|き}こえました 。 {名前|なまえ} を {呼|よ}んで もらう と 、 {声|こえ} って {戻|もど}る ん です ね 。 {薬|くすり} に は 、 できない こと です 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "…… {聞|き}こえた 。 {名前|なまえ} を {呼|よ}んで もらう と 、 {声|こえ} って {戻|もど}る ん だ ね 。 {薬|くすり} に は 、 できない こと 。",
   "en": "…I heard it. When someone calls your name, your voice comes back. That's something no medicine can do."
  },
  "scene:sa2.hushed#y60ttu": {
@@ -173,16 +173,16 @@
   "jp": "{棚|たな} の {札|ふだ} に は 、 {効|き}く こと と 、 {効|き}かない こと が 、 {両方|りょうほう} {書|か}いて ある 。",
   "en": "Each label on the shelves says what the remedy does, and what it doesn't."
  },
- "scene:sa2.end_mio#yetke4": {
+ "scene:sa2.end_mio#5mez4i": {
   "status": "self-reviewed",
-  "ref": "P14 self-review: the last chapter in a twelve-chapter journey (the hushed voice at the Archive's gate and the name called back, the four companions' arc endings at the bridge, the ending's romance moment answered three ways, the name-calling step's look-alikes) and the New Game+ farewell (each companion's unfinished work, the solo version, the road folding back); checked against the lexicon and grammar notes and the companions' existing lines, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the Keepers' Road is 灯守の道 (灯の道 is the Lantern Road); Nao goes to collect the letters (ちゃんと取りに行く), not to 'empty' the shelf",
-  "jp": "キクエ さん の {札|ふだ} の {真似|まね} です 。 …… {正直|しょうじき} な {札|ふだ} は 、 {書|か}く の に {時間|じかん} が かかります 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "キクエ さん の {札|ふだ} の {真似|まね} 。 …… {正直|しょうじき} な {札|ふだ} は 、 {書|か}く の に {時間|じかん} が かかる の 。",
   "en": "I copied Kikue's labels. …Honest labels take a long time to write."
  },
- "scene:sa2.end_mio#urqqxs": {
+ "scene:sa2.end_mio#dgwccm": {
   "status": "self-reviewed",
-  "ref": "P14 self-review: the last chapter in a twelve-chapter journey (the hushed voice at the Archive's gate and the name called back, the four companions' arc endings at the bridge, the ending's romance moment answered three ways, the name-calling step's look-alikes) and the New Game+ farewell (each companion's unfinished work, the solo version, the road folding back); checked against the lexicon and grammar notes and the companions' existing lines, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the Keepers' Road is 灯守の道 (灯の道 is the Lantern Road); Nao goes to collect the letters (ちゃんと取りに行く), not to 'empty' the shelf",
-  "jp": "{正直|しょうじき} な {札|ふだ} は 、 {書|か}く の に {時間|じかん} が かかります 。 でも 、 {嘘|うそ} の {札|ふだ} より 、 {夜|よる} よく {眠|ねむ}れます 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{正直|しょうじき} な {札|ふだ} は 、 {書|か}く の に {時間|じかん} が かかる 。 でも 、 {嘘|うそ} の {札|ふだ} より 、 {夜|よる} よく {眠|ねむ}れる の 。",
   "en": "Honest labels take a long time to write. But I sleep better than I would with lying ones."
  },
  "scene:sa2.end_mio#sizdlv": {
@@ -191,22 +191,22 @@
   "jp": "{棚|たな} の {一番|いちばん} {奥|おく} に 、 {札|ふだ} の ない {瓶|びん} が {一|ひと}つ ある 。",
   "en": "At the very back of the shelf there is one jar with no label."
  },
- "scene:sa2.end_mio#1on63wh": {
+ "scene:sa2.end_mio#1nng2ul": {
   "status": "self-reviewed",
-  "ref": "P14 self-review: the last chapter in a twelve-chapter journey (the hushed voice at the Archive's gate and the name called back, the four companions' arc endings at the bridge, the ending's romance moment answered three ways, the name-calling step's look-alikes) and the New Game+ farewell (each companion's unfinished work, the solo version, the road folding back); checked against the lexicon and grammar notes and the companions' existing lines, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the Keepers' Road is 灯守の道 (灯の道 is the Lantern Road); Nao goes to collect the letters (ちゃんと取りに行く), not to 'empty' the shelf",
-  "jp": "これ は 、 その まま 。 {決|き}めて いない こと の {場所|ばしょ} です 。 …… {中身|なかみ} は 、 だいぶ {減|へ}りました 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "これ は 、 その まま 。 {決|き}めて いない こと の {場所|ばしょ} 。 …… {中身|なかみ} は 、 だいぶ {減|へ}った よ 。",
   "en": "That one stays as it is. A place for what I haven't decided yet. …There's a lot less in it now."
  },
- "scene:sa2.end_mio#1qud15q": {
+ "scene:sa2.end_mio#drslub": {
   "status": "self-reviewed",
-  "ref": "P14 self-review: the last chapter in a twelve-chapter journey (the hushed voice at the Archive's gate and the name called back, the four companions' arc endings at the bridge, the ending's romance moment answered three ways, the name-calling step's look-alikes) and the New Game+ farewell (each companion's unfinished work, the solo version, the road folding back); checked against the lexicon and grammar notes and the companions' existing lines, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the Keepers' Road is 灯守の道 (灯の道 is the Lantern Road); Nao goes to collect the letters (ちゃんと取りに行く), not to 'empty' the shelf",
-  "jp": "{一番|いちばん} {古|ふる}い {紙|かみ} は 、 もう {入|はい}って いません 。 {返事|へんじ} を しました から 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{一番|いちばん} {古|ふる}い {紙|かみ} は 、 もう {入|はい}って ない 。 {返事|へんじ} を した から 。",
   "en": "The oldest scrap isn't in there any more. I answered it."
  },
- "scene:sa2.end_mio#142jku8": {
+ "scene:sa2.end_mio#1u8aohu": {
   "status": "self-reviewed",
-  "ref": "P14 self-review: the last chapter in a twelve-chapter journey (the hushed voice at the Archive's gate and the name called back, the four companions' arc endings at the bridge, the ending's romance moment answered three ways, the name-calling step's look-alikes) and the New Game+ farewell (each companion's unfinished work, the solo version, the road folding back); checked against the lexicon and grammar notes and the companions' existing lines, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the Keepers' Road is 灯守の道 (灯の道 is the Lantern Road); Nao goes to collect the letters (ちゃんと取りに行く), not to 'empty' the shelf",
-  "jp": "いつか 、 {全部|ぜんぶ} に {返事|へんじ} を します 。 {急|いそ}がず に 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "いつか 、 {全部|ぜんぶ} に {返事|へんじ} を する 。 {急|いそ}がず に 。",
   "en": "One day I'll answer all of them. Without hurrying."
  },
  "scene:sa2.end_ren#1pzzc93": {
@@ -287,10 +287,10 @@
   "jp": "…… ああ 。 {離|はな}す な よ 。 {出口|でぐち} は 、 {確|たし}かめなくて いい 。",
   "en": "…Yeah. Don't let go. No need to check the exits."
  },
- "scene:sa2.romance#1sz8o5e": {
+ "scene:sa2.romance#h79z9i": {
   "status": "self-reviewed",
-  "ref": "P14 self-review: the last chapter in a twelve-chapter journey (the hushed voice at the Archive's gate and the name called back, the four companions' arc endings at the bridge, the ending's romance moment answered three ways, the name-calling step's look-alikes) and the New Game+ farewell (each companion's unfinished work, the solo version, the road folding back); checked against the lexicon and grammar notes and the companions' existing lines, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the Keepers' Road is 灯守の道 (灯の道 is the Lantern Road); Nao goes to collect the letters (ちゃんと取りに行く), not to 'empty' the shelf",
-  "jp": "…… はい 。 {手|て} 、 {温|あたた}かい です ね 。 {今日|きょう} は 、 {薬|くすり} の {匂|にお}い が しない 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "…… はい 。 {手|て} 、 {温|あたた}かい ね 。 {今日|きょう} は 、 {薬|くすり} の {匂|にお}い が しない 。",
   "en": "…Yes. Your hand's warm. And today it doesn't smell of medicine."
  },
  "scene:sa2.romance#vk9ie7": {
@@ -317,10 +317,10 @@
   "jp": "…… {聞|き}く な よ 。 …… いい 。",
   "en": "…Don't ask. …Yes."
  },
- "scene:sa2.romance#1e7or2p": {
+ "scene:sa2.romance#1hryd07": {
   "status": "self-reviewed",
-  "ref": "P14 self-review: the last chapter in a twelve-chapter journey (the hushed voice at the Archive's gate and the name called back, the four companions' arc endings at the bridge, the ending's romance moment answered three ways, the name-calling step's look-alikes) and the New Game+ farewell (each companion's unfinished work, the solo version, the road folding back); checked against the lexicon and grammar notes and the companions' existing lines, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the Keepers' Road is 灯守の道 (灯の道 is the Lantern Road); Nao goes to collect the letters (ちゃんと取りに行く), not to 'empty' the shelf",
-  "jp": "…… はい 。 {私|わたし} も 、 そう したかった です 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "…… はい 。 {私|わたし} も 、 そう したかった 。",
   "en": "…Yes. I wanted that too."
  },
  "scene:sa2.romance#og0a24": {
@@ -347,10 +347,10 @@
   "jp": "ああ 。 {隣|となり} が {一番|いちばん} {歩|ある}きやすい 。 {相棒|あいぼう} 。",
   "en": "Yeah. Beside you is the easiest place to walk. Partner."
  },
- "scene:sa2.romance#1uysqq6": {
+ "scene:sa2.romance#iwrxcm": {
   "status": "self-reviewed",
-  "ref": "P14 self-review: the last chapter in a twelve-chapter journey (the hushed voice at the Archive's gate and the name called back, the four companions' arc endings at the bridge, the ending's romance moment answered three ways, the name-calling step's look-alikes) and the New Game+ farewell (each companion's unfinished work, the solo version, the road folding back); checked against the lexicon and grammar notes and the companions' existing lines, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the Keepers' Road is 灯守の道 (灯の道 is the Lantern Road); Nao goes to collect the letters (ちゃんと取りに行く), not to 'empty' the shelf",
-  "jp": "はい 。 {隣|となり} に いて くれる の が 、 {一番|いちばん} {安心|あんしん} します 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "うん 。 {隣|となり} に いて くれる の が 、 {一番|いちばん} {安心|あんしん} する 。",
   "en": "Yes. Having you beside me is what makes me feel safest."
  },
  "scene:sa2.romance#3ws701": {

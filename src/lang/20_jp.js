@@ -243,8 +243,15 @@ RB.jp = (function () {
     const v = vars ? mergedVars(vars) : Object.keys(defaultVars).length ? mergedVars() : null;
     const out = [];
     for (const raw of splitRaw(line)) out.push(...parseRaw(raw, v, errs));
-    // Context for lookup: the word token directly before (no punctuation between).
+    // Context for lookup: the word token directly before (no punctuation between); and for every word, what stands
+    // right before and after it ('' at the line's edge), for the few entries that fit only one place (RV-1 D6:
+    // sentence-final かい, explanatory なんだ after a word).
     for (let i = 1; i < out.length; i++) if (!out[i].punct && !out[i - 1].punct) out[i].after = out[i - 1].surface;
+    for (let i = 0; i < out.length; i++) {
+      if (out[i].punct) continue;
+      out[i].prev = i > 0 ? out[i - 1].surface : '';
+      out[i].next = i + 1 < out.length ? out[i + 1].surface : '';
+    }
     return out;
   }
 
@@ -642,11 +649,43 @@ RB.jp = (function () {
       // a name written in katakana (トキ, トモ, カネ) is not what a word in hiragana means (とき, とも, かね): reached by
       // its reading only, it comes after every other reading of the word (and still stands when there is none)
       if (c.e.pos === 'name' && !c.surf && c.e.w !== prefer && /^[\u30a0-\u30ff]+$/.test(c.e.w)) s += 150;
+      // before a trailing な (or んな), a verb is its stem (a soft command: 気を つけな, 来な; 届けんな) or a dictionary
+      // form (a prohibition), never a godan imperative (つけ of つく): an imperative + な is not Japanese
+      if (ctx && ctx.beforeNa && c.rules && c.rules.some((r) => /^imperative/.test(r.d))) s += 60;
       s += lvRank(c.e);
       return s;
     };
     const sorted = cands.slice().sort((a, b) => score(a) - score(b));
     return sorted;
+  }
+
+  /* Where a word stands (from parse: prev / next), for entries that fit one place only (RV-1 D6). An entry may say
+   *   final: true        only ending a phrase after a word (punctuation or the line's end next): sentence-final かい,
+   *                      not かい "oar" in かい を …, nor a bare かね (a bell);
+   *   endsSentence: true the same, but only before 。！？」… or the line's end: 見た とも 。 "certainly", not
+   *                      許す とも 、 許さない とも (and … and …);
+   *   notFirst: true     only after something in the same sentence: な + んだ after a word, not なんだ "what?";
+   *   afterEnd: [...]    only directly after a word ending so: かった after a negative in 〜ん (通れん かった).
+   * Only a whole token with a known place takes such an entry: never a bare string's guess, never a part of a token. */
+  const STARTS = new Set(Array.from('。！？!?「『（【〈《“‘〔(…‥―\n'));
+  const ENDS = new Set(Array.from('。！？!?」』）)】〉》”’〕…‥―\n'));
+  function placeOf(tk) {
+    if (tk.prev == null || tk.next == null) return null;
+    return {
+      fin: tk.next === '' || (isPunct(tk.next[0]) && !OPENERS.has(tk.next[0])),
+      end: tk.next === '' || ENDS.has(tk.next[0]),
+      first: tk.prev === '' || STARTS.has(tk.prev),
+      after: tk.after || null,
+    };
+  }
+  function fits(e, place) {
+    if (!e.final && !e.endsSentence && !e.notFirst && !e.afterEnd) return true;
+    if (!place) return false;
+    if (e.final && (!place.fin || place.first)) return false;
+    if (e.endsSentence && (!place.end || place.first)) return false;
+    if (e.notFirst && place.first) return false;
+    if (e.afterEnd && !(place.after && e.afterEnd.some((x) => place.after.endsWith(x)))) return false;
+    return true;
   }
 
   // Analyse a single unit (no splitting). Returns {entry, forms, others} | null.
@@ -657,7 +696,9 @@ RB.jp = (function () {
     const rh = hira(readingStr || surface);
     const kanaOnly = !K.hasKanji(surface);
     const cands = [];
+    const place = opts.ctx ? opts.ctx.place || null : null;
     const add = (e, rules, surf, readOk) => {
+      if (!fits(e, place)) return;
       if (!cands.some((c) => c.e === e)) cands.push({ e, rules, surf, readOk });
     };
     const exact = L.get(surface, rh);
@@ -731,7 +772,8 @@ RB.jp = (function () {
   // Function words (particles / copula / grammatical nouns) that may trail a word.
   function funcUnit(surface) {
     const L = lex();
-    let list = L.bySurface(surface).filter((e) => isFuncEntry(e));
+    // (an entry that fits one place only never ends another word: fits(e, null))
+    let list = L.bySurface(surface).filter((e) => isFuncEntry(e) && fits(e, null));
     if (!list.length && GRAM_TAIL.has(surface)) list = L.bySurface(surface).concat(L.byReading(surface)).filter((e) => !K.hasKanji(e.w) || e.w === '所');
     return list.length ? list[0] : null;
   }
@@ -778,6 +820,8 @@ RB.jp = (function () {
         punct: !!t.punct,
         ph: t.ph || null,
         after: t.after || null,
+        prev: t.prev != null ? t.prev : null,
+        next: t.next != null ? t.next : null,
       };
     }
     const toks = parse(String(t == null ? '' : t));
@@ -823,7 +867,7 @@ RB.jp = (function () {
     }
     const prefer = tk.lemma || null;
     // After a て-form, auxiliaries such as おく (置く) or みる (見る) are likely.
-    const ctx = { teAux: !!(tk.after && /[てで]$/.test(tk.after)) };
+    const ctx = { teAux: !!(tk.after && /[てで]$/.test(tk.after)), place: placeOf(tk) };
     const finish = (entry, forms, others) => {
       res.entry = entry;
       res.lemma = entry ? entry.w : prefer || surface;
@@ -876,8 +920,8 @@ RB.jp = (function () {
     const pts = splitPoints(tk);
     const rd = tk.reading;
     const memo = new Map();
-    const unit = (a, b) => {
-      const key = a.s + ':' + b.s;
+    const unit = (a, b, beforeNa) => {
+      const key = a.s + ':' + b.s + (beforeNa ? ':na' : '');
       if (memo.has(key)) return memo.get(key);
       const s = surface.slice(a.s, b.s);
       const r = rd.slice(a.r, b.r);
@@ -886,7 +930,8 @@ RB.jp = (function () {
       const seg = tk.segs.find((sg) => sg.ph && sg.t === s);
       if (seg) out = { ph: seg.ph, info: { surface: s, reading: r, entry: null, lemma: s, forms: [], romaji: K.romaji(r), meaning: null, name: seg.ph } };
       else {
-        const an = analyseUnit(s, r, prefer, { noCop: true, ctx: a.s === 0 ? ctx : null });
+        // (a part of a token has no place of its own: entries that fit one place only are for whole tokens)
+        const an = analyseUnit(s, r, prefer, { noCop: true, ctx: a.s === 0 ? Object.assign({}, ctx, { place: null, beforeNa: !!beforeNa }) : null });
         if (an) {
           const e = an.entry;
           const kanaOnly = !K.hasKanji(s);
@@ -903,7 +948,7 @@ RB.jp = (function () {
       const tail = surface.slice(p.s);
       const fs = segmentFunc(tail);
       if (!fs) continue;
-      const head = unit(pts[0], p);
+      const head = unit(pts[0], p, fs[0] && (fs[0].surface === 'な' || fs[0].surface === 'んな'));
       if (!head) continue;
       const parts = [head.info];
       let ri = p.r;

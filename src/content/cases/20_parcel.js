@@ -93,7 +93,7 @@ narr: {宛名|あてな} は 「 {工房|こうぼう} の {主|あるじ} 」 �
 ?(comp=nao) !gesture comp shake
 ?(comp=nao) comp: {誰|だれ} も いない {所|ところ} に {置|お}いたら 、 {届|とど}けた こと に は ならない よ 。 || Leaving it where nobody is doesn't count as delivering.
 ?(comp=mio) !gesture comp palm pc
-?(comp=mio) comp: {雨|あめ} が {降|ふ}ったら {濡|ぬ}れて しまいます 。 {持|も}って いきましょう 。 || If it rains, it'll get soaked. Let's keep it with us.
+?(comp=mio) comp: {雨|あめ} が {降|ふ}ったら {濡|ぬ}れて しまう 。 {持|も}って いこう 。 || If it rains, it'll get soaked. Let's keep it with us.
 ?(comp=ren) !gesture comp observe 53,31
 ?(comp=ren) comp: {場所|ばしょ} は {残|のこ}って いて も 、 {主|あるじ} は ここ に いません 。 || The place is still here, but its keeper isn't.
 ?(comp=suzu) !gesture comp shrug
@@ -223,7 +223,7 @@ narr: 「 {似|に}た {印|しるし} に {注意|ちゅうい} ： {潮|しお
 !end
 :done
 ?(comp=nao) comp[smile]: {名前|なまえ} の ない {宛名|あてな} でも 、 {届|とど}く ところ に は {届|とど}く 。 …… {気分|きぶん} が いい な 。 || Even with no name, it reached the right place. …That feels good.
-?(comp=mio) comp[smile]: ハマ さん の {呼|よ}び{鈴|りん} 、 いい {音|おと} に なった でしょう ね 。 || Hama's call bell must sound lovely now.
+?(comp=mio) comp[smile]: ハマ さん の {呼|よ}び{鈴|りん} 、 いい {音|おと} に なった だろう ね 。 || Hama's call bell must sound lovely now.
 ?(comp=ren) comp: {工房|こうぼう} が {移|うつ}って も 、 {宛名|あてな} は {生|い}きて いた 。 {名|な} と {役目|やくめ} は 、 {引|ひ}っ{越|こ}せる の です ね 。 || The workshop moved and the address stayed alive. Names and duties can move house.
 ?(comp=suzu) comp[laugh]: {何年|なんねん} も {遅|おく}れた {配達|はいたつ} ！ でも 、 {間|ま}に {合|あ}う もの も ある の よ ね 。 || A delivery years late! Some things still arrive in time, though.
 `, 'cases/20_parcel');

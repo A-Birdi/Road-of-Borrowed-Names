@@ -177,7 +177,7 @@ narr: {定式幕|じょうしきまく} の {綱|つな} 。 {幕|まく} の {�
 narr: {一度|いちど} に {全部|ぜんぶ} で は なく 、 {宿|しゅく} ごと に 。 {一|ひと}つ の {宿場|しゅくば} で {止|と}まって は 、 {新|あたら}しい {墨|すみ} で {次|つぎ} の {区間|くかん} を たどる 。 || Not all at once, but station by station. You stop at each post town and trace the next leg in fresh ink.
 narr: {墨|すみ} は もう {薄|うす}れない 。 {道|みち} は {山|やま} を {越|こ}えて 、 {雲路|くもじ} の {峠|とうげ} まで {続|つづ}いて いた 。 || The ink fades no more. The road climbs over the mountains, all the way to the Cloudroad's pass.
 ?(comp=nao) comp: …… {昔|むかし} の {飛脚|ひきゃく} は 、 ここ まで {走|はし}った の か 。 {宿|しゅく} ごと に 、 {次|つぎ} の {足|あし} に {渡|わた}して 。 || …So the couriers of old ran all this way. Handing on to fresh legs at every station.
-?(comp=mio) comp[smile]: {薬|くすり} と {同|おな}じ です ね 。 {一度|いちど} に {全部|ぜんぶ} で は なく 、 {一回|いっかい} ごと に {少|すこ}し ずつ 。 || Like medicine. Not all at once: a little, every time.
+?(comp=mio) comp[smile]: {薬|くすり} と {同|おな}じ だ ね 。 {一度|いちど} に {全部|ぜんぶ} で は なく 、 {一回|いっかい} ごと に {少|すこ}し ずつ 。 || Like medicine. Not all at once: a little, every time.
 ?(comp=ren) comp: {一区間|ひとくかん} ずつ 、 {新|あたら}しい {墨|すみ} 。 {灯|ひ} の {芯|しん} を {切|き}る の と {同|おな}じ です 。 || A fresh line of ink for each leg. The same as trimming a wick.
 ?(comp=suzu) comp[laugh]: {一座|いちざ} の {旅|たび} と {同|おな}じ ね 。 {町|まち} ごと に {一幕|ひとまく} 。 || Like a troupe on tour. One act in every town.
 !note lw_mp_relaymap

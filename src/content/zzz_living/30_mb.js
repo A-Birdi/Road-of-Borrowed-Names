@@ -172,7 +172,7 @@ narr: {一|ひと}つ ずつ で は なく 、 すべて の {印|しるし} �
 narr: {山|やま} {形|がた} 、 {丸|まる} に {米|こめ} 、 {井桁|いげた} …… 。 {板|いた} の {上|うえ} に 、 {蔵|くら} の {印|しるし} が {揃|そろ}って {戻|もど}った 。 もう {消|き}えない 。 || A mountain, rice in a circle, a well-frame… The storehouse marks come back onto the board all together, and this time none fades.
 ?(comp=ren) comp: {灯守|ひもり} の {言葉|ことば} です ね 。 「すべて の {灯|ひ} を {守|まも}る」 。 {印|しるし} に も {効|き}く ん です ね 。 || The lamp-keepers' saying. "A keeper guards every lamp." It works on marks too.
 ?(comp=nao) comp: {宛名|あてな} と {同|おな}じ だ 。 {印|しるし} が あれば 、 {荷|に} は {迷|まよ}わない 。 || Same as an address. With a mark on it, cargo doesn't go astray.
-?(comp=mio) comp[smile]: {薬|くすり} の {札|ふだ} と {同|おな}じ です 。 {一|ひと}つ でも {消|き}えたら 、 {困|こま}ります から 。 || Like medicine labels. If even one goes, there's trouble.
+?(comp=mio) comp[smile]: {薬|くすり} の {札|ふだ} と {同|おな}じ 。 {一|ひと}つ でも {消|き}えたら 、 {困|こま}る から 。 || Like medicine labels. If even one goes, there's trouble.
 ?(comp=suzu) comp: {一座|いちざ} の {名前|なまえ} も 、 {一人|ひとり} {欠|か}けたら {番付|ばんづけ} に ならない の よ 。 || A company's names too: one missing, and it's not a playbill.
 !note lw_mb_kura_marks
 !refresh

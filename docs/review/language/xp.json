@@ -113,11 +113,11 @@
   "jp": "「{上|あ}げて あります」 か 。 やった {本人|ほんにん} は {書|か}いて ない が 、 {誰|だれ} か が やった んだ 。",
   "en": "\"Has been put up.\" Doesn't say who, but somebody did it."
  },
- "scene:xp.cellars_board#1ui8dsv": {
+ "scene:xp.cellars_board#1a7jczr": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
-  "jp": "「〜て あります」 は 、 {誰|だれ} か が {済|す}ませて {残|のこ}した {形|かたち} です 。 {灯|あか}り の {帳面|ちょうめん} でも よく {見|み}ます 。",
-  "en": "\"〜て あります\" is the shape of something someone finished and left. You see it in lamp logs all the time."
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "「{上|あ}げて あります」 。 …… {誰|だれ} か が {済|す}ませて 、 {置|お}いて いった 。 {灯|あか}り の {帳面|ちょうめん} と {同|おな}じ {書|か}き{方|かた} です 。",
+  "en": "\"Has been put up.\" …Someone finished it and left it so. Lamp logs are written the same way."
  },
  "scene:xp.cellars_board#1d6i5qe": {
   "status": "self-reviewed",
@@ -183,6 +183,12 @@
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
   "jp": "{向|む}こう {側|がわ} から なら 、 {開|あ}けられる かも 。",
+  "en": "Maybe from the other side."
+ },
+ "scene:xp.cellars_grate#16ckwyw": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{向|む}こう {側|がわ} から なら 、 {開|あ}けられる かも しれません 。",
   "en": "Maybe from the other side."
  },
  "scene:xp.cellars_lampnote#wj4s7n": {

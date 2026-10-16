@@ -158,7 +158,7 @@ narr: 「ごと に」 は 、 {雲路|くもじ} で {覚|おぼ}えた 。 {�
 narr: {上|うえ} に は 、 {石|いし} を {積|つ}んだ {見張|みは}り{台|だい} が あった 。 {西|にし} に {潮硝子|しおがらす} の {灯台|とうだい} 。 {沖|おき} の {船|ふね} が 、 {全部|ぜんぶ} {見|み}える 。 || At the top stands a lookout of piled stones. To the west, Saltglass's lighthouse. Every boat out at sea is in sight.
 narr: {石|いし} に {線|せん} が {何十本|なんじゅっぽん} も {刻|きざ}んで ある 。 {船|ふね} を {見|み}つける ごと に 、 {一本|いっぽん} 。 || Dozens of lines are scratched into the stone. One for every boat spotted.
 ?(comp=nao) comp: {全部|ぜんぶ} の {船|ふね} が {見|み}える 。 {配達|はいたつ} の {順番|じゅんばん} を {決|き}める なら 、 ここ が {一番|いちばん} だ な 。 || Every boat in sight. If you were planning a delivery round, this would be the place.
-?(comp=mio) comp[smile]: {風|かぜ} が {気持|きも}ち いい 。 {見張|みは}り の {人|ひと} も 、 きっと ここ が {好|す}き だった ん です ね 。 || What a lovely wind. Whoever kept watch here must have loved it.
+?(comp=mio) comp[smile]: {風|かぜ} が {気持|きも}ち いい 。 {見張|みは}り の {人|ひと} も 、 きっと ここ が {好|す}き だった ん だ ね 。 || What a lovely wind. Whoever kept watch here must have loved it.
 ?(comp=ren) comp: {灯|ひ} の ない {頃|ころ} の 、 {目|め} の {灯台|とうだい} です ね 。 || A lighthouse made of eyes, from before there were lamps.
 ?(comp=suzu) comp[smile]: {天井桟敷|てんじょうさじき} ね 。 {一番|いちばん} {安|やす}くて 、 {一番|いちばん} よく {見|み}える {席|せき} よ 。 || The gods, way up top. The cheapest seats, and the best view.
 !note el_lw_lookout

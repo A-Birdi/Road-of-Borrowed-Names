@@ -20,9 +20,9 @@ narr: {坂|さか} を {上|のぼ}る ほど 、 {空気|くうき} が {薄|�
 ?(comp=nao) !gesture comp strap
 ?(comp=nao) comp: …… {待|ま}たせる {側|がわ} の {配達人|はいたつにん} と して は 、 {耳|みみ} が {痛|いた}い {話|はなし} だけど な 。 || …Not a pleasant thing to hear, for a courier who's kept people waiting before.
 ?(comp=mio) !gesture comp observe pc
-?(comp=mio) comp[worry]: {指|ゆび} 、 {冷|つめ}たく なって ない ？ {手袋|てぶくろ} の {予備|よび} 、 ありますよ 。 ええと 、 {二組|ふたくみ} …… いえ 、 {三組|さんくみ} 。 || Are your fingers getting cold? I've got spare gloves. Let's see, two pairs… no, three.
+?(comp=mio) comp[worry]: {指|ゆび} 、 {冷|つめ}たく なって ない ？ {手袋|てぶくろ} の {予備|よび} 、 ある よ 。 ええと 、 {二組|ふたくみ} …… いえ 、 {三組|さんくみ} 。 || Are your fingers getting cold? I've got spare gloves. Let's see, two pairs… no, three.
 ?(comp=mio) !gesture comp point up
-?(comp=mio) comp[smile]: {山|やま} の {上|うえ} に 、 {天文台|てんもんだい} が ある そう です 。 {夜|よる} に なる と 、 {下|した} の {町|まち} から も {灯|あか}り が {見|み}える んです って 。 || They say there's an observatory up on the mountain. At night its lamp can be seen even from the towns below.
+?(comp=mio) comp[smile]: {山|やま} の {上|うえ} に 、 {天文台|てんもんだい} が ある そう よ 。 {夜|よる} に なる と 、 {下|した} の {町|まち} から も {灯|あか}り が {見|み}える ん だ って 。 || They say there's an observatory up on the mountain. At night its lamp can be seen even from the towns below.
 ?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp[think]: {雪鈴|ゆきすず} 。 {灯|ひ} の {道|みち} の {里|さと} の {中|なか} で 、 いちばん {高|たか}い ところ に ある {村|むら} です 。 || Snowbell. Of all the villages on the lantern roads, it sits the highest.
 ?(comp=ren) !gesture comp palm
@@ -46,7 +46,7 @@ narr: {古|ふる}い {石|いし} に 、 {字|じ} が {刻|きざ}んで あ�
 
 @scene sb.road_shrine
 narr: {雪|ゆき} を かぶった {小|ちい}さな {祠|ほこら} 。 {誰|だれ} か が 、 {干|ほ}し{柿|がき} を {一|ひと}つ {供|そな}えて いった 。 まだ {新|あたら}しい 。 || A small snow-capped wayside shrine. Someone has left a single dried persimmon as an offering. It's still fresh.
-?(comp=mio) comp[smile]: {誰|だれ} か が {最近|さいきん} 、 ここ を {通|とお}った んです ね 。 {冬|ふゆ} の {坂|さか} を 。 || Someone came by here recently, then. Up the winter slope.
+?(comp=mio) comp[smile]: {誰|だれ} か が {最近|さいきん} 、 ここ を {通|とお}った ん だ ね 。 {冬|ふゆ} の {坂|さか} を 。 || Someone came by here recently, then. Up the winter slope.
 
 @scene sb.road_east_locked
 # Staged: you look at the drift over the road down to Lanternfall; your companion's own answer (Nao's shrug,
@@ -56,7 +56,7 @@ narr: {灯落|ひおち} へ {下|くだ}る {道|みち} は 、 {背|せ} よ�
 ?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp: {春|はる} まで {待|ま}つ か 、 {誰|だれ} か が {掘|ほ}る か だ な 。 {雪鈴|ゆきすず} の {連中|れんちゅう} に {聞|き}いて みよう 。 || Either we wait for spring or somebody digs. Let's ask the Snowbell folk.
 ?(comp=mio) !gesture comp shake
-?(comp=mio) comp: {今|いま} {無理|むり} を して も 、 {凍|こご}える だけ です 。 {先|さき} に {雪鈴|ゆきすず} へ {行|い}きましょう 。 || Forcing it now would only get us frozen. Let's go to Snowbell first.
+?(comp=mio) comp: {今|いま} {無理|むり} を して も 、 {凍|こご}える だけ 。 {先|さき} に {雪鈴|ゆきすず} へ {行|い}こう 。 || Forcing it now would only get us frozen. Let's go to Snowbell first.
 ?(comp=ren) !gesture comp observe 31,13
 ?(comp=ren) comp: {道|みち} が ある こと は {確|たし}か です 。 …… {見|み}えない だけ で 。 || The road is definitely there. …We just can't see it.
 ?(comp=suzu) !gesture comp point up
@@ -86,7 +86,7 @@ kanta[worry]: ホシノ じいちゃん 、 {元気|げんき} ない んだ よ
 ?(comp=nao) !gesture comp aside
 ?(comp=nao) comp: {消|き}えた {灯|あか}り 、 か 。 {嫌|いや} な {予感|よかん} が する な 。 || A lamp that went out. I've got a bad feeling.
 ?(comp=mio) !gesture comp guard
-?(comp=mio) comp[worry]: {十日|とおか} も …… 。 {宿|やど} に {行|い}って みましょう 。 {体|からだ} も {温|あたた}めないと 。 || Ten days… Let's go to the inn. We need to warm up, too.
+?(comp=mio) comp[worry]: {十日|とおか} も …… 。 {宿|やど} に {行|い}って みよう 。 {体|からだ} も {温|あたた}めないと 。 || Ten days… Let's go to the inn. We need to warm up, too.
 ?(comp=ren) !gesture comp chin
 ?(comp=ren) comp[think]: {灯|あか}り が {消|き}える の は 、 {油|あぶら} が {切|き}れた とき か 、 {名前|なまえ} が {消|き}えた とき です 。 || A lamp goes out when the oil runs dry — or when its name is lifted.
 ?(comp=suzu) !gesture comp palm
@@ -113,7 +113,7 @@ narr: {古|ふる}い {望遠鏡|ぼうえんきょう} が 、 {坂|さか} の
 
 @scene sb.icehole
 narr: {川|かわ} の {氷|こおり} に {開|あ}けた {丸|まる}い {穴|あな} 。 {黒|くろ}い {水|みず} が 、 ゆっくり {動|うご}いて いる 。 || A round hole cut in the ice of the stream. Black water moves slowly beneath.
-?(comp=mio) comp: ここ に {落|お}ちたら 、 {薬|くすり} より {先|さき} に {毛布|もうふ} が {要|い}ります ね 。 {気|き}を つけて 。 || Fall in here and you'd need a blanket before any medicine. Careful.
+?(comp=mio) comp: ここ に {落|お}ちたら 、 {薬|くすり} より {先|さき} に {毛布|もうふ} が {要|い}る ね 。 {気|き}を つけて 。 || Fall in here and you'd need a blanket before any medicine. Careful.
 
 @scene sb.stair_marker
 narr: {石段|いしだん} の {脇|わき} の {石|いし} 。 「 ここ より {上|うえ} 、 {天文台|てんもんだい} 。 {星|ほし} を {見|み}る {者|もの} は 、 {足元|あしもと} も {見|み}よ 。 」 || A stone beside the stair: "Observatory above. You who look at the stars — look at your feet too."
@@ -131,7 +131,8 @@ narr: {天文台|てんもんだい} へ の {石段|いしだん} が 、 {青�
 ?(!word.honoo) narr: この {氷|こおり} を とかす {方法|ほうほう} が 、 {今|いま} は {思|おも}いつかない 。 || You can't think of any way to melt this, for now.
 ?(word.honoo&!sb_morning) narr: {外|そと} は もう {吹雪|ふぶき} だ 。 {今|いま} は {上|のぼ}れない 。 || The storm is already here. No climbing now.
 ?(sb_morning&!sb_obs_open) !gesture comp lookbetween 35,7 and=pc
-?(sb_morning&!sb_obs_open) comp: {扉|とびら} の {鍵|かぎ} は ホシノ さん が {持|も}って いる はず です 。 {先|さき} に {話|はなし} を {聞|き}きましょう 。 || Hoshino should have the key to the door. Let's talk to him first.
+?(sb_morning&!sb_obs_open&comp!=nao&comp!=suzu) comp: {扉|とびら} の {鍵|かぎ} は ホシノ さん が {持|も}って いる はず です 。 {先|さき} に {話|はなし} を {聞|き}きましょう 。 || Hoshino should have the key to the door. Let's talk to him first.
+?(sb_morning&!sb_obs_open&comp&comp!=mio&comp!=ren) comp: {扉|とびら} の {鍵|かぎ} は ホシノ さん が {持|も}ってる はず だ 。 {先|さき} に {話|はなし} を {聞|き}こう 。 || Hoshino should have the key to the door. Let's talk to him first.
 !end
 :melt
 !gesture pc handover 30,1
@@ -146,7 +147,7 @@ narr: {氷|こおり} が {音|おと} を {立|た}てて {割|わ}れ 、 {湯
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp[smirk]: {便利|べんり} だ な 、 その {字|じ} 。 {冬|ふゆ} の {配達|はいたつ} に {一|ひと}つ {欲|ほ}しい 。 || Handy word, that. I'd like one for winter deliveries.
 ?(comp=mio) !gesture comp point 30,1
-?(comp=mio) comp[smile]: {足元|あしもと} 、 {気|き}を つけて 。 とけた {水|みず} が また {凍|こお}ります から 。 || Watch your step. The meltwater will freeze again.
+?(comp=mio) comp[smile]: {足元|あしもと} 、 {気|き}を つけて 。 とけた {水|みず} が また {凍|こお}る から 。 || Watch your step. The meltwater will freeze again.
 ?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp: {星|ほし} の {石段|いしだん} 。 {上|のぼ}り{切|き}った ところ が 、 {天文台|てんもんだい} です 。 …… {一本道|いっぽんみち} で よかった 。 || The Star Stair. The observatory is at the very top. …Thank goodness it's one road.
 ?(comp=suzu) !gesture comp celebrate
@@ -487,7 +488,8 @@ narr: {柱|はしら} の {梯子|はしご} を {上|のぼ}る 。 {鐘|かね
 !sfx bell
 narr: ごーん 。 …… {窓|まど} が {開|あ}いて 、 {寝間着|ねまき} の {人|ひと} が {顔|かお} を {出|だ}した 。 「 もう {朝|あさ} ？ 」 || Gonnnng. …A window opens and someone in nightclothes pokes their head out. "Morning already?"
 ?(comp) !gesture comp shake
-?(comp) comp: {一|ひと}つ は {朝|あさ} の {合図|あいず} だった みたい だ よ 。 {帳面|ちょうめん} を {思|おも}い{出|だ}そう 。 || One stroke seems to have been the morning signal. Let's remember the notebook.
+?(comp&comp!=ren) comp: {一|ひと}つ は {朝|あさ} の {合図|あいず} だった みたい だ よ 。 {帳面|ちょうめん} を {思|おも}い{出|だ}そう 。 || One stroke seems to have been the morning signal. Let's remember the notebook.
+?(comp=ren) comp: {一|ひと}つ は {朝|あさ} の {合図|あいず} だった よう です 。 {帳面|ちょうめん} の {決|き}まり を {思|おも}い{出|だ}しましょう 。 || One stroke seems to have been the morning signal. Let's remember the rules in the notebook.
 !end
 :three
 !sfx bell
@@ -496,7 +498,8 @@ narr: ごーん 、 ごーん 、 ごーん 。 …… {遠|とお}く で テ�
 ?(comp=mio) !gesture comp laugh
 ?(comp=ren) !gesture comp palm
 ?(comp=suzu) !gesture comp laugh
-?(comp) comp[laugh]: {三|みっ}つ は {夕方|ゆうがた} の ヤギ の {合図|あいず} だ ね 。 {今|いま} は {昼|ひる} だ よ 。 || Three is the evening goat signal. It's noon now.
+?(comp&comp!=ren) comp[laugh]: {三|みっ}つ は {夕方|ゆうがた} の ヤギ の {合図|あいず} だ ね 。 {今|いま} は {昼|ひる} だ よ 。 || Three is the evening goat signal. It's noon now.
+?(comp=ren) comp[laugh]: {三|みっ}つ は {夕方|ゆうがた} の ヤギ の {合図|あいず} です 。 …… {今|いま} は 、 {昼|ひる} です が 。 || Three is the evening goat signal. …It's noon, though.
 !end
 :storm
 !sfx bell
@@ -504,7 +507,8 @@ narr: ごーん 、 ごーん 、 ごーん 。 …… {遠|とお}く で テ�
 narr: カン カン カン カン ！ …… {家々|いえいえ} の {戸|と} が {一斉|いっせい} に {閉|し}まる {音|おと} が した 。 {空|そら} は {青|あお}い 。 || Clang clang clang clang! …Every door in the hamlet slams shut at once. The sky is blue.
 ?(comp=mio) !gesture comp guard
 ?(comp!=mio) !gesture comp aside
-?(comp) comp[worry]: …… {吹雪|ふぶき} の {合図|あいず} だ よ 、 それ 。 みんな に {謝|あやま}り に {行|い}かない と 。 || …That's the storm signal. We'll have to go round and apologise to everyone.
+?(comp&comp!=ren) comp[worry]: …… {吹雪|ふぶき} の {合図|あいず} だ よ 、 それ 。 みんな に {謝|あやま}り に {行|い}かない と 。 || …That's the storm signal. We'll have to go round and apologise to everyone.
+?(comp=ren) comp[worry]: …… {今|いま} の は 、 {吹雪|ふぶき} の {合図|あいず} です 。 {皆|みな}さん に {謝|あやま}り に {行|い}きましょう 。 || …That was the storm signal. Let's go round and apologise to everyone.
 !end
 :two
 !sfx bell
@@ -515,7 +519,7 @@ narr: ごーん …… ごーん 。 {澄|す}んだ {音|おと} が 、 {雪|�
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: {時間|じかん} どおり 。 {配達人|はいたつにん} と して は 、 {気持|きも}ち が いい 。 || Right on time. As a courier, that's satisfying.
 ?(comp=mio) !gesture comp laugh
-?(comp=mio) comp[smile]: みんな の {昼|ひる} ごはん を {守|まも}りました ね 。 {大事|だいじ} な {仕事|しごと} です 。 || You've saved everyone's lunch. That's important work.
+?(comp=mio) comp[smile]: みんな の {昼|ひる} ごはん を {守|まも}った ね 。 {大事|だいじ} な {仕事|しごと} だ よ 。 || You've saved everyone's lunch. That's important work.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp[smile]: {鐘|かね} も {灯|あか}り も 、 {決|き}まった {時|とき} に {決|き}まった {形|かたち} で 。 {灯守|ひもり} の {仕事|しごと} と {似|に}て います 。 || Bells and lamps both: the set form, at the set time. Not unlike a keeper's work.
 ?(comp=suzu) !gesture comp celebrate

@@ -42,13 +42,13 @@ RB.dialect.add('kansai', `
 > {百年|ひゃくねん} {続|つづ}いた {芝居|しばい} にも 、 {千秋楽|せんしゅうらく} は ある ねん で 。 || Even a play that's run a hundred years has a closing night.
 @ kr/lodge [kr.chapter_end]
 = {幕|まく} を {下|お}ろし に {行|い}きましょう 。 …… {今度|こんど} は 、 {私|わたし} たち の {手|て} で 。 || Let's go and bring the curtain down. …With our own hands, this time.
-> {幕|まく} を {下|お}ろし に {行|い}こ 。 …… {今度|こんど} は 、 うちら の {手|て} で 。 || Let's go and bring the curtain down. …With our own hands, this time.
+> {幕|まく} を {下|お}ろし に {行|い}きましょ 。 …… {今度|こんど} は 、 うちら の {手|て} で 。 || Let's go and bring the curtain down. …With our own hands, this time.
 @ kr/vigil [kr.rite]
 = {歌|うた} は {節|ふし} が {大事|だいじ} 。 {順番|じゅんばん} より {響|ひび}き よ 。 {歌|うた} の {身|み} に も なって あげて 。 || A song cares about the tune. The sound matters more than the order. Spare a thought for the song.
 > {歌|うた} は {節|ふし} が {大事|だいじ} や 。 {順番|じゅんばん} より {響|ひび}き や で 。 {歌|うた} の {身|み} に も なって あげて 。 || A song cares about the tune. The sound matters more than the order. Spare a thought for the song.
 @ kr/vigil [kr.cave_deadend]
 = {鐘|かね} は {幕|まく} {切|ぎ}れ の {合図|あいず} 。 {途中|とちゅう} で {鳴|な}らしたら 、 {芝居|しばい} は {終|お}わっちゃう わ 。 || The bell is the curtain. Ring it in the middle and the play's over.
-> {鐘|かね} は {幕|まく} {切|ぎ}れ の {合図|あいず} や 。 {途中|とちゅう} で {鳴|な}らしたら 、 {芝居|しばい} は {終|お}わって しまう で 。 || The bell is the curtain. Ring it in the middle and the play's over.
+> {鐘|かね} は {幕|まく} {切|ぎ}れ の {合図|あいず} や 。 {途中|とちゅう} で {鳴|な}らしたら 、 {芝居|しばい} は {終|お}わってまう で 。 || The bell is the curtain. Ring it in the middle and the play's over.
 @ kr/vigil [kr.registers]
 = {三|みっ}つ の {台本|だいほん} が あって 、 {一番|いちばん} {楽|らく} な の が {勝|か}った の ね 。 …… {黙|だま}って いる の が 、 {一番|いちばん} {楽|らく} だ もの 。 || Three scripts, and the easiest one won. …Keeping quiet is always easiest.
 > {三|みっ}つ の {台本|だいほん} が あって 、 {一番|いちばん} {楽|らく} な の が {勝|か}った ん や な 。 …… {黙|だま}ってる の が 、 {一番|いちばん} {楽|らく} や もん 。 || Three scripts, and the easiest one won. …Keeping quiet is always easiest.
@@ -63,10 +63,10 @@ RB.dialect.add('kansai', `
 > …… {人|ひと} の {懐|ふところ} {覗|のぞ}く の は 、 {野暮|やぼ} や で 。 {客|きゃく} は {舞台|ぶたい} {見|み}とったら ええ ねん 。 || …Peering into someone's robe is bad manners. The audience should keep its eyes on the stage.
 @ kr/company [kr.makeup]
 = …… さっき は 、 {悪|わる}かった わ 。 {野暮|やぼ} なんて 、 {言|い}う つもり じゃ なかった の 。 {手紙|てがみ} は 、 まだ {怖|こわ}くて {開|ひら}けない だけ 。 || …Sorry about earlier. I didn't mean to call you rude. It's only that I'm still too scared to answer the letter.
-> …… さっき は 、 {悪|わる}かった な 。 {野暮|やぼ} なんて 、 {言|い}う つもり ちゃう かった ねん 。 {手紙|てがみ} は 、 まだ {怖|こわ}くて {開|ひら}けへん だけ や 。 || …Sorry about earlier. I didn't mean to call you rude. It's only that I'm still too scared to answer the letter.
+> …… さっき は 、 {悪|わる}かった な 。 {野暮|やぼ} なんて 、 {言|い}う つもり ちゃうかった ん や 。 {手紙|てがみ} は 、 まだ {怖|こわ}くて {開|ひら}けへん だけ や 。 || …Sorry about earlier. I didn't mean to call you rude. It's only that I'm still too scared to answer the letter.
 @ kr/company [kr.makeup]
 = …… ありがと 。 {相方|あいかた} が あなた で よかった わ 。 || …Thanks. I'm glad you're my partner.
-> …… おおきに 。 {相方|あいかた} が あんた で よかった わ 。 || …Thanks. I'm glad you're my partner.
+> …… ありがと 。 {相方|あいかた} が あんた で よかった わ 。 || …Thanks. I'm glad you're my partner.
 @ kr/company [kr.makeup]
 = こちら こそ 。 …… ほら 、 これ で {両成敗|りょうせいばい} ね 。 || Me too. …There, that's both of us at fault, fair and square.
 > こっち こそ 。 …… ほな 、 これ で {両成敗|りょうせいばい} や な 。 || Me too. …There, that's both of us at fault, fair and square.

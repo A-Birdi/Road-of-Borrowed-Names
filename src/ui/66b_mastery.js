@@ -57,7 +57,8 @@ RB.ui.mastery = (function () {
   // ---- Mastery (L3) --------------------------------------------------------------------------------------
   function masteryHtml(s) {
     const G = X().groups(s).filter((g) => X().offered(s, g));
-    const voice = !!(RB.voice && RB.voice.status && RB.voice.status().localJaCount > 0);
+    // listening: the device's voice, or the recordings (a word without either is read instead, as on a step)
+    const voice = !!(RB.voice && RB.voice.canSpeak && (RB.voice.canSpeak() || (RB.voice.mode() === 'prepared' && RB.voicebank && RB.voicebank.active())));
     const modes = X().MODES.filter((m) => m.id !== 'listen' || voice);
     let h = '<p class="ms-note">These stars are just for you: a way to see what you\'ve grasped. They don\'t unlock anything. A star in one way of answering is as bright as in any other. ' +
       'An exam is up to ten questions in one way of answering; hints stay available. A star needs fewer than 3 in 10 answered with help or after a first miss.</p>';

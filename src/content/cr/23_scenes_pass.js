@@ -47,7 +47,7 @@ cr_ine: {宿|しゅく} ごと に {新|あたら}しい {足|あし} 。 {一�
 narr: {雲居|くもい} を {出|で}る と 、 {道|みち} は {九十九折|つづらお}り に なった 。 {一|ひと}つ {曲|ま}がる たび に 、 {雲|くも} が {遠|とお}く なる 。 || Beyond Kumoi the road turns into switchbacks. At every turn the clouds fall further away.
 narr: {雪|ゆき} が {降|ふ}って いる 。 {峠|とうげ} は 、 まだ {見|み}えない 。 || Snow is falling. The pass is not in sight yet.
 ?(comp=nao) comp: {飛脚|ひきゃく} は 、 この {坂|さか} を {走|はし}って {登|のぼ}った ん だ 。 …… {信|しん}じられない な 。 || Couriers ran up this slope. …Hard to believe.
-?(comp=mio) comp: {息|いき} が {苦|くる}しく なったら 、 すぐ {言|い}って ください ね 。 {高|たか}い {所|ところ} で は 、 {無理|むり} を しない の が {一番|いちばん} です 。 || Tell me straight away if you get short of breath. Up high, the best thing is not to push yourself.
+?(comp=mio) comp: {息|いき} が {苦|くる}しく なったら 、 すぐ {言|い}って ね 。 {高|たか}い {所|ところ} で は 、 {無理|むり} を しない の が {一番|いちばん} 。 || Tell me straight away if you get short of breath. Up high, the best thing is not to push yourself.
 ?(comp=ren) comp: {曲|ま}がり{角|かど} に 、 {灯籠|とうろう} が {立|た}って います 。 {昔|むかし} の {人|ひと} は 、 {夜|よる} も ここ を {越|こ}えた ん です ね 。 || There are lanterns at the turns. People used to cross here at night, too.
 ?(comp=suzu) comp: {花道|はなみち} に して は 、 {長|なが}すぎる わ 。 …… {冗談|じょうだん} よ 。 {行|い}きましょ 。 || Rather long for a walkway to the stage. …Joking. Let's go.
 !autosave
@@ -57,7 +57,7 @@ narr: {雪|ゆき} が {降|ふ}って いる 。 {峠|とうげ} は 、 まだ
 narr: {曲|ま}がり{角|かど} が 、 {崩|くず}れた {岩|いわ} で {埋|う}まって いる 。 {上|うえ} の {斜面|しゃめん} から {落|お}ちて きた {土砂|どしゃ} だ 。 || The turn is buried under fallen rock: a slide from the slope above.
 narr: {右|みぎ} の {岩場|いわば} に 、 {獣道|けものみち} の よう な {細|ほそ}い {踏|ふ}み{跡|あと} が ある 。 {回|まわ}り{道|みち} できそう だ 。 || To the right, across the scree, a thin track like an animal path. You could go round.
 ?(comp=nao) comp: {回|まわ}れ 。 {土砂|どしゃ} の {上|うえ} は {歩|ある}く な 。 {足|あし} の {下|した} で {動|うご}く ぞ 。 || Go round. Don't walk on the slide. It moves under your feet.
-?(comp=mio) comp: {足元|あしもと} に {気|き} を つけて 。 {捻挫|ねんざ} は 、 {山|やま} で は {一番|いちばん} {多|おお}い {怪我|けが} です 。 || Watch your footing. Sprains are the commonest injury in the mountains.
+?(comp=mio) comp: {足元|あしもと} に {気|き} を つけて 。 {捻挫|ねんざ} は 、 {山|やま} で は {一番|いちばん} {多|おお}い {怪我|けが} だ から 。 || Watch your footing. Sprains are the commonest injury in the mountains.
 ?(comp=ren) comp: {上|うえ} から {見|み}れば 、 {何|なに} が {止|と}めて いる か {分|わ}かる かも しれません 。 || From above we might see what's holding it.
 ?(comp=suzu) comp: {大道具|おおどうぐ} が {倒|たお}れた みたい ね 。 {裏|うら} から {回|まわ}りましょ 。 || Like a piece of scenery that's fallen over. Let's go round the back.
 !move pc down 1
@@ -71,7 +71,7 @@ narr: {上|うえ} から {見|み}る と 、 {土砂|どしゃ} は {倒|た�
 !sfx reveal
 narr: {丸太|まるた} を {外|はず}す と 、 {岩|いわ} が {音|おと} を {立|た}てて {斜面|しゃめん} を {転|ころ}がり{落|お}ちた 。 {曲|ま}がり{角|かど} が {通|とお}れる よう に なった 。 || You lever the log free, and the rocks go thundering down the scree. The turn is open.
 ?(comp=nao) comp: これ で {帰|かえ}り は {近道|ちかみち} だ 。 || That's a shorter way back down.
-?(comp=mio) comp[smile]: {帰|かえ}り の {人|ひと} も 、 これ で {安心|あんしん} です ね 。 || That'll be a relief for anyone coming down, too.
+?(comp=mio) comp[smile]: {帰|かえ}り の {人|ひと} も 、 これ で {安心|あんしん} だ ね 。 || That'll be a relief for anyone coming down, too.
 ?(comp=ren) comp: {道|みち} が {一|ひと}つ 、 {戻|もど}りました 。 || A way's been given back.
 ?(comp=suzu) comp: {幕|まく} が {開|あ}いた わ 。 || The curtain's up.
 !set cr_turn_cleared
@@ -90,7 +90,7 @@ narr: 「{九十九|つづら}」 は {数|かず} で は ない 。 つづら 
 narr: {谷|たに} を {渡|わた}る {吊|つ}り{橋|ばし} が 、 {風|かぜ} に {揺|ゆ}れて いる 。 {向|む}こう {側|がわ} に 、 {雪|ゆき} に {埋|う}もれ かけた {避難|ひなん}{小屋|ごや} が {見|み}える 。 || A rope bridge sways in the wind across the gorge. On the far side, a snow shelter, half buried.
 !sfx wind
 ?(comp=nao) comp: {吊|つ}り{橋|ばし} か 。 …… {下|した} は {見|み}る な よ 。 || A rope bridge. …Don't look down.
-?(comp=mio) comp: {小屋|こや} が ある なら 、 {休|やす}めます ね 。 {薪|まき} が {残|のこ}って いる と いい けど 。 || If there's a shelter we can rest. I hope there's firewood left.
+?(comp=mio) comp: {小屋|こや} が ある なら 、 {休|やす}める ね 。 {薪|まき} が {残|のこ}って いる と いい けど 。 || If there's a shelter we can rest. I hope there's firewood left.
 ?(comp=ren) comp: {橋|はし} の {袂|たもと} に 、 {札|ふだ} が あります 。 {先|さき} に {読|よ}みましょう 。 || There's a notice at the bridge's end. Let's read it first.
 ?(comp=suzu) comp: {揺|ゆ}れる {舞台|ぶたい} は {慣|な}れてる けど 、 {谷|たに} の {上|うえ} は {初|はじ}めて よ 。 || I'm used to a stage that wobbles, but not one over a gorge.
 !autosave
@@ -101,7 +101,7 @@ narr: {橋|はし} の {袂|たもと} に 、 {古|ふる}い {札|ふだ} が 
 !sfx wind
 narr: {札|ふだ} の とおり に 、 {一人|ひとり} ずつ {渡|わた}った 。 {板|いた} が {鳴|な}り 、 {綱|つな} が {軋|きし}む 。 {向|む}こう {岸|ぎし} に {着|つ}く と 、 {膝|ひざ} が {少|すこ}し {笑|わら}って いた 。 || As the notice says, you cross one at a time. The planks creak, the ropes groan. On the far side, your knees are shaking a little.
 ?(comp=nao) comp: …… {郵便|ゆうびん} の {鞄|かばん} を {背負|せお}って 、 {毎日|まいにち} これ か 。 {飛脚|ひきゃく} は {偉|えら}い な 。 || …Across this every day with a mailbag on your back. Couriers were something.
-?(comp=mio) comp: {怖|こわ}かった …… 。 でも 、 {札|ふだ} の とおり に {渡|わた}れば 、 {大丈夫|だいじょうぶ} でした ね 。 || That was frightening… But crossing as the notice said, we were all right.
+?(comp=mio) comp: {怖|こわ}かった …… 。 でも 、 {札|ふだ} の とおり に {渡|わた}れば 、 {大丈夫|だいじょうぶ} だった ね 。 || That was frightening… But crossing as the notice said, we were all right.
 ?(comp=ren) comp: {古|ふる}い {札|ふだ} の {言葉|ことば} が 、 {今|いま} も {人|ひと} を {守|まも}って います 。 || The old notice's words still keep people safe.
 ?(comp=suzu) comp: {一人|ひとり} ずつ の {花道|はなみち} 。 {揺|ゆ}れる けど 、 {見得|みえ} を {切|き}る {暇|ひま} は なかった わ 。 || A walkway for one at a time. It sways, and there wasn't a moment to strike a pose.
 !set cr_bridge_crossed
@@ -144,7 +144,7 @@ narr: {薪|まき} が {尽|つ}きた 。 {囲炉裏|いろり} は {冷|つめ
 !set cr_pass3_seen
 narr: {雪原|せつげん} 。 {道|みち} は {雪|ゆき} の {下|した} に {消|き}えて 、 {半分|はんぶん} {埋|う}まった {道標|みちしるべ} だけ が 、 {点々|てんてん} と {続|つづ}いて いる 。 || A snowfield. The road has vanished under the snow; only half-buried waystones go on, one after another.
 ?(comp=nao) comp: {石|いし} から {石|いし} へ {歩|ある}け 。 {雪|ゆき} の {上|うえ} の {近道|ちかみち} は 、 {近道|ちかみち} じゃ ない 。 || Walk from stone to stone. A short cut across snow is no short cut.
-?(comp=mio) comp: {雪|ゆき} の {照|て}り{返|かえ}し が {強|つよ}い です 。 {目|め} を {細|ほそ}めて {歩|ある}いて ください 。 || The glare off the snow is strong. Walk with your eyes narrowed.
+?(comp=mio) comp: {雪|ゆき} の {照|て}り{返|かえ}し が {強|つよ}い ね 。 {目|め} を {細|ほそ}めて {歩|ある}いて 。 || The glare off the snow is strong. Walk with your eyes narrowed.
 ?(comp=ren) comp: {道標|みちしるべ} が {灯|ひ} の {代|か}わり です ね 。 {一|ひと}つ ずつ {読|よ}んで {行|い}きましょう 。 || The waystones stand in for lamps up here. Let's read them one by one.
 ?(comp=suzu) comp: {真|ま}っ{白|しろ} な {舞台|ぶたい} 。 {足跡|あしあと} が {台本|だいほん} ね 。 || A pure white stage. Our footprints are the script.
 !autosave
@@ -166,7 +166,7 @@ narr: {吹|ふ}き{溜|だ}まり が 、 {道|みち} を {塞|ふさ}いで �
 :dig
 narr: {手|て} で {雪|ゆき} を {掻|か}き{分|わ}けて 、 {少|すこ}し ずつ {進|すす}んだ 。 || You dig the snow aside with your hands and work your way through, bit by bit.
 ?(comp=nao) comp: {貸|か}せ 。 …… {雪|ゆき} {掻|か}き は 、 {西|にし} の {町|まち} で {毎冬|まいふゆ} やった 。 || Let me. …I shovelled snow every winter in the western town.
-?(comp=mio) comp: {手袋|てぶくろ} を どうぞ 。 {霜焼|しもや}け に なります から 。 || Here, gloves. You'll get chilblains otherwise.
+?(comp=mio) comp: {手袋|てぶくろ} を どうぞ 。 {霜焼|しもや}け に なる から 。 || Here, gloves. You'll get chilblains otherwise.
 ?(comp=ren) comp: {灯守|ひもり} の {冬|ふゆ} は 、 {毎朝|まいあさ} {雪|ゆき} {掻|か}き から です 。 {任|まか}せて ください 。 || A keeper's winter starts with digging snow every morning. Leave it to me.
 ?(comp=suzu) comp: {雪|ゆき} の {大道具|おおどうぐ} 、 {片付|かたづ}け ます よ 。 …… {重|おも}い ！ || Clearing away the snow scenery. …Heavy!
 !set cr_drift_cleared
@@ -184,7 +184,7 @@ narr: {冷|つめ}たい {炉|ろ} の {横|よこ} に 、 {草鞋|わらじ} �
 narr: {壁|かべ} に 、 {墨|すみ} の {書|か}き{付|つ}け 。 「{雪|ゆき} {深|ふか}し 。 {晴|は}れ を {待|ま}つ 。 {便|びん} は {濡|ぬ}らさず 。 ゲンタ 」 || On the wall, a note in ink: "Snow deep. Waiting for the clear. Post kept dry. Genta."
 ?(comp=nao) !gesture comp lookroad up
 ?(comp=nao) comp: …… {封|ふう} が {切|き}れて いない 。 {飛脚|ひきゃく} は 、 {便|びん} を {捨|す}てて {逃|に}げたり しない 。 {捨|す}てる くらい なら 、 {抱|だ}いて {寝|ね}る 。 || …The seal's not broken. A courier doesn't drop the post and run. He'd sooner sleep with it in his arms.
-?(comp=mio) comp: {草鞋|わらじ} を {乾|かわ}かそう と して いた ん です ね 。 {濡|ぬ}れた {足|あし} で {雪|ゆき} の {中|なか} に いたら 、 {凍傷|とうしょう} に なります から 。 || He was trying to dry his sandals. Wet feet in the snow means frostbite.
+?(comp=mio) comp: {草鞋|わらじ} を {乾|かわ}かそう と してた ん だ ね 。 {濡|ぬ}れた {足|あし} で {雪|ゆき} の {中|なか} に いたら 、 {凍傷|とうしょう} に なる から 。 || He was trying to dry his sandals. Wet feet in the snow means frostbite.
 ?(comp=ren) comp: {壁|かべ} の {字|じ} 、 カンベエ さん の {帳面|ちょうめん} の {字|じ} と {同|おな}じ {手|て} です 。 ゲンタ さん が {自分|じぶん} で {書|か}いた もの です 。 || The writing on the wall is the same hand as in Kanbe's ledger. Genta wrote it himself.
 ?(comp=suzu) comp: {舞台|ぶたい} の {小道具|こどうぐ} が 、 {全部|ぜんぶ} {揃|そろ}ってる わ 。 {誰|だれ} か が 、 {台詞|せりふ} を {忘|わす}れた まま {立|た}って いる みたい 。 || All the props are in place. As if someone's standing there having forgotten his lines.
 !checkpoint
@@ -203,7 +203,7 @@ cr_genta: {俺|おれ} は …… {逃|に}げた ん だった か 。 {下|し
 !refresh
 narr: {飛脚|ひきゃく} の {姿|すがた} は 、 もう ない 。 {戸口|とぐち} の {雪|ゆき} の {上|うえ} に 、 {状箱|じょうばこ} が {置|お}いて ある 。 || The courier is gone. On the snow by the door lies the letter box.
 ?(comp=nao) comp: …… {受|う}け{取|と}った 。 {継|つ}ぐ ぞ 。 || …Received. We'll take it on.
-?(comp=mio) comp: {暖|あたた}かい {所|ところ} へ {行|い}けた なら 、 いい ん です けど 。 || I hope he's gone somewhere warm.
+?(comp=mio) comp: {暖|あたた}かい {所|ところ} へ {行|い}けた なら 、 いい ん だ けど 。 || I hope he's gone somewhere warm.
 ?(comp=ren) comp: ゲンタ さん 。 …… お{疲|つか}れ さま でした 。 || Genta. …Thank you for your hard work.
 ?(comp=suzu) comp: {長|なが}い {一人|ひとり} {芝居|しばい} だった わ ね 。 …… {拍手|はくしゅ} 。 || A long one-man show. …Applause.
 !autosave
@@ -235,7 +235,7 @@ narr: {峠|とうげ} に {出|で}た 。 {四方|しほう} が {雲|くも} �
 !shot steam
 narr: {北東|ほくとう} の {遥|はる}か {下|した} に 、 {雲|くも} の {切|き}れ{目|め} が ある 。 {谷|たに} から 、 {白|しろ}い {湯気|ゆげ} が {何本|なんぼん} も {立|た}ち{上|のぼ}って いる 。 || Far below to the north-east there's a gap in the cloud. White steam rises from a valley in many columns.
 ?(comp=nao) comp: {湯気|ゆげ} …… {温泉|おんせん} か 。 {西|にし} で {聞|き}いた こと が ある 。 {湯|ゆ} の {谷|たに} の {話|はなし} 。 || Steam… Hot springs? I heard of it in the west. A valley of hot water.
-?(comp=mio) comp: {湯気|ゆげ} の {谷|たに} 。 …… {薬湯|くすりゆ} の {本|ほん} で {読|よ}んだ {所|ところ} かも しれません 。 || A valley of steam. …It might be the place I read about in a book on medicinal baths.
+?(comp=mio) comp: {湯気|ゆげ} の {谷|たに} 。 …… {薬湯|くすりゆ} の {本|ほん} で {読|よ}んだ {所|ところ} かも しれない 。 || A valley of steam. …It might be the place I read about in a book on medicinal baths.
 ?(comp=ren) comp: {師匠|ししょう} の {地図|ちず} に も 、 {湯気|ゆげ} の {印|しるし} が ありました 。 …… {行|い}って みる {価値|かち} は あります 。 || My master's map had a steam mark there too. …It would be worth going.
 ?(comp=suzu) comp: {湯治場|とうじば} ね ！ {旅|たび} の {一座|いちざ} の {憧|あこが}れ よ 。 {次|つぎ} の {幕|まく} は 、 あそこ かしら 。 || A spa! Every touring company's dream. Is that where the next act is?
 !sequence cr.summit end

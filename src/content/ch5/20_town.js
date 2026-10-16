@@ -38,7 +38,7 @@ narr: {湖|みずうみ} の {中|なか} から 、{古|ふる}い {塔|とう}
 ?(comp=suzu) !gesture comp aside
 ?(comp=suzu) comp[worry]: {今日|きょう} は 、やけ に {静|しず}か ね 。|| Awfully quiet today, though.
 !gesture pc point right
-pc: {下|お}りて みましょう 。|| Let's go down.
+pc: {下|お}りて みよう 。|| Let's go down.
 ?(comp=nao) !quest lf_nao start
 !journal {灯落|ひおち} に {着|つ}いた 。{町|まち} は {妙|みょう} に {静|しず}か だ 。|| Arrived above Lanternfall. The town is strangely quiet.
 !autosave

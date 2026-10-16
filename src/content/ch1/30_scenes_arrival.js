@@ -307,7 +307,7 @@ ren: レン と {申|もう}します 。 {川上|かわかみ} から 、 {嵐|
 ren: {記録|きろく} は {完璧|かんぺき} です 。 {名前|なまえ} も {距離|きょり} も {全部|ぜんぶ} {写|うつ}して ある 。 ただ …… {書|か}いて も {書|か}いて も 、 {名前|なまえ} が {根|ね} を {張|は}らない 。 || My records are perfect. Every name and distance, copied out. Only… however many times I write them, the names won't take root.
 !look ren pc
 !gesture ren chin then=shake
-ren[think]: {先生|せんせい} なら 、 どう した でしょう 。 {教|おし}え は {全部|ぜんぶ} {覚|おぼ}えて いる のに 、 {顔|かお} が …… いえ 、 {関係|かんけい} ない {話|はなし} です 。 || What would my teacher have done? I remember every lesson, and yet the face… No. That's beside the point.
+ren[think]: {師匠|ししょう} なら 、 どう した でしょう 。 {教|おし}え は {全部|ぜんぶ} {覚|おぼ}えて いる のに 、 {顔|かお} が …… いえ 、 {関係|かんけい} ない {話|はなし} です 。 || What would my teacher have done? I remember every lesson, and yet the face… No. That's beside the point.
 !walkto pc 32 19 left
 !look ren pc
 !prop ren ledger
@@ -362,7 +362,7 @@ ren[surprise]: …… {根|ね} を {張|は}った 。 {本当|ほんとう} �
 !gesture ren point 42,17
 ren: {橋|はし} の {方|ほう} は 、 {記録|きろく} に よれば {名前|なまえ} が {二|ふた}つ {必要|ひつよう} な はず です 。 {向|む}こう{岸|ぎし} と 、 {渡|わた}し{守|もり} の {名前|なまえ} 。 {二|ふた}つ{目|め} の {欄|らん} が 、 {記録|きろく} から も {消|き}えて いる 。 || According to the records, the bridge needs two names: the far bank, and the ferryman's. The second entry has vanished from the records too.
 !gesture ren chin
-ren[think]: {記録|きろく} から まで …… 。 {紙|かみ} の {上|うえ} の {名前|なまえ} だけ を {持|も}って いく {何|なに} か が いる 。 {先生|せんせい} が {昔|むかし} 、 そんな {話|はなし} を して いた {気|き} が します 。 || Even from the records… Something is taking only the names written on paper. My teacher once told me a story like that, I think.
+ren[think]: {記録|きろく} から まで …… 。 {紙|かみ} の {上|うえ} の {名前|なまえ} だけ を {持|も}って いく {何|なに} か が いる 。 {師匠|ししょう} が {昔|むかし} 、 そんな {話|はなし} を して いた {気|き} が します 。 || Even from the records… Something is taking only the names written on paper. My teacher once told me a story like that, I think.
 !look ren pc
 !gesture ren nod pc
 ren[smile]: ありがとう ございます 。 これ を 。 {灯守|ひもり} の {言葉|ことば} です 。 {私|わたし} より 、 あなた の {手|て} で {書|か}く {方|ほう} が {明|あか}るい でしょう 。 || Thank you. Take this — a keeper's word. It'll shine brighter written in your hand than in mine.

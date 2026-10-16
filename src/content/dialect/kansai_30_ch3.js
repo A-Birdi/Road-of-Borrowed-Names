@@ -78,7 +78,7 @@ RB.dialect.add('kansai', `
 > …… {土|つち} は 、 {覚|おぼ}えてた ん や な 。 || …The soil remembered.
 @ ch3/upper:56 [co.ashband]
 = {足元|あしもと} を {固|かた}める {言葉|ことば} ね 。 {今|いま} の {私|わたし} に {一番|いちばん} {必要|ひつよう} かも 。 || A word for firm footing. Maybe the one I need most right now.
-> {足元|あしもと} を {固|かた}める {言葉|ことば} や な 。 {今|いま} の うち が {一番|いちばん} {要|い}る もん かも 。 || A word for firm footing. Maybe just what I need most right now.
+> {足元|あしもと} を {固|かた}める {言葉|ことば} や な 。 {今|いま} 、 うち が {一番|いちばん} {要|い}る もん かも 。 || A word for firm footing. Maybe just what I need most right now.
 @ ch3/oldworks:9 [co.oldworks_enter]
 = {下|した} から {見|み}た 。 この {通|とお}り が 、 {全部|ぜんぶ} {赤|あか}かった 。 || I saw it from below. This whole row, red.
 > {下|した} から {見|み}てん 。 この {通|とお}り が 、 {全部|ぜんぶ} {赤|あか}かった 。 || I saw it from below. This whole row, red.
@@ -153,7 +153,7 @@ RB.dialect.add('kansai', `
 > …… って 、 {芝居|しばい} やったら {言|い}う とこ や な 。 ほら 、 {行|い}こ 。 || …Is what I'd say if this were a play. Come on, let's go.
 @ ch3/end:62 [co.assembly]
 = …… {拍手|はくしゅ} は 、 しない で おく わ 。 これ は {舞台|ぶたい} じゃ ない から 。 || …I won't applaud. This isn't a stage.
-> …… {拍手|はくしゅ} は 、 せえへん で おく わ 。 これ は {舞台|ぶたい} ちゃう から 。 || …I won't applaud. This isn't a stage.
+> …… {拍手|はくしゅ} は 、 やめとく わ 。 これ は {舞台|ぶたい} ちゃう から 。 || …I won't applaud. This isn't a stage.
 @ ch3/end:87 [co.festival_begin]
 = {隣|となり} の {席|せき} 、 {予約|よやく} が {入|はい}ってる の 。 …… {後|あと} で ね 。 {先|さき} に {一周|いっしゅう} して きて 。 || I've a reserved seat — next door to Hiro's. …Later. Go and walk round first.
 > {隣|となり} の {席|せき} 、 {予約|よやく} が {入|はい}ってる ねん 。 …… {後|あと} で な 。 {先|さき} に {一周|いっしゅう} して きて 。 || I've got a reserved seat — right next to Hiro's. …Later. Go walk round first.
@@ -273,7 +273,7 @@ RB.dialect.add('kansai', `
 > …… その {前|まえ} に 、 ヒロ が {今|いま} {何|なに} を {信|しん}じてる か 、 {確|たし}かめたい ねん 。 {付|つ}いて {来|き}て くれる ？ {観客|かんきゃく} が おったら 、 うち 、 {強|つよ}い ねん 。 || …Before that, I wanna know what Hiro believes now. Will you come along? I'm braver with an audience.
 @ ch3/suzu:59 [co.suzu_ask]
 = …… {素敵|すてき} な {習|なら}わし ね 。 ありがとう 、 {話|はな}して くれて 。 || …It's a lovely custom. Thank you for telling us.
-> …… {素敵|すてき} な {習|なら}わし です ね 。 ありがとう 、 {話|はな}して くれはって 。 || …It's a lovely custom. Thank you for telling us.
+> …… {素敵|すてき} な {習|なら}わし や な 。 ありがとう 、 {話|はな}して くれて 。 || …It's a lovely custom. Thank you for telling us.
 @ ch3/suzu:61 [co.suzu_ask]
 = {旅芸人|たびげいにん} の {顔|かお} は 、 みんな どこ か で {見|み}た {顔|かお} よ 。 || Every travelling performer has a face you've seen somewhere.
 > {旅芸人|たびげいにん} の {顔|かお} は 、 みんな どこ か で {見|み}た {顔|かお} や で 。 || Every travelling performer's got a face you've seen somewhere.
@@ -399,7 +399,7 @@ RB.dialect.add('kansai', `
 > {次|つぎ} が うち の {番|ばん} やねん 。 {二十年前|にじゅうねんまえ} に {踊|おど}る はず やった {演目|えんもく} 。 {台詞|せりふ} は {三|みっ}つ だけ 。 {全部|ぜんぶ} 、 ほんま の こと や で 。 || I'm on next. The piece I was meant to dance twenty years ago. Only three lines. Every one of 'em true.
 @ ch3/suzu:197 [co.fest_suzu_c]
 = {見|み}て て 。 {観客|かんきゃく} {一名|いちめい} 、 {最後|さいご} まで {席|せき} を {立|た}たず に ね 。 || Watch me. Audience of one, stay in your seat to the end.
-> {見|み}てて な 。 {観客|かんきゃく} {一名|いちめい} 、 {最後|さいご} まで {席|せき} を {立|た}たんと な 。 || Watch me, now. Audience of one — stay in your seat to the end.
+> {見|み}てて な 。 {観客|かんきゃく} {一名|いちめい} 、 {最後|さいご} まで {席|せき} を {立|た}たんと いて な 。 || Watch me, now. Audience of one — stay in your seat to the end.
 @ ch3/festival:32 [co.fest_hiro]
 = {分|わ}かってる わ よ 。 {帳簿|ちょうぼ} {通|どお}り に ね 。 || I know, I know. By the book.
 > {分|わ}かってる って 。 {帳簿|ちょうぼ} {通|どお}り に な 。 || I know, I know. By the book.

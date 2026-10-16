@@ -44,7 +44,7 @@ narr: もう {一度|いちど} 。 {名前|なまえ} は 、 {一|ひと}つ �
 !set sa2_voice_back
 narr: {名前|なまえ} を {呼|よ}んだ 。 {自分|じぶん} の {声|こえ} が 、 {聞|き}こえた 。 || You call their name. You can hear your own voice.
 ?(comp=nao) nao[closed]: …… {聞|き}こえた 。 {名前|なまえ} だけ は 、 ちゃんと {届|とど}いた 。 …… {一番|いちばん} {大事|だいじ} な {郵便|ゆうびん} だ な 。 || …I heard it. My name, at least, got through. …The most important post there is.
-?(comp=mio) mio[closed]: …… {聞|き}こえました 。 {名前|なまえ} を {呼|よ}んで もらう と 、 {声|こえ} って {戻|もど}る ん です ね 。 {薬|くすり} に は 、 できない こと です 。 || …I heard it. When someone calls your name, your voice comes back. That's something no medicine can do.
+?(comp=mio) mio[closed]: …… {聞|き}こえた 。 {名前|なまえ} を {呼|よ}んで もらう と 、 {声|こえ} って {戻|もど}る ん だ ね 。 {薬|くすり} に は 、 できない こと 。 || …I heard it. When someone calls your name, your voice comes back. That's something no medicine can do.
 ?(comp=ren) ren[closed]: …… {名前|なまえ} を {呼|よ}ばれました 。 {灯|ひ} と {同|おな}じ です 。 {名前|なまえ} を {呼|よ}べば 、 {灯|ひ} は {応|こた}える 。 …… ありがとう ございます 。 || …You called my name. It's the same as a lamp: call its name, and it answers. …Thank you.
 ?(comp=suzu) suzu[surprise]: …… {出|で}た ！ {声|こえ} 、 {出|で}た ！ …… もう 、 {台詞|せりふ} が {飛|と}んだ {役者|やくしゃ} の {気分|きぶん} 。 {二度|にど} と ごめん よ 。 || …It's back! My voice, it's back! …That felt like an actor whose lines have gone. Never again, thank you.
 narr: {遠|とお}く で 、 {水|みず} の {音|おと} が {戻|もど}って きた 。 || Far off, the sound of water comes back.
@@ -83,13 +83,13 @@ nao[smile]: これ で 、 {俺|おれ} に も {届|とど}く 。 || Now thing
 # Mio's ending (S14): her own shelves, an honest label on every one; the one jar with no label, kept for whatever she
 # hasn't decided yet.
 narr: {棚|たな} の {札|ふだ} に は 、 {効|き}く こと と 、 {効|き}かない こと が 、 {両方|りょうほう} {書|か}いて ある 。 || Each label on the shelves says what the remedy does, and what it doesn't.
-?(yn_mio_back) mio: キクエ さん の {札|ふだ} の {真似|まね} です 。 …… {正直|しょうじき} な {札|ふだ} は 、 {書|か}く の に {時間|じかん} が かかります 。 || I copied Kikue's labels. …Honest labels take a long time to write.
-?(!yn_mio_back) mio: {正直|しょうじき} な {札|ふだ} は 、 {書|か}く の に {時間|じかん} が かかります 。 でも 、 {嘘|うそ} の {札|ふだ} より 、 {夜|よる} よく {眠|ねむ}れます 。 || Honest labels take a long time to write. But I sleep better than I would with lying ones.
+?(yn_mio_back) mio: キクエ さん の {札|ふだ} の {真似|まね} 。 …… {正直|しょうじき} な {札|ふだ} は 、 {書|か}く の に {時間|じかん} が かかる の 。 || I copied Kikue's labels. …Honest labels take a long time to write.
+?(!yn_mio_back) mio: {正直|しょうじき} な {札|ふだ} は 、 {書|か}く の に {時間|じかん} が かかる 。 でも 、 {嘘|うそ} の {札|ふだ} より 、 {夜|よる} よく {眠|ねむ}れる の 。 || Honest labels take a long time to write. But I sleep better than I would with lying ones.
 ?(comp=mio) !gesture comp point up
 narr: {棚|たな} の {一番|いちばん} {奥|おく} に 、 {札|ふだ} の ない {瓶|びん} が {一|ひと}つ ある 。 || At the very back of the shelf there is one jar with no label.
-mio: これ は 、 その まま 。 {決|き}めて いない こと の {場所|ばしょ} です 。 …… {中身|なかみ} は 、 だいぶ {減|へ}りました 。 || That one stays as it is. A place for what I haven't decided yet. …There's a lot less in it now.
-?(yn_mio_back) mio[smile]: {一番|いちばん} {古|ふる}い {紙|かみ} は 、 もう {入|はい}って いません 。 {返事|へんじ} を しました から 。 || The oldest scrap isn't in there any more. I answered it.
-?(!yn_mio_back) mio[smile]: いつか 、 {全部|ぜんぶ} に {返事|へんじ} を します 。 {急|いそ}がず に 。 || One day I'll answer all of them. Without hurrying.
+mio: これ は 、 その まま 。 {決|き}めて いない こと の {場所|ばしょ} 。 …… {中身|なかみ} は 、 だいぶ {減|へ}った よ 。 || That one stays as it is. A place for what I haven't decided yet. …There's a lot less in it now.
+?(yn_mio_back) mio[smile]: {一番|いちばん} {古|ふる}い {紙|かみ} は 、 もう {入|はい}って ない 。 {返事|へんじ} を した から 。 || The oldest scrap isn't in there any more. I answered it.
+?(!yn_mio_back) mio[smile]: いつか 、 {全部|ぜんぶ} に {返事|へんじ} を する 。 {急|いそ}がず に 。 || One day I'll answer all of them. Without hurrying.
 
 @scene sa2.end_ren
 # Ren's ending (S14): the answer to Hisae, a keeper who walks the road as the order once did; the relay will carry it.
@@ -122,7 +122,7 @@ narr: {最後|さいご} の {光|ひかり} が 、 {川|かわ} の {上|う�
 :hand
 !hook co_note end_romance hand
 ?(comp=nao) nao[shy]: …… ああ 。 {離|はな}す な よ 。 {出口|でぐち} は 、 {確|たし}かめなくて いい 。 || …Yeah. Don't let go. No need to check the exits.
-?(comp=mio) mio[smile]: …… はい 。 {手|て} 、 {温|あたた}かい です ね 。 {今日|きょう} は 、 {薬|くすり} の {匂|にお}い が しない 。 || …Yes. Your hand's warm. And today it doesn't smell of medicine.
+?(comp=mio) mio[smile]: …… はい 。 {手|て} 、 {温|あたた}かい ね 。 {今日|きょう} は 、 {薬|くすり} の {匂|にお}い が しない 。 || …Yes. Your hand's warm. And today it doesn't smell of medicine.
 ?(comp=ren) ren[smile]: …… はい 。 {迷子|まいご} に ならない よう に 、 で は なくて 。 そう したい から です 。 || …Yes. Not so that I don't get lost. Because I want to.
 ?(comp=suzu) suzu[shy]: …… うん 。 {台詞|せりふ} なし で いい 。 {一番|いちばん} {効|き}く {場面|ばめん} だ から 。 || …Mm. No lines needed. It's the scene that lands hardest.
 narr: {日|ひ} が {沈|しず}む まで 、 {二人|ふたり} は {手|て} を つないで いた 。 || You hold hands until the sun is down.
@@ -130,7 +130,7 @@ narr: {日|ひ} が {沈|しず}む まで 、 {二人|ふたり} は {手|て} 
 :kiss
 !hook co_note end_romance kiss
 ?(comp=nao) nao[shy]: …… {聞|き}く な よ 。 …… いい 。 || …Don't ask. …Yes.
-?(comp=mio) mio[shy]: …… はい 。 {私|わたし} も 、 そう したかった です 。 || …Yes. I wanted that too.
+?(comp=mio) mio[shy]: …… はい 。 {私|わたし} も 、 そう したかった 。 || …Yes. I wanted that too.
 ?(comp=ren) ren[shy]: …… はい 。 {師匠|ししょう} の {教|おし}え に は 、 ない こと です けど 。 || …Yes. It isn't in any of my teacher's sayings, mind.
 ?(comp=suzu) suzu[shy]: …… うん 。 {今|いま} の は 、 {台本|だいほん} に {書|か}かない 。 {二人|ふたり} だけ の {場面|ばめん} 。 || …Mm. That one's not going in the script. A scene just for the two of us.
 narr: {短|みじか}い キス 。 {川|かわ} の {音|おと} だけ が 、 {聞|き}いて いた 。 || A brief kiss. Only the river is listening.
@@ -138,7 +138,7 @@ narr: {短|みじか}い キス 。 {川|かわ} の {音|おと} だけ が 、
 :friend
 !hook co_note end_romance friend
 ?(comp=nao) nao[smile]: ああ 。 {隣|となり} が {一番|いちばん} {歩|ある}きやすい 。 {相棒|あいぼう} 。 || Yeah. Beside you is the easiest place to walk. Partner.
-?(comp=mio) mio[smile]: はい 。 {隣|となり} に いて くれる の が 、 {一番|いちばん} {安心|あんしん} します 。 || Yes. Having you beside me is what makes me feel safest.
+?(comp=mio) mio[smile]: うん 。 {隣|となり} に いて くれる の が 、 {一番|いちばん} {安心|あんしん} する 。 || Yes. Having you beside me is what makes me feel safest.
 ?(comp=ren) ren[smile]: {一番|いちばん} の {友|とも} 。 …… {灯|ひ} の {名前|なまえ} より 、 {大事|だいじ} に {覚|おぼ}えて おきます 。 || My closest friend. …I'll keep that more carefully than any lamp's name.
 ?(comp=suzu) suzu[laugh]: {相方|あいかた} は {並|なら}んで {立|た}つ もの よ 。 {舞台|ぶたい} でも 、 {道|みち} でも 。 …… {最後|さいご} まで 、 {一緒|いっしょ} に ね 。 || Partners stand side by side. On stage, and on the road. …All the way, together.
 narr: {二人|ふたり} は {並|なら}んで 、 {日|ひ} が {沈|しず}む の を {見|み}て いた 。 || Side by side, you watch the sun go down.

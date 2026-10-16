@@ -54,7 +54,9 @@ narr: {台|だい} の {上|うえ} に 、 {鍵帳|かぎちょう} を {開|�
 
 @scene hall.gate
 narr: しめ{縄|なわ} が {道|みち} を {塞|ふさ}いで いる 。 この {階|かい} の {行灯|あんどん} が {全部|ぜんぶ} {灯|とも}る まで 、 {先|さき} へ は {進|すす}めない らしい 。 || A sacred rope blocks the way. It seems you can't go on until every floor lantern on this level is lit.
-?(comp) comp: {灯|ひ} が {全部|ぜんぶ} {点|つ}いたら 、 ほどける ん だろう 。 || I expect it unties once all the lights are lit.
+?(comp&comp!=ren&comp!=mio) comp: {灯|ひ} が {全部|ぜんぶ} {点|つ}いたら 、 ほどける ん だろう 。 || I expect it unties once all the lights are lit.
+?(comp=mio) comp: {灯|ひ} が {全部|ぜんぶ} {点|つ}いたら 、 ほどける ん でしょう ね 。 || I expect it unties once all the lights are lit.
+?(comp=ren) comp: {灯|ひ} が {全部|ぜんぶ} {点|つ}いたら 、 ほどける の でしょう 。 || I expect it unties once all the lights are lit.
 
 @scene hall.return
 narr: {帰|かえ}り{灯|び} 。 {手|て} を かざす と 、 {館|やかた} の {囲炉裏|いろり} の {火|ひ} が {見|み}える 。 || The return lantern. Hold out your hand, and you can see the fire of the hall's hearth in it.

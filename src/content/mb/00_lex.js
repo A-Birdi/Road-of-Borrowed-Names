@@ -66,7 +66,7 @@ RB.lex.add(RB.lex.parseTable(`
 # ---- people and their speech ---------------------------------------------------------------------------------------
 閘門番|こうもんばん|n|A|lock-keeper
 橋守|はしもり|n|A|bridge-keeper (one who watches over a bridge)
-儂|わし|pn|I|I, me (an old man's word)
+儂|わし|pn|I|I, me (an old man's word)|Old-fashioned; in stories and drama, the conventional "I" of old men. Everyday: わたし.
 のう|のう|prt|A|isn't it; you know (an old man's way of ending a sentence)
 ゴン|ごん|adv|E|thunk, clunk (something heavy knocking)
 # ---- the Undercroft ---------------------------------------------------------------------------------------------

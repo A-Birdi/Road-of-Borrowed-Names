@@ -17,7 +17,7 @@ narr: {雪|ゆき} の {上|うえ} に 、 {白|しろ}い {影|かげ} が {�
 ?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp: {走|はし}る な 、 だった な 。 …… {配達人|はいたつにん} に {走|はし}る な って 、 {無茶|むちゃ} を {言|い}う ぜ 。 || "Don't run," was it. …Telling a courier not to run. Unreasonable.
 ?(comp=mio) !gesture comp guard
-?(comp=mio) comp[worry]: あの {目|め} …… {熱|ねつ} の ある {子|こ} の {目|め} に {似|に}て います 。 {苦|くる}しい の かも しれない 。 || Those eyes… they look like a feverish child's. Maybe it's suffering.
+?(comp=mio) comp[worry]: あの {目|め} …… {熱|ねつ} の ある {子|こ} の {目|め} に {似|に}てる 。 {苦|くる}しい の かも しれない 。 || Those eyes… they look like a feverish child's. Maybe it's suffering.
 ?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp: {石段|いしだん} の {灯|あか}り が {消|き}えて います 。 {上|うえ} の {灯|あか}り と {一緒|いっしょ} に 。 {灯|あか}り は 、 {道|みち} の {背骨|せぼね} です から 。 || The lanterns on the stair are out. Along with the one above. Lanterns are the backbone of a road.
 ?(comp=suzu) !gesture comp palm
@@ -33,7 +33,7 @@ narr: {石段|いしだん} の {灯|あか}り 。 {笠|かさ} の {字|じ} �
 !gesture pc observe 9,36
 narr: {石|いし} の {腰掛|こしか}け 。 {脇|わき} の {柱|はしら} に 、 {刻|きざ}み{目|め} が {縦|たて} に {並|なら}んで いる 。 {一|ひと}つ {一|ひと}つ に {小|ちい}さく 、 「 アカリ {四|よっ}つ 」 「 アカリ {五|いつ}つ 」 …… 「 アカリ {十五|じゅうご} 」 。 || A stone seat. On the post beside it, notches run upward, each labelled small: "Akari, 4", "Akari, 5"… "Akari, 15".
 ?(comp=mio) !gesture comp observe 9,36
-?(comp=mio) comp[smile]: {毎年|まいとし} 、 ここ で {背|せ} を {測|はか}って いた んです ね 。 {天文台|てんもんだい} へ {上|のぼ}る {途中|とちゅう} に 。 || He measured her height here every year. On the way up to the observatory.
+?(comp=mio) comp[smile]: {毎年|まいとし} 、 ここ で {背|せ} を {測|はか}ってた ん だ ね 。 {天文台|てんもんだい} へ {上|のぼ}る {途中|とちゅう} に 。 || He measured her height here every year. On the way up to the observatory.
 ?(comp=nao) !gesture comp aside
 ?(comp=nao) comp: {十五|じゅうご} で {止|と}まってる 。 {町|まち} へ {出|で}た {年|とし} か 。 || Stops at fifteen. The year she went down to the town, I guess.
 ?(comp=suzu) !gesture comp check prop=accountbook
@@ -55,7 +55,8 @@ narr: {石段|いしだん} の {上|うえ} から 、 {雪鈴|ゆきすず} �
 @scene sb.service_door_out
 narr: {小|ちい}さな {石|いし} の {小屋|こや} の {扉|とびら} 。 {内側|うちがわ} から {閂|かんぬき} が かかって いて 、 びくとも しない 。 || The door of a little stone hut. It's barred from the inside and won't budge.
 ?(comp=nao) comp: {内側|うちがわ} から しか {開|あ}かない 、 か 。 {中|なか} を {回|まわ}って 、 {向|む}こう から {開|あ}けよう 。 || Only opens from the inside. We'll go round through the building and open it from the other side.
-?(comp!=nao) comp: デンジ さん の {言|い}って いた 、 {裏|うら} の {階段|かいだん} でしょう か 。 {中|なか} から {開|あ}けられる はず です 。 || That must be the back stair Denji mentioned. It should open from inside.
+?(comp!=nao&comp!=suzu) comp: デンジ さん の {言|い}って いた 、 {裏|うら} の {階段|かいだん} でしょう か 。 {中|なか} から {開|あ}けられる はず です 。 || That must be the back stair Denji mentioned. It should open from inside.
+?(comp=suzu) comp: デンジ さん の {言|い}ってた 、 {裏|うら} の {階段|かいだん} かな 。 {中|なか} から {開|あ}けられる はず だ よ 。 || That must be the back stair Denji mentioned. It should open from inside.
 
 @scene sb.hall_enter
 # Staged: your companion steps in off the doorway beside you; you look up at the icicles and lean towards the
@@ -70,7 +71,7 @@ narr: {奥|おく} の {扉|とびら} は 、 {分厚|ぶあつ}い {氷|こお
 ?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp: {息|いき} が {白|しろ}い 。 …… {中|なか} の ほう が {寒|さむ}い って 、 {建物|たてもの} と して {失格|しっかく} だろ 。 || My breath's white. …A building that's colder inside than out has failed at being a building.
 ?(comp=mio) !gesture comp rubhands
-?(comp=mio) comp[worry]: {長|なが}く いる と 、 {指|ゆび} を {悪|わる}く します 。 {手|て} を {擦|こす}り{合|あ}わせて 。 こう 。 || Stay too long and you'll damage your fingers. Rub your hands together. Like this.
+?(comp=mio) comp[worry]: {長|なが}く いる と 、 {指|ゆび} を {悪|わる}く する よ 。 {手|て} を {擦|こす}り{合|あ}わせて 。 こう 。 || Stay too long and you'll damage your fingers. Rub your hands together. Like this.
 ?(comp=ren) !gesture comp chin
 ?(comp=ren) comp[think]: {星|ほし} を {見|み}る {建物|たてもの} が 、 {目|め} を {閉|と}じて いる よう です 。 || It's as if a building for watching stars has closed its eyes.
 ?(comp=suzu) !gesture comp size
@@ -105,7 +106,7 @@ narr: {氷|こおり} は {崩|くず}れ 、 {扉|とびら} が {開|ひら}�
 ?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp[smirk]: 「 {見|み}る べき {方角|ほうがく} 」 、 か 。 {気取|きど}った {扉|とびら} だ 。 {嫌|きら}い じゃ ない 。 || "Which way to look." A pretentious door. I don't hate it.
 ?(comp=mio) !gesture comp laugh
-?(comp=mio) comp[smile]: ホシノ さん らしい {鍵|かぎ} です ね 。 {星|ほし} を {知|し}って いる {人|ひと} だけ が {入|はい}れる 。 || A very Hoshino sort of lock. Only people who know the stars can enter.
+?(comp=mio) comp[smile]: ホシノ さん らしい {鍵|かぎ} だ ね 。 {星|ほし} を {知|し}って いる {人|ひと} だけ が {入|はい}れる 。 || A very Hoshino sort of lock. Only people who know the stars can enter.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {冬|ふゆ} の {鼓星|つづみぼし} は {南|みなみ} 。 …… {方角|ほうがく} だけ は 、 {得意|とくい} な んです 。 {空|そら} の {方角|ほうがく} は 。 || The winter Drum Stars: south. …Directions are my strong point. In the sky, that is.
 ?(comp=suzu) !gesture comp laugh
@@ -130,8 +131,9 @@ narr: {霜|しも} で {真|ま}っ{白|しろ} に なった {星図|せいず}
 !set sb_charts_seen
 narr: {星図|せいず} の {部屋|へや} 。 {棚|たな} に {巻物|まきもの} の よう な {星図|せいず} が {並|なら}び 、 {大|おお}きな {机|つくえ} に {観測|かんそく} {日誌|にっし} が {開|ひら}いた まま に なって いる 。 || The chart room. Rolled star charts fill the shelves, and on a big table an observing log lies open.
 narr: {部屋|へや} の {隅|すみ} に 、 {冷|つめ}たく なった {鉄|てつ} の ストーブ が ある 。 || In the corner stands an iron stove, gone cold.
-?(comp=mio) comp: ストーブ に {火|ひ} を {入|い}れたら 、 {少|すこ}し {休|やす}めます ね 。 {炎|ほのお} の {字|じ} で 。 || If we light the stove, we can rest a little. With the flame word.
-?(comp!=mio) comp: {少|すこ}し {休|やす}もう 。 あの ストーブ 、 {使|つか}える かも しれない 。 || Let's rest a bit. That stove might still work.
+?(comp=mio) comp: ストーブ に {火|ひ} を {入|い}れたら 、 {少|すこ}し {休|やす}める ね 。 {炎|ほのお} の {字|じ} で 。 || If we light the stove, we can rest a little. With the flame word.
+?(comp!=mio&comp!=ren) comp: {少|すこ}し {休|やす}もう 。 あの ストーブ 、 {使|つか}える かも しれない 。 || Let's rest a bit. That stove might still work.
+?(comp=ren) comp: {少|すこ}し {休|やす}みましょう 。 あの ストーブ 、 {使|つか}える かも しれません 。 || Let's rest a bit. That stove might still work.
 !checkpoint sb.obs_charts 8 9 up
 !autosave
 
@@ -159,7 +161,7 @@ narr: ストーブ の {前|まえ} で {手|て} を {温|あたた}める 。 
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: {温|あった}まった 。 …… {次|つぎ} の {部屋|へや} も 、 これ ぐらい {親切|しんせつ} だと いい な 。 || Warm now. …Hope the next room's this friendly.
 ?(comp=mio) !gesture comp observe pc
-?(comp=mio) comp[smile]: {手|て} 、 {赤|あか}く なって きました ね 。 よかった 。 || Your hands are going pink. Good.
+?(comp=mio) comp[smile]: {手|て} 、 {赤|あか}く なって きた ね 。 よかった 。 || Your hands are going pink. Good.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {火|ひ} の {前|まえ} で は 、 {道|みち} を {間違|まちが}えません 。 {動|うご}かない から です 。 || I never take a wrong turn in front of a fire. Because I'm not moving.
 ?(comp=suzu) !gesture comp exhale
@@ -178,7 +180,8 @@ narr: 「 デンジ へ 。 {上|うえ} の {階|かい} へ の {格子|こう
 !if sb_log_solved -> end
 !gesture pc -
 ?(comp) !gesture comp lookbetween 4,5 and=pc
-?(comp) comp: {日誌|にっし} は 、 あの {大|おお}きな {机|つくえ} の {上|うえ} だ ね 。 || The log is on that big table.
+?(comp&comp!=ren) comp: {日誌|にっし} は 、 あの {大|おお}きな {机|つくえ} の {上|うえ} だ ね 。 || The log is on that big table.
+?(comp=ren) comp: {日誌|にっし} は 、 あの {大|おお}きな {机|つくえ} の {上|うえ} です ね 。 || The log is on that big table.
 
 @scene sb.charts_cabinet
 narr: {壁|かべ} {一面|いちめん} の {引|ひ}き{出|だ}し 。 {北|きた} ・ {北東|ほくとう} ・ {東|ひがし} ・ {南東|なんとう} ・ {南|みなみ} ・ {南西|なんせい} ・ {西|にし} ・ {北西|ほくせい} 。 {方角|ほうがく} ごと に {札|ふだ} が {貼|は}って ある 。 || A wall of drawers, each labelled with a direction: N, NE, E, SE, S, SW, W, NW.
@@ -228,7 +231,7 @@ narr: {余白|よはく} に 、 {別|べつ} の {手|て} で 。 「 {名|な
 ?(comp=mio) !gesture comp observe pc
 ?(comp=mio) comp[worry]: ウシオ さん 。 レン さん の {先生|せんせい} の …… 。 レン さん 、 {先生|せんせい} の {話|はなし} を する とき 、 いつも {少|すこ}し {寂|さび}しそう だった 。 || Ushio. Ren's teacher… Whenever Ren talked about their teacher, they always looked a little lonely.
 ?(comp=mio) !gesture comp chin
-?(comp=mio) comp: {葦|あし}ノ{瀬|せ} に {帰|かえ}ったら 、 {見|み}せて あげましょう 。 …… {見|み}せて いい もの か 、 {少|すこ}し {考|かんが}えて から 。 || When we get back to Reedwake, let's show Ren. …After thinking a bit about whether we should.
+?(comp=mio) comp: {葦|あし}ノ{瀬|せ} に {帰|かえ}ったら 、 {見|み}せて あげよう 。 …… {見|み}せて いい もの か 、 {少|すこ}し {考|かんが}えて から 。 || When we get back to Reedwake, let's show Ren. …After thinking a bit about whether we should.
 ?(comp=suzu) !gesture comp chin
 ?(comp=suzu) comp[think]: ウシオ 。 {聞|き}いた こと ある 。 レン の {師匠|ししょう} だ よ ね 。 {似顔絵|にがおえ} って 、 {残|のこ}された {方|ほう} に は {重|おも}い {荷物|にもつ} だ よ 。 {渡|わた}し{方|かた} を {間違|まちが}え ない よう に しない と 。 || Ushio. I've heard that name. Ren's teacher, right? A portrait is a heavy thing to hand to the one left behind. We'll have to be careful how we give it.
 !goto after
@@ -273,7 +276,8 @@ narr: {似顔絵|にがおえ} を {丁寧|ていねい} に {畳|たた}み 、
 
 @scene sb.charts_stair_locked
 narr: {上|うえ} へ の {階段|かいだん} は 、 {鉄|てつ} の {格子|こうし} と {氷|こおり} で {閉|と}ざされて いる 。 {錠前|じょうまえ} が {一|ひと}つ 。 || The stair up is closed off by an iron grille and ice. There's a single padlock.
-?(!sb_log_solved) comp: {鍵|かぎ} が {要|い}る 。 {机|つくえ} の {上|うえ} の {書|か}き{置|お}き に 、 {何|なに} か {書|か}いて ない ？ || We need a key. Doesn't the note on the desk say something?
+?(!sb_log_solved&comp!=ren) comp: {鍵|かぎ} が {要|い}る 。 {机|つくえ} の {上|うえ} の {書|か}き{置|お}き に 、 {何|なに} か {書|か}いて ない ？ || We need a key. Doesn't the note on the desk say something?
+?(!sb_log_solved&comp=ren) comp: {鍵|かぎ} が {要|い}ります 。 {机|つくえ} の {上|うえ} の {書|か}き{置|お}き に 、 {何|なに} か {書|か}いて ありません か 。 || We need a key. Doesn't the note on the desk say something?
 
 @scene sb.gallery_enter
 # Staged: your companion steps off the doorway beside you; you look up round the ring of the gallery and lean
@@ -356,7 +360,7 @@ narr: {笠|かさ} に は 、 {何|なに} も {書|か}いて ない 。 || No
 ?(comp=nao) !gesture comp lookbetween 6,4 and=pc
 ?(comp=nao) comp: {宛名|あてな} の ない {手紙|てがみ} と {同|おな}じ だ 。 {白|しろ}い 。 || Same as the letters with no address. White.
 ?(comp=mio) !gesture comp guard
-?(comp=mio) comp[worry]: {寒|さむ}い …… 。 {灯|あか}り が {冷|つめ}たい なんて 、 {変|へん} です 。 || So cold… A lamp shouldn't be cold.
+?(comp=mio) comp[worry]: {寒|さむ}い …… 。 {灯|あか}り が {冷|つめ}たい なんて 、 {変|へん} だ よ 。 || So cold… A lamp shouldn't be cold.
 ?(comp=ren) !gesture comp observe 6,4
 ?(comp=ren) comp: {名|な} を {失|うしな}った {灯|ひ} です 。 {近|ちか}づけば 、 {向|む}こう から {話|はな}しかけて くる でしょう 。 || A lamp that has lost its name. If we go closer, it will speak to us.
 ?(comp=suzu) !gesture comp point 6,4

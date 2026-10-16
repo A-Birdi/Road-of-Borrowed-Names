@@ -218,7 +218,7 @@ narr: {扉|とびら} を {閉|し}める と 、{重|おも}い {閂|かんぬ�
 ?(comp=mio) !gesture comp point 10,16
 ?(comp=mio) comp[smile]: よし 。{階段|かいだん} が {見|み}えた 。|| Right. I can see the stairs.
 ?(comp=ren) !gesture comp count
-?(comp=ren) comp: {条件|じょうけん} 、{時|とき} 、{結果|けっか} 。{三|みっ}つ とも {守|まも}りました 。|| Condition, timing, consequence. We kept all three.
+?(comp=ren) comp: {開|あ}けて 、{待|ま}って 、{閉|し}める 。{書|か}いて ある {順番|じゅんばん} の とおり に できました 。|| Open, wait, close. Done in exactly the order written.
 ?(comp=suzu) !gesture comp celebrate
 ?(comp=suzu) comp[laugh]: {第二幕|だいにまく} 、{幕|まく} ！|| Act two — curtain!
 !autosave

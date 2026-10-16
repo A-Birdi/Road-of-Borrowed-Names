@@ -24,7 +24,8 @@ narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {明|あか}るい 
 @scene hall.w2.f2_first
 !set hall_w2_f2_seen
 narr: {道|みち} の {脇|わき} に 、 {行列|ぎょうれつ} の {人|ひと} たち が {待|ま}って いる 。 {顔|かお} は {笑|わら}って いる が 、 {目|め} が {細|ほそ}い 。 {狐|きつね} の {目|め} だ 。 || At the roadside the procession waits. Their faces smile, but their eyes are narrow: fox eyes.
-?(comp) comp: {並|なら}び{順|じゅん} が {分|わ}からなくて 、 {困|こま}って いる みたい だ 。 || They seem stuck: nobody knows the order to walk in.
+?(comp&comp!=ren) comp: {並|なら}び{順|じゅん} が {分|わ}からなくて 、 {困|こま}って いる みたい だ 。 || They seem stuck: nobody knows the order to walk in.
+?(comp=ren) comp: {並|なら}び{順|じゅん} が {分|わ}からなくて 、 {困|こま}って いる よう です 。 || They seem stuck: nobody knows the order to walk in.
 
 @scene hall.w2.f3_first
 !set hall_w2_f3_seen
@@ -113,7 +114,8 @@ narr: ${TRAY[t][0]} 。 || ${TRAY[t][1][0].toUpperCase() + TRAY[t][1].slice(1)}.
     }
     out += `:all
 narr: {三|みっ}つ の {贈|おく}り{物|もの} が 、 {正|ただ}しい {台|だい} に {揃|そろ}った 。 || The three gifts are each on the right tray.
-?(comp) comp: {誰|だれ} から 、 {誰|だれ} へ 。 {札|ふだ} の {字|じ} {一|ひと}つ で 、 {行|い}き{先|さき} が {変|か}わる ん だ ね 。 || From whom, to whom. One word on a tag, and the gift goes somewhere else.
+?(comp&comp!=ren) comp: {誰|だれ} から 、 {誰|だれ} へ 。 {札|ふだ} の {字|じ} {一|ひと}つ で 、 {行|い}き{先|さき} が {変|か}わる ん だ ね 。 || From whom, to whom. One word on a tag, and the gift goes somewhere else.
+?(comp=ren) comp: {誰|だれ} から 、 {誰|だれ} へ 。 {札|ふだ} の {字|じ} {一|ひと}つ で 、 {行|い}き{先|さき} が {変|か}わる ん です ね 。 || From whom, to whom. One word on a tag, and the gift goes somewhere else.
 ${K.mark(W, 0, 't2')}
 `;
   }
@@ -132,7 +134,7 @@ ${K.mark(W, 0, 't2')}
   out += '\n@scene hall.w2.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {仲人|なこうど} の {石|いし} に 、 {字|じ} が {刻|きざ}んで ある 。 「 {四|よん} {枚|まい} の {札|ふだ} の うち 、 {一枚|いちまい} だけ が {間違|まちが}って いる 。 」 || Carved on the go-between\'s stone: "Of the four cards, one alone is wrong."'],
     task: { 0: 'hall.w2.counter0', 1: 'hall.w2.counter1' },
-    after: ['narr: {間違|まちが}った {札|ふだ} が 、 {風|かぜ} に {飛|と}んで いった 。 || The wrong card blows away on the wind.', '?(comp) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に ならない から ね 。 || A go-between who mixes up who gives to whom is out of work.'],
+    after: ['narr: {間違|まちが}った {札|ふだ} が 、 {風|かぜ} に {飛|と}んで いった 。 || The wrong card blows away on the wind.', '?(comp&comp!=ren) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に ならない から ね 。 || A go-between who mixes up who gives to whom is out of work.', '?(comp=ren) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に なりません から ね 。 || A go-between who mixes up who gives to whom is out of work.'],
     later: 'narr: {札|ふだ} を {一枚|いちまい} ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the cards one by one, then come back.',
     done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
   for (let i = 0; i < 4; i++) {
@@ -164,7 +166,8 @@ narr: {行列|ぎょうれつ} の {並|なら}び{順|じゅん} を {書|か}�
 ?(${both(L.E, 'hall.w2.pat=' + p)}) narr: 「 ${CARD[p][1]} 」 || "${CARD[p][3]}"
 ?(${both(L.IA, 'hall.w2.pat=' + p)}) narr: 「 ${CARD[p][2]} 」 || "${CARD[p][4]}"
 `;
-  out += `?(comp&!hall.w2.t4) comp: {先頭|せんとう} から {順番|じゅんばん} に 、 {声|こえ} を かけて いこう 。 || Let's call them out in order, from the front.
+  out += `?(comp&!hall.w2.t4&comp!=ren) comp: {先頭|せんとう} から {順番|じゅんばん} に 、 {声|こえ} を かけて いこう 。 || Let's call them out in order, from the front.
+?(comp=ren&!hall.w2.t4) comp: {先頭|せんとう} から {順番|じゅんばん} に 、 {声|こえ} を かけて いきましょう 。 || Let's call them out in order, from the front.
 `;
   const SENT = (r) => 'xp_hall_w2_f1_sent_' + r, AT = (r, i) => 'xp_hall_w2_f1_at_' + r + '_' + i, STEP = (i) => 'xp_hall_w2_f1_s' + i;
   const resetAll = '!unset ' + ORD[0].map(SENT).concat([1, 2, 3, 4].map(STEP)).concat(...ORD[0].map((r) => [1, 2, 3, 4, 5].map((i) => AT(r, i)))).join(' ');
@@ -185,7 +188,8 @@ ${ROLE[r][2]}: ${SAYS[r]}
     }
     out += `:wrong
 narr: ${ROLE[r][0]} が {前|まえ} に {出|で}る と 、 {行列|ぎょうれつ} が ざわついた 。 「 {順番|じゅんばん} が {違|ちが}う よ 」 と 、 {皆|みな} が {元|もと} の {場所|ばしょ} に {戻|もど}って しまった 。 || As ${ROLE[r][1]} steps out, the procession stirs. "That's not the order," someone says, and they all drift back to where they were.
-?(comp) comp: {札|ふだ} を もう {一度|いちど} {読|よ}もう 。 {誰|だれ} の {後|うし}ろ に {誰|だれ} 、 か 。 || Let's read the card again. Who walks behind whom.
+?(comp&comp!=ren) comp: {札|ふだ} を もう {一度|いちど} {読|よ}もう 。 {誰|だれ} の {後|うし}ろ に {誰|だれ} 、 か 。 || Let's read the card again. Who walks behind whom.
+?(comp=ren) comp: {札|ふだ} を もう {一度|いちど} {読|よ}みましょう 。 {誰|だれ} の {後|うし}ろ に {誰|だれ} 、 か 。 || Let's read the card again. Who walks behind whom.
 ${resetAll}
 !refresh
 !end
@@ -240,11 +244,13 @@ narr: ${where[0]} の {席|せき} 。 || The seat ${where[1]}.
 !if !xp_hall_w2_f1_asked -> empty
 !if hall.w2.pat=${pat} -> right
 narr: {席|せき} の {紙|かみ} の {話|はなし} と 、 {違|ちが}う {場所|ばしょ} の よう だ 。 || This doesn't seem to be the place the list gave.
-?(comp) comp: {紙|かみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the list said again?
+?(comp&comp!=ren) comp: {紙|かみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the list said again?
+?(comp=ren) comp: {紙|かみ} を 、 もう {一度|いちど} {読|よ}みましょう か 。 || Shall I read the list again?
 !end
 :right
 narr: サヨ の {名札|なふだ} を 、 {席|せき} に {置|お}いた 。 || You set Sayo's name card at the place.
-?(comp) comp: {傘|かさ} を {貸|か}した {人|ひと} が 、 {一番|いちばん} いい {席|せき} に {座|すわ}る 。 {正|ただ}しい {並|なら}び だ ね 。 || The one who lent the umbrella sits in the best seat. The right arrangement.
+?(comp&comp!=ren) comp: {傘|かさ} を {貸|か}した {人|ひと} が 、 {一番|いちばん} いい {席|せき} に {座|すわ}る 。 {正|ただ}しい {並|なら}び だ ね 。 || The one who lent the umbrella sits in the best seat. The right arrangement.
+?(comp=ren) comp: {傘|かさ} を {貸|か}した {人|ひと} が 、 {一番|いちばん} いい {席|せき} に {座|すわ}る 。 {正|ただ}しい {並|なら}び です ね 。 || The one who lent the umbrella sits in the best seat. The right arrangement.
 ${K.mark(W, 1, 't6')}
 !end
 :empty
@@ -278,7 +284,7 @@ narr: {名札|なふだ} が {置|お}いて ある 。 || A name card is set he
 narr: お{宮|みや} の {帳面|ちょうめん} 。 {借|か}りた {物|もの} が {書|か}いて ある 。 「 {式|しき} の {前|まえ} に 、 {持|も}ち{主|ぬし} に {返|かえ}す こと 。 」 || The shrine's ledger of things borrowed: "Return them to their owners before the ceremony."
 `;
   for (const p of [0, 1]) for (const n of NOTE[p]) out += `?(${both(L.EF, 'hall.w2.pat=' + p)}) narr: 「 ${n[0]} 」 || "${n[2]}"\n?(${both(L.NOTF, 'hall.w2.pat=' + p)}) narr: 「 ${n[1]} 」 || "${n[2]}"\n`;
-  out += `?(comp&!hall.w2.t8) comp: {貸|か}した {人|ひと} に {返|かえ}す 。 {借|か}りた {人|ひと} じゃ ない よ 。 || Back to whoever lent it. Not whoever borrowed it.\n`;
+  out += `?(comp&!hall.w2.t8&comp!=ren) comp: {貸|か}した {人|ひと} に {返|かえ}す 。 {借|か}りた {人|ひと} じゃ ない よ 。 || Back to whoever lent it. Not whoever borrowed it.\n?(comp=ren&!hall.w2.t8) comp: {貸|か}した {人|ひと} に {返|かえ}します 。 {借|か}りた {人|ひと} で は なく 。 || Back to whoever lent it. Not whoever borrowed it.\n`;
   const H8 = (x) => 'xp_hall_w2_f2_hold_' + x, B8 = (x) => 'xp_hall_w2_f2_back_' + x;
   for (const x of Object.keys(THING)) out += `
 @scene hall.w2.th_${x}

@@ -33,7 +33,7 @@ RB.script.add(`
 yasu: おう 。 こんな {所|ところ} で {会|あ}う と は な 。 {水|みず} の {音|おと} が した から 、 {来|き}て みた んだ 。 || Well. Fancy meeting you here. I heard water, so I came to have a look.
 yasu: {座|すわ}って いけ 。 {年寄|としよ}り の {茶|ちゃ} だ が 、 {温|あたた}まる ぞ 。 || Sit down a while. An old man's tea, but it'll warm you.
 !hook dv_aid yasu
-yasu: …… {川|かわ} の こと 、 {前|まえ} に {話|はな}した な 。 {俺|おれ} は {何|なん} と {言|い}った ？ || …I told you something about the river once. What did I say?
+yasu: …… {川|かわ} の こと 、 {前|まえ} に {話|はな}した な 。 {何|なん} と {言|い}った ？ || …I told you something about the river once. What did I say?
 !choice
 * {川|かわ} は {正直|しょうじき} だ 。 || That the river is honest: it shows you when it rises and when it falls. -> right
 * {川|かわ} は {怖|こわ}い 。 || That the river is frightening. -> wrong

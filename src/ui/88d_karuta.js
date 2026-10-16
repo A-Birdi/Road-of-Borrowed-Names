@@ -19,7 +19,8 @@ RB.ui.karuta = (function () {
   let V = null;
   const partner = () => { const w = V && V.with; return w && RB.content.chars[w] ? RB.content.chars[w].name.en : 'your partner'; };
   const reduced = () => !!(RB.game.reducedMotion && RB.game.reducedMotion());
-  const voiceOk = () => !!(RB.voice && RB.voice.supported && RB.voice.supported() && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length);
+  // the reader: the proverb's recording, else the device's voice (src/audio/54_voice_route.js)
+  const voiceOk = (c) => !!(RB.voice && RB.voice.canSayRef && (c ? RB.voice.canSayRef(RB.voice.refKey.phrase(c.jp)) : RB.voice.canSpeak() || (RB.voice.mode() === 'prepared' && RB.voicebank && RB.voicebank.active())));
 
   RB.activity.register('karuta', {
     title: { en: 'Karuta', jp: 'かるた' },
@@ -108,7 +109,7 @@ RB.ui.karuta = (function () {
     h += '<div class="hf-menu"><section><h3>' + RB.ui.label('{遊|あそ}ぶ', 'Play') + '</h3>' +
       '<fieldset class="sg-level"><legend>How many cards on the mat</legend>' + SIZES.map(([n, l]) => '<label class="opt"><input type="radio" name="kt-size" value="' + n + '"' + (V.size === n ? ' checked' : '') + '><span>' + l + '</span></label>').join('') + '</fieldset>' +
       '<fieldset class="sg-level"><legend>Speed (' + esc(partner()) + ' reaches for the card after a while)</legend>' + SPEED.map(([n, l]) => '<label class="opt"><input type="radio" name="kt-speed" value="' + n + '"' + (V.speed === n ? ' checked' : '') + '><span>' + l + '</span></label>').join('') + '</fieldset>' +
-      (voiceOk() ? '<label class="opt"><input type="checkbox" data-a="voice"' + (V.voice ? ' checked' : '') + '><span>Read aloud (your device\'s Japanese voice)</span></label>' : '<p class="muted small">Reading aloud needs a Japanese voice installed on this device; the proverbs are read in text.</p>') +
+      (voiceOk() ? '<label class="opt"><input type="checkbox" data-a="voice"' + (V.voice ? ' checked' : '') + '><span>Read aloud</span></label>' : '<p class="muted small">Reading aloud needs the recorded voices or a Japanese voice on this device; the proverbs are read in text.</p>') +
       '<div class="sg-acts"><button type="button" class="pbtn primary" data-a="start">' + I('next') + '<span>Lay out the cards</span></button></div>' +
       '<p class="muted small">' + esc(r.games ? 'Games: ' + r.games + (r.best ? '. Most cards in one game: ' + r.best + '.' : '.') : 'Not played yet.') + '</p></section>' +
       '<section><h3>' + RB.ui.label('{集|あつ}めた {札|ふだ}', 'Proverbs you have taken') + '</h3>' +
@@ -135,7 +136,7 @@ RB.ui.karuta = (function () {
     if (!c) { finish(); render(); return; }
     V.tokens = c.jp.split(' ').filter(Boolean).length;
     render();
-    if (V.voice && voiceOk()) RB.voice.speak(RB.jp.reading(c.jp), { rate: 0.9 });
+    if (V.voice && voiceOk(c)) RB.voice.sayRef(RB.voice.refKey.phrase(c.jp), RB.jp.reading(c.jp), { rate: 0.9 });
     const step = () => { if (!V || V.view !== 'table' || V.shown) return; V.words++; render(); if (V.words < V.tokens) V.wordTimer = setTimeout(step, reduced() ? 0 : 650); };
     V.wordTimer = setTimeout(step, reduced() ? 0 : 500);
     if (V.speed) V.reach = setTimeout(() => { if (!V || V.view !== 'table' || V.shown) return; V.g = KR().partnerTakes(V.g); afterTake(); }, REACH[V.speed]);

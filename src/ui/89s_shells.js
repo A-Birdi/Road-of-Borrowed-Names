@@ -15,7 +15,8 @@ RB.ui.shells = (function () {
   const J = (t) => RB.ui.jhtml(t || '');
   const S = () => RB.game.s;
   const prof = () => (S() && S().learn && S().learn.profile) || 'F';
-  const canListen = () => !!(RB.voice && RB.voice.supported && RB.voice.supported() && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length);
+  // a fragment's recording, else the device's voice (src/audio/54_voice_route.js)
+  const canListen = (jp) => !!(RB.voice && RB.voice.canSayRef && RB.voice.canSayRef(jp ? RB.voice.refKey.phrase(jp) : null));
 
   function open(id) {
     const H = RB.shells, d = H.def(id);
@@ -40,7 +41,7 @@ RB.ui.shells = (function () {
         return '<section class="sh-frag" data-f="' + esc(f.id) + '"><header class="sh-head"><span class="sh-shell">' + J('{法螺貝|ほらがい}') + ' ' + esc(String(f.shell).toUpperCase()) + '</span></header>' +
           '<p class="sh-text">' + J(t.jp) + '</p>' + (shownEn[f.id] ? '<p class="sh-entext">' + esc(t.en) + '</p>' : '') +
           '<p class="sh-acts"><button class="pbtn small sh-showen" data-f="' + esc(f.id) + '" aria-pressed="' + !!shownEn[f.id] + '">In English</button>' +
-          (canListen() ? ' <button class="pbtn small sh-listen" data-f="' + esc(f.id) + '">Listen</button>' : '') + '</p>' +
+          (canListen(t.jp) ? ' <button class="pbtn small sh-listen" data-f="' + esc(f.id) + '">Listen</button>' : '') + '</p>' +
           '<div class="sh-q"><span class="sh-ql">Who said it?</span>' + chips('who') + '<span class="sh-ql">To whom?</span>' + chips('to') + '</div>' + fb + '</section>';
       }
       function render() {
@@ -55,7 +56,7 @@ RB.ui.shells = (function () {
         if (!b) return;
         if (b.classList.contains('sh-chip')) { const f = b.dataset.f; placed[f] = Object.assign({}, placed[f], { [b.dataset.r]: b.dataset.p }); if (judged && judged.frags[f]) judged.frags[f] = null; render(); focusSel('.sh-chip[data-f="' + f + '"][data-r="' + b.dataset.r + '"][data-p="' + b.dataset.p + '"]'); return; }
         if (b.classList.contains('sh-showen')) { shownEn[b.dataset.f] = !shownEn[b.dataset.f]; render(); focusSel('.sh-showen[data-f="' + b.dataset.f + '"]'); return; }
-        if (b.classList.contains('sh-listen')) { const f = d.frags.find((x) => x.id === b.dataset.f); try { RB.voice.speak(RB.jp.reading(H.textAt(f, prof()).jp).replace(/\s/g, '')); } catch (err) { /* the voice is optional */ } return; }
+        if (b.classList.contains('sh-listen')) { const f = d.frags.find((x) => x.id === b.dataset.f); try { const jp = H.textAt(f, prof()).jp; RB.voice.sayRef(RB.voice.refKey.phrase(jp), RB.jp.reading(jp).replace(/\s/g, '')); } catch (err) { /* the voice is optional */ } return; }
         if (b.classList.contains('sh-cancel')) { finish({ cancelled: true }); return; }
         if (b.classList.contains('sh-go')) { judged = H.judge(d, placed); render(); focusSel(judged.ok ? '.sh-done' : '.sh-why'); return; }
         if (b.classList.contains('sh-done')) finish(H.judge(d, placed));

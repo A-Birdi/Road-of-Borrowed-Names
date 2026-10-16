@@ -34,7 +34,9 @@ RB.game = (function () {
       // of it where one exists; a device preference (older records lack it: Original)
       musicPerformance: 'original',
       // highlight: the word being spoken marked in the line and its English (PT-1c; older records lack it: On)
-      voice: { auto: false, uri: null, rate: 0.95, highlight: true }, lightbulb: true, input: 'hand',
+      // mode: 'prepared' (the recordings, else the device's voice), 'device', 'none'; player: 'none' | 'A' | 'B' and its
+      // pitch 'high' | 'low' (C-83: unset reads as None); autoRec: the recordings speak each line as it appears
+      voice: { auto: false, uri: null, rate: 0.95, highlight: true, mode: 'prepared', player: 'none', pitch: 'high', autoRec: true }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
       // touch layout (older settings records lack these; the defaults keep the previous layout)
       touchHand: 'right', touchSize: 'normal',

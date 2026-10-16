@@ -301,7 +301,7 @@ RB.lex.add(RB.lex.parseTable(`
 機嫌|きげん|n|E|mood
 かんな||n|E|(woodworking) plane
 ねえ||aux|I|(rough casual) = ない, not|返さねえ = won't return. Also an interjection "hey".
-なっちまう||v5u|A|(rough casual) = なってしまう, to end up becoming
+なっちまう||v5u|A|(rough casual) = なってしまう, to end up becoming|〜ちまう = 〜てしまう: a rough or old-fashioned form of 〜ちゃう.
 作業台|さぎょうだい|n|I|workbench
 絡まる|からまる|v5r|I|to get tangled
 機|はた|n|A|loom
@@ -324,7 +324,7 @@ RB.lex.add(RB.lex.parseTable(`
 柄|がら|n|I|pattern
 籠|かご|n|I|basket
 いかん||exp|I|won't do; can't (= いかない, casual/old-fashioned)
-くれん||exp|I|won't (do for me) (= くれない, casual/old-fashioned)
+くれん||exp|I|won't (do for me) (= くれない, casual/old-fashioned)|〜て くれんか = 〜て くれないか "won't you … for me?", a homely, older way to ask a favour: {頼|たの}まれて くれんか "would you do me a favour?".
 若造|わかぞう|n|A|youngster (dismissive, affectionate)
 盛る|もる|v5r|I|to pile up; (a story) to exaggerate
 特権|とっけん|n|I|privilege
@@ -456,9 +456,9 @@ RB.lex.add(RB.lex.parseTable(`
 びん||n|F|bottle
 ぬる||v5r|F|to spread on, paint
 のむ||v5m|F|to drink, take (medicine)
-ん||aux|E|(explanatory) contraction of の in 〜んです / 〜んだ|Adds explanation or emphasis; very common in speech.
+ん||aux|E|(explanatory) contraction of の in 〜んです / 〜んだ; (after a verb's negative stem) = ない, not|Adds explanation or emphasis; very common in speech. After a verb's negative stem ({崩|くず}せん, {飽|あ}きん, {行|い}かん) ん is the negative ない instead: older or western speech.
 ふさがる||v5r|I|to be blocked, closed off
 きな||exp|I|come (casual command: 来な)|Short for 来なさい; familiar, a bit rough.
-返さねえ|かえさねえ|exp|I|won't give back (rough casual of 返さない)
+返さねえ|かえさねえ|exp|I|won't give back (rough casual of 返さない)|〜ねえ for 〜ない is rough, casual speech: {返|かえ}さない → {返|かえ}さねえ.
 欲しけりゃ|ほしけりゃ|exp|I|if (you) want it (casual of 欲しければ)
 `), 'ch1');

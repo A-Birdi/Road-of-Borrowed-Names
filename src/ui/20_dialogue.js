@@ -160,7 +160,8 @@ RB.ui.dialogue = (function () {
     const hasJp = !!line.jp;
     renderMain();
     renderSub();
-    box.querySelector('.b-voice').classList.toggle('hidden', !(hasJp && RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length));
+    // a recording of the line, or the device's voice (src/audio/54_voice_route.js): either shows the Voice button
+    box.querySelector('.b-voice').classList.toggle('hidden', !(hasJp && RB.voice && RB.voice.canSayLine && RB.voice.canSayLine(current, line)));
     box.querySelector('.b-skip').classList.toggle('hidden', !(seenScene && RB.game.settings.skipSeen));
     box.querySelector('.b-ask').classList.toggle('hidden', !(line.simple && line.simple.jp));
     box.querySelector('.b-tr').classList.toggle('hidden', RB.game.settings.secondary === 'always' || !hasJp);
@@ -172,7 +173,9 @@ RB.ui.dialogue = (function () {
     if (RB.sequence) RB.sequence.onLine(line);
     dock(fresh);
     requestAnimationFrame(syncMore);
-    if (RB.game.settings.voice.auto && hasJp && !RB.game.fastForward()) speak(false);
+    if (hasJp && RB.voice && RB.voice.autoOn && RB.voice.autoOn() && !RB.game.fastForward()) speak(false);
+    // the next few lines of the scene, fetched ahead while this one reads (src/audio/52_voicebank.js; bounded)
+    if (hasJp && RB.voicebank && !RB.game.fastForward()) RB.voicebank.lookahead(current, line);
     reveal(main);
     shownAt = performance.now();
     RB.audio && RB.audio.sfx('text_blip', { vol: 0.35 });
@@ -211,7 +214,7 @@ RB.ui.dialogue = (function () {
       if (s) s.backlog.push({ who: src.who, jp: current.jp, en: current.en });
       renderMain(); renderSub();
       requestAnimationFrame(syncMore);
-      if (a.how === 'slower' && RB.voice && RB.voice.speak) { try { RB.voice.speak(RB.jp.reading(current.jp), { rate: 0.75 }); } catch (err) { /* optional */ } }
+      if (a.how === 'slower' && RB.voice && RB.voice.sayLine) { try { RB.voice.sayLine(current, current.src, { rate: 0.75 }); } catch (err) { /* optional */ } }
       try { RB.learn.record('c:ask_back', { ok: true, mode: 'choice', assisted: false, ctx: 'story', ev: 'context', kind: 'ask' }); } catch (err) { /* recording never blocks the scene */ }
       box.querySelector('.b-ask').classList.add('hidden');
     };
@@ -311,12 +314,15 @@ RB.ui.dialogue = (function () {
     if (!current || !current.jp || !RB.voice) return;
     const text = RB.jp && RB.jp.reading ? RB.jp.reading(current.jp, RB.script.jpVars()) : current.jp;
     const ch = RB.content.chars[current.who];
-    // the word being said, marked in the Japanese and its English (PT-1c; Settings › Sound can turn it off)
+    // the word being said, marked in the Japanese and its English (PT-1c; Settings › Sound can turn it off): the
+    // device's voice reports where it is; a recording is followed by its own clock (an estimate, VOICE_RUNTIME.md)
     const mark = RB.ui.speechMark ? RB.ui.speechMark.begin(box, current, text) : null;
-    RB.voice.speak(text, {
+    RB.voice.sayLine(current, current.src || current, {
+      text,
       pitch: ch && ch.voice ? ch.voice.pitch : 1,
       onstart: mark ? () => mark.start() : undefined,
       onboundary: mark ? (ci) => mark.at(ci) : undefined,
+      follow: mark ? (get, dur) => mark.follow(get, dur) : undefined,
       onend: mark ? () => mark.end() : undefined,
     });
     void force;

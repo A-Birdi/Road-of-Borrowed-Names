@@ -26,7 +26,8 @@ narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {雪|ゆき} の {�
 @scene hall.w7.f2_first
 !set hall_w7_f2_seen
 narr: {家|いえ} の {奥|おく} へ {続|つづ}く {廊下|ろうか} 。 どの {部屋|へや} に も 、 {今|いま} まで {誰|だれ} か が いた よう な {温|ぬく}もり が ある 。 || A corridor leading into the house. Every room is warm, as if someone had been there a moment ago.
-?(comp) comp: …… {誰|だれ} も いない のに 、 {誰|だれ} か の {話|はな}し{声|ごえ} が {聞|き}こえる よう な {気|き}が する 。 || …There's nobody here, but it feels as if I can hear someone talking.
+?(comp&comp!=ren) comp: …… {誰|だれ} も いない のに 、 {誰|だれ} か の {話|はな}し{声|ごえ} が {聞|き}こえる よう な {気|き}が する 。 || …There's nobody here, but it feels as if I can hear someone talking.
+?(comp=ren) comp: …… {誰|だれ} も いない のに 、 {誰|だれ} か の {話|はな}し{声|ごえ} が {聞|き}こえる よう な {気|き} が します 。 || …There's nobody here, but it feels as if I can hear someone talking.
 
 @scene hall.w7.f3_first
 !set hall_w7_f3_seen
@@ -53,7 +54,8 @@ narr: {中庭|なかにわ} の {井戸|いど} 。 {水|みず} が 、 {雪|�
 !faceplayer hall_owan
 !if hall.w7.t2 -> done
 hall_owan: いらっしゃい 。 この {家|いえ} の {椀|わん} だ よ 。 {昔|むかし} の {人|ひと} が {置|お}いて いった {物|もの} が 、 {片付|かたづ}かない の 。 {札|ふだ} の {下|した} に 、 {掛|か}けて あげて 。 || Welcome. (I'm) this house's bowl. The things people left behind long ago never got put away. Hang each one under its note.
-?(comp) comp: {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+?(comp&comp!=ren) comp: {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+?(comp=ren) comp: {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて いません ね 。 {読|よ}めば {分|わ}かる の でしょう か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
 !end
 :done
 hall_owan: {全部|ぜんぶ} 、 {元|もと} の {所|ところ} 。 {家|いえ} が 、 {少|すこ}し {思|おも}い{出|だ}した みたい 。 || All back where they belong. The house seems to remember a little.
@@ -129,7 +131,8 @@ narr: 「 ${ITEM[HOOKN[p][h]][0]} 」 を {鉤|かぎ} に {掛|か}けた 。 |
 !end
 :all
 narr: {忘|わす}れ{物|もの} が 、 {全部|ぜんぶ} {元|もと} の {鉤|かぎ} に {戻|もど}った 。 || Everything left behind is back on its hook.
-?(comp) comp: {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+?(comp&comp!=ren) comp: {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+?(comp=ren) comp: {何|なに} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
 ${K.mark(W, 0, 't2')}
 !end
 :done
@@ -152,7 +155,7 @@ ${K.mark(W, 0, 't2')}
   out += '\n@scene hall.w7.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {庭|にわ} の {石|いし} に 、 {四|よっ}つ の {言葉|ことば} が {刻|きざ}んで ある 。 {一番|いちばん} {奥|おく} の {石|いし} に は 、 「 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 と ある 。 || Four sayings are carved on the garden stones. The stone at the back says: "One alone is wrong."'],
     task: { 0: 'hall.w7.counter0', 1: 'hall.w7.counter1' },
-    after: ['narr: {間違|まちが}った {言葉|ことば} の {上|うえ} に 、 {雪|ゆき} が {積|つ}もって {消|け}した 。 || Snow settles on the wrong saying until it is gone.', '?(comp) comp: 「 あれ 」 も 「 それ 」 も 、 {相手|あいて} が {何|なに} を {知|し}って いる か で {決|き}まる ん だ ね 。 || Are or sore: which one you say depends on what the other person knows.'],
+    after: ['narr: {間違|まちが}った {言葉|ことば} の {上|うえ} に 、 {雪|ゆき} が {積|つ}もって {消|け}した 。 || Snow settles on the wrong saying until it is gone.', '?(comp&comp!=ren) comp: {雪|ゆき} が 、 {間違|まちが}い を {隠|かく}して くれた ね 。 || The snow covered up the mistake for us.', '?(comp=ren) comp: {雪|ゆき} が 、 {間違|まちが}い を {隠|かく}して くれました ね 。 || The snow covered up the mistake for us.'],
     later: 'narr: {言葉|ことば} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the sayings one by one, then come back.',
     done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
   for (let i = 0; i < 4; i++) {
@@ -202,7 +205,8 @@ narr: ${THING[c][2]} || ${THING[c][3]}
 !end
 :all
 narr: {覚|おぼ}え{書|が}き の {通|とお}り に 、 {全部|ぜんぶ} {済|す}んだ 。 {台所|だいどころ} が 、 {満足|まんぞく} そう に {静|しず}か に なった 。 || Everything on the memo is done, in its order. The kitchen goes quiet, as if satisfied.
-?(comp) comp: {何|なに} を 、 と は {一言|ひとこと} も {書|か}いて ない のに 、 {台所|だいどころ} に {立|た}つ と {分|わ}かる 。 {毎日|まいにち} の こと だ から だ ね 。 || It never once says what, and yet standing in the kitchen you know. Because it's the same every day.
+?(comp&comp!=ren) comp: {何|なに} を 、 と は {一言|ひとこと} も {書|か}いて ない のに 、 {台所|だいどころ} に {立|た}つ と {分|わ}かる 。 {毎日|まいにち} の こと だ から だ ね 。 || It never once says what, and yet standing in the kitchen you know. Because it's the same every day.
+?(comp=ren) comp: {何|なに} を 、 と は {一言|ひとこと} も {書|か}いて いない のに 、 {台所|だいどころ} に {立|た}つ と {分|わ}かります 。 {毎日|まいにち} の こと です から ね 。 || It never once says what, and yet standing in the kitchen you know. Because it's the same every day.
 ${K.mark(W, 1, 't4')}
 !end
 :early
@@ -262,11 +266,13 @@ narr: {手紙|てがみ} は 、 {机|つくえ} の {上|うえ} で {畳|た�
 narr: ${KEEP[g][0]} 。 || ${KEEP[g][1][0].toUpperCase() + KEEP[g][1].slice(1)}.
 !if !xp_hall_w7_f1_asked -> unknown
 ${KEEP[g][2] >= 0 ? '!if hall.w7.pat=' + KEEP[g][2] + ' -> right\n' : ''}narr: {手紙|てがみ} が {言|い}って いる の は 、 これ で は ない よう だ 。 || The letter doesn't seem to mean this one.
-?(comp) comp: {手紙|てがみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the letter said again?
+?(comp&comp!=ren) comp: {手紙|てがみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the letter said again?
+?(comp=ren) comp: {手紙|てがみ} を 、 もう {一度|いちど} {読|よ}みましょう か 。 || Shall I read the letter again?
 !end
 ${KEEP[g][2] >= 0 ? `:right
 narr: ${KEEP[g][0]} を 、 {仏壇|ぶつだん} の {前|まえ} に そっと {供|そな}えた 。 || You set ${KEEP[g][1]} gently before the family altar.
-?(comp) comp: {名前|なまえ} を {書|か}かなくて も 、 {家族|かぞく} に は {分|わ}かった ん だ ね 。 {分|わ}かる {人|ひと} に {向|む}けて {書|か}いた {手紙|てがみ} だ 。 || Even without naming it, the family would have known. It was written for someone who would understand.
+?(comp&comp!=ren) comp: {名前|なまえ} を {書|か}かなくて も 、 {家族|かぞく} に は {分|わ}かった ん だ ね 。 {分|わ}かる {人|ひと} に {向|む}けて {書|か}いた {手紙|てがみ} だ 。 || Even without naming it, the family would have known. It was written for someone who would understand.
+?(comp=ren) comp: {名前|なまえ} を {書|か}かなくて も 、 {家族|かぞく} に は {分|わ}かった ん です ね 。 {分|わ}かる {人|ひと} に {向|む}けて {書|か}いた {手紙|てがみ} です 。 || Even without naming it, the family would have known. It was written for someone who would understand.
 ${K.mark(W, 1, 't6')}
 !end
 ` : ''}:unknown
@@ -323,7 +329,8 @@ ${ASKS}!refresh
 !end
 :all
 narr: オワン が 、 {三|みっ}つ の {椀|わん} を {膳|ぜん} に {並|なら}べた 。 「 それ で 、 {全部|ぜんぶ} 。 」 || Owan sets the three bowls on a tray. "That's all of them."
-?(comp) comp: 「 {赤|あか}い の 」 「 さっき の 」 。 {名前|なまえ} を {言|い}わなくて も 、 {話|はなし} の {流|なが}れ で {分|わ}かる ね 。 || "The red one", "the one from before": no names needed, the conversation carries it.
+?(comp&comp!=ren) comp: {三|みっ}つ とも 、 {揃|そろ}った ね 。 {膳|ぜん} の {上|うえ} が 、 {賑|にぎ}やか に なった 。 || All three, together again. The tray looks lively now.
+?(comp=ren) comp: {三|みっ}つ とも 、 {揃|そろ}いました ね 。 {膳|ぜん} の {上|うえ} が 、 {賑|にぎ}やか に なりました 。 || All three, together again. The tray looks lively now.
 ${K.mark(W, 2, 't8')}
 !end
 `;

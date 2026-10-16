@@ -254,7 +254,7 @@ RB.lex.add(RB.lex.parseTable(`
 新月|しんげつ|n|I|the new moon
 納める|おさめる|v1|I|to deliver (to a lord); to pay (a tax)
 仰せ|おおせ|n|A|(respectful) a command; what a superior says
-拙者|せっしゃ|pn|A|(old, of a samurai) I, myself (humble)
+拙者|せっしゃ|pn|A|(old, of a samurai) I, myself (humble)|Samurai-drama speech, heard today only in period pieces and jokes.
 申し伝える|もうしつたえる|v1|A|(humble) to pass a message on
 達者|たっしゃ|adj-na|I|in good health; 達者でね: take care of yourself
 他人行儀|たにんぎょうぎ|adj-na|A|formal and distant, as if with a stranger

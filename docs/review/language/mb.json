@@ -191,10 +191,10 @@
   "jp": "あっ …… {舟|ふね} の {人|ひと} 、 {大丈夫|だいじょうぶ} ？ …… よかった 、 {怪我|けが} は ない みたい 。",
   "en": "Oh — is the boatman all right? …Good, he doesn't look hurt."
  },
- "scene:mb.arrive#14hjoqj": {
+ "scene:mb.arrive#1w557lf": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
-  "jp": "{橋|はし} の {名札|なふだ} が 、 {灯籠|とうろう} の {笠|かさ} と {同|おな}じ {消|き}え{方|かた} を して います 。 {字|じ} だけ が 、 きれい に ない 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{橋|はし} の {名札|なふだ} が 、 {灯籠|とうろう} の {笠|かさ} と {同|おな}じ {消|き}え{方|かた} を して います 。 {字|じ} だけ が 、 きれい に {消|き}えて います 。",
   "en": "The bridges' plaques have faded the way the lantern shades did. Only the letters gone, and cleanly."
  },
  "scene:mb.arrive#ecalm4": {

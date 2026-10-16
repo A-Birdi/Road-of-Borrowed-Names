@@ -1,0 +1,87 @@
+{
+ "schema": "rbn.voice.production/1",
+ "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e",
+ "sourceLines": 14175,
+ "recordings": 14721,
+ "characters": 408760,
+ "morae": 428686,
+ "pauses": 52985,
+ "byRole": {
+  "npc": {
+   "recordings": 3662,
+   "chars": 114638,
+   "morae": 117968,
+   "pauses": 15523
+  },
+  "mio": {
+   "recordings": 1079,
+   "chars": 29785,
+   "morae": 30207,
+   "pauses": 4326
+  },
+  "nao": {
+   "recordings": 1182,
+   "chars": 31317,
+   "morae": 32688,
+   "pauses": 4684
+  },
+  "narrator": {
+   "recordings": 4791,
+   "chars": 125072,
+   "morae": 134428,
+   "pauses": 13841
+  },
+  "pc": {
+   "recordings": 636,
+   "chars": 11368,
+   "morae": 11804,
+   "pauses": 1420
+  },
+  "ren": {
+   "recordings": 1121,
+   "chars": 34080,
+   "morae": 35547,
+   "pauses": 4480
+  },
+  "suzu": {
+   "recordings": 2250,
+   "chars": 62500,
+   "morae": 66044,
+   "pauses": 8711
+  }
+ },
+ "speakers": 287,
+ "companionAttribution": {
+  "condition": 2790,
+  "scene-name": 589,
+  "branch": 61
+ },
+ "withSeams": 21,
+ "withNames": 2104,
+ "frozenLines": 404,
+ "frozenMarksLoaded": true,
+ "references": {
+  "recordings": 9095,
+  "characters": 31003,
+  "morae": 29497,
+  "byKind": {
+   "kana": 234,
+   "kanji": 1838,
+   "word": 6963,
+   "phrase": 60
+  },
+  "saidNotSpelled": [
+   "は → わ",
+   "を → お",
+   "へ → え"
+  ]
+ },
+ "nonverbal": {
+  "lines": 19,
+  "note": "only a pause (「……」): a beat in the scene, not recorded"
+ },
+ "notRecordable": {
+  "lines": 116,
+  "reason": "run-time name: device voice or silence until a name policy is chosen (C-93: a line that is only the name becomes the speaker's \"you\" by relation)"
+ }
+}

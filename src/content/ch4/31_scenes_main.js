@@ -51,7 +51,7 @@ hoshino: だが 、 {秋|あき} の うち に {届|とど}く はず の {手�
 ?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[worry]: {出|だ}した {手紙|てがみ} が {戻|もど}って くる の は 、 {届|とど}かない より つらい です ね 。 || Having your letter come back is worse than it never arriving.
 ?(comp=ren) !gesture comp chin
-?(comp=ren) comp[think]: {宛名|あてな} は 、 {手紙|てがみ} の {行|ゆ}き{先|さき} の {名前|なまえ} です 。 {灯|あか}り の {名前|なまえ} と {同|おな}じ よう に 、 {持|も}って いかれた の でしょう 。 || An address is the name of where a letter is going. It must have been taken, just like a lamp's name.
+?(comp=ren) comp[think]: {宛名|あてな} も 、 {名前|なまえ} です から 。 {灯|あか}り の {名前|なまえ} と {同|おな}じ よう に 、 {持|も}って いかれた の でしょう 。 || An address is a name too. It must have been taken, just like a lamp's name.
 ?(comp=suzu) !gesture comp aside
 ?(comp=suzu) comp: {返事|へんじ} が {来|こ}ない の と 、 {出|だ}した {手紙|てがみ} が {帰|かえ}って くる の 。 どっち が {堪|こた}える かな 。 …… {後|あと} の ほう だ ね 。 || No reply, or your own letter coming home. Which hurts more? …The second.
 !prop hoshino -
@@ -121,7 +121,8 @@ narr: {窓|まど} の {外|そと} で 、 {風|かぜ} の {音|おと} が {�
 !gesture hoshino listen pc
 hoshino[surprise]: {吹雪|ふぶき} が {来|く}る 。 フキ さん は {寝込|ねこ}んで いる …… {鐘|かね} を {鳴|な}らす {者|もの} が いない 。 || A storm's coming. And Fuki's laid up… there's no one to ring the bell.
 ?(comp) !gesture comp nod pc
-?(comp) comp: $name 、 {鐘|かね} の {決|き}まり 、 {覚|おぼ}えてる よね ？ {行|い}こう ！ || $name, you remember the bell rules, right? Let's go!
+?(comp&comp!=ren) comp: $name 、 {鐘|かね} の {決|き}まり 、 {覚|おぼ}えてる よね ？ {行|い}こう ！ || $name, you remember the bell rules, right? Let's go!
+?(comp=ren) comp: $name 、 {鐘|かね} の {決|き}まり 、 {覚|おぼ}えて います ね 。 {行|い}きましょう 。 || $name, you remember the bell rules, right? Let's go.
 !warp sb.hamlet 22 16 up
 !sfx wind
 !gesture pc lookroad up
@@ -149,7 +150,7 @@ narr: カン 、 カン 、 カン 、 カン ！ {家々|いえいえ} の {戸
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: {間|ま}に{合|あ}った 。 …… {鐘|かね} って の は 、 {一番|いちばん} {速|はや}い {手紙|てがみ} だ な 。 || Made it. …A bell's the fastest letter there is.
 ?(comp=mio) !gesture comp point 10,16
-?(comp=mio) comp[smile]: みんな 、 {聞|き}こえた みたい です 。 {行|い}きましょう 、 わたし たち も 。 || Looks like everyone heard it. Come on — us too.
+?(comp=mio) comp[smile]: みんな 、 {聞|き}こえた みたい 。 {行|い}こう 、 わたし たち も 。 || Looks like everyone heard it. Come on — us too.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {音|おと} が {届|とど}く {範囲|はんい} は 、 {灯|あか}り より {広|ひろ}い 。 {雪|ゆき} の {日|ひ} は {特|とく}に 。 {石|いし} の {言葉|ことば} どおり です 。 || Sound carries further than light, on snowy days especially. Just as the stone on the road said.
 ?(comp=suzu) !gesture comp laugh
@@ -340,7 +341,7 @@ hoshino[think]: …… {炎|ほのお} 。 そう か 。 あの {灯|あか}り
 ?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp[smirk]: {火|ひ} を {起|お}こす {配達人|はいたつにん} 。 {新|あたら}しい {商売|しょうばい} に なる な 。 || A courier who lights fires. That could be a new line of business.
 ?(comp=mio) !gesture comp exhale
-?(comp=mio) comp[smile]: よかった 。 …… {子|こ}ども たち の {顔|かお} に 、 {色|いろ} が {戻|もど}って きました 。 || Thank goodness. …The colour's coming back to the children's faces.
+?(comp=mio) comp[smile]: よかった 。 …… {子|こ}ども たち の {顔|かお} に 、 {色|いろ} が {戻|もど}って きた 。 || Thank goodness. …The colour's coming back to the children's faces.
 ?(comp=ren) !gesture comp nod pc
 ?(comp=ren) comp: {明日|あした} 、 {上|のぼ}りましょう 。 {名前|なまえ} を {書|か}き{直|なお}す の は 、 {灯守|ひもり} の {仕事|しごと} です から 。 || Tomorrow, let's climb. Rewriting a name is a keeper's job, after all.
 ?(comp=suzu) !gesture comp celebrate

@@ -36,29 +36,29 @@ comp: {雪鈴|ゆきすず} へ の {道|みち} が {開|あ}いた 。 {冬|�
 comp[smirk]: {干|ほ}し{柿|がき} 、 {鞄|かばん} に {入|い}れた 。 {手紙|てがみ} と {一緒|いっしょ} に 。 {甘|あま}い {匂|にお}い の {手紙|てがみ} が {届|とど}いたら 、 {俺|おれ} の せい だ 。 || I put dried persimmons in my bag. With the letters. If anyone gets a sweet-smelling letter, that's on me.
 
 @scene co.b_mio1
-comp: {広場|ひろば} の {椅子|いす} 、 {列|れつ} が {少|すこ}し {曲|ま}がって いた ので 、 {直|なお}して しまいました 。 …… {頼|たの}まれて も いない のに 。 || The chairs in the square were a little out of line, so I straightened them. …Nobody even asked me to.
-comp[smile]: {考|かんが}え{事|ごと} を する と 、 {手|て} が {勝手|かって} に {並|なら}べる んです 。 {瓶|びん} でも 、 {椅子|いす} でも 、 {人|ひと} の {話|はなし} でも 。 || When I'm thinking, my hands line things up on their own. Bottles, chairs, what people tell me.
-comp[think]: この {里|さと} の {話|はなし} は 、 {並|なら}べて も {一|ひと}つ {足|た}りない んです 。 {真|ま}ん{中|なか} の {一|ひと}つ が 。 || The things people here say never line up. One piece is missing — the middle one.
+comp: {広場|ひろば} の {椅子|いす} 、 {列|れつ} が {少|すこ}し {曲|ま}がってた から 、 {直|なお}しちゃった 。 …… {頼|たの}まれて も いない のに 。 || The chairs in the square were a little out of line, so I straightened them. …Nobody even asked me to.
+comp[smile]: {考|かんが}え{事|ごと} を する と 、 {手|て} が {勝手|かって} に {並|なら}べる の 。 {瓶|びん} でも 、 {椅子|いす} でも 、 {人|ひと} の {話|はなし} でも 。 || When I'm thinking, my hands line things up on their own. Bottles, chairs, what people tell me.
+comp[think]: この {里|さと} の {話|はなし} は 、 {並|なら}べて も {一|ひと}つ {足|た}りない の 。 {真|ま}ん{中|なか} の {一|ひと}つ が 。 || The things people here say never line up. One piece is missing — the middle one.
 
 @scene co.b_mio2
-comp: フサ さん の {喉|のど} の {薬|くすり} 、 ヘイタ さん の {腰|こし} の {湿布|しっぷ} 、 コタロウ くん の {膝|ひざ} の {擦|す}り{傷|きず} 。 …… {全部|ぜんぶ} 「 はい 」 と {言|い}って しまいました 。 || Fusa's throat syrup, Heita's back poultice, Kotarō's scraped knee… I said yes to all of them.
+comp: フサ さん の {喉|のど} の {薬|くすり} 、 ヘイタ さん の {腰|こし} の {湿布|しっぷ} 、 コタロウ くん の {膝|ひざ} の {擦|す}り{傷|きず} 。 …… {全部|ぜんぶ} 「 はい 」 って {言|い}っちゃった 。 || Fusa's throat syrup, Heita's back poultice, Kotarō's scraped knee… I said yes to all of them.
 pc: {断|ことわ}って も よかった ん だ よ 。 || You could have said no.
-comp[surprise]: …… {断|ことわ}る 。 {断|ことわ}って も 、 いい ん です か 。 || …Say no. Is that… allowed?
-comp[smile]: {冗談|じょうだん} です 。 …… {半分|はんぶん} は 。 {今夜|こんや} 、 {少|すこ}し {考|かんが}えて みます 。 || That was a joke. …Half of one. I'll think about it tonight.
+comp[surprise]: …… {断|ことわ}る 。 {断|ことわ}って も 、 いい の ？ || …Say no. Is that… allowed?
+comp[smile]: {冗談|じょうだん} 。 …… {半分|はんぶん} は 。 {今夜|こんや} 、 {少|すこ}し {考|かんが}えて みる 。 || That was a joke. …Half of one. I'll think about it tonight.
 
 @scene co.b_mio3
-comp[worry]: $name さん 、 {水|みず} を 。 {今|いま} です 。 {喉|のど} が {渇|かわ}いて から で は {遅|おそ}い んです 。 || $name, water. Now. Once you're thirsty it's already too late.
-comp: {潮硝子|しおがらす} で 、 {薬|くすり} を {買|か}い に {来|き}た {商人|しょうにん} に 「 お{嬢|じょう}ちゃん 、 {分|わ}かる かな 」 って {言|い}われた こと が ある んです 。 || Back in Saltglass, a merchant who came to buy medicine asked me, "Do you understand this, little miss?"
-comp[angry]: {分量|ぶんりょう} を {三回|さんかい} {間違|まちが}えて いた の は 、 {向|む}こう です 。 {全部|ぜんぶ} {直|なお}して あげました 。 {大|おお}きな {声|こえ} で 。 || He was the one who'd got the dosage wrong three times. I corrected every one. Loudly.
-comp[smile]: …… さ 、 {飲|の}んで ください 。 {笑|わら}って ない で 。 || …Now, drink. Stop laughing.
+comp[worry]: $name 、 {水|みず} を 。 {今|いま} 。 {喉|のど} が {渇|かわ}いて から じゃ {遅|おそ}い の 。 || $name, water. Now. Once you're thirsty it's already too late.
+comp: {潮硝子|しおがらす} で 、 {薬|くすり} を {買|か}い に {来|き}た {商人|しょうにん} に 「 お{嬢|じょう}ちゃん 、 {分|わ}かる かな 」 って {言|い}われた こと が ある の 。 || Back in Saltglass, a merchant who came to buy medicine asked me, "Do you understand this, little miss?"
+comp[angry]: {分量|ぶんりょう} を {三回|さんかい} {間違|まちが}えて いた の は 、 {向|む}こう 。 {全部|ぜんぶ} {直|なお}して あげた 。 {大|おお}きな {声|こえ} で 。 || He was the one who'd got the dosage wrong three times. I corrected every one. Loudly.
+comp[smile]: …… さ 、 {飲|の}んで 。 {笑|わら}って ない で 。 || …Now, drink. Stop laughing.
 
 @scene co.b_mio4
-comp: {苦|にが}い {薬|くすり} ほど 、 {効|き}く 、 と {言|い}う {人|ひと} が います 。 {私|わたし} は {嫌|きら}い な {言葉|ことば} です 。 {苦|にが}く なくて {効|き}く なら 、 その {方|ほう} が いい 。 || Some say the more bitter the medicine, the better it works. I hate that saying. If it can work without being bitter, so much the better.
-comp[sad]: でも 、 {今夜|こんや} {皆|みな} さん に {渡|わた}す の は 、 {苦|にが}く ない と {効|き}かない {薬|くすり} です 。 …… {初|はじ}めて です 。 {甘|あま}く できない の は 。 || But what everyone receives tonight only works if it's bitter. …It's the first time I can't sweeten something.
+comp: {苦|にが}い {薬|くすり} ほど 、 {効|き}く 、 と {言|い}う {人|ひと} が いる けど 、 {私|わたし} は {嫌|きら}い な {言葉|ことば} 。 {苦|にが}く なくて {効|き}く なら 、 その {方|ほう} が いい 。 || Some say the more bitter the medicine, the better it works. I hate that saying. If it can work without being bitter, so much the better.
+comp[sad]: でも 、 {今夜|こんや} {皆|みな} さん に {渡|わた}す の は 、 {苦|にが}く ない と {効|き}かない {薬|くすり} 。 …… {初|はじ}めて 。 {甘|あま}く できない の は 。 || But what everyone receives tonight only works if it's bitter. …It's the first time I can't sweeten something.
 
 @scene co.b_mio5
-comp[smile]: {火傷|やけど} の {薬|くすり} 、 {十四軒|じゅうよんけん} {分|ぶん} 。 ラベル も {全部|ぜんぶ} {書|か}きました 。 {日付|ひづけ} と 、 {使|つか}い{方|かた} と 、 {私|わたし} の {名前|なまえ} 。 || Burn salve for fourteen households. Every jar labelled: date, directions, and my name.
-comp: {名前|なまえ} を {書|か}く の は 、 {責任|せきにん} を {取|と}る と いう こと です 。 …… この {里|さと} で 、 {改|あらた}めて そう {思|おも}いました 。 || Writing your name on something means taking responsibility for it. …This village reminded me of that.
+comp[smile]: {火傷|やけど} の {薬|くすり} 、 {十四軒|じゅうよんけん} {分|ぶん} 。 ラベル も {全部|ぜんぶ} {書|か}いた 。 {日付|ひづけ} と 、 {使|つか}い{方|かた} と 、 {私|わたし} の {名前|なまえ} 。 || Burn salve for fourteen households. Every jar labelled: date, directions, and my name.
+comp: {名前|なまえ} を {書|か}く の は 、 {責任|せきにん} を {取|と}る って こと 。 …… この {里|さと} で 、 {改|あらた}めて そう {思|おも}った 。 || Writing your name on something means taking responsibility for it. …This village reminded me of that.
 
 @scene co.b_ren1
 comp: {正直|しょうじき} に {申|もう}し{上|あ}げます 。 {段々畑|だんだんばたけ} で 、 {同|おな}じ {柿|かき} の {木|き} の {前|まえ} を {三回|さんかい} {通|とお}りました 。 || I'll be honest. On the terraces, I passed the same persimmon tree three times.

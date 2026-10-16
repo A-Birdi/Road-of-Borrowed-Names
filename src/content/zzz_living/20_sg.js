@@ -272,14 +272,14 @@ narr: {灯籠|とうろう} の {下|した} に 、 あの {子|こ} が また
 :ask
 !choice
 * {一緒|いっしょ} に {探|さが}そう 。 || Let's find it together. -> help
-* {今|いま} は {急|いそ}いで いる 。 ごめん ね 。 || We're in a hurry just now. Sorry. -> later
+* {今|いま} 、 ちょっと {急|いそ}いでる ん だ 。 ごめん ね 。 || We're in a hurry just now. Sorry. -> later
 :help
 !challenge sg.lw_child
 !if var._res=0 -> miss
 narr: {坂|さか} の {上|うえ} から 、 {港|みなと} を {指|さ}す 。 {赤|あか}い {屋根|やね} 、 {桟橋|さんばし} 、 {岬|みさき} の {灯台|とうだい} 。 || From the top of the slope you point out the harbour: red roofs, piers, the lighthouse on the point.
 narr: 「あ ！ {灯台|とうだい} ！ あっち が お{家|うち} ！」 {子|こ} は {手|て} を {振|ふ}って 、 {坂|さか} を {走|はし}って {下|お}りて いった 。 || "Oh! The lighthouse! Home's that way!" The child waves and runs off down the slope.
 ?(comp=nao) comp: {住所|じゅうしょ} が なくて も 、 {目印|めじるし} が あれば {届|とど}く 。 {配達|はいたつ} と {同|おな}じ だ 。 || No address, but with landmarks it still gets there. Same as the post.
-?(comp=mio) comp[smile]: {灯台|とうだい} が {見|み}えた {時|とき} の {顔|かお} 、 {見|み}ました ？ {一番|いちばん} の お{薬|くすり} です ね 。 || Did you see that face when the lighthouse came into view? Better than any medicine.
+?(comp=mio) comp[smile]: {灯台|とうだい} が {見|み}えた {時|とき} の {顔|かお} 、 {見|み}た ？ {一番|いちばん} の お{薬|くすり} だ ね 。 || Did you see that face when the lighthouse came into view? Better than any medicine.
 ?(comp=ren) comp: {灯|ひ} は 、 {帰|かえ}る {道|みち} の {目印|めじるし} です 。 {灯台|とうだい} も {灯籠|とうろう} も 。 || A light marks the way home. Lighthouse or lantern, both.
 ?(comp=suzu) comp[smile]: {迷子|まいご} の {役|やく} は 、 {家|いえ} に {帰|かえ}る {場面|ばめん} で {終|お}わり 。 いい {幕切|まくぎ}れ ね 。 || A lost child's part ends with the scene where they get home. A good curtain.
 !note sg_lw_landmarks

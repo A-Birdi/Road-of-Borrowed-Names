@@ -127,7 +127,7 @@ mio[smile]: {大丈夫|だいじょうぶ} です 。 {気|き} に しないで
 !faceplayer ren
 !if prov=ren -> chosen
 !gesture ren count
-ren: {灯守|ひもり} と して 、 {西|にし} の {灯|あか}り を {確|たし}かめたい 。 それ が {第一|だいいち} の {理由|りゆう} です 。 {第二|だいに} の {理由|りゆう} は …… {先生|せんせい} が 、 {昔|むかし} 、 {西|にし} へ {行|い}った きり {戻|もど}らなかった 。 || As a keeper, I want to check the western lanterns. That's my first reason. The second… my teacher went west long ago and never came back.
+ren: {灯守|ひもり} と して 、 {西|にし} の {灯|あか}り を {確|たし}かめたい 。 それ が {第一|だいいち} の {理由|りゆう} です 。 {第二|だいに} の {理由|りゆう} は …… {師匠|ししょう} が 、 {昔|むかし} 、 {西|にし} へ {行|い}った きり {戻|もど}らなかった 。 || As a keeper, I want to check the western lanterns. That's my first reason. The second… my teacher went west long ago and never came back.
 !gesture ren glasses
 ren[think]: {教|おし}え は {一言|ひとこと} も {忘|わす}れて いない のに 、 {顔|かお} だけ が {思|おも}い{出|だ}せない 。 {西|にし} に {行|い}けば 、 {理由|りゆう} が わかる かも しれません 。 || I haven't forgotten a single word of what they taught me, and yet I can't recall their face. If I go west, I might find out why.
 !choice
@@ -300,7 +300,7 @@ mio[think]: {最近|さいきん} 、 {夜|よる} は {店|みせ} を {閉|し
 @scene rw.ren_after
 !faceplayer ren
 ren: {村|むら} の {灯|あか}り は {全部|ぜんぶ} ともって います 。 {毎晩|まいばん} {確|たし}かめて いる ので 、 {間違|まちが}い ありません 。 || Every lantern in the village is lit. I check each night, so there's no doubt.
-ren[think]: {先生|せんせい} の {顔|かお} は 、 まだ {思|おも}い{出|だ}せません 。 でも 、 {待|ま}つ こと に しました 。 {灯守|ひもり} は {待|ま}つ の も {仕事|しごと} です から 。 || I still can't remember my teacher's face. But I've decided to wait. Waiting is part of a keeper's work.
+ren[think]: {師匠|ししょう} の {顔|かお} は 、 まだ {思|おも}い{出|だ}せません 。 でも 、 {待|ま}つ こと に しました 。 {灯守|ひもり} は {待|ま}つ の も {仕事|しごと} です から 。 || I still can't remember my teacher's face. But I've decided to wait. Waiting is part of a keeper's work.
 
 @scene rw.suzu_after
 !faceplayer suzu

@@ -109,7 +109,7 @@ co_kotaro: サヨ さん は 「 さんじゅう まい 」 って {言|い}っ�
 ?(comp=mio) !gesture comp bend co_kotaro
 ?(comp=mio) comp[smile]: {好|す}きな もの を {頼|たの}んじゃった の ね 。 {正直|しょうじき} で よろしい 。 {謝|あやま}りに {行|い}こう か 。 || You ordered what you liked. Very honest. Shall we go and apologise?
 ?(comp=ren) !gesture comp size
-?(comp=ren) comp: {助数詞|じょすうし} {一|ひと}つ で 、 {皿|さら} が {徳利|とっくり} に なる 。 {言葉|ことば} は {恐|おそ}ろしい 。 {美|うつく}しい 。 || One counter word, and plates become flasks. Language is terrifying. And beautiful.
+?(comp=ren) comp: {数|かぞ}え{方|かた} {一|ひと}つ で 、 {皿|さら} が {徳利|とっくり} に なる 。 {言葉|ことば} は {恐|おそ}ろしい 。 {美|うつく}しい 。 || One way of counting, and plates become flasks. Language is terrifying. And beautiful.
 ?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: {台本|だいほん} を {書|か}き{換|か}える {役者|やくしゃ} ね 。 {気持|きも}ち は {分|わ}かる けど 、 {座長|ざちょう} に {怒|おこ}られる やつ よ 。 || An actor rewriting the script mid-show. I understand the urge, but the director will have your head.
 !gesture co_kotaro fidget
@@ -256,7 +256,7 @@ narr: トキワ は {何|なに} か {言|い}い かけて 、 {黙|だま}っ�
 ?(comp=nao) !gesture comp point 34,14
 ?(comp=nao) comp: {見|み}た か 。 {全員|ぜんいん} 、 {迷|まよ}わず {水路|すいろ} に {走|はし}った 。 {逃|に}げ{道|みち} を {体|からだ} が {覚|おぼ}えてる 。 || Did you see? Every one of them ran straight for the channel. Their bodies know the escape route.
 ?(comp=mio) !gesture comp guard
-?(comp=mio) comp[worry]: {皆|みな} さん 、 {息|いき} が {上|あ}がって いる 。 {怖|こわ}かった ん です 。 {理由|りゆう} も {分|わ}からない まま …… || They're all out of breath. They were frightened — without knowing why…
+?(comp=mio) comp[worry]: みんな {息|いき} が {上|あ}がってる 。 {怖|こわ}かった ん だ 。 {理由|りゆう} も {分|わ}からない まま …… || They're all out of breath. They were frightened — without knowing why…
 ?(comp=ren) !gesture comp lookroad 11,11
 ?(comp=ren) comp: {鐘|かね} の {音|おと} は 、 {名|な} より {深|ふか}い ところ に {残|のこ}って いた 。 {静寂|しじま} も 、 そこ まで は {届|とど}かなかった 。 || The sound of the bell was kept somewhere deeper than names. Even the Hush couldn't reach that far.
 ?(comp=suzu) !gesture comp lowered hold
@@ -385,7 +385,7 @@ narr: {他|ほか} の {席|せき} に は {名札|なふだ} が ある 。 �
 ?(comp=nao) !gesture comp observe 26,18
 ?(comp=nao) comp: {宛名|あてな} の ない {席|せき} だ 。 …… {誰|だれ} か を {待|ま}ってる {顔|かお} を してる 。 || A seat with no address. …It has the look of someone waiting.
 ?(comp=mio) !gesture comp bend 26,18
-?(comp=mio) comp[think]: {伏|ふ}せた {杯|さかずき} 。 {誰|だれ} か が {来|く}る まで 、 {埃|ほこり} が {入|はい}らない よう に 。 …… {優|やさ}しい {置|お}き{方|かた} です 。 || An overturned cup — to keep the dust out until someone comes. …That's a tender way to set a place.
+?(comp=mio) comp[think]: {伏|ふ}せた {杯|さかずき} 。 {誰|だれ} か が {来|く}る まで 、 {埃|ほこり} が {入|はい}らない よう に 。 …… {優|やさ}しい {置|お}き{方|かた} だ ね 。 || An overturned cup — to keep the dust out until someone comes. …That's a tender way to set a place.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {空|あ}いた {席|せき} は 、 {名|な} の ない {灯|ひ} と {同|おな}じ です 。 {誰|だれ} か の {形|かたち} を して いる のに 、 {誰|だれ} の もの か {分|わ}からない 。 || An empty seat is like a nameless lantern: shaped like someone, but whose, no one can say.
 ?(comp=suzu) !gesture comp lowered hold
@@ -409,7 +409,7 @@ narr: {記録堂|きろくどう} の {軒下|のきした} に 、 {古|ふる}
 ?(comp=nao) !gesture comp observe 38,6
 ?(comp=nao) comp: {火消|ひけ}し の {桶|おけ} だ 。 {使|つか}わない のに 、 {捨|す}て も しない 。 || Fire buckets. Nobody uses them, but nobody throws them out either.
 ?(comp=mio) !gesture comp observe 38,6
-?(comp=mio) comp: {革|かわ} の {桶|おけ} …… {水|みず} を {急|いそ}いで {運|はこ}ぶ ため の もの です 。 {井戸|いど} で {使|つか}う もの じゃ ない 。 || Leather buckets… for carrying water in a hurry. Not the kind you use at a well.
+?(comp=mio) comp: {革|かわ} の {桶|おけ} …… {水|みず} を {急|いそ}いで {運|はこ}ぶ ため の もの 。 {井戸|いど} で {使|つか}う もの じゃ ない 。 || Leather buckets… for carrying water in a hurry. Not the kind you use at a well.
 ?(comp=ren) !gesture comp chin
 ?(comp=ren) comp: {印|しるし} の {横|よこ} に 、 {字|じ} の {跡|あと} が あります 。 {消|け}された {字|じ} …… 「 {火|ひ} 」 で {始|はじ}まる {言葉|ことば} でした 。 || Beside the mark there's the ghost of some writing. Erased… a word that began with the character for fire.
 ?(comp=suzu) !gesture comp aside
@@ -429,7 +429,7 @@ narr: {水路|すいろ} の {脇|わき} の {石|いし} に 、 {字|じ} が
 ?(comp=nao) !gesture comp point 35,24
 ?(comp=nao) comp: {非常|ひじょう} {時|じ} の {逃|に}げ{道|みち} だ 。 {祭|まつ}り の {広場|ひろば} は 、 {逃|に}げて きた {人|ひと} が {集|あつ}まる {場所|ばしょ} な ん だ 。 …… {何|なに} から {逃|に}げる ん だろう な 。 || An escape route. The festival square is where people fleeing downhill would gather. …Fleeing what, I wonder.
 ?(comp=mio) !gesture comp nod
-?(comp=mio) comp: {水|みず} の そば は 、 {火|ひ} から {一番|いちばん} {遠|とお}い {場所|ばしょ} です 。 || Beside water is the farthest you can get from fire.
+?(comp=mio) comp: {水|みず} の そば は 、 {火|ひ} から {一番|いちばん} {遠|とお}い {場所|ばしょ} だ ね 。 || Beside water is the farthest you can get from fire.
 ?(comp=ren) !gesture comp size
 ?(comp=ren) comp: {田|た} に {水|みず} を {引|ひ}く に は 、 {広|ひろ}すぎる {水路|すいろ} です 。 {人|ひと} が {通|とお}る ため の {幅|はば} です ね 。 || This channel is too wide for irrigation alone. It's wide enough for people.
 ?(comp=suzu) !gesture comp lowered hold

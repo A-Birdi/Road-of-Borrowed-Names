@@ -51,7 +51,7 @@ function speakable(l) {
 const dedupe = (a) => a.filter((x, i) => a.findIndex((y) => y.surface === x.surface) === i);
 const VARIABLE = /\{name|\$\{|%[a-z]|\{pc|\{comp|\{player/i;
 function line(scene, plain) {
-  const l = LINES.find((x) => x.scene === scene && x.plain === plain);
+  const l = LINES.find((x) => x.scene === scene && x.plain === plain) || frozenByText(scene, plain);
   if (!l) { fail('no line "' + plain + '" in ' + scene); return null; }
   if (VARIABLE.test(l.jp + l.en)) fail('line has a run-time variable: ' + l.key);
   return l;
@@ -231,6 +231,21 @@ const SOUNDS = {
 };
 
 // ---- 3. the NPCs ----------------------------------------------------------------------------------------------------
+// a companion sample is chosen by its text: the frozen plan's line with that text, when it is listed
+function frozenByText(scene, plain) {
+  if (!fs.existsSync(OUT)) return null;
+  const fl = Object.values(JSON.parse(fs.readFileSync(OUT, 'utf8')).lines || {}).find((x) => x.scene === scene && x.text === plain);
+  const l = fl ? frozenSample(fl.key) : null;
+  return l ? Object.assign(l, { plain }) : null;
+}
+function frozenSample(key) {
+  const df = path.join(DIR, 'DIVERGENCES.json');
+  if (!fs.existsSync(df) || !fs.existsSync(OUT)) return null;
+  const d = (JSON.parse(fs.readFileSync(df, 'utf8')).divergences || []).find((x) => x.key === key);
+  const frozen = d && JSON.parse(fs.readFileSync(OUT, 'utf8')).lines[key];
+  if (!frozen || sha(frozen.jp) !== d.frozenJpSha256) return null;
+  return { key, scene: frozen.scene, who: frozen.who, jp: frozen.jp, en: frozen.en, plain: frozen.text, frozen: true };
+}
 function npcSection() {
   const f = process.env.VA2_NPC_CASTING || path.join(DIR, 'npc_casting.json');
   if (!fs.existsSync(f)) { fail('missing ' + path.relative(root, f)); return { npcs: [], takes: [] }; }
@@ -238,7 +253,9 @@ function npcSection() {
   const takes = [], npcs = [];
   const speakers = new Set(LINES.map((l) => l.who));
   for (const n of cast.npcs || []) {
-    const l = n.sample && byKey.get(n.sample.key);
+    // a sample the game has since corrected stays frozen (C-95; docs/future/voice/va2/DIVERGENCES.json): the frozen
+    // plan's own line, while its text still has the recorded hash
+    const l = n.sample && (byKey.get(n.sample.key) || frozenSample(n.sample.key));
     if (!l) { fail('NPC ' + n.id + ': sample line ' + (n.sample && n.sample.key) + ' not in the game'); continue; }
     if (l.who !== n.id) fail('NPC ' + n.id + ': sample is spoken by ' + l.who);
     if (VARIABLE.test(l.jp + l.en)) fail('NPC ' + n.id + ': sample has a run-time variable');
@@ -293,7 +310,7 @@ const FX = {
 const sections = { player: playerSection(), companion: companionSection(), narrator: narratorSection(), npc: npcSection() };
 const lineTexts = {};
 for (const t of [...sections.player.takes, ...sections.companion.takes, ...sections.narrator.takes, ...sections.npc.takes]) {
-  const l = byKey.get(t.line);
+  const l = byKey.get(t.line) || frozenSample(t.line);
   if (l && !lineTexts[t.line]) lineTexts[t.line] = lineOut(l);
 }
 let commit = 'unknown';

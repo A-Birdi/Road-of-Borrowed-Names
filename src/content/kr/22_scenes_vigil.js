@@ -34,7 +34,7 @@ narr: {東|ひがし} 、 {泉|いずみ} 、 {名|な} 。 {灯|ひ} が {一|�
 narr: {奥|おく} の {戸|と} が 、 {重|おも}い {音|おと} を {立|た}てて {開|ひら}いた 。 || The door at the back opens with a heavy sound.
 ?(comp=ren) comp[smile]: {全部|ぜんぶ} が {正|ただ}しい わけ じゃ なかった 。 でも 、 {全部|ぜんぶ} が {少|すこ}し ずつ {正|ただ}しかった 。 || None of them was all right. But each of them was a little right.
 ?(comp=nao) comp: {碑|ひ} と 、 ばあさん と 、 {絵巻|えまき} 。 {三|みっ}つ が {同|おな}じ {宛先|あてさき} を {指|さ}して いた な 。 || The stele, the old woman and the scroll. All three pointed at the same address.
-?(comp=mio) comp[smile]: {歌|うた} だけ 、 {少|すこ}し {違|ちが}って いました ね 。 {子供|こども} の {歌|うた} は 、 {覚|おぼ}え{易|やす}い {順|じゅん} に なる の かしら 。 || Only the song was a little different. Maybe children's songs settle into the order that's easiest to remember.
+?(comp=mio) comp[smile]: {歌|うた} だけ 、 {少|すこ}し {違|ちが}ってた ね 。 {子供|こども} の {歌|うた} は 、 {覚|おぼ}え{易|やす}い {順|じゅん} に なる の かしら 。 || Only the song was a little different. Maybe children's songs settle into the order that's easiest to remember.
 ?(comp=suzu) comp[laugh]: {歌|うた} は {節|ふし} が {大事|だいじ} 。 {順番|じゅんばん} より {響|ひび}き よ 。 {歌|うた} の {身|み} に も なって あげて 。 || A song cares about the tune. The sound matters more than the order. Spare a thought for the song.
 !quest kr_main 5
 !journal {洞|ほら} の {奥|おく} の {戸|と} が {開|ひら}いた 。 {灯守|ひもり} の {記録|きろく} は 、 {奥|おく} の {書庫|しょこ} に ある 。 || The cave's inner door is open. The keepers' registers are in the deepest shelves.
@@ -126,7 +126,7 @@ narr: {最後|さいご} の {頁|ページ} は 、 {三十年|さんじゅう�
 !set kr_registers_read
 !set kr_night
 ?(comp=nao) !call kr.nao_registers
-?(comp=mio) comp[sad]: {静|しず}か に して いれば {通|とお}り{過|す}ぎる …… 。 {通|とお}り{過|す}ぎなかった ん です ね 。 {灯|ひ} が {一|ひと}つ ずつ 、 {消|き}えて いった 。 || Keep quiet and it will pass… It didn't pass. The lamps went out one by one.
+?(comp=mio) comp[sad]: {静|しず}か に して いれば {通|とお}り{過|す}ぎる …… 。 {通|とお}り{過|す}ぎなかった ん だ ね 。 {灯|ひ} が {一|ひと}つ ずつ 、 {消|き}えて いった 。 || Keep quiet and it will pass… It didn't pass. The lamps went out one by one.
 ?(comp=ren) !call kr.ren_registers
 ?(comp=suzu) comp: {三|みっ}つ の {台本|だいほん} が あって 、 {一番|いちばん} {楽|らく} な の が {勝|か}った の ね 。 …… {黙|だま}って いる の が 、 {一番|いちばん} {楽|らく} だ もの 。 || Three scripts, and the easiest one won. …Keeping quiet is always easiest.
 narr: ヒサエ は 、 {仲間|なかま} が みんな {山|やま} を {下|お}りた こと を 、 {知|し}って いる の だろう か 。 || Does Hisae know the others all went down the mountain?

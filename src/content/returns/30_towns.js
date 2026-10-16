@@ -98,7 +98,8 @@ narr: {真|ま}ん{中|なか} に 、 {新|あたら}しい {紙|かみ} 。 �
 ?(sb_hoshino_goes) narr: 「 カンタ 、 フキ 、 サチ 、 ソウスケ 。 {順番|じゅんばん} に 」 。 {下|した} に 、 {灯落|ひおち} から の {字|じ} で 「 ホシノ 、 {遠|とお}く から {見|み}て いる 」 。 || "Kanta, Fuki, Sachi, Sousuke. In turn." Underneath, in a hand from Lanternfall: "Hoshino, watching from afar."
 ?(sb_hoshino_both) narr: 「 {春|はる} から {秋|あき} は ホシノ 。 {冬|ふゆ} は カンタ 、 フキ 、 サチ 。 {順番|じゅんばん} に 」 。 || "Spring to autumn: Hoshino. Winter: Kanta, Fuki, Sachi, in turn."
 ?(!sb_hoshino_stays&!sb_hoshino_goes&!sb_hoshino_both) narr: 「 カンタ 、 フキ 、 サチ 。 {順番|じゅんばん} に 」 。 || "Kanta, Fuki, Sachi. In turn."
-?(comp) comp: {一人|ひとり} で {待|ま}つ {灯|ひ} じゃ なく なった ん だ ね 。 || It isn't a lamp that waits alone any more.
+?(comp&comp!=ren) comp: {一人|ひとり} で {待|ま}つ {灯|ひ} じゃ なく なった ん だ ね 。 || It isn't a lamp that waits alone any more.
+?(comp=ren) comp: {一人|ひとり} で {待|ま}つ {灯|ひ} で は 、 なく なった ん です ね 。 || It isn't a lamp that waits alone any more.
 :end
 
 @scene rt.akari_letter

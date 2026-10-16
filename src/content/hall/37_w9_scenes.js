@@ -30,7 +30,8 @@ narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {雪|ゆき} に {�
 @scene hall.w9.f2_first
 !set hall_w9_f2_seen
 narr: {老夫婦|ろうふうふ} の {家|いえ} 。 {囲炉裏|いろり} に {火|ひ} が {入|はい}り 、 {戸口|とぐち} に は {雪|ゆき} が {吹|ふ}き{寄|よ}せて いる 。 {奥|おく} の {襖|ふすま} は 、 ぴたり と {閉|し}まって いる 。 || The old couple's house. The hearth is lit, and snow drifts against the door. At the back, a paper door is shut tight.
-?(comp) comp: {囲炉裏|いろり} の {席|せき} に も 、 {決|き}まり が ある みたい だ ね 。 || Even the seats round the hearth seem to have rules.
+?(comp&comp!=ren) comp: {囲炉裏|いろり} の {席|せき} に も 、 {決|き}まり が ある みたい だ ね 。 || Even the seats round the hearth seem to have rules.
+?(comp=ren) comp: {囲炉裏|いろり} の {席|せき} に も 、 {決|き}まり が ある よう です ね 。 || Even the seats round the hearth seem to have rules.
 
 @scene hall.w9.f3_first
 !set hall_w9_f3_seen
@@ -92,7 +93,7 @@ hall_gensuke: ヨサク さん の {所|ところ} の {布|ぬの} は 、 {都
       ['narr: {戸|と} の {隙間|すきま} から {雪|ゆき} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || Snow blows in through the door, and the pictures slip out of order.']),
     task: 'hall.w9.story',
     after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w9.story_q',
-      '?(comp=nao) comp: {泊|と}めて ください 、 じゃ なくて 、 {泊|と}めて いただけません か 。 {知|し}らない {家|いえ} の {戸|と} を {叩|たた}く とき の {言|い}い{方|かた} だ 。 || Not "let me stay", but "might I stay". That\'s how you knock on a stranger\'s door.',
+      '?(comp=nao) comp: {知|し}らない {家|いえ} の {戸|と} を {叩|たた}く {時|とき} は 、 ああ いう {頼|たの}み{方|かた} に なる 。 {配達|はいたつ} でも そう だ 。 || Knocking on a stranger\'s door, that\'s how you ask. Same on a delivery.',
       '?(comp=mio) comp: {一|ひと}つ だけ の お{願|ねが}い 。 {守|まも}る の は 、 {簡単|かんたん} な よう で {難|むずか}しい の よ ね 。 || Just one request. Keeping it sounds easy, and isn\'t.',
       '?(comp=ren) comp: {覗|のぞ}かないで ください 。 …… {灯|ひ} も {同|おな}じ です 。 {覗|のぞ}き{込|こ}む と 、 {消|き}えて しまう {物|もの} が あります 。 || "Please don\'t look." …Lamps are the same. Some lights go out if you peer into them.',
       '?(comp=suzu) comp: {約束|やくそく} を {破|やぶ}る {場面|ばめん} 、 {毎回|まいかい} 「 やめて 」 って {言|い}いたく なる の よ ね 。 || Every time we reach the part where they break the promise, I want to shout "don\'t".'],
@@ -169,7 +170,8 @@ ${H.who}: ${H.ok}
 !end
 :all
 narr: ヨサク の {言葉|ことば} が 、 {五|いつ}つ とも 、 {言|い}った {相手|あいて} に {戻|もど}った 。 || All five of Yosaku's sayings are back with the ones they were said to.
-?(comp) comp: {奥|おく}さん に は {普通|ふつう} に 、 {子供|こども} に は {優|やさ}しく 、 {店|みせ} の {人|ひと} に は {丁寧|ていねい} に 、 {殿|との}さま の {使|つか}い に は うんと {丁寧|ていねい} に 。 {同|おな}じ {人|ひと} が 、 {四|よっ}つ の {話|はな}し{方|かた} を して いた ね 。 || Plain with his wife, gentle with a child, polite with the shopkeeper, very polite with the lord's man. One man, four ways of talking.
+?(comp&comp!=ren) comp: {奥|おく}さん に は {普通|ふつう} に 、 {子供|こども} に は {優|やさ}しく 、 {店|みせ} の {人|ひと} に は {丁寧|ていねい} に 、 {殿|との}さま の {使|つか}い に は うんと {丁寧|ていねい} に 。 {同|おな}じ {人|ひと} が 、 {四|よっ}つ の {話|はな}し{方|かた} を して いた ね 。 || Plain with his wife, gentle with a child, polite with the shopkeeper, very polite with the lord's man. One man, four ways of talking.
+?(comp=ren) comp: {奥|おく}さん に は {普通|ふつう} に 、 {子供|こども} に は {優|やさ}しく 、 {店|みせ} の {人|ひと} に は {丁寧|ていねい} に 、 {殿|との}さま の {使|つか}い に は とても {丁寧|ていねい} に 。 {同|おな}じ {人|ひと} が 、 {四|よっ}つ の {話|はな}し{方|かた} を して いました ね 。 || Plain with his wife, gentle with a child, polite with the shopkeeper, very polite with the lord's man. One man, four ways of talking.
 ${K.mark(W, 0, 't2')}
 !end
 `;
@@ -189,7 +191,7 @@ ${K.mark(W, 0, 't2')}
   out += '\n@scene hall.w9.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {社|やしろ} の {絵馬|えま} に 、 {四|よっ}つ の {言葉|ことば} 。 {端|はし} の {掛|か}け{軸|じく} に は 、 「 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 と ある 。 || Four sayings on the shrine\'s prayer boards. The scroll at the end reads: "One alone is wrong."'],
     task: { 0: 'hall.w9.counter0', 1: 'hall.w9.counter1' },
-    after: ['narr: {間違|まちが}った {絵馬|えま} が 、 {風|かぜ} に {揺|ゆ}れて 、 {裏返|うらがえ}った 。 || The wrong prayer board swings in the wind and turns face down.', '?(comp) comp: {言葉|ことば} は {合|あ}って いて も 、 {相手|あいて} を {間違|まちが}える と {失礼|しつれい} に なる ん だ ね 。 || The words can be right and still be rude, if they\'re aimed at the wrong person.'],
+    after: ['narr: {間違|まちが}った {絵馬|えま} が 、 {風|かぜ} に {揺|ゆ}れて 、 {裏返|うらがえ}った 。 || The wrong prayer board swings in the wind and turns face down.', '?(comp&comp!=ren) comp: {言葉|ことば} は {合|あ}って いて も 、 {相手|あいて} を {間違|まちが}える と {失礼|しつれい} に なる ん だ ね 。 || The words can be right and still be rude, if they\'re aimed at the wrong person.', '?(comp=ren) comp: {言葉|ことば} は {合|あ}って いて も 、 {相手|あいて} を {間違|まちが}える と {失礼|しつれい} に なる ん です ね 。 || The words can be right and still be rude, if they\'re aimed at the wrong person.'],
     later: 'narr: {絵馬|えま} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the boards one by one, then come back.',
     done: 'narr: {絵馬|えま} は 、 もう {何|なに} も {問|と}わない 。 || The boards ask nothing more.' });
   for (let i = 0; i < 4; i++) {
@@ -223,7 +225,8 @@ narr: {囲炉裏|いろり} の {側|そば} の {板|いた} に 、 {席|せ�
 `;
   for (const st of STS) out += LVN3((t, i) => `?(${L[t]}) narr: 「 ${RULE[st][i]} 」 || "${RULE[st][3]}"\n`);
   out += LV3((p, t, i) => `?(${both(L[t], 'hall.w9.pat=' + p)}) narr: 「 ${nest(NIGHT[p][i])} 」 || "${NIGHT[p][3]}"\n`);
-  out += `?(comp&!hall.w9.t4) comp: {名札|なふだ} を 、 {今夜|こんや} の {席|せき} に {置|お}いて いこう 。 || Let's set each name tag on tonight's seat.
+  out += `?(comp&!hall.w9.t4&comp!=ren) comp: {名札|なふだ} を 、 {今夜|こんや} の {席|せき} に {置|お}いて いこう 。 || Let's set each name tag on tonight's seat.
+?(comp=ren&!hall.w9.t4) comp: {名札|なふだ} を 、 {今夜|こんや} の {席|せき} に {置|お}いて いきましょう 。 || Let's set each name tag on tonight's seat.
 `;
   for (const w of Object.keys(WHO)) out += `
 @scene hall.w9.tag_${w}
@@ -257,8 +260,10 @@ narr: 「 ${WHO[w][0]} 」 の {名札|なふだ} を 、 ${SEAT[st][0]} に {�
 !end
 :all
 narr: {四|よっ}つ の {席|せき} に 、 {四|よっ}つ の {名前|なまえ} 。 {囲炉裏|いろり} の {火|ひ} が 、 {皆|みな} の {顔|かお} を {照|て}らす 。 || Four seats, four names. The hearth fire lights every face.
-?(comp&hall.w9.pat=0) comp: お{客|きゃく}さん は {客座|きゃくざ} 。 …… {今夜|こんや} の あの {人|ひと} は 、 まだ お{客|きゃく}さん なん だ ね 。 || The guest takes the guest's seat. …Tonight she is still a guest.
-?(comp&hall.w9.pat=1) comp: {木尻|きじり} に {座|すわ}る の は 、 {家族|かぞく} に なった しるし だ ね 。 || Sitting by the firewood is a sign she has become family.
+?(comp&hall.w9.pat=0&comp!=ren) comp: お{客|きゃく}さん は {客座|きゃくざ} 。 …… {今夜|こんや} の あの {人|ひと} は 、 まだ お{客|きゃく}さん なん だ ね 。 || The guest takes the guest's seat. …Tonight she is still a guest.
+?(comp=ren&hall.w9.pat=0) comp: お{客|きゃく}さん は {客座|きゃくざ} 。 …… {今夜|こんや} の あの {方|かた} は 、 まだ お{客|きゃく}さん なん です ね 。 || The guest takes the guest's seat. …Tonight she is still a guest.
+?(comp&hall.w9.pat=1&comp!=ren) comp: {木尻|きじり} に {座|すわ}る の は 、 {家族|かぞく} に なった しるし だ ね 。 || Sitting by the firewood is a sign she has become family.
+?(comp=ren&hall.w9.pat=1) comp: {木尻|きじり} に {座|すわ}る の は 、 {家族|かぞく} に なった しるし です ね 。 || Sitting by the firewood is a sign she has become family.
 ${K.mark(W, 1, 't4')}
 !end
 :done
@@ -316,11 +321,13 @@ narr: ${DUTY[d][0]} 。 || ${cap(DUTY[d][1])}.
 !if !xp_hall_w9_f1_asked -> unknown
 !if hall.w9.pat=${DUTY[d][2]} -> right
 narr: {娘|むすめ} の {頼|たの}み は 、 これ で は なかった よう だ 。 || That doesn't seem to be what she asked.
-?(comp) comp: {頼|たの}み の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what she asked again?
+?(comp&comp!=ren) comp: {頼|たの}み の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what she asked again?
+?(comp=ren) comp: あの {方|かた} の {頼|たの}み 、 もう {一度|いちど} お{話|はな}し しましょう か 。 || Shall I tell you again what she asked?
 !end
 :right
 narr: ${DUTY[d][3]}
-?(comp) comp: {頼|たの}まれた こと を して 、 {頼|たの}まれて いない こと は しない 。 それ も 、 {相手|あいて} を {大事|だいじ} に する {方法|ほうほう} だ ね 。 || Doing what you're asked, and nothing you're not: that's a way of caring for someone, too.
+?(comp&comp!=ren) comp: {頼|たの}まれた こと を して 、 {頼|たの}まれて いない こと は しない 。 それ も 、 {相手|あいて} を {大事|だいじ} に する {方法|ほうほう} だ ね 。 || Doing what you're asked, and nothing you're not: that's a way of caring for someone, too.
+?(comp=ren) comp: {頼|たの}まれた こと を して 、 {頼|たの}まれて いない こと は しない 。 それ も 、 {相手|あいて} を {大事|だいじ} に する {方法|ほうほう} です ね 。 || Doing what you're asked, and nothing you're not: that's a way of caring for someone, too.
 ${K.mark(W, 1, 't6')}
 !end
 :unknown
@@ -451,7 +458,8 @@ narr: ヨサク は 、 オトク に {何|なん} と {言|い}う べき だ�
   }
   out += `:right
 narr: オトク は {黙|だま}って {聞|き}いて 、 {機|はた} の {音|おと} の する {方|ほう} を {見|み}た 。 || Otoku listens in silence, then looks towards the sound of the loom.
-?(comp) comp: {同|おな}じ {注文|ちゅうもん} が 、 {門|もん} で は {仰|おお}せ 、 {店|みせ} で は ご{注文|ちゅうもん} 、 {家|いえ} で は 「 {欲|ほ}しい そう だ 」 に なった 。 {言葉|ことば} は 、 {相手|あいて} に {合|あ}わせて {着替|きが}える ん だ ね 。 || The same order was a decree at the gate, a commission at the shop and "he wants" at home. Words change their clothes to suit the listener.
+?(comp&comp!=ren) comp: オトク さん 、 {黙|だま}って {聞|き}いて くれた ね 。 {言葉|ことば} も 、 {家|いえ} に {帰|かえ}ったら {着替|きが}える ん だ ね 。 || Otoku just listened. Words change their clothes when they come home, too.
+?(comp=ren) comp: オトク さん 、 {黙|だま}って {聞|き}いて くれました ね 。 {言葉|ことば} も 、 {家|いえ} に {帰|かえ}ったら {着替|きが}える ん です ね 。 || Otoku just listened. Words change their clothes when they come home, too.
 ${K.mark(W, 2, 't8')}
 !end
 :wrong_stiff

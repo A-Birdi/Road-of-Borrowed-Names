@@ -6,7 +6,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.dialect.add('kansai', `
 @ ch4/arrive:14 [sb.arrive]
 = さあ さあ 、 {雪|ゆき} の {舞台|ぶたい} の {幕開|まくあ}け だよ ！ …… さむっ 。 {客席|きゃくせき} に {火鉢|ひばち} を ください 。 || Roll up, roll up — the curtain rises on the snow stage! …Brr. Braziers for the audience, please.
-> さあ さあ 、 {雪|ゆき} の {舞台|ぶたい} の {幕開|まくあ}け や で ！ …… さむっ 。 {客席|きゃくせき} に {火鉢|ひばち} ちょうだい 。 || Roll up, roll up — the curtain rises on the snow stage! …Brr. Braziers for the audience, please.
+> さあ さあ 、 {雪|ゆき} の {舞台|ぶたい} の {幕開|まくあ}け や で ！ …… さむっ 。 {客席|きゃくせき} に {火鉢|ひばち} ください 。 || Roll up, roll up — the curtain rises on the snow stage! …Brr. Braziers for the audience, please.
 @ ch4/arrive:15 [sb.arrive]
 = {昔|むかし} 、 {一座|いちざ} で {一度|いちど} だけ {来|き}た こと が ある んだ 。 {鐘|かね} の {音|おと} が 、 やけに きれい な {村|むら} だった 。 || I came here once with the troupe, years ago. A village where the bell sounded ridiculously clear.
 > {昔|むかし} 、 {一座|いちざ} で いっぺん だけ {来|き}た こと ある ねん 。 {鐘|かね} の {音|おと} が 、 えらい きれい な {村|むら} やった 。 || I came here once with the troupe, years back. A village where the bell sounded awful pretty.
@@ -20,7 +20,7 @@ RB.dialect.add('kansai', `
 = {主役|しゅやく} の いない {舞台|ぶたい} みたい だ ね 。 よし 、 {宿|やど} で {筋書|すじが}き を {聞|き}こう 。 || Like a stage with no lead. Right — let's get the plot at the inn.
 > {主役|しゅやく} の いてへん {舞台|ぶたい} みたい や な 。 よっしゃ 、 {宿|やど} で {筋書|すじが}き {聞|き}こ 。 || Like a stage with no lead. Right then — let's go get the plot at the inn.
 @ ch4/hamlet:47 [sb.stair_ice]
-= {扉|とびら} の {鍵|かぎ} は ホシノ さん が {持|も}って いる はず です 。 {先|さき} に {話|はなし} を {聞|き}きましょう 。 || Hoshino should have the key to the door. Let's talk to him first.
+= {扉|とびら} の {鍵|かぎ} は ホシノ さん が {持|も}ってる はず だ 。 {先|さき} に {話|はなし} を {聞|き}こう 。 || Hoshino should have the key to the door. Let's talk to him first.
 > {扉|とびら} の {鍵|かぎ} は ホシノ さん が {持|も}ってはる はず や 。 {先|さき} に {話|はなし} {聞|き}こ 。 || Hoshino oughta have the key to that door. Let's go talk to him first.
 @ ch4/hamlet:60 [sb.stair_ice]
 = {拍手|はくしゅ} ！ {氷|こおり} の {幕|まく} が {上|あ}がった よ 。 || Applause! The ice curtain rises.
@@ -161,7 +161,7 @@ RB.dialect.add('kansai', `
 = {石|いし} に {刻|きざ}む こと じゃ ない よ 、 それ ！ || That's not something you carve in stone!
 > {石|いし} に {刻|きざ}む こと ちゃう で 、 それ ！ || That ain't something you carve in stone!
 @ ch4/dungeon:36 [sb.service_door_out]
-= デンジ さん の {言|い}って いた 、 {裏|うら} の {階段|かいだん} でしょう か 。 {中|なか} から {開|あ}けられる はず です 。 || That must be the back stair Denji mentioned. It should open from inside.
+= デンジ さん の {言|い}ってた 、 {裏|うら} の {階段|かいだん} かな 。 {中|なか} から {開|あ}けられる はず だ よ 。 || That must be the back stair Denji mentioned. It should open from inside.
 > デンジ さん が {言|い}わはった 、 {裏|うら} の {階段|かいだん} ちゃう か 。 {中|なか} から {開|あ}けられる はず や で 。 || That's gotta be the back stair Denji mentioned. Should open from inside.
 @ ch4/dungeon:45 [sb.hall_enter]
 = {氷|こおり} の {宮殿|きゅうでん} だ ね 。 {衣装|いしょう} {代|だい}=(cost) が かからない {舞台|ぶたい} 。 …… {薪|まき} {代|だい}=(cost) は かかる けど 。 || An ice palace. A set that costs nothing in costumes. …Plenty in firewood, though.
@@ -206,7 +206,7 @@ RB.dialect.add('kansai', `
 = {客席|きゃくせき} が {空|から} でも {幕|まく} を {上|あ}げる 。 …… {一番|いちばん} {難|むずか}しくて 、 {一番|いちばん} {格好|かっこう} いい やつ だ 。 || Raising the curtain on an empty house. …The hardest thing, and the finest.
 > {客席|きゃくせき} が {空|から} でも {幕|まく} を {上|あ}げる 。 …… {一番|いちばん} {難|むずか}しくて 、 {一番|いちばん} {格好|かっこう} ええ やつ や 。 || Raising the curtain on an empty house. …The hardest thing, and the finest.
 @ ch4/end-lamp:81 [sb.lamp_name]
-= {舞台|ぶたい} を {降|お}りて 、 {客席|きゃくせき} の {娘|むすめ} さん に {会|あ}い に {行|い}く 。 …… {最高|さいこう} の {終幕|しゅうまく} じゃ ない 。 || Stepping down off the stage to meet your daughter in the audience. …What a finale.
+= {舞台|ぶたい} を {降|お}りて 、 {客席|きゃくせき} の {娘|むすめ} さん に {会|あ}い に {行|い}く 。 …… {最高|さいこう} の {終幕|しゅうまく} じゃ ない ！ || Stepping down off the stage to meet your daughter in the audience. …What a finale.
 > {舞台|ぶたい} を {降|お}りて 、 {客席|きゃくせき} の {娘|むすめ} さん に {会|あ}い に {行|い}く 。 …… {最高|さいこう} の {終幕|しゅうまく} やん 。 || Stepping down off the stage to go meet your daughter in the audience. …Now that's a finale.
 @ ch4/end-lamp:91 [sb.lamp_name]
 = {巡業|じゅんぎょう} と {同|おな}じ だ ね 。 {行|い}って 、 {帰|かえ}って 、 また {行|い}く 。 {幕|まく} は {何度|なんど} でも {上|あ}がる 。 || Same as touring. You go, you come back, you go again. The curtain can rise as many times as you like.

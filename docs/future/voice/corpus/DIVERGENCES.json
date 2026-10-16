@@ -1,0 +1,13 @@
+{
+ "note": "Frozen VA-1 audition cases whose game line was corrected afterwards. The case keeps its frozen text (Robin, 2026-10-16: \"Preserve the frozen audition text\"; \"Do not reopen VA-1 or VA-2\"); the full-game batch records the corrected game line (docs/future/voice/production/RECORDING_MANIFEST). tools/voice/corpus.mjs --check accepts a case listed here only while both texts still have the hashes recorded here.",
+ "divergences": [
+  {
+   "caseId": "SUZU_K05",
+   "lineId": "sg.check_clues#e27367500d@kansai",
+   "finding": "RV-0015",
+   "decision": "C-95 (Robin, 2026-10-16): fix before recording; D4 keeps the standard line's politeness in Kansai",
+   "frozenSpokenSha256": "c07d3a29bd710eaea111a2e4f7dd2a7b8f67a5333bcef81ed112ed110dac389e",
+   "gameSpokenSha256": "eb583217bf97267b3006dbb0c893815975a6bfbf5c29ac938aaa5df4f760622c"
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "note": "VA-2 casting samples whose game line was corrected afterwards. The sample keeps its frozen line (Robin, 2026-10-16: \"Preserve the frozen audition text\"; \"Do not reopen VA-1 or VA-2\"); the full-game batch records the corrected line. tools/voice/va2/plan.mjs --check uses the frozen line for a sample listed here while its text still has the recorded hash.",
+ "divergences": [
+  {
+   "key": "cr.call#e3c48a2fe7",
+   "speaker": "cr_jinpachi",
+   "finding": "RV-0162",
+   "decision": "C-95 (Robin, 2026-10-16): fix before recording: the councillor is タミ, not ヤエ (Lanternfall already has a Yae)",
+   "frozenJpSha256": "e3c48a2fe7d0d1f8013eb4b9f98a0fe401746c22dfa094e21c3f5e56820c42d7"
+  },
+  {
+   "key": "rw.mr_lantern#7686da0cd8",
+   "speaker": "ren",
+   "finding": "RV-0161",
+   "decision": "C-95 (Robin, 2026-10-16): fix before recording: Ren's teacher is 師匠 in Ren's own lines (先生 is Mio's usage)",
+   "frozenJpSha256": "7686da0cd80068df4d155a64b531970e815387e0c12f6c3f24abef50b7052d7c"
+  }
+ ]
+}

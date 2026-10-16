@@ -110,7 +110,7 @@ narr: {郵便|ゆうびん} の {棚|たな} 。 {一段|いちだん} だけ �
 !gesture pc lookroad right
 narr: {霧|きり} の {中|なか} に 、 {灰色|はいいろ} の {柵|さく} が {尾根|おね} を {横切|よこぎ}って いる 。 {屋根|やね} の ある {門|もん} は 、 {閉|し}まって いる 。 {霧|きり} の {関|せき} だ 。 || In the mist, a grey fence runs right across the ridge. The roofed gate is shut. The Mist Barrier.
 ?(comp=nao) comp: {関所|せきしょ} か 。 …… {手形|てがた} を {見|み}せる {時|とき} は 、 {余計|よけい} な こと を {言|い}う な よ 。 || A checkpoint. …When we show the papers, don't say more than you need.
-?(comp=mio) comp: {柵|さく} が どこ まで も {続|つづ}いて います 。 {通|とお}る {所|ところ} は 、 あの {門|もん} だけ です ね 。 || The fence goes on and on. The gate is the only way through.
+?(comp=mio) comp: {柵|さく} が どこ まで も {続|つづ}いてる 。 {通|とお}る {所|ところ} は 、 あの {門|もん} だけ だ ね 。 || The fence goes on and on. The gate is the only way through.
 ?(comp=ren) comp: {門|もん} の {灯|ひ} は {点|つ}いて います 。 ここ は 、 {誰|だれ} か が {守|まも}って いる {関|せき} です 。 || The gate's lamp is lit. Someone keeps this barrier.
 ?(comp=suzu) comp: {関所|せきしょ} の {芝居|しばい} なら 、 {何度|なんど} も {見|み}た わ 。 {本物|ほんもの} は 、 もっと {静|しず}か ね 。 || I've seen plenty of checkpoint plays. The real one's quieter.
 !quest cr_main 4
@@ -155,7 +155,7 @@ cr_ujie: ですが 、 {手形|てがた} に {名|な} が ない 。 {私|わ�
 cr_ujie: この {関|せき} に は 、 {古|ふる}い {決|き}まり が ございます 。 {身元|みもと} を {証|あか}す {物|もの} の ない お{二人|ふたり} は 、 {一人|ひとり} が ここ に {残|のこ}り 、 {一人|ひとり} が {上|うえ} の {雲居|くもい} の {宿|しゅく} から {請状|うけじょう} を いただいて {来|く}る 。 || This barrier has an old custom. When two travellers have nothing to prove who they are, one stays here, and the other goes up to Kumoi Station for a letter of guarantee.
 cr_ujie: {残|のこ}る {方|かた} は 、 {番所|ばんしょ} で お{預|あず}かり いたします 。 {縄|なわ} も {牢|ろう} も ございません 。 お{茶|ちゃ} と {座布団|ざぶとん} だけ で ございます 。 || The one who stays is our guest in the office. No ropes and no cell: only tea and a cushion.
 ?(comp=nao) comp: …… {俺|おれ} が {残|のこ}る 。 {考|かんが}える こと も ある 。 {上|うえ} の {道|みち} は 、 お{前|まえ} の {足|あし} なら {大丈夫|だいじょうぶ} だ 。 || …I'll stay. I've got some thinking to do. Your legs can manage the road up.
-?(comp=mio) comp: わたし が {残|のこ}ります 。 {少|すこ}し 、 {頭|あたま} が {痛|いた}くて 。 {休|やす}んで いれば {治|なお}ります から 。 …… {本当|ほんとう} です よ 。 || I'll stay. My head aches a little. It'll pass if I rest. …Really, it will.
+?(comp=mio) comp: わたし が {残|のこ}る 。 {少|すこ}し 、 {頭|あたま} が {痛|いた}くて 。 {休|やす}んで いれば {治|なお}る から 。 …… {本当|ほんとう} だ よ 。 || I'll stay. My head aches a little. It'll pass if I rest. …Really, it will.
 ?(comp=ren) comp: {私|わたし} が {残|のこ}ります 。 …… {上|うえ} の {道|みち} で {私|わたし} が {迷|まよ}う より 、 ここ で {待|ま}つ {方|ほう} が 、 みんな の ため です 。 || I'll stay. …Better I wait here than get lost on the road up. For everyone's sake.
 ?(comp=suzu) comp: わたし が {残|のこ}る わ 。 {番所|ばんしょ} の {皆|みな}さん に 、 {一席|いっせき} {聞|き}かせて あげる 。 {帰|かえ}って {来|く}る まで 、 {退屈|たいくつ} させない から 。 || I'll stay. I'll give the office a performance. They won't be bored till you're back.
 !choice
@@ -165,7 +165,7 @@ cr_ujie: {残|のこ}る {方|かた} は 、 {番所|ばんしょ} で お{預|
 cr_ujie: {申|もう}し{訳|わけ} ございません 。 {決|き}まり で ございます 。 …… {雲居|くもい} は 、 {霧|きり} の {上|うえ} 。 {道|みち} は {一本|いっぽん} で ございます 。 || I am sorry. It is the rule. …Kumoi is above the mist. There is one road.
 :go
 ?(comp=nao) comp: {行|い}って {来|こ}い 。 …… {戻|もど}って {来|く}る {奴|やつ} を {待|ま}つ の は 、 {悪|わる}く ない 。 || Go on. …Waiting for someone who'll come back isn't so bad.
-?(comp=mio) comp[smile]: {行|い}ってらっしゃい 。 {寒|さむ}い から 、 これ を 。 …… {生姜|しょうが} の {飴|あめ} です 。 || Off you go. It's cold, so take this. …A ginger sweet.
+?(comp=mio) comp[smile]: {行|い}ってらっしゃい 。 {寒|さむ}い から 、 これ を 。 …… {生姜|しょうが} の {飴|あめ} 。 || Off you go. It's cold, so take this. …A ginger sweet.
 ?(comp=ren) comp: {道|みち} は {一本|いっぽん} です 。 …… それ でも 、 {灯|ひ} の ある {方|ほう} へ {行|い}って ください ね 。 || There's one road. …Even so, keep to the lit side.
 ?(comp=suzu) comp: {一人|ひとり} {芝居|しばい} の {稽古|けいこ} だ と {思|おも}って 。 {幕|まく} が {下|お}りる {前|まえ} に {戻|もど}って {来|き}て よ 。 || Think of it as rehearsing a one-person show. Be back before the curtain comes down.
 !set cr_apart
@@ -219,7 +219,7 @@ narr: {改|あらた}め の {台|だい} 。 {印|いん} を {比|くら}べ�
 nao: {早|はや}かった な 。 …… いや 、 まだ {行|い}って ない の か 。 {雲居|くもい} は {上|うえ} だ 。 {灯|ひ} の ある {方|ほう} へ {行|い}け 。 || That was quick. …Oh, you haven't gone yet. Kumoi's up the road. Head for the light.
 @scene cr.wait_mio
 !faceplayer
-mio: お{茶|ちゃ} を いただいて います 。 {頭|あたま} も {少|すこ}し {楽|らく} に なりました 。 {急|いそ}がなくて いい です よ 。 || I'm being given tea. My head's a little better. No need to rush.
+mio: お{茶|ちゃ} を いただいてる 。 {頭|あたま} も {少|すこ}し {楽|らく} に なった 。 {急|いそ}がなくて いい よ 。 || I'm being given tea. My head's a little better. No need to rush.
 @scene cr.wait_ren
 !faceplayer
 ren: {番所|ばんしょ} の {灯|ひ} の {名前|なまえ} を 、 {教|おし}えて もらいました 。 …… {迷|まよ}わず に 、 {戻|もど}って {来|き}て ください ね 。 || They told me the name of the office's lamp. …Come back without getting lost.
@@ -299,7 +299,7 @@ cr_ujie: …… {雲居|くもい} の シズ {様|さま} の {字|じ} と {�
 !set cr_passed
 !hook comp_back
 ?(comp=nao) comp: …… {戻|もど}った か 。 {待|ま}つ の は 、 {思|おも}った より {長|なが}かった 。 || …You're back. Waiting was longer than I thought.
-?(comp=mio) comp[smile]: おかえり なさい 。 {頭|あたま} も {治|なお}りました 。 {生姜|しょうが} の {飴|あめ} 、 {役|やく} に {立|た}ちました か ？ || Welcome back. My head's better. Did the ginger sweet help?
+?(comp=mio) comp[smile]: おかえり なさい 。 {頭|あたま} も {治|なお}った よ 。 {生姜|しょうが} の {飴|あめ} 、 {役|やく} に {立|た}った ？ || Welcome back. My head's better. Did the ginger sweet help?
 ?(comp=ren) comp[happy]: …… {迷|まよ}わず に {戻|もど}って {来|き}ました ね 。 {番所|ばんしょ} の {灯|ひ} を 、 {毎晩|まいばん} {呼|よ}んで いました 。 {目印|めじるし} に なる よう に 。 || …You came back without getting lost. I called the office's lamp every night, so it would be something to steer by.
 ?(comp=suzu) comp[laugh]: {遅|おそ}い ！ …… {冗談|じょうだん} よ 。 {番所|ばんしょ} の {人|ひと} たち 、 わたし の {芸|げい} で {三回|さんかい} {泣|な}いた わ 。 {笑|わら}い {泣|な}き で ね 。 || Late! …I'm joking. The office folk cried three times at my act. From laughing.
 !hook co_bond cr:surety
@@ -310,7 +310,7 @@ cr_ujie: …… {雲居|くもい} の シズ {様|さま} の {字|じ} と {�
 @scene cr.nao_decides
 # Nao's answer, to be said to Sakichi's face: "I need to run this one myself." Nao takes the last leg of the restored
 # relay down to Kirishita alone, with a reply written by hand, and asks you to come down later.
-comp: …… {決|き}めた 。 {答|こた}え は 、 サキチ さん に {直接|ちょくせつ} {言|い}う 。 {手紙|てがみ} じゃ なく て な 。 || …I've decided. I'll give Sakichi my answer in person. Not by letter.
+comp: …… {決|き}めた 。 {答|こた}え は 、 サキチ さん に {直接|ちょくせつ} {言|い}う 。 {手紙|てがみ} だけ じゃ なく て な 。 || …I've decided. I'll give Sakichi my answer in person. Not just by letter.
 comp: {手紙|てがみ} は {書|か}いた 。 {待|ま}って いる {間|あいだ} に 、 {手|て} で 。 …… これ は 、 {俺|おれ} が {一人|ひとり} で {走|はし}る 。 {継|つ}ぎ{飛脚|びきゃく} の {最後|さいご} の {区間|くかん} だ 。 || I wrote him a letter, by hand, while I waited. …This one I need to run myself. The relay's last leg.
 comp: {先|さき} に {下|お}りる 。 {後|あと} から {来|こ}い 。 {霧下|きりした} の {宿|やど} で 、 {会|あ}おう 。 || I'll go down first. Come after. We'll meet at the inn at Kirishita.
 !set cr_nao_night

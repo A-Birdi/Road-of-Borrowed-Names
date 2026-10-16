@@ -81,7 +81,7 @@ RB.dialect.add('kansai', `
 > {八|はち} {引|ひ}く {四|よん} は {四|よん} 。 {四缶|よんかん} 、 どこ か で {誰|だれ} か が {売|う}った ん や な 。 || Eight take away four is four. Four cans somebody sold off somewhere.
 @ ch2/21_scenes_main:270 [sg.check_clues]
 = {帳簿|ちょうぼ} を {合|あ}わせる ため の {嘘|うそ} は 、 {一|ひと}つ では {終|お}わらない の 。 …… {会|あ}いに {行|い}きましょう 。 || A lie told to balance the books never stays just one lie. …Let's go and see him.
-> {帳簿|ちょうぼ} {合|あ}わせる ため の {嘘|うそ} は 、 {一|ひと}つ で は {終|お}わらへん ねん 。 …… {会|あ}い に {行|い}こう か 。 || A lie told to balance the books never stays just one lie. …Let's go see him.
+> {帳簿|ちょうぼ} {合|あ}わせる ため の {嘘|うそ} は 、 {一|ひと}つ で は {終|お}わらへん ねん 。 …… {会|あ}い に {行|い}きましょ 。 || A lie told to balance the books never stays just one lie. …Let's go see him.
 @ ch2/21_scenes_main:290 [sg.wataru_confront]
 = {帳尻|ちょうじり} は 、 いつか {合|あ}わせなきゃ いけない の よ 。 {嘘|うそ} で {合|あ}わせた {分|ぶん} も 、 {利子|りし} を つけて ね 。 …… {身|み} に {覚|おぼ}え が ある から 、 {言|い}える の 。 || The books have to balance eventually. Including whatever you balanced with lies — with interest. …I say that from experience.
 > {帳尻|ちょうじり} は 、 いつか {合|あ}わせな あかん ねん で 。 {嘘|うそ} で {合|あ}わせた {分|ぶん} も 、 {利子|りし} つけて な 。 …… {身|み} に {覚|おぼ}え が ある から 、 {言|い}える ねん 。 || The books gotta balance sooner or later. Whatever you balanced with lies too — with interest. …I can say that 'cause I've been there.

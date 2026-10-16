@@ -425,7 +425,9 @@ RB.ui.help = (function () {
       '<button class="hclose" data-a="close" aria-label="Close word help">' + HI('close') + '<span>Close</span></button></div><div class="hbody">';
     if (RB.game.settings.romaji !== false && info.romaji) html += '<div class="rom">' + esc(info.romaji) + '</div>';
     if (info.gloss) html += '<div class="mean"><span class="lab">Here</span>' + esc(info.gloss) + '</div>';
-    if (e) html += '<div class="mean">' + (info.gloss ? '<span class="lab">Dictionary</span>' : '') + esc(e.m) + (info.lemma && info.lemma !== surface ? ' <span class="small" lang="ja">(' + esc(info.lemma) + ')</span>' : '') + '</div>';
+    // a dictionary meaning or note is mixed text: English with {漢字|かんじ} furigana groups (src/lang/30_lexicon.js)
+    const MX = (x) => (RB.jp && RB.jp.renderMixed ? RB.jp.renderMixed(x) : esc(x));
+    if (e) html += '<div class="mean">' + (info.gloss ? '<span class="lab">Dictionary</span>' : '') + MX(e.m) + (info.lemma && info.lemma !== surface ? ' <span class="small" lang="ja">(' + esc(info.lemma) + ')</span>' : '') + '</div>';
     if (info.forms && info.forms.length) html += '<div class="note">Form: ' + esc(info.forms.join(' → ')) + '</div>';
     if (info.parts && info.parts.length) html += '<div class="note">Parts: ' + info.parts.map((p) => esc(p.surface || p.w || '') + (p.m ? ' (' + esc(p.m) + ')' : '')).join(' + ') + '</div>';
     if (info.dia && RB.dialect && RB.dialect.note(info)) {
@@ -433,7 +435,7 @@ RB.ui.help = (function () {
       const J = (plain, mk) => '<span lang="ja">' + esc(mk || plain).replace(/\{([^|}]+)\|([^}]+)\}/g, '<ruby>$1<rt>$2</rt></ruby>') + '</span>';
       html += '<div class="note dia" lang="en"><b>' + (e && e.casual ? 'Casual speech' : 'Kansai-ben') + '</b> ' + RB.dialect.note(info, J) + '</div>';
     }
-    if (e && e.n) html += '<div class="note">' + esc(e.n) + '</div>';
+    if (e && e.n) html += '<div class="note">' + MX(e.n) + '</div>';
     // in a dialogue line: what this word does there (AG-1: a construction, grammar the English has no word for, or a
     // role not worked out), from the same relations the highlight shows
     const here = RB.ui.speechMark && RB.ui.speechMark.explain ? RB.ui.speechMark.explain(anchor, idx) : null;
@@ -443,7 +445,9 @@ RB.ui.help = (function () {
     if (surface.indexOf('っ') >= 0 || surface.indexOf('ッ') >= 0) html += '<div class="note">Small っ is a held beat: the next consonant is doubled.</div>';
     if (surface.indexOf('ー') >= 0) html += '<div class="note">ー lengthens the vowel before it by one beat.</div>';
     html += '</div><div class="acts">';
-    if (RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length) html += '<button class="pbtn" data-a="say">' + HI('sound') + 'Say it</button>';
+    // the narrator's recording of this word (its written form and reading), else the device's voice (54_voice_route.js)
+    const sayKey = e && e.w && e.r && RB.voice && RB.voice.refKey ? RB.voice.refKey.word(e.w, e.r) : null;
+    if (RB.voice && RB.voice.canSayRef && RB.voice.canSayRef(sayKey)) html += '<button class="pbtn" data-a="say">' + HI('sound') + 'Say it</button>';
     html += '<button class="pbtn" data-a="pin" aria-pressed="' + pinned + '">' + HI('note') + (pinned ? 'Pinned' : 'Keep open') + '</button>';
     if (RB.game.s) html += '<button class="pbtn" data-a="note">' + HI('words') + 'Add to notebook</button>';
     html += '</div>';
@@ -453,7 +457,7 @@ RB.ui.help = (function () {
       const b = ev.target.closest('[data-a]');
       if (!b) return;
       const a = b.getAttribute('data-a');
-      if (a === 'say') RB.voice.speak(reading || surface);
+      if (a === 'say') RB.voice.sayRef(sayKey, reading || surface);
       if (a === 'pin') { pinned = !pinned; render(tok, anchor, r, idx); }
       if (a === 'close') { pinned = false; hide(); if (anchor && anchor.isConnected && via === 'key') anchor.focus({ preventScroll: true }); }
       if (a === 'note') addToNotebook(tok, info);

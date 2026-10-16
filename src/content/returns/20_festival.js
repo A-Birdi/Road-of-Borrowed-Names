@@ -75,7 +75,7 @@ co_ume: {今年|ことし} の {柿|かき} は 、 よく {熟|う}れた よ �
 co_goro: {火|ひ} の {番|ばん} は 、 {若|わか}い {者|もの} に {任|まか}せた 。 {今夜|こんや} は 、 {見|み}る だけ だ 。 || I've handed the fire watch to the young ones. Tonight I only watch.
 
 @scene rt.fest_asa
-co_asa: {屋台|やたい} で 、 {言葉|ことば} の {遊|あそ}び が できる の よ 。 {八百橋|やおばし} から {来|き}た {人|ひと} が 、 {教|おし}えて くれた の 。 || There are word games at the stalls. Someone from Manybridge showed us how.
+co_asa: {屋台|やたい} で 、 {言葉|ことば} の {遊|あそ}び が できる ん だ よ 。 {八百橋|やおばし} から {来|き}た {人|ひと} が 、 {教|おし}えて くれた ん だ 。 || There are word games at the stalls. Someone from Manybridge showed us how.
 
 @scene rt.fest_kotaro
 co_kotaro: ねえ ねえ 、 {来年|らいねん} も {来|く}る ？ || Hey, hey, will you come next year too?

@@ -180,9 +180,12 @@ RB.challenge = (function () {
         // a listening step (L16): the device's own voice, optional; the words are always a tap away and reading them
         // is never help (it is recorded as reading, not listening). With no Japanese voice, the words are simply shown.
         if (step.kind === 'listen') {
-          const canHear = !!(RB.voice && RB.voice.status && RB.voice.status().localJaCount > 0);
+          // a recording of the words (src/audio/54_voice_route.js), else the device's voice, else reading
+          const hk = RB.voice && RB.voice.refKey ? RB.voice.refKey.spoken(step.transcript.jp) : null;
+          const recorded = !!(RB.voicebank && RB.voicebank.active() && RB.voice.mode() === 'prepared' && RB.voicebank.hasRef(hk));
+          const canHear = !!(RB.voice && RB.voice.canSayRef && RB.voice.canSayRef(hk));
           if (!canHear) res.read = true;
-          h += '<div class="chal-listen">' + (canHear ? '<button class="pbtn" data-a="hear">' + I('sound') + '<span>Listen (your device\'s voice)</span></button>' : '<p class="muted small">No Japanese voice on this device: read it instead.</p>') +
+          h += '<div class="chal-listen">' + (canHear ? '<button class="pbtn" data-a="hear">' + I('sound') + '<span>' + (recorded ? 'Listen' : 'Listen (your device\'s voice)') + '</span></button>' : '<p class="muted small">No recording and no Japanese voice on this device: read it instead.</p>') +
             (res.read ? '<div class="chal-ctx">' + RB.ui.jhtml(step.transcript.jp) + '</div>' : '<button class="pbtn quiet" data-a="readit">' + I('note') + '<span>Read it instead</span></button>') + '</div>';
         }
         if (step.prompt) h += '<div class="chal-prompt">' + enRuby(RB.script.enVars(step.prompt.en || '')) + (step.prompt.jp ? ' ' + RB.ui.jhtml(step.prompt.jp) : '') + '</div>';
@@ -202,7 +205,7 @@ RB.challenge = (function () {
         const trSlot = wrap.querySelector('.task-tr');
         trSlot.innerHTML = step.ctx && step.ctx.jp && step.ctx.en && !showEn ? '<button class="pbtn quiet tr" data-a="tr" title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '';
         const hear = ctxEl.querySelector('[data-a=hear]'), readit = ctxEl.querySelector('[data-a=readit]');
-        if (hear) hear.onclick = () => { try { RB.voice.speak(RB.jp.reading(step.transcript.jp)); } catch (e) { /* the voice is optional */ } };
+        if (hear) hear.onclick = () => { try { RB.voice.sayRef(RB.voice.refKey.spoken(step.transcript.jp), RB.jp.reading(step.transcript.jp)); } catch (e) { /* the voice is optional */ } };
         if (readit) readit.onclick = () => { res.read = true; renderCtx(); };
         const tr = trSlot.querySelector('[data-a=tr]');
         if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; helpCat(step.kind === 'choose' ? 'constrain' : 'conceptual'); if (PH) PH.assist('translation'); renderCtx(); };

@@ -177,8 +177,8 @@ RB.dialect.add('kansai', `
 = {渡|わた}って も いい {所|ところ} から 、 {渡|わた}る 。 {一年|いちねん} {前|まえ} の ゴサク さん も 、 そう したかった だろう ね 。 || We cross where crossing is allowed. Gosaku would have wanted to, a year ago.
 > {渡|わた}って も ええ {所|ところ} から 、 {渡|わた}る ん や 。 {一年|いちねん} {前|まえ} の ゴサク さん も 、 そう したかった やろ な 。 || We cross where crossing is allowed. Gosaku would have wanted to, a year ago.
 @ hall/hall.w4.t8_rules [hall.w4.t8_rules]
-= しなければ ならない こと 、 して も いい こと 、 して は いけない こと 。 {分|わ}けて {覚|おぼ}えよう 。 || What we must do, what we may do, what we mustn't. Let's keep them apart.
-> せな あかん こと 、 して も ええ こと 、 したら あかん こと 。 {分|わ}けて {覚|おぼ}えよ か 。 || What we must do, what we may do, what we mustn't. Let's keep them apart.
+= どれ が {決|き}まり で 、 どれ が しなくて いい こと か 、 よく {見|み}て から {上|あ}がろう 。 || Let's look properly at what's a rule and what we needn't do before we go up.
+> どれ が {決|き}まり で 、 どれ が しなくて ええ こと か 、 よう {見|み}て から {上|あ}がろ 。 || Let's have a proper look at what's a rule and what we needn't do before we go up.
 @ hall/hall.w4.r_door [hall.w4.r_door]
 = {全部|ぜんぶ} 、 {決|き}まり の {通|とお}り 。 これ なら 、 {誰|だれ} に も {叱|しか}られない ね 。 || All by the rules. Nobody can scold us now.
 > {全部|ぜんぶ} 、 {決|き}まり の {通|とお}り や 。 これ やったら 、 {誰|だれ} に も {叱|しか}られへん な 。 || All by the rules. Nobody can scold us now.
@@ -243,8 +243,8 @@ RB.dialect.add('kansai', `
 = {最後|さいご} の {一行|いちぎょう} を {書|か}かない {台本|だいほん} 。 {役者|やくしゃ} を {信|しん}じて いる の ね 。 || A script that leaves out its last line. It trusts its actors.
 > {最後|さいご} の {一行|いちぎょう} を {書|か}かへん {台本|だいほん} 。 {役者|やくしゃ} を {信|しん}じてる ん や な 。 || A script that leaves out its last line. It trusts its actors.
 @ hall/hall.w6.n_ofuku [hall.w6.n_ofuku]
-= {決|き}まり の {通|とお}り 。 「 ても 」 と 「 ただし 」 を {見落|みお}とさなくて よかった 。 || All by the board. Good thing we didn't miss the "even if" and the "however".
-> {決|き}まり の {通|とお}り や 。 「 ても 」 と 「 ただし 」 を {見落|みお}とさへん で よかった わ 。 || All by the board. Good thing we didn't miss the "even if" and the "however".
+= {決|き}まり の {通|とお}り 。 {札|ふだ} の {最後|さいご} の {一行|いちぎょう} まで 、 {読|よ}んで よかった 。 || All by the board. Good thing we read the board to the last line.
+> {決|き}まり の {通|とお}り や 。 {札|ふだ} の {最後|さいご} の {一行|いちぎょう} まで 、 {読|よ}んで よかった わ 。 || All by the board. Good thing we read the board to the last line.
 @ hall/hall.w6.t3 [hall.w6.t3]
 = {条件|じょうけん} が {合|あ}わない と 、 {言葉|ことば} が {全部|ぜんぶ} {逆|さか}さま に なる から ね 。 || When the condition doesn't fit, the whole saying comes out backwards.
 > {条件|じょうけん} が {合|あ}わへん と 、 {言葉|ことば} が {全部|ぜんぶ} {逆|さか}さま に なる から な 。 || When the condition doesn't fit, the whole saying comes out backwards.
@@ -291,8 +291,8 @@ RB.dialect.add('kansai', `
 = {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
 > {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}んだら {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん や な 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
 @ hall/hall.w7.t3 [hall.w7.t3]
-= 「 あれ 」 も 「 それ 」 も 、 {相手|あいて} が {何|なに} を {知|し}って いる か で {決|き}まる ん だ ね 。 || Are or sore: which one you say depends on what the other person knows.
-> 「 あれ 」 も 「 それ 」 も 、 {相手|あいて} が {何|なに} を {知|し}ってる か で {決|き}まる ん や な 。 || Are or sore: which one you say depends on what the other person knows.
+= {雪|ゆき} が 、 {間違|まちが}い を {隠|かく}して くれた ね 。 || The snow covered up the mistake for us.
+> {雪|ゆき} が 、 {間違|まちが}い を {隠|かく}して くれた な 。 || The snow covered up the mistake for us.
 @ hall/hall.w7.c_kettle [hall.w7.c_kettle]
 = {何|なに} を 、 と は {一言|ひとこと} も {書|か}いて ない のに 、 {台所|だいどころ} に {立|た}つ と {分|わ}かる 。 {毎日|まいにち} の こと だ から だ ね 。 || It never once says what, and yet standing in the kitchen you know. Because it's the same every day.
 > {何|なに} を 、 と は {一言|ひとこと} も {書|か}いて ない のに 、 {台所|だいどころ} に {立|た}ったら {分|わ}かる 。 {毎日|まいにち} の こと や から な 。 || It never once says what, and yet standing in the kitchen you know. Because it's the same every day.
@@ -306,8 +306,8 @@ RB.dialect.add('kansai', `
 = {名前|なまえ} を {書|か}かなくて も 、 {家族|かぞく} に は {分|わ}かった ん だ ね 。 {分|わ}かる {人|ひと} に {向|む}けて {書|か}いた {手紙|てがみ} だ 。 || Even without naming it, the family would have known. It was written for someone who would understand.
 > {名前|なまえ} を {書|か}かなくて も 、 {家族|かぞく} に は {分|わ}かった ん や な 。 {分|わ}かる {人|ひと} に {向|む}けて {書|か}いた {手紙|てがみ} や 。 || Even without naming it, the family would have known. It was written for someone who would understand.
 @ hall/hall.w7.b_rl [hall.w7.b_rl]
-= 「 {赤|あか}い の 」 「 さっき の 」 。 {名前|なまえ} を {言|い}わなくて も 、 {話|はなし} の {流|なが}れ で {分|わ}かる ね 。 || "The red one", "the one from before": no names needed, the conversation carries it.
-> 「 {赤|あか}い の 」 「 さっき の 」 。 {名前|なまえ} を {言|い}わなくて も 、 {話|はなし} の {流|なが}れ で {分|わ}かる な 。 || "The red one", "the one from before": no names needed, the conversation carries it.
+= {三|みっ}つ とも 、 {揃|そろ}った ね 。 {膳|ぜん} の {上|うえ} が 、 {賑|にぎ}やか に なった 。 || All three, together again. The tray looks lively now.
+> {三|みっ}つ とも 、 {揃|そろ}った な 。 {膳|ぜん} の {上|うえ} が 、 {賑|にぎ}やか に なった わ 。 || All three, together again. The tray looks lively now.
 @ hall/hall.w7.end [hall.w7.end]
 = {第|だい}{七幕|ななまく} 、 {幕|まく} ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もの よ 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
 > {第|だい}{七幕|ななまく} 、 {幕|まく} や ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もん や で 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
@@ -327,8 +327,8 @@ RB.dialect.add('kansai', `
 = {見|み}た 、 {聞|き}こえた 、 {聞|き}いた 、 {思|おも}った 。 {分|わ}けて みる と 、 {狐|きつね} の {話|はなし} は {一枚|いちまい} も 「 {見|み}た 」 に {入|はい}って いない ね 。 || Seen, heard, told, guessed. Sorted, not one slip about the fox is in "seen".
 > {見|み}た 、 {聞|き}こえた 、 {聞|き}いた 、 {思|おも}った 。 {分|わ}けて みたら 、 {狐|きつね} の {話|はなし} は {一枚|いちまい} も 「 {見|み}た 」 に {入|はい}って ない な 。 || Seen, heard, told, guessed. Sorted, not one slip about the fox is in "seen".
 @ hall/hall.w8.t3 [hall.w8.t3]
-= どれ だけ {確|たし}か か を {言|い}い{間違|まちが}える と 、 {話|はなし} が {全部|ぜんぶ} {信用|しんよう} できなく なる から ね 。 || Get how sure you are wrong, and nobody can trust any of it.
-> どれ だけ {確|たし}か か を {言|い}い{間違|まちが}えたら 、 {話|はなし} が {全部|ぜんぶ} {信用|しんよう} できなく なる から な 。 || Get how sure you are wrong, and nobody can trust any of it.
+= {一|ひと}つ {間違|まちが}える だけ で 、 {全部|ぜんぶ} {怪|あや}しく {聞|き}こえる ね 。 || Get one wrong, and all of it sounds suspect.
+> {一|ひと}つ {間違|まちが}える だけ で 、 {全部|ぜんぶ} {怪|あや}しく {聞|き}こえる な 。 || Get one wrong, and all of it sounds suspect.
 @ hall/hall.w8.p_kitchen [hall.w8.p_kitchen]
 = {本人|ほんにん} が {確|たし}か だ と {思|おも}って いて も 、 {場所|ばしょ} を {見|み}る と {違|ちが}う こと も ある 。 {嘘|うそ} じゃ なくて 、 {思|おも}い{込|こ}み だ ね 。 || Even when someone is sure, the place itself can show otherwise. Not a lie: a mistaken belief.
 > {本人|ほんにん} が {確|たし}か や と {思|おも}って いて も 、 {場所|ばしょ} を {見|み}たら {違|ちが}う こと も ある 。 {嘘|うそ} や なくて 、 {思|おも}い{込|こ}み や な 。 || Even when someone is sure, the place itself can show otherwise. Not a lie: a mistaken belief.
@@ -339,8 +339,8 @@ RB.dialect.add('kansai', `
 = {書|か}き{置|お}き の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the note said again?
 > {書|か}き{置|お}き の {言葉|ことば} 、 もう {一回|いっかい} {言|い}おう か ？ || Shall I say what the note said again?
 @ hall/hall.w8.r_east [hall.w8.r_east]
-= 「 そう だ 」 も 「 らしい 」 も 、 {人|ひと} から {聞|き}いた {話|はなし} 。 でも 、 ヒサ は それ を {信|しん}じて {歩|ある}いて いった ん だ ね 。 || Whether it's そうだ or らしい, it's something Hisa heard. And Hisa trusted it, and walked.
-> 「 そう だ 」 も 「 らしい 」 も 、 {人|ひと} から {聞|き}いた {話|はなし} や 。 でも 、 ヒサ は それ を {信|しん}じて {歩|ある}いて いった ん や な 。 || Whether it's そうだ or らしい, it's something Hisa heard. And Hisa trusted it, and walked.
+= {小|ちい}さな {足跡|あしあと} 。 ヒサ は 、 {信|しん}じた {道|みち} を まっすぐ {歩|ある}いて いった ん だ ね 。 || Small footprints. Hisa trusted the road, and walked it straight.
+> {小|ちい}さな {足跡|あしあと} や 。 ヒサ は 、 {信|しん}じた {道|みち} を まっすぐ {歩|ある}いて いった ん や な 。 || Small footprints. Hisa trusted the road, and walked it straight.
 @ hall/hall.w8.t8_board [hall.w8.t8_board]
 = {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いこう 。 || Let's set each name tag by the prints that match.
 > {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて みよ か 。 || Let's set each name tag by the prints that match.
@@ -387,8 +387,8 @@ RB.dialect.add('kansai', `
 = {頼|たの}まれた こと を して 、 {頼|たの}まれて いない こと は しない 。 それ も 、 {相手|あいて} を {大事|だいじ} に する {方法|ほうほう} だ ね 。 || Doing what you're asked, and nothing you're not: that's a way of caring for someone, too.
 > {頼|たの}まれた こと を して 、 {頼|たの}まれて いない こと は しない 。 それ も 、 {相手|あいて} を {大事|だいじ} に する やり{方|かた} や な 。 || Doing what you're asked, and nothing you're not: that's a way of caring for someone, too.
 @ hall/hall.w9.post_hearth [hall.w9.post_hearth]
-= {同|おな}じ {注文|ちゅうもん} が 、 {門|もん} で は {仰|おお}せ 、 {店|みせ} で は ご{注文|ちゅうもん} 、 {家|いえ} で は 「 {欲|ほ}しい そう だ 」 に なった 。 {言葉|ことば} は 、 {相手|あいて} に {合|あ}わせて {着替|きが}える ん だ ね 。 || The same order was a decree at the gate, a commission at the shop and "he wants" at home. Words change their clothes to suit the listener.
-> {同|おな}じ {注文|ちゅうもん} が 、 {門|もん} で は {仰|おお}せ 、 {店|みせ} で は ご{注文|ちゅうもん} 、 {家|いえ} で は 「 {欲|ほ}しい そう だ 」 に なった 。 {言葉|ことば} は 、 {相手|あいて} に {合|あ}わせて {着替|きが}える ん や な 。 || The same order was a decree at the gate, a commission at the shop and "he wants" at home. Words change their clothes to suit the listener.
+= オトク さん 、 {黙|だま}って {聞|き}いて くれた ね 。 {言葉|ことば} も 、 {家|いえ} に {帰|かえ}ったら {着替|きが}える ん だ ね 。 || Otoku just listened. Words change their clothes when they come home, too.
+> オトク さん 、 {黙|だま}って {聞|き}いて くれた な 。 {言葉|ことば} も 、 {家|いえ} に {帰|かえ}ったら {着替|きが}える ん や な 。 || Otoku just listened. Words change their clothes when they come home, too.
 @ hall/hall.w9.end [hall.w9.end]
 = {第|だい}{九幕|きゅうまく} 、 {幕|まく} 。 …… {泣|な}かせる {芝居|しばい} だった わ 。 || End of act nine. …That one got me.
 > {第|だい}{九幕|きゅうまく} 、 {幕|まく} 。 …… {泣|な}かせる {芝居|しばい} やった わ 。 || End of act nine. …That one got me.
@@ -433,5 +433,5 @@ RB.dialect.add('kansai', `
 > {百幕|ひゃくまく} 、 {大入|おおい}り {満員|まんいん} 。 …… ええ {芝居|しばい} やった わ 。 || A hundred acts, a full house. …A fine show.
 @ hall/hall.tsuru_final [hall.tsuru_final]
 = ツル さん 、 {帰|かえ}り の {道中|どうちゅう} 、 {退屈|たいくつ} は させません よ 。 || Keeper Tsuru, I won't let you be bored on the way home.
-> ツル さん 、 {帰|かえ}り の {道中|どうちゅう} は 、 うち が {盛|も}り{上|あ}げる で 。 || Keeper Tsuru, I won't let you be bored on the way home.
+> ツル さん 、 {帰|かえ}り の {道中|どうちゅう} 、 {退屈|たいくつ} は させません で 。 || Keeper Tsuru, I won't let you be bored on the way home.
 `, 'hall');

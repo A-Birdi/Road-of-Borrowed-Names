@@ -18,9 +18,9 @@ narr: {丘|おか} の {上|うえ} は {段々畑|だんだんばたけ} 。 {�
 ?(comp=nao) comp[smirk]: {柿|かき} と ガラス と {祭|まつ}り の {里|さと} か 。 {配達|はいたつ} で {一回|いっかい} {来|き}た 。 {坂|さか} が {多|おお}くて 、 {靴|くつ} が {減|へ}る ん だ よ な 。 || Persimmons, glass and a festival. I delivered here once. All slopes — it eats your boots.
 ?(comp=nao) !gesture comp point 35,11
 ?(comp=nao) comp: …… {出口|でぐち} の {少|すく}ない {村|むら} だ 。 {下|した} へ {一本|いっぽん} 、 {水|みず} の {道|みち} が ある だけ 。 || …Not many ways out of this place. One channel running downhill, and that's it.
-?(comp=mio) comp[smile]: {空気|くうき} が {乾|かわ}いて います ね 。 {柿|かき} を {干|ほ}す に は いい けど …… {喉|のど} を {痛|いた}める {人|ひと} が {多|おお}そう 。 || The air's so dry. Good for drying persimmons, but… I'd guess a lot of sore throats.
+?(comp=mio) comp[smile]: {空気|くうき} が {乾|かわ}いてる ね 。 {柿|かき} を {干|ほ}す に は いい けど …… {喉|のど} を {痛|いた}める {人|ひと} が {多|おお}そう 。 || The air's so dry. Good for drying persimmons, but… I'd guess a lot of sore throats.
 ?(comp=mio) !gesture comp bend down
-?(comp=mio) comp[think]: {道端|みちばた} の {薬草|やくそう} まで {萎|しお}れて いる 。 {雨|あめ} 、 {長|なが}い こと {降|ふ}って ない みたい です 。 || Even the herbs by the road are wilting. It hasn't rained in a long while.
+?(comp=mio) comp[think]: {道端|みちばた} の {薬草|やくそう} まで {萎|しお}れて いる 。 {雨|あめ} 、 {長|なが}い こと {降|ふ}って ない みたい 。 || Even the herbs by the road are wilting. It hasn't rained in a long while.
 ?(comp=ren) !gesture comp observe prop:lantern
 ?(comp=ren) comp[think]: {灯|ひ} の {名|な} は 「 {灰実|はいみ} 」 。 …… {字|じ} は {新|あたら}しい のに 、 {芯|しん} が {古|ふる}い 。 {書|か}き{直|なお}された {灯|ひ} です ね 。 || The lantern's name reads "Haimi". …The letters are new but the wick is old. Someone has rewritten this lantern.
 ?(comp=ren) comp[smirk]: {灰|はい} の {里|さと} で 「 はい 」 と ばかり {言|い}う {人|ひと} が いて も 、 {驚|おどろ}かない で ください 。 …… {失礼|しつれい} 。 {駄洒落|だじゃれ} です 。 || If people in the village of ash say nothing but "hai", don't be surprised. …Forgive me. That was a pun.
@@ -45,7 +45,7 @@ narr: {石|いし} の {向|む}こう に は 、 {道|みち} の よう に {
 ?(comp=nao) !gesture comp point 22,5
 ?(comp=nao) comp: {火除|ひよ}け ？ この {草|くさ} で ？ {逆|ぎゃく} に よく {燃|も}え そう だ けど な 。 || Fire-ward? With this much grass on it? Looks more like kindling.
 ?(comp=mio) !gesture comp guard
-?(comp=mio) comp[worry]: {火除|ひよ}け の {道|みち} …… {本当|ほんとう} は {草|くさ} を {刈|か}って おく {道|みち} です よ ね 。 {誰|だれ} も {手入|てい}れ して いない 。 || A firebreak… it's meant to be kept mown. Nobody has touched it.
+?(comp=mio) comp[worry]: {火除|ひよ}け の {道|みち} …… {本当|ほんとう} は {草|くさ} を {刈|か}って おく {道|みち} だ よ ね 。 {誰|だれ} も {手入|てい}れ して いない 。 || A firebreak… it's meant to be kept mown. Nobody has touched it.
 ?(comp=ren) !gesture comp palm 22,5
 ?(comp=ren) comp: {火除|ひよ}け{道|みち} です ね 。 {古|ふる}い {里|さと} に は よく あります 。 {手入|てい}れ を やめれば 、 ただ の {草|くさ}むら です が 。 || A firebreak path. Old villages often have them. Stop tending one and it's just a strip of weeds.
 ?(comp=suzu) !gesture comp lowered hold
@@ -70,7 +70,7 @@ narr: {茂|しげ}み の {向|む}こう 、 {雪|ゆき} を かぶった {峰
 ?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp: {抜|ぬ}けられ なく は ない けど 、 {服|ふく} が {全部|ぜんぶ} {破|やぶ}れる 。 {先|さき} に {村|むら} だ 。 || Could force it, if you don't mind losing your clothes. Village first.
 ?(comp=mio) !gesture comp observe 23,5
-?(comp=mio) comp[worry]: この {茨|いばら} 、 {枯|か}れて カラカラ です 。 {火|ひ} が ついたら 、 ひとたまり も ない 。 || These brambles are bone dry. One spark and they'd go up like paper.
+?(comp=mio) comp[worry]: この {茨|いばら} 、 {枯|か}れて カラカラ 。 {火|ひ} が ついたら 、 ひとたまり も ない 。 || These brambles are bone dry. One spark and they'd go up like paper.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {道|みち} が 、 {道|みち} で ある こと を {忘|わす}れて います 。 {先|さき} に {里|さと} の {人|ひと} に {話|はなし} を {聞|き}きましょう 。 || This road has forgotten it's a road. Let's talk to the villagers first.
 ?(comp=suzu) !gesture comp aside
@@ -127,7 +127,7 @@ narr: {広場|ひろば} を {抜|ぬ}ける {途中|とちゅう} で 、 {足|
 ?(comp=nao) comp: なあ 、 {気|き}づいた ？ {空|あ}いた {席|せき} 、 {焦|こ}げた {梁|はり} 、 {誰|だれ} も {使|つか}わない {桶|おけ} 、 {綱|つな} の ない {鐘|かね} 。 || Hey. Notice it? An empty seat, a scorched beam, buckets nobody uses, a bell with no rope.
 ?(comp=nao) comp: {全部|ぜんぶ} 、 {同|おな}じ {穴|あな} の {周|まわ}り を よけて {歩|ある}いてる 。 {宛名|あてな} の {抜|ぬ}けた {手紙|てがみ} と {同|おな}じ {感|かん}じ だ 。 || Everything here walks around the same hole. Same feeling as a letter with the address missing.
 ?(comp=mio) !gesture comp guard
-?(comp=mio) comp[worry]: $name さん 。 この {里|さと} 、 {火傷|やけど} の {薬|くすり} を {置|お}いて いる {家|いえ} が {一軒|いっけん} も ない んです 。 || $name… not one house in this village keeps burn salve.
+?(comp=mio) comp[worry]: $name 。 この {里|さと} 、 {火傷|やけど} の {薬|くすり} を {置|お}いて いる {家|いえ} が {一軒|いっけん} も ない の 。 || $name… not one house in this village keeps burn salve.
 ?(comp=mio) !gesture comp shake
 ?(comp=mio) comp: ガラス と {焼|や}き{物|もの} の {里|さと} で 、 {火傷|やけど} の {薬|くすり} が ない なんて 。 {何|なに} か を 、 {忘|わす}れさせられて いる みたい 。 || A village of glass and pottery, and no burn salve. It's as if they've been made to forget something.
 ?(comp=ren) !gesture comp chin hold
@@ -426,7 +426,7 @@ narr: {柵|さく} が きしんで {開|ひら}いた 。 || The fence creaks o
 ?(comp=nao) !gesture comp nod
 ?(comp=nao) comp: {出口|でぐち} が {一|ひと}つ {増|ふ}えた 。 {悪|わる}く ない 。 || One more exit. Not bad.
 ?(comp=mio) !gesture comp check prop=bottle
-?(comp=mio) comp: {水筒|すいとう} 、 {満|まん}タン です 。 {行|い}きましょう 。 || Water flasks full. Let's go.
+?(comp=mio) comp: {水筒|すいとう} 、 {満|まん}タン 。 {行|い}こう 。 || Water flasks full. Let's go.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {上|うえ} へ 。 …… {方向|ほうこう} は 、 {私|わたし} が {言|い}う の と {逆|ぎゃく} に {行|い}けば {間違|まちが}い ありません 。 || Upward. …If you go the opposite way to whatever I suggest, you can't go wrong.
 ?(comp=suzu) !gesture comp size
@@ -443,7 +443,7 @@ narr: {上|うえ} の {段|だん} へ の {道|みち} は 、 {錠|じょう}
 ?(comp=nao) !gesture comp lookbetween 20,0 and=pc
 ?(comp=nao) comp: {立入|たちい}り {禁止|きんし} の {理由|りゆう} が {書|か}いて ない 。 {理由|りゆう} の ない {禁止|きんし} は 、 {大体|だいたい} {何|なに} か {隠|かく}してる 。 || No reason given for the "no entry". A ban without a reason is usually hiding something.
 ?(comp=mio) !gesture comp aside
-?(comp=mio) comp: {鍵|かぎ} が ない と {無理|むり} です ね 。 {誰|だれ} が {持|も}って いる の かしら 。 || We can't without the key. I wonder who has it.
+?(comp=mio) comp: {鍵|かぎ} が ない と {無理|むり} だ ね 。 {誰|だれ} が {持|も}って いる の かしら 。 || We can't without the key. I wonder who has it.
 ?(comp=ren) !gesture comp observe 20,0
 ?(comp=ren) comp: {柵|さく} の {向|む}こう の {木|き} 、 {全部|ぜんぶ} {同|おな}じ {背丈|せたけ} です 。 …… {気味|きみ} が {悪|わる}い ほど 。 || The trees beyond the fence are all the same height. …Unnervingly so.
 ?(comp=suzu) !gesture comp shake
@@ -483,7 +483,7 @@ RB.script.add(`
 @scene co.tokiwa_after
 co_tokiwa: {年代記|ねんだいき} の {今年|ことし} の {頁|ページ} に は 、 「 {本年|ほんねん} 」 と {書|か}きました 。 {今|いま} 、 ここ で {書|か}いて いる {記録|きろく} です から 。 || On this year's page I wrote "this year". Because it's a record written here and now.
 co_tokiwa: {記録係|きろくがかり} の {仕事|しごと} は 、 {正|ただ}しい {字|じ} を {守|まも}る こと だ と {思|おも}って いました 。 {違|ちが}いました 。 {書|か}いて ある こと と 、 {書|か}いて ない こと の {両方|りょうほう} に 、 {責任|せきにん} を {持|も}つ こと でした 。 || I used to think a recorder's job was to guard correct writing. I was wrong. It's to answer for both what is written and what isn't.
-?(co_bell_rung) co_tokiwa: …… {鐘|かね} を {外|はず}せ と {言|い}った こと 、 ゴロウ さん に {謝|あやま}りました 。 {笑|わら}われました よ 。 {腕|うで} の {方|ほう} が {頭|あたま} より {賢|かしこ}い 、 と 。 || …I apologised to Gorō for telling him to take the rope down. He laughed at me. Said arms are wiser than heads.
+?(co_bell_rung) co_tokiwa: …… {綱|つな} を {外|はず}せ と {言|い}った こと 、 ゴロウ さん に {謝|あやま}りました 。 {笑|わら}われました よ 。 {腕|うで} の {方|ほう} が {頭|あたま} より {賢|かしこ}い 、 と 。 || …I apologised to Gorō for telling him to take the rope down. He laughed at me. Said arms are wiser than heads.
 
 @scene co.tokiwa_post
 # Staged: Tokiwa reads a letter from the other villages' recorders; then, for what became of the Archive and

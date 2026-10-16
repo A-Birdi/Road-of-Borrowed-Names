@@ -628,7 +628,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 !set sea_islet_seen
 narr: {沖|おき} の {小島|こじま} 。 {松|まつ} が {一本|いっぽん} 、 {風|かぜ} に {傾|かたむ}いて {立|た}って いる 。 {他|ほか} に は 、 {石|いし} が {一|ひと}つ と 、 {小|ちい}さな {桟橋|さんばし} だけ 。 || The islet out at sea. One pine stands there, leaning in the wind. Apart from it, a single stone and a small jetty.
 ?(comp=nao) nao: {地図|ちず} に は 、 {点|てん} {一|ひと}つ で {描|か}いて ある {島|しま} だ 。 {来|き}て みる と 、 {点|てん} より は {大|おお}きい な 。 || On the chart it's a single dot. Up close it's a bit bigger than a dot.
-?(comp=mio) mio: {誰|だれ} も いない {島|しま} です ね 。 …… たまに は 、 いい です 。 || An island with nobody on it. …Now and then, that's nice.
+?(comp=mio) mio: {誰|だれ} も いない {島|しま} 。 …… たまに は 、 いい ね 。 || An island with nobody on it. …Now and then, that's nice.
 ?(comp=ren) ren: この {松|まつ} が 、 {灯台|とうだい} の {代|か}わり だった の かも しれません 。 {昔|むかし} の {船|ふね} に とって 。 || Perhaps this pine was a lighthouse, of a kind. For the boats of long ago.
 ?(comp=suzu) suzu: {舞台|ぶたい} も {客|きゃく} も ない {島|しま} 。 …… {松|まつ} が {一本|いっぽん} 、 {主役|しゅやく} ね 。 || An island with no stage and no audience. …One pine, playing the lead.
 :end

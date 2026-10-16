@@ -197,7 +197,7 @@ narr: {道|みち} の {脇|わき} で 、 {誰|だれ} か の {焚|た}き{�
 !challenge co.lw_embers
 !if var._res=0 -> later
 narr: {水|みず} を かけ 、 {土|つち} を かぶせて 、 {手|て} を かざす 。 もう {熱|あつ}く ない 。 || Water, then earth over it, then a hand held above. No heat left.
-?(comp=mio) comp: よかった 。 この {乾|かわ}き {方|かた} なら 、 {本当|ほんとう} に {危|あぶ}なかった です 。 || Good. As dry as it is, that really was dangerous.
+?(comp=mio) comp: よかった 。 この {乾|かわ}き {方|かた} なら 、 {本当|ほんとう} に {危|あぶ}なかった 。 || Good. As dry as it is, that really was dangerous.
 !hook road_done co_road embers
 !end
 :later

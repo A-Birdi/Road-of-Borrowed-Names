@@ -146,7 +146,7 @@ kasane[surprise]: …… {知|し}って います 。 {置|お}いた の は �
 !gesture kasane avert pc
 kasane[closed]: {持|も}って {来|き}て くださいます か 。 …… お{願|ねが}い します 。 {頼|たの}んで いる の です 。 わたし が 。 || Would you bring them to me? …Please. I am asking. Me.
 ?(comp=nao) !gesture comp lookbetween kasane and=pc
-?(comp=nao) nao: …… {今|いま} の 、 {聞|き}いた か 。 {頼|たの}んだ ぞ 。 {三十年|さんじゅうねん} ぶり に 。 || …Did you hear that? Kasane asked. First time in thirty years.
+?(comp=nao) nao: …… {今|いま} の 、 {聞|き}いた か 。 カサネ が 、 {人|ひと} に {頼|たの}んだ ぞ 。 {三十年|さんじゅうねん} ぶり に 。 || …Did you hear that? Kasane asked. First time in thirty years.
 ?(comp=mio) !gesture comp nod pc
 ?(comp=mio) mio: {頼|たの}まれた なら 、 {行|い}きましょう 。 {断|ことわ}る {理由|りゆう} が ない 。 || If we've been asked, let's go. There's no reason to say no.
 ?(comp=ren) !gesture comp nod

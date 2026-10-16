@@ -47,7 +47,7 @@ mio: {持|も}って いる の ね 。 …… {返|かえ}しても いい と 
 sae: …… いいえ 。 あなた たち に {渡|わた}します 。 {止|と}まった ままの {父|ちち} の {水車|すいしゃ} なんて 、 {嫌|いや} です 。 || …No. I'll give it to you. I don't want my father's wheel standing still.
 !give rw_wheel_pin
 !gesture mio nod sae
-mio[smile]: よく {言|い}えました 。 …… {私|わたし} は ここ で サエ さん と いる 。 {気|き}を つけて ね 。 || Well said. …I'll stay here with Sae. Be careful.
+mio[smile]: よく {言|い}えました 。 …… {私|わたし} は ここ で サエ さん と います 。 {気|き}を つけて ください ね 。 || Well said. …I'll stay here with Sae. Be careful.
 !set rw_mr_mio
 !quest rw_mill 1 quiet
 
@@ -59,7 +59,7 @@ mio[smirk]: …… {冗談|じょうだん} です 。 {半分|はんぶん} は
 @scene rw.mr_ren
 !faceplayer ren
 ren: この {灯|あか}り 、 {名前|なまえ} は 「 すいしゃごや 」 。 {記録|きろく} に よれば 、 {三十年|さんじゅうねん} {変|か}わって いない 。 || This lantern's name is "suishagoya" — water mill. According to the records it hasn't changed in thirty years.
-ren[think]: {先生|せんせい} は {言|い}って いました 。 「 {迷|まよ}ったら 、 {一番|いちばん} {古|ふる}い {名前|なまえ} に {戻|もど}れ 」 。 …… {道|みち} に {迷|まよ}う の は 、 {私|わたし} の {得意|とくい} {分野|ぶんや} です が 。 || My teacher used to say, "When lost, go back to the oldest name." …Getting lost is my speciality, admittedly.
+ren[think]: {師匠|ししょう} は {言|い}って いました 。 「 {迷|まよ}ったら 、 {一番|いちばん} {古|ふる}い {名前|なまえ} に {戻|もど}れ 」 。 …… {道|みち} に {迷|まよ}う の は 、 {私|わたし} の {得意|とくい} {分野|ぶんや} です が 。 || My teacher used to say, "When lost, go back to the oldest name." …Getting lost is my speciality, admittedly.
 ren: {書|か}いて いただけます か 。 {私|わたし} は {読|よ}み{上|あ}げる {係|かかり} で 。 || Would you write? I'll be in charge of reading aloud.
 !set rw_mr_ren_talked
 
@@ -71,7 +71,7 @@ ren: {書|か}いて いただけます か 。 {私|わたし} は {読|よ}み
 !if var._res=0 -> end
 !sfx lantern
 narr: {灯|あか}り が ともる と 、 {川|かわ} {沿|ぞ}い の もや が {少|すこ}し {薄|うす}く なった 。 || As the lantern lights, the haze along the river thins a little.
-ren[smile]: …… ありがとう 。 {灯|あか}り が {一|ひと}つ ともる と 、 {道|みち} が {一|ひと}つ {思|おも}い{出|だ}す 。 {先生|せんせい} の {口癖|くちぐせ} です 。 || …Thank you. Light one lantern and the road remembers one thing. My teacher used to say that.
+ren[smile]: …… ありがとう 。 {灯|あか}り が {一|ひと}つ ともる と 、 {道|みち} が {一|ひと}つ {思|おも}い{出|だ}す 。 {師匠|ししょう} の {口癖|くちぐせ} です 。 || …Thank you. Light one lantern and the road remembers one thing. My teacher used to say that.
 !set rw_mr_ren
 
 @scene rw.mr_ren2

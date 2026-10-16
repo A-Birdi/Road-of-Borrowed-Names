@@ -203,7 +203,7 @@ lq_chigusa[tired]: {次|つぎ} の {春|はる} こそ 、 と {毎年|まい�
 !gesture lq_chigusa listen pc
 lq_chigusa: …… おばさん は 、 {元気|げんき} かい 。 || …Is she well, the ferrywoman?
 pc: {何年|なんねん} か {前|まえ} に {亡|な}くなった そう です 。 {渡|わた}し{舟|ぶね} は 、 {息子|むすこ} の コウジ さん が {継|つ}いで います 。 || She passed away some years ago. Her son Kōji runs the ferry now.
-pc: {最後|さいご} まで 、 あなた を {待|ま}って いた そう です 。 「 {約束|やくそく} した ん だ から 、 どこか で {生|い}きてる 」 って 。 || She waited for you to the end. "They promised — so they're alive somewhere," she used to say.
+pc: {最後|さいご} まで 、 チグサ さん を {待|ま}って いた そう です 。 「 {約束|やくそく} した ん だ から 、 どこか で {生|い}きてる 」 って 。 || She waited for you to the end. "They promised — so they're alive somewhere," she used to say.
 !gesture lq_chigusa bow
 lq_chigusa[sad]: …… そう かい 。 || …Is that so.
 ?(comp) !walkto comp 10 12 right

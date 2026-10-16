@@ -23,11 +23,11 @@
   "jp": "すみません 。 {途中|とちゅう} の {宿場|しゅくば} で {三回|さんかい} {聞|き}き{直|なお}した ん です けど 、 {聞|き}く たび に {話|はなし} が {違|ちが}って いて …… 。",
   "en": "Sorry. I asked again three times at stations on the way, and every time it was different…"
  },
- "scene:cr.call#1jdbihs": {
+ "scene:cr.call#svtau2": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "でも 、 「{直接|ちょくせつ} {来|き}て ください 」 って ところ は {確|たし}か です ！ ヤエ さん が {言|い}って いました 。",
-  "en": "But the part about \"please come in person\", that's certain! Yae said it."
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "でも 、 「{直接|ちょくせつ} {来|き}て ください 」 って ところ は {確|たし}か です ！ タミ さん が {言|い}って いました 。",
+  "en": "But the part about \"please come in person\", that's certain! Tami said it."
  },
  "scene:cr.call#alpuse": {
   "status": "self-reviewed",
@@ -35,11 +35,11 @@
   "jp": "{口伝|くちづた}え か 。 {三人|さんにん} {通|とお}れば 、 {別|べつ} の {話|はなし} に なる 。 …… {次|つぎ} は {紙|かみ} に {書|か}いて {持|も}って {来|こ}い 。",
   "en": "By word of mouth. Pass it through three people and it's a different story. …Next time, bring it on paper."
  },
- "scene:cr.call#1u3zlot": {
+ "scene:cr.call#1gnts1f": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{大事|だいじ} な ところ が 、 {抜|ぬ}けて しまった みたい です ね 。 ヤエ さん に {直接|ちょくせつ} {聞|き}きましょう 。",
-  "en": "The important part seems to have dropped out. Let's ask Yae herself."
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{大事|だいじ} な ところ が 、 {抜|ぬ}けて しまった みたい だ ね 。 タミ さん に {直接|ちょくせつ} {聞|き}こう 。",
+  "en": "The important part seems to have dropped out. Let's ask Tami herself."
  },
  "scene:cr.call#1e10vm0": {
   "status": "self-reviewed",
@@ -59,11 +59,11 @@
   "jp": "おいら は {先|さき} に {戻|もど}ります ！ {灯|ひ} の {道|みち} の {上|うえ} の {端|はし} 、 {追分|おいわけ} の {宿|しゅく} に いますんで ！",
   "en": "I'll head back ahead of you! I'll be at Oiwake Station, at the top end of the Lantern Road!"
  },
- "scene:cr.call#9lktyv": {
+ "scene:cr.call#1nofi8t": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{灯落|ひおち} の {議会|ぎかい} から の {伝言|でんごん} が 、 {途中|とちゅう} で {崩|くず}れて いた 。 {議会|ぎかい}{堂|どう} で 、 ヤエ に {直接|ちょくせつ} {聞|き}こう 。",
-  "en": "The message from Lanternfall's council came garbled on the way. Ask Yae herself, at the council chamber."
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{灯落|ひおち} の {議会|ぎかい} から の {伝言|でんごん} が 、 {途中|とちゅう} で {崩|くず}れて いた 。 {議会|ぎかい}{堂|どう} で 、 タミ に {直接|ちょくせつ} {聞|き}こう 。",
+  "en": "The message from Lanternfall's council came garbled on the way. Ask Tami herself, at the council chamber."
  },
  "scene:cr.yae#8sms77": {
   "status": "self-reviewed",
@@ -191,10 +191,10 @@
   "jp": "{追分|おいわけ} …… {道|みち} が {分|わ}かれる {所|ところ} 、 か 。 {飛脚|ひきゃく} の {問屋場|といやば} も ある 。 {懐|なつ}かしい {匂|にお}い だ 。",
   "en": "Oiwake… where the road divides. And a relay office. That smell takes me back."
  },
- "scene:cr.arrive1#u6e0zf": {
+ "scene:cr.arrive1#uo1qu0": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{空気|くうき} が {冷|つめ}たく なりました ね 。 …… {上|うえ} は 、 もっと {寒|さむ}い の でしょう か 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{空気|くうき} が {冷|つめ}たく なった ね 。 …… {上|うえ} は 、 もっと {寒|さむ}い の かな 。",
   "en": "The air's gone cold. …Will it be colder still further up?"
  },
  "scene:cr.arrive1#1yi2r24": {
@@ -221,11 +221,11 @@
   "jp": "{飛脚|ひきゃく} の {問屋場|といやば} だ 。 {手紙|てがみ} か 、 {荷物|にもつ} か 。 …… どちら でも ない {顔|かお} だ な 。",
   "en": "This is the relay office. A letter, or a parcel? …Neither, by the look of you."
  },
- "scene:cr.kanbe_first#m4edrr": {
+ "scene:cr.kanbe_first#1pjdnnx": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{灯落|ひおち} の ヤエ さん から 、 {話|はなし} は {聞|き}いて いる 。 {本当|ほんとう} に {来|き}た の か 。",
-  "en": "I've had word from Yae in Lanternfall. So you really came."
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{灯落|ひおち} の タミ さん から 、 {話|はなし} は {聞|き}いて いる 。 {本当|ほんとう} に {来|き}た の か 。",
+  "en": "I've had word from Tami in Lanternfall. So you really came."
  },
  "scene:cr.kanbe_first#yctxrr": {
   "status": "self-reviewed",
@@ -935,10 +935,10 @@
   "jp": "{急|いそ}ぎ の {便|びん} じゃ ない 。 {霧|きり} の {中|なか} を {走|はし}る {飛脚|ひきゃく} は 、 {長生|ながい}き しない 。",
   "en": "It's not urgent post. Couriers who run in fog don't live long."
  },
- "scene:cr.wait_fog#17yj2ws": {
+ "scene:cr.wait_fog#1gjnad2": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{待|ま}つ の も 、 {大事|だいじ} な {判断|はんだん} です 。 …… {温|あたた}かい お{茶|ちゃ} を {入|い}れましょう 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{待|ま}つ の も 、 {大事|だいじ} な {判断|はんだん} だ よ 。 …… {温|あたた}かい お{茶|ちゃ} を {入|い}れよう 。",
   "en": "Waiting is a decision too. …I'll make some hot tea."
  },
  "scene:cr.wait_fog#1tinpmb": {
@@ -977,10 +977,10 @@
   "jp": "{飛脚|ひきゃく} は 、 {大|おお}きな {木|き} を {目印|めじるし} に する 。 {迷|まよ}わない ため だ 。",
   "en": "Couriers use big trees as landmarks. So they don't get lost."
  },
- "scene:cr.arrive2#1fgrunl": {
+ "scene:cr.arrive2#1cu0zwv": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{杉|すぎ} の {葉|は} の {匂|にお}い 。 …… {頭|あたま} が すっきり します 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{杉|すぎ} の {葉|は} の {匂|にお}い 。 …… {頭|あたま} が すっきり する 。",
   "en": "The smell of cedar. …It clears the head."
  },
  "scene:cr.arrive2#17w4egj": {
@@ -1121,10 +1121,10 @@
   "jp": "{山|やま} の {雨|あめ} は {早|はや}い 。 …… {今夜|こんや} は 、 {沢|さわ} を {渡|わた}らない {方|ほう} が いい 。",
   "en": "Rain comes fast in the mountains. …Better not cross the stream tonight."
  },
- "scene:cr.arrive3#1m7o4ik": {
+ "scene:cr.arrive3#mlfdj": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{濡|ぬ}れた ままで は {風邪|かぜ} を ひきます 。 {早|はや}く {宿|やど} に {入|はい}りましょう 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{濡|ぬ}れた まま じゃ {風邪|かぜ} を ひく よ 。 {早|はや}く {宿|やど} に {入|はい}ろう 。",
   "en": "You'll catch cold if you stay wet. Let's get inside."
  },
  "scene:cr.arrive3#1r86klo": {
@@ -1169,10 +1169,10 @@
   "jp": "…… ふむ 。 {分|わ}かった 。 {伝|つた}えて おこう 。",
   "en": "…Hm. Very well. I'll pass it on."
  },
- "scene:cr.relay2#4hcjfx": {
+ "scene:cr.relay2#1cqv39n": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{次|つぎ} は {中山|なかやま} の オタキ に 、 わし から {頼|たの}む 。 「{雨|あめ} が やんだら 、 {大工|だいく} を {寄越|よこ}して ほしい 。 {橋|はし} を {直|なお}す 。」",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{次|つぎ} は {中山|なかやま} の オタキ に 、 {俺|おれ} から {頼|たの}む 。 「{雨|あめ} が やんだら 、 {大工|だいく} を {寄越|よこ}して ほしい 。 {橋|はし} を {直|なお}す 。」",
   "en": "Next, from me, to Otaki at Nakayama: \"Once the rain stops, send us carpenters. We'll fix the bridge.\""
  },
  "scene:cr.relay2#14x7tgm": {
@@ -1211,11 +1211,11 @@
   "jp": "…… そう か 。 {噂|うわさ} は {噂|うわさ} と して {聞|き}けば 、 {誰|だれ} も {雨|あめ} に {濡|ぬ}れず に {済|す}んだ 。 まあ 、 {道|みち} の {掃除|そうじ} に は なった 。 {気|き} に するな 。",
   "en": "…I see. Heard as a rumour, nobody would have got wet. Well, the road got a sweeping. Don't let it trouble you."
  },
- "scene:cr.r2_crew#131fdi5": {
+ "scene:cr.r2_crew#1hbp7b7": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{聞|き}いた と {言|い}えば 、 {聞|き}いた {話|はなし} に なる 。 {言|い}わなければ 、 {見|み}た {話|はなし} に なる 。 …… {覚|おぼ}えて おけ 。",
-  "en": "Say you heard it, and it's a thing you heard. Don't, and it becomes a thing you saw. …Remember that."
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{次|つぎ} は 「{聞|き}いた」 って {付|つ}けろ 。 それ だけ で {済|す}む 。",
+  "en": "Next time, tack on \"I heard\". That's all it takes."
  },
  "scene:cr.heisuke#swpi6k": {
   "status": "self-reviewed",
@@ -1325,10 +1325,10 @@
   "jp": "{客|きゃく} の {取|と}り{合|あ}い か 。 {宿場|しゅくば} じゃ よく ある 。",
   "en": "Fighting over guests. Common enough at a post station."
  },
- "scene:cr.arrive4#bm2w4s": {
+ "scene:cr.arrive4#1ci85re": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{二軒|にけん} とも 、 {良|よ}い {宿|やど} に {見|み}えます けど …… 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{二軒|にけん} とも 、 {良|よ}い {宿|やど} に {見|み}える けど …… 。",
   "en": "Both of them look like good inns…"
  },
  "scene:cr.arrive4#x25f0u": {
@@ -1571,10 +1571,10 @@
   "jp": "{霧|きり} か 。 …… {急|いそ}ぐ {時|とき} ほど 、 {足|あし} を {止|と}める もん だ 。",
   "en": "Fog. …The more you're in a hurry, the more you should stop."
  },
- "scene:cr.arrive5#1twxov3": {
+ "scene:cr.arrive5#4ja85x": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{少|すこ}し 、 {息|いき} が {苦|くる}しい です 。 {高|たか}い {所|ところ} に {来|き}た から でしょう 。 {無理|むり} は しない で ください ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{少|すこ}し 、 {息|いき} が {苦|くる}しい 。 {高|たか}い {所|ところ} に {来|き}た から かな 。 {無理|むり} は しない で ね 。",
   "en": "I'm a little short of breath. It must be the height. Don't push yourself."
  },
  "scene:cr.arrive5#s99a29": {
@@ -1643,10 +1643,10 @@
   "jp": "{地図|ちず} の {話|はなし} と 、 タツ さん の {話|はなし} を 、 {分|わ}けて {言|い}う べき でした 。",
   "en": "I should have kept what the map says apart from what Tatsu saw."
  },
- "scene:cr.r4_ledge:choice#1j63h4q": {
+ "scene:cr.r4_ledge:choice#1f81g1o": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "すみません 。 {地図|ちず} の {話|はなし} だけ を {伝|つた}えて しまった 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "すみません 。 {地図|ちず} の {話|はなし} だけ を {伝|つた}えて しまいました 。",
   "en": "Sorry. I passed on only the map's side."
  },
  "scene:cr.r4_ledge#iuq57j": {
@@ -1739,10 +1739,10 @@
   "jp": "…… {灯|ひ} が {点|つ}いて いる 。 {誰|だれ} が {守|まも}って いる か 、 {分|わ}かる {気|き} が する 。",
   "en": "…The lamp is lit. I think I know who's keeping it."
  },
- "scene:cr.arrive6#iujpnq": {
+ "scene:cr.arrive6#re2r04": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{灯|ひ} が {点|つ}いて いる と 、 ほっと します ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{灯|ひ} が {点|つ}いて いる と 、 ほっと する ね 。",
   "en": "It's a relief to see a lamp lit."
  },
  "scene:cr.arrive6#170y72j": {
@@ -2021,10 +2021,10 @@
   "jp": "{関所|せきしょ} か 。 …… {手形|てがた} を {見|み}せる {時|とき} は 、 {余計|よけい} な こと を {言|い}う な よ 。",
   "en": "A checkpoint. …When we show the papers, don't say more than you need."
  },
- "scene:cr.barrier_first#vno0en": {
+ "scene:cr.barrier_first#1x53y7r": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{柵|さく} が どこ まで も {続|つづ}いて います 。 {通|とお}る {所|ところ} は 、 あの {門|もん} だけ です ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{柵|さく} が どこ まで も {続|つづ}いてる 。 {通|とお}る {所|ところ} は 、 あの {門|もん} だけ だ ね 。",
   "en": "The fence goes on and on. The gate is the only way through."
  },
  "scene:cr.barrier_first#1l8u6mt": {
@@ -2129,10 +2129,10 @@
   "jp": "…… {俺|おれ} が {残|のこ}る 。 {考|かんが}える こと も ある 。 {上|うえ} の {道|みち} は 、 お{前|まえ} の {足|あし} なら {大丈夫|だいじょうぶ} だ 。",
   "en": "…I'll stay. I've got some thinking to do. Your legs can manage the road up."
  },
- "scene:cr.ujie#1vywy64": {
+ "scene:cr.ujie#1ir8gb0": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "わたし が {残|のこ}ります 。 {少|すこ}し 、 {頭|あたま} が {痛|いた}くて 。 {休|やす}んで いれば {治|なお}ります から 。 …… {本当|ほんとう} です よ 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "わたし が {残|のこ}る 。 {少|すこ}し 、 {頭|あたま} が {痛|いた}くて 。 {休|やす}んで いれば {治|なお}る から 。 …… {本当|ほんとう} だ よ 。",
   "en": "I'll stay. My head aches a little. It'll pass if I rest. …Really, it will."
  },
  "scene:cr.ujie#262uop": {
@@ -2171,10 +2171,10 @@
   "jp": "{行|い}って {来|こ}い 。 …… {戻|もど}って {来|く}る {奴|やつ} を {待|ま}つ の は 、 {悪|わる}く ない 。",
   "en": "Go on. …Waiting for someone who'll come back isn't so bad."
  },
- "scene:cr.ujie#2phllz": {
+ "scene:cr.ujie#1rpv4vx": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{行|い}ってらっしゃい 。 {寒|さむ}い から 、 これ を 。 …… {生姜|しょうが} の {飴|あめ} です 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{行|い}ってらっしゃい 。 {寒|さむ}い から 、 これ を 。 …… {生姜|しょうが} の {飴|あめ} 。",
   "en": "Off you go. It's cold, so take this. …A ginger sweet."
  },
  "scene:cr.ujie#sqsgtr": {
@@ -2279,10 +2279,10 @@
   "jp": "{早|はや}かった な 。 …… いや 、 まだ {行|い}って ない の か 。 {雲居|くもい} は {上|うえ} だ 。 {灯|ひ} の ある {方|ほう} へ {行|い}け 。",
   "en": "That was quick. …Oh, you haven't gone yet. Kumoi's up the road. Head for the light."
  },
- "scene:cr.wait_mio#tv3efw": {
+ "scene:cr.wait_mio#g2616k": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "お{茶|ちゃ} を いただいて います 。 {頭|あたま} も {少|すこ}し {楽|らく} に なりました 。 {急|いそ}がなくて いい です よ 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "お{茶|ちゃ} を いただいてる 。 {頭|あたま} も {少|すこ}し {楽|らく} に なった 。 {急|いそ}がなくて いい よ 。",
   "en": "I'm being given tea. My head's a little better. No need to rush."
  },
  "scene:cr.wait_ren#nqpf8t": {
@@ -2423,10 +2423,10 @@
   "jp": "…… {戻|もど}った か 。 {待|ま}つ の は 、 {思|おも}った より {長|なが}かった 。",
   "en": "…You're back. Waiting was longer than I thought."
  },
- "scene:cr.barrier_back#10n4lub": {
+ "scene:cr.barrier_back#atx9up": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "おかえり なさい 。 {頭|あたま} も {治|なお}りました 。 {生姜|しょうが} の {飴|あめ} 、 {役|やく} に {立|た}ちました か ？",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "おかえり なさい 。 {頭|あたま} も {治|なお}った よ 。 {生姜|しょうが} の {飴|あめ} 、 {役|やく} に {立|た}った ？",
   "en": "Welcome back. My head's better. Did the ginger sweet help?"
  },
  "scene:cr.barrier_back#i05a1d": {
@@ -2447,11 +2447,11 @@
   "jp": "{関所|せきしょ} を {二人|ふたり} で {越|こ}えた 。 {雲居宿|くもいじゅく} から {雲路峠|くもじとうげ} へ {登|のぼ}ろう 。",
   "en": "Through the Barrier together. Climb from Kumoi Station to the High Pass."
  },
- "scene:cr.nao_decides#1okii6a": {
+ "scene:cr.nao_decides#3zmxqp": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "…… {決|き}めた 。 {答|こた}え は 、 サキチ さん に {直接|ちょくせつ} {言|い}う 。 {手紙|てがみ} じゃ なく て な 。",
-  "en": "…I've decided. I'll give Sakichi my answer in person. Not by letter."
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "…… {決|き}めた 。 {答|こた}え は 、 サキチ さん に {直接|ちょくせつ} {言|い}う 。 {手紙|てがみ} だけ じゃ なく て な 。",
+  "en": "…I've decided. I'll give Sakichi my answer in person. Not just by letter."
  },
  "scene:cr.nao_decides#10ipfln": {
   "status": "self-reviewed",
@@ -2597,10 +2597,10 @@
   "jp": "{飛脚|ひきゃく} は 、 この {坂|さか} を {走|はし}って {登|のぼ}った ん だ 。 …… {信|しん}じられない な 。",
   "en": "Couriers ran up this slope. …Hard to believe."
  },
- "scene:cr.pass1_enter#12rtwlz": {
+ "scene:cr.pass1_enter#ihmmm1": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{息|いき} が {苦|くる}しく なったら 、 すぐ {言|い}って ください ね 。 {高|たか}い {所|ところ} で は 、 {無理|むり} を しない の が {一番|いちばん} です 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{息|いき} が {苦|くる}しく なったら 、 すぐ {言|い}って ね 。 {高|たか}い {所|ところ} で は 、 {無理|むり} を しない の が {一番|いちばん} 。",
   "en": "Tell me straight away if you get short of breath. Up high, the best thing is not to push yourself."
  },
  "scene:cr.pass1_enter#1lk61fw": {
@@ -2633,10 +2633,10 @@
   "jp": "{回|まわ}れ 。 {土砂|どしゃ} の {上|うえ} は {歩|ある}く な 。 {足|あし} の {下|した} で {動|うご}く ぞ 。",
   "en": "Go round. Don't walk on the slide. It moves under your feet."
  },
- "scene:cr.pass1_slide#1bqrp7x": {
+ "scene:cr.pass1_slide#16jbmpl": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{足元|あしもと} に {気|き} を つけて 。 {捻挫|ねんざ} は 、 {山|やま} で は {一番|いちばん} {多|おお}い {怪我|けが} です 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{足元|あしもと} に {気|き} を つけて 。 {捻挫|ねんざ} は 、 {山|やま} で は {一番|いちばん} {多|おお}い {怪我|けが} だ から 。",
   "en": "Watch your footing. Sprains are the commonest injury in the mountains."
  },
  "scene:cr.pass1_slide#o4gsh2": {
@@ -2681,10 +2681,10 @@
   "jp": "これ で {帰|かえ}り は {近道|ちかみち} だ 。",
   "en": "That's a shorter way back down."
  },
- "scene:cr.pass1_clear#pk7cn1": {
+ "scene:cr.pass1_clear#174p81": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{帰|かえ}り の {人|ひと} も 、 これ で {安心|あんしん} です ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{帰|かえ}り の {人|ひと} も 、 これ で {安心|あんしん} だ ね 。",
   "en": "That'll be a relief for anyone coming down, too."
  },
  "scene:cr.pass1_clear#ohhuk1": {
@@ -2723,10 +2723,10 @@
   "jp": "{吊|つ}り{橋|ばし} か 。 …… {下|した} は {見|み}る な よ 。",
   "en": "A rope bridge. …Don't look down."
  },
- "scene:cr.pass2_enter#fh2qqv": {
+ "scene:cr.pass2_enter#i3gewv": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{小屋|こや} が ある なら 、 {休|やす}めます ね 。 {薪|まき} が {残|のこ}って いる と いい けど 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{小屋|こや} が ある なら 、 {休|やす}める ね 。 {薪|まき} が {残|のこ}って いる と いい けど 。",
   "en": "If there's a shelter we can rest. I hope there's firewood left."
  },
  "scene:cr.pass2_enter#16cahzd": {
@@ -2759,10 +2759,10 @@
   "jp": "…… {郵便|ゆうびん} の {鞄|かばん} を {背負|せお}って 、 {毎日|まいにち} これ か 。 {飛脚|ひきゃく} は {偉|えら}い な 。",
   "en": "…Across this every day with a mailbag on your back. Couriers were something."
  },
- "scene:cr.bridge#zhdn4": {
+ "scene:cr.bridge#1m8rddx": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{怖|こわ}かった …… 。 でも 、 {札|ふだ} の とおり に {渡|わた}れば 、 {大丈夫|だいじょうぶ} でした ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{怖|こわ}かった …… 。 でも 、 {札|ふだ} の とおり に {渡|わた}れば 、 {大丈夫|だいじょうぶ} だった ね 。",
   "en": "That was frightening… But crossing as the notice said, we were all right."
  },
  "scene:cr.bridge#r8kiky": {
@@ -2867,10 +2867,10 @@
   "jp": "{石|いし} から {石|いし} へ {歩|ある}け 。 {雪|ゆき} の {上|うえ} の {近道|ちかみち} は 、 {近道|ちかみち} じゃ ない 。",
   "en": "Walk from stone to stone. A short cut across snow is no short cut."
  },
- "scene:cr.pass3_enter#1qitk3m": {
+ "scene:cr.pass3_enter#wh1e23": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{雪|ゆき} の {照|て}り{返|かえ}し が {強|つよ}い です 。 {目|め} を {細|ほそ}めて {歩|ある}いて ください 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{雪|ゆき} の {照|て}り{返|かえ}し が {強|つよ}い ね 。 {目|め} を {細|ほそ}めて {歩|ある}いて 。",
   "en": "The glare off the snow is strong. Walk with your eyes narrowed."
  },
  "scene:cr.pass3_enter#1fywuin": {
@@ -2933,10 +2933,10 @@
   "jp": "{貸|か}せ 。 …… {雪|ゆき} {掻|か}き は 、 {西|にし} の {町|まち} で {毎冬|まいふゆ} やった 。",
   "en": "Let me. …I shovelled snow every winter in the western town."
  },
- "scene:cr.drift#l80p2s": {
+ "scene:cr.drift#1h0zbmu": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{手袋|てぶくろ} を どうぞ 。 {霜焼|しもや}け に なります から 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{手袋|てぶくろ} を どうぞ 。 {霜焼|しもや}け に なる から 。",
   "en": "Here, gloves. You'll get chilblains otherwise."
  },
  "scene:cr.drift#gjxp7a": {
@@ -2981,10 +2981,10 @@
   "jp": "…… {封|ふう} が {切|き}れて いない 。 {飛脚|ひきゃく} は 、 {便|びん} を {捨|す}てて {逃|に}げたり しない 。 {捨|す}てる くらい なら 、 {抱|だ}いて {寝|ね}る 。",
   "en": "…The seal's not broken. A courier doesn't drop the post and run. He'd sooner sleep with it in his arms."
  },
- "scene:cr.hut_enter#1vp3p9n": {
+ "scene:cr.hut_enter#h5bcad": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{草鞋|わらじ} を {乾|かわ}かそう と して いた ん です ね 。 {濡|ぬ}れた {足|あし} で {雪|ゆき} の {中|なか} に いたら 、 {凍傷|とうしょう} に なります から 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{草鞋|わらじ} を {乾|かわ}かそう と してた ん だ ね 。 {濡|ぬ}れた {足|あし} で {雪|ゆき} の {中|なか} に いたら 、 {凍傷|とうしょう} に なる から 。",
   "en": "He was trying to dry his sandals. Wet feet in the snow means frostbite."
  },
  "scene:cr.hut_enter#tfomve": {
@@ -3029,10 +3029,10 @@
   "jp": "…… {受|う}け{取|と}った 。 {継|つ}ぐ ぞ 。",
   "en": "…Received. We'll take it on."
  },
- "scene:cr.courier#1v4b5ar": {
+ "scene:cr.courier#1yzar2t": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{暖|あたた}かい {所|ところ} へ {行|い}けた なら 、 いい ん です けど 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{暖|あたた}かい {所|ところ} へ {行|い}けた なら 、 いい ん だ けど 。",
   "en": "I hope he's gone somewhere warm."
  },
  "scene:cr.courier#bj331g": {
@@ -3107,10 +3107,10 @@
   "jp": "{湯気|ゆげ} …… {温泉|おんせん} か 。 {西|にし} で {聞|き}いた こと が ある 。 {湯|ゆ} の {谷|たに} の {話|はなし} 。",
   "en": "Steam… Hot springs? I heard of it in the west. A valley of hot water."
  },
- "scene:cr.summit_first#4rr9da": {
+ "scene:cr.summit_first#1fhr5y8": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{湯気|ゆげ} の {谷|たに} 。 …… {薬湯|くすりゆ} の {本|ほん} で {読|よ}んだ {所|ところ} かも しれません 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{湯気|ゆげ} の {谷|たに} 。 …… {薬湯|くすりゆ} の {本|ほん} で {読|よ}んだ {所|ところ} かも しれない 。",
   "en": "A valley of steam. …It might be the place I read about in a book on medicinal baths."
  },
  "scene:cr.summit_first#wr50fg": {
@@ -3407,10 +3407,10 @@
   "jp": "{印帳|いんちょう} か 。 {郵便|ゆうびん} の {消印|けしいん} と {同|おな}じ だ な 。 {通|とお}った {証拠|しょうこ} 。",
   "en": "A seal book. Like a postmark. Proof you passed through."
  },
- "scene:cr.seals_start#1o9mer1": {
+ "scene:cr.seals_start#4qs8wx": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{七|なな}つ も ！ {集|あつ}める の 、 {楽|たの}しみ です ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{七|なな}つ も ！ {集|あつ}める の 、 {楽|たの}しみ だ ね 。",
   "en": "Seven of them! I'm looking forward to collecting them."
  },
  "scene:cr.seals_start#15cv9rd": {
@@ -3443,10 +3443,10 @@
   "jp": "…… {大事|だいじ} に しよう 。 {宛先|あてさき} の ない {手紙|てがみ} より 、 ずっと いい 。",
   "en": "…We'll look after it. Far better than a letter with no address."
  },
- "scene:cr.seals_done#1e6t1ml": {
+ "scene:cr.seals_done#1r9dwoj": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "ページ ごと に 、 {思|おも}い{出|で} が あります ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "ページ ごと に 、 {思|おも}い{出|で} が ある ね 。",
   "en": "A memory on every page."
  },
  "scene:cr.seals_done#19s089z": {
@@ -3485,10 +3485,10 @@
   "jp": "{帳面|ちょうめん} の {取|と}り{違|ちが}え は 、 {郵便|ゆうびん} でも よく ある 。 {下|した} の {宿|しゅく} を {当|あ}たろう 。",
   "en": "Mixing up ledgers happens in the post too. Let's try the stations below."
  },
- "scene:cr.guest_start#1orchn4": {
+ "scene:cr.guest_start#qnzfc8": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{帳面|ちょうめん} が ない と 、 {言|い}った {言|い}わない の {喧嘩|けんか} に なります ね 。 {探|さが}しましょう 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{帳面|ちょうめん} が ない と 、 {言|い}った {言|い}わない の {喧嘩|けんか} に なる ね 。 {探|さが}そう 。",
   "en": "Without the book it's just one word against the other. Let's look for it."
  },
  "scene:cr.guest_start#1rgzunx": {
@@ -3509,16 +3509,16 @@
   "jp": "{宿帳|やどちょう} が {二冊|にさつ} 。 {一冊|いっさつ} は {飛脚宿|ひきゃくやど} の もの 。 もう {一冊|いっさつ} の {表紙|ひょうし} に は 、 {松葉|まつば} の {紋|もん} が ある 。",
   "en": "Two guest books. One is the Courier's Inn's. The other has a pine-needle crest on its cover."
  },
- "scene:cr.guestbook#of3jwp": {
+ "scene:cr.guestbook#1si2sm6": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "それ ね 。 {商人|しょうにん} の お{客|きゃく} さん が {置|お}いて {行|い}った の 。 {誰|だれ} の かしら 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "それ です か 。 {商人|しょうにん} の お{客|きゃく} さん が {置|お}いて {行|い}った んです 。 {誰|だれ} の でしょう 。",
   "en": "That one? A merchant left it. I wonder whose it is."
  },
- "scene:cr.guestbook#10efw1i": {
+ "scene:cr.guestbook#suhbdn": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{松葉|まつば} の {紋|もん} …… {中山|なかやま} の {松葉屋|まつばや} さん の ね 。 コウスケ さん が {置|お}いて {行|い}った の よ 。 {持|も}って {行|い}って あげて 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{松葉|まつば} の {紋|もん} …… {中山|なかやま} の {松葉屋|まつばや} さん の です ね 。 コウスケ さん が {置|お}いて {行|い}った んです 。 {持|も}って {行|い}って あげて ください 。",
   "en": "A pine-needle crest… the Matsuba's, at Nakayama. Kōsuke left it here. Take it back to them."
  },
  "scene:cr.guestbook#1v596wo": {
@@ -3569,10 +3569,10 @@
   "jp": "{書|か}いて ある こと を {読|よ}めば 、 {喧嘩|けんか} は {半分|はんぶん} {終|お}わる 。",
   "en": "Read what's written, and half the quarrel's over."
  },
- "scene:cr.guest_settle#epchwv": {
+ "scene:cr.guest_settle#1gpvy4m": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{両方|りょうほう} {正|ただ}しかった なんて 、 いちばん いい {終|お}わり{方|かた} です 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{両方|りょうほう} {正|ただ}しかった なんて 、 いちばん いい {終|お}わり{方|かた} だ ね 。",
   "en": "Both being right is the best possible ending."
  },
  "scene:cr.guest_settle#1rfl8tq": {
@@ -3983,10 +3983,10 @@
   "jp": "{届|とど}いた {便|びん} が 、 また {次|つぎ} へ {行|い}く 。 …… それ で いい 。",
   "en": "The post that arrived goes on to the next. …That's how it should be."
  },
- "scene:cr.family#niamnm": {
+ "scene:cr.family#g0n3vx": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{重|おも}い こと を {決|き}めました ね 。 {一人|ひとり} で {背負|せお}わない で ください 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{重|おも}い こと を {決|き}めた ね 。 {一人|ひとり} で {背負|せお}わない で 。",
   "en": "That was a heavy thing to decide. Don't carry it alone."
  },
  "scene:cr.family#x2jdds": {
@@ -4037,10 +4037,10 @@
   "jp": "…… {見|み}た {人|ひと} が いない {話|はなし} が 、 {二|ふた}つ 。 どっち も 、 {本当|ほんとう} と は {限|かぎ}らない 。",
   "en": "…Two stories, and nobody saw either. Neither is necessarily true."
  },
- "scene:cr.sono#aubuq4": {
+ "scene:cr.sono#14m338q": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{待|ま}って いた {人|ひと} の {話|はなし} は 、 {優|やさ}しく なる もの です ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{待|ま}って いた {人|ひと} の {話|はなし} は 、 {優|やさ}しく なる もの だ ね 。",
   "en": "The stories of the ones left waiting turn kind, don't they."
  },
  "scene:cr.sono#ikkrkx": {
@@ -4199,10 +4199,10 @@
   "jp": "{全部|ぜんぶ} の {船|ふね} が {見|み}える 。 {配達|はいたつ} の {順番|じゅんばん} を {決|き}める なら 、 ここ が {一番|いちばん} だ な 。",
   "en": "Every boat in sight. If you were planning a delivery round, this would be the place."
  },
- "scene:cr.lw_open_el_lookout#t1coei": {
+ "scene:cr.lw_open_el_lookout#eiaydc": {
   "status": "self-reviewed",
-  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
-  "jp": "{風|かぜ} が {気持|きも}ち いい 。 {見張|みは}り の {人|ひと} も 、 きっと ここ が {好|す}き だった ん です ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{風|かぜ} が {気持|きも}ち いい 。 {見張|みは}り の {人|ひと} も 、 きっと ここ が {好|す}き だった ん だ ね 。",
   "en": "What a lovely wind. Whoever kept watch here must have loved it."
  },
  "scene:cr.lw_open_el_lookout#7mohv1": {
@@ -4277,10 +4277,10 @@
   "jp": "…… {昔|むかし} の {飛脚|ひきゃく} は 、 ここ まで {走|はし}った の か 。 {宿|しゅく} ごと に 、 {次|つぎ} の {足|あし} に {渡|わた}して 。",
   "en": "…So the couriers of old ran all this way. Handing on to fresh legs at every station."
  },
- "scene:cr.lw_mp_relaymap_open#1c5h2kh": {
+ "scene:cr.lw_mp_relaymap_open#z0cpij": {
   "status": "self-reviewed",
-  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
-  "jp": "{薬|くすり} と {同|おな}じ です ね 。 {一度|いちど} に {全部|ぜんぶ} で は なく 、 {一回|いっかい} ごと に {少|すこ}し ずつ 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{薬|くすり} と {同|おな}じ だ ね 。 {一度|いちど} に {全部|ぜんぶ} で は なく 、 {一回|いっかい} ごと に {少|すこ}し ずつ 。",
   "en": "Like medicine. Not all at once: a little, every time."
  },
  "scene:cr.lw_mp_relaymap_open#nsff4": {
@@ -5087,10 +5087,10 @@
   "jp": "{鈴|すず} は 、 「{来|き}た ぞ」 の {合図|あいず} だ 。 …… {遅|おく}れて も 、 {来|き}た ぞ 。",
   "en": "A bell means \"I'm here.\" …Late, but here."
  },
- "scene:cr.ks_bell#fl6ig3": {
+ "scene:cr.ks_bell#1f0xgyx": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English (KS-1, C-94, 2026-10-14): the twelve chapter keepsakes' scenes (Ichi, the porters' shelf, Tomi, the Understage's type case; Kumazō, the third waystation's lantern, the great camphor, Isaku; Sumi, the couriers' bell, Kihachi, the yu-no-hana vent) against each speaker's established speech in their chapter and the companions' voices (Nao 俺/casual, Mio polite with わ/のね, Ren 私/polite, Suzu casual with わ/よ, Kansai versions against docs/dialect/suzu_kansai.md), the lexicon and standard textbook grammar; one phrase corrected (字の書いてある葉); the real-custom note on the couriers' bell labelled as the game does elsewhere",
-  "jp": "{澄|す}んだ {音|おと} です ね 。 {雲|くも} の {下|した} の {宿場|しゅくば} まで 、 {届|とど}く と いい です けど 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{澄|す}んだ {音|おと} だ ね 。 {雲|くも} の {下|した} の {宿場|しゅくば} まで 、 {届|とど}く と いい けど 。",
   "en": "What a clear sound. I hope it carries down to the stations under the cloud."
  },
  "scene:cr.ks_bell#1pscfl9": {
@@ -9077,11 +9077,11 @@
   "jp": "{雲路|くもじ}",
   "en": "The Cloudroad"
  },
- "quests:cr_main#11i7w4j": {
+ "quests:cr_main#1p47mr5": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{伝言|でんごん} が {途中|とちゅう} で {崩|くず}れて いた 。 {灯落|ひおち} の {議会|ぎかい}{堂|どう} で 、 ヤエ に {直接|ちょくせつ} {聞|き}こう 。",
-  "en": "The message came garbled on the way. Ask Yae herself, at Lanternfall's council chamber."
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{伝言|でんごん} が {途中|とちゅう} で {崩|くず}れて いた 。 {灯落|ひおち} の {議会|ぎかい}{堂|どう} で 、 タミ に {直接|ちょくせつ} {聞|き}こう 。",
+  "en": "The message came garbled on the way. Ask Tami herself, at Lanternfall's council chamber."
  },
  "quests:cr_main#1y5t5vr": {
   "status": "self-reviewed",

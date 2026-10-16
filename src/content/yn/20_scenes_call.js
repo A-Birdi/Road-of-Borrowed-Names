@@ -82,7 +82,7 @@ yn_yasuke: …… ああ 。 {下|した} は うるさい らしい 。 うる�
 :still
 yn_yasuke: {大半|たいはん} は な 。 {下|お}りよう と {言|い}って も 、 {聞|き}こえない ん だ 。 {紙|かみ} に {書|か}いて {置|お}いて きた 。 || Most of them. You tell them to come down, and they can't hear you. I left it written on paper.
 :end
-?(comp=nao) comp[closed]: {紙|かみ} に {書|か}いた か 。 …… {正|ただ}しい 。 {声|こえ} が {届|とど}かない なら 、 {紙|かみ} だ 。 || You wrote it down. …Right call. If your voice won't carry, use paper.
+?(comp=nao) comp[closed]: {紙|かみ} に {書|か}いた か 。 …… それ で いい 。 {声|こえ} が {届|とど}かない なら 、 {紙|かみ} だ 。 || You wrote it down. …Right call. If your voice won't carry, use paper.
 ?(comp=mio) comp[worry]: よく {眠|ねむ}れて います か 。 …… {谷|たに} で 、 {診|み}て もらいましょう 。 || Are you sleeping at all? …Let's have someone look at you in the valley.
 ?(comp=ren) comp[think]: {声|こえ} が {届|とど}かない …… 。 {覚|おぼ}えて おきます 。 || Voices that don't carry… I'll remember that.
 ?(comp=suzu) comp: {声|こえ} が {出|で}る {所|ところ} へ {行|い}きましょ 。 {下|した} の {谷|たに} は 、 きっと うるさい わ よ 。 || Let's go where voices work. The valley down there will be noisy, I'm sure.

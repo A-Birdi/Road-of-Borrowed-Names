@@ -156,7 +156,7 @@ sz_riku: {潮|しお}だまり が {教室|きょうしつ} な ん だ 。 {生
 ?(comp=ren) comp: {教|おし}える と 、 {自分|じぶん} も {覚|おぼ}え{直|なお}します 。 いい {授業|じゅぎょう} に なります よ 。 || Teaching, you learn it again yourself. It'll be a good lesson.
 ?(comp=suzu) comp[smile]: {教壇|きょうだん} も {舞台|ぶたい} の {一|ひと}つ よ 。 {声|こえ} を {張|は}って ね 。 || A teacher's platform is a kind of stage. Project your voice.
 !choice
-* {引|ひ}き{受|う}けます 。 || All right. -> yes
+* いい よ 。 || All right. -> yes
 * また {今度|こんど} 。 || Another time. -> end
 :yes
 !quest sz_school 0

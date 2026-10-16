@@ -25,6 +25,12 @@ decision and the lead's reconciliations with the standing rules are in
 - `casting/<config>.json`: casting files (19 roles each). Gemini's list unheard candidates; the others are templates.
 - `authorizations/<id>.json`: what a paid audition run may spend, approved by Robin. Gemini's samples are kept
   ready but not proposed: free and local engines come first.
+- [production/](production/): the full-game batch (C-95 reconciled, 2026-10-16):
+  - [READINESS.md](production/READINESS.md): what is ready, kept apart: the generation inputs, the runtime and the hosting.
+  - [PRODUCTION_SCOPE.md](production/PRODUCTION_SCOPE.md): the authorization and the agreed scope.
+  - [VOICE_DELIVERY.md](production/VOICE_DELIVERY.md): the contract with the local worker.
+  - [VOICE_RUNTIME.md](production/VOICE_RUNTIME.md): how the game plays the recordings.
+  - `GO.json`: the source commit and the manifest.
 - [PRODUCTION_ESTIMATE.md](PRODUCTION_ESTIMATE.md): how a whole-game estimate is built (variants, measured
   duration, corrections, regeneration). Production is a separate approval.
 - `usage/<id>.jsonl`: each authorization's append-only usage ledger.
@@ -41,6 +47,10 @@ decision and the lead's reconciliations with the standing rules are in
   | `qwen_local_job.py` | The Qwen job for a GPU machine. |
   | `fullgame_count.mjs` | The whole-game planning count. |
   | `reference_count.mjs` | The narrator's reference readings (kana, kanji readings, words) for Listen / Say it / Hear it (LI-8). |
+  | `attribution.mjs` | Which companions say a "whoever travels with you" line: its condition, its branch, the scene (RV-0160). |
+  | `production_manifest.mjs` | The full-game recording manifest (`production/manifest/`), with `--check`. |
+  | `voice_site.mjs` | The voice site the game reads: per-scene indexes, content-named recordings (`rbn.voice.site/1`). |
+  | `delivery_estimate.mjs` | The voice bytes in the delivery encoding, from the manifest and VA-2's measured rates. |
 
   Everything the runner writes, audio and gallery included, goes under `voice-audition/`, which git ignores. Test
   clips are never committed or published.

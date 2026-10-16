@@ -227,8 +227,8 @@ narr: {書|か}きかけ の {葉|は} を しまう 。 {言葉|ことば} は 
 # ---- The Keepers' Census --------------------------------------------------------------------------------------------
 @scene ko.census_ask
 !faceplayer
-ko_tokio: …… お{願|ねが}い が あります 。 {今日|きょう} の {籠|かご} が 、 まだ {二|ふた}つ {数|かぞ}えて いません 。 || …I have a favour to ask. Two of today's baskets haven't been counted yet.
-ko_tokio: {段|だん} の アオ の {籠|かご} と 、 {浜|はま} の {籠|かご} です 。 {数|かず} を {教|おし}えて ください 。 {葉|は} は {一枚|いちまい} 、 {二枚|にまい} と {数|かぞ}えます 。 || Ao's basket on the terraces, and the one on the shore. Tell me the numbers. Leaves are counted 一枚, 二枚.
+ko_tokio: …… お{願|ねが}い が あります 。 {今日|きょう} の {籠|かご} を 、 まだ {二|ふた}つ {数|かぞ}えて いません 。 || …I have a favour to ask. Two of today's baskets haven't been counted yet.
+ko_tokio: {段|だん} の アオ の {籠|かご} と 、 {浜|はま} の {籠|かご} です 。 {数|かず} を {教|おし}えて ください 。 {一枚|いちまい} ずつ 、 {正確|せいかく} に お{願|ねが}い します 。 || Ao's basket on the terraces, and the one on the shore. Tell me the numbers. One leaf at a time, exactly, please.
 !quest ko_census 0
 
 @scene ko.census_wait

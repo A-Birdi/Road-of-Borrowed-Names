@@ -57,7 +57,7 @@ RB.lex.add(RB.lex.parseTable(`
 番所|ばんしょ|n|A|a guardhouse, a checkpoint's office
 請状|うけじょう|n|A|a letter of guarantee (vouching for someone)
 # ---- the people and the road's life --------------------------------------------------------------------------------
-おいら|おいら|pn|E|I, me (casual, old-fashioned; a young man's word)
+おいら|おいら|pn|E|I, me (casual, old-fashioned; a young man's word)|Old-fashioned and rustic: it marks a character's voice. Neutral: わたし.
 馬子|まご|n|A|a pack-horse driver
 駕籠|かご|n|I|a palanquin, a seat carried on poles
 手綱|たづな|n|I|reins

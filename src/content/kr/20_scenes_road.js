@@ -13,7 +13,7 @@ hayate: {灯落|ひおち} へ {行|い}く なら 、 {尾根|おね} の {古|
 hayate: …… {暗|くら}く なる {前|まえ} に 、 {宿|やど} に {着|つ}け 。 それ だけ だ 。 || …Get to a waystation before dark. That's all.
 ?(comp=ren) comp[surprise]: {灯守|ひもり} の {道|みち} …… 。 {名前|なまえ} だけ は 、 {聞|き}いた こと が あります 。 || The keepers' road… I've only ever heard the name.
 ?(comp=nao) comp: {尾根|おね} {越|ご}え か 。 {遠回|とおまわ}り だ が 、 {道|みち} が ある なら {行|い}く まで だ 。 || Over the ridge, then. The long way round, but if there's a road, we take it.
-?(comp=mio) comp: {暗|くら}い {道|みち} です か …… 。 {明|あか}るい うち に 、 {進|すす}みましょう 。 || A dark road… Let's get on while it's light.
+?(comp=mio) comp: {暗|くら}い {道|みち} か …… 。 {明|あか}るい うち に 、 {進|すす}もう 。 || A dark road… Let's get on while it's light.
 ?(comp=suzu) comp: {遠回|とおまわ}り も 、 {旅|たび} の うち よ 。 || The long way round is part of the trip too.
 
 @scene kr.arrive
@@ -28,7 +28,7 @@ narr: {石|いし} の {灯籠|とうろう} が 、 {山|やま} の {上|う�
 ?(!seen.kr.hayate_road) narr: {下|した} の {道|みち} は 、 {雪崩|なだれ} で {埋|う}まって いる 。 {灯落|ひおち} へ は 、 この {古|ふる}い {尾根|おね} の {道|みち} を {行|い}く しか ない 。 || The lower road lies buried under an avalanche. The only way to Lanternfall now is this old ridge road.
 ?(comp=nao) !gesture comp lookroad up
 ?(comp=nao) comp: {灯籠|とうろう} の {道|みち} か 。 …… {昔|むかし} は 、 {夜|よる} でも {歩|ある}けた ん だろう な 。 || A road of lanterns. …Once you could have walked it at night.
-?(comp=mio) comp[sad]: こんな に たくさん ある のに 、 {全部|ぜんぶ} {消|き}えて いる …… 。 {寂|さび}しい {道|みち} です ね 。 || So many of them, and every one dark… It's a lonely road.
+?(comp=mio) comp[sad]: こんな に たくさん ある のに 、 {全部|ぜんぶ} {消|き}えて いる …… 。 {寂|さび}しい {道|みち} だ ね 。 || So many of them, and every one dark… It's a lonely road.
 ?(comp=ren) !gesture comp chin
 ?(comp=ren) comp[think]: ここ を {歩|ある}いて いた {人|ひと} たち が いた ん です ね 。 {灯|ひ} を {一|ひと}つ ずつ 、 {守|まも}りながら 。 || There were people who walked this road, tending the lights one by one.
 ?(comp=suzu) comp: {暗|くら}い {花道|はなみち} ね 。 …… {誰|だれ} か が 、 {灯|あか}り を {入|い}れ{忘|わす}れた みたい 。 || A dark runway. …As if someone forgot to bring the lights up.
@@ -48,7 +48,7 @@ narr: {台|だい} に {名札|なふだ} が ある 。 {字|じ} が {消|き}
 narr: {名前|なまえ} を {呼|よ}ぶ と 、 {火袋|ひぶくろ} の {奥|おく} に 、 {小|ちい}さな {火|ひ} が ともった 。 || As you say its name, a small flame catches deep in the fire box.
 ?(comp=ren) comp[happy]: …… {点|つ}きました 。 {名前|なまえ} で 、 {灯|ひ} が {戻|もど}った 。 {灯守|ひもり} の {灯|ひ} です 。 || …It's lit. Its name brought the light back. A keepers' lamp.
 ?(comp=nao) comp[surprise]: {名前|なまえ} を {呼|よ}んだ だけ で …… 。 {葦|あし}ノ{瀬|せ} の {名札|なふだ} と 、 {同|おな}じ だ な 。 || Just by calling its name… Like the name tags back in Reedwake.
-?(comp=mio) comp[smile]: {点|つ}いた …… 。 {一|ひと}つ だけ でも 、 {道|みち} が {明|あか}るく {見|み}えます ね 。 || It's lit… Even one makes the road look brighter.
+?(comp=mio) comp[smile]: {点|つ}いた …… 。 {一|ひと}つ だけ でも 、 {道|みち} が {明|あか}るく {見|み}える ね 。 || It's lit… Even one makes the road look brighter.
 ?(comp=suzu) comp[laugh]: {一|ひと}つ {目|め} の {灯|あか}り 、 {入|はい}りました ！ {幕|まく} が {開|あ}いた わ 。 || First light up! The curtain's open.
 !quest kr_main 1
 !journal {名前|なまえ} を {読|よ}む と 、 {灯籠|とうろう} に {灯|ひ} が {戻|もど}る 。 {杉|すぎ} の {石段|いしだん} を {登|のぼ}って 、 {狐橋|きつねばし} へ 。 || Read a lantern's name, and its light comes back. On up the cedar steps to the Fox Bridge.
@@ -181,7 +181,7 @@ narr: {井戸|いど} の そば で 、 {子供|こども} が {二人|ふた�
 ?(comp=suzu) comp[smile]: {子供|こども} の {歌|うた} って 、 {古|ふる}い {話|はなし} が {残|のこ}って いる こと が ある の よ 。 {覚|おぼ}えて おこう 。 || Children's songs sometimes keep old stories in them. Let's remember it.
 ?(comp=ren) comp[think]: {灯|ひ} の {歌|うた} です ね 。 …… {灯守|ひもり} の {言葉|ことば} が 、 {入|はい}って いる よう な 。 || A song about lights. …It sounds like it has keepers' words in it.
 ?(comp=nao) comp: {数|かぞ}え{歌|うた} か 。 {子供|こども} の {歌|うた} は 、 {大人|おとな} より {物|もの} を {覚|おぼ}えて いる 。 || A counting song. Children's songs remember more than grown-ups do.
-?(comp=mio) comp[smile]: かわいい {歌|うた} 。 …… でも 、 {灯|ひ} の {名前|なまえ} ばかり です ね 。 || A sweet song. …All about the names of lights, though.
+?(comp=mio) comp[smile]: かわいい {歌|うた} 。 …… でも 、 {灯|ひ} の {名前|なまえ} ばかり だ ね 。 || A sweet song. …All about the names of lights, though.
 !quest kr_main 2
 !journal {狐橋|きつねばし} の {里|さと} に {着|つ}いた 。 {宿坊|しゅくぼう} は 、 {橋|はし} を {渡|わた}って {尾根|おね} の {先|さき} 。 || You reach the hamlet at the Fox Bridge. The lodge is across the bridge, past the ridge.
 
@@ -275,7 +275,7 @@ narr: {橋|はし} の そば の {灯籠|とうろう} 。 {色|いろ} の {�
 !sfx bell
 narr: 「{狐|きつね} の {灯|ひ}」 。 {狐色|きつねいろ} の {灯籠|とうろう} が 、 {橋|はし} を {金色|きんいろ} に {照|て}らした 。 || "The Fox Light". The fox-coloured lantern lights the bridge gold.
 ?(comp=nao) comp[smile]: {三|みっ}つ {目|め} か 。 {名前|なまえ} を {覚|おぼ}えて いる {人|ひと} が 、 まだ いる 。 {悪|わる}く ない な 。 || Three. There are still people who remember the names. Not bad.
-?(comp=mio) comp[smile]: {狐色|きつねいろ} の {灯|ひ} …… {温|あたた}かい {色|いろ} です ね 。 || A fox-brown light… such a warm colour.
+?(comp=mio) comp[smile]: {狐色|きつねいろ} の {灯|ひ} …… {温|あたた}かい {色|いろ} だ ね 。 || A fox-brown light… such a warm colour.
 ?(comp=ren) comp[happy]: {狐|きつね} の {灯|ひ} 。 …… {名|な} は {灯|ひ} に 、 です ね 。 || The Fox Light. …The name to the lamp.
 ?(comp=suzu) comp[laugh]: {化|ば}かされた みたい に きれい ね 。 {狐|きつね} の {灯|あか}り って 、 {出来過|できす}ぎ よ 。 || Pretty enough to be a fox's trick. A fox's light — it's almost too good.
 !end

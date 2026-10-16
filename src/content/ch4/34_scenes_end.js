@@ -15,7 +15,7 @@ sb_lampvoice: {待|ま}つ の は 、 {寒|さむ}い 。 {誰|だれ} も {見
 ?(comp=nao) !gesture comp strap
 ?(comp=nao) comp: {待|ま}ち{疲|つか}れた {灯|あか}り 、 か 。 …… {悪|わる}い が 、 {帰|かえ}る {気|き} は ない 。 {届|とど}け{物|もの} が ある んで な 。 || A lamp worn out from waiting. …Sorry, but we're not leaving. We've got a delivery.
 ?(comp=mio) !gesture comp guard
-?(comp=mio) comp[worry]: {冷|つめ}たい …… でも 、 {怒|おこ}って いる ん じゃ ない 。 {寂|さび}しい んです 。 {傷|きず}つけず に 、 {温|あたた}めましょう 。 || So cold… but it isn't angry. It's lonely. Let's warm it without hurting it.
+?(comp=mio) comp[worry]: {冷|つめ}たい …… でも 、 {怒|おこ}って いる ん じゃ ない 。 {寂|さび}しい ん だ 。 {傷|きず}つけず に 、 {温|あたた}めよう 。 || So cold… but it isn't angry. It's lonely. Let's warm it without hurting it.
 ?(comp=ren) !gesture comp tendlamp
 ?(comp=ren) comp: {名|な} を {失|うしな}って も 、 {約束|やくそく} だけ は {覚|おぼ}えて いる 。 …… {灯|ひ} と は 、 {健気|けなげ} な もの です 。 {行|い}きましょう 。 || It lost the name and still remembers the promise. …Lamps are loyal things. Let's go.
 ?(comp=suzu) !gesture comp palm
@@ -49,7 +49,7 @@ hoshino: {書|か}こう と した んだ 。 {何度|なんど} も 。 {消|�
 ?(comp=nao) !gesture comp point 6,4
 ?(comp=nao) comp: $name の {字|じ} は {消|き}えない 。 {葦|あし}ノ{瀬|せ} から ずっと {見|み}てる 。 {書|か}いて やれ 。 || $name's writing doesn't fade. I've watched it since Reedwake. Write it for him.
 ?(comp=mio) !gesture comp nod pc
-?(comp=mio) comp[smile]: $name の {字|じ} なら 、 きっと {残|のこ}ります 。 わたし 、 {灯|あか}り を {持|も}って います から 。 ゆっくり で いい 。 || Your writing will stay, $name, I'm sure. I'll hold the light. Take your time.
+?(comp=mio) comp[smile]: $name の {字|じ} なら 、 きっと {残|のこ}る よ 。 わたし 、 {灯|あか}り を {持|も}ってる から 。 ゆっくり で いい 。 || Your writing will stay, $name, I'm sure. I'll hold the light. Take your time.
 ?(comp=suzu) !gesture comp point pc
 ?(comp=suzu) comp: {主役|しゅやく} の {名前|なまえ} を {呼|よ}ぶ {役|やく} は 、 $name に {譲|ゆず}る よ 。 {一番|いちばん} いい {台詞|せりふ} だ 。 || The part where the lead's name is called — that's yours, $name. It's the best line in the play.
 !look hoshino pc
@@ -119,7 +119,7 @@ hoshino[smile]: {雪|ゆき} が {許|ゆる}したら 、 {下|くだ}ろう �
 ?(comp=nao) comp: {自分|じぶん} で {届|とど}ける の が 、 {一番|いちばん} {確|たし}か だ 。 …… {耳|みみ} が {痛|いた}い な 、 {自分|じぶん} で {言|い}って て 。 || Delivering it yourself is the surest way. …Stings a bit, saying that.
 ?(comp=mio) comp[smile]: {灯落|ひおち} の {坂|さか} は {長|なが}い です 。 {靴|くつ} と {膝|ひざ} の {薬|くすり} 、 {用意|ようい} して おきます ね 。 || The road down to Lanternfall is long. I'll get your boots and something for your knees ready.
 ?(comp=ren) comp: {約束|やくそく} は {灯|あか}り に {宿|やど}り 、 {灯|あか}り は {人|ひと} から {人|ひと} へ {渡|わた}る 。 {名|な} は {灯|ひ} に 、 {灯|ひ} は {人|ひと} に 。 …… {正|ただ}しい {形|かたち} です 。 || A promise lives in a lamp, and a lamp passes from hand to hand. A name to the lamp, the lamp to people. …That's the proper shape of it.
-?(comp=suzu) comp[smile]: {舞台|ぶたい} を {降|お}りて 、 {客席|きゃくせき} の {娘|むすめ} さん に {会|あ}い に {行|い}く 。 …… {最高|さいこう} の {終幕|しゅうまく} じゃ ない 。 || Stepping down off the stage to meet your daughter in the audience. …What a finale.
+?(comp=suzu) comp[smile]: {舞台|ぶたい} を {降|お}りて 、 {客席|きゃくせき} の {娘|むすめ} さん に {会|あ}い に {行|い}く 。 …… {最高|さいこう} の {終幕|しゅうまく} じゃ ない ！ || Stepping down off the stage to meet your daughter in the audience. …What a finale.
 !goto light
 :both
 !set sb_hoshino_both
@@ -144,7 +144,7 @@ narr: ホシノ が {古|ふる}い {火打|ひう}ち{石|いし} を {打|う}
 !shot valley
 narr: {丸屋根|まるやね} の {窓|まど} から 、 {光|ひかり} が {夜|よる} の {山|やま} へ {流|なが}れ{出|だ}した 。 {谷|たに} を {越|こ}え 、 {南東|なんとう} へ 、 {灯落|ひおち} の ほう へ 。 || Light pours from the dome's window out into the mountain night — across the valley, southeast, toward Lanternfall.
 ?(comp=nao) comp[smile]: …… {届|とど}いた な 。 {宛名|あてな} なし でも 、 {届|とど}く もの が ある 。 || …It got there. Some things arrive even without an address.
-?(comp=mio) comp[smile]: {温|あたた}かい 。 …… ちゃんと 、 {温|あたた}かい {灯|あか}り です 。 || Warm. …A properly warm light.
+?(comp=mio) comp[smile]: {温|あたた}かい 。 …… ちゃんと 、 {温|あたた}かい {灯|あか}り だ ね 。 || Warm. …A properly warm light.
 ?(comp=ren) comp[smile]: 「 あかり 」 が 、 あかり を ともして いる 。 …… {今|いま} の は {駄洒落|だじゃれ} では ありません 。 {事実|じじつ} です 。 || "Akari" is making light. …That wasn't a pun. It's a fact.
 ?(comp=suzu) comp[laugh]: {照明|しょうめい} 、 よし ！ …… {拍手|はくしゅ} は 、 {下|した} の {村|むら} から {聞|き}こえて くる はず だ よ 。 || Lights — go! …The applause should come up from the village below.
 !sequence ch4.lamp end
@@ -204,9 +204,9 @@ sousuke[smile]: {袋|ふくろ} の {封筒|ふうとう} に 、 {宛名|あて
 ?(comp=nao) !gesture comp strap
 ?(comp=nao) comp[smile]: $name 。 {灯落|ひおち} に {着|つ}いたら 、 {話|はな}す こと が ある 。 {鞄|かばん} の {底|そこ} の {手紙|てがみ} の こと だ 。 || $name. When we get to Lanternfall, there's something I'll tell you. About the letter at the bottom of my bag.
 ?(comp=mio) !gesture comp lookbetween yae and=sousuke
-?(comp=mio) comp[smile]: みんな の {顔|かお} 、 {明|あか}るい です ね 。 {灯|あか}り の せい だけ じゃ なくて 。 || Everyone looks so bright. And not only because of the lamp.
+?(comp=mio) comp[smile]: みんな の {顔|かお} 、 {明|あか}るい ね 。 {灯|あか}り の せい だけ じゃ なくて 。 || Everyone looks so bright. And not only because of the lamp.
 ?(comp=mio) !gesture comp chin
-?(comp=mio) comp[think]: {灯落|ひおち} の {人|ひと} たち は 、 「 かしこまりました 」 しか {言|い}えない …… 。 アカリ さん の {手紙|てがみ} が 、 {気|き}に なります 。 {次|つぎ} は 、 わたし たち が {下|くだ}る {番|ばん} です ね 。 || The people in Lanternfall can only say "certainly"… I keep thinking about Akari's letter. Next it's our turn to go down.
+?(comp=mio) comp[think]: {灯落|ひおち} の {人|ひと} たち は 、 「 かしこまりました 」 しか {言|い}えない …… 。 アカリ さん の {手紙|てがみ} が 、 {気|き}に なる 。 {次|つぎ} は 、 わたし たち が {下|くだ}る {番|ばん} だ ね 。 || The people in Lanternfall can only say "certainly"… I keep thinking about Akari's letter. Next it's our turn to go down.
 ?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp[smile]: {石段|いしだん} の {灯|あか}り が 、 {上|うえ} の {灯|あか}り の {名前|なまえ} を {呼|よ}んで いる 。 {正|ただ}しい {夜|よる} です 。 || The stair lanterns are calling the name of the lamp above. A proper night.
 ?(comp=ren) !look comp pc

@@ -55,7 +55,7 @@ narr: {箱|はこ} に {入|はい}った 、 {一番|いちばん} {古|ふる}
 mp_sobe: {先祖|せんぞ} が {彫|ほ}った もの だ 。 {何百年|なんびゃくねん} も {前|まえ} の 、 {灯守|ひもり} の {心得|こころえ} だ そう だ 。 || My forebears cut that one. A keepers' rule, they say, from hundreds of years ago.
 narr: 「{昔|むかし} の {灯守|ひもり} は 、 こういう の を 『しじま』 と {呼|よ}んだ 。」 || "The old keepers had a word for this: shijima."
 ?(comp=nao) comp[surprise]: …… ツル さん の {言葉|ことば} と 、 {一字|いちじ} も {違|ちが}わない 。 {何百年|なんびゃくねん} {前|まえ} の {版木|はんぎ} が 、 {同|おな}じ こと を {言|い}ってる 。 || …Not one word different from what Tsuru said. A block hundreds of years old says exactly the same.
-?(comp=mio) comp[surprise]: ツル さん の {言葉|ことば} と 、 {同|おな}じ …… 。 {昔|むかし} の {昔|むかし} から 、 {同|おな}じ こと が あった の ？ || The same as Tsuru's words… Has this been happening since long, long ago?
+?(comp=mio) comp[surprise]: ツル さん の {言葉|ことば} と 、 {同|おな}じ …… 。 そんな {昔|むかし} から 、 {同|おな}じ こと が あった の ？ || The same as Tsuru's words… Has this been happening since long, long ago?
 ?(comp=ren) comp[surprise]: …… ツル さん が {言|い}った こと と 、 {同|おな}じ です 。 {同|おな}じ {言葉|ことば} で 。 {何百年|なんびゃくねん} も {前|まえ} に 、 {誰|だれ} か が {同|おな}じ よう に {彫|ほ}って いた 。 || …It's what Tsuru said. In the same words. Someone cut it just the same, hundreds of years ago.
 ?(comp=suzu) comp[surprise]: ツル さん の {台詞|せりふ} と 、 そっくり よ 。 {何百年|なんびゃくねん} も {前|まえ} の {台本|だいほん} に 、 {同|おな}じ {台詞|せりふ} が ある みたい 。 || Word for word what Tsuru said. As if a script from hundreds of years ago had the same line.
 !note mp_oldest_block
@@ -136,7 +136,9 @@ mp_tokube: さあ さあ 、 {湯|ゆ} の {谷|たに} の {名薬|めいやく
 ?(comp=mio) mp_tokube: お{嬢|じょう}ちゃん に は 、 {難|むずか}しい {話|はなし} か な 。 {薬|くすり} の こと は 、 {大人|おとな} に {任|まか}せ な 。 || Too difficult for a young miss like you, eh? Leave medicine to the grown-ups.
 ?(comp=mio) comp[angry]: …… {私|わたし} は 、 {葦|あし}ノ{瀬|せ} の {薬師|くすし} です 。 {何|なに} が {入|はい}って いる か 、 {言|い}えます か ？ {言|い}えない なら 、 {売|う}らないで ください 。 || …I'm the apothecary of Reedwake. Can you tell me what's in it? If you can't, please don't sell it.
 ?(comp=mio) mp_tokube: いや …… それ は 、 {秘伝|ひでん} で …… 。 || Well… that's a secret recipe…
-?(comp!=mio) comp: {何|なん} でも {治|なお}る は 、 {何|なに} も {治|なお}らない と {同|おな}じ かも ね 。 || "Cures everything" might be the same as "cures nothing".
+?(comp!=mio&comp!=ren&comp!=nao) comp: 「 {何|なん} でも {治|なお}る 」 って 、 「 {何|なに} も {治|なお}らない 」 の と {同|おな}じ かも ね 。 || "Cures everything" might be the same as "cures nothing".
+?(comp=nao) comp: 「 {何|なん} でも {治|なお}る 」 って の は 、 「 {何|なに} も {治|なお}らない 」 の と {同|おな}じ かも な 。 || "Cures everything" might be the same as "cures nothing".
+?(comp=ren) comp: 「 {何|なん} でも {治|なお}る 」 と いう の は 、 「 {何|なに} も {治|なお}らない 」 の と {同|おな}じ かも しれません 。 || "Cures everything" might be the same as "cures nothing".
 
 @scene mp.kakeru
 # Nao's thread here (14_COMPANIONS): the courier guild, a rival who has heard of them.

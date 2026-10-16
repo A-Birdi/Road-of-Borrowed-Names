@@ -20,7 +20,7 @@ narr: {柱|はしら} の {書|か}き{置|お}き 。 「 テツジ {伯父|お
 ?(comp=nao) !gesture comp lookbetween 6,4 and=7,4
 ?(comp=nao) comp[smirk]: {増|ふ}えた {二頭|にとう} は 、 {迷子|まいご} じゃ なくて {新入|しんい}り だった わけ だ 。 || So the extra two weren't strays. They were newcomers.
 ?(comp=mio) !gesture comp bend 6,3
-?(comp=mio) comp[smile]: {生|う}まれた ばかり …… ！ {母|はは} ヤギ の {具合|ぐあい} も {見|み}て おきたい です ね 。 || Newborns…! I'd like to check on the mother too.
+?(comp=mio) comp[smile]: {生|う}まれた ばかり …… ！ {母|はは} ヤギ の {具合|ぐあい} も {見|み}て おきたい な 。 || Newborns…! I'd like to check on the mother too.
 ?(comp=ren) !gesture comp nod pc
 ?(comp=ren) comp: {数|かず} の {合|あ}わない {記録|きろく} に は 、 {必|かなら}ず {理由|りゆう} が あります 。 {今回|こんかい} は 、 {良|よ}い {理由|りゆう} でした 。 || When the numbers in a record don't add up, there's always a reason. This time, a good one.
 ?(comp=suzu) !gesture comp laugh
@@ -62,7 +62,7 @@ comp: {石段|いしだん} の {柱|はしら} の {刻|きざ}み{目|め} 、
 comp: {次|つぎ} は {灯落|ひおち} だ 。 …… {鞄|かばん} が {急|きゅう} に {重|おも}く なった {気|き} が する 。 {気|き}の せい だ 。 {気|き}の せい 。 || Lanternfall next. …Feels like my bag just got heavier. My imagination. Just my imagination.
 
 @scene sb.bn_mio1
-comp: {雪国|ゆきぐに} の {人|ひと} は 、 しょうが{湯|ゆ} に {蜂蜜|はちみつ} を {入|い}れる んです って 。 {作|つく}り{方|かた} 、 ヤエ さん に {聞|き}いて おかなきゃ 。 …… ラベル は {何|なん} て {書|か}こう かな 。 || People in snow country put honey in their ginger tea. I must ask Yae how she makes it. …What should I write on the label?
+comp: {雪国|ゆきぐに} の {人|ひと} は 、 しょうが{湯|ゆ} に {蜂蜜|はちみつ} を {入|い}れる ん だ って 。 {作|つく}り{方|かた} 、 ヤエ さん に {聞|き}いて おかなきゃ 。 …… ラベル は {何|なん} て {書|か}こう かな 。 || People in snow country put honey in their ginger tea. I must ask Yae how she makes it. …What should I write on the label?
 
 @scene sb.bn_mio2
 comp[worry]: {指先|ゆびさき} が {白|しろ}く なったら 、 すぐ {言|い}って ね 。 {凍傷|とうしょう} は 、 {痛|いた}く なる {前|まえ} が {一番|いちばん} {危|あぶ}ない の 。 …… {脅|おど}してる わけ じゃ ない のよ 。 {本当|ほんとう} の こと だ から 。 || If your fingertips go white, tell me straight away. Frostbite is most dangerous before it starts to hurt. …I'm not trying to scare you. It's just true.
@@ -71,7 +71,7 @@ comp[worry]: {指先|ゆびさき} が {白|しろ}く なったら 、 すぐ {
 comp[smile]: カンタ くん たち の {雪像|せつぞう} 、 {見|み}た ？ {札|ふだ} まで {書|か}いて ある の 。 {子|こ}ども の ころ の わたし と {同|おな}じ 。 {何|なん} に でも ラベル を {貼|は}ってた 。 {猫|ねこ} に も 。 || Did you see Kanta and the others' snow sculptures? They even wrote cards for them. Just like me as a child. I labelled everything. Even the cat.
 
 @scene sb.bn_mio4
-comp[think]: {灯落|ひおち} の {人|ひと} たち は 、 「 かしこまりました 」 しか {言|い}わない …… 。 {断|ことわ}れない の って 、 {外|そと} から {見|み}る と 、 こんな に {怖|こわ}い んです ね 。 || The people of Lanternfall only say "certainly"… Being unable to refuse — seen from outside, it's frightening, isn't it.
+comp[think]: {灯落|ひおち} の {人|ひと} たち は 、 「 かしこまりました 」 しか {言|い}わない …… 。 {断|ことわ}れない の って 、 {外|そと} から {見|み}る と 、 こんな に {怖|こわ}い ん だ ね 。 || The people of Lanternfall only say "certainly"… Being unable to refuse — seen from outside, it's frightening, isn't it.
 
 @scene sb.bn_mio5
 comp[smile]: ホシノ さん の {膝|ひざ} の {薬|くすり} 、 ヤエ さん に {預|あず}けて きた わ 。 {飲|の}み{方|かた} を {三回|さんかい} {説明|せつめい} したら 、 「 もう {覚|おぼ}えた 」 って {怒|おこ}られちゃった 。 || I left some medicine for Hoshino's knees with Yae. I explained how to take it three times and she snapped, "I've got it already."

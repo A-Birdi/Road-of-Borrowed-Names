@@ -95,14 +95,14 @@ RB.lessons = (function () {
           '<button class="cbtn go" data-a="next" data-ok>' + '<span>' + (idx < cs.length - 1 ? 'Next' : 'Practice these') + '</span>' + I('next') + '</button>';
         stop = demo(fr.leaf.querySelector('canvas'), c.ch);
         const say = fr.foot.querySelector('[data-a=say]');
-        if (!(RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length)) say.classList.add('hidden');
+        if (!(RB.voice && RB.voice.canSayRef && RB.voice.canSayRef(RB.voice.refKey.kana(c.ch)))) say.classList.add('hidden');
         fr.leaf.scrollTop = 0;
       }
       fr.el.addEventListener('click', (e) => {
         const b = e.target.closest('[data-a]');
         if (!b || !fr.foot.contains(b)) return;
         const a = b.getAttribute('data-a');
-        if (a === 'say') RB.voice.speak(cs[idx].ch);
+        if (a === 'say') RB.voice.sayRef(RB.voice.refKey.kana(cs[idx].ch), cs[idx].ch);
         if (a === 'prev') { idx--; render(); }
         if (a === 'next') { if (idx < cs.length - 1) { idx++; render(); } else { stop(); RB.ui.popLayer(lay); resolve(); } }
       });

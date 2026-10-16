@@ -129,7 +129,7 @@ RB.dialect.add('kansai', `
 > {勝|か}った ん は うち やけど 、 {拍手|はくしゅ} は {二人|ふたり} {分|ぶん} や で 。 || I won, but the applause is for the both of us.
 @ wordplay/20_reflect:113 [wp.reflect_suzu]
 = また {幕|まく} を {開|あ}けましょう 。 {次|つぎ} の {舞台|ぶたい} も {楽|たの}しみ に してる わ 。 || Let's raise the curtain again. I'm looking forward to the next show.
-> また {幕|まく} {開|あ}けよ な 。 {次|つぎ} の {舞台|ぶたい} も {楽|たの}しみ に してる わ 。 || Let's raise the curtain again, a'right? I'm lookin' forward to the next show.
+> また {幕|まく} {開|あ}けましょう な 。 {次|つぎ} の {舞台|ぶたい} も {楽|たの}しみ に してる わ 。 || Let's raise the curtain again, a'right? I'm lookin' forward to the next show.
 @ reaction case_parcel_suzu_reasoned[0]
 = {伏線|ふくせん} を ぜんぶ {回収|かいしゅう} ！ {帳簿|ちょうぼ} も {合|あ}った し 、 {気持|きも}ち いい わ 。 || Every thread tied up! And the books balance. Lovely.
 > {伏線|ふくせん} 、 ぜんぶ {回収|かいしゅう} や ！ {帳簿|ちょうぼ} も {合|あ}った し 、 {気持|きも}ち ええ わ 。 || Every thread tied up! And the books balance. Feels good.

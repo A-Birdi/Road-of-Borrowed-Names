@@ -393,10 +393,7 @@
     the player along the road; the lines any companion says, which Ren cannot voice; the player's register to
     companions; Suzu's Kansai keeping politeness and 〜てん; teaching voices in character speech; word help that names
     the wrong word), `FINDINGS.md` / `findings.json` (304 findings, 80 fix before recording; 112 lines to keep).
-    **Do not rewrite until Robin decides.** Then: corrections in the game's lines and Kansai table only; the ledger,
-    tests and `tools/review/` again; the recording plan rebuilt from the corrected lines (companions attributed
-    through branches; reading hints where spacing removal joins words) before any full-game batch. VALIDATION.md
-    "RV-1", REQUIREMENTS.md XP121.
+    **Decided and applied on 2026-10-16** (see "C-95 resolved" below). VALIDATION.md "RV-1", REQUIREMENTS.md XP121.
 
     **PT-1 (a coworker's first play as a new learner, relayed by Robin on 2026-10-15):** "The start was confusing - needs
     voices (wip)"; "When the voiced lines are spoken, highlight the spoken word in Japanese and the English
@@ -467,6 +464,53 @@
     - Open: the cut-off "My Learning", "Reference" request (asked Robin what it meant). Icons to look at again:
       `yn_letter`, `cr_message`, `atlas_cos_sash`. The browser regression and `harmony_cutin` (ST-1) pass.
     - VALIDATION.md "LI", REQUIREMENTS.md XP124.
+
+    **C-95 resolved, the voice batch's inputs, the recorded-voice runtime and the hosting audit (Robin, 2026-10-16).**
+    The current state for anyone picking this up:
+    - **C-95 (Robin's bounded editorial authorization):** every RV-1 finding has a disposition:
+      `docs/review/register/DISPOSITIONS.md` and `.json`, with 222 accepted, 70 retained and 12 deferred (Robin's).
+      - **The script:** 482 lines in 100 files, 19 in the Kansai table. The edits were applied with
+        `tools/review/register_apply.mjs`, which refuses any line that is not exactly as reviewed.
+      - **The lexicon:** D6, word help, done with no line changed (`tests/unit/word_help_rv1.test.mjs`).
+      - **Kept:** the 112 preserved lines are unchanged, and the ledger has entries for every changed line.
+      - **Frozen audition texts kept:** VA-1 SUZU_K05, plus VA-2's cr.call and rw.mr_lantern samples.
+        `docs/future/voice/{corpus,va2}/DIVERGENCES.json` record them, and `corpus.mjs --check` and `va2/plan.mjs
+        --check` accept only those recorded pairs.
+    - **The voice batch** (`docs/future/voice/production/`):
+      - [READINESS.md](docs/future/voice/production/READINESS.md) keeps generation, the runtime and hosting apart.
+      - `PRODUCTION_SCOPE.md` is the authorization, kept apart from the auditions, with the agreed cast. The local worker
+        reported player A = Set 3A and B = Set 1B; Mochi's meow is pick H8.
+      - `VOICE_DELIVERY.md` is the worker contract: the key, the variants, normalization, the encoding (VA-2's, about
+        58 kbit/s, not lowered), the results and the site.
+      - `manifest/` holds the manifest, and `GO.json` names the commit.
+      - Tools: `tools/voice/attribution.mjs`, `production_manifest.mjs`, `voice_site.mjs`, `delivery_estimate.mjs`.
+    - **The recorded-voice runtime** (VR-1, VR-2; `docs/future/voice/production/VOICE_RUNTIME.md`):
+      - `src/audio/52_voicebank.js` loads a voice site:
+        - per-scene indexes, and content-named, stable recording URLs;
+        - lookahead of three lines, at most 1.5 MB;
+        - its own Cache Storage cache, `rbn-voice-v1`, bounded at 150 MB, never touching other caches or saves;
+        - the 2 s start rule, the text-hash check and the device fallback.
+      - `src/audio/54_voice_route.js` routes every speaking control: recording, then device, then none, independent of
+        system voices.
+      - Settings › Sound: Who speaks (Recorded / Device / None), your own lines (Silent / A / B), the pitch, Play
+        automatically, and Clear the kept recordings.
+      - `HOSTED_BASE` is null until Robin chooses the voice host. Until then the hosted game behaves as before.
+      - The voiced offline package: `tools/publish/offline_package.mjs`.
+      - Browser test: `tests/e2e/voice_runtime.mjs`, with synthetic tones.
+    - **Hosting** (`docs/hosting/RUNTIME_PUBLISHING.md`):
+      - Pages publishes the whole branch, 1,072,095,009 bytes, on every push (472 deployments since 2026-09-27; the
+        older "not deployed" lines were wrong in effect).
+      - The runtime-only set is 625 files, 523,674,397 bytes (`tools/publish/prepare_runtime.mjs`;
+        `tests/e2e/runtime_publish.mjs`).
+      - The voices are about 665 MB, so they need their own same-origin site.
+      - Robin's to do: the Pages setting (draft workflow `docs/hosting/pages-runtime.workflow.yml`), and the voice
+        repository.
+    - **Open, the lead's:**
+      - the 116 lines with the player's name, which need a neutral-word version for recording (C-93);
+      - after the batch, real recordings into a voice site, `HOSTED_BASE`, and timing marks if wanted;
+      - `tests/e2e/bookmarks.mjs` fails one check at 200 % text on a phone ("Next does not move for the tab"), on the
+        previous build too, so it predates this work.
+    - VALIDATION.md "C-95 corrections", "VR — the recorded voices" and "Hosting audit"; REQUIREMENTS.md XP121, XP127–XP129.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md

@@ -201,7 +201,7 @@ yn_koume: {必|かなら}ず 。 {道|みち} の どこ か で 、 また ね 
 # Nao's quarrel over the mediation (10_STORY §8): impatient with ceremony; saying yes to everyone isn't helping.
 narr: {部屋|へや} に {戻|もど}る と 、 ナオ が {窓|まど} の {外|そと} の {提灯|ちょうちん} を {見|み}て いた 。 || Back in the room, Nao is looking out of the window at the lanterns.
 nao[closed]: {明日|あした} 、 {全員|ぜんいん} を {座|すわ}らせて 、 {全員|ぜんいん} の {話|はなし} を {聞|き}く の か 。 || Tomorrow you're going to sit them all down and listen to every one of them?
-nao: {時計|とけい} は {直|なお}った 。 {半日|はんにち} ずつ {分|わ}けて 、 {明日|あした} の {朝|あさ} {出|で}れば いい 。 {全員|ぜんいん} に {口|くち} を {出|だ}させたら 、 {誰|だれ} も {何|なに} も {得|え}ない ぞ 。 || The clock's fixed. Split it half a day each and we leave in the morning. Let everyone have their say and nobody gets anything.
+nao: {時計|とけい} は {直|なお}った 。 {半日|はんにち} ずつ {分|わ}けて 、 {明日|あした} の {朝|あさ} {出|で}れば いい 。 {全員|ぜんいん} に {口|くち} を {出|だ}させたら 、 {誰|だれ} の ため に も ならない ぞ 。 || The clock's fixed. Split it half a day each and we leave in the morning. Let everyone have their say and it does nobody any good.
 !choice
 * {全員|ぜんいん} の {話|はなし} を {聞|き}きたい 。 || I want to hear all of them. -> hear
 * {時計|とけい} だけ で は 、 {尾根|おね} の {人|ひと} たち が {困|こま}る 。 || The clock alone leaves the ridge folk out. -> ridge

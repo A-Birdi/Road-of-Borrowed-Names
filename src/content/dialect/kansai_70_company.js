@@ -141,7 +141,7 @@ RB.dialect.add('kansai', `
 > せやろ ！ {帳簿|ちょうぼ} に は 「 {干物|ひもの} {一箱|ひとはこ} 、 {金額|きんがく} {不明|ふめい} 」 って {書|か}いた わ 。 || Right? I wrote in the book: "One crate of dried fish, value unknown."
 @ company/50_topics:211 [co.t_suzu_amazake]
 = {私|わたし} 、 {甘酒|あまざけ} に は {目|め} が ない の 。 {知|し}ってた ？ || I have a weakness for amazake. Did you know?
-> うち 、 {甘酒|あまざけ} に は {目|め} が あらへん ねん 。 {知|し}ってた ？ || I've got a real weakness for amazake. Didja know?
+> うち 、 {甘酒|あまざけ} に は {目|め} が ない ねん 。 {知|し}ってた ？ || I've got a real weakness for amazake. Didja know?
 @ company/50_topics:212 [co.t_suzu_amazake]
 = {寒|さむ}い {町|まち} に {着|つ}いたら 、 まず {甘酒|あまざけ} の {屋台|やたい} を {探|さが}す 。 {宿|やど} より {先|さき} に 。 {帳簿|ちょうぼ} に は 「 {必要|ひつよう} {経費|けいひ} 」 って {書|か}いて ある わ 。 || When I reach a cold town, I look for an amazake stall first. Before the inn. It's entered in the books as a necessary expense.
 > {寒|さむ}い {町|まち} に {着|つ}いたら 、 まず {甘酒|あまざけ} の {屋台|やたい} {探|さが}す ねん 。 {宿|やど} より {先|さき} に 。 {帳簿|ちょうぼ} に は 「 {必要|ひつよう} {経費|けいひ} 」 って {書|か}いて ある わ 。 || When I reach a cold town, I go hunting for an amazake stall first. Before the inn. It's in the books as a necessary expense.
@@ -219,7 +219,7 @@ RB.dialect.add('kansai', `
 > {雪鈴|ゆきすず} の {宿|やど} で 、 うち の {冗談|じょうだん} に {助|たす}けられた って {言|い}うて くれた こと 。 {帳簿|ちょうぼ} に 「 {貸|か}し {一|ひと}つ 」 って {書|か}いてん で 。 || At the Snowbell inn, when you said my jokes had helped you. I wrote "one in credit" in the book.
 @ company.mem.ch4.keep[1]
 = {雪鈴|ゆきすず} の {宿|やど} で 、 {帳簿|ちょうぼ} の {最後|さいご} の {頁|ページ} を {見|み}せた {夜|よる} 。 {誰|だれ} に も {見|み}せた こと なかった の よ 。 || The night at the Snowbell inn when I showed you the last page of my book. I'd never shown it to anyone.
-> {雪鈴|ゆきすず} の {宿|やど} で 、 {帳簿|ちょうぼ} の {最後|さいご} の {頁|ページ} {見|み}せた {夜|よる} 。 {誰|だれ} に も {見|み}せた こと あらへんかった ねん で 。 || The night at the Snowbell inn when I showed you the last page of my book. I'd never shown it to anybody.
+> {雪鈴|ゆきすず} の {宿|やど} で 、 {帳簿|ちょうぼ} の {最後|さいご} の {頁|ページ} {見|み}せた {夜|よる} 。 {誰|だれ} に も {見|み}せた こと あらへんかった ん や で 。 || The night at the Snowbell inn when I showed you the last page of my book. I'd never shown it to anybody.
 @ company.mem.ch4.keep[2]
 = {雪鈴|ゆきすず} の {満員|まんいん} の {客席|きゃくせき} 。 {主役|しゅやく} は {灯|あか}り だった けど 。 || That packed house in Snowbell. The lamp had the lead, mind.
 > {雪鈴|ゆきすず} の {満員|まんいん} の {客席|きゃくせき} 。 {主役|しゅやく} は {灯|あか}り やった けど な 。 || That packed house in Snowbell. The lamp had the lead, mind.

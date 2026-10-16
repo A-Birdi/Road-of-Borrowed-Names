@@ -5571,8 +5571,9 @@ What was built, how, and its limits: docs/MUSIC_PERFORMANCE.md; decision F-145. 
   in both performances, both switches mid-phrase, the join and the first repeat beside the Original's. Robin: "It
   sounds great, nice job". **H**, still open: hearing it in the game on Robin's own device.
 - **Device-tested: no** (Chromium on Linux only; Safari's Opus, other browsers' MP3 lengths and phones untested; a
-  browser decoding another length is refused by the check and falls back). **Deployed: no** (C-87's gate; the deploy
-  must copy `assets/music/ensemble/`). **Rights:** the TimGM6mb (GPL-2) question is open for Robin (NOTICE.md).
+  browser decoding another length is refused by the check and falls back). **Deployed:** not as C-87's release, but
+  in effect yes: GitHub Pages has served the task branch at the game's URL on every push since 2026-09-27, these
+  recordings included (corrected 2026-10-16, docs/hosting/RUNTIME_PUBLISHING.md and "Hosting audit" below). **Rights:** the TimGM6mb (GPL-2) question is open for Robin (NOTICE.md).
 - **B** regressions on the final build (MT-T46): `audio.check` all passed, `audio_suite` 5/5, `audio_zones` 91/0,
   `audio_instruments` all passed, `settings` all ok, `battle_settings` 10/0, `title_ledger` 18/0.
 - Not covered by a test: a live capture of a cue transition with Ensemble (the offline renderer plays one cue).

@@ -43,7 +43,7 @@ RB.dialect.add('kansai', `
 > {奈落|ならく} より {暗|くら}い な 。 …… {大丈夫|だいじょうぶ} 、 {出口|でぐち} は いつも ある もん や 。 || Darker than any understage. …Don't worry, there's always a way out.
 @ ko/story [ko.tide_split]
 = …… {大丈夫|だいじょうぶ} 、 {幕間|まくあい} よ 、 {幕間|まくあい} ！ {次|つぎ} の {幕|まく} で {会|あ}いましょう 。 {出番|でばん} {忘|わす}れたら 、 {承知|しょうち} しない から ね ！ || …It's all right, it's just the interval! See you in the next act. Miss your cue and I'll never forgive you!
-> …… {大丈夫|だいじょうぶ} 、 {幕間|まくあい} や 、 {幕間|まくあい} ！ {次|つぎ} の {幕|まく} で {会|あ}おう 。 {出番|でばん} {忘|わす}れたら 、 {承知|しょうち} せえへん で ！ || …It's all right, it's just the interval! See you in the next act. Miss your cue and I'll never forgive you!
+> …… {大丈夫|だいじょうぶ} 、 {幕間|まくあい} や 、 {幕間|まくあい} ！ {次|つぎ} の {幕|まく} で {会|あ}いましょう 。 {出番|でばん} {忘|わす}れたら 、 {承知|しょうち} せえへん で ！ || …It's all right, it's just the interval! See you in the next act. Miss your cue and I'll never forgive you!
 @ ko/story [ko.reunion]
 = お{帰|かえ}り なさい 、 {主役|しゅやく} さん 。 {出番|でばん} 、 ぎりぎり {間|ま}に{合|あ}った わ ね 。 || Welcome back, star of the show. Just made your cue.
 > お{帰|かえ}り 、 {主役|しゅやく} さん 。 {出番|でばん} 、 ぎりぎり {間|ま}に{合|あ}った な 。 || Welcome back, star of the show. Just made your cue.
@@ -98,7 +98,7 @@ RB.dialect.add('kansai', `
 = {書|か}きかけ の {返事|へんじ} ！ {捨|す}てた つもり だった のに 、 {海|うみ} を {渡|わた}って {来|く}る なんて 。 {律儀|りちぎ} な {葉|は} ね 。 || A half-written reply! I thought I'd thrown it away, and it's come all the way across the sea. What a dutiful leaf.
 > {書|か}きかけ の {返事|へんじ} や ！ {捨|す}てた つもり やった のに 、 {海|うみ} を {渡|わた}って {来|く}る なんて 。 {律儀|りちぎ} な {葉|は} や な 。 || A half-written reply! I thought I'd thrown it away, and it's come all the way across the sea. What a dutiful leaf.
 = …… 「なぜ か と いう と」 の {続|つづ}き 、 {書|か}けなかった の よ 。 {今|いま} も 、 {書|か}けない 。 || …I couldn't write what came after "The reason is". I still can't.
-> …… 「なぜ か と いう と」 の {続|つづ}き 、 {書|か}けへんかった ねん 。 {今|いま} も 、 {書|か}けへん 。 || …I couldn't write what came after "The reason is". I still can't.
+> …… 「なぜ か と いう と」 の {続|つづ}き 、 {書|か}けへんかった ん や 。 {今|いま} も 、 {書|か}けへん 。 || …I couldn't write what came after "The reason is". I still can't.
 @ ko/comp [ko.suzu_stage]
 = …… お{客|きゃく} さん が いる なら 、 やる しか ない わ ね 。 || …Well, if there's an audience, there's nothing for it.
 > …… お{客|きゃく} さん が おる なら 、 やる しか ない な 。 || …Well, if there's an audience, there's nothing for it.

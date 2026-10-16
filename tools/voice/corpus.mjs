@@ -187,8 +187,19 @@ if (errors.length) { console.log('CORPUS PROBLEMS (' + errors.length + '):\n  ' 
 const json = JSON.stringify(corpus, null, 1) + '\n';
 if (process.argv.includes('--check')) {
   const have = fs.existsSync(path.join(OUT, 'audition_corpus.json')) ? JSON.parse(fs.readFileSync(path.join(OUT, 'audition_corpus.json'), 'utf8')) : null;
-  const diff = !have ? ['no committed corpus'] : cases.filter((c, i) => !have.cases[i] || have.cases[i].speechLine.production.spokenTextSha256 !== c.speechLine.production.spokenTextSha256 || have.cases[i].lineId !== c.lineId).map((c) => c.caseId);
-  console.log(diff.length ? 'the corpus no longer matches the game: ' + diff.join(', ') : 'corpus ok: ' + cases.length + ' cases match the game');
+  // a frozen case the game has since corrected stays frozen (C-95, Robin 2026-10-16: "Preserve the frozen audition
+  // text"): listed in DIVERGENCES.json with both texts' hashes, so any further change to either still fails here
+  const DIV = fs.existsSync(path.join(OUT, 'DIVERGENCES.json')) ? JSON.parse(fs.readFileSync(path.join(OUT, 'DIVERGENCES.json'), 'utf8')).divergences || [] : [];
+  const kept = [];
+  const diff = !have ? ['no committed corpus'] : cases.filter((c, i) => {
+    const h = have.cases[i];
+    if (h && h.speechLine.production.spokenTextSha256 === c.speechLine.production.spokenTextSha256 && h.lineId === c.lineId) return false;
+    const d = h && DIV.find((x) => x.caseId === c.caseId && x.frozenSpokenSha256 === h.speechLine.production.spokenTextSha256 && x.gameSpokenSha256 === c.speechLine.production.spokenTextSha256);
+    if (d) { kept.push(c.caseId + ' (' + d.finding + ')'); return false; }
+    return true;
+  }).map((c) => c.caseId);
+  console.log(diff.length ? 'the corpus no longer matches the game: ' + diff.join(', ') : 'corpus ok: ' + cases.length + ' cases match the game' + (kept.length ? '; kept frozen as recorded: ' + kept.join(', ') : ''));
+  if (process.argv.includes('--hashes')) for (const id of process.argv.slice(process.argv.indexOf('--hashes') + 1)) { const i = cases.findIndex((c) => c.caseId === id); if (i >= 0) console.log(id, have.cases[i].speechLine.production.spokenTextSha256, cases[i].speechLine.production.spokenTextSha256); }
   process.exit(diff.length ? 1 : 0);
 }
 fs.mkdirSync(OUT, { recursive: true });

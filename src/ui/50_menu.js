@@ -635,8 +635,11 @@ RB.ui.menu = (function () {
     }
     if (id === 'noted') {
       const saved = s.notebook.filter((n) => n.kind === 'word');
-      const canSpeak = RB.voice && RB.voice.status && RB.voice.status().localJaCount > 0;
+      // a word's recording (its written form and reading) or the device's voice (src/audio/54_voice_route.js)
+      const wkey = (n) => (RB.voice && RB.voice.refKey && n.surface && n.reading ? RB.voice.refKey.word(n.surface, n.reading) : null);
+      const canSay = (n) => !!(RB.voice && RB.voice.canSayRef && RB.voice.canSayRef(wkey(n)));
       return saved.length ? '<ul class="entries notes">' + saved.map((n, i) => {
+        const canSpeak = canSay(n);
         const hasKanji = /[一-鿿々]/.test(n.surface || '');
         const written = hasKanji && n.reading ? '{' + n.surface + '|' + n.reading + '}' : n.surface;
         return '<li class="entry filed"><span class="mark">' + I('note') + '</span><div><div class="written">' + j(written) + '</div>' +
@@ -709,7 +712,7 @@ RB.ui.menu = (function () {
         return;
       }
       const say = e.target.closest('[data-say]');
-      if (say) { const n = s.notebook.filter((x) => x.kind === 'word')[+say.dataset.say]; if (n && RB.voice) RB.voice.speak(n.reading || n.surface); }
+      if (say) { const n = s.notebook.filter((x) => x.kind === 'word')[+say.dataset.say]; if (n && RB.voice) RB.voice.sayRef(n.surface && n.reading && RB.voice.refKey ? RB.voice.refKey.word(n.surface, n.reading) : null, n.reading || n.surface); }
     };
   }
   function kanaChart(s) {

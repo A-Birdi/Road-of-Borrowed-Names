@@ -563,10 +563,10 @@
   "jp": "{水路|すいろ} に {沿|そ}って 。 {水|みず} に {映|うつ}って 、 {倍|ばい} に {見|み}えます よ 。",
   "en": "Along the channel. Reflected in the water, there'll look to be twice as many."
  },
- "scene:as.fest_prep#a2b7hd": {
+ "scene:as.fest_prep#16yn32u": {
   "status": "self-reviewed",
-  "ref": "self-reviewed (P15f, Ashihara Shinden): each line read in full against the lexicon, the grammar points' notes and the established places (葦ノ瀬, 潮硝子, 灯の道); fixed: a pedlar's 持ってきな ('bring it') now 持っていきな ('take it'), 隣 alone for neighbours now 隣同士, a split counter (ひと{つ}) and 終演 written as one word",
-  "jp": "{坂|さか} の {上|うえ} まで 。 {松|まつ} の {下|した} から 、 {村|むら} {中|じゅう} の {灯|ひ} が {見|み}える わ 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{坂|さか} の {上|うえ} まで 。 {松|まつ} の {下|した} から 、 {村|むら} {中|じゅう} の {灯|ひ} が {見|み}えます よ 。",
   "en": "Right up the slope. From under the pine you'll see the whole village lit."
  },
  "scene:as.fest_prep#58dus0": {

@@ -63,7 +63,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 @scene rt.grove_arch
 !if rt_grove_seen -> go
 narr: {根|ね} の {奥|おく} に 、 {狭|せま}い {道|みち} が {下|くだ}って いる 。 {前|まえ} に は 、 なかった {道|みち} だ 。 || Behind the roots a narrow way goes down. It wasn't there before.
-?(comp) comp: {森|もり} が 、 {育|そだ}った ん だ ね 。 || The grove has grown.
+?(comp&comp!=ren) comp: {森|もり} が 、 {育|そだ}った ん だ ね 。 || The grove has grown.
+?(comp=ren) comp: {森|もり} が 、 {育|そだ}った ん です ね 。 || The grove has grown.
 :go
 !warp ko.grove 7 10 up
 

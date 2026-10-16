@@ -10,7 +10,7 @@
 // files it names) is added under ./voices/.
 // Local copies only: no git, no network, no push, no deploy. Nothing here changes how or where the site is published.
 // Usage: node tools/publish/prepare_runtime.mjs --out <empty dir> [--without-gpl-source] [--keep <previous RUNTIME_FILES.tsv>]
-//          [--voices <dir with ja-JP/<build>/manifest.json>] [--list-only]
+//          [--voices <a voice site folder: <dir>/ja-JP/index.json>] [--list-only]
 //   --without-gpl-source: leave the recordings' source out (only if Robin decides a link to the repository is enough);
 //   --keep: also copy the recordings an earlier build named, when they are still in the checkout (a page opened before
 //           the update can still ask for them); --list-only: print the set and its bytes, copy nothing.
@@ -45,18 +45,27 @@ if (opt('--keep')) {
     else console.warn('not in the checkout, so not kept: ' + p);
   }
 }
-// voices: a build folder with its runtime manifest (tools/voice/runtime_manifest.mjs) and the files it names
+// voices: a voice site (tools/voice/voice_site.mjs) copied whole under ./voices/: its index, every index it names and
+// every recording those name (anything else in the folder is left out)
 const voice = [];
 if (opt('--voices')) {
   const vdir = path.resolve(opt('--voices'));
-  for (const lang of fs.readdirSync(vdir)) for (const build of fs.existsSync(path.join(vdir, lang)) ? fs.readdirSync(path.join(vdir, lang)) : []) {
-    const mf = path.join(vdir, lang, build, 'manifest.json');
-    if (!fs.existsSync(mf)) continue;
-    const m = JSON.parse(fs.readFileSync(mf, 'utf8'));
-    if (m.schema !== 'rbn.voice.runtime/1') die('not a runtime voice manifest: ' + mf);
-    voice.push({ rel: ['voices', lang, build, 'manifest.json'].join('/'), src: mf });
-    const files = new Set(Object.values(m.lines).flat().map((x) => x.file));
-    for (const f of files) voice.push({ rel: ['voices', lang, build, f].join('/'), src: path.join(vdir, lang, build, f) });
+  for (const lang of fs.readdirSync(vdir)) {
+    const ix = path.join(vdir, lang, 'index.json');
+    if (!fs.existsSync(ix)) continue;
+    const m = JSON.parse(fs.readFileSync(ix, 'utf8'));
+    if (m.schema !== 'rbn.voice.site/1') die('not a voice site index: ' + ix);
+    const add = (rel) => voice.push({ rel: ['voices', lang, rel].join('/'), src: path.join(vdir, lang, rel) });
+    add('index.json');
+    const shards = Object.values(m.scenes || {}).concat(m.refs ? [m.refs] : []);
+    const recs = new Set();
+    for (const s of shards) {
+      add(s);
+      const j = JSON.parse(fs.readFileSync(path.join(vdir, lang, s), 'utf8'));
+      if (j.lines) for (const vs of Object.values(j.lines)) for (const v of vs) recs.add(v.f);
+      else for (const v of Object.values(j)) recs.add(v.f);
+    }
+    for (const f of recs) add(f);
   }
 }
 

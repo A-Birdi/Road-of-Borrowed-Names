@@ -36,14 +36,14 @@ cr_jinpachi: おーい ！ $name さん です よね ！ {灯落|ひおち} の
 cr_jinpachi: おいら 、 {継|つ}ぎ{飛脚|びきゃく} の ジンパチ です 。 {伝言|でんごん} は 、 {宿場|しゅくば} から {宿場|しゅくば} へ 、 {口|くち} で {伝|つた}えて {来|き}ました 。 || I'm Jinpachi, a relay runner. The message came station to station, by word of mouth.
 cr_jinpachi: ええと …… 「{北|きた} の {古|ふる}い {街道|かいどう} で 、 {灯|ひ} が …… {消|き}えた ？ {名前|なまえ} が …… {雲|くも} の …… 」 。 …… あれ ？ || Um… "On the old highway north, the lights… went out? The names… the clouds…" …Huh?
 cr_jinpachi[sad]: すみません 。 {途中|とちゅう} の {宿場|しゅくば} で {三回|さんかい} {聞|き}き{直|なお}した ん です けど 、 {聞|き}く たび に {話|はなし} が {違|ちが}って いて …… 。 || Sorry. I asked again three times at stations on the way, and every time it was different…
-cr_jinpachi: でも 、 「{直接|ちょくせつ} {来|き}て ください 」 って ところ は {確|たし}か です ！ ヤエ さん が {言|い}って いました 。 || But the part about "please come in person", that's certain! Yae said it.
+cr_jinpachi: でも 、 「{直接|ちょくせつ} {来|き}て ください 」 って ところ は {確|たし}か です ！ タミ さん が {言|い}って いました 。 || But the part about "please come in person", that's certain! Tami said it.
 ?(comp=nao) comp: {口伝|くちづた}え か 。 {三人|さんにん} {通|とお}れば 、 {別|べつ} の {話|はなし} に なる 。 …… {次|つぎ} は {紙|かみ} に {書|か}いて {持|も}って {来|こ}い 。 || By word of mouth. Pass it through three people and it's a different story. …Next time, bring it on paper.
-?(comp=mio) comp: {大事|だいじ} な ところ が 、 {抜|ぬ}けて しまった みたい です ね 。 ヤエ さん に {直接|ちょくせつ} {聞|き}きましょう 。 || The important part seems to have dropped out. Let's ask Yae herself.
+?(comp=mio) comp: {大事|だいじ} な ところ が 、 {抜|ぬ}けて しまった みたい だ ね 。 タミ さん に {直接|ちょくせつ} {聞|き}こう 。 || The important part seems to have dropped out. Let's ask Tami herself.
 ?(comp=ren) comp[think]: {灯|ひ} と 、 {名前|なまえ} …… 。 {聞|き}き{捨|す}て に は できません 。 || Lights, and names… I can't leave that alone.
 ?(comp=suzu) comp[laugh]: {伝言|でんごん}ゲーム の {最後|さいご} の {人|ひと} って {感|かん}じ ね 。 {元|もと} の {台本|だいほん} を {見|み}に {行|い}きましょ 。 || Like the last person in a game of telephone. Let's go and read the original script.
 cr_jinpachi: おいら は {先|さき} に {戻|もど}ります ！ {灯|ひ} の {道|みち} の {上|うえ} の {端|はし} 、 {追分|おいわけ} の {宿|しゅく} に いますんで ！ || I'll head back ahead of you! I'll be at Oiwake Station, at the top end of the Lantern Road!
 !quest cr_main 0
-!journal {灯落|ひおち} の {議会|ぎかい} から の {伝言|でんごん} が 、 {途中|とちゅう} で {崩|くず}れて いた 。 {議会|ぎかい}{堂|どう} で 、 ヤエ に {直接|ちょくせつ} {聞|き}こう 。 || The message from Lanternfall's council came garbled on the way. Ask Yae herself, at the council chamber.
+!journal {灯落|ひおち} の {議会|ぎかい} から の {伝言|でんごん} が 、 {途中|とちゅう} で {崩|くず}れて いた 。 {議会|ぎかい}{堂|どう} で 、 タミ に {直接|ちょくせつ} {聞|き}こう 。 || The message from Lanternfall's council came garbled on the way. Ask Tami herself, at the council chamber.
 
 @scene cr.yae
 # Yae, first-hand: the Cloudroad, the relay and its lamps, the last courier who never arrived; the leaves from the
@@ -94,7 +94,7 @@ narr: {石畳|いしだたみ} の {坂|さか} を {登|のぼ}る と 、 {宿
 !card {第十章|だいじゅっしょう} 　{雲路|くもじ} || Chapter 10 — The Cloudroad
 narr: {道|みち} の {北側|きたがわ} に {宿屋|やどや} が {並|なら}ぶ 。 {宿場|しゅくば} の {東|ひがし} の {端|はし} に 、 {背|せ} の {高|たか}い {石|いし} の {灯|ひ} 。 {消|き}えて いる 。 || Inns line the north side of the road. At the station's east end, a tall stone lamp. It's dark.
 ?(comp=nao) comp: {追分|おいわけ} …… {道|みち} が {分|わ}かれる {所|ところ} 、 か 。 {飛脚|ひきゃく} の {問屋場|といやば} も ある 。 {懐|なつ}かしい {匂|にお}い だ 。 || Oiwake… where the road divides. And a relay office. That smell takes me back.
-?(comp=mio) comp: {空気|くうき} が {冷|つめ}たく なりました ね 。 …… {上|うえ} は 、 もっと {寒|さむ}い の でしょう か 。 || The air's gone cold. …Will it be colder still further up?
+?(comp=mio) comp: {空気|くうき} が {冷|つめ}たく なった ね 。 …… {上|うえ} は 、 もっと {寒|さむ}い の かな 。 || The air's gone cold. …Will it be colder still further up?
 ?(comp=ren) !gesture comp lookroad right
 ?(comp=ren) comp[think]: あの {灯|ひ} 。 {灯籠|とうろう} より {大|おお}きい 。 {宿場|しゅくば} の {灯|ひ} です ね 。 {一晩中|ひとばんじゅう} {点|つ}けて おく {灯|ひ} 。 || That lamp. Bigger than a lantern. A station's lamp: the kind that burns all night.
 ?(comp=suzu) comp[smile]: {宿場|しゅくば} の {朝|あさ} の {匂|にお}い 。 お{味噌汁|みそしる} と 、 {馬|うま} と 、 {草鞋|わらじ} 。 {懐|なつ}かしい わ 。 || The smell of a post station in the morning. Miso soup, horses and straw sandals. It takes me back.
@@ -108,7 +108,7 @@ narr: {道|みち} の {北側|きたがわ} に {宿屋|やどや} が {並|な
 !set cr_kanbe_met
 !set cr_called
 cr_kanbe: {飛脚|ひきゃく} の {問屋場|といやば} だ 。 {手紙|てがみ} か 、 {荷物|にもつ} か 。 …… どちら でも ない {顔|かお} だ な 。 || This is the relay office. A letter, or a parcel? …Neither, by the look of you.
-?(cr_yae_told) cr_kanbe: {灯落|ひおち} の ヤエ さん から 、 {話|はなし} は {聞|き}いて いる 。 {本当|ほんとう} に {来|き}た の か 。 || I've had word from Yae in Lanternfall. So you really came.
+?(cr_yae_told) cr_kanbe: {灯落|ひおち} の タミ さん から 、 {話|はなし} は {聞|き}いて いる 。 {本当|ほんとう} に {来|き}た の か 。 || I've had word from Tami in Lanternfall. So you really came.
 cr_kanbe: いい か 。 {昔|むかし} 、 この {街道|かいどう} は {継|つ}ぎ{飛脚|びきゃく} で {動|うご}いて いた 。 {一人|ひとり} が {次|つぎ} の {宿|しゅく} まで {走|はし}って 、 {次|つぎ} の {者|もの} に {渡|わた}す 。 {手紙|てがみ} も 、 {伝言|でんごん} も 。 || Listen. This highway used to run on the relay. One runner to the next station, then he hands it on. Letters, and messages too.
 cr_kanbe: {宿場|しゅくば} の {常夜灯|じょうやとう} に は 、 {宿|しゅく} の {名前|なまえ} が {彫|ほ}って ある 。 {飛脚|ひきゃく} は {通|とお}る たび に 、 その {名前|なまえ} を {呼|よ}んだ 。 だから 、 {灯|ひ} は {消|き}えなかった 。 || Each station's everlasting lamp has the station's name carved on it. The couriers called the name every time they passed. That's why the lamps never went out.
 cr_kanbe: {五十年|ごじゅうねん} {前|まえ} 、 {最後|さいご} の {飛脚|ひきゃく} が {着|つ}かなかった 。 それ から 、 {継|つ}ぎ{飛脚|びきゃく} は {途切|とぎ}れた 。 {今|いま} は 、 {名前|なまえ} を {呼|よ}ぶ {者|もの} も いない 。 || Fifty years ago the last courier never arrived. After that the relay broke off. Now nobody calls the names.

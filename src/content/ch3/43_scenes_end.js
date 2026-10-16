@@ -87,7 +87,7 @@ narr: その {瞬間|しゅんかん} 、 {里|さと} {中|じゅう} の {人|
 narr: {泣|な}き{声|ごえ} が 、 {広場|ひろば} の あちこち で {上|あ}がった 。 それ は {長|なが}く {続|つづ}いた が 、 {誰|だれ} も {止|と}め なかった 。 || Weeping rises all over the square. It goes on a long time, and nobody tries to stop it.
 !shot night comp
 ?(comp=nao) comp: …… {宛先|あてさき} が {戻|もど}った な 。 {重|おも}い {荷物|にもつ} だ けど 、 {届|とど}いた 。 || …The address came back. Heavy parcel. But it arrived.
-?(comp=mio) comp[sad]: {皆|みな} さん 、 {泣|な}いて います 。 …… {薬|くすり} で {止|と}めて は いけない {涙|なみだ} です ね 。 || Everyone's crying. …These are tears no medicine should stop.
+?(comp=mio) comp[sad]: みんな {泣|な}いてる 。 …… {薬|くすり} で {止|と}めて は いけない {涙|なみだ} だ ね 。 || Everyone's crying. …These are tears no medicine should stop.
 ?(comp=ren) comp: {名|な} が {灯|とも}りました 。 …… {師匠|ししょう} は 、 {言|い}わない {名|な} は {薄|うす}く なる 、 と {言|い}って いました 。 {今夜|こんや} 、 {五|いつ}つ の {名|な} が {濃|こ}く なった 。 || The names are lit. …My master used to say that a name nobody speaks grows thin. Tonight, five names grew dark again.
 ?(comp=suzu) comp: …… {拍手|はくしゅ} は 、 しない で おく わ 。 これ は {舞台|ぶたい} じゃ ない から 。 || …I won't applaud. This isn't a stage.
 !sequence ch3.assembly end
@@ -120,7 +120,7 @@ narr: {日|ひ} が {暮|く}れる と 、 {三十|さんじゅう} の ガラ�
 narr: ヒロ の {席|せき} に は 、 {名前|なまえ} の {札|ふだ} と 、 {橙色|だいだいいろ} の {火屋|ほや} が {一|ひと}つ {置|お}いて ある 。 || On Hiro's seat: a name slip, and a single orange lantern globe.
 ?(comp=nao) comp: {普通|ふつう} に {楽|たの}しそう だ な 。 {皆|みな} で {泣|な}いた {次|つぎ} の {日|ひ} な のに 。 || It looks like ordinary fun. The day after everyone cried together.
 ?(comp=nao) comp: …… いや 、 だから か 。 || …No. Maybe that's why.
-?(comp=mio) comp[smile]: {皆|みな} さん 、 ちゃんと {食|た}べて います ね 。 よかった 。 {泣|な}いた {後|あと} は 、 {甘|あま}い もの が {一番|いちばん} の {薬|くすり} です から 。 || Everyone's eating properly. Good. After crying, something sweet is the best medicine.
+?(comp=mio) comp[smile]: みんな ちゃんと {食|た}べてる ね 。 よかった 。 {泣|な}いた {後|あと} は 、 {甘|あま}い もの が {一番|いちばん} の {薬|くすり} だ から 。 || Everyone's eating properly. Good. After crying, something sweet is the best medicine.
 ?(comp=ren) comp: {灯籠|とうろう} の {名|な} を 、 {全部|ぜんぶ} {読|よ}んで きます 。 …… {戻|もど}って こなかったら 、 {迷子|まいご} です 。 {探|さが}して ください 。 || I'm going to read the name on every lantern. …If I don't come back, I'm lost. Please come and find me.
 ?(comp=suzu) comp[smile]: {隣|となり} の {席|せき} 、 {予約|よやく} が {入|はい}ってる の 。 …… {後|あと} で ね 。 {先|さき} に {一周|いっしゅう} して きて 。 || I've a reserved seat — next door to Hiro's. …Later. Go and walk round first.
 ?(comp!=suzu) narr: {舞台|ぶたい} の {袖|そで} で 、 スズ が リボン を {結|むす}び{直|なお}して いる 。 {色褪|いろあ}せた リボン を 。 || At the side of the stage, Suzu is retying her ribbon. The faded one.
@@ -169,11 +169,11 @@ narr: {刈|か}った ばかり の {火除|ひよ}け{道|みち} が 、 {月|
 ?(comp=nao) comp[smirk]: …… {灯落|ひおち} まで 、 {考|かんが}える {時間|じかん} は ある 。 {急|いそ}ぐ {配達|はいたつ} じゃ ない 。 たぶん 。 || …There's time to think before Lanternfall. It's not an urgent delivery. Probably.
 ?(comp=mio) !look comp pc
 ?(comp=mio) !gesture comp size
-?(comp=mio) comp: {今日|きょう} 、 {火傷|やけど} の {薬|くすり} を {十四軒|じゅうよんけん} {分|ぶん} {作|つく}りました 。 {皆|みな} さん に {頼|たの}まれて 、 {全部|ぜんぶ} 「 はい 」 って {言|い}って 。 || Today I made burn salve for fourteen households. Everyone asked, and I said yes to all of them.
+?(comp=mio) comp: {今日|きょう} 、 {火傷|やけど} の {薬|くすり} を {十四軒|じゅうよんけん} {分|ぶん} {作|つく}った の 。 {皆|みな} さん に {頼|たの}まれて 、 {全部|ぜんぶ} 「 はい 」 って {言|い}って 。 || Today I made burn salve for fourteen households. Everyone asked, and I said yes to all of them.
 ?(comp=mio) !gesture comp exhale
-?(comp=mio) comp[think]: …… {今|いま} に なって 、 {疲|つか}れて いる こと に {気|き}づきました 。 {変|へん} です よ ね 。 {頼|たの}まれる の は 、 {嬉|うれ}しい はず なのに 。 || …Only now do I notice I'm tired. Strange, isn't it. Being asked is supposed to make me happy.
+?(comp=mio) comp[think]: …… {今|いま} に なって 、 {疲|つか}れてる こと に {気|き}づいた 。 {変|へん} だ よ ね 。 {頼|たの}まれる の は 、 {嬉|うれ}しい はず なのに 。 || …Only now do I notice I'm tired. Strange, isn't it. Being asked is supposed to make me happy.
 ?(comp=mio) !gesture comp laugh
-?(comp=mio) comp[smile]: {今夜|こんや} は 、 {誰|だれ} の {頼|たの}み も {聞|き}きません 。 …… $name さん の {頼|たの}み も です よ 。 {冗談|じょうだん} です 。 {半分|はんぶん} は 。 || Tonight I'm not taking anyone's requests. …Not even yours. That's a joke. Half a joke.
+?(comp=mio) comp[smile]: {今夜|こんや} は 、 {誰|だれ} の {頼|たの}み も {聞|き}かない 。 …… $name の {頼|たの}み も だ よ 。 {冗談|じょうだん} 。 {半分|はんぶん} は 。 || Tonight I'm not taking anyone's requests. …Not even yours. That's a joke. Half a joke.
 ?(comp=ren) !gesture comp lookroad down
 ?(comp=ren) comp: トキワ さん は 、 {自分|じぶん} から {預|あず}けた 、 と {言|い}いました ね 。 {痛|いた}み を 。 || Tokiwa said he handed it over himself. The pain.
 ?(comp=ren) !look comp pc
@@ -202,7 +202,7 @@ pc: {白|しろ}い {服|ふく} の {旅人|たびびと} …… {静寂|しじ
 ?(comp=nao) !gesture comp emphatic
 ?(comp=nao) comp: {悲|かな}しみ を {預|あず}かる 、 か 。 {頼|たの}まれて も いない {荷物|にもつ} まで {運|はこ}んで いった ん だ 。 {配達人|はいたつにん} と して は 、 {許|ゆる}せない な 。 || Keeping people's grief. And carrying off parcels nobody asked it to take. As a courier, I can't forgive that.
 ?(comp=mio) !gesture comp shake
-?(comp=mio) comp: {最初|さいしょ} は 、 {優|やさ}しさ だった の かも しれません 。 …… {優|やさ}しさ も 、 {量|りょう} を {間違|まちが}えれば {毒|どく} です 。 || Maybe it began as kindness. …But even kindness is poison in the wrong dose.
+?(comp=mio) comp: {最初|さいしょ} は 、 {優|やさ}しさ だった の かも しれない 。 …… {優|やさ}しさ も 、 {量|りょう} を {間違|まちが}えれば {毒|どく} よ 。 || Maybe it began as kindness. …But even kindness is poison in the wrong dose.
 ?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp: {北|きた} の {山|やま} の {上|うえ} です ね 。 {記録|きろく} に よれば 。 …… {道|みち} は 、 {私|わたし} が {案内|あんない} しない ほう が いい でしょう 。 || Up in the northern mountains, according to the records. …It's probably best if I don't lead.
 ?(comp=suzu) !gesture comp palm

@@ -120,7 +120,7 @@ narr: {常夜灯|じょうやとう} が 、 {静|しず}か に {燃|も}えて
 !fade out
 narr: {宿|やど} で 、 {一晩|ひとばん} {待|ま}つ こと に した 。 {窓|まど} の {外|そと} は 、 {真|ま}っ{白|しろ} だ 。 || You decide to wait the night at the inn. Outside the window, everything is white.
 ?(comp=nao) comp: {急|いそ}ぎ の {便|びん} じゃ ない 。 {霧|きり} の {中|なか} を {走|はし}る {飛脚|ひきゃく} は 、 {長生|ながい}き しない 。 || It's not urgent post. Couriers who run in fog don't live long.
-?(comp=mio) comp: {待|ま}つ の も 、 {大事|だいじ} な {判断|はんだん} です 。 …… {温|あたた}かい お{茶|ちゃ} を {入|い}れましょう 。 || Waiting is a decision too. …I'll make some hot tea.
+?(comp=mio) comp: {待|ま}つ の も 、 {大事|だいじ} な {判断|はんだん} だ よ 。 …… {温|あたた}かい お{茶|ちゃ} を {入|い}れよう 。 || Waiting is a decision too. …I'll make some hot tea.
 ?(comp=ren) comp: {暗|くら}い {道|みち} より 、 {明|あか}るい {朝|あさ} を {待|ま}ちましょう 。 {灯守|ひもり} の {教|おし}え です 。 || Better to wait for a bright morning than walk a dark road. A keepers' teaching.
 ?(comp=suzu) comp: {幕間|まくあい} ね 。 {休|やす}む の も {芸|げい} の うち よ 。 || An interval. Resting is part of the craft.
 !var cr_phase = 5
@@ -140,7 +140,7 @@ RB.script.add(`
 narr: {杉並木|すぎなみき} を {抜|ぬ}ける と 、 {大|おお}きな {杉|すぎ} の {下|した} に {宿場|しゅくば} が あった 。 {杉|すぎ}ノ{木宿|きじゅく} だ 。 || Out of the cedar avenue, a post station under a great cedar: Suginoki.
 narr: {空|そら} が {低|ひく}く なって きた 。 {雲|くも} が 、 {山|やま} の {上|うえ} まで {下|お}りて いる 。 || The sky has come down lower. The clouds reach down to the mountaintops.
 ?(comp=nao) comp: {飛脚|ひきゃく} は 、 {大|おお}きな {木|き} を {目印|めじるし} に する 。 {迷|まよ}わない ため だ 。 || Couriers use big trees as landmarks. So they don't get lost.
-?(comp=mio) comp: {杉|すぎ} の {葉|は} の {匂|にお}い 。 …… {頭|あたま} が すっきり します 。 || The smell of cedar. …It clears the head.
+?(comp=mio) comp: {杉|すぎ} の {葉|は} の {匂|にお}い 。 …… {頭|あたま} が すっきり する 。 || The smell of cedar. …It clears the head.
 ?(comp=ren) comp[smile]: {大|おお}きな {杉|すぎ} です ね 。 …… これ なら 、 {私|わたし} でも {迷|まよ}いません 。 || What a great cedar. …Even I couldn't lose my way with that.
 ?(comp=suzu) comp: しめ{縄|なわ} が {巻|ま}いて ある わ 。 {神様|かみさま} の {木|き} ね 。 {挨拶|あいさつ} して {行|い}きましょ 。 || There's a sacred rope round it. A god's tree. Let's pay our respects.
 
@@ -215,7 +215,7 @@ narr: {石畳|いしだたみ} を {登|のぼ}り{切|き}る と 、 {長|な�
 !sfx water
 narr: {着|つ}いた {途端|とたん} 、 {雨|あめ} が {降|ふ}り{出|だ}した 。 {宿場|しゅくば} の {下|した} の {沢|さわ} が 、 {音|おと} を {立|た}てて {流|なが}れて いる 。 || The moment you arrive, it starts to rain. The stream below the station runs loud.
 ?(comp=nao) comp: {山|やま} の {雨|あめ} は {早|はや}い 。 …… {今夜|こんや} は 、 {沢|さわ} を {渡|わた}らない {方|ほう} が いい 。 || Rain comes fast in the mountains. …Better not cross the stream tonight.
-?(comp=mio) comp: {濡|ぬ}れた ままで は {風邪|かぜ} を ひきます 。 {早|はや}く {宿|やど} に {入|はい}りましょう 。 || You'll catch cold if you stay wet. Let's get inside.
+?(comp=mio) comp: {濡|ぬ}れた まま じゃ {風邪|かぜ} を ひく よ 。 {早|はや}く {宿|やど} に {入|はい}ろう 。 || You'll catch cold if you stay wet. Let's get inside.
 ?(comp=ren) comp: {雨|あめ} の {日|ひ} の {灯|ひ} は 、 {特|とく}に {大事|だいじ} です 。 {道|みち} が {見|み}えません から 。 || On a rainy day a lamp matters most. You can't see the road.
 ?(comp=suzu) comp: {雨|あめ} の {日|ひ} の {宿場|しゅくば} は 、 {満員|まんいん} に なる わ よ 。 {早|はや}い {者|もの} {勝|が}ち 。 || A post station fills up on a rainy day. First come, first served.
 
@@ -236,7 +236,7 @@ narr: ヘイスケ は 、 {雨|あめ} の {中|なか} 、 {人|ひと} を {�
 :over
 cr_heisuke: …… ふむ 。 {分|わ}かった 。 {伝|つた}えて おこう 。 || …Hm. Very well. I'll pass it on.
 :next
-cr_heisuke: {次|つぎ} は {中山|なかやま} の オタキ に 、 わし から {頼|たの}む 。 「{雨|あめ} が やんだら 、 {大工|だいく} を {寄越|よこ}して ほしい 。 {橋|はし} を {直|なお}す 。」 || Next, from me, to Otaki at Nakayama: "Once the rain stops, send us carpenters. We'll fix the bridge."
+cr_heisuke: {次|つぎ} は {中山|なかやま} の オタキ に 、 {俺|おれ} から {頼|たの}む 。 「{雨|あめ} が やんだら 、 {大工|だいく} を {寄越|よこ}して ほしい 。 {橋|はし} を {直|なお}す 。」 || Next, from me, to Otaki at Nakayama: "Once the rain stops, send us carpenters. We'll fix the bridge."
 !set cr_given3
 !journal ヘイスケ に {伝言|でんごん} を {伝|つた}えた 。 {次|つぎ} は {中山|なかやま} の オタキ へ 。 || You passed the message to Heisuke. The next is for Otaki at Nakayama.
 !end
@@ -253,7 +253,7 @@ cr_heisuke: {石畳|いしだたみ} へ {出|だ}した {者|もの} たち が
 :sorry
 cr_heisuke: …… そう か 。 {噂|うわさ} は {噂|うわさ} と して {聞|き}けば 、 {誰|だれ} も {雨|あめ} に {濡|ぬ}れず に {済|す}んだ 。 まあ 、 {道|みち} の {掃除|そうじ} に は なった 。 {気|き} に するな 。 || …I see. Heard as a rumour, nobody would have got wet. Well, the road got a sweeping. Don't let it trouble you.
 !set cr_r2_fixed
-?(comp=nao) comp: {聞|き}いた と {言|い}えば 、 {聞|き}いた {話|はなし} に なる 。 {言|い}わなければ 、 {見|み}た {話|はなし} に なる 。 …… {覚|おぼ}えて おけ 。 || Say you heard it, and it's a thing you heard. Don't, and it becomes a thing you saw. …Remember that.
+?(comp=nao) comp: {次|つぎ} は 「{聞|き}いた」 って {付|つ}けろ 。 それ だけ で {済|す}む 。 || Next time, tack on "I heard". That's all it takes.
 
 @scene cr.heisuke
 !faceplayer
@@ -309,7 +309,7 @@ RB.script.add(`
 narr: {雨|あめ} が {上|あ}がった 。 {山|やま} の {中|なか}ほど に 、 {中山宿|なかやまじゅく} が ある 。 || The rain has stopped. Halfway up the mountain lies Nakayama Station.
 narr: {二軒|にけん} の {宿屋|やどや} が 、 {並|なら}んで {客|きゃく} を {呼|よ}んで いる 。 {片方|かたほう} が {呼|よ}ぶ と 、 もう {片方|かたほう} が {大|おお}きな {声|こえ} で {呼|よ}ぶ 。 || Two inns side by side are calling for guests. When one calls, the other calls louder.
 ?(comp=nao) comp: {客|きゃく} の {取|と}り{合|あ}い か 。 {宿場|しゅくば} じゃ よく ある 。 || Fighting over guests. Common enough at a post station.
-?(comp=mio) comp: {二軒|にけん} とも 、 {良|よ}い {宿|やど} に {見|み}えます けど …… 。 || Both of them look like good inns…
+?(comp=mio) comp: {二軒|にけん} とも 、 {良|よ}い {宿|やど} に {見|み}える けど …… 。 || Both of them look like good inns…
 ?(comp=ren) comp: {灯|ひ} が {一|ひと}つ で 、 {宿|やど} が {二|ふた}つ 。 …… {喧嘩|けんか} の {種|たね} は 、 {他|ほか} に あり そう です ね 。 || One lamp, two inns. …The quarrel must have some other cause.
 ?(comp=suzu) comp[laugh]: {呼|よ}び{込|こ}み の {声|こえ} 、 いい {勝負|しょうぶ} ね 。 {芝居|しばい} の {口上|こうじょう} より {元気|げんき} だ わ 。 || The calling-in's neck and neck. Livelier than a theatre's opening announcement.
 
@@ -418,7 +418,7 @@ narr: {馬返|うまがえ}し の {宿|しゅく} 。 ここ から {先|さき
 narr: {上|うえ} の {坂|さか} から 、 {霧|きり} が {流|なが}れて {来|き}た 。 {宿場|しゅくば} の {端|はし} が 、 もう {見|み}えない 。 || Fog flows down from the slope above. The far end of the station is already gone.
 ?(comp=nao) comp: {霧|きり} か 。 …… {急|いそ}ぐ {時|とき} ほど 、 {足|あし} を {止|と}める もん だ 。 || Fog. …The more you're in a hurry, the more you should stop.
 ?(comp=mio) !gesture comp guard
-?(comp=mio) comp[worry]: {少|すこ}し 、 {息|いき} が {苦|くる}しい です 。 {高|たか}い {所|ところ} に {来|き}た から でしょう 。 {無理|むり} は しない で ください ね 。 || I'm a little short of breath. It must be the height. Don't push yourself.
+?(comp=mio) comp[worry]: {少|すこ}し 、 {息|いき} が {苦|くる}しい 。 {高|たか}い {所|ところ} に {来|き}た から かな 。 {無理|むり} は しない で ね 。 || I'm a little short of breath. It must be the height. Don't push yourself.
 ?(comp=ren) comp: {霧|きり} の {中|なか} の {灯|ひ} は 、 {遠|とお}く から {見|み}えます 。 {早|はや}く {点|つ}けましょう 。 || A light in fog can be seen from a long way off. Let's light it soon.
 ?(comp=suzu) comp: {霧|きり} の {演出|えんしゅつ} ね 。 …… {本物|ほんもの} は 、 {寒|さむ}い わ 。 || A fog effect. …The real thing is cold.
 
@@ -451,7 +451,7 @@ cr_genji: {霧|きり} は {逃|に}げん 。 {後|あと} で いい 。 || Th
 cr_genji: {崖道|がけみち} へ {行|い}って みた が 、 {大|おお}きな {石|いし} で {通|とお}れん かった 。 {馬|うま} を {後|うし}ろ へ {歩|ある}かせて 、 {戻|もど}って {来|き}た わい 。 || I tried the ledge, but a big rock blocked it. I had to back the horse out and come home.
 !choice
 * {地図|ちず} の {話|はなし} と 、 タツ さん の {話|はなし} を 、 {分|わ}けて {言|い}う べき でした 。 || I should have kept what the map says apart from what Tatsu saw. -> sorry
-* すみません 。 {地図|ちず} の {話|はなし} だけ を {伝|つた}えて しまった 。 || Sorry. I passed on only the map's side. -> sorry
+* すみません 。 {地図|ちず} の {話|はなし} だけ を {伝|つた}えて しまいました 。 || Sorry. I passed on only the map's side. -> sorry
 :sorry
 cr_genji: なあに 、 {馬|うま} も わし も {無事|ぶじ} だ 。 {地図|ちず} と いう の は 、 {描|か}いた {者|もの} が {歩|ある}いた {所|ところ} しか {信用|しんよう} できん 。 わし も {勉強|べんきょう} に なった 。 || Ah, the horse and I are fine. A map's only to be trusted where its maker walked. I learned something too.
 !set cr_r4_fixed
@@ -508,7 +508,7 @@ narr: {霧下宿|きりしたじゅく} 。 {宿場|しゅくば} の {灯|ひ} 
 narr: {上|うえ} の {尾根|おね} は 、 {白|しろ}い {霧|きり} に {隠|かく}れて いる 。 あの {中|なか} に 、 {関所|せきしょ} が ある と いう 。 || The ridge above is hidden in white mist. The checkpoint is up there, they say.
 ?(comp=nao) !gesture comp lookroad up
 ?(comp=nao) comp: …… {灯|ひ} が {点|つ}いて いる 。 {誰|だれ} が {守|まも}って いる か 、 {分|わ}かる {気|き} が する 。 || …The lamp is lit. I think I know who's keeping it.
-?(comp=mio) comp: {灯|ひ} が {点|つ}いて いる と 、 ほっと します ね 。 || It's a relief to see a lamp lit.
+?(comp=mio) comp: {灯|ひ} が {点|つ}いて いる と 、 ほっと する ね 。 || It's a relief to see a lamp lit.
 ?(comp=ren) comp[surprise]: {守|まも}られて いる {灯|ひ} です 。 {毎晩|まいばん} 、 {誰|だれ} か が {名前|なまえ} を {呼|よ}んで いる 。 || A tended lamp. Someone has been calling its name every night.
 ?(comp=suzu) comp: {最後|さいご} の {宿|しゅく} …… 。 {幕|まく} の {前|まえ} の {一休|ひとやす}み ね 。 || The last station… A breather before the curtain.
 !quest cr_main 3

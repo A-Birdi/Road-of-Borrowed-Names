@@ -219,7 +219,7 @@ as_mitsue: {祭|まつ}り の {支度|したく} 、 {一緒|いっしょ} に 
 !set as_fp_lan
 ?(var.as_lan=street) as_mitsue: {道|みち} に {沿|そ}って ずっと 。 {村|むら} の {端|はし} から {端|はし} まで {明|あか}るく なります ね 。 || All along the road. The village will be lit from end to end.
 ?(var.as_lan=canal) as_mitsue: {水路|すいろ} に {沿|そ}って 。 {水|みず} に {映|うつ}って 、 {倍|ばい} に {見|み}えます よ 。 || Along the channel. Reflected in the water, there'll look to be twice as many.
-?(var.as_lan=hill) as_mitsue: {坂|さか} の {上|うえ} まで 。 {松|まつ} の {下|した} から 、 {村|むら} {中|じゅう} の {灯|ひ} が {見|み}える わ 。 || Right up the slope. From under the pine you'll see the whole village lit.
+?(var.as_lan=hill) as_mitsue: {坂|さか} の {上|うえ} まで 。 {松|まつ} の {下|した} から 、 {村|むら} {中|じゅう} の {灯|ひ} が {見|み}えます よ 。 || Right up the slope. From under the pine you'll see the whole village lit.
 :food
 !if as_fp_food -> order
 !challenge as.fest_food

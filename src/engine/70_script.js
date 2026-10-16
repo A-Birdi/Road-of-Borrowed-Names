@@ -160,6 +160,8 @@ RB.script = (function () {
     RB.game.pushMode('dialogue');
     // the staging token: the actors this scene cues are its own until it ends (src/engine/52_staging.js)
     const stageTok = RB.staging ? RB.staging.begin(sceneId) : 0;
+    // the scene's voice index and its first lines, fetched while it begins (src/audio/52_voicebank.js)
+    if (RB.voicebank) { try { RB.voicebank.scene(sceneId); } catch (e) { /* voices are optional */ } }
     try {
       await exec(sc, ctx || {});
       if (g === gen) RB.game.s.seen[sceneId] = true;

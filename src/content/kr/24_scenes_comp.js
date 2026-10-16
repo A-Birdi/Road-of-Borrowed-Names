@@ -75,13 +75,13 @@ narr: ミオ は 、 ヒサエ の {咳|せき} を {聞|き}いて から 、 {
 * {少|すこ}し {休|やす}んだら ？ || Why not rest a little? -> rest
 * {一緒|いっしょ} に {持|も}って いこう か 。 || Shall we take it over together? -> together
 :rest
-comp[angry]: {休|やす}める わけ ない でしょう ！ {一人|ひとり} で {三十年|さんじゅうねん} 、 {誰|だれ} も {診|み}て くれなかった ん です よ ！ || How could I rest? Thirty years alone, and nobody ever looked after her!
+comp[angry]: {休|やす}める わけ ない でしょう ！ {一人|ひとり} で {三十年|さんじゅうねん} 、 {誰|だれ} も {診|み}て くれなかった の よ ！ || How could I rest? Thirty years alone, and nobody ever looked after her!
 narr: ミオ は {鍋|なべ} を {抱|かか}えて 、 ヒサエ の {小屋|こや} の {方|ほう} へ {行|い}って しまった 。 || Mio picks up the pot and goes off towards Hisae's hut.
 !set kr_quarrel
 !goto end
 :together
 narr: {二人|ふたり} で {薬|くすり} を {持|も}って いく と 、 ヒサエ は {四度目|よんどめ} に やっと {受|う}け{取|と}った 。 「{二人|ふたり} がかり かい 。 {降参|こうさん} だ よ 。」 || You take the medicine over together, and on the fourth try Hisae finally accepts it. "Two of you at once? I give in."
-comp[smile]: …… ありがとう 。 {一人|ひとり} で {頑張|がんば}りすぎる の 、 わたし の {悪|わる}い {癖|くせ} です ね 。 || …Thank you. Trying too hard on my own: that's a bad habit of mine.
+comp[smile]: …… ありがとう 。 {一人|ひとり} で {頑張|がんば}りすぎる の 、 わたし の {悪|わる}い {癖|くせ} だ ね 。 || …Thank you. Trying too hard on my own: that's a bad habit of mine.
 !set kr_makeup_done
 :end
 
@@ -130,12 +130,12 @@ kr_hisae: {喧嘩|けんか} かい 。 {灯|ひ} の {前|まえ} で {喧嘩|�
 * {誠|まこと} に {申|もう}し{訳|わけ} ありません でした 。 || I offer my most sincere apologies. -> stiff
 :fine
 ?(comp=nao) comp[smile]: …… そう か 。 {助|たす}かる 。 || …Right. Thanks.
-?(comp=mio) comp[smile]: …… ありがとう 。 {優|やさ}しい です ね 。 || …Thank you. You're kind.
+?(comp=mio) comp[smile]: …… ありがとう 。 {優|やさ}しい ね 。 || …Thank you. You're kind.
 ?(comp=suzu) comp[smile]: …… ありがと 。 {相方|あいかた} が あなた で よかった わ 。 || …Thanks. I'm glad you're my partner.
 !goto made
 :mine
 ?(comp=nao) comp: お{互|たが}い さま だ 。 …… {仲直|なかなお}り だ な 。 || We're even. …Made up, then.
-?(comp=mio) comp[smile]: いいえ 、 {心配|しんぱい} して くれた ん です もの 。 {仲直|なかなお}り です 。 || No, you were worried about me. We're friends again.
+?(comp=mio) comp[smile]: ううん 、 {心配|しんぱい} して くれた ん だ もの 。 {仲直|なかなお}り 。 || No, you were worried about me. We're friends again.
 ?(comp=suzu) comp[laugh]: こちら こそ 。 …… ほら 、 これ で {両成敗|りょうせいばい} ね 。 || Me too. …There, that's both of us at fault, fair and square.
 !goto made
 :stiff

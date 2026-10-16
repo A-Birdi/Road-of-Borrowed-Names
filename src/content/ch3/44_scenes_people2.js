@@ -61,7 +61,7 @@ narr: {壁|かべ} に {立|た}て{掛|か}けた {太|ふと}い {梁|はり} 
 ?(comp=nao) !gesture comp observe 8,2
 ?(comp=nao) comp: {燃|も}えた {跡|あと} だ 。 {焚|た}き{火|び} じゃ ない 。 {家|いえ} ごと {燃|も}えた {焦|こ}げ{方|かた} だ よ 。 || That's burning. Not a campfire — that's the char of a whole house going up.
 ?(comp=mio) !gesture comp guard
-?(comp=mio) comp[worry]: {焦|こ}げ{目|め} が {深|ふか}い 。 {長|なが}い {時間|じかん} 、 {強|つよ}い {火|ひ} に {当|あ}たった ん です 。 || The char runs deep. It sat in a fierce fire for a long time.
+?(comp=mio) comp[worry]: {焦|こ}げ{目|め} が {深|ふか}い 。 {長|なが}い {時間|じかん} 、 {強|つよ}い {火|ひ} に {当|あ}たった ん だ 。 || The char runs deep. It sat in a fierce fire for a long time.
 ?(comp=ren) !gesture comp tendlamp
 ?(comp=ren) comp: {木|き} は {燃|も}えた こと を {忘|わす}れません 。 {灯|ひ} の {芯|しん} と {同|おな}じ で 。 || Wood doesn't forget that it burned. Like a lantern wick.
 ?(comp=suzu) !gesture comp aside
@@ -218,7 +218,7 @@ co_fusa: {少|すこ}し だけ {手伝|てつだ}って くれない ？ {言|�
 !activity co.a_orders
 !if var._res=0 -> end
 !gesture co_fusa laugh
-co_fusa[laugh]: {完璧|かんぺき} ！ {数|かぞ}え{方|かた} が きれい ね 。 {杯|はい} も {個|こ} も {袋|ふくろ} も 、 {一|ひと}つ も {間違|まちが}え ない なんて 。 || Perfect! You count beautifully — cups, pieces, bags, not one wrong.
+co_fusa[laugh]: {完璧|かんぺき} ！ {数|かぞ}え{方|かた} が きれい ね 。 {甘酒|あまざけ} も お{茶|ちゃ} も {干|ほ}し{柿|がき} も 、 {一|ひと}つ も {間違|まちが}え ない なんて 。 || Perfect! You count beautifully — amazake, tea, dried persimmons, not one wrong.
 !prop co_fusa hoshigaki
 !gesture co_fusa handover pc
 !gesture pc receive co_fusa
@@ -330,7 +330,7 @@ nao[smirk]: …… よう 。 {世|よ} の {中|なか} 、 {狭|せま}い な
 !gesture nao strap
 nao: {潮硝子|しおがらす} から の {荷|に} を {届|とど}け に {来|き}た 。 {祭|まつ}り の {前|まえ} は 、 {柿|かき} の {箱|はこ} より {手紙|てがみ} の {方|ほう} が {重|おも}い 。 || Came up with a load from Saltglass. Before the festival, the letters weigh more than the persimmon crates.
 ?(comp=mio) !gesture comp observe nao
-?(comp=mio) comp[smile]: ナオ さん 。 {靴|くつ} 、 また {減|へ}って います よ 。 || Nao. Your boots are worn down again.
+?(comp=mio) comp[smile]: ナオ さん 。 {靴|くつ} 、 また {減|へ}ってる よ 。 || Nao. Your boots are worn down again.
 ?(comp=mio) !gesture nao shrug
 ?(comp=mio) nao: {坂|さか} の せい だ 。 {俺|おれ} の せい じゃ ない 。 || The hills' fault. Not mine.
 ?(comp=ren) !gesture comp palm
@@ -437,7 +437,7 @@ RB.script.add(`
 !if quest.co_main>=4 -> end
 !quest co_main 4
 ?(comp=nao) comp: {三人|さんにん} の {話|はなし} 、 {全部|ぜんぶ} {同|おな}じ {夜|よる} の {話|はなし} だ 。 {宛先|あてさき} は {一|ひと}つ 。 {記録堂|きろくどう} に {持|も}って {行|い}こう 。 || Three stories, all about the same night. One address. Let's take them to the Chronicle Hall.
-?(comp=mio) comp: {三人|さんにん} とも 、 {同|おな}じ {夜|よる} の こと を {話|はな}して いました 。 {症状|しょうじょう} が {揃|そろ}えば 、 {診断|しんだん} は {一|ひと}つ です 。 || All three were describing the same night. When the symptoms line up, there's only one diagnosis.
+?(comp=mio) comp: {三人|さんにん} とも 、 {同|おな}じ {夜|よる} の こと を {話|はな}してた 。 {症状|しょうじょう} が {揃|そろ}えば 、 {診断|しんだん} は {一|ひと}つ 。 || All three were describing the same night. When the symptoms line up, there's only one diagnosis.
 ?(comp=ren) comp: {三|みっ}つ の {灯|ひ} が 、 {同|おな}じ {名|な} を {照|て}らして います 。 {記録堂|きろくどう} で 、 {帳面|ちょうめん} と {並|なら}べましょう 。 || Three lanterns lighting the same name. Let's set them beside the records in the Chronicle Hall.
 ?(comp=suzu) comp: {三人|さんにん} の {台詞|せりふ} が 、 {同|おな}じ {場面|ばめん} を {指|さ}してる 。 …… {記録堂|きろくどう} へ 。 {植|う}え{付|つ}け{帳|ちょう} と {窯|かま} の {帳面|ちょうめん} を {持|も}って 。 || Three people's lines, all pointing to the same scene. …To the Chronicle Hall, with the planting book and the kiln ledger.
 !journal {植|う}え{付|つ}け{帳|ちょう} と {窯|かま} の {帳面|ちょうめん} を 、 {記録堂|きろくどう} の {閲覧|えつらん} の {机|つくえ} へ 。 || Take the planting book and the kiln ledger to the reading table in the Chronicle Hall.
@@ -482,7 +482,7 @@ co_ume[sad]: …… そう 。 そう いう {順番|じゅんばん} だった 
 co_ume: {植|う}え{付|つ}け{帳|ちょう} を {持|も}って お{行|い}き 。 {三|さん}{代|だい} {分|ぶん} の {字|じ} が ある 。 {変|へん} な {年|とし} が {一|ひと}つ ある から 、 {見|み}て ご{覧|らん} 。 || Take the planting book. It has three generations' handwriting in it. There's one odd year — have a look.
 !give co_plantbook
 ?(comp=nao) !gesture comp nod co_ume
-?(comp=nao) comp: {子|こ}ども を {連|つ}れて {逃|に}げた の は 、 ばあさん だった の か 。 {水路|すいろ} が {逃|に}げ{道|みち} 。 {石|いし} に {彫|ほ}って あった とおり だ 。 || So it was you who led the children out. Down the channel — just like the stone says.
+?(comp=nao) comp: {子|こ}ども を {連|つ}れて {逃|に}げた の は 、 ウメ さん だった の か 。 {水路|すいろ} が {逃|に}げ{道|みち} 。 {石|いし} に {彫|ほ}って あった とおり だ 。 || So it was you who led the children out. Down the channel — just like the stone says.
 ?(comp=mio) !gesture comp lowered
 ?(comp=mio) comp[sad]: {子|こ}ども たち の {手|て} を {引|ひ}いて …… {怖|こわ}かった でしょう 。 || Leading the children by the hand… You must have been so frightened.
 ?(comp=mio) !gesture co_ume rubhands
@@ -625,7 +625,7 @@ narr: {腕|うで} に {名前|なまえ} が {戻|もど}った 。 {下|くだ
 ?(comp=nao) !gesture comp nod 18,17
 ?(comp=nao) comp: {道|みち} に {名前|なまえ} が {戻|もど}る と 、 {道|みち} も {急|きゅう}に {真面目|まじめ} な {顔|かお} を する な 。 || Give a road its name back and it suddenly looks serious.
 ?(comp=mio) !gesture comp laugh
-?(comp=mio) comp[smile]: これ で ウメ さん も {迷|まよ}わない です ね 。 || Now Ume won't get lost.
+?(comp=mio) comp[smile]: これ で ウメ さん も {迷|まよ}わない ね 。 || Now Ume won't get lost.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {道|みち}しるべ は 、 {道|みち} の {約束|やくそく} です 。 …… {私|わたし} も 、 これ で {迷|まよ}わない 、 と {言|い}いたい ところ です が 。 || A signpost is a road's promise. …I'd like to say I won't get lost now either, but.
 ?(comp=suzu) !gesture comp point left

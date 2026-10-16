@@ -51,14 +51,16 @@ RB.script.add(`
 @scene at.decor_ferry
 narr: {新|あたら}しい {看板|かんばん} だ 。 ペンキ が まだ {乾|かわ}いて いない 。 || A new signboard. The paint isn't dry yet.
 narr: 「 {渡|わた}し{場|ば} ── {夜明|よあ}け に {出|で}ます 」 || "Ferry landing — we cross at dawn."
-?(comp) comp: {前|まえ} の {看板|かんばん} は 、 {字|じ} が {消|き}えて いた よね 。 || The old sign had lost its letters, hadn't it?
+?(comp&comp!=ren) comp: {前|まえ} の {看板|かんばん} は 、 {字|じ} が {消|き}えて いた よね 。 || The old sign had lost its letters, hadn't it?
+?(comp=ren) comp: {前|まえ} の {看板|かんばん} は 、 {字|じ} が {消|き}えて いました ね 。 || The old sign had lost its letters, hadn't it?
 
 @scene at.decor_mark300
 narr: {新|あたら}しい {道標|みちしるべ} だ 。 「 {天文台|てんもんだい} まで あと {三百|さんびゃく}{段|だん} 」 || A new waymarker. "Observatory: 300 steps to go."
 
 @scene at.decor_mark200
 narr: 「 {天文台|てんもんだい} まで あと {二百|にひゃく}{段|だん} 」 || "Observatory: 200 steps to go."
-?(comp) comp: {雪|ゆき} が {降|ふ}って も 、 これ なら {迷|まよ}わない ね 。 || Even in snow, nobody will get lost now.
+?(comp&comp!=ren) comp: {雪|ゆき} が {降|ふ}って も 、 これ なら {迷|まよ}わない ね 。 || Even in snow, nobody will get lost now.
+?(comp=ren) comp: {雪|ゆき} が {降|ふ}って も 、 これ なら {迷|まよ}いません 。 …… {私|わたし} でも 、 たぶん 。 || Even in snow, nobody will get lost now. …Even me, probably.
 
 @scene at.decor_mark100
 narr: 「 {天文台|てんもんだい} まで あと {百|ひゃく}{段|だん} 。 {灯|あか}り が {見|み}えたら 、 もう すぐ 」 || "Observatory: 100 steps to go. Once you can see the lamp, you're nearly there."
@@ -66,7 +68,8 @@ narr: 「 {天文台|てんもんだい} まで あと {百|ひゃく}{段|だ�
 @scene at.decor_tags
 narr: {港|みなと} {事務所|じむしょ} の {前|まえ} に 、 {木箱|きばこ} が {一|ひと}つ {置|お}いて ある 。 {中|なか} は {荷札|にふだ} で いっぱい だ 。 || A wooden crate stands outside the harbour office, full of cargo tags.
 narr: 「 {持|も}ち{主|ぬし} に {返|かえ}りました 。 {読|よ}めない {字|じ} は 、 もう ありません 」 || "Returned to their owners. There are no unreadable letters left."
-?(comp) comp: {字|じ} が {戻|もど}る と 、 {荷物|にもつ} も {帰|かえ}れる んだ ね 。 || When the letters come back, the cargo can go home too.
+?(comp&comp!=ren) comp: {字|じ} が {戻|もど}る と 、 {荷物|にもつ} も {帰|かえ}れる んだ ね 。 || When the letters come back, the cargo can go home too.
+?(comp=ren) comp: {字|じ} が {戻|もど}る と 、 {荷物|にもつ} も {帰|かえ}れる ん です ね 。 || When the letters come back, the cargo can go home too.
 
 @scene at.decor_saplings
 narr: {苗木|なえぎ} {一本|いっぽん} ずつ に 、 {小|ちい}さな {名札|なふだ} が ついて いる 。 || Every sapling has a small name tag.
@@ -80,5 +83,6 @@ narr: {下|した} に は 、 {小|ちい}さな {字|じ} の {書|か}き{込
 @scene at.decor_lantern
 narr: {新|あたら}しい {灯籠|とうろう} だ 。 {火袋|ひぶくろ} に 、 {知|し}らない {地名|ちめい} が {書|か}いて ある 。 || A new lantern. On its light-box is the name of a place you don't know.
 narr: 「 {葦原|あしはら}{新田|しんでん} 」 || "Ashihara Shinden" — shinden, "new fields": the old way of naming a newly settled village.
-?(comp) comp: {去年|きょねん} は 、 なかった {村|むら} だ ね 。 || That village wasn't there last year.
+?(comp&comp!=ren) comp: {去年|きょねん} は 、 なかった {村|むら} だ ね 。 || That village wasn't there last year.
+?(comp=ren) comp: {去年|きょねん} は 、 なかった {村|むら} です ね 。 || That village wasn't there last year.
 `, 'zz_atlas_decor');

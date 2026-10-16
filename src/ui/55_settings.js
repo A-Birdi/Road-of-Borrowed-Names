@@ -198,6 +198,13 @@ RB.ui.settings = (function () {
     mark: '<path class="c-a" d="M16 3l7.5 9.5L16 22 8.5 12.5z"/><path class="ln" d="M16 22v3.5M10 28h12"/><path class="dia" d="M16 8.5l3.2 4-3.2 4-3.2-4z"/>',
     nudge: '<path class="tile" d="M5 6h22v15H14l-6 5v-5H5z"/><path class="ln" d="M13.4 11a2.7 2.7 0 1 1 3.8 2.5c-.8.4-1.2 1-1.2 1.8"/><circle class="c-ink" cx="16" cy="18.2" r="1"/>',
     none: '<circle class="ln" cx="16" cy="16" r="10"/><path class="ln" d="M9 23L23 9"/>',
+    // voices: the game's recorded cast / the device's voice; the player's Voice A and B; higher and lower
+    cast: '<path class="tile" d="M4 6h17v12H11l-5 4.5V18H4z"/><path class="c-a" d="M8.5 12v-1M11.5 14v-5M14.5 13v-3M17.5 12.5v-2"/><path class="ln" d="M24 11.5a5 5 0 0 1 0 7M26.6 9a8.6 8.6 0 0 1 0 12"/>',
+    device: '<rect class="tile" x="9" y="3.5" width="14" height="25" rx="2.5"/><path class="ln" d="M14 25h4"/><path class="c-a" d="M13 11.5h2.5l3-2.6v8.2l-3-2.6H13z"/>',
+    vA: '<circle class="tile" cx="16" cy="16" r="12"/><text class="tx" x="16" y="21.6" text-anchor="middle">A</text>',
+    vB: '<circle class="tile" cx="16" cy="16" r="12"/><text class="tx" x="16" y="21.6" text-anchor="middle">B</text>',
+    pHi: '<path class="ln" d="M5 24h22"/><path class="c-a" d="M16 5l6 8h-4v7h-4v-7h-4z"/>',
+    pLo: '<path class="ln" d="M5 8h22"/><path class="c-a" d="M16 27l6-8h-4v-7h-4v7h-4z"/>',
     // the Ledger's look: a book with depth / the same book, flat
     book: '<path class="c-b" d="M3 8.5c5-1.6 9.6-1.4 13 1.2v17c-3.4-2.6-8-2.8-13-1.2z"/><path class="c-b2" d="M29 8.5c-5-1.6-9.6-1.4-13 1.2v17c3.4-2.6 8-2.8 13-1.2z"/><path class="pg" d="M6 11c3.4-.8 6.4-.6 8.5.7M6 14.5c3.4-.8 6.4-.6 8.5.7M17.5 11.7c2.1-1.3 5.1-1.5 8.5-.7M17.5 15.2c2.1-1.3 5.1-1.5 8.5-.7"/>',
     flat: '<rect class="tile" x="4" y="7" width="24" height="18" rx="1"/><path class="ln" d="M16 7v18"/><path class="ln" d="M7.5 11.5h5.5M7.5 15h5.5M19 11.5h5.5M19 15h5.5"/>',
@@ -216,7 +223,7 @@ RB.ui.settings = (function () {
   const why = (t) => (t ? '<p class="hint sx-why">' + esc(t) + '</p>' : '');
   // opts: [value, words, { i: icon, jp: Japanese name, d: a line under it }]
   function radios(key, label, opts, obj, hint) {
-    const cur = (obj === 'learn' ? learnObj() : RB.game.settings)[key];
+    const cur = (obj === 'learn' ? learnObj() : obj === 'voice' ? RB.game.settings.voice : RB.game.settings)[key];
     const name = 'r' + (++uid) + key;
     const stack = opts.some((o) => o[2] && o[2].d);
     return '<fieldset class="field sx-field" data-field="' + esc(key) + '"><legend class="sx-h">' + esc(label) + '</legend>' + why(hint) +
@@ -350,10 +357,34 @@ RB.ui.settings = (function () {
   }
 
   // ---- voices: why a line may be silent, the device's voice, following along ---------------------
+  // which voice speaks (src/audio/54_voice_route.js), and what this copy of the game can play
   function voiceNote() {
-    return '<div class="sx-slip"><p class="sx-slip-h">No recorded voices yet</p>' +
-      '<p>The game’s own Japanese voices are still being cast and recorded, so this version has none. Until they arrive, a line is spoken only by a Japanese voice installed on your device, if it has one and you turn it on; otherwise every line stays silent, and everything still works by reading.</p>' +
-      '<p class="muted small">When the recordings are added they will play by default, and this page will offer them, your device’s voice, or no voice at all.</p></div>';
+    const vb = RB.voicebank;
+    const st = RB.game.settings;
+    const mode = RB.voice && RB.voice.mode ? RB.voice.mode() : 'prepared';
+    let slip = '';
+    if (!vb || !vb.configured()) {
+      const alone = typeof location !== 'undefined' && !/^https?:$/.test(location.protocol);
+      slip = alone
+        ? '<div class="sx-slip"><p class="sx-slip-h">This copy plays no recordings</p><p>A copy of the game on its own never fetches anything. The recorded voices play in the hosted game and in the voiced offline package. Here a line is spoken by a Japanese voice installed on your device, if it has one; otherwise every line stays silent, and everything still works by reading.</p></div>'
+        : '<div class="sx-slip"><p class="sx-slip-h">No recorded voices yet</p><p>The game’s own Japanese voices are being recorded. Until they arrive, a line is spoken by a Japanese voice installed on your device, if it has one; otherwise every line stays silent, and everything still works by reading.</p></div>';
+    } else if (!vb.active() && mode === 'prepared') {
+      slip = '<div class="sx-slip"><p class="sx-slip-h">This browser cannot play the recordings</p><p>They are Ogg Opus, which this browser does not play. Your device’s Japanese voice speaks instead, if it has one.</p></div>';
+    }
+    let h = slip + radios('mode', 'Who speaks', [
+      ['prepared', 'Recorded voices', { i: 'cast', d: 'The game’s cast. A line without a recording uses your device’s voice, if it has one.' }],
+      ['device', 'Your device’s voice', { i: 'device', d: 'Only the Japanese voice installed on this device.' }],
+      ['none', 'No voice', { i: 'none', d: 'Nothing is spoken; every line can still be read.' }]], 'voice', null);
+    if (mode === 'prepared') {
+      h += radios('player', 'Your own lines', [['none', 'Silent', { i: 'none' }], ['A', 'Voice A', { i: 'vA' }], ['B', 'Voice B', { i: 'vB' }]], 'voice',
+        'Your character’s lines in the recorded voices. The words on screen are always yours; a line with your name in it is spoken by your device’s voice, which can say it.');
+      if (st.voice.player === 'A' || st.voice.player === 'B') h += radios('pitch', 'Pitch', [['high', 'Higher', { i: 'pHi' }], ['low', 'Lower', { i: 'pLo' }]], 'voice', null);
+      if (vb && vb.active()) {
+        h += tick('data-voiceautorec', st.voice.autoRec !== false, 'Play the voices automatically', 'On: each line is spoken as it appears, and the next few lines are fetched ahead. Off: a line is spoken when you press its Voice button.');
+        if (vb.configured() && typeof location !== 'undefined' && /^https?:$/.test(location.protocol)) h += '<div class="field sx-field"><p class="sx-h">Kept on this device</p><p class="hint sx-why" data-voicekept>Recordings already heard are kept, up to 150 MB, so they play at once next time. Your saves are separate and never touched.</p><button type="button" class="pbtn quiet" data-a="voiceclear">Clear the kept recordings</button></div>';
+      }
+    }
+    return h;
   }
   function deviceVoice() {
     const st = RB.game.settings;
@@ -505,6 +536,11 @@ RB.ui.settings = (function () {
         });
       } else if (b.dataset.a === 'resetbinds') {
         st.binds = null; RB.input.setBinds(null); await RB.game.saveSettings(); render();
+      } else if (b.dataset.a === 'voiceclear') {
+        // only the game's own kept recordings (its one cache); saves and everything else stay
+        const ok = RB.voicebank ? await RB.voicebank.clearKept() : false;
+        const p = L.querySelector('[data-voicekept]');
+        if (p) p.textContent = ok ? 'The kept recordings were cleared. Your saves were not touched.' : 'Nothing was kept on this device.';
       } else if (b.dataset.a === 'persist') {
         const r = await RB.save.requestPersist();
         RB.ui.notice(r ? 'The browser agreed to keep this site\'s storage persistent.' : 'The browser declined; saves still work but may be cleared under storage pressure.', 'info');
@@ -519,7 +555,9 @@ RB.ui.settings = (function () {
       if (t.matches('input[type=radio][data-set]')) {
         let v = t.value;
         if (v === 'true') v = true; else if (v === 'false') v = false;
-        if (t.dataset.obj === 'learn') learnObj()[t.dataset.set] = v; else st[t.dataset.set] = v;
+        if (t.dataset.obj === 'learn') learnObj()[t.dataset.set] = v;
+        else if (t.dataset.obj === 'voice') { st.voice[t.dataset.set] = v; if (RB.voice && RB.voice.cancel) RB.voice.cancel(); }
+        else st[t.dataset.set] = v;
         await RB.game.saveSettings();
         if (t.dataset.set === 'uiLang') { RB.ui.hud.refresh && RB.ui.hud.refresh(); relabel(); }
         if (t.dataset.set === 'ledgerStyle') { if (fr) fr.setBook(st.ledgerStyle === 'flat' ? 'flat' : 'book'); if (RB.ui.menu && RB.ui.menu.restyle) RB.ui.menu.restyle(); }
@@ -536,6 +574,8 @@ RB.ui.settings = (function () {
         focusSame(t);
       } else if (t.matches('[data-voiceauto]')) {
         st.voice.auto = t.checked; await RB.game.saveSettings(); render(); focusSame(t);
+      } else if (t.matches('[data-voiceautorec]')) {
+        st.voice.autoRec = t.checked; await RB.game.saveSettings(); render(); focusSame(t);
       } else if (t.matches('[data-voicehl]')) {
         st.voice.highlight = t.checked; if (!t.checked && RB.ui.speechMark) RB.ui.speechMark.stop();
         await RB.game.saveSettings(); render(); focusSame(t);

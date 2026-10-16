@@ -15,7 +15,7 @@ narr: {古|ふる}い {木|き} は {一本|いっぽん} も ない 。 {黒|�
 ?(comp=nao) !gesture comp lookroad up
 ?(comp=nao) comp: {全部|ぜんぶ} {同|おな}じ {年|とし} の {木|き} だ 。 {一度|いちど} に {植|う}えた ん だ な 。 {二百本|にひゃっぽん} 、 か 。 || All the same age. Planted in one go. Two hundred, was it.
 ?(comp=mio) !gesture comp bend down
-?(comp=mio) comp[worry]: {切|き}り{株|かぶ} が {黒|くろ}い 。 {腐|くさ}った {黒|くろ} じゃ なくて 、 {焦|こ}げた {黒|くろ} です 。 || The stumps are black. Not the black of rot — the black of burning.
+?(comp=mio) comp[worry]: {切|き}り{株|かぶ} が {黒|くろ}い 。 {腐|くさ}った {黒|くろ} じゃ なくて 、 {焦|こ}げた {黒|くろ} 。 || The stumps are black. Not the black of rot — the black of burning.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {道|みち} は {一本|いっぽん} 、 {上|うえ} へ 。 …… {私|わたし} でも {分|わ}かります 。 {今日|きょう} は {運|うん} が いい 。 || One path, going up. …Even I can follow that. Lucky day.
 ?(comp=suzu) !gesture comp lowered hold
@@ -31,7 +31,7 @@ narr: 「 {火|ひ} は {来|く}る 。 {火|ひ} は {去|さ}る 。 {石|い
 ?(comp=nao) !gesture comp nod
 ?(comp=nao) comp: {石|いし} は {喋|しゃべ}らない けど 、 {嘘|うそ} も つかない 。 {配達|はいたつ} {先|さき} と して は {最高|さいこう} だ 。 || Stone doesn't talk, but it doesn't lie either. Ideal recipient.
 ?(comp=mio) !gesture comp point 23,25
-?(comp=mio) comp: {火|ひ} が {来|く}る 、 と {書|か}いて ある 。 {来|こ}ない 、 じゃ なくて 。 {昔|むかし} の {人|ひと} は 、 {分|わ}かって いた んです ね 。 || It says fire comes. Not that it doesn't. The founders knew.
+?(comp=mio) comp: {火|ひ} が {来|く}る 、 と {書|か}いて ある 。 {来|こ}ない 、 じゃ なくて 。 {昔|むかし} の {人|ひと} は 、 {分|わ}かって いた ん だ ね 。 || It says fire comes. Not that it doesn't. The founders knew.
 ?(comp=ren) !gesture comp observe 23,25
 ?(comp=ren) comp: {石|いし} に {刻|きざ}んだ {字|じ} は 、 {静寂|しじま} でも {消|け}しにくい 。 だから {残|のこ}った の でしょう 。 || Words cut in stone are hard even for the Hush to lift. That's why these survived.
 ?(comp=suzu) !gesture comp shrug
@@ -61,7 +61,7 @@ narr: {石|いし} が {互|たが}い に {噛|か}み{合|あ}って 、 {静|
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: いし 、 か 。 {風|かぜ} で {飛|と}ばされ そう に なったら 、 それ で {踏|ふ}ん{張|ば}れ 。 {上|うえ} の {蛾|が} 、 {羽|はね} で {風|かぜ} を {起|お}こす から な 。 || Ishi, huh. If a gust tries to knock you over, dig in with that. The moths up there beat up a wind.
 ?(comp=mio) !gesture comp nod pc
-?(comp=mio) comp: {石|いし} は {風|かぜ} に も {水|みず} に も {動|うご}かない 。 {覚|おぼ}えて おきます ね 。 || Stone doesn't move for wind or water. I'll remember that.
+?(comp=mio) comp: {石|いし} は {風|かぜ} に も {水|みず} に も {動|うご}かない 。 {覚|おぼ}えて おく ね 。 || Stone doesn't move for wind or water. I'll remember that.
 ?(comp=ren) !gesture comp tendlamp
 ?(comp=ren) comp: {石|いし} は {風|かぜ} に {動|うご}かない 。 {蛾|が} が {風|かぜ} を {起|お}こしたら 、 {石|いし} を 。 {灯|ひ} の {台座|だいざ} も 、 {石|いし} で {作|つく}ります から ね 。 || Stone doesn't move in wind. When the moths raise a gust — stone. Lantern bases are made of stone for a reason.
 ?(comp=suzu) !gesture comp celebrate
@@ -81,7 +81,7 @@ narr: {崩|くず}れた {壁|かべ} の {断面|だんめん} に 、 {土|つ
 ?(comp=nao) !gesture comp observe 16,14
 ?(comp=nao) comp: …… {灰|はい} だ 。 {焚|た}き{火|び} の {跡|あと} を {埋|う}めた の と 、 {同|おな}じ {色|いろ} を してる 。 || …Ash. Same colour as a campfire that's been buried.
 ?(comp=mio) !gesture comp bend 16,14
-?(comp=mio) comp[think]: {灰|はい} の {層|そう} です 。 {上|うえ} に {積|つ}もった {土|つち} の {厚|あつ}さ から する と …… {二十年|にじゅうねん} {前後|ぜんご} 。 || A layer of ash. From the depth of soil on top… about twenty years.
+?(comp=mio) comp[think]: {灰|はい} の {層|そう} だ 。 {上|うえ} に {積|つ}もった {土|つち} の {厚|あつ}さ から する と …… {二十年|にじゅうねん} {前後|ぜんご} 。 || A layer of ash. From the depth of soil on top… about twenty years.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {記録|きろく} は {書|か}き{換|か}えられて も 、 {土|つち} は {書|か}き{換|か}えられ ない 。 …… {灯守|ひもり} の {教本|きょうほん} に 、 {載|の}せたい くらい です 。 || You can rewrite a record, but not the soil. …I'd like to put that in the lantern keepers' handbook.
 ?(comp=suzu) !gesture comp lowered hold
@@ -94,7 +94,7 @@ narr: {崩|くず}れて いた {土|つち} が {固|かた}まり 、 {上|う
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: つち 。 {水|みず} が {来|き}たら 、 それ で {土手|どて} を {作|つく}る 。 {単純|たんじゅん} で いい 。 || Tsuchi. Water comes, you build a bank. Simple. I like it.
 ?(comp=mio) !gesture comp size
-?(comp=mio) comp: {土|つち} は {水|みず} を {止|と}める 。 {薬|くすり} を {煎|せん}じる {時|とき} も 、 {土|つち} の {鍋|なべ} が {一番|いちばん} です 。 || Earth holds back water. When I brew medicine, clay pots are best too.
+?(comp=mio) comp: {土|つち} は {水|みず} を {止|と}める 。 {薬|くすり} を {煎|せん}じる {時|とき} も 、 {土|つち} の {鍋|なべ} が {一番|いちばん} な の 。 || Earth holds back water. When I brew medicine, clay pots are best too.
 ?(comp=ren) !gesture comp glasses
 ?(comp=ren) comp: {土|つち} の {字|じ} 。 {十|じゅう} の {下|した} に {一|いち} 。 …… {字源|じげん} の {話|はなし} は 、 やめて おきます 。 {嘘|うそ} に なる と いけない ので 。 || The character for earth. A cross over a line… No, I'll leave the etymology alone. I don't want to make things up.
 ?(comp=suzu) !gesture comp exhale
@@ -131,7 +131,7 @@ narr: {通|とお}り の {奥|おく} に 、 {大|おお}きな {窯|かま} �
 ?(comp=nao) !gesture comp point 2,25
 ?(comp=nao) comp: {逃|に}げ{道|みち} は 、 {来|き}た {道|みち} だけ か 。 …… いや 、 {左|ひだり} の {下|した} に {木戸|きど} が ある 。 {内側|うちがわ} から {閂|かんぬき} だ 。 || Only way out is the way we came? …No — there's a gate down on the left. Barred from this side.
 ?(comp=mio) !gesture comp lowered hold
-?(comp=mio) comp[sad]: ここ は {工房|こうぼう} で あって 、 {家|いえ} でも あった んです ね 。 {鍋|なべ} が ある 。 {子|こ}ども の {下駄|げた} も 。 || These were workshops — and homes too. There's a cooking pot. A child's clogs.
+?(comp=mio) comp[sad]: ここ は {工房|こうぼう} で あって 、 {家|いえ} でも あった ん だ ね 。 {鍋|なべ} が ある 。 {子|こ}ども の {下駄|げた} も 。 || These were workshops — and homes too. There's a cooking pot. A child's clogs.
 ?(comp=ren) !gesture comp chin
 ?(comp=ren) comp: {工房|こうぼう} {通|どお}り 。 {年代記|ねんだいき} に は {一度|いちど} も {出|で}て こなかった {名|な} です 。 || The workshop row. A name that never once appeared in the chronicle.
 ?(comp=suzu) !gesture comp aside
@@ -145,7 +145,7 @@ narr: {焼|や}け{残|のこ}った {看板|かんばん} 。 {煤|すす} の 
 ?(comp=nao) !gesture comp nod 5,13
 ?(comp=nao) comp: トモエ 。 …… {誰|だれ} か の {名前|なまえ} が 、 やっと {出|で}て きた な 。 || Tomoe. …Finally, someone's name.
 ?(comp=mio) !gesture comp observe 5,13
-?(comp=mio) comp: {字|じ} が {丁寧|ていねい} です 。 {看板|かんばん} を {大事|だいじ} に して いた {人|ひと} だ 。 || Careful lettering. Someone who took pride in her sign.
+?(comp=mio) comp: {字|じ} が {丁寧|ていねい} 。 {看板|かんばん} を {大事|だいじ} に して いた {人|ひと} だ 。 || Careful lettering. Someone who took pride in her sign.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {看板|かんばん} の {字|じ} は 、 {灯|ひ} の {名|な} と {同|おな}じ で 、 {店|みせ} の {約束|やくそく} です 。 ここ に {来|く}れば 、 トモエ が いる 、 と いう 。 || A shop sign is like a lantern name: a promise. Come here, and you'll find Tomoe.
 ?(comp=suzu) !gesture comp lowered hold
@@ -157,7 +157,7 @@ narr: {看板|かんばん} の {板|いた} だけ が 、 {真|ま}っ{白|し
 
 @scene co.works_globes
 narr: {溶|と}けて {歪|ゆが}んだ ガラス の {火屋|ほや} が 、 {十|とお} ほど {重|かさ}なって {固|かた}まって いる 。 || Around ten lantern globes, melted and warped, have fused into one lump.
-?(comp=mio) comp: {祭|まつ}り の {灯籠|とうろう} の {火屋|ほや} です ね 。 {三十個|さんじゅっこ} {焼|や}いて いた 、 と イサオ さん が 。 || The festival lantern globes. Isao said they were firing thirty.
+?(comp=mio) comp: {祭|まつ}り の {灯籠|とうろう} の {火屋|ほや} だ ね 。 {三十個|さんじゅっこ} {焼|や}いて いた 、 と イサオ さん が 。 || The festival lantern globes. Isao said they were firing thirty.
 
 @scene co.works_lantern
 !if co_kiln_done -> lit
@@ -200,7 +200,7 @@ narr: {冷気|れいき} が {走|はし}る と 、 {封|ふう} に {細|ほ�
 ?(comp=nao) !gesture comp observe 20,5
 ?(comp=nao) comp: {開|あ}いた 。 …… {中|なか} から {熱気|ねっき} が {来|く}る ぞ 。 {二十年|にじゅうねん} {閉|と}じてた {窯|かま} の {熱|ねつ} じゃ ない 。 || It's open. …Heat's coming out. That's not the heat of a kiln shut for twenty years.
 ?(comp=mio) !gesture comp check prop=bottle
-?(comp=mio) comp[worry]: {熱|あつ}い …… {中|なか} で は 、 こまめ に {水|みず} を {飲|の}んで ください ね 。 {約束|やくそく} です よ 。 || It's hot… Drink water often in there. Promise me.
+?(comp=mio) comp[worry]: {熱|あつ}い …… {中|なか} で は 、 こまめ に {水|みず} を {飲|の}んで ね 。 {約束|やくそく} よ 。 || It's hot… Drink water often in there. Promise me.
 ?(comp=ren) !gesture comp listen 20,5
 ?(comp=ren) comp: {窯|かま} が {息|いき} を して います 。 {気|き} を つけて 。 || The kiln is breathing. Careful.
 ?(comp=suzu) !gesture comp size
@@ -218,7 +218,7 @@ narr: {木戸|きど} に {重|おも}い {閂|かんぬき} が {掛|か}かっ
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: {近道|ちかみち} {完成|かんせい} 。 {帰|かえ}り は {楽|らく} だ 。 {配達人|はいたつにん} の {宝|たから} だ よ 、 こういう の は 。 || Shortcut made. Easy trip home. That's a courier's treasure, that is.
 ?(comp=mio) !gesture comp nod pc
-?(comp=mio) comp[smile]: {帰|かえ}り {道|みち} が {近|ちか}く なりました ね 。 よかった 。 || The way home just got shorter. Good.
+?(comp=mio) comp[smile]: {帰|かえ}り {道|みち} が {近|ちか}く なった ね 。 よかった 。 || The way home just got shorter. Good.
 ?(comp=ren) !gesture comp exhale
 ?(comp=ren) comp: {帰|かえ}り {道|みち} が {一本|いっぽん} に なりました 。 …… {迷|まよ}い {様|よう} が ありません 。 {素晴|すば}らしい 。 || One straight road home. …Impossible to get lost. Wonderful.
 ?(comp=suzu) !gesture comp point 2,25
@@ -238,7 +238,7 @@ narr: {藁|わら} の {山|やま} の {間|あいだ} に 、 {青白|あお�
 ?(comp=nao) !gesture comp palm
 ?(comp=nao) comp: {氷室|ひむろ} だ 。 {夏|なつ} に {氷|こおり} を {売|う}る {家|いえ} が 、 {昔|むかし} は {山|やま} に こういう の を {持|も}ってた 。 || An ice house. Families who sold ice in summer used to keep these in the hills.
 ?(comp=mio) !gesture comp exhale
-?(comp=mio) comp[smile]: …… {涼|すず}しい 。 ちょっと だけ 、 ここ で {休|やす}んで も いい です か 。 {三十|さんじゅう} {数|かぞ}える あいだ だけ 。 || …It's cool. Could we rest here, just a little? Just while I count to thirty.
+?(comp=mio) comp[smile]: …… {涼|すず}しい 。 ちょっと だけ 、 ここ で {休|やす}んで も いい ？ {三十|さんじゅう} {数|かぞ}える あいだ だけ 。 || …It's cool. Could we rest here, just a little? Just while I count to thirty.
 ?(comp=ren) !gesture comp cupear
 ?(comp=ren) comp: {静|しず}か な {場所|ばしょ} です 。 {静寂|しじま} の {静|しず}けさ と は {違|ちが}う 。 {音|おと} が {休|やす}んで いる だけ の 、 {静|しず}けさ 。 || A quiet place. Not the Hush's kind of quiet. The kind where sound is just resting.
 ?(comp=suzu) !gesture comp exhale
@@ -272,7 +272,7 @@ narr: {手|て} の {中|なか} で 、 {冷|つめ}たさ が {字|じ} に �
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: みず と こおり 。 {火|ひ} に {出|だ}す {札|ふだ} が {二枚|にまい} に なった 。 {悪|わる}く ない 。 || Water and ice. Two cards to play against fire. Not bad.
 ?(comp=mio) !gesture comp size
-?(comp=mio) comp: {熱|ねつ} を {冷|さ}ます の は 、 {水|みず} でも {氷|こおり} でも いい 。 {患者|かんじゃ} に よって {使|つか}い{分|わ}けます 。 {敵|てき} も {同|おな}じ です ね 。 || Water or ice — either cools a fever. You choose by the patient. Same with enemies, I suppose.
+?(comp=mio) comp: {熱|ねつ} を {冷|さ}ます の は 、 {水|みず} でも {氷|こおり} でも いい 。 {患者|かんじゃ} に よって {使|つか}い{分|わ}ける の 。 {敵|てき} も {同|おな}じ だ ね 。 || Water or ice — either cools a fever. You choose by the patient. Same with enemies, I suppose.
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {水|みず} と {氷|こおり} 。 {同|おな}じ もの の {違|ちが}う {名|な} 。 どちら で {呼|よ}んで も 、 {熱|ねつ} は {応|こた}える でしょう 。 || Water and ice. Different names for the same thing. Call it either way and heat will answer.
 ?(comp=suzu) !gesture comp aside
@@ -301,7 +301,7 @@ narr: {斜面|しゃめん} に {沿|そ}って 、 {部屋|へや} が {三|み
 ?(comp=nao) !gesture comp lookroad down
 ?(comp=nao) comp: {出口|でぐち} は {入|い}り{口|ぐち} だけ 。 {最高|さいこう} だ な 。 …… {冗談|じょうだん} だ よ 。 {行|い}こう 。 || The only exit is the entrance. Lovely. …Joking. Let's go.
 ?(comp=mio) !gesture comp present pc prop=bottle
-?(comp=mio) comp[worry]: {水|みず} 、 {飲|の}んで ください 。 {今|いま} です 。 {喉|のど} が {渇|かわ}く {前|まえ} に 。 || Drink some water. Now. Before you're thirsty.
+?(comp=mio) comp[worry]: {水|みず} 、 {飲|の}んで 。 {今|いま} 。 {喉|のど} が {渇|かわ}く {前|まえ} に 。 || Drink some water. Now. Before you're thirsty.
 ?(comp=ren) comp[smirk]: {窯|かま} の {中|なか} でも 、 {私|わたし} は {構|かま}いません 。 …… {今|いま} の は {聞|き}かなかった こと に して ください 。 || Even inside a kiln, I kilnt complain. …Please pretend you didn't hear that.
 ?(comp=suzu) !gesture comp brow
 ?(comp=suzu) comp: {客席|きゃくせき} が {暑|あつ}すぎる {芝居|しばい} は 、 {大体|だいたい} {短|みじか}い の 。 …… {短|みじか}く {終|お}わらせよう 。 || Plays with overheated audiences are usually short ones. …Let's keep this short.
@@ -334,7 +334,7 @@ narr: {一番|いちばん} {上|うえ} の {部屋|へや} で 、 {最後|さ
 :all
 !toast {札|ふだ} が {揃|そろ}った 。 {上|うえ} の {部屋|へや} の {壁|かべ} へ || All the tiles found — take them to the wall in the top chamber
 ?(comp=nao) comp: {全部|ぜんぶ} {揃|そろ}った 。 {上|うえ} の {壁|かべ} に {穴|あな} が {三|みっ}つ あった な 。 || That's all of them. There were three gaps in the wall up top.
-?(comp=mio) comp: {三枚|さんまい} {揃|そろ}いました 。 {壁|かべ} に {戻|もど}しましょう 。 {順番|じゅんばん} を {間違|まちが}え ない よう に 。 || All three. Let's put them back in the wall — in the right order.
+?(comp=mio) comp: {三枚|さんまい} {揃|そろ}った 。 {壁|かべ} に {戻|もど}そう 。 {順番|じゅんばん} を {間違|まちが}え ない よう に 。 || All three. Let's put them back in the wall — in the right order.
 ?(comp=ren) comp: {手順|てじゅん} の {札|ふだ} は 、 {順番|じゅんばん} こそ が {意味|いみ} です 。 {灯|ひ} の {名|な} の {字|じ} と {同|おな}じ で 。 || With instruction tiles, the order is the meaning. Like the characters in a lantern name.
 ?(comp=suzu) comp: {台本|だいほん} の {頁|ページ} が {揃|そろ}った わ 。 {順番|じゅんばん} を {間違|まちが}えたら 、 {喜劇|きげき} に なっちゃう 。 || All the script pages. Get them in the wrong order and it turns into a comedy.
 
@@ -360,7 +360,7 @@ narr: {焚口|たきぐち} を {塞|ふさ}いで いた ガラス が 、 {音
 ?(comp=nao) !gesture comp aside
 ?(comp=nao) comp: {今夜|こんや} は {風|かぜ} が ない 。 だから {開|あ}けて いい 。 …… あの {夜|よる} は 、 {違|ちが}った わけ だ 。 || No wind tonight, so opening it is fine. …That night, it wasn't.
 ?(comp=mio) !gesture comp lowered hold
-?(comp=mio) comp[sad]: 「 {風|かぜ} の {強|つよ}い {夜|よる} は {開|ひら}く べからず 」 。 トモエ さん の {字|じ} でした ね 。 || "On windy nights, do not open." That was Tomoe's hand.
+?(comp=mio) comp[sad]: 「 {風|かぜ} の {強|つよ}い {夜|よる} は {開|ひら}く べからず 」 。 トモエ さん の {字|じ} だった ね 。 || "On windy nights, do not open." That was Tomoe's hand.
 ?(comp=ren) !gesture comp nod pc
 ?(comp=ren) comp: {余白|よはく} の {一行|いちぎょう} が 、 {本文|ほんぶん} より {大事|だいじ} な こと が ある 。 {灯守|ひもり} の {帳面|ちょうめん} も 、 そう です 。 || Sometimes one line in the margin matters more than the main text. It's the same in a lantern keeper's notebook.
 ?(comp=suzu) !gesture comp lowered hold
@@ -428,7 +428,7 @@ narr: {番人|ばんにん} の {体|からだ} から {熱|ねつ} が {抜|ぬ
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: {水門|すいもん} は {開|あ}いた か 、 って {聞|き}いた な 。 …… {開|あ}いた ん だろう な 。 {下|した} の {里|さと} は {残|のこ}ってる 。 || It asked if the water gate opened. …It must have. The village below is still standing.
 ?(comp=mio) !gesture comp lowered hold
-?(comp=mio) comp[sad]: {最後|さいご} まで 、 {誰|だれ} か の {心配|しんぱい} を して いました ね 。 || Right to the end, it was worried about someone else.
+?(comp=mio) comp[sad]: {最後|さいご} まで 、 {誰|だれ} か の {心配|しんぱい} を してた ね 。 || Right to the end, it was worried about someone else.
 ?(comp=ren) !gesture comp exhale
 ?(comp=ren) comp: {答|こた}え を {聞|き}けず に 、 {二十年|にじゅうねん} 。 …… {灯|ひ} も 、 {人|ひと} も 、 {答|こた}え を {待|ま}つ の は {辛|つら}い 。 || Twenty years without an answer. …For lanterns and people alike, waiting for an answer is hard.
 ?(comp=suzu) !gesture comp bow
@@ -448,7 +448,7 @@ narr: {三十個|さんじゅっこ} の {火屋|ほや} の うち 、 {一|ひ
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: {届|とど}け{先|さき} は 、 {決|き}まってる な 。 || We know exactly where this gets delivered.
 ?(comp=mio) !gesture comp present pc prop=cloth
-?(comp=mio) comp: {割|わ}らない よう に 、 {布|ぬの} で {包|つつ}みましょう 。 …… ええ 、 {私|わたし} が {持|も}ちます 。 {慣|な}れて います から 。 || Let's wrap it in cloth so it doesn't break. …Yes, I'll carry it. I'm used to fragile things.
+?(comp=mio) comp: {割|わ}らない よう に 、 {布|ぬの} で {包|つつ}もう 。 …… うん 、 {私|わたし} が {持|も}つ 。 {慣|な}れてる から 。 || Let's wrap it in cloth so it doesn't break. …Yes, I'll carry it. I'm used to fragile things.
 ?(comp=ren) !gesture comp observe pc
 ?(comp=ren) comp: {作|つく}った {人|ひと} の {名|な} が 、 {作|つく}った もの に {残|のこ}って いる 。 {灯|ひ} と {同|おな}じ です 。 || The maker's name, left on the thing she made. Just like a lantern.
 ?(comp=suzu) !gesture comp lowered hold

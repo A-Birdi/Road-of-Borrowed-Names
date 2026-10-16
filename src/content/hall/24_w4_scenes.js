@@ -25,7 +25,8 @@ narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {雨|あめ} の {�
 @scene hall.w4.f2_first
 !set hall_w4_f2_seen
 narr: {道|みち} の {先|さき} で 、 {川|かわ} が {茶色|ちゃいろ} く {溢|あふ}れて いる 。 {土手|どて} に {高札|こうさつ} が {立|た}って いる 。 || Ahead, the river runs brown and over its banks. A notice board stands on the bank.
-?(comp) comp: {一年|いちねん} {前|まえ} 、 ゴサク さん は ここ で {足止|あしど}め された ん だ ね 。 || A year ago, this is where Gosaku was stopped.
+?(comp&comp!=ren) comp: {一年|いちねん} {前|まえ} 、 ゴサク さん は ここ で {足止|あしど}め された ん だ ね 。 || A year ago, this is where Gosaku was stopped.
+?(comp=ren) comp: {一年|いちねん} {前|まえ} 、 ゴサク さん は ここ で {足止|あしど}め された ん です ね 。 || A year ago, this is where Gosaku was stopped.
 
 @scene hall.w4.f3_first
 !set hall_w4_f3_seen
@@ -134,7 +135,8 @@ narr: ${ITEM[i][0]} を {持|も}って いる 。 || You are holding ${ITEM[i][
 !end
 :wrong
 narr: ${nameJp} が {首|くび} を {傾|かし}げた 。 「 ええ と …… それ じゃ なくて 。 」 || ${name} tilts ${obj === 'them' ? 'their' : obj === 'her' ? 'her' : 'his'} head. "Um… not that."
-?(comp) comp: {何|なに} を {頼|たの}んで いた か 、 もう {一度|いちど} {聞|き}いて みよう 。 || Let's hear again what they were asking for.
+?(comp&comp!=ren) comp: {何|なに} を {頼|たの}んで いた か 、 もう {一度|いちど} {聞|き}いて みよう 。 || Let's hear again what they were asking for.
+?(comp=ren) comp: {何|なに} を {頼|たの}んで いた か 、 もう {一度|いちど} {聞|き}いて みましょう 。 || Let's hear again what they were asking for.
 !end
 `;
     for (const p of [0, 1]) {
@@ -152,7 +154,8 @@ narr: ${ITEM[it][0]} を {渡|わた}した 。 「 {助|たす}かります ！
 !end
 :all
 narr: {近所|きんじょ} の {人|ひと} たち は 、 {皆|みな} {借|か}りた {物|もの} を {持|も}って {帰|かえ}って いった 。 || The neighbours have all gone home with what they borrowed.
-?(comp) comp: はっきり {言|い}わない {頼|たの}み も 、 {聞|き}けば {分|わ}かる もの だ ね 。 || Even a request nobody says outright makes sense once you listen.
+?(comp&comp!=ren) comp: はっきり {言|い}わない {頼|たの}み も 、 {聞|き}けば {分|わ}かる もの だ ね 。 || Even a request nobody says outright makes sense once you listen.
+?(comp=ren) comp: はっきり {言|い}わない {頼|たの}み も 、 {聞|き}けば {分|わ}かる もの です ね 。 || Even a request nobody says outright makes sense once you listen.
 ${K.mark(W, 0, 't2')}
 !end
 :done
@@ -174,7 +177,7 @@ ${id}: ありがとう 。 {大事|だいじ} に {使|つか}います 。 || T
   out += '\n@scene hall.w4.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {行商人|ぎょうしょうにん} の {心得|こころえ} を {刻|きざ}んだ {石|いし} 。 「 {四|よん} {枚|まい} の {札|ふだ} の うち 、 {一枚|いちまい} だけ が {間違|まちが}って いる 。 」 || A stone carved with the peddler\'s rules of trade: "Of the four cards, one alone is wrong."'],
     task: { 0: 'hall.w4.counter0', 1: 'hall.w4.counter1' },
-    after: ['narr: {間違|まちが}った {札|ふだ} が 、 {雨|あめ} に {溶|と}けて {消|き}えた 。 || The wrong card melts away in the rain.', '?(comp) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に ならない から ね 。 || Ask the wrong way and there\'s no trade at all.'],
+    after: ['narr: {間違|まちが}った {札|ふだ} が 、 {雨|あめ} に {溶|と}けて {消|き}えた 。 || The wrong card melts away in the rain.', '?(comp&comp!=ren) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に ならない から ね 。 || Ask the wrong way and there\'s no trade at all.', '?(comp=ren) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に なりません から ね 。 || Ask the wrong way and there\'s no trade at all.'],
     later: 'narr: {札|ふだ} を {一枚|いちまい} ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the cards one by one, then come back.',
     done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
   for (let i = 0; i < 4; i++) {
@@ -205,7 +208,7 @@ narr: {雨|あめ} に {濡|ぬ}れない よう に {包|つつ}まれた 、 �
 ?(${both(L.E, 'hall.w4.pat=' + p)}) narr: 「 ${DIARY[p].E[k]} 」 || "${DIARY[p].en[k]}"
 ?(${both(L.IA, 'hall.w4.pat=' + p)}) narr: 「 ${DIARY[p].IA[k]} 」 || "${DIARY[p].en[k]}"
 `;
-  out += `?(comp&!hall.w4.t4) comp: {行|い}く つもり だった {道|みち} じゃ なくて 、 {本当|ほんとう} に {行|い}った {道|みち} を {辿|たど}ろう 。 || Not the way he meant to go: the way he really went.\n`;
+  out += `?(comp&!hall.w4.t4&comp!=ren) comp: {行|い}く つもり だった {道|みち} じゃ なくて 、 {本当|ほんとう} に {行|い}った {道|みち} を {辿|たど}ろう 。 || Not the way he meant to go: the way he really went.\n?(comp=ren&!hall.w4.t4) comp: {行|い}く つもり だった {道|みち} で は なく 、 {本当|ほんとう} に {行|い}った {道|みち} を {辿|たど}りましょう 。 || Not the way he meant to go: the way he really went.\n`;
   const STEP = (k) => 'xp_hall_w4_f1_s' + k;
   const reset4 = '!unset ' + [1, 2, 3].map(STEP).join(' ');
   const FORK = { f1: ['bridge', 'bank'], f2: ['teahouse', 'woods'], f3: ['ferry', 'hut'] };
@@ -226,7 +229,8 @@ ${reset4}
 narr: {泥|どろ} の {中|なか} に 、 {古|ふる}い {草鞋|わらじ} の {跡|あと} が {残|のこ}って いる 。 || In the mud, the marks of old straw sandals.
 !set ${STEP(k)}
 ${k === 3 ? `narr: {道|みち} の {終|お}わり で 、 {泥|どろ} に {埋|う}もれた {笠|かさ} を {見|み}つけた 。 ゴサク が {一年|いちねん} {前|まえ} に {落|お}とした {物|もの} だ 。 || At the end of the way you find a hat half buried in the mud: the one Gosaku dropped a year ago.
-?(comp) comp: {行|い}く つもり の {道|みち} と 、 {本当|ほんとう} に {行|い}った {道|みち} 。 {一年|いちねん} {前|まえ} の ゴサク さん に 、 {追|お}い{付|つ}いた ね 。 || The way he meant and the way he went. We've caught up with Gosaku as he was a year ago.
+?(comp&comp!=ren) comp: {行|い}く つもり の {道|みち} と 、 {本当|ほんとう} に {行|い}った {道|みち} 。 {一年|いちねん} {前|まえ} の ゴサク さん に 、 {追|お}い{付|つ}いた ね 。 || The way he meant and the way he went. We've caught up with Gosaku as he was a year ago.
+?(comp=ren) comp: {行|い}く つもり の {道|みち} と 、 {本当|ほんとう} に {行|い}った {道|みち} 。 {一年|いちねん} {前|まえ} の ゴサク さん に 、 {追|お}い{付|つ}きました ね 。 || The way he meant and the way he went. We've caught up with Gosaku as he was a year ago.
 ${K.mark(W, 1, 't4')}` : '!refresh'}
 !end
 ${k > 1 ? ':early\nnarr: {日記|にっき} の {頁|ページ} は 、 まだ ここ まで {来|き}て いない 。 {最初|さいしょ} の {分|わ}かれ{道|みち} から だ 。 || The diary hasn\'t got this far yet. Start from the first fork.\n!end\n' : ''}:done
@@ -281,11 +285,13 @@ narr: ${CROSSING[c][0]} 。 {向|む}こう {岸|ぎし} に 、 {山寺|やま�
 !if !xp_hall_w4_f1_asked -> unknown
 ${right.map((p) => '!if hall.w4.pat=' + p + ' -> right').join('\n')}
 narr: {高札|こうさつ} に よる と 、 {今日|きょう} は ここ を {渡|わた}って は いけない 。 || By the notice, this may not be crossed today.
-?(comp) comp: {高札|こうさつ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say the notice's words again?
+?(comp&comp!=ren) comp: {高札|こうさつ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say the notice's words again?
+?(comp=ren) comp: {高札|こうさつ} を 、 もう {一度|いちど} {読|よ}みましょう か 。 || Shall I read the notice again?
 !end
 :right
 narr: {高札|こうさつ} の {許|ゆる}す ${CROSSING[c][0]} に 、 ゴサク の {杖|つえ} を {目印|めじるし} に {立|た}てた 。 ゴサク が {後|あと} から {来|き}て も 、 {迷|まよ}わない 。 || You plant Gosaku's staff as a marker by ${CROSSING[c][1]}, the crossing the notice allows. Gosaku, coming behind, won't lose the way.
-?(comp) comp: {渡|わた}って も いい {所|ところ} から 、 {渡|わた}る 。 {一年|いちねん} {前|まえ} の ゴサク さん も 、 そう したかった だろう ね 。 || We cross where crossing is allowed. Gosaku would have wanted to, a year ago.
+?(comp&comp!=ren) comp: {渡|わた}って も いい {所|ところ} から 、 {渡|わた}る 。 {一年|いちねん} {前|まえ} の ゴサク さん も 、 そう したかった だろう ね 。 || We cross where crossing is allowed. Gosaku would have wanted to, a year ago.
+?(comp=ren) comp: {渡|わた}って も いい {所|ところ} から 、 {渡|わた}る 。 {一年|いちねん} {前|まえ} の ゴサク さん も 、 そう したかった でしょう ね 。 || We cross where crossing is allowed. Gosaku would have wanted to, a year ago.
 ${K.mark(W, 1, 't6')}
 !end
 :unknown
@@ -323,7 +329,8 @@ narr: ${CROSSING[c][0]} 。 || ${cap(CROSSING[c][1])}.
 narr: {山門|さんもん} の {内側|うちがわ} に 、 {寺|てら} の {決|き}まり が {書|か}いて ある 。 || Inside the gate, the temple's rules for visitors.
 `;
   out += LV((p, t) => `?(${both(L[t], 'hall.w4.pat=' + p)}) narr: 「 ${RULES[p][t]} 」 || "${RULES[p].en}"\n`);
-  out += `?(comp&!hall.w4.t8) comp: しなければ ならない こと 、 して も いい こと 、 して は いけない こと 。 {分|わ}けて {覚|おぼ}えよう 。 || What we must do, what we may do, what we mustn't. Let's keep them apart.
+  out += `?(comp&!hall.w4.t8&comp!=ren) comp: どれ が {決|き}まり で 、 どれ が しなくて いい こと か 、 よく {見|み}て から {上|あ}がろう 。 || Let's look properly at what's a rule and what we needn't do before we go up.
+?(comp=ren&!hall.w4.t8) comp: どれ が {決|き}まり で 、 どれ が しなくて いい こと か 、 よく {見|み}て から {上|あ}がりましょう 。 || Let's look properly at what's a rule and what we needn't do before we go up.
 !if hall.w4.t8 -> kept
 !end
 :kept
@@ -382,7 +389,8 @@ narr: {本堂|ほんどう} の {戸|と} 。 || The door of the main hall.
 !if !${SHOES} -> need1
 :enter
 narr: {決|き}まり を {守|まも}って 、 {本堂|ほんどう} に {上|あ}がった 。 {中|なか} は 、 {線香|せんこう} と {古|ふる}い {雨|あめ} の {匂|にお}い が した 。 || Keeping the rules, you step up into the main hall. Inside it smells of incense and old rain.
-?(comp) comp: {全部|ぜんぶ} 、 {決|き}まり の {通|とお}り 。 これ なら 、 {誰|だれ} に も {叱|しか}られない ね 。 || All by the rules. Nobody can scold us now.
+?(comp&comp!=ren) comp: {全部|ぜんぶ} 、 {決|き}まり の {通|とお}り 。 これ なら 、 {誰|だれ} に も {叱|しか}られない ね 。 || All by the rules. Nobody can scold us now.
+?(comp=ren) comp: {全部|ぜんぶ} 、 {決|き}まり の {通|とお}り 。 これ なら 、 {誰|だれ} に も {叱|しか}られません ね 。 || All by the rules. Nobody can scold us now.
 ${K.mark(W, 2, 't8')}
 !end
 :need0
@@ -402,7 +410,7 @@ narr: {本堂|ほんどう} の {戸|と} は 、 {開|あ}いて いる 。 || 
 hall_karakasa: …… {放|ほう}って おいて 。 {僕|ぼく} は 、 もう {誰|だれ} の {傘|かさ} で も ない 。 || …Leave me alone. I'm nobody's umbrella any more.
 !encounter hall.w4.kasa
 !if var._enc=understood -> understood
-hall_karakasa: …… ぽつ 、 ぽつ 。 {雨|あめ} の {音|おと} だけ が 、 {返事|へんじ} の よう に {続|つづ}いて いる 。 || …Drip, drip. Only the rain answers, on and on.
+narr: …… ぽつ 、 ぽつ 。 {雨|あめ} の {音|おと} だけ が 、 {返事|へんじ} の よう に {続|つづ}いて いる 。 || …Drip, drip. Only the rain answers, on and on.
 !end
 :understood
 hall_karakasa: {返|かえ}す つもり 、 だった ん だ 。 …… {縁側|えんがわ} で 、 {待|ま}ってる 。 || He meant to bring me back. …I'll wait on the veranda.
@@ -454,7 +462,7 @@ hall_myoshin: {来年|らいねん} も 、 {返|かえ}しに {来|き}て く�
 narr: {雨|あめ} の {中|なか} を 、 ゴサク が {帰|かえ}って いく 。 {頭|あたま} の {上|うえ} で 、 {赤|あか}い {傘|かさ} が {誇|ほこ}らしげ に {開|ひら}いて いる 。 || Gosaku goes home through the rain, the red umbrella open proudly over his head.
 hall_myoshin: {貸|か}した {物|もの} は 、 {返|かえ}って くる と {嬉|うれ}しい 。 {返|かえ}って こなくて も 、 {待|ま}つ の は {悪|わる}く ない 。 || It's good when something lent comes back. Even when it doesn't, waiting isn't so bad.
 ?(comp=nao) comp: {一年|いちねん} {遅|おく}れ の {配達|はいたつ} か 。 …… {届|とど}いた なら 、 それ で いい 。 || A delivery a year late. …If it arrived, that's enough.
-?(comp=mio) comp[happy]: {頼|たの}む 、 {許|ゆる}す 、 つもり 。 {全部|ぜんぶ} 、 {相手|あいて} を {思|おも}う {言葉|ことば} だった のね 。 || Asking, allowing, meaning to. They were all words for thinking of the other person.
+?(comp=mio) comp[happy]: {貸|か}した {人|ひと} も 、 {借|か}りた {人|ひと} も 、 {相手|あいて} の こと を {思|おも}って いた のね 。 || The one who lent and the one who borrowed were both thinking of each other.
 ?(comp=ren) comp: {灯|ひ} が {四|よっ}つ 、 {戻|もど}りました 。 {借|か}りた {物|もの} も 、 {返|かえ}す つもり の {心|こころ} も 、 {灯|ひ} の よう な もの です ね 。 || Four lights back. A borrowed thing and the will to return it are something like a light too.
 ?(comp=suzu) comp: {第|だい}{四幕|よんまく} 、 {幕|まく} ！ {主役|しゅやく} の {傘|かさ} に 、 {大|おお}きな {拍手|はくしゅ} を ！ || End of act four! A big hand for our lead, the umbrella!
 !sequence hall.w4 end

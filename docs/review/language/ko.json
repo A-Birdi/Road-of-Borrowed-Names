@@ -365,10 +365,10 @@
   "jp": "{木|き} が {疲|つか}れる …… 。 {薬|くすり} で {治|なお}る もの なら いい のに 。",
   "en": "The tree is tired… If only it were something medicine could mend."
  },
- "scene:ko.otoha_first#1gycuzc": {
+ "scene:ko.otoha_first#k77bxo": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
-  "jp": "{灯|ひ} の {道|みち} で も 、 {名前|なまえ} が {消|き}える {速|はや}さ は 、 {年|とし} ごと に {速|はや}く なって いました 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{灯|ひ} の {道|みち} で も 、 {名前|なまえ} が {消|き}える の が 、 {年|とし} ごと に {速|はや}く なって いました 。",
   "en": "On the lantern roads too, the names were fading faster every year."
  },
  "scene:ko.otoha_first#1fc39ik": {
@@ -725,10 +725,10 @@
   "jp": "{縁起|えんぎ} が いい 。 {次|つぎ} の {興行|こうぎょう} も 、 {満員|まんいん} {間違|まちが}い なし だ ！",
   "en": "A good omen. The next run will be a full house, no doubt about it!"
  },
- "scene:ko.back_co#peaxj8": {
+ "scene:ko.back_co#2upu6w": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
-  "jp": "{干|ほ}し{場|ば} の {札|ふだ} に 、 「{干|ほ}し{柿|がき}」 って {字|じ} が {戻|もど}った の よ 。 {孫|まご} が {書|か}いて くれた {札|ふだ} な の 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{干|ほ}し{場|ば} の {札|ふだ} に 、 「{干|ほ}し{柿|がき}」 って {字|じ} が {戻|もど}った ん だ よ 。 {孫|まご} が {書|か}いて くれた {札|ふだ} さ 。",
   "en": "The tag on my drying rack: \"Dried persimmons\" is back on it. My grandchild wrote that tag for me."
  },
  "scene:ko.back_co#z4ocov": {
@@ -737,16 +737,16 @@
   "jp": "{消|き}えた とき は 、 {少|すこ}し {寂|さび}しかった けど ね 。",
   "en": "I was a little sad when it faded."
  },
- "scene:ko.back_sb#1t5gazz": {
+ "scene:ko.back_sb#1fvqlm": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
-  "jp": "{届|とど}け{先|さき} の {分|わ}からない {手紙|てがみ} が {一通|いっつう} あって ね 。 {最後|さいご} の {一行|いちぎょう} が {消|き}えて いた 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{届|とど}け{先|さき} の {分|わ}からない {手紙|てがみ} が {一通|いっつう} ありまして ね 。 {最後|さいご} の {一行|いちぎょう} が {消|き}えて いた んです 。",
   "en": "There's a letter here I couldn't deliver. Its last line had faded away."
  },
- "scene:ko.back_sb#1kinpqk": {
+ "scene:ko.back_sb#1myp5yj": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
-  "jp": "{今朝|けさ} {見|み}たら 、 {戻|もど}って いた 。 「{春|はる} に は {帰|かえ}ります」 。 …… {宛名|あてな} も 、 {読|よ}める よう に なった 。 {届|とど}けられる よ 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{今朝|けさ} {見|み}たら 、 {戻|もど}って いました 。 「{春|はる} に は {帰|かえ}ります」 。 …… {宛名|あてな} も 、 {読|よ}める よう に なりました 。 {届|とど}けられます よ 。",
   "en": "This morning it was back. \"I'll be home in spring.\" …And the address is readable now too. I can deliver it."
  },
  "scene:ko.back_kr#1hxttzt": {
@@ -785,11 +785,11 @@
   "jp": "{昔|むかし} 、 {一人|ひとり} の {女|おんな} の {人|ひと} が 、 {海|うみ} の {真|ま}ん{中|なか} の {岩|いわ} に {楠|くす} の {種|たね} を {植|う}えた 。 {届|とど}かない {言葉|ことば} が 、 {休|やす}める よう に 。 その {人|ひと} が 、 {最初|さいしょ} の {葉守|はもり} 。",
   "en": "Long ago a woman planted a camphor seed on a rock in the middle of the sea, so that words that never arrive could rest. She was the first keeper."
  },
- "scene:ko.otoha_tellings#17svl70": {
+ "scene:ko.otoha_tellings#g7b0o2": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
-  "jp": "{葉守|はもり} は 、 {古今集|こきんしゅう} の {序|じょ} を {唱|とな}えて きました 。 「やまとうた は 、 {人|ひと} の {心|こころ} を {種|たね} と して 」 …… {古|ふる}い 、 {本当|ほんとう} の {歌|うた} の {本|ほん} の {言葉|ことば} です よ 。",
-  "en": "The keepers have always recited the Kokinshū's preface. \"Japanese poetry takes the human heart as its seed…\" Words from an old book of poems: a real one."
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{葉守|はもり} は 、 {古今集|こきんしゅう} の {序|じょ} を {唱|とな}えて きました 。 「やまとうた は 、 {人|ひと} の {心|こころ} を {種|たね} と して 」 …… {古|ふる}い {歌|うた} の {本|ほん} の {言葉|ことば} です よ 。",
+  "en": "The keepers have always recited the Kokinshū's preface. \"Japanese poetry takes the human heart as its seed…\" Words from an old book of poems."
  },
  "scene:ko.otoha_tellings#1lcehwh": {
   "status": "self-reviewed",
@@ -2645,17 +2645,17 @@
   "jp": "{書|か}きかけ の {葉|は} を しまう 。 {言葉|ことば} は 、 また {考|かんが}えよう 。",
   "en": "You put the half-written leaf away. You'll think of the words again."
  },
- "scene:ko.census_ask#1au9dtb": {
+ "scene:ko.census_ask#1o0mcmh": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
-  "jp": "…… お{願|ねが}い が あります 。 {今日|きょう} の {籠|かご} が 、 まだ {二|ふた}つ {数|かぞ}えて いません 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "…… お{願|ねが}い が あります 。 {今日|きょう} の {籠|かご} を 、 まだ {二|ふた}つ {数|かぞ}えて いません 。",
   "en": "…I have a favour to ask. Two of today's baskets haven't been counted yet."
  },
- "scene:ko.census_ask#1h4oyus": {
+ "scene:ko.census_ask#l6pnso": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
-  "jp": "{段|だん} の アオ の {籠|かご} と 、 {浜|はま} の {籠|かご} です 。 {数|かず} を {教|おし}えて ください 。 {葉|は} は {一枚|いちまい} 、 {二枚|にまい} と {数|かぞ}えます 。",
-  "en": "Ao's basket on the terraces, and the one on the shore. Tell me the numbers. Leaves are counted 一枚, 二枚."
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{段|だん} の アオ の {籠|かご} と 、 {浜|はま} の {籠|かご} です 。 {数|かず} を {教|おし}えて ください 。 {一枚|いちまい} ずつ 、 {正確|せいかく} に お{願|ねが}い します 。",
+  "en": "Ao's basket on the terraces, and the one on the shore. Tell me the numbers. One leaf at a time, exactly, please."
  },
  "scene:ko.census_wait#xtiazn": {
   "status": "self-reviewed",

@@ -28,7 +28,8 @@ narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {雪|ゆき} に {�
 @scene hall.w8.f2_first
 !set hall_w8_f2_seen
 narr: {宿|やど} の {裏|うら} の {庭|にわ} 。 {夜|よる} の {間|あいだ} に {積|つ}もった {雪|ゆき} に 、 {誰|だれ} か が {歩|ある}いた {跡|あと} が {残|のこ}って いる 。 || The yard behind the inn. In the snow that fell overnight, someone's tracks remain.
-?(comp) comp: {証人|しょうにん} が {立|た}って いた {場所|ばしょ} に {行|い}けば 、 {本当|ほんとう} に {見|み}えた か 、 {聞|き}こえた か 、 {確|たし}かめられる ね 。 || If we go to where each witness was, we can check whether they really could have seen or heard it.
+?(comp&comp!=ren) comp: {証人|しょうにん} が {立|た}って いた {場所|ばしょ} に {行|い}けば 、 {本当|ほんとう} に {見|み}えた か 、 {聞|き}こえた か 、 {確|たし}かめられる ね 。 || If we go to where each witness was, we can check whether they really could have seen or heard it.
+?(comp=ren) comp: {証人|しょうにん} が {立|た}って いた {場所|ばしょ} に {行|い}けば 、 {本当|ほんとう} に {見|み}えた か 、 {聞|き}こえた か 、 {確|たし}かめられます ね 。 || If we go to where each witness was, we can check whether they really could have seen or heard it.
 
 @scene hall.w8.f3_first
 !set hall_w8_f3_seen
@@ -83,7 +84,7 @@ hall_omatsu: {帳面|ちょうめん} に は 、 {見|み}た こと と {聞|�
     task: 'hall.w8.story',
     after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w8.story_q',
       '?(comp=nao) comp: {一人|ひとり} の {話|はなし} だけ を {信|しん}じる と 、 {間違|まちが}える 。 {三人|さんにん} {分|ぶん} を {並|なら}べて 、 {初|はじ}めて {見|み}える 。 || Believe one account alone and you go wrong. Lay all three side by side, and it shows.',
-      '?(comp=mio) comp: {見|み}た 、 {聞|き}こえた 、 らしい 。 {同|おな}じ {夜|よる} の {話|はなし} でも 、 {確|たし}かさ が {全然|ぜんぜん} {違|ちが}う のね 。 || Saw, heard, seems. The same night, but how sure each one is couldn\'t be more different.',
+      '?(comp=mio) comp: {影|かげ} を {見|み}た {人|ひと} 、 {足音|あしおと} を {聞|き}いた {人|ひと} 、 {狐|きつね} だ と {思|おも}った {人|ひと} 。 {同|おな}じ {夜|よる} でも 、 {見|み}えて いた もの が {違|ちが}う のね 。 || One saw a shadow, one heard footsteps, one thought it was a fox. The same night, and each saw something different.',
       '?(comp=ren) comp: {狐|きつね} の {話|はなし} が 、 {一番|いちばん} {大|おお}きな {声|こえ} でした ね 。 {一番|いちばん} {確|たし}か で は ない のに 。 || The fox story was the loudest, wasn\'t it. Though it was the least certain.',
       '?(comp=suzu) comp: {証人|しょうにん} が {三人|さんにん} 、 {誰|だれ} も {嘘|うそ} は ついて ない 。 でも {誰|だれ} も {全部|ぜんぶ} は {知|し}らない 。 {上手|じょうず} な {脚本|きゃくほん} ね 。 || Three witnesses, none of them lying, none of them knowing it all. Clever writing.'],
     later: 'narr: {絵|え} は 、 {後|あと} で {並|なら}べ{直|なお}せる 。 || You can put the pictures in order later.',
@@ -142,7 +143,8 @@ narr: {紙|かみ} を 「 ${KIND[k][0]} 」 の {箱|はこ} に {入|い}れ�
 !end
 :all
 narr: {五枚|ごまい} の {紙|かみ} が 、 {四|よっ}つ の {箱|はこ} に {分|わ}けられた 。 || The five slips are sorted into the four trays.
-?(comp) comp: {見|み}た 、 {聞|き}こえた 、 {聞|き}いた 、 {思|おも}った 。 {分|わ}けて みる と 、 {狐|きつね} の {話|はなし} は {一枚|いちまい} も 「 {見|み}た 」 に {入|はい}って いない ね 。 || Seen, heard, told, guessed. Sorted, not one slip about the fox is in "seen".
+?(comp&comp!=ren) comp: {見|み}た 、 {聞|き}こえた 、 {聞|き}いた 、 {思|おも}った 。 {分|わ}けて みる と 、 {狐|きつね} の {話|はなし} は {一枚|いちまい} も 「 {見|み}た 」 に {入|はい}って いない ね 。 || Seen, heard, told, guessed. Sorted, not one slip about the fox is in "seen".
+?(comp=ren) comp: {見|み}た 、 {聞|き}こえた 、 {聞|き}いた 、 {思|おも}った 。 {分|わ}けて みる と 、 {狐|きつね} の {話|はなし} は {一枚|いちまい} も 「 {見|み}た 」 に {入|はい}って いません ね 。 || Seen, heard, told, guessed. Sorted, not one slip about the fox is in "seen".
 ${K.mark(W, 0, 't2')}
 !end
 `;
@@ -162,7 +164,7 @@ ${K.mark(W, 0, 't2')}
   out += '\n@scene hall.w8.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {廊下|ろうか} の {掛|か}け{軸|じく} に 、 {四|よっ}つ の {言葉|ことば} 。 {一番|いちばん} {奥|おく} の {軸|じく} に は 、 「 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 と ある 。 || Four sayings on the corridor\'s hanging scrolls. The last scroll reads: "One alone is wrong."'],
     task: { 0: 'hall.w8.counter0', 1: 'hall.w8.counter1' },
-    after: ['narr: {間違|まちが}った {言葉|ことば} の {墨|すみ} が 、 すうっと {薄|うす}れて {消|き}えた 。 || The ink of the wrong saying fades away.', '?(comp) comp: どれ だけ {確|たし}か か を {言|い}い{間違|まちが}える と 、 {話|はなし} が {全部|ぜんぶ} {信用|しんよう} できなく なる から ね 。 || Get how sure you are wrong, and nobody can trust any of it.'],
+    after: ['narr: {間違|まちが}った {言葉|ことば} の {墨|すみ} が 、 すうっと {薄|うす}れて {消|き}えた 。 || The ink of the wrong saying fades away.', '?(comp&comp!=ren) comp: {一|ひと}つ {間違|まちが}える だけ で 、 {全部|ぜんぶ} {怪|あや}しく {聞|き}こえる ね 。 || Get one wrong, and all of it sounds suspect.', '?(comp=ren) comp: {一|ひと}つ {間違|まちが}える だけ で 、 {全部|ぜんぶ} {怪|あや}しく {聞|き}こえます ね 。 || Get one wrong, and all of it sounds suspect.'],
     later: 'narr: {言葉|ことば} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the sayings one by one, then come back.',
     done: 'narr: {掛|か}け{軸|じく} は 、 もう {何|なに} も {問|と}わない 。 || The scrolls ask nothing more.' });
   for (let i = 0; i < 4; i++) {
@@ -210,7 +212,8 @@ narr: {証言|しょうげん} と 、 ここ で {確|たし}かめた こと �
 !end
 :all
 narr: {三|みっ}つ の {証言|しょうげん} を 、 {全部|ぜんぶ} {確|たし}かめた 。 || All three accounts are checked.
-?(comp) comp: {本人|ほんにん} が {確|たし}か だ と {思|おも}って いて も 、 {場所|ばしょ} を {見|み}る と {違|ちが}う こと も ある 。 {嘘|うそ} じゃ なくて 、 {思|おも}い{込|こ}み だ ね 。 || Even when someone is sure, the place itself can show otherwise. Not a lie: a mistaken belief.
+?(comp&comp!=ren) comp: {本人|ほんにん} が {確|たし}か だ と {思|おも}って いて も 、 {場所|ばしょ} を {見|み}る と {違|ちが}う こと も ある 。 {嘘|うそ} じゃ なくて 、 {思|おも}い{込|こ}み だ ね 。 || Even when someone is sure, the place itself can show otherwise. Not a lie: a mistaken belief.
+?(comp=ren) comp: {本人|ほんにん} が {確|たし}か だ と {思|おも}って いて も 、 {場所|ばしょ} を {見|み}る と {違|ちが}う こと も あります 。 {嘘|うそ} で は なく 、 {思|おも}い{込|こ}み です ね 。 || Even when someone is sure, the place itself can show otherwise. Not a lie: a mistaken belief.
 ${K.mark(W, 1, 't4')}
 !end
 :done
@@ -239,7 +242,7 @@ narr: {箱|はこ} の {置|お}いて あった {所|ところ} に 、 {小|�
 ?(comp=mio) comp: {私|わたし} が {読|よ}む わ 。 {滲|にじ}んで いて も 、 {大丈夫|だいじょうぶ} 。 {何|なに} を {調|しら}べる ？ || I'll read it. Smudged is fine. What are we looking for?
 ?(comp=ren) comp: {私|わたし} が {読|よ}みましょう 。 {何|なに} を {知|し}りたい です か ？ || I'll read it. What would you like to know?
 ?(comp=suzu) comp: {子供|こども} の {字|じ} は 、 {子役|こやく} の {台本|だいほん} で {慣|な}れてる わ 。 {任|まか}せて 。 {何|なに} を {探|さが}す ？ || I'm used to children's writing from the child actors' scripts. Leave it to me. What am I looking for?
-?(!comp) hall_omatsu: ヒサ の {字|じ} です 。 {一緒|いっしょ} に {読|よ}んで ください 。 {何|なに} が {知|し}りたい です か ？ || It's Hisa's writing. Read it with me. What would you like to know?
+?(!comp) hall_omatsu: ヒサ の {字|じ} です 。 {一緒|いっしょ} に {読|よ}んで ください 。 {何|なに} を {調|しら}べましょう か ？ || It's Hisa's writing. Read it with me. What shall we look into?
 !hook hall_challenge hall.w8.ask
 !if var._res=0 -> later
 !set xp_hall_w8_f1_asked
@@ -261,11 +264,13 @@ narr: {書|か}き{置|お}き は 、 {畳|たた}んで しまって ある �
 narr: ${ROAD[r][0]} 。 || ${cap(ROAD[r][1])}.
 !if !xp_hall_w8_f1_asked -> unknown
 ${ROAD[r][2] >= 0 ? '!if hall.w8.pat=' + ROAD[r][2] + ' -> right\n' : ''}narr: ヒサ の {書|か}き{置|お}き の {行|ゆ}き{先|さき} は 、 こっち で は ない よう だ 。 || Hisa's note doesn't seem to point this way.
-?(comp) comp: {書|か}き{置|お}き の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the note said again?
+?(comp&comp!=ren) comp: {書|か}き{置|お}き の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the note said again?
+?(comp=ren) comp: {書|か}き{置|お}き を 、 もう {一度|いちど} {読|よ}みましょう か 。 || Shall I read the note again?
 !end
 ${ROAD[r][2] >= 0 ? `:right
 narr: {雪|ゆき} の {上|うえ} に 、 {小|ちい}さな {足跡|あしあと} が こっち へ {続|つづ}いて いる 。 ヒサ が {帰|かえ}り に {迷|まよ}わない よう 、 {道|みち} の {入|い}り{口|ぐち} に {提灯|ちょうちん} を {掛|か}けた 。 || In the snow, small footprints lead this way. You hang a lantern at the head of the road, so Hisa won't lose the way back.
-?(comp) comp: 「 そう だ 」 も 「 らしい 」 も 、 {人|ひと} から {聞|き}いた {話|はなし} 。 でも 、 ヒサ は それ を {信|しん}じて {歩|ある}いて いった ん だ ね 。 || Whether it's そうだ or らしい, it's something Hisa heard. And Hisa trusted it, and walked.
+?(comp&comp!=ren) comp: {小|ちい}さな {足跡|あしあと} 。 ヒサ は 、 {信|しん}じた {道|みち} を まっすぐ {歩|ある}いて いった ん だ ね 。 || Small footprints. Hisa trusted the road, and walked it straight.
+?(comp=ren) comp: {小|ちい}さな {足跡|あしあと} です 。 ヒサ は 、 {信|しん}じた {道|みち} を まっすぐ {歩|ある}いて いった ん です ね 。 || Small footprints. Hisa trusted the road, and walked it straight.
 ${K.mark(W, 1, 't6')}
 !end
 ` : ''}:unknown
@@ -302,7 +307,8 @@ narr: ${ROAD[r][0]} 。 {雪|ゆき} が {静|しず}か に {降|ふ}って い
 narr: {座敷|ざしき} の {板|いた} に 、 {皆|みな} の {履|は}き{物|もの} に ついて の {話|はなし} が {貼|は}って ある 。 || On the board in the morning room, notes on everyone's footwear are pinned up.
 `;
   for (const w of Object.keys(EVID)) out += LVN3((t, i) => `?(${L[t]}) narr: 「 ${EVID[w][i]} 」 || "${EVID[w][3]}"\n`);
-  out += `?(comp&!hall.w8.t8) comp: {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いこう 。 || Let's set each name tag by the prints that match.
+  out += `?(comp&!hall.w8.t8&comp!=ren) comp: {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いこう 。 || Let's set each name tag by the prints that match.
+?(comp=ren&!hall.w8.t8) comp: {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いきましょう 。 || Let's set each name tag by the prints that match.
 `;
   for (const w of Object.keys(WHO)) out += `
 @scene hall.w8.tag_${w}
@@ -337,7 +343,8 @@ narr: 「 ${WHO[w][0]} 」 の {名札|なふだ} を 、 {跡|あと} の {横|
 !end
 :all
 narr: {四|よっ}つ の {足跡|あしあと} に 、 {四|よっ}つ の {名前|なまえ} 。 {小|ちい}さな {草鞋|わらじ} の {跡|あと} は 、 {裏|うら} の {戸|と} から {出|で}て 、 {道|みち} の {方|ほう} へ {続|つづ}いて いる 。 || Four sets of prints, four names. The small sandal prints lead out of the back door and away down the road.
-?(comp) comp: {見|み}た {話|はなし} 、 {聞|き}こえた {話|はなし} 、 {聞|き}いた {話|はなし} 。 {全部|ぜんぶ} {合|あ}わせる と 、 {雪|ゆき} の {上|うえ} で {一|ひと}つ に なった ね 。 || What was seen, heard and told: put together, it all comes to one thing in the snow.
+?(comp&comp!=ren) comp: {見|み}た {話|はなし} 、 {聞|き}こえた {話|はなし} 、 {聞|き}いた {話|はなし} 。 {全部|ぜんぶ} {合|あ}わせる と 、 {雪|ゆき} の {上|うえ} で {一|ひと}つ に なった ね 。 || What was seen, heard and told: put together, it all comes to one thing in the snow.
+?(comp=ren) comp: {見|み}た {話|はなし} 、 {聞|き}こえた {話|はなし} 、 {聞|き}いた {話|はなし} 。 {全部|ぜんぶ} {合|あ}わせる と 、 {雪|ゆき} の {上|うえ} で {一|ひと}つ に なりました ね 。 || What was seen, heard and told: put together, it all comes to one thing in the snow.
 ${K.mark(W, 2, 't8')}
 !end
 :done
@@ -400,7 +407,7 @@ narr: {朝日|あさひ} の {中|なか} を 、 ヒサ が {帰|かえ}って 
 hall_kichibei: {十年|じゅうねん} {前|まえ} に {預|あず}けた {箱|はこ} を 、 この {子|こ} が {届|とど}けて くれた 。 {中|なか} の {手紙|てがみ} は 、 この {宿|やど} へ の お{礼|れい} だ 。 {戻|もど}ったら {渡|わた}す つもり だった 。 || This child brought me the box I left here ten years ago. The letter inside is my thanks to this inn. I meant to hand it over when I came back.
 hall_hisa: {誰|だれ} も {聞|き}かなかった から 、 {言|い}わなかった 。 …… ごめん なさい 。 || Nobody asked, so I didn't say. …Sorry.
 ?(comp=nao) comp: {見|み}た 、 {聞|き}いた 、 {聞|き}かされた 。 {手紙|てがみ} に その {三|みっ}つ を {分|わ}けて {書|か}く {人|ひと} は 、 {信用|しんよう} できる 。 || Saw, heard, was told. Someone who keeps those three apart in a letter can be trusted.
-?(comp=mio) comp[happy]: らしい 、 そう だ 、 に {違|ちが}いない 。 {言葉|ことば} {一|ひと}つ で 、 どの くらい {確|たし}か か まで {伝|つた}わる のね 。 || Seems, I hear, must be. One word, and it carries how sure you are.
+?(comp=mio) comp[happy]: {聞|き}いて あげれば 、 {話|はな}して くれた のね 。 {次|つぎ} は 、 {最初|さいしょ} に {聞|き}く わ 。 || If anyone had asked, Hisa would have told us. Next time, I'll ask first.
 ?(comp=ren) comp: {灯|ひ} が {八|やっ}つ 、 {戻|もど}りました 。 {残|のこ}り は 、 {二|ふた}つ です 。 || Eight lights back. Two to go.
 ?(comp=suzu) comp: {第|だい}{八幕|はちまく} 、 {幕|まく} ！ {犯人|はんにん} の いない {推理|すいり} {劇|げき} 、 {案外|あんがい} {悪|わる}く ない わ 。 || End of act eight! A whodunit with no culprit. Not bad at all.
 !sequence hall.w8 end

@@ -11,10 +11,10 @@
   "jp": "{座|すわ}って いけ 。 {年寄|としよ}り の {茶|ちゃ} だ が 、 {温|あたた}まる ぞ 。",
   "en": "Sit down a while. An old man's tea, but it'll warm you."
  },
- "scene:dv.yasu#2c0jam": {
+ "scene:dv.yasu#1q6r8u5": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
-  "jp": "…… {川|かわ} の こと 、 {前|まえ} に {話|はな}した な 。 {俺|おれ} は {何|なん} と {言|い}った ？",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "…… {川|かわ} の こと 、 {前|まえ} に {話|はな}した な 。 {何|なん} と {言|い}った ？",
   "en": "…I told you something about the river once. What did I say?"
  },
  "scene:dv.yasu:choice#1821sr1": {

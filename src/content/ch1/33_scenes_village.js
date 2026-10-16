@@ -376,9 +376,9 @@ suzu: ねえ 、 {旅|たび} の {一座|いちざ} の {名前|なまえ} 、 
 @scene rw.b_nao2
 nao: {村|むら} の {字|じ} 、 {誰|だれ} も {消|け}さなく なった な 。 {配達|はいたつ} が {退屈|たいくつ} に なる くらい {平和|へいわ} だ 。 …… {悪|わる}く ない 。 || Nobody's erasing the village's writing anymore. So peaceful that deliveries are boring. …Not bad, though.
 @scene rw.b_mio2
-mio: {店|みせ} の {看板|かんばん} に 「 {定休日|ていきゅうび} 」 を {書|か}き{足|た}しました 。 …… {初|はじ}めて {書|か}いた {字|じ} です 。 || I added "Regular day off" to the shop sign. …First time I've ever written those words.
+mio: {店|みせ} の {看板|かんばん} に 「 {定休日|ていきゅうび} 」 を {書|か}き{足|た}した の 。 …… {初|はじ}めて {書|か}いた {字|じ} 。 || I added "Regular day off" to the shop sign. …First time I've ever written those words.
 @scene rw.b_ren2
-ren: {先生|せんせい} の {教|おし}え 、 {一|ひと}つ {増|ふ}えました 。 {正確|せいかく} に は 、 {私|わたし} が {増|ふ}やしました 。 「 {迷|まよ}ったら 、 {隣|となり} を {見|み}ろ 」 。 || My teacher's lessons have gained one more. Strictly speaking, I added it. "When lost, look beside you."
+ren: {師匠|ししょう} の {教|おし}え 、 {一|ひと}つ {増|ふ}えました 。 {正確|せいかく} に は 、 {私|わたし} が {増|ふ}やしました 。 「 {迷|まよ}ったら 、 {隣|となり} を {見|み}ろ 」 。 || My teacher's lessons have gained one more. Strictly speaking, I added it. "When lost, look beside you."
 @scene rw.b_suzu2
 suzu: {新作|しんさく} が できた の 。 {題名|だいめい} は 「 {借|か}りた {名前|なまえ} の {道|みち} 」 。 …… {主役|しゅやく} は {誰|だれ} か 、 わかる でしょ ？ || My new piece is finished. It's called "The Road of Borrowed Names". …You can guess who plays the lead, can't you?
 `, 'ch1/33_banter');

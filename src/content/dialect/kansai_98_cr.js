@@ -6,7 +6,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.dialect.add('kansai', `
 @ cr/call [cr.call]
 = {伝言|でんごん}ゲーム の {最後|さいご} の {人|ひと} って {感|かん}じ ね 。 {元|もと} の {台本|だいほん} を {見|み}に {行|い}きましょ 。 || Like the last person in a game of telephone. Let's go and read the original script.
-> {伝言|でんごん}ゲーム の {最後|さいご} の {人|ひと} って {感|かん}じ や な 。 {元|もと} の {台本|だいほん} を {見|み}に {行|い}こ 。 || Like the last person in a game of telephone. Let's go and read the original script.
+> {伝言|でんごん}ゲーム の {最後|さいご} の {人|ひと} って {感|かん}じ や な 。 {元|もと} の {台本|だいほん} を {見|み}に {行|い}きましょ 。 || Like the last person in a game of telephone. Let's go and read the original script.
 @ cr/call [cr.yae]
 = {旅芸人|たびげいにん} も 、 {昔|むかし} は {山|やま} の {街道|かいどう} を {越|こ}えた もの よ 。 {宿屋|やどや} の {話|はなし} なら 、 {任|まか}せて 。 || Travelling players used to cross the mountain highways too. If it's inns you want to know about, leave it to me.
 > {旅芸人|たびげいにん} も 、 {昔|むかし} は {山|やま} の {街道|かいどう} を {越|こ}えた もん や 。 {宿屋|やどや} の {話|はなし} なら 、 {任|まか}せとき 。 || Travelling players used to cross the mountain highways too. If it's inns you want to know about, leave it to me.
@@ -21,7 +21,7 @@ RB.dialect.add('kansai', `
 > {幕間|まくあい} や な 。 {休|やす}む の も {芸|げい} の うち や で 。 || An interval. Resting is part of the craft.
 @ cr/stations [cr.arrive2]
 = しめ{縄|なわ} が {巻|ま}いて ある わ 。 {神様|かみさま} の {木|き} ね 。 {挨拶|あいさつ} して {行|い}きましょ 。 || There's a sacred rope round it. A god's tree. Let's pay our respects.
-> しめ{縄|なわ} が {巻|ま}いて ある わ 。 {神様|かみさま} の {木|き} や な 。 {挨拶|あいさつ} して {行|い}こ 。 || There's a sacred rope round it. A god's tree. Let's pay our respects.
+> しめ{縄|なわ} が {巻|ま}いて ある わ 。 {神様|かみさま} の {木|き} や な 。 {挨拶|あいさつ} して {行|い}きましょ 。 || There's a sacred rope round it. A god's tree. Let's pay our respects.
 @ cr/stations [cr.cedar]
 = 「{伝|つた}えられて いる 」 。 …… {正直|しょうじき} な {札|ふだ} ね 。 {誰|だれ} も {数|かぞ}えて ない って こと よ 。 || "Said to be." …An honest plaque. It means nobody's counted.
 > 「{伝|つた}えられて いる 」 。 …… {正直|しょうじき} な {札|ふだ} や な 。 {誰|だれ} も {数|かぞ}えて へん って こと や 。 || "Said to be." …An honest plaque. It means nobody's counted.
@@ -60,10 +60,10 @@ RB.dialect.add('kansai', `
 > {一座|いちざ} も 、 {町|まち} ごと に {出|だ}し{物|もの} を {変|か}える ん や で 。 {同|おな}じ {芝居|しばい} や と 、 {飽|あ}きられて まう もん 。 || A troupe changes its programme with every town, too. Do the same play and they get tired of you.
 @ cr/pass [cr.pass1_enter]
 = {花道|はなみち} に して は 、 {長|なが}すぎる わ 。 …… {冗談|じょうだん} よ 。 {行|い}きましょ 。 || Rather long for a walkway to the stage. …Joking. Let's go.
-> {花道|はなみち} に して は 、 {長|なが}すぎる わ 。 …… {冗談|じょうだん} や 。 {行|い}こ 。 || Rather long for a walkway to the stage. …Joking. Let's go.
+> {花道|はなみち} に して は 、 {長|なが}すぎる わ 。 …… {冗談|じょうだん} や 。 {行|い}きましょ 。 || Rather long for a walkway to the stage. …Joking. Let's go.
 @ cr/pass [cr.pass1_slide]
 = {大道具|おおどうぐ} が {倒|たお}れた みたい ね 。 {裏|うら} から {回|まわ}りましょ 。 || Like a piece of scenery that's fallen over. Let's go round the back.
-> {大道具|おおどうぐ} が {倒|たお}れた みたい や な 。 {裏|うら} から {回|まわ}ろ 。 || Like a piece of scenery that's fallen over. Let's go round the back.
+> {大道具|おおどうぐ} が {倒|たお}れた みたい や な 。 {裏|うら} から {回|まわ}りましょ 。 || Like a piece of scenery that's fallen over. Let's go round the back.
 @ cr/pass [cr.pass1_clear]
 = {幕|まく} が {開|あ}いた わ 。 || The curtain's up.
 > {幕|まく} が {開|あ}いた で 。 || The curtain's up.

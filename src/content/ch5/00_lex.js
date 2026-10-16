@@ -333,7 +333,7 @@ RB.lex.add(RB.lex.parseTable(`
 稽古|けいこ|n|I|practice, rehearsal
 場面|ばめん|n|I|scene
 化けの皮|ばけのかわ|n|A|disguise, mask|化けの皮をはがす = to unmask.
-ござい||exp|A|(showman's patter) "here is…, behold…"|Old-fashioned, from ございます: 〜でござい.
+ござい||exp|A|(showman's patter) "here is…, behold…"|A street showman's or barker's call (〜でござい！ "here is …!"), from ございます: old-fashioned and theatrical, not everyday speech.
 
 # ---- verbs -------------------------------------------------------------------------------------------------
 突き出る|つきでる|v1|I|to stick out, jut out

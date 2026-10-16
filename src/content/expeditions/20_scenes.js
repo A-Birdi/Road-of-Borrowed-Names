@@ -48,7 +48,7 @@ narr: 「 {米|こめ} は {棚|たな} の {上|うえ} に {上|あ}げて あ
 !if xpk_cellars_taught -> again
 ?(comp=mio) comp: 「{上|あ}げて あります」 。 {誰|だれ} か が {上|あ}げて 、 その まま に して ある 、 と いう こと ね 。 || "Has been put up": someone put it up, and left it that way.
 ?(comp=nao) comp: 「{上|あ}げて あります」 か 。 やった {本人|ほんにん} は {書|か}いて ない が 、 {誰|だれ} か が やった んだ 。 || "Has been put up." Doesn't say who, but somebody did it.
-?(comp=ren) comp: 「〜て あります」 は 、 {誰|だれ} か が {済|す}ませて {残|のこ}した {形|かたち} です 。 {灯|あか}り の {帳面|ちょうめん} でも よく {見|み}ます 。 || "〜て あります" is the shape of something someone finished and left. You see it in lamp logs all the time.
+?(comp=ren) comp: 「{上|あ}げて あります」 。 …… {誰|だれ} か が {済|す}ませて 、 {置|お}いて いった 。 {灯|あか}り の {帳面|ちょうめん} と {同|おな}じ {書|か}き{方|かた} です 。 || "Has been put up." …Someone finished it and left it so. Lamp logs are written the same way.
 ?(comp=suzu) comp: 「{上|あ}げて あります」 。 {済|す}み の {判|はん} みたい な もの だ よ 。 {誰|だれ} か が やって 、 その まま に して ある 。 || "Has been put up." Like a "done" stamp: someone did it, and it's been left that way.
 !teach te_aru
 !set xpk_cellars_taught
@@ -73,7 +73,8 @@ narr: {壁|かべ} {際|ぎわ} に {長椅子|ながいす} が {置|お}いて
 
 @scene xp.cellars_grate
 narr: {床|ゆか} に {鉄|てつ} の {格子|こうし} が ある 。 {下|した} から {留|と}めて あって 、 {上|うえ} から は {開|あ}かない 。 || An iron grate in the floor. It has been fastened from below, and won't open from up here.
-?(comp) comp: {向|む}こう {側|がわ} から なら 、 {開|あ}けられる かも 。 || Maybe from the other side.
+?(comp&comp!=ren) comp: {向|む}こう {側|がわ} から なら 、 {開|あ}けられる かも 。 || Maybe from the other side.
+?(comp=ren) comp: {向|む}こう {側|がわ} から なら 、 {開|あ}けられる かも しれません 。 || Maybe from the other side.
 
 @scene xp.cellars_lampnote
 narr: {棚|たな} に {紙|かみ} が {貼|は}って ある 。 「 ガラス は {拭|ふ}いて あります 。 {油|あぶら} は {箱|はこ} の {中|なか} に {入|い}れて あります 。 ランプ に は まだ {入|い}れて いません 。 」 || A note has been put up on the shelf. "The glass has been wiped. The oil has been put in the box. It is not in the lamp yet."

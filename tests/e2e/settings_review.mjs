@@ -84,10 +84,10 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
     const leaf = document.querySelector('.folio-settings .spread');
     const hl = document.querySelector('[data-voicehl]');
     const f = hl && hl.closest('.sx-field');
-    return { voices: RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices().length : -1, note: /No recorded voices yet/.test(leaf.textContent) && /still being cast and recorded/.test(leaf.textContent),
+    return { voices: RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices().length : -1, note: /No recorded voices yet/.test(leaf.textContent) && /being recorded/.test(leaf.textContent) && [...leaf.querySelectorAll('input[data-set="mode"][data-obj="voice"]')].map((i) => i.value).join() === 'prepared,device,none',
       hl: !!hl, visible: !!(hl && hl.closest('.sx-tick').offsetParent), head: f && f.querySelector('.sx-h').textContent, notBulb: !!(f && !f.querySelector('[data-sw="lightbulb"]')), bulbHere: !!leaf.querySelector('[data-sw="lightbulb"]'), on: hl && hl.checked };
   });
-  assert(voice.voices === 0 && voice.note, 'Sound says why no line is spoken: no recorded voices yet, none on this device: ' + JSON.stringify(voice));
+  assert(voice.voices === 0 && voice.note, 'Sound says why no line is spoken (no recorded voices yet, none on this device) and offers who speaks: ' + JSON.stringify(voice));
   assert(voice.hl && voice.visible && voice.head === 'Highlight each word as it is spoken' && voice.notBulb && !voice.bulbHere && voice.on, 'the spoken-word highlight is its own setting, shown without a device voice, on a different tab from Word help: ' + JSON.stringify(voice));
   await p.click('label.switch:has([data-voicehl])');
   await wait(p, 300);

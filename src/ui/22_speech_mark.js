@@ -128,8 +128,12 @@ RB.ui.speechMark = (function () {
         show(S().tokenAt(st.offs, ci));
       },
       // a recording: follow its clock, the estimate stretched to its length
+      // (an estimate: each word's beats from its reading, stretched to the recording's length; a recording's own word
+      // timings, if they are ever measured from the audio, would replace it without recording anything again)
       follow(getTime, duration) {
         if (cur !== st) return;
+        clearTimeout(st.timer);
+        cancelAnimationFrame(st.raf);
         st.follow = { get: getTime, duration };
         st.events = false;
         loop();

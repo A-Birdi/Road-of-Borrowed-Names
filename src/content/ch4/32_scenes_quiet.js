@@ -447,7 +447,7 @@ narr: {朝|あさ} 。 {窓|まど} の {外|そと} は 、 {目|め} が {痛|
 !sequence ch4.morning end
 ?(comp=nao&var.sb_tone=1) comp[smirk]: ヤギ の {夢|ゆめ} を {見|み}た 。 {十三頭|じゅうさんとう} いた 。 …… {誰|だれ} の せい だ 。 || I dreamed about goats. There were thirteen. …Whose fault is that.
 ?(comp=nao&var.sb_tone>=2) comp: …… {昨夜|ゆうべ} は 、 どうも 。 {行|い}こう 。 {灯|あか}り が {待|ま}ってる 。 || …Thanks for last night. Let's go. The lamp's waiting.
-?(comp=mio&var.sb_tone=1) comp[laugh]: おはよう 。 {主義|しゅぎ} {第一条|だいいちじょう} 、 「 {朝|あさ} ごはん は {抜|ぬ}かない 」 。 {下|した} に {行|い}きましょう 。 || Morning. Rule number one: never skip breakfast. Let's go down.
+?(comp=mio&var.sb_tone=1) comp[laugh]: おはよう 。 {主義|しゅぎ} {第一条|だいいちじょう} 、 「 {朝|あさ} ごはん は {抜|ぬ}かない 」 。 {下|した} に {行|い}こう 。 || Morning. Rule number one: never skip breakfast. Let's go down.
 ?(comp=mio&var.sb_tone>=2) comp[smile]: おはよう 。 …… {久|ひさ}しぶり に 、 よく {眠|ねむ}れた わ 。 {瓶|びん} の {中|なか} が 、 {少|すこ}し {軽|かる}く なった {気|き} が する 。 || Morning. …I slept well, for once. The jar feels a little lighter.
 ?(comp=ren&var.sb_tone=1) comp[smirk]: おはよう ございます 。 {今朝|けさ} は {迷|まよ}わず に {起|お}きられました 。 {布団|ふとん} から {出|で}る {道|みち} は 、 {一本道|いっぽんみち} でした 。 || Good morning. I managed to wake without getting lost. The road out of the futon was a single road.
 ?(comp=ren&var.sb_tone>=2) comp[smile]: おはよう ございます 。 {昨夜|ゆうべ} 、 {言葉|ことば} は {一|ひと}つ も {欠|か}けて いません でした 。 {今朝|けさ} も 。 {行|い}きましょう 。 || Good morning. Last night, not a single word was missing. This morning neither. Let's go.

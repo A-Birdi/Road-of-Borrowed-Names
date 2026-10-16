@@ -33,19 +33,19 @@ RB.dialect.add('kansai', `
 > {一番|いちばん} {古|ふる}い {名前|なまえ} {知|し}ってる ん は 、 {一番|いちばん} {古|ふる}い {人|ひと} か 、 {一番|いちばん} {古|ふる}い {紙|かみ} や な 。 || Whoever knows the oldest name: the oldest person, or the oldest paper.
 @ mb/21_scenes_main [mb.uno_evening]
 = {行|い}きましょう 。 …… {大|おお}きな {声|こえ} で {呼|よ}ぶ の は 、 {私|わたし} の {得意|とくい} よ 。 || Let's go. …Calling out loud is my speciality.
-> {行|い}こ 。 …… {大|おお}きい {声|こえ} で {呼|よ}ぶ の は 、 うち の {得意|とくい} や で 。 || Let's go. …Callin' out loud's my speciality.
+> {行|い}きましょ 。 …… {大|おお}きい {声|こえ} で {呼|よ}ぶ の は 、 うち の {得意|とくい} や で 。 || Let's go. …Callin' out loud's my speciality.
 @ mb/21_scenes_main [mb.ichi_found]
 = {泣|な}かなかった の ね 。 {立派|りっぱ} な {役者|やくしゃ} よ 。 {帰|かえ}ったら 、 {拍手|はくしゅ} して あげる 。 || You didn't cry. A fine performer. When we get home, I'll give you a round of applause.
 > {泣|な}かへん かった ん や な 。 {立派|りっぱ} な {役者|やくしゃ} や で 。 {帰|かえ}ったら 、 {拍手|はくしゅ} したる わ 。 || You didn't cry. A proper performer. When we get home, I'll give you a round of applause.
 @ mb/21_scenes_main [mb.morning_after]
 = …… {笑|わら}って {済|す}む {話|はなし} じゃ なく なった わ ね 。 {一番|いちばん} の {橋|はし} 、 {名前|なまえ} を {返|かえ}して もらいましょう 。 || …This isn't something to laugh off any more. Let's get the first bridge its name back.
-> …… {笑|わら}って {済|す}む {話|はなし} や なくなった な 。 {一番|いちばん} の {橋|はし} 、 {名前|なまえ} {返|かえ}して もらお 。 || …This ain't somethin' to laugh off any more. Let's get the first bridge its name back.
+> …… {笑|わら}って {済|す}む {話|はなし} や なくなった な 。 {一番|いちばん} の {橋|はし} 、 {名前|なまえ} {返|かえ}して もらいましょう 。 || …This ain't somethin' to laugh off any more. Let's get the first bridge its name back.
 @ mb/22_scenes_side [mb.noodle_done]
 = {赤|あか} と {青|あお} の {二枚看板|にまいかんばん} 。 お{祭|まつ}り の {目玉|めだま} に なる わ よ 。 || Red and blue, a double bill. They'll be the talk of the festival.
 > {赤|あか} と {青|あお} の {二枚看板|にまいかんばん} 。 お{祭|まつ}り の {目玉|めだま} に なる で 。 || Red and blue, a double bill. They'll be the talk of the festival, mark me.
 @ mb/22_scenes_side [mb.lc_inside]
 = {六十年|ろくじゅうねん} の {幕間|まくあい} ね 。 {次|つぎ} の {幕|まく} 、 {始|はじ}めましょう 。 || A sixty-year interval. Let's start the next act.
-> {六十年|ろくじゅうねん} の {幕間|まくあい} や な 。 {次|つぎ} の {幕|まく} 、 {始|はじ}めよ か 。 || A sixty-year interval. Shall we start the next act?
+> {六十年|ろくじゅうねん} の {幕間|まくあい} や な 。 {次|つぎ} の {幕|まく} 、 {始|はじ}めましょう か 。 || A sixty-year interval. Shall we start the next act?
 `, 'kansai_93_mb.js');
 
 RB.dialect.add('kansai', `
@@ -54,7 +54,7 @@ RB.dialect.add('kansai', `
 > {舞台|ぶたい} の {奈落|ならく} みたい や な 。 …… {観客|かんきゃく} が {水|みず} だけ って いう の が 、 {寂|さび}しい けど 。 || Like the pit under a stage. …Only the audience is all water, which is a bit lonely.
 @ mb/23_scenes_under [mb.firstbridge_arrive]
 = {役|やく} の {名前|なまえ} を {忘|わす}れた {役者|やくしゃ} は 、 {舞台|ぶたい} に {立|た}てない の よ 。 {思|おも}い{出|だ}させて あげましょう 。 || An actor who's forgotten their part's name can't go on. Let's help it remember.
-> {役|やく} の {名前|なまえ} {忘|わす}れた {役者|やくしゃ} は 、 {舞台|ぶたい} に {立|た}たれへん ねん 。 {思|おも}い{出|だ}さして あげよ 。 || An actor who's forgotten their part's name can't go on, see. Let's help it remember.
+> {役|やく} の {名前|なまえ} {忘|わす}れた {役者|やくしゃ} は 、 {舞台|ぶたい} に {立|た}たれへん ねん 。 {思|おも}い{出|だ}さして あげましょう 。 || An actor who's forgotten their part's name can't go on, see. Let's help it remember.
 @ mb/23_scenes_under [mb.bridge_named]
 = {名台詞|めいぜりふ} は 、 {名前|なまえ} {一|ひと}つ で {十分|じゅうぶん} ね 。 {幕|まく} ！ || The best line was just a name. Curtain!
 > {名台詞|めいぜりふ} は 、 {名前|なまえ} {一|ひと}つ で {十分|じゅうぶん} や な 。 {幕|まく} ！ || The best line was just a name. Curtain!

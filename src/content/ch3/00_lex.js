@@ -271,7 +271,7 @@ RB.lex.add(RB.lex.parseTable(`
 唸る|うなる|v5r|I|to hum, drone, groan
 物持ち|ものもち|n|A|taking good care of one's things (物持ちがいい)
 竿|さお|n|I|pole, rod
-行っちまう|いっちまう|v5u|A|(rough) to go off and leave (= 行ってしまう)
+行っちまう|いっちまう|v5u|A|(rough) to go off and leave (= 行ってしまう)|〜ちまう = 〜てしまう: a rough or old-fashioned form of 〜ちゃう.
 三十個目|さんじゅっこめ|n|E|the thirtieth (small object)
 受取人|うけとりにん|n|I|recipient
 手鐘|てがね|n|A|handbell

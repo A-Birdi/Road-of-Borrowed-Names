@@ -140,7 +140,7 @@ co_ume[smile]: {毎年|まいとし} 、 {採|と}る {日|ひ} に は 「 {小
 !prop co_ume kaki
 !gesture co_ume handover pc
 !gesture pc receive co_ume
-co_ume: ほら 、 {去年|きょねん} の {干|ほ}し{柿|がき} だ 。 その お{年寄|としよ}り に {食|た}べさせて ごらん 。 {舌|した} は {頭|あたま} より {物覚|ものおぼ}え が いい から ね 。 || Here — a dried one from last year. Let the old man taste it. The tongue remembers better than the head.
+co_ume: ほら 、 {去年|きょねん} の {干|ほ}し{柿|がき} だ 。 {名前|なまえ} を {探|さが}して いる {人|ひと} が いる ん だ ね 。 {食|た}べさせて ごらん 。 {舌|した} は {頭|あたま} より {物覚|ものおぼ}え が いい から ね 。 || Here — a dried one from last year. Somebody's looking for that name, then. Let them taste it. The tongue remembers better than the head.
 !give lq_koharu_fruit
 !set lq_road_name
 !note lq_koharubiyori
@@ -181,7 +181,7 @@ yasu: {先|さき} に {行|い}って {待|ま}ってる 。 || I'll go ahead a
 ?(comp=nao) !gesture comp nod
 ?(comp=nao) comp: …… {名前|なまえ} が {口|くち} から {出|で}る {瞬間|しゅんかん} って の は 、 {何度|なんど} {見|み}て も いい もん だ な 。 || …The moment a name comes back out of someone's mouth. Never gets old.
 ?(comp=mio) !gesture comp exhale
-?(comp=mio) comp[smile]: よかった ……。 ヤス さん 、 {顔色|かおいろ} が {変|か}わりました 。 || Oh, good… Yasu's colour has come back.
+?(comp=mio) comp[smile]: よかった ……。 ヤス さん 、 {顔色|かおいろ} が よく なりました 。 || Oh, good… Yasu's colour has come back.
 ?(comp=ren) !gesture comp nod
 ?(comp=ren) comp: {名前|なまえ} を {呼|よ}ぶ {人|ひと} が いる 。 これ なら 、 {灯|あか}り に {書|か}いて も {根|ね} を {張|は}ります 。 || Someone calls the name now. Written on the lantern, it'll take root.
 ?(comp=suzu) !gesture comp thanks
@@ -417,7 +417,7 @@ lq_kayo[surprise]: …… {小春野|こはるの} 。 そう 、 {小春野|こ
 !gesture lq_kayo lowered
 lq_kayo[sad]: …… {正直|しょうじき} に {言|い}います 。 {帰|かえ}る の が 、 {怖|こわ}い んです 。 {誰|だれ} も いない {村|むら} を {見|み}たら 、 {本当|ほんとう} に {終|お}わって しまう {気|き} が して 。 || …I'll be honest. I'm afraid to go back. If I see the village with no one in it, I feel it'll really be over.
 !choice
-* {柿|かき} の {木|き} に 、 あなた の {背|せ} の {線|せん} が {残|のこ}って いました 。 || Your height marks are still on the persimmon tree. -> tree
+* {柿|かき} の {木|き} に 、 カヨ さん の {背|せ} の {線|せん} が {残|のこ}って いました 。 || Your height marks are still on the persimmon tree. -> tree
 * ヤス さん も 、 {元気|げんき} です よ 。 || Yasu is alive and well, you know. -> yasu
 :tree
 !gesture lq_kayo aside

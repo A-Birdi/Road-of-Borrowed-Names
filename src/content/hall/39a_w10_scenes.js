@@ -30,7 +30,8 @@ narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {見覚|みおぼ}�
 @scene hall.w10.f2_first
 !set hall_w10_f2_seen
 narr: {館|やかた} の {回廊|かいろう} 。 {壁|かべ} に {沿|そ}って 、 {九|ここの}つ の {話|はなし} の {灯|ひ} が {並|なら}んで いる 。 {今|いま} より ずっと {昔|むかし} の 、 {館|やかた} の {夜|よる} だ 。 || The Hall's long gallery. Along the walls stand the lights of the nine tales. It is a night in the Hall, long, long ago.
-?(comp) comp: {九|ここの}つ の {灯|ひ} 、 {全部|ぜんぶ} {見覚|みおぼ}え が ある ね 。 || All nine lights look familiar.
+?(comp&comp!=ren) comp: {九|ここの}つ の {灯|ひ} 、 {全部|ぜんぶ} {見覚|みおぼ}え が ある ね 。 || All nine lights look familiar.
+?(comp=ren) comp: {九|ここの}つ の {灯|ひ} 、 {全部|ぜんぶ} {見覚|みおぼ}え が あります ね 。 || All nine lights look familiar.
 
 @scene hall.w10.f3_first
 !set hall_w10_f3_seen
@@ -115,7 +116,8 @@ hall_kohaku: {九十九|きゅうじゅうきゅう} まで は 、 {師匠|し�
 narr: {道|みち} の {脇|わき} の {道中記|どうちゅうき} 。 {旅|たび} の {順|じゅん} が {書|か}いて ある 。 || The road record by the wayside, setting down the order of a journey.
 `;
   out += LV3((p, t, i) => `?(${P2(t, p)}) narr: 「 ${ROADREC[p][i]} 」 || "${ROADREC[p][3]}"\n`);
-  out += `?(comp&!hall.w10.t2) comp: {札|ふだ} を 、 {通|とお}った {順|じゅん} に {道標|みちしるべ} へ {置|お}いて いこう 。 || Let's set the tablets on the waystones in the order we passed through.
+  out += `?(comp&!hall.w10.t2&comp!=ren) comp: {札|ふだ} を 、 {通|とお}った {順|じゅん} に {道標|みちしるべ} へ {置|お}いて いこう 。 || Let's set the tablets on the waystones in the order we passed through.
+?(comp=ren&!hall.w10.t2) comp: {札|ふだ} を 、 {通|とお}った {順|じゅん} に {道標|みちしるべ} へ {置|お}いて いきましょう 。 || Let's set the tablets on the waystones in the order we passed through.
 `;
   for (const k of KEYS) out += `
 @scene hall.w10.tab_${k}
@@ -147,7 +149,8 @@ narr: 「 ${PLACE[k][0]} 」 の {札|ふだ} を 、 {道標|みちしるべ} �
 !end
 :all
 narr: {六|むっ}つ の {道標|みちしるべ} に 、 {六|むっ}つ の {名前|なまえ} 。 {振|ふ}り{返|かえ}る と 、 {来|き}た {道|みち} が {一本|いっぽん} に {繋|つな}がって {見|み}えた 。 || Six waystones, six names. Looking back, the road you came by shows as one unbroken line.
-?(comp) comp: {一|ひと}つ {一|ひと}つ は {寄|よ}り{道|みち} みたい だった けど 、 {並|なら}べる と ちゃんと {道|みち} に なって いる ね 。 || Each one felt like a detour at the time, but laid out together they make a road.
+?(comp&comp!=ren) comp: {一|ひと}つ {一|ひと}つ は {寄|よ}り{道|みち} みたい だった けど 、 {並|なら}べる と ちゃんと {道|みち} に なって いる ね 。 || Each one felt like a detour at the time, but laid out together they make a road.
+?(comp=ren) comp: {一|ひと}つ {一|ひと}つ は {寄|よ}り{道|みち} の よう でした が 、 {並|なら}べる と ちゃんと {道|みち} に なって います ね 。 || Each one felt like a detour at the time, but laid out together they make a road.
 ${K.mark(W, 0, 't2')}
 !end
 :done
@@ -169,7 +172,7 @@ narr: {道標|みちしるべ} に 、 {札|ふだ} が {立|た}って いる �
   out += '\n@scene hall.w10.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {古|ふる}い {灯守|ひもり} たち が {練習|れんしゅう} に {使|つか}った {石板|せきばん} 。 {九|ここの}つ の {話|はなし} の {教|おし}え が {刻|きざ}まれて いる 。 {端|はし} の {掛|か}け{軸|じく} に は 「 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 と ある 。 || The slates the old keepers practiced on, cut with the lessons of the nine tales. The scroll at the end reads: "One alone is wrong."'],
     task: { 0: 'hall.w10.counter0', 1: 'hall.w10.counter1' },
-    after: ['narr: {間違|まちが}った {石板|せきばん} の {文字|もじ} が 、 {砂|すな} の よう に {崩|くず}れて {消|き}えた 。 || The letters on the wrong slate crumble away like sand.', '?(comp) comp: {全部|ぜんぶ} 、 どこ か で {一度|いちど} {習|なら}った こと だ 。 {忘|わす}れて ない もの だ ね 。 || Every one of them something we learned somewhere along the way. We haven\'t forgotten.'],
+    after: ['narr: {間違|まちが}った {石板|せきばん} の {文字|もじ} が 、 {砂|すな} の よう に {崩|くず}れて {消|き}えた 。 || The letters on the wrong slate crumble away like sand.', '?(comp&comp!=ren) comp: {全部|ぜんぶ} 、 どこ か で {一度|いちど} {習|なら}った こと だ 。 {忘|わす}れて ない もの だ ね 。 || Every one of them something we learned somewhere along the way. We haven\'t forgotten.', '?(comp=ren) comp: {全部|ぜんぶ} 、 どこ か で {一度|いちど} {習|なら}った こと です 。 {忘|わす}れて いない もの です ね 。 || Every one of them something we learned somewhere along the way. We haven\'t forgotten.'],
     later: 'narr: {石板|せきばん} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the slates one by one, then come back.',
     done: 'narr: {石板|せきばん} は 、 もう {何|なに} も {問|と}わない 。 || The slates ask nothing more.' });
   for (let i = 0; i < 4; i++) {
@@ -231,7 +234,8 @@ narr: {言葉|ことば} を 、 「 ${TITLE[w][0]} 」 の {灯|ひ} の {前|�
 !end
 :all
 narr: {五|いつ}つ の {言葉|ことば} が 、 それぞれ の {灯|ひ} の {前|まえ} に {収|おさ}まった 。 || The five sayings are each in place before their lights.
-?(comp) comp: {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practiced all of it in this Hall.
+?(comp&comp!=ren) comp: {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practiced all of it in this Hall.
+?(comp=ren) comp: {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん です ね 。 || Asking the way, saying no, passing on what someone said: we practiced all of it in this Hall.
 ${K.mark(W, 1, 't4')}
 !end
 `;
@@ -280,11 +284,13 @@ narr: {書|か}き{付|つ}け は 、 {畳|たた}んで しまって ある �
 narr: ${SPOT[k][0]} 。 || ${cap(SPOT[k][1])}.
 !if !xp_hall_w10_f1_asked -> unknown
 ${SPOT[k][2] >= 0 ? '!if hall.w10.pat=' + SPOT[k][2] + ' -> right\n' : ''}narr: {灯芯|とうしん} は 、 ここ に は ない よう だ 。 || The wick doesn't seem to be here.
-?(comp) comp: {書|か}き{付|つ}け の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the note said again?
+?(comp&comp!=ren) comp: {書|か}き{付|つ}け の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the note said again?
+?(comp=ren) comp: {書|か}き{付|つ}け を 、 もう {一度|いちど} {読|よ}みましょう か 。 || Shall I read the note again?
 !end
 ${SPOT[k][2] >= 0 ? `:right
 narr: {古|ふる}い {灯芯|とうしん} が {一本|いっぽん} 、 {紙|かみ} に {包|つつ}まれて いた 。 {包|つつ}み に は 「 {次|つぎ} の {人|ひと} へ 」 と {書|か}いて ある 。 || One old wick, wrapped in paper. On the wrapping: "For the next one."
-?(comp) comp: {止|や}めた {人|ひと} たち が 、 {続|つづ}き を {待|ま}って いた ん だ ね 。 || The ones who stopped were waiting for someone to go on.
+?(comp&comp!=ren) comp: {止|や}めた {人|ひと} たち が 、 {続|つづ}き を {待|ま}って いた ん だ ね 。 || The ones who stopped were waiting for someone to go on.
+?(comp=ren) comp: {止|や}めた {人|ひと} たち が 、 {続|つづ}き を {待|ま}って いた ん です ね 。 || The ones who stopped were waiting for someone to go on.
 ${K.mark(W, 1, 't6')}
 !end
 ` : ''}:unknown
@@ -346,7 +352,8 @@ ${n > 0 ? `!if !${PGF(PGS[n - 1])} -> early\n` : ''}narr: {百話目|ひゃく�
 narr: {言葉|ことば} が {頁|ページ} に {収|おさ}まって 、 {墨|すみ} が {乾|かわ}いた 。 || The word settles into the page, and the ink dries.
 !set ${PGF(pg)}
 ${n === PGS.length - 1 ? `narr: {四|よっ}つ の {頁|ページ} が 、 {一|ひと}つ の {話|はなし} に なった 。 || Four pages make one tale.
-?(comp) comp: {自分|じぶん} の {旅|たび} を 、 {自分|じぶん} の {言葉|ことば} で {書|か}く 。 …… {最初|さいしょ} の {頃|ころ} は 、 {考|かんが}えられなかった ね 。 || Writing your own journey in your own words. …Back at the start, you couldn't have imagined it.
+?(comp&comp!=ren) comp: {自分|じぶん} の {旅|たび} を 、 {自分|じぶん} の {言葉|ことば} で {書|か}く 。 …… {最初|さいしょ} の {頃|ころ} は 、 {考|かんが}えられなかった ね 。 || Writing your own journey in your own words. …Back at the start, you couldn't have imagined it.
+?(comp=ren) comp: {自分|じぶん} の {旅|たび} を 、 {自分|じぶん} の {言葉|ことば} で {書|か}く 。 …… {最初|さいしょ} の {頃|ころ} は 、 {考|かんが}えられなかった こと です ね 。 || Writing your own journey in your own words. …Back at the start, you couldn't have imagined it.
 ${K.mark(W, 2, 't8')}
 ` : '!refresh\n'}!end
 :wrong

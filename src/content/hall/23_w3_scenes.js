@@ -26,7 +26,8 @@ narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {夜|よる} の {�
 !set hall_w3_f2_seen
 narr: {坂道|さかみち} に {霧|きり} が {出|で}て いる 。 {坂|さか} の {下|した} で 、 シノ が {灯|ひ} を {持|も}って {待|ま}って いた 。 || Mist lies on the slope. At its foot, Shino is waiting with a light.
 hall_shino: {祖父|そふ} の {代|か}わり に 、 {今夜|こんや} は {私|わたし} が {鐘|かね} を {撞|つ}きます 。 でも 、 {一人|ひとり} で は {暗|くら}くて …… 。 || Tonight I ring the bell in my grandfather's place. But alone, in the dark…
-?(comp) comp: {一緒|いっしょ} に {登|のぼ}ろう 。 {順番|じゅんばん} に 、 {一|ひと}つ ずつ 。 || We'll climb with you. In order, one thing at a time.
+?(comp&comp!=ren) comp: {一緒|いっしょ} に {登|のぼ}ろう 。 {順番|じゅんばん} に 、 {一|ひと}つ ずつ 。 || We'll climb with you. In order, one thing at a time.
+?(comp=ren) comp: {一緒|いっしょ} に {登|のぼ}りましょう 。 {順番|じゅんばん} に 、 {一|ひと}つ ずつ 。 || We'll climb with you. In order, one thing at a time.
 
 @scene hall.w3.f3_first
 !set hall_w3_f3_seen
@@ -113,7 +114,7 @@ hall_shino: {鳴|な}った 。 …… {私|わたし} の {鐘|かね} が 、 
 narr: {道|みち} の {札|ふだ} に 、 ジンベエ の {書|か}き{置|お}き が {貼|は}って ある 。 {震|ふる}える {字|じ} だ 。 || Jinbei's note is pinned to the board by the path, in a shaking hand.
 `;
   for (const p of [0, 1]) for (const tier of ['F', 'E', 'I', 'A']) out += `?(${both(L[tier], 'hall.w3.pat=' + p)}) narr: 「 ${NOTE[p][tier]} 」 || "${NOTE[p].en}"\n`;
-  out += `?(comp&!hall.w3.t2) comp: {書|か}いて ある {順|じゅん} と 、 やる {順|じゅん} は 、 {違|ちが}う かも しれない 。 {前|まえ} と {後|あと} を よく {見|み}よう 。 || The order it's written in may not be the order to do it in. Watch for before and after.\n`;
+  out += `?(comp&!hall.w3.t2&comp!=ren) comp: {書|か}いて ある {順|じゅん} と 、 やる {順|じゅん} は 、 {違|ちが}う かも しれない 。 {前|まえ} と {後|あと} を よく {見|み}よう 。 || The order it's written in may not be the order to do it in. Watch for before and after.\n?(comp=ren&!hall.w3.t2) comp: {書|か}いて ある {順|じゅん} と 、 やる {順|じゅん} は 、 {違|ちが}う かも しれません 。 {前|まえ} と {後|あと} を よく {見|み}ましょう 。 || The order it's written in may not be the order to do it in. Watch for before and after.\n`;
   const CH = {
     water: ['{井戸|いど}', 'the well', '{水|みず} を {汲|く}んだ 。 {桶|おけ} が {冷|つめ}たい 。', 'You draw a bucket of water. The pail is cold.'],
     lamp: ['{石|いし} の {灯籠|とうろう}', 'the stone lantern', '{灯籠|とうろう} に {火|ひ} を {入|い}れた 。 {道|みち} が {明|あか}るく なった 。', 'You light the stone lantern. The path brightens.'],
@@ -142,7 +143,8 @@ ${reset2}
 !end
 :all
 narr: {支度|したく} が 、 {書|か}き{置|お}き の {言|い}う {順番|じゅんばん} で {全部|ぜんぶ} {済|す}んだ 。 || Everything is done, in the order the note means.
-?(comp) comp: {書|か}いて ある {順|じゅん} じゃ なくて 、 {前|まえ} と {後|あと} で {決|き}まる {順|じゅん} 。 {上手|うま}く いった ね 。 || Not the order it was written in, but the order before and after make. Well done.
+?(comp&comp!=ren) comp: {書|か}いて ある {順|じゅん} じゃ なくて 、 {前|まえ} と {後|あと} で {決|き}まる {順|じゅん} 。 {上手|うま}く いった ね 。 || Not the order it was written in, but the order before and after make. Well done.
+?(comp=ren) comp: {書|か}いて ある {順|じゅん} で は なく 、 {前|まえ} と {後|あと} で {決|き}まる {順|じゅん} 。 {上手|うま}く いきました ね 。 || Not the order it was written in, but the order before and after make. Well done.
 ${K.mark(W, 0, 't2')}
 !end
 :did
@@ -167,7 +169,7 @@ narr: {支度|したく} は 、 {全部|ぜんぶ} {済|す}んで いる 。 |
   out += '\n@scene hall.w3.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {寺|てら} の {道|みち} の {石|いし} に 、 {字|じ} が {刻|きざ}んで ある 。 「 {四|よっ}つ の {言葉|ことば} の うち 、 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 || Carved on a stone by the temple path: "Of the four sayings, one alone is wrong."'],
     task: { 0: 'hall.w3.counter0', 1: 'hall.w3.counter1' },
-    after: ['narr: {間違|まちが}った {言葉|ことば} の {石|いし} が 、 {音|おと} も なく {苔|こけ} に {覆|おお}われた 。 || The stone with the wrong saying is covered over by moss without a sound.', '?(comp) comp: {鐘撞|かねつ}き は 、 {前|まえ} と {後|あと} を {間違|まちが}えたら {仕事|しごと} に ならない から ね 。 || A bell-ringer who mixes up before and after is out of a job.'],
+    after: ['narr: {間違|まちが}った {言葉|ことば} の {石|いし} が 、 {音|おと} も なく {苔|こけ} に {覆|おお}われた 。 || The stone with the wrong saying is covered over by moss without a sound.', '?(comp&comp!=ren) comp: {鐘撞|かねつ}き は 、 {前|まえ} と {後|あと} を {間違|まちが}えたら {仕事|しごと} に ならない から ね 。 || A bell-ringer who mixes up before and after is out of a job.', '?(comp=ren) comp: {鐘撞|かねつ}き は 、 {前|まえ} と {後|あと} を {間違|まちが}えたら {仕事|しごと} に なりません から ね 。 || A bell-ringer who mixes up before and after is out of a job.'],
     later: 'narr: {言葉|ことば} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the sayings one by one, then come back.',
     done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
   for (let i = 0; i < 4; i++) {
@@ -267,7 +269,8 @@ narr: {石板|せきばん} に よる と 、 まだ {早|はや}い 。 {香�
 !end
 :late
 narr: {石板|せきばん} に よる と 、 もう {遅|おそ}い 。 その {時|とき} は {過|す}ぎて しまった 。 {新|あたら}しい {線香|せんこう} で 、 {夜|よる} を {始|はじ}め{直|なお}そう 。 || By the slate, it is too late: that hour has passed. Light a new stick and begin the night again.
-?(comp) comp: {急|いそ}がなくて いい 。 {線香|せんこう} は 、 まだ ある 。 || No need to hurry. There's more incense.
+?(comp&comp!=ren) comp: {急|いそ}がなくて いい 。 {線香|せんこう} は 、 まだ ある 。 || No need to hurry. There's more incense.
+?(comp=ren) comp: {急|いそ}がなくて {大丈夫|だいじょうぶ} です 。 {線香|せんこう} は 、 まだ あります 。 || No need to hurry. There's more incense.
 !end
 :check
 !if ${Object.keys(THING).map(DD).join('&')} -> all
@@ -275,7 +278,8 @@ narr: {石板|せきばん} に よる と 、 もう {遅|おそ}い 。 その
 !end
 :all
 narr: {石板|せきばん} の {仕事|しごと} が 、 {全部|ぜんぶ} {時間|じかん} {通|どお}り に {済|す}んだ 。 || Everything on the slate is done, each at its hour.
-?(comp) comp: {前|まえ} に 、 {後|あと} で 、 {間|ま}に{合|あ}った 。 {時計|とけい} と {仲良|なかよ}く なった {気分|きぶん} だ ね 。 || Before, after, in time. I feel like the clock and I are friends now.
+?(comp&comp!=ren) comp: {前|まえ} に 、 {後|あと} で 、 {間|ま}に{合|あ}った 。 {時計|とけい} と {仲良|なかよ}く なった {気分|きぶん} だ ね 。 || Before, after, in time. I feel like the clock and I are friends now.
+?(comp=ren) comp: {前|まえ} に 、 {後|あと} で 、 {間|ま}に{合|あ}った 。 {時計|とけい} と {仲良|なかよ}く なれた {気|き} が します 。 || Before, after, in time. I feel like the clock and I are friends now.
 ${K.mark(W, 1, 't4')}
 !end
 :did
@@ -335,12 +339,14 @@ narr: {時|とき} の {柱|はしら} の {鉤|かぎ} 。 {札|ふだ} が {�
 ?(${L.NOTF}) narr: 「 ${HOOK[h][1]} 」 || "${HOOK[h][2]}"
 !if !xp_hall_w3_f1_asked -> empty
 ${HOOK[h][3] >= 0 ? '!if hall.w3.pat=' + HOOK[h][3] + ' -> right\n' : ''}narr: {暦|こよみ} の {時刻|じこく} と は 、 {違|ちが}う よう だ 。 || That isn't the hour the almanac gave, it seems.
-?(comp) comp: {暦|こよみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say the almanac's words again?
+?(comp&comp!=ren) comp: {暦|こよみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say the almanac's words again?
+?(comp=ren) comp: {暦|こよみ} を 、 もう {一度|いちど} {読|よ}みましょう か 。 || Shall I read the almanac again?
 !end
 :right
 narr: シノ の {提灯|ちょうちん} を 、 その {鉤|かぎ} に {掛|か}けた 。 {村|むら} の {夜回|よまわ}り が 、 これ を {見|み}て {時|とき} を {知|し}る 。 || You hang Shino's lantern on that hook. The village watchman will see it and know the hour.
 !set xp_hall_w3_f1_hung_${h}
-?(comp) comp: これ で 、 {村|むら} の {人|ひと} も {鐘|かね} の {時|とき} が {分|わ}かる 。 || Now the village will know the bell's hour too.
+?(comp&comp!=ren) comp: これ で 、 {村|むら} の {人|ひと} も {鐘|かね} の {時|とき} が {分|わ}かる 。 || Now the village will know the bell's hour too.
+?(comp=ren) comp: これ で 、 {村|むら} の {人|ひと} も {鐘|かね} の {時|とき} が {分|わ}かります 。 || Now the village will know the bell's hour too.
 ${K.mark(W, 1, 't6')}
 !end
 :empty
@@ -381,7 +387,7 @@ ${WIT[w][0]}: ${HELLO[w]}
 ?(${both(L.E, 'hall.w3.pat=' + p)}) ${WIT[w][0]}: 「 ${SEEN[w][p][1]} 」 || "${SEEN[w][p][3]}"
 ?(${both(L.IA, 'hall.w3.pat=' + p)}) ${WIT[w][0]}: 「 ${SEEN[w][p][2]} 」 || "${SEEN[w][p][3]}"
 `;
-    out += `?(comp&!hall.w3.t8) comp: {見|み}た {順番|じゅんばん} に {並|なら}べたら 、 {最後|さいご} の {場所|ばしょ} に いる はず だ 。 || Put the sightings in order, and the cub should be where it was seen last.\n`;
+    out += `?(comp&!hall.w3.t8&comp!=ren) comp: {見|み}た {順番|じゅんばん} に {並|なら}べたら 、 {最後|さいご} の {場所|ばしょ} に いる はず だ 。 || Put the sightings in order, and the cub should be where it was seen last.\n?(comp=ren&!hall.w3.t8) comp: {見|み}た {順番|じゅんばん} に {並|なら}べたら 、 {最後|さいご} の {場所|ばしょ} に いる はず です 。 || Put the sightings in order, and the cub should be where it was seen last.\n`;
   }
   const PLACE = { steps: ['{鐘楼|しょうろう} の {石段|いしだん}', 'the bell tower\'s stone steps', '{石段|いしだん} の {下|した} を {覗|のぞ}いた 。 {落|お}ち{葉|ば} しか ない 。', 'You look under the steps. Only fallen leaves.'],
     wood: ['{薪|まき} の {山|やま}', 'the woodpile', '{薪|まき} の {間|あいだ} を {覗|のぞ}いた 。 {虫|むし} が {一匹|いっぴき} 、 {逃|に}げて いった 。', 'You look between the logs. A beetle scuttles off.'],
@@ -394,12 +400,14 @@ ${WIT[w][0]}: ${HELLO[w]}
 narr: ${PLACE[pl][0]} 。 || ${cap(PLACE[pl][1])}.
 ${right.map((p) => '!if hall.w3.pat=' + p + ' -> found').join('\n')}
 narr: ${PLACE[pl][2]} || ${PLACE[pl][3]}
-?(comp) comp: {一番|いちばん} {最後|さいご} に {見|み}た の は 、 {誰|だれ} だった ？ || Who saw it last?
+?(comp&comp!=ren) comp: {一番|いちばん} {最後|さいご} に {見|み}た の は 、 {誰|だれ} だった ？ || Who saw it last?
+?(comp=ren) comp: {一番|いちばん} {最後|さいご} に {見|み}た の は 、 {誰|だれ} でした か ？ || Who saw it last?
 !end
 :found
 narr: {暗|くら}がり で 、 {丸|まる}い {目|め} が {二|ふた}つ {光|ひか}った 。 {小|ちい}さな {子|こ} が 、 {膝|ひざ} を {抱|かか}えて {震|ふる}えて いる 。 || In the dark, two round eyes shine. A small child is hugging their knees, shivering.
 hall_kobu: …… {蛾|が} を {追|お}いかけて たら 、 {帰|かえ}り {道|みち} が {分|わ}からなく なった 。 || …I was chasing a moth, and then I couldn't find the way back.
-?(comp) comp: {大丈夫|だいじょうぶ} 。 お{母|かあ}さん の ところ へ {帰|かえ}ろう 。 || It's all right. Let's get you back to your mother.
+?(comp&comp!=ren) comp: {大丈夫|だいじょうぶ} 。 お{母|かあ}さん の ところ へ {帰|かえ}ろう 。 || It's all right. Let's get you back to your mother.
+?(comp=ren) comp: {大丈夫|だいじょうぶ} です 。 お{母|かあ}さん の ところ へ {帰|かえ}りましょう 。 || It's all right. Let's get you back to your mother.
 ${K.mark(W, 2, 't8')}
 !end
 :done
@@ -414,7 +422,7 @@ narr: ${PLACE[pl][0]} 。 もう {誰|だれ} も {隠|かく}れて いない �
 hall_mame: …… {来|こ}ない で 。 {夜|よる} は 、 まだ {終|お}わらない 。 {終|お}わらせない 。 || …Stay back. The night isn't over. I won't let it end.
 !encounter hall.w3.mame
 !if var._enc=promised -> promised
-hall_mame: …… ぽん 、 ぽん 。 {太鼓|たいこ} の {音|おと} が 、 {杉|すぎ} の {奥|おく} で {続|つづ}いて いる 。 || …Pon, pon. The drumming goes on, deep in the cedars.
+narr: …… ぽん 、 ぽん 。 {太鼓|たいこ} の {音|おと} が 、 {杉|すぎ} の {奥|おく} で {続|つづ}いて いる 。 || …Pon, pon. The drumming goes on, deep in the cedars.
 !end
 :promised
 hall_mame: {夜明|よあ}け までに 。 {約束|やくそく} だ よ 。 {鐘|かね} の {側|そば} で 、 {待|ま}って いる 。 || By dawn. That's a promise. I'll wait by the bell.
@@ -470,9 +478,9 @@ narr: シノ は 、 {綱|つな} を {握|にぎ}った まま {待|ま}って 
 narr: {鐘|かね} の {声|こえ} が 、 {谷|たに} を {下|くだ}って いく 。 {村|むら} の {戸|と} が 、 {一|ひと}つ 、 また {一|ひと}つ と {開|ひら}いた 。 || The bell's voice rolls down the valley. In the village, the doors open, one, then another.
 hall_shino: おじいちゃん 、 {聞|き}こえた かな 。 || Grandpa, I wonder if you heard.
 narr: {坂|さか} の {下|した} の {家|いえ} で 、 ジンベエ が {目|め} を {閉|と}じた まま 、 {笑|わら}った 。 || In the house below the slope, Jinbei smiles with his eyes still closed.
-hall_mame: {夜|よる} は {終|お}わった 。 でも 、 また {来|く}る ね 。 …… ありがとう 。 || The night is over. But it'll come again, won't it. …Thank you.
+hall_mame: {夜|よる} は {終|お}わった 。 でも 、 {夜|よる} は また {来|く}る ね 。 …… ありがとう 。 || The night is over. But it'll come again, won't it. …Thank you.
 ?(comp=nao) comp: {時間|じかん} {通|どお}り に {届|とど}いた な 。 {鐘|かね} の {音|おと} も 、 {手紙|てがみ} と {同|おな}じ だ 。 || Delivered on time. A bell's sound is like a letter that way.
-?(comp=mio) comp[happy]: {前|まえ} に 、 {後|あと} で 、 まで 、 までに 。 {全部|ぜんぶ} 、 {間|ま}に{合|あ}う ため の {言葉|ことば} だった のね 。 || Before, after, until, by. They were all words for being in time.
+?(comp=mio) comp[happy]: {夜明|よあ}け に 、 ちゃんと {間|ま}に{合|あ}った のね 。 {鐘|かね} も 、 {約束|やくそく} も 。 || We made it by dawn. The bell, and the promise.
 ?(comp=ren) comp: {灯|ひ} が {三|みっ}つ 、 {戻|もど}りました 。 {夜|よる} を {終|お}わらせる の も 、 {灯守|ひもり} の {仕事|しごと} です ね 。 || Three lights back. Ending a night is lamp-keepers' work too.
 ?(comp=suzu) comp: {第|だい}{三幕|さんまく} 、 {幕|まく} ！ {出|で} の きっかけ を {一度|いちど} も {外|はず}さなかった わ 。 {拍手|はくしゅ} ！ || End of act three! Not one cue missed. Applause!
 !sequence hall.w3 end

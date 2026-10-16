@@ -173,7 +173,7 @@ RB.ui.festivalGames = RB.ui.festivalGames || {};
     }
     const desc = () => (high(G.api.s) ? G.target.full : G.target.easy);
     // spoken too when a Japanese voice is available and turned up (src/audio/50_voice.js); the text is always shown
-    function speak() { if (RB.voice && RB.voice.speak) { try { RB.voice.speak(RB.jp.reading(desc().jp).replace(/\s/g, '')); } catch (e) { /* the voice is optional */ } } }
+    function speak() { if (RB.voice && RB.voice.sayRef) { try { RB.voice.sayRef(RB.voice.refKey.phrase(desc().jp), RB.jp.reading(desc().jp).replace(/\s/g, '')); } catch (e) { /* the voice is optional */ } } }
     function draw() {
       if (!G) return;
       const timed = G.api.mode === 'timed';

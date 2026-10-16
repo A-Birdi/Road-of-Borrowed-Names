@@ -63,8 +63,8 @@ comp: また やろう 。 {次|つぎ} も {本気|ほんき} で {行|い}く 
 !look pc mio
 !look mio pc
 !gesture mio chin
-?(!wordplay.reflect=cooperative) comp: さっき の しりとり 、 どう でした か 。 {私|わたし} 、 {途中|とちゅう} で {薬|くすり} の こと を {一度|いちど} も {考|かんが}えて いない と {気|き}づきました 。 || How was that game for you? Partway through, I noticed I hadn't thought about medicine once.
-?(wordplay.reflect=cooperative) comp: さっき の {札|ふだ} の {列|れつ} 、 {長|なが}く なりました ね 。 {私|わたし} 、 {途中|とちゅう} で {薬|くすり} の こと を {一度|いちど} も {考|かんが}えて いない と {気|き}づきました 。 || That row of slips grew long, didn't it. Partway through, I noticed I hadn't thought about medicine once.
+?(!wordplay.reflect=cooperative) comp: さっき の しりとり 、 どう だった ？ {私|わたし} 、 {途中|とちゅう} で {薬|くすり} の こと を {一度|いちど} も {考|かんが}えて いない と {気|き}づいた の 。 || How was that game for you? Partway through, I noticed I hadn't thought about medicine once.
+?(wordplay.reflect=cooperative) comp: さっき の {札|ふだ} の {列|れつ} 、 {長|なが}く なった ね 。 {私|わたし} 、 {途中|とちゅう} で {薬|くすり} の こと を {一度|いちど} も {考|かんが}えて いない と {気|き}づいた の 。 || That row of slips grew long, didn't it. Partway through, I noticed I hadn't thought about medicine once.
 !choice
 * どの {終|お}わり が まだ {使|つか}える か 、 {見|み}て いた || I was watching which endings were still available. -> endings
 * {次|つぎ} の {言葉|ことば} を {探|さが}す の が {難|むずか}しかった || Finding the next word was the difficult part. -> finding
@@ -72,30 +72,30 @@ comp: また やろう 。 {次|つぎ} も {本気|ほんき} で {行|い}く 
 * {今|いま} は いい || Not now. -> later
 :later
 !gesture mio nod pc
-comp[smile]: はい 。 また {今度|こんど} 。 || All right. Another time.
+comp[smile]: うん 。 また {今度|こんど} 。 || All right. Another time.
 !hook wp_reflect_defer
 !end
 :endings
 !gesture mio exhale
-comp[smile]: {札|ふだ} を {数|かぞ}えて いた の は 、 {私|わたし} だけ じゃ なかった んです ね 。 {少|すこ}し {安心|あんしん} しました 。 || So I wasn't the only one counting slips. That's a relief.
+comp[smile]: {札|ふだ} を {数|かぞ}えて いた の は 、 {私|わたし} だけ じゃ なかった ん だ ね 。 {少|すこ}し {安心|あんしん} した 。 || So I wasn't the only one counting slips. That's a relief.
 !hook wp_reflect endings
 !goto close
 :finding
 !gesture mio palm
-comp: {私|わたし} も です 。 {頭|あたま} の {中|なか} の {棚|たな} を 、 {全部|ぜんぶ} {開|あ}けて {探|さが}して いる {気分|きぶん} でした 。 || Me too. It felt like opening every shelf in my head.
+comp: {私|わたし} も 。 {頭|あたま} の {中|なか} の {棚|たな} を 、 {全部|ぜんぶ} {開|あ}けて {探|さが}して いる {気分|きぶん} だった 。 || Me too. It felt like opening every shelf in my head.
 !hook wp_reflect finding
 !goto close
 :together
 !gesture mio fidget
-comp[shy]: …… はい 。 {何|なに} の {役|やく} に も {立|た}たない のに 、 {楽|たの}しかった 。 そう {言|い}って も いい んです ね 。 || …Yes. It wasn't useful for anything, and it was fun. I'm allowed to say that, aren't I.
+comp[shy]: …… うん 。 {何|なに} の {役|やく} に も {立|た}たない のに 、 {楽|たの}しかった 。 そう {言|い}って も いい ん だ ね 。 || …Yes. It wasn't useful for anything, and it was fun. I'm allowed to say that, aren't I.
 !hook wp_reflect together
 :close
 ?(wordplay.won) !gesture mio laugh
-?(wordplay.won) comp[smile]: {勝|か}った の は あなた でした ね 。 {悔|くや}しい です けど 。 || You were the one who won. It stings a little.
+?(wordplay.won) comp[smile]: {勝|か}った の は あなた だった ね 。 {悔|くや}しい けど 。 || You were the one who won. It stings a little.
 ?(wordplay.lost) !gesture mio shake
-?(wordplay.lost) comp: {勝|か}った の は {私|わたし} でした が 、 それ は {大事|だいじ} な こと じゃ ありません ね 。 || I won, but that isn't what matters here.
+?(wordplay.lost) comp: {勝|か}った の は {私|わたし} だった けど 、 それ は {大事|だいじ} な こと じゃ ない よ ね 。 || I won, but that isn't what matters here.
 !gesture mio nod pc
-comp[smile]: また {休|やす}む {時|とき} に 、 {一局|いっきょく} 。 {私|わたし} の {新|あたら}しい {規則|きそく} です 。 || Another game the next time we rest. A new rule of mine.
+comp[smile]: また {休|やす}む {時|とき} に 、 {一局|いっきょく} 。 {私|わたし} の {新|あたら}しい {規則|きそく} 。 || Another game the next time we rest. A new rule of mine.
 
 @scene wp.reflect_ren
 # Staged (at a rest place, anywhere it is told): you and Ren turn to each other. Ren reads from the record of the

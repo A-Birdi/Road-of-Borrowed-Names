@@ -12,7 +12,7 @@ RB.script.add(`
 !set ko_tell_otoha
 ko_otoha: わたし たち {葉守|はもり} の {話|はなし} から 。 || The keepers' telling first, then.
 ko_otoha: {昔|むかし} 、 {一人|ひとり} の {女|おんな} の {人|ひと} が 、 {海|うみ} の {真|ま}ん{中|なか} の {岩|いわ} に {楠|くす} の {種|たね} を {植|う}えた 。 {届|とど}かない {言葉|ことば} が 、 {休|やす}める よう に 。 その {人|ひと} が 、 {最初|さいしょ} の {葉守|はもり} 。 || Long ago a woman planted a camphor seed on a rock in the middle of the sea, so that words that never arrive could rest. She was the first keeper.
-?(prof>=A) ko_otoha: {葉守|はもり} は 、 {古今集|こきんしゅう} の {序|じょ} を {唱|とな}えて きました 。 「やまとうた は 、 {人|ひと} の {心|こころ} を {種|たね} と して 」 …… {古|ふる}い 、 {本当|ほんとう} の {歌|うた} の {本|ほん} の {言葉|ことば} です よ 。 || The keepers have always recited the Kokinshū's preface. "Japanese poetry takes the human heart as its seed…" Words from an old book of poems: a real one.
+?(prof>=A) ko_otoha: {葉守|はもり} は 、 {古今集|こきんしゅう} の {序|じょ} を {唱|とな}えて きました 。 「やまとうた は 、 {人|ひと} の {心|こころ} を {種|たね} と して 」 …… {古|ふる}い {歌|うた} の {本|ほん} の {言葉|ことば} です よ 。 || The keepers have always recited the Kokinshū's preface. "Japanese poetry takes the human heart as its seed…" Words from an old book of poems.
 ko_otoha: ナミ は {舟|ふね} の {話|はなし} を 、 ハマジ は {漁師|りょうし} の {話|はなし} を する でしょう 。 それ から 、 {西|にし} の {浜|はま} の {法螺貝|ほらがい} 。 あれ は 、 {話|はなし} で は なく 、 {声|こえ} を {覚|おぼ}えて いる 。 || Nami will tell you the boat-keepers' telling, Hamaji the fishers'. And the conches on the west beach: they don't keep a story, they keep voices.
 !end
 :wait

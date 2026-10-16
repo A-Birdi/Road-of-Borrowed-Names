@@ -157,7 +157,7 @@ nao: …… {鐘楼|しょうろう} に {行|い}く んだって ？ {気|き}
 # with them (Mio looks Nao over and Nao's hand goes to a lighter satchel; Ren's open thanks and Nao's smirk away;
 # Suzu checks her account book and Nao shakes their head); Nao points up the lantern road and waves you goodbye.
 !gesture nao nod pc
-nao: {鐘|かね} 、{聞|き}こえた よ 。あれ 、{君|きみ} たち だ よね 。|| Heard the bell. That was you lot, right?
+nao: {鐘|かね} 、{聞|き}こえた よ 。あれ 、あんた たち だろ 。|| Heard the bell. That was you lot, right?
 nao: {渡|わた}した よ 、{手紙|てがみ} 。ウミ 、{怒|おこ}った 。ちゃんと {怒|おこ}れた 。|| I delivered it. Umi got angry. Properly angry.
 !gesture nao present pc prop=letter
 nao: で 、{一行|いちぎょう} だけ {返事|へんじ} を {書|か}いた 。「{読|よ}みました」 って 。|| Then she wrote one line back. "I read it."
@@ -279,7 +279,7 @@ comp: {作|つく}りません 。|| I won't make it.
 !gesture lf_tadashi nod comp
 lf_tadashi[think]: …… {鐘|かね} の {後|あと} ですから 、{私|わたし} も {申|もう}せます 。{作|つく}って いただかなくて {結構|けっこう} です 。{最初|さいしょ} から 、{出|だ}す べき で は ない {依頼|いらい} でした 。|| …Since the bell, I can say it too. You need not make it. It was a commission that should never have been sent.
 !gesture comp guard hold
-comp: それ でも 、{私|わたし} の {口|くち} で {言|い}いたかった んです 。お{断|ことわ}り します 。|| Even so, I wanted to say it with my own mouth. I refuse.
+comp: それ でも 、{自分|じぶん} の {口|くち} で {言|い}いたかった んです 。お{断|ことわ}り します 。|| Even so, I wanted to say it with my own mouth. I refuse.
 :end_scene
 !look comp pc
 !gesture comp fidget
@@ -337,7 +337,7 @@ mio: {葦|あし}ノ{瀬|せ} に {帰|かえ}る ね 。{店|みせ} の {棚|�
 @scene lf.b_nao1
 comp: この {町|まち} の {宛名|あてな} 、{全部|ぜんぶ} {同|おな}じ {字|じ} に {見|み}える 。{上手|じょうず} な のに 、{誰|だれ} の {字|じ} でも ない 。|| Every address in this town looks like the same handwriting. Neat — and nobody's.
 comp: {字|じ} って 、{少|すこ}し {下手|へた} な くらい が いい んだ よ 。{急|いそ}いでた 、とか 、{寒|さむ}かった 、とか 、わかる から 。|| Handwriting's better a little bad. You can tell they were in a hurry, or cold.
-pc: {字|じ} が {好|す}き なんです ね 。|| You really like handwriting.
+pc: {字|じ} が {好|す}き なんだ ね 。|| You really like handwriting.
 comp[smirk]: …… {配達人|はいたつにん} だ から ね 。{他|ほか} に {理由|りゆう} は ない よ 。|| …I'm a courier. That's all it is.
 
 @scene lf.b_nao2
@@ -356,7 +356,7 @@ comp: …… でも 、そっち の ほう が いい 。{拒否|きょひ} で
 @scene lf.b_mio1
 comp: {刈|か}り{込|こ}んだ {植木|うえき} って 、{元気|げんき} そう に {見|み}える けど 、{中|なか} は {息|いき} が できて ない の 。|| Clipped hedges look healthy, but inside they can't breathe.
 comp[worry]: 「{大丈夫|だいじょうぶ} です」 しか {言|い}わない {患者|かんじゃ} さん と 、{同|おな}じ 。{一番|いちばん} {心配|しんぱい} な の は 、そういう {人|ひと} 。|| Like a patient who only ever says "I'm fine". They're the ones I worry about most.
-pc: ミオ も 、よく 「{大丈夫|だいじょうぶ}」 と {言|い}います よね 。|| You say "I'm fine" a lot too, Mio.
+pc: ミオ も 、よく 「{大丈夫|だいじょうぶ}」 って {言|い}う よね 。|| You say "I'm fine" a lot too, Mio.
 comp[shy]: …… {気|き} を つけます 。|| …I'll watch that.
 
 @scene lf.b_mio2
@@ -397,7 +397,7 @@ comp: {野次|やじ} が {飛|と}べば 、どこ が {悪|わる}かった �
 @scene lf.b_suzu2
 comp[think]: リツ の {店|みせ} 、{帳簿|ちょうぼ} が めちゃくちゃ よ 。{値切|ねぎ}られて も {断|ことわ}れない から 、{団子|だんご} が {半額|はんがく} {以下|いか} 。|| Ritsu's accounts are a shambles. She can't refuse when people haggle, so her dango sell for less than half price.
 comp: {貸|か}し{借|か}り は 、きっちり しない と 。{情|なさ}け で {帳簿|ちょうぼ} を {曲|ま}げる と 、{最後|さいご} に {困|こま}る の は {情|なさ}け を かけた {本人|ほんにん} なんだ から 。|| Debts and credits need to be exact. Bend the books out of kindness, and in the end it's the kind one who suffers.
-pc: {厳|きび}しい です ね 。|| That's strict.
+pc: {厳|きび}しい ね 。|| That's strict.
 comp[smirk]: {一座|いちざ} の {会計|かいけい} を {十年|じゅうねん} やれば 、{誰|だれ} でも こう なる わ よ 。|| Do a troupe's books for ten years and anyone would be.
 
 @scene lf.b_suzu3

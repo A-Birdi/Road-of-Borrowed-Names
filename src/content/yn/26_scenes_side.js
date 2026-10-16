@@ -51,7 +51,7 @@ yn_kihachi: {揉|も}み{歌|うた} か 。 {子供|こども} の {頃|ころ}
 @scene yn.verse_oshige
 !faceplayer
 !set yn_verse3
-yn_oshige: …… {揉|も}み{歌|うた} 。 {村|むら} で 、 {稲刈|いねか}り の {後|あと} に {歌|うた}った 。 {最後|さいご} の {行|ぎょう} は 、 「{明日|あした} も {歩|ある}ける 、 {軽|かる}い {足|あし} 」 。 …… {村|むら} で 、 {最後|さいご} に {歌|うた}った の は 、 いつ だった か 。 || …The massage song. We sang it in the village after the rice harvest. The last line goes, "Light feet, to walk again tomorrow." …When did we last sing it in the village, I wonder.
+yn_oshige: …… {揉|も}み{歌|うた} です 。 {村|むら} で 、 {稲刈|いねか}り の {後|あと} に {歌|うた}いました 。 {最後|さいご} の {行|ぎょう} は 、 「{明日|あした} も {歩|ある}ける 、 {軽|かる}い {足|あし} 」 。 …… {村|むら} で 、 {最後|さいご} に {歌|うた}った の は 、 いつ だった か 。 || …The massage song. We sang it in the village after the rice harvest. The last line goes, "Light feet, to walk again tomorrow." …When did we last sing it in the village, I wonder.
 !journal {揉|も}み{歌|うた} の {最後|さいご} の {一行|いちぎょう} ： 「{明日|あした} も {歩|ある}ける 、 {軽|かる}い {足|あし} 」 。 || The last line of the massage song: "Light feet, to walk again tomorrow."
 ?(yn_verse1&yn_verse2) !quest yn_masseur 1
 

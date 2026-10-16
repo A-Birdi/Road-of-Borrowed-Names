@@ -38,9 +38,9 @@ The register has these parts:
 
 | # | Question | Label |
 |---|---|---|
-| C-95 | Register and naturalness review (RV-1): which findings to correct before the full-game recording | Open |
-| C-93 | VA-2: Robin's picks from the casting gallery, after the run on Robin's PC | Open |
-| — | Nothing else is waiting. Robin authorised the whole expansion without consulting (C-81); the lead's own decisions are logged in part F | — |
+| C-95 | Register and naturalness review (RV-1): decided 2026-10-16 (a bounded editorial authorization), corrections applied; 12 findings deferred to Robin (listed in docs/review/register/DISPOSITIONS.md) | Decided |
+| C-93 | VA-2: Robin's picks, made on Robin's PC ("The voice/casting reviews are complete", 2026-10-16) | Decided |
+| — | Hosting: switching Pages to the runtime-only set and where the voices are published (docs/hosting/RUNTIME_PUBLISHING.md) | Robin's settings |
 
 ---
 
@@ -804,6 +804,14 @@ and implementation."
   Nya for Mochi, generate it using a female model, any one is fine. Just keep it playful". Mochi's ニャー is a sourced
   CC0 or public-domain meow when one's terms can be confirmed; otherwise the AV-bright AivisSpeech voice says it in its
   upbeat style, labelled as generated.
+- **Robin, 2026-10-16:** "The voice/casting reviews are complete. Do not reopen VA-1 or VA-2." "Preserve the frozen
+  audition text and my accepted voice identities."
+  - **The picks are on Robin's PC.** They were made locally in VA-2's gallery, and this repository holds no copy.
+  - **What the local worker reported:**
+    - "Final cast locked locally (player A = Set 3A, B = Set 1B, High/Low; all accepted references kept)".
+    - Mochi's meow is Robin's pick H8 (round 3), a meow cut from Heismark's public-domain "Meow of a pleading cat.oga",
+      6.65–7.64 s. It replaces the Tsester recording that the VA-2 run used.
+  - **The casting record comes back** with the batch's results (`docs/future/voice/production/PRODUCTION_SCOPE.md`).
 - **Robin, later:** "I noticed we don't have companion voice auditions in va-2. I should've clarified them. Cover each
   companion with the same scope as the player: 60 total lines. Amend that to the existing va-2 plan for proper full
   review". Added: for each of Nao, Mio, Ren and Suzu, five of their own lines (one per mood), three sets of two candidate
@@ -827,7 +835,7 @@ sealed spots promised keepsakes (06_WORLD W5, W6). Robin: "Yes, please do so."
   into New Game+ (C-66); the items themselves do what they did.
 
 ### C-95 · Register and conversational naturalness, reviewed in context before whole-game voice production
-**Open: the report is ready; Robin decides what is corrected** (2026-10-15). Robin: "Before whole-game voice
+**Decided** (2026-10-16), and the corrections are applied (below). The report was ready on 2026-10-15. Robin: "Before whole-game voice
 production, review conversational naturalness and register in context—not just grammatical correctness. The script
 should retain both natural polite conversation and casual Japanese where the relationship and situation support it. Do
 not convert everyone to casual speech or remove character-specific politeness. Review complete exchanges, including who
@@ -841,10 +849,44 @@ recording batch."
   (the patterns and the examples to decide on) and `FINDINGS.md` / `findings.json` (every finding, keyed to its line).
   No game line, Kansai line, word-help entry, VA-1 audition text or VA-2 sample text was changed; the VA-1 and VA-2
   runs are untouched.
-- **Waiting for Robin:** which findings (or which kinds) to correct. Then the corrections are made in the game's lines,
-  the language ledger and Kansai table follow, and before the full-game recording batch the recording plan is rebuilt
-  from the corrected lines (a line already sampled in VA-1 or VA-2 keeps its frozen audition text; the batch records the
-  corrected line).
+- **Robin, 2026-10-16:** "Resolve C-95 with this bounded editorial authorization: Apply the verified "fix before
+  recording" findings. Follow the report's D1–D5 recommendations where supported by the full exchange, preserving
+  intentional register changes and the 112 preservation notes. Do not apply every "consider" finding as a blanket
+  stylistic rewrite. Handle D6 word-help/support corrections in parallel; do not hold unchanged dialogue generation for
+  explanatory-note-only work. … Record each accepted, retained or deferred finding and finish the necessary
+  corrections. Preserve the frozen audition text and my accepted voice identities." And later: "authorized/pending
+  work is not yet production-ready."
+- **Done** ([DISPOSITIONS.md](../../review/register/DISPOSITIONS.md), `DISPOSITIONS.json`):
+  - **Every finding has a disposition:** 222 accepted, 70 retained and 12 deferred, of 304.
+  - **D6 word help** was done in parallel: lexicon and lookup fixes, with no line changed. Word help's check went from
+    33 wrong cases to 1.
+  - **Fix before recording:** all 80 applied.
+  - **The script:** 482 lines changed in 100 files, 19 of them in the Kansai table.
+  - **Mio's lines:** 190 of 286 candidates became soft plain to the player. The 96 that stay polite each have their
+    addressee and reason.
+  - **Ren:** 112 shared texts are split so Ren speaks politely.
+  - **Kansai:** keeps the standard line's politeness.
+- **Kept:**
+  - **The 112 preserved lines** are unchanged.
+  - **The frozen audition texts** are unchanged. Three game lines the corrections touch are also audition samples, and
+    they keep their frozen text: VA-1 SUZU_K05, plus VA-2's cr.call and rw.mr_lantern samples. The divergences are
+    recorded in `docs/future/voice/*/DIVERGENCES.json`, and the checks accept only those.
+- **Records:** the language ledger has entries for every changed line, self-reviewed (C-26).
+- **The recording plan** is rebuilt from the corrected lines: `docs/future/voice/production/`, and the go signal
+  `GO.json`.
+- **Deferred, Robin's:**
+  - Suzu's standard あんた and あたし (RV-0025, 0089, 0090);
+  - Kasane's endings (RV-0108);
+  - Zenzō's role speech (RV-0131);
+  - three C-74 growth scenes (RV-0130, 0190, 0208);
+  - two content additions (RV-0047, 0189);
+  - an exercise framing (RV-0283);
+  - Suzu's 断られへん (RV-0115, a D4 line decision).
+  Their lines are recorded as they are now; a later change re-records only those lines.
+- **Not production-ready yet** (Robin, 2026-10-16), each kept apart in
+  `docs/future/voice/production/READINESS.md`:
+  - the runtime is built and tested with synthetic recordings, not yet with real ones;
+  - publishing the voices needs Robin's hosting settings.
 
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a

@@ -863,10 +863,10 @@
   "jp": "{一緒|いっしょ} に {探|さが}そう 。",
   "en": "Let's find it together."
  },
- "scene:sg.lw_road_child:choice#1egd7a7": {
+ "scene:sg.lw_road_child:choice#k5a6b7": {
   "status": "self-reviewed",
-  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
-  "jp": "{今|いま} は {急|いそ}いで いる 。 ごめん ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{今|いま} 、 ちょっと {急|いそ}いでる ん だ 。 ごめん ね 。",
   "en": "We're in a hurry just now. Sorry."
  },
  "scene:sg.lw_road_child#6duo5y": {
@@ -887,10 +887,10 @@
   "jp": "{住所|じゅうしょ} が なくて も 、 {目印|めじるし} が あれば {届|とど}く 。 {配達|はいたつ} と {同|おな}じ だ 。",
   "en": "No address, but with landmarks it still gets there. Same as the post."
  },
- "scene:sg.lw_road_child#ynvpn8": {
+ "scene:sg.lw_road_child#1gpoxp9": {
   "status": "self-reviewed",
-  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
-  "jp": "{灯台|とうだい} が {見|み}えた {時|とき} の {顔|かお} 、 {見|み}ました ？ {一番|いちばん} の お{薬|くすり} です ね 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{灯台|とうだい} が {見|み}えた {時|とき} の {顔|かお} 、 {見|み}た ？ {一番|いちばん} の お{薬|くすり} だ ね 。",
   "en": "Did you see that face when the lighthouse came into view? Better than any medicine."
  },
  "scene:sg.lw_road_child#fv2tjf": {
@@ -1229,10 +1229,10 @@
   "jp": "{水|みず} を かけ 、 {土|つち} を かぶせて 、 {手|て} を かざす 。 もう {熱|あつ}く ない 。",
   "en": "Water, then earth over it, then a hand held above. No heat left."
  },
- "scene:co.lw_road_embers#dhf39d": {
+ "scene:co.lw_road_embers#e3fayv": {
   "status": "self-reviewed",
-  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
-  "jp": "よかった 。 この {乾|かわ}き {方|かた} なら 、 {本当|ほんとう} に {危|あぶ}なかった です 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "よかった 。 この {乾|かわ}き {方|かた} なら 、 {本当|ほんとう} に {危|あぶ}なかった 。",
   "en": "Good. As dry as it is, that really was dangerous."
  },
  "scene:co.lw_road_embers#4pg987": {

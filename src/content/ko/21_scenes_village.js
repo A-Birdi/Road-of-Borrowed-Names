@@ -57,7 +57,7 @@ ko_otoha: {大|おお}きな {楠|くす} が 、 それ を {葉|は} に し�
 ko_otoha[sad]: {近|ちか}ごろ は 、 {葉|は} が {多|おお}すぎる 。 {見|み}た こと の ない 、 {紙|かみ} の {切|き}れ{端|はし} の よう な {葉|は} まで {混|ま}じって いる 。 {木|き} が 、 {疲|つか}れて いる の です 。 || Lately there are too many. Some are like nothing I have seen: scraps, like torn-off pages. The tree is tired.
 ?(comp=nao) comp: {配達|はいたつ} が {間|ま}に{合|あ}わない って こと か 。 {分|わ}かる よ 。 || The deliveries can't keep up. I know how that is.
 ?(comp=mio) comp[worry]: {木|き} が {疲|つか}れる …… 。 {薬|くすり} で {治|なお}る もの なら いい のに 。 || The tree is tired… If only it were something medicine could mend.
-?(comp=ren) comp: {灯|ひ} の {道|みち} で も 、 {名前|なまえ} が {消|き}える {速|はや}さ は 、 {年|とし} ごと に {速|はや}く なって いました 。 || On the lantern roads too, the names were fading faster every year.
+?(comp=ren) comp: {灯|ひ} の {道|みち} で も 、 {名前|なまえ} が {消|き}える の が 、 {年|とし} ごと に {速|はや}く なって いました 。 || On the lantern roads too, the names were fading faster every year.
 ?(comp=suzu) comp: {稽古|けいこ} を {詰|つ}め{込|こ}みすぎた {役者|やくしゃ} みたい ね 。 {休|やす}ませて あげない と 。 || Like an actor rehearsed half to death. It needs a rest.
 ko_otoha: {手|て} を {貸|か}して ください 。 {葉|は} を {読|よ}んで 、 どこ で なくした もの か を {考|かんが}えて 、 {風石|かぜいし} から {返|かえ}して ほしい 。 || Lend us your hands. Read a leaf, think where it was lost, and send it home from the Wind Stone.
 ?(mb2_done) ko_otoha: まず 、 これ を 。 {今朝|けさ} {拾|ひろ}った {葉|は} です 。 {賑|にぎ}やか な {字|じ} でしょう 。 || This one first. I picked it up this morning. Cheerful writing, isn't it.
@@ -277,12 +277,12 @@ mp_manbe[happy]: {見|み}て くれ 、 {古|ふる}い {番付|ばんづけ} �
 mp_manbe: {縁起|えんぎ} が いい 。 {次|つぎ} の {興行|こうぎょう} も 、 {満員|まんいん} {間違|まちが}い なし だ ！ || A good omen. The next run will be a full house, no doubt about it!
 @scene ko.back_co
 !faceplayer
-co_ume[smile]: {干|ほ}し{場|ば} の {札|ふだ} に 、 「{干|ほ}し{柿|がき}」 って {字|じ} が {戻|もど}った の よ 。 {孫|まご} が {書|か}いて くれた {札|ふだ} な の 。 || The tag on my drying rack: "Dried persimmons" is back on it. My grandchild wrote that tag for me.
+co_ume[smile]: {干|ほ}し{場|ば} の {札|ふだ} に 、 「{干|ほ}し{柿|がき}」 って {字|じ} が {戻|もど}った ん だ よ 。 {孫|まご} が {書|か}いて くれた {札|ふだ} さ 。 || The tag on my drying rack: "Dried persimmons" is back on it. My grandchild wrote that tag for me.
 co_ume: {消|き}えた とき は 、 {少|すこ}し {寂|さび}しかった けど ね 。 || I was a little sad when it faded.
 @scene ko.back_sb
 !faceplayer
-sousuke: {届|とど}け{先|さき} の {分|わ}からない {手紙|てがみ} が {一通|いっつう} あって ね 。 {最後|さいご} の {一行|いちぎょう} が {消|き}えて いた 。 || There's a letter here I couldn't deliver. Its last line had faded away.
-sousuke[smile]: {今朝|けさ} {見|み}たら 、 {戻|もど}って いた 。 「{春|はる} に は {帰|かえ}ります」 。 …… {宛名|あてな} も 、 {読|よ}める よう に なった 。 {届|とど}けられる よ 。 || This morning it was back. "I'll be home in spring." …And the address is readable now too. I can deliver it.
+sousuke: {届|とど}け{先|さき} の {分|わ}からない {手紙|てがみ} が {一通|いっつう} ありまして ね 。 {最後|さいご} の {一行|いちぎょう} が {消|き}えて いた んです 。 || There's a letter here I couldn't deliver. Its last line had faded away.
+sousuke[smile]: {今朝|けさ} {見|み}たら 、 {戻|もど}って いました 。 「{春|はる} に は {帰|かえ}ります」 。 …… {宛名|あてな} も 、 {読|よ}める よう に なりました 。 {届|とど}けられます よ 。 || This morning it was back. "I'll be home in spring." …And the address is readable now too. I can deliver it.
 @scene ko.back_kr
 !faceplayer
 kr_aya[surprise]: {峠|とうげ} の {灯籠|とうろう} の {名札|なふだ} 、 {見|み}ました ？ 「{峠|とうげ} の {灯|ひ}」 。 {字|じ} が {戻|もど}って いる の 。 || Have you seen the plate on the lantern at the pass? "The Pass Light". The characters are back.

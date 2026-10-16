@@ -139,7 +139,7 @@ narr: {歌|うた} と 、 {碑|ひ} と 、 クマゾウ の {話|はなし} �
 !give kr_oil
 !quest kr_cache done
 narr: {中|なか} は {菜種|なたね} の {油|あぶら} 。 {封|ふう} が {固|かた}くて 、 まだ {使|つか}える 。 || Rapeseed oil, sealed tight and still good.
-?(comp=mio) comp[smile]: {封|ふう} の {仕方|しかた} が 、 {丁寧|ていねい} です ね 。 {灯守|ひもり} は 、 {後|あと} の {人|ひと} の こと を {考|かんが}えて いた ん だ わ 。 || Such careful sealing. The keepers were thinking of whoever came after them.
+?(comp=mio) comp[smile]: {封|ふう} の {仕方|しかた} が 、 {丁寧|ていねい} だ ね 。 {灯守|ひもり} は 、 {後|あと} の {人|ひと} の こと を {考|かんが}えて いた ん だ わ 。 || Such careful sealing. The keepers were thinking of whoever came after them.
 ?(comp=nao) comp: {何十年|なんじゅうねん} {前|まえ} の {荷|に} が 、 やっと {届|とど}いた な 。 || A delivery decades late, finally arrived.
 ?(comp=ren) comp[happy]: {灯守|ひもり} の {油|あぶら} です 。 …… これ で 、 {灯|ひ} が もう {何|なん} {晩|ばん} か もちます 。 || Keepers' oil. …That will keep the lamps going a few more nights.
 ?(comp=suzu) comp[laugh]: {子供|こども} の {歌|うた} が {宝|たから} の {地図|ちず} 。 {芝居|しばい} に したい くらい ね 。 || A children's song as a treasure map. I'd put it on the stage.

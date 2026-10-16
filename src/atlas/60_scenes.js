@@ -15,7 +15,7 @@ tsuru: {書|か}かれて いない {道|みち} に は 、 {迷子|まいご} 
 !gesture tsuru count
 tsuru: {道|みち} は {歩|ある}く たび に {形|かたち} が {変|か}わる 。 {霧|きり} の {日|ひ} も あれば 、 {潮|しお} の {引|ひ}いた {日|ひ} も ある 。 {好|す}きな {道|みち} を {選|えら}び な 。 || They change every time you walk them. Some days there's fog, some days the tide's out. Pick whichever road you like.
 ?(comp=nao) !gesture comp strap
-?(comp=nao) comp[smirk]: {届|とど}け{損|そこ}ねた {名前|なまえ} か 。 {私|わたし} の {仕事|しごと} だ な 。 || Undelivered names. Sounds like my line of work.
+?(comp=nao) comp[smirk]: {届|とど}け{損|そこ}ねた {名前|なまえ} か 。 {俺|おれ} の {仕事|しごと} だ な 。 || Undelivered names. Sounds like my line of work.
 ?(comp=mio) !gesture comp nod tsuru
 ?(comp=mio) comp: {迷|まよ}って いる なら 、 {迎|むか}え に {行|い}かない と ね 。 || If they're lost, someone should go and fetch them.
 ?(comp=ren) !gesture comp glasses
@@ -202,7 +202,8 @@ narr: {焚|た}き{火|び} に {火|ひ} を {入|い}れて 、 {二人|ふた
 :home
 !pose pc -
 ?(comp) !pose comp -
-?(comp) comp: {引|ひ}き{返|かえ}す の も 、 {旅|たび} の うち だ よ 。 || Turning back is part of travelling too.
+?(comp&comp!=ren) comp: {引|ひ}き{返|かえ}す の も 、 {旅|たび} の うち だ よ 。 || Turning back is part of travelling too.
+?(comp=ren) comp: {引|ひ}き{返|かえ}す の も 、 {旅|たび} の うち です 。 || Turning back is part of travelling too.
 !hook atlas_extract early
 !end
 :go
@@ -308,7 +309,8 @@ narr: {灯|あか}り は あなた の {腰|こし} に {収|おさ}まって �
 ?(var.atlas_kind=1&comp=suzu) !gesture comp celebrate
 ?(var.atlas_kind=1&comp=suzu) comp[laugh]: {本日|ほんじつ} の {公演|こうえん} 、 これ に て {終幕|しゅうまく} ！ || And that concludes today's performance!
 ?(var.atlas_kind=2&comp) !gesture comp nod pc
-?(var.atlas_kind=2&comp) comp: {引|ひ}き{返|かえ}す {勇気|ゆうき} も 、 {大事|だいじ} だ よ 。 || It takes nerve to turn back, too.
+?(var.atlas_kind=2&comp&comp!=ren) comp: {引|ひ}き{返|かえ}す {勇気|ゆうき} も 、 {大事|だいじ} だ よ 。 || It takes nerve to turn back, too.
+?(var.atlas_kind=2&comp=ren) comp: {引|ひ}き{返|かえ}す {勇気|ゆうき} も 、 {大事|だいじ} です 。 || It takes nerve to turn back, too.
 !call pages.home
 
 @scene atlas.banter.nao1

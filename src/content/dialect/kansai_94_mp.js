@@ -19,8 +19,8 @@ RB.dialect.add('kansai', `
 = {口上|こうじょう} が うまい わ ね 。 {役者|やくしゃ} に {向|む}いてる わ 。 || Smooth patter. He'd make a fine actor.
 > {口上|こうじょう} が うまい な あ 。 {役者|やくしゃ} に {向|む}いてる わ 。 || Smooth patter, that. He'd make a fine actor.
 @ mp/20_scenes_print [mp.tokube]
-= {何|なん} でも {治|なお}る は 、 {何|なに} も {治|なお}らない と {同|おな}じ かも ね 。 || "Cures everything" might be the same as "cures nothing".
-> {何|なん} でも {治|なお}る は 、 {何|なに} も {治|なお}らへん と {同|おな}じ かも な 。 || "Cures everything" might be the same as "cures nothing", mind.
+= 「 {何|なん} でも {治|なお}る 」 って 、 「 {何|なに} も {治|なお}らない 」 の と {同|おな}じ かも ね 。 || "Cures everything" might be the same as "cures nothing".
+> 「 {何|なん} でも {治|なお}る 」 って 、 「 {何|なに} も {治|なお}らへん 」 の と {同|おな}じ かも な 。 || "Cures everything" might be the same as "cures nothing", mind.
 @ mp/21_scenes_stage [mp.playhouse_first]
 = …… {芝居小屋|しばいごや} の {匂|にお}い 。 {木|き} と 、 {白粉|おしろい} と 、 {埃|ほこり} 。 {久|ひさ}しぶり ね 。 || …The smell of a playhouse. Wood, face powder, dust. It's been a while.
 > …… {芝居小屋|しばいごや} の {匂|にお}い や 。 {木|き} と 、 {白粉|おしろい} と 、 {埃|ほこり} 。 {久|ひさ}しぶり や わ 。 || …The smell of a playhouse. Wood, face powder, dust. Been a while.
@@ -29,7 +29,7 @@ RB.dialect.add('kansai', `
 > {役者|やくしゃ} から {役|やく} を {取|と}る やなんて 、 {一番|いちばん} {残酷|ざんこく} な こと や で 。 …… {黙|だま}ってられへん わ 。 || Taking an actor's part away, that's the cruellest thing there is. …I can't keep quiet about this.
 @ mp/21_scenes_stage [mp.rehearsal]
 = {鉛筆|えんぴつ} で {書|か}き{込|こ}んだ {名前|なまえ} は 、 {消|き}えて も また {書|か}ける わ 。 {役者|やくしゃ} は 、 そう やって {生|い}きて きた の よ 。 || A name pencilled in can be written again if it fades. That's how actors have always lived.
-> {鉛筆|えんぴつ} で {書|か}き{込|こ}んだ {名前|なまえ} は 、 {消|き}えて も また {書|か}ける やん 。 {役者|やくしゃ} は 、 そう やって {生|い}きて きた ねん で 。 || A name pencilled in can be written again if it fades. That's how actors have always lived, see.
+> {鉛筆|えんぴつ} で {書|か}き{込|こ}んだ {名前|なまえ} は 、 {消|き}えて も また {書|か}ける やん 。 {役者|やくしゃ} は 、 そう やって {生|い}きて きた ん や で 。 || A name pencilled in can be written again if it fades. That's how actors have always lived, see.
 @ mp/21_scenes_stage [mp.manbe_under]
 = {奈落|ならく} …… {舞台|ぶたい} の {下|した} の 、 {役者|やくしゃ} が {怖|こわ}がる {場所|ばしょ} よ 。 {一緒|いっしょ} なら 、 {平気|へいき} 。 || The Understage… the place under the stage that actors are afraid of. With you, I'll be fine.
 > {奈落|ならく} …… {舞台|ぶたい} の {下|した} の 、 {役者|やくしゃ} が {怖|こわ}がる {場所|ばしょ} や 。 {一緒|いっしょ} やったら 、 {平気|へいき} や 。 || The Understage… the place under the stage actors are scared of. With you, I'm fine.
@@ -47,9 +47,9 @@ RB.dialect.add('kansai', `
 = はい 、 どうも どうも ！ {今日|きょう} は いい {天気|てんき} です ね 。 だから 、 {傘|かさ} を {三本|さんぼん} {持|も}って {来|き}ました ！ || Hello, hello! Lovely weather today. So I brought three umbrellas!
 > はい 、 どうも どうも ！ {今日|きょう} は ええ {天気|てんき} や ね 。 せやから 、 {傘|かさ} を {三本|さんぼん} {持|も}って {来|き}ました ！ || Hello, hello! Lovely weather today, innit. So I brought three umbrellas!
 = わたし 、 {毎朝|まいあさ} {走|はし}って います 。 …… {夢|ゆめ} の {中|なか} で 。 || I go for a run every morning. …In my dreams.
-> うち 、 {毎朝|まいあさ} {走|はし}ってる ねん 。 …… {夢|ゆめ} の {中|なか} で 。 || I go for a run every morning. …In my dreams.
+> うち 、 {毎朝|まいあさ} {走|はし}ってます ねん 。 …… {夢|ゆめ} の {中|なか} で 。 || I go for a run every morning. …In my dreams.
 = {昨日|きのう} は ね 、 {箸|はし} を {渡|わた}って 、 {橋|はし} で ご{飯|はん} を {食|た}べました 。 || Yesterday I crossed the chopsticks and ate my rice with a bridge.
-> {昨日|きのう} は な 、 {箸|はし} を {渡|わた}って 、 {橋|はし} で ご{飯|はん} {食|た}べた ねん 。 || Yesterday, see, I crossed the chopsticks and ate my rice with a bridge.
+> {昨日|きのう} は な 、 {箸|はし} を {渡|わた}って 、 {橋|はし} で ご{飯|はん} {食|た}べましてん 。 || Yesterday, see, I crossed the chopsticks and ate my rice with a bridge.
 = …… ありがとう 、 {相方|あいかた} 。 {久|ひさ}しぶり に 、 {舞台|ぶたい} で {笑|わら}った わ 。 {間|ま} の {取|と}り{方|かた} 、 {悪|わる}く ない わ よ 。 || …Thank you, partner. It's been a long time since I laughed on a stage. Your timing's not bad at all.
 > …… おおきに 、 {相方|あいかた} 。 {久|ひさ}しぶり に 、 {舞台|ぶたい} で {笑|わら}った わ 。 {間|ま} の {取|と}り{方|かた} 、 {悪|わる}く ない で 。 || …Thanks, partner. Been a long time since I laughed on a stage. Your timing's not bad at all.
 @ mp/21_scenes_stage [mp.oldest_play]
@@ -57,7 +57,7 @@ RB.dialect.add('kansai', `
 > 「{百物語|ひゃくものがたり}」 や ！ {一座|いちざ} の {年寄|としよ}り が 、 よう {話|はな}して くれた わ 。 …… せやけど 、 {灯|あか}り を {点|つ}けて いく {話|はなし} は 、 {初|はじ}めて や 。 || "A Hundred Tales"! The old hands in the troupe used to tell it. …But one where you light the lamps, that's new to me.
 @ mp/21_scenes_stage [mp.saku_first]
 = {名前|なまえ} が なくて も 、 {台詞|せりふ} は {体|からだ} が {覚|おぼ}えて いる わ 。 {一緒|いっしょ} に 、 {読|よ}んで みましょう 。 || Your body remembers the lines, even without the name. Let's read them together.
-> {名前|なまえ} が なくて も 、 {台詞|せりふ} は {体|からだ} が {覚|おぼ}えてる で 。 {一緒|いっしょ} に 、 {読|よ}んで みよ か 。 || Your body remembers the lines, even without the name. Shall we read them together?
+> {名前|なまえ} が なくて も 、 {台詞|せりふ} は {体|からだ} が {覚|おぼ}えてる で 。 {一緒|いっしょ} に 、 {読|よ}んで みましょう か 。 || Your body remembers the lines, even without the name. Shall we read them together?
 @ mp/22_scenes_fest [mp.tomi_tasks]
 = {舞台|ぶたい} の {演出|えんしゅつ} と {同|おな}じ ね 。 {町|まち} {全体|ぜんたい} が {舞台|ぶたい} よ 。 || It's like directing a show. The whole city's the stage.
 > {舞台|ぶたい} の {演出|えんしゅつ} と {同|おな}じ や な 。 {町|まち} {全体|ぜんたい} が {舞台|ぶたい} や で 。 || It's like directing a show. The whole city's the stage.

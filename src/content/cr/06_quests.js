@@ -9,7 +9,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     main: true, chapter: 'cr',
     title: T('{雲路|くもじ}', 'The Cloudroad'),
     stages: [
-      T('{伝言|でんごん} が {途中|とちゅう} で {崩|くず}れて いた 。 {灯落|ひおち} の {議会|ぎかい}{堂|どう} で 、 ヤエ に {直接|ちょくせつ} {聞|き}こう 。', 'The message came garbled on the way. Ask Yae herself, at Lanternfall\'s council chamber.'),
+      T('{伝言|でんごん} が {途中|とちゅう} で {崩|くず}れて いた 。 {灯落|ひおち} の {議会|ぎかい}{堂|どう} で 、 タミ に {直接|ちょくせつ} {聞|き}こう 。', 'The message came garbled on the way. Ask Tami herself, at Lanternfall\'s council chamber.'),
       T('{灯|ひ} の {道|みち} の {上|うえ} の {端|はし} から 、 {古|ふる}い {街道|かいどう} が {北|きた} の {山|やま} へ {登|のぼ}って いる 。 {追分宿|おいわけじゅく} へ {行|い}こう 。', 'From the top end of the Lantern Road the old highway climbs into the northern mountains. Go up to Oiwake Station.'),
       T('{宿場|しゅくば} の {灯|ひ} に {名前|なまえ} を {戻|もど}し 、 {継|つ}ぎ{飛脚|びきゃく} の {伝言|でんごん} を {運|はこ}び ながら 、 {宿|しゅく} から {宿|しゅく} へ {登|のぼ}ろう 。', 'Give each station\'s lamp its name back and carry the relay\'s messages, climbing station by station.'),
       T('{霧下宿|きりしたじゅく} は 、 {関所|せきしょ} の {下|した} の {最後|さいご} の {宿|しゅく} だ 。 {霧|きり} の {関|せき} へ {行|い}こう 。', 'Kirishita is the last station below the checkpoint. Go on to the Mist Barrier.'),

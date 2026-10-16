@@ -47,6 +47,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     K('ちゃうん', '', 'exp', 'I', 'isn\'t it?', 'じゃないの'),
     K('ちゃうかった', '', 'exp', 'I', 'it wasn\'t; it was different', '違った / じゃなかった'),
     K('ちゃうねん', '', 'exp', 'I', 'no, it\'s not like that', '違うんだ'),
+    // 〜へん written apart after a て-form (数えて へん = 数えて いない), not 変 "strange" (RV-1 D6)
+    K('へん', '', 'aux', 'E', 'not (after a て-form: 〜て へん = 〜て いない, hasn\'t …, isn\'t …-ing)', 'ていない', '{数|かぞ}えて へん = {数|かぞ}えて いない "nobody has counted". The Kansai negative 〜へん, here after a て-form.'),
+    K('おおきに', '', 'int', 'E', 'thank you', 'ありがとう', 'Kansai\'s traditional, warm thank-you.'),
     K('あかん', '', 'exp', 'E', 'no good; mustn\'t; won\'t do', 'だめ / いけない', '〜な あかん = must (行かな あかん "I have to go").'),
     K('あかんかった', '', 'exp', 'I', 'it was no good', 'だめだった'),
     K('しゃあない', '', 'exp', 'E', 'it can\'t be helped', '仕方ない'),
@@ -90,4 +93,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ], 'kansai');
   // うち before に is usually "while" (〜うちに), not "I"
   for (const e of RB.dialect.lexAll()) if (e.w === 'うち') { e.notNext = ['に']; e.notPrev = ['の']; }
+  // この へん, その へん: "around here", not the negative
+  for (const e of RB.dialect.lexAll()) if (e.w === 'へん') e.notPrev = ['この', 'その', 'あの', 'どの', 'の'];
 })();

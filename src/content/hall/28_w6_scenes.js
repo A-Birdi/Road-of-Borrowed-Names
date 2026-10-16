@@ -28,7 +28,8 @@ narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {秋|あき} の {�
 @scene hall.w6.f2_first
 !set hall_w6_f2_seen
 narr: {峠|とうげ} の {道|みち} は 、 {夕暮|ゆうぐ}れ の {中|なか} を {上|のぼ}って いく 。 {道|みち} に {沿|そ}って 、 {火|ひ} の {入|はい}って いない {灯籠|とうろう} が {並|なら}んで いる 。 || The road climbs the pass into the dusk. Along it stand stone lanterns, none of them lit.
-?(comp) comp: {暗|くら}く なる {前|まえ} に 、 {灯籠|とうろう} を {灯|とも}さない と 。 でも 、 {決|き}まり が ある みたい だ ね 。 || We should light the lanterns before it's dark. But there seems to be a rule.
+?(comp&comp!=ren) comp: {暗|くら}く なる {前|まえ} に 、 {灯籠|とうろう} を {灯|とも}さない と 。 でも 、 {決|き}まり が ある みたい だ ね 。 || We should light the lanterns before it's dark. But there seems to be a rule.
+?(comp=ren) comp: {暗|くら}く なる {前|まえ} に 、 {灯籠|とうろう} を {灯|とも}しましょう 。 でも 、 {決|き}まり が ある よう です ね 。 || We should light the lanterns before it's dark. But there seems to be a rule.
 
 @scene hall.w6.f3_first
 !set hall_w6_f3_seen
@@ -63,7 +64,8 @@ hall_kihei: {絵|え} の {通|とお}り じゃ 。 {札|ふだ} は 、 {増|�
 !faceplayer hall_ibuki
 !if hall.w6.t2 -> done
 hall_ibuki: キヘエ さん の {代|か}わり に 、 {関所|せきしょ} を {守|まも}って いる 。 {札|ふだ} の {決|き}まり の {通|とお}り に 、 {一人|ひとり} ずつ {木札|きふだ} を {渡|わた}して 。 {箱|はこ} は そこ 。 || I'm keeping the gate in Kihei's place. Give each traveller the wooden tag the board says they owe. The box is there.
-?(comp) comp: {札|ふだ} の {決|き}まり 、 {先|さき} に {読|よ}もう 。 {例外|れいがい} が {多|おお}そう だ 。 || Let's read the board first. Looks like lots of exceptions.
+?(comp&comp!=ren) comp: {札|ふだ} の {決|き}まり 、 {先|さき} に {読|よ}もう 。 {例外|れいがい} が {多|おお}そう だ 。 || Let's read the board first. Looks like lots of exceptions.
+?(comp=ren) comp: {札|ふだ} の {決|き}まり 、 {先|さき} に {読|よ}みましょう 。 {例外|れいがい} が {多|おお}そう です 。 || Let's read the board first. Looks like lots of exceptions.
 !end
 :done
 hall_ibuki: {全部|ぜんぶ} 、 {札|ふだ} の {通|とお}り 。 {間違|まちが}い は ない 。 …… キヘエ さん が {戻|もど}る まで 、 {間違|まちが}えられない ん だ 。 || All by the board. No mistakes. …I can't make any, till Kihei's back.
@@ -154,7 +156,8 @@ hall_${w}: ${thx} || ${thxEn}
 !end
 :all
 narr: {四人|よにん} と も 、 {札|ふだ} の {決|き}まり の {通|とお}り に {払|はら}って 、 {峠|とうげ} を {上|のぼ}って いった 。 || All four have paid what the board says and gone on up the pass.
-?(comp) comp: {決|き}まり の {通|とお}り 。 「 ても 」 と 「 ただし 」 を {見落|みお}とさなくて よかった 。 || All by the board. Good thing we didn't miss the "even if" and the "however".
+?(comp&comp!=ren) comp: {決|き}まり の {通|とお}り 。 {札|ふだ} の {最後|さいご} の {一行|いちぎょう} まで 、 {読|よ}んで よかった 。 || All by the board. Good thing we read the board to the last line.
+?(comp=ren) comp: {決|き}まり の {通|とお}り です 。 {札|ふだ} の {最後|さいご} の {一行|いちぎょう} まで 、 {読|よ}んで よかった です 。 || All by the board. Good thing we read the board to the last line.
 ${K.mark(W, 0, 't2')}
 !end
 :done
@@ -176,7 +179,7 @@ hall_${w}: ${thx} || ${thxEn}
   out += '\n@scene hall.w6.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {古|ふる}い {道標|みちしるべ} が {四|よっ}つ {並|なら}び 、 その {先|さき} の {石|いし} に {字|じ} が {刻|きざ}んで ある 。 「 {四|よっ}つ の {言葉|ことば} の うち 、 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 || Four old waymarkers stand in a row, and on the stone beyond them is carved: "Of the four sayings, one alone is wrong."'],
     task: { 0: 'hall.w6.counter0', 1: 'hall.w6.counter1' },
-    after: ['narr: {間違|まちが}った {言葉|ことば} が 、 {峠|とうげ} の {風|かぜ} に {消|き}えた 。 || The wrong saying blows away on the wind off the pass.', '?(comp) comp: {条件|じょうけん} が {合|あ}わない と 、 {言葉|ことば} が {全部|ぜんぶ} {逆|さか}さま に なる から ね 。 || When the condition doesn\'t fit, the whole saying comes out backwards.'],
+    after: ['narr: {間違|まちが}った {言葉|ことば} が 、 {峠|とうげ} の {風|かぜ} に {消|き}えた 。 || The wrong saying blows away on the wind off the pass.', '?(comp&comp!=ren) comp: {条件|じょうけん} が {合|あ}わない と 、 {言葉|ことば} が {全部|ぜんぶ} {逆|さか}さま に なる から ね 。 || When the condition doesn\'t fit, the whole saying comes out backwards.', '?(comp=ren) comp: {条件|じょうけん} が {合|あ}わない と 、 {言葉|ことば} が {全部|ぜんぶ} {逆|さか}さま に なります から ね 。 || When the condition doesn\'t fit, the whole saying comes out backwards.'],
     later: 'narr: {言葉|ことば} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the sayings one by one, then come back.',
     done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
   for (let i = 0; i < 4; i++) {
@@ -219,7 +222,8 @@ narr: {灯籠|とうろう} に {火|ひ} を {入|い}れた 。 || You light t
 !end
 :all
 narr: {峠|とうげ} の {灯籠|とうろう} が 、 {決|き}まり の {通|とお}り に {灯|とも}った 。 || The pass's lanterns are lit, just as the rule says.
-?(comp) comp: 「 {全部|ぜんぶ} {灯|とも}す 」 で も 、 「 ただし 」 が {一|ひと}つ 。 {例外|れいがい} を {見落|みお}とさなくて よかった 。 || "Light them all", with one "however". Good thing we didn't miss the exception.
+?(comp&comp!=ren) comp: 「 {全部|ぜんぶ} {灯|とも}す 」 で も 、 「 ただし 」 が {一|ひと}つ 。 {例外|れいがい} を {見落|みお}とさなくて よかった 。 || "Light them all", with one "however". Good thing we didn't miss the exception.
+?(comp=ren) comp: 「 {全部|ぜんぶ} {灯|とも}す 」 で も 、 「 ただし 」 が {一|ひと}つ 。 {例外|れいがい} を {見落|みお}とさなくて よかった です 。 || "Light them all", with one "however". Good thing we didn't miss the exception.
 ${K.mark(W, 1, 't4')}
 !end
 :no
@@ -284,12 +288,14 @@ narr: {帳面|ちょうめん} は 、 {夜|よる} の {決|き}まり の {頁
     out += LVN3((t, i) => `?(${L[t]}) hall_${w}: 「 ${s[i]} 」 || "${s[3]}"\n`);
     out += `!if !xp_hall_w6_f1_asked -> unknown
 ${w in ALLOW ? '!if hall.w6.pat=' + ALLOW[w] + ' -> right\n' : ''}narr: キヘエ の {帳面|ちょうめん} の {決|き}まり で は 、 {今|いま} は {通|とお}せない 。 || By the rule in Kihei's ledger, you can't let them through now.
-?(comp) comp: {帳面|ちょうめん} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the ledger said again?
+?(comp&comp!=ren) comp: {帳面|ちょうめん} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the ledger said again?
+?(comp=ren) comp: {帳面|ちょうめん} を 、 もう {一度|いちど} {読|よ}みましょう か 。 || Shall I read the ledger again?
 !end
 ${w in ALLOW ? `:right
 narr: {帳面|ちょうめん} の {決|き}まり の {通|とお}り 、 ${s[6]} を {峠|とうげ} の {上|うえ} へ {通|とお}した 。 || As the ledger allows, you let ${s[7]} go on up the pass.
 hall_${w}: ${s[4]} || ${s[5]}
-?(comp) comp: {夜|よる} は {通|とお}さない 。 ただし 、 {一|ひと}つ だけ {例外|れいがい} が ある 。 {読|よ}んで よかった ね 。 || Nobody after dark, except in one case. Good thing we read it.
+?(comp&comp!=ren) comp: {夜|よる} は {通|とお}さない 。 ただし 、 {一|ひと}つ だけ {例外|れいがい} が ある 。 {読|よ}んで よかった ね 。 || Nobody after dark, except in one case. Good thing we read it.
+?(comp=ren) comp: {夜|よる} は {通|とお}さない 。 ただし 、 {一|ひと}つ だけ {例外|れいがい} が ある 。 {読|よ}んで よかった です ね 。 || Nobody after dark, except in one case. Good thing we read it.
 ${K.mark(W, 1, 't6')}
 !end
 ` : ''}:unknown
@@ -328,7 +334,8 @@ narr: {峠|とうげ} は もう {暗|くら}い 。 {灯籠|とうろう} の {
   out += `
 @scene hall.w6.t8_board
 narr: {番小屋|ばんごや} の {壁|かべ} の 「 {助|たす}け の {札|ふだ} 」 。 {風|かぜ} で 、 {場合|ばあい} を {書|か}いた {板|いた} が {外|はず}れて {落|お}ちて いる 。 {鉤|かぎ} に {残|のこ}って いる の は 、 {関所|せきしょ} が する こと だけ だ 。 || The "help board" on the guard hut wall. The wind has knocked down the boards naming each case; only what the toll house does is left on the hooks.
-?(comp&!hall.w6.t8) comp: どの {場合|ばあい} に 、 {何|なに} を する の か 。 {合|あ}う {組|く}み{合|あ}わせ を {探|さが}そう 。 || Which case calls for what. Let's find what goes together.
+?(comp&!hall.w6.t8&comp!=ren) comp: どの {場合|ばあい} に 、 {何|なに} を する の か 。 {合|あ}う {組|く}み{合|あ}わせ を {探|さが}そう 。 || Which case calls for what. Let's find what goes together.
+?(comp=ren&!hall.w6.t8) comp: どの {場合|ばあい} に 、 {何|なに} を する の か 。 {合|あ}う {組|く}み{合|あ}わせ を {探|さが}しましょう 。 || Which case calls for what. Let's find what goes together.
 `;
   for (const c of Object.keys(CASE)) {
     out += `
@@ -372,7 +379,8 @@ narr: {板|いた} を {鉤|かぎ} に {掛|か}けた 。 || You hang the boar
 !end
 :all
 narr: 「 {助|たす}け の {札|ふだ} 」 が 、 {元|もと} に {戻|もど}った 。 || The help board is whole again.
-?(comp) comp: {雨|あめ} なら {傘|かさ} 、 {暗|くら}く なったら {提灯|ちょうちん} 。 {決|き}まり と いう より 、 {親切|しんせつ} の {一覧|いちらん} だ ね 。 || An umbrella if it rains, a lantern once it's dark. Less a list of rules than a list of kindnesses.
+?(comp&comp!=ren) comp: {雨|あめ} なら {傘|かさ} 、 {暗|くら}く なったら {提灯|ちょうちん} 。 {決|き}まり と いう より 、 {親切|しんせつ} の {一覧|いちらん} だ ね 。 || An umbrella if it rains, a lantern once it's dark. Less a list of rules than a list of kindnesses.
+?(comp=ren) comp: {雨|あめ} なら {傘|かさ} 、 {暗|くら}く なったら {提灯|ちょうちん} 。 {決|き}まり と いう より 、 {親切|しんせつ} の {一覧|いちらん} です ね 。 || An umbrella if it rains, a lantern once it's dark. Less a list of rules than a list of kindnesses.
 ${K.mark(W, 2, 't8')}
 !end
 :done
@@ -385,7 +393,8 @@ narr: {板|いた} が {掛|か}かって いる 。 || The board hangs in its p
 @scene hall.w6.otsuta
 !faceplayer hall_otsuta
 hall_otsuta: お{願|ねが}い です 。 この {子|こ} を 、 {峠|とうげ} の {向|む}こう の お{医者|いしゃ} に …… 。 || Please. This child, to the doctor over the pass…
-?(comp) comp: …… イブキ と {話|はな}そう 。 || …Let's talk to Ibuki.
+?(comp&comp!=ren) comp: …… イブキ と {話|はな}そう 。 || …Let's talk to Ibuki.
+?(comp=ren) comp: …… イブキ さん と {話|はな}しましょう 。 || …Let's talk to Ibuki.
 
 @scene hall.w6.t9
 !faceplayer hall_ibuki3
@@ -439,7 +448,7 @@ narr: {門|もん} の {提灯|ちょうちん} が 、 {朝|あさ} の {光|�
 narr: {朝|あさ} 、 オツタ が {峠|とうげ} を {上|のぼ}って {戻|もど}って きた 。 {赤|あか}ん{坊|ぼう} は 、 {腕|うで} の {中|なか} で {眠|ねむ}って いる 。 {熱|ねつ} は {下|さ}がった 。 || In the morning Otsuta comes back up the pass. The baby is asleep in her arms; the fever has broken.
 hall_kihei: {札|ふだ} の {一番|いちばん} {下|した} の {一行|いちぎょう} 、 {良|よ}い {字|じ} じゃ 。 …… {決|き}まり は {変|か}わる 。 {変|か}わって {良|よ}い 。 {変|か}わらん の は 、 {何|なん} の ため の {決|き}まり か 、 だけ じゃ 。 || The bottom line on the board: a good hand. …Rules change, and so they should. The only thing that doesn't is what they're for.
 ?(comp=nao) comp: {宛先|あてさき} の ない {手紙|てがみ} は {届|とど}けない 。 ただし 、 {困|こま}って いる {人|ひと} の {手紙|てがみ} は 、 {何|なん} と して でも {届|とど}ける 。 {配達|はいたつ} の {決|き}まり も 、 {同|おな}じ だ 。 || No address, no delivery. Except a letter from someone in trouble: that gets there, whatever it takes. The delivery rules are the same.
-?(comp=mio) comp[happy]: なら 、 たら 、 ても 、 ただし 。 {決|き}まり の {言葉|ことば} は {冷|つめ}たく {聞|き}こえる けど 、 {使|つか}う {人|ひと} {次第|しだい} で 、 {温|あたた}かく も なる のね 。 || If, when, even if, except. The words of rules sound cold, but in the right hands they can be warm.
+?(comp=mio) comp[happy]: {決|き}まり の {言葉|ことば} は {冷|つめ}たく {聞|き}こえる けど 、 {使|つか}う {人|ひと} {次第|しだい} で 、 {温|あたた}かく も なる のね 。 || The words of rules sound cold, but in the right hands they can be warm.
 ?(comp=ren) comp: {灯|ひ} が {六|むっ}つ 、 {戻|もど}りました 。 {残|のこ}り は 、 {四|よっ}つ です 。 || Six lights back. Four to go.
 ?(comp=suzu) comp: {第|だい}{六幕|ろくまく} 、 {幕|まく} ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
 !sequence hall.w6 end

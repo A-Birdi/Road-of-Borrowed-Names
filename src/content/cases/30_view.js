@@ -148,7 +148,8 @@ narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯
 !gesture pc handover 11,36
 narr: {腰掛|こしか}け の {横|よこ} の {柱|はしら} に 、 {小|ちい}さな {額|がく} を {作|つく}って {絵|え} を {納|おさ}めた 。 {表|おもて} を {景色|けしき} の ほう へ {向|む}けて 。 || On the post beside the seat you set the sketch in a small frame, its face turned towards the view.
 ?(comp) !gesture comp nod pc
-?(comp) comp[smile]: {絵|え} も 、 やっと {帰|かえ}って きた ね 。 || The picture's finally come home.
+?(comp&comp!=ren) comp[smile]: {絵|え} も 、 やっと {帰|かえ}って きた ね 。 || The picture's finally come home.
+?(comp=ren) comp[smile]: {絵|え} も 、 やっと {帰|かえ}って きました ね 。 || The picture's finally come home.
 
 @scene cs.view_west
 # Staged: looking out, you turn east across the slope; holding up the sketch as it hung, you hold it up before
@@ -233,13 +234,13 @@ narr: {絵|え} の {中|なか} の {灯|あか}り と 、 {本物|ほんも�
 @scene cs.talk_view
 !if case.view=done -> done
 ?(comp=nao) comp[think]: {宛名|あてな} を {裏|うら} から {読|よ}んだ こと が ある 。 {封筒|ふうとう} が {透|す}けて て な 。 …… {字|じ} が {全部|ぜんぶ} {逆|ぎゃく} だった 。 || I once read an address from the back — the envelope was thin. …Every letter was the wrong way round.
-?(comp=mio) comp: {薬|くすり} の {包|つつ}み も 、 {表|おもて} と {裏|うら} を {間違|まちが}える と 、 {全然|ぜんぜん} {違|ちが}う {字|じ} に {見|み}える んです 。 || Medicine wrappers too — get the front and back mixed up and the writing looks like something else entirely.
+?(comp=mio) comp: {薬|くすり} の {包|つつ}み も 、 {表|おもて} と {裏|うら} を {間違|まちが}える と 、 {全然|ぜんぜん} {違|ちが}う {字|じ} に {見|み}える の 。 || Medicine wrappers too — get the front and back mixed up and the writing looks like something else entirely.
 ?(comp=ren) comp: {景色|けしき} が {合|あ}わない の は 、 {景色|けしき} の せい では ない かも しれません 。 {見|み}て いる {側|がわ} の せい かも 。 || Maybe the view doesn't match because of how we're looking, not because of the view.
 ?(comp=suzu) comp: {客席|きゃくせき} から {見|み}る の と 、 {舞台|ぶたい} の {上|うえ} から {見|み}る の と 。 {左右|さゆう} が {逆|ぎゃく} に なる の よ ね 。 || From the seats, and from the stage. Left and right swap over.
 !end
 :done
 ?(comp=nao) comp[smile]: {窓|まど} の {絵|え} 、 {何年|なんねん} も {裏|うら} を {向|む}いて た ん だ な 。 {誰|だれ} も {気|き}づかない まま 。 || That picture faced the wrong way for years. Nobody noticed.
-?(comp=mio) comp[smile]: あの {腰掛|こしか}け 、 アカリ さん の {背|せ} の {印|しるし} が ある {柱|はしら} の そば でした ね 。 {景色|けしき} も 、 {人|ひと} も 、 {覚|おぼ}えて いる {場所|ばしょ} 。 || That seat was by the post with Akari's height marks. A place that remembers a view and people too.
+?(comp=mio) comp[smile]: あの {腰掛|こしか}け 、 アカリ さん の {背|せ} の {印|しるし} が ある {柱|はしら} の そば だった ね 。 {景色|けしき} も 、 {人|ひと} も 、 {覚|おぼ}えて いる {場所|ばしょ} 。 || That seat was by the post with Akari's height marks. A place that remembers a view and people too.
 ?(comp=ren) comp: {裏|うら} から {見|み}て いた の は 、 {私|わたし} たち の ほう でした 。 …… {良|よ}い {教訓|きょうくん} です 。 {方角|ほうがく} の {苦手|にがて} な {私|わたし} に は 、 {特|とく}に 。 || We were the ones looking from the back. …A good lesson. Especially for someone as bad with directions as me.
 ?(comp=suzu) comp[laugh]: {裏返|うらがえ}す だけ で {正解|せいかい} ！ {一番|いちばん} {好|す}き な {種明|たねあ}かし よ 。 || Just turn it over and there's the answer! My favourite kind of reveal.
 `, 'cases/30_view');

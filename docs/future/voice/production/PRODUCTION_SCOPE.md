@@ -56,7 +56,11 @@ them, on Robin's PC with free local engines, in Robin's accepted cast, at the so
   disliked should be authoritative to use those model/settings."
 - **Supernatural speakers** sound so. The Mill Echo has a slight echo.
 - **The Hush has no voice and no lines.** Its speaking agent, the Tide Clerk, keeps the foreboding treatment.
-- **Mochi's ニャー** is the sourced CC0 meow (Wikimedia Commons, Tsester), not a voice.
+- **Mochi's ニャー** is a sourced recording, not a voice. It is **Robin's pick H8 (round 3)**: a single meow cut from
+  "Meow of a pleading cat.oga" by Heismark on Wikimedia Commons, public domain (PD-self), 6.65–7.64 s of the source.
+  - This was reported by the local worker on 2026-10-16. It replaces the Tsester CC0 meow that VA-2's run used and
+    that this page first named.
+  - The casting record in `results.json` carries the source, the cut and the hash.
 - **One loudness** for every line, trimmed alike: "The equalized loudness is best."
 - **A speaking person always in their own voice.** The narrator speaks narration (C-93's answer on mixed models).
 
@@ -76,7 +80,7 @@ accepted references kept)."
 
 ### The player's name (C-93)
 
-There are 115 lines with the traveller's name in them, listed under `notRecordable` in the manifest. They are not in
+There are 116 lines with the traveller's name in them, listed under `notRecordable` in the manifest. They are not in
 this batch.
 - **Robin's rule.** A recording says a neutral word in place of the name. A line that is only the name ("Robin…")
   becomes the speaker's natural way to say "you" to the traveller (あなた, 君, お前… by their relation).
@@ -91,7 +95,8 @@ this batch.
 - **Companion lines** belong to the companions who can say them: through the line's condition, then its branch, then a
   scene named for one companion (RV-0160).
 - **Seams and names** are resolved in `send`, so no engine reads a joined compound the line does not mean (RV-0006).
-- **The narrator's reference readings** are recorded in the same batch (LI-8).
+- **The narrator's reference readings** are recorded in the same batch (LI-8), with the phrases the learning controls and
+  pastimes read: the listening steps, karuta, the ring toss and the shells. Those controls then work without a device voice.
 - **Delivery encoding:** VA-2's. Ogg Opus 48 kHz mono, about 58 kbit/s, −20 LUFS. Not lowered to fit any site.
 - **The contract** (variants, file names, results, runtime manifest) is in [VOICE_DELIVERY.md](VOICE_DELIVERY.md).
 

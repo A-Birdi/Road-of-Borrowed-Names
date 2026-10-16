@@ -236,9 +236,15 @@ RB.ui.wordsPages = (function () {
       '<span class="kind">' + (who.sr ? '<span class="sr">' + esc(who.sr) + ' — </span>' : '') + '<span aria-hidden="' + (who.sr ? 'true' : 'false') + '">' + who.html + '</span> · ' + placeHtml(b) + '</span></span></button>' +
       (open ? bmDetail(b, s) : '') + '</li>';
   }
+  // a kept line's recording: its scene and its standard markup, shown as the player's Suzu speaks (54_voice_route.js)
+  function bmVoice(b) {
+    const source = { sceneId: b.src && b.src.k === 'sc' ? b.src.id : null, jp: b.jp, who: b.who };
+    return { source, display: RB.dialect && RB.dialect.line ? RB.dialect.line(b.who, source) : source };
+  }
   function bmDetail(b, s) {
     const who = speakerLine(b);
-    const canSpeak = RB.voice && RB.voice.status && RB.voice.status().localJaCount > 0;
+    const bv = bmVoice(b);
+    const canSpeak = !!(RB.voice && RB.voice.canSayLine && RB.voice.canSayLine(bv.display, bv.source));
     const words = B().wordsOf(b).filter((w) => w.entry && w.entry.m && ['prt', 'aux', 'suf', 'cop'].indexOf(w.entry.pos) < 0);
     const uniq = [];
     for (const w of words) if (!uniq.some((u) => u.entry.w === w.entry.w)) uniq.push(w);
@@ -353,7 +359,8 @@ RB.ui.wordsPages = (function () {
         if (b && RB.voice) {
           const vars = Object.assign({}, RB.script.jpVars(), b.v || {});
           const ch = RB.content.chars[b.who];
-          RB.voice.speak(RB.jp && RB.jp.reading ? RB.jp.reading(b.jp, vars) : RB.ui.plainJp(b.jp), { pitch: ch && ch.voice ? ch.voice.pitch : 1 });
+          const bv = bmVoice(b);
+          RB.voice.sayLine(bv.display, bv.source, { text: RB.jp && RB.jp.reading ? RB.jp.reading(bv.display.jp, vars) : RB.ui.plainJp(b.jp), pitch: ch && ch.voice ? ch.voice.pitch : 1 });
         }
         return;
       }

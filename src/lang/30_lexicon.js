@@ -163,10 +163,10 @@ RB.lex = (function () {
 よ||prt|F|sentence ending: tells the listener something new|Can sound pushy if overused.
 ね||prt|F|sentence ending: seeks agreement ("…, isn't it?")
 よね||prt|E|sentence ending: "…, right?" (checking shared knowledge)
-な||prt|E|sentence ending: casual emphasis or musing|After a dictionary-form verb, な is a blunt prohibition: {行|い}くな "don't go".
+な||prt|E|sentence ending: casual emphasis or musing|After a dictionary-form verb, な is a blunt prohibition: {行|い}くな "don't go". After a verb's stem it is a soft command, short for なさい: {来|き}な "come here", {巻|ま}いて おきな "keep it tied on" (warm, from an older person).
 ぞ||prt|I|sentence ending: strong, rough emphasis|Casual; mostly used by men.
-わ||prt|I|sentence ending: soft emphasis|In Tokyo speech a rising わ sounds feminine; in western Japan it is used by everyone.
-って||prt|E|casual quotation marker (= と); "speaking of …" (= は)||(I heard) that … (hearsay)
+わ||prt|I|sentence ending: soft emphasis|In Tokyo speech a rising わ sounds feminine; in western Japan it is used by everyone. After です / ます (ですわ, ましたわ) it is an old-fashioned, refined style that marks a character's voice; everyday polite speech stops at です / ます.
+って||prt|E|casual quotation marker (= と); "speaking of …" (= は)|Rough contractions: 〜ってんだ = 〜と いうんだ ({何|なに}が ある ってんだ "what else is there?"); 〜っての = 〜と いうの ({言|い}えっての "say so, then!", exasperated).|(I heard) that … (hearsay)
 けど||prt|E|but; although (casual)|Often left hanging at the end of a sentence to soften it.
 けれど||prt|I|but, although
 けれども||prt|I|but, although (a little more formal)
@@ -213,7 +213,7 @@ RB.lex = (function () {
 だろう||aux|I|probably; I wonder (plain)
 じゃない||aux|E|is not (casual)|With rising intonation it can mean "…, isn't it?".
 ではない||aux|E|is not (neutral or written)|Pronounced dewa nai.
-じゃ||aux|E|casual form of では (as in じゃない, じゃありません)|Also used alone as "well then" (= じゃあ).
+じゃ||aux|E|casual form of では (as in じゃない, じゃありません); (ending a sentence, older or storybook speech) = だ, is|Alone at the start, じゃ is "well then" (= じゃあ). Ending a sentence ({狐|きつね}じゃ。), it is the copula だ: western Japanese, and the conventional speech of old people in folk tales; recognise it, but say だ yourself.
 じゃありません||aux|E|is not (polite)
 ではありません||aux|E|is not (polite, a little more formal)
 じゃなかった||aux|E|was not (casual)
@@ -502,7 +502,7 @@ RB.lex = (function () {
 目|め|n|F|eye|As a suffix after a number: -th ({二|ふた}つ{目|め} "the second").|-th (ordinal suffix)
 耳|みみ|n|F|ear
 鼻|はな|n|F|nose|Homophone: {花|はな} (flower).
-口|くち|n|F|mouth
+口|くち|n|F|mouth|Also "a sort, a kind (of person)": {勝手|かって}に {入|はい}って きた {口|くち}だ "you're the sort who just walks in".
 歯|は|n|E|tooth
 手|て|n|F|hand
 足|あし|n|F|foot; leg
@@ -714,7 +714,7 @@ RB.lex = (function () {
 湯のみ|ゆのみ|n|I|teacup (Japanese-style, without a handle)
 カップ||n|E|cup
 コップ||n|E|glass, tumbler
-棚|たな|n|E|shelf
+棚|たな|n|E|shelf|{棚|たな}に {上|あ}げる (literally "to put up on the shelf") is an idiom: to conveniently ignore something, especially your own faults.
 床|ゆか|n|E|floor
 屋根|やね|n|E|roof
 壁|かべ|n|E|wall
@@ -1084,7 +1084,7 @@ RB.lex = (function () {
 至る|いたる|v5r|A|to reach, lead to
 散る|ちる|v5r|I|to scatter; to fall (leaves, petals)
 参る|まいる|v5r|I|to go, come (humble)
-おる||v5r|I|to be (humble form of いる)
+おる||v5r|I|to be (humble form of いる)|In western Japan and in folk-tale speech, おる is plain "to be" (= いる), not humble: {決|き}まって おる = {決|き}まって いる.
 召し上がる|めしあがる|v5r|I|to eat, drink (respectful)
 蘇る|よみがえる|v5r|A|to come back to life, revive
 偽る|いつわる|v5r|A|to lie about, falsify
@@ -1925,6 +1925,75 @@ RB.lex = (function () {
 パーティー||n|F|party
 ヴァイオリン||n|F|violin|Also written バイオリン.
 `));
+
+  // Spoken forms that word help read as another word (RV-1 register review, D6): kana spellings of everyday words,
+  // sentence-final particles, contractions, and marked older or regional forms, with a short register note where the
+  // form is marked. PLACE: the few that fit one place only (read by RB.jp.lookup, src/lang/20_jp.js: final = ending a
+  // phrase after a word; endsSentence = ending a sentence after a word; notFirst = not opening a sentence; afterEnd =
+  // right after a word ending so). とも "certainly" follows a verb, an adjective or です (not 三つ とも "all three").
+  const PRED_END = ['う', 'く', 'ぐ', 'す', 'ぬ', 'ぶ', 'む', 'る', 'い', 'た', 'だ'];
+  const PLACE = {
+    かい: { final: true }, かね: { final: true }, とも: { endsSentence: true, afterEnd: PRED_END },
+    なんだ: { notFirst: true }, なんです: { notFirst: true }, なんだって: { notFirst: true },
+    かった: { afterEnd: ['ん', 'ちゃう'] }, ちゃ: { afterEnd: ['て', 'で'] }, おくれ: { afterEnd: ['て', 'で'] },
+    おけん: { afterEnd: ['は', 'て', 'で'] }, まい: { afterEnd: ['る'] }, ついて: { afterEnd: ['に'] }, つる: { afterEnd: ['が'] },
+  };
+  core.push(...T(`
+かい||prt|E|(ending a sentence) a familiar yes/no question: そうかい "is that so?", {来|き}たのかい "did you come?"|Warm and familiar, more common among older speakers. For your own questions: 〜の？ with friends, 〜ですか politely.
+かね||prt|I|(ending a sentence) a musing question: "I wonder …?", "is it …?"|Familiar and a little old-fashioned, more common among older speakers. Everyday equivalents: 〜かな, 〜でしょうか.
+とも||prt|I|(ending a sentence) of course, certainly: {見|み}たとも "I certainly did"|Warm and a little old-fashioned. Elsewhere とも is "both, all" ({二人|ふたり}とも) or {友|とも} "friend".
+なんだ||exp|I|(after a noun or な-adjective) it's that …, you see: な + explanatory んだ|な links the word to んだ, which explains or stresses: {苦手|にがて}なんだ "I'm just no good at it". At the start of a sentence, なんだ is "what?" or "oh, it's only …" (なん = what).
+なんです||exp|I|(after a noun or な-adjective) it's that …, you see: な + explanatory んです (polite)|At the start of a sentence, なんですか is "what is it?" (なん = what).
+なんだって||exp|I|(after a noun or な-adjective) it's …, they say; apparently: な + んだ + って|At the start of a sentence, なんだって？ is "what did you say?"
+かった||aux|I|(after a negative in 〜ん or 〜へん) past ending: 〜んかった = 〜なかった, did not …|Western Japanese and Kansai speech; standard Japanese says 〜なかった. Kansai ちゃうかった = {違|ちが}った "it wasn't".
+ちゃ||prt|I|(casual, after a て-form) = ては: if (you go on) …-ing; 〜ちゃ いけない "must not"|Short for 〜ては, or 〜ていては: {隠|かく}れてちゃ = {隠|かく}れていては.
+おくれ||exp|I|(after a て-form) please (do it) for me: = 〜てくれ / 〜てください, old-fashioned and warm|An older, familiar way to ask someone close or younger. Not おくれる "to be late". For your own requests, use 〜てください.
+おいで||exp|E|come (here); (after a て-form) go and … (and come back): a warm command, = {来|き}なさい|Said to a child or someone younger; old-fashioned and kindly.
+お行き|おいき|exp|I|go (on): a warm command, = {行|い}きなさい; (after a て-form) {持|も}って おいき "take it with you"|お + a verb's stem as a command is old-fashioned and warm, from an older person to a younger one; not for speaking to anyone senior.
+おやり||exp|A|(after a て-form) do (it) for them: a warm command, = 〜てやりなさい|お + a verb's stem as a command: old-fashioned and warm, from an older person to a younger one.
+お付け|おつけ|exp|A|({気|き}を〜) take care, mind (…): a warm command, = {付|つ}けなさい|お + a verb's stem as a command: old-fashioned and warm, from an older person to a younger one.
+お前|おまえ|pn|E|you (familiar or rough)|Said to someone close or younger (a parent to a child, close friends); to anyone else it sounds rude.
+お前さん|おまえさん|pn|I|you (old-fashioned; gruff but kindly)|Older speech, warmer than お{前|まえ}; not for your own use with people you don't know.
+おれ||pn|E|I, me (casual; mostly male)|In kanji {俺|おれ}. Casual: with strangers or seniors, say わたし.
+お立ち会い|おたちあい|exp|A|"Gather round, everyone!" (a showman's call to a crowd)|A traditional call of street performers and stage barkers (さあさあ、お{立|た}ち{会|あ}い！), used playfully; not ordinary speech.
+くださいまし||exp|A|please (do …): old-fashioned and very polite, = ください|Old-fashioned service speech (an inn's staff, a shop); everyday polite speech says 〜ください.
+あるまい||exp|A|surely is not; there can hardly be (literary: = ないだろう)|Old literary speech, as in period drama.
+まい||aux|A|(after a verb) surely won't; I won't (literary: {当|あ}たるまい = {当|あ}たらないだろう)|Old literary speech, as in period drama and proverbs.
+待たれよ|またれよ|exp|A|wait! (archaic and formal: a guard's or official's set phrase)|Period-drama speech; today: {待|ま}ってください.
+通られよ|とおられよ|exp|A|you may pass (archaic and formal: a gate guard's set phrase)|Period-drama speech; today: {通|とお}ってください.
+おけん||exp|A|(〜ては おけん) can't (just leave it): = おけない|〜ん for 〜ない is older or western speech.
+ござる||v5aru|A|to be, there is (very polite; its ます-form is ございます)|ござる itself (でござる = です) is samurai-drama speech, heard today only in period pieces and jokes. Modern polite speech uses ございます (ございました, でございまして …).
+じゃろう||aux|A|= だろう: probably, surely; …, I'd think|Western Japanese, and the conventional speech of old people in folk tales; recognise it, but say だろう yourself.
+しもうた||exp|A|(after a て-form) = しまった: has gone and …, ended up …-ing|Western Japanese, and the conventional speech of old people in folk tales.
+やめる||v1|E|to stop (doing), to quit, to give up|Also written {止|や}める. Not やむ, which is rain or wind stopping.
+止める|やめる|v1|E|to stop (doing), to quit, to give up|Also read とめる: to stop (something moving).
+つける||v1|E|to attach, to put on; to turn on (a light); to write down (in a book); to give (a name)|In kana, also {気|き}を つける "to take care". Also written {付|つ}ける or {点|つ}ける.
+つかれる||v1|E|to get tired|Also written {疲|つか}れる.
+つく||v5k|E|to be attached, to stick; to come on (a light); to follow (ついて くる); to arrive|In kana, つく can be several words: {付|つ}く (be attached: {名前|なまえ}が つく; {気|き}が つく "to notice"), {点|つ}く (a light comes on), {着|つ}く (to arrive), and the つく of {嘘|うそ}を つく "to tell a lie". The words around it tell you which.
+ついて||exp|I|(〜に ついて) about, concerning; (〜に ついて いく) along with, following|From つく "to be attached".
+おかげ||n|E|thanks to (〜の おかげで); someone's help|おかげさまで: "thanks to you" (a polite reply when asked how you are).
+ふり||n|I|pretending, a show of (〜ふりを する: to pretend to …)|{分|わ}かった ふり: pretending to understand.
+ほんと||n|E|really; true (casual for {本当|ほんとう})|ほんと？ "really?"; ほんとに "truly".
+おふくろ||n|I|mum, (my) mother (familiar)|An adult's familiar word for their own mother, used mostly by men, and in speaking about her rather than to her.
+かかり過ぎる|かかりすぎる|v1|I|to take too much (time or money); to cost too much
+くじく||v5k|I|to sprain, to twist (an ankle or wrist); to crush (someone's spirit)
+たびに||exp|I|every time (…), whenever ({鳴|な}る たびに "every time it rings"; その たびに "each time")|Not {旅|たび} "journey".
+おまけ||n|E|something extra, a bonus (おまけに: what's more, on top of that)
+なし||n|E|none, nothing; without (〜なし で: without …)|In kana, なし is usually this word (also written {無|な}し); a pear is {梨|なし}.
+んな||aux|I|(after a verb's stem, rough casual) = るな: don't …|る before な often becomes ん in rough speech: {届|とど}けんな = {届|とど}けるな "don't deliver it".
+やけに||adv|I|awfully, strangely (more than you'd expect)
+すまない||exp|E|sorry (plainer than すみません)|Direct and plain, to people close to you or younger. Also "it won't do" (〜では すまない).
+ざわざわ||adv|I|(mimetic) a stir, a rustling; (of the heart) uneasy, unsettled
+つまんない||adj-i|E|boring, dull (casual for つまらない)
+だんだん||adv|E|gradually, little by little
+じゃんけん||n|E|rock-paper-scissors
+ごちゃまぜ||n|I|a jumble, everything mixed up together
+ひとたまり||n|A|(ひとたまりも ない) would not last a moment, would be finished at once
+まし||adj-na|I|better (of two poor choices), less bad|〜よりは まし: "better than …".
+お経|おきょう|n|I|a sutra; Buddhist scripture (chanted)
+あいにく||adv|I|unfortunately; I'm afraid (polite regret)
+つる||v5r|A|(of a muscle) to cramp: {足|あし}が つる "to get a cramp in the leg"|Not {釣|つ}る "to fish".
+`).map((e) => Object.assign(e, PLACE[e.w] || {})));
 
   // Romaji overrides where は is the (historical) particle inside a fixed word.
   const RO = {

@@ -178,6 +178,24 @@ for (const e of RB.lex.all()) {
   const said = e.pos === 'prt' && /pronounced (wa|e|o)\b/.exec(e.n || '');
   addRef('word', w, r, said ? SAID[said[1]] : r);
 }
+// phrases the learning controls and pastimes read aloud (today through the device voice only): the listening steps'
+// transcripts, the karuta reader's proverbs, the ring toss's descriptions (both tiers), the shells' fragments (every
+// tier). Keyed by the reading without spaces, which is what those controls already speak; the engine is sent the
+// written line (names in kana, seams as the line means them) like dialogue. The narrator, in a plain reading delivery.
+const phraseOf = (jp) => {
+  if (!jp || /\$\w+/.test(jp)) return;
+  const reading = NFC(String(RB.jp.reading(jp)).replace(/\s+/g, ''));
+  const key = 'phrase:' + reading;
+  if (refSeen.has(key)) return;
+  refSeen.add(key);
+  const nm = names(jp), sm = seams(jp);
+  const send = sm.reduce((t, x) => t.split(x.kanji).join(x.kana), nm.spokenNamesKana);
+  references.push({ id: 'r1-ref-' + sha(key + '\u0001' + send).slice(0, 16), key, kind: 'phrase', speaker: 'narrator', delivery: 'reading', written: spoken(jp), reading, spoken: send, display: jp, chars: [...send].length, morae: moraeOf(jp) || 1 });
+};
+for (const id in RB.content.challenges || {}) for (const lv in RB.content.challenges[id].tiers || {}) for (const st of RB.content.challenges[id].tiers[lv] || []) if (st.kind === 'listen' && st.transcript) phraseOf(st.transcript.jp);
+for (const c of (RB.content.karuta && RB.content.karuta.deck) || []) phraseOf(c.jp);
+for (const pz of (RB.content.festival && RB.content.festival.wanage && RB.content.festival.wanage.prizes) || []) { phraseOf(pz.easy && pz.easy.jp); phraseOf(pz.full && pz.full.jp); }
+for (const k in RB.content.shells || {}) for (const f of RB.content.shells[k].frags || []) for (const t of Object.values(f.text || {})) phraseOf(t && t.jp);
 const contentHash = sha(L.map((l) => l.key + '\u0001' + l.who + '\u0001' + (l.if || '') + '\u0001' + l.jp).join('\n'));
 const byRole = {};
 for (const e of entries) {

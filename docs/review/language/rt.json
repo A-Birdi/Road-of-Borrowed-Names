@@ -11,6 +11,12 @@
   "jp": "{森|もり} が 、 {育|そだ}った ん だ ね 。",
   "en": "The grove has grown."
  },
+ "scene:rt.grove_arch#1xs1lln": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{森|もり} が 、 {育|そだ}った ん です ね 。",
+  "en": "The grove has grown."
+ },
  "scene:rt.grove_tree#1tp3gz": {
   "status": "self-reviewed",
   "ref": "self-reviewed (P15g, the returns and the companions' beats): each line read in full against the lexicon, the grammar points' notes, sealed S8/S14 and the characters' existing lines (Hiro's twenty festivals, the keepers' register of lamp names, Sakichi's shelf, Kikue's unlabelled jar, Koume's promise to see the act); fixed: a headline's 刻み直さる now 刻み直される, 賛成致しかねます now 賛成しかねます (致す is not taught), 案 given its reading, the night walk made to start from the road's foot, Suzu's 待ってる contracted as her other Kansai lines are",
@@ -239,10 +245,10 @@
   "jp": "{火|ひ} の {番|ばん} は 、 {若|わか}い {者|もの} に {任|まか}せた 。 {今夜|こんや} は 、 {見|み}る だけ だ 。",
   "en": "I've handed the fire watch to the young ones. Tonight I only watch."
  },
- "scene:rt.fest_asa#ke50sr": {
+ "scene:rt.fest_asa#vkr0qx": {
   "status": "self-reviewed",
-  "ref": "self-reviewed (P15g, the returns and the companions' beats): each line read in full against the lexicon, the grammar points' notes, sealed S8/S14 and the characters' existing lines (Hiro's twenty festivals, the keepers' register of lamp names, Sakichi's shelf, Kikue's unlabelled jar, Koume's promise to see the act); fixed: a headline's 刻み直さる now 刻み直される, 賛成致しかねます now 賛成しかねます (致す is not taught), 案 given its reading, the night walk made to start from the road's foot, Suzu's 待ってる contracted as her other Kansai lines are",
-  "jp": "{屋台|やたい} で 、 {言葉|ことば} の {遊|あそ}び が できる の よ 。 {八百橋|やおばし} から {来|き}た {人|ひと} が 、 {教|おし}えて くれた の 。",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{屋台|やたい} で 、 {言葉|ことば} の {遊|あそ}び が できる ん だ よ 。 {八百橋|やおばし} から {来|き}た {人|ひと} が 、 {教|おし}えて くれた ん だ 。",
   "en": "There are word games at the stalls. Someone from Manybridge showed us how."
  },
  "scene:rt.fest_kotaro#wqvq80": {
@@ -291,6 +297,12 @@
   "status": "self-reviewed",
   "ref": "self-reviewed (P15g, the returns and the companions' beats): each line read in full against the lexicon, the grammar points' notes, sealed S8/S14 and the characters' existing lines (Hiro's twenty festivals, the keepers' register of lamp names, Sakichi's shelf, Kikue's unlabelled jar, Koume's promise to see the act); fixed: a headline's 刻み直さる now 刻み直される, 賛成致しかねます now 賛成しかねます (致す is not taught), 案 given its reading, the night walk made to start from the road's foot, Suzu's 待ってる contracted as her other Kansai lines are",
   "jp": "{一人|ひとり} で {待|ま}つ {灯|ひ} じゃ なく なった ん だ ね 。",
+  "en": "It isn't a lamp that waits alone any more."
+ },
+ "scene:rt.sb_board#jlzsh6": {
+  "status": "self-reviewed",
+  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
+  "jp": "{一人|ひとり} で {待|ま}つ {灯|ひ} で は 、 なく なった ん です ね 。",
   "en": "It isn't a lamp that waits alone any more."
  },
  "scene:rt.akari_letter#1j956lh": {

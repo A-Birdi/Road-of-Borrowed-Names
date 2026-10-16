@@ -219,7 +219,7 @@ narr: {飛脚|ひきゃく} は 、 {状箱|じょうばこ} に {鈴|すず} �
 narr: {誰|だれ} の {鈴|すず} だった の か は 、 {分|わ}からない 。 {振|ふ}って みる と 、 {澄|す}んだ {音|おと} が {一|ひと}つ 、 {雲|くも} の {海|うみ} の {上|うえ} を {渡|わた}って いった 。 || Whose bell it was, there's no telling. You give it a shake, and one clear note goes out over the sea of cloud.
 !sfx bell
 ?(comp=nao) comp[closed]: {鈴|すず} は 、 「{来|き}た ぞ」 の {合図|あいず} だ 。 …… {遅|おく}れて も 、 {来|き}た ぞ 。 || A bell means "I'm here." …Late, but here.
-?(comp=mio) comp: {澄|す}んだ {音|おと} です ね 。 {雲|くも} の {下|した} の {宿場|しゅくば} まで 、 {届|とど}く と いい です けど 。 || What a clear sound. I hope it carries down to the stations under the cloud.
+?(comp=mio) comp: {澄|す}んだ {音|おと} だ ね 。 {雲|くも} の {下|した} の {宿場|しゅくば} まで 、 {届|とど}く と いい けど 。 || What a clear sound. I hope it carries down to the stations under the cloud.
 ?(comp=ren) comp[smile]: {灯|ひ} が {届|とど}かない {所|ところ} に も 、 {音|おと} は {届|とど}きます 。 {飛脚|ひきゃく} の {鈴|すず} は 、 {耳|みみ} で {見|み}る {灯|ひ} です ね 。 || Where a lamp can't reach, a sound still can. A courier's bell is a lamp you see with your ears.
 ?(comp=suzu) comp[smile]: {開幕|かいまく} の {合図|あいず} みたい ね 。 …… さあ 、 {次|つぎ} の {便|びん} の {出番|でばん} よ 。 || Like the signal for curtain-up. …Right: the next post is on.
 !hook cs_keepsake ks_cr_bell

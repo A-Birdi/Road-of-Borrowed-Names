@@ -161,22 +161,22 @@ comp: …… そう だ な 。 {帰|かえ}り{道|みち} は 、 {歩|ある}
 !look pc mio
 !look mio pc
 !gesture mio touchhair
-comp: {正直|しょうじき} に {言|い}う と 、 {海|うみ} を {近|ちか}く で {見|み}た の は 、 {潮硝子|しおがらす} が {久|ひさ}しぶり でした 。 || To be honest, Saltglass was the first time in years I'd seen the sea up close.
+comp: {正直|しょうじき} に {言|い}う と 、 {海|うみ} を {近|ちか}く で {見|み}た の は 、 {潮硝子|しおがらす} が {久|ひさ}しぶり だった 。 || To be honest, Saltglass was the first time in years I'd seen the sea up close.
 !gesture mio laugh
-comp[laugh]: {川|かわ} の {村|むら} の {薬師|くすし} です から 。 {最初|さいしょ} に {思|おも}った の は 、 「 {塩|しお} の {薬|くすり} が いくら でも {作|つく}れる 」 でした 。 || I'm a river-village apothecary. The first thing I thought was, "I could make as much salt remedy as I like."
+comp[laugh]: {川|かわ} の {村|むら} の {薬師|くすし} だ から 。 {最初|さいしょ} に {思|おも}った の は 、 「 {塩|しお} の {薬|くすり} が いくら でも {作|つく}れる 」 だった 。 || I'm a river-village apothecary. The first thing I thought was, "I could make as much salt remedy as I like."
 !choice
 * {薬師|くすし} らしい {感想|かんそう} だ || Spoken like an apothecary. -> a
 * {怖|こわ}く なかった ？ || Wasn't it a little frightening? -> b
 :a
 !gesture mio aside
-comp[smile]: よく {言|い}われます 。 …… {二番目|にばんめ} に {思|おも}った こと は 、 {言|い}わない こと に します 。 || People say that a lot. …The second thing I thought, I'll keep to myself.
+comp[smile]: よく {言|い}われる 。 …… {二番目|にばんめ} に {思|おも}った こと は 、 {言|い}わない こと に する 。 || People say that a lot. …The second thing I thought, I'll keep to myself.
 !goto close
 :b
 !gesture mio guard
-comp[think]: {少|すこ}し 。 {終|お}わり が {見|み}えない もの は 、 {苦手|にがて} です 。 {病気|びょうき} でも 、 {仕事|しごと} でも 。 || A little. I'm not good with things that have no end in sight. Illnesses. Work.
+comp[think]: {少|すこ}し 。 {終|お}わり が {見|み}えない もの は 、 {苦手|にがて} な の 。 {病気|びょうき} でも 、 {仕事|しごと} でも 。 || A little. I'm not good with things that have no end in sight. Illnesses. Work.
 :close
 ?(ch3_done) !gesture mio exhale
-?(ch3_done) comp: {今|いま} なら 、 {少|すこ}し {違|ちが}う {感想|かんそう} を {言|い}えそう です 。 {終|お}わり が {見|み}えなくて も 、 {一緒|いっしょ} に {歩|ある}く {人|ひと} が いれば {平気|へいき} です 。 || Now I think I'd say something different. Even with no end in sight, it's all right if someone walks it with you.
+?(ch3_done) comp: {今|いま} なら 、 {少|すこ}し {違|ちが}う {感想|かんそう} を {言|い}えそう 。 {終|お}わり が {見|み}えなくて も 、 {一緒|いっしょ} に {歩|ある}く {人|ひと} が いれば {平気|へいき} 。 || Now I think I'd say something different. Even with no end in sight, it's all right if someone walks it with you.
 !hook co_heard t.mio.sea
 
 @scene co.t_mio_tea
@@ -185,19 +185,19 @@ comp[think]: {少|すこ}し 。 {終|お}わり が {見|み}えない もの �
 !look pc mio
 !look mio pc
 !gesture mio check prop=cup
-comp: {私|わたし} 、 お{茶|ちゃ} は ぬるい の が {好|す}き なん です 。 || I like my tea lukewarm.
+comp: {私|わたし} 、 お{茶|ちゃ} は ぬるい の が {好|す}き な の 。 || I like my tea lukewarm.
 !gesture mio fidget
-comp[shy]: {薬|くすり} を {作|つく}って いる と 、 {淹|い}れた お{茶|ちゃ} を {忘|わす}れて しまって 。 {気|き}づく と いつも ぬるくて 。 {慣|な}れたら 、 それ が {好|す}き に なりました 。 || When I'm making medicine I forget the tea I've poured. By the time I notice, it's always lukewarm. I got used to it, and now I like it.
+comp[shy]: {薬|くすり} を {作|つく}って いる と 、 {淹|い}れた お{茶|ちゃ} を {忘|わす}れて しまって 。 {気|き}づく と いつも ぬるくて 。 {慣|な}れたら 、 それ が {好|す}き に なった の 。 || When I'm making medicine I forget the tea I've poured. By the time I notice, it's always lukewarm. I got used to it, and now I like it.
 !choice
 * {熱|あつ}い の を {淹|い}れ{直|なお}そう か ？ || Shall I make you a fresh hot one? -> hot
 * {冷|さ}める まで {待|ま}とう || Let's wait for it to cool. -> wait
 :hot
 !gesture mio laugh
-comp[laugh]: ありがとう 。 …… でも 、 {冷|さ}める まで {待|ま}ちます 。 {待|ま}って いる {間|あいだ} に 、 {話|はなし} が できます から 。 || Thank you. …But I'll wait for it to cool. We can talk while we wait.
+comp[laugh]: ありがとう 。 …… でも 、 {冷|さ}める まで {待|ま}つ ね 。 {待|ま}ってる {間|あいだ} に 、 {話|はなし} が できる から 。 || Thank you. …But I'll wait for it to cool. We can talk while we wait.
 !goto close
 :wait
 !gesture mio nod pc
-comp[smile]: はい 。 {二人|ふたり} で ぬるい お{茶|ちゃ} 。 …… ハナ さん に {見|み}られたら 、 {怒|おこ}られ そう です 。 || Yes. Lukewarm tea for two. …Hana would scold us if she saw.
+comp[smile]: うん 。 {二人|ふたり} で ぬるい お{茶|ちゃ} 。 …… ハナ さん に {見|み}られたら 、 {怒|おこ}られ そう 。 || Yes. Lukewarm tea for two. …Hana would scold us if she saw.
 :close
 !hook co_heard t.mio.tea
 
@@ -208,24 +208,24 @@ comp[smile]: はい 。 {二人|ふたり} で ぬるい お{茶|ちゃ} 。 …
 !look pc mio
 !look mio pc
 !gesture mio size
-comp: {薬箱|くすりばこ} 、 {二|ふた}つ に {分|わ}けた ん です 。 || I've split the medicine chest in two.
+comp: {薬箱|くすりばこ} 、 {二|ふた}つ に {分|わ}けた の 。 || I've split the medicine chest in two.
 !gesture mio palm pc
-comp: {一|ひと}つ は {私|わたし} が {持|も}ちます 。 もう {一|ひと}つ は …… {軽|かる}い {方|ほう} です けど 、 {持|も}って もらえます か 。 || I'll carry one. The other one… it's the lighter one, but would you carry it?
+comp: {一|ひと}つ は {私|わたし} が {持|も}つ 。 もう {一|ひと}つ は …… {軽|かる}い {方|ほう} だ けど 、 {持|も}って もらえる ？ || I'll carry one. The other one… it's the lighter one, but would you carry it?
 !gesture mio fidget
-comp[shy]: {一人|ひとり} で {全部|ぜんぶ} {持|も}つ の が 、 {当|あ}たり{前|まえ} だ と {思|おも}って いました 。 {頼|たの}む の は 、 {頼|たの}まれる より {難|むずか}しい です ね 。 || I always thought carrying all of it myself was simply how it was. Asking is harder than being asked.
+comp[shy]: {一人|ひとり} で {全部|ぜんぶ} {持|も}つ の が 、 {当|あ}たり{前|まえ} だ と {思|おも}ってた 。 {頼|たの}む の は 、 {頼|たの}まれる より {難|むずか}しい ね 。 || I always thought carrying all of it myself was simply how it was. Asking is harder than being asked.
 !choice
 * {重|おも}い {方|ほう} を {持|も}つ よ || I'll take the heavy one. -> heavy
 * {喜|よろこ}んで {持|も}つ || Gladly. -> glad
 :heavy
 !gesture mio emphatic
-comp[laugh]: だめ です 。 {重|おも}い {方|ほう} は {私|わたし} 。 …… {断|ことわ}る の も 、 {練習|れんしゅう} {中|ちゅう} です から 。 || No. The heavy one's mine. …I'm practicing saying no, too.
+comp[laugh]: だめ 。 {重|おも}い {方|ほう} は {私|わたし} 。 …… {断|ことわ}る の も 、 {練習|れんしゅう} {中|ちゅう} だ から 。 || No. The heavy one's mine. …I'm practicing saying no, too.
 !goto close
 :glad
 !gesture mio thanks pc
-comp[smile]: …… ありがとう 。 {中|なか} の ラベル は 、 {全部|ぜんぶ} {三回|さんかい} {確|たし}かめて あります 。 || …Thank you. Every label inside has been checked three times.
+comp[smile]: …… ありがとう 。 {中|なか} の ラベル は 、 {全部|ぜんぶ} {三回|さんかい} {確|たし}かめて ある よ 。 || …Thank you. Every label inside has been checked three times.
 :close
 ?(lq_ally2) !gesture mio exhale
-?(lq_ally2) comp: {小春野|こはるの} で 、 {一人|ひとり} で {受|う}け{止|と}めない で って {言|い}いました よね 。 {自分|じぶん} に も {言|い}って いた ん です 、 たぶん 。 || At Koharuno I told you not to take it all alone. I think I was telling myself, too.
+?(lq_ally2) comp: {小春野|こはるの} で 、 {一人|ひとり} で {受|う}け{止|と}めない で って {言|い}った よね 。 {自分|じぶん} に も {言|い}ってた の 、 たぶん 。 || At Koharuno I told you not to take it all alone. I think I was telling myself, too.
 !hook co_heard t.mio.box
 
 @scene co.t_mio_after
@@ -234,26 +234,26 @@ comp[smile]: …… ありがとう 。 {中|なか} の ラベル は 、 {全�
 !look pc mio
 !look mio pc
 !gesture mio palm
-?(!post) comp: {旅|たび} が {終|お}わったら 、 お{店|みせ} に {戻|もど}ります 。 {戻|もど}る つもり です 。 || When the journey's over, I'll go back to the shop. That's the plan.
-?(post) comp: お{店|みせ} に {戻|もど}って 、 {思|おも}った より {早|はや}く {慣|な}れました 。 {水曜|すいよう} の お{休|やす}み に は 、 まだ {慣|な}れません けど 。 || Back at the shop, I settled in faster than I expected. Except for Wednesdays off — I'm still not used to those.
+?(!post) comp: {旅|たび} が {終|お}わったら 、 お{店|みせ} に {戻|もど}る 。 {戻|もど}る つもり 。 || When the journey's over, I'll go back to the shop. That's the plan.
+?(post) comp: お{店|みせ} に {戻|もど}って 、 {思|おも}った より {早|はや}く {慣|な}れた 。 {水曜|すいよう} の お{休|やす}み に は 、 まだ {慣|な}れない けど 。 || Back at the shop, I settled in faster than I expected. Except for Wednesdays off — I'm still not used to those.
 !gesture mio chin
-comp[think]: でも 、 {続|つづ}ける って 、 {同|おな}じ こと を {繰|く}り{返|かえ}す こと じゃ ない と {思|おも}う んです 。 {少|すこ}し ずつ {変|か}えて いく こと 。 || But I don't think carrying on means repeating the same thing. It means changing a little at a time.
+comp[think]: でも 、 {続|つづ}ける って 、 {同|おな}じ こと を {繰|く}り{返|かえ}す こと じゃ ない と {思|おも}う の 。 {少|すこ}し ずつ {変|か}えて いく こと 。 || But I don't think carrying on means repeating the same thing. It means changing a little at a time.
 !choice
 * {時々|ときどき} は 、 {一緒|いっしょ} に {旅|たび} を しよう || Let's still travel together sometimes. -> travel
 * {店|みせ} に も {寄|よ}る よ || I'll come by the shop. -> shop
 * ミオ が {決|き}めて いい || It's yours to decide. -> yours
 :travel
 !gesture mio nod pc
-?(post) comp[smile]: はい 。 {水曜|すいよう} に 。 …… {冗談|じょうだん} です 。 {水曜|すいよう} じゃ なくて も 。 || Yes. On Wednesdays. …Joking. Not only Wednesdays.
-?(!post) comp[smile]: はい 。 {約束|やくそく} です 。 {薬箱|くすりばこ} は {軽|かる}く して {行|い}きます 。 || Yes. A promise. I'll pack a lighter medicine chest.
+?(post) comp[smile]: うん 。 {水曜|すいよう} に 。 …… {冗談|じょうだん} 。 {水曜|すいよう} じゃ なくて も 。 || Yes. On Wednesdays. …Joking. Not only Wednesdays.
+?(!post) comp[smile]: うん 。 {約束|やくそく} 。 {薬箱|くすりばこ} は {軽|かる}く して {行|い}く ね 。 || Yes. A promise. I'll pack a lighter medicine chest.
 !goto close
 :shop
 !gesture mio laugh
-comp[laugh]: お{客|きゃく} さん と して {来|き}たら 、 ちゃんと お{代|だい} を {頂|いただ}きます よ 。 {友達|ともだち} と して {来|き}たら 、 お{茶|ちゃ} を {出|だ}します 。 || If you come as a customer, I'll charge you properly. If you come as a friend, I'll make tea.
+comp[laugh]: お{客|きゃく} さん と して {来|き}たら 、 ちゃんと お{代|だい} を {頂|いただ}きます よ 。 {友達|ともだち} と して {来|き}たら 、 お{茶|ちゃ} を {出|だ}す ね 。 || If you come as a customer, I'll charge you properly. If you come as a friend, I'll make tea.
 !goto close
 :yours
 !gesture mio thanks pc
-comp: …… ありがとう 。 {決|き}めて いい 、 って {言|い}われる の 、 {好|す}き です 。 {断|ことわ}って いい 、 と {同|おな}じ くらい 。 || …Thank you. I like being told it's mine to decide. As much as being told I can say no.
+comp: …… ありがとう 。 {決|き}めて いい 、 って {言|い}われる の 、 {好|す}き 。 {断|ことわ}って いい 、 と {同|おな}じ くらい 。 || …Thank you. I like being told it's mine to decide. As much as being told I can say no.
 :close
 !hook co_heard t.mio.after
 
@@ -487,9 +487,9 @@ comp: …… 「 そして 、 {皆|みな} {生|い}きて いった 」 。 �
 !emote comp note
 ?(display) narr: ミオ は {飾|かざ}って ある {品|しな} の {埃|ほこり} を 、 {袖|そで} で そっと {払|はら}った 。 || Mio brushes the dust from the keepsake you set out, gently, with her sleeve.
 !gesture mio exhale
-?(!bond>=rhythm) comp: …… ふう 。 {何|なに} も しない {時間|じかん} も 、 {大事|だいじ} です ね 。 || …Phew. Time spent doing nothing matters too.
-?(bond>=rhythm&!bond>=trusted) comp[smile]: {直|なお}す もの が {一|ひと}つ だけ で 、 よかった 。 {今日|きょう} は それ で {十分|じゅうぶん} です 。 || Only one thing to straighten. That's plenty for today.
-?(bond>=trusted) comp[smile]: {誰|だれ} か と {一緒|いっしょ} に {休|やす}む と 、 {休|やす}み が {薬|くすり} に なる ん です ね 。 {知|し}りません でした 。 || Resting with someone turns rest into medicine. I didn't know that.
+?(!bond>=rhythm) comp: …… ふう 。 {何|なに} も しない {時間|じかん} も 、 {大事|だいじ} だ ね 。 || …Phew. Time spent doing nothing matters too.
+?(bond>=rhythm&!bond>=trusted) comp[smile]: {直|なお}す もの が {一|ひと}つ だけ で 、 よかった 。 {今日|きょう} は それ で {十分|じゅうぶん} 。 || Only one thing to straighten. That's plenty for today.
+?(bond>=trusted) comp[smile]: {誰|だれ} か と {一緒|いっしょ} に {休|やす}む と 、 {休|やす}み が {薬|くすり} に なる ん だ ね 。 {知|し}らなかった 。 || Resting with someone turns rest into medicine. I didn't know that.
 
 @scene co.ritual_ren
 # Staged (anywhere you rest): Ren sits with the travelling lamp and tends it, then speaks from there with an open

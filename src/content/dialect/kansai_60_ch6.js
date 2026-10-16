@@ -36,7 +36,7 @@ RB.dialect.add('kansai', `
 > {貸|か}し{出|だ}し の {帳簿|ちょうぼ} みたい や 。 {返却|へんきゃく}{日|び} 、 {守|まも}ろ な 。 || Like a lending ledger. Let's be back by the due date, now.
 @ ch6/scenes-road:157 [sa.oyone_first]
 = {三十年|さんじゅうねん} も {荷|に} を {担|かつ}いでた の ？ {腰|こし} の {貸|か}し が 、 {相当|そうとう} {溜|た}まってる ね 。 || Thirty years of hauling bags? Your back must be owed a fortune.
-> {三十年|さんじゅうねん} も {荷|に} {担|かつ}いではった ん ？ {腰|こし} の {貸|か}し が 、 {相当|そうとう} {溜|た}まってる で 。 || Thirty years of hauling bags? Your back must be owed a fortune.
+> {三十年|さんじゅうねん} も {荷|に} {担|かつ}いでた ん ？ {腰|こし} の {貸|か}し が 、 {相当|そうとう} {溜|た}まってる で 。 || Thirty years of hauling bags? Your back must be owed a fortune.
 @ ch6/scenes-road:183 [sa.ushio_grave]
 = 「 {反対|はんたい} した {人|ひと} 」 か 。 {墓石|はかいし} の {言葉|ことば} と して は 、 {最高|さいこう} の {褒|ほ}め{言葉|ことば} だ ね 。 {葦|あし}ノ{瀬|せ} の レン の {師匠|ししょう} でしょ 。 {知|し}らせて あげなきゃ 。 || "One who disagreed." As words for a gravestone, that's the highest praise there is. That's Ren's teacher, from Reedwake, isn't it? Someone has to tell them.
 > 「 {反対|はんたい} した {人|ひと} 」 か 。 {墓石|はかいし} の {言葉|ことば} と して は 、 {最高|さいこう} の {褒|ほ}め{言葉|ことば} や な 。 {葦|あし}ノ{瀬|せ} の レン の {師匠|ししょう} やろ 。 {知|し}らせたらな あかん 。 || "One who disagreed." As words for a gravestone, that's the highest praise there is. That's Ren's teacher, from Reedwake, ain't it? Somebody's gotta tell them.
@@ -207,7 +207,7 @@ RB.dialect.add('kansai', `
 > = || And — this here.
 @ ch6/scenes-ending:245 [sa.end_comp]
 = {貸|か}し じゃ ない よ 。 {預|あず}ける だけ 。 {次|つぎ} の {幕|まく} まで 。 …… {返|かえ}し に {来|き}て よ ね 。 {必|かなら}ず 。 {曖昧|あいまい} じゃ ない ほう の {必|かなら}ず 。 || It's not a loan. I'm just leaving it with you. Until the next act. …Come and give it back. Without fail. The kind of "without fail" that isn't vague.
-> {貸|か}し ちゃう で 。 {預|あず}ける だけ や 。 {次|つぎ} の {幕|まく} まで 。 …… {返|かえ}し に {来|き}て な 。 {必|かなら}ず 。 {曖昧|あいまい} ちゃう ほう の {必|かなら}ず や で 。 || It ain't a loan. I'm just leaving it with you. Till the next act. …Come give it back, now. Without fail. The kind of "without fail" that isn't vague.
+> {貸|か}し や ない で 。 {預|あず}ける だけ や 。 {次|つぎ} の {幕|まく} まで 。 …… {返|かえ}し に {来|き}て な 。 {必|かなら}ず 。 {曖昧|あいまい} ちゃう ほう の {必|かなら}ず や で 。 || It ain't a loan. I'm just leaving it with you. Till the next act. …Come give it back, now. Without fail. The kind of "without fail" that isn't vague.
 @ ch6/scenes-side:12 [sa.isamu_first]
 = {預|あず}かり{証|しょう} は ある ？ …… ない 。 だよ ね 。 {大丈夫|だいじょうぶ} 、 {人|ひと} の {忘|わす}れ{物|もの} を {探|さが}す の は 、 {旅芸人|たびげいにん} の {副業|ふくぎょう} だ から 。 || Got a receipt? …No. Of course not. Don't worry — hunting down what people have lost is every travelling player's side job.
 > {預|あず}かり{証|しょう} は ある ？ …… あらへん 。 せやろ な 。 {大丈夫|だいじょうぶ} 、 {人|ひと} の {忘|わす}れ{物|もの} {探|さが}す の は 、 {旅芸人|たびげいにん} の {副業|ふくぎょう} や から 。 || Got a receipt? …Nope. Figured. Don't you worry — hunting down what folks have lost is every travelling player's side job.

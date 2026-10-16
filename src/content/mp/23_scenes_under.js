@@ -126,7 +126,8 @@ narr: {錘|おもり} の {綱|つな} 。 {井戸|いど} の {底|そこ} に 
 narr: {柱|はしら} の {影|かげ} に 、 {黒|くろ}い {頭巾|ずきん} の {誰|だれ} か が {立|た}って いる 。 {芝居|しばい} の {決|き}まり で は 、 {黒子|くろこ} は 「いない」 こと に なって いる 。 || In the pillar's shadow stands someone in a black hood. By the theatre's rule, a kuroko is "not there".
 !note mp_kuroko
 ?(comp=suzu) comp[think]: {黒子|くろこ} は 、 {見|み}えて も {見|み}えない ふり を する の が {礼儀|れいぎ} よ 。 …… でも 、 ここ は {舞台|ぶたい} じゃ ない わ 。 || With a kuroko, it's good manners to pretend you can't see them. …But this isn't the stage.
-?(comp!=suzu) comp[think]: {見|み}えて いる のに 、 いない こと に する の か 。 …… {声|こえ} を かけて みよう 。 || You can see it, and it counts as not there? …Say something to it.
+?(comp!=suzu&comp!=ren) comp[think]: {見|み}えて いる のに 、 いない こと に する の か 。 …… {声|こえ} を かけて みよう 。 || You can see it, and it counts as not there? …Say something to it.
+?(comp=ren) comp[think]: {見|み}えて いる のに 、 いない こと に する の です か 。 …… {声|こえ} を かけて みましょう 。 || You can see it, and it counts as not there? …Let's say something to it.
 !challenge mp.kuroko_name
 ?(var._res=1) narr: {黒子|くろこ} が 、 ゆっくり と {顔|かお} を {上|あ}げた 。 {名前|なまえ} を {呼|よ}ばれて 、 やっと 「いる」 こと に なった 。 || The kuroko slowly raises its head. Named aloud, it is there at last.
 

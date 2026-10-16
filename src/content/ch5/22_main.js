@@ -81,7 +81,7 @@ lf_tadashi: {地下|ちか} の {元|もと} の {台帳|だいちょう} を �
 ?(comp=mio) !gesture comp nod
 ?(comp=mio) comp[smile]: {元|もと} の {字|じ} の ほう が 、{読|よ}みにくくて も 、ずっと いい です よ 。|| The original writing's much better, even if it's harder to read.
 ?(comp=ren) !gesture comp tendlamp
-?(comp=ren) comp: {元|もと} に {戻|もど}す こと を 、{記録|きろく} の {世界|せかい} で は 「{復元|ふくげん}」 と {言|い}う そう です 。{灯守|ひもり} で は 「{灯|ひ} を {入|い}れ{直|なお}す」 と {言|い}います 。|| In the world of records they call putting things back "restoration". Lantern keepers call it "relighting".
+?(comp=ren) comp: {記録|きろく} で は 「{復元|ふくげん}」 です か 。{灯守|ひもり} なら 、「{灯|ひ} を {入|い}れ{直|なお}す」 です 。|| In the records it's "restoration", is it? For a lantern keeper, it's "relighting".
 ?(comp=suzu) !gesture comp count
 ?(comp=suzu) comp: {写|うつ}し の {紙代|かみだい} 、ちゃんと {帳簿|ちょうぼ} に {付|つ}けて おいて ね 。|| Do put the paper for those copies down in the accounts.
 !end
@@ -218,7 +218,7 @@ akari[smile]: 「{温|あたた}かく して {寝|ね}る んだ よ 」 。…
 # the prop); "I haven't said a thing", and the key passes into your hand.
 !if !quest.lf_akari -> letters
 :hint
-pc: {洪水|こうずい} の {年|とし} の {台帳|だいちょう} を {写|うつ}した の は 、あなた です か 。|| Was it you who copied the ledger for the flood year?
+pc: {洪水|こうずい} の {年|とし} の {台帳|だいちょう} を {写|うつ}した の は 、アカリ さん です か 。|| Was it you who copied the ledger for the flood year?
 !gesture akari guard
 akari[worry]: …… はい 。{先月|せんげつ} 、{写|うつ}し{直|なお}す よう に {言|い}われて 。|| …Yes. I was told to recopy it last month.
 !gesture akari avert pc
@@ -463,7 +463,7 @@ lf_yae: カサネ は その あと 、{山|やま} の {上|うえ} の {書庫
 ?(comp=mio) !gesture comp lowered
 ?(comp=mio) comp[sad]: {正|ただ}しく {読|よ}もう と した だけ なのに 。…… {正|ただ}しい こと と 、{助|たす}かる こと は 、{違|ちが}う ん だね 。|| Kasane was only trying to read it correctly. …Being correct and saving people aren't the same thing, are they.
 ?(comp=ren) !gesture comp chin
-?(comp=ren) comp[think]: 「{必要|ひつよう} なら」 。{誰|だれ} に とって の {必要|ひつよう} か を 、{誰|だれ} も {書|か}かなかった 。{灯守|ひもり} の {約束|やくそく} も 、{気|き} を つけない と {同|おな}じ {穴|あな} に {落|お}ちます 。|| "If it's needed." Nobody wrote down needed by whom. A lantern keeper's promise can fall into the same hole if we aren't careful.
+?(comp=ren) comp[think]: 「{必要|ひつよう} なら」 。{誰|だれ} に とって の {必要|ひつよう} か を 、{誰|だれ} も {書|か}かなかった 。{灯守|ひもり} の {約束|やくそく} も 、{気|き} を つけない と {同|おな}じ {落|お}とし{穴|あな} に はまります 。|| "If it's needed." Nobody wrote down needed by whom. A lantern keeper's promise can fall into the same hole if we aren't careful.
 ?(comp=suzu) !gesture comp lowered
 ?(comp=suzu) comp[sad]: …… {台本|だいほん} を {信|しん}じた {人|ひと} と 、{客席|きゃくせき} の {空気|くうき} を {読|よ}んだ {人|ひと} 。どっち も 、{本気|ほんき} だった の ね 。|| …One who trusted the script, and one who read the room. Both of them meant it with everything they had.
 !gesture lf_yae palm down
@@ -669,7 +669,7 @@ lf_yae[sad]: …… もし カサネ に {会|あ}ったら 、{伝|つた}え�
 ?(comp=mio) !gesture comp nod pc
 ?(comp=mio) comp[smile]: {行|い}こう 。{一緒|いっしょ} に 。{薬箱|くすりばこ} 、{重|おも}く して いく から 。|| Let's go. Together. I'll pack the medicine chest extra heavy.
 ?(comp=ren) !gesture comp lookroad up
-?(comp=ren) comp[think]: {書庫|しょこ} に は 、ウシオ {師匠|ししょう} の {残|のこ}り も ある はず です 。{顔|かお} も 、{最後|さいご} の …… {口|くち}げんか も 。|| The rest of Master Ushio should be in the Archive. His face, and our last… quarrel.
+?(comp=ren) comp[think]: {書庫|しょこ} に は 、{私|わたし} が なくした ウシオ {師匠|ししょう} の {記憶|きおく} も ある はず です 。{顔|かお} も 、{最後|さいご} の …… {口|くち}げんか も 。|| What I lost of Master Ushio should be in the Archive too. His face, and our last… quarrel.
 ?(comp=ren) comp: {道|みち} に {迷|まよ}ったら 、{私|わたし} の {逆|ぎゃく} を {行|い}って ください 。それ で {着|つ}きます 。|| If we get lost, go the opposite way from me. That'll get us there.
 ?(comp=suzu) !gesture comp point up
 ?(comp=suzu) comp: {最終|さいしゅう} {幕|まく} の {舞台|ぶたい} は 、{山|やま} の {上|うえ} ね 。{客|きゃく} は {一人|ひとり} 、{演出家|えんしゅつか} も {一人|ひとり} 。|| So the final act is up the mountain. An audience of one, and one director.

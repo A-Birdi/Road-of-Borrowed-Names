@@ -18,7 +18,7 @@ RB.dialect.add('kansai', `
 > ええ {眺|なが}め や 。 {幕|まく} が {上|あ}がる {前|まえ} の {客席|きゃくせき} みたい 。 || Nice view. Like the house just before the curtain goes up.
 @ ch5/town:56 [lf.road_north_locked]
 = この {道|みち} 、{迷子|まいご} の {芝居|しばい} を {繰|く}り{返|かえ}してる みたい 。{幕間|まくあい} に しましょ 。 || This road keeps playing the same lost-traveller scene. Let's call an interval.
-> この {道|みち} 、 {迷子|まいご} の {芝居|しばい} を {繰|く}り{返|かえ}してる みたい や 。 {幕間|まくあい} に しよう 。 || This road keeps playing the same lost-traveller scene. Let's call an interval.
+> この {道|みち} 、 {迷子|まいご} の {芝居|しばい} を {繰|く}り{返|かえ}してる みたい や 。 {幕間|まくあい} に しましょ 。 || This road keeps playing the same lost-traveller scene. Let's call an interval.
 @ ch5/town:75 [lf.town_intro]
 = ねえ 、お{兄|にい}さん 。{今日|きょう} は {雪|ゆき} が {降|ふ}る と {思|おも}う ？ || Say, young man. Think it'll snow today?
 > なあ 、 お{兄|にい}さん 。 {今日|きょう} は {雪|ゆき} が {降|ふ}る と {思|おも}う ？ || Say, young fella. Think it'll snow today?
@@ -75,7 +75,7 @@ RB.dialect.add('kansai', `
 > {舞台|ぶたい} {裏|うら} の {仕掛|しか}け {見|み}てもうた 。 …… {悪趣味|あくしゅみ} な {演出家|えんしゅつか} が おる な 。 || We've found the stage machinery. …There's a director up there with real poor taste.
 @ ch5/main:255 [lf.stacks_check]
 = {次|つぎ} の {幕|まく} は {議会堂|ぎかいどう} ね 。{古|ふる}い {台本|だいほん} を {読|よ}んで もらいましょう 。 || Next act: the Council Chamber. Let's have someone read the old script aloud.
-> {次|つぎ} の {幕|まく} は {議会堂|ぎかいどう} や な 。 {古|ふる}い {台本|だいほん} を {読|よ}んで もらお 。 || Next act: the Council Chamber. Let's get somebody to read the old script aloud.
+> {次|つぎ} の {幕|まく} は {議会堂|ぎかいどう} や な 。 {古|ふる}い {台本|だいほん} を {読|よ}んで もらいましょう 。 || Next act: the Council Chamber. Let's get somebody to read the old script aloud.
 @ ch5/main:277 [lf.yae]
 = {台詞|せりふ} を {忘|わす}れた {役者|やくしゃ} の {顔|かお} ね 。{誰|だれ} か が {台本|だいほん} を {見|み}せて あげない と 。 || That's the face of an actor who's forgotten her line. Someone needs to show her the script.
 > {台詞|せりふ} {忘|わす}れた {役者|やくしゃ} の {顔|かお} や 。 {誰|だれ} か が {台本|だいほん} {見|み}せたらな あかん 。 || That's the face of an actor who's forgotten her line. Somebody needs to show her the script.
@@ -96,7 +96,7 @@ RB.dialect.add('kansai', `
 > {最終|さいしゅう} {幕|まく} の {舞台|ぶたい} は 、 {山|やま} の {上|うえ} や な 。 {客|きゃく} は {一人|ひとり} 、 {演出家|えんしゅつか} も {一人|ひとり} 。 || So the final act's up the mountain. An audience of one, and one director.
 @ ch5/main:420 [lf.yae_after]
 = {貸|か}し{借|か}り は 、きっちり {返|かえ}して もらいましょう 。{町|まち} {一|ひと}つ {分|ぶん} の 「いいえ」 、{利子|りし} を つけて ね 。 || Let's make sure the debts get settled properly. One whole town's worth of "no"s — with interest.
-> {貸|か}し{借|か}り は 、 きっちり {返|かえ}して もらお 。 {町|まち} {一|ひと}つ {分|ぶん} の 「 いいえ 」 、 {利子|りし} つけて な 。 || Let's make sure the debts get settled proper. One whole town's worth of "no"s — with interest.
+> {貸|か}し{借|か}り は 、 きっちり {返|かえ}して もらいましょう 。 {町|まち} {一|ひと}つ {分|ぶん} の 「 いいえ 」 、 {利子|りし} つけて な 。 || Let's make sure the debts get settled proper. One whole town's worth of "no"s — with interest.
 @ ch5/tower:9 [lf.tower_arrive]
 = いい {響|ひび}き 。{一言|ひとこと} {言|い}う だけ で 、{塔|とう} {全体|ぜんたい} が {聞|き}いてる みたい 。 || Lovely acoustics. Say one word and the whole tower listens.
 > ええ {響|ひび}き や 。 {一言|ひとこと} {言|い}う だけ で 、 {塔|とう} {全体|ぜんたい} が {聞|き}いてる みたい 。 || Lovely acoustics. Say one word and the whole tower's listening.
@@ -135,7 +135,7 @@ RB.dialect.add('kansai', `
 > {一番|いちばん} {上|うえ} の {線|せん} だけ 、 {誰|だれ} も {見|み}たない {台詞|せりふ} みたい に {深|ふか}い わ 。 || Only the top line's cut deep, like a line nobody wants to read.
 @ ch5/tower:294 [lf.boss_intro]
 = 「はい」 で 「いいえ」 を {隠|かく}す {役者|やくしゃ} 。…… {化|ば}けの{皮|かわ} 、はがして あげましょう 。 || An actor who hides a "no" inside a "yes". …Let's peel off that disguise.
-> 「 はい 」 で 「 いいえ 」 を {隠|かく}す {役者|やくしゃ} 。 …… {化|ば}けの{皮|かわ} 、 はがしたろ 。 || An actor who hides a "no" inside a "yes". …Let's peel that disguise right off.
+> 「 はい 」 で 「 いいえ 」 を {隠|かく}す {役者|やくしゃ} 。 …… ほな 、 {化|ば}けの{皮|かわ} 、 はがして あげましょう 。 || An actor who hides a "no" inside a "yes". …Right then, let's peel that disguise off.
 @ ch5/tower:302 [lf.boss_intro]
 = {拍手|はくしゅ} は 、{鐘|かね} が {鳴|な}って から ね 。 || Applause can wait until the bell rings.
 > {拍手|はくしゅ} は 、 {鐘|かね} が {鳴|な}って から や で 。 || Applause can wait till the bell rings.

@@ -26,9 +26,9 @@ be no larger than 1 GB". The margins below are taken against 1,000,000,000 bytes
 | --- | ---: | ---: | --- |
 | **1 · Published now** (the whole task branch, every push) | 5,194 | 1,072,095,009 | **72.1 MB over** (1.6 MB under 1 GiB) |
 | **2 · Runtime only** (page, every recording, notices, GPL-2 source) | 625 | 523,674,397 | 476.3 MB left |
-| **3 · Voice** (estimate; dialogue, reference readings, runtime manifest) | 23,382 | about 656 MB | see below |
-| **4 · Runtime + voice in one site** | about 24,000 | about 1,180 MB | **about 180 MB over** |
-| 4a · Runtime site + a separate voice site, same origin | 625 + 23,382 | 523.7 MB + about 656 MB | 476.3 MB left + about 344 MB left |
+| **3 · Voice** (estimate; dialogue, reference readings and phrases, the site's indexes) | 26,891 | about 665 MB | see below |
+| **4 · Runtime + voice in one site** | about 27,500 | about 1,188 MB | **about 188 MB over** |
+| 4a · Runtime site + a separate voice site, same origin | 625 + 26,891 | 523.7 MB + about 665 MB | 476.3 MB left + about 335 MB left |
 | 4b · Runtime site + voices as an imported Release pack | 625 | 523.7 MB | 476.3 MB left (the pack is not on Pages) |
 
 So the game and its voices do not fit one Pages site at the chosen quality. They fit as two sites on the same origin
@@ -128,31 +128,32 @@ would add about 0.52 GB to what is published today.
 - for the reference readings, the narrator's rate plus 0.4 s of edges per short citation take. This edge is an
   assumption, to be measured on a dozen citation takes first (PRODUCTION_ESTIMATE.md §1b).
 
-For the script as it stands at this commit:
+For the corrected script (C-95 applied, with the D6 lexicon; script content `65cd38053ad6`; `node tools/voice/delivery_estimate.mjs`):
 
 | | Files | Hours | Bytes |
 | --- | ---: | ---: | ---: |
-| NPCs (281 speakers) | 3,664 | 6.36 | 169.3 MB |
-| Companions (Nao, Mio, Ren, Suzu; Suzu's Kansai where it differs) | 5,629 | 9.07 | 241.8 MB |
-| Narrator | 4,789 | 5.95 | 159.6 MB |
-| Player, Voice A and Voice B | 318 | 0.30 | 8.1 MB |
-| Reference readings (kana, kanji, words; LI-8) | 8,981 | 2.43 | 71.5 MB |
-| Runtime voice manifest (`manifest.json`; 1.6 MB gzip on the wire) | 1 | | 5.8 MB |
-| **All** | **23,382** | **24.1** | **about 656 MB** |
+| NPCs (281 speakers) | 3,662 | 6.36 | 169.3 MB |
+| Companions (Nao, Mio, Ren, Suzu; Suzu's Kansai where it differs) | 5,632 | 9.04 | 241.0 MB |
+| Narrator | 4,791 | 5.95 | 159.7 MB |
+| Player, Voice A and Voice B, each Higher and Lower | 636 | 0.60 | 16.1 MB |
+| Reference readings and phrases (kana, kanji, words; LI-8; the learning controls' phrases) | 9,095 | 2.49 | 73.1 MB |
+| The voice site's indexes (`index.json`, one per scene, the reference index; 2.4 MB gzip on the wire) | 3,075 | | 6.0 MB |
+| **All** | **26,891** | **24.4** | **665.1 MB** |
 
-**Why this is an estimate.** No full-game recording exists, so this is not a measured total. The runtime manifest
-records each real file's bytes and SHA-256, so the real figure is known the moment the files are.
+**Why this is an estimate.** No full-game recording exists, so this is not a measured total. The site tool records
+each real file's bytes and SHA-256, so the real figure is known the moment the files are.
 
 The figure counts:
-- **Fewer companion recordings than before.** The manifest's corrected companion attribution (RV-0160) records 1,974
-  fewer companion recordings than the old count.
+- **Corrected companion attribution.** The manifest attributes companion lines through their branches (RV-0160), so
+  each companion records only the lines they can say.
 - **Each recording once.** One recording serves every line that says the same thing in the same voice.
+- **The player four times.** Voice A and B, each High and Low.
 
 The VA-1 and VA-2 audition takes are not part of it: they stay with Robin's local runs.
 
 ### 4 · Combined, and the margin
 
-The runtime set and the voices together come to about 1,180 MB. That is about 180 MB over 1 GB, and about 106 MB over
+The runtime set and the voices together come to about 1,188 MB. That is about 188 MB over 1 GB, and about 114 MB over
 1 GiB. They do not fit one Pages site at the chosen quality.
 
 Two ways keep the quality and the URL. Both are prepared in the voice manifest (`docs/future/voice/production/VOICE_DELIVERY.md`):
@@ -163,20 +164,22 @@ Two ways keep the quality and the URL. Both are prepared in the voice manifest (
   already allows it.
 - **Relative base.** The voice manifest's `base` is a relative path (`../Road-of-Borrowed-Names-voices/ja-JP/<build>/`),
   so no absolute address is written into the game.
-- **Margins.** Each site stays under the limit: the game's 523.7 MB leaves 476.3 MB, and the voices' about 656 MB leaves
-  about 344 MB.
+- **Margins.** Each site stays under the limit: the game's 523.7 MB leaves 476.3 MB, and the voices' about 665 MB leaves
+  about 335 MB.
 - **Cost.** Creating that repository and turning on its Pages is Robin's step, since it publishes something new. There
   is no cost.
 
-**4b · A Release pack the player imports.** The same recordings and the same manifest (with `base: pack:<build>`) go in
+**4b · A Release pack the player imports** (not the primary release: Robin, 2026-10-16, the hosted game plays the cast
+"without … manually importing a voicebank"; the voiced offline package below covers playing from disk). The same recordings and the same manifest (with `base: pack:<build>`) go in
 one or more ZIP files attached to a GitHub Release. Each file must be under 2 GiB.
 - **How the player uses it.** The player downloads the pack and chooses it in the game. The game reads it locally and
   stores it in the browser. Nothing is fetched from the Release by the game.
-- **Not built yet.** The importer is a runtime feature for the voice batch (VOICE_DELIVERY.md). Releases are made by
-  Robin.
+- **Not built.** The voiced offline package (`tools/publish/offline_package.mjs`, tested) plays the same recordings
+  from disk with no import step, so an importer is not planned. Releases are made by Robin.
 
 **Bandwidth.** GitHub documents a soft bandwidth limit of 100 GB a month for Pages. The game fetches a voice line only
-when it is spoken, so a journey costs what it plays, not 656 MB.
+when it is about to be spoken (and the next three ahead) and keeps what it heard, so a journey costs what it plays, not
+665 MB.
 
 ## What needs Robin (nothing here is done without it)
 
@@ -188,7 +191,9 @@ when it is spoken, so a journey costs what it plays, not 656 MB.
    - To use it, Robin copies it into `.github/workflows/` and changes the setting. Robin can say so and the lead makes
      the copy; the setting itself stays Robin's.
    - Until then every push keeps publishing the whole branch.
-2. **Voices: 4a or 4b** (or both from the same manifest), when the batch exists. No audio is made by any of this.
+2. **Voices: where to publish them.** 4a, a same-origin voice repository, is the lead's recommendation for the primary
+   release, since the game then plays the cast with nothing to install or import. The voiced offline package serves
+   playing from disk. No audio is made by any of this.
 3. **Old Ensemble recordings.** Should the runtime set keep recordings an earlier build named (`--keep`)? Then a page
    opened before an update still finds them. They are kept only while the files are still in the checkout.
 4. **The GPL-2 notice inside the game.** The game's own screens do not mention that the Ensemble recordings are GPL-2.

@@ -54,7 +54,7 @@ shiori: {岬|みさき} の {道|みち} は {逃|に}げません 。 {潮|し�
 !look pc shiori
 !gesture shiori point 1,2
 shiori: {表|ひょう} は 、 いつでも ここ に あります 。 || The table's always here.
-shiori: {急|いそ}がなくて いい です よ 。 {知|し}らない {言葉|ことば} は 、 {言葉|ことば} の {手助|てだす}け で {読|よ}み{方|かた} と {意味|いみ} が {分|わ}かります 。 || There's no hurry. If a word is new, word help will give you its reading and meaning.
+shiori: {急|いそ}がなくて いい です よ 。 {潮|しお} の {表|ひょう} は 、 {慣|な}れる まで {誰|だれ} でも {迷|まよ}います 。 || There's no hurry. Everyone gets lost in a tide table at first.
 
 @scene sg.tide_wait
 # the wait is seen from Shiori's window: the tide goes out over the lines (src/ui/42b_interlude_tide.js)

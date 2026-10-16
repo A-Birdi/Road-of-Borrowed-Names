@@ -347,7 +347,7 @@ narr: オシゲ が {眠|ねむ}って いる 。 {額|ひたい} に {冷|つ�
 @scene yn.north_first
 !set yn_north_seen
 narr: {北|きた} へ {登|のぼ}る {道|みち} 。 {一歩|いっぽ} {登|のぼ}る ごと に 、 {谷|たに} の {音|おと} が {遠|とお}く なる 。 || The road climbs north. With every step up, the valley's noise grows fainter.
-?(comp=nao) comp[closed]: …… {静|しず}か だ 。 {俺|おれ} の {足音|あしおと} が 、 {自分|じぶん} に {聞|き}こえない 。 || …Quiet. I can't hear my own footsteps.
+?(comp=nao) comp[closed]: …… {静|しず}か だ 。 {自分|じぶん} の {足音|あしおと} も {聞|き}こえない 。 || …Quiet. I can't hear my own footsteps.
 ?(comp=mio) comp[worry]: {耳|みみ} が 、 また {詰|つ}まります 。 …… {大丈夫|だいじょうぶ} 。 {進|すす}みましょう 。 || My ears are blocking up again. …I'm all right. Let's go on.
 ?(comp=ren) comp: {灯|ひ} の ない {道|みち} です 。 {私|わたし} が {前|まえ} を …… いえ 、 {並|なら}んで {歩|ある}きましょう 。 || A road with no lamps. I'll go in front… no. Let's walk side by side.
 ?(comp=suzu) comp: {客席|きゃくせき} が {空|から} に なって いく みたい 。 …… でも 、 {舞台|ぶたい} は まだ {終|お}わって ない わ 。 || Like the seats emptying one by one. …But the play isn't over yet.
