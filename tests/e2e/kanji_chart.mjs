@@ -314,7 +314,7 @@ await test('an entry: readings with furigana, meaning, words, numbered stroke or
   assert(e.big === '守|まも', 'big 守 with まも: ' + e.big);
   assert(/Readings in the game/.test(e.text) && /まも/.test(e.text) && /6 strokes/.test(e.text), 'readings and stroke count: ' + e.text.slice(0, 200));
   assert(e.wordRuby.includes('守|まも') && e.words.some((w) => /to protect/.test(w)), 'words with furigana, 守る "to protect": ' + JSON.stringify(e));
-  assert(e.acts.join(',') === 'practice,use', 'actions: ' + e.acts.join(','));
+  assert(e.acts.join(',') === 'practise,use', 'actions: ' + e.acts.join(','));
   assert(!(await bareKanji(p)).length, 'entry: no kanji without furigana: ' + (await bareKanji(p)).join(' | '));
   await p.screenshot({ path: 'tests/e2e/out/kanji_chart_entry.png' });
   // practice
