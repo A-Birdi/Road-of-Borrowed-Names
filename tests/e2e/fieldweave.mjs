@@ -320,7 +320,7 @@ await section('F1 A Dry Place for Names: the ward route, written by hand', async
   mioLine = rt.en;
   assert(rt.id === 'f1.mio.warded' && log.indexOf('mio: ' + rt.en) >= 0, 'Mio reacts to the ward route, briefly ("' + rt.en + '")');
   assert(/Take one/.test(log), 'the keepsake is found in the world (the children\'s note)');
-  await p.waitForSelector('.ks-toast', { timeout: 6000 });
+  await p.waitForSelector('.award.aw-keepsake, .award.aw-badged', { timeout: 6000 }); // (the keepsake's award slip, LI-3)
   assert(true, 'a brief non-blocking notice names the keepsake');
   await shot('f1_done');
   // re-entry: the result stays, nothing awards twice, the routine weave needs no writing

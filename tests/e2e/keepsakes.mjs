@@ -101,13 +101,15 @@ const solveF1 = (how) => p.evaluate((how) => {
 {
   await start({ comp: 'mio' });
   await solveF1('screened');
-  const notice = await p.waitForSelector('.ks-toast', { timeout: 6000 }).then(() => p.textContent('.ks-toast')).catch(() => '');
+  // (the keepsake's award slip since LI-3: src/ui/15_award.js; an item that is a keepsake shows on its item slip, badged)
+  const KS = '.award.aw-keepsake, .award.aw-badged';
+  const notice = await p.waitForSelector(KS, { timeout: 6000 }).then(() => p.textContent(KS)).catch(() => '');
   assert(/Keepsake found/.test(notice) && /Folded Reed Boat/.test(notice), 'the first find: a brief notice ("' + notice.replace(/\s+/g, ' ').trim().slice(0, 60) + '")');
   await p.screenshot({ path: path.join(OUT, 'ks_notice.png') });
   // a second award of the same keepsake is refused
   const again = await p.evaluate(() => RB.discovery.keepsake(RB.game.s, 'reed_boat', { kind: 'puzzle', id: 'f1' }));
   await p.waitForTimeout(700);
-  const f = await p.evaluate(() => ({ found: window.__found, n: Object.keys(RB.game.s.discovery.keepsakes).length, toasts: document.querySelectorAll('.ks-toast').length }));
+  const f = await p.evaluate(() => ({ found: window.__found, n: Object.keys(RB.game.s.discovery.keepsakes).length, toasts: document.querySelectorAll('.award.aw-keepsake, .award.aw-badged').length }));
   assert(!again && f.found.join() === 'reed_boat' && f.n === 1 && f.toasts <= 1, 'no duplicates: a second award is refused, one keepsake:found, one notice');
   await p.evaluate(() => { RB.game.s.company.react['puzzle:f1:done'] = RB.game.s.company.react['puzzle:f1:done'] || 'f1.mio.screened'; });
   await openPage();
