@@ -41,6 +41,52 @@ policy is chosen, they stay with the device voice or silent.
 
 This counts every conditional variant (level, companion, dialect, story state), not what one journey hears.
 
+## 1b · Reference readings: Listen, Say it and Hear it (LI-8; `node tools/voice/reference_count.mjs`)
+
+Robin, 2026-10-16: "When you choose to Listen to a specific Kana or Kanji, like 省略 in the Ledger, the narrator should
+have a voiced line for that. Account for this in the overall VA plan, for when we make the decision on a narrator and
+begin full-game generation."
+
+Today every such button speaks through the device's own Japanese voice (`RB.voice.speak`), or is hidden when the device
+has none:
+- word help's **Say it** (any word in dialogue, notes and the Ledger);
+- the notebook's and the bookmarks' **Hear it**;
+- the lessons' kana cards;
+- Listen practice, karuta and the festival games' callers.
+
+With the full batch, the chosen narrator records these too, in a plain citation delivery: clear, unhurried, the same
+pitch every time, and no character in it. Each button then plays the recording, and the device voice becomes the
+fallback for anything not recorded.
+
+| | Recordings | Characters | Morae |
+| --- | ---: | ---: | ---: |
+| Kana | 234 | 317 | 234 |
+| Kanji (their readings) | 1,838 | 4,689 | 4,177 |
+| Words (written form + reading) | 6,909 | 25,113 | 24,140 |
+| **All** | 8,981 | 30,119 | 28,551 |
+
+**How the count was made:**
+- **Kana:** each character the kana chart and the lessons teach, once.
+- **Kanji:** one recording per kanji that has readings, its readings read as a short list in the chart's order.
+- **Words:** every distinct written form and reading in the game's lexicon (the words word help, the notebook, the
+  kanji chart's word lists and the bookmarks can show). Two words with the same reading and different kanji are two
+  recordings, because their accent can differ (橋 / 箸).
+
+**Points for the batch:**
+- **Short takes.** These are many very short takes, so edge silence weighs more than in dialogue. The §2 formula
+  applies with the narrator's measured rate, but per-take overheads should be measured on a dozen citation takes
+  first.
+- **Particles.** The lexicon writes some particles as they are spelled, not as they are said: は and へ as topic and
+  direction particles are said "wa" and "e". Their entries carry a note saying so. The batch sends the pronounced
+  form for those few entries (listed by `reference_count.mjs --json` in a later revision), never the spelling.
+- **One take per reading.** A word recorded once serves every place that word appears. A kanji's list of readings is
+  one take; a later "say just this reading" would need one take per reading, about 4,700 short takes, and is not
+  counted here.
+- **Names.** Run-time names (the player's) are not in the lexicon and stay with the device voice.
+- **No runtime change before the batch.** No game code changes until a narrator is chosen and the batch is
+  authorized. The lookup (recorded clip by written form + reading, then the device voice) is a small runtime change
+  made with the batch.
+
 ## 2 · Duration: measured, per chosen voice
 
 For each chosen voice, its audition takes give a measured speaking rate. That voice's recordings then take:

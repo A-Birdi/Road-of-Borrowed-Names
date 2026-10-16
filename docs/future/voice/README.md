@@ -40,6 +40,7 @@ decision and the lead's reconciliations with the standing rules are in
   | `pack_local_kit.mjs`, `windows/` | The Windows kit for the local engines. |
   | `qwen_local_job.py` | The Qwen job for a GPU machine. |
   | `fullgame_count.mjs` | The whole-game planning count. |
+  | `reference_count.mjs` | The narrator's reference readings (kana, kanji readings, words) for Listen / Say it / Hear it (LI-8). |
 
   Everything the runner writes, audio and gallery included, goes under `voice-audition/`, which git ignores. Test
   clips are never committed or published.
