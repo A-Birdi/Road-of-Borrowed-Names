@@ -812,7 +812,7 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - Run on Robin's PC (2026-10-15): 595 of 595 samples made, records in `docs/future/voice/va2/run/` (checked here:
     the plan's 595 take ids, none mocked); the gallery is with Robin.
   - Not done: Robin's picks; anything in the game's speech (C-93: only after Robin's decisions).
-- [~] XP121 RV-1, register and conversational naturalness reviewed in context before whole-game voice production
+- [x] XP121 RV-1, register and conversational naturalness reviewed in context before whole-game voice production
   (Robin, 2026-10-15; C-95). docs/review/register/REGISTER_REVIEW.md; VALIDATION.md "RV-1".
   - Done (R, review by reading; no game line changed): every spoken scene line (9,335, the player's choices and
     Suzu's Kansai lines included) read as whole exchanges by 14 readers against Robin's criteria; 304 findings
@@ -820,8 +820,16 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     (33 wrong explanations, 250 tokens), Suzu's Kansai politeness (21 lines), lines several companions say (116 texts)
     and recording text that joins words (9); six decisions for Robin (D1–D6) and 112 lines to keep; tools in
     `tools/review/`. The VA-1 audition text, the VA-2 plan and samples and the VA-2 run are untouched.
-  - Not done: Robin's decisions; any correction (and then the ledger, the Kansai table and the recording plan rebuilt
-    from the corrected lines before the full-game batch).
+  - C-95 decided (Robin, 2026-10-16, a bounded editorial authorization) and applied: docs/review/register/
+    DISPOSITIONS.md. VALIDATION.md "C-95 corrections".
+    - Every finding is disposed of: 222 accepted, 70 retained, 12 deferred. All 80 "fix before recording" are applied.
+    - The script: 482 lines in 100 files, 19 of them Kansai.
+    - D6 word help: lexicon only, no line changed.
+    - Kept: the 112 preserved lines unchanged, and the frozen audition texts (their divergences recorded).
+    - Records: the ledger has entries for every changed line.
+    - Checks: R by reading; U suite 54,352 passed, plus the one regenerated data file; B Kansai, Hall, chapters 3 and 4,
+      ui.
+  - Not done: the 12 deferred findings, which are Robin's (listed in DISPOSITIONS.md).
 - [~] XP122 PT-1, a new learner's first play (a coworker's notes, relayed by Robin, 2026-10-15). VALIDATION.md "PT-1".
   - Done: (a) "The UI volume was crazy loud": interface and feedback effects trimmed in the engine to sit under the
     music, measured at the game's default volumes (B `audio_levels`; sliders and saved settings untouched); (b)
@@ -903,6 +911,45 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     alignments cover five lines.
 - [x] XP126 ST-2: the new journey's learning step uses the Settings book's circled choices, drawn icons and on-page
   slip (Robin, 2026-10-16). VALIDATION.md "ST-2". B `create` 383/0, `settings_review`, `title_ledger`.
+
+- [x] XP127 The voice batch's generation inputs, after C-95 (Robin, 2026-10-16: "publish the exact source commit,
+  frozen production manifest and agreed recording-key/schema contract for Local"). Records:
+  docs/future/voice/production/ (READINESS.md, PRODUCTION_SCOPE.md, VOICE_DELIVERY.md, GO.json); VALIDATION.md "C-95
+  corrections".
+  - Done:
+    - the manifest is built from the corrected script: 14,721 recordings and 9,095 reference readings and phrases;
+    - companions are attributed through their branches;
+    - the player has Voice A/B, each High/Low;
+    - Kansai is recorded where it differs;
+    - names are given in kana, seams as the reading the line means, and particles as said;
+    - frozen audition texts are kept;
+    - the go signal names the commit (U `voice_production` 23/0; `production_manifest.mjs --check`).
+  - Not in this batch: the 116 lines with the player's name (C-93), and the 12 deferred findings, which are Robin's.
+- [~] XP128 VR-1/VR-2, the recorded voices in the game: "plays the selected cast without installing Japanese system
+  voices, manually importing a voicebank, or downloading the entire corpus before play". The record is
+  docs/future/voice/production/VOICE_RUNTIME.md; VALIDATION.md "VR".
+  - Done (B `voice_runtime` 9/0 with synthetic recordings, no Japanese system voice):
+    - per-scene indexes and content-named stable URLs;
+    - a bounded lookahead;
+    - a persistent cache of the game's own, bounded and cleared alone, whose failure never blocks;
+    - None, Mute and a zero level fetch nothing;
+    - the player's voice and pitch, and Kansai;
+    - the text-hash check;
+    - every speaking control plays recordings without a device voice;
+    - the voiced offline package plays from `file:`;
+    - AG-1's highlight follows a recording's clock (an estimate, documented; measured timings can come later without
+      re-recording).
+  - Not done: real recordings; `HOSTED_BASE` (Robin's host choice); browsers other than Chromium; phones.
+- [~] XP129 Hosting: the runtime-only publishing set and the byte report (Robin, 2026-10-16). The record is
+  docs/hosting/RUNTIME_PUBLISHING.md; VALIDATION.md "Hosting audit".
+  - Done:
+    - the unpacked Pages artifact was audited: Pages publishes the whole branch, 1,072,095,009 bytes, and the "not
+      deployed" lines were corrected;
+    - the runtime-only set (625 files, 523,674,397 bytes) is prepared and served on its own (B `runtime_publish` 3/0);
+    - the voice estimate is about 665 MB;
+    - the combined total is about 1,188 MB, so the voices need their own same-origin site;
+    - development evidence is kept in the repository, nothing deleted.
+  - Not done (Robin's): the Pages setting for the runtime-only set (draft workflow, inactive), and the voice repository.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

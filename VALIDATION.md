@@ -4491,6 +4491,156 @@ Checks on the built index.html (headless Chromium, Linux), 2026-10-16.
     they plainly stand for.
   - Not checked by a native speaker or by Astra.
 
+## C-95 corrections — RV-1's findings applied, kept or deferred (Robin's bounded editorial authorization, 2026-10-16)
+
+**What was decided.**
+- Robin: "Apply the verified "fix before recording" findings. Follow the report's D1–D5 recommendations where supported by
+  the full exchange, preserving intentional register changes and the 112 preservation notes. Do not apply every
+  "consider" finding as a blanket stylistic rewrite. Handle D6 word-help/support corrections in parallel."
+- Record: docs/review/register/DISPOSITIONS.md and `.json`.
+
+**What was done.**
+- **Four parts, by self-review (C-26):**
+  - A: fixes, D3, D4, D5;
+  - B: Mio's D1 register;
+  - C: lines any companion says, D2;
+  - D: word help, D6.
+- **R (review by reading):**
+  - Each proposal gave every in-scope finding a disposition, with the line as it is now, the line proposed, the
+    addressee and the reason. Every proposal was checked against the source byte for byte.
+  - The lead merged the proposals where two touched one line. Part B supersedes A on 3 lines. A's content and C's
+    companion split were merged on 7 Hall lines.
+  - The lead read a random sample of 18 edits against the review's rules.
+  - Mio's 49 existing plain よ and わ endings were checked, so B follows her established voice, not a gender rule.
+- **Applied:**
+  - 482 lines in 100 files (19 in the Kansai table), by `tools/review/register_apply.mjs`. The tool refuses any edit
+    whose old line is not exactly in its file, and any two different edits to one line.
+  - The D6 lexicon and lookup changes (D's commit 2df207e, without its index.html), applied cleanly.
+- **Dispositions:** 304 findings: 222 accepted, 70 retained, 12 deferred. All 80 "fix before recording" findings are
+  accepted.
+
+**Checked.**
+- **U (unit) and tools:**
+  - `tools/validate.mjs`: no errors, and no new lexicon conflicts.
+  - `dialect_kansai` 9528/0, `word_help` 45/0, `word_help_rv1` 37/0, `speech_align` 28/0, `align_registry` 9/0 (and
+    `align_registry.mjs --check`: 5 reviewed alignments, 0 stale), `conversation_continuity` 1773/0, `hall_w9` 124/0,
+    `script_prompts` 10/0.
+  - `review_ledger` 2/0 after `review_ledger.mjs --add` recorded the changed lines as self-reviewed against C-95:
+    20,316 lines, 0 without an entry.
+- **Preserved and frozen texts:**
+  - The 112 preserved lines: 112 unchanged, by line key, after the corrections.
+  - Frozen audition texts unchanged. VA-1 `corpus.mjs --check`: 83 cases, with SUZU_K05 (RV-0015) kept frozen as
+    recorded. VA-2 `plan.mjs --check`: current.
+  - The two VA-2 samples the corrections touch (cr.call, RV-0162; rw.mr_lantern, RV-0161) keep their frozen lines.
+  - Divergence files: `docs/future/voice/corpus/DIVERGENCES.json`, `docs/future/voice/va2/DIVERGENCES.json`. A listed
+    case is accepted only while both texts keep their recorded hashes.
+- **The whole unit suite:** 54,352 passed and 1 failed, in four slices of the unit runner: 40,830/0, 4,812/0, 4,328/1 and 4,382/0. The one-process
+  runner had been killed by the environment (exit 144).
+  - The one failure: `src/lang/75_kanjiread.js is up to date`. This is the generated kanji-reading data behind the
+    corrected lines.
+  - It was regenerated with `node tools/kanjiread.mjs` (a one-line change). Afterwards `recog-coverage` 15/0,
+    `kanji_chart` 53/0 and `voice_production` 23/0.
+- **B (browser), on the build with the corrections and the lexicon:** 
+  - `dialect_kansai` all passed.
+  - `hall` 4/0.
+  - `story_ch3`: profile A with each companion, all checks passed (38, 38, 38, 36).
+  - `story_ch4`: every combination N/N checks ok, for example A/mio 52/52, A/ren 53/53, A/suzu 52/52.
+  - `ui` 14/0.
+
+**Not done.**
+- **The 12 deferred findings:** Robin's, listed in DISPOSITIONS.md.
+- **The 116 lines with the player's name:** their neutral-word versions for recording (C-93).
+- **No native review** (C-26).
+
+## VR — the recorded voices in the game (VR-1, VR-2; Robin, 2026-10-16)
+
+docs/future/voice/production/VOICE_RUNTIME.md describes the runtime. The code is `src/audio/52_voicebank.js` and
+`54_voice_route.js`, Settings › Sound › Voices, and every speaking control routed through them.
+
+**B: `tests/e2e/voice_runtime.mjs`, Chromium, 9/0.**
+- **The setup:**
+  - A real voice site was built by `tools/voice/voice_site.mjs` from the current script's production manifest.
+  - Synthetic Opus tones (ffmpeg) stand in for the recordings of scene `co.suzu_ask` and three reference keys.
+  - The machine has no Japanese system voice, which the test asserts. So every recording heard proves the voices do
+    not depend on one.
+- **The shipped page** (no voice site configured) fetches nothing.
+- **A line plays its own recording:**
+  - the right file for its speaker;
+  - the Voice button shows without a device voice;
+  - the spoken mark follows the recording;
+  - nothing was fetched before play.
+- **Looking ahead** fetches only the index, the scene's index and at most three recordings of the next lines.
+- **Variants:** Suzu in Kansai plays her Kansai recording. The player is silent with Voice None, then plays Voice A
+  High and Voice B Low. A text-hash mismatch plays nothing.
+- **The game's cache:**
+  - A second visit plays from the cache with no request.
+  - A broken cache (`caches.open` rejecting) still plays the line.
+  - The cache stays within a small limit.
+- **Clearing the kept recordings** empties `rbn-voice-v1` only. Another project's cache, a localStorage key, an IndexedDB
+  database and the saves stay.
+- **Silence:** No voice, Mute and a voice level of zero fetch and play nothing. No voice hides the Voice button.
+- **The learning controls:** word help's Say it (a recording exists; no device voice), a karuta proverb and a kana card
+  play their recordings. A reading with neither a recording nor a device voice says nothing.
+- **The voiced offline package** (`tools/publish/offline_package.mjs`) plays from `file:` with nothing fetched.
+
+**U: `voice_production` 23/0.**
+- Companion attribution through branches.
+- The manifest:
+  - no markup or spacing spoken;
+  - the player in Voice A and B, each High and Low, each its own id;
+  - the 今朝 seam sent as いまあさ, and no seam left in any `send`;
+  - reference readings with particles sent as said;
+  - 60 phrases.
+- The voice site: per-scene indexes; an unchanged recording keeps its address across builds and a re-recorded one does
+  not; partial batches counted.
+- The in-page SHA-256 matches Node's on 9 inputs, including 100,003 random bytes (a script check, not a test file).
+
+**B (the suites the routing touches):** 
+  - `speech_relations` and `speech_mark`: all passed.
+  - `settings_review`: all passed. Its voice check now looks for the new wording and the three "Who speaks" choices:
+    the cast is locked, so the page no longer says "still being cast".
+  - `settings` all ok, `create` 383/0, `karuta` 3/0, `festival_games` 5/0.
+  - `bookmarks`: one check fails at 200 % text on a phone ("Next does not move for the tab"), at 320×640 on one run and
+    390×844 on another. It fails the same way on the previous build (bde31dd's index.html), so it predates this work.
+    It is suggested as its own task.
+
+**Not done.**
+- Real recordings: the first batch is on Robin's PC.
+- `HOSTED_BASE`: set when the voice host is chosen.
+- Browsers other than Chromium; phones; Firefox's `file:` media for the package.
+- Word timings measured from the audio: optional later, with no re-recording.
+
+## Hosting audit — what Pages publishes, the runtime-only set, room for the voices (Robin, 2026-10-16)
+
+docs/hosting/RUNTIME_PUBLISHING.md is the full account.
+
+**Measured.**
+- **The deployed artifact for f1c4415:** downloaded and unpacked, it held 5,180 files and 1,071,939,269 bytes. That is
+  exactly that commit's tree; Pages publishes the whole branch root.
+- **Deployments:** 472 deployments of the branch since 2026-09-27, from GitHub's deployment records.
+- **Today:** the tree is 5,194 files and 1,072,095,009 bytes, 72.1 MB over 1 GB (1.6 MB under 1 GiB).
+- **A correction to the records:** they said "not deployed". In effect the branch has been served at the game's URL
+  all along. VALIDATION's MT-1 line is corrected.
+
+**The runtime-only set** (`tools/publish/prepare_runtime.mjs`): 625 files and 523,674,397 bytes. That is the page, 464
+recordings, their notices and the GPL-2 source their NOTICE.md says goes with them.
+- **B: `tests/e2e/runtime_publish.mjs` 3/0, with the folder served on its own:**
+  - the game loads with no error and no request to another origin;
+  - the page fetches all 464 recordings (494,629,058 bytes), each matching its catalog size and SHA-256;
+  - Ensemble music sounds;
+  - development files answer 404.
+
+**The voice estimate** (`tools/voice/delivery_estimate.mjs`, corrected script): about 665 MB in 26,891 files.
+- **The encoding:** the VA-2 setting, libsndfile Opus level 0.8, measured here at 57.1–57.8 kbit/s plus about 900
+  bytes per file.
+- **The speaking rates:** measured from the 595 VA-2 takes.
+- **Combined with the runtime set:** about 1,188 MB, so the voices need their own same-origin site (about 335 MB to
+  spare).
+
+**Not done, Robin's:**
+- the Pages setting to publish the runtime-only set (draft workflow, inactive);
+- the voice repository.
+
 ## AG-1 — the dialogue highlight's grammar (Robin's review packet, 2026-10-16)
 
 The full record is [docs/review/align/AG1_REVIEW.md](docs/review/align/AG1_REVIEW.md): what changed, the tests, the
