@@ -4491,6 +4491,168 @@ Checks on the built index.html (headless Chromium, Linux), 2026-10-16.
     they plainly stand for.
   - Not checked by a native speaker or by Astra.
 
+## VR-C1 — the voice runtime audit (Astra's packet, relayed by Robin, 2026-10-16)
+
+Astra's packet (REVIEW.md, findings.json, audit.mjs over function excerpts at 131918a) found six loader gaps (A–F) and
+four publishing notes. Robin: "reproduce the important cases against the full current module before applying narrow
+corrections". docs/future/voice/production/VOICE_RUNTIME.md describes the result. Nothing of the production inputs,
+the audio, the casting or the local worker was touched.
+
+**Reproduced first (U, against the full module at 131918a).** `tests/unit/voicebank_vrc1.test.mjs` loads the whole
+`src/audio/52_voicebank.js`, with the real script runner, condition test and text functions. The network, Cache
+Storage and the Audio element are controlled stand-ins. The harness's first version, run on the module as it was at
+131918a, had 30 cases: 21 failed and 9 passed.
+- **All nine of the packet's adverse cases failed:**
+  - a false condition;
+  - a choice;
+  - an end;
+  - a stop that left old preloads starting;
+  - 8 transfers at once;
+  - a same-size corrupt kept copy returned with no check;
+  - a scene and its references still missing after the index recovered;
+  - a kept file with no bookkeeping not counted (10,500 bytes kept, 2,000 reported, limit 10,000);
+  - fetched audio held behind a cache write.
+- **Also failed:**
+  - `!if` and `!goto` not followed;
+  - a battle not stopped at;
+  - a condition guessed after a change;
+  - a called scene not followed;
+  - the line's own prefetch not shared or kept;
+  - no abort of an obsolete transfer;
+  - two tabs losing each other's entries (6 kept, 2 listed);
+  - two first uses of the cache, of which one was told "no cache";
+  - a write that never finished silencing a line: `none` after 2,002 ms;
+  - the reference index loaded at scene start.
+- **Passed, as the packet's controls did:**
+  - the linear cap of three;
+  - muted, nothing fetched;
+  - a bad fresh download refused;
+  - ordinary reuse;
+  - ordinary LRU;
+  - a quota error leaving another project's cache alone;
+  - an absent scene remembered;
+  - no request storm while failing.
+
+**Corrected** (`52_voicebank.js`, plus small reads in `70_script.js` and `05_state.js`):
+- **A, lookahead.**
+  - It plans from the runner's own position: `RB.script.position()`, the frames of the scenes being run, innermost
+    first, read only.
+  - It follows `!goto`, `!if` when it can be read, `!end` and `!call`. A called scene is followed into and back out to
+    its caller.
+  - It reads a condition only with `RB.state.peek`, plain reads of the journey. A condition another system registered
+    is declined, because `fish.*` and `slot.*` build the record they read: found when planning over the whole script
+    first changed the journey.
+  - After a command that changes the state, it guesses no condition.
+  - It stops at a choice, an unknown `!if`, and anything that hands the scene elsewhere: a battle, an encounter, a
+    challenge, an activity, a lesson, teaching, a shop, a menu, an inn, the credits, recruiting, departing or a hook.
+  - The companion, Kansai, A/B and High/Low selection are as before.
+- **B, one queue.**
+  - One transfer ahead at a time, within three lines and 1.5 MB.
+  - Nothing ahead starts while the line asked for is loading.
+  - A new plan or scene drops the queue and aborts a transfer for a line no longer ahead. It never aborts one the line
+    on screen waits for, nor the shown line's own.
+  - Moving on, closing or a settings change drops the queue.
+  - Mute, a zero level, No voice and leaving the journey also abort what runs.
+  - An abort is not a failure, so there is no cool-down.
+- **C, indexes.**
+  - A failed index load is not remembered. It is asked again after 1 s, 2 s, 4 s and so on, up to 60 s.
+  - A valid index that lacks a scene is remembered as such.
+- **D, kept copies are checked** like fresh ones: the size and SHA-256, or for an index the 12 hex in its name. A bad
+  copy is removed and fetched again. The browser's own `crypto.subtle` is used where it exists: the page's own SHA-256
+  took 64–82 ms here on the 1.87 MB reference index.
+- **E, bookkeeping.**
+  - It is changed one step at a time under a Web Lock across tabs. Each step reads the stored copy, merges this tab's
+    own changes and writes it back.
+  - Once a session it is reconciled with `cache.keys()`. Unlisted files are counted by an `x-rbn-bytes` header (or
+    measured) and go first; entries for files that are gone are dropped; an unreadable file is rebuilt.
+  - 512 bytes are counted per entry, indexes included.
+  - On a quota error, this cache alone is trimmed to half and the write tried once more.
+  - The cache is opened once, shared by every caller, and retried after 30 s if it would not open.
+- **F, writes are never waited for.**
+  - A copy is written in the background and recorded once it is in, with at most 8 writes pending.
+  - A cache still opening is waited for at most 400 ms, and a kept copy is read for at most 600 ms, before the network
+    is asked.
+- **The reference index** is no longer loaded by a scene's start. A control asks for it when it shows; otherwise it is
+  loaded when nothing waits.
+
+**U: `voicebank_vrc1` 33/0.** The original 30 cases, the own-hash variant of the cache-hit case, two tabs on one lock
+with a limit both pass (the trim sees both; the ledger equals the cache) and a corrupt ledger rebuilt.
+
+**U: `voicebank_plan_content` 7/0.** The plan was run from every spoken line of every scene, with each companion:
+69,592 positions.
+- It changed no journey and never threw.
+- `peek` agrees with `test` wherever it answers, and declines only registered heads.
+- Where a later line exists in the file (56,620 positions), the next one is known at 60 %.
+- The old raw-order scan named 88,024 lines the plan does not, at 43,323 positions. "Not known to come" includes, but
+  is not only, unreachable.
+
+**U: `publish_guard` 10/0.** A tiny voice site, built four times with the real command line:
+- the first build is measured;
+- an update keeps the build before it;
+- two builds on, the older file is listed and kept;
+- `--prune-older` removes it;
+- `--max-bytes` over the limit exits 1;
+- `site_size` exits 1 over the ceiling;
+- `prepare_runtime` is within the default ceiling, and over a tiny one copies nothing.
+
+**B: `tests/e2e/voice_runtime_vrc1.mjs`, Chromium, 7/0.** It runs on the built page against a real fixture site
+(synthetic tones; scenes `co.suzu_ask`, `cr.drift`, `lf.west_plug`), with server-side request logging.
+- **`cr.drift` through the real runner, with Suzu:**
+  - before its choice, only the first line was fetched;
+  - "not now" fetched neither branch line;
+  - "dig" fetched the branch's line and Suzu's;
+  - no other companion's line was fetched.
+- **`lf.west_plug`:**
+  - nothing beyond the choice before it was made;
+  - after "pull", the `!if` sent it to "stuck": that line and the line its condition allows were fetched (3
+    recordings in all);
+  - never the line whose condition is false, nor the branch the `!if` skipped;
+  - at most 2 transfers at once (the line playing and one ahead).
+- **Five scenes begun in a row**, 400 ms per file:
+  - 1 recording request reached the network, the last scene's first line;
+  - 1 transfer was aborted by the queue;
+  - at most 1 ran at once.
+  - Begun and closed at once: nothing left queued or running, at most 1 more request.
+  - (Chromium labels some completed requests `ERR_ABORTED`, an index included, so arrival is judged from the page's
+    memory, not from `requestfailed`.)
+- **The index answering 503**, then recovering: no recording, then recorded on the same page after the back-off, with
+  2–4 index requests.
+- **A same-size wrong kept copy** is not played: it is fetched again and replaced (its hash checked in the page).
+- **A cache write that never finishes, and a cache that answers after 3 s:** the line plays in under 2 s.
+- **An ordinary update** (a new index, the same recordings): played from the cache. Only `index.json` was requested,
+  and the build reads `test-2`.
+- **Two tabs in one profile:** everything both kept is listed. With the bookkeeping deleted, the next visit's `kept()`
+  equals what the cache holds.
+
+**B (the suites the change touches):**
+- `voice_runtime` 9/0 on the corrected module: the earlier nine.
+- `dialect_kansai`:
+  - one run failed one check: a Settings radio measured 268×43 against 44 px;
+  - two reruns on the same build passed every check at 273×44;
+  - it passes at 131918a.
+  - It is a layout measurement under load, not the voices.
+- `runtime_publish` and `story_ch1`: see the commit's run below.
+
+**Publishing (VR-C1's notes).**
+- **The size guard:** `tools/publish/site_size.mjs`, with a ceiling of 900,000,000 bytes (10 % under 10^9). It is
+  wired into `prepare_runtime.mjs` (before copying and on the finished folder), `voice_site.mjs` (the whole site
+  folder) and the draft workflow (both checks before upload; still inactive).
+- **Measured:** the runtime set is now 625 files, 523,731,292 bytes; the index rebuilt with this change.
+- **The voice site's retention:** the current build and the one before it; older files are listed and pruned only on
+  request.
+- **Stable URLs:** RUNTIME_PUBLISHING.md's `<build>` path example is corrected; the language folder has no build level.
+- **The reference index, measured** on the production manifest with placeholder sizes: 1,873,440 bytes (660,215
+  gzip), for 9,095 readings. Node parses it in 8 ms. `index.json` is 176,748 bytes. The 3,073 scene indexes have a
+  median of 770 bytes and a maximum of 16,789. No sharding of the references: deferral is enough.
+
+**Not done.**
+- Real recordings, heard and timed: the batch is still on Robin's PC.
+- Firefox and Safari: not installed here.
+- Phones: none.
+- `HOSTED_BASE`: Robin's host choice.
+
+The synthetic-tone browser runs are not evidence for any of these.
+
 ## C-95 corrections — RV-1's findings applied, kept or deferred (Robin's bounded editorial authorization, 2026-10-16)
 
 **What was decided.**

@@ -40,8 +40,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      # index.html is the committed build; the tool checks every file the page names and refuses a missing one
-      - run: node tools/publish/prepare_runtime.mjs --out _site
+      # index.html is the committed build; the tool checks every file the page names and refuses a missing one, and
+      # stops (exit 1) when the set is over the ceiling
+      - run: node tools/publish/prepare_runtime.mjs --out _site --max-bytes 900000000
+      # the size guard on the folder as it will be uploaded, everything in it counted (10 % under Pages' 1 GB); a
+      # failed step uploads nothing
+      - run: node tools/publish/site_size.mjs _site --max-bytes 900000000
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

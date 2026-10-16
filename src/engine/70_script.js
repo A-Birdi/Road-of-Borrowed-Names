@@ -147,7 +147,13 @@ RB.script = (function () {
   // running, and if it ever resumed it would stop at its next line (exec) without writing to the
   // campaign that came next (`gen`).
   let gen = 0;
-  if (RB.bus) RB.bus.on('campaign:changing', () => { gen++; running = 0; });
+  if (RB.bus) RB.bus.on('campaign:changing', () => { gen++; running = 0; frames.length = 0; });
+  // where the runner is: one frame per scene being executed, innermost last (`called`: entered by !call, so its caller
+  // goes on after it). Read only by the voices' lookahead (src/audio/52_voicebank.js), which never runs a command.
+  const frames = [];
+  function position() {
+    return frames.slice().reverse().map((f) => ({ sceneId: f.sc.id, pc: f.pc, called: f.called }));
+  }
 
   async function run(sceneId, ctx) {
     const sc = RB.content.scenes[sceneId];
@@ -202,7 +208,12 @@ RB.script = (function () {
     }
   }
 
-  async function exec(sc, ctx) {
+  async function exec(sc, ctx, called) {
+    const fr = { sc, pc: 0, called: !!called };
+    frames.push(fr);
+    try { await steps(sc, ctx, fr); } finally { const i = frames.lastIndexOf(fr); if (i >= 0) frames.splice(i, 1); }
+  }
+  async function steps(sc, ctx, fr) {
     const s = RB.game.s;
     let pc = 0;
     const jump = (label) => {
@@ -215,6 +226,7 @@ RB.script = (function () {
       if (++guard > 20000) throw new Error('script loop in ' + sc.id);
       if (RB.game.s !== s) return; // the campaign changed under this scene: it ends here
       const c = sc.cmds[pc++];
+      fr.pc = pc;
       if (c.if && !RB.state.test(s, c.if)) continue;
       const a = c.args || [];
       switch (c.op) {
@@ -313,7 +325,7 @@ RB.script = (function () {
         }
         case 'call': {
           const sub = RB.content.scenes[a[0]];
-          if (sub) { await exec(sub, ctx); s.seen[a[0]] = true; }
+          if (sub) { await exec(sub, ctx, true); s.seen[a[0]] = true; }
           else console.warn('missing scene', a[0]);
           break;
         }
@@ -441,5 +453,5 @@ RB.script = (function () {
   // the world is behind an illustrated sequence's picture (src/ui/43_sequence.js)
   const hidden = () => !!(RB.sequence && RB.sequence.hidesWorld());
 
-  return { parse, add, run, runInline, isRunning, enVars, jpVars, splitBilingual, stageArgs };
+  return { parse, add, run, runInline, isRunning, position, enVars, jpVars, splitBilingual, stageArgs };
 })();

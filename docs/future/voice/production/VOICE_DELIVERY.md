@@ -188,7 +188,12 @@ says which was done.
 1. Rebuild the manifest at the new revision.
 2. Every entry whose id is already in a results file keeps its file, and its address in the site does not change.
 3. Only new ids are recorded, as a supplement.
-4. Ids no longer in the manifest drop out of the next site's indexes. Their files may stay, so a page opened before the update still finds them.
+4. Ids no longer in the manifest drop out of the next site's indexes. Their files stay for one build, so a page opened
+   before the update still finds them; files older than that are listed, and removed from the publishing folder only
+   with `--prune-older`.
+5. The whole site folder, kept files included, is measured against the size guard's ceiling (900,000,000 bytes by
+   default; `tools/publish/site_size.mjs`) every time it is written. Over it, the tool exits 1: not to be deployed as
+   it is.
 
 ## 9 · What comes back to this repository
 

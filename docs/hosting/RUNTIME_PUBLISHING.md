@@ -162,15 +162,17 @@ Two ways keep the quality and the URL. Both are prepared in the voice manifest (
 `https://a-birdi.github.io/Road-of-Borrowed-Names-voices/`.
 - **Same origin.** That is the same origin as the game (`a-birdi.github.io`), so the page's existing `connect-src 'self'`
   already allows it.
-- **Relative base.** The voice manifest's `base` is a relative path (`../Road-of-Borrowed-Names-voices/ja-JP/<build>/`),
-  so no absolute address is written into the game.
+- **Relative base.** The game's voice base (`HOSTED_BASE`) is a relative path, `../Road-of-Borrowed-Names-voices/ja-JP/`,
+  so no absolute address is written into the game. It is the same for every build: the recordings sit directly under
+  the language folder (`ja-JP/rec/<speaker>/<id>.<sha12>.opus`, VOICE_DELIVERY.md §5), never under a build folder, so an
+  unchanged recording keeps its address and a player's kept copy stays good (VR-C1).
 - **Margins.** Each site stays under the limit: the game's 523.7 MB leaves 476.3 MB, and the voices' about 665 MB leaves
   about 335 MB.
 - **Cost.** Creating that repository and turning on its Pages is Robin's step, since it publishes something new. There
   is no cost.
 
 **4b · A Release pack the player imports** (not the primary release: Robin, 2026-10-16, the hosted game plays the cast
-"without … manually importing a voicebank"; the voiced offline package below covers playing from disk). The same recordings and the same manifest (with `base: pack:<build>`) go in
+"without … manually importing a voicebank"; the voiced offline package below covers playing from disk). The same recordings and the same site go in
 one or more ZIP files attached to a GitHub Release. Each file must be under 2 GiB.
 - **How the player uses it.** The player downloads the pack and chooses it in the game. The game reads it locally and
   stores it in the browser. Nothing is fetched from the Release by the game.
@@ -178,8 +180,33 @@ one or more ZIP files attached to a GitHub Release. Each file must be under 2 Gi
   from disk with no import step, so an importer is not planned. Releases are made by Robin.
 
 **Bandwidth.** GitHub documents a soft bandwidth limit of 100 GB a month for Pages. The game fetches a voice line only
-when it is about to be spoken (and the next three ahead) and keeps what it heard, so a journey costs what it plays, not
-665 MB.
+when it is about to be spoken (and at most the next three that will certainly come) and keeps what it heard, so a
+journey costs what it plays, not 665 MB.
+
+### 5 · The size guard, and what an update keeps (VR-C1)
+
+Robin, 2026-10-16: "Measure the full publishing directory including retained historical assets, and add a size guard
+before deployment."
+
+- **What is measured:** every file in the folder that would be published, not only what the current build names:
+  `node tools/publish/site_size.mjs <folder>` (exit 1 over the ceiling). For a voice site it also splits the bytes into
+  what the current index names and what it does not.
+- **The ceiling:** 900,000,000 bytes by default (`--max-bytes`), a 10 % margin under 10^9 bytes, the stricter reading
+  of Pages' 1 GB. The game's site and the voice site are two Pages sites, each measured against its own ceiling.
+- **The game's site:** `prepare_runtime.mjs` checks the whole set, kept files (`--keep`) included, before it copies
+  anything, and the finished folder again after; over the ceiling it stops with exit 1. Measured now (`--list-only`):
+  625 files, 523,731,292 bytes, 376,268,708 under the ceiling. The draft workflow runs both checks before its upload
+  step, so an oversized folder is never uploaded (the draft stays inactive: activating it is Robin's).
+- **The voice site:** `voice_site.mjs` measures the whole site folder after it writes, and exits 1 over the ceiling.
+  - **What an update keeps:** the files the current build names and the files the build before it named, so a page
+    opened before one update still finds what it asks for. Anything older is listed (`olderThanThat`) and removed from
+    the publishing folder only with `--prune-older`. That folder is a copy for publishing: the accepted audio and its
+    evidence stay where they are.
+  - **The first build** keeps nothing older, so its folder is the current set: about 665 MB estimated
+    (`delivery_estimate.mjs`), 235 MB under the ceiling. Real sizes come with the real files.
+- **The indexes in it** (measured on the production manifest with placeholder sizes): `index.json` 176,748 bytes
+  (49 KB gzipped); 3,073 scene indexes, median 770 bytes, largest 16,789, 4.0 MB together; the reference index
+  1,873,440 bytes (660 KB gzipped).
 
 ## What needs Robin (nothing here is done without it)
 

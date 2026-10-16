@@ -15,14 +15,20 @@
 // d ('s' standard | 'k' Kansai), v ('A' | 'B') and p ('h' | 'l') for the player, f (file), b (bytes), h (SHA-256),
 // t (seconds), th (SHA-256 of the spoken text, first 16), id (recording id).
 // Usage: node tools/voice/voice_site.mjs --results <a.json>[,<b.json>] --files <dir>[,<dir>] --voice-build <id>
-//          --out <site>/ja-JP [--production <RECORDING_MANIFEST.json.gz>] [--update]
+//          --out <site>/ja-JP [--production <RECORDING_MANIFEST.json.gz>] [--update] [--prune-older] [--max-bytes <n>]
 //   --files: the folder each results file's `file` paths are relative to (one per results file, or one for all);
 //   --update: write into an existing site (new names only; nothing is overwritten or removed).
+// Kept from earlier builds (VR-C1): the site keeps what the current build names and what the build before it named, so
+// a page opened before one update still finds its files. Anything older is reported, and removed from this publishing
+// folder only with --prune-older (this folder is a copy for publishing; the accepted audio and its evidence stay
+// where they are). Then the whole site folder is measured, kept files included, against the size guard's ceiling
+// (--max-bytes, default 900,000,000 bytes: tools/publish/site_size.mjs); over it, exit 1: not to be deployed as it is.
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import crypto from 'node:crypto';
 import { root } from '../../tests/lib/load.mjs';
+import { measure, voiceNamed } from '../publish/site_size.mjs';
 
 export const SITE_SCHEMA = 'rbn.voice.site/1';
 const sha = (b) => crypto.createHash('sha256').update(b).digest('hex');
@@ -131,6 +137,21 @@ if (import.meta.url === 'file://' + process.argv[1]) {
   const site = buildSite(production, recordings, { voiceBuild: opt('--voice-build') });
   const errors = re.concat(site.errors);
   if (errors.length) { console.error(errors.slice(0, 30).join('\n') + (errors.length > 30 ? '\n… ' + (errors.length - 30) + ' more' : '')); process.exit(1); }
-  writeSite(opt('--out'), site, recordings, a.includes('--update'));
-  console.log(JSON.stringify(Object.assign({ out: opt('--out') }, site.index.totals)));
+  const out = opt('--out');
+  // what the build before this one named (kept), read before its index is replaced
+  const before = a.includes('--update') && fs.existsSync(path.join(out, 'index.json')) ? voiceNamed(out) : null;
+  writeSite(out, site, recordings, a.includes('--update'));
+  const now = voiceNamed(out);
+  const older = [];
+  const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) walk(p); else older.push(path.relative(out, p).split(path.sep).join('/')); } };
+  walk(out);
+  const stale = older.filter((f) => /^(idx|rec)\//.test(f) && !now.named.has(f) && !(before && before.named.has(f)));
+  let pruned = 0;
+  if (a.includes('--prune-older')) for (const f of stale) { fs.rmSync(path.join(out, f)); pruned++; }
+  const m = measure(path.dirname(path.resolve(out)), { maxBytes: +opt('--max-bytes') || 0 });
+  console.log(JSON.stringify(Object.assign({ out }, site.index.totals, {
+    keptFromPreviousBuild: before ? before.voiceBuild : null, olderThanThat: stale.length, pruned,
+    folder: { files: m.files, bytes: m.bytes, ceiling: m.ceiling, headroom: m.headroom, voice: m.voice },
+  })));
+  if (!m.ok) { console.error('voice_site: the site folder is ' + m.bytes + ' bytes, over the ceiling of ' + m.ceiling + '; not to be deployed as it is'); process.exit(1); }
 }

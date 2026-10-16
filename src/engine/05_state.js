@@ -191,6 +191,21 @@ RB.state = (function () {
       .split('|')
       .some((conj) => conj.split('&').every((t) => term(s, t)));
   }
+  // test()'s answer when the condition reads only the heads above (each a plain read of the journey); null when it
+  // names a head another system registered (some build the record they read: fish, slot). For looking ahead without
+  // touching anything (src/audio/52_voicebank.js): a null there means "not known now".
+  const BUILT = new Set(['comp', 'prov', 'party', 'quest', 'item', 'var', 'prof', 'ch', 'word', 'seen', 'post', 'bg']);
+  function peek(s, cond) {
+    if (cond == null || cond === '') return true;
+    for (const t of String(cond).split(/[|&]/)) {
+      const x = t.trim().replace(/^!+/, '');
+      if (!x || x === 'true' || x === 'false') continue;
+      const m = x.match(/^([a-zA-Z_][\w.]*?)(>=|<=|!=|==|=|>|<)(.+)$/);
+      const head = (m ? m[1] : x).split('.')[0];
+      if (!BUILT.has(head) && TERMS[head]) return null;
+    }
+    return test(s, cond);
+  }
 
   // ---- Mutators ------------------------------------------------------------
   function give(s, id, n) {
@@ -235,5 +250,5 @@ RB.state = (function () {
     s.awarded[id] = Date.now();
     return true;
   }
-  return { newCampaign, test, give, take, setQuest, pronouns, once, addTerm, PROF_ORDER };
+  return { newCampaign, test, peek, give, take, setQuest, pronouns, once, addTerm, PROF_ORDER };
 })();

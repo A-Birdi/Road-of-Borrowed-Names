@@ -512,6 +512,29 @@
         previous build too, so it predates this work.
     - VALIDATION.md "C-95 corrections", "VR — the recorded voices" and "Hosting audit"; REQUIREMENTS.md XP121, XP127–XP129.
 
+    **VR-C1, Astra's voice runtime audit (relayed by Robin, 2026-10-16):** reproduced against the full module first, then
+    narrow loader and publishing corrections. VALIDATION.md "VR-C1", REQUIREMENTS.md XP130, VOICE_RUNTIME.md.
+    - **Lookahead** plans from `RB.script.position()` (the runner's frames, read only) and gives only lines that will
+      certainly come:
+      - choices and conditions are respected;
+      - conditions are read with `RB.state.peek`, which has no side effects (`fish.*` and `slot.*` build records when
+        read, so registered heads are declined);
+      - it stops at battles, lessons, hooks and the like.
+    - **The speculative queue** is one for the game, one transfer at a time, behind the line asked for. It is dropped
+      or aborted when obsolete, and never aborts the line on screen's transfer.
+    - **Indexes** are retried with a back-off; kept copies are hash-checked.
+    - **The bookkeeping** is merged under a Web Lock and reconciled once a session; cache writes are not waited for.
+    - **The reference index** is deferred.
+    - **The size guard:** `tools/publish/site_size.mjs` (900,000,000 bytes), in `prepare_runtime.mjs`, `voice_site.mjs`
+      and the inactive draft workflow. The voice site keeps the current build and the one before it.
+    - **Tests:** U `voicebank_vrc1`, `voicebank_plan_content`, `publish_guard`; B `voice_runtime_vrc1` (Chromium).
+    - **Open:**
+      - real recordings, heard and timed;
+      - Firefox, Safari and phones, none installed or tried here;
+      - `HOSTED_BASE`.
+      - The plan knows the next line at 60 % of positions. Most stops are hooks, choices, registered conditions and
+        challenges. Widening it means declaring pure condition heads; it was not done, to stay conservative.
+
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
     "P18 — Plan B", "LP-1" and "VA-1".

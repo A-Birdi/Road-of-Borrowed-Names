@@ -71,10 +71,22 @@ It prints "manifest is current: 14721 recordings + 9095 reference readings, cont
 - the learning controls play their recordings;
 - the voiced offline package plays from `file:`.
 
+**VR-C1** (Astra's audit, 2026-10-16) corrected the loader after reproducing its cases on the full module. The
+changes:
+- lookahead to lines that will certainly come;
+- one bounded speculative queue;
+- index recovery;
+- checked kept copies;
+- bookkeeping across tabs;
+- writes never waited for.
+
+`tests/e2e/voice_runtime_vrc1.mjs` (Chromium, 7/0) checks them on the built page. They are not real-audio or other-browser
+evidence (VALIDATION.md "VR-C1").
+
 **Open:**
 - the first real recordings, to hear and to time;
 - `HOSTED_BASE`, set when the host is chosen;
-- browsers other than Chromium (Firefox, Safari);
+- browsers other than Chromium (Firefox, Safari): not installed where the tests run;
 - phones.
 
 ## 3 · Hosting: AUDITED; PUBLISHING NEEDS ROBIN
@@ -86,6 +98,9 @@ It prints "manifest is current: 14721 recordings + 9095 reference readings, cont
 - The runtime-only folder is prepared and browser-tested on its own: 625 files, 523,674,397 bytes.
 - The voice site format and the offline package are built.
 - Development evidence stays in the repository and is not published; nothing was deleted.
+
+**The size guard** (VR-C1): `tools/publish/site_size.mjs`, a ceiling of 900,000,000 bytes, in `prepare_runtime.mjs`,
+`voice_site.mjs` (the whole site folder, kept builds included) and the draft workflow before upload.
 
 **Concrete blockers, Robin's to remove (the lead cannot):**
 1. **The game's site.** It publishes the whole branch, about 1.07 GB, over the 1 GB limit. Switching Pages to the runtime-only workflow (draft: `docs/hosting/pages-runtime.workflow.yml`) is a Pages setting. The URL is unchanged.

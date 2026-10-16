@@ -940,6 +940,8 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     - AG-1's highlight follows a recording's clock (an estimate, documented; measured timings can come later without
       re-recording).
   - Not done: real recordings; `HOSTED_BASE` (Robin's host choice); browsers other than Chromium; phones.
+  - VR-C1 (XP130) corrected the lookahead, the speculative queue, index recovery, the checks on kept copies, the
+    bookkeeping and the cache writes.
 - [~] XP129 Hosting: the runtime-only publishing set and the byte report (Robin, 2026-10-16). The record is
   docs/hosting/RUNTIME_PUBLISHING.md; VALIDATION.md "Hosting audit".
   - Done:
@@ -950,6 +952,29 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     - the combined total is about 1,188 MB, so the voices need their own same-origin site;
     - development evidence is kept in the repository, nothing deleted.
   - Not done (Robin's): the Pages setting for the runtime-only set (draft workflow, inactive), and the voice repository.
+- [~] XP130 VR-C1, Astra's voice runtime audit (relayed by Robin, 2026-10-16): "reproduce the important cases against the
+  full current module before applying narrow corrections". The record is VALIDATION.md "VR-C1".
+  - **Reproduced first:** on the module at 131918a (U), the harness's 30 cases gave 21 failures; all nine of the packet's
+    adverse cases failed, its controls passed.
+  - **Done** (U `voicebank_vrc1` 33/0, `voicebank_plan_content` 7/0, `publish_guard` 10/0; B `voice_runtime_vrc1` 7/0
+    and `voice_runtime` 9/0, Chromium, synthetic tones):
+    - lookahead plans only lines that will certainly come, from the runner's position. It follows a choice only once it
+      is made and never goes past an end or a false condition. It reads conditions without side effects (`RB.state.peek`)
+      and stops at battles, lessons, hooks and the like. Speaker, Kansai, A/B and High/Low are unchanged;
+    - one speculative queue for the game: one transfer at a time, behind the line asked for, dropped and aborted when
+      obsolete, never the line on screen's; an abort is no failure;
+    - a failed index load is retried with a back-off on the same page;
+    - kept copies are checked by size and SHA-256 (or the name's hash), and a bad one is replaced;
+    - the bookkeeping is merged under a Web Lock across tabs, reconciled with what is kept once a session, includes
+      indexes and overhead, and survives quota errors within its own cache;
+    - cache writes are never waited for;
+    - the reference index is deferred behind the dialogue (measured: 1,873,440 bytes, 660 KB gzipped);
+    - stable recording URLs, and the stale `<build>` example corrected;
+    - the size guard (`tools/publish/site_size.mjs`, 900,000,000 bytes), in `prepare_runtime.mjs`, `voice_site.mjs`
+      (which measures the whole site, retention included) and the inactive draft workflow;
+    - the voice site keeps the current build and the one before it; older files are pruned only on request.
+  - **Not done:** real recordings heard; Firefox and Safari (not installed here); phones; `HOSTED_BASE` (Robin's host
+    choice).
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
