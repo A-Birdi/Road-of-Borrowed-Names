@@ -11,7 +11,13 @@
  *
  *   RB.ui.speechMark.begin(box, line, spoken) → { start(), at(charIndex), follow(getTime, duration), end() } | null
  *   RB.ui.speechMark.stop()  clears any mark (a new line, the box hidden)
- * Pointing at a word marks its counterpart in the other language (LI-9; the same setting, the same pairs). */
+ *   RB.ui.speechMark.explain(wordEl, i)  what a word does in its line, for word help (AG-1)
+ * Pointing at a word marks its counterpart in the other language (LI-9; the same setting, the same pairs).
+ * AG-1: the pairs are relations (RB.jp.speech.align rels): a relation may join several Japanese words (行かなければ
+ * ならない "must") and an English word may belong to more than one, part by part (私 and です share "I'm"). Pointing
+ * at either side marks every relation it belongs to, all its words, in its colour (amber for a word's meaning, blue for
+ * grammar). While a voice speaks, the spoken word's relations are marked the same way (.spk, .spk2): one set of
+ * relations for both, decided once (the spoken mark keeps the line; pointing waits until it ends, as before). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
 
@@ -22,7 +28,14 @@ RB.ui.speechMark = (function () {
   const on = () => !(RB.game.settings && RB.game.settings.voice && RB.game.settings.voice.highlight === false);
 
   function clear(root) {
-    (root || document).querySelectorAll('.spk').forEach((e) => e.classList.remove('spk'));
+    (root || document).querySelectorAll('.spk, .spk2').forEach((e) => e.classList.remove('spk', 'spk2'));
+  }
+  // the relations of a shown line: its displayed words, its English as shown (the player's name in it), its dialect
+  function alignFor(tokens, line, ctx) {
+    const en = RB.game.s && RB.script.enVars ? RB.script.enVars(line.en || '') : line.en || '';
+    const look = ctx && ctx.dia && RB.dialect ? (t, i) => RB.dialect.lookupIn(tokens, i) || RB.jp.lookup(t) : null;
+    const name = RB.game.s && RB.game.s.player ? RB.game.s.player.name : null;
+    return S().align(tokens, en, { lookup: look, name, dia: ctx && ctx.dia ? ctx.dia : null });
   }
   // the English line's words as spans, numbered like RB.jp.speech.enWords (the same pattern over the same text)
   function wrapEnglish(el) {
@@ -62,14 +75,11 @@ RB.ui.speechMark = (function () {
     const tokens = jl && RB.ui.help.tokensOf ? RB.ui.help.tokensOf(+jl.dataset.src) : null;
     if (!tokens) return null;
     const ctx = RB.ui.help.ctxOf ? RB.ui.help.ctxOf(+jl.dataset.src) : null;
-    const en = RB.game.s && RB.script.enVars ? RB.script.enVars(line.en || '') : line.en || '';
-    const look = ctx && ctx.dia && RB.dialect ? (t, i) => RB.dialect.lookupIn(tokens, i) || RB.jp.lookup(t) : null;
-    const name = RB.game.s && RB.game.s.player ? RB.game.s.player.name : null;
     const st = {
       box, tokens,
       offs: S().offsets(tokens, String(spoken || '')),
       tl: S().timeline(tokens, (RB.game.settings.voice && RB.game.settings.voice.rate) || 1),
-      al: S().align(tokens, en, { lookup: look, name }),
+      al: alignFor(tokens, line, ctx),
       shown: null, events: false, t0: 0, raf: 0, timer: 0, follow: null,
     };
     cur = st;
@@ -80,12 +90,13 @@ RB.ui.speechMark = (function () {
       if (i == null) return;
       const line = box.querySelector(LINE);
       if (line) line.querySelectorAll('.jt[data-i="' + i + '"]').forEach((e) => e.classList.add('spk'));
-      const ws = st.al.map[i] || [];
-      if (ws.length) {
+      // the spoken word's relations: its meaning's English strongly (.spk), what its grammar says lighter (.spk2)
+      const rs = (st.al.rels || []).filter((r) => r.jp.includes(i));
+      if (rs.length) {
         const enEl = box.querySelector('.main .enline, .sub .enline');
         if (enEl) {
           wrapEnglish(enEl);
-          for (const k of ws) { const w = enEl.querySelector('.ew[data-w="' + k + '"]'); if (w) w.classList.add('spk'); }
+          for (const r of rs) for (const k of r.en) { const w = enEl.querySelector('.ew[data-w="' + k + '"]'); if (w) w.classList.add(r.tier === 'word' ? 'spk' : 'spk2'); }
         }
       }
     };
@@ -137,7 +148,7 @@ RB.ui.speechMark = (function () {
   // counterpart where applicable if the Highlight setting is On"): a Japanese word under the pointer (or focused) marks
   // the English words that render it, and an English word marks its Japanese word; nothing where there is no pair
   // (particles, endings, words the English does not name). The same pairs as the spoken mark; only classes change.
-  let hov = null; // { src, al, back: { englishIndex: tokenIndex } }
+  let hov = null; // { src, box, al, byTok: { tokenIndex: [relation] }, byWord: { englishIndex: [relation] } }
   function pairsFor(box) {
     const jl = box.querySelector(LINE_SEL);
     if (!jl || !S() || !RB.ui.help || !RB.ui.help.tokensOf) return null;
@@ -146,14 +157,14 @@ RB.ui.speechMark = (function () {
     const tokens = RB.ui.help.tokensOf(src);
     const line = RB.ui.dialogue && RB.ui.dialogue.shown ? RB.ui.dialogue.shown() : null;
     if (!tokens || !line) return null;
-    const ctx = RB.ui.help.ctxOf ? RB.ui.help.ctxOf(src) : null;
-    const en = RB.game.s && RB.script.enVars ? RB.script.enVars(line.en || '') : line.en || '';
-    const look = ctx && ctx.dia && RB.dialect ? (t, i) => RB.dialect.lookupIn(tokens, i) || RB.jp.lookup(t) : null;
-    const al = S().align(tokens, en, { lookup: look, name: RB.game.s && RB.game.s.player ? RB.game.s.player.name : null });
-    const back = {}, gback = {};
-    al.map.forEach((ws, i) => (ws || []).forEach((k) => { back[k] = i; }));
-    (al.gmap || []).forEach((ws, i) => (ws || []).forEach((k) => { gback[k] = i; }));
-    hov = { src, box, al, back, gback };
+    const al = alignFor(tokens, line, RB.ui.help.ctxOf ? RB.ui.help.ctxOf(src) : null);
+    // every relation each word belongs to, on both sides (an English word may be in two: "I'm" for 私 and です)
+    const byTok = {}, byWord = {};
+    for (const r of al.rels || []) {
+      for (const i of r.jp) (byTok[i] || (byTok[i] = [])).push(r);
+      for (const k of r.en) (byWord[k] || (byWord[k] = [])).push(r);
+    }
+    hov = { src, box, al, byTok, byWord, tokens };
     return hov;
   }
   const LINE_SEL = '.main .jline[data-src], .sub .jline[data-src]';
@@ -167,27 +178,46 @@ RB.ui.speechMark = (function () {
     if (!p) return;
     hovClear(box);
     const enEl = box.querySelector('.main .enline, .sub .enline');
+    const jl = box.querySelector(LINE_SEL);
+    if (!enEl || !jl) return;
+    // mark relations: every Japanese and English word in each, in its colour (a word in both kinds shows its meaning's)
+    const markAll = (rs) => {
+      wrapEnglish(enEl);
+      const cls = (r) => (r.tier === 'word' ? 'hov' : 'hov2');
+      const put = (el, c) => { if (el && !(c === 'hov2' && el.classList.contains('hov'))) { if (c === 'hov') el.classList.remove('hov2'); el.classList.add(c); } };
+      for (const r of rs.filter((x) => x.tier !== 'word').concat(rs.filter((x) => x.tier === 'word'))) {
+        for (const k of r.en) put(enEl.querySelector('.ew[data-w="' + k + '"]'), cls(r));
+        for (const i of r.jp) jl.querySelectorAll('.jt[data-i="' + i + '"]').forEach((e) => put(e, cls(r)));
+      }
+    };
     const jt = target.closest('.jline[data-src] .jt[data-i]');
     if (jt && jt.closest(LINE_SEL)) {
-      const i = +jt.dataset.i, ws = p.al.map[i] || [], gs = (p.al.gmap || [])[i] || [];
-      if ((!ws.length && !gs.length) || !enEl) return;
-      wrapEnglish(enEl);
-      jt.classList.add(ws.length ? 'hov' : 'hov2');
-      const mark = (k, cls) => { const w = enEl.querySelector('.ew[data-w="' + k + '"]'); if (w) w.classList.add(cls); };
-      for (const k of ws) mark(k, 'hov');
-      for (const k of gs) mark(k, 'hov2');
+      const rs = p.byTok[+jt.dataset.i] || [];
+      if (rs.length) markAll(rs);
       return;
     }
     const ew = target.closest('.ew[data-w]');
-    if (ew && enEl && enEl.contains(ew)) {
-      const k = +ew.dataset.w;
-      let i = p.back[k], cls = 'hov';
-      if (i == null) { i = p.gback[k]; cls = 'hov2'; }
-      if (i == null) return;
-      ew.classList.add(cls);
-      const jl = box.querySelector(LINE_SEL);
-      if (jl) jl.querySelectorAll('.jt[data-i="' + i + '"]').forEach((e) => e.classList.add(cls));
+    if (ew && enEl.contains(ew)) {
+      const rs = p.byWord[+ew.dataset.w] || [];
+      if (rs.length) markAll(rs);
     }
+  }
+  // what a word does in its line, for word help (AG-1): the construction or relation it is part of, what its grammar
+  // does when the English has no word for it, or that its role was not worked out. Null outside a dialogue line.
+  function explain(el, i) {
+    const box = el && el.closest && el.closest('.dlg');
+    if (!box || !el.closest(LINE_SEL)) return null;
+    const p = pairsFor(box);
+    if (!p) return null;
+    const out = [];
+    const words = (r) => r.en.map((k) => p.al.words[k].text).join(' ');
+    for (const r of p.byTok[i] || []) {
+      if (!r.label) continue;
+      const others = r.jp.filter((x) => x !== i).map((x) => (p.tokens[x] ? p.tokens[x].surface : '')).filter(Boolean);
+      out.push({ kind: 'relation', text: r.label + (others.length ? ', with ' + others.join(' ') : '') + '. Here: "' + words(r) + '".' });
+    }
+    for (const n of (p.al.notes || [])[i] || []) out.push({ kind: n.kind, text: n.text });
+    return out.length ? out : null;
   }
   if (typeof document !== 'undefined') {
     document.addEventListener('pointerover', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg')) hovAt(e.target); });
@@ -197,5 +227,5 @@ RB.ui.speechMark = (function () {
     // the English words become pointable as soon as a line shows (wrapped in spans the same way the spoken mark does)
     document.addEventListener('pointerenter', (e) => { const en = e.target && e.target.closest && e.target.closest('.dlg .main .enline, .dlg .sub .enline'); if (en && on()) wrapEnglish(en); }, true);
   }
-  return { begin, stop, active: () => !!cur, wrapEnglish, pairsFor };
+  return { begin, stop, active: () => !!cur, wrapEnglish, pairsFor, explain };
 })();

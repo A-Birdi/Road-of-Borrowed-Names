@@ -4491,6 +4491,59 @@ Checks on the built index.html (headless Chromium, Linux), 2026-10-16.
     they plainly stand for.
   - Not checked by a native speaker or by Astra.
 
+## AG-1 — the dialogue highlight's grammar (Robin's review packet, 2026-10-16)
+
+The full record is [docs/review/align/AG1_REVIEW.md](docs/review/align/AG1_REVIEW.md): what changed, the tests, the
+reviewed real lines and what remains. Robin's packet was `RBN_Word_Highlight_Review_AG1`: a report, 34 examples, a
+candidate patch and a harness, pinned to `fb85958`, which was this branch's HEAD. Its vendored core files are identical
+to `src/` by git blob.
+
+- **U, the packet's harness on this repository's aligner:** 26/26 safety cases, 8/8 open requirements; `--require-all`
+  exits 0; the timing comparison is unchanged. Before: 15/34.
+- **U `speech_align_ag1` 56/56:** the packet's 34 cases on the whole game's dictionary, plus 22 positive and negative
+  controls beside the six open requirements.
+- **U `speech_align` 25/0:** the exclusivity check was replaced, as the packet advised, by "no English part claimed
+  twice; a shared word always has parts". Both hold over all 8,417 spoken lines.
+- **U `align_registry` 9/0:**
+  - the five reviewed alignments are each used on their own line;
+  - another player name still matches;
+  - a changed line, another dialect, or `authored: false` falls back to the rules.
+- **U, the whole suite on the AG-1 build: 54,289 passed, 0 failed.**
+- **B `speech_relations` (new), all pass:**
+  - "I'm" marks 私 (amber) and です (blue);
+  - ならない marks 行かなければ and "must", not "go";
+  - word help explains は (topic) and ならない (part of the obligation);
+  - while 行かない is spoken, "go" is `.spk` and "won't" is `.spk2`;
+  - with Highlight off, nothing is marked.
+- **B `ledger_li`, `speech_mark`, `dialect_kansai`:** pass.
+- **R, real lines (developer's judgement; not a native speaker, not a test):**
+  - `tools/review/align_compare.mjs` over 13,931 lines.
+  - Held-out sample, seed 27182: 55 better, 6 worse, 19 unclear of 80 changed words.
+  - An earlier held-out sample, seed 31415: 66/11/24 of 101, before the two fixes it found.
+  - Sheets: `docs/review/align/HELDOUT_*.md`.
+- **Not checked:** Firefox or a real device, or a real Japanese voice.
+
+## ST-2 — the new journey's learning step in the Settings book's look (Robin, 2026-10-16)
+
+Robin: "The new game learning check should use icons, same as the settings menu. It retains the settings' previous
+layout with radio buttons and basic button layout." Step 4 of the creation wizard ("How would you like to learn?") now
+uses the Settings book's look, with the same keys, values and wizard logic:
+- headed choices, each with its sentence;
+- circled options with their drawn icons (the seedling-to-tree levels; new kana tiles for "Kana so far");
+- section headings;
+- the optional placement as a pencilled slip.
+
+The Settings choice styles now apply under `.sx-scope` as well as `.folio-settings` (`src/styles/92_settings.css`), and
+`RB.ui.settings.choice()` gives the markup.
+
+- **B `create` 383/0.** The first run was 379/4:
+  - the kana field had lost its `data-group`;
+  - long kana labels ran past a 320–390 px phone at 200% text.
+
+  Both were fixed (the attribute, shorter labels, wrapping inside the circle).
+- **B `settings_review`, `title_ledger` 18/0:** pass.
+- **R:** captures of the step at 1280×800, top and lower half.
+
 ## ST-1 — Settings laid out like the Ledger, and the settings reviewed when a journey begins (Robin, 2026-10-15)
 
 Checks on the built index.html (headless Chromium, Linux), 2026-10-15 and 16.

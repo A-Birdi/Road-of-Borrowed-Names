@@ -883,6 +883,26 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - The "My Learning", "Reference" line was not cut off by mistake: Robin meant LI-13. Nothing here has been seen or
     heard by a person; captures only. The grammar pairs are not checked by a native speaker.
   - Reduced motion is respected throughout (B `ledger_li`).
+- [x] XP125 AG-1, the dialogue highlight's grammar (Robin's review packet, 2026-10-16).
+  - Records: VALIDATION.md "AG-1"; docs/review/align/AG1_REVIEW.md.
+  - Reconciled: the packet's candidate fixes are kept, and its six open requirements are implemented:
+    - English word parts shared part by part (私+です → "I'm", 私+の → "my");
+    - noun + verb as one English word (雨が降る → "rains");
+    - several endings on one word (食べたくない → "want" + "not");
+    - obligation, no obligation, しか…ない;
+    - constructions recognised before their endings.
+  - Every word is linked, explained (word help's "In this line"), or "Not worked out"; no blank is filled with an
+    arbitrary English word.
+  - Hover and the spoken mark read the same relations.
+  - Reviewed alignments are keyed to the displayed pair, with the rules as fallback.
+  - Evidence:
+    - U: the packet's harness 34/34, `speech_align_ag1` 56/56, `speech_align`, `align_registry`;
+    - B: `speech_relations`, `ledger_li`, `speech_mark`, `dialect_kansai`;
+    - R: held-out real-line samples.
+  - Open: there is no native-speaker review. Unresolved patterns are listed in AG1_REVIEW.md, and the reviewed
+    alignments cover five lines.
+- [x] XP126 ST-2: the new journey's learning step uses the Settings book's circled choices, drawn icons and on-page
+  slip (Robin, 2026-10-16). VALIDATION.md "ST-2". B `create` 383/0, `settings_review`, `title_ledger`.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

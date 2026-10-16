@@ -870,5 +870,5 @@ RB.jp.speech = (function () {
     }
     return out;
   }
-  return { offsets, tokenAt, timeline, enWords, align, stem, beats, parts, key, authored, collisions, NOTE };
+  return { offsets, tokenAt, timeline, enWords, align, stem, beats, parts, key, authored, authoredEntries: () => [...AUTH.values()], collisions, NOTE };
 })();

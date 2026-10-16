@@ -441,6 +441,16 @@
         (keigo verbs), `NOT_SAID` (no English) and `IRR` (English irregulars, contractions and pronoun cases).
       - Coverage: `node tools/review/align_coverage.mjs [--samples N] [--grep re]`.
       - Astra could review the `GRAM` mappings.
+    - **AG-1 (Robin's review packet, 2026-10-16):**
+      - The pairs are relations (`align()` → `rels`, `notes`, `status`).
+      - English words have parts, each claimed once.
+      - Constructions are recognised before their endings.
+      - Every word is linked, gets a grammar note (word help's "In this line"), or is marked unresolved.
+      - Hover and the spoken mark (`.spk2` for grammar) share the relations.
+      - Reviewed alignments live in `src/content/align/`. Propose and check them with
+        `tools/review/align_registry.mjs`; compare old and new aligners with `tools/review/align_compare.mjs`.
+      - Record: `docs/review/align/AG1_REVIEW.md`.
+    - **ST-2:** the creation wizard's learning step uses the Settings choices (`RB.ui.settings.choice`, `.sx-scope`).
     - Satchel detail icons have no dish (LI-10). The icon viewer is `index.html?dev=items` (LI-11,
       `src/ui/11z_items_dev.js`; `&all` shows every place). The Words section headers are headings (LI-13,
       `.index-sec`).

@@ -166,6 +166,10 @@ RB.ui.settings = (function () {
     // which language leads: a letter and a kana on paper tiles
     en: '<rect class="tile" x="4" y="4" width="24" height="24" rx="3"/><text class="tx" x="16" y="23.2" text-anchor="middle">A</text>',
     ja: '<rect class="tile" x="4" y="4" width="24" height="24" rx="3"/><text class="tx jp" x="16" y="22.8" text-anchor="middle">あ</text>',
+    // kana known so far (the creation step): none yet, hiragana, hiragana and katakana
+    kana0: '<rect class="tile" x="4" y="4" width="24" height="24" rx="3" stroke-dasharray="2.5 2.5"/><path class="ln-g" d="M16 22v-5"/><path class="c-g" d="M16 18c-3.6.2-5.2-1.6-5.4-4.1 3-.1 5.2 1 5.4 4.1z"/>',
+    kanaH: '<rect class="tile" x="4" y="4" width="24" height="24" rx="3"/><text class="tx jp" x="16" y="22.8" text-anchor="middle">あ</text>',
+    kanaHK: '<rect class="tile" x="2" y="2" width="19" height="19" rx="2.5"/><text class="tx jp" x="11.5" y="17.2" text-anchor="middle" font-size="13">あ</text><rect class="tile" x="11" y="11" width="19" height="19" rx="2.5"/><text class="tx jp" x="20.5" y="26.2" text-anchor="middle" font-size="13">ア</text>',
     // the second language: in view, under a tap, out of view
     shown: '<path class="ln" d="M3.5 16c3.4-5.6 7.5-8.5 12.5-8.5s9.1 2.9 12.5 8.5c-3.4 5.6-7.5 8.5-12.5 8.5S6.9 21.6 3.5 16z"/><circle class="c-b" cx="16" cy="16" r="4.2"/>',
     tap: '<path class="ln" d="M13 27v-9.5a2 2 0 0 1 4 0V22l5.2.9a2.8 2.8 0 0 1 2.3 3.1L24 29"/><path class="ln" d="M15 13.6v-5.6a2 2 0 0 1 4 0v8"/><circle class="c-a" cx="17" cy="6.5" r="1.4"/><path class="ln" d="M10 9.5a7 7 0 0 1 14 0" stroke-dasharray="1.6 2.4"/>',
@@ -219,6 +223,19 @@ RB.ui.settings = (function () {
       '<div class="opts sx-opts' + (stack ? ' stack' : '') + '">' + opts.map(([v, l, x]) => {
         x = x || {};
         return '<label class="opt sx-opt"><input type="radio" name="' + name + '" data-set="' + esc(key) + '" data-obj="' + (obj || 'st') + '" value="' + esc(String(v)) + '"' + (String(cur) === String(v) ? ' checked' : '') + '>' +
+          '<span class="sx-face"><span class="sx-mark">' + icon(x.i) + '<span class="sx-w">' + (x.jp ? '<span class="sx-jp">' + ruby(x.jp) + '</span>' : '') + '<span class="sx-en">' + esc(l) + '</span></span>' + RING + '</span>' +
+          (x.d ? '<span class="sx-d">' + esc(x.d) + '</span>' : '') + '</span></label>';
+      }).join('') + '</div></fieldset>';
+  }
+  // ST-2: the same circled choices for a page that keeps its own state (the creation step): each input carries the
+  // caller's attributes (attr="key" data-v="value"); the caller marks the checked one
+  function choice(key, attr, label, opts, hint) {
+    const name = 'c' + (++uid) + key;
+    const stack = opts.some((o) => o[2] && o[2].d);
+    return '<fieldset class="field sx-field" data-field="' + esc(key) + '" data-group="' + esc(key) + '"><legend class="sx-h">' + esc(label) + '</legend>' + why(hint) +
+      '<div class="opts sx-opts' + (stack ? ' stack' : '') + '">' + opts.map(([v, l, x]) => {
+        x = x || {};
+        return '<label class="opt sx-opt"><input type="radio" name="' + name + '" ' + attr + '="' + esc(key) + '" data-v="' + esc(String(v)) + '">' +
           '<span class="sx-face"><span class="sx-mark">' + icon(x.i) + '<span class="sx-w">' + (x.jp ? '<span class="sx-jp">' + ruby(x.jp) + '</span>' : '') + '<span class="sx-en">' + esc(l) + '</span></span>' + RING + '</span>' +
           (x.d ? '<span class="sx-d">' + esc(x.d) + '</span>' : '') + '</span></label>';
       }).join('') + '</div></fieldset>';
@@ -779,7 +796,7 @@ RB.ui.settings = (function () {
   }
 
   return {
-    open, close, addRows, review, isOpen: () => !!lay, openBattle, battleReady, inBattle: () => !!(lay && battle()),
+    open, close, addRows, review, choice, isOpen: () => !!lay, openBattle, battleReady, inBattle: () => !!(lay && battle()),
     reviewing: () => !!(lay && mode === 'review'), tab: show_, suzuRow, current: () => (lay ? group : null), TABS, BATTLE_TABS,
   };
 })();

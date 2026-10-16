@@ -14,15 +14,15 @@
   .folio-settings.folio-bset.book .tabslot { padding-right: 260px; }
 }
 .folio-settings .folio-foot { align-items: center; }
-.folio-settings .sx-foot { flex: 1 1 16em; margin: 0; display: flex; align-items: center; gap: 0.45em; color: var(--on-cloth-2); font-size: 0.9em; }
-.folio-settings .sx-foot svg { width: 1.2em; height: 1.2em; flex: none; }
+:is(.folio-settings, .sx-scope) .sx-foot { flex: 1 1 16em; margin: 0; display: flex; align-items: center; gap: 0.45em; color: var(--on-cloth-2); font-size: 0.9em; }
+:is(.folio-settings, .sx-scope) .sx-foot svg { width: 1.2em; height: 1.2em; flex: none; }
 .folio-settings .folio-foot .cbtn.sx-go, .folio-settings.book .folio-foot .cbtn.sx-go {
   background: var(--ribbon); color: #1d1406; border: 1px solid var(--ribbon-deep); box-shadow: 0 2px 0 var(--ribbon-deep);
   font-weight: 700; padding: 0 1.4em; letter-spacing: 0.02em;
 }
 .folio-settings .folio-foot .cbtn.sx-go:hover { background: #d29a36; }
 @media (max-width: 599px) {
-  .folio-settings .sx-foot { flex-basis: 100%; }
+  :is(.folio-settings, .sx-scope) .sx-foot { flex-basis: 100%; }
   /* six tabs in one row on a phone, as the Ledger's five are (a larger text size scrolls the rail instead) */
   .folio-settings.book .ptab { font-size: 0.74em; padding: 6px 0.1em 7px; }
   .folio-settings.book .ptab + .ptab { margin-left: 1px; }
@@ -31,92 +31,92 @@
 /* ---- the page: sections, headings, sentences ------------------------------------------------------------------- */
 .folio-settings .leaf > .sx-sec { border-bottom: 1px solid var(--rule); padding-bottom: 0.25em; margin-top: 1.9em; }
 .folio-settings .leaf > .bk-runhead + .sx-sec, .folio-settings .leaf > .sx-sec:first-child { margin-top: 0.4em; }
-.folio-settings .sx-field { margin: 0.95em 0 1.35em; }
-.folio-settings .sx-field:last-child { margin-bottom: 0.6em; }
+:is(.folio-settings, .sx-scope) .sx-field { margin: 0.95em 0 1.35em; }
+:is(.folio-settings, .sx-scope) .sx-field:last-child { margin-bottom: 0.6em; }
 /* every setting's name reads as a heading */
-.folio-settings .sx-h, .folio-settings fieldset.sx-field > legend.sx-h, .folio-settings .sx-field > .lab.sx-h {
+:is(.folio-settings, .sx-scope) .sx-h, :is(.folio-settings, .sx-scope) fieldset.sx-field > legend.sx-h, :is(.folio-settings, .sx-scope) .sx-field > .lab.sx-h {
   display: block; margin: 0 0 0.15em; padding: 0;
   font-family: var(--type-latin-display); font-size: 1.16em; font-weight: 600; letter-spacing: 0.01em; line-height: 1.3; color: var(--ink);
 }
 /* and the sentence under it says what it does */
-.folio-settings .sx-why, .folio-settings .sx-field .hint.sx-why {
+:is(.folio-settings, .sx-scope) .sx-why, :is(.folio-settings, .sx-scope) .sx-field .hint.sx-why {
   margin: 0.1em 0 0.6em; max-width: 62ch; color: var(--ink-2); font-size: 0.97em; line-height: 1.5; font-family: var(--type-latin-reading);
 }
-.folio-settings .sx-note { margin: 1.2em 0 0.4em; }
-.folio-settings .sx-lede { font-size: 1.05em; line-height: 1.55; color: var(--ink-2); margin: 0 0 1em; max-width: 62ch; }
+:is(.folio-settings, .sx-scope) .sx-note { margin: 1.2em 0 0.4em; }
+:is(.folio-settings, .sx-scope) .sx-lede { font-size: 1.05em; line-height: 1.55; color: var(--ink-2); margin: 0 0 1em; max-width: 62ch; }
 /* this journey's own choices: the ribbon's edge, not a box */
-.folio-settings .campaign-box.sx-journey { border: 0; border-left: 3px solid var(--ribbon); background: rgba(193, 138, 42, 0.06); padding: 0.45em 0.2em 0.1em 1em; margin: 0.5em 0 1.2em; }
-.folio-settings .sx-journey > .kind { display: flex; align-items: center; gap: 0.4em; font-variant: small-caps; text-transform: none; letter-spacing: 0.06em; font-size: 0.92em; color: var(--ink-3); }
-.folio-settings .sx-journey > .kind svg { width: 1.15em; height: 1.15em; }
-.folio-settings .sx-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4em 0.8em; }
-.folio-settings .sx-row .lab { font-weight: 600; }
-.folio-settings .sx-row select { flex: 1 1 14em; }
+:is(.folio-settings, .sx-scope) .campaign-box.sx-journey { border: 0; border-left: 3px solid var(--ribbon); background: rgba(193, 138, 42, 0.06); padding: 0.45em 0.2em 0.1em 1em; margin: 0.5em 0 1.2em; }
+:is(.folio-settings, .sx-scope) .sx-journey > .kind { display: flex; align-items: center; gap: 0.4em; font-variant: small-caps; text-transform: none; letter-spacing: 0.06em; font-size: 0.92em; color: var(--ink-3); }
+:is(.folio-settings, .sx-scope) .sx-journey > .kind svg { width: 1.15em; height: 1.15em; }
+:is(.folio-settings, .sx-scope) .sx-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4em 0.8em; }
+:is(.folio-settings, .sx-scope) .sx-row .lab { font-weight: 600; }
+:is(.folio-settings, .sx-scope) .sx-row select { flex: 1 1 14em; }
 
 /* ---- a choice, circled in ink --------------------------------------------------------------------------------- */
-.folio-settings .sx-opts { display: flex; flex-wrap: wrap; gap: 0.3em 0.7em; align-items: stretch; }
-.folio-settings .sx-opt { position: relative; display: inline-flex; max-width: 100%; }
-.folio-settings .sx-opt > input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
+:is(.folio-settings, .sx-scope) .sx-opts { display: flex; flex-wrap: wrap; gap: 0.3em 0.7em; align-items: stretch; }
+:is(.folio-settings, .sx-scope) .sx-opt { position: relative; display: inline-flex; max-width: 100%; }
+:is(.folio-settings, .sx-scope) .sx-opt > input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
 /* (the base folio's pill buttons, undone for the marks below) */
-.folio-settings .opt.sx-opt span { display: revert; min-height: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
-.folio-settings .opt.sx-opt span::before { content: none; }
-.folio-settings .opt.sx-opt > .sx-face { display: flex; flex-direction: column; justify-content: center; gap: 0.1em; min-height: var(--tap); padding: 0.2em 0.6em; border-radius: 4px; font-weight: 400; }
-.folio-settings .opt.sx-opt .sx-mark { position: relative; display: inline-flex; align-items: center; gap: 0.55em; padding: 0.4em 1em; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt span { display: revert; min-height: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt span::before { content: none; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt > .sx-face { display: flex; flex-direction: column; justify-content: center; gap: 0.1em; min-height: var(--tap); padding: 0.2em 0.6em; border-radius: 4px; font-weight: 400; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-mark { position: relative; display: inline-flex; align-items: center; gap: 0.55em; padding: 0.4em 1em; }
 /* the English word, then its Japanese name in a lighter ink */
-.folio-settings .opt.sx-opt .sx-w { display: inline-flex; flex-direction: row-reverse; flex-wrap: wrap; align-items: baseline; gap: 0 0.45em; line-height: 1.25; }
-.folio-settings .opt.sx-opt .sx-en { font-family: var(--type-ui); font-weight: 600; color: var(--ink-2); }
-.folio-settings .opt.sx-opt .sx-jp { font-family: var(--type-jp-body); font-size: 0.95em; color: var(--ink-2); line-height: 1.7; }
-.folio-settings .opt.sx-opt .sx-jp rt { font-size: 0.55em; color: var(--rt-ink); }
-.folio-settings .opt.sx-opt .sx-d { font-family: var(--type-latin-reading); font-size: 0.93em; line-height: 1.4; color: var(--ink-2); }
-.folio-settings .sx-ring {
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-w { display: inline-flex; flex-direction: row-reverse; flex-wrap: wrap; align-items: baseline; gap: 0 0.45em; line-height: 1.25; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-en { font-family: var(--type-ui); font-weight: 600; color: var(--ink-2); }
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-jp { font-family: var(--type-jp-body); font-size: 0.95em; color: var(--ink-2); line-height: 1.7; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-jp rt { font-size: 0.55em; color: var(--rt-ink); }
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-d { font-family: var(--type-latin-reading); font-size: 0.93em; line-height: 1.4; color: var(--ink-2); }
+:is(.folio-settings, .sx-scope) .sx-ring {
   position: absolute; left: -0.3em; top: -3px; width: calc(100% + 0.6em); height: calc(100% + 6px); overflow: visible;
   fill: none; stroke: var(--ink); stroke-width: 2.2px; stroke-linecap: round; vector-effect: non-scaling-stroke; pointer-events: none; opacity: 0;
 }
-.folio-settings .sx-ring path { vector-effect: non-scaling-stroke; }
-.folio-settings .sx-opt > input:checked + .sx-face .sx-ring { opacity: 1; }
-.folio-settings .sx-opt > input:checked + .sx-face .sx-en, .folio-settings .sx-opt > input:checked + .sx-face .sx-jp { color: var(--ink); }
-.folio-settings .sx-opt > input:checked + .sx-face .sx-en { font-weight: 700; }
+:is(.folio-settings, .sx-scope) .sx-ring path { vector-effect: non-scaling-stroke; }
+:is(.folio-settings, .sx-scope) .sx-opt > input:checked + .sx-face .sx-ring { opacity: 1; }
+:is(.folio-settings, .sx-scope) .sx-opt > input:checked + .sx-face .sx-en, :is(.folio-settings, .sx-scope) .sx-opt > input:checked + .sx-face .sx-jp { color: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-opt > input:checked + .sx-face .sx-en { font-weight: 700; }
 /* the others: a faint pencilled loop, so the choices read as choices; darker where the pointer rests */
-.folio-settings .sx-opt > input:not(:checked) + .sx-face .sx-ring { opacity: 0.32; stroke: var(--ink-3); stroke-width: 1.2px; stroke-dasharray: 2.5 4.5; }
-.folio-settings .sx-opt:hover > input:not(:checked) + .sx-face .sx-ring { opacity: 0.7; }
-.folio-settings .sx-opt:hover > input:not(:checked) + .sx-face .sx-en { color: var(--ink); }
-.folio-settings .sx-opt > input:focus-visible + .sx-face { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+:is(.folio-settings, .sx-scope) .sx-opt > input:not(:checked) + .sx-face .sx-ring { opacity: 0.32; stroke: var(--ink-3); stroke-width: 1.2px; stroke-dasharray: 2.5 4.5; }
+:is(.folio-settings, .sx-scope) .sx-opt:hover > input:not(:checked) + .sx-face .sx-ring { opacity: 0.7; }
+:is(.folio-settings, .sx-scope) .sx-opt:hover > input:not(:checked) + .sx-face .sx-en { color: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-opt > input:focus-visible + .sx-face { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
 /* the one just chosen: the loop is drawn round it (only that one; the page is drawn afresh after each change) */
-.folio-settings .sx-opt.fresh > input:checked + .sx-face .sx-ring { animation: sx-draw 300ms var(--ease) both; }
+:is(.folio-settings, .sx-scope) .sx-opt.fresh > input:checked + .sx-face .sx-ring { animation: sx-draw 300ms var(--ease) both; }
 @keyframes sx-draw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 /* options with a line under them: one per row, the line beside the mark (under it on a narrow page) */
-.folio-settings .sx-opts.stack { flex-direction: column; flex-wrap: nowrap; gap: 0.1em; }
-.folio-settings .sx-opts.stack .sx-opt { display: flex; }
-.folio-settings .sx-opts.stack .opt.sx-opt > .sx-face { display: grid; grid-template-columns: 11.5em minmax(0, 1fr); align-items: center; column-gap: 0.7em; width: 100%; }
-.folio-settings .sx-opts.stack .sx-mark { justify-self: start; }
+:is(.folio-settings, .sx-scope) .sx-opts.stack { flex-direction: column; flex-wrap: nowrap; gap: 0.1em; }
+:is(.folio-settings, .sx-scope) .sx-opts.stack .sx-opt { display: flex; }
+:is(.folio-settings, .sx-scope) .sx-opts.stack .opt.sx-opt > .sx-face { display: grid; grid-template-columns: 11.5em minmax(0, 1fr); align-items: center; column-gap: 0.7em; width: 100%; }
+:is(.folio-settings, .sx-scope) .sx-opts.stack .sx-mark { justify-self: start; }
 @container (max-width: 430px) {
-  .folio-settings .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: minmax(0, 1fr); }
-  .folio-settings .sx-opts.stack .sx-d { padding: 0 0 0.2em 1em; }
+  :is(.folio-settings, .sx-scope) .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: minmax(0, 1fr); }
+  :is(.folio-settings, .sx-scope) .sx-opts.stack .sx-d { padding: 0 0 0.2em 1em; }
 }
 
 /* the option icons (drawn in src/ui/55_settings.js): a few of the book's inks */
-.folio-settings .sx-ic { --oi-r: var(--vermilion); --oi-b: var(--river); --oi-b2: #2a4a75; --oi-g: #3f7b40; --oi-g2: #2c5f30; --oi-a: var(--ribbon); width: 2em; height: 2em; flex: none; overflow: visible; }
-.folio-settings .sx-opt > input:not(:checked) + .sx-face .sx-ic { opacity: 0.78; }
-.folio-settings .sx-ic .c-r { fill: var(--oi-r); }
-.folio-settings .sx-ic .c-b { fill: var(--oi-b); }
-.folio-settings .sx-ic .c-b2 { fill: var(--oi-b2); }
-.folio-settings .sx-ic .c-g { fill: var(--oi-g); }
-.folio-settings .sx-ic .c-g2 { fill: var(--oi-g2); }
-.folio-settings .sx-ic .c-a { fill: var(--oi-a); }
-.folio-settings .sx-ic .c-ink { fill: var(--ink-2); }
-.folio-settings .sx-ic .st { fill: none; stroke: var(--ink-3); stroke-width: 1; opacity: 0.7; }
-.folio-settings .sx-ic .gl { fill: #fff; opacity: 0.55; }
-.folio-settings .sx-ic .tile { fill: var(--paper-2); stroke: var(--ink-2); stroke-width: 1.3; }
-.folio-settings .sx-ic .tx { fill: var(--ink); font-family: var(--type-latin-display); font-weight: 700; font-size: 17px; }
-.folio-settings .sx-ic .tx.jp { font-family: var(--type-jp-body); font-size: 16px; font-weight: 700; }
-.folio-settings .sx-ic .ln { fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.folio-settings .sx-ic .ln-r { fill: none; stroke: var(--oi-r); stroke-width: 2.4; stroke-linecap: round; }
-.folio-settings .sx-ic .ln-g { fill: none; stroke: var(--oi-g2); stroke-width: 2; stroke-linecap: round; }
-.folio-settings .sx-ic .soil { fill: none; stroke: #7a5a32; stroke-width: 2; stroke-linecap: round; }
-.folio-settings .sx-ic .trunk { fill: #7a5a32; }
-.folio-settings .sx-ic .tk-w { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.folio-settings .sx-ic .ring-in { fill: none; stroke: #fff; stroke-width: 1.2; opacity: 0.7; }
-.folio-settings .sx-ic .dia { fill: #fff; opacity: 0.55; }
-.folio-settings .sx-ic .pg { fill: none; stroke: #fff; stroke-width: 1; opacity: 0.6; }
+:is(.folio-settings, .sx-scope) .sx-ic { --oi-r: var(--vermilion); --oi-b: var(--river); --oi-b2: #2a4a75; --oi-g: #3f7b40; --oi-g2: #2c5f30; --oi-a: var(--ribbon); width: 2em; height: 2em; flex: none; overflow: visible; }
+:is(.folio-settings, .sx-scope) .sx-opt > input:not(:checked) + .sx-face .sx-ic { opacity: 0.78; }
+:is(.folio-settings, .sx-scope) .sx-ic .c-r { fill: var(--oi-r); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-b { fill: var(--oi-b); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-b2 { fill: var(--oi-b2); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-g { fill: var(--oi-g); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-g2 { fill: var(--oi-g2); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-a { fill: var(--oi-a); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-ink { fill: var(--ink-2); }
+:is(.folio-settings, .sx-scope) .sx-ic .st { fill: none; stroke: var(--ink-3); stroke-width: 1; opacity: 0.7; }
+:is(.folio-settings, .sx-scope) .sx-ic .gl { fill: #fff; opacity: 0.55; }
+:is(.folio-settings, .sx-scope) .sx-ic .tile { fill: var(--paper-2); stroke: var(--ink-2); stroke-width: 1.3; }
+:is(.folio-settings, .sx-scope) .sx-ic .tx { fill: var(--ink); font-family: var(--type-latin-display); font-weight: 700; font-size: 17px; }
+:is(.folio-settings, .sx-scope) .sx-ic .tx.jp { font-family: var(--type-jp-body); font-size: 16px; font-weight: 700; }
+:is(.folio-settings, .sx-scope) .sx-ic .ln { fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+:is(.folio-settings, .sx-scope) .sx-ic .ln-r { fill: none; stroke: var(--oi-r); stroke-width: 2.4; stroke-linecap: round; }
+:is(.folio-settings, .sx-scope) .sx-ic .ln-g { fill: none; stroke: var(--oi-g2); stroke-width: 2; stroke-linecap: round; }
+:is(.folio-settings, .sx-scope) .sx-ic .soil { fill: none; stroke: #7a5a32; stroke-width: 2; stroke-linecap: round; }
+:is(.folio-settings, .sx-scope) .sx-ic .trunk { fill: #7a5a32; }
+:is(.folio-settings, .sx-scope) .sx-ic .tk-w { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+:is(.folio-settings, .sx-scope) .sx-ic .ring-in { fill: none; stroke: #fff; stroke-width: 1.2; opacity: 0.7; }
+:is(.folio-settings, .sx-scope) .sx-ic .dia { fill: #fff; opacity: 0.55; }
+:is(.folio-settings, .sx-scope) .sx-ic .pg { fill: none; stroke: #fff; stroke-width: 1; opacity: 0.6; }
 
 /* ---- on or off: a pencilled box and an ink tick ----------------------------------------------------------------- */
 .folio-settings .switch.sx-tick { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.75em; min-height: var(--tap); cursor: pointer; }
@@ -125,26 +125,26 @@
   -webkit-appearance: none; appearance: none; background: none; border: 0; border-radius: 0;
 }
 .folio-settings .switch.sx-tick > input::after { content: none; }
-.folio-settings .sx-box { display: block; line-height: 0; }
-.folio-settings .sx-box svg { width: 1.75em; height: 1.75em; overflow: visible; }
-.folio-settings .sx-box .bx { fill: rgba(255, 252, 242, 0.55); stroke: var(--ink-2); stroke-width: 1.5; }
-.folio-settings .sx-box .tk { fill: none; stroke: var(--ink); stroke-width: 2.9; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
-.folio-settings .sx-tick > input:checked ~ .sx-box .tk { opacity: 1; }
-.folio-settings .sx-tick.fresh > input:checked ~ .sx-box .tk { animation: sx-draw 240ms var(--ease) both; }
-.folio-settings .sx-tick > .sx-h { margin: 0; }
-.folio-settings .sx-tick > .state { margin: 0; font-family: var(--type-latin-display); font-style: italic; font-size: 0.98em; color: var(--ink-3); }
-.folio-settings .sx-tick > input:checked ~ .state { color: var(--ink); }
-.folio-settings .sx-tick:hover > .sx-box .bx { stroke: var(--ink); }
-.folio-settings .sx-tick > input:focus-visible ~ .sx-box { outline: 3px solid var(--focus-paper); outline-offset: 3px; border-radius: 3px; }
-.folio-settings .sx-field.sx-tickf > .hint.sx-why { margin-left: calc(1.75em + 0.75em); }
+:is(.folio-settings, .sx-scope) .sx-box { display: block; line-height: 0; }
+:is(.folio-settings, .sx-scope) .sx-box svg { width: 1.75em; height: 1.75em; overflow: visible; }
+:is(.folio-settings, .sx-scope) .sx-box .bx { fill: rgba(255, 252, 242, 0.55); stroke: var(--ink-2); stroke-width: 1.5; }
+:is(.folio-settings, .sx-scope) .sx-box .tk { fill: none; stroke: var(--ink); stroke-width: 2.9; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+:is(.folio-settings, .sx-scope) .sx-tick > input:checked ~ .sx-box .tk { opacity: 1; }
+:is(.folio-settings, .sx-scope) .sx-tick.fresh > input:checked ~ .sx-box .tk { animation: sx-draw 240ms var(--ease) both; }
+:is(.folio-settings, .sx-scope) .sx-tick > .sx-h { margin: 0; }
+:is(.folio-settings, .sx-scope) .sx-tick > .state { margin: 0; font-family: var(--type-latin-display); font-style: italic; font-size: 0.98em; color: var(--ink-3); }
+:is(.folio-settings, .sx-scope) .sx-tick > input:checked ~ .state { color: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-tick:hover > .sx-box .bx { stroke: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-tick > input:focus-visible ~ .sx-box { outline: 3px solid var(--focus-paper); outline-offset: 3px; border-radius: 3px; }
+:is(.folio-settings, .sx-scope) .sx-field.sx-tickf > .hint.sx-why { margin-left: calc(1.75em + 0.75em); }
 
 /* ---- a level: a ruled line, its ticks, the inked part, and a seal to slide ---------------------------------------- */
 .folio-settings .slider.sx-slider { display: grid; grid-template-columns: minmax(0, 1fr) 3.6em; gap: 0.8em; align-items: center; }
-.folio-settings .sx-slider output { font-family: var(--type-latin-display); font-style: italic; font-size: 1.02em; color: var(--ink); text-align: right; font-variant-numeric: lining-nums tabular-nums; }
-.folio-settings .sx-slider input[type=range] {
+:is(.folio-settings, .sx-scope) .sx-slider output { font-family: var(--type-latin-display); font-style: italic; font-size: 1.02em; color: var(--ink); text-align: right; font-variant-numeric: lining-nums tabular-nums; }
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range] {
   -webkit-appearance: none; appearance: none; width: 100%; min-height: var(--tap); margin: 0; background: transparent; cursor: pointer; accent-color: var(--ink);
 }
-.folio-settings .sx-slider input[type=range]::-webkit-slider-runnable-track {
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]::-webkit-slider-runnable-track {
   height: 12px; border: 0;
   background:
     linear-gradient(var(--ink), var(--ink)) 0 50% / var(--v, 50%) 3px no-repeat,
@@ -152,45 +152,69 @@
     linear-gradient(var(--ink-3), var(--ink-3)) 100% 50% / 1px 8px no-repeat,
     linear-gradient(var(--paper-edge), var(--paper-edge)) 0 50% / 100% 1px no-repeat;
 }
-.folio-settings .sx-slider input[type=range]::-webkit-slider-thumb {
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none; appearance: none; width: 22px; height: 22px; margin-top: -5px; border-radius: 50%;
   background: var(--ribbon); border: 2px solid var(--ink); box-shadow: inset 0 0 0 3px var(--paper), 0 1px 2px rgba(40, 25, 5, 0.35);
 }
-.folio-settings .sx-slider input[type=range]::-moz-range-track {
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]::-moz-range-track {
   height: 12px; border: 0;
   background:
     repeating-linear-gradient(90deg, var(--ink-3) 0 1px, transparent 1px 10%) 0 50% / 100% 8px no-repeat,
     linear-gradient(var(--ink-3), var(--ink-3)) 100% 50% / 1px 8px no-repeat,
     linear-gradient(var(--paper-edge), var(--paper-edge)) 0 50% / 100% 1px no-repeat;
 }
-.folio-settings .sx-slider input[type=range]::-moz-range-progress { height: 3px; background: var(--ink); }
-.folio-settings .sx-slider input[type=range]::-moz-range-thumb {
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]::-moz-range-progress { height: 3px; background: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]::-moz-range-thumb {
   width: 18px; height: 18px; border-radius: 50%; background: var(--ribbon); border: 2px solid var(--ink); box-shadow: inset 0 0 0 3px var(--paper);
 }
-.folio-settings .sx-slider input[type=range]:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 /* the volumes as one table: each name, its level */
-.folio-settings .sx-mix { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; gap: 0 1.2em; margin: 0.7em 0 0.6em; }
-.folio-settings .sx-mix-l { font-family: var(--type-latin-display); font-weight: 600; font-size: 1.1em; color: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-mix { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; gap: 0 1.2em; margin: 0.7em 0 0.6em; }
+:is(.folio-settings, .sx-scope) .sx-mix-l { font-family: var(--type-latin-display); font-weight: 600; font-size: 1.1em; color: var(--ink); }
 
 /* ---- a slip tucked into the page (why lines are silent for now) ------------------------------------------------- */
-.folio-settings .sx-slip {
+:is(.folio-settings, .sx-scope) .sx-slip {
   position: relative; margin: 0.8em -4px 1.1em; padding: 0.7em 1.05em 0.4em;
   background-color: var(--bk-slip); background-image: var(--bk-tooth); border-radius: 1px 1px 3px 3px;
   box-shadow: 0 1px 0 var(--paper-edge), 0 7px 12px -8px rgba(60, 40, 10, 0.45);
 }
-.folio-settings .sx-slip::before {
+:is(.folio-settings, .sx-scope) .sx-slip::before {
   content: ""; position: absolute; top: 0; right: 0; width: 18px; height: 18px; pointer-events: none;
   background: linear-gradient(225deg, var(--paper) 0 50%, #e2d4b2 50% 100%); box-shadow: -1px 1px 2px rgba(60, 40, 10, 0.25);
 }
-.folio-settings .sx-slip p { margin: 0.2em 0 0.55em; line-height: 1.5; max-width: 62ch; }
-.folio-settings .sx-slip .sx-slip-h { font-family: var(--type-latin-display); font-weight: 600; font-size: 1.1em; color: var(--ink); margin-top: 0; }
+:is(.folio-settings, .sx-scope) .sx-slip p { margin: 0.2em 0 0.55em; line-height: 1.5; max-width: 62ch; }
+:is(.folio-settings, .sx-scope) .sx-slip .sx-slip-h { font-family: var(--type-latin-display); font-weight: 600; font-size: 1.1em; color: var(--ink); margin-top: 0; }
 
 /* ---- reduced motion, flat book, high contrast ----------------------------------------------------------------- */
-body.reduced-motion .folio-settings .sx-opt.fresh > input:checked + .sx-face .sx-ring,
-body.reduced-motion .folio-settings .sx-tick.fresh > input:checked ~ .sx-box .tk { animation: none; }
-body.book-flat .folio-settings .sx-slip, body.high-contrast .folio-settings .sx-slip { background-image: none; }
-body.high-contrast .folio-settings .sx-slip::before { display: none; }
-body.high-contrast .folio-settings .sx-box .bx { fill: #fff; stroke: #000; stroke-width: 2; }
-body.high-contrast .folio-settings .sx-ring { stroke-width: 3px; }
-body.high-contrast .folio-settings .sx-opt > input:not(:checked) + .sx-face .sx-ic { opacity: 1; }
-body.high-contrast .folio-settings .campaign-box.sx-journey { background: none; }
+body.reduced-motion :is(.folio-settings, .sx-scope) .sx-opt.fresh > input:checked + .sx-face .sx-ring,
+body.reduced-motion :is(.folio-settings, .sx-scope) .sx-tick.fresh > input:checked ~ .sx-box .tk { animation: none; }
+body.book-flat :is(.folio-settings, .sx-scope) .sx-slip, body.high-contrast :is(.folio-settings, .sx-scope) .sx-slip { background-image: none; }
+body.high-contrast :is(.folio-settings, .sx-scope) .sx-slip::before { display: none; }
+body.high-contrast :is(.folio-settings, .sx-scope) .sx-box .bx { fill: #fff; stroke: #000; stroke-width: 2; }
+body.high-contrast :is(.folio-settings, .sx-scope) .sx-ring { stroke-width: 3px; }
+body.high-contrast :is(.folio-settings, .sx-scope) .sx-opt > input:not(:checked) + .sx-face .sx-ic { opacity: 1; }
+body.high-contrast :is(.folio-settings, .sx-scope) .campaign-box.sx-journey { background: none; }
+
+/* ---- ST-2: the creation step's learning page in the same look (.sx-scope, src/ui/40_create.js) ---------------- */
+.sx-scope { container-type: inline-size; }
+.sx-scope > .sx-sec { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; font-size: 1.12em; font-weight: 600; color: var(--ink-2);
+  border-bottom: 1px solid var(--rule); padding-bottom: 0.25em; margin: 1.7em 0 0.3em; }
+.sx-scope > .sx-sec:first-child { margin-top: 0.3em; }
+/* a slip on the page that opens something (the optional placement): a pencilled card with its line, not a pill button */
+.sx-scope .sx-slipbtn {
+  display: grid; grid-template-columns: 2.2em minmax(0, 1fr); align-items: center; gap: 0.6em; width: 100%; min-height: var(--tap, 44px); margin: 0.2em 0 1em;
+  padding: 0.55em 0.8em; border: 1px dashed var(--paper-edge, #c9b88f); border-left: 3px solid var(--ribbon); border-radius: 3px; background: rgba(193, 138, 42, 0.06);
+  font: inherit; color: var(--ink); text-align: left; cursor: pointer;
+}
+.sx-scope .sx-slipbtn:hover { background: rgba(193, 138, 42, 0.13); }
+.sx-scope .sx-slipbtn:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.sx-scope .sx-slipic { display: inline-flex; align-items: center; justify-content: center; width: 2.2em; height: 2.2em; border-radius: 50%; background: rgba(193, 138, 42, 0.18); }
+.sx-scope .sx-slipic svg { width: 1.1em; height: 1.1em; }
+.sx-scope .sx-slipt { display: flex; flex-direction: column; line-height: 1.35; }
+.sx-scope .sx-slipt b { font-family: var(--type-ui); font-weight: 600; }
+.sx-scope .sx-slipt span { font-size: 0.9em; color: var(--ink-3); }
+body.high-contrast .sx-scope .sx-slipbtn { background: none; border-color: #000; }
+/* (on a narrow page at large text a choice's words wrap inside its circle, never past the page) */
+.sx-scope .opt.sx-opt, .sx-scope .opt.sx-opt > .sx-face, .sx-scope .opt.sx-opt .sx-mark { max-width: 100%; min-width: 0; box-sizing: border-box; }
+.sx-scope .opt.sx-opt .sx-w { min-width: 0; }
+.sx-scope .opt.sx-opt .sx-en { overflow-wrap: anywhere; }

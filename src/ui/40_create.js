@@ -114,6 +114,24 @@ RB.ui.create = (function () {
     uiLang: ['Menus', [['en', 'English'], ['ja', null]]],
   };
 
+  // the learning step's choices in the Settings book's look (ST-2): legend, choices with their drawn icons, a sentence
+  const LEARN_LOOK = {
+    kana: ['Kana so far', [['none', 'From the start', { i: 'kana0' }], ['hira', 'Hiragana', { i: 'kanaH' }], ['both', 'Both kana', { i: 'kanaHK' }]],
+      'What you can already read: none yet, hiragana, or hiragana and katakana. Kana you know is not taught again, and every character can still be looked up.'],
+    assist: ['Mistakes in battle', [['assist', 'Assisted', { i: 'assist', d: 'A wrong answer costs nothing.' }], ['normal', 'Standard', { i: 'capped', d: 'A wrong answer costs a little, never much.' }]],
+      'What a wrong answer costs in an encounter. Either way you are shown the right answer and can try again.'],
+    difficulty: ['Tactical challenge', [['relaxed', 'Relaxed', { i: 'f1' }], ['normal', 'Standard', { i: 'f2' }], ['hard', 'Demanding', { i: 'f3' }]],
+      'How many creatures come, and how hard they press. Separate from the Japanese level.'],
+    input: ['Default way to answer', [['hand', 'Handwriting', { i: 'hand' }], ['choice', 'Choices', { i: 'choice' }], ['ime', 'Keyboard / IME', { i: 'ime' }]],
+      'How a question first asks for your answer. You can switch during any question.'],
+    lead: ['Dialogue leads with', [['en', 'English', { i: 'en' }], ['ja', 'Japanese', { i: 'ja', jp: '{日本語|にほんご}' }]],
+      'Which language each line of dialogue shows first, in the larger type.'],
+    secondary: ['The second language', [['always', 'Always shown', { i: 'shown' }], ['tap', 'Shown when tapped', { i: 'tap' }], ['off', 'Hidden', { i: 'hidden' }]],
+      'The other language, under the first. Tapping a line shows it when it is tucked away.'],
+    uiLang: ['Menu language', [['en', 'English', { i: 'en' }], ['ja', 'Japanese', { i: 'ja', jp: '{日本語|にほんご}' }]],
+      'The words on tabs, buttons and headings. Japanese menus keep furigana.'],
+  };
+
   function romajiToKata(s) {
     const src = s.toLowerCase().replace(/[^a-z]/g, '');
     if (!src) return '';
@@ -266,16 +284,20 @@ RB.ui.create = (function () {
         background() {
           return head('background') + entryGroup('bg', 'data-set', 'Background', BACKGROUNDS, (id) => BG_ICON[id] || 'pouch', true);
         },
+        // (ST-2, Robin 2026-10-16: "The new game learning check should use icons, same as the settings menu": the
+        // Settings book's circled choices, drawn icons, headings and sentences; the same keys and values as before)
         learning() {
-          const L = (k) => chips(k, 'data-k', LEARN[k][0], LEARN[k][1].map(([v, l]) => [v, l == null ? RB.ui.jhtml('{日本語|にほんご}') + ' (with furigana)' : esc(l)]));
-          return head('learning') +
-            '<h4 class="cr-kicker">Japanese level</h4>' +
-            entryGroup('profile', 'data-k', 'Japanese level', PROFILES, null, true) +
-            '<div class="row-acts"><button type="button" class="pbtn" data-a="place">Not sure? Try a short, optional placement' + I('next') + '</button></div>' +
-            L('kana') +
-            '<h4 class="cr-kicker">Challenge</h4>' + L('assist') + L('difficulty') +
-            '<h4 class="cr-kicker">Answering and reading</h4>' + L('input') + L('lead') + L('secondary') + L('uiLang') +
-            '<p class="note-slip">Furigana is always shown over kanji. Turn on the lightbulb (H or the bulb button) to hover or tap any Japanese for its reading and meaning.</p>';
+          const C = (k) => RB.ui.settings.choice(k, 'data-k', LEARN_LOOK[k][0], LEARN_LOOK[k][1], LEARN_LOOK[k][2]);
+          return head('learning') + '<div class="sx-scope cr-learn">' +
+            '<h3 class="sx-sec">Japanese level</h3>' +
+            RB.ui.settings.choice('profile', 'data-k', 'Your Japanese so far', PROFILES.map((p0) => [p0.id, p0.en, { i: 'lv' + p0.id, d: p0.d }]),
+              'Which version of each challenge you meet. It never locks you out of the story, and you can change it at any time.') +
+            '<button type="button" class="sx-slipbtn" data-a="place"><span class="sx-slipic">' + I('next') + '</span><span class="sx-slipt"><b>Not sure? Try a short placement</b>' +
+            '<span>A few questions to suggest a level. Nothing is graded or saved.</span></span></button>' +
+            C('kana') +
+            '<h3 class="sx-sec">Challenge</h3>' + C('assist') + C('difficulty') +
+            '<h3 class="sx-sec">Answering and reading</h3>' + C('input') + C('lead') + C('secondary') + C('uiLang') +
+            '<p class="note-slip">Furigana is always shown over kanji. Turn on the lightbulb (H or the bulb button) to hover or tap any Japanese for its reading and meaning.</p></div>';
         },
       };
 

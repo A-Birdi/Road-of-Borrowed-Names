@@ -434,6 +434,10 @@ RB.ui.help = (function () {
       html += '<div class="note dia" lang="en"><b>' + (e && e.casual ? 'Casual speech' : 'Kansai-ben') + '</b> ' + RB.dialect.note(info, J) + '</div>';
     }
     if (e && e.n) html += '<div class="note">' + esc(e.n) + '</div>';
+    // in a dialogue line: what this word does there (AG-1: a construction, grammar the English has no word for, or a
+    // role not worked out), from the same relations the highlight shows
+    const here = RB.ui.speechMark && RB.ui.speechMark.explain ? RB.ui.speechMark.explain(anchor, idx) : null;
+    if (here) html += '<div class="note in-line"><span class="lab">In this line</span>' + here.map((n) => '<span class="il-' + esc(n.kind) + '">' + (n.kind === 'unresolved' ? 'Not worked out: ' : '') + esc(n.text) + '</span>').join(' ') + '</div>';
     if (!e && !info.gloss) html += '<div class="note">No dictionary note is recorded for this piece of text. The reading above is still accurate.</div>';
     if (mora && mora.length > 1) html += '<div class="note">Beats (morae): <span class="mora" lang="ja">' + mora.map((m) => '<span>' + esc(m) + '</span>').join('') + '</span></div>';
     if (surface.indexOf('っ') >= 0 || surface.indexOf('ッ') >= 0) html += '<div class="note">Small っ is a held beat: the next consonant is doubled.</div>';

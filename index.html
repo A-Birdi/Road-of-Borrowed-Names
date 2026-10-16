@@ -1691,6 +1691,10 @@ body .dlg-sheet .jline .jt.hov2, body .dlg-sheet .enline .ew.hov2 { background: 
   text-decoration: underline dotted rgba(28, 74, 120, 0.95); text-decoration-thickness: 0.12em; text-underline-offset: 0.18em; }
 .dlg-sheet .enline .ew.hov2 { padding: 0 0.08em; margin: 0 -0.08em; }
 body.high-contrast .dlg-sheet .jline .jt.hov2, body.high-contrast .dlg-sheet .enline .ew.hov2 { background: #c8e4ff; color: #000; text-decoration-color: #000; }
+/* while a voice speaks, what the spoken word's grammar says in the English (AG-1): blue and dotted like .hov2, stronger */
+.dlg-sheet .enline .ew.spk2 { background: rgba(60, 118, 170, 0.34); border-radius: 3px; padding: 0 0.08em; margin: 0 -0.08em;
+  text-decoration: underline dotted rgba(28, 74, 120, 0.95); text-decoration-thickness: 0.14em; text-underline-offset: 0.18em; }
+body.high-contrast .dlg-sheet .enline .ew.spk2 { background: #a9d4ff; color: #000; text-decoration-color: #000; }
 
 /* ---- shared cloth button and generic panel (screens not yet rebuilt) ---- */
 .btn {
@@ -1869,6 +1873,10 @@ body.dlg-top .place { top: calc(var(--dlg-h, 0px) + max(12px, env(safe-area-inse
 .help .mean { margin: 0.35em 0; font-family: var(--serif); font-size: 1.06em; color: var(--ink); }
 .help .mean .lab { display: block; font-family: var(--ui-font); font-size: 0.66em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
 .help .note { color: var(--ink-2); font-size: 0.92em; margin-top: 0.35em; }
+/* what the word does in its line (AG-1): its lead like the other labels, a blue rule for grammar, a dashed one when not worked out */
+.help .note.in-line { border-left: 3px solid rgba(60, 118, 170, 0.7); padding-left: 6px; }
+.help .note.in-line .lab { display: block; font-family: var(--ui-font); font-size: 0.72em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.help .note.in-line .il-unresolved { color: var(--ink-3); font-style: italic; }
 .help .small { font-size: 0.88em; color: var(--ink-2); }
 .help .mora { display: inline-flex; flex-wrap: wrap; gap: 3px; margin-top: 0.2em; vertical-align: middle; }
 .help .mora span { border: 1px solid var(--paper-edge); border-radius: 3px; padding: 0 0.35em; font-family: var(--jp-font); background: #fffaf0; color: var(--ink); }
@@ -5939,15 +5947,15 @@ body.book-flat .folio:not(.book) .leaf, body.high-contrast.book-ui .folio:not(.b
   .folio-settings.folio-bset.book .tabslot { padding-right: 260px; }
 }
 .folio-settings .folio-foot { align-items: center; }
-.folio-settings .sx-foot { flex: 1 1 16em; margin: 0; display: flex; align-items: center; gap: 0.45em; color: var(--on-cloth-2); font-size: 0.9em; }
-.folio-settings .sx-foot svg { width: 1.2em; height: 1.2em; flex: none; }
+:is(.folio-settings, .sx-scope) .sx-foot { flex: 1 1 16em; margin: 0; display: flex; align-items: center; gap: 0.45em; color: var(--on-cloth-2); font-size: 0.9em; }
+:is(.folio-settings, .sx-scope) .sx-foot svg { width: 1.2em; height: 1.2em; flex: none; }
 .folio-settings .folio-foot .cbtn.sx-go, .folio-settings.book .folio-foot .cbtn.sx-go {
   background: var(--ribbon); color: #1d1406; border: 1px solid var(--ribbon-deep); box-shadow: 0 2px 0 var(--ribbon-deep);
   font-weight: 700; padding: 0 1.4em; letter-spacing: 0.02em;
 }
 .folio-settings .folio-foot .cbtn.sx-go:hover { background: #d29a36; }
 @media (max-width: 599px) {
-  .folio-settings .sx-foot { flex-basis: 100%; }
+  :is(.folio-settings, .sx-scope) .sx-foot { flex-basis: 100%; }
   /* six tabs in one row on a phone, as the Ledger's five are (a larger text size scrolls the rail instead) */
   .folio-settings.book .ptab { font-size: 0.74em; padding: 6px 0.1em 7px; }
   .folio-settings.book .ptab + .ptab { margin-left: 1px; }
@@ -5956,92 +5964,92 @@ body.book-flat .folio:not(.book) .leaf, body.high-contrast.book-ui .folio:not(.b
 /* ---- the page: sections, headings, sentences ------------------------------------------------------------------- */
 .folio-settings .leaf > .sx-sec { border-bottom: 1px solid var(--rule); padding-bottom: 0.25em; margin-top: 1.9em; }
 .folio-settings .leaf > .bk-runhead + .sx-sec, .folio-settings .leaf > .sx-sec:first-child { margin-top: 0.4em; }
-.folio-settings .sx-field { margin: 0.95em 0 1.35em; }
-.folio-settings .sx-field:last-child { margin-bottom: 0.6em; }
+:is(.folio-settings, .sx-scope) .sx-field { margin: 0.95em 0 1.35em; }
+:is(.folio-settings, .sx-scope) .sx-field:last-child { margin-bottom: 0.6em; }
 /* every setting's name reads as a heading */
-.folio-settings .sx-h, .folio-settings fieldset.sx-field > legend.sx-h, .folio-settings .sx-field > .lab.sx-h {
+:is(.folio-settings, .sx-scope) .sx-h, :is(.folio-settings, .sx-scope) fieldset.sx-field > legend.sx-h, :is(.folio-settings, .sx-scope) .sx-field > .lab.sx-h {
   display: block; margin: 0 0 0.15em; padding: 0;
   font-family: var(--type-latin-display); font-size: 1.16em; font-weight: 600; letter-spacing: 0.01em; line-height: 1.3; color: var(--ink);
 }
 /* and the sentence under it says what it does */
-.folio-settings .sx-why, .folio-settings .sx-field .hint.sx-why {
+:is(.folio-settings, .sx-scope) .sx-why, :is(.folio-settings, .sx-scope) .sx-field .hint.sx-why {
   margin: 0.1em 0 0.6em; max-width: 62ch; color: var(--ink-2); font-size: 0.97em; line-height: 1.5; font-family: var(--type-latin-reading);
 }
-.folio-settings .sx-note { margin: 1.2em 0 0.4em; }
-.folio-settings .sx-lede { font-size: 1.05em; line-height: 1.55; color: var(--ink-2); margin: 0 0 1em; max-width: 62ch; }
+:is(.folio-settings, .sx-scope) .sx-note { margin: 1.2em 0 0.4em; }
+:is(.folio-settings, .sx-scope) .sx-lede { font-size: 1.05em; line-height: 1.55; color: var(--ink-2); margin: 0 0 1em; max-width: 62ch; }
 /* this journey's own choices: the ribbon's edge, not a box */
-.folio-settings .campaign-box.sx-journey { border: 0; border-left: 3px solid var(--ribbon); background: rgba(193, 138, 42, 0.06); padding: 0.45em 0.2em 0.1em 1em; margin: 0.5em 0 1.2em; }
-.folio-settings .sx-journey > .kind { display: flex; align-items: center; gap: 0.4em; font-variant: small-caps; text-transform: none; letter-spacing: 0.06em; font-size: 0.92em; color: var(--ink-3); }
-.folio-settings .sx-journey > .kind svg { width: 1.15em; height: 1.15em; }
-.folio-settings .sx-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4em 0.8em; }
-.folio-settings .sx-row .lab { font-weight: 600; }
-.folio-settings .sx-row select { flex: 1 1 14em; }
+:is(.folio-settings, .sx-scope) .campaign-box.sx-journey { border: 0; border-left: 3px solid var(--ribbon); background: rgba(193, 138, 42, 0.06); padding: 0.45em 0.2em 0.1em 1em; margin: 0.5em 0 1.2em; }
+:is(.folio-settings, .sx-scope) .sx-journey > .kind { display: flex; align-items: center; gap: 0.4em; font-variant: small-caps; text-transform: none; letter-spacing: 0.06em; font-size: 0.92em; color: var(--ink-3); }
+:is(.folio-settings, .sx-scope) .sx-journey > .kind svg { width: 1.15em; height: 1.15em; }
+:is(.folio-settings, .sx-scope) .sx-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4em 0.8em; }
+:is(.folio-settings, .sx-scope) .sx-row .lab { font-weight: 600; }
+:is(.folio-settings, .sx-scope) .sx-row select { flex: 1 1 14em; }
 
 /* ---- a choice, circled in ink --------------------------------------------------------------------------------- */
-.folio-settings .sx-opts { display: flex; flex-wrap: wrap; gap: 0.3em 0.7em; align-items: stretch; }
-.folio-settings .sx-opt { position: relative; display: inline-flex; max-width: 100%; }
-.folio-settings .sx-opt > input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
+:is(.folio-settings, .sx-scope) .sx-opts { display: flex; flex-wrap: wrap; gap: 0.3em 0.7em; align-items: stretch; }
+:is(.folio-settings, .sx-scope) .sx-opt { position: relative; display: inline-flex; max-width: 100%; }
+:is(.folio-settings, .sx-scope) .sx-opt > input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
 /* (the base folio's pill buttons, undone for the marks below) */
-.folio-settings .opt.sx-opt span { display: revert; min-height: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
-.folio-settings .opt.sx-opt span::before { content: none; }
-.folio-settings .opt.sx-opt > .sx-face { display: flex; flex-direction: column; justify-content: center; gap: 0.1em; min-height: var(--tap); padding: 0.2em 0.6em; border-radius: 4px; font-weight: 400; }
-.folio-settings .opt.sx-opt .sx-mark { position: relative; display: inline-flex; align-items: center; gap: 0.55em; padding: 0.4em 1em; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt span { display: revert; min-height: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt span::before { content: none; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt > .sx-face { display: flex; flex-direction: column; justify-content: center; gap: 0.1em; min-height: var(--tap); padding: 0.2em 0.6em; border-radius: 4px; font-weight: 400; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-mark { position: relative; display: inline-flex; align-items: center; gap: 0.55em; padding: 0.4em 1em; }
 /* the English word, then its Japanese name in a lighter ink */
-.folio-settings .opt.sx-opt .sx-w { display: inline-flex; flex-direction: row-reverse; flex-wrap: wrap; align-items: baseline; gap: 0 0.45em; line-height: 1.25; }
-.folio-settings .opt.sx-opt .sx-en { font-family: var(--type-ui); font-weight: 600; color: var(--ink-2); }
-.folio-settings .opt.sx-opt .sx-jp { font-family: var(--type-jp-body); font-size: 0.95em; color: var(--ink-2); line-height: 1.7; }
-.folio-settings .opt.sx-opt .sx-jp rt { font-size: 0.55em; color: var(--rt-ink); }
-.folio-settings .opt.sx-opt .sx-d { font-family: var(--type-latin-reading); font-size: 0.93em; line-height: 1.4; color: var(--ink-2); }
-.folio-settings .sx-ring {
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-w { display: inline-flex; flex-direction: row-reverse; flex-wrap: wrap; align-items: baseline; gap: 0 0.45em; line-height: 1.25; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-en { font-family: var(--type-ui); font-weight: 600; color: var(--ink-2); }
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-jp { font-family: var(--type-jp-body); font-size: 0.95em; color: var(--ink-2); line-height: 1.7; }
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-jp rt { font-size: 0.55em; color: var(--rt-ink); }
+:is(.folio-settings, .sx-scope) .opt.sx-opt .sx-d { font-family: var(--type-latin-reading); font-size: 0.93em; line-height: 1.4; color: var(--ink-2); }
+:is(.folio-settings, .sx-scope) .sx-ring {
   position: absolute; left: -0.3em; top: -3px; width: calc(100% + 0.6em); height: calc(100% + 6px); overflow: visible;
   fill: none; stroke: var(--ink); stroke-width: 2.2px; stroke-linecap: round; vector-effect: non-scaling-stroke; pointer-events: none; opacity: 0;
 }
-.folio-settings .sx-ring path { vector-effect: non-scaling-stroke; }
-.folio-settings .sx-opt > input:checked + .sx-face .sx-ring { opacity: 1; }
-.folio-settings .sx-opt > input:checked + .sx-face .sx-en, .folio-settings .sx-opt > input:checked + .sx-face .sx-jp { color: var(--ink); }
-.folio-settings .sx-opt > input:checked + .sx-face .sx-en { font-weight: 700; }
+:is(.folio-settings, .sx-scope) .sx-ring path { vector-effect: non-scaling-stroke; }
+:is(.folio-settings, .sx-scope) .sx-opt > input:checked + .sx-face .sx-ring { opacity: 1; }
+:is(.folio-settings, .sx-scope) .sx-opt > input:checked + .sx-face .sx-en, :is(.folio-settings, .sx-scope) .sx-opt > input:checked + .sx-face .sx-jp { color: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-opt > input:checked + .sx-face .sx-en { font-weight: 700; }
 /* the others: a faint pencilled loop, so the choices read as choices; darker where the pointer rests */
-.folio-settings .sx-opt > input:not(:checked) + .sx-face .sx-ring { opacity: 0.32; stroke: var(--ink-3); stroke-width: 1.2px; stroke-dasharray: 2.5 4.5; }
-.folio-settings .sx-opt:hover > input:not(:checked) + .sx-face .sx-ring { opacity: 0.7; }
-.folio-settings .sx-opt:hover > input:not(:checked) + .sx-face .sx-en { color: var(--ink); }
-.folio-settings .sx-opt > input:focus-visible + .sx-face { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+:is(.folio-settings, .sx-scope) .sx-opt > input:not(:checked) + .sx-face .sx-ring { opacity: 0.32; stroke: var(--ink-3); stroke-width: 1.2px; stroke-dasharray: 2.5 4.5; }
+:is(.folio-settings, .sx-scope) .sx-opt:hover > input:not(:checked) + .sx-face .sx-ring { opacity: 0.7; }
+:is(.folio-settings, .sx-scope) .sx-opt:hover > input:not(:checked) + .sx-face .sx-en { color: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-opt > input:focus-visible + .sx-face { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
 /* the one just chosen: the loop is drawn round it (only that one; the page is drawn afresh after each change) */
-.folio-settings .sx-opt.fresh > input:checked + .sx-face .sx-ring { animation: sx-draw 300ms var(--ease) both; }
+:is(.folio-settings, .sx-scope) .sx-opt.fresh > input:checked + .sx-face .sx-ring { animation: sx-draw 300ms var(--ease) both; }
 @keyframes sx-draw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 /* options with a line under them: one per row, the line beside the mark (under it on a narrow page) */
-.folio-settings .sx-opts.stack { flex-direction: column; flex-wrap: nowrap; gap: 0.1em; }
-.folio-settings .sx-opts.stack .sx-opt { display: flex; }
-.folio-settings .sx-opts.stack .opt.sx-opt > .sx-face { display: grid; grid-template-columns: 11.5em minmax(0, 1fr); align-items: center; column-gap: 0.7em; width: 100%; }
-.folio-settings .sx-opts.stack .sx-mark { justify-self: start; }
+:is(.folio-settings, .sx-scope) .sx-opts.stack { flex-direction: column; flex-wrap: nowrap; gap: 0.1em; }
+:is(.folio-settings, .sx-scope) .sx-opts.stack .sx-opt { display: flex; }
+:is(.folio-settings, .sx-scope) .sx-opts.stack .opt.sx-opt > .sx-face { display: grid; grid-template-columns: 11.5em minmax(0, 1fr); align-items: center; column-gap: 0.7em; width: 100%; }
+:is(.folio-settings, .sx-scope) .sx-opts.stack .sx-mark { justify-self: start; }
 @container (max-width: 430px) {
-  .folio-settings .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: minmax(0, 1fr); }
-  .folio-settings .sx-opts.stack .sx-d { padding: 0 0 0.2em 1em; }
+  :is(.folio-settings, .sx-scope) .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: minmax(0, 1fr); }
+  :is(.folio-settings, .sx-scope) .sx-opts.stack .sx-d { padding: 0 0 0.2em 1em; }
 }
 
 /* the option icons (drawn in src/ui/55_settings.js): a few of the book's inks */
-.folio-settings .sx-ic { --oi-r: var(--vermilion); --oi-b: var(--river); --oi-b2: #2a4a75; --oi-g: #3f7b40; --oi-g2: #2c5f30; --oi-a: var(--ribbon); width: 2em; height: 2em; flex: none; overflow: visible; }
-.folio-settings .sx-opt > input:not(:checked) + .sx-face .sx-ic { opacity: 0.78; }
-.folio-settings .sx-ic .c-r { fill: var(--oi-r); }
-.folio-settings .sx-ic .c-b { fill: var(--oi-b); }
-.folio-settings .sx-ic .c-b2 { fill: var(--oi-b2); }
-.folio-settings .sx-ic .c-g { fill: var(--oi-g); }
-.folio-settings .sx-ic .c-g2 { fill: var(--oi-g2); }
-.folio-settings .sx-ic .c-a { fill: var(--oi-a); }
-.folio-settings .sx-ic .c-ink { fill: var(--ink-2); }
-.folio-settings .sx-ic .st { fill: none; stroke: var(--ink-3); stroke-width: 1; opacity: 0.7; }
-.folio-settings .sx-ic .gl { fill: #fff; opacity: 0.55; }
-.folio-settings .sx-ic .tile { fill: var(--paper-2); stroke: var(--ink-2); stroke-width: 1.3; }
-.folio-settings .sx-ic .tx { fill: var(--ink); font-family: var(--type-latin-display); font-weight: 700; font-size: 17px; }
-.folio-settings .sx-ic .tx.jp { font-family: var(--type-jp-body); font-size: 16px; font-weight: 700; }
-.folio-settings .sx-ic .ln { fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.folio-settings .sx-ic .ln-r { fill: none; stroke: var(--oi-r); stroke-width: 2.4; stroke-linecap: round; }
-.folio-settings .sx-ic .ln-g { fill: none; stroke: var(--oi-g2); stroke-width: 2; stroke-linecap: round; }
-.folio-settings .sx-ic .soil { fill: none; stroke: #7a5a32; stroke-width: 2; stroke-linecap: round; }
-.folio-settings .sx-ic .trunk { fill: #7a5a32; }
-.folio-settings .sx-ic .tk-w { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.folio-settings .sx-ic .ring-in { fill: none; stroke: #fff; stroke-width: 1.2; opacity: 0.7; }
-.folio-settings .sx-ic .dia { fill: #fff; opacity: 0.55; }
-.folio-settings .sx-ic .pg { fill: none; stroke: #fff; stroke-width: 1; opacity: 0.6; }
+:is(.folio-settings, .sx-scope) .sx-ic { --oi-r: var(--vermilion); --oi-b: var(--river); --oi-b2: #2a4a75; --oi-g: #3f7b40; --oi-g2: #2c5f30; --oi-a: var(--ribbon); width: 2em; height: 2em; flex: none; overflow: visible; }
+:is(.folio-settings, .sx-scope) .sx-opt > input:not(:checked) + .sx-face .sx-ic { opacity: 0.78; }
+:is(.folio-settings, .sx-scope) .sx-ic .c-r { fill: var(--oi-r); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-b { fill: var(--oi-b); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-b2 { fill: var(--oi-b2); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-g { fill: var(--oi-g); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-g2 { fill: var(--oi-g2); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-a { fill: var(--oi-a); }
+:is(.folio-settings, .sx-scope) .sx-ic .c-ink { fill: var(--ink-2); }
+:is(.folio-settings, .sx-scope) .sx-ic .st { fill: none; stroke: var(--ink-3); stroke-width: 1; opacity: 0.7; }
+:is(.folio-settings, .sx-scope) .sx-ic .gl { fill: #fff; opacity: 0.55; }
+:is(.folio-settings, .sx-scope) .sx-ic .tile { fill: var(--paper-2); stroke: var(--ink-2); stroke-width: 1.3; }
+:is(.folio-settings, .sx-scope) .sx-ic .tx { fill: var(--ink); font-family: var(--type-latin-display); font-weight: 700; font-size: 17px; }
+:is(.folio-settings, .sx-scope) .sx-ic .tx.jp { font-family: var(--type-jp-body); font-size: 16px; font-weight: 700; }
+:is(.folio-settings, .sx-scope) .sx-ic .ln { fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+:is(.folio-settings, .sx-scope) .sx-ic .ln-r { fill: none; stroke: var(--oi-r); stroke-width: 2.4; stroke-linecap: round; }
+:is(.folio-settings, .sx-scope) .sx-ic .ln-g { fill: none; stroke: var(--oi-g2); stroke-width: 2; stroke-linecap: round; }
+:is(.folio-settings, .sx-scope) .sx-ic .soil { fill: none; stroke: #7a5a32; stroke-width: 2; stroke-linecap: round; }
+:is(.folio-settings, .sx-scope) .sx-ic .trunk { fill: #7a5a32; }
+:is(.folio-settings, .sx-scope) .sx-ic .tk-w { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+:is(.folio-settings, .sx-scope) .sx-ic .ring-in { fill: none; stroke: #fff; stroke-width: 1.2; opacity: 0.7; }
+:is(.folio-settings, .sx-scope) .sx-ic .dia { fill: #fff; opacity: 0.55; }
+:is(.folio-settings, .sx-scope) .sx-ic .pg { fill: none; stroke: #fff; stroke-width: 1; opacity: 0.6; }
 
 /* ---- on or off: a pencilled box and an ink tick ----------------------------------------------------------------- */
 .folio-settings .switch.sx-tick { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.75em; min-height: var(--tap); cursor: pointer; }
@@ -6050,26 +6058,26 @@ body.book-flat .folio:not(.book) .leaf, body.high-contrast.book-ui .folio:not(.b
   -webkit-appearance: none; appearance: none; background: none; border: 0; border-radius: 0;
 }
 .folio-settings .switch.sx-tick > input::after { content: none; }
-.folio-settings .sx-box { display: block; line-height: 0; }
-.folio-settings .sx-box svg { width: 1.75em; height: 1.75em; overflow: visible; }
-.folio-settings .sx-box .bx { fill: rgba(255, 252, 242, 0.55); stroke: var(--ink-2); stroke-width: 1.5; }
-.folio-settings .sx-box .tk { fill: none; stroke: var(--ink); stroke-width: 2.9; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
-.folio-settings .sx-tick > input:checked ~ .sx-box .tk { opacity: 1; }
-.folio-settings .sx-tick.fresh > input:checked ~ .sx-box .tk { animation: sx-draw 240ms var(--ease) both; }
-.folio-settings .sx-tick > .sx-h { margin: 0; }
-.folio-settings .sx-tick > .state { margin: 0; font-family: var(--type-latin-display); font-style: italic; font-size: 0.98em; color: var(--ink-3); }
-.folio-settings .sx-tick > input:checked ~ .state { color: var(--ink); }
-.folio-settings .sx-tick:hover > .sx-box .bx { stroke: var(--ink); }
-.folio-settings .sx-tick > input:focus-visible ~ .sx-box { outline: 3px solid var(--focus-paper); outline-offset: 3px; border-radius: 3px; }
-.folio-settings .sx-field.sx-tickf > .hint.sx-why { margin-left: calc(1.75em + 0.75em); }
+:is(.folio-settings, .sx-scope) .sx-box { display: block; line-height: 0; }
+:is(.folio-settings, .sx-scope) .sx-box svg { width: 1.75em; height: 1.75em; overflow: visible; }
+:is(.folio-settings, .sx-scope) .sx-box .bx { fill: rgba(255, 252, 242, 0.55); stroke: var(--ink-2); stroke-width: 1.5; }
+:is(.folio-settings, .sx-scope) .sx-box .tk { fill: none; stroke: var(--ink); stroke-width: 2.9; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+:is(.folio-settings, .sx-scope) .sx-tick > input:checked ~ .sx-box .tk { opacity: 1; }
+:is(.folio-settings, .sx-scope) .sx-tick.fresh > input:checked ~ .sx-box .tk { animation: sx-draw 240ms var(--ease) both; }
+:is(.folio-settings, .sx-scope) .sx-tick > .sx-h { margin: 0; }
+:is(.folio-settings, .sx-scope) .sx-tick > .state { margin: 0; font-family: var(--type-latin-display); font-style: italic; font-size: 0.98em; color: var(--ink-3); }
+:is(.folio-settings, .sx-scope) .sx-tick > input:checked ~ .state { color: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-tick:hover > .sx-box .bx { stroke: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-tick > input:focus-visible ~ .sx-box { outline: 3px solid var(--focus-paper); outline-offset: 3px; border-radius: 3px; }
+:is(.folio-settings, .sx-scope) .sx-field.sx-tickf > .hint.sx-why { margin-left: calc(1.75em + 0.75em); }
 
 /* ---- a level: a ruled line, its ticks, the inked part, and a seal to slide ---------------------------------------- */
 .folio-settings .slider.sx-slider { display: grid; grid-template-columns: minmax(0, 1fr) 3.6em; gap: 0.8em; align-items: center; }
-.folio-settings .sx-slider output { font-family: var(--type-latin-display); font-style: italic; font-size: 1.02em; color: var(--ink); text-align: right; font-variant-numeric: lining-nums tabular-nums; }
-.folio-settings .sx-slider input[type=range] {
+:is(.folio-settings, .sx-scope) .sx-slider output { font-family: var(--type-latin-display); font-style: italic; font-size: 1.02em; color: var(--ink); text-align: right; font-variant-numeric: lining-nums tabular-nums; }
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range] {
   -webkit-appearance: none; appearance: none; width: 100%; min-height: var(--tap); margin: 0; background: transparent; cursor: pointer; accent-color: var(--ink);
 }
-.folio-settings .sx-slider input[type=range]::-webkit-slider-runnable-track {
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]::-webkit-slider-runnable-track {
   height: 12px; border: 0;
   background:
     linear-gradient(var(--ink), var(--ink)) 0 50% / var(--v, 50%) 3px no-repeat,
@@ -6077,48 +6085,72 @@ body.book-flat .folio:not(.book) .leaf, body.high-contrast.book-ui .folio:not(.b
     linear-gradient(var(--ink-3), var(--ink-3)) 100% 50% / 1px 8px no-repeat,
     linear-gradient(var(--paper-edge), var(--paper-edge)) 0 50% / 100% 1px no-repeat;
 }
-.folio-settings .sx-slider input[type=range]::-webkit-slider-thumb {
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none; appearance: none; width: 22px; height: 22px; margin-top: -5px; border-radius: 50%;
   background: var(--ribbon); border: 2px solid var(--ink); box-shadow: inset 0 0 0 3px var(--paper), 0 1px 2px rgba(40, 25, 5, 0.35);
 }
-.folio-settings .sx-slider input[type=range]::-moz-range-track {
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]::-moz-range-track {
   height: 12px; border: 0;
   background:
     repeating-linear-gradient(90deg, var(--ink-3) 0 1px, transparent 1px 10%) 0 50% / 100% 8px no-repeat,
     linear-gradient(var(--ink-3), var(--ink-3)) 100% 50% / 1px 8px no-repeat,
     linear-gradient(var(--paper-edge), var(--paper-edge)) 0 50% / 100% 1px no-repeat;
 }
-.folio-settings .sx-slider input[type=range]::-moz-range-progress { height: 3px; background: var(--ink); }
-.folio-settings .sx-slider input[type=range]::-moz-range-thumb {
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]::-moz-range-progress { height: 3px; background: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]::-moz-range-thumb {
   width: 18px; height: 18px; border-radius: 50%; background: var(--ribbon); border: 2px solid var(--ink); box-shadow: inset 0 0 0 3px var(--paper);
 }
-.folio-settings .sx-slider input[type=range]:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+:is(.folio-settings, .sx-scope) .sx-slider input[type=range]:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 /* the volumes as one table: each name, its level */
-.folio-settings .sx-mix { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; gap: 0 1.2em; margin: 0.7em 0 0.6em; }
-.folio-settings .sx-mix-l { font-family: var(--type-latin-display); font-weight: 600; font-size: 1.1em; color: var(--ink); }
+:is(.folio-settings, .sx-scope) .sx-mix { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; gap: 0 1.2em; margin: 0.7em 0 0.6em; }
+:is(.folio-settings, .sx-scope) .sx-mix-l { font-family: var(--type-latin-display); font-weight: 600; font-size: 1.1em; color: var(--ink); }
 
 /* ---- a slip tucked into the page (why lines are silent for now) ------------------------------------------------- */
-.folio-settings .sx-slip {
+:is(.folio-settings, .sx-scope) .sx-slip {
   position: relative; margin: 0.8em -4px 1.1em; padding: 0.7em 1.05em 0.4em;
   background-color: var(--bk-slip); background-image: var(--bk-tooth); border-radius: 1px 1px 3px 3px;
   box-shadow: 0 1px 0 var(--paper-edge), 0 7px 12px -8px rgba(60, 40, 10, 0.45);
 }
-.folio-settings .sx-slip::before {
+:is(.folio-settings, .sx-scope) .sx-slip::before {
   content: ""; position: absolute; top: 0; right: 0; width: 18px; height: 18px; pointer-events: none;
   background: linear-gradient(225deg, var(--paper) 0 50%, #e2d4b2 50% 100%); box-shadow: -1px 1px 2px rgba(60, 40, 10, 0.25);
 }
-.folio-settings .sx-slip p { margin: 0.2em 0 0.55em; line-height: 1.5; max-width: 62ch; }
-.folio-settings .sx-slip .sx-slip-h { font-family: var(--type-latin-display); font-weight: 600; font-size: 1.1em; color: var(--ink); margin-top: 0; }
+:is(.folio-settings, .sx-scope) .sx-slip p { margin: 0.2em 0 0.55em; line-height: 1.5; max-width: 62ch; }
+:is(.folio-settings, .sx-scope) .sx-slip .sx-slip-h { font-family: var(--type-latin-display); font-weight: 600; font-size: 1.1em; color: var(--ink); margin-top: 0; }
 
 /* ---- reduced motion, flat book, high contrast ----------------------------------------------------------------- */
-body.reduced-motion .folio-settings .sx-opt.fresh > input:checked + .sx-face .sx-ring,
-body.reduced-motion .folio-settings .sx-tick.fresh > input:checked ~ .sx-box .tk { animation: none; }
-body.book-flat .folio-settings .sx-slip, body.high-contrast .folio-settings .sx-slip { background-image: none; }
-body.high-contrast .folio-settings .sx-slip::before { display: none; }
-body.high-contrast .folio-settings .sx-box .bx { fill: #fff; stroke: #000; stroke-width: 2; }
-body.high-contrast .folio-settings .sx-ring { stroke-width: 3px; }
-body.high-contrast .folio-settings .sx-opt > input:not(:checked) + .sx-face .sx-ic { opacity: 1; }
-body.high-contrast .folio-settings .campaign-box.sx-journey { background: none; }
+body.reduced-motion :is(.folio-settings, .sx-scope) .sx-opt.fresh > input:checked + .sx-face .sx-ring,
+body.reduced-motion :is(.folio-settings, .sx-scope) .sx-tick.fresh > input:checked ~ .sx-box .tk { animation: none; }
+body.book-flat :is(.folio-settings, .sx-scope) .sx-slip, body.high-contrast :is(.folio-settings, .sx-scope) .sx-slip { background-image: none; }
+body.high-contrast :is(.folio-settings, .sx-scope) .sx-slip::before { display: none; }
+body.high-contrast :is(.folio-settings, .sx-scope) .sx-box .bx { fill: #fff; stroke: #000; stroke-width: 2; }
+body.high-contrast :is(.folio-settings, .sx-scope) .sx-ring { stroke-width: 3px; }
+body.high-contrast :is(.folio-settings, .sx-scope) .sx-opt > input:not(:checked) + .sx-face .sx-ic { opacity: 1; }
+body.high-contrast :is(.folio-settings, .sx-scope) .campaign-box.sx-journey { background: none; }
+
+/* ---- ST-2: the creation step's learning page in the same look (.sx-scope, src/ui/40_create.js) ---------------- */
+.sx-scope { container-type: inline-size; }
+.sx-scope > .sx-sec { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; font-size: 1.12em; font-weight: 600; color: var(--ink-2);
+  border-bottom: 1px solid var(--rule); padding-bottom: 0.25em; margin: 1.7em 0 0.3em; }
+.sx-scope > .sx-sec:first-child { margin-top: 0.3em; }
+/* a slip on the page that opens something (the optional placement): a pencilled card with its line, not a pill button */
+.sx-scope .sx-slipbtn {
+  display: grid; grid-template-columns: 2.2em minmax(0, 1fr); align-items: center; gap: 0.6em; width: 100%; min-height: var(--tap, 44px); margin: 0.2em 0 1em;
+  padding: 0.55em 0.8em; border: 1px dashed var(--paper-edge, #c9b88f); border-left: 3px solid var(--ribbon); border-radius: 3px; background: rgba(193, 138, 42, 0.06);
+  font: inherit; color: var(--ink); text-align: left; cursor: pointer;
+}
+.sx-scope .sx-slipbtn:hover { background: rgba(193, 138, 42, 0.13); }
+.sx-scope .sx-slipbtn:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.sx-scope .sx-slipic { display: inline-flex; align-items: center; justify-content: center; width: 2.2em; height: 2.2em; border-radius: 50%; background: rgba(193, 138, 42, 0.18); }
+.sx-scope .sx-slipic svg { width: 1.1em; height: 1.1em; }
+.sx-scope .sx-slipt { display: flex; flex-direction: column; line-height: 1.35; }
+.sx-scope .sx-slipt b { font-family: var(--type-ui); font-weight: 600; }
+.sx-scope .sx-slipt span { font-size: 0.9em; color: var(--ink-3); }
+body.high-contrast .sx-scope .sx-slipbtn { background: none; border-color: #000; }
+/* (on a narrow page at large text a choice's words wrap inside its circle, never past the page) */
+.sx-scope .opt.sx-opt, .sx-scope .opt.sx-opt > .sx-face, .sx-scope .opt.sx-opt .sx-mark { max-width: 100%; min-width: 0; box-sizing: border-box; }
+.sx-scope .opt.sx-opt .sx-w { min-width: 0; }
+.sx-scope .opt.sx-opt .sx-en { overflow-wrap: anywhere; }
 
 /* ==== src/styles/93_items.css ==== */
 /* Items on the page (LI-1, LI-2): each item's own pixel icon (src/ui/11_item_art.js) in the Satchel's rows, its detail
@@ -12976,7 +13008,7 @@ RB.jp.speech = (function () {
     }
     return out;
   }
-  return { offsets, tokenAt, timeline, enWords, align, stem, beats, parts, key, authored, collisions, NOTE };
+  return { offsets, tokenAt, timeline, enWords, align, stem, beats, parts, key, authored, authoredEntries: () => [...AUTH.values()], collisions, NOTE };
 })();
 
 
@@ -66104,6 +66136,10 @@ RB.ui.help = (function () {
       html += '<div class="note dia" lang="en"><b>' + (e && e.casual ? 'Casual speech' : 'Kansai-ben') + '</b> ' + RB.dialect.note(info, J) + '</div>';
     }
     if (e && e.n) html += '<div class="note">' + esc(e.n) + '</div>';
+    // in a dialogue line: what this word does there (AG-1: a construction, grammar the English has no word for, or a
+    // role not worked out), from the same relations the highlight shows
+    const here = RB.ui.speechMark && RB.ui.speechMark.explain ? RB.ui.speechMark.explain(anchor, idx) : null;
+    if (here) html += '<div class="note in-line"><span class="lab">In this line</span>' + here.map((n) => '<span class="il-' + esc(n.kind) + '">' + (n.kind === 'unresolved' ? 'Not worked out: ' : '') + esc(n.text) + '</span>').join(' ') + '</div>';
     if (!e && !info.gloss) html += '<div class="note">No dictionary note is recorded for this piece of text. The reading above is still accurate.</div>';
     if (mora && mora.length > 1) html += '<div class="note">Beats (morae): <span class="mora" lang="ja">' + mora.map((m) => '<span>' + esc(m) + '</span>').join('') + '</span></div>';
     if (surface.indexOf('っ') >= 0 || surface.indexOf('ッ') >= 0) html += '<div class="note">Small っ is a held beat: the next consonant is doubled.</div>';
@@ -68430,7 +68466,13 @@ RB.portraitDev = (function () {
  *
  *   RB.ui.speechMark.begin(box, line, spoken) → { start(), at(charIndex), follow(getTime, duration), end() } | null
  *   RB.ui.speechMark.stop()  clears any mark (a new line, the box hidden)
- * Pointing at a word marks its counterpart in the other language (LI-9; the same setting, the same pairs). */
+ *   RB.ui.speechMark.explain(wordEl, i)  what a word does in its line, for word help (AG-1)
+ * Pointing at a word marks its counterpart in the other language (LI-9; the same setting, the same pairs).
+ * AG-1: the pairs are relations (RB.jp.speech.align rels): a relation may join several Japanese words (行かなければ
+ * ならない "must") and an English word may belong to more than one, part by part (私 and です share "I'm"). Pointing
+ * at either side marks every relation it belongs to, all its words, in its colour (amber for a word's meaning, blue for
+ * grammar). While a voice speaks, the spoken word's relations are marked the same way (.spk, .spk2): one set of
+ * relations for both, decided once (the spoken mark keeps the line; pointing waits until it ends, as before). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
 
@@ -68441,7 +68483,14 @@ RB.ui.speechMark = (function () {
   const on = () => !(RB.game.settings && RB.game.settings.voice && RB.game.settings.voice.highlight === false);
 
   function clear(root) {
-    (root || document).querySelectorAll('.spk').forEach((e) => e.classList.remove('spk'));
+    (root || document).querySelectorAll('.spk, .spk2').forEach((e) => e.classList.remove('spk', 'spk2'));
+  }
+  // the relations of a shown line: its displayed words, its English as shown (the player's name in it), its dialect
+  function alignFor(tokens, line, ctx) {
+    const en = RB.game.s && RB.script.enVars ? RB.script.enVars(line.en || '') : line.en || '';
+    const look = ctx && ctx.dia && RB.dialect ? (t, i) => RB.dialect.lookupIn(tokens, i) || RB.jp.lookup(t) : null;
+    const name = RB.game.s && RB.game.s.player ? RB.game.s.player.name : null;
+    return S().align(tokens, en, { lookup: look, name, dia: ctx && ctx.dia ? ctx.dia : null });
   }
   // the English line's words as spans, numbered like RB.jp.speech.enWords (the same pattern over the same text)
   function wrapEnglish(el) {
@@ -68481,14 +68530,11 @@ RB.ui.speechMark = (function () {
     const tokens = jl && RB.ui.help.tokensOf ? RB.ui.help.tokensOf(+jl.dataset.src) : null;
     if (!tokens) return null;
     const ctx = RB.ui.help.ctxOf ? RB.ui.help.ctxOf(+jl.dataset.src) : null;
-    const en = RB.game.s && RB.script.enVars ? RB.script.enVars(line.en || '') : line.en || '';
-    const look = ctx && ctx.dia && RB.dialect ? (t, i) => RB.dialect.lookupIn(tokens, i) || RB.jp.lookup(t) : null;
-    const name = RB.game.s && RB.game.s.player ? RB.game.s.player.name : null;
     const st = {
       box, tokens,
       offs: S().offsets(tokens, String(spoken || '')),
       tl: S().timeline(tokens, (RB.game.settings.voice && RB.game.settings.voice.rate) || 1),
-      al: S().align(tokens, en, { lookup: look, name }),
+      al: alignFor(tokens, line, ctx),
       shown: null, events: false, t0: 0, raf: 0, timer: 0, follow: null,
     };
     cur = st;
@@ -68499,12 +68545,13 @@ RB.ui.speechMark = (function () {
       if (i == null) return;
       const line = box.querySelector(LINE);
       if (line) line.querySelectorAll('.jt[data-i="' + i + '"]').forEach((e) => e.classList.add('spk'));
-      const ws = st.al.map[i] || [];
-      if (ws.length) {
+      // the spoken word's relations: its meaning's English strongly (.spk), what its grammar says lighter (.spk2)
+      const rs = (st.al.rels || []).filter((r) => r.jp.includes(i));
+      if (rs.length) {
         const enEl = box.querySelector('.main .enline, .sub .enline');
         if (enEl) {
           wrapEnglish(enEl);
-          for (const k of ws) { const w = enEl.querySelector('.ew[data-w="' + k + '"]'); if (w) w.classList.add('spk'); }
+          for (const r of rs) for (const k of r.en) { const w = enEl.querySelector('.ew[data-w="' + k + '"]'); if (w) w.classList.add(r.tier === 'word' ? 'spk' : 'spk2'); }
         }
       }
     };
@@ -68556,7 +68603,7 @@ RB.ui.speechMark = (function () {
   // counterpart where applicable if the Highlight setting is On"): a Japanese word under the pointer (or focused) marks
   // the English words that render it, and an English word marks its Japanese word; nothing where there is no pair
   // (particles, endings, words the English does not name). The same pairs as the spoken mark; only classes change.
-  let hov = null; // { src, al, back: { englishIndex: tokenIndex } }
+  let hov = null; // { src, box, al, byTok: { tokenIndex: [relation] }, byWord: { englishIndex: [relation] } }
   function pairsFor(box) {
     const jl = box.querySelector(LINE_SEL);
     if (!jl || !S() || !RB.ui.help || !RB.ui.help.tokensOf) return null;
@@ -68565,14 +68612,14 @@ RB.ui.speechMark = (function () {
     const tokens = RB.ui.help.tokensOf(src);
     const line = RB.ui.dialogue && RB.ui.dialogue.shown ? RB.ui.dialogue.shown() : null;
     if (!tokens || !line) return null;
-    const ctx = RB.ui.help.ctxOf ? RB.ui.help.ctxOf(src) : null;
-    const en = RB.game.s && RB.script.enVars ? RB.script.enVars(line.en || '') : line.en || '';
-    const look = ctx && ctx.dia && RB.dialect ? (t, i) => RB.dialect.lookupIn(tokens, i) || RB.jp.lookup(t) : null;
-    const al = S().align(tokens, en, { lookup: look, name: RB.game.s && RB.game.s.player ? RB.game.s.player.name : null });
-    const back = {}, gback = {};
-    al.map.forEach((ws, i) => (ws || []).forEach((k) => { back[k] = i; }));
-    (al.gmap || []).forEach((ws, i) => (ws || []).forEach((k) => { gback[k] = i; }));
-    hov = { src, box, al, back, gback };
+    const al = alignFor(tokens, line, RB.ui.help.ctxOf ? RB.ui.help.ctxOf(src) : null);
+    // every relation each word belongs to, on both sides (an English word may be in two: "I'm" for 私 and です)
+    const byTok = {}, byWord = {};
+    for (const r of al.rels || []) {
+      for (const i of r.jp) (byTok[i] || (byTok[i] = [])).push(r);
+      for (const k of r.en) (byWord[k] || (byWord[k] = [])).push(r);
+    }
+    hov = { src, box, al, byTok, byWord, tokens };
     return hov;
   }
   const LINE_SEL = '.main .jline[data-src], .sub .jline[data-src]';
@@ -68586,27 +68633,46 @@ RB.ui.speechMark = (function () {
     if (!p) return;
     hovClear(box);
     const enEl = box.querySelector('.main .enline, .sub .enline');
+    const jl = box.querySelector(LINE_SEL);
+    if (!enEl || !jl) return;
+    // mark relations: every Japanese and English word in each, in its colour (a word in both kinds shows its meaning's)
+    const markAll = (rs) => {
+      wrapEnglish(enEl);
+      const cls = (r) => (r.tier === 'word' ? 'hov' : 'hov2');
+      const put = (el, c) => { if (el && !(c === 'hov2' && el.classList.contains('hov'))) { if (c === 'hov') el.classList.remove('hov2'); el.classList.add(c); } };
+      for (const r of rs.filter((x) => x.tier !== 'word').concat(rs.filter((x) => x.tier === 'word'))) {
+        for (const k of r.en) put(enEl.querySelector('.ew[data-w="' + k + '"]'), cls(r));
+        for (const i of r.jp) jl.querySelectorAll('.jt[data-i="' + i + '"]').forEach((e) => put(e, cls(r)));
+      }
+    };
     const jt = target.closest('.jline[data-src] .jt[data-i]');
     if (jt && jt.closest(LINE_SEL)) {
-      const i = +jt.dataset.i, ws = p.al.map[i] || [], gs = (p.al.gmap || [])[i] || [];
-      if ((!ws.length && !gs.length) || !enEl) return;
-      wrapEnglish(enEl);
-      jt.classList.add(ws.length ? 'hov' : 'hov2');
-      const mark = (k, cls) => { const w = enEl.querySelector('.ew[data-w="' + k + '"]'); if (w) w.classList.add(cls); };
-      for (const k of ws) mark(k, 'hov');
-      for (const k of gs) mark(k, 'hov2');
+      const rs = p.byTok[+jt.dataset.i] || [];
+      if (rs.length) markAll(rs);
       return;
     }
     const ew = target.closest('.ew[data-w]');
-    if (ew && enEl && enEl.contains(ew)) {
-      const k = +ew.dataset.w;
-      let i = p.back[k], cls = 'hov';
-      if (i == null) { i = p.gback[k]; cls = 'hov2'; }
-      if (i == null) return;
-      ew.classList.add(cls);
-      const jl = box.querySelector(LINE_SEL);
-      if (jl) jl.querySelectorAll('.jt[data-i="' + i + '"]').forEach((e) => e.classList.add(cls));
+    if (ew && enEl.contains(ew)) {
+      const rs = p.byWord[+ew.dataset.w] || [];
+      if (rs.length) markAll(rs);
     }
+  }
+  // what a word does in its line, for word help (AG-1): the construction or relation it is part of, what its grammar
+  // does when the English has no word for it, or that its role was not worked out. Null outside a dialogue line.
+  function explain(el, i) {
+    const box = el && el.closest && el.closest('.dlg');
+    if (!box || !el.closest(LINE_SEL)) return null;
+    const p = pairsFor(box);
+    if (!p) return null;
+    const out = [];
+    const words = (r) => r.en.map((k) => p.al.words[k].text).join(' ');
+    for (const r of p.byTok[i] || []) {
+      if (!r.label) continue;
+      const others = r.jp.filter((x) => x !== i).map((x) => (p.tokens[x] ? p.tokens[x].surface : '')).filter(Boolean);
+      out.push({ kind: 'relation', text: r.label + (others.length ? ', with ' + others.join(' ') : '') + '. Here: "' + words(r) + '".' });
+    }
+    for (const n of (p.al.notes || [])[i] || []) out.push({ kind: n.kind, text: n.text });
+    return out.length ? out : null;
   }
   if (typeof document !== 'undefined') {
     document.addEventListener('pointerover', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg')) hovAt(e.target); });
@@ -68616,7 +68682,7 @@ RB.ui.speechMark = (function () {
     // the English words become pointable as soon as a line shows (wrapped in spans the same way the spoken mark does)
     document.addEventListener('pointerenter', (e) => { const en = e.target && e.target.closest && e.target.closest('.dlg .main .enline, .dlg .sub .enline'); if (en && on()) wrapEnglish(en); }, true);
   }
-  return { begin, stop, active: () => !!cur, wrapEnglish, pairsFor };
+  return { begin, stop, active: () => !!cur, wrapEnglish, pairsFor, explain };
 })();
 
 
@@ -69771,6 +69837,24 @@ RB.ui.create = (function () {
     uiLang: ['Menus', [['en', 'English'], ['ja', null]]],
   };
 
+  // the learning step's choices in the Settings book's look (ST-2): legend, choices with their drawn icons, a sentence
+  const LEARN_LOOK = {
+    kana: ['Kana so far', [['none', 'From the start', { i: 'kana0' }], ['hira', 'Hiragana', { i: 'kanaH' }], ['both', 'Both kana', { i: 'kanaHK' }]],
+      'What you can already read: none yet, hiragana, or hiragana and katakana. Kana you know is not taught again, and every character can still be looked up.'],
+    assist: ['Mistakes in battle', [['assist', 'Assisted', { i: 'assist', d: 'A wrong answer costs nothing.' }], ['normal', 'Standard', { i: 'capped', d: 'A wrong answer costs a little, never much.' }]],
+      'What a wrong answer costs in an encounter. Either way you are shown the right answer and can try again.'],
+    difficulty: ['Tactical challenge', [['relaxed', 'Relaxed', { i: 'f1' }], ['normal', 'Standard', { i: 'f2' }], ['hard', 'Demanding', { i: 'f3' }]],
+      'How many creatures come, and how hard they press. Separate from the Japanese level.'],
+    input: ['Default way to answer', [['hand', 'Handwriting', { i: 'hand' }], ['choice', 'Choices', { i: 'choice' }], ['ime', 'Keyboard / IME', { i: 'ime' }]],
+      'How a question first asks for your answer. You can switch during any question.'],
+    lead: ['Dialogue leads with', [['en', 'English', { i: 'en' }], ['ja', 'Japanese', { i: 'ja', jp: '{日本語|にほんご}' }]],
+      'Which language each line of dialogue shows first, in the larger type.'],
+    secondary: ['The second language', [['always', 'Always shown', { i: 'shown' }], ['tap', 'Shown when tapped', { i: 'tap' }], ['off', 'Hidden', { i: 'hidden' }]],
+      'The other language, under the first. Tapping a line shows it when it is tucked away.'],
+    uiLang: ['Menu language', [['en', 'English', { i: 'en' }], ['ja', 'Japanese', { i: 'ja', jp: '{日本語|にほんご}' }]],
+      'The words on tabs, buttons and headings. Japanese menus keep furigana.'],
+  };
+
   function romajiToKata(s) {
     const src = s.toLowerCase().replace(/[^a-z]/g, '');
     if (!src) return '';
@@ -69923,16 +70007,20 @@ RB.ui.create = (function () {
         background() {
           return head('background') + entryGroup('bg', 'data-set', 'Background', BACKGROUNDS, (id) => BG_ICON[id] || 'pouch', true);
         },
+        // (ST-2, Robin 2026-10-16: "The new game learning check should use icons, same as the settings menu": the
+        // Settings book's circled choices, drawn icons, headings and sentences; the same keys and values as before)
         learning() {
-          const L = (k) => chips(k, 'data-k', LEARN[k][0], LEARN[k][1].map(([v, l]) => [v, l == null ? RB.ui.jhtml('{日本語|にほんご}') + ' (with furigana)' : esc(l)]));
-          return head('learning') +
-            '<h4 class="cr-kicker">Japanese level</h4>' +
-            entryGroup('profile', 'data-k', 'Japanese level', PROFILES, null, true) +
-            '<div class="row-acts"><button type="button" class="pbtn" data-a="place">Not sure? Try a short, optional placement' + I('next') + '</button></div>' +
-            L('kana') +
-            '<h4 class="cr-kicker">Challenge</h4>' + L('assist') + L('difficulty') +
-            '<h4 class="cr-kicker">Answering and reading</h4>' + L('input') + L('lead') + L('secondary') + L('uiLang') +
-            '<p class="note-slip">Furigana is always shown over kanji. Turn on the lightbulb (H or the bulb button) to hover or tap any Japanese for its reading and meaning.</p>';
+          const C = (k) => RB.ui.settings.choice(k, 'data-k', LEARN_LOOK[k][0], LEARN_LOOK[k][1], LEARN_LOOK[k][2]);
+          return head('learning') + '<div class="sx-scope cr-learn">' +
+            '<h3 class="sx-sec">Japanese level</h3>' +
+            RB.ui.settings.choice('profile', 'data-k', 'Your Japanese so far', PROFILES.map((p0) => [p0.id, p0.en, { i: 'lv' + p0.id, d: p0.d }]),
+              'Which version of each challenge you meet. It never locks you out of the story, and you can change it at any time.') +
+            '<button type="button" class="sx-slipbtn" data-a="place"><span class="sx-slipic">' + I('next') + '</span><span class="sx-slipt"><b>Not sure? Try a short placement</b>' +
+            '<span>A few questions to suggest a level. Nothing is graded or saved.</span></span></button>' +
+            C('kana') +
+            '<h3 class="sx-sec">Challenge</h3>' + C('assist') + C('difficulty') +
+            '<h3 class="sx-sec">Answering and reading</h3>' + C('input') + C('lead') + C('secondary') + C('uiLang') +
+            '<p class="note-slip">Furigana is always shown over kanji. Turn on the lightbulb (H or the bulb button) to hover or tap any Japanese for its reading and meaning.</p></div>';
         },
       };
 
@@ -84841,6 +84929,10 @@ RB.ui.settings = (function () {
     // which language leads: a letter and a kana on paper tiles
     en: '<rect class="tile" x="4" y="4" width="24" height="24" rx="3"/><text class="tx" x="16" y="23.2" text-anchor="middle">A</text>',
     ja: '<rect class="tile" x="4" y="4" width="24" height="24" rx="3"/><text class="tx jp" x="16" y="22.8" text-anchor="middle">あ</text>',
+    // kana known so far (the creation step): none yet, hiragana, hiragana and katakana
+    kana0: '<rect class="tile" x="4" y="4" width="24" height="24" rx="3" stroke-dasharray="2.5 2.5"/><path class="ln-g" d="M16 22v-5"/><path class="c-g" d="M16 18c-3.6.2-5.2-1.6-5.4-4.1 3-.1 5.2 1 5.4 4.1z"/>',
+    kanaH: '<rect class="tile" x="4" y="4" width="24" height="24" rx="3"/><text class="tx jp" x="16" y="22.8" text-anchor="middle">あ</text>',
+    kanaHK: '<rect class="tile" x="2" y="2" width="19" height="19" rx="2.5"/><text class="tx jp" x="11.5" y="17.2" text-anchor="middle" font-size="13">あ</text><rect class="tile" x="11" y="11" width="19" height="19" rx="2.5"/><text class="tx jp" x="20.5" y="26.2" text-anchor="middle" font-size="13">ア</text>',
     // the second language: in view, under a tap, out of view
     shown: '<path class="ln" d="M3.5 16c3.4-5.6 7.5-8.5 12.5-8.5s9.1 2.9 12.5 8.5c-3.4 5.6-7.5 8.5-12.5 8.5S6.9 21.6 3.5 16z"/><circle class="c-b" cx="16" cy="16" r="4.2"/>',
     tap: '<path class="ln" d="M13 27v-9.5a2 2 0 0 1 4 0V22l5.2.9a2.8 2.8 0 0 1 2.3 3.1L24 29"/><path class="ln" d="M15 13.6v-5.6a2 2 0 0 1 4 0v8"/><circle class="c-a" cx="17" cy="6.5" r="1.4"/><path class="ln" d="M10 9.5a7 7 0 0 1 14 0" stroke-dasharray="1.6 2.4"/>',
@@ -84894,6 +84986,19 @@ RB.ui.settings = (function () {
       '<div class="opts sx-opts' + (stack ? ' stack' : '') + '">' + opts.map(([v, l, x]) => {
         x = x || {};
         return '<label class="opt sx-opt"><input type="radio" name="' + name + '" data-set="' + esc(key) + '" data-obj="' + (obj || 'st') + '" value="' + esc(String(v)) + '"' + (String(cur) === String(v) ? ' checked' : '') + '>' +
+          '<span class="sx-face"><span class="sx-mark">' + icon(x.i) + '<span class="sx-w">' + (x.jp ? '<span class="sx-jp">' + ruby(x.jp) + '</span>' : '') + '<span class="sx-en">' + esc(l) + '</span></span>' + RING + '</span>' +
+          (x.d ? '<span class="sx-d">' + esc(x.d) + '</span>' : '') + '</span></label>';
+      }).join('') + '</div></fieldset>';
+  }
+  // ST-2: the same circled choices for a page that keeps its own state (the creation step): each input carries the
+  // caller's attributes (attr="key" data-v="value"); the caller marks the checked one
+  function choice(key, attr, label, opts, hint) {
+    const name = 'c' + (++uid) + key;
+    const stack = opts.some((o) => o[2] && o[2].d);
+    return '<fieldset class="field sx-field" data-field="' + esc(key) + '" data-group="' + esc(key) + '"><legend class="sx-h">' + esc(label) + '</legend>' + why(hint) +
+      '<div class="opts sx-opts' + (stack ? ' stack' : '') + '">' + opts.map(([v, l, x]) => {
+        x = x || {};
+        return '<label class="opt sx-opt"><input type="radio" name="' + name + '" ' + attr + '="' + esc(key) + '" data-v="' + esc(String(v)) + '">' +
           '<span class="sx-face"><span class="sx-mark">' + icon(x.i) + '<span class="sx-w">' + (x.jp ? '<span class="sx-jp">' + ruby(x.jp) + '</span>' : '') + '<span class="sx-en">' + esc(l) + '</span></span>' + RING + '</span>' +
           (x.d ? '<span class="sx-d">' + esc(x.d) + '</span>' : '') + '</span></label>';
       }).join('') + '</div></fieldset>';
@@ -85454,7 +85559,7 @@ RB.ui.settings = (function () {
   }
 
   return {
-    open, close, addRows, review, isOpen: () => !!lay, openBattle, battleReady, inBattle: () => !!(lay && battle()),
+    open, close, addRows, review, choice, isOpen: () => !!lay, openBattle, battleReady, inBattle: () => !!(lay && battle()),
     reviewing: () => !!(lay && mode === 'review'), tab: show_, suzuRow, current: () => (lay ? group : null), TABS, BATTLE_TABS,
   };
 })();
@@ -128850,6 +128955,1121 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
 })(RB.content);
+
+
+/* ==== src/content/align/00_reviewed.js ==== */
+/* Reviewed alignments for authored dialogue (AG-1): what each word of a displayed line says in its English, checked
+ * by a person against the whole line, used by RB.jp.speech.align before its rules (src/lang/88_speech_align.js).
+ * Each entry is keyed to the displayed pair: the Japanese words (the player's name as $name), the dialect and the
+ * English (the name as $name), and names every word by its place and its text; a line that changes no longer matches
+ * and falls back to the rules. Propose an entry with `node tools/review/align_registry.mjs --propose <scene> <n>`,
+ * correct it against the line, and check all with `--check` (also run by tests/unit/align_registry.test.mjs).
+ * Reviewed by the developer, not by a native speaker; see VALIDATION.md "AG-1". */
+var RB = (globalThis.RB = globalThis.RB || {});
+if (RB.jp && RB.jp.speech && RB.jp.speech.authored) RB.jp.speech.authored(
+[
+ {
+  "key": "a1-c3da78e0-e004",
+  "scene": "rw.ren_first",
+  "line": 2,
+  "jp": "レン と {申|もう}します 。 {川上|かわかみ} から 、 {嵐|あらし} の あと の {灯|あか}り を {直|なお}し に {来|き}ました 。 {灯守|ひもり} です 。 {一応|いちおう} 。",
+  "en": "I'm Ren. I came down from upriver to mend the lanterns after the storm. A keeper. Nominally.",
+  "dia": null,
+  "reviewed": "2026-10-16 developer review against the full line (not a native speaker); AG-1 seed",
+  "rels": [
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      0,
+      "レン"
+     ]
+    ],
+    "en": [
+     {
+      "t": "Ren"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "naming",
+    "jp": [
+     [
+      1,
+      "と"
+     ],
+     [
+      2,
+      "申します"
+     ]
+    ],
+    "en": [
+     {
+      "t": "I'm",
+      "p": 1
+     }
+    ],
+    "label": "naming: \"X と申します\" is \"I'm X\" (humble)"
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      4,
+      "川上"
+     ]
+    ],
+    "en": [
+     {
+      "t": "upriver"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "case",
+    "jp": [
+     [
+      5,
+      "から"
+     ]
+    ],
+    "en": [
+     {
+      "t": "from"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      7,
+      "嵐"
+     ]
+    ],
+    "en": [
+     {
+      "t": "storm"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      9,
+      "あと"
+     ]
+    ],
+    "en": [
+     {
+      "t": "after"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      11,
+      "灯り"
+     ]
+    ],
+    "en": [
+     {
+      "t": "lanterns"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      13,
+      "直し"
+     ]
+    ],
+    "en": [
+     {
+      "t": "mend"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "purpose",
+    "jp": [
+     [
+      14,
+      "に"
+     ]
+    ],
+    "en": [
+     {
+      "t": "to"
+     }
+    ],
+    "label": "～しに来る: comes \"to\" do something"
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      15,
+      "来ました"
+     ]
+    ],
+    "en": [
+     {
+      "t": "came"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      17,
+      "灯守"
+     ]
+    ],
+    "en": [
+     {
+      "t": "keeper"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      20,
+      "一応"
+     ]
+    ],
+    "en": [
+     {
+      "t": "Nominally"
+     }
+    ]
+   }
+  ],
+  "notes": [
+   [
+    2,
+    "申します",
+    "Humble 申す: a polite way to give your own name. The English says \"I'm Ren\"."
+   ],
+   [
+    18,
+    "です",
+    "Polite です: \"A keeper.\" has no \"is\" of its own."
+   ]
+  ]
+ },
+ {
+  "key": "a1-3481c22e-615a",
+  "scene": "sg.genzo_waiting",
+  "line": 0,
+  "jp": "{渡|わた}し{船|ぶね} は まだ か 。 …… {別|べつ} に 、 {待|ま}ってる わけ じゃ ない 。 {灯台守|とうだいもり} は 、 {海|うみ} を {見|み}る の が {仕事|しごと} だ 。",
+  "en": "The ferry's not in yet? …Not that I'm waiting. A lighthouse keeper's job is to watch the sea.",
+  "dia": null,
+  "reviewed": "2026-10-16 developer review against the full line (not a native speaker); AG-1 seed",
+  "rels": [
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      0,
+      "渡し船"
+     ]
+    ],
+    "en": [
+     {
+      "t": "ferry's"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      2,
+      "まだ"
+     ]
+    ],
+    "en": [
+     {
+      "t": "not"
+     },
+     {
+      "t": "yet"
+     }
+    ],
+    "label": "まだ … か: \"not … yet?\""
+   },
+   {
+    "tier": "grammar",
+    "fn": "construction",
+    "jp": [
+     [
+      7,
+      "別"
+     ],
+     [
+      8,
+      "に"
+     ],
+     [
+      11,
+      "わけ"
+     ],
+     [
+      12,
+      "じゃ"
+     ],
+     [
+      13,
+      "ない"
+     ]
+    ],
+    "en": [
+     {
+      "t": "Not"
+     },
+     {
+      "t": "that"
+     }
+    ],
+    "label": "別に … わけじゃない: \"not that …\""
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      10,
+      "待ってる"
+     ]
+    ],
+    "en": [
+     {
+      "t": "waiting"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "aspect",
+    "jp": [
+     [
+      10,
+      "待ってる"
+     ]
+    ],
+    "en": [
+     {
+      "t": "I'm",
+      "p": 1
+     }
+    ],
+    "label": "～てる (～ている): an action going on, \"am …-ing\""
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      15,
+      "灯台守"
+     ]
+    ],
+    "en": [
+     {
+      "t": "lighthouse"
+     },
+     {
+      "t": "keeper's"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      18,
+      "海"
+     ]
+    ],
+    "en": [
+     {
+      "t": "sea"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      20,
+      "見る"
+     ]
+    ],
+    "en": [
+     {
+      "t": "watch"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "nominal",
+    "jp": [
+     [
+      21,
+      "の"
+     ]
+    ],
+    "en": [
+     {
+      "t": "to"
+     }
+    ],
+    "label": "の makes \"見る\" a noun: here the English \"to watch\""
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      23,
+      "仕事"
+     ]
+    ],
+    "en": [
+     {
+      "t": "job"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "cop",
+    "jp": [
+     [
+      24,
+      "だ"
+     ]
+    ],
+    "en": [
+     {
+      "t": "is"
+     }
+    ]
+   }
+  ],
+  "notes": [
+   [
+    3,
+    "か",
+    "Question marker: \"…yet?\""
+   ],
+   [
+    16,
+    "は",
+    "Topic marker: \"a lighthouse keeper (as for him), the job is …\"."
+   ]
+  ]
+ },
+ {
+  "key": "a1-b4123a67-ce86",
+  "scene": "sb.hoshino",
+  "line": 45,
+  "jp": "$name 、 {鐘|かね} の {決|き}まり 、 {覚|おぼ}えてる よね ？ {行|い}こう ！",
+  "en": "$name, you remember the bell rules, right? Let's go!",
+  "dia": null,
+  "reviewed": "2026-10-16 developer review against the full line (not a native speaker); AG-1 seed",
+  "rels": [
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      0,
+      "$name"
+     ]
+    ],
+    "en": [
+     {
+      "ph": "name"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      2,
+      "鐘"
+     ]
+    ],
+    "en": [
+     {
+      "t": "bell"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      4,
+      "決まり"
+     ]
+    ],
+    "en": [
+     {
+      "t": "rules"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      6,
+      "覚えてる"
+     ]
+    ],
+    "en": [
+     {
+      "t": "remember"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "tag",
+    "jp": [
+     [
+      7,
+      "よね"
+     ]
+    ],
+    "en": [
+     {
+      "t": "right"
+     }
+    ],
+    "label": "よね: seeking agreement, \"…, right?\""
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      9,
+      "行こう"
+     ]
+    ],
+    "en": [
+     {
+      "t": "go"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "vol",
+    "jp": [
+     [
+      9,
+      "行こう"
+     ]
+    ],
+    "en": [
+     {
+      "t": "Let's"
+     },
+     {
+      "t": "Let's",
+      "p": 1
+     }
+    ],
+    "label": "volitional ～よう: \"let's …\""
+   }
+  ],
+  "notes": [
+   [
+    3,
+    "の",
+    "Links 鐘 to 決まり: the English puts the two nouns together, \"bell rules\"."
+   ]
+  ]
+ },
+ {
+  "key": "a1-c5de3c39-bc7b",
+  "scene": "sb.quiet_mio",
+  "line": 11,
+  "jp": "わたし 、 {頼|たの}まれる と {断|ことわ}れない でしょう 。 {夜中|よなか} でも 、 {熱|ねつ} を {出|だ}した {子|こ} が いれば {行|い}く 。 {隣|となり} の {村|むら} でも 。 それ は いい の 。 {好|す}き で やってる から 。",
+  "en": "I can't say no when someone asks, can I. Middle of the night, a child with a fever — I go. Even to the next village. That part's fine. I do it because I want to.",
+  "dia": null,
+  "reviewed": "2026-10-16 developer review against the full line (not a native speaker); AG-1 seed",
+  "rels": [
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      0,
+      "わたし"
+     ]
+    ],
+    "en": [
+     {
+      "t": "I"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      2,
+      "頼まれる"
+     ]
+    ],
+    "en": [
+     {
+      "t": "asks"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "passive",
+    "jp": [
+     [
+      2,
+      "頼まれる"
+     ]
+    ],
+    "en": [
+     {
+      "t": "someone"
+     }
+    ],
+    "label": "passive 頼まれる \"be asked\": the English says it actively, \"someone asks\""
+   },
+   {
+    "tier": "grammar",
+    "fn": "cond",
+    "jp": [
+     [
+      3,
+      "と"
+     ]
+    ],
+    "en": [
+     {
+      "t": "when"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      4,
+      "断れない"
+     ]
+    ],
+    "en": [
+     {
+      "t": "say"
+     },
+     {
+      "t": "no"
+     }
+    ],
+    "label": "断る \"refuse\": \"say no\""
+   },
+   {
+    "tier": "grammar",
+    "fn": "pot",
+    "jp": [
+     [
+      4,
+      "断れない"
+     ]
+    ],
+    "en": [
+     {
+      "t": "can't"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "neg",
+    "jp": [
+     [
+      4,
+      "断れない"
+     ]
+    ],
+    "en": [
+     {
+      "t": "can't",
+      "p": 1
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "tag",
+    "jp": [
+     [
+      5,
+      "でしょう"
+     ]
+    ],
+    "en": [
+     {"t": "can"},
+     {
+      "t": "I",
+      "n": 1
+     }
+    ],
+    "label": "でしょう here seeks agreement: \"…, can I?\""
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      7,
+      "夜中"
+     ]
+    ],
+    "en": [
+     {
+      "t": "Middle"
+     },
+     {
+      "t": "night"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      10,
+      "熱"
+     ]
+    ],
+    "en": [
+     {
+      "t": "fever"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "construction",
+    "jp": [
+     [
+      11,
+      "を"
+     ],
+     [
+      12,
+      "出した"
+     ]
+    ],
+    "en": [
+     {
+      "t": "with"
+     }
+    ],
+    "label": "熱を出した子 \"a child who has a fever\": \"a child with a fever\""
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      13,
+      "子"
+     ]
+    ],
+    "en": [
+     {
+      "t": "child"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      16,
+      "行く"
+     ]
+    ],
+    "en": [
+     {
+      "t": "go"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "focus",
+    "jp": [
+     [
+      21,
+      "でも"
+     ]
+    ],
+    "en": [
+     {
+      "t": "Even"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      18,
+      "隣"
+     ]
+    ],
+    "en": [
+     {
+      "t": "next"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      20,
+      "村"
+     ]
+    ],
+    "en": [
+     {
+      "t": "village"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      23,
+      "それ"
+     ]
+    ],
+    "en": [
+     {
+      "t": "That"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      25,
+      "いい"
+     ]
+    ],
+    "en": [
+     {
+      "t": "fine"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      28,
+      "好き"
+     ]
+    ],
+    "en": [
+     {
+      "t": "want"
+     }
+    ],
+    "label": "好きで \"because I like to\": \"because I want to\""
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      30,
+      "やってる"
+     ]
+    ],
+    "en": [
+     {
+      "t": "do"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "reason",
+    "jp": [
+     [
+      31,
+      "から"
+     ]
+    ],
+    "en": [
+     {
+      "t": "because"
+     }
+    ]
+   }
+  ],
+  "notes": [
+   [
+    8,
+    "でも",
+    "でも \"even\": \"even in the middle of the night\"; the English leaves the \"even\" out here."
+   ],
+   [
+    15,
+    "いれば",
+    "いれば \"if there is\": the English sets it as a scene, \"a child with a fever — I go\"."
+   ]
+  ]
+ },
+ {
+  "key": "a1-d4b93e0f-508c",
+  "scene": "hall.w5.c_stone",
+  "line": 1,
+  "jp": "{水路|すいろ} から {石|いし} を {取|と}り{除|のぞ}いた 。 …… {何|なに} も {変|か}わらない 。 {理由|りゆう} は 、 ここ で は ない よう だ 。",
+  "en": "You lift the stone out of the channel. …Nothing changes. That isn't why, it seems.",
+  "dia": null,
+  "reviewed": "2026-10-16 developer review against the full line (not a native speaker); AG-1 seed",
+  "rels": [
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      0,
+      "水路"
+     ]
+    ],
+    "en": [
+     {
+      "t": "channel"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "case",
+    "jp": [
+     [
+      1,
+      "から"
+     ]
+    ],
+    "en": [
+     {
+      "t": "out"
+     },
+     {
+      "t": "of"
+     }
+    ],
+    "label": "から \"from\": here \"out of\""
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      2,
+      "石"
+     ]
+    ],
+    "en": [
+     {
+      "t": "stone"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      4,
+      "取り除いた"
+     ]
+    ],
+    "en": [
+     {
+      "t": "lift"
+     }
+    ]
+   },
+   {
+    "tier": "grammar",
+    "fn": "construction",
+    "jp": [
+     [
+      8,
+      "何"
+     ],
+     [
+      9,
+      "も"
+     ],
+     [
+      10,
+      "変わらない"
+     ]
+    ],
+    "en": [
+     {
+      "t": "Nothing"
+     }
+    ],
+    "label": "何も … ない: \"nothing\""
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      10,
+      "変わらない"
+     ]
+    ],
+    "en": [
+     {
+      "t": "changes"
+     }
+    ]
+   },
+   {
+    "tier": "word",
+    "fn": "meaning",
+    "jp": [
+     [
+      12,
+      "理由"
+     ]
+    ],
+    "en": [
+     {
+      "t": "why"
+     }
+    ],
+    "label": "理由 \"the reason\": \"That isn't why\""
+   },
+   {
+    "tier": "grammar",
+    "fn": "cop",
+    "jp": [
+     [
+      16,
+      "で"
+     ],
+     [
+      17,
+      "は"
+     ],
+     [
+      18,
+      "ない"
+     ]
+    ],
+    "en": [
+     {
+      "t": "isn't"
+     },
+     {
+      "t": "isn't",
+      "p": 1
+     }
+    ],
+    "label": "ではない: \"is not\""
+   },
+   {
+    "tier": "grammar",
+    "fn": "modal",
+    "jp": [
+     [
+      19,
+      "よう"
+     ],
+     [
+      20,
+      "だ"
+     ]
+    ],
+    "en": [
+     {
+      "t": "it"
+     },
+     {
+      "t": "seems"
+     }
+    ],
+    "label": "～ようだ: \"it seems\""
+   }
+  ],
+  "notes": [
+   [
+    15,
+    "ここ",
+    "ここ \"here\" (this spot): the English says \"That\"."
+   ]
+  ]
+ }
+]);
 
 
 /* ==== src/content/cases/00_lex.js ==== */
