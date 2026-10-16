@@ -834,10 +834,10 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - Not done: (d) "The start was confusing - needs voices (wip)": the voices, which wait on Robin's VA-2 picks (C-93).
     No look at the opening itself beyond that was asked for. A real device voice's own positions were not tried here
     (headless Chromium has no voice; the browser test uses a stand-in that reports positions as device voices do).
-- [~] XP123 ST-1, Settings laid out like the Ledger, and the settings reviewed when a journey begins (Robin, 2026-10-15).
+- [x] XP123 ST-1, Settings laid out like the Ledger, and the settings reviewed when a journey begins (Robin, 2026-10-15).
   VALIDATION.md "ST-1". Run: B `settings_review`, `settings`, `settings_access`, `book`, `folio`, and the regression
-  batches (32 suites) pass, after three test updates for the new layout. U: whole suite 54,226/0. Still open:
-  `harmony_cutin` run whole and alone (2 failures under load; each failing section passed alone).
+  batches (32 suites) pass, after three test updates for the new layout; `harmony_cutin` 13/0 run whole and alone.
+  U: whole suite 54,226/0.
   - Done: (a) paper tabs across the top instead of the left page's list of groups, each tab across both pages (B
     `settings_review`, `settings`, `battle_settings`); (b) every setting named by a heading with a sentence under it (B
     `settings_review`); (c) the controls drawn on the page: a choice circled in ink, on/off a tick box, a level a ruled
@@ -850,8 +850,8 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     `settings_review`).
   - Not done (by design, later): voices on by default with recordings / device voice / none, when the recordings ship.
     Not heard or seen by a person here; layouts seen in captures (docs/screenshots/settings/).
-- [~] XP124 LI, the Ledger, items and their slips (Robin, 2026-10-16). VALIDATION.md "LI". B `ledger_li` (30 checks)
-  passes; the browser regression on this build is running.
+- [x] XP124 LI, the Ledger, items and their slips (Robin, 2026-10-16). VALIDATION.md "LI". B `ledger_li` (30 checks)
+  passes, and so does the browser regression on this build (22 suites; four needed a fix first: VALIDATION.md "LI").
   - Done:
     - (LI-1) Change… on each slot, in the Equipped list and under the portrait: a short list of what fits, the worn one
       ticked, and Nothing (B `equipment`).

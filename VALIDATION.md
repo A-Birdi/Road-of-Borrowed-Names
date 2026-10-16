@@ -4416,7 +4416,7 @@ the captures listed.
       sweep keeps. The test was corrected; then 8/0.
     - `keepsakes`, 32/33: the test looked for the old keepsake notice, now the keepsake's award slip. The test was
       updated; then 33/33.
-  - `fieldweave` (same update as `keepsakes`) runs next.
+  - `fieldweave` (same update as `keepsakes`): 89/89.
   - `ledger_li` passes again on the fixed build.
   - Updated for the new markup: `folio`, `settings_access` and `title_ledger` (the Save slip); `book`
     (`.leaf:first-of-type`); `quest_guide` (the here ring); `world_living` (the spot words); `keepsakes` and
@@ -4453,10 +4453,9 @@ Checks on the built index.html (headless Chromium, Linux), 2026-10-15 and 16.
   - `settings_review`, `dialect_kansai`, `ui` 14/0, `equipment`, `visual`: all pass.
   - `audio_levels` first failed with "unknown sfx:moment" because it ran against the build from before LI-3's sound;
     on the current build it passes.
-- **Not finished: `harmony_cutin`.** It had 2 failures in a loaded batch (11/2). Each failing section passed when run
-  alone: the frozen section on the new build, and the painted-geometry section on both the old and the new build.
-  The whole suite run alone was stopped twice, once by the 30-minute limit and once by a container restart. It is to
-  be completed.
+- **`harmony_cutin`:** 11/2 in a loaded batch; each failing section passed when run alone (the frozen section on the
+  new build, the painted-geometry section on both builds). Two whole runs were stopped, by the time limit and by a
+  container restart. The whole suite, run alone on the current build (ST-1 and LI): **13 passed, 0 failed**.
 - **U, the whole unit suite at ST-1: 54,226 passed, 0 failed.**
 
 ## PT-1 — a new learner's first play (a coworker's notes, relayed by Robin, 2026-10-15)

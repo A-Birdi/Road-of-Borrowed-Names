@@ -445,8 +445,8 @@
       key in groups.
     - Voice plan: the narrator's reference readings are counted (`tools/voice/reference_count.mjs`,
       PRODUCTION_ESTIMATE.md §1b).
-    - Open: the browser regression run on this build; `harmony_cutin` whole and alone (ST-1); the cut-off "My
-      Learning", "Reference" request. Icons to look at again: `yn_letter`, `cr_message`, `atlas_cos_sash`.
+    - Open: the cut-off "My Learning", "Reference" request (asked Robin what it meant). Icons to look at again:
+      `yn_letter`, `cr_message`, `atlas_cos_sash`. The browser regression and `harmony_cutin` (ST-1) pass.
     - VALIDATION.md "LI", REQUIREMENTS.md XP124.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
