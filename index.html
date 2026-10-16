@@ -700,7 +700,7 @@ button.entry .t, button.entry .kind { display: block; }
 .next-note svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; color: var(--ribbon-deep); }
 .next-kind { color: var(--ribbon-deep) !important; }
 .next-kind svg { width: 1em; height: 1em; vertical-align: -0.15em; }
-.chartbox:focus { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.chartbox:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 
 /* Words: filed notes */
 .row-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.6em 0; }
@@ -793,7 +793,7 @@ button.entry .kind.slotline { display: flex; flex-wrap: wrap; align-items: cente
 
 /* Map: a folded chart */
 .chartbox { border: 1px solid var(--paper-edge); box-shadow: 0 2px 0 var(--paper-3); background: #efe3c6; margin: 0.2em 0 0.3em; }
-.chartbox svg { display: block; width: 100%; height: auto; max-height: min(52 * var(--vh), 420px); }
+.chartbox svg { display: block; width: 100%; height: auto; }
 
 /* Settings */
 .folio-settings .leaf h3:first-child { margin-top: 0; }
@@ -6314,6 +6314,39 @@ body.high-contrast .folio.book .subnav.bm-chips > .subbtn { clip-path: none; out
 .sv-opt.sv-leave { margin-top: 0.35em; border-top: 1px solid var(--rule); border-radius: 0 0 3px 3px; }
 .sv-opt.sv-leave .sv-ic { background: rgba(168, 62, 39, 0.1); color: var(--vermilion, #a83e27); }
 .sv-foot { margin: 0.4em 0.65em 0.1em; font-size: 0.82em; color: var(--ink-3); line-height: 1.45; }
+
+/* ==== src/styles/95_route_chart.css ==== */
+/* The Route chart (LI-6, src/ui/50_menu.js chartWire): a window onto a taller chart, zoomed with its buttons, Ctrl and
+ * the wheel, two fingers or the keys, and moved by dragging once zoomed. Where you are pulses in red with its name on a
+ * slip; a name without room beside its place waits to be pointed at. */
+.chartbox { position: relative; overflow: hidden; aspect-ratio: 520 / 448; max-height: min(62 * var(--vh, 1vh), 560px); width: 100%; }
+.chartbox svg.chart { display: block; width: 100%; height: 100%; max-height: none; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.chartbox.zoomed svg.chart { cursor: grab; touch-action: none; }
+.chartbox.zoomed.dragging svg.chart { cursor: grabbing; }
+.chartbox:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+
+/* the zoom buttons: small paper stamps in the chart's top-left corner, over the mountains, where no place lies */
+.ch-zoom { position: absolute; top: 8px; left: 8px; display: flex; flex-direction: column; gap: 4px; }
+.ch-z {
+  display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 3px; cursor: pointer;
+  background: rgba(255, 250, 238, 0.92); color: var(--ink); border: 1px solid var(--paper-edge); box-shadow: 0 1px 2px rgba(40, 25, 5, 0.25);
+}
+.ch-z svg { width: 18px; height: 18px; }
+.ch-z:hover:not([disabled]) { background: #fff6e2; }
+.ch-z[disabled] { opacity: 0.4; cursor: default; }
+.ch-z:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+@media (pointer: coarse) { .ch-z { width: 44px; height: 44px; } .ch-z svg { width: 22px; height: 22px; } }
+
+/* places: a name waiting for room appears on a slip when its place is pointed at */
+.chart .pl.quiet .pl-name, .chart .pl.quiet .pl-slip { visibility: hidden; }
+.chart .pl.quiet.hov .pl-name, .chart .pl.quiet.hov .pl-slip { visibility: visible; }
+.chart .pl.quiet.hov .pl-name { stroke: none; }
+.chart .pl { cursor: default; }
+/* where you are: a ring that keeps widening from the red dot */
+.chart .here-pulse { transform-box: fill-box; transform-origin: center; animation: here-pulse 1.8s ease-out infinite; }
+@keyframes here-pulse { from { transform: scale(0.8); opacity: 0.9; } to { transform: scale(2.3); opacity: 0; } }
+body.reduced-motion .chart .here-pulse { animation: none; transform: scale(1.4); opacity: 0.7; }
+body.high-contrast .ch-z { background: #fff; border-color: #000; }
 </style>
 </head>
 <body>
@@ -81617,6 +81650,7 @@ RB.ui.menu = (function () {
     stopDemo();
     if (tabsApi) tabsApi.destroy();
     if (headRO) { headRO.disconnect(); headRO = null; }
+    if (chartRO) { chartRO.disconnect(); chartRO = null; }
     if (mq) mq.onchange = null;
     const el = layer.el, at = el.parentNode;
     RB.ui.popLayer(layer);
@@ -82461,47 +82495,221 @@ RB.ui.menu = (function () {
   }
   // places and routes of this journey's edition (the twelve-chapter edition's places stay off a six-chapter chart)
   const inEd = (s, o) => !o || !o.edition || (RB.edition ? RB.edition.of(s) : 1) >= o.edition;
+  // ---- the Route chart (LI-6, Robin 2026-10-16: "less cramped … allow it to scroll, with an option to zoom. Your
+  // current location could be marked with an animated circle and the name always displayed … hovering over locations
+  // could then display their name … if we're zoomed in and it makes sense spatially just display it normally.
+  // Unexplored locations should still say such, just not get cut off").
+  // The places' positions are the content's 520×320 chart; it is drawn taller (CH.SY) so the north's crowd spreads
+  // out. Marks and words keep one size on screen at every zoom; a name is written beside its place when it has room
+  // there, and otherwise appears when the place is pointed at. Drag moves the chart; +/−, Ctrl and the wheel, two
+  // fingers or the keys zoom it.
+  const CH = { W: 520, SY: 1.4, ZMAX: 4, LBL: 13 };
+  CH.H = Math.round(320 * CH.SY);
+  const cxy = (p) => [p.pos[0], p.pos[1] * CH.SY];
+  let chartRO = null;
+  function chartState() {
+    const M = view.map;
+    if (!M.chart) M.chart = { z: 1, cx: CH.W / 2, cy: CH.H / 2 };
+    return M.chart;
+  }
+  function chartView(st) {
+    const vw = CH.W / st.z, vh = CH.H / st.z;
+    st.cx = Math.min(CH.W - vw / 2, Math.max(vw / 2, st.cx));
+    st.cy = Math.min(CH.H - vh / 2, Math.max(vh / 2, st.cy));
+    return [st.cx - vw / 2, st.cy - vh / 2, vw, vh];
+  }
   function chartSvg(s, curMap) {
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => inEd(s, p));
-    const Wd = 520, H = 320;
-    const fs = Math.round(14 * Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1)));
     const gm = guideMarks(s);
     // you are here: the place this map belongs to (rooms count as their village)
     const hereOld = places.find((p) => curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub));
     const hereId = hereOld ? hereOld.id : RB.questGuide.placeOf(s.map);
     const nextName = gm ? gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'an unexplored place')).join(', ') : '';
-    let svg = '<svg class="chart" viewBox="0 0 ' + Wd + ' ' + H + '" role="img" aria-label="Route chart. Known places: ' + esc(places.filter((p) => s.travel[p.id]).map((p) => p.name.en).join(', ') || 'none yet') +
-      (hereId && RB.content.places[hereId] ? '. You are in or near ' + esc(RB.content.places[hereId].name.en) : '') + (gm ? '. The next step of the followed quest is in ' + esc(nextName) : '') + '.">';
+    return '<svg class="chart" viewBox="' + chartView(chartState()).join(' ') + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Route chart. Known places: ' + esc(places.filter((p) => s.travel[p.id]).map((p) => p.name.en).join(', ') || 'none yet') +
+      (hereId && RB.content.places[hereId] ? '. You are in or near ' + esc(RB.content.places[hereId].name.en) : '') + (gm ? '. The next step of the followed quest is in ' + esc(nextName) : '') + '.">' +
+      chartInk(s, places, hereId, gm, 1, chartView(chartState())) + '</svg>';
+  }
+  // what is drawn on the chart at a scale of k chart units to one screen pixel, its names placed inside the part of
+  // the chart in view (vb: x, y, width, height)
+  function chartInk(s, places, hereId, gm, k, vb) {
+    const W = CH.W, H = CH.H, NS = ' vector-effect="non-scaling-stroke"';
+    const ts = Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1));
+    const fs = CH.LBL * ts * k;
     // paper, folds and the sea/mountain washes (decorative)
-    svg += '<rect width="' + Wd + '" height="' + H + '" fill="#efe3c6"/><path d="M0 252 Q120 222 200 252 T 520 232 L520 320 L0 320Z" fill="#cfdbd6"/><path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/>';
-    svg += '<path d="M173 0V320M346 0V320M0 160H520" stroke="#b9a57a" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"/>';
+    let svg = '<rect width="' + W + '" height="' + H + '" fill="#efe3c6"/><g transform="scale(1 ' + CH.SY + ')"><path d="M0 252 Q120 222 200 252 T 520 232 L520 320 L0 320Z" fill="#cfdbd6"/><path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/></g>';
+    svg += '<path d="M173 0V' + H + 'M346 0V' + H + 'M0 ' + H / 2 + 'H520" stroke="#b9a57a" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"' + NS + '/>';
     for (const [a, b, ro] of RB.content.roads || []) {
       const A = RB.content.places[a], B = RB.content.places[b];
       if (!A || !B || !inEd(s, ro) || !inEd(s, A) || !inEd(s, B) || (ro && ro.if && !RB.state.test(s, ro.if))) continue;
       const known = s.travel[a] && s.travel[b];
       const half = s.travel[a] || s.travel[b];
+      const [ax, ay] = cxy(A), [bx, by] = cxy(B);
       // a ferry's route: a curve over the sea, in the sea's ink
       if (ro && ro.sea) {
-        const mx = (A.pos[0] + B.pos[0]) / 2, my = Math.max(A.pos[1], B.pos[1]) + 26;
-        svg += '<path d="M' + A.pos[0] + ' ' + A.pos[1] + ' Q' + mx + ' ' + my + ' ' + B.pos[0] + ' ' + B.pos[1] + '" fill="none" stroke="' + (known ? '#2c5470' : '#7a98a8') + '" stroke-width="' + (known ? 2.2 : 1.6) + '" stroke-dasharray="' + (known ? '7 4' : '2 6') + '"/>';
+        const mx = (ax + bx) / 2, my = Math.max(ay, by) + 36;
+        svg += '<path d="M' + ax + ' ' + ay + ' Q' + mx + ' ' + my + ' ' + bx + ' ' + by + '" fill="none" stroke="' + (known ? '#2c5470' : '#7a98a8') + '" stroke-width="' + (known ? 2.2 : 1.6) + '" stroke-dasharray="' + (known ? '7 4' : '2 6') + '"' + NS + '/>';
         continue;
       }
-      svg += '<line x1="' + A.pos[0] + '" y1="' + A.pos[1] + '" x2="' + B.pos[0] + '" y2="' + B.pos[1] + '" stroke="' + (known ? '#3b2e1c' : '#9d8b66') + '" stroke-width="' + (known ? 2.5 : 1.6) + '" stroke-dasharray="' + (known ? '0' : half ? '6 5' : '2 6') + '"/>';
+      svg += '<line x1="' + ax + '" y1="' + ay + '" x2="' + bx + '" y2="' + by + '" stroke="' + (known ? '#3b2e1c' : '#9d8b66') + '" stroke-width="' + (known ? 2.5 : 1.6) + '" stroke-dasharray="' + (known ? '0' : half ? '6 5' : '2 6') + '"' + NS + '/>';
+    }
+    // the names: the place you are in first, then the next step, then the places you know, then the rest; each takes
+    // the first side of its dot with room (inside the chart, clear of other names and dots), or waits to be pointed at
+    const order = places.slice().sort((p, q) => rank(p) - rank(q));
+    function rank(p) { return p.id === hereId ? 0 : gm && gm.places.includes(p.id) ? 1 : s.travel[p.id] ? 2 : 3; }
+    const taken = places.map((p) => { const [x, y] = cxy(p); const r = 8 * k; return [x - r, y - r, x + r, y + r]; });
+    const hit = (b) => taken.some((t) => b[0] < t[2] && b[2] > t[0] && b[1] < t[3] && b[3] > t[1]);
+    const [vx, vy, vw, vh] = vb || [0, 0, W, H];
+    const inside = (b) => b[0] >= vx + 3 * k && b[2] <= vx + vw - 3 * k && b[1] >= vy + 3 * k && b[3] <= vy + vh - 3 * k;
+    // (the zoom buttons' corner, top left, is kept clear)
+    taken.push([vx, vy, vx + 52 * k, vy + 132 * k]);
+    const spot = {};
+    for (const p of order) {
+      const [x, y] = cxy(p), known = s.travel[p.id], here = p.id === hereId;
+      const text = known ? p.name.en : '? unexplored';
+      const w = text.length * fs * (here ? 0.6 : 0.55) + (here ? 12 * k : 0), h = fs * 1.15;
+      const g = 11 * k;
+      const sides = [
+        { x: x + g, y: y + fs * 0.36, a: 'start', b: [x + g - 2 * k, y - h / 2, x + g + w + 2 * k, y + h / 2] },
+        { x: x - g, y: y + fs * 0.36, a: 'end', b: [x - g - w - 2 * k, y - h / 2, x - g + 2 * k, y + h / 2] },
+        { x: x, y: y - g - fs * 0.25, a: 'middle', b: [x - w / 2, y - g - h, x + w / 2, y - g] },
+        { x: x, y: y + g + fs * 0.9, a: 'middle', b: [x - w / 2, y + g, x + w / 2, y + g + h] },
+      ];
+      const fits = sides.filter((c) => inside(c.b));
+      const free = fits.find((c) => !hit(c.b));
+      const c = free || fits[0] || sides[0];
+      if (free || here) taken.push(c.b);
+      spot[p.id] = { c, text, shown: !!free || here, w, h };
     }
     for (const p of places) {
+      const [x, y] = cxy(p);
       const known = s.travel[p.id];
       const here = p.id === hereId;
       const next = gm && gm.places.includes(p.id);
-      if (next) svg += '<circle class="next-ring" cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="14" fill="none" stroke="#c0761c" stroke-width="3" stroke-dasharray="5 3"/>';
-      svg += '<circle cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="' + (here ? 8 : 6) + '" fill="' + (known ? '#2a2217' : '#efe3c6') + '" stroke="#2a2217" stroke-width="1.5"/>';
-      if (here) svg += '<path d="M' + p.pos[0] + ' ' + (p.pos[1] - 12) + ' l-6 -12 h12 z" fill="#a83e27"/>';
-      // the quest marker: the same inked amber diamond as in the world (beside the red mark when both are here)
-      if (next) { const dx = p.pos[0] + (here ? 19 : 0), dy = p.pos[1] - (here ? 14 : 16); svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 22) + ' l10 11 -10 11 -10 -11z" fill="#f0b43c" stroke="#2a2024" stroke-width="2"/><path d="M' + dx + ' ' + (dy - 11) + ' v8" stroke="#8a4e12" stroke-width="1.6"/><path d="M' + (dx - 4) + ' ' + (dy - 17) + ' l3 -3" stroke="#fff0b8" stroke-width="1.6"/>'; }
-      // labels near the right edge sit left of their dot so they are never cut off; size follows the text-size setting
-      const right = p.pos[0] > Wd * 0.62;
-      svg += '<text x="' + (p.pos[0] + (right ? -11 : 11)) + '" y="' + (p.pos[1] + 5) + '"' + (right ? ' text-anchor="end"' : '') + ' fill="' + (known ? '#261f15' : '#62553f') + '" font-size="' + fs + '" font-family="Georgia, serif" stroke="#efe3c6" stroke-width="3" paint-order="stroke">' + esc(known ? p.name.en : '? unexplored') + '</text>';
+      const L = spot[p.id];
+      svg += '<g class="pl' + (here ? ' here' : '') + (L.shown ? '' : ' quiet') + '" data-place="' + p.id + '">';
+      svg += '<rect class="pl-hit" x="' + (x - 13 * k) + '" y="' + (y - 13 * k) + '" width="' + 26 * k + '" height="' + 26 * k + '" fill="transparent"/>';
+      if (next) svg += '<circle class="next-ring" cx="' + x + '" cy="' + y + '" r="' + 14 * k + '" fill="none" stroke="#c0761c" stroke-width="3" stroke-dasharray="5 3"' + NS + '/>';
+      if (here) svg += '<circle class="here-pulse" cx="' + x + '" cy="' + y + '" r="' + 10 * k + '" fill="none" stroke="#a83e27" stroke-width="2.5"' + NS + '/>';
+      svg += '<circle cx="' + x + '" cy="' + y + '" r="' + (here ? 6.5 : 6) * k + '" fill="' + (here ? '#a83e27' : known ? '#2a2217' : '#efe3c6') + '" stroke="' + (here ? '#fff6e2' : '#2a2217') + '" stroke-width="' + (here ? 2 : 1.5) + '"' + NS + '/>';
+      // the quest marker: the same inked amber diamond as in the world, just above its place
+      if (next) { const dx = x + (here ? 16 * k : 0), dy = y - (here ? 12 : 16) * k; svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 18 * k) + ' l' + 8 * k + ' ' + 9 * k + ' ' + -8 * k + ' ' + 9 * k + ' ' + -8 * k + ' ' + -9 * k + 'z" fill="#f0b43c" stroke="#2a2024" stroke-width="2"' + NS + '/>'; }
+      const c = L.c;
+      if (here) {
+        // the name of where you are, always: on a small slip so it reads over anything
+        const bx = c.a === 'start' ? c.x - 4 * k : c.a === 'end' ? c.x - L.w + 4 * k : c.x - L.w / 2;
+        svg += '<rect class="here-slip" x="' + bx + '" y="' + (c.y - fs * 0.95) + '" width="' + L.w + '" height="' + fs * 1.35 + '" rx="' + 3 * k + '" fill="#fff6e2" stroke="#a83e27" stroke-width="1"' + NS + '/>';
+        svg += '<text x="' + (c.a === 'start' ? c.x + 2 * k : c.a === 'end' ? c.x - 2 * k : c.x) + '" y="' + c.y + '" text-anchor="' + c.a + '" fill="#7a2a18" font-size="' + fs + '" font-weight="700" font-family="Georgia, serif">' + esc(L.text) + '</text>';
+      } else {
+        if (!L.shown) { const bx = c.a === 'start' ? c.x - 3 * k : c.a === 'end' ? c.x - L.w - 3 * k : c.x - L.w / 2 - 3 * k; svg += '<rect class="pl-slip" x="' + bx + '" y="' + (c.y - fs * 0.95) + '" width="' + (L.w + 6 * k) + '" height="' + fs * 1.35 + '" rx="' + 2 * k + '" fill="#fff8e8" stroke="#8a7650" stroke-width="1"' + NS + '/>'; }
+        svg += '<text class="pl-name" x="' + c.x + '" y="' + c.y + '" text-anchor="' + c.a + '" fill="' + (known ? '#261f15' : '#62553f') + '" font-size="' + fs + '" font-family="Georgia, serif"' + (known ? '' : ' font-style="italic"') + ' stroke="#efe3c6" stroke-width="' + 3 * k + '" paint-order="stroke">' + esc(L.text) + '</text>';
+      }
+      svg += '</g>';
     }
-    return svg + '</svg>';
+    return svg;
+  }
+  // the chart once it is on the page: drawn for its real size, moved and zoomed
+  function chartWire(box, s, curMap) {
+    if (chartRO) { chartRO.disconnect(); chartRO = null; }
+    const svg = box.querySelector('svg.chart');
+    if (!svg) return;
+    const st = chartState();
+    const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => inEd(s, p));
+    const gm = guideMarks(s);
+    const hereOld = places.find((p) => curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub));
+    const hereId = hereOld ? hereOld.id : RB.questGuide.placeOf(s.map);
+    const scaleK = () => { const w = svg.clientWidth || box.clientWidth || CH.W, h = svg.clientHeight || w * CH.H / CH.W; return 1 / (Math.min(w / CH.W, h / CH.H) * st.z); };
+    function draw() {
+      const k = scaleK(), vb = chartView(st);
+      svg.setAttribute('viewBox', vb.join(' '));
+      svg.innerHTML = chartInk(s, places, hereId, gm, k, vb);
+      box.classList.toggle('zoomed', st.z > 1.001);
+      const out = box.querySelector('[data-cz="out"]'), inn = box.querySelector('[data-cz="in"]');
+      if (out) out.disabled = st.z <= 1.001;
+      if (inn) inn.disabled = st.z >= CH.ZMAX - 0.001;
+    }
+    // zoom by f, keeping the chart point under (px, py) (screen) where it is
+    function zoomAt(f, px, py) {
+      const z = Math.min(CH.ZMAX, Math.max(1, st.z * f));
+      if (z === st.z) return;
+      const r = svg.getBoundingClientRect(), [vx, vy, vw, vh] = chartView(st);
+      const u = px == null ? 0.5 : (px - r.left) / r.width, v = py == null ? 0.5 : (py - r.top) / r.height;
+      const ux = vx + u * vw, uy = vy + v * vh;
+      st.z = z;
+      const nw = CH.W / z, nh = CH.H / z;
+      st.cx = ux - (u - 0.5) * nw; st.cy = uy - (v - 0.5) * nh;
+      draw();
+    }
+    function panBy(dxPx, dyPx) {
+      const r = svg.getBoundingClientRect(), [, , vw, vh] = chartView(st);
+      st.cx -= dxPx * vw / Math.max(1, r.width); st.cy -= dyPx * vh / Math.max(1, r.height);
+      svg.setAttribute('viewBox', chartView(st).join(' '));
+      // the names find their sides again for what is now in view, once a frame
+      if (!panRaf) panRaf = requestAnimationFrame(() => { panRaf = 0; if (svg.isConnected) draw(); });
+    }
+    let panRaf = 0;
+    function home() {
+      const p = hereId && RB.content.places[hereId];
+      if (p) { const [x, y] = cxy(p); st.cx = x; st.cy = y; }
+    }
+    box.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-cz]');
+      if (!b) return;
+      e.stopPropagation();
+      if (b.dataset.cz === 'in') zoomAt(1.5);
+      else if (b.dataset.cz === 'out') zoomAt(1 / 1.5);
+      else { home(); if (st.z < 2) st.z = 2; draw(); }
+    });
+    // Ctrl and the wheel (and a trackpad's pinch, which the browser sends as one) zoom; the plain wheel scrolls the page
+    svg.addEventListener('wheel', (e) => { if (!e.ctrlKey && !e.metaKey) return; e.preventDefault(); zoomAt(Math.exp(-e.deltaY * 0.0025), e.clientX, e.clientY); }, { passive: false });
+    const pts = new Map();
+    let pinch = null, moved = false;
+    svg.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      pts.set(e.pointerId, [e.clientX, e.clientY]);
+      moved = false;
+      if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), z: st.z }; }
+      if (st.z > 1.001 || pts.size === 2) { try { svg.setPointerCapture(e.pointerId); } catch (err) { /* (not capturable) */ } }
+    });
+    svg.addEventListener('pointermove', (e) => {
+      const was = pts.get(e.pointerId);
+      if (!was) return;
+      pts.set(e.pointerId, [e.clientX, e.clientY]);
+      if (pts.size === 2 && pinch) {
+        const [a, b] = [...pts.values()];
+        const d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+        zoomAt((pinch.z * d / Math.max(1, pinch.d)) / st.z, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2);
+        return;
+      }
+      if (st.z <= 1.001) return;
+      const dx = e.clientX - was[0], dy = e.clientY - was[1];
+      if (Math.abs(dx) + Math.abs(dy) > 0) { moved = true; box.classList.add('dragging'); panBy(dx, dy); }
+    });
+    const up = (e) => { pts.delete(e.pointerId); if (pts.size < 2) pinch = null; if (!pts.size) box.classList.remove('dragging'); };
+    svg.addEventListener('pointerup', up);
+    svg.addEventListener('pointercancel', up);
+    svg.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); moved = false; } }, true);
+    // the keys, on the chart: + and − zoom, the arrows move it, 0 shows it all, H finds you
+    box.addEventListener('keydown', (e) => {
+      const step = 40;
+      let done = true;
+      if (e.key === '+' || e.key === '=') zoomAt(1.5);
+      else if (e.key === '-' || e.key === '_') zoomAt(1 / 1.5);
+      else if (e.key === '0') { st.z = 1; draw(); }
+      else if ((e.key === 'h' || e.key === 'H') && !e.ctrlKey && !e.metaKey) { home(); if (st.z < 2) st.z = 2; draw(); }
+      else if (e.key === 'ArrowLeft') panBy(step, 0); else if (e.key === 'ArrowRight') panBy(-step, 0);
+      else if (e.key === 'ArrowUp') panBy(0, step); else if (e.key === 'ArrowDown') panBy(0, -step);
+      else done = false;
+      if (done) { e.preventDefault(); e.stopPropagation(); }
+    });
+    // a name waiting for room shows when its place is pointed at
+    svg.addEventListener('pointerover', (e) => { const g = e.target.closest('.pl.quiet'); svg.querySelectorAll('.pl.hov').forEach((x) => { if (x !== g) x.classList.remove('hov'); }); if (g) { g.classList.add('hov'); g.parentNode.appendChild(g); } });
+    svg.addEventListener('pointerleave', () => svg.querySelectorAll('.pl.hov').forEach((x) => x.classList.remove('hov')));
+    if (typeof ResizeObserver !== 'undefined') {
+      let raf = 0;
+      chartRO = new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { if (svg.isConnected) draw(); }); });
+      chartRO.observe(box);
+    }
+    draw();
   }
   function map(A, B, two) {
     const s = RB.game.s;
@@ -82528,8 +82736,14 @@ RB.ui.menu = (function () {
     const canTravel = tr.ok && RB.game.mode() === 'menu';
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id] && inEd(s, p));
     const gm = guideMarks(s);
-    const chart = '<div class="chartbox" tabindex="-1">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of' + ((RB.content.roads || []).some((r) => r[2] && r[2].sea && inEd(s, r[2]) && (!r[2].if || RB.state.test(s, r[2].if))) ? '; blue dashes are ferry routes' : '') + '. The red mark is where you are.' +
-      (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + '</p>' +
+    const zb = (k, icon, label) => '<button type="button" class="ch-z" data-cz="' + k + '" aria-label="' + label + '" title="' + label + '">' + icon + '</button>';
+    const ZI = { in: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      out: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      here: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3" fill="currentColor"/><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>' };
+    const chart = '<div class="chartbox" tabindex="0" aria-describedby="chart-how">' + chartSvg(s, curMap) +
+      '<div class="ch-zoom" role="group" aria-label="Zoom the chart">' + zb('in', ZI.in, 'Zoom in') + zb('out', ZI.out, 'Zoom out') + zb('here', ZI.here, 'Show where you are') + '</div></div>' +
+      '<p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of' + ((RB.content.roads || []).some((r) => r[2] && r[2].sea && inEd(s, r[2]) && (!r[2].if || RB.state.test(s, r[2].if))) ? '; blue dashes are ferry routes' : '') + '. The red ring is where you are.' +
+      (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + ' <span id="chart-how">' + (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches ? 'Zoom with + and − or two fingers and drag to move around; touch a place to read its name.' : 'Zoom with + and − (or Ctrl and the wheel) and drag to move around; point at a place to read its name.') + '</span></p>' +
       (gm ? '<p class="note-slip next-note">' + I('follow') + ' <span>Next step of <b>' + esc(gm.title.en) + '</b>: ' + esc(gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'a place you have not reached yet')).join(', ')) + '.</span></p>' : '');
     const list = '<h3>' + I('travel') + ' Travel <span class="count">' + places.length + ' known</span></h3>' +
       (canTravel ? '' : '<p class="note-slip warn travel-why" data-kind="' + esc(tr.kind) + '">' + esc(tr.en || 'You can’t travel quickly from here just now.') + '</p>') +
@@ -82540,6 +82754,7 @@ RB.ui.menu = (function () {
           (canTravel ? '<button class="pbtn" data-go="' + p.id + '">Travel</button>' : '<span></span>') + '</li>';
       }).join('') + '</ul><p class="muted small">Roads you have walked can be travelled quickly.</p>';
     if (two) { A.innerHTML = nav + chart; B.innerHTML = list; } else { A.innerHTML = nav + chart + list; }
+    chartWire(A.querySelector('.chartbox'), s, curMap);
     const handler = async (e) => {
       if (navClick(e)) return;
       const b = e.target.closest('[data-go]');
@@ -186190,6 +186405,680 @@ var RB = (globalThis.RB = globalThis.RB || {});
       '....ohhhhhko....',
       '....okkkkkko....',
       '.....oooooo.....',
+    ],
+  });
+})(RB.itemArt.def);
+
+
+/* ==== src/content/item_art/d_ko_kr_lq_mb_mp_sea_as.js ==== */
+/* Item icons: Kotonoha (ko_), the Keepers' Road (kr_), the two long roads (lq_), Manybridge (mb_, mp_), the open sea
+ * (sea_) and Ashihara Shinden (as_). 16×16 authored pixel tables (src/ui/11_item_art.js): '.' clear, 'o' the shared
+ * outline ink; light from the upper left; one shade and one highlight, no dithering noise. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (D) {
+  'use strict';
+  // ---- Kotonoha ----------------------------------------------------------------------------------------------
+  // The island's written leaves are the great camphor's (src/content/ko/02_art.js). Each one here is told apart by the
+  // way it lies, its colour and what its words are about.
+
+  // "Sweet dumplings today": a gold leaf lying up to the right, a skewer of pink, white and green dango painted down it
+  D('ko_leaf_rw', {
+    pal: { l: '#e8c868', g: '#d0a844', d: '#a8822e', v: '#7a5a1e', p: '#e8909e', w: '#fbf6ea', n: '#7aa84a' },
+    px: [
+      '................',
+      '............ooo.',
+      '.........ooollo.',
+      '.......oolgvgdo.',
+      '......olgppggdo.',
+      '.....olggppgddo.',
+      '....olgwwgggdo..',
+      '...olggwwggddo..',
+      '..olgnngggddo...',
+      '..olgnnggddo....',
+      '..olvgggdddo....',
+      '.olvggdddoo.....',
+      '.ovgdddoo.......',
+      '.vooooo.........',
+      'v...............',
+      '................',
+    ],
+  });
+  // "Fragile: take care": a pale yellow-green leaf lying low, tip rising, a crate's red stencil of a cracked glass
+  D('ko_leaf_sg', {
+    pal: { l: '#e8dc94', g: '#c8b85e', d: '#9a8a3a', v: '#6a6026', r: '#b83a2a' },
+    px: [
+      '................',
+      '................',
+      '............oo..',
+      '.........ooollo.',
+      '.......oolllgvgo',
+      '.....oollggvvdo.',
+      '....orrrrrvgdo..',
+      '...olrrgrrgdo...',
+      '..olggrrrgdo....',
+      '.olgvvgrddo.....',
+      '.ogvddrrro......',
+      '..vddddoo.......',
+      '.v.oooo.........',
+      'v...............',
+      '................',
+      '................',
+    ],
+  });
+  // "Baggage here": a broad pale leaf standing up, a porter's strapped trunk painted on it in bold black, the way a
+  // board for people in a hurry says it
+  D('ko_leaf_mb', {
+    pal: { l: '#f8eab0', g: '#ecd27c', d: '#c4a048', v: '#8a6a2a', k: '#231c28', b: '#c89a48' },
+    px: [
+      '.........o......',
+      '........olo.....',
+      '......oolvgo....',
+      '.....ollvgggo...',
+      '....olggvgggdo..',
+      '...olgggvgggdo..',
+      '..olggkkkkggdo..',
+      '..olggkggkggdo..',
+      '..olkkkkkkkkdo..',
+      '..olkbkbbkbkdo..',
+      '..olkbkbbkbkdo..',
+      '..ogkkkkkkkkdo..',
+      '...ogggvdddoo...',
+      '....ogvddoo.....',
+      '.....ovoo.......',
+      '.....v..........',
+    ],
+  });
+  // "Full house, with thanks": a red camphor leaf lying up to the left, one fat festive character on it (大, as in a
+  // full house's 大入り)
+  D('ko_leaf_mp', {
+    pal: { l: '#ec7a4c', g: '#c8462a', d: '#902c1c', v: '#5e2216', k: '#1a1014' },
+    px: [
+      '................',
+      '..oo............',
+      '.oglooo.........',
+      '.odvllloo.......',
+      '.odgvglllo......',
+      '.oddgggkglo.....',
+      '..odgkkkkklo....',
+      '..oddggkggllo...',
+      '...oddkgkggllo..',
+      '....okddgkgglo..',
+      '....odddggvglo..',
+      '.....ooddggvglo.',
+      '.......oodddvgo.',
+      '.........ooooov.',
+      '...............v',
+      '................',
+    ],
+  });
+  // "Dried persimmons": a russet leaf hung tip-down on a red string like a rack's tag, small careful writing on it
+  D('ko_leaf_co', {
+    pal: { r: '#b8302a', l: '#e8a868', g: '#c87a3c', d: '#985024', v: '#6a3418', k: '#2a1810' },
+    px: [
+      '.....rrr........',
+      '....r...r.......',
+      '.....r.r........',
+      '......v.........',
+      '.....ovo........',
+      '....olvgo.......',
+      '...olggvgo......',
+      '...olggvgdo.....',
+      '...olgkkvgdo....',
+      '....olggvgdo....',
+      '....olgkkvgdo...',
+      '.....olggvgdo...',
+      '......olgkvdo...',
+      '.......oggvdo...',
+      '........oogdo...',
+      '..........oo....',
+    ],
+  });
+  // "I'll be home in spring": a cream leaf lying down to the right, one broken line in a letter-writer's blue-black
+  // hand, a plum blossom above it
+  D('ko_leaf_sb', {
+    pal: { l: '#fff8e4', g: '#efdfb0', d: '#c9b07c', v: '#9a8050', k: '#30508e', p: '#f2a0b8', P: '#c84a6a' },
+    px: [
+      '.............o..',
+      '.v..........opo.',
+      '..voooo....opPpo',
+      '..ovllloo...opo.',
+      '.oggvgklloo..o..',
+      '..odgvgkgllo....',
+      '..oddgvggglo....',
+      '..oddggvgkglo...',
+      '...oddggvgkglo..',
+      '....oddggvgggo..',
+      '.....oddggvgklo.',
+      '......oddggvggo.',
+      '.......ooddgvgo.',
+      '.........ooodgo.',
+      '............oo..',
+      '................',
+    ],
+  });
+  // "The Pass Light": a dark bronze leaf standing up, its characters cut through like a lantern's plate and the light
+  // showing through them (a mountain over a flame)
+  D('ko_leaf_kr', {
+    pal: { l: '#b09058', g: '#7e6036', d: '#56401e', v: '#3a2a14', y: '#ffd060', w: '#fff6c8' },
+    px: [
+      '......oo........',
+      '.....olgo.......',
+      '....olggdo......',
+      '...olggygdo.....',
+      '...olygygydo....',
+      '..olgygygydo....',
+      '..olgyyyyygdo...',
+      '..olgggvgggdo...',
+      '..olggggyggdo...',
+      '...olggywygdo...',
+      '...olggywyddo...',
+      '....olggyddo....',
+      '.....oggvddo....',
+      '......odvdo.....',
+      '.......ovo......',
+      '........v.......',
+    ],
+  });
+  // "Against": the dried grey-brown leaf that came in Ōmi's letter (the envelope beside it), one word in a thin hand
+  D('ko_leaf_lf', {
+    pal: { l: '#d8c8a4', g: '#b0986c', d: '#86704c', v: '#5e4c32', k: '#22223c', p: '#f8f2e4', s: '#b8b0a0' },
+    px: [
+      '................',
+      '...............v',
+      '.........ooooov.',
+      '.......oolllgvo.',
+      '.....oollkggvdo.',
+      '....olgggggvdo..',
+      '....olgkggvddo..',
+      '...olgkggvgddo..',
+      '..olggggvgddo...',
+      '..olkggvgddo....',
+      '.olgggvgddoooooo',
+      '.olggvdddoosppso',
+      '.oggvddoo.opsspo',
+      '.ogvooo...oppppo',
+      '..oo......oooooo',
+      '................',
+    ],
+  });
+  // the leaf with your name: a fresh green leaf, the name written down it, a glint of gold about it
+  D('ko_myleaf', {
+    pal: { l: '#b4d47a', g: '#78a848', d: '#4a7a30', v: '#2e5420', k: '#1e2a30', y: '#e8b830', w: '#fffbe8' },
+    px: [
+      '................',
+      '...y........ooo.',
+      '..ywy....ooollo.',
+      '...y...oolgkgdo.',
+      '......olggkggdo.',
+      '.....olggvggddo.',
+      '....olggkgggdo..',
+      '...olggkgggddo..',
+      '..olggvgggddo...',
+      '..olgkgggddo....',
+      '..olkgggdddo....',
+      '.olvggdddoo..y..',
+      '.ovgdddoo...ywy.',
+      '.vooooo......y..',
+      'v...............',
+      '................',
+    ],
+  });
+  // Kihei's letter: a sea-stained leaf from the cave, lying up to the left, rows of a sailor's careful writing on it,
+  // still dripping
+  D('ko_kihei_letter', {
+    pal: { l: '#a8ccb4', g: '#6e9c88', d: '#46705e', v: '#2c4a3e', k: '#16202a', b: '#3e88c8', B: '#a8dcf4' },
+    px: [
+      '................',
+      '..oo............',
+      '.ollooo.........',
+      'ogvllkloo.......',
+      '.odvvkgkloo.....',
+      '..odgvvkgklo....',
+      '...odkgvvkgko...',
+      '....okdkgvvklo..',
+      '.....odkgkgvvlo.',
+      '......oddkgggvo.',
+      '.......ooddddov.',
+      '.....b...oooo..v',
+      '....Bbb.........',
+      '....bbb..b......',
+      '.....b..Bb......',
+      '................',
+    ],
+  });
+
+  // ---- the Keepers' Road -------------------------------------------------------------------------------------
+  // Iwa's stamp book: a folding book of shrine seals standing open, brocade cover at one end, red seals on the pages
+  D('kr_stampbook', {
+    pal: { c: '#3a3e78', C: '#5a5ea0', y: '#d8b048', p: '#f6eedc', s: '#d8ccb0', r: '#b8302a' },
+    px: [
+      '................',
+      '.....o.........o',
+      '....oooo.....ooo',
+      '..ooCoppoo.oosso',
+      'ooCCcopoppososso',
+      'oCcpcopoppososso',
+      'ocypcoprrposssso',
+      'occpyorrrrosrrso',
+      'oycpcorrrrosrrso',
+      'occccoprrposrrso',
+      'ocycyoppoposssso',
+      'occccoppopososso',
+      'occco.ooppossoo.',
+      'ocoo....ooooo...',
+      'oo........o.....',
+      '................',
+    ],
+  });
+  // lamp oil: the keepers' earthenware jar, its mouth sealed with paper and tied with cord, a run of golden rapeseed
+  D('kr_oil', {
+    pal: { c: '#a8683a', l: '#c88a50', h: '#e2b078', d: '#7a4626', p: '#efe2c4', r: '#8a2a1e', y: '#e8c040' },
+    px: [
+      '................',
+      '................',
+      '.....oooooo.....',
+      '....oppppppo....',
+      '....orrrrrro....',
+      '...oppppppppo...',
+      '..oolhllcyccoo..',
+      '.olhhllccyccddo.',
+      '.olhlcccccccddo.',
+      '.ollcccccccdddo.',
+      '.olccccccccdddo.',
+      '..olcccccccddo..',
+      '..occccccddddo..',
+      '...occcdddddo...',
+      '....oooooooo....',
+      '................',
+    ],
+  });
+  // the inkstone: a small dark slate seen from the front, a pool of wet ink in its far well, an ink stick with its gold
+  // name laid across the worn grinding face
+  D('kr_inkstone', {
+    pal: { s: '#5e5e6a', l: '#868694', h: '#b4b4c4', d: '#3a3a46', k: '#141218', w: '#90a6d0', g: '#c8a040' },
+    px: [
+      '................',
+      '................',
+      '.............oo.',
+      '....ooooooooolko',
+      '...ohkkkkkkolko.',
+      '...olkwkkkolko..',
+      '..olskkkkogko...',
+      '..olssskogkoo...',
+      '.olssslolkoddo..',
+      '.olsslolkolsdo..',
+      '.ollllolkolldo..',
+      '.oddddddooddddo.',
+      '.oddddddddddddo.',
+      '..oooooooooooo..',
+      '................',
+      '................',
+    ],
+  });
+  // the keepers' register: a copied page, red-ruled columns of the road's lamps by name, a flame at the head of each,
+  // the last one gone out
+  D('kr_register', {
+    pal: { p: '#f2e6c8', s: '#d6c6a0', r: '#c06048', f: '#e8902a', y: '#ffd060', d: '#a89670' },
+    px: [
+      '................',
+      '..oooooooooooo..',
+      '..oppprppprpso..',
+      '..opfprpfprdso..',
+      '..opyprpyprdso..',
+      '..oppprppprpso..',
+      '..opoprpoprdso..',
+      '..opoprpoprpso..',
+      '..oppprpoprdso..',
+      '..opoprppprpso..',
+      '..opoprpoprpso..',
+      '..oppprpoprpso..',
+      '..opoprppprpso..',
+      '..osssrsssrsso..',
+      '..oooooooooooo..',
+      '................',
+    ],
+  });
+
+  // ---- the long roads: A Fare Thirty Years Owed, The Name Nobody Calls ----------------------------------------
+  // the stamped scrap: a torn slip of paper, the ferry book's little red seal pressed in one corner (か of かもめ), the
+  // space for a name left blank
+  D('lq_stamp', {
+    pal: { p: '#f4ecd8', s: '#d8c8a4', r: '#b8302a' },
+    px: [
+      '................',
+      '...ooooo..ooo...',
+      '..oppppooopppoo.',
+      '.opppppppppppso.',
+      '.opppppppppppso.',
+      '..oppppppppppso.',
+      '.oppppprrrrrpso.',
+      '.opppprrprrrrso.',
+      '.opppprpppprrso.',
+      '.opppprrprprpso.',
+      '.opppprprrprrso.',
+      '.opppprrrpprrso.',
+      '.oppppprrrrrsso.',
+      '..ossssosssssoo.',
+      '...oooo.ooooo...',
+      '................',
+    ],
+  });
+  // the Koharu dried persimmon: squat, wrinkled and dark orange, a bloom of sugar on it, its calyx and stalk on top
+  D('lq_koharu_fruit', {
+    pal: { c: '#4a3a1e', C: '#7a6a34', g: '#b05a24', l: '#d07a3a', h: '#e8a060', d: '#7a3818', w: '#f2e6d0' },
+    px: [
+      '................',
+      '.......oo.......',
+      '......ocCo......',
+      '....oooccoooo...',
+      '..oolccCCccgoo..',
+      '.olhlcggggcggdo.',
+      '.olhwwlggggggdo.',
+      '.olhlgdgggwggdo.',
+      '.ollgdgggdggddo.',
+      '.olggdgwgdgggdo.',
+      '.oggggdgggdgddo.',
+      '.oggwggdgggdddo.',
+      '..oggggdgggddo..',
+      '...oogggdddoo...',
+      '.....oooooo.....',
+      '................',
+    ],
+  });
+  // the kept cup: Chigusa's thick little teacup, blue-grey glaze running down short of the bare clay foot
+  D('lq_kept_cup', {
+    pal: { g: '#6a7e96', l: '#90a4ba', h: '#c4d4e4', d: '#46566c', i: '#2c2a30', f: '#c8a07a', F: '#9a7452' },
+    px: [
+      '................',
+      '................',
+      '...oooooooooo...',
+      '..ohddddddddlo..',
+      '..ohdiiiiiidlo..',
+      '..ohlllllllllo..',
+      '..ohlgggggggdo..',
+      '..ohlgggggggdo..',
+      '..ohgggggggddo..',
+      '...olggggggdo...',
+      '...olggdgggdo...',
+      '...ofgffgfgFo...',
+      '....offfffFo....',
+      '.....oooooo.....',
+      '................',
+      '................',
+    ],
+  });
+  // the persimmon-seed charm: a little pouch sewn from an old indigo kasuri sleeve, tied with red, the seed before it
+  D('lq_kaki_seed', {
+    pal: { i: '#34407a', I: '#52609a', D: '#262e58', w: '#dfe2ec', r: '#b8302a', s: '#6a3a1a', S: '#b0703a' },
+    px: [
+      '................',
+      '......oooo......',
+      '.....oIiIio.....',
+      '.....orrrro.....',
+      '....oIiiiiio....',
+      '...oIiwiiiwio...',
+      '..oIiiiiiiiiDo..',
+      '..oIwiiiwiiooo..',
+      '..oIiiiiiioSso..',
+      '..oIiiwiioSsso..',
+      '..oIiiiioSssso..',
+      '..oiwiiioSssoo..',
+      '...oiDDosssoo...',
+      '....oooosooo....',
+      '........o.......',
+      '................',
+    ],
+  });
+  // the persimmon-dyed cloth: a folded tenugui in kakishibu brown-orange, fringed, a little persimmon in one corner
+  D('lq_tenugui', {
+    pal: { g: '#b8642a', d: '#a4561f', l: '#d08a4a', p: '#e8a050', n: '#5a7a3a' },
+    px: [
+      '................',
+      '................',
+      '................',
+      '..g.g.g.g.g.g...',
+      '.oooooooooooooo.',
+      '.oggdggdggdggdo.',
+      '.oggdggdggdggdo.',
+      '.oggdggdggdggdo.',
+      '.ollllllllllllo.',
+      '.oggdggdggdngdo.',
+      '.oggdggdggppgdo.',
+      '.oggdggdggppgdo.',
+      '.oooooooooooooo.',
+      '..g.g.g.g.g.g...',
+      '................',
+      '................',
+    ],
+  });
+
+  // ---- Manybridge, Chapter 3 -----------------------------------------------------------------------------------
+  // the forty-year-old letter: a tall envelope gone yellow, an old stamp, the address column fading out, age stains
+  D('mb_letter', {
+    pal: { p: '#e6d4a0', l: '#f0e2b8', s: '#c4a870', t: '#a88a52', k: '#7a6a5a', r: '#b0503a' },
+    px: [
+      '................',
+      '...oooooooooo...',
+      '...olllllllso...',
+      '...oprrrpkpso...',
+      '...oprlrpkpso...',
+      '...oprrrpkpso...',
+      '...opppppkpso...',
+      '...opppppkpso...',
+      '...opppppspso...',
+      '...opppppppso...',
+      '...opppspspso...',
+      '...osppppppso...',
+      '...otsppppsso...',
+      '...ottsssssso...',
+      '...oooooooooo...',
+      '................',
+    ],
+  });
+  // the printed bridge map: a sheet from Blockprint Row, blue canals across the district, every bridge a red mark
+  D('mb_bridgemap', {
+    pal: { p: '#f2e6c4', s: '#d4c296', b: '#4a7ab0', B: '#7aa8d4', r: '#c0442a', k: '#8a7a62' },
+    px: [
+      '................',
+      '................',
+      '.oooooooooooooo.',
+      '.opppbbpppbbppo.',
+      '.okkprrpkprrkpo.',
+      '.okkpbbpkpbbkpo.',
+      '.opppbbpppbbppo.',
+      '.oBrBBBBrBBBrBo.',
+      '.obrbbbbrbbbrbo.',
+      '.opppbbpppppppo.',
+      '.okkpbbpkkpkkpo.',
+      '.oppprrpppppppo.',
+      '.osssbbssssssso.',
+      '.oooooooooooooo.',
+      '................',
+      '................',
+    ],
+  });
+  // the old agreement: sixty years old, columns of writing, the two parties' red seals, the rest still rolled up
+  D('mb_contract', {
+    pal: { p: '#ecdcae', l: '#f6ecd0', s: '#c8ae78', d: '#a08856', r: '#b8302a' },
+    px: [
+      '................',
+      '............ooo.',
+      '.ooooooooooolpdo',
+      '.olllllllllolpdo',
+      '.opppppppopolpdo',
+      '.opppppopopolpdo',
+      '.opopopopopolpdo',
+      '.opopopopopolpdo',
+      '.opopopppopolpdo',
+      '.opopppopopolpdo',
+      '.oprrprrpopolpdo',
+      '.oprrprrpppolpdo',
+      '.osssssssssolpdo',
+      '.ooooooooooolpdo',
+      '............ooo.',
+      '................',
+    ],
+  });
+
+  // ---- Manybridge, Chapter 4 (Playhouse Row) -------------------------------------------------------------------
+  // the print of Manybridge: a tall picture print of the city, red title slip in the sky, roofs, a drum bridge, water
+  D('mp_cityprint', {
+    pal: { a: '#bcd4e0', r: '#c0442a', g: '#5a6878', b: '#3a6aa0', B: '#7aa8d4', p: '#f2e6c4' },
+    px: [
+      '................',
+      '..oooooooooooo..',
+      '..oaaaaaarraao..',
+      '..oaaaaaarraao..',
+      '..oaaaaaarraao..',
+      '..oagaaggaagao..',
+      '..ogggaggggggo..',
+      '..oggggggggggo..',
+      '..obbbrrrrbbbo..',
+      '..obbrbBBbrbbo..',
+      '..obrbbbbbbrbo..',
+      '..orbBbbbBbbro..',
+      '..obbbbbbbbbbo..',
+      '..oppppppppppo..',
+      '..oooooooooooo..',
+      '................',
+    ],
+  });
+  // the old playbill: a troupe's bill in a red frame, the title a column of fat black characters, the cast either side
+  D('mp_playbill', {
+    pal: { p: '#f4ead0', r: '#b8302a', k: '#1e1418' },
+    px: [
+      '................',
+      '..oooooooooooo..',
+      '..orrrrrrrrrro..',
+      '..orppkkkkpkro..',
+      '..orkppkkppkro..',
+      '..orkpkkkkppro..',
+      '..orpppppppkro..',
+      '..orkpkppkpkro..',
+      '..orkpkkkkppro..',
+      '..orppkppkpkro..',
+      '..orkppppppkro..',
+      '..orkpkkkkppro..',
+      '..orppkpkkpkro..',
+      '..orrrrrrrrrro..',
+      '..oooooooooooo..',
+      '................',
+    ],
+  });
+  // the manuscript: Shinobu's first draft on squared manuscript paper, the right-hand columns written, sheets under
+  D('mp_manuscript', {
+    pal: { p: '#f6eedc', s: '#d8ccb0', g: '#d08a6a', k: '#2a3048' },
+    px: [
+      '................',
+      '.ooooooooooo....',
+      '.oppgkpgpkpooo..',
+      '.oppgpkgkpposo..',
+      '.ogggggggggoso..',
+      '.oppgkpgkkposo..',
+      '.oppgppgpkposo..',
+      '.ogggggggggoso..',
+      '.oppgppgkpposo..',
+      '.oppgppgkkposo..',
+      '.oppgppgppposo..',
+      '.oooooooooooso..',
+      '..osssssssssso..',
+      '..oooooooooooo..',
+      '................',
+      '................',
+    ],
+  });
+
+  // ---- the open sea --------------------------------------------------------------------------------------------
+  // the timber's delivery note: a paper slip with a column of writing, lying on the stacked planking
+  D('sea_timber_note', {
+    pal: { l: '#d8a466', w: '#b07a44', d: '#7a5028', e: '#e8c088', p: '#f6eedc' },
+    px: [
+      '................',
+      '........ooooo...',
+      '........opppo...',
+      '........opopo...',
+      '........opopo...',
+      '.oooooooopopooo.',
+      '.oelllllopppolo.',
+      '.oewwwwwopopowo.',
+      '.oooooooooooooo.',
+      'oelllllllllllllo',
+      'oewwwdddwwwwwwwo',
+      'oooooooooooooooo',
+      '.oellllllllllllo',
+      '.oewwwwwwwddwwo.',
+      '.oooooooooooooo.',
+      '................',
+    ],
+  });
+  // the coast's mailbag: a canvas sack with a leather strap, a letter showing at its drawn mouth, the post's red mark
+  D('sea_mailbag', {
+    pal: { c: '#c8b48a', l: '#e0d0aa', d: '#9a8660', s: '#6a4a2a', r: '#c0302a', w: '#f8f2e4' },
+    px: [
+      '................',
+      '....ssssssss....',
+      '...s.oooooo.s...',
+      '...s.owwwro.s...',
+      '...s.owwwwo.s...',
+      '..oooooooooooo..',
+      '..oldldldldldo..',
+      '.ollccccccccddo.',
+      '.olccrrrrrccddo.',
+      '.olcccccccccddo.',
+      '.olccrrrrrccddo.',
+      '.olccccrccccddo.',
+      '.olccccrcccdddo.',
+      '..olcccccccddo..',
+      '...oooooooooo...',
+      '................',
+    ],
+  });
+  // the licence for the open sea: folded in glossy oilcloth against the spray, tied with cord, the paper's red seal
+  // showing at one corner
+  D('sea_licence_doc', {
+    pal: { g: '#7a6a3a', l: '#a8945a', h: '#d8c890', d: '#544824', c: '#e0c890', p: '#f4ecd8', r: '#b8302a' },
+    px: [
+      '................',
+      '................',
+      '..........oo....',
+      '.........oppo...',
+      '........opprpo..',
+      '.......opprrppo.',
+      '.oooooooooooooo.',
+      '.ohlllllclllllo.',
+      '.olhggggcggggdo.',
+      '.olghgggcggggdo.',
+      '.olggggcccgggdo.',
+      '.occcccccccccco.',
+      '.olgggggcggggdo.',
+      '.oddddddcdddddo.',
+      '.oooooooooooooo.',
+      '................',
+    ],
+  });
+
+  // ---- Ashihara Shinden ----------------------------------------------------------------------------------------
+  // the planting hat: a wide sedge kasa, its rings and the rays of the weave, the chin cord below (as the keepsake)
+  D('as_kasa', {
+    pal: { s: '#c8a860', d: '#b0904a', l: '#e0c47c', w: '#8a6a30', c: '#7a3a2a' },
+    px: [
+      '................',
+      '................',
+      '.......oo.......',
+      '......olso......',
+      '.....olssdo.....',
+      '....olwsswdo....',
+      '...oddddddddo...',
+      '..olswsssswsdo..',
+      '.olswsssssswsdo.',
+      'oddddddddddddddo',
+      '.oooooooooooooo.',
+      '...c........c...',
+      '....c......c....',
+      '.....cccccc.....',
+      '................',
+      '................',
     ],
   });
 })(RB.itemArt.def);

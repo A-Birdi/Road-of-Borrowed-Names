@@ -1,0 +1,31 @@
+/* The Route chart (LI-6, src/ui/50_menu.js chartWire): a window onto a taller chart, zoomed with its buttons, Ctrl and
+ * the wheel, two fingers or the keys, and moved by dragging once zoomed. Where you are pulses in red with its name on a
+ * slip; a name without room beside its place waits to be pointed at. */
+.chartbox { position: relative; overflow: hidden; aspect-ratio: 520 / 448; max-height: min(62 * var(--vh, 1vh), 560px); width: 100%; }
+.chartbox svg.chart { display: block; width: 100%; height: 100%; max-height: none; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.chartbox.zoomed svg.chart { cursor: grab; touch-action: none; }
+.chartbox.zoomed.dragging svg.chart { cursor: grabbing; }
+.chartbox:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+
+/* the zoom buttons: small paper stamps in the chart's top-left corner, over the mountains, where no place lies */
+.ch-zoom { position: absolute; top: 8px; left: 8px; display: flex; flex-direction: column; gap: 4px; }
+.ch-z {
+  display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; padding: 0; border-radius: 3px; cursor: pointer;
+  background: rgba(255, 250, 238, 0.92); color: var(--ink); border: 1px solid var(--paper-edge); box-shadow: 0 1px 2px rgba(40, 25, 5, 0.25);
+}
+.ch-z svg { width: 18px; height: 18px; }
+.ch-z:hover:not([disabled]) { background: #fff6e2; }
+.ch-z[disabled] { opacity: 0.4; cursor: default; }
+.ch-z:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+@media (pointer: coarse) { .ch-z { width: 44px; height: 44px; } .ch-z svg { width: 22px; height: 22px; } }
+
+/* places: a name waiting for room appears on a slip when its place is pointed at */
+.chart .pl.quiet .pl-name, .chart .pl.quiet .pl-slip { visibility: hidden; }
+.chart .pl.quiet.hov .pl-name, .chart .pl.quiet.hov .pl-slip { visibility: visible; }
+.chart .pl.quiet.hov .pl-name { stroke: none; }
+.chart .pl { cursor: default; }
+/* where you are: a ring that keeps widening from the red dot */
+.chart .here-pulse { transform-box: fill-box; transform-origin: center; animation: here-pulse 1.8s ease-out infinite; }
+@keyframes here-pulse { from { transform: scale(0.8); opacity: 0.9; } to { transform: scale(2.3); opacity: 0; } }
+body.reduced-motion .chart .here-pulse { animation: none; transform: scale(1.4); opacity: 0.7; }
+body.high-contrast .ch-z { background: #fff; border-color: #000; }

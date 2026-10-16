@@ -133,7 +133,7 @@ async function closeMenu(p) { await p.evaluate(() => { RB.ui.menu.close(); }); a
   await shot(p, 'journey_nudges_1280x800');
   await p.click('[data-nudge]');
   await p.waitForTimeout(300);
-  const mp = await p.evaluate(() => ({ sec: RB.ui.menu.current().section, mark: !!document.querySelector('.chart .next-mark'), label: document.querySelector('.chart').getAttribute('aria-label'), note: (document.querySelector('.next-note') || {}).textContent, follow: RB.game.s.follow, here: !!document.querySelector('.chart path[fill="#a83e27"]') }));
+  const mp = await p.evaluate(() => ({ sec: RB.ui.menu.current().section, mark: !!document.querySelector('.chart .next-mark'), label: document.querySelector('.chart').getAttribute('aria-label'), note: (document.querySelector('.next-note') || {}).textContent, follow: RB.game.s.follow, here: !!document.querySelector('.chart .here .here-pulse') }));
   assert(mp.sec === 'map' && mp.mark && /next step of the followed quest is in Reedwake/.test(mp.label) && mp.here, 'nudge 3 shows the chart: the next step marked in Reedwake, "you are here" kept (' + mp.label + ')');
   assert(mp.follow === 'rw_labels', 'and follows the quest');
   await shot(p, 'map_chart_1280x800');

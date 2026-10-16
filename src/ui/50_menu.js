@@ -137,6 +137,7 @@ RB.ui.menu = (function () {
     stopDemo();
     if (tabsApi) tabsApi.destroy();
     if (headRO) { headRO.disconnect(); headRO = null; }
+    if (chartRO) { chartRO.disconnect(); chartRO = null; }
     if (mq) mq.onchange = null;
     const el = layer.el, at = el.parentNode;
     RB.ui.popLayer(layer);
@@ -981,47 +982,221 @@ RB.ui.menu = (function () {
   }
   // places and routes of this journey's edition (the twelve-chapter edition's places stay off a six-chapter chart)
   const inEd = (s, o) => !o || !o.edition || (RB.edition ? RB.edition.of(s) : 1) >= o.edition;
+  // ---- the Route chart (LI-6, Robin 2026-10-16: "less cramped … allow it to scroll, with an option to zoom. Your
+  // current location could be marked with an animated circle and the name always displayed … hovering over locations
+  // could then display their name … if we're zoomed in and it makes sense spatially just display it normally.
+  // Unexplored locations should still say such, just not get cut off").
+  // The places' positions are the content's 520×320 chart; it is drawn taller (CH.SY) so the north's crowd spreads
+  // out. Marks and words keep one size on screen at every zoom; a name is written beside its place when it has room
+  // there, and otherwise appears when the place is pointed at. Drag moves the chart; +/−, Ctrl and the wheel, two
+  // fingers or the keys zoom it.
+  const CH = { W: 520, SY: 1.4, ZMAX: 4, LBL: 13 };
+  CH.H = Math.round(320 * CH.SY);
+  const cxy = (p) => [p.pos[0], p.pos[1] * CH.SY];
+  let chartRO = null;
+  function chartState() {
+    const M = view.map;
+    if (!M.chart) M.chart = { z: 1, cx: CH.W / 2, cy: CH.H / 2 };
+    return M.chart;
+  }
+  function chartView(st) {
+    const vw = CH.W / st.z, vh = CH.H / st.z;
+    st.cx = Math.min(CH.W - vw / 2, Math.max(vw / 2, st.cx));
+    st.cy = Math.min(CH.H - vh / 2, Math.max(vh / 2, st.cy));
+    return [st.cx - vw / 2, st.cy - vh / 2, vw, vh];
+  }
   function chartSvg(s, curMap) {
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => inEd(s, p));
-    const Wd = 520, H = 320;
-    const fs = Math.round(14 * Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1)));
     const gm = guideMarks(s);
     // you are here: the place this map belongs to (rooms count as their village)
     const hereOld = places.find((p) => curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub));
     const hereId = hereOld ? hereOld.id : RB.questGuide.placeOf(s.map);
     const nextName = gm ? gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'an unexplored place')).join(', ') : '';
-    let svg = '<svg class="chart" viewBox="0 0 ' + Wd + ' ' + H + '" role="img" aria-label="Route chart. Known places: ' + esc(places.filter((p) => s.travel[p.id]).map((p) => p.name.en).join(', ') || 'none yet') +
-      (hereId && RB.content.places[hereId] ? '. You are in or near ' + esc(RB.content.places[hereId].name.en) : '') + (gm ? '. The next step of the followed quest is in ' + esc(nextName) : '') + '.">';
+    return '<svg class="chart" viewBox="' + chartView(chartState()).join(' ') + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Route chart. Known places: ' + esc(places.filter((p) => s.travel[p.id]).map((p) => p.name.en).join(', ') || 'none yet') +
+      (hereId && RB.content.places[hereId] ? '. You are in or near ' + esc(RB.content.places[hereId].name.en) : '') + (gm ? '. The next step of the followed quest is in ' + esc(nextName) : '') + '.">' +
+      chartInk(s, places, hereId, gm, 1, chartView(chartState())) + '</svg>';
+  }
+  // what is drawn on the chart at a scale of k chart units to one screen pixel, its names placed inside the part of
+  // the chart in view (vb: x, y, width, height)
+  function chartInk(s, places, hereId, gm, k, vb) {
+    const W = CH.W, H = CH.H, NS = ' vector-effect="non-scaling-stroke"';
+    const ts = Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1));
+    const fs = CH.LBL * ts * k;
     // paper, folds and the sea/mountain washes (decorative)
-    svg += '<rect width="' + Wd + '" height="' + H + '" fill="#efe3c6"/><path d="M0 252 Q120 222 200 252 T 520 232 L520 320 L0 320Z" fill="#cfdbd6"/><path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/>';
-    svg += '<path d="M173 0V320M346 0V320M0 160H520" stroke="#b9a57a" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"/>';
+    let svg = '<rect width="' + W + '" height="' + H + '" fill="#efe3c6"/><g transform="scale(1 ' + CH.SY + ')"><path d="M0 252 Q120 222 200 252 T 520 232 L520 320 L0 320Z" fill="#cfdbd6"/><path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/></g>';
+    svg += '<path d="M173 0V' + H + 'M346 0V' + H + 'M0 ' + H / 2 + 'H520" stroke="#b9a57a" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"' + NS + '/>';
     for (const [a, b, ro] of RB.content.roads || []) {
       const A = RB.content.places[a], B = RB.content.places[b];
       if (!A || !B || !inEd(s, ro) || !inEd(s, A) || !inEd(s, B) || (ro && ro.if && !RB.state.test(s, ro.if))) continue;
       const known = s.travel[a] && s.travel[b];
       const half = s.travel[a] || s.travel[b];
+      const [ax, ay] = cxy(A), [bx, by] = cxy(B);
       // a ferry's route: a curve over the sea, in the sea's ink
       if (ro && ro.sea) {
-        const mx = (A.pos[0] + B.pos[0]) / 2, my = Math.max(A.pos[1], B.pos[1]) + 26;
-        svg += '<path d="M' + A.pos[0] + ' ' + A.pos[1] + ' Q' + mx + ' ' + my + ' ' + B.pos[0] + ' ' + B.pos[1] + '" fill="none" stroke="' + (known ? '#2c5470' : '#7a98a8') + '" stroke-width="' + (known ? 2.2 : 1.6) + '" stroke-dasharray="' + (known ? '7 4' : '2 6') + '"/>';
+        const mx = (ax + bx) / 2, my = Math.max(ay, by) + 36;
+        svg += '<path d="M' + ax + ' ' + ay + ' Q' + mx + ' ' + my + ' ' + bx + ' ' + by + '" fill="none" stroke="' + (known ? '#2c5470' : '#7a98a8') + '" stroke-width="' + (known ? 2.2 : 1.6) + '" stroke-dasharray="' + (known ? '7 4' : '2 6') + '"' + NS + '/>';
         continue;
       }
-      svg += '<line x1="' + A.pos[0] + '" y1="' + A.pos[1] + '" x2="' + B.pos[0] + '" y2="' + B.pos[1] + '" stroke="' + (known ? '#3b2e1c' : '#9d8b66') + '" stroke-width="' + (known ? 2.5 : 1.6) + '" stroke-dasharray="' + (known ? '0' : half ? '6 5' : '2 6') + '"/>';
+      svg += '<line x1="' + ax + '" y1="' + ay + '" x2="' + bx + '" y2="' + by + '" stroke="' + (known ? '#3b2e1c' : '#9d8b66') + '" stroke-width="' + (known ? 2.5 : 1.6) + '" stroke-dasharray="' + (known ? '0' : half ? '6 5' : '2 6') + '"' + NS + '/>';
+    }
+    // the names: the place you are in first, then the next step, then the places you know, then the rest; each takes
+    // the first side of its dot with room (inside the chart, clear of other names and dots), or waits to be pointed at
+    const order = places.slice().sort((p, q) => rank(p) - rank(q));
+    function rank(p) { return p.id === hereId ? 0 : gm && gm.places.includes(p.id) ? 1 : s.travel[p.id] ? 2 : 3; }
+    const taken = places.map((p) => { const [x, y] = cxy(p); const r = 8 * k; return [x - r, y - r, x + r, y + r]; });
+    const hit = (b) => taken.some((t) => b[0] < t[2] && b[2] > t[0] && b[1] < t[3] && b[3] > t[1]);
+    const [vx, vy, vw, vh] = vb || [0, 0, W, H];
+    const inside = (b) => b[0] >= vx + 3 * k && b[2] <= vx + vw - 3 * k && b[1] >= vy + 3 * k && b[3] <= vy + vh - 3 * k;
+    // (the zoom buttons' corner, top left, is kept clear)
+    taken.push([vx, vy, vx + 52 * k, vy + 132 * k]);
+    const spot = {};
+    for (const p of order) {
+      const [x, y] = cxy(p), known = s.travel[p.id], here = p.id === hereId;
+      const text = known ? p.name.en : '? unexplored';
+      const w = text.length * fs * (here ? 0.6 : 0.55) + (here ? 12 * k : 0), h = fs * 1.15;
+      const g = 11 * k;
+      const sides = [
+        { x: x + g, y: y + fs * 0.36, a: 'start', b: [x + g - 2 * k, y - h / 2, x + g + w + 2 * k, y + h / 2] },
+        { x: x - g, y: y + fs * 0.36, a: 'end', b: [x - g - w - 2 * k, y - h / 2, x - g + 2 * k, y + h / 2] },
+        { x: x, y: y - g - fs * 0.25, a: 'middle', b: [x - w / 2, y - g - h, x + w / 2, y - g] },
+        { x: x, y: y + g + fs * 0.9, a: 'middle', b: [x - w / 2, y + g, x + w / 2, y + g + h] },
+      ];
+      const fits = sides.filter((c) => inside(c.b));
+      const free = fits.find((c) => !hit(c.b));
+      const c = free || fits[0] || sides[0];
+      if (free || here) taken.push(c.b);
+      spot[p.id] = { c, text, shown: !!free || here, w, h };
     }
     for (const p of places) {
+      const [x, y] = cxy(p);
       const known = s.travel[p.id];
       const here = p.id === hereId;
       const next = gm && gm.places.includes(p.id);
-      if (next) svg += '<circle class="next-ring" cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="14" fill="none" stroke="#c0761c" stroke-width="3" stroke-dasharray="5 3"/>';
-      svg += '<circle cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="' + (here ? 8 : 6) + '" fill="' + (known ? '#2a2217' : '#efe3c6') + '" stroke="#2a2217" stroke-width="1.5"/>';
-      if (here) svg += '<path d="M' + p.pos[0] + ' ' + (p.pos[1] - 12) + ' l-6 -12 h12 z" fill="#a83e27"/>';
-      // the quest marker: the same inked amber diamond as in the world (beside the red mark when both are here)
-      if (next) { const dx = p.pos[0] + (here ? 19 : 0), dy = p.pos[1] - (here ? 14 : 16); svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 22) + ' l10 11 -10 11 -10 -11z" fill="#f0b43c" stroke="#2a2024" stroke-width="2"/><path d="M' + dx + ' ' + (dy - 11) + ' v8" stroke="#8a4e12" stroke-width="1.6"/><path d="M' + (dx - 4) + ' ' + (dy - 17) + ' l3 -3" stroke="#fff0b8" stroke-width="1.6"/>'; }
-      // labels near the right edge sit left of their dot so they are never cut off; size follows the text-size setting
-      const right = p.pos[0] > Wd * 0.62;
-      svg += '<text x="' + (p.pos[0] + (right ? -11 : 11)) + '" y="' + (p.pos[1] + 5) + '"' + (right ? ' text-anchor="end"' : '') + ' fill="' + (known ? '#261f15' : '#62553f') + '" font-size="' + fs + '" font-family="Georgia, serif" stroke="#efe3c6" stroke-width="3" paint-order="stroke">' + esc(known ? p.name.en : '? unexplored') + '</text>';
+      const L = spot[p.id];
+      svg += '<g class="pl' + (here ? ' here' : '') + (L.shown ? '' : ' quiet') + '" data-place="' + p.id + '">';
+      svg += '<rect class="pl-hit" x="' + (x - 13 * k) + '" y="' + (y - 13 * k) + '" width="' + 26 * k + '" height="' + 26 * k + '" fill="transparent"/>';
+      if (next) svg += '<circle class="next-ring" cx="' + x + '" cy="' + y + '" r="' + 14 * k + '" fill="none" stroke="#c0761c" stroke-width="3" stroke-dasharray="5 3"' + NS + '/>';
+      if (here) svg += '<circle class="here-pulse" cx="' + x + '" cy="' + y + '" r="' + 10 * k + '" fill="none" stroke="#a83e27" stroke-width="2.5"' + NS + '/>';
+      svg += '<circle cx="' + x + '" cy="' + y + '" r="' + (here ? 6.5 : 6) * k + '" fill="' + (here ? '#a83e27' : known ? '#2a2217' : '#efe3c6') + '" stroke="' + (here ? '#fff6e2' : '#2a2217') + '" stroke-width="' + (here ? 2 : 1.5) + '"' + NS + '/>';
+      // the quest marker: the same inked amber diamond as in the world, just above its place
+      if (next) { const dx = x + (here ? 16 * k : 0), dy = y - (here ? 12 : 16) * k; svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 18 * k) + ' l' + 8 * k + ' ' + 9 * k + ' ' + -8 * k + ' ' + 9 * k + ' ' + -8 * k + ' ' + -9 * k + 'z" fill="#f0b43c" stroke="#2a2024" stroke-width="2"' + NS + '/>'; }
+      const c = L.c;
+      if (here) {
+        // the name of where you are, always: on a small slip so it reads over anything
+        const bx = c.a === 'start' ? c.x - 4 * k : c.a === 'end' ? c.x - L.w + 4 * k : c.x - L.w / 2;
+        svg += '<rect class="here-slip" x="' + bx + '" y="' + (c.y - fs * 0.95) + '" width="' + L.w + '" height="' + fs * 1.35 + '" rx="' + 3 * k + '" fill="#fff6e2" stroke="#a83e27" stroke-width="1"' + NS + '/>';
+        svg += '<text x="' + (c.a === 'start' ? c.x + 2 * k : c.a === 'end' ? c.x - 2 * k : c.x) + '" y="' + c.y + '" text-anchor="' + c.a + '" fill="#7a2a18" font-size="' + fs + '" font-weight="700" font-family="Georgia, serif">' + esc(L.text) + '</text>';
+      } else {
+        if (!L.shown) { const bx = c.a === 'start' ? c.x - 3 * k : c.a === 'end' ? c.x - L.w - 3 * k : c.x - L.w / 2 - 3 * k; svg += '<rect class="pl-slip" x="' + bx + '" y="' + (c.y - fs * 0.95) + '" width="' + (L.w + 6 * k) + '" height="' + fs * 1.35 + '" rx="' + 2 * k + '" fill="#fff8e8" stroke="#8a7650" stroke-width="1"' + NS + '/>'; }
+        svg += '<text class="pl-name" x="' + c.x + '" y="' + c.y + '" text-anchor="' + c.a + '" fill="' + (known ? '#261f15' : '#62553f') + '" font-size="' + fs + '" font-family="Georgia, serif"' + (known ? '' : ' font-style="italic"') + ' stroke="#efe3c6" stroke-width="' + 3 * k + '" paint-order="stroke">' + esc(L.text) + '</text>';
+      }
+      svg += '</g>';
     }
-    return svg + '</svg>';
+    return svg;
+  }
+  // the chart once it is on the page: drawn for its real size, moved and zoomed
+  function chartWire(box, s, curMap) {
+    if (chartRO) { chartRO.disconnect(); chartRO = null; }
+    const svg = box.querySelector('svg.chart');
+    if (!svg) return;
+    const st = chartState();
+    const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => inEd(s, p));
+    const gm = guideMarks(s);
+    const hereOld = places.find((p) => curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub));
+    const hereId = hereOld ? hereOld.id : RB.questGuide.placeOf(s.map);
+    const scaleK = () => { const w = svg.clientWidth || box.clientWidth || CH.W, h = svg.clientHeight || w * CH.H / CH.W; return 1 / (Math.min(w / CH.W, h / CH.H) * st.z); };
+    function draw() {
+      const k = scaleK(), vb = chartView(st);
+      svg.setAttribute('viewBox', vb.join(' '));
+      svg.innerHTML = chartInk(s, places, hereId, gm, k, vb);
+      box.classList.toggle('zoomed', st.z > 1.001);
+      const out = box.querySelector('[data-cz="out"]'), inn = box.querySelector('[data-cz="in"]');
+      if (out) out.disabled = st.z <= 1.001;
+      if (inn) inn.disabled = st.z >= CH.ZMAX - 0.001;
+    }
+    // zoom by f, keeping the chart point under (px, py) (screen) where it is
+    function zoomAt(f, px, py) {
+      const z = Math.min(CH.ZMAX, Math.max(1, st.z * f));
+      if (z === st.z) return;
+      const r = svg.getBoundingClientRect(), [vx, vy, vw, vh] = chartView(st);
+      const u = px == null ? 0.5 : (px - r.left) / r.width, v = py == null ? 0.5 : (py - r.top) / r.height;
+      const ux = vx + u * vw, uy = vy + v * vh;
+      st.z = z;
+      const nw = CH.W / z, nh = CH.H / z;
+      st.cx = ux - (u - 0.5) * nw; st.cy = uy - (v - 0.5) * nh;
+      draw();
+    }
+    function panBy(dxPx, dyPx) {
+      const r = svg.getBoundingClientRect(), [, , vw, vh] = chartView(st);
+      st.cx -= dxPx * vw / Math.max(1, r.width); st.cy -= dyPx * vh / Math.max(1, r.height);
+      svg.setAttribute('viewBox', chartView(st).join(' '));
+      // the names find their sides again for what is now in view, once a frame
+      if (!panRaf) panRaf = requestAnimationFrame(() => { panRaf = 0; if (svg.isConnected) draw(); });
+    }
+    let panRaf = 0;
+    function home() {
+      const p = hereId && RB.content.places[hereId];
+      if (p) { const [x, y] = cxy(p); st.cx = x; st.cy = y; }
+    }
+    box.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-cz]');
+      if (!b) return;
+      e.stopPropagation();
+      if (b.dataset.cz === 'in') zoomAt(1.5);
+      else if (b.dataset.cz === 'out') zoomAt(1 / 1.5);
+      else { home(); if (st.z < 2) st.z = 2; draw(); }
+    });
+    // Ctrl and the wheel (and a trackpad's pinch, which the browser sends as one) zoom; the plain wheel scrolls the page
+    svg.addEventListener('wheel', (e) => { if (!e.ctrlKey && !e.metaKey) return; e.preventDefault(); zoomAt(Math.exp(-e.deltaY * 0.0025), e.clientX, e.clientY); }, { passive: false });
+    const pts = new Map();
+    let pinch = null, moved = false;
+    svg.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      pts.set(e.pointerId, [e.clientX, e.clientY]);
+      moved = false;
+      if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), z: st.z }; }
+      if (st.z > 1.001 || pts.size === 2) { try { svg.setPointerCapture(e.pointerId); } catch (err) { /* (not capturable) */ } }
+    });
+    svg.addEventListener('pointermove', (e) => {
+      const was = pts.get(e.pointerId);
+      if (!was) return;
+      pts.set(e.pointerId, [e.clientX, e.clientY]);
+      if (pts.size === 2 && pinch) {
+        const [a, b] = [...pts.values()];
+        const d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+        zoomAt((pinch.z * d / Math.max(1, pinch.d)) / st.z, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2);
+        return;
+      }
+      if (st.z <= 1.001) return;
+      const dx = e.clientX - was[0], dy = e.clientY - was[1];
+      if (Math.abs(dx) + Math.abs(dy) > 0) { moved = true; box.classList.add('dragging'); panBy(dx, dy); }
+    });
+    const up = (e) => { pts.delete(e.pointerId); if (pts.size < 2) pinch = null; if (!pts.size) box.classList.remove('dragging'); };
+    svg.addEventListener('pointerup', up);
+    svg.addEventListener('pointercancel', up);
+    svg.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); moved = false; } }, true);
+    // the keys, on the chart: + and − zoom, the arrows move it, 0 shows it all, H finds you
+    box.addEventListener('keydown', (e) => {
+      const step = 40;
+      let done = true;
+      if (e.key === '+' || e.key === '=') zoomAt(1.5);
+      else if (e.key === '-' || e.key === '_') zoomAt(1 / 1.5);
+      else if (e.key === '0') { st.z = 1; draw(); }
+      else if ((e.key === 'h' || e.key === 'H') && !e.ctrlKey && !e.metaKey) { home(); if (st.z < 2) st.z = 2; draw(); }
+      else if (e.key === 'ArrowLeft') panBy(step, 0); else if (e.key === 'ArrowRight') panBy(-step, 0);
+      else if (e.key === 'ArrowUp') panBy(0, step); else if (e.key === 'ArrowDown') panBy(0, -step);
+      else done = false;
+      if (done) { e.preventDefault(); e.stopPropagation(); }
+    });
+    // a name waiting for room shows when its place is pointed at
+    svg.addEventListener('pointerover', (e) => { const g = e.target.closest('.pl.quiet'); svg.querySelectorAll('.pl.hov').forEach((x) => { if (x !== g) x.classList.remove('hov'); }); if (g) { g.classList.add('hov'); g.parentNode.appendChild(g); } });
+    svg.addEventListener('pointerleave', () => svg.querySelectorAll('.pl.hov').forEach((x) => x.classList.remove('hov')));
+    if (typeof ResizeObserver !== 'undefined') {
+      let raf = 0;
+      chartRO = new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { if (svg.isConnected) draw(); }); });
+      chartRO.observe(box);
+    }
+    draw();
   }
   function map(A, B, two) {
     const s = RB.game.s;
@@ -1048,8 +1223,14 @@ RB.ui.menu = (function () {
     const canTravel = tr.ok && RB.game.mode() === 'menu';
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id] && inEd(s, p));
     const gm = guideMarks(s);
-    const chart = '<div class="chartbox" tabindex="-1">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of' + ((RB.content.roads || []).some((r) => r[2] && r[2].sea && inEd(s, r[2]) && (!r[2].if || RB.state.test(s, r[2].if))) ? '; blue dashes are ferry routes' : '') + '. The red mark is where you are.' +
-      (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + '</p>' +
+    const zb = (k, icon, label) => '<button type="button" class="ch-z" data-cz="' + k + '" aria-label="' + label + '" title="' + label + '">' + icon + '</button>';
+    const ZI = { in: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      out: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+      here: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3" fill="currentColor"/><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>' };
+    const chart = '<div class="chartbox" tabindex="0" aria-describedby="chart-how">' + chartSvg(s, curMap) +
+      '<div class="ch-zoom" role="group" aria-label="Zoom the chart">' + zb('in', ZI.in, 'Zoom in') + zb('out', ZI.out, 'Zoom out') + zb('here', ZI.here, 'Show where you are') + '</div></div>' +
+      '<p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of' + ((RB.content.roads || []).some((r) => r[2] && r[2].sea && inEd(s, r[2]) && (!r[2].if || RB.state.test(s, r[2].if))) ? '; blue dashes are ferry routes' : '') + '. The red ring is where you are.' +
+      (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + ' <span id="chart-how">' + (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches ? 'Zoom with + and − or two fingers and drag to move around; touch a place to read its name.' : 'Zoom with + and − (or Ctrl and the wheel) and drag to move around; point at a place to read its name.') + '</span></p>' +
       (gm ? '<p class="note-slip next-note">' + I('follow') + ' <span>Next step of <b>' + esc(gm.title.en) + '</b>: ' + esc(gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'a place you have not reached yet')).join(', ')) + '.</span></p>' : '');
     const list = '<h3>' + I('travel') + ' Travel <span class="count">' + places.length + ' known</span></h3>' +
       (canTravel ? '' : '<p class="note-slip warn travel-why" data-kind="' + esc(tr.kind) + '">' + esc(tr.en || 'You can’t travel quickly from here just now.') + '</p>') +
@@ -1060,6 +1241,7 @@ RB.ui.menu = (function () {
           (canTravel ? '<button class="pbtn" data-go="' + p.id + '">Travel</button>' : '<span></span>') + '</li>';
       }).join('') + '</ul><p class="muted small">Roads you have walked can be travelled quickly.</p>';
     if (two) { A.innerHTML = nav + chart; B.innerHTML = list; } else { A.innerHTML = nav + chart + list; }
+    chartWire(A.querySelector('.chartbox'), s, curMap);
     const handler = async (e) => {
       if (navClick(e)) return;
       const b = e.target.closest('[data-go]');

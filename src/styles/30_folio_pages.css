@@ -62,7 +62,7 @@ button.entry .t, button.entry .kind { display: block; }
 .next-note svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; color: var(--ribbon-deep); }
 .next-kind { color: var(--ribbon-deep) !important; }
 .next-kind svg { width: 1em; height: 1em; vertical-align: -0.15em; }
-.chartbox:focus { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.chartbox:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 
 /* Words: filed notes */
 .row-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.6em 0; }
@@ -155,7 +155,7 @@ button.entry .kind.slotline { display: flex; flex-wrap: wrap; align-items: cente
 
 /* Map: a folded chart */
 .chartbox { border: 1px solid var(--paper-edge); box-shadow: 0 2px 0 var(--paper-3); background: #efe3c6; margin: 0.2em 0 0.3em; }
-.chartbox svg { display: block; width: 100%; height: auto; max-height: min(52 * var(--vh), 420px); }
+.chartbox svg { display: block; width: 100%; height: auto; }
 
 /* Settings */
 .folio-settings .leaf h3:first-child { margin-top: 0; }
