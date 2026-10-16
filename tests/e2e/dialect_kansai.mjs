@@ -163,9 +163,10 @@ const sceneLines = (p, id, who) => p.evaluate(([id, who]) => RB.content.scenes[i
   await p.waitForSelector('[data-grp=reading]');
   await p.click('[data-grp=reading]');
   await wait(p, 200);
-  assert(await p.isChecked('input[data-suzu-speech][value="kansai"]'), 'Settings › Reading & Language: "Suzu\'s speech" reads Kansai');
+  assert(await p.isChecked('input[data-suzu-speech][value="kansai"]'), 'Settings › Reading: "Suzu\'s speech" reads Kansai');
   const legend = await p.evaluate(() => { const f = document.querySelector('[data-speech-field]'); return f ? f.textContent.replace(/\s+/g, ' ') : ''; });
-  assert(/Suzu's speech/.test(legend) && /Standard/.test(legend) && /Kansai \(Kansai-ben\)/.test(legend), 'the Settings row: ' + legend.slice(0, 60));
+  // (since ST-1 the options are named with their Japanese: Standard 標準語, Kansai-ben 関西弁)
+  assert(/Suzu['’]s speech/.test(legend) && /Standard/.test(legend) && /Kansai-ben/.test(legend) && /関西弁/.test(legend), 'the Settings row: ' + legend.slice(0, 60));
   await p.evaluate(() => { RB.ui.settings.close(); RB.ui.menu.close(); });
   await p.reload();
   await p.waitForFunction(() => window.__RB_READY__);
