@@ -16,6 +16,15 @@ The repository is the shared record:
 **Go:** branch `claude/stoic-sagan-n3jvgk`, source commit `ff8a0fa87cfacb322b8c277305eddd9b4cc196fb`. The manifest is
 `docs/future/voice/production/manifest/RECORDING_MANIFEST.json.gz`, and its SHA-256 is in `GO.json`.
 
+**Batch started** (the local worker, 2026-10-16) from `GO.json`:
+- the source ff8a0fa, the manifest 513ec3ff…, and the script content 65cd3805…;
+- 23,816 entries resolved against the locked cast, which is 14,721 dialogue recordings plus 9,095 reference readings,
+  the manifest's count;
+- 256 accepted reference files verified;
+- the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
+
+Nothing has been made or pushed yet. Results come back as `results.json` (VOICE_DELIVERY.md §4 and §9).
+
 To check:
 ```
 git fetch origin claude/stoic-sagan-n3jvgk
