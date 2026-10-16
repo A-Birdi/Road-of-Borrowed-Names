@@ -1,7 +1,9 @@
 // VA-1 planning (not the audition): how many distinct recordings a whole-game voice batch would need, and how many
 // characters, resolved the way the game would play them. Nothing is generated.
-//  - A line said by "whoever travels with you" (`comp`) is recorded once per companion it can belong to (its
-//    `comp=` / `comp!=` / `party` conditions narrow that), in that companion's voice.
+//  - A line said by "whoever travels with you" (`comp`) is recorded once per companion it can belong to, in that
+//    companion's voice: its own condition, else the scene branch it sits in (`!if comp=ren -> ren`), else a scene named
+//    for one companion, else all four (tools/voice/attribution.mjs; RV-0160, C-95: the line's condition alone recorded
+//    branch-only lines for all four).
 //  - The player's lines are recorded twice, Voice A and Voice B (and never for "player None").
 //  - Suzu's lines (as herself or as the companion) are recorded again in Kansai where the dialect table changes them.
 //  - The narrator is one female narrator.
@@ -12,24 +14,11 @@
 //    turn a speaking rate measured on real audition takes into duration (docs/future/voice/PRODUCTION_ESTIMATE.md).
 // Usage: node tools/voice/fullgame_count.mjs [--json]
 import { RB, allLines } from './lines.mjs';
+import { branches, companionsOf } from './attribution.mjs';
 
-const COMPS = ['nao', 'mio', 'ren', 'suzu'];
-// which companions a `comp` line can belong to, from its condition (an `|` alternative opens all four)
-function compsOf(cond) {
-  if (!cond) return COMPS;
-  const alts = String(cond).split('|');
-  const out = new Set();
-  for (const a of alts) {
-    let allowed = COMPS.slice();
-    for (const t of a.split('&')) {
-      const m = /^(?:comp|party)(=|!=)(\w+)$/.exec(t.trim());
-      if (!m) continue;
-      allowed = m[1] === '=' ? allowed.filter((c) => c === m[2]) : allowed.filter((c) => c !== m[2]);
-    }
-    allowed.forEach((c) => out.add(c));
-  }
-  return [...out];
-}
+const BR = {};
+const branchOf = (l) => (BR[l.scene] || (BR[l.scene] = branches(RB.content.scenes[l.scene])))[l.idx] || null;
+const basis = {};
 const L = allLines();
 const keys = new Map(); // recording key -> characters
 const dyn = { lines: 0, chars: 0 };
@@ -51,7 +40,8 @@ const spoken = (jp) => RB.jp.plain(jp).replace(/\s+/g, '').normalize('NFC');
 for (const l of L) {
   if (/\$\w+/.test(l.jp)) { dyn.lines++; dyn.chars += [...l.plain].length; continue; }
   const who = l.who;
-  const speakers = who === 'comp' ? compsOf(l.if) : [who === 'narr' ? 'narrator_female' : who];
+  let speakers = [who === 'narr' ? 'narrator_female' : who];
+  if (who === 'comp') { const a = companionsOf(l, branchOf(l)); speakers = a.comps; basis[a.basis] = (basis[a.basis] || 0) + 1; }
   for (const s of speakers) {
     if (s === 'pc') { add('pc', 'A', 'standard', l.plain, l.expr, l.jp); add('pc', 'B', 'standard', l.plain, l.expr, l.jp); continue; }
     add(s, null, 'standard', l.plain, l.expr, l.jp);
@@ -66,6 +56,7 @@ const textOnly = new Set(L.map((l) => l.plain)).size;
 const out = {
   sourceLines: L.length, distinctJapaneseTextsOnly: textOnly, recordings: total.recordings, characters: total.chars, morae: total.morae, pauses: total.pauses,
   dynamicLinesNotRecordable: dyn,
+  companionAttribution: basis,
   byRole: Object.fromEntries(Object.entries(by).filter(([k]) => ['narrator_female', 'pc', 'nao', 'mio', 'ren', 'suzu'].includes(k))),
   otherSpeakers: (() => { const o = Object.entries(by).filter(([k]) => !['narrator_female', 'pc', 'nao', 'mio', 'ren', 'suzu'].includes(k)); return { speakers: o.length, recordings: o.reduce((a, [, v]) => a + v.recordings, 0), chars: o.reduce((a, [, v]) => a + v.chars, 0), morae: o.reduce((a, [, v]) => a + v.morae, 0), pauses: o.reduce((a, [, v]) => a + v.pauses, 0) }; })(),
   note: 'Counts every conditional variant (level, companion, dialect, story state), not what one journey hears. Distinct by speaker, player voice, dialect, spoken text and delivery (the line\'s expression); not by text alone.',
