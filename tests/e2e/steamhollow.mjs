@@ -184,8 +184,9 @@ await test('the baths: she/he with no question, they/them asked once and kept; t
   assert(st.side === 3 && st.menus === 0, 'and kept: not asked again: ' + JSON.stringify(st));
   // the comfort setting, in the Settings sheet
   await p.evaluate(() => RB.ui.settings.open());
-  await p.waitForSelector('button[data-grp="learning"]');
-  await p.click('button[data-grp="learning"]');
+  // (Settings › Play › Stories since ST-1)
+  await p.waitForSelector('button[data-grp="play"]');
+  await p.click('button[data-grp="play"]');
   await p.waitForSelector('input[data-set="bathScenes"]', { state: 'attached' });
   const radios = await p.$$eval('input[data-set="bathScenes"]', (xs) => xs.map((x) => ({ v: x.value, on: x.checked })));
   assert(radios.map((r) => r.v).join() === 'shown,summarised' && radios[0].on, 'Bathing scenes: Shown (the default) and Summarised: ' + JSON.stringify(radios));

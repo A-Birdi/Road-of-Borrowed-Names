@@ -285,7 +285,7 @@ const STATES = {
   async settings_guide(p) {
     await p.evaluate(() => { V.rich('sg.harbor', 20, 22); V.openMenu(['settings']); });
     await settle(p);
-    await p.click('[data-grp="learning"] >> visible=true');
+    await p.click('[data-grp="play"] >> visible=true');
     await p.evaluate(() => { const e = document.querySelector('input[data-set="questGuide"]'); if (e) e.closest('fieldset').scrollIntoView({ block: 'center' }); });
     await settle(p, 150);
   },

@@ -158,7 +158,7 @@ RB.pad = (function () {
   const MODES = ['kanji', 'any', 'hira', 'kata']; // "Read as": Kanji or kana / Either kana / ひらがな / カタカナ
   const isKanji = (c) => !!c && RB.kana.isKanji(c);
 
-  /* Kanji reading on the pad is the player's preference (Settings › Learning:
+  /* Kanji reading on the pad is the player's preference (Settings › Learning ›
    * padKanji 'auto' | 'on' | 'off'; older settings records have none and mean
    * 'auto'). 'auto' follows the Japanese level: kana only in Foundations,
    * kanji or kana from Elementary on. It never depends on the task's answer. */

@@ -255,8 +255,8 @@ All other preferences apply to every campaign.
   controls. When several places qualify (up to six), each is marked (those
   on this map only, when any are); more than six, none. The Journey says the
   same in words ("Next: Suzu, in Reedwake — south-west of you"), so nothing
-  depends on seeing the marker. Settings › Learning & Challenge › Quest
-  guidance: Markers and hints (default) / Hints only / Off.
+  depends on seeing the marker. Settings › Play › Quest guidance (Learning &
+  Challenge until ST-1): Markers and hints (default) / Hints only / Off.
 - **Battle clarity** (2026-09-28): Harmony is its own band on the party
   slip — pips, a count, and the name of this companion's technique — and
   every move, status and ward is a keyword with a note card (hover, focus

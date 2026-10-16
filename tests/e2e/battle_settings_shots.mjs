@@ -38,11 +38,10 @@ for (const v of [{ tag: '1280x800', size: { width: 1280, height: 800 }, k: 0.75 
   await webp(p, 'battle_' + v.tag, v.k);
   await p.keyboard.press('c');
   await p.waitForTimeout(400);
-  if (v.phone) { await webp(p, 'sheet_' + v.tag, v.k); await p.click('.folio-bset [data-grp="motion"]'); await p.waitForTimeout(300); }
+  // (since ST-1 the sheet's groups are paper tabs at every width: it opens on Speed & motion)
   await p.mouse.move(2, 2);
   await webp(p, 'sheet_motion_' + v.tag, v.k);
-  if (v.phone) { await p.click('.folio-bset [data-grp=""]'); await p.waitForTimeout(200); }
-  await p.click('.folio-bset [data-grp="fixed"]');
+  await p.click('.folio-bset .ptab[data-grp="fixed"]');
   await p.waitForTimeout(300);
   await p.mouse.move(2, 2);
   await webp(p, 'sheet_fixed_' + v.tag, v.k);

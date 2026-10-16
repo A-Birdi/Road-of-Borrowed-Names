@@ -13,7 +13,7 @@ The measured results are in `docs/music/ensemble/qa/<song>.json`; the record of 
 
 ## For the player
 
-- **Settings › Audio › Music performance: Original / Ensemble.** The control appears on the title's Settings, the
+- **Settings › Sound › Music performance: Original / Ensemble** (the Audio group until ST-1)**.** The control appears on the title's Settings, the
   Ledger's Settings and the battle's settings sheet (it is presentation only, so a battle allows it). It is offered
   only when the game has at least one recording.
 - **A status line under it says what is actually playing**, which can differ from what is chosen: "Original playing",

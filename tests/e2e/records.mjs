@@ -12,7 +12,7 @@
 // Usage: node tests/e2e/records.mjs
 import path from 'node:path';
 import fs from 'node:fs';
-import { serve, launch, page } from './lib.mjs';
+import { serve, launch, page, setOut } from './lib.mjs';
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -153,6 +153,8 @@ await test('New Game+ from the end: the slot, the farewell, a new journey with t
     if (st.ng === 1) break;
     if (st.cur && (!said.length || said[said.length - 1].en !== st.cur.en)) said.push(st.cur);
     if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));
+    // (the new journey's settings are looked over before it begins, ST-1b)
+    else if (await p.evaluate(() => RB.ui.settings.reviewing())) await setOut(p);
     await p.waitForTimeout(120);
   }
   // (the companion's lines, then the narration of the road folding back: P14's farewell, F-112)
@@ -195,6 +197,8 @@ await test('New Game+ into another journey\'s slot: asked first; Choose again ch
     if (st.ng === 1) break;
     if (st.cur && (!said.length || said[said.length - 1].en !== st.cur.en)) said.push(st.cur);
     if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));
+    // (the new journey's settings are looked over before it begins, ST-1b)
+    else if (await p.evaluate(() => RB.ui.settings.reviewing())) await setOut(p);
     await p.waitForTimeout(120);
   }
   assert(said.filter((l) => l.who === 'mio').length >= 3 && said.every((l) => l.who === 'mio' || l.who === 'narr'), 'the farewell is the ending journey\'s companion\'s (Mio), not the erased one\'s (Ren): ' + said.map((l) => l.who).join(','));

@@ -610,7 +610,7 @@ RB.battlePets = (function () {
     RB.ui.settings.addRows('display', ({ sw }) => '<h3 class="pet-set">Pets</h3>' +
       sw('petWorld', 'Show pet in exploration', 'A pet you have met and chosen follows you on the road. It is only company: it changes nothing in play.') +
       sw('petBattle', 'Show pet in battle', 'It sits beside the two of you and watches. It never acts, and hiding it changes nothing.'));
-    RB.ui.settings.addRows('audio', ({ sw }) => sw('petSounds', 'Quiet pet sounds', 'An occasional soft sound from your pet (never needed: everything it does is also seen).'));
+    RB.ui.settings.addRows('audio', ({ sw }) => sw('petSounds', 'Quiet pet sounds', 'An occasional soft sound from your pet (never needed: everything it does is also seen).'), 'a');
   }
 
   return { wants, draw, stats, sample, sampleAny, centreOf, extentOf, place, footSpans, densityOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, PREP, SETTLE, VICTORY, CALM, READY, BASE, LOOK, MIN_WIN, MAX_RATE, SETTLE_GRACE, CADENCE, IDLE_STEP, _begin: begin, _end: end, get _B() { return B; } };

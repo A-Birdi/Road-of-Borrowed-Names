@@ -93,7 +93,7 @@ await test('MT-T04/T06/T45 the control: real clicks and keys, exclusive, kept on
   const f = await p.evaluate(() => {
     const fs_ = document.querySelector('input[data-set="musicPerformance"]').closest('fieldset');
     const st = document.querySelector('[data-mp-status]');
-    return { legend: fs_.querySelector('legend') && fs_.querySelector('legend').textContent, options: [...fs_.querySelectorAll('label.opt')].map((l) => l.textContent.trim()), checked: fs_.querySelector('input:checked').value, overflow: fs_.scrollWidth > fs_.clientWidth + 1, status: st && st.textContent, live: st && st.getAttribute('aria-live'), page: document.documentElement.scrollWidth <= innerWidth };
+    return { legend: fs_.querySelector('legend') && fs_.querySelector('legend').textContent, options: [...fs_.querySelectorAll('label.opt')].map((l) => (l.querySelector('.sx-en') || l).textContent.trim()), checked: fs_.querySelector('input:checked').value, overflow: fs_.scrollWidth > fs_.clientWidth + 1, status: st && st.textContent, live: st && st.getAttribute('aria-live'), page: document.documentElement.scrollWidth <= innerWidth };
   });
   assert(/Music performance/.test(f.legend) && f.options.join('|') === 'Original|Ensemble' && f.checked === 'original', 'two options, Original chosen: ' + JSON.stringify(f));
   assert(!f.overflow && f.page, 'no overflow at 360 px: ' + JSON.stringify(f));

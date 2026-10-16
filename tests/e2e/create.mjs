@@ -9,7 +9,7 @@
 // mistaken for one); Inspect, placement and the New Game+ choice work; the
 // campaign starts with exactly what was chosen.
 // Usage: node tests/e2e/create.mjs
-import { serve, launch, page } from './lib.mjs';
+import { serve, launch, page, setOut } from './lib.mjs';
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -182,6 +182,7 @@ function judge(tag, L, opts) {
   ok(!nr.songs && !nr.overrides && !nr.prologue, 'no prologue replay across all steps');
   ok(await p.isHidden('.cr-next') && await p.isVisible('[data-a=go]'), 'the last step offers Begin instead of Next');
   await p.click('[data-a=go]');
+  await setOut(p); // (settings looked over before the story begins, ST-1b)
   await p.waitForFunction(() => RB.game.G.playing === true && (RB.game.mode() === 'dialogue' || RB.game.mode() === 'world'), null, { timeout: 15000 });
   const s = await p.evaluate(() => ({ edition: RB.game.s.edition, player: RB.game.s.player, learn: { profile: RB.game.s.learn.profile, assist: RB.game.s.learn.assist, difficulty: RB.game.s.learn.difficulty, kana: RB.game.s.learn.kanaKnown }, input: RB.game.settings.input, map: RB.game.s.map, layers: document.querySelectorAll('.folio-create').length }));
   const L = s.player.look;

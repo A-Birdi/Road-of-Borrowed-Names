@@ -2,7 +2,7 @@
 // loading take the edition a new journey has in this build (RB.edition.forNew(): twelve chapters since C-84), so a
 // reload continues them; old six-chapter saves have their own suite (old_saves.mjs).
 // Usage: node tests/e2e/ui.mjs [filter]
-import { serve, launch, page, chromium, companionTurn } from './lib.mjs';
+import { serve, launch, page, chromium, companionTurn, setOut } from './lib.mjs';
 
 const only = process.argv[2];
 const { srv, url } = await serve();
@@ -38,6 +38,7 @@ await test('new game through title, prologue skip, creation, setup', async () =>
   await p.click('[data-a=next]'); // -> Learning setup
   await p.click('[data-k=profile][data-v=E]');
   await p.click('[data-a=go]');
+  await setOut(p); // (settings looked over before the story begins, ST-1b)
   await p.waitForFunction(() => RB.game.mode() === 'dialogue' || RB.game.mode() === 'world', null, { timeout: 10000 });
   const st = await p.evaluate(() => ({ name: RB.game.s.player.name, jp: RB.game.s.player.nameJp, prof: RB.game.s.learn.profile, map: RB.game.s.map, hair: RB.game.s.player.look.hair, acc: RB.game.s.player.look.acc }));
   assert(st.name === 'Aki' && st.jp === 'アキ' && st.prof === 'E' && st.map === 'rw.road' && st.hair === 'bun' && st.acc.includes('glasses'), JSON.stringify(st));
@@ -473,6 +474,7 @@ await test('direct file:// mode boots, reports storage honestly, no network', as
   await p.fill('#nm', 'Filer');
   for (let i = 0; i < 3; i++) await p.click('[data-a=next]'); // Identity -> Appearance -> Background -> Learning setup
   await p.click('[data-a=go]');
+  await setOut(p);
   await p.waitForFunction(() => RB.game.G.playing === true);
   assert(!errors.length, errors.join('; '));
   assert(!requests.length, 'network: ' + requests.join(', '));
@@ -500,6 +502,8 @@ await test('New Game+ carries the learning record and the traveller, not lore, k
   let said = 0;
   for (let i = 0; i < 400 && !(await p.evaluate(() => RB.game.G.playing === true && !RB.ui.dialogue.isOpen())); i++) {
     if (await p.evaluate(() => RB.ui.dialogue.isOpen())) { said++; await p.evaluate(() => RB.ui.dialogue.advance(true)); }
+    // (then the new journey's settings are looked over, ST-1b)
+    if (await p.evaluate(() => RB.ui.settings.reviewing())) await setOut(p);
     await p.waitForTimeout(50);
   }
   assert(said > 0, 'Ren\'s farewell should play');

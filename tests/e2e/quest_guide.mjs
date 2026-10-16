@@ -190,10 +190,10 @@ async function closeMenu(p) { await p.evaluate(() => { RB.ui.menu.close(); }); a
   const back = await p.evaluate(() => ({ res: window.__res, mode: RB.game.mode() }));
   assert(back.res === 'flee' && back.mode === 'world' && (await marks(p)).marks.length > 0, 'after stepping back from it, the markers return');
 
-  // settings modes, through Settings › Learning & Challenge
+  // settings modes, through Settings › Play › Finding the way (ST-1)
   await p.evaluate(() => { RB.ui.menu.open('settings'); });
   await p.waitForTimeout(300);
-  await p.click('[data-grp="learning"]').catch(() => {});
+  await p.click('[data-grp="play"]').catch(() => {});
   await p.waitForTimeout(200);
   await p.click('input[data-set="questGuide"][value="hints"] >> xpath=..');
   await p.waitForTimeout(200);

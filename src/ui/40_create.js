@@ -736,6 +736,8 @@ RB.ui.create = (function () {
       // the six-chapter edition too, with the solo farewell if no companion was chosen)
       if (RB.ui.ngplus && RB.recordsUI && (RB.recordsUI.inCampaign(from) || (RB.edition && RB.edition.isOld(from)))) await RB.ui.ngplus.farewell(from);
       const s = carry(from);
+      // look the settings over before setting out (ST-1b)
+      if (RB.ui.settings && RB.ui.settings.review) await RB.ui.settings.review(s);
       RB.render.setOverride(null);
       await RB.game.startNewCampaign(slot, s);
       return;
@@ -753,6 +755,10 @@ RB.ui.create = (function () {
     if (o.kana === 'hira') s.learn.kanaGroup = 'hira_done';
     if (o.kana === 'both') s.learn.kanaGroup = 'all_done';
     s.journal = [{ jp: '{名前|なまえ} が {消|き}えている 。 {橋|はし} は {向|む}こう{岸|ぎし} に {届|とど}かない 。', en: 'Names are fading from things. Hana at the Reedwake teahouse poured tea for someone she cannot remember; a lantern lost its name; a bridge no longer reaches the far bank.', t: Date.now() }];
+    // before the story begins: the settings that shape ordinary play, on one spread of the Settings book (ST-1b: a
+    // new learner should never meet loud sound, the wrong level or an unexpected dialect without having seen where
+    // they are set)
+    if (RB.ui.settings && RB.ui.settings.review) await RB.ui.settings.review(s);
     RB.render.setOverride(null);
     await RB.game.startNewCampaign(slot, s);
   }

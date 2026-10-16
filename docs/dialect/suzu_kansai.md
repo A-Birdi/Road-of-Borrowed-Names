@@ -30,7 +30,7 @@ The same setting is shown and changed in three places:
    sample (furigana on every kanji), one sentence on what Kansai-ben is, and how
    to switch back. Choosing applies at once; Escape keeps the current choice.
    Automated play (`RB.test.auto`) never sees it.
-2. **Settings › Reading & Language › Suzu's speech**: *Standard* / *Kansai
+2. **Settings › Reading › Suzu's speech** (and "Before you set out" when a journey begins, ST-1): *Standard* / *Kansai
    (Kansai-ben)*, with a one-line hint.
 3. **Company › Suzu, in "Talk with Suzu"**: a small labelled control, *How Suzu
    speaks*, with two radio buttons — *Standard Japanese* ({標準語|ひょうじゅんご}) and

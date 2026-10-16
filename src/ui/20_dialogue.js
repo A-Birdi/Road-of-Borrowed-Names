@@ -304,7 +304,7 @@ RB.ui.dialogue = (function () {
     if (!current || !current.jp || !RB.voice) return;
     const text = RB.jp && RB.jp.reading ? RB.jp.reading(current.jp, RB.script.jpVars()) : current.jp;
     const ch = RB.content.chars[current.who];
-    // the word being said, marked in the Japanese and its English (PT-1c; Settings › Audio can turn it off)
+    // the word being said, marked in the Japanese and its English (PT-1c; Settings › Sound can turn it off)
     const mark = RB.ui.speechMark ? RB.ui.speechMark.begin(box, current, text) : null;
     RB.voice.speak(text, {
       pitch: ch && ch.voice ? ch.voice.pitch : 1,

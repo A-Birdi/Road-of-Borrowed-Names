@@ -67,6 +67,8 @@ RB.ui.ngplus = (function () {
     if (!x.empty) await RB.save.del(slot);
     const s = RB.ui.create.carry(from);
     if (RB.ui.menu && RB.ui.menu.isOpen && RB.ui.menu.isOpen()) RB.ui.menu.close();
+    // a new journey: its settings are looked over before it begins (ST-1b)
+    if (RB.ui.settings && RB.ui.settings.review) await RB.ui.settings.review(s);
     await RB.game.startNewCampaign(slot, s);
     return true;
   }

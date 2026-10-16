@@ -260,7 +260,7 @@ RB.pets = (function () {
     for (const id in VIGNETTES) if (VIGNETTES[id].species === sp && VIGNETTES[id].met) return VIGNETTES[id].met;
     return null;
   }
-  // An occasional soft sound, never needed (Settings › Audio › Quiet pet sounds). The effects exist in the
+  // An occasional soft sound, never needed (Settings › Sound › Quiet pet sounds). The effects exist in the
   // game's synth; with the setting off, or no audio, nothing plays.
   const SOUND = { cat: 'pet_cat', dog: 'pet_dog', bird: 'pet_bird', tanuki: 'pet_tanuki' };
   // The four quiet sounds, synthesized like every other effect in the game (no files): a soft trill (cat), a

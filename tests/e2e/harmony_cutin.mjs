@@ -764,8 +764,9 @@ await test('setting: "Harmony portrait flourish" is On by default (also for an o
   const old = await p.evaluate(() => { delete RB.game.settings.harmonyFlourish; return RB.harmonyCutin.enabled(); });
   assert(old === true, 'an older settings record (no key) counts as On');
   await p.evaluate(() => { RB.game.settings.harmonyFlourish = true; RB.ui.settings.open(); });
-  await waitSel(p, '.folio-settings [data-grp="learning"]', { timeout: 8000 });
-  await p.click('.folio-settings [data-grp="learning"]');
+  // (Settings › Play since ST-1: the battle settings have their own tab)
+  await waitSel(p, '.folio-settings [data-grp="play"]', { timeout: 8000 });
+  await p.click('.folio-settings [data-grp="play"]');
   await waitSel(p, '[data-sw="harmonyFlourish"]', { timeout: 8000 });
   // (in the Battles group: the nearest heading above it is Battles; the group has grown other rows since)
   const row = await p.evaluate(() => { const i = document.querySelector('[data-sw="harmonyFlourish"]'); const f = i.closest('.field'); let h = f.previousElementSibling; while (h && !/^H[1-6]$/.test(h.tagName)) h = h.previousElementSibling; return { label: f.textContent.replace(/\s+/g, ' ').trim(), checked: i.checked, afterBattles: !!(h && /Battles/.test(h.textContent)), heading: h && h.textContent.trim() }; });

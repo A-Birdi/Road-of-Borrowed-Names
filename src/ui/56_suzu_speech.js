@@ -5,7 +5,7 @@
  *     or, in a saved campaign where she already travels with you (loaded from its
  *     slot), once after the next scene in which she speaks (never in the middle of
  *     a scene);
- *   - Settings › Reading & Language: "Suzu's speech";
+ *   - Settings › Reading (and "Before you set out" when a journey begins): "Suzu's speech";
  *   - Company › Suzu, in "Talk with Suzu": the same choice, plus an in-world way
  *     to ask her (co.suzu_speech_kansai / co.suzu_speech_standard).
  * Changing it applies at once (the line on screen, the history, the Company
@@ -23,7 +23,7 @@ RB.ui.suzuSpeech = (function () {
   const decided = () => !!(RB.game.settings && RB.game.settings.suzuSpeech);
   // one sentence on what it is; the small print says what stays the same and how to switch back
   const EXPLAIN = 'Kansai-ben ({関西弁|かんさいべん}) is the regional dialect of Osaka and Kyoto: the same Japanese with its own endings and words (や for だ, 〜へん for 〜ない, ほんま for "really"), each one explained in word help.';
-  const BACK = 'Your exercises and answers always stay in standard Japanese, and you can switch back any time if it is hard to follow: Settings › Reading & Language, or Company › Suzu.';
+  const BACK = 'Your exercises and answers always stay in standard Japanese, and you can switch back any time if it is hard to follow: Settings › Reading, or Company › Suzu.';
   // one of her lines, both ways (the sample in the choice)
   const SAMPLE = { jp: '{開幕|かいまく} ！ …… ふふ 、 {一度|いちど} {言|い}って みたかった の 。', en: 'Curtain up! …Heh. I always wanted to say that.' };
   function sample(v) {
@@ -112,14 +112,10 @@ RB.ui.suzuSpeech = (function () {
   }
   if (RB.bus) RB.bus.on('story:settled', maybeAskExisting);
 
-  // ---- Settings › Reading & Language ---------------------------------------------------------------------
+  // ---- Settings › Reading ---------------------------------------------------------------------------------
   if (RB.ui.settings && RB.ui.settings.addRows) {
-    RB.ui.settings.addRows('reading', () => {
-      const v = value();
-      const r = (val, label) => '<label class="opt"><input type="radio" name="suzuSpeech" data-suzu-speech value="' + val + '"' + (v === val ? ' checked' : '') + '><span>' + label + '</span></label>';
-      return '<fieldset class="field" data-speech-field><legend>Suzu\'s speech</legend><div class="opts">' + r('standard', 'Standard') + r('kansai', 'Kansai (Kansai-ben)') + '</div>' +
-        '<div class="hint">How Suzu talks, wherever she speaks. Kansai-ben is the regional dialect of Osaka and Kyoto; word help explains its forms, and exercises always use standard Japanese.</div></fieldset>';
-    });
+    // (the row itself is Settings' own, ST-1: the same marks as every other choice there)
+    RB.ui.settings.addRows('reading', () => (RB.ui.settings.suzuRow ? RB.ui.settings.suzuRow() : ''));
   }
   if (typeof document !== 'undefined') {
     document.addEventListener('change', (e) => {

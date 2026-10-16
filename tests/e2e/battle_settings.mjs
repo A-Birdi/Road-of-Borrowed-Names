@@ -129,12 +129,9 @@ const battleKey = (p) => p.evaluate(() => JSON.stringify({
   runs: RB.battleSeq.stats().counters.runs,
 }));
 const sheetOpen = (p) => p.evaluate(() => !!(RB.ui.settings.inBattle && RB.ui.settings.inBattle()) && !!document.querySelector('.folio-bset'));
-// a group of the sheet (the index on a phone is its own page)
+// a group of the sheet: its paper tab, at every width (ST-1: the tabs replaced the list of groups)
 async function group(p, id) {
-  if (await p.evaluate((id) => { const b = document.querySelector('.folio-bset [data-grp="' + id + '"]'); return !!(b && b.offsetParent); }, id)) { await clickEl(p, '.folio-bset [data-grp="' + id + '"]'); await wait(p, 150); return; }
-  await clickEl(p, '.folio-bset [data-grp=""]');
-  await wait(p, 150);
-  await clickEl(p, '.folio-bset [data-grp="' + id + '"]');
+  await clickEl(p, '.folio-bset .ptab[data-grp="' + id + '"]');
   await wait(p, 150);
 }
 const radio = async (p, k, v) => { await clickEl(p, '.folio-bset label.opt:has(input[data-set="' + k + '"][value="' + v + '"])'); await wait(p, 150); };
@@ -254,8 +251,21 @@ for (const v of VIEWS) {
     const pressed0 = await p.evaluate(() => RB.combat.debug().pressesIgnored);
     if (!v.phone) {
       await p.keyboard.press('c'); await wait(p, 250);
-      const pt = await p.evaluate(() => { const card = document.querySelector('.rcard[data-i]:not([disabled])'), f = document.querySelector('.folio-bset').getBoundingClientRect(); const r = card.getBoundingClientRect(); const x = Math.max(f.right + 20, r.left + r.width * 0.75); const y = r.top + r.height / 2; const top = document.elementFromPoint(x, y); return { x, y, scrim: !!(top && top.classList.contains('folio-scrim')), under: x < r.right }; });
-      assert(pt.scrim && pt.under, 'a point on the dim area that lies over a response card: ' + JSON.stringify(pt));
+      // (since ST-1 the sheet is the Settings book, wider than the folio it was: a card may lie under the dim area or
+      // not at all at this size; the point is over a card when one does, otherwise anywhere on the dim area)
+      const pt = await p.evaluate(() => {
+        const f = document.querySelector('.folio-bset').getBoundingClientRect();
+        const onScrim = (x, y) => { const top = document.elementFromPoint(x, y); return !!(top && top.classList.contains('folio-scrim')); };
+        for (const card of document.querySelectorAll('.rcard[data-i]:not([disabled])')) {
+          const r = card.getBoundingClientRect();
+          for (const [x, y] of [[f.right + 12, r.top + r.height / 2], [f.left - 12, r.top + r.height / 2], [r.left + r.width / 2, f.bottom + 6], [r.left + r.width / 2, f.top - 6]]) {
+            if (x > r.left && x < r.right && y > r.top && y < r.bottom && onScrim(x, y)) return { x, y, scrim: true, under: true };
+          }
+        }
+        const x = Math.min(innerWidth - 4, f.right + Math.max(4, (innerWidth - f.right) / 2)), y = f.top + f.height / 2;
+        return { x, y, scrim: onScrim(x, y), under: false };
+      });
+      assert(pt.scrim, 'a point on the dim area (over a response card where one lies under it: ' + pt.under + '): ' + JSON.stringify(pt));
       await p.evaluate(() => { window.__T.clicks = []; });
       await p.mouse.dblclick(pt.x, pt.y);
       await settledClose(p); await wait(p, 100);

@@ -102,3 +102,11 @@ export async function companionTurn(p, o) {
   }
   return null;
 }
+
+// A new journey opens Settings on "Before you set out" (ST-1b, src/ui/55_settings.js review()) before its story
+// begins: set out from it with the real button (the review is the subject of tests/e2e/settings_review.mjs).
+export async function setOut(p, opts = {}) {
+  await p.waitForSelector('.folio-review [data-review-go]', { timeout: opts.timeout || 15000 });
+  await p.click('.folio-review [data-review-go]');
+  await p.waitForFunction(() => !(RB.ui.settings.reviewing && RB.ui.settings.reviewing()), null, { timeout: 5000 });
+}

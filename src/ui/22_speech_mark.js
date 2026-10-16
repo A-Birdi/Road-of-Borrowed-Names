@@ -5,7 +5,7 @@
  * render it (RB.jp.speech.align) are marked in the translation when it shows. The position comes from the voice
  * itself when it reports one (a speech "boundary" event: a character offset into what it speaks); a voice that
  * reports none is followed by an estimate from each word's beats (RB.jp.speech.timeline), and a recording can be
- * followed the same way, scaled to its length (follow()). Settings › Audio › "Highlight each word as it is spoken"
+ * followed the same way, scaled to its length (follow()). Settings › Sound › "Highlight each word as it is spoken"
  * (settings.voice.highlight; older records lack it: On). Only classes change: no motion, nothing announced, nothing
  * saved.
  *

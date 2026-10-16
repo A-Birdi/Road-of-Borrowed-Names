@@ -11,7 +11,7 @@
 // Usage: node tests/e2e/old_saves.mjs
 import fs from 'node:fs';
 import path from 'node:path';
-import { serve, launch, page, root } from './lib.mjs';
+import { serve, launch, page, root, setOut } from './lib.mjs';
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -52,6 +52,8 @@ async function farewellThrough(p) {
     const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), who: RB.ui.dialogue.isOpen() ? (document.querySelector('.dlg .who, .dlg .dlg-tab') || {}).textContent || '' : '', ng: !!(RB.game.G.playing && RB.game.s && RB.game.s.ngplus) }));
     if (st.ng && !st.dlg) break;
     if (st.dlg) { lines.push(st.who.replace(/\s+/g, ' ').trim()); await p.evaluate(() => RB.ui.dialogue.advance(true)); }
+    // (the new journey's settings are looked over before it begins, ST-1b)
+    else if (await p.evaluate(() => RB.ui.settings.reviewing())) await setOut(p);
     await p.waitForTimeout(60);
   }
   return lines;
