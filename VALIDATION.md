@@ -4403,12 +4403,26 @@ the captures listed.
   Settings button overlapped the sixth tab there).
 - **Spelling:** 86 "practise…" words became "practice…" in the game's text and docs; code names were kept; the
   English halves of dialogue lines only.
-- **Regression on this build:** the browser suites the changes touch are running (folio, settings_access,
-  title_ledger, quest_guide, manybridge, book, records, ledger, world_living, distractions, atlas_board, pages_ending,
-  practice_a_lamps, workshop, ui_inventory, kanji_chart, practice_b, wordplay, keepsakes, play_ui); results are added
-  here when they finish. Updated for the new markup: `folio`, `settings_access`, `title_ledger` (the Save slip),
-  `book` (`.leaf:first-of-type`), `quest_guide` (the here ring), `world_living` (the spot words), and the four
-  spelling regexes.
+- **B, regression on this build:**
+  - Passed first time (16 suites): `settings_access`; `title_ledger` 18/0; `quest_guide`; `manybridge` 3/0;
+    `records` 7/0; `ledger`; `world_living` 4/0; `distractions` 4/0; `atlas_board` 4/0; `pages_ending`;
+    `practice_a_lamps` 51/51; `workshop` 6/0; `ui_inventory`; `practice_b` 6/0; `wordplay` 83/0; `play_ui`.
+  - Four failed and pass after a fix:
+    - `folio`, 12 failures: the ribbon tags on phones were 40 px, under the 44 px touch size. Fixed in the CSS; then
+      all ok.
+    - `book`, 14/1: the open ribbon rested with a 3 px `transform`, and the reading plane must have none at rest
+      (LP-1). It is now a `left` offset; then 15/0.
+    - `kanji_chart`, 7/1: the spelling sweep had changed the test's expected action names, which are code names the
+      sweep keeps. The test was corrected; then 8/0.
+    - `keepsakes`, 32/33: the test looked for the old keepsake notice, now the keepsake's award slip. The test was
+      updated; then 33/33.
+  - `fieldweave` (same update as `keepsakes`) runs next.
+  - `ledger_li` passes again on the fixed build.
+  - Updated for the new markup: `folio`, `settings_access` and `title_ledger` (the Save slip); `book`
+    (`.leaf:first-of-type`); `quest_guide` (the here ring); `world_living` (the spot words); `keepsakes` and
+    `fieldweave` (the keepsake slip); and the four spelling regexes.
+  - `ui_inventory` rewrites the P00 "Ledger before the book" baseline images when it runs. They were restored, and two
+    of its working PNGs, committed by mistake, were removed: the baseline is unchanged.
 - **LI-8 (R; nothing runs):** `node tools/voice/reference_count.mjs` counts 8,981 reference recordings (234 kana,
   1,838 kanji reading lists, 6,909 words; 30,119 characters, 28,551 morae), now in PRODUCTION_ESTIMATE.md §1b.
 
