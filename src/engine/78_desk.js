@@ -1,5 +1,5 @@
 /* The copying desk (Practice addendum §16): four directly selectable modes
- * that practise different things, and up to six personal pages per campaign.
+ * that practice different things, and up to six personal pages per campaign.
  *
  *   trace    numbered reference strokes underneath  → guided motor practice only
  *   copy     the model in its own pane beside        → copying practice, never recall
@@ -89,7 +89,7 @@ RB.practiceDesk = (function () {
   function notebookCards(s) {
     const out = [], seen = new Set(base().map((c) => c.item));
     for (const n of (s && s.notebook) || []) {
-      if (!n || n.kind !== 'word' || typeof n.id !== 'string' || n.dia) continue; // a noted Kansai word is not standard vocabulary to practise
+      if (!n || n.kind !== 'word' || typeof n.id !== 'string' || n.dia) continue; // a noted Kansai word is not standard vocabulary to practice
       const m = /^w:([^|]*)\|(.*)$/.exec(n.id);
       const lemma = m ? m[1] : n.surface, reading = m ? m[2] : n.reading;
       const e = (lemma && reading && RB.lex.get(lemma, reading)) || null;
@@ -102,7 +102,7 @@ RB.practiceDesk = (function () {
     return out;
   }
   function find(s, id) { return cards(s).concat(notebookCards(s)).find((c) => c.id === id) || null; }
-  // the written forms a page can practise: the word as usually written, and its kana
+  // the written forms a page can practice: the word as usually written, and its kana
   function forms(card) {
     const out = [];
     if (writable(card.w)) out.push({ id: 'kanji', text: card.w });

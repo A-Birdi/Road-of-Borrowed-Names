@@ -156,7 +156,7 @@ body.reduced-motion .ptab.lift, body.reduced-motion .ptab.lift2 { animation: non
 @media (min-width: 720px) { /* keep in step with RB.ui.folio.WIDE */
   .spread.two { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 0; }
   .spread.two > .leaf + .leaf { display: block; }
-  .spread.two > .leaf:first-child { border-radius: 3px 0 0 6px; box-shadow: inset -14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
+  .spread.two > .leaf:first-of-type { border-radius: 3px 0 0 6px; box-shadow: inset -14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
   .spread.two > .leaf + .leaf { border-left: 0; border-radius: 0 3px 6px 0; box-shadow: inset 14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
 }
 

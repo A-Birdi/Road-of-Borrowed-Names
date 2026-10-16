@@ -1,4 +1,4 @@
-/* Words › Ways to practise (Practice addendum §20.1): where each roadside
+/* Words › Ways to practice (Practice addendum §20.1): where each roadside
  * activity is offered and whether it can begin from here. It never launches a
  * physical activity remotely: "Begin here" appears only when you are at its
  * place and the world is safe; otherwise the page says where to go. Entries
@@ -49,14 +49,14 @@ RB.ui.practiceIndex = (function () {
   }
   if (RB.ui.menu && RB.ui.menu.addPage) {
     RB.ui.menu.addPage('words', {
-      id: 'practice', en: 'Ways to practise', jp: '{練習|れんしゅう} の {場所|ばしょ}',
+      id: 'practice', en: 'Ways to practice', jp: '{練習|れんしゅう} の {場所|ばしょ}',
       count: (s) => RB.practice.activities().filter((d) => status(d, s).available).length,
       available: () => RB.practice.activities().length > 0,
       html, wire,
     });
   }
   if (RB.ui.settings && RB.ui.settings.addRows) {
-    RB.ui.settings.addRows('learning', ({ radios, sw }) => '<h3 class="pr-set">Ways to practise</h3>' +
+    RB.ui.settings.addRows('learning', ({ radios, sw }) => '<h3 class="pr-set">Ways to practice</h3>' +
       radios('activityChatter', 'Companion remarks during activities', [['normal', 'Normal'], ['quiet', 'Quiet']], null, 'Quiet keeps rules and results, and drops incidental comments.') +
       sw('hideTotals', 'Hide shiritori win/loss totals', 'Stage records stay visible.') +
       sw('fishSeconds', 'Show seconds beside the fishing line', 'Only when you choose a pace; fishing is untimed by default.') +

@@ -527,7 +527,7 @@ body.reduced-motion .ptab.lift, body.reduced-motion .ptab.lift2 { animation: non
 @media (min-width: 720px) { /* keep in step with RB.ui.folio.WIDE */
   .spread.two { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 0; }
   .spread.two > .leaf + .leaf { display: block; }
-  .spread.two > .leaf:first-child { border-radius: 3px 0 0 6px; box-shadow: inset -14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
+  .spread.two > .leaf:first-of-type { border-radius: 3px 0 0 6px; box-shadow: inset -14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
   .spread.two > .leaf + .leaf { border-left: 0; border-radius: 0 3px 6px 0; box-shadow: inset 14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
 }
 
@@ -4628,7 +4628,7 @@ body.reduced-motion .fs-say { transition: opacity 0.2s; transform: none; }
   .fish-panel { flex: 1 1 50%; padding: 6px 8px; }
 }
 
-/* Words › Ways to practise (the foundation's page, src/ui/68_practice_index.js, has no stylesheet of its
+/* Words › Ways to practice (the foundation's page, src/ui/68_practice_index.js, has no stylesheet of its
  * own): its "where" line carries an inline icon that would otherwise grow to the page's width. Kept here,
  * small and scoped to that page, until the page gets its own stylesheet (merge note). */
 .pr-index .entry .small svg { width: 1.05em; height: 1.05em; vertical-align: -0.15em; flex: none; }
@@ -5447,7 +5447,7 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
   box-shadow: 1px 0 0 var(--paper-edge), 3px 2px 0 -1px var(--paper-2), 4px 2px 0 -1px var(--paper-edge), 6px 4px 0 -2px var(--paper-3), 7px 4px 0 -2px var(--paper-edge);
 }
 @media (min-width: 720px) {
-  .folio.book .spread.two > .leaf:first-child {
+  .folio.book .spread.two > .leaf:first-of-type {
     border-radius: 5px 0 0 5px;
     background-image:
       linear-gradient(270deg, var(--bk-gutter), rgba(70, 48, 18, 0.10) 14px, transparent 56px),   /* into the fold */
@@ -5754,7 +5754,7 @@ body.book-ui .dlg .portrait { border-width: 5px; border-color: #fbf6ea; backgrou
 .folio.book.book-flat .leafbox, .folio.book.book-flat .spread.turn > .leaf, .folio.book.book-flat .spread.turn::before { animation: none; }
 .folio.book.book-flat .spread::before { display: none; }
 .folio.book.book-flat .leaf { background-image: none !important; box-shadow: none !important; }
-@media (min-width: 720px) { .folio.book.book-flat .spread.two > .leaf:first-child { border-right: 1px solid var(--paper-edge); } }
+@media (min-width: 720px) { .folio.book.book-flat .spread.two > .leaf:first-of-type { border-right: 1px solid var(--paper-edge); } }
 .folio.book.book-flat .co-mount { transform: none; }
 .folio.book.book-flat .co-mount::before, .folio.book.book-flat .co-mount::after { display: none; }
 .folio.book.book-flat .nudge-slip, .folio.book.book-flat .co-pending { background-image: none; box-shadow: none; border: 1px solid var(--paper-edge); }
@@ -6191,6 +6191,129 @@ body.reduced-motion .new-dot { animation: none; }
 .hbtn.menu-b > .new-dot { top: 4px; right: 4px; }
 .entry > .mark { position: relative; }
 .entry > .mark > .new-dot { top: -3px; right: -4px; }
+
+/* ==== src/styles/94_bookmarks.css ==== */
+/* The pages within a Ledger section (Journey, Map, Company) as coloured bookmarks (LI-5, src/ui/50_menu.js bookmarks):
+ * ribbons tucked under the left page with their ends out on the cover. Pointing at one draws it a little further out
+ * and lays it over the page with its words; the open page's ribbon lies on top, its end curled over the page's edge.
+ * Without a fine pointer, or on one page, the same pages are ribbon tags on the page itself. Save & Load's place on
+ * the cover and its slip are here too. */
+
+/* the cover keeps a strip on the left for the ribbons' ends, on every section, so the pages never shift */
+.folio.book.bm-room { padding-left: 42px; }
+
+.folio.book .subnav.bk-marks {
+  position: absolute; left: -33px; top: 64px; z-index: auto; display: flex; flex-direction: column; flex-wrap: nowrap; align-items: flex-start;
+  gap: 6px; width: 56px; margin: 0; padding: 0; border: 0;
+}
+/* a ribbon: its end on the cover (the button's box) and its flap past the page's edge; its words lie further along */
+.folio.book .bk-marks .subbtn.bm {
+  --bm-paper: #fbf3df;
+  position: relative; z-index: 0; display: flex; align-items: stretch; justify-content: flex-start; gap: 0; width: 56px; height: var(--tap, 44px);
+  min-width: 0; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none;
+  color: var(--bm-paper); font: inherit; text-align: left; cursor: pointer; transition: transform 140ms var(--ease);
+}
+/* the ribbon's cloth: its colour, a fine weave and a little light along its top */
+.folio.book .bk-marks .bm > span {
+  background-color: var(--bm, #7a4f26);
+  background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 45%, rgba(0, 0, 0, 0.2));
+}
+/* the end on the cover: a swallowtail notch, the page's picture in paper ink */
+.folio.book .bk-marks .bm-tab {
+  flex: none; width: 38px; display: flex; align-items: center; justify-content: center; padding-left: 6px; box-sizing: border-box;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 8px 50%);
+}
+.folio.book .bk-marks .bm .bm-tab svg { display: block; width: 20px; height: 20px; filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.3)); }
+.folio.book .bk-marks .bm-flap { flex: none; width: 18px; }
+/* its words: hidden under the page until it is pointed at, then drawn out along the page */
+.folio.book .bk-marks .bm-label {
+  position: absolute; left: 56px; top: 0; bottom: 0; display: flex; align-items: center; padding: 0 14px 0 2px; white-space: nowrap;
+  border-radius: 0 2px 2px 0; font-family: var(--type-ui); font-weight: 600; font-size: 0.92em; letter-spacing: 0.02em;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.22);
+  clip-path: inset(0 100% 0 0); transition: clip-path 180ms var(--ease);
+}
+/* pointed at: drawn a little further out and laid over the page, its words showing */
+.folio.book .bk-marks .subbtn.bm:hover, .folio.book .bk-marks .subbtn.bm:focus-visible { z-index: 4; transform: translateX(-4px); background: none; color: var(--bm-paper); }
+.folio.book .bk-marks .bm:hover .bm-label, .folio.book .bk-marks .bm:focus-visible .bm-label { clip-path: inset(0 0 0 0); }
+.folio.book .bk-marks .subbtn.bm:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+/* the open page's ribbon: on top of the page, its end curled over the edge */
+.folio.book .bk-marks .subbtn.bm[aria-pressed="true"] { z-index: 3; transform: translateX(-3px); color: var(--bm-paper); border: 0; }
+.folio.book .bk-marks .subbtn.bm[aria-pressed="true"]:hover, .folio.book .bk-marks .subbtn.bm[aria-pressed="true"]:focus-visible { z-index: 4; transform: translateX(-5px); }
+.folio.book .bk-marks .bm[aria-pressed="true"] .bm-flap {
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.06) 5px, rgba(255, 255, 255, 0.2) 70%, rgba(0, 0, 0, 0.08)),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 3px);
+  filter: drop-shadow(1px 1px 1px rgba(40, 25, 5, 0.4)); transform-origin: left center;
+}
+.folio.book .bk-marks .bm[aria-pressed="true"]:not(:hover):not(:focus-visible) .bm-flap { clip-path: polygon(0 0, 100% 0, calc(100% - 5px) 100%, 0 100%); }
+/* turned to: the ribbon comes over the edge and lies down on the page */
+.folio.book .bk-marks .bm.curl .bm-flap { animation: bm-curl 320ms cubic-bezier(0.2, 0.8, 0.3, 1.15) both; }
+.folio.book .bk-marks .bm.curl .bm-tab { animation: bm-pull 320ms var(--ease) both; }
+@keyframes bm-curl {
+  0% { transform: perspective(70px) rotateY(-100deg); }
+  65% { transform: perspective(70px) rotateY(10deg); }
+  100% { transform: none; }
+}
+@keyframes bm-pull { from { transform: translateX(5px); } to { transform: none; } }
+
+/* the open page named in the running head, beside the section, with its ribbon's colour */
+.folio.book .bk-runhead .bk-subp {
+  display: inline-flex; align-items: center; gap: 0.45em; font-family: var(--type-latin-display); font-variant: small-caps;
+  letter-spacing: 0.05em; font-size: 1.05em; color: var(--ink-2);
+}
+.folio.book .bk-runhead .bk-subp::before {
+  content: ""; flex: none; width: 9px; height: 15px; background: var(--bm); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 72%, 0 100%);
+}
+
+/* on one page, or without a pointer to hover with: ribbon tags in a row, each with its colour and its words */
+.folio.book .subnav.bm-chips { gap: 6px; margin: 0 0 14px; }
+.folio.book .subnav.bm-chips > .subbtn {
+  min-height: 40px; padding: 0 0.85em 0 1.2em; border: 0; border-radius: 0 3px 3px 0; color: var(--ink); font-family: var(--type-ui); font-size: 0.92em;
+  background: rgba(122, 79, 38, 0.12); background: color-mix(in srgb, var(--bm, #7a4f26) 14%, transparent);
+  box-shadow: inset 6px 0 0 var(--bm, #7a4f26); clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 6px 50%);
+}
+.folio.book .subnav.bm-chips > .subbtn:hover { background: color-mix(in srgb, var(--bm, #7a4f26) 24%, transparent); color: var(--ink); }
+.folio.book .subnav.bm-chips > .subbtn[aria-pressed="true"] { background: var(--bm, #7a4f26); color: #fbf3df; border: 0; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3); }
+.folio.book .subnav.bm-chips > .subbtn:focus-visible { clip-path: none; outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+
+body.reduced-motion .folio.book .bk-marks .bm, body.reduced-motion .folio.book .bk-marks .bm > span { transition: none !important; animation: none !important; }
+body.high-contrast .folio.book .bk-marks .bm > span, body.high-contrast .folio.book .subnav.bm-chips > .subbtn { background-image: none; }
+body.high-contrast .folio.book .bk-marks .bm-label { box-shadow: inset 0 0 0 2px #000; }
+body.high-contrast .folio.book .subnav.bm-chips > .subbtn { clip-path: none; outline: 1px solid #000; }
+
+/* ---- Save & Load (LI-5): on the cover beside Settings and Close; no foot under the pages ------------------------- */
+.folio.book.no-foot .folio-foot { display: none; }
+.folio.book.no-foot { padding-bottom: 16px; }
+/* the three cover buttons sit a little closer and slimmer than a sheet's, so six tabs fit beside them on a desk */
+.folio.book.no-foot .folio-head { gap: 4px; }
+.folio.book.no-foot .folio-head > .cbtn { padding: 0 0.6em; }
+@media (min-width: 600px) { .folio.book.no-foot .ptab { padding-left: 0.6em; padding-right: 0.6em; } }
+@media (min-width: 980px) {
+  .folio.book.no-foot .tabslot { padding-right: calc(var(--head-w, 360px) + 8px); }
+}
+/* (between a phone's layout and a wide desk: Save & Load and Settings keep their pictures and lose their words) */
+@media (min-width: 980px) and (max-width: 1279px) {
+  .folio.book.no-foot .folio-head > .ledger-set > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+.folio.book .folio-head > .ledger-set[aria-expanded="true"] { background: rgba(255, 240, 210, 0.16); border-color: rgba(240, 200, 120, 0.8); }
+
+/* its slip: three choices, each with its picture and a line on what it does; leaving the journey set apart */
+.sv-slip { padding: 0.45em 0.35em 0.5em; }
+.sv-slip .note-slip { margin: 0.2em 0.5em 0.4em; }
+.sv-opt {
+  display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; gap: 0.6em; width: 100%; min-height: 56px;
+  padding: 0.4em 0.65em; background: none; border: 0; border-radius: 3px; text-align: left; font: inherit; color: inherit; cursor: pointer;
+}
+.sv-opt:hover { background: rgba(193, 138, 42, 0.12); }
+.sv-opt:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+.sv-opt .sv-ic { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; color: var(--ink); background: rgba(193, 138, 42, 0.16); box-shadow: inset 0 0 0 1px var(--paper-edge); }
+.sv-opt .sv-ic svg { width: 20px; height: 20px; }
+.sv-opt .sv-t { display: flex; flex-direction: column; min-width: 0; line-height: 1.35; }
+.sv-opt .sv-t b { font-weight: 600; }
+.sv-opt .sv-d { font-size: 0.86em; color: var(--ink-3); }
+.sv-opt.sv-leave { margin-top: 0.35em; border-top: 1px solid var(--rule); border-radius: 0 0 3px 3px; }
+.sv-opt.sv-leave .sv-ic { background: rgba(168, 62, 39, 0.1); color: var(--vermilion, #a83e27); }
+.sv-foot { margin: 0.4em 0.65em 0.1em; font-size: 0.82em; color: var(--ink-3); line-height: 1.45; }
 </style>
 </head>
 <body>
@@ -11255,7 +11378,7 @@ RB.kanjiRead = {
  * Search: by kanji, by a word written with it, by kana reading (hiragana or
  * katakana), by rōmaji (Hepburn or 'wāpuro' spellings) and by English meaning.
  * "Met": kanji in the scenes the player has seen, the inscriptions they can
- * weave, the words they have practised or noted. */
+ * weave, the words they have practiced or noted. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.kanjiInfo = (function () {
@@ -11529,7 +11652,7 @@ RB.kanjiInfo = (function () {
 
   // ---- met ------------------------------------------------------------------------------
   // Kanji the player has met: in the scenes they have seen, the inscriptions
-  // they can weave, and the words they have practised or noted.
+  // they can weave, and the words they have practiced or noted.
   function met(s) {
     const set = new Set();
     if (!s) return set;
@@ -19593,7 +19716,7 @@ RB.audio = RB.audio || {};
     title: 'The Orchard Road',
     kind: 'area',
     motifs: ['road'],
-    notes: 'Chapter 3 route (A mixolydian, 92): the slope up through the persimmon terraces, someone practising for the festival. The road motif opens a shinobue tune over a koto figure; A2 doubles it an octave down on shamisen, the min’yō way; B hands the Cinder Orchard tune to the koto with the shinobue answering — the village ahead; C turns to A minor on shakuhachi over a slow ōdaiko heartbeat — the fire nobody mentions.',
+    notes: 'Chapter 3 route (A mixolydian, 92): the slope up through the persimmon terraces, someone practicing for the festival. The road motif opens a shinobue tune over a koto figure; A2 doubles it an octave down on shamisen, the min’yō way; B hands the Cinder Orchard tune to the koto with the shinobue answering — the village ahead; C turns to A minor on shakuhachi over a slow ōdaiko heartbeat — the fire nobody mentions.',
     key: 'A', mode: 'mixolydian', bpm: 92, loopFrom: 1,
     tracks: {
       lead: { i: 'shinobue', o: 5, v: 0.5, rv: 0.28 },
@@ -24252,7 +24375,7 @@ RB.equip = (function () {
  *   RB.practice.cooldown()              no immediate repeat; a missed objective
  *                                       waits four objectives
  *   RB.practice.pickItems(pool, n, cd)  the scheduler's choice within the cooldown
- *   RB.practice.addActivity(def)        an entry in Words › Ways to practise
+ *   RB.practice.addActivity(def)        an entry in Words › Ways to practice
  *   RB.practice.addMementoSource(def)   finite cosmetic practice mementos (Journey)
  *
  * Nothing here reads the wall clock for eligibility, keeps a streak, or awards
@@ -24379,7 +24502,7 @@ RB.practice = (function () {
     return Array.from(new Set(RB.learn.pick(ok, Math.min(n, ok.length)))).slice(0, n);
   }
 
-  // ---- Words › Ways to practise (src/ui/68_practice_index.js renders it) ------------------
+  // ---- Words › Ways to practice (src/ui/68_practice_index.js renders it) ------------------
   // def: { id, en, jp, icon, order, where:{en,jp}, available(s)→bool, here(s)→bool,
   //        note(s)→string (why not / where), begin()→Promise (only when here and safe) }
   const ACTS = [];
@@ -58264,7 +58387,7 @@ RB.lanterns = (function () {
 
 /* ==== src/engine/78_desk.js ==== */
 /* The copying desk (Practice addendum §16): four directly selectable modes
- * that practise different things, and up to six personal pages per campaign.
+ * that practice different things, and up to six personal pages per campaign.
  *
  *   trace    numbered reference strokes underneath  → guided motor practice only
  *   copy     the model in its own pane beside        → copying practice, never recall
@@ -58354,7 +58477,7 @@ RB.practiceDesk = (function () {
   function notebookCards(s) {
     const out = [], seen = new Set(base().map((c) => c.item));
     for (const n of (s && s.notebook) || []) {
-      if (!n || n.kind !== 'word' || typeof n.id !== 'string' || n.dia) continue; // a noted Kansai word is not standard vocabulary to practise
+      if (!n || n.kind !== 'word' || typeof n.id !== 'string' || n.dia) continue; // a noted Kansai word is not standard vocabulary to practice
       const m = /^w:([^|]*)\|(.*)$/.exec(n.id);
       const lemma = m ? m[1] : n.surface, reading = m ? m[2] : n.reading;
       const e = (lemma && reading && RB.lex.get(lemma, reading)) || null;
@@ -58367,7 +58490,7 @@ RB.practiceDesk = (function () {
     return out;
   }
   function find(s, id) { return cards(s).concat(notebookCards(s)).find((c) => c.id === id) || null; }
-  // the written forms a page can practise: the word as usually written, and its kana
+  // the written forms a page can practice: the word as usually written, and its kana
   function forms(card) {
     const out = [];
     if (writable(card.w)) out.push({ id: 'kanji', text: card.w });
@@ -63059,7 +63182,7 @@ RB.expedition = (function () {
     return true;
   }
 
-  // ---- the preview card (D4): what is practised, never the solutions ---------------------------------------------------
+  // ---- the preview card (D4): what is practiced, never the solutions ---------------------------------------------------
   function preview(id) {
     const d = DEFS[id];
     if (!d) return null;
@@ -65208,7 +65331,7 @@ RB.ui.help = (function () {
     const s = RB.game.s;
     const key = 'w:' + (info.lemma || tok.surface) + '|' + (info.reading || '');
     if (!s.notebook.find((n) => n.id === key)) {
-      // a Kansai word or form is marked so: it is noted, but never practised as standard vocabulary
+      // a Kansai word or form is marked so: it is noted, but never practiced as standard vocabulary
       s.notebook.push(Object.assign({ kind: 'word', id: key, surface: tok.surface, reading: info.reading || '', m: info.gloss || (info.entry && info.entry.m) || '', t: Date.now() }, info.dia ? { dia: 'kansai' } : {}));
       RB.ui.notice('Added to your field notebook.', 'info');
     } else RB.ui.notice('Already in your notebook.', 'info');
@@ -81419,7 +81542,7 @@ RB.ui.menu = (function () {
     company: { page: null },
     scroll: {},
   };
-  let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
+  let layer = null, fr = null, tabsApi = null, mq = null, headRO = null, stopDemo = () => {};
   let lastSec = null; // the section last drawn: a change of section turns the page (the book)
   // the book (Settings › Display › The Wayfarer's Ledger): 'book' or 'flat' (the classic folio was retired in U06)
   const bookStyle = () => (RB.game.settings && RB.game.settings.ledgerStyle === 'flat' ? 'flat' : 'book');
@@ -81442,14 +81565,26 @@ RB.ui.menu = (function () {
     if (RB.bookType) RB.bookType.install(); // the book's type, if the idle start hasn't made it yet
     fr = F().frame({ onClose: close, closeLabel: 'Close', book: bookStyle() });
     lastSec = null;
-    fr.foot.innerHTML =
-      '<button class="cbtn" data-util="save">' + I('ledger') + '<span>' + RB.ui.label('セーブ・ロード', 'Save & Load') + '</span></button>';
-    // Settings beside Close, where a reader looks first, rather than in the corner under the book (PT-1b)
+    // Save & Load and Settings beside Close, where a reader looks first, rather than in the corner under the book
+    // (PT-1b; Save & Load joined them in LI-5): the book's pages then reach the bottom of the cover
+    const saveB = RB.ui.el('button', 'cbtn ledger-set ledger-save');
+    saveB.dataset.util = 'save';
+    saveB.setAttribute('aria-label', 'Save & Load');
+    saveB.setAttribute('aria-haspopup', 'dialog');
+    saveB.setAttribute('aria-expanded', 'false');
+    saveB.innerHTML = I('ledger') + '<span>' + RB.ui.label('セーブ・ロード', 'Save & Load') + '</span>';
+    fr.head.insertBefore(saveB, fr.head.querySelector('[data-folio-close]'));
+    fr.el.classList.add('no-foot');
     const setB = RB.ui.el('button', 'cbtn ledger-set');
     setB.dataset.util = 'settings';
     setB.setAttribute('aria-label', 'Settings');
     setB.innerHTML = I('settings') + '<span>' + RB.ui.label('{設定|せってい}', 'Settings') + '</span>';
     fr.head.insertBefore(setB, fr.head.querySelector('[data-folio-close]'));
+    // the tabs keep clear of the cover's buttons by their real width (text size, labels shown or not)
+    const fitHead = () => { if (fr) fr.el.style.setProperty('--head-w', fr.head.offsetWidth + 'px'); }; // (its laid-out width: the opening book is scaled)
+    fitHead();
+    headRO = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fitHead) : null;
+    if (headRO) headRO.observe(fr.head);
     fr.el.addEventListener('click', (e) => {
       const b = e.target.closest('[data-util]');
       if (!b || !fr || !fr.el.contains(b)) return;
@@ -81476,10 +81611,12 @@ RB.ui.menu = (function () {
   function close() {
     if (!layer) return;
     closePick(false);
+    closeSheet(false);
     if (view.section === 'satchel') seenSatchel();
     remember();
     stopDemo();
     if (tabsApi) tabsApi.destroy();
+    if (headRO) { headRO.disconnect(); headRO = null; }
     if (mq) mq.onchange = null;
     const el = layer.el, at = el.parentNode;
     RB.ui.popLayer(layer);
@@ -81501,7 +81638,7 @@ RB.ui.menu = (function () {
     RB.input.clearHeld && RB.input.clearHeld();
   }
   // leaving the game (loading another journey, returning to the title) closes the sheet too
-  function closeAll() { if (sheet) { const sh = sheet; sheet = null; RB.ui.popLayer(sh); } close(); }
+  function closeAll() { closeSheet(false); close(); }
   // Back: leave a sub-page first (phones), otherwise close the folio.
   function back() {
     const w = view.words, j = view.journey;
@@ -81575,7 +81712,8 @@ RB.ui.menu = (function () {
     const [A, B] = sp.querySelectorAll(':scope > .leaf');
     const builtIn = { journey, words, satchel, map, company }[view.section];
     if (builtIn) builtIn(A, B, two); else xsec(view.section).render(A, B, two, api(view.section));
-    runningHeads(A, B, two, sec, s, comp);
+    const mark = bookmarks(sp, A, two);
+    runningHeads(A, B, two, sec, s, comp, mark);
     const sc = view.scroll[key()];
     if (sc) { A.scrollTop = sc[0]; B.scrollTop = sc[1]; }
   }
@@ -81584,7 +81722,72 @@ RB.ui.menu = (function () {
   // The book's running heads: the section's name at the top of the first page, who is travelling and for how long
   // at the top of the second (on a phone, both on the one page). They repeat the dialog's own title and meta for
   // the eye; the dialog keeps its accessible name, so these are hidden from assistive technology.
-  function runningHeads(A, B, two, sec, s, comp) {
+  // LI-5 (Robin 2026-10-16: "a bookmarker on the left edge of the pages, colored uniquely … hovering … slide out a
+  // little to show the full text … clicking … brings it forefront over the top of the page, curled over the edge"):
+  // the pages within Journey, Map and Company as ribbons tucked under the left page. Each ribbon is the page's own
+  // button pressed on its behalf, so a section keeps its one way of turning to a page. Without a fine pointer to
+  // hover with, or on one page, the same buttons stay on the page as coloured ribbon tags with their words.
+  const MARK_SECS = { journey: 1, map: 1, company: 1 };
+  const MARK_INK = {
+    quests: '#a33b26', history: '#34507e', cases: '#6a4482', keepsakes: '#476e3e', mementos: '#476e3e', fishing: '#2a6b74',
+    stamps: '#87591a', volume: '#2a6b74', chart: '#7a4f26', known: '#a33b26', board: '#34507e', expedition: '#476e3e',
+    companion: '#9a4152', pet: '#87591a', memories: '#34507e',
+  };
+  const MARK_MORE = ['#a33b26', '#34507e', '#476e3e', '#87591a', '#6a4482', '#2a6b74', '#9a4152', '#7a4f26', '#4a5566'];
+  const lastMark = {};
+  const railable = (two) => two && typeof matchMedia !== 'undefined' && matchMedia('(hover: hover) and (pointer: fine)').matches;
+  function bookmarks(sp, A, two) {
+    const rail = railable(two);
+    fr.el.classList.toggle('bm-room', rail); // the cover keeps the same strip on every section, so pages never shift
+    const nav = MARK_SECS[view.section] && A.querySelector('.subnav:not(.sub2)');
+    if (!nav) return null;
+    const bs = [...nav.querySelectorAll(':scope > .subbtn')];
+    const idOf = (b) => b.dataset.jv || b.dataset.mv || b.dataset.cp || '';
+    const used = new Set();
+    bs.forEach((b, i) => {
+      let c = MARK_INK[idOf(b)];
+      if (!c || used.has(c)) c = MARK_MORE.find((x) => !used.has(x)) || MARK_MORE[i % MARK_MORE.length];
+      used.add(c);
+      b.style.setProperty('--bm', c);
+    });
+    const on = bs.find((b) => b.getAttribute('aria-pressed') === 'true') || null;
+    const cur = on ? idOf(on) : null;
+    const prev = lastMark[view.section];
+    lastMark[view.section] = cur;
+    if (!rail) { nav.classList.add('bm-chips'); return null; }
+    // the page's own buttons move out onto the cover as the ribbons (a <nav>, so the leaves stay the spread's first
+    // two <div>s). A press is handed back to the page through a stand-in carrying the same data, so each section's
+    // own listener on its page turns to it as before.
+    const r = document.createElement('nav');
+    r.className = 'subnav bk-marks';
+    r.setAttribute('role', 'group');
+    r.setAttribute('aria-label', nav.getAttribute('aria-label') || 'Pages');
+    bs.forEach((b) => {
+      const svg = b.querySelector('svg'), label = b.textContent.trim();
+      b.classList.add('bm');
+      if (b === on && prev && prev !== cur) b.classList.add('curl');
+      b.innerHTML = '<span class="bm-tab" aria-hidden="true">' + (svg ? svg.outerHTML : '') + '</span><span class="bm-flap" aria-hidden="true"></span><span class="bm-label">' + esc(label) + '</span>';
+      r.appendChild(b);
+    });
+    nav.remove();
+    r.addEventListener('click', (e) => {
+      const b = e.target.closest('.subbtn');
+      if (!b || !r.contains(b)) return;
+      const key = Object.keys(b.dataset).find((k) => k !== 'mark') || '';
+      const back = document.activeElement === b;
+      const proxy = document.createElement('button');
+      proxy.type = 'button'; proxy.hidden = true;
+      proxy.dataset[key] = b.dataset[key];
+      A.appendChild(proxy);
+      proxy.click();
+      proxy.remove();
+      const again = back && fr && fr.box.querySelector('.bk-marks [data-' + key.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase()) + '="' + b.dataset[key] + '"]');
+      if (again) again.focus({ preventScroll: true });
+    });
+    sp.insertBefore(r, sp.firstChild);
+    return on ? { en: on.querySelector('.bm-label').textContent, ink: on.style.getPropertyValue('--bm') } : null;
+  }
+  function runningHeads(A, B, two, sec, s, comp, mark) {
     // who is travelling: the Company page's summary line folds into this (the pet by the name you gave it)
     const pet = s.company && s.company.pet && s.company.pets && s.company.pets[s.company.pet];
     const meta = esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + (pet && pet.name ? ', with ' + esc(pet.name) : '') + ' · ' + RB.util.fmtTime(s.playtime);
@@ -81592,7 +81795,8 @@ RB.ui.menu = (function () {
     // technology, so nothing in it may take focus)
     const plain = RB.ui.jhtml(sec.jp).replace(/ data-(i|src)="[^"]*"/g, '').replace(/ tabindex="0"/g, '').replace(/class="jt"/g, 'class="jt-static"');
     A.insertAdjacentHTML('afterbegin', '<header class="bk-runhead" aria-hidden="true"><span class="bk-sec" lang="ja">' + plain + '</span>' +
-      '<span class="bk-sec-en">' + esc(sec.en) + '</span>' + (two ? '' : '<span class="bk-meta">' + meta + '</span>') + '</header>');
+      '<span class="bk-sec-en">' + esc(sec.en) + '</span>' + (mark ? '<span class="bk-subp" style="--bm:' + esc(mark.ink) + '">' + esc(mark.en) + '</span>' : '') +
+      (two ? '' : '<span class="bk-meta">' + meta + '</span>') + '</header>');
     if (two) B.insertAdjacentHTML('afterbegin', '<header class="bk-runhead r" aria-hidden="true"><span class="bk-meta">' + meta + '</span></header>');
   }
   // Settings › Display changed the Ledger's look while it is open: redraw it in the new style
@@ -81834,7 +82038,7 @@ RB.ui.menu = (function () {
       'Draw one character in the box. The pad shows what it thinks you wrote ("I read this as…") and alternatives. Nothing is submitted until you press Confirm, then Submit.',
       'Tap a character in the answer strip to replace it; tap a gap to insert. Undo removes a stroke; Clear wipes the box. Use 小 for small kana (ゃ, っ…) and the script buttons to choose hiragana or katakana.',
       'If the recogniser can\'t read you, pick the character from the chart. That counts as "assisted" — which is fine, it just isn\'t counted as unaided handwriting.',
-      'The chart lists every kana and every kanji in the game, on pages by theme (water, nature, people…) and by use (nouns, verbs…), with a search by kanji, reading, rōmaji, meaning or word. Each kanji shows its readings, meaning, words from the game and its stroke order, and you can practise writing it. Words › Kanji chart opens it any time.',
+      'The chart lists every kana and every kanji in the game, on pages by theme (water, nature, people…) and by use (nouns, verbs…), with a search by kanji, reading, rōmaji, meaning or word. Each kanji shows its readings, meaning, words from the game and its stroke order, and you can practice writing it. Words › Kanji chart opens it any time.',
       'You can switch to choices or keyboard (IME) at any time without losing your place.',
     ]],
     bulb: ['Word help', [
@@ -81877,8 +82081,9 @@ RB.ui.menu = (function () {
       const sec = (id) => WORD_GROUPS[id] || 'reference';
       list = WORD_SECTIONS.map(([k, en, jp]) => { const xs = subs.filter((x) => sec(x[0]) === k); return xs.length ? '<h4 class="index-sec">' + RB.ui.label(jp, en) + '</h4><ul class="index">' + xs.map(item).join('') + '</ul>' : ''; }).join('');
     }
-    const index = '<h3>Contents</h3>' + list +
-      '<div class="row-acts"><button class="pbtn" data-a="practice">' + I('practice') + 'Practise (optional)</button>' +
+    // (in sections, the sections' own headings stand for it: a "Contents" heading over "My learning" read as empty)
+    const index = (grouped(s) ? '' : '<h3>Contents</h3>') + list +
+      '<div class="row-acts"><button class="pbtn" data-a="practice">' + I('practice') + 'Practice (optional)</button>' +
       (ng ? '<button class="pbtn" data-a="nextkana">' + I('words') + 'Learn the next kana: ' + esc(ng.g.title || '') + '</button>' : '') + '</div>' +
       '<p class="muted small">Practice is optional review of items you are unsure of. The story teaches everything you need as you go.</p>';
     if (two) {
@@ -81922,7 +82127,7 @@ RB.ui.menu = (function () {
     if (id === 'kanji') {
       const met = RB.kanjiInfo ? RB.kanjiInfo.met(s).size : 0;
       const all = RB.kanjiInfo ? RB.kanjiInfo.all().length : 0;
-      return '<p>Every kanji in the game — ' + all + ' of them — on pages by theme and by use, with a search. Each one shows its readings, meaning, words from the game and its stroke order, and you can practise writing it.</p>' +
+      return '<p>Every kanji in the game — ' + all + ' of them — on pages by theme and by use, with a search. Each one shows its readings, meaning, words from the game and its stroke order, and you can practice writing it.</p>' +
         '<p class="muted small">You have met ' + met + ' of them in the story so far; they come first on each page.</p>' +
         '<div class="row-acts"><button class="pbtn" data-kchart>' + I('grid') + 'Open the kanji chart</button></div>';
     }
@@ -81991,7 +82196,7 @@ RB.ui.menu = (function () {
     const groups = RB.lessons.groups();
     if (!groups.length) return '<p class="muted">Kana chart unavailable.</p>';
     const rec = s.learn.items;
-    const LV = ['not met', 'met', 'practising', 'steady'];
+    const LV = ['not met', 'met', 'practicing', 'steady'];
     const cell = (ch) => {
       const r = rec['k:' + ch];
       const lvl = !r ? 0 : r.box >= 3 ? 3 : r.box >= 1 ? 2 : 1;
@@ -82352,22 +82557,54 @@ RB.ui.menu = (function () {
     else A.innerHTML = '<p class="muted">Nothing here yet.</p>';
   }
 
-  // ---- Save & Load (utility sheet) ---------------------------------------------------------------
+  // ---- Save & Load (LI-5, Robin 2026-10-16: "feels a bit out of place in the Ledger now. Find a new way to present
+  // the choice"): beside Settings and Close on the cover, and its three choices on a slip that drops from it, as the
+  // Satchel's Change… list does, rather than a second book over the first ------------------------------------------
   function saveSheet() {
+    if (!fr) return;
+    if (sheet) { closeSheet(true); return; }
+    closePick(false);
     const st = RB.save.status();
-    const popSheet = () => { sheet = null; RB.ui.popLayer(lay); };
-    const f2 = F().frame({ onClose: () => popSheet(), closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet' });
-    f2.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), 'Save &amp; Load');
-    f2.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0">' +
+    const anchor = fr.head.querySelector('[data-util="save"]');
+    const opt = (a, icon, t, d) => '<button type="button" class="sv-opt' + (a === 'title' ? ' sv-leave' : '') + '" data-a="' + a + '">' +
+      '<span class="sv-ic" aria-hidden="true">' + I(icon) + '</span><span class="sv-t"><b>' + t + '</b><span class="sv-d">' + d + '</span></span></button>';
+    const wrap = RB.ui.el('div', 'eq-pick-wrap sv-wrap');
+    const box = RB.ui.el('div', 'eq-pick sv-slip');
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-label', 'Save & Load');
+    box.innerHTML = '<div class="eq-pick-h">' + lab('{宿帳|やどちょう}', 'The Inn Ledger') + '</div>' +
       (st.mode === 'session' ? '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>' : '') +
-      '<ul class="entries">' +
-      '<li class="entry"><span class="mark">' + I('save') + '</span><div><div class="t">Save this journey</div><div class="muted small">Choose one of six slots in the ledger. Overwriting asks first.</div></div><button class="pbtn primary" data-a="save">Save…</button></li>' +
-      '<li class="entry"><span class="mark">' + I('load') + '</span><div><div class="t">Load a journey</div><div class="muted small">Manual saves, autosaves and the pre-departure point.</div></div><button class="pbtn" data-a="load">Load…</button></li>' +
-      '<li class="entry"><span class="mark">' + I('title') + '</span><div><div class="t">Return to the title</div><div class="muted small">Anything since your last save or autosave will be lost.</div></div><button class="pbtn" data-a="title">Return to title</button></li>' +
-      '</ul><p class="muted small">Autosaves happen at safe places (arriving somewhere new, finishing a scene that matters). Manual saves are kept separately from them.</p></div></div>';
-    const lay = { el: f2.scrim, name: 'savesheet' };
-    lay.onCancel = () => popSheet();
-    f2.box.onclick = async (e) => {
+      opt('save', 'save', 'Save this journey', 'Choose one of six slots. Overwriting asks first.') +
+      opt('load', 'load', 'Load a journey', 'Manual saves, autosaves and the pre-departure point.') +
+      opt('title', 'title', 'Return to the title', 'Anything since your last save or autosave will be lost.') +
+      '<p class="sv-foot">Autosaves happen at safe places: arriving somewhere new, finishing a scene that matters. Manual saves are kept apart from them.</p>';
+    wrap.appendChild(box);
+    const lay = { el: wrap, name: 'savesheet', parent: fr.el };
+    lay.onCancel = () => { closeSheet(true); return true; };
+    sheet = lay;
+    RB.ui.pushLayer(lay);
+    if (anchor) anchor.setAttribute('aria-expanded', 'true');
+    // under its button, its right edge with the button's, kept inside the book
+    const fb = fr.el.getBoundingClientRect(), ab = (anchor || fr.head).getBoundingClientRect();
+    const w = Math.min(380, fb.width - 24);
+    box.style.width = w + 'px';
+    box.style.left = Math.max(12, Math.min(fb.width - w - 12, ab.right - fb.left - w)) + 'px';
+    box.style.top = (ab.bottom - fb.top + 6) + 'px';
+    box.style.maxHeight = Math.max(160, fb.bottom - ab.bottom - 18) + 'px';
+    const opts = () => Array.from(box.querySelectorAll('.sv-opt'));
+    setTimeout(() => { if (sheet === lay) opts()[0].focus({ preventScroll: true }); }, 0);
+    box.addEventListener('keydown', (e) => {
+      const o = opts(), i = o.indexOf(document.activeElement);
+      let k = null;
+      if (e.key === 'ArrowDown') k = (i + 1) % o.length; else if (e.key === 'ArrowUp') k = (i - 1 + o.length) % o.length;
+      else if (e.key === 'Home') k = 0; else if (e.key === 'End') k = o.length - 1;
+      else if (e.key === 'Tab') { e.preventDefault(); k = (i + (e.shiftKey ? -1 : 1) + o.length) % o.length; }
+      if (k == null) return;
+      e.preventDefault(); e.stopPropagation();
+      o[k].focus();
+    });
+    wrap.addEventListener('pointerdown', (e) => { if (e.target === wrap) { e.preventDefault(); closeSheet(true); } });
+    box.addEventListener('click', async (e) => {
       const b = e.target.closest('[data-a]');
       if (!b) return;
       const a = b.dataset.a;
@@ -82375,11 +82612,17 @@ RB.ui.menu = (function () {
       if (a === 'load') RB.ui.title.slots('load', true);
       if (a === 'title') {
         const r = await RB.ui.confirm('Return to the title screen? Anything since your last save or autosave will be lost.', ['Return to title', 'Cancel']);
-        if (r === 0) { popSheet(); close(); RB.game.toTitle(); }
+        if (r === 0) { closeSheet(false); close(); RB.game.toTitle(); }
       }
-    };
-    sheet = lay;
-    RB.ui.pushLayer(lay);
+    });
+  }
+  function closeSheet(refocus) {
+    if (!sheet) return;
+    const sh = sheet;
+    sheet = null;
+    RB.ui.popLayer(sh);
+    const a = fr && fr.head.querySelector('[data-util="save"]');
+    if (a) { a.setAttribute('aria-expanded', 'false'); if (refocus) a.focus({ preventScroll: true }); }
   }
 
   function settingsStandalone() { return RB.ui.settings.open(); }
@@ -86679,7 +86922,7 @@ RB.pad = (function () {
     }
     // The chart (RB.kanjiChart): every kana and kanji, by theme and by use,
     // with search. Picking a character puts it in the answer (assisted);
-    // opening a kanji's entry or practising it counts as help, like How to
+    // opening a kanji's entry or practicing it counts as help, like How to
     // write. Kanji go into the answer only while the pad reads kanji.
     function chart() {
       const kana = P.mode === 'kanji' ? P.kanaScript : P.mode;
@@ -87118,7 +87361,7 @@ RB.ui.known = (function () {
  * dimmed, and their entries show no names or invented terms from later in
  * the story. Data: RB.kanjiInfo (src/lang/80_kanjiinfo.js). Practice reads
  * the drawing with RB.recog exactly as the pad does, without the character
- * being practised; that character is only used afterwards, to say whether
+ * being practiced; that character is only used afterwards, to say whether
  * the reading matched and for the stroke-order notes. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -87247,7 +87490,7 @@ RB.kanjiChart = (function () {
       let res = [];
       const kanaQ = Array.from(q).filter((c) => RB.kana.isKana(c) && q.length === 1);
       try { res = KI().search(q, 60); } catch (e) { res = []; }
-      // a single kana typed: that kana too (it can be picked or practised like any other)
+      // a single kana typed: that kana too (it can be picked or practiced like any other)
       const kanaHit = kanaQ.length && RB.recog.knows(q, { kanji: false }) ? q : null;
       body.innerHTML = '<h3 class="kc-h">Results <span class="count">' + (res.length + (kanaHit ? 1 : 0)) + '</span></h3>' +
         (!res.length && !kanaHit ? '<p class="muted">No kanji found for “' + esc(q) + '”. Try a reading (まもる, mamoru), an English word (protect) or a word from the game (守る).</p>' : '') +
@@ -87314,7 +87557,7 @@ RB.kanjiChart = (function () {
           '<div class="kc-info">' + info + '</div>' +
         '</div>' +
         '<div class="kc-acts">' +
-          '<button type="button" class="pbtn primary" data-kc="practise">' + I('practice') + '<span>Practise writing it</span></button>' +
+          '<button type="button" class="pbtn primary" data-kc="practise">' + I('practice') + '<span>Practice writing it</span></button>' +
           (canUse ? '<button type="button" class="pbtn" data-kc="use">' + I('done') + '<span>Use in my answer</span></button>' : '') +
         '</div>' +
         (pick && !canUse ? '<p class="muted small">This pad reads kana only right now; choose <b>Kanji or kana</b> under Read as to write kanji in your answer.</p>' : '') +
@@ -87338,7 +87581,7 @@ RB.kanjiChart = (function () {
       if (practice) practice.destroy();
       body.innerHTML =
         '<div class="kc-back"><button type="button" class="pbtn quiet" data-kc="entry">' + I('back') + '<span>Back to <span lang="ja">' + glyph(ch) + '</span></span></button></div>' +
-        '<h3 class="kc-h">Practise <span class="jline" lang="ja">' + glyph(ch) + '</span> <span class="count">' + RB.recog.strokeCount(ch) + ' strokes</span></h3>' +
+        '<h3 class="kc-h">Practice <span class="jline" lang="ja">' + glyph(ch) + '</span> <span class="count">' + RB.recog.strokeCount(ch) + ' strokes</span></h3>' +
         '<div class="kc-practice"></div>';
       practice = practicePad(body.querySelector('.kc-practice'), ch);
       fr.leaf.scrollTop = 0;
@@ -87415,7 +87658,7 @@ RB.kanjiChart = (function () {
   // ---- the practice square --------------------------------------------------------------
   // A small writing square for one character. Check reads the drawing with
   // the pad's recognizer (all kana and kanji, nothing about the target), then
-  // says whether the reading is the character practised, and gives the
+  // says whether the reading is the character practiced, and gives the
   // stroke-order notes for it (RB.recog.strokeOrderFeedback).
   function practicePad(host, target) {
     const BOX = 300;
@@ -87590,7 +87833,7 @@ RB.kanjiChart = (function () {
 
 /* ==== src/ui/64_workshop.js ==== */
 /* The Language Workshop (expansion L7–L17b): one worked example of each new task family, at any of the four levels,
- * from Words › Ways to practise. Practice only: it records like any practice (src/learn/40_evidence.js, context
+ * from Words › Ways to practice. Practice only: it records like any practice (src/learn/40_evidence.js, context
  * "practice"), never changes the campaign's level, and a level above yours is offered as a stretch, never imposed
  * (L18). Content: src/content/workshop/. */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -88467,7 +88710,7 @@ RB.challenge = (function () {
         const step = id ? RB.tasks.prepare(RB.tasks.stepFor(id) || RB.tasks.next({})) : RB.tasks.next({});
         if (!step) break;
         step.title = 'Practice ' + (i + 1) + ' / 5 (optional)';
-        const r = await runStep(step, { ctxTag: 'practice', cancelLabel: 'Stop practising' });
+        const r = await runStep(step, { ctxTag: 'practice', cancelLabel: 'Stop practicing' });
         if (r.cancelled) break;
       }
     } finally {
@@ -88746,7 +88989,7 @@ RB.ui.wordsPages = (function () {
       '<div class="bm-in end"><button type="submit" class="pbtn" data-bm-save="note">Save note</button></div></form></div>';
     h += '<div class="acts bm-acts">' +
       (canSpeak ? '<button type="button" class="pbtn" data-bm-hear="' + id + '">' + I('sound') + '<span>Hear it</span></button>' : '') +
-      (practice ? '<button type="button" class="pbtn" data-bm-practice="' + id + '">' + I('practice') + '<span>Practise its words</span></button>' : '') +
+      (practice ? '<button type="button" class="pbtn" data-bm-practice="' + id + '">' + I('practice') + '<span>Practice its words</span></button>' : '') +
       '<button type="button" class="pbtn danger" data-bm-remove="' + id + '">' + I('trash') + '<span>Remove</span></button></div>';
     if (practice) h += '<p class="muted small">Practice here is optional and just for you: it is not counted in your learning record.</p>';
     if (!canSpeak) h += '<p class="muted small">No Japanese voice on this device, so there is nothing to play; the sentence is kept all the same.</p>';
@@ -88804,7 +89047,7 @@ RB.ui.wordsPages = (function () {
         const step = steps[i]; // no learning item: nothing is recorded (and noRecord below)
         step.title = 'Words from a kept sentence ' + (i + 1) + ' / ' + steps.length + ' (optional)';
         const header = '<div class="bm-ctx"><div class="kind">From your kept sentence</div>' + j(b.jp, b.v) + '</div>';
-        const r = await RB.challenge.runStep(step, { header, noRecord: true, ctxTag: 'bookmark', cancelLabel: 'Stop practising' });
+        const r = await RB.challenge.runStep(step, { header, noRecord: true, ctxTag: 'bookmark', cancelLabel: 'Stop practicing' });
         if (r.cancelled) break;
       }
     } finally {
@@ -89068,14 +89311,14 @@ RB.ui.mastery = (function () {
       if (!K) return h + '<p class="muted small">Not met in an answer yet.</p></div>';
       const words = Object.entries(K.words).sort((a, b) => b[1] - a[1]).slice(0, 6);
       h += '<p class="small">Met in ' + words.map(([w, n]) => '<span lang="ja">' + esc(w) + '</span> ×' + n).join(', ') + '.</p>' +
-        '<p class="small">Handwritten in an answer: ' + (K.hand ? K.handOk + ' of ' + K.hand + ' on your own' : 'not practised yet') + (K.practice ? ' · in the chart: ' + K.practice.memory + ' from memory, ' + K.practice.traced + ' traced' : '') + '.</p>' +
+        '<p class="small">Handwritten in an answer: ' + (K.hand ? K.handOk + ' of ' + K.hand + ' on your own' : 'not practiced yet') + (K.practice ? ' · in the chart: ' + K.practice.memory + ' from memory, ' + K.practice.traced + ' traced' : '') + '.</p>' +
         '<p class="muted small">Each reading counts on its own: meeting this kanji in one word says nothing about its other readings.</p>';
       return h + '</div>';
     }
     const p = RB.evidence.profile(s, id);
     if (!p) return h + '<p class="muted small">Not met in an answer yet.</p></div>';
     const m = p.modes;
-    const row = (lab, x) => (x.tries ? x.independent + ' of ' + x.tries + ' on your own' : 'not practised');
+    const row = (lab, x) => (x.tries ? x.independent + ' of ' + x.tries + ' on your own' : 'not practiced');
     h += '<ul class="ms-ev small">' +
       '<li><b>Recognised:</b> ' + (p.recogRecent.of ? p.recogRecent.ok + ' of the last ' + p.recogRecent.of + ' times asked' : 'not asked yet') + '</li>' +
       '<li><b>Used in a sentence:</b> ' + row('', m.construct) + '</li>' +
@@ -89772,7 +90015,7 @@ RB.ui.practiceMementos = (function () {
 
 
 /* ==== src/ui/68_practice_index.js ==== */
-/* Words › Ways to practise (Practice addendum §20.1): where each roadside
+/* Words › Ways to practice (Practice addendum §20.1): where each roadside
  * activity is offered and whether it can begin from here. It never launches a
  * physical activity remotely: "Begin here" appears only when you are at its
  * place and the world is safe; otherwise the page says where to go. Entries
@@ -89823,14 +90066,14 @@ RB.ui.practiceIndex = (function () {
   }
   if (RB.ui.menu && RB.ui.menu.addPage) {
     RB.ui.menu.addPage('words', {
-      id: 'practice', en: 'Ways to practise', jp: '{練習|れんしゅう} の {場所|ばしょ}',
+      id: 'practice', en: 'Ways to practice', jp: '{練習|れんしゅう} の {場所|ばしょ}',
       count: (s) => RB.practice.activities().filter((d) => status(d, s).available).length,
       available: () => RB.practice.activities().length > 0,
       html, wire,
     });
   }
   if (RB.ui.settings && RB.ui.settings.addRows) {
-    RB.ui.settings.addRows('learning', ({ radios, sw }) => '<h3 class="pr-set">Ways to practise</h3>' +
+    RB.ui.settings.addRows('learning', ({ radios, sw }) => '<h3 class="pr-set">Ways to practice</h3>' +
       radios('activityChatter', 'Companion remarks during activities', [['normal', 'Normal'], ['quiet', 'Quiet']], null, 'Quiet keeps rules and results, and drops incidental comments.') +
       sw('hideTotals', 'Hide shiritori win/loss totals', 'Stage records stay visible.') +
       sw('fishSeconds', 'Show seconds beside the fishing line', 'Only when you choose a pace; fishing is untimed by default.') +
@@ -91050,7 +91293,7 @@ RB.lessons = (function () {
           '</div>';
         fr.foot.innerHTML = (idx > 0 ? '<button class="cbtn" data-a="prev">' + I('back') + '<span>Back</span></button>' : '') +
           '<button class="cbtn" data-a="say">' + I('sound') + '<span>Say it</span></button>' +
-          '<button class="cbtn go" data-a="next" data-ok>' + '<span>' + (idx < cs.length - 1 ? 'Next' : 'Practise these') + '</span>' + I('next') + '</button>';
+          '<button class="cbtn go" data-a="next" data-ok>' + '<span>' + (idx < cs.length - 1 ? 'Next' : 'Practice these') + '</span>' + I('next') + '</button>';
         stop = demo(fr.leaf.querySelector('canvas'), c.ch);
         const say = fr.foot.querySelector('[data-a=say]');
         if (!(RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length)) say.classList.add('hidden');
@@ -116532,7 +116775,7 @@ RB.ui.fishing = (function () {
     };
   }
 
-  // ---- Words › Ways to practise (no remote launch: Begin only at a station, in a safe world) ---------------------------------------
+  // ---- Words › Ways to practice (no remote launch: Begin only at a station, in a safe world) ---------------------------------------
   RB.practice.addActivity({
     id: 'fishing', order: 10, icon: 'fish',
     en: 'A Quiet Cast — fishing for Yasu\'s survey', jp: '{静|しず}か な {釣|つ}り',
@@ -116685,7 +116928,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       h += '<p class="wp-row"><b>From my journey:</b> ' + esc((cs.played ? cs.played + ' game' + (cs.played === 1 ? '' : 's') + (RB.game.settings && RB.game.settings.hideTotals ? '' : ' (' + cs.won + ' won, ' + cs.lost + ' lost)') : '') + (cs.coop ? (cs.played ? '; ' : '') + cs.coop + ' chain' + (cs.coop === 1 ? '' : 's') + ' completed' : '') + ' · custom banks, not stages') + '</p>';
     }
     if (r && r.totals.played && !(RB.game.settings && RB.game.settings.hideTotals)) {
-      h += '<p class="wp-row muted small">' + esc('Fixed-bank games: ' + r.totals.played + ' (' + r.totals.won + ' won, ' + r.totals.lost + ' lost). Settings › Ways to practise can hide these totals.') + '</p>';
+      h += '<p class="wp-row muted small">' + esc('Fixed-bank games: ' + r.totals.played + ' (' + r.totals.won + ' won, ' + r.totals.lost + ' lost). Settings › Ways to practice can hide these totals.') + '</p>';
     }
     return h + '</section>';
   }
@@ -116997,7 +117240,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       if (!step) continue;
       RB.game.pushMode('challenge');
       let res = null;
-      try { res = await RB.challenge.runStep(RB.tasks.prepare ? RB.tasks.prepare(step) : step, { noRecord: true, cancelLabel: 'Stop practising' }); } finally { RB.game.popMode('challenge'); }
+      try { res = await RB.challenge.runStep(RB.tasks.prepare ? RB.tasks.prepare(step) : step, { noRecord: true, cancelLabel: 'Stop practicing' }); } finally { RB.game.popMode('challenge'); }
       if (!res || res.cancelled) break;
       ob.assess('wordplay:' + t.id + ':' + key, step.item, res, { kind: 'wordplay-review' });
     }
@@ -117013,7 +117256,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       const canPractise = practiseKeys(t).length > 0;
       const h = U.reviewHtml(s, t, sel) + '<div class="row-acts">' +
         '<button class="pbtn" data-wp="analyse">' + I('lens') + 'More analysis</button>' +
-        (canPractise ? '<button class="pbtn" data-wp="practise">' + I('practice') + 'Practise words from this chain</button>' : '') +
+        (canPractise ? '<button class="pbtn" data-wp="practise">' + I('practice') + 'Practice words from this chain</button>' : '') +
         (t.comp === s.comp ? '<button class="pbtn quiet" data-wp="' + (pinned ? 'unpin' : 'pin') + '">' + I('keepsake') + lab(pinned ? 'unpin' : 'pin', pinned ? 'Unpin this chain' : 'Pin this chain') + '</button>' : '') +
         '<button class="pbtn primary" data-wp="back" data-autofocus>' + I('back') + esc(o.back || 'Back') + '</button></div>';
       const r = await U.show(V, h, (el, done) => {
@@ -117062,7 +117305,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
  * candidate is never a move: Play word is. An invalid draft is explained and the
  * turn kept. No clock: the companion's short thinking gesture can be skipped.
  * Other views (rules, the bank, look back, the primer) are in 87_wordplay_views.js;
- * Company, Ways to practise and the rest menu in 87_wordplay_links.js. */
+ * Company, Ways to practice and the rest menu in 87_wordplay_links.js. */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
 RB.ui.wordplay = RB.ui.wordplay || {};
@@ -121750,7 +121993,7 @@ RB.harmonyRaster = (function () {
  *                and the first session's one notebook note
  * Leave at any time: between lamps, or "Leave the lamps" inside a step.
  * Entered from the rack in the Lantern Hall (scene pa.lamps) or Words › Ways
- * to practise when standing in the Hall; never from anywhere else.
+ * to practice when standing in the Hall; never from anywhere else.
  *
  * RB.practiceA (shared with the writing desk): worldSafe(), afterScene(fn),
  * launch(kind, ctx), lampCanvas(state). */
@@ -121874,7 +122117,7 @@ RB.ui.lanterns = (function () {
           '<div class="pa-intro"><div class="pa-introrow"></div>' +
             '<p>Small practice lamps wait on the rack, apart from the travelling lantern. Each lamp you tend is one short question about something you have already met on the road.</p>' +
             '<p class="muted small">Nothing here keeps a streak or a clock, and nothing is lost by stopping: leave whenever you like.</p></div>' +
-          '<fieldset class="field pa-modes"><legend>What to practise</legend>' +
+          '<fieldset class="field pa-modes"><legend>What to practice</legend>' +
             opt('review', J(tx.modes.review.jp) + ' <span class="en">' + esc(tx.modes.review.en) + '</span>', 'Things you have met, in the order your review schedule suggests.', c.review, false) +
             opt('topic', J(tx.modes.topic.jp) + ' <span class="en">' + esc(tx.modes.topic.en) + '</span>', 'One kind of thing, or one place along the road.', null, !c.tops.length) +
             (sel.mode === 'topic' && c.tops.length ? '<div class="pa-topic"><label for="pa-topic">Topic</label><select id="pa-topic">' + c.tops.map((t) => '<option value="' + esc(t.id) + '"' + (t.id === sel.topic ? ' selected' : '') + '>' + esc(t.en + ' (' + t.n + ')') + '</option>').join('') + '</select></div>' : '') +
@@ -122049,7 +122292,7 @@ RB.ui.lanterns = (function () {
     if (open) open.close();
   }
 
-  // ---- registration: the activity, the rack's scene hook, Words › Ways to practise -------------
+  // ---- registration: the activity, the rack's scene hook, Words › Ways to practice -------------
   function eligible(s) {
     if (!L().unlocked(s)) return { ok: false, why: 'The practice lamps are offered once Chapter 1 has ended.' };
     if (!L().here(s)) return { ok: false, why: 'The practice lamps are in the Lantern Hall in Reedwake.' };
@@ -123824,7 +124067,7 @@ RB.ui.desk = (function () {
         // page's scroll guard), with short names; the full name heads the page below
         const slot = ui.fr.tabslot;
         slot.classList.add('dk-tabs');
-        const tabs = RB.ui.folio.tabs(slot, D().MODES.map((m) => ({ id: m, en: TAB[m], jp: tx.modes[m].jp, icon: MODE_ICON[m] })), mode, (id) => { st.mode = id; D().remember(s, { mode: id }); render(); ui.focus('.dk-tabs .ptab[data-id="' + id + '"]'); }, { label: 'How to practise', panelId: 'dk-modehelp' });
+        const tabs = RB.ui.folio.tabs(slot, D().MODES.map((m) => ({ id: m, en: TAB[m], jp: tx.modes[m].jp, icon: MODE_ICON[m] })), mode, (id) => { st.mode = id; D().remember(s, { mode: id }); render(); ui.focus('.dk-tabs .ptab[data-id="' + id + '"]'); }, { label: 'How to practice', panelId: 'dk-modehelp' });
         tabs.el.classList.add('dk-tabrail');
         ui.teardown(() => { tabs.destroy(); slot.innerHTML = ''; slot.classList.remove('dk-tabs'); });
         ui.foot.innerHTML = '<button class="cbtn" data-dk="leave">' + I('back') + '<span>Leave the desk</span></button>';
@@ -124355,7 +124598,7 @@ RB.ui.desk = (function () {
     if (open) open.close();
   }
 
-  // ---- registration: the activity, the desk's scene hook, the rest menu, Words › Ways to practise ----
+  // ---- registration: the activity, the desk's scene hook, the rest menu, Words › Ways to practice ----
   function eligible(s) {
     if (!D().here(s)) return { ok: false, why: 'The writing desk is at the Gull in Saltglass.' };
     const w = RB.practiceA.worldSafe();
@@ -124390,7 +124633,7 @@ RB.ui.desk = (function () {
 
 /* ==== src/ui/89b_expedition.js ==== */
 /* Expeditions on screen (expansion P07; plan 04_DUNGEONS.md D1–D4, D10; the rules in src/engine/98_expedition.js):
- *   - the entrance preview card (D4): what is practised, the size, the rules in words, never the solutions; Go down
+ *   - the entrance preview card (D4): what is practiced, the size, the rules in words, never the solutions; Go down
  *     or Not now. What the card says is read from the same definition the expedition then runs by.
  *   - a chip at the top of the map while on an expedition: carried resolve (persistent condition, D2), the floor.
  *   - the Ledger's Map › Expedition page: each floor seen (map knowledge, kept across restarts), the stations with
@@ -126273,7 +126516,7 @@ RB.ui.letters = (function () {
         h += '<ul class="entries pb-cards">' + list.map((x) => {
           const d = x.def, nm = U.who(d.from);
           const blocked = open && x.state !== 'open';
-          const st = x.state === 'open' ? 'Open — continue' : x.state === 'answered' ? 'Answered · practise again (not sent)' : !x.met ? 'From someone you haven\'t met on this journey' : 'Waiting';
+          const st = x.state === 'open' ? 'Open — continue' : x.state === 'answered' ? 'Answered · practice again (not sent)' : !x.met ? 'From someone you haven\'t met on this journey' : 'Waiting';
           return '<li><button class="entry pb-card" data-pb-letter="' + esc(d.id) + '"' + (blocked || !x.met ? ' disabled aria-disabled="true"' : '') + ' data-state="' + x.state + '">' +
             '<span class="mark">' + I(x.state === 'answered' ? 'done' : 'letter') + '</span><span class="body">' +
             '<span class="t">' + J(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></span>' +
@@ -126477,7 +126720,7 @@ RB.ui.letters = (function () {
       const d = x.def, nm = U.who(d.from), rr = x.rec, t = L().tier(d, (rr && rr.prof) || U.prof());
       if (!rr) return '<li class="entry"><span class="mark">' + I('letter') + '</span><div><div class="t">' + J(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></div><div class="small muted">' + esc(nm.en) + ' · ' + esc(x.state === 'open' ? 'open at the post box' : 'waiting at the post box') + '</div></div></li>';
       return '<li class="entry filed"><span class="mark">' + I('done') + '</span><div><div class="t">' + J(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></div>' +
-        '<div class="small muted">' + esc(nm.en) + ' ' + J(nm.jp) + (rr.replays ? ' · practised again ' + rr.replays + '×' : '') + '</div>' +
+        '<div class="small muted">' + esc(nm.en) + ' ' + J(nm.jp) + (rr.replays ? ' · practiced again ' + rr.replays + '×' : '') + '</div>' +
         '<div class="pb-f-msg">' + J(t.msg.jp) + '<div class="act-en">' + esc(RB.script.enVars(t.msg.en)) + '</div></div>' +
         '<div class="pb-f-reply"><span class="kind">Your reply</span> <span class="jp" lang="ja">' + U.own(rr.reply || '') + '</span>' + (rr.tone ? ' <span class="muted small">(' + esc(U.toneWord(rr.tone)) + ')</span>' : '') + '</div>' +
         '<div class="pb-f-ack"><span class="kind">' + esc(nm.en) + '</span> ' + J(t.ack.jp) + '<div class="act-en">' + esc(RB.script.enVars(t.ack.en)) + '</div></div>' +
@@ -126494,7 +126737,7 @@ RB.ui.letters = (function () {
       html: folderHtml,
     });
   }
-  // ---- Words › Ways to practise ------------------------------------------------------------------------
+  // ---- Words › Ways to practice ------------------------------------------------------------------------
   const PL = () => RB.practiceB.PLACE;
   if (RB.practice && RB.practice.addActivity) {
     RB.practice.addActivity({
@@ -126844,7 +127087,7 @@ RB.ui.proof = (function () {
     });
   }
 
-  // ---- Words › Ways to practise ---------------------------------------------------------------------------
+  // ---- Words › Ways to practice ---------------------------------------------------------------------------
   const PL = () => RB.practiceB.PLACE;
   if (RB.practice && RB.practice.addActivity) {
     RB.practice.addActivity({
@@ -126868,7 +127111,7 @@ RB.ui.proof = (function () {
  * The page lists only comparisons whose two lines the player has actually seen
  * (RB.compare.unlocked); locked ones are counted, never shown. With none unlocked it says
  * why and offers a clearly labelled sample pair of teaching examples and the other ways
- * to practise. A comparison shows both quotations exactly as frozen (speaker, where it
+ * to practice. A comparison shows both quotations exactly as frozen (speaker, where it
  * was heard), asks one short interpretation question adapted to the learning profile
  * (Foundations: translations supplied, a simpler relation question), then gives one
  * explanation, an optional bookmark of the comparison (its quotations kept as they were
@@ -127034,7 +127277,7 @@ RB.ui.compare = (function () {
     if (!un.length) {
       h += '<div class="note-slip pb-empty" role="note">' + I('look') + ' <p><b>No comparisons yet.</b> Each one needs two particular lines from the story, and you have not yet heard both lines of any pair. ' + locked + ' comparisons are waiting for their lines.</p></div>' +
         '<div class="row-acts"><button class="pbtn" data-cmp-sample>' + I('book') + '<span>Try a sample pair (teaching examples)</span></button>' +
-        '<button class="pbtn" data-cmp-ways>' + I('practice') + '<span>Other ways to practise</span></button></div>';
+        '<button class="pbtn" data-cmp-ways>' + I('practice') + '<span>Other ways to practice</span></button></div>';
     } else {
       h += '<div class="row-acts"><button class="pbtn primary" data-cmp-three>' + I('practice') + '<span>Compare (up to three)</span></button></div>';
       h += '<ul class="entries pb-cmp-list">' + un.map((d) => {
@@ -129258,7 +129501,7 @@ RB.lex.add(RB.lex.parseTable(`
 でしょ||aux|E|right? (casual でしょう)
 目指す|めざす|v5s|E|to aim for, head for
 第一章|だいいっしょう|n|I|chapter one
-練習中|れんしゅうちゅう|n|E|in the middle of practising
+練習中|れんしゅうちゅう|n|E|in the middle of practicing
 内緒|ないしょ|n|E|secret
 掲示板|けいじばん|n|E|noticeboard
 道標|みちしるべ|n|I|signpost
@@ -131441,7 +131684,7 @@ nao: {戻|もど}って きた の か 。 {忘|わす}れ{物|もの} ？ …�
 @scene rw.mio_after
 !faceplayer mio
 mio: いらっしゃいませ 。 …… あ 、 お{帰|かえ}り なさい 。 {傷薬|きずぐすり} 、 {足|た}りて います か ？ || Welcome… oh, welcome back. Do you have enough wound salve?
-mio[think]: {最近|さいきん} 、 {夜|よる} は {店|みせ} を {閉|し}める こと に しました 。 {頼|たの}まれて も 、 です 。 …… {少|すこ}し ずつ 、 {練習|れんしゅう} して います 。 || Lately I've started closing the shop at night. Even if people ask. …I'm practising, bit by bit.
+mio[think]: {最近|さいきん} 、 {夜|よる} は {店|みせ} を {閉|し}める こと に しました 。 {頼|たの}まれて も 、 です 。 …… {少|すこ}し ずつ 、 {練習|れんしゅう} して います 。 || Lately I've started closing the shop at night. Even if people ask. …I'm practicing, bit by bit.
 
 @scene rw.ren_after
 !faceplayer ren
@@ -131704,7 +131947,7 @@ mame: ねえ ねえ ！ {字|じ} が {消|き}えた の 、 {見|み}た ？ �
 * わからない || I don't know. -> idk
 :no
 !gesture mame celebrate
-mame[smile]: ほんと ？ じゃあ 、 マメ も {字|じ} を {練習|れんしゅう} する ！ {自分|じぶん} で {書|か}けば 、 {消|き}えない よね ！ || Really? Then Mame will practise writing too! If I write it myself, it won't disappear, right?
+mame[smile]: ほんと ？ じゃあ 、 マメ も {字|じ} を {練習|れんしゅう} する ！ {自分|じぶん} で {書|か}けば 、 {消|き}えない よね ！ || Really? Then Mame will practice writing too! If I write it myself, it won't disappear, right?
 !end
 :idk
 !gesture mame point pc
@@ -131729,7 +131972,7 @@ mame: {持|も}って いる と 、 {悪|わる}い もの が ちょっと だ
 
 @scene rw.mame_post
 !faceplayer mame
-mame: {字|じ} 、 {練習|れんしゅう} した よ ！ {見|み}て ！ 「 まめ@マメ 」 ！ …… {西|にし} の {話|はなし} 、 {次|つぎ} は {何|なに} ？ || I practised writing! Look! "Mame"! …What's the next story from the west?
+mame: {字|じ} 、 {練習|れんしゅう} した よ ！ {見|み}て ！ 「 まめ@マメ 」 ！ …… {西|にし} の {話|はなし} 、 {次|つぎ} は {何|なに} ？ || I practiced writing! Look! "Mame"! …What's the next story from the west?
 
 @scene rw.tomo_first
 !faceplayer tomo
@@ -134391,7 +134634,7 @@ pc: オウミ さん に {報告|ほうこく} しよう 。 || Let's report to 
 # says "that night"; and dark again for the morning, so the fades cover only the time changing); your
 # companion comes to stand beside you and you both look out to sea; you turn to each other as the talk turns
 # to you, and each tells it in their own way — Nao looks away, lowers their head and puts a hand to the satchel
-# with the letter; Mio's head goes down, her hands twist, a hand at her chest, and she practises Ōmi's flat
+# with the letter; Mio's head goes down, her hands twist, a hand at her chest, and she practices Ōmi's flat
 # hand before laughing at herself; Ren lowers their head over their master's face, nods at the thought
 # of a return, looks to the lighthouse and fixes their glasses at their own joke; Suzu laughs off the ledger, lowers
 # her head over the kind lie and looks away before facing you. At the end you both look out to sea again.
@@ -134425,7 +134668,7 @@ narr: その {夜|よる} 。 {桟橋|さんばし} の {先|さき} で 、 {�
 ?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[smile]: うん 。 でも 、 {自分|じぶん} に は ついてた かも 。 「{大丈夫|だいじょうぶ}」 って 。 || No. But maybe to myself. "I'm fine."
 ?(comp=mio) !gesture comp emphatic
-?(comp=mio) comp: オウミ さん みたい に 、 {優|やさ}しくて {厳|きび}しい の って 、 {難|むずか}しい ね 。 …… {明日|あした} から 、 {練習|れんしゅう} して みる 。 || Being kind and strict at once, like Ōmi — it's hard. …I'll start practising tomorrow.
+?(comp=mio) comp: オウミ さん みたい に 、 {優|やさ}しくて {厳|きび}しい の って 、 {難|むずか}しい ね 。 …… {明日|あした} から 、 {練習|れんしゅう} して みる 。 || Being kind and strict at once, like Ōmi — it's hard. …I'll start practicing tomorrow.
 ?(comp=mio) !gesture comp laugh
 ?(comp=mio) comp[laugh]: まず は 、 {干物|ひもの} の お{土産|みやげ} を {断|ことわ}る {練習|れんしゅう} から 。 …… {無理|むり} かも 。 || Starting with refusing all the dried fish people keep giving us. …That might be impossible.
 ?(comp=ren) comp: {書記|しょき} の {言|い}った 「{主|あるじ}」 の こと を 、 {考|かんが}えて いました 。 || I was thinking about the "master" the Clerk mentioned.
@@ -141301,7 +141544,7 @@ co_goro: おお 、 {綱|つな} か ！ …… {待|ま}って いた よう �
 !take co_rope
 !prop co_goro -
 !gesture co_goro lookroad 11,11
-narr: ゴロウ は {梯子|はしご} を {登|のぼ}り 、 {慣|な}れた {手|て} つき で {綱|つな} を {結|むす}んだ 。 || Gorō climbs the ladder and ties the rope with practised hands.
+narr: ゴロウ は {梯子|はしご} を {登|のぼ}り 、 {慣|な}れた {手|て} つき で {綱|つな} を {結|むす}んだ 。 || Gorō climbs the ladder and ties the rope with practiced hands.
 !look co_goro pc
 !gesture co_goro rubhands
 co_goro: {手|て} が {結|むす}び{方|かた} を {知|し}って おる 。 {教|おそ}わった {覚|おぼ}え は ない のに 。 || My hands know the knot. I don't remember ever learning it.
@@ -150188,7 +150431,7 @@ lf_kei[angry]: みんな 「いや」 って {言|い}う よう に なっち�
 lf_kei[smirk]: でも いい や 。お{母|かあ}さん と {通|とお}り の {名前|なまえ} で けんか する の 、{楽|たの}しい から 。|| Oh well. Arguing about street names with Mum is fun.
 
 @scene lf.kei_post
-lf_kei: ねえ ！ {今|いま} は 「いや」 の {上手|じょうず} な {言|い}い{方|かた} を {練習|れんしゅう} してる の 。「{遠慮|えんりょ} して おきます」 ！|| Hey! I'm practising fancy ways to say no now. "I think I'll refrain"!
+lf_kei: ねえ ！ {今|いま} は 「いや」 の {上手|じょうず} な {言|い}い{方|かた} を {練習|れんしゅう} してる の 。「{遠慮|えんりょ} して おきます」 ！|| Hey! I'm practicing fancy ways to say no now. "I think I'll refrain"!
 lf_kei[laugh]: お{母|かあ}さん に {言|い}ったら 、{笑|わら}われた 。|| When I said it to Mum, she laughed at me.
 
 # ---- the gardener ---------------------------------------------------------------------------------------------------------
@@ -157027,7 +157270,7 @@ akari: $name さん ！ …… {父|ちち} と 、 {手紙|てがみ} が や�
 ?(comp=mio) !gesture comp laugh
 ?(comp=mio) mio[laugh]: …… {聞|き}いた ？ {今|いま} の 。 {断|ことわ}った 。 ちゃんと 、 {丁寧|ていねい} に 。 || …Did you hear that? I said no. Properly, and politely.
 ?(comp=ren) !gesture comp point prop:lamppost
-?(comp=ren) ren: {灯落|ひおち} の {灯籠|とうろう} 、 {名前|なまえ} が {全部|ぜんぶ} {戻|もど}って います 。 …… {一本|いっぽん} だけ 、 {字|じ} が {下手|へた} です 。 {新|あたら}しい {字|じ} だ 。 {誰|だれ}か が 、 {練習|れんしゅう} して いる 。 || Every lantern in Lanternfall has its name back. …Just one has clumsy writing. New writing. Someone's practising.
+?(comp=ren) ren: {灯落|ひおち} の {灯籠|とうろう} 、 {名前|なまえ} が {全部|ぜんぶ} {戻|もど}って います 。 …… {一本|いっぽん} だけ 、 {字|じ} が {下手|へた} です 。 {新|あたら}しい {字|じ} だ 。 {誰|だれ}か が 、 {練習|れんしゅう} して いる 。 || Every lantern in Lanternfall has its name back. …Just one has clumsy writing. New writing. Someone's practicing.
 ?(comp=suzu) !gesture comp size
 ?(comp=suzu) suzu: {広場|ひろば} で {揉|も}めてる {声|こえ} 、 {最高|さいこう} の {音楽|おんがく} だ ね 。 {入場料|にゅうじょうりょう} を {取|と}りたい くらい 。 || The squabbling in the square — finest music there is. I could charge admission.
 
@@ -157454,7 +157697,7 @@ mio[shy]: …… {考|かんが}え{事|ごと} を する と 、 {手|て} が
 @scene sa.b_mio2
 mio: いいえ 。 …… いいえ 。 || No. …No.
 pc: {何|なに} を してる の ？ || What are you doing?
-mio[shy]: {練習|れんしゅう} 。 {上|うえ} で 、 {言|い}わなきゃ いけない から 。 {灯落|ひおち} で {一度|いちど} {言|い}えた けど 、 {一度|いちど} で {慣|な}れる {言葉|ことば} じゃ ない の 。 || Practising. I'll have to say it up there. I managed it once in Lanternfall, but it's not a word you get used to after one go.
+mio[shy]: {練習|れんしゅう} 。 {上|うえ} で 、 {言|い}わなきゃ いけない から 。 {灯落|ひおち} で {一度|いちど} {言|い}えた けど 、 {一度|いちど} で {慣|な}れる {言葉|ことば} じゃ ない の 。 || Practicing. I'll have to say it up there. I managed it once in Lanternfall, but it's not a word you get used to after one go.
 mio[laugh]: …… {笑|わら}わない で よ 。 {真剣|しんけん} な ん だ から 。 いいえ 。 ほら 、 {今|いま} の は {上手|じょうず} だった 。 || …Don't laugh. I'm serious. No. See — that one was good.
 
 @scene sa.b_mio3
@@ -157815,7 +158058,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     text: T('{沈|しず}んだ {書庫|しょこ} が 「 {返送|へんそう} 」 した {名前|なまえ} が 、 {手紙|てがみ} の {雨|あめ} に なって {港|みなと} に {戻|もど}った 。 {渡|わた}し{船|ぶね} が また {動|うご}く 。', 'The names the Drowned Archive had "returned" came back over the harbour as a rain of letters. The ferry runs again.'),
     reply: {
       nao: T('{宛名|あてな} の {読|よ}める {手紙|てがみ} を 、 {読|よ}めない {箱|はこ} に {入|い}れる 。 …… {同|おな}じ こと を した こと が ある 。 {一回|いっかい} だけ 。', 'Putting a letter with a readable address in the unreadable box. …I\'ve done the same thing. Once.'),
-      mio: T('オウミ さん みたい に 、 {優|やさ}しくて {厳|きび}しい の って 、 {難|むずか}しい ね 。 …… {明日|あした} から 、 {練習|れんしゅう} して みる 。', 'Being kind and strict at once, like Ōmi — it\'s hard. …I\'ll start practising tomorrow.'),
+      mio: T('オウミ さん みたい に 、 {優|やさ}しくて {厳|きび}しい の って 、 {難|むずか}しい ね 。 …… {明日|あした} から 、 {練習|れんしゅう} して みる 。', 'Being kind and strict at once, like Ōmi — it\'s hard. …I\'ll start practicing tomorrow.'),
       ren: T('…… ええ 。 だと すれば 、 {取|と}り{戻|もど}せる かも しれません 。 {返送|へんそう} は {取|と}り{消|け}せる と 、 {今日|きょう} {分|わ}かりました から 。', '…Yes. And if so, it might be retrieved. Today we learned that a return can be cancelled.'),
       suzu: T('{嘘|うそ} に は 、 {帳簿|ちょうぼ} に {書|か}けない {嘘|うそ} も ある の 。 {人|ひと} を {慰|なぐさ}める ため の やつ 。 {利子|りし} が {見|み}えない から 、 {返|かえ}す {日|ひ} が {分|わ}からない 。', 'Some lies can\'t go in a ledger. The ones you tell to comfort someone. You can\'t see the interest, so you never know when it falls due.'),
     },
@@ -158505,7 +158748,7 @@ RB.script.add(`
 ?(comp=suzu) !gesture comp laugh
 ?(comp=nao) comp: {鐘|かね} が {鳴|な}って 、 {町|まち} {中|じゅう} 「 いいえ 」 だらけ だ 。 …… {断|ことわ}れる {相手|あいて} に なら 、 {渡|わた}せる もの も ある 。 || Since the bell, the whole town is full of "no". …To someone who can refuse, there are things you can finally hand over.
 ?(comp=mio&quest.lf_mio=done) comp[smile]: {町|まち} も {私|わたし} も 、 {断|ことわ}れる よう に なりました ね 。 || The town and I can both say no now.
-?(comp=mio&!quest.lf_mio=done) comp: {断|ことわ}れる {町|まち} に 、 {戻|もど}りました ね 。 …… {私|わたし} も 、 {練習|れんしゅう} しない と 。 || The town can refuse again. …I ought to practise too.
+?(comp=mio&!quest.lf_mio=done) comp: {断|ことわ}れる {町|まち} に 、 {戻|もど}りました ね 。 …… {私|わたし} も 、 {練習|れんしゅう} しない と 。 || The town can refuse again. …I ought to practice too.
 ?(comp=ren) comp: {言葉|ことば} が {一|ひと}つ 、 {町|まち} に {帰|かえ}って きました 。 {灯|あか}り の {名前|なまえ} が {戻|もど}る の と 、 {同|おな}じ {音|おと} が しました 。 || One word has come home to the town. It sounded just like a lantern's name coming back.
 ?(comp=suzu) comp[laugh]: {鐘|かね} の {後|あと} の {野次|やじ} 、 {聞|き}いた ？ {最高|さいこう} の {初日|しょにち} だった わ 。 || Did you hear the heckling after the bell? The best opening night there is.
 !hook co_done inv.lf_word
@@ -158589,7 +158832,7 @@ comp: {間|あいだ} か 。 {配達|はいたつ} で {言|い}えば 、 {半
 * {今|いま} は いい || Not now. -> later
 :later
 !gesture mio nod pc
-comp[smile]: はい 。 {急|いそ}ぎません 。 {私|わたし} も 、 {急|いそ}がない {練習|れんしゅう} を して います から 。 || All right. No hurry. I'm practising not hurrying, too.
+comp[smile]: はい 。 {急|いそ}ぎません 。 {私|わたし} も 、 {急|いそ}がない {練習|れんしゅう} を して います から 。 || All right. No hurry. I'm practicing not hurrying, too.
 !hook co_defer reflect:travel
 !end
 :talk
@@ -159149,7 +159392,7 @@ comp[shy]: {一人|ひとり} で {全部|ぜんぶ} {持|も}つ の が 、 {�
 * {喜|よろこ}んで {持|も}つ || Gladly. -> glad
 :heavy
 !gesture mio emphatic
-comp[laugh]: だめ です 。 {重|おも}い {方|ほう} は {私|わたし} 。 …… {断|ことわ}る の も 、 {練習|れんしゅう} {中|ちゅう} です から 。 || No. The heavy one's mine. …I'm practising saying no, too.
+comp[laugh]: だめ です 。 {重|おも}い {方|ほう} は {私|わたし} 。 …… {断|ことわ}る の も 、 {練習|れんしゅう} {中|ちゅう} です から 。 || No. The heavy one's mine. …I'm practicing saying no, too.
 !goto close
 :glad
 !gesture mio thanks pc
@@ -167461,8 +167704,8 @@ RB.dialect.add('kansai', `
 = {全部|ぜんぶ} 、 どこ か で {一度|いちど} {習|なら}った こと だ 。 {忘|わす}れて ない もの だ ね 。 || Every one of them something we learned somewhere along the way. We haven't forgotten.
 > {全部|ぜんぶ} 、 どこ か で {一回|いっかい} {習|なら}った こと や 。 ちゃんと {覚|おぼ}えて いる もん や な 。 || Every one of them something we learned somewhere along the way. We haven't forgotten.
 @ hall/hall.w10.to_w1 [hall.w10.to_w1]
-= {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practised all of it in this Hall.
-> {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん や な 。 || Asking the way, saying no, passing on what someone said: we practised all of it in this Hall.
+= {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practiced all of it in this Hall.
+> {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん や な 。 || Asking the way, saying no, passing on what someone said: we practiced all of it in this Hall.
 @ hall/hall.w10.t6 [hall.w10.t6]
 = {古|ふる}い {台本|だいほん} の {字|じ} に {似|に}て いる わ 。 {読|よ}んで あげる 。 {何|なに} が {知|し}りたい ？ || It looks like the writing in old scripts. I'll read it for you. What do you want to know?
 > {古|ふる}い {台本|だいほん} の {字|じ} に {似|に}て いる わ 。 {任|まか}せとき 。 {何|なに} が {知|し}りたい ん ？ || It looks like the writing in old scripts. I'll read it for you. What do you want to know?
@@ -183781,7 +184024,7 @@ narr: {道標|みちしるべ} に 、 {札|ふだ} が {立|た}って いる �
       A: ['Then, with your leave, I will begin.', 'The doctor says it will soon get better.', 'Unless it rains, the festival will be held.', 'The former is red, the latter blue, and the third white. (前者 and 後者 for three)'] },
   };
   out += '\n@scene hall.w10.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
-    intro: ['narr: {古|ふる}い {灯守|ひもり} たち が {練習|れんしゅう} に {使|つか}った {石板|せきばん} 。 {九|ここの}つ の {話|はなし} の {教|おし}え が {刻|きざ}まれて いる 。 {端|はし} の {掛|か}け{軸|じく} に は 「 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 と ある 。 || The slates the old keepers practised on, cut with the lessons of the nine tales. The scroll at the end reads: "One alone is wrong."'],
+    intro: ['narr: {古|ふる}い {灯守|ひもり} たち が {練習|れんしゅう} に {使|つか}った {石板|せきばん} 。 {九|ここの}つ の {話|はなし} の {教|おし}え が {刻|きざ}まれて いる 。 {端|はし} の {掛|か}け{軸|じく} に は 「 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 と ある 。 || The slates the old keepers practiced on, cut with the lessons of the nine tales. The scroll at the end reads: "One alone is wrong."'],
     task: { 0: 'hall.w10.counter0', 1: 'hall.w10.counter1' },
     after: ['narr: {間違|まちが}った {石板|せきばん} の {文字|もじ} が 、 {砂|すな} の よう に {崩|くず}れて {消|き}えた 。 || The letters on the wrong slate crumble away like sand.', '?(comp) comp: {全部|ぜんぶ} 、 どこ か で {一度|いちど} {習|なら}った こと だ 。 {忘|わす}れて ない もの だ ね 。 || Every one of them something we learned somewhere along the way. We haven\'t forgotten.'],
     later: 'narr: {石板|せきばん} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the slates one by one, then come back.',
@@ -183845,7 +184088,7 @@ narr: {言葉|ことば} を 、 「 ${TITLE[w][0]} 」 の {灯|ひ} の {前|�
 !end
 :all
 narr: {五|いつ}つ の {言葉|ことば} が 、 それぞれ の {灯|ひ} の {前|まえ} に {収|おさ}まった 。 || The five sayings are each in place before their lights.
-?(comp) comp: {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practised all of it in this Hall.
+?(comp) comp: {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practiced all of it in this Hall.
 ${K.mark(W, 1, 't4')}
 !end
 `;
@@ -184132,6 +184375,51 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (D) {
   'use strict';
+  // ---- The cases ---------------------------------------------------------------------------------------------
+  // the sealed parcel: brown paper tied crosswise with twine, the red wax seal (a bell) where the strings cross
+  D('cs_parcel', {
+    pal: { t: '#e0c08e', p: '#c49c66', s: '#8c6a42', w: '#f2e6c4', r: '#a83e27', k: '#dc6a4c', d: '#6a2014' },
+    px: [
+      '................',
+      '................',
+      '...oooooooooooo.',
+      '..otttttwttttso.',
+      '.otttttwttttsso.',
+      'opppppwppppssso.',
+      'opppppwppppssso.',
+      'opppprrrpppsswo.',
+      'oppprkrrrppswso.',
+      'owwwrrdrrwwwsso.',
+      'oppprdddrppssso.',
+      'opppprrrpppssso.',
+      'opppppwppppsso..',
+      'ossssswssssso...',
+      'oooooooooooo....',
+      '................',
+    ],
+  });
+  // the translucent sketch: thin paper with a curling corner; in pencil a bare tree, a little shrine, a lamp on a post
+  D('cs_sketch', {
+    pal: { p: '#f8f3e4', b: '#c4d0d6', g: '#857e72', a: '#e0a440' },
+    px: [
+      '................',
+      '.oooooooooooooo.',
+      '.oppppppppppppo.',
+      '.opppppppppgggo.',
+      '.ogpgpgppppgago.',
+      '.opgggppppppgpo.',
+      '.oppgpppgpppgpo.',
+      '.oppgpgggggpgpo.',
+      '.oppgppgggppgpo.',
+      '.oppgppgpgpgggo.',
+      '.oppgpgggggpppo.',
+      '.oggggppppppppo.',
+      '.oppppppppppbbo.',
+      '.oppppppppppbo..',
+      '.ooooooooooooo..',
+      '................',
+    ],
+  });
   // ---- Reedwake ----------------------------------------------------------------------------------------------
   // the letter of introduction: a folded paper envelope, its flap closed with a red wax seal
   D('rw_letter', {
@@ -184196,6 +184484,2190 @@ var RB = (globalThis.RB = globalThis.RB || {});
       '..oggggggddddo..',
       '...oodddddddoo..',
       '.....ooooooo....',
+      '................',
+    ],
+  });
+  // Ren's lantern records: a stitched ledger, persimmon-brown covers, title slip, binding thread, a water stain
+  D('rw_record', {
+    pal: { c: '#9c5a32', h: '#c07c4c', d: '#6c3a1c', w: '#7c4424', t: '#ece2c8', p: '#f2e8cc', k: '#4a3428' },
+    px: [
+      '................',
+      '..oooooooooooo..',
+      '..ohhhhhhhhtdo..',
+      '..ohpppcccctto..',
+      '..ohpkpcccctdo..',
+      '..ohpppcccctdo..',
+      '..ohpkpcccctto..',
+      '..ohpppcccctdo..',
+      '..ohpkpcccctdo..',
+      '..ohpppcccctto..',
+      '..ohccccccctdo..',
+      '..ohwwccccctdo..',
+      '..owwwwcccctto..',
+      '..odwwdddddtdo..',
+      '..oooooooooooo..',
+      '................',
+    ],
+  });
+  // Kiku's shuttle: a pointed wooden boat-shape with metal tips, a bobbin of thread in its eye, the weft running out
+  D('rw_shuttle', {
+    pal: { w: '#bc8c52', l: '#deb276', d: '#86603a', k: '#4a301c', t: '#f2e6c8', u: '#c8566a', n: '#d4d9de' },
+    px: [
+      '................',
+      '.............o..',
+      '...........oono.',
+      '.........oolno..',
+      '.......oollwwo..',
+      '......ollkwwo...',
+      '.....olltkkdo...',
+      '....ollttkdo....',
+      '....olttkddo....',
+      '...olkkkddu.....',
+      '...olwkddo.u....',
+      '..olwwdoo..u....',
+      '..onwoo.....uu..',
+      '.onoo.........u.',
+      '..o.............',
+      '................',
+    ],
+  });
+  // the gear pin: a heavy iron pin with a collared head and a hole for the wedge near its tip
+  D('rw_wheel_pin', {
+    pal: { i: '#7c8692', l: '#aab4be', h: '#d4dce2', d: '#4c5460' },
+    px: [
+      '................',
+      '..........ooo...',
+      '.........olhho..',
+      '........olliiio.',
+      '.........oiiido.',
+      '........oloiddo.',
+      '.......olidodo..',
+      '......olido.o...',
+      '.....olido......',
+      '....olido.......',
+      '...olido........',
+      '..olodo.........',
+      '..oido..........',
+      '.oioo...........',
+      '..o.............',
+      '................',
+    ],
+  });
+  // Mame's reed charm: a braided green reed loop, its ends crossed and bound with red cord
+  D('rw_reed_charm', {
+    pal: { l: '#bcd06a', g: '#86a040', d: '#566c26', r: '#c4402e', s: '#e8705a' },
+    px: [
+      '......oooo......',
+      '....oolldloo....',
+      '...odlldlldgo...',
+      '...olldoodggo...',
+      '..olldo..ogdgo..',
+      '..oldlo..odggo..',
+      '..odllo..oggdo..',
+      '...oldgooggdo...',
+      '....ogoooodo....',
+      '.....ossrro.....',
+      '.....orrrro.....',
+      '....oloooodo....',
+      '...olgo..ogdo...',
+      '..olgo....ogdo..',
+      '..ogo......ogo..',
+      '...o........o...',
+    ],
+  });
+  // Oto's sturdy boots: a pair of tall leather boots with tan cuffs and thick dark soles
+  D('rw_boots_good', {
+    pal: { b: '#8a5634', l: '#b07448', d: '#5e3820', c: '#c89a62', q: '#a47648', e: '#6a4028', s: '#3a2c26' },
+    px: [
+      '...........ooo..',
+      '.....ooooooqqqo.',
+      '....occcccoqqqo.',
+      '....occccqoeeeo.',
+      '....olbbbdoeeeo.',
+      '....olbbbdoeeeo.',
+      '....olbbbdoeeeo.',
+      '....olbbbdoeeeo.',
+      '....olbbbdoeeeo.',
+      '....olbbbdoeeeo.',
+      '..oollbbbdoeeeo.',
+      '.olllbbbbdoeeeo.',
+      'olbbbbbbbdossso.',
+      'osssssssssoooo..',
+      '.ooooooooo......',
+      '................',
+    ],
+  });
+  // Kiku's faded ribbon: a dusty-rose bow with two notched tails (as the keepsake)
+  D('rw_ribbon', {
+    pal: { m: '#cc707e', h: '#eaa8b0', d: '#a4505e', k: '#b45a68' },
+    px: [
+      '................',
+      '.o............o.',
+      'ohoo........ooho',
+      'omhhoo....oohhmo',
+      'ommmhhoooohhmmmo',
+      'ommmmmohkommmmmo',
+      'ommmmdokkodmmmmo',
+      'ommmmdokkodmmmmo',
+      'ommmmmokkommmmmo',
+      'ommmmoooooommmmo',
+      'ommoodo..omoommo',
+      '.ooomdo..omdooo.',
+      '..omdo....omdo..',
+      '..omdo....omo...',
+      '.omoo......o....',
+      '..o.............',
+    ],
+  });
+  // Hana's tea leaves: a bud and two leaves on one stem
+  D('rw_tea_leaves', {
+    pal: { g: '#3e7a30', l: '#6eae46', v: '#a8d470', s: '#7a6a3a' },
+    px: [
+      '.......oo.......',
+      '......oglo......',
+      '.oo...oglo......',
+      'ovloo.oglo...o..',
+      'ogvlloggllooolo.',
+      'ogvvllogllollvgo',
+      'oggvlllolollvvgo',
+      'ogggvlloollvvggo',
+      '.oggvvlolllvggo.',
+      '.ogggvlollvgggo.',
+      '..ogggvolvgggo..',
+      '...oogvovvggo...',
+      '.....ooooooo....',
+      '......oso.......',
+      '......oso.......',
+      '.......o........',
+    ],
+  });
+  // Mio's salve: a squat celadon jar with a wooden lid and her label (two lines and a red initial)
+  D('rw_salve', {
+    pal: { g: '#86ab9c', l: '#a9cbbd', d: '#5c7f72', c: '#a6764c', p: '#f4ebd2', k: '#5a4a3c', r: '#b83a2a' },
+    px: [
+      '................',
+      '.......oo.......',
+      '....oooccooo....',
+      '...occcccccco...',
+      '...okkkkkkkko...',
+      '..olllggggggdo..',
+      '.ollgggggggggdo.',
+      '.olggppppppgddo.',
+      '.olggpkkkkpgddo.',
+      '.olggppppppgddo.',
+      '.olggpkkkprgddo.',
+      '.olggppppppgddo.',
+      '.ollgggggggdddo.',
+      '..oddddddddddo..',
+      '...oooooooooo...',
+      '................',
+    ],
+  });
+  // Mochi's bell: a round gold cat bell with its slit (the keepsake's colours), hanging from a loop of its old red cord
+  D('rw_catbell', {
+    pal: { r: '#c43a30', q: '#a02c24', y: '#d8b040', l: '#f0d878', h: '#fff6c8', d: '#9a7428', k: '#5a4018' },
+    px: [
+      '....oooooooo....',
+      '...orrrrqqqqo...',
+      '..orrooooooqqo..',
+      '.oroo......ooqo.',
+      '.oro........oqo.',
+      '.oro...oo...oqo.',
+      '..oqooolloooqo..',
+      '...oollllyyoo...',
+      '...olhhlyyyyo...',
+      '...olllyyyyyo...',
+      '...ollyyyyydo...',
+      '...olkkkkkkdo...',
+      '...oyyykkdddo...',
+      '....oyykkddo....',
+      '.....oydddo.....',
+      '......oooo......',
+    ],
+  });
+  // ---- Saltglass ---------------------------------------------------------------------------------------------
+  // Tetsu's rope: a coil of twisted rope, one end trailing
+  D('sg_rope', {
+    pal: { r: '#c4a060', l: '#dcc084', h: '#f0dca8', d: '#8a6a36' },
+    px: [
+      '................',
+      '.....ooooo......',
+      '...oollddhoo....',
+      '..oddhhlddhlo...',
+      '.olllddhldhrdo..',
+      'ollhhlooodrrdro.',
+      'ohhddo...ordrro.',
+      'oddllo....orrro.',
+      'ohdlho...orrrdo.',
+      'odllhroooddddro.',
+      '.olhdrrdrrrrro..',
+      '..orddrrddrro...',
+      '...ordrrrrdoo...',
+      '....ooooooordoo.',
+      '...........odrdo',
+      '............ooo.',
+    ],
+  });
+  // the Gull's post bag: a red mail bag with the white post mark, envelopes standing out of it, one address run
+  D('sg_postbag', {
+    pal: { r: '#b0453a', h: '#cc6650', d: '#7c2c26', w: '#f4f0e6', v: '#c9c0b0', i: '#6c7ea4' },
+    px: [
+      '..oooooo........',
+      '.owwwwwwoooooo..',
+      '.ovwwwwvovvvvvo.',
+      '.owvwwvwovivvvo.',
+      '.owwvvwwoviivvo.',
+      '.owwwwwwovvvvvo.',
+      'oddddddddddddddo',
+      'ohrrrrrrrrrrrddo',
+      'ohrrrrwwwwwrrddo',
+      'ohrrrrrrrrrrrddo',
+      'ohrrrrwwwwwrrddo',
+      'ohrrrrrrwrrrrddo',
+      'ohrrrrrrwrrrrddo',
+      'oddddddddddddddo',
+      '.oddddddddddddo.',
+      '..oooooooooooo..',
+    ],
+  });
+  // the final notice: a tall white envelope with the red stamp and its address written out clearly
+  D('sg_notice', {
+    pal: { w: '#f6f3ec', s: '#d6d0c4', k: '#3e3a44', r: '#c0402e', q: '#f0b0a0' },
+    px: [
+      '...ooooooooo....',
+      '..owwwwwwwwso...',
+      '..orrrrwwwwso...',
+      '..orqqrwwkwso...',
+      '..orqqrwwkwso...',
+      '..orrrrwwwwso...',
+      '..owwwwwwkwso...',
+      '..owwkwwwkwso...',
+      '..owwkwwwwwso...',
+      '..owwkwwwkwso...',
+      '..owwwwwwwwso...',
+      '..owwkwwwwwso...',
+      '..owwkwwwwwso...',
+      '..owwkwwwwwso...',
+      '..ossssssssso...',
+      '...ooooooooo....',
+    ],
+  });
+  // Wataru's notebook: open on green-bound pages, small careful lines and copied labels
+  D('sg_labelbook', {
+    pal: { p: '#f6efdc', s: '#d8caa8', k: '#4a5878', e: '#e2d4b4', c: '#3e6a52' },
+    px: [
+      '................',
+      '................',
+      '.oooooo..oooooo.',
+      'oppppppooppppppo',
+      'oppppppssppppppo',
+      'opkkkkpsspkkkkpo',
+      'oppppppsspkppkpo',
+      'opkkkppsspkkkkpo',
+      'oppppppssppppppo',
+      'opkkkkpsspkkkppo',
+      'oppppppssppppppo',
+      'opkkpppsspkkpppo',
+      'oeeeeeeeeeeeeeeo',
+      'occcccccccccccco',
+      '.oooooooooooooo.',
+      '................',
+    ],
+  });
+  // blue sea glass: a smooth, frosted blue pebble with a glint
+  D('sg_seaglass', {
+    pal: { h: '#eef8fc', l: '#a8d2ea', m: '#78b0d6', d: '#4a80ae', r: '#b8def2' },
+    px: [
+      '................',
+      '................',
+      '....oooo........',
+      '...olllloo......',
+      '..ollllllloo....',
+      '.olllhhlmmmmo...',
+      '.olllhlmmmmmmo..',
+      '.olllmmmmmmmmro.',
+      '.ollmmmmmmmmmro.',
+      '.ommmmmmmmmddro.',
+      '..ommmmmmmdddro.',
+      '...ommmmddddro..',
+      '....oorrrrrrro..',
+      '......ooooooo...',
+      '................',
+      '................',
+    ],
+  });
+  // the ship registry card: a grey-blue card with the boat drawn on it and the red ring of the 'returned' stamp
+  D('sg_registry', {
+    pal: { m: '#d8e0e0', s: '#aebcc0', b: '#3a5a86', k: '#76828e', r: '#bc402e' },
+    px: [
+      '................',
+      '................',
+      '.oooooooooooooo.',
+      'ommmmmmmmmmmmmso',
+      'ommmbmmmmmmmmmso',
+      'ommmbmmmmkkkkkso',
+      'ommmbmmmmmmmmmso',
+      'ommmbbbmmkkkkmso',
+      'ombbbbbbbmmrrmso',
+      'ommbbbbbmmrmmrso',
+      'ommmmmmmmmrmmrso',
+      'ommmmmmmmmmrrmso',
+      'osssssssssssssso',
+      '.oooooooooooooo.',
+      '................',
+      '................',
+    ],
+  });
+  // Sota's nets: a hanging fishing net, orange floats on the headline, weights on the footrope
+  D('sg_nets', {
+    pal: { g: '#6a947e', l: '#a4c8b4', k: '#2a3a32', r: '#c8a868', c: '#e0803a', h: '#f4b070', n: '#6a6e78' },
+    px: [
+      '................',
+      '..oo...oo...oo..',
+      'oohhooohhooohhoo',
+      'rrccrrrccrrrccrr',
+      'oooooooooooooooo',
+      'ollkllkllkllkllo',
+      'okklkklkklkklkko',
+      'ollkllkllkllkllo',
+      'oggkggkggkggkggo',
+      'okkgkkgkkgkkgkko',
+      'oggkggkggkggkggo',
+      'orgkgrrggkrrkgro',
+      '.ornroornroonro.',
+      '..ooo..ooo..oo..',
+      '................',
+      '................',
+    ],
+  });
+  // the sea-glass nameplate: a driftwood board with the Chidori-maru's plover (chidori) set in blue glass
+  D('sg_plate', {
+    pal: { l: '#dcc8a0', w: '#bca278', d: '#8a7450', h: '#b8e2f8', b: '#3c86c4', e: '#285c94', k: '#14243c' },
+    px: [
+      '................',
+      '................',
+      '.oooooooooooooo.',
+      'ollllllllllllllo',
+      'owwwwwwwwwwwwwwo',
+      'owwwwhbwwwwwbwwo',
+      'owwebbkbwwwbbwwo',
+      'owwwwbbbbbbbewwo',
+      'owwwwhhbbbbeewwo',
+      'owwwwwhhbbeewwwo',
+      'owwwwwwweeewwwwo',
+      'owwwwwwwwwwwwwwo',
+      'oddddddddddddddo',
+      '.oooooooooooooo.',
+      '................',
+      '................',
+    ],
+  });
+  // the broken stamp: a wooden office stamp with its red rubber face, cracked through from knob to face
+  D('sg_stamp', {
+    pal: { w: '#b07848', l: '#d8a26a', d: '#7a4c2c', b: '#5a3a28', c: '#8a6040', r: '#cc4430', q: '#9a2c20' },
+    px: [
+      '......oooo......',
+      '.....ollwwo.....',
+      '....olllowdo....',
+      '....ollwowdo....',
+      '.....owwodo.....',
+      '......owodo.....',
+      '..ooooowodoooo..',
+      '.occccccoccccco.',
+      '.ocbbbbbobbbbbo.',
+      '.ocbbbbobbbbbbo.',
+      '.ocbbbboobbbbbo.',
+      '.orrrro.orrrrqo.',
+      '..oooo...ooooo..',
+      '................',
+      '................',
+      '................',
+    ],
+  });
+  // the glass float charm: a green glass fishing float in its rope net, with a loop to hang it by
+  D('sg_float_charm', {
+    pal: { g: '#4ea898', l: '#88d2c2', h: '#ecfcf6', d: '#2c7068', n: '#b8935a' },
+    px: [
+      '......onno......',
+      '.....onnnno.....',
+      '.....onoono.....',
+      '.....oooooo.....',
+      '....olnllnlo....',
+      '...olnnllnngo...',
+      '..ollnlllgnggo..',
+      '..olhnllggnggo..',
+      '.olllnlgggngddo.',
+      '.onnnnnnnnnnnno.',
+      '.olllnggggndddo.',
+      '..olgngggdnddo..',
+      '..oggnggddnddo..',
+      '...ogngdddndo...',
+      '....ognddndo....',
+      '.....oooooo.....',
+    ],
+  });
+  // the lens chip: a shard of clear lighthouse lens with its ridges, a glint of lamp-light caught in it
+  D('sg_lens_charm', {
+    pal: { c: '#c4e2e4', m: '#9cc6cc', l: '#f2fbfa', d: '#6e9ca4', g: '#fffbe0', y: '#f0c048' },
+    px: [
+      '................',
+      '...........o....',
+      '..........oco...',
+      '.........oyco...',
+      '........oygyo...',
+      '........odycco..',
+      '.......oclldco..',
+      '......occclldo..',
+      '......oddcclddo.',
+      '.....ollddmmlo..',
+      '....occlldmmo...',
+      '...occcclldo....',
+      '...occcmmlo.....',
+      '..occcmmmo......',
+      '...oooooo.......',
+      '................',
+    ],
+  });
+  // Asahi's earrings: two frosted blue glass drops on silver hooks (as the keepsake)
+  D('sg_glass_earrings', {
+    pal: { l: '#a6d0ea', m: '#72aad2', d: '#4a80ae', h: '#eef8fc', s: '#dfe3e8', t: '#a8b0ba' },
+    px: [
+      '.....oo.....oo..',
+      '....osso...osso.',
+      '...osooso.osooso',
+      '...oto.o..oto.o.',
+      '...oto....oto...',
+      '...ooo....ooo...',
+      '...olo....olo...',
+      '..olldo..olldo..',
+      '..olldo..olldo..',
+      '.olhlddoolhlddo.',
+      '.omhmddoomhmddo.',
+      '.ommmddoommmddo.',
+      '.odddddoodddddo.',
+      '..odddo..odddo..',
+      '...ooo....ooo...',
+      '................',
+    ],
+  });
+})(RB.itemArt.def);
+
+
+/* ==== src/content/item_art/b_co_sb_lf.js ==== */
+/* Item icons: Cinder Orchard (co_), Snowbell (sb_) and Lanternfall (lf_). 16×16 authored pixel tables
+ * (src/ui/11_item_art.js): '.' clear, 'o' the shared outline ink; light from the upper left; one shade and one
+ * highlight per material, no dithering noise. Where an item is also a keepsake its 32×32 drawing sets the design. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (D) {
+  'use strict';
+  // ---- Cinder Orchard --------------------------------------------------------------------------------------------
+  // Grandma Ume's planting book, lying open: green covers, a page of names, a sapling drawn on the facing page
+  D('co_plantbook', {
+    pal: { g: '#5a8a44', p: '#f2e8cc', s: '#d8c8a0', k: '#6a5440', y: '#8cc054', v: '#4e7a34' },
+    px: [
+      '................',
+      '................',
+      '..ooooo..ooooo..',
+      '.opppppoopppppo.',
+      '.opppppssppyppo.',
+      'ogpkkkpsspyyypgo',
+      'ogpppppssyyvyygo',
+      'ogpkkkpssppvppgo',
+      'ogpppppssppvppgo',
+      'ogpkkppsspkkkpgo',
+      'ogpppppsspppppgo',
+      'ogpkkppsskkkkpgo',
+      'ogssssssssssssgo',
+      'ovvvvvvvvvvvvvvo',
+      '.oooooooooooooo.',
+      '................',
+    ],
+  });
+  // Master Isao's kiln ledger, shut: a thick soot-brown book with a flame on its cover, page edges showing
+  D('co_kilnbook', {
+    pal: { r: '#6e3e2a', h: '#94583a', d: '#4a2618', p: '#efe0bc', f: '#e8702a', y: '#f8c858' },
+    px: [
+      '....oooooooooo..',
+      '...oppppppppppo.',
+      '..oooooooooohho.',
+      '.ohhhhhhhhhoppo.',
+      '.ohrrrrrrrdohho.',
+      '.ohrrrfrrrdoppo.',
+      '.ohrrffrrrdohho.',
+      '.ohrrffyrrdoppo.',
+      '.ohrfyyfrrdohho.',
+      '.ohrfyyyfrdoppo.',
+      '.ohrrfffrrdohho.',
+      '.ohrrrrrrrdoppo.',
+      '.ohrrrrrrrdohho.',
+      '.ohrrrrrrrdooo..',
+      '.ohddddddddo....',
+      '..ooooooooo.....',
+    ],
+  });
+  // the kiln log's last page: a single sheet in a hurried hand, its top corner burnt away
+  D('co_logpage', {
+    pal: { p: '#ecdcb2', s: '#c9b386', k: '#6a5440', b: '#a8743e', c: '#3e2c22' },
+    px: [
+      '................',
+      '...ooooc........',
+      '...opppbc.......',
+      '...opkpbbc......',
+      '...oppppbc......',
+      '...opkkkpbcc....',
+      '...oppppppbbc...',
+      '...opkkkkkpbc...',
+      '...opppppppso...',
+      '...opkkkpkkso...',
+      '...opppppppso...',
+      '...opkkkkppso...',
+      '...opppppppso...',
+      '...osssssssso...',
+      '...oooooooooo...',
+      '................',
+    ],
+  });
+  // Tomoe's lantern globe: a round globe of amber glass, open at the top and lit (the one of thirty that survived)
+  D('co_globe', {
+    pal: { a: '#d8823a', h: '#f0a850', y: '#f8c860', w: '#fff0c8', d: '#a85a28', b: '#7a4220' },
+    px: [
+      '................',
+      '......oooo......',
+      '.....obbbbo.....',
+      '...oobbbbbboo...',
+      '..ohhhhaaaaaao..',
+      '..ohwhayyaaaao..',
+      '.ohwhyyyyyaaaao.',
+      '.ohwyyywwyyaado.',
+      '.ohayywwwyyaddo.',
+      '.oaayywwwyydddo.',
+      '.oaayyywyyydddo.',
+      '..oaayyyyydddo..',
+      '..oaaaaydddddo..',
+      '...ooadddddoo...',
+      '.....obbbbo.....',
+      '......oooo......',
+    ],
+  });
+  // Tamotsu's channel-gate rope: a coil of hemp rope, its end running out
+  D('co_rope', {
+    pal: { a: '#c8a868', l: '#e2c890', t: '#8e6e3e', k: '#5a4630' },
+    px: [
+      '................',
+      '.....oooooo.....',
+      '...ooltllltoo...',
+      '..olltllltlllo..',
+      '.olltooooooltlo.',
+      'oaatoaataaaoaaao',
+      'oatoaakkkktaoato',
+      'otaaotaaataoatao',
+      '.oaatooooooatao.',
+      '..otaaataaatao..',
+      '...ooataaatoaao.',
+      '...ollaltalaato.',
+      '..olaataataaoo..',
+      '.olooooooooo....',
+      '..o.............',
+      '................',
+    ],
+  });
+  // Nobu's ash-glazed cup: a tall tea cup in grey ash glaze, running green where it pooled, an unglazed foot
+  D('co_ash_cup', {
+    pal: { r: '#d8cfb4', g: '#b2a684', d: '#8a7e60', v: '#6a9a58', w: '#3f6e44', c: '#a46c42' },
+    px: [
+      '................',
+      '................',
+      '...oooooooooo...',
+      '..orwwwwwwwwro..',
+      '..orrrrrrrrrro..',
+      '..orggggggggdo..',
+      '..orgvgggvggdo..',
+      '..orgvgggvgvdo..',
+      '...orvggwgvdo...',
+      '...orwgggggdo...',
+      '...orgggggwdo...',
+      '...ovvvvvvvvo...',
+      '...owwwwwwwwo...',
+      '....occcccco....',
+      '.....oooooo.....',
+      '................',
+    ],
+  });
+  // Asa's spare straw hat: a wide straw brim, round crown and red band, as the keepsake shows it
+  D('co_straw_hat', {
+    pal: { b: '#e0c070', c: '#e8cc80', h: '#f6e2a8', d: '#b0904a', r: '#a83a2a' },
+    px: [
+      '................',
+      '................',
+      '.......oo.......',
+      '.....ooccoo.....',
+      '....ohccccbo....',
+      '...ohhccccbbo...',
+      '...ohhccccbbo...',
+      '...ohhccccbbo...',
+      '..oorrrrrrrroo..',
+      '.obbrrrrrrrrbbo.',
+      'obbbbbbbbbbbbbbo',
+      'obbbbbbbbbbbbbbo',
+      '.oddddddddddddo.',
+      '..oooddddddooo..',
+      '.....oooooo.....',
+      '................',
+    ],
+  });
+  // Grandma Ume's hairpin: a red maple leaf with a silver pin running down from it
+  D('co_leaf_pin', {
+    pal: { r: '#c8452a', h: '#e8703a', d: '#962f1e', m: '#a4acb4', n: '#e4eaee' },
+    px: [
+      '.......o........',
+      '......oho.......',
+      '...o.ohhro.o....',
+      '..ohoohdrooro...',
+      '..ohhordrorro...',
+      '..oohrrdrrroo...',
+      '.ohhrrrdrrrddo..',
+      '..orrrrdrrddo...',
+      '...orrrdrddo....',
+      '..orroodooddo...',
+      '..oro.omnoodo...',
+      '...o...omnoo....',
+      '........omno....',
+      '.........omo....',
+      '..........omo...',
+      '...........o....',
+    ],
+  });
+  // Hiro's glass-bead earrings: two amber glass drops on fine hooks
+  D('co_glass_beads', {
+    pal: { k: '#8c8894', y: '#e8c860', a: '#e0781e', h: '#f8b860', w: '#fff0c0', d: '#a8501a' },
+    px: [
+      '................',
+      '................',
+      '....kk..........',
+      '...k..k.........',
+      '...k.......kk...',
+      '...oyo....k..k..',
+      '...oao....k.....',
+      '..oahao...oyo...',
+      '.oahwaao..oao...',
+      '.oahaado.oahao..',
+      '.oaaaddooahwaao.',
+      '..oaddo.oahaado.',
+      '...ooo..oaaaddo.',
+      '.........oaddo..',
+      '..........ooo...',
+      '................',
+    ],
+  });
+  // Fusa's dried persimmons: three on a straw twine, hung by their stems on alternate sides
+  D('co_hoshigaki', {
+    pal: { c: '#5a4a24', a: '#b8602c', h: '#dc8a48', d: '#7a3a1a', n: '#b89a5a' },
+    px: [
+      '...oonnnn.......',
+      '..occo..n.......',
+      '.ohaaao.n.......',
+      'ohaaaaaon.......',
+      'ohaaadaonnnoo...',
+      '.oaaado.n.occo..',
+      '..oddo..nohaaao.',
+      '...oo...nhaaaaao',
+      '...oonnnnhaaadao',
+      '..occo..noaaado.',
+      '.ohaaao.n.oddo..',
+      'ohaaaaaon..oo...',
+      'ohaaadaon.......',
+      '.oaaado.n.......',
+      '..oddo..n.......',
+      '...oo...n.......',
+    ],
+  });
+  // ---- Snowbell --------------------------------------------------------------------------------------------------
+  // Akari's letters: four envelopes in one hand, stacked in order and tied with string
+  D('sb_akari_letters', {
+    pal: { p: '#e2eaee', l: '#f6fafc', s: '#a8bac6', d: '#b8c8d2', r: '#b8402a' },
+    px: [
+      '................',
+      '................',
+      'ooooooooor......',
+      'ollllllllr......',
+      'opoooooooroo....',
+      'opollllllrlo....',
+      'opopoooooroooo..',
+      'opopollllrlllo..',
+      'ooopopoooroooooo',
+      '..opoposlrllllso',
+      '..ooopopsrpppspo',
+      '....opopprppsppo',
+      '....ooopprsspppo',
+      '......opprpppppo',
+      '......oddrdddddo',
+      '................',
+    ],
+  });
+  // Hoshino's observatory key: a brass key whose bow is a five-pointed star
+  D('sb_obs_key', {
+    pal: { b: '#d8b04a', l: '#f4dc88', d: '#a07a28', k: '#5a4a2a' },
+    px: [
+      '................',
+      '................',
+      '................',
+      '.....o..........',
+      '....olo.........',
+      '....olo.........',
+      '.ooolblooo......',
+      'olllbbblllooooo.',
+      '.olbbkbbdolllllo',
+      '..olbbbdooldbddo',
+      '..olddddo.oololo',
+      '.oldooollo.ololo',
+      '.olo...olo..oolo',
+      '..o.....o.....o.',
+      '................',
+      '................',
+    ],
+  });
+  // Hoshino's pencil sketch of Ushio: a traveller in a hat with a heavy lantern, a line written in the margin
+  D('sb_ushio_sketch', {
+    pal: { p: '#f4efe2', s: '#ddd5c2', g: '#6e6c72', q: '#aeacb2', k: '#8a8890' },
+    px: [
+      '................',
+      '................',
+      '.oooooooooooooo.',
+      '.oppppggpppppso.',
+      '.opgggggggpkpso.',
+      '.oppqqqqqppkpso.',
+      '.oppqqqqqppkpso.',
+      '.opppqqqpppppso.',
+      '.oppgggggppkpso.',
+      '.opggggqggpkpso.',
+      '.ogggqgggggkpso.',
+      '.ogggggggggppso.',
+      '.osssssssssssso.',
+      '.oooooooooooooo.',
+      '................',
+      '................',
+    ],
+  });
+  // Hoshino's reply: a tall envelope sealed with a star, the address panel left blank
+  D('sb_reply_letter', {
+    pal: { p: '#f6f0e0', l: '#fffaf0', s: '#d2c6a8', n: '#2c3e6a', y: '#e8c040' },
+    px: [
+      '................',
+      '...oooooooooo...',
+      '...osppppppso...',
+      '...olsppppsso...',
+      '...olpsnnspso...',
+      '...olpnyynpso...',
+      '...olpnyynpso...',
+      '...olppnnppso...',
+      '...olppppppso...',
+      '...olpsssspso...',
+      '...olpsppspso...',
+      '...olpsssspso...',
+      '...olppppppso...',
+      '...osssssssso...',
+      '...oooooooooo...',
+      '................',
+    ],
+  });
+  // Tetsuji's spare goat bell: a square-mouthed bell on its leather strap
+  D('sb_goat_bell', {
+    pal: { s: '#8a5a3a', t: '#b07a50', b: '#c8a040', l: '#ecd070', d: '#8a6a28', k: '#4a3a20' },
+    px: [
+      '....oooooooo....',
+      '...ossttttsso...',
+      '...oso....oso...',
+      '...oso....oso...',
+      '...oooooooooo...',
+      '....olbbbbdo....',
+      '....olbbbbdo....',
+      '...olbbbbbbdo...',
+      '...olbbbbbbdo...',
+      '...olbbbbbbdo...',
+      '...olbbbbbbdo...',
+      '...oddddddddo...',
+      '...oooookoooo...',
+      '.......okko.....',
+      '.......ooo......',
+      '................',
+    ],
+  });
+  // Fuki's bell-rope braid: a short hemp-and-red cord, a loop to hang it by, bound and tasselled at the end
+  D('sb_bell_cord', {
+    pal: { r: '#c84a3a', a: '#d2b47c', c: '#ecd8a8', d: '#962e24' },
+    px: [
+      '.....ocrrco.....',
+      '....orooooco....',
+      '....ocooooro....',
+      '.....orccro.....',
+      '......ocraco....',
+      '......oraaro....',
+      '......ocarao....',
+      '.....ocarao.....',
+      '....ocarao......',
+      '....ocraao......',
+      '....oraaro......',
+      '.....ocraco.....',
+      '.....oddddo.....',
+      '....orararco....',
+      '....ocorocoro...',
+      '...orocoroco....',
+    ],
+  });
+  // Sachi's hand-knitted scarf: red, looped, its ends hanging in the children's yellow stripes with fringes
+  D('sb_scarf', {
+    pal: { r: '#b8433a', h: '#d8645a', d: '#8a2e28', y: '#e9c648' },
+    px: [
+      '....ooooooooo...',
+      '...odddddddddoo.',
+      '..odddoooooodddo',
+      '.orrro......orro',
+      '.orrrroooooorrro',
+      '.ohhrrddddhhhhho',
+      '.ohhrrddddrrrro.',
+      '.ohhrrddddrroo..',
+      '.ohhrrddddoo....',
+      '.ohhrroyyyyo....',
+      '.oyyyyoddddo....',
+      '.ohrrroyyyyo....',
+      '.oyyyyoddddo....',
+      '.ohrrrororo.....',
+      '.ohrrro.........',
+      '.roror..........',
+    ],
+  });
+  // Tetsuji's goat cheese: a white round with a wedge cut out, on the checked cloth it came wrapped in
+  D('sb_cheese', {
+    pal: { t: '#fbf6e8', s: '#e0cc98', d: '#c4ac70', i: '#f4dc8c', c: '#e8eef4', e: '#5a7aa8' },
+    px: [
+      '................',
+      '................',
+      '....oooooooo....',
+      '..oottttttttoo..',
+      '.otttttttttttto.',
+      '.ottttttdiiiiio.',
+      '.ottttttdiiiiio.',
+      '.ossssssdiiiiio.',
+      '.ossssssdooooo..',
+      '.odddddddecoo...',
+      '.ooooooooceecoo.',
+      'oceecceecceecceo',
+      'oecceecceecceeco',
+      '.ooceecceecceoo.',
+      '...ooceecceoo...',
+      '.....ooecoo.....',
+    ],
+  });
+  // Yae's amazake: a round white flask with a wooden stopper and a red cord at the neck
+  D('sb_amazake', {
+    pal: { a: '#ece4d2', h: '#fffaf0', d: '#c4b89c', n: '#4a6a9a', k: '#8a6440', r: '#b8402a' },
+    px: [
+      '......oooo......',
+      '.....okkkko.....',
+      '.....okkkko.....',
+      '.....ohaado.....',
+      '.....ohaado.....',
+      '....oorrrroo....',
+      '...ohhhaadrao...',
+      '..ohhhhaaaraao..',
+      '..ohhhaaaaaaao..',
+      '.ohhhaaaaaaaddo.',
+      '.ohnnnnnnnnnndo.',
+      '..oaaaaaaddddo..',
+      '..oaaaaadddddo..',
+      '...oaaadddddo...',
+      '....ooddddoo....',
+      '......oooo......',
+    ],
+  });
+  // ---- Lanternfall -----------------------------------------------------------------------------------------------
+  // the visitor's pass: a card on a cord, a blue heading, and every box stamped red
+  D('lf_visitor_pass', {
+    pal: { p: '#e4ecf0', s: '#a8b8c4', b: '#3a5a88', r: '#c0382a', m: '#c8a040', k: '#6a4a3a' },
+    px: [
+      '..oko......oko..',
+      '...oko....oko...',
+      '....oko..oko....',
+      '.....okooko.....',
+      '...oooommoooo...',
+      '..obbbbmmbbbbo..',
+      '..obbbbbbbbbbo..',
+      '..oppppppppppo..',
+      '..opprpssssppo..',
+      '..oppppppppppo..',
+      '..opprpssssppo..',
+      '..oppppppppppo..',
+      '..opprpssssppo..',
+      '..oppppppppppo..',
+      '..osssssssssso..',
+      '...oooooooooo...',
+    ],
+  });
+  // the reading permit: a slip torn from a pad, stamped red on the front, the back's stamp showing through
+  D('lf_request_slip', {
+    pal: { p: '#f4ecd8', s: '#d4c6a4', k: '#7a6a58', r: '#c0382a', f: '#e8aa98' },
+    px: [
+      '....o.o.o.o.....',
+      '...opopopopo....',
+      '...oppprrrppo...',
+      '...opprrrrrso...',
+      '...opprrrrrso...',
+      '...opprrrrrso...',
+      '...oppprrrpso...',
+      '...opppppppso...',
+      '...opkkkkkpso...',
+      '...offfffppso...',
+      '...ofkkkkkpso...',
+      '...offfffppso...',
+      '...opkkkpppso...',
+      '...osssssssso...',
+      '....oooooooo....',
+      '................',
+    ],
+  });
+  // Akari's basement stacks key: a plain brass key with a round bow and a paper tag
+  D('lf_stacks_key', {
+    pal: { b: '#c09a40', l: '#e6c870', d: '#8a6a24', t: '#f2e8cc', s: '#b8a880', r: '#b8402a' },
+    px: [
+      '....ooo.........',
+      '...olllo........',
+      '..oldddlo.......',
+      '.oldooollo......',
+      '.oldo.olddd.....',
+      '.oldoooldo.dooo.',
+      '..olllldo.orrrro',
+      '...olbdo..otttto',
+      '....oldo..otstto',
+      '....oldo..otttto',
+      '....oldoo.otssto',
+      '....olbllootttto',
+      '....oldoo.otttto',
+      '....olblo..oooo.',
+      '....oldo........',
+      '.....oo.........',
+    ],
+  });
+  // the old minutes: a thick, uneven sheaf of yellowed council papers bound with a red cord
+  D('lf_minutes', {
+    pal: { p: '#ecdca8', e: '#e0cc90', s: '#b8a06a', k: '#6a5a40', r: '#a03a28' },
+    px: [
+      '..oooooooooo....',
+      '.oppppppppppo...',
+      '.orpppppppppso..',
+      'orrrpkpkpkppseo.',
+      '.opppkpkppppseo.',
+      '.opppkpppkppseo.',
+      '.opppppkppppseo.',
+      '.opppkpppkppseo.',
+      '.opppppkpkppseo.',
+      '.orppkpkpkppseo.',
+      'orrrpkpkpkppseo.',
+      '.opppkpkppppseo.',
+      '.oeeeeeeeeeeseo.',
+      '..osssssssssseo.',
+      '..oeeeeeeeeeeeo.',
+      '...ooooooooooo..',
+    ],
+  });
+  // Tōya's hand bell: a messenger's small brass bell on a red cord
+  D('lf_toya_bell', {
+    pal: { b: '#d8b050', l: '#f0d080', w: '#fff0b8', d: '#9a7428', k: '#4a3a20', r: '#b83a32' },
+    px: [
+      '.....orrrro.....',
+      '....orooooro....',
+      '.....orooro.....',
+      '......orro......',
+      '......obbo......',
+      '.....owbbbo.....',
+      '....owbbbbdo....',
+      '....olbbbbdo....',
+      '....olbbbbdo....',
+      '...ollbbbbddo...',
+      '..obbbbbbbdddo..',
+      '..oddddddddddo..',
+      '...ooookkoooo...',
+      '......okko......',
+      '.......oo.......',
+      '................',
+    ],
+  });
+  // Kōhei and Kinu's dried persimmons: two of them, side by side on one small dish
+  D('lf_hoshigaki', {
+    pal: { a: '#c4682c', h: '#e8944c', d: '#86401a', c: '#4a5022', w: '#eef2f4', n: '#4a6a9a' },
+    px: [
+      '................',
+      '................',
+      '...........o....',
+      '.....o...ooco...',
+      '...ooco.ohccco..',
+      '..ohcccohhhaao..',
+      '.ohhhaaahhaaado.',
+      '.ohhaaadhaaaddo.',
+      '.ohaaaddaaadddo.',
+      '.owaadddwadddwo.',
+      'owwwdddwwwwwwwwo',
+      'owwwwwwwwwwwwwwo',
+      '.onnnnnnnnnnnno.',
+      '..oooonnnnoooo..',
+      '......oooo......',
+      '................',
+    ],
+  });
+  // the ferry cap from Umi's office: navy, with a stiff peak and a brass badge, as the keepsake shows it
+  D('lf_ferry_cap', {
+    pal: { n: '#34507c', h: '#5878a8', d: '#22385a', v: '#1a2a44', y: '#e0b84a', w: '#fff0b0' },
+    px: [
+      '................',
+      '................',
+      '......ooooo.....',
+      '.....ohnnnno....',
+      '....ohhnnnnno...',
+      '...ohhhwynnndo..',
+      '..ohhhhyynnnddo.',
+      '..ohhhhnnnnnddo.',
+      '..onnnnnnnnnddo.',
+      '..oddddddddddddo',
+      '.ooddddddddddddo',
+      'ovnnnnnnnvvvooo.',
+      'ovvvvvvvvvvvo...',
+      '.oovvvvvvvoo....',
+      '...ooooooo......',
+      '................',
+    ],
+  });
+  // Hayato's correcting pen: a red pen with a gold band, its nib, and a red line it has just drawn
+  D('lf_red_pen', {
+    pal: { r: '#c0302a', h: '#e0605a', y: '#e0b84a', m: '#9aa4ac' },
+    px: [
+      '................',
+      '.............oo.',
+      '............ohro',
+      '...........ohro.',
+      '..........ohro..',
+      '.........ohro...',
+      '........ohro....',
+      '.......ohro.....',
+      '......ohro......',
+      '.....ohro.......',
+      '....ohro........',
+      '...oyyo.........',
+      '..omro..........',
+      '.ommo...........',
+      '..oo............',
+      'rrrrr...........',
+    ],
+  });
+  // the bell fragment: a broken piece of the drowned bell, bronze with a raised band and green patina
+  D('lf_bell_shard', {
+    pal: { b: '#b08a40', l: '#c8a458', h: '#e8cc80', d: '#80602c', g: '#5a8a6a' },
+    px: [
+      '................',
+      '..........oo....',
+      '.....oo..ohlo...',
+      '...oolloollllo..',
+      '..ollhlllllllo..',
+      '.ollllllllllllo.',
+      '.obbbbbbbbbbbbo.',
+      '..ogbbbbbbbbhbo.',
+      '...obbbbbbhbdo..',
+      '...obbbbhbdbbo..',
+      '..obbbhbdbbbbo..',
+      '.oddhdddddddgdo.',
+      '..oddggdddddddo.',
+      '...oddddoooooo..',
+      '....oddo........',
+      '.....oo.........',
+    ],
+  });
+})(RB.itemArt.def);
+
+
+/* ==== src/content/item_art/c_sa_cr_gd_hall.js ==== */
+/* Item icons: the Still Archive (sa_), the Cloudroad (cr_), the old guardians' gifts (gd_) and the Hall of a Hundred
+ * Tales (hall_). 16×16 authored pixel tables (src/ui/11_item_art.js): '.' clear, 'o' the shared outline ink; light
+ * from the upper left; flat colour with one shade and one highlight, no dithering noise. The keepsakes take their
+ * colours and design from their 32×32 catalogue drawings (src/content/zzzz_keepsakes/), redrawn where 16 pixels need a
+ * clearer outline (the cape, the hood, the scarf, the headband); the Archive's folios and papers follow the chapter's
+ * own drawings of them (src/ui/43f_seq_ch6.js). The books and papers differ in outline and colour, not just detail. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (D) {
+  'use strict';
+  // ---- The Still Archive (chapter 6) -------------------------------------------------------------------------
+  // Kasane's first folio: blue-grey card covers, a blank label, tied round with a red cord whose ends hang loose
+  D('sa_letter_kasane', {
+    pal: { c: '#98a0b4', l: '#b8c0d0', d: '#737b91', w: '#ece5d3', r: '#8a3434', k: '#c0584c' },
+    px: [
+      '...oooooooooo...',
+      '...ollllllldo...',
+      '...olwwwcccdo...',
+      '...olwwwcccdo...',
+      '...olwwwcccdo...',
+      '...olwwwoocdo...',
+      '...olccorrodo...',
+      '...okkkkkrkko...',
+      '...orrrrrrrro...',
+      '...olccorrodo...',
+      '...olcccrrcdo...',
+      '...oddddrdrdo...',
+      '...oooorooroo...',
+      '......oro.oro...',
+      '.....oro..oro...',
+      '......o....o....',
+    ],
+  });
+  // Tōya's note: the bell tower's key slip, a stiff tag on a string, Tōya's four hurried words across its back
+  D('sa_toya_reply', {
+    pal: { p: '#ece4cc', h: '#f8f2e2', s: '#cbbf9f', k: '#3a3036', r: '#a8564a' },
+    px: [
+      '...oooo.........',
+      '..oorroo........',
+      '..orooro........',
+      '..orooro........',
+      '..oorooooooooooo',
+      '..oorhhhhhhhhhso',
+      '.ooprpppkppkppso',
+      '.oppoppkppkppkso',
+      '.oppopkppkppkpso',
+      '.oopppppppppppso',
+      '..oossssssssssso',
+      '...ooooooooooooo',
+      '................',
+      '................',
+      '................',
+      '................',
+    ],
+  });
+  // the council notice: a wide sheet of print columns, water-stained to a tide line, the council's red seal
+  D('sa_notice', {
+    pal: { p: '#e6dcc2', h: '#f4ecd8', t: '#c9b086', u: '#9a7a50', k: '#4e4a58', r: '#a83a32' },
+    px: [
+      '................',
+      'oooooooooooooooo',
+      'ohhhhhhhhhhhhhho',
+      'opppppppppppkppo',
+      'opppppkpkpkpkppo',
+      'opppppkpkpkpkppo',
+      'opppppkpppkpkppo',
+      'opppppkpkpppkppo',
+      'opuuppuukpkukpuo',
+      'outtuuttkuktkuto',
+      'otrrrtttttktttto',
+      'otrrrtttttttttto',
+      'otrrrtttttttttoo',
+      'ottttttttttttoo.',
+      'oooooooooooooo..',
+      '................',
+    ],
+  });
+  // Tae's slip: a small slip with a corner turned down, the bell of the flood night drawn in ink above the water
+  D('sa_tae_slip', {
+    pal: { p: '#eee6d2', h: '#faf5e8', s: '#cfc3a5', k: '#3e3a46', b: '#5f86a8' },
+    px: [
+      '................',
+      '..oooooooooo....',
+      '..ohhhhhhhhoo...',
+      '..opppppppspoo..',
+      '..oppppkkpsspo..',
+      '..opppkkkkpppo..',
+      '..opppkkkkpppo..',
+      '..opppkkkkpppo..',
+      '..oppkkkkkkppo..',
+      '..oppppkpppppo..',
+      '..oppbbppbbppo..',
+      '..opbppbbppbpo..',
+      '..oppppppppppo..',
+      '..osssssssssso..',
+      '..oooooooooooo..',
+      '................',
+    ],
+  });
+  // Isamu's folio: a thin sea-green folio from the Saltglass shelf, the return request pasted on its spine
+  D('sa_folio_isamu', {
+    pal: { c: '#5e968e', l: '#80b6ac', d: '#44736c', s: '#365c57', w: '#eee8d6', r: '#b8443a' },
+    px: [
+      '......ooooooo...',
+      '....ooolllldo...',
+      '....osslcccdo...',
+      '....osslcccdo...',
+      '....owwlcccdo...',
+      '....owwlcccdo...',
+      '....owwlcccdo...',
+      '....owwlcccdo...',
+      '....orrlcccdo...',
+      '....owwlcccdo...',
+      '....osslcccdo...',
+      '....osslcccdo...',
+      '....osslcccdo...',
+      '....osslcccdo...',
+      '....ossdddddo...',
+      '....ooooooooo...',
+    ],
+  });
+  // Ushio's notebook: a battered brown pocket book, a corner folded over, loose recipes sticking out of its pages
+  D('sa_ushio_notes', {
+    pal: { c: '#8a5a3a', l: '#a87450', d: '#6a4028', p: '#efe4c8', s: '#cdbf9e' },
+    px: [
+      '................',
+      '..ooooooooo.....',
+      '..ollllllloooo..',
+      '..olcccccsspso..',
+      '..olcccccssdsooo',
+      '..olcccccccdsppo',
+      '..olcccddccdspso',
+      '..olcccccccdsooo',
+      '..olcccccccdsoo.',
+      '..olcccccccdspo.',
+      '..olcllccccdspo.',
+      '..olcclccccdspo.',
+      '..ollccccccdsoo.',
+      '..odddddddddso..',
+      '..oossssssssso..',
+      '...ooooooooooo..',
+    ],
+  });
+  // the Archive bookmark: a narrow pale card, its red thread through the hole at the top and hanging in a tassel
+  D('sa_bookmark', {
+    pal: { p: '#f0e8d4', h: '#fbf6ea', s: '#d4c8a8', r: '#b8302a', q: '#e0605a' },
+    px: [
+      '.......ooo......',
+      '......orrro.....',
+      '....ooroooro....',
+      '...ohprpsoro....',
+      '...ohprpsoro....',
+      '...ohpopsoro....',
+      '...ohpppsoro....',
+      '...ohpppsoro....',
+      '...ohpppsoqro...',
+      '...ohssssoqro...',
+      '...ohpppsoqro...',
+      '...ohsspsoqro...',
+      '...ohpppsororo..',
+      '...ohpppsoo.o...',
+      '...ossssso......',
+      '....ooooo.......',
+    ],
+  });
+  // Ren's folio: dark plum card covers, Ushio's strong hand on the label, his filing slip standing out of the pages
+  D('sa_ren_folio', {
+    pal: { c: '#5a4a5e', l: '#7a6a7e', d: '#43374a', w: '#e4dcc4', s: '#f6f0e2', p: '#c4b898' },
+    px: [
+      '.........oooo...',
+      '.........ossoo..',
+      '.........ososo..',
+      '...ooooooososo..',
+      '...ollllllldso..',
+      '...olccccccdpo..',
+      '...olcwwwwcdpo..',
+      '...olcwowwcdpo..',
+      '...olcwowocdpo..',
+      '...olcwoowcdpo..',
+      '...olcwoowcdpo..',
+      '...olcwwwwcdpo..',
+      '...olccccccdpo..',
+      '...oddddddddpo..',
+      '...ooppppppppo..',
+      '....oooooooooo..',
+    ],
+  });
+  // ---- The Cloudroad -----------------------------------------------------------------------------------------
+  // the relay's ledger: a thick ochre account book hung on a string, its title in big brush strokes, stitched
+  D('cr_ledger', {
+    pal: { c: '#c8a050', l: '#e2c070', d: '#9c7834', w: '#f4ecd6', s: '#d8caa4', n: '#7a4a2a' },
+    px: [
+      '.....oonnoo.....',
+      '.....onoono.....',
+      '..oooonoonoooo..',
+      '..ollllllllndoo.',
+      '..olcwwwccnndso.',
+      '..olcwowcccndso.',
+      '..olcooocccndwo.',
+      '..olcwowccnndso.',
+      '..olcwwwcccndso.',
+      '..olcwowcccndwo.',
+      '..olcoowccnndso.',
+      '..olcwoocccndso.',
+      '..oddwwwdddndwo.',
+      '..oowwwwwwwwwso.',
+      '...osswsswsssso.',
+      '...oooooooooooo.',
+    ],
+  });
+  // travel papers: a pass under Oiwake's red seal, the box where your name belongs gone blank
+  D('cr_papers', {
+    pal: { p: '#efe6cf', h: '#faf4e4', s: '#cdbf9c', k: '#3a3440', r: '#b03a2e' },
+    px: [
+      '..oooooooooooo..',
+      '..ohhhhhhhhhho..',
+      '..oppppppppppo..',
+      '..oppsssspkkpo..',
+      '..oppshhspkkpo..',
+      '..oppshhspkkpo..',
+      '..oppshhspkkpo..',
+      '..oppshhspkkpo..',
+      '..oppshhsppppo..',
+      '..oppshhspkppo..',
+      '..oppsssspkppo..',
+      '..oprrrpppkppo..',
+      '..oprrrppppppo..',
+      '..oprrrppppppo..',
+      '..osssssssssso..',
+      '..oooooooooooo..',
+    ],
+  });
+  // the letter of guarantee: Shizu's letter on rolled paper, unrolled to her hand and Kumoi's red seal
+  D('cr_proof', {
+    pal: { p: '#f2ead6', h: '#fdf8ec', s: '#d2c4a2', k: '#2e2a34', m: '#b8342a' },
+    px: [
+      '.ooooo..........',
+      '.ohpso..........',
+      '.ohpsoooooooooo.',
+      '.ohpshhhhhhhhho.',
+      '.ohpspppppppppo.',
+      '.ohpspkpkpkpkpo.',
+      '.ohpspkpkpkpkpo.',
+      '.ohpspppkpkpkpo.',
+      '.ohpspmmkpppkpo.',
+      '.ohpspmmppkpkpo.',
+      '.ohpspmmppkpkpo.',
+      '.ohpspppppppppo.',
+      '.ohpsssssssssso.',
+      '.ohpsoooooooooo.',
+      '.ohpso..........',
+      '.ooooo..........',
+    ],
+  });
+  // the old letter: folded small, its address almost gone, lying on the oiled paper that kept it dry fifty years
+  D('cr_message', {
+    pal: { a: '#c89448', b: '#e0b066', c: '#a2702c', p: '#ece0bc', s: '#c8b484', f: '#a49478' },
+    px: [
+      '......oooo......',
+      '.....oobboo.....',
+      '.....obbaao.....',
+      '...oooooooooo...',
+      '..oobopppsoaoo..',
+      '.oobbopffsoaaoo.',
+      'oobbaopfpsoaaaoo',
+      'obbaaossssoaaaco',
+      'obaaaopppsoaacco',
+      'ooaaaopfpsoaccoo',
+      '.ooaaopfpsoccoo.',
+      '..ooaossssocoo..',
+      '...oooooooooo...',
+      '.....oaacco.....',
+      '.....ooccoo.....',
+      '......oooo......',
+    ],
+  });
+  // the seal book: a little folding book opened out in its zigzag, a red station seal on every page
+  D('cr_sealbook', {
+    pal: { p: '#f2ead4', s: '#cdbd98', h: '#fffaf0', r: '#b8342a', c: '#7a5a3a' },
+    px: [
+      '................',
+      '.ooo...ooo...ooo',
+      'oohoo.oohoo.ooho',
+      'ochpoooshpooosho',
+      'ochpposshppossho',
+      'ochppssshppsssho',
+      'ochppssshppsssho',
+      'ochrrsrrhrrsrrho',
+      'ochrrsrrhrrsrrho',
+      'ochppssshppsssho',
+      'ochppssshppsssho',
+      'ochpposshppossho',
+      'ochpoooshpooosho',
+      'oohoo.oohoo.ooho',
+      '.ooo...ooo...ooo',
+      '................',
+    ],
+  });
+  // the Matsuba's guest book: a deep green cover stab-bound with white thread, the inn's pine-needle crest on it
+  D('cr_guestbook', {
+    pal: { g: '#3e6a4a', l: '#5a8a62', d: '#2c4e36', w: '#efe6cc', t: '#e6dcc0', p: '#d8cba8' },
+    px: [
+      '.oooooooooooo...',
+      '.ollllllllldoo..',
+      '.olgggggggtdpo..',
+      '.olwggggwtttto..',
+      '.olwlgglwgtdpo..',
+      '.olgwggwggtdpo..',
+      '.olgwggwgtttto..',
+      '.olggwwgggtdpo..',
+      '.olggwwgggtdpo..',
+      '.olggwwggtttto..',
+      '.olgggggggtdpo..',
+      '.olgggggggtdpo..',
+      '.olggggggtttto..',
+      '.oddddddddddpo..',
+      '.ooppppppppppo..',
+      '..oooooooooooo..',
+    ],
+  });
+  // Oshika's pilgrim book: open in its red brocade covers, every page a temple's red seal and black brushwork
+  D('cr_pilgrimbook', {
+    pal: { p: '#f4ecd8', s: '#d8cbaa', c: '#7a2a34', y: '#d0a850', r: '#c0382c', k: '#2e2a34' },
+    px: [
+      '................',
+      '................',
+      '.oooooooooooooo.',
+      'oopppppoopppppoo',
+      'ocpppppssppkppco',
+      'ocpkprrssppkppco',
+      'ocpkprrssprkppco',
+      'ocpkpppssrrkrpco',
+      'ocpkkppssrrkrpco',
+      'ocpkpppssprkppco',
+      'ocpkpppssppkppco',
+      'ocpkpppssppkppco',
+      'ocpppppsspppppco',
+      'occyccyccyccycco',
+      'oooooooooooooooo',
+      '................',
+    ],
+  });
+  // the parcel of medicine: headache powder wrapped in glossy oiled paper, tied with twine and a bow
+  D('cr_parcel', {
+    pal: { a: '#c08840', h: '#e2b46a', s: '#966426', t: '#f0e4c4', w: '#f8f0dc', r: '#a83e27' },
+    px: [
+      '................',
+      '................',
+      '.....oo..oo.....',
+      '....ottootto....',
+      '..ooottoottooo..',
+      '.ohhhhhtthhhhso.',
+      '.ohaaaattaaaaso.',
+      '.ohaaaattaaaaso.',
+      '.ohaaaattaaaaso.',
+      '.otttttttttttto.',
+      '.ohwwwattaaaaso.',
+      '.ohwrwattaaaaso.',
+      '.ohwwwattaaaaso.',
+      '.osssssttssssso.',
+      '..oooooooooooo..',
+      '................',
+    ],
+  });
+  // ---- The old guardians' gifts (keepsakes) ------------------------------------------------------------------
+  // the founder's miller's cap: flour-white and patched, a button on top, flour still in the cloth
+  D('gd_rw_keepsake', {
+    pal: { w: '#e6dcc4', h: '#f6efdc', s: '#d0c3a4', p: '#c4b694', q: '#a8987a', f: '#ffffff' },
+    px: [
+      '................',
+      '................',
+      '.......oo.......',
+      '....oooqqooo....',
+      '...ohhhhhhhho...',
+      '..ohhhhhhhhhho..',
+      '..ohhhhhhhhhso..',
+      '..ohwqqqwwfwso..',
+      '..ohwppqwwwwso..',
+      '..ohwppqwfwwso..',
+      '.oshwwwwwwwwsso.',
+      'osfsssssssssssso',
+      '.oqqqqqqqqqqqfo.',
+      '..ooqqqqqqqqoo..',
+      '....oooooooo....',
+      '................',
+    ],
+  });
+  // Head Office spectacles: two round lenses catching the light, a thin gold chain hanging between them
+  D('gd_sg_keepsake', {
+    pal: { g: '#cfe0ea', f: '#93a6b6', w: '#ffffff', c: '#e0bc5c', e: '#8e6c26' },
+    px: [
+      '................',
+      '................',
+      '................',
+      '..oooo....oooo..',
+      '.owwggoooowwggo.',
+      '.owgggo..owgggo.',
+      '.ogggfo..ogggfo.',
+      '.oggffo..oggffo.',
+      '..oooo....oooo..',
+      '.c............e.',
+      '.e............c.',
+      '..c..........e..',
+      '...e........c...',
+      '....ce....ce....',
+      '......cece......',
+      '................',
+    ],
+  });
+  // the ember scarf: folded across, one fringed end hanging down, dyed the colour of the First Fire and still warm
+  D('gd_co_keepsake', {
+    pal: { r: '#c4502a', d: '#9a3a1c', e: '#e47448', s: '#f0a050' },
+    px: [
+      '.............s..',
+      '...s..........s.',
+      '..s......oooo...',
+      '.ooooooooeeeeo..',
+      'oreeeeeeoerrdo..',
+      '.orrsrrsoerrdo..',
+      'orrrsrrsoerrdo..',
+      '.orrsrrsosssso..',
+      'orddddddoerrdo..',
+      '.ooooooooerrdo..',
+      '........osssso..',
+      '........oerrdo..',
+      '........oerrdo..',
+      '........oerrdo..',
+      '........ororoo..',
+      '........ororo...',
+    ],
+  });
+  // the star earrings: two chips of starlight, four-pointed and bright, each on a silver hook
+  D('gd_sb_keepsake', {
+    pal: { w: '#eef0ff', h: '#ffffff', b: '#9fb0f4', m: '#c4c8d6' },
+    px: [
+      '.....oo.........',
+      '....ommo........',
+      '...omoomo...oo..',
+      '...omo.o...ommo.',
+      '...omo....omoomo',
+      '...owo....omo.o.',
+      '...owo....omo...',
+      '.oohhhoo..owo...',
+      'owwhhhwbo.owo...',
+      '.oohhboooohhhoo.',
+      '...owo.owwhhhwbo',
+      '...obo..oohhboo.',
+      '....o.....owo...',
+      '..........obo...',
+      '...........o....',
+      '................',
+    ],
+  });
+  // the maker's little bell: bronze, flared at the lip, hanging from a dark cord, its clapper showing
+  D('gd_lf_keepsake', {
+    pal: { b: '#b89a4a', m: '#9a7a3a', s: '#e0c880', d: '#6e5024', c: '#7a3a2a', k: '#4a3418' },
+    px: [
+      '.......oo.......',
+      '......occo......',
+      '......occo......',
+      '.....obbbbo.....',
+      '....obsbbbbo....',
+      '....obsbbbbo....',
+      '....obsbbbbo....',
+      '...omsmmmmmmo...',
+      '...omsmmmmmmo...',
+      '...omsmmmmmmo...',
+      '..omsmmmmmmmmo..',
+      '..ommmmmmmmmmo..',
+      '.oddddddddddddo.',
+      '..oooookkooooo..',
+      '.......oo.......',
+      '................',
+    ],
+  });
+  // the bridge-builder's headband: old indigo tied in a ring, its knot and two loose ends, a white pattern
+  D('gd_mb_keepsake', {
+    pal: { i: '#41689a', d: '#2e4c74', l: '#6a90c0', w: '#dfe6f2' },
+    px: [
+      '........o.......',
+      '....oooowooo....',
+      '...owlllllllo...',
+      '..oiiiiooiiiwo..',
+      '.oiiioo..ooiiio.',
+      '.oiio......oiio.',
+      'oiwio......oiiio',
+      '.oiioo....ooiwo.',
+      '.oddddo..oddddo.',
+      '..odddoooodddo..',
+      '...oddoiioddo...',
+      '....oooidooo....',
+      '.....oooooo.....',
+      '....oiiooddo....',
+      '...oiio..oddo...',
+      '....oo....oo....',
+    ],
+  });
+  // the cloud cape: white as the Elder, from a grey collar to a hem that billows like cloud, beaded with damp
+  D('gd_cr_keepsake', {
+    pal: { w: '#e6eaf0', h: '#f8f9fc', f: '#c2cad6', c: '#9aa2b2', b: '#6e9cd0' },
+    px: [
+      '.....oo..oo.....',
+      '....occoocco....',
+      '...occcccccco...',
+      '...occcbbccco...',
+      '..ohwwwfwwwbfo..',
+      '..ohwfwfwwfwfo..',
+      '..ohwfwfwwfwfo..',
+      '..ohwwwfwwwwfo..',
+      '.ohwfwwfwwwfwfo.',
+      '.ohwfwwfwwwfwfo.',
+      '.ohwwwwfwwwwwfo.',
+      'ohbfwwwfwwwwfwfo',
+      'ohwfwwwfwwbwfwfo',
+      'owwwowwfowwwowfo',
+      '.ooo.ooo.ooo.oo.',
+      '................',
+    ],
+  });
+  // the steam-grey hood: soft grey cloth to a rounded point, dark inside, a little steam still rising off it
+  D('gd_yn_keepsake', {
+    pal: { g: '#b8b2aa', h: '#d4cec6', s: '#9a948c', k: '#4e464c', v: '#8f9cab' },
+    px: [
+      '..........oo....',
+      '...v....oohho...',
+      '.v....oohhggho..',
+      '..v..ohhggggso..',
+      '.v..ohgggggso.v.',
+      '...ohghhgggghv..',
+      '..ohghkkkkggsov.',
+      '..ohggkkkkggso..',
+      '..ohgkkkkkkgso..',
+      '..ohggkkkkggso..',
+      '..ohggkkkkggso..',
+      '.ohggggggggggho.',
+      'ohggsggggggsggho',
+      'ohssssssssssssso',
+      '.oooooooooooooo.',
+      '................',
+    ],
+  });
+  // the First Leaf: one green leaf, its veins drawn dark, an address tag tied to its stem
+  D('gd_ko_keepsake', {
+    pal: { g: '#5a9a4a', d: '#47843a', l: '#7cba68', v: '#2e5a2a', t: '#f4ecd0', n: '#8a7a5a' },
+    px: [
+      '......ooo.......',
+      '.....olggo......',
+      '....olgvggo.....',
+      '...olggvgggo....',
+      '..olgvgvgvggo...',
+      '.olgggvvvggggo..',
+      '.olggggvgggggo..',
+      '.olddvdvdvdddo..',
+      '.oldddvvvddddo..',
+      '..oldddvddddo...',
+      '...olvdvdvdoooo.',
+      '....olvvvdotttto',
+      '.....olvdnntnnto',
+      '......ovnootttto',
+      '......ovo..oooo.',
+      '.......o........',
+    ],
+  });
+  // ---- The Hall of a Hundred Tales ---------------------------------------------------------------------------
+  // the Hall's key ledger: an old dark-red book with its title slip, the Hall's iron key hanging from it on a ring
+  D('hall_ledger', {
+    pal: { c: '#6e2e2a', l: '#8e4a3e', d: '#4e1e1c', w: '#e8dcc0', i: '#7a8690', j: '#b8c4cc' },
+    px: [
+      '.oooooooo.......',
+      'ollllllldo......',
+      'olccccccdio.....',
+      'olcwwcccdwioo...',
+      'olcwwcccdwjiio..',
+      'olcwwcccdwioio..',
+      'olcwwcccdwiiio..',
+      'olcwwcccdwoio...',
+      'olcwwcccdwojo...',
+      'olccccccdwoio...',
+      'olccccccdwoio...',
+      'olccccccdwoioo..',
+      'olccccccdwoiiio.',
+      'oddddddddwoioo..',
+      '.owwwwwwwwoiiio.',
+      '..oooooooo.ooo..',
+    ],
+  });
+  // the Lantern of the Hundred: the Hall's last hand lantern, lit, its paper ribs glowing between dark cap and base
+  D('hall_lantern', {
+    pal: { y: '#f0c060', b: '#f8d878', g: '#fff2c0', r: '#c8903a', k: '#3a3036', h: '#5e5460' },
+    px: [
+      '.......oo.......',
+      '.....ookkoo.....',
+      '....ohhhhhko....',
+      '....okkkkkko....',
+      '...oyyyyyyyyo...',
+      '..orrrrrrrrrro..',
+      '.obbbbggggbbbbo.',
+      '.obbbbggggbbbbo.',
+      '.orrrrggggrrrro.',
+      '.obbbbggggbbbbo.',
+      '.obbbbggggbbbbo.',
+      '..orrrrrrrrrro..',
+      '...oyyyyyyyyo...',
+      '....ohhhhhko....',
+      '....okkkkkko....',
+      '.....oooooo.....',
+    ],
+  });
+})(RB.itemArt.def);
+
+
+/* ==== src/content/item_art/e_yn_lw_atlas.js ==== */
+/* Item icons: Steamhollow (yn_), the Living World's keepsakes (lw_) and the Unwritten Atlas's rewards (atlas_).
+ * 16×16 authored pixel tables (src/ui/11_item_art.js): '.' clear, 'o' the shared outline ink; light from the upper
+ * left; one shade and one highlight, no dithering noise. The keepsakes follow their 32×32 catalogue drawings
+ * (src/content/zzzz_keepsakes/00_items.js); the Atlas cosmetics follow the accessories the figures wear
+ * (src/engine/32k_spriteacc.js, src/engine/35_portraits.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (D) {
+  'use strict';
+  // ---- Steamhollow -------------------------------------------------------------------------------------------------
+  // Rokubei's letter, up the relay: the written sheet drawn half out of its kraft envelope, a red stamp in the corner
+  D('yn_letter', {
+    pal: { w: '#fbf7ec', k: '#3a3036', l: '#e8c690', b: '#d4a86c', n: '#ac8048', r: '#b0402c' },
+    px: [
+      '................',
+      '....oooooooo....',
+      '....owwwwwwo....',
+      '....owkkkkwo....',
+      '....owwwwwwo....',
+      '....owkkkwwo....',
+      '....owwwwwwo....',
+      '..oooooooooooo..',
+      '..olllllllllno..',
+      '..olbbbbbbrrno..',
+      '..olbbbbbbrrno..',
+      '..olbbbbbbbbno..',
+      '..olbbbbbbbbno..',
+      '..onnnnnnnnnno..',
+      '..oooooooooooo..',
+      '................',
+    ],
+  });
+  // the inn's tenugui hung over a bamboo rail: white cotton, the Upper House's ring crest, indigo bands at the hem
+  D('yn_towel', {
+    pal: { w: '#f6f3ea', s: '#c6cad4', i: '#34477e', j: '#24325c', g: '#a08a4a' },
+    px: [
+      '................',
+      '...ooooooooo....',
+      '.oowwwwwwwwsooo.',
+      'ogowwwwwwwwsoggo',
+      '.oosssssssssooo.',
+      '..owwwwwwwwsoso.',
+      '..owwwiiwwwsoso.',
+      '..owwiwwiwwsoso.',
+      '..owwiwwiwwsoso.',
+      '..owwwiiwwwsoso.',
+      '..owwwwwwwwsoso.',
+      '..oiiiiiiiijoso.',
+      '..owwwwwwwwsoso.',
+      '..oiiiiiiiijoso.',
+      '..ooooooooooooo.',
+      '................',
+    ],
+  });
+  // the inn's lent yukata: indigo cotton with white steam curls, a light obi, worn left over right
+  D('yn_yukata', {
+    pal: { m: '#3c4c80', l: '#566aa4', n: '#2a3660', c: '#eeeadc', y: '#d8c8a0', w: '#dce4f2' },
+    px: [
+      '................',
+      '.....oooooo.....',
+      '.oooooccccooooo.',
+      '.ollmmcnncmmmno.',
+      '.olmmmmccmmwmno.',
+      '.olmmmmcmmmmwno.',
+      '.olmomcmmmmomno.',
+      '.owmocmmmmmomno.',
+      '.olwoyyyyyyomno.',
+      '.olmoyyyyyyomno.',
+      '.oooommmmmmoooo.',
+      '....olmmmmno....',
+      '....ommwmmno....',
+      '....ommmwmno....',
+      '....oooooooo....',
+      '................',
+    ],
+  });
+  // the guild's water ledger: a stitched Japanese account book, water-blue cover, a title slip, the binding thread
+  D('yn_ledger', {
+    pal: { b: '#5a82a8', l: '#7aa2c4', n: '#3e6488', w: '#f4ecd8', k: '#3a3036', q: '#c8b890' },
+    px: [
+      '................',
+      '...oooooooooo...',
+      '...ollllllwno...',
+      '...olwwwbbwwo...',
+      '...olwkwbbwno...',
+      '...olwwwbbwno...',
+      '...olwkwbbwwo...',
+      '...olwwwbbwno...',
+      '...olwkwbbwno...',
+      '...olbbbbbwwo...',
+      '...olbbbbbwno...',
+      '...onnnnnnwno...',
+      '...oooooooooo...',
+      '...owwwwwwwqo...',
+      '...oqqqqqqqqo...',
+      '...oooooooooo...',
+    ],
+  });
+  // the spring agreement: a sheet folded once and opened, written in columns, four red seals (two houses, guild, town)
+  D('yn_agreement', {
+    pal: { p: '#f4ecd6', s: '#d8cba8', k: '#4a3e44', r: '#b0382a', h: '#e0705a' },
+    px: [
+      '................',
+      '................',
+      '.oooooooooooooo.',
+      '.oppppppsssssso.',
+      '.opkpkppsskskso.',
+      '.opkpkppsskskso.',
+      '.opppkppsssskso.',
+      '.opkppppsskskso.',
+      '.oppppppsssssso.',
+      '.ohrphrpshrshro.',
+      '.orrprrpsrrsrro.',
+      '.oppppppsssssso.',
+      '.oooooooooooooo.',
+      '................',
+      '................',
+      '................',
+    ],
+  });
+  // spring buns: three steamed brown buns sitting in a little pale wooden box
+  D('yn_buns', {
+    pal: { b: '#b06a38', h: '#d08c50', n: '#844a26', l: '#ecd0a0', w: '#d8b07a', d: '#a87e4a' },
+    px: [
+      '................',
+      '................',
+      '................',
+      '......oooo......',
+      '.ooo.ohhhbo.ooo.',
+      'ohbbohbbbbnobbno',
+      'obbnobbbbnnobnno',
+      'oooooooooooooooo',
+      'ollllllllllllldo',
+      'owwwwwwwwwwwwwdo',
+      'owwwwwwwwwwwwwdo',
+      'oddddddddddddddo',
+      'oooooooooooooooo',
+      '................',
+      '................',
+      '................',
+    ],
+  });
+  // spring eggs: three white eggs in a bamboo basket with a hoop handle, as they hang in the steam box
+  D('yn_eggs', {
+    pal: { e: '#f8f2e4', h: '#ffffff', s: '#d8ccb0', y: '#c8a860', z: '#9a7a3a', r: '#e0c888' },
+    px: [
+      '................',
+      '.....oooooo.....',
+      '...ooyyyyyyoo...',
+      '..oyyooooooyyo..',
+      '.oyo..oheo..oyo.',
+      'oyoo.oheeeo.ooyo',
+      '.oheooeeesooeeo.',
+      'oheeeoeeesoeeeso',
+      'oeeesoeessoeesso',
+      'oooooooooooooooo',
+      'orrrrrrrrrrrrrro',
+      '.oyyzyyzyyzyyzo.',
+      '..ozzzzzzzzzzo..',
+      '...oooooooooo...',
+      '................',
+      '................',
+    ],
+  });
+  // ---- the Living World's keepsakes --------------------------------------------------------------------------------
+  // the iroha print (as its keepsake): a tall cream sheet, columns of kana, the press's red seal at the foot
+  D('lw_iroha_print', {
+    pal: { h: '#fff8e4', p: '#f4ecd0', s: '#d8ccac', k: '#3a3036', r: '#b83a2e', e: '#e8806a' },
+    px: [
+      '................',
+      '...oooooooooo...',
+      '...ohhhhhhhho...',
+      '...oppkpkpkso...',
+      '...oppkpppkso...',
+      '...oppppkppso...',
+      '...oppkpkpkso...',
+      '...oppkpppkso...',
+      '...oppppkppso...',
+      '...oppkpkpkso...',
+      '...oerppppkso...',
+      '...orrppkppso...',
+      '...opppppppso...',
+      '...osssssssso...',
+      '...oooooooooo...',
+      '................',
+    ],
+  });
+  // the tide-stone rubbing (as its keepsake): charcoal on paper, the calendar's ring, a notch for each tide
+  D('lw_ko_tiderubbing', {
+    pal: { p: '#ece4d0', c: '#4a4650', g: '#a8a4b0' },
+    px: [
+      '................',
+      '................',
+      '.oooooooooooooo.',
+      '.oggpppcppppppo.',
+      '.oppcppppppcppo.',
+      '.oppppccccppppo.',
+      '.opppcppppcpppo.',
+      '.opppcpccpcpcpo.',
+      '.opcpcpccpcpppo.',
+      '.opppcppppcpppo.',
+      '.oppppccccppppo.',
+      '.oppcppppppcppo.',
+      '.oppppppcpppggo.',
+      '.oooooooooooooo.',
+      '................',
+      '................',
+    ],
+  });
+  // the "Fish Street" name slip (as its keepsake): a narrow slip on its string, inked, a corner torn on a thorn
+  D('lw_sa_slip', {
+    pal: { t: '#8a7a5a', p: '#f0e6cc', s: '#c8bca0', k: '#4a3a40', v: '#6a5032' },
+    px: [
+      '.......t........',
+      '.......t........',
+      '......otoo......',
+      '.....opppso.....',
+      '.....opkkso.....',
+      '.....oppkso.....',
+      '.....opppso.....',
+      '.....opkkso.....',
+      '.....opkpso.....',
+      '.....opppso...o.',
+      '.....opkkso.oovo',
+      '.....oppksoovvo.',
+      '.....opppoovoo..',
+      '.....oppoovo....',
+      '......oo..o.....',
+      '................',
+    ],
+  });
+  // ---- the Unwritten Atlas's charms --------------------------------------------------------------------------------
+  // the reed knot: a green reed looped and crossed, its two ends hanging
+  D('atlas_charm_reed', {
+    pal: { l: '#c4d47a', g: '#8aa048', d: '#5a7030' },
+    px: [
+      '................',
+      '.....oooooo.....',
+      '....olllllgo....',
+      '...ollooooggo...',
+      '...olo....ogo...',
+      '...olo....ogo...',
+      '...olgo..ogdo...',
+      '....olgoogdo....',
+      '.....olggdo.....',
+      '.....ogdlgo.....',
+      '....oldooldo....',
+      '...oldo..oldo...',
+      '..oldo....oldo..',
+      '..olo......olo..',
+      '..oo........oo..',
+      '................',
+    ],
+  });
+  // the tide-glass: a sea-green glass drop on a brass cap, the tide held inside it
+  D('atlas_charm_tide', {
+    pal: { m: '#c8a858', l: '#c4f0e6', w: '#ffffff', a: '#6cc4bc', d: '#3a8a90', b: '#2e6a9a' },
+    px: [
+      '.......oo.......',
+      '......oooo......',
+      '......ommo......',
+      '......olwo......',
+      '.....olwaao.....',
+      '....olwaaaao....',
+      '....olwaaado....',
+      '...ollaaaaado...',
+      '...olaaaaaado...',
+      '...owwwwwwwwo...',
+      '...obbbbbbbdo...',
+      '....obbbbbdo....',
+      '.....obbddo.....',
+      '......oooo......',
+      '................',
+      '................',
+    ],
+  });
+  // the blank bookmark: a white strip with nothing written on it, cut to a swallowtail, a violet cord and tassel
+  D('atlas_charm_page', {
+    pal: { w: '#fbfaf2', s: '#d0d6e0', t: '#8a4ab8', u: '#743c9e', q: '#b07ad8' },
+    px: [
+      '................',
+      '........tt......',
+      '.......t..too...',
+      '.....ootooouuo..',
+      '....owwtwsoquuo.',
+      '....owwowsoquuo.',
+      '....owwwwsoquuo.',
+      '....owwwwsoqouo.',
+      '....owwwwsoo.o..',
+      '....owwwwso.....',
+      '....owwwwso.....',
+      '....owwwwso.....',
+      '....owwwwso.....',
+      '....owwowso.....',
+      '....owo.oso.....',
+      '.....o...o......',
+    ],
+  });
+  // the mirror shard: a jagged sliver of silvered glass with a bright streak of reflection
+  D('atlas_charm_mirror', {
+    pal: { l: '#e6eef6', m: '#b4c4d6', d: '#7c8ca4', w: '#ffffff', b: '#8eb4dc' },
+    px: [
+      '.........o......',
+      '........owo.....',
+      '.......olwo.....',
+      '.......olwmo....',
+      '......ollwmo....',
+      '......olwmmdo...',
+      '.....ollwmbdo...',
+      '.....olwmbmddo..',
+      '....ollwmbwmdo..',
+      '....olwmmwbmddo.',
+      '...ollwmwmmmmdo.',
+      '...olwmwmmmddo..',
+      '..ollwmmmddoo...',
+      '..oddodddoo.....',
+      '...oo.ooo.......',
+      '................',
+    ],
+  });
+  // ---- the Unwritten Atlas's cosmetics -----------------------------------------------------------------------------
+  // the map-paper sash, tied as it is worn at the hip: a bow of map paper (a river, a red road), its ends hanging
+  D('atlas_cos_sash', {
+    pal: { s: '#d8c89a', l: '#ece0b8', d: '#b4a274', r: '#b0402c', b: '#4a7ab0' },
+    px: [
+      '................',
+      '.oo..........oo.',
+      'olsoo......oosdo',
+      'olssboooooosssdo',
+      'olsbssdlddrsssdo',
+      'olsbssddddsrssdo',
+      'olbsssddddssssdo',
+      'olsssddddddssrdo',
+      'odssdosdsdodssdo',
+      'oddoosdoosdooddo',
+      '.oo.osdoosdo.oo.',
+      '...osdo..osdo...',
+      '...oso....odo...',
+      '....o......o....',
+      '................',
+      '................',
+    ],
+  });
+  // the compass-rose pin: four gold points round a blue heart
+  D('atlas_cos_pin', {
+    pal: { l: '#fff0a8', g: '#e8c860', d: '#a8842c', b: '#3a5a8a', c: '#8ab0e0' },
+    px: [
+      '.......o........',
+      '......olo.......',
+      '......olo.......',
+      '.....ollgo......',
+      '.....ollgo......',
+      '...oolggggoo....',
+      '.oollgcbbgggoo..',
+      'ollllgbbbgggddo.',
+      '.oogggbbbdddoo..',
+      '...oogggddoo....',
+      '.....oggdo......',
+      '.....oggdo......',
+      '......ogo.......',
+      '......ogo.......',
+      '.......o........',
+      '................',
+    ],
+  });
+  // the little lantern: a paper chochin still lit, dark cap and foot, hung from its hook
+  D('atlas_cos_lamplet', {
+    pal: { y: '#ffd27a', h: '#fff0b8', a: '#e8a040', k: '#3a3440', i: '#8a8490' },
+    px: [
+      '.......ii.......',
+      '.....ooiioo.....',
+      '....okkkkkko....',
+      '...ohhyyyyyao...',
+      '..ohhyyyyyyyao..',
+      '..oaaaaaaaaaao..',
+      '..ohhyyyyyyyao..',
+      '..ohyyyyyyyyao..',
+      '..oaaaaaaaaaao..',
+      '..ohhyyyyyyyao..',
+      '...ohyyyyyaao...',
+      '....okkkkkko....',
+      '.....oooooo.....',
+      '................',
+      '................',
+      '................',
+    ],
+  });
+  // the quill: a long white feather cut to a nib, the cartographer's pen worn behind the ear
+  D('atlas_cos_quill', {
+    pal: { w: '#f4f0e0', v: '#d8d0bc', q: '#b8a88a', n: '#6a5a3a', k: '#3a3036' },
+    px: [
+      '............oo..',
+      '..........oowwo.',
+      '.........owwqvo.',
+      '........owwqvvo.',
+      '.......owwqvvvo.',
+      '......owwqvvvo..',
+      '.....owwqvvvo...',
+      '....owwqvvvo....',
+      '...owwqvvoo.....',
+      '...owqvvo.......',
+      '...oqvoo........',
+      '..oqoo..........',
+      '.ono............',
+      'oko.............',
+      '.o..............',
+      '................',
+    ],
+  });
+  // the pressed road-flower: a flattened pale blue five-petalled flower on its stem
+  D('atlas_cos_flower', {
+    pal: { p: '#9fb6ea', l: '#c8d8f6', d: '#6a84c0', y: '#f0d060', g: '#5a8a42', h: '#8ab868' },
+    px: [
+      '......oooo......',
+      '....oolpppoo....',
+      '...ololpppopo...',
+      '..olldppppdppo..',
+      '..olpppyypppdo..',
+      '..olpppyypppdo..',
+      '...odppppppdo...',
+      '..olpppddpppdo..',
+      '...opppgoppdo...',
+      '....opdgoddo....',
+      '.....oogooo.....',
+      '....ohhgo.......',
+      '.....ohgoo......',
+      '......oghho.....',
+      '......ogho......',
+      '.......oo.......',
+    ],
+  });
+  // the traveller's cape: a slate-green hooded cape, fastened at the throat with a gold clasp
+  D('atlas_cos_cape', {
+    pal: { c: '#51666e', l: '#6e8690', d: '#3a4a52', g: '#e8c860', n: '#8a4a3a' },
+    px: [
+      '......oooo......',
+      '.....olccdo.....',
+      '....olcccddo....',
+      '....olcccddo....',
+      '...ooddggddoo...',
+      '..ollccnnccddo..',
+      '..olcccnnccddo..',
+      '.ollcccnncccddo.',
+      '.olccdcnncdcddo.',
+      '.olccdcnncdcddo.',
+      'ollccdcnncdccddo',
+      'olcccdcnncdccddo',
+      'olcccdcnncdccddo',
+      'olcccdcnncdccddo',
+      'olcccdcnncdccddo',
+      '.oooooooooooooo.',
+    ],
+  });
+  // the cartographer's compass: a brass case on its ring, a pale face, the red needle pointing north
+  D('atlas_cos_compass', {
+    pal: { h: '#fff0a8', g: '#e8c860', d: '#a8842c', f: '#f4ecd0', r: '#c0402a', k: '#3a3440' },
+    px: [
+      '......oggo......',
+      '.....ogoogo.....',
+      '......oggo......',
+      '......oooo......',
+      '.....ohhggo.....',
+      '....ohffffgo....',
+      '...ohffrrffdo...',
+      '..ohfffrrfffdo..',
+      '..ohdffrrffddo..',
+      '..ohdffkkffddo..',
+      '..ogfffkkfffdo..',
+      '...ogffkkffdo...',
+      '....ogffffdo....',
+      '.....oddddo.....',
+      '......oooo......',
       '................',
     ],
   });
@@ -192477,7 +194949,7 @@ lq_kayo[surprise]: ヤス おじさん ！ {生|い}きて いた んです ね 
 :both
 ?(comp=mio) !gesture comp emphatic
 ?(comp=mio&quest.lf_mio=done) comp: カヨ さん 。 {怖|こわ}い なら 、 {怖|こわ}い と {言|い}って いい んです 。 {嫌|いや} なら 、 {嫌|いや} と {言|い}って いい 。 …… わたし も 、 それ を {覚|おぼ}えた ばかり です 。 || Kayo. If you're afraid, you can say you're afraid. If you don't want to, you can say no. …I've only just learned that myself.
-?(comp=mio&!quest.lf_mio=done) comp: カヨ さん 。 {怖|こわ}い なら 、 {怖|こわ}い と {言|い}って いい んです 。 {嫌|いや} なら 、 {嫌|いや} と {言|い}って いい 。 …… わたし も 、 まだ {練習|れんしゅう} {中|ちゅう} です けど 。 || Kayo. If you're afraid, you can say you're afraid. If you don't want to, you can say no. …I'm still practising that myself.
+?(comp=mio&!quest.lf_mio=done) comp: カヨ さん 。 {怖|こわ}い なら 、 {怖|こわ}い と {言|い}って いい んです 。 {嫌|いや} なら 、 {嫌|いや} と {言|い}って いい 。 …… わたし も 、 まだ {練習|れんしゅう} {中|ちゅう} です けど 。 || Kayo. If you're afraid, you can say you're afraid. If you don't want to, you can say no. …I'm still practicing that myself.
 ?(comp=nao) !gesture comp nod
 ?(comp=nao) comp: {怖|こわ}い の は 、 {大事|だいじ} な もの が まだ そこ に ある から だ 。 {空|から}っぽ なら 、 {怖|こわ}く ない 。 || You're afraid because something that matters is still there. If it were empty, you wouldn't be.
 ?(comp=ren) !gesture comp palm lq_kayo
@@ -198603,7 +201075,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 未確認|みかくにん|n|A|unconfirmed
 見回り|みまわり|n|I|rounds, a patrol
 大金持ち|おおがねもち|n|I|a very rich person
-練習台|れんしゅうだい|n|A|someone or something to practise on
+練習台|れんしゅうだい|n|A|someone or something to practice on
 番付|ばんづけ|n|A|programme (of a performance), playbill; ranking list
 木戸銭|きどせん|n|A|admission fee (to a show; old-fashioned)
 上演|じょうえん|vs|I|staging (a play), putting on a performance
@@ -199545,7 +202017,7 @@ mio: {雪鈴|ゆきすず} の {吹雪|ふぶき} も 、 {書庫|しょこ} の
 :pq
 ?(quest.lf_mio=done) mio: {記録館|きろくかん} で タダシ さん に {言|い}えた の も 、 $name が {背中|せなか} に {手|て} を {当|あ}てて くれた から 。 {一人|ひとり} じゃ 、 {声|こえ} が {出|で}なかった 。 || I could say it to Tadashi at the Records Hall because you had a hand on my back. On my own, my voice wouldn't have come out.
 ?(!quest.lf_mio=done&quest.lf_mio>=2) mio[think]: {灯落|ひおち} に 、 まだ {返事|へんじ} を して いない {頼|たの}み{事|ごと} が {一|ひと}つ ある の 。 {自分|じぶん} の {声|こえ} で 、 ちゃんと {返|かえ}す 。 {急|いそ}がない けど 。 || There's still one request in Lanternfall I haven't answered. I'll answer it properly, in my own voice. Not in a hurry, though.
-?(!quest.lf_mio>=2) mio[think]: {断|ことわ}る の は 、 まだ {練習|れんしゅう} {中|ちゅう} 。 {店|みせ} の {札|ふだ} が 、 {最初|さいしょ} の {一枚|いちまい} 。 || I'm still practising saying no. The sign on my shop is the first page.
+?(!quest.lf_mio>=2) mio[think]: {断|ことわ}る の は 、 まだ {練習|れんしゅう} {中|ちゅう} 。 {店|みせ} の {札|ふだ} が 、 {最初|さいしょ} の {一枚|いちまい} 。 || I'm still practicing saying no. The sign on my shop is the first page.
 mio: {旅|たび} の {間|あいだ} 、 わたし ばかり {薬|くすり} を {配|くば}って いた {気|き} が する けど 、 {本当|ほんとう} は わたし の {方|ほう} が {休|やす}ませて もらって た 。 || All through the journey it felt like I was the one handing out remedies. Really, you were the one letting me rest.
 ?(bond>=trusted) mio[smile]: {具合|ぐあい} を {聞|き}かれる {側|がわ} に なる の 、 {最初|さいしょ} は {落|お}ち{着|つ}かなかった の よ 。 {今|いま} は 、 {少|すこ}し {慣|な}れた 。 || Being the one asked how I'm feeling unsettled me at first. I'm a little used to it now.
 
@@ -199896,7 +202368,7 @@ mio: {休|やす}んで も {怖|こわ}くなかった {理由|りゆう} を {
 !hook pages_choose theme
 !if pages.pick=later -> mlater
 ?(pages.pick=pause) !gesture mio nod pc
-?(pages.pick=pause) mio[smile]: うん 。 {休|やす}む {練習|れんしゅう} の {記録|きろく} ね 。 {処方|しょほう} より 、 ずっと {大事|だいじ} かも 。 || Mm. A record of practising rest. Maybe more important than any prescription.
+?(pages.pick=pause) mio[smile]: うん 。 {休|やす}む {練習|れんしゅう} の {記録|きろく} ね 。 {処方|しょほう} より 、 ずっと {大事|だいじ} かも 。 || Mm. A record of practicing rest. Maybe more important than any prescription.
 ?(pages.pick=share) !gesture mio emphatic
 ?(pages.pick=share) mio: {分|わ}け{合|あ}う {方|ほう} ね 。 …… わたし が {全部|ぜんぶ} やろう と したら 、 {止|と}めて よ 。 || Sharing, then. …If I try to do everything myself, stop me.
 mio: {次|つぎ} の {道|みち} で 、 {一|ひと}つ だけ {覚|おぼ}えて おこう 。 {無理|むり} に じゃ なくて 、 {自然|しぜん} に 。 || On the next road, let's remember just one thing. Not forcing it — naturally.
@@ -200379,7 +202851,7 @@ nao: {出口|でぐち} は {二|ふた}つ 。 {連|つ}れ は {一人|ひと�
 # ======================================================================================
 @scene road.mio.h1
 mio: {瓶|びん} の ラベル 、 {少|すこ}し でも {曲|ま}がって いる と {気|き} に なる の 。 {旅|たび} の {間|あいだ} も 、 {毎晩|まいばん} {直|なお}して た 。 || If a bottle label's even slightly crooked, it bothers me. I straightened them every night on the journey.
-mio: {最近|さいきん} は 、 {一|ひと}つ だけ {曲|ま}がった まま に して おく {練習|れんしゅう} を してる の 。 …… {三日|みっか} で {直|なお}しちゃった けど 。 || Lately I've been practising leaving just one crooked. …I fixed it after three days.
+mio: {最近|さいきん} は 、 {一|ひと}つ だけ {曲|ま}がった まま に して おく {練習|れんしゅう} を してる の 。 …… {三日|みっか} で {直|なお}しちゃった けど 。 || Lately I've been practicing leaving just one crooked. …I fixed it after three days.
 
 @scene road.mio.h2
 mio: お{茶|ちゃ} は 、 {疲|つか}れて いる {時|とき} ほど {薄|うす}く {淹|い}れる の 。 {濃|こ}い と 、 {眠|ねむ}れなく なる から 。 || The more tired you are, the weaker I make the tea. Strong tea keeps you awake.
@@ -200393,7 +202865,7 @@ pc: …… {今|いま} は ？ || …And right now?
 mio[smile]: {聞|き}かれた から {言|い}う ね 。 {大丈夫|だいじょうぶ} そう 。 || Since you asked: you look fine.
 
 @scene road.mio.h4
-mio: {一日|いちにち} {一回|いっかい} 、 {何|なに}か に 「 いいえ 」 と {言|い}う {練習|れんしゅう} を してる の 。 {小|ちい}さな こと で いい から 。 || Once a day I practise saying "no" to something. Small things are fine.
+mio: {一日|いちにち} {一回|いっかい} 、 {何|なに}か に 「 いいえ 」 と {言|い}う {練習|れんしゅう} を してる の 。 {小|ちい}さな こと で いい から 。 || Once a day I practice saying "no" to something. Small things are fine.
 mio: {昨日|きのう} は 、 {三杯目|さんばいめ} の お{茶|ちゃ} を {断|ことわ}った 。 {自分|じぶん} で {淹|い}れた お{茶|ちゃ} だ けど 。 || Yesterday I turned down a third cup of tea. One I'd made myself.
 ?(bond>=trusted) mio[laugh]: …… $name に も 、 {今度|こんど} {何|なに}か {断|ことわ}って みよう かな 。 {練習台|れんしゅうだい} に なって くれる ？ || …Maybe I'll try refusing you something next. Will you be my practice partner?
 
@@ -210077,7 +212549,7 @@ RB.content.wordplay = RB.content.wordplay || { lines: [], gestures: {}, reflecti
 
   // ---- Mio -------------------------------------------------------------------------------------------------
   L('mio', 'invite', [
-    { expr: 'shy', jp: '{少|すこ}し 、 しりとり を しません か 。 …… {役|やく} に {立|た}たない {遊|あそ}び を 、 {練習|れんしゅう} {中|ちゅう} なん です 。', en: 'Shall we play a little shiritori? …I\'m practising games that aren\'t useful for anything.' },
+    { expr: 'shy', jp: '{少|すこ}し 、 しりとり を しません か 。 …… {役|やく} に {立|た}たない {遊|あそ}び を 、 {練習|れんしゅう} {中|ちゅう} なん です 。', en: 'Shall we play a little shiritori? …I\'m practicing games that aren\'t useful for anything.' },
   ]);
   L('mio', 'rules', [
     { jp: '{前|まえ} の {言葉|ことば} の {最後|さいご} の {字|じ} で {始|はじ}めます 。 ん で {終|お}わる {言葉|ことば} は {負|ま}け 、 {同|おな}じ {言葉|ことば} は {一度|いちど} だけ です 。', en: 'Begin with the last kana of the word before. A word ending in ん loses, and each word only once.' },
@@ -210520,7 +212992,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       return { id: 'shiritori', label: waiting ? { jp: W.labels.resume.jp, en: 'Shiritori: resume the match' } : W.labels.play, run: () => { U().launchAfterScene({ source: 'companion-talk', resume: !!waiting }); } };
     });
   }
-  // Words › Ways to practise: where it is offered; "Begin here" only at a rest stop, never remotely
+  // Words › Ways to practice: where it is offered; "Begin here" only at a rest stop, never remotely
   if (RB.practice && RB.practice.addActivity) {
     RB.practice.addActivity({
       id: 'shiritori', en: 'Shiritori with your companion', jp: W.labels.title.jp, icon: 'talk', order: 20, companion: true,
@@ -210652,7 +213124,7 @@ RB.lex.add(RB.lex.parseTable(`
 /* ==== src/content/workshop/10_families.js ==== */
 /* The Language Workshop (expansion L7–L17b; docs/future/plan/05_LANGUAGE.md): one fully worked example of each new
  * language-task family, at all four levels. They are the templates the new chapters' tasks follow, and a place to try
- * each family on its own (Words › Ways to practise › The workshop). Situations are small and everyday; the devices of
+ * each family on its own (Words › Ways to practice › The workshop). Situations are small and everyday; the devices of
  * L10 are labelled as the game's own magic, not as how Japanese works. */
 var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
@@ -213271,7 +215743,7 @@ RB.script.add(`
 yn_rokubei: {皆|みな} 、 {集|あつ}まった 。 {上|かみ}の{湯|ゆ} 、 {下|しも}の{湯|ゆ} 、 {湯守|ゆもり} 。 {湯|ゆ} の {代|か}わり に は 、 アキ が {座|すわ}る 。 {湯|ゆ} の {顔色|かおいろ} が {分|わ}かる の は 、 あいつ だけ だ 。 || Everyone's here. The Upper House, the Lower House, the bath-keepers. Aki sits in for the spring. She's the only one who can read its face.
 yn_rokubei: {俺|おれ} は {湯守|ゆもり} だ から 、 {中立|ちゅうりつ} に は なれない 。 …… {話|はなし} の {舵|かじ} を 、 {取|と}って くれない か 。 || I'm a bath-keeper, so I can't be neutral. …Would you take the helm of the talk?
 ?(comp=nao&yn_nao_madeup) comp: {全員|ぜんいん} に {言|い}わせて やれ 。 {最後|さいご} まで 。 …… {昨日|きのう} {言|い}った こと は 、 {取|と}り{消|け}す 。 || Let every one of them have their say. All the way. …What I said yesterday, I take back.
-?(comp=mio) comp[smile]: {大丈夫|だいじょうぶ} 。 {断|ことわ}る の も 、 {聞|き}く の も 、 {練習|れんしゅう} して きました から 。 {隣|となり} に います 。 || It's all right. I've practised saying no, and listening. I'm right beside you.
+?(comp=mio) comp[smile]: {大丈夫|だいじょうぶ} 。 {断|ことわ}る の も 、 {聞|き}く の も 、 {練習|れんしゅう} して きました から 。 {隣|となり} に います 。 || It's all right. I've practiced saying no, and listening. I'm right beside you.
 ?(comp=ren&yn_ren_madeup) comp[smile]: {一番|いちばん} {古|ふる}い {名前|なまえ} と 、 {一番|いちばん} {新|あたら}しい {名前|なまえ} 。 {両方|りょうほう} を {同|おな}じ {灯|ひ} に 。 || The oldest name and the newest. Both on the same lamp.
 ?(comp=suzu) comp[smirk]: {幕|まく} が {上|あ}がる わ 。 {台本|だいほん} は ない けど 、 {客|きゃく} は {本気|ほんき} よ 。 || Curtain up. There's no script, but the audience means it.
 !encounter yn.mediation
@@ -215926,7 +218398,7 @@ narr: {子|こ}ども は {水車|すいしゃ} の そば から {動|うご}�
 /* Saltglass's Living World (C-87; docs/future/work/LW1_AUTHORING.md, LW1_ROLLOUT.md; plan 06_WORLD.md W1-W3, W5, W6).
  * The town is the harbour and its rooms; its routines run once Chapter 2 is over (`ch2_done`).
  *   Routines (W2): Daigo carries on the quay, eats at his carved seat in the Gull, or shifts Kiyo's fish boxes at the
- *     market; Tobi plays on the beach, practises reading addresses at the post box, or watches for boats from the
+ *     market; Tobi plays on the beach, practices reading addresses at the post box, or watches for boats from the
  *     west point; Fuku sits outside her house, wipes the Chidori-maru's nameplate at the little shrine on the beach,
  *     or takes the sun at the bench (only once the nameplate is there: she is pinned until then, and while the
  *     licence's first step needs her); Wataru tallies in No. 2 Warehouse, rewrites the quay's crate labels, or copies
@@ -215993,7 +218465,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { map: 'sg.harbor', x: 38, y: 22, dir: 'up', perform: { act: 'carry', traits: ['brisk'] }, line: ['キヨ さん の {箱|はこ} を {運|はこ}んでる ん だ 。 {重|おも}い が 、 {札|ふだ} が {白|しろ}く ならねえ から {楽|らく} な もん だ ！', 'Shifting Kiyo\'s boxes. Heavy, but the tags don\'t go blank any more, so it\'s easy work!'] },
   ] });
   L.routine('saltglass', 'tobi', { base: 'sg.harbor:tobi', pin: 'quest.sg_cove=0|quest.sg_seaglass=0', slots: [
-    { map: 'sg.harbor', x: 37, y: 12, dir: 'left', line: ['{宛名|あてな} を {読|よ}む {練習|れんしゅう} ！ {配達人|はいたつにん} に なる ん だ から ！ {右|みぎ} と {左|ひだり} は 、 もう {間違|まちが}えない よ 。', 'Practising reading addresses! I\'m going to be a courier! And I don\'t mix up right and left any more.'] },
+    { map: 'sg.harbor', x: 37, y: 12, dir: 'left', line: ['{宛名|あてな} を {読|よ}む {練習|れんしゅう} ！ {配達人|はいたつにん} に なる ん だ から ！ {右|みぎ} と {左|ひだり} は 、 もう {間違|まちが}えない よ 。', 'Practicing reading addresses! I\'m going to be a courier! And I don\'t mix up right and left any more.'] },
     { map: 'sg.harbor', x: 5, y: 28, dir: 'down', line: ['ここ から だ と 、 {船|ふね} が {帰|かえ}って くる の が {一番|いちばん} {早|はや}く {見|み}える ん だ よ 。 {海|うみ} ガラス も 、 {時々|ときどき} {落|お}ちてる ！', 'From here you see the boats coming home first. And sometimes there\'s sea glass lying about!'] },
   ] });
   L.routine('saltglass', 'fuku', { base: 'sg.harbor:fuku', pin: '!quest.sg_seaglass=done|quest.sea_licence=0', slots: [

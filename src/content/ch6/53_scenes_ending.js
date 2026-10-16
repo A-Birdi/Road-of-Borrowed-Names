@@ -149,7 +149,7 @@ akari: $name さん ！ …… {父|ちち} と 、 {手紙|てがみ} が や�
 ?(comp=mio) !gesture comp laugh
 ?(comp=mio) mio[laugh]: …… {聞|き}いた ？ {今|いま} の 。 {断|ことわ}った 。 ちゃんと 、 {丁寧|ていねい} に 。 || …Did you hear that? I said no. Properly, and politely.
 ?(comp=ren) !gesture comp point prop:lamppost
-?(comp=ren) ren: {灯落|ひおち} の {灯籠|とうろう} 、 {名前|なまえ} が {全部|ぜんぶ} {戻|もど}って います 。 …… {一本|いっぽん} だけ 、 {字|じ} が {下手|へた} です 。 {新|あたら}しい {字|じ} だ 。 {誰|だれ}か が 、 {練習|れんしゅう} して いる 。 || Every lantern in Lanternfall has its name back. …Just one has clumsy writing. New writing. Someone's practising.
+?(comp=ren) ren: {灯落|ひおち} の {灯籠|とうろう} 、 {名前|なまえ} が {全部|ぜんぶ} {戻|もど}って います 。 …… {一本|いっぽん} だけ 、 {字|じ} が {下手|へた} です 。 {新|あたら}しい {字|じ} だ 。 {誰|だれ}か が 、 {練習|れんしゅう} して いる 。 || Every lantern in Lanternfall has its name back. …Just one has clumsy writing. New writing. Someone's practicing.
 ?(comp=suzu) !gesture comp size
 ?(comp=suzu) suzu: {広場|ひろば} で {揉|も}めてる {声|こえ} 、 {最高|さいこう} の {音楽|おんがく} だ ね 。 {入場料|にゅうじょうりょう} を {取|と}りたい くらい 。 || The squabbling in the square — finest music there is. I could charge admission.
 

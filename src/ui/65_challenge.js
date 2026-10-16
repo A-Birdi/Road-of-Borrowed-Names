@@ -732,7 +732,7 @@ RB.challenge = (function () {
         const step = id ? RB.tasks.prepare(RB.tasks.stepFor(id) || RB.tasks.next({})) : RB.tasks.next({});
         if (!step) break;
         step.title = 'Practice ' + (i + 1) + ' / 5 (optional)';
-        const r = await runStep(step, { ctxTag: 'practice', cancelLabel: 'Stop practising' });
+        const r = await runStep(step, { ctxTag: 'practice', cancelLabel: 'Stop practicing' });
         if (r.cancelled) break;
       }
     } finally {

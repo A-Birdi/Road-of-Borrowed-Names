@@ -609,7 +609,7 @@ RB.ui.fishing = (function () {
     };
   }
 
-  // ---- Words › Ways to practise (no remote launch: Begin only at a station, in a safe world) ---------------------------------------
+  // ---- Words › Ways to practice (no remote launch: Begin only at a station, in a safe world) ---------------------------------------
   RB.practice.addActivity({
     id: 'fishing', order: 10, icon: 'fish',
     en: 'A Quiet Cast — fishing for Yasu\'s survey', jp: '{静|しず}か な {釣|つ}り',

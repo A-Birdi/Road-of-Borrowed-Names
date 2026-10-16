@@ -12,7 +12,7 @@
  * candidate is never a move: Play word is. An invalid draft is explained and the
  * turn kept. No clock: the companion's short thinking gesture can be skipped.
  * Other views (rules, the bank, look back, the primer) are in 87_wordplay_views.js;
- * Company, Ways to practise and the rest menu in 87_wordplay_links.js. */
+ * Company, Ways to practice and the rest menu in 87_wordplay_links.js. */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
 RB.ui.wordplay = RB.ui.wordplay || {};

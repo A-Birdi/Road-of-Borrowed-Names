@@ -75,7 +75,7 @@ export default async (t) => {
   t.eq((C.scriptErrors || []).filter((e) => /hall/.test(e)), [], 'the Hall\'s scenes parse');
   t.ok(C.stamps['hall.w8'] && C.stamps['hall.w8'].hidden, 'its stamp, hidden until the tale is told');
   t.ok(ops('hall.door_w8').includes('hook:hall_card w8') && w8.trials.length === 10, 'the eighth alcove opens onto a told tale');
-  t.ok(['sou_hear', 'sou_look', 'rashii', 'you_mitai', 'hazu', 'kamo', 'ni_chigainai', 'to_no_koto'].every((g) => RB.grammar.get(g)), 'what it practises is grammar the game teaches');
+  t.ok(['sou_hear', 'sou_look', 'rashii', 'you_mitai', 'hazu', 'kamo', 'ni_chigainai', 'to_no_koto'].every((g) => RB.grammar.get(g)), 'what it practices is grammar the game teaches');
 
   // ---- the trials, end to end -----------------------------------------------------------------------------------------
   const SLIPCAT = { 0: { s1: 'seen', s2: 'heard', s3: 'told', s4: 'guess', s5: 'seen' }, 1: { s1: 'heard', s2: 'seen', s3: 'told', s4: 'told', s5: 'guess' } };

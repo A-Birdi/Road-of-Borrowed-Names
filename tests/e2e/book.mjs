@@ -274,7 +274,7 @@ await test('the inner pages are organised: each thing said once, related things 
     const step = document.querySelector('.folio.book .qdetail .obj');
     const stepText = step ? step.querySelector('.en').textContent : '';
     const shown = [...document.querySelectorAll('.folio.book .obj')].filter((e) => vis(e) && e.querySelector('.en') && e.querySelector('.en').textContent === stepText).length;
-    const titles = [...document.querySelectorAll('.folio.book .leaf:first-child button.entry .t > .en')].map((e) => getComputedStyle(e).display);
+    const titles = [...document.querySelectorAll('.folio.book .leaf:first-of-type button.entry .t > .en')].map((e) => getComputedStyle(e).display);
     const way = document.querySelector('.folio.book .qdetail .qway');
     const follow = document.querySelector('.folio.book .qdetail [data-follow]');
     const next = document.querySelector('.folio.book .qdetail .qnext');

@@ -29,7 +29,7 @@ RB.audio = RB.audio || {};
     title: 'The Orchard Road',
     kind: 'area',
     motifs: ['road'],
-    notes: 'Chapter 3 route (A mixolydian, 92): the slope up through the persimmon terraces, someone practising for the festival. The road motif opens a shinobue tune over a koto figure; A2 doubles it an octave down on shamisen, the min’yō way; B hands the Cinder Orchard tune to the koto with the shinobue answering — the village ahead; C turns to A minor on shakuhachi over a slow ōdaiko heartbeat — the fire nobody mentions.',
+    notes: 'Chapter 3 route (A mixolydian, 92): the slope up through the persimmon terraces, someone practicing for the festival. The road motif opens a shinobue tune over a koto figure; A2 doubles it an octave down on shamisen, the min’yō way; B hands the Cinder Orchard tune to the koto with the shinobue answering — the village ahead; C turns to A minor on shakuhachi over a slow ōdaiko heartbeat — the fire nobody mentions.',
     key: 'A', mode: 'mixolydian', bpm: 92, loopFrom: 1,
     tracks: {
       lead: { i: 'shinobue', o: 5, v: 0.5, rv: 0.28 },

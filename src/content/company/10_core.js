@@ -88,7 +88,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     text: T('{沈|しず}んだ {書庫|しょこ} が 「 {返送|へんそう} 」 した {名前|なまえ} が 、 {手紙|てがみ} の {雨|あめ} に なって {港|みなと} に {戻|もど}った 。 {渡|わた}し{船|ぶね} が また {動|うご}く 。', 'The names the Drowned Archive had "returned" came back over the harbour as a rain of letters. The ferry runs again.'),
     reply: {
       nao: T('{宛名|あてな} の {読|よ}める {手紙|てがみ} を 、 {読|よ}めない {箱|はこ} に {入|い}れる 。 …… {同|おな}じ こと を した こと が ある 。 {一回|いっかい} だけ 。', 'Putting a letter with a readable address in the unreadable box. …I\'ve done the same thing. Once.'),
-      mio: T('オウミ さん みたい に 、 {優|やさ}しくて {厳|きび}しい の って 、 {難|むずか}しい ね 。 …… {明日|あした} から 、 {練習|れんしゅう} して みる 。', 'Being kind and strict at once, like Ōmi — it\'s hard. …I\'ll start practising tomorrow.'),
+      mio: T('オウミ さん みたい に 、 {優|やさ}しくて {厳|きび}しい の って 、 {難|むずか}しい ね 。 …… {明日|あした} から 、 {練習|れんしゅう} して みる 。', 'Being kind and strict at once, like Ōmi — it\'s hard. …I\'ll start practicing tomorrow.'),
       ren: T('…… ええ 。 だと すれば 、 {取|と}り{戻|もど}せる かも しれません 。 {返送|へんそう} は {取|と}り{消|け}せる と 、 {今日|きょう} {分|わ}かりました から 。', '…Yes. And if so, it might be retrieved. Today we learned that a return can be cancelled.'),
       suzu: T('{嘘|うそ} に は 、 {帳簿|ちょうぼ} に {書|か}けない {嘘|うそ} も ある の 。 {人|ひと} を {慰|なぐさ}める ため の やつ 。 {利子|りし} が {見|み}えない から 、 {返|かえ}す {日|ひ} が {分|わ}からない 。', 'Some lies can\'t go in a ledger. The ones you tell to comfort someone. You can\'t see the interest, so you never know when it falls due.'),
     },

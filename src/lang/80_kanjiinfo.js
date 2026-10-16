@@ -23,7 +23,7 @@
  * Search: by kanji, by a word written with it, by kana reading (hiragana or
  * katakana), by rōmaji (Hepburn or 'wāpuro' spellings) and by English meaning.
  * "Met": kanji in the scenes the player has seen, the inscriptions they can
- * weave, the words they have practised or noted. */
+ * weave, the words they have practiced or noted. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.kanjiInfo = (function () {
@@ -297,7 +297,7 @@ RB.kanjiInfo = (function () {
 
   // ---- met ------------------------------------------------------------------------------
   // Kanji the player has met: in the scenes they have seen, the inscriptions
-  // they can weave, and the words they have practised or noted.
+  // they can weave, and the words they have practiced or noted.
   function met(s) {
     const set = new Set();
     if (!s) return set;

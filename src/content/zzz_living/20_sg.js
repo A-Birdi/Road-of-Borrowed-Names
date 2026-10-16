@@ -1,7 +1,7 @@
 /* Saltglass's Living World (C-87; docs/future/work/LW1_AUTHORING.md, LW1_ROLLOUT.md; plan 06_WORLD.md W1-W3, W5, W6).
  * The town is the harbour and its rooms; its routines run once Chapter 2 is over (`ch2_done`).
  *   Routines (W2): Daigo carries on the quay, eats at his carved seat in the Gull, or shifts Kiyo's fish boxes at the
- *     market; Tobi plays on the beach, practises reading addresses at the post box, or watches for boats from the
+ *     market; Tobi plays on the beach, practices reading addresses at the post box, or watches for boats from the
  *     west point; Fuku sits outside her house, wipes the Chidori-maru's nameplate at the little shrine on the beach,
  *     or takes the sun at the bench (only once the nameplate is there: she is pinned until then, and while the
  *     licence's first step needs her); Wataru tallies in No. 2 Warehouse, rewrites the quay's crate labels, or copies
@@ -68,7 +68,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { map: 'sg.harbor', x: 38, y: 22, dir: 'up', perform: { act: 'carry', traits: ['brisk'] }, line: ['キヨ さん の {箱|はこ} を {運|はこ}んでる ん だ 。 {重|おも}い が 、 {札|ふだ} が {白|しろ}く ならねえ から {楽|らく} な もん だ ！', 'Shifting Kiyo\'s boxes. Heavy, but the tags don\'t go blank any more, so it\'s easy work!'] },
   ] });
   L.routine('saltglass', 'tobi', { base: 'sg.harbor:tobi', pin: 'quest.sg_cove=0|quest.sg_seaglass=0', slots: [
-    { map: 'sg.harbor', x: 37, y: 12, dir: 'left', line: ['{宛名|あてな} を {読|よ}む {練習|れんしゅう} ！ {配達人|はいたつにん} に なる ん だ から ！ {右|みぎ} と {左|ひだり} は 、 もう {間違|まちが}えない よ 。', 'Practising reading addresses! I\'m going to be a courier! And I don\'t mix up right and left any more.'] },
+    { map: 'sg.harbor', x: 37, y: 12, dir: 'left', line: ['{宛名|あてな} を {読|よ}む {練習|れんしゅう} ！ {配達人|はいたつにん} に なる ん だ から ！ {右|みぎ} と {左|ひだり} は 、 もう {間違|まちが}えない よ 。', 'Practicing reading addresses! I\'m going to be a courier! And I don\'t mix up right and left any more.'] },
     { map: 'sg.harbor', x: 5, y: 28, dir: 'down', line: ['ここ から だ と 、 {船|ふね} が {帰|かえ}って くる の が {一番|いちばん} {早|はや}く {見|み}える ん だ よ 。 {海|うみ} ガラス も 、 {時々|ときどき} {落|お}ちてる ！', 'From here you see the boats coming home first. And sometimes there\'s sea glass lying about!'] },
   ] });
   L.routine('saltglass', 'fuku', { base: 'sg.harbor:fuku', pin: '!quest.sg_seaglass=done|quest.sea_licence=0', slots: [

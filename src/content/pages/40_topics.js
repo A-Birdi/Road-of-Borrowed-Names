@@ -103,7 +103,7 @@ nao: {出口|でぐち} は {二|ふた}つ 。 {連|つ}れ は {一人|ひと�
 # ======================================================================================
 @scene road.mio.h1
 mio: {瓶|びん} の ラベル 、 {少|すこ}し でも {曲|ま}がって いる と {気|き} に なる の 。 {旅|たび} の {間|あいだ} も 、 {毎晩|まいばん} {直|なお}して た 。 || If a bottle label's even slightly crooked, it bothers me. I straightened them every night on the journey.
-mio: {最近|さいきん} は 、 {一|ひと}つ だけ {曲|ま}がった まま に して おく {練習|れんしゅう} を してる の 。 …… {三日|みっか} で {直|なお}しちゃった けど 。 || Lately I've been practising leaving just one crooked. …I fixed it after three days.
+mio: {最近|さいきん} は 、 {一|ひと}つ だけ {曲|ま}がった まま に して おく {練習|れんしゅう} を してる の 。 …… {三日|みっか} で {直|なお}しちゃった けど 。 || Lately I've been practicing leaving just one crooked. …I fixed it after three days.
 
 @scene road.mio.h2
 mio: お{茶|ちゃ} は 、 {疲|つか}れて いる {時|とき} ほど {薄|うす}く {淹|い}れる の 。 {濃|こ}い と 、 {眠|ねむ}れなく なる から 。 || The more tired you are, the weaker I make the tea. Strong tea keeps you awake.
@@ -117,7 +117,7 @@ pc: …… {今|いま} は ？ || …And right now?
 mio[smile]: {聞|き}かれた から {言|い}う ね 。 {大丈夫|だいじょうぶ} そう 。 || Since you asked: you look fine.
 
 @scene road.mio.h4
-mio: {一日|いちにち} {一回|いっかい} 、 {何|なに}か に 「 いいえ 」 と {言|い}う {練習|れんしゅう} を してる の 。 {小|ちい}さな こと で いい から 。 || Once a day I practise saying "no" to something. Small things are fine.
+mio: {一日|いちにち} {一回|いっかい} 、 {何|なに}か に 「 いいえ 」 と {言|い}う {練習|れんしゅう} を してる の 。 {小|ちい}さな こと で いい から 。 || Once a day I practice saying "no" to something. Small things are fine.
 mio: {昨日|きのう} は 、 {三杯目|さんばいめ} の お{茶|ちゃ} を {断|ことわ}った 。 {自分|じぶん} で {淹|い}れた お{茶|ちゃ} だ けど 。 || Yesterday I turned down a third cup of tea. One I'd made myself.
 ?(bond>=trusted) mio[laugh]: …… $name に も 、 {今度|こんど} {何|なに}か {断|ことわ}って みよう かな 。 {練習台|れんしゅうだい} に なって くれる ？ || …Maybe I'll try refusing you something next. Will you be my practice partner?
 

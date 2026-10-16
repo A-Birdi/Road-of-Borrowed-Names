@@ -218,7 +218,7 @@ comp[shy]: {一人|ひとり} で {全部|ぜんぶ} {持|も}つ の が 、 {�
 * {喜|よろこ}んで {持|も}つ || Gladly. -> glad
 :heavy
 !gesture mio emphatic
-comp[laugh]: だめ です 。 {重|おも}い {方|ほう} は {私|わたし} 。 …… {断|ことわ}る の も 、 {練習|れんしゅう} {中|ちゅう} です から 。 || No. The heavy one's mine. …I'm practising saying no, too.
+comp[laugh]: だめ です 。 {重|おも}い {方|ほう} は {私|わたし} 。 …… {断|ことわ}る の も 、 {練習|れんしゅう} {中|ちゅう} です から 。 || No. The heavy one's mine. …I'm practicing saying no, too.
 !goto close
 :glad
 !gesture mio thanks pc

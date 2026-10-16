@@ -39,7 +39,7 @@ empty, pace Off, nothing inferred). `RB.save.migrate` calls `of`. Shape:
   `shiritoriLevel` (`casual`), `shiritoriSupport` (`open`), `shiritoriChain` (12), and `demoSeen`.
 - Device preferences live in `RB.game.settings`: `activityChatter` (`normal`/`quiet`),
   `hideTotals`, `fishSeconds`, `fishWait`. They appear in Settings › Learning & Challenge ›
-  Ways to practise.
+  Ways to practice.
 - `RB.practice.seq(s)` returns a monotonic per-campaign session/cast number.
   `RB.practice.stream(s, name, extra)` returns a seeded generator. Use one stream per
   purpose: species queue, strategy, decorative motion. Never use `Math.random` for an
@@ -83,13 +83,13 @@ RB.activity.launch(kind, { source: 'company'|'companion-talk'|'world-prop'|'word
 
 ## Navigation hooks
 
-- **Words › Ways to practise.** Call `RB.practice.addActivity({ id, en, jp, icon, order,
+- **Words › Ways to practice.** Call `RB.practice.addActivity({ id, en, jp, icon, order,
   where: {en, jp}, companion?, available(s), here(s), note(s), begin(ctx) })`. *Begin here* is shown only
   when `here(s)` is true and the world is safe; there is no remote launch.
 - **Company › Companion sections.** Call `RB.ui.companyPages.addSection({ id, order,
   html(s, comp, view), click(button, s, api) })`. Buttons carry `data-co-sec="<id>"`.
 - **Journey pages** use `RB.ui.menu.addPage('journey', …)`. **Words pages** use
-  `addPage('words', …)`. The menu alias `practice` opens Words › Ways to practise.
+  `addPage('words', …)`. The menu alias `practice` opens Words › Ways to practice.
 - **Practice mementos.** Call `RB.practice.addMementoSource({ id, list(s) })`. Suite worker
   A renders them in Journey. They never become Roadside Keepsakes.
 

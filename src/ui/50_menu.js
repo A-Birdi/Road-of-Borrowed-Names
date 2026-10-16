@@ -62,7 +62,7 @@ RB.ui.menu = (function () {
     company: { page: null },
     scroll: {},
   };
-  let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
+  let layer = null, fr = null, tabsApi = null, mq = null, headRO = null, stopDemo = () => {};
   let lastSec = null; // the section last drawn: a change of section turns the page (the book)
   // the book (Settings › Display › The Wayfarer's Ledger): 'book' or 'flat' (the classic folio was retired in U06)
   const bookStyle = () => (RB.game.settings && RB.game.settings.ledgerStyle === 'flat' ? 'flat' : 'book');
@@ -85,14 +85,26 @@ RB.ui.menu = (function () {
     if (RB.bookType) RB.bookType.install(); // the book's type, if the idle start hasn't made it yet
     fr = F().frame({ onClose: close, closeLabel: 'Close', book: bookStyle() });
     lastSec = null;
-    fr.foot.innerHTML =
-      '<button class="cbtn" data-util="save">' + I('ledger') + '<span>' + RB.ui.label('セーブ・ロード', 'Save & Load') + '</span></button>';
-    // Settings beside Close, where a reader looks first, rather than in the corner under the book (PT-1b)
+    // Save & Load and Settings beside Close, where a reader looks first, rather than in the corner under the book
+    // (PT-1b; Save & Load joined them in LI-5): the book's pages then reach the bottom of the cover
+    const saveB = RB.ui.el('button', 'cbtn ledger-set ledger-save');
+    saveB.dataset.util = 'save';
+    saveB.setAttribute('aria-label', 'Save & Load');
+    saveB.setAttribute('aria-haspopup', 'dialog');
+    saveB.setAttribute('aria-expanded', 'false');
+    saveB.innerHTML = I('ledger') + '<span>' + RB.ui.label('セーブ・ロード', 'Save & Load') + '</span>';
+    fr.head.insertBefore(saveB, fr.head.querySelector('[data-folio-close]'));
+    fr.el.classList.add('no-foot');
     const setB = RB.ui.el('button', 'cbtn ledger-set');
     setB.dataset.util = 'settings';
     setB.setAttribute('aria-label', 'Settings');
     setB.innerHTML = I('settings') + '<span>' + RB.ui.label('{設定|せってい}', 'Settings') + '</span>';
     fr.head.insertBefore(setB, fr.head.querySelector('[data-folio-close]'));
+    // the tabs keep clear of the cover's buttons by their real width (text size, labels shown or not)
+    const fitHead = () => { if (fr) fr.el.style.setProperty('--head-w', fr.head.offsetWidth + 'px'); }; // (its laid-out width: the opening book is scaled)
+    fitHead();
+    headRO = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fitHead) : null;
+    if (headRO) headRO.observe(fr.head);
     fr.el.addEventListener('click', (e) => {
       const b = e.target.closest('[data-util]');
       if (!b || !fr || !fr.el.contains(b)) return;
@@ -119,10 +131,12 @@ RB.ui.menu = (function () {
   function close() {
     if (!layer) return;
     closePick(false);
+    closeSheet(false);
     if (view.section === 'satchel') seenSatchel();
     remember();
     stopDemo();
     if (tabsApi) tabsApi.destroy();
+    if (headRO) { headRO.disconnect(); headRO = null; }
     if (mq) mq.onchange = null;
     const el = layer.el, at = el.parentNode;
     RB.ui.popLayer(layer);
@@ -144,7 +158,7 @@ RB.ui.menu = (function () {
     RB.input.clearHeld && RB.input.clearHeld();
   }
   // leaving the game (loading another journey, returning to the title) closes the sheet too
-  function closeAll() { if (sheet) { const sh = sheet; sheet = null; RB.ui.popLayer(sh); } close(); }
+  function closeAll() { closeSheet(false); close(); }
   // Back: leave a sub-page first (phones), otherwise close the folio.
   function back() {
     const w = view.words, j = view.journey;
@@ -218,7 +232,8 @@ RB.ui.menu = (function () {
     const [A, B] = sp.querySelectorAll(':scope > .leaf');
     const builtIn = { journey, words, satchel, map, company }[view.section];
     if (builtIn) builtIn(A, B, two); else xsec(view.section).render(A, B, two, api(view.section));
-    runningHeads(A, B, two, sec, s, comp);
+    const mark = bookmarks(sp, A, two);
+    runningHeads(A, B, two, sec, s, comp, mark);
     const sc = view.scroll[key()];
     if (sc) { A.scrollTop = sc[0]; B.scrollTop = sc[1]; }
   }
@@ -227,7 +242,72 @@ RB.ui.menu = (function () {
   // The book's running heads: the section's name at the top of the first page, who is travelling and for how long
   // at the top of the second (on a phone, both on the one page). They repeat the dialog's own title and meta for
   // the eye; the dialog keeps its accessible name, so these are hidden from assistive technology.
-  function runningHeads(A, B, two, sec, s, comp) {
+  // LI-5 (Robin 2026-10-16: "a bookmarker on the left edge of the pages, colored uniquely … hovering … slide out a
+  // little to show the full text … clicking … brings it forefront over the top of the page, curled over the edge"):
+  // the pages within Journey, Map and Company as ribbons tucked under the left page. Each ribbon is the page's own
+  // button pressed on its behalf, so a section keeps its one way of turning to a page. Without a fine pointer to
+  // hover with, or on one page, the same buttons stay on the page as coloured ribbon tags with their words.
+  const MARK_SECS = { journey: 1, map: 1, company: 1 };
+  const MARK_INK = {
+    quests: '#a33b26', history: '#34507e', cases: '#6a4482', keepsakes: '#476e3e', mementos: '#476e3e', fishing: '#2a6b74',
+    stamps: '#87591a', volume: '#2a6b74', chart: '#7a4f26', known: '#a33b26', board: '#34507e', expedition: '#476e3e',
+    companion: '#9a4152', pet: '#87591a', memories: '#34507e',
+  };
+  const MARK_MORE = ['#a33b26', '#34507e', '#476e3e', '#87591a', '#6a4482', '#2a6b74', '#9a4152', '#7a4f26', '#4a5566'];
+  const lastMark = {};
+  const railable = (two) => two && typeof matchMedia !== 'undefined' && matchMedia('(hover: hover) and (pointer: fine)').matches;
+  function bookmarks(sp, A, two) {
+    const rail = railable(two);
+    fr.el.classList.toggle('bm-room', rail); // the cover keeps the same strip on every section, so pages never shift
+    const nav = MARK_SECS[view.section] && A.querySelector('.subnav:not(.sub2)');
+    if (!nav) return null;
+    const bs = [...nav.querySelectorAll(':scope > .subbtn')];
+    const idOf = (b) => b.dataset.jv || b.dataset.mv || b.dataset.cp || '';
+    const used = new Set();
+    bs.forEach((b, i) => {
+      let c = MARK_INK[idOf(b)];
+      if (!c || used.has(c)) c = MARK_MORE.find((x) => !used.has(x)) || MARK_MORE[i % MARK_MORE.length];
+      used.add(c);
+      b.style.setProperty('--bm', c);
+    });
+    const on = bs.find((b) => b.getAttribute('aria-pressed') === 'true') || null;
+    const cur = on ? idOf(on) : null;
+    const prev = lastMark[view.section];
+    lastMark[view.section] = cur;
+    if (!rail) { nav.classList.add('bm-chips'); return null; }
+    // the page's own buttons move out onto the cover as the ribbons (a <nav>, so the leaves stay the spread's first
+    // two <div>s). A press is handed back to the page through a stand-in carrying the same data, so each section's
+    // own listener on its page turns to it as before.
+    const r = document.createElement('nav');
+    r.className = 'subnav bk-marks';
+    r.setAttribute('role', 'group');
+    r.setAttribute('aria-label', nav.getAttribute('aria-label') || 'Pages');
+    bs.forEach((b) => {
+      const svg = b.querySelector('svg'), label = b.textContent.trim();
+      b.classList.add('bm');
+      if (b === on && prev && prev !== cur) b.classList.add('curl');
+      b.innerHTML = '<span class="bm-tab" aria-hidden="true">' + (svg ? svg.outerHTML : '') + '</span><span class="bm-flap" aria-hidden="true"></span><span class="bm-label">' + esc(label) + '</span>';
+      r.appendChild(b);
+    });
+    nav.remove();
+    r.addEventListener('click', (e) => {
+      const b = e.target.closest('.subbtn');
+      if (!b || !r.contains(b)) return;
+      const key = Object.keys(b.dataset).find((k) => k !== 'mark') || '';
+      const back = document.activeElement === b;
+      const proxy = document.createElement('button');
+      proxy.type = 'button'; proxy.hidden = true;
+      proxy.dataset[key] = b.dataset[key];
+      A.appendChild(proxy);
+      proxy.click();
+      proxy.remove();
+      const again = back && fr && fr.box.querySelector('.bk-marks [data-' + key.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase()) + '="' + b.dataset[key] + '"]');
+      if (again) again.focus({ preventScroll: true });
+    });
+    sp.insertBefore(r, sp.firstChild);
+    return on ? { en: on.querySelector('.bm-label').textContent, ink: on.style.getPropertyValue('--bm') } : null;
+  }
+  function runningHeads(A, B, two, sec, s, comp, mark) {
     // who is travelling: the Company page's summary line folds into this (the pet by the name you gave it)
     const pet = s.company && s.company.pet && s.company.pets && s.company.pets[s.company.pet];
     const meta = esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + (pet && pet.name ? ', with ' + esc(pet.name) : '') + ' · ' + RB.util.fmtTime(s.playtime);
@@ -235,7 +315,8 @@ RB.ui.menu = (function () {
     // technology, so nothing in it may take focus)
     const plain = RB.ui.jhtml(sec.jp).replace(/ data-(i|src)="[^"]*"/g, '').replace(/ tabindex="0"/g, '').replace(/class="jt"/g, 'class="jt-static"');
     A.insertAdjacentHTML('afterbegin', '<header class="bk-runhead" aria-hidden="true"><span class="bk-sec" lang="ja">' + plain + '</span>' +
-      '<span class="bk-sec-en">' + esc(sec.en) + '</span>' + (two ? '' : '<span class="bk-meta">' + meta + '</span>') + '</header>');
+      '<span class="bk-sec-en">' + esc(sec.en) + '</span>' + (mark ? '<span class="bk-subp" style="--bm:' + esc(mark.ink) + '">' + esc(mark.en) + '</span>' : '') +
+      (two ? '' : '<span class="bk-meta">' + meta + '</span>') + '</header>');
     if (two) B.insertAdjacentHTML('afterbegin', '<header class="bk-runhead r" aria-hidden="true"><span class="bk-meta">' + meta + '</span></header>');
   }
   // Settings › Display changed the Ledger's look while it is open: redraw it in the new style
@@ -477,7 +558,7 @@ RB.ui.menu = (function () {
       'Draw one character in the box. The pad shows what it thinks you wrote ("I read this as…") and alternatives. Nothing is submitted until you press Confirm, then Submit.',
       'Tap a character in the answer strip to replace it; tap a gap to insert. Undo removes a stroke; Clear wipes the box. Use 小 for small kana (ゃ, っ…) and the script buttons to choose hiragana or katakana.',
       'If the recogniser can\'t read you, pick the character from the chart. That counts as "assisted" — which is fine, it just isn\'t counted as unaided handwriting.',
-      'The chart lists every kana and every kanji in the game, on pages by theme (water, nature, people…) and by use (nouns, verbs…), with a search by kanji, reading, rōmaji, meaning or word. Each kanji shows its readings, meaning, words from the game and its stroke order, and you can practise writing it. Words › Kanji chart opens it any time.',
+      'The chart lists every kana and every kanji in the game, on pages by theme (water, nature, people…) and by use (nouns, verbs…), with a search by kanji, reading, rōmaji, meaning or word. Each kanji shows its readings, meaning, words from the game and its stroke order, and you can practice writing it. Words › Kanji chart opens it any time.',
       'You can switch to choices or keyboard (IME) at any time without losing your place.',
     ]],
     bulb: ['Word help', [
@@ -520,8 +601,9 @@ RB.ui.menu = (function () {
       const sec = (id) => WORD_GROUPS[id] || 'reference';
       list = WORD_SECTIONS.map(([k, en, jp]) => { const xs = subs.filter((x) => sec(x[0]) === k); return xs.length ? '<h4 class="index-sec">' + RB.ui.label(jp, en) + '</h4><ul class="index">' + xs.map(item).join('') + '</ul>' : ''; }).join('');
     }
-    const index = '<h3>Contents</h3>' + list +
-      '<div class="row-acts"><button class="pbtn" data-a="practice">' + I('practice') + 'Practise (optional)</button>' +
+    // (in sections, the sections' own headings stand for it: a "Contents" heading over "My learning" read as empty)
+    const index = (grouped(s) ? '' : '<h3>Contents</h3>') + list +
+      '<div class="row-acts"><button class="pbtn" data-a="practice">' + I('practice') + 'Practice (optional)</button>' +
       (ng ? '<button class="pbtn" data-a="nextkana">' + I('words') + 'Learn the next kana: ' + esc(ng.g.title || '') + '</button>' : '') + '</div>' +
       '<p class="muted small">Practice is optional review of items you are unsure of. The story teaches everything you need as you go.</p>';
     if (two) {
@@ -565,7 +647,7 @@ RB.ui.menu = (function () {
     if (id === 'kanji') {
       const met = RB.kanjiInfo ? RB.kanjiInfo.met(s).size : 0;
       const all = RB.kanjiInfo ? RB.kanjiInfo.all().length : 0;
-      return '<p>Every kanji in the game — ' + all + ' of them — on pages by theme and by use, with a search. Each one shows its readings, meaning, words from the game and its stroke order, and you can practise writing it.</p>' +
+      return '<p>Every kanji in the game — ' + all + ' of them — on pages by theme and by use, with a search. Each one shows its readings, meaning, words from the game and its stroke order, and you can practice writing it.</p>' +
         '<p class="muted small">You have met ' + met + ' of them in the story so far; they come first on each page.</p>' +
         '<div class="row-acts"><button class="pbtn" data-kchart>' + I('grid') + 'Open the kanji chart</button></div>';
     }
@@ -634,7 +716,7 @@ RB.ui.menu = (function () {
     const groups = RB.lessons.groups();
     if (!groups.length) return '<p class="muted">Kana chart unavailable.</p>';
     const rec = s.learn.items;
-    const LV = ['not met', 'met', 'practising', 'steady'];
+    const LV = ['not met', 'met', 'practicing', 'steady'];
     const cell = (ch) => {
       const r = rec['k:' + ch];
       const lvl = !r ? 0 : r.box >= 3 ? 3 : r.box >= 1 ? 2 : 1;
@@ -995,22 +1077,54 @@ RB.ui.menu = (function () {
     else A.innerHTML = '<p class="muted">Nothing here yet.</p>';
   }
 
-  // ---- Save & Load (utility sheet) ---------------------------------------------------------------
+  // ---- Save & Load (LI-5, Robin 2026-10-16: "feels a bit out of place in the Ledger now. Find a new way to present
+  // the choice"): beside Settings and Close on the cover, and its three choices on a slip that drops from it, as the
+  // Satchel's Change… list does, rather than a second book over the first ------------------------------------------
   function saveSheet() {
+    if (!fr) return;
+    if (sheet) { closeSheet(true); return; }
+    closePick(false);
     const st = RB.save.status();
-    const popSheet = () => { sheet = null; RB.ui.popLayer(lay); };
-    const f2 = F().frame({ onClose: () => popSheet(), closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet' });
-    f2.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), 'Save &amp; Load');
-    f2.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0">' +
+    const anchor = fr.head.querySelector('[data-util="save"]');
+    const opt = (a, icon, t, d) => '<button type="button" class="sv-opt' + (a === 'title' ? ' sv-leave' : '') + '" data-a="' + a + '">' +
+      '<span class="sv-ic" aria-hidden="true">' + I(icon) + '</span><span class="sv-t"><b>' + t + '</b><span class="sv-d">' + d + '</span></span></button>';
+    const wrap = RB.ui.el('div', 'eq-pick-wrap sv-wrap');
+    const box = RB.ui.el('div', 'eq-pick sv-slip');
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-label', 'Save & Load');
+    box.innerHTML = '<div class="eq-pick-h">' + lab('{宿帳|やどちょう}', 'The Inn Ledger') + '</div>' +
       (st.mode === 'session' ? '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>' : '') +
-      '<ul class="entries">' +
-      '<li class="entry"><span class="mark">' + I('save') + '</span><div><div class="t">Save this journey</div><div class="muted small">Choose one of six slots in the ledger. Overwriting asks first.</div></div><button class="pbtn primary" data-a="save">Save…</button></li>' +
-      '<li class="entry"><span class="mark">' + I('load') + '</span><div><div class="t">Load a journey</div><div class="muted small">Manual saves, autosaves and the pre-departure point.</div></div><button class="pbtn" data-a="load">Load…</button></li>' +
-      '<li class="entry"><span class="mark">' + I('title') + '</span><div><div class="t">Return to the title</div><div class="muted small">Anything since your last save or autosave will be lost.</div></div><button class="pbtn" data-a="title">Return to title</button></li>' +
-      '</ul><p class="muted small">Autosaves happen at safe places (arriving somewhere new, finishing a scene that matters). Manual saves are kept separately from them.</p></div></div>';
-    const lay = { el: f2.scrim, name: 'savesheet' };
-    lay.onCancel = () => popSheet();
-    f2.box.onclick = async (e) => {
+      opt('save', 'save', 'Save this journey', 'Choose one of six slots. Overwriting asks first.') +
+      opt('load', 'load', 'Load a journey', 'Manual saves, autosaves and the pre-departure point.') +
+      opt('title', 'title', 'Return to the title', 'Anything since your last save or autosave will be lost.') +
+      '<p class="sv-foot">Autosaves happen at safe places: arriving somewhere new, finishing a scene that matters. Manual saves are kept apart from them.</p>';
+    wrap.appendChild(box);
+    const lay = { el: wrap, name: 'savesheet', parent: fr.el };
+    lay.onCancel = () => { closeSheet(true); return true; };
+    sheet = lay;
+    RB.ui.pushLayer(lay);
+    if (anchor) anchor.setAttribute('aria-expanded', 'true');
+    // under its button, its right edge with the button's, kept inside the book
+    const fb = fr.el.getBoundingClientRect(), ab = (anchor || fr.head).getBoundingClientRect();
+    const w = Math.min(380, fb.width - 24);
+    box.style.width = w + 'px';
+    box.style.left = Math.max(12, Math.min(fb.width - w - 12, ab.right - fb.left - w)) + 'px';
+    box.style.top = (ab.bottom - fb.top + 6) + 'px';
+    box.style.maxHeight = Math.max(160, fb.bottom - ab.bottom - 18) + 'px';
+    const opts = () => Array.from(box.querySelectorAll('.sv-opt'));
+    setTimeout(() => { if (sheet === lay) opts()[0].focus({ preventScroll: true }); }, 0);
+    box.addEventListener('keydown', (e) => {
+      const o = opts(), i = o.indexOf(document.activeElement);
+      let k = null;
+      if (e.key === 'ArrowDown') k = (i + 1) % o.length; else if (e.key === 'ArrowUp') k = (i - 1 + o.length) % o.length;
+      else if (e.key === 'Home') k = 0; else if (e.key === 'End') k = o.length - 1;
+      else if (e.key === 'Tab') { e.preventDefault(); k = (i + (e.shiftKey ? -1 : 1) + o.length) % o.length; }
+      if (k == null) return;
+      e.preventDefault(); e.stopPropagation();
+      o[k].focus();
+    });
+    wrap.addEventListener('pointerdown', (e) => { if (e.target === wrap) { e.preventDefault(); closeSheet(true); } });
+    box.addEventListener('click', async (e) => {
       const b = e.target.closest('[data-a]');
       if (!b) return;
       const a = b.dataset.a;
@@ -1018,11 +1132,17 @@ RB.ui.menu = (function () {
       if (a === 'load') RB.ui.title.slots('load', true);
       if (a === 'title') {
         const r = await RB.ui.confirm('Return to the title screen? Anything since your last save or autosave will be lost.', ['Return to title', 'Cancel']);
-        if (r === 0) { popSheet(); close(); RB.game.toTitle(); }
+        if (r === 0) { closeSheet(false); close(); RB.game.toTitle(); }
       }
-    };
-    sheet = lay;
-    RB.ui.pushLayer(lay);
+    });
+  }
+  function closeSheet(refocus) {
+    if (!sheet) return;
+    const sh = sheet;
+    sheet = null;
+    RB.ui.popLayer(sh);
+    const a = fr && fr.head.querySelector('[data-util="save"]');
+    if (a) { a.setAttribute('aria-expanded', 'false'); if (refocus) a.focus({ preventScroll: true }); }
   }
 
   function settingsStandalone() { return RB.ui.settings.open(); }

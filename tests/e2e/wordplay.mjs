@@ -14,7 +14,7 @@
 //   - a cooperative chain; How we played once (rest menu), and never again;
 //   - a pending story topic left exactly as it was; Company › Wordplay: Play, the folio
 //     closes and comes back to the same page and scroll, focus on the card; Play disabled
-//     with a truthful reason elsewhere; Ways to practise;
+//     with a truthful reason elsewhere; Ways to practice;
 //   - a different campaign loaded while the table is open: the old session is gone;
 //   - keyboard-only and touch play.
 // Usage: node tests/e2e/wordplay.mjs [--shots]
@@ -525,7 +525,7 @@ if (want('company')) {
   await p.evaluate(() => RB.game.companionTalk());
   await p.waitForTimeout(250);
   const first = await talk(p, ['Not now']);
-  assert(first.seen.some((l) => /practising not hurrying|Shall we rest|meant to ask/i.test(l)) || first.seen.some((l) => /Of course/.test(l)), 'talking to Mio still plays the waiting story topic first (' + first.seen[0] + ')');
+  assert(first.seen.some((l) => /practicing not hurrying|Shall we rest|meant to ask/i.test(l)) || first.seen.some((l) => /Of course/.test(l)), 'talking to Mio still plays the waiting story topic first (' + first.seen[0] + ')');
   // suspend from the table, resume from Company
   await p.evaluate(() => RB.ui.menu.open('companion'));
   await p.waitForSelector('.wp-card');
@@ -570,7 +570,7 @@ if (want('nothere')) {
   await p.evaluate(() => RB.ui.menu.open('practice'));
   await p.waitForTimeout(120);
   const idx = await p.evaluate(() => { const e = document.querySelector('[data-pr="shiritori"]'); return e ? { text: e.textContent, begin: !!e.querySelector('[data-pr-begin]') } : null; });
-  assert(idx && /Shiritori/.test(idx.text) && !idx.begin && /rest stop/.test(idx.text), 'Words › Ways to practise: where it is offered, no remote launch');
+  assert(idx && /Shiritori/.test(idx.text) && !idx.begin && /rest stop/.test(idx.text), 'Words › Ways to practice: where it is offered, no remote launch');
   await p.evaluate(() => RB.ui.menu.close());
   // a creature close by (a real one of the Mill Road, moved beside you): Play disabled, said plainly
   await p.evaluate(() => window.__start('rw.millroad', 12, 10, { comp: 'suzu' }));
@@ -585,7 +585,7 @@ if (want('nothere')) {
   await p.evaluate(() => { if (RB.ui.menu.isOpen()) RB.ui.menu.close(); });
   await p.evaluate(() => window.__start('co.inn', 6, 8, { comp: 'suzu' }));
   await p.waitForTimeout(200);
-  // Ways to practise at the rest stop: Begin here
+  // Ways to practice at the rest stop: Begin here
   await p.evaluate(() => RB.ui.menu.open('practice'));
   await p.waitForTimeout(150);
   const here = await p.evaluate(() => !!document.querySelector('[data-pr="shiritori"] [data-pr-begin]'));

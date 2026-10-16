@@ -134,7 +134,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       h += '<p class="wp-row"><b>From my journey:</b> ' + esc((cs.played ? cs.played + ' game' + (cs.played === 1 ? '' : 's') + (RB.game.settings && RB.game.settings.hideTotals ? '' : ' (' + cs.won + ' won, ' + cs.lost + ' lost)') : '') + (cs.coop ? (cs.played ? '; ' : '') + cs.coop + ' chain' + (cs.coop === 1 ? '' : 's') + ' completed' : '') + ' · custom banks, not stages') + '</p>';
     }
     if (r && r.totals.played && !(RB.game.settings && RB.game.settings.hideTotals)) {
-      h += '<p class="wp-row muted small">' + esc('Fixed-bank games: ' + r.totals.played + ' (' + r.totals.won + ' won, ' + r.totals.lost + ' lost). Settings › Ways to practise can hide these totals.') + '</p>';
+      h += '<p class="wp-row muted small">' + esc('Fixed-bank games: ' + r.totals.played + ' (' + r.totals.won + ' won, ' + r.totals.lost + ' lost). Settings › Ways to practice can hide these totals.') + '</p>';
     }
     return h + '</section>';
   }

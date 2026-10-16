@@ -80,7 +80,7 @@ RB.content.wordplay = RB.content.wordplay || { lines: [], gestures: {}, reflecti
 
   // ---- Mio -------------------------------------------------------------------------------------------------
   L('mio', 'invite', [
-    { expr: 'shy', jp: '{少|すこ}し 、 しりとり を しません か 。 …… {役|やく} に {立|た}たない {遊|あそ}び を 、 {練習|れんしゅう} {中|ちゅう} なん です 。', en: 'Shall we play a little shiritori? …I\'m practising games that aren\'t useful for anything.' },
+    { expr: 'shy', jp: '{少|すこ}し 、 しりとり を しません か 。 …… {役|やく} に {立|た}たない {遊|あそ}び を 、 {練習|れんしゅう} {中|ちゅう} なん です 。', en: 'Shall we play a little shiritori? …I\'m practicing games that aren\'t useful for anything.' },
   ]);
   L('mio', 'rules', [
     { jp: '{前|まえ} の {言葉|ことば} の {最後|さいご} の {字|じ} で {始|はじ}めます 。 ん で {終|お}わる {言葉|ことば} は {負|ま}け 、 {同|おな}じ {言葉|ことば} は {一度|いちど} だけ です 。', en: 'Begin with the last kana of the word before. A word ending in ん loses, and each word only once.' },

@@ -189,7 +189,7 @@ RB.ui.desk = (function () {
         // page's scroll guard), with short names; the full name heads the page below
         const slot = ui.fr.tabslot;
         slot.classList.add('dk-tabs');
-        const tabs = RB.ui.folio.tabs(slot, D().MODES.map((m) => ({ id: m, en: TAB[m], jp: tx.modes[m].jp, icon: MODE_ICON[m] })), mode, (id) => { st.mode = id; D().remember(s, { mode: id }); render(); ui.focus('.dk-tabs .ptab[data-id="' + id + '"]'); }, { label: 'How to practise', panelId: 'dk-modehelp' });
+        const tabs = RB.ui.folio.tabs(slot, D().MODES.map((m) => ({ id: m, en: TAB[m], jp: tx.modes[m].jp, icon: MODE_ICON[m] })), mode, (id) => { st.mode = id; D().remember(s, { mode: id }); render(); ui.focus('.dk-tabs .ptab[data-id="' + id + '"]'); }, { label: 'How to practice', panelId: 'dk-modehelp' });
         tabs.el.classList.add('dk-tabrail');
         ui.teardown(() => { tabs.destroy(); slot.innerHTML = ''; slot.classList.remove('dk-tabs'); });
         ui.foot.innerHTML = '<button class="cbtn" data-dk="leave">' + I('back') + '<span>Leave the desk</span></button>';
@@ -720,7 +720,7 @@ RB.ui.desk = (function () {
     if (open) open.close();
   }
 
-  // ---- registration: the activity, the desk's scene hook, the rest menu, Words › Ways to practise ----
+  // ---- registration: the activity, the desk's scene hook, the rest menu, Words › Ways to practice ----
   function eligible(s) {
     if (!D().here(s)) return { ok: false, why: 'The writing desk is at the Gull in Saltglass.' };
     const w = RB.practiceA.worldSafe();

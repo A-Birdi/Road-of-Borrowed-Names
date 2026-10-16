@@ -65,7 +65,7 @@ mio: {雪鈴|ゆきすず} の {吹雪|ふぶき} も 、 {書庫|しょこ} の
 :pq
 ?(quest.lf_mio=done) mio: {記録館|きろくかん} で タダシ さん に {言|い}えた の も 、 $name が {背中|せなか} に {手|て} を {当|あ}てて くれた から 。 {一人|ひとり} じゃ 、 {声|こえ} が {出|で}なかった 。 || I could say it to Tadashi at the Records Hall because you had a hand on my back. On my own, my voice wouldn't have come out.
 ?(!quest.lf_mio=done&quest.lf_mio>=2) mio[think]: {灯落|ひおち} に 、 まだ {返事|へんじ} を して いない {頼|たの}み{事|ごと} が {一|ひと}つ ある の 。 {自分|じぶん} の {声|こえ} で 、 ちゃんと {返|かえ}す 。 {急|いそ}がない けど 。 || There's still one request in Lanternfall I haven't answered. I'll answer it properly, in my own voice. Not in a hurry, though.
-?(!quest.lf_mio>=2) mio[think]: {断|ことわ}る の は 、 まだ {練習|れんしゅう} {中|ちゅう} 。 {店|みせ} の {札|ふだ} が 、 {最初|さいしょ} の {一枚|いちまい} 。 || I'm still practising saying no. The sign on my shop is the first page.
+?(!quest.lf_mio>=2) mio[think]: {断|ことわ}る の は 、 まだ {練習|れんしゅう} {中|ちゅう} 。 {店|みせ} の {札|ふだ} が 、 {最初|さいしょ} の {一枚|いちまい} 。 || I'm still practicing saying no. The sign on my shop is the first page.
 mio: {旅|たび} の {間|あいだ} 、 わたし ばかり {薬|くすり} を {配|くば}って いた {気|き} が する けど 、 {本当|ほんとう} は わたし の {方|ほう} が {休|やす}ませて もらって た 。 || All through the journey it felt like I was the one handing out remedies. Really, you were the one letting me rest.
 ?(bond>=trusted) mio[smile]: {具合|ぐあい} を {聞|き}かれる {側|がわ} に なる の 、 {最初|さいしょ} は {落|お}ち{着|つ}かなかった の よ 。 {今|いま} は 、 {少|すこ}し {慣|な}れた 。 || Being the one asked how I'm feeling unsettled me at first. I'm a little used to it now.
 

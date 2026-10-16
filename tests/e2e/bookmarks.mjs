@@ -315,7 +315,7 @@ await test('Kept sentences: your own words stay plain text; keyboard; practice r
     if (await p.evaluate(() => RB.ui.menu.isOpen())) break;
   }
   await p.waitForFunction(() => RB.ui.menu.isOpen() && RB.ui.menu.current().words === 'bookmarks', null, { timeout: 5000 });
-  assert(await p.evaluate((l) => JSON.stringify(RB.game.s.learn) === l, learn0), 'keeping, titling, noting and practising changed nothing in the learning record');
+  assert(await p.evaluate((l) => JSON.stringify(RB.game.s.learn) === l, learn0), 'keeping, titling, noting and practicing changed nothing in the learning record');
   // save; then the names and the companion change (as later state), save again and reload
   await p.evaluate(async () => { const s = RB.game.s; s.player.name = 'Beni'; s.player.nameJp = 'ベニ'; s.comp = 'mio'; RB.ui.menu.close(); await RB.save.writeSlot(1, s, { force: true }); });
   await p.reload();

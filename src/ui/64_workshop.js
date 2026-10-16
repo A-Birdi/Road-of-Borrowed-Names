@@ -1,5 +1,5 @@
 /* The Language Workshop (expansion L7–L17b): one worked example of each new task family, at any of the four levels,
- * from Words › Ways to practise. Practice only: it records like any practice (src/learn/40_evidence.js, context
+ * from Words › Ways to practice. Practice only: it records like any practice (src/learn/40_evidence.js, context
  * "practice"), never changes the campaign's level, and a level above yours is offered as a stretch, never imposed
  * (L18). Content: src/content/workshop/. */
 var RB = (globalThis.RB = globalThis.RB || {});

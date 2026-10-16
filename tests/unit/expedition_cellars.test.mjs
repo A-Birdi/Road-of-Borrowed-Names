@@ -18,7 +18,7 @@ export default async (t) => {
   const rules = pv.rules.map((r) => r.en).join(' | ');
   t.ok(/carries/.test(rules) && /1 rest bench/.test(rules) && /1 spring/.test(rules) && /mended/.test(rules) && /entrance/.test(rules) && /plain sight/.test(rules) && /stay open/.test(rules) && /climb out/.test(rules), 'the card states every rule the run applies: ' + rules);
   t.ok(!/minute|hour/i.test(pv.size.en + rules), 'no length in minutes or hours is claimed (none has been measured)');
-  t.ok(/〜て ある/.test(pv.language.en) && pv.language.jp, 'it names what is practised (〜て ある), never an answer');
+  t.ok(/〜て ある/.test(pv.language.en) && pv.language.jp, 'it names what is practiced (〜て ある), never an answer');
   const html = RB.ui.expedition.cardHtml('cellars', RB.state.newCampaign({ edition: 2 }));
   t.ok(/Go down|Rules/.test(html + 'Go down') && /Language/.test(html) && /Size/.test(html), 'the card on screen carries the language, the size and the rules');
 

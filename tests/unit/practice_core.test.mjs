@@ -3,7 +3,7 @@
 // sequence numbers and seeded streams, the learning adapter (one mastery event
 // per objective; exposed answers never promote recall), caller-side cooldowns,
 // the single activity session (mode, disposal on a campaign change, input
-// hold), the Ways to practise and Company section hooks, and the shiritori
+// hold), the Ways to practice and Company section hooks, and the shiritori
 // rules core against the addendum's worked fixtures (§26.3).
 import { load } from '../lib/load.mjs';
 
@@ -106,7 +106,7 @@ export default async (t) => {
   // ---- hooks -----------------------------------------------------------------------------------
   t.ok(typeof RB.ui.companyPages.addSection === 'function', 'Company › Companion accepts sections (Wordplay)');
   P.addActivity({ id: '__a', en: 'A test', order: 1, available: () => true, here: () => false });
-  t.ok(P.activities().some((d) => d.id === '__a'), 'Ways to practise has a registry');
+  t.ok(P.activities().some((d) => d.id === '__a'), 'Ways to practice has a registry');
   t.ok(/A test/.test(RB.ui.practiceIndex.html(s0)), 'and the Words page lists it');
   t.ok(!/Begin here/.test(RB.ui.practiceIndex.html(s0)), 'never offering to begin away from its place');
 

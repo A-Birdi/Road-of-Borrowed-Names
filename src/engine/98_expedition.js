@@ -215,7 +215,7 @@ RB.expedition = (function () {
     return true;
   }
 
-  // ---- the preview card (D4): what is practised, never the solutions ---------------------------------------------------
+  // ---- the preview card (D4): what is practiced, never the solutions ---------------------------------------------------
   function preview(id) {
     const d = DEFS[id];
     if (!d) return null;

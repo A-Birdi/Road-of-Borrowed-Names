@@ -1,7 +1,7 @@
 // The writing desk in the real game (Practice addendum §16, §23.6; docs/practice/suite_a.md), in
 // Chromium against the built index.html, synthetic campaigns in a fresh profile:
 //  - the Gull's small table offers the desk; the rest menu at the Gull adds "Writing desk" after
-//    Just chat; Words › Ways to practise offers Begin here only at the Gull;
+//    Just chat; Words › Ways to practice offers Begin here only at the Gull;
 //  - the four modes are tabs chosen directly; Write from a prompt lists meanings only;
 //  - Trace: real mouse strokes over the numbered reference; what the pad read (not told the
 //    character) and a stroke-order note only when certain; never recorded as recall;
@@ -71,7 +71,7 @@ async function writeAll(p, how) {
   await wait(p, 500);
   await p.evaluate(() => RB.ui.menu.open('practice'));
   await p.waitForSelector('[data-pr-begin=desk]');
-  assert(!(await p.evaluate(() => !!document.querySelector('[data-pr-begin=lanterns]'))), 'Words › Ways to practise: Begin here for the desk at the Gull, not for the lamps');
+  assert(!(await p.evaluate(() => !!document.querySelector('[data-pr-begin=lanterns]'))), 'Words › Ways to practice: Begin here for the desk at the Gull, not for the lamps');
   await p.evaluate(() => RB.ui.menu.close());
   assert(!errors.length, 'no errors: ' + errors.join('; '));
   await ctx.close();

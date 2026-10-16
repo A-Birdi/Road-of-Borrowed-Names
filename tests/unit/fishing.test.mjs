@@ -361,7 +361,7 @@ export default async (t) => {
     const iIntro = order.indexOf('fish.yasu_intro'), iPost = order.indexOf('rw.yasu_post'), iLq = order.findIndex((x) => /^lq\./.test(x));
     t.ok(iLq >= 0 && iLq < iIntro && iIntro < iPost, 'Yasu: his long-quest conversations still come first, his own postgame line follows the favour (' + order.join(' → ') + ')');
     t.ok(RB.content.scenes['fish.yasu_intro'].cmds.some((c) => c.op === 'call' && c.args[0] === 'rw.yasu_post'), 'the favour plays his usual postgame line first');
-    t.ok(RB.practice.activities().some((d) => d.id === 'fishing'), 'Words › Ways to practise lists A Quiet Cast');
+    t.ok(RB.practice.activities().some((d) => d.id === 'fishing'), 'Words › Ways to practice lists A Quiet Cast');
     t.ok(RB.activity.kinds().indexOf('fishing') >= 0, 'fishing runs through the shared activity controller');
     t.ok(typeof RB.hooks.fish_go === 'function' && typeof RB.hooks.fish_intro === 'function', 'the station scenes\' hooks exist');
   }

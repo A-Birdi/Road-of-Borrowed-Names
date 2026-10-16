@@ -226,7 +226,7 @@ RB.ui.letters = (function () {
         h += '<ul class="entries pb-cards">' + list.map((x) => {
           const d = x.def, nm = U.who(d.from);
           const blocked = open && x.state !== 'open';
-          const st = x.state === 'open' ? 'Open — continue' : x.state === 'answered' ? 'Answered · practise again (not sent)' : !x.met ? 'From someone you haven\'t met on this journey' : 'Waiting';
+          const st = x.state === 'open' ? 'Open — continue' : x.state === 'answered' ? 'Answered · practice again (not sent)' : !x.met ? 'From someone you haven\'t met on this journey' : 'Waiting';
           return '<li><button class="entry pb-card" data-pb-letter="' + esc(d.id) + '"' + (blocked || !x.met ? ' disabled aria-disabled="true"' : '') + ' data-state="' + x.state + '">' +
             '<span class="mark">' + I(x.state === 'answered' ? 'done' : 'letter') + '</span><span class="body">' +
             '<span class="t">' + J(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></span>' +
@@ -430,7 +430,7 @@ RB.ui.letters = (function () {
       const d = x.def, nm = U.who(d.from), rr = x.rec, t = L().tier(d, (rr && rr.prof) || U.prof());
       if (!rr) return '<li class="entry"><span class="mark">' + I('letter') + '</span><div><div class="t">' + J(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></div><div class="small muted">' + esc(nm.en) + ' · ' + esc(x.state === 'open' ? 'open at the post box' : 'waiting at the post box') + '</div></div></li>';
       return '<li class="entry filed"><span class="mark">' + I('done') + '</span><div><div class="t">' + J(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></div>' +
-        '<div class="small muted">' + esc(nm.en) + ' ' + J(nm.jp) + (rr.replays ? ' · practised again ' + rr.replays + '×' : '') + '</div>' +
+        '<div class="small muted">' + esc(nm.en) + ' ' + J(nm.jp) + (rr.replays ? ' · practiced again ' + rr.replays + '×' : '') + '</div>' +
         '<div class="pb-f-msg">' + J(t.msg.jp) + '<div class="act-en">' + esc(RB.script.enVars(t.msg.en)) + '</div></div>' +
         '<div class="pb-f-reply"><span class="kind">Your reply</span> <span class="jp" lang="ja">' + U.own(rr.reply || '') + '</span>' + (rr.tone ? ' <span class="muted small">(' + esc(U.toneWord(rr.tone)) + ')</span>' : '') + '</div>' +
         '<div class="pb-f-ack"><span class="kind">' + esc(nm.en) + '</span> ' + J(t.ack.jp) + '<div class="act-en">' + esc(RB.script.enVars(t.ack.en)) + '</div></div>' +
@@ -447,7 +447,7 @@ RB.ui.letters = (function () {
       html: folderHtml,
     });
   }
-  // ---- Words › Ways to practise ------------------------------------------------------------------------
+  // ---- Words › Ways to practice ------------------------------------------------------------------------
   const PL = () => RB.practiceB.PLACE;
   if (RB.practice && RB.practice.addActivity) {
     RB.practice.addActivity({

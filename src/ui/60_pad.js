@@ -638,7 +638,7 @@ RB.pad = (function () {
     }
     // The chart (RB.kanjiChart): every kana and kanji, by theme and by use,
     // with search. Picking a character puts it in the answer (assisted);
-    // opening a kanji's entry or practising it counts as help, like How to
+    // opening a kanji's entry or practicing it counts as help, like How to
     // write. Kanji go into the answer only while the pad reads kanji.
     function chart() {
       const kana = P.mode === 'kanji' ? P.kanaScript : P.mode;

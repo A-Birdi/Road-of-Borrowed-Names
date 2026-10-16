@@ -414,8 +414,8 @@ RB.dialect.add('kansai', `
 = {全部|ぜんぶ} 、 どこ か で {一度|いちど} {習|なら}った こと だ 。 {忘|わす}れて ない もの だ ね 。 || Every one of them something we learned somewhere along the way. We haven't forgotten.
 > {全部|ぜんぶ} 、 どこ か で {一回|いっかい} {習|なら}った こと や 。 ちゃんと {覚|おぼ}えて いる もん や な 。 || Every one of them something we learned somewhere along the way. We haven't forgotten.
 @ hall/hall.w10.to_w1 [hall.w10.to_w1]
-= {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practised all of it in this Hall.
-> {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん や な 。 || Asking the way, saying no, passing on what someone said: we practised all of it in this Hall.
+= {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practiced all of it in this Hall.
+> {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん や な 。 || Asking the way, saying no, passing on what someone said: we practiced all of it in this Hall.
 @ hall/hall.w10.t6 [hall.w10.t6]
 = {古|ふる}い {台本|だいほん} の {字|じ} に {似|に}て いる わ 。 {読|よ}んで あげる 。 {何|なに} が {知|し}りたい ？ || It looks like the writing in old scripts. I'll read it for you. What do you want to know?
 > {古|ふる}い {台本|だいほん} の {字|じ} に {似|に}て いる わ 。 {任|まか}せとき 。 {何|なに} が {知|し}りたい ん ？ || It looks like the writing in old scripts. I'll read it for you. What do you want to know?

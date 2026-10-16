@@ -230,7 +230,7 @@ co_goro: おお 、 {綱|つな} か ！ …… {待|ま}って いた よう �
 !take co_rope
 !prop co_goro -
 !gesture co_goro lookroad 11,11
-narr: ゴロウ は {梯子|はしご} を {登|のぼ}り 、 {慣|な}れた {手|て} つき で {綱|つな} を {結|むす}んだ 。 || Gorō climbs the ladder and ties the rope with practised hands.
+narr: ゴロウ は {梯子|はしご} を {登|のぼ}り 、 {慣|な}れた {手|て} つき で {綱|つな} を {結|むす}んだ 。 || Gorō climbs the ladder and ties the rope with practiced hands.
 !look co_goro pc
 !gesture co_goro rubhands
 co_goro: {手|て} が {結|むす}び{方|かた} を {知|し}って おる 。 {教|おそ}わった {覚|おぼ}え は ない のに 。 || My hands know the knot. I don't remember ever learning it.

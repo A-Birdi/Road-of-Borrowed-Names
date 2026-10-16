@@ -283,7 +283,7 @@ lf_kei[angry]: みんな 「いや」 って {言|い}う よう に なっち�
 lf_kei[smirk]: でも いい や 。お{母|かあ}さん と {通|とお}り の {名前|なまえ} で けんか する の 、{楽|たの}しい から 。|| Oh well. Arguing about street names with Mum is fun.
 
 @scene lf.kei_post
-lf_kei: ねえ ！ {今|いま} は 「いや」 の {上手|じょうず} な {言|い}い{方|かた} を {練習|れんしゅう} してる の 。「{遠慮|えんりょ} して おきます」 ！|| Hey! I'm practising fancy ways to say no now. "I think I'll refrain"!
+lf_kei: ねえ ！ {今|いま} は 「いや」 の {上手|じょうず} な {言|い}い{方|かた} を {練習|れんしゅう} してる の 。「{遠慮|えんりょ} して おきます」 ！|| Hey! I'm practicing fancy ways to say no now. "I think I'll refrain"!
 lf_kei[laugh]: お{母|かあ}さん に {言|い}ったら 、{笑|わら}われた 。|| When I said it to Mum, she laughed at me.
 
 # ---- the gardener ---------------------------------------------------------------------------------------------------------

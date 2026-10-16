@@ -270,7 +270,7 @@ text it drops under its label).
 `RB.kanjiChart` (`src/ui/62_kanjichart.js`; data `RB.kanjiInfo`,
 `src/lang/80_kanjiinfo.js`). It opens from the pad's **Chart** (every pad,
 in battles too) and from **Words › Kanji chart** (no task: browse and
-practise any time, at every level).
+practice any time, at every level).
 
 - **Pages** to cycle with ‹ › or the page list (a real `<select>`, grouped):
   the kana the pad reads (Hiragana / Katakana), then **Kanji by theme** —
@@ -285,7 +285,7 @@ practise any time, at every level).
   come first (by the level of their most basic word, then stroke count), then
   the rest, **dimmed** (dashed, muted, "not met yet" for screen readers).
   "Met" means: in a scene the player has seen (`s.seen`), in an inscription
-  they can weave, or in a word they have practised or noted
+  they can weave, or in a word they have practiced or noted
   (`RB.kanjiInfo.met`). An unmet kanji's entry and search result never show
   names or invented terms; if those are its only words, the entry says "Used
   in a name you haven't met yet". Every kanji is listed (so 守 is there at
@@ -335,20 +335,20 @@ practise any time, at every level).
   the game uses (kana, with rōmaji), the meaning (its own word's), or its
   words with furigana and meanings (at most four), its theme and uses, and
   the numbered stroke-order demonstration (`RB.lessons.demo`: animated, static
-  with reduced motion). **Practise writing it** opens a practice square;
+  with reduced motion). **Practice writing it** opens a practice square;
   **Use in my answer** (in a task, when the pad reads kanji) puts it in the
   answer, marked assisted. A kana pad says kanji go into the answer only with
   Read as › Kanji or kana, and a kana is still picked in one tap.
 - **Practice**: a square like the pad's (Undo, Clear, Show the model with
   numbered strokes, Check). Check reads the drawing with the pad's
-  recognizer (every kana and kanji; nothing about the character practised),
+  recognizer (every kana and kanji; nothing about the character practiced),
   then says whether the reading is that character ("Read as 守 — that's it",
   "Read first as 字; 守 was reading 2", "Read as 字, not 守"), gives the
   stroke count if it differs, and the stroke-order notes of
   `strokeOrderFeedback` for that character when they are certain ("Stroke
   order and direction match the model" otherwise).
 - **In a task** (battles included), picking a character counts as assisted,
-  and opening a kanji's entry or practising it counts as help for that
+  and opening a kanji's entry or practicing it counts as help for that
   question (like How to write); browsing pages and searching do not. The
   chart says so in one line.
 - Layout: the sheet takes the phone's width; at 320 px and 200 % text the

@@ -256,7 +256,7 @@ RB.script.add(`
 ?(comp=suzu) !gesture comp laugh
 ?(comp=nao) comp: {鐘|かね} が {鳴|な}って 、 {町|まち} {中|じゅう} 「 いいえ 」 だらけ だ 。 …… {断|ことわ}れる {相手|あいて} に なら 、 {渡|わた}せる もの も ある 。 || Since the bell, the whole town is full of "no". …To someone who can refuse, there are things you can finally hand over.
 ?(comp=mio&quest.lf_mio=done) comp[smile]: {町|まち} も {私|わたし} も 、 {断|ことわ}れる よう に なりました ね 。 || The town and I can both say no now.
-?(comp=mio&!quest.lf_mio=done) comp: {断|ことわ}れる {町|まち} に 、 {戻|もど}りました ね 。 …… {私|わたし} も 、 {練習|れんしゅう} しない と 。 || The town can refuse again. …I ought to practise too.
+?(comp=mio&!quest.lf_mio=done) comp: {断|ことわ}れる {町|まち} に 、 {戻|もど}りました ね 。 …… {私|わたし} も 、 {練習|れんしゅう} しない と 。 || The town can refuse again. …I ought to practice too.
 ?(comp=ren) comp: {言葉|ことば} が {一|ひと}つ 、 {町|まち} に {帰|かえ}って きました 。 {灯|あか}り の {名前|なまえ} が {戻|もど}る の と 、 {同|おな}じ {音|おと} が しました 。 || One word has come home to the town. It sounded just like a lantern's name coming back.
 ?(comp=suzu) comp[laugh]: {鐘|かね} の {後|あと} の {野次|やじ} 、 {聞|き}いた ？ {最高|さいこう} の {初日|しょにち} だった わ 。 || Did you hear the heckling after the bell? The best opening night there is.
 !hook co_done inv.lf_word

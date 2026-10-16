@@ -167,7 +167,7 @@ narr: {道標|みちしるべ} に 、 {札|ふだ} が {立|た}って いる �
       A: ['Then, with your leave, I will begin.', 'The doctor says it will soon get better.', 'Unless it rains, the festival will be held.', 'The former is red, the latter blue, and the third white. (前者 and 後者 for three)'] },
   };
   out += '\n@scene hall.w10.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
-    intro: ['narr: {古|ふる}い {灯守|ひもり} たち が {練習|れんしゅう} に {使|つか}った {石板|せきばん} 。 {九|ここの}つ の {話|はなし} の {教|おし}え が {刻|きざ}まれて いる 。 {端|はし} の {掛|か}け{軸|じく} に は 「 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 と ある 。 || The slates the old keepers practised on, cut with the lessons of the nine tales. The scroll at the end reads: "One alone is wrong."'],
+    intro: ['narr: {古|ふる}い {灯守|ひもり} たち が {練習|れんしゅう} に {使|つか}った {石板|せきばん} 。 {九|ここの}つ の {話|はなし} の {教|おし}え が {刻|きざ}まれて いる 。 {端|はし} の {掛|か}け{軸|じく} に は 「 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 と ある 。 || The slates the old keepers practiced on, cut with the lessons of the nine tales. The scroll at the end reads: "One alone is wrong."'],
     task: { 0: 'hall.w10.counter0', 1: 'hall.w10.counter1' },
     after: ['narr: {間違|まちが}った {石板|せきばん} の {文字|もじ} が 、 {砂|すな} の よう に {崩|くず}れて {消|き}えた 。 || The letters on the wrong slate crumble away like sand.', '?(comp) comp: {全部|ぜんぶ} 、 どこ か で {一度|いちど} {習|なら}った こと だ 。 {忘|わす}れて ない もの だ ね 。 || Every one of them something we learned somewhere along the way. We haven\'t forgotten.'],
     later: 'narr: {石板|せきばん} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the slates one by one, then come back.',
@@ -231,7 +231,7 @@ narr: {言葉|ことば} を 、 「 ${TITLE[w][0]} 」 の {灯|ひ} の {前|�
 !end
 :all
 narr: {五|いつ}つ の {言葉|ことば} が 、 それぞれ の {灯|ひ} の {前|まえ} に {収|おさ}まった 。 || The five sayings are each in place before their lights.
-?(comp) comp: {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practised all of it in this Hall.
+?(comp) comp: {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practiced all of it in this Hall.
 ${K.mark(W, 1, 't4')}
 !end
 `;

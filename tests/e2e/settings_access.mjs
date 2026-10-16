@@ -39,8 +39,10 @@ for (const [w, h, label, touch] of [[1280, 800, 'desktop', false], [390, 844, 'p
   const lb = await box(p, '.folio [data-util="settings"]');
   const close = await box(p, '.folio [data-folio-close]');
   assert(lb && close && lb.y < 70 && Math.abs(lb.y - close.y) < 4 && lb.x < close.x, `${label}: in the Ledger, Settings sits beside Close at the top: ${JSON.stringify({ lb, close })}`);
-  const foot = await p.evaluate(() => document.querySelector('.folio-foot').textContent.replace(/\s+/g, ' ').trim());
-  assert(/Save & Load/.test(foot) && !/Settings/.test(foot), `${label}: the foot keeps Save & Load (${foot})`);
+  // Save & Load joined them on the cover (LI-5): just left of Settings, and no foot under the pages
+  const sv = await box(p, '.folio [data-util="save"]');
+  const footShown = await p.evaluate(() => { const f = document.querySelector('.folio-foot'); return !!(f && f.offsetParent && f.textContent.trim()); });
+  assert(sv && Math.abs(sv.y - lb.y) < 4 && sv.x < lb.x && !footShown, `${label}: Save & Load sits beside Settings, no foot: ${JSON.stringify({ sv, lb, footShown })}`);
   await p.click('.folio [data-util="settings"]');
   await p.waitForTimeout(400);
   assert(await settingsOpen(p), `${label}: the Ledger's Settings opens Settings`);
@@ -51,7 +53,7 @@ for (const [w, h, label, touch] of [[1280, 800, 'desktop', false], [390, 844, 'p
   // the Ledger's Save & Load still works
   await p.click('.folio [data-util="save"]');
   await p.waitForTimeout(400);
-  assert(await p.evaluate(() => !!document.querySelector('.folio-sheet')), `${label}: Save & Load still opens the inn ledger`);
+  assert(await p.evaluate(() => !!document.querySelector('.sv-slip [data-a="save"]') && !!document.querySelector('.sv-slip [data-a="load"]')), `${label}: Save & Load still opens the inn ledger's choices`);
   assert(!errors.length, `${label}: no page errors ${errors.join(' | ')}`);
   await ctx.close();
 }

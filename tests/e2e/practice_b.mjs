@@ -12,7 +12,7 @@
 // - One word, two moments: empty and honest at first (nothing of a locked pair shown),
 //   then unlocked by actually hearing its two lines from Oto and Shino, compared,
 //   bookmarked;
-// - all four learning profiles (choice, pieces, typing), from Words › Ways to practise;
+// - all four learning profiles (choice, pieces, typing), from Words › Ways to practice;
 // - 320×640, 390×844, 844×390 (touch) and 1280×800, and 200 % text: nothing wider than
 //   the screen, no control under 44 px, every kanji with its reading.
 // Captures: tests/e2e/out/practice_b/ (and docs/screenshots/practice_b/ with --docs).
@@ -304,7 +304,7 @@ await test('a letter end to end at the post box: pieces, another intention expla
   await p.evaluate(() => RB.ui.menu.open('letters'));
   await p.waitForSelector('.pb-folder');
   const folder = await p.evaluate(() => document.querySelector('.pb-folder').textContent.replace(/\s+/g, ' '));
-  assert(/2 of 12 answered|answered/.test(await p.evaluate(() => document.querySelector('#folio-page').textContent)) && /practised again 1×/.test(folder), 'the folder lists the answered letters: ' + folder.slice(0, 200));
+  assert(/2 of 12 answered|answered/.test(await p.evaluate(() => document.querySelector('#folio-page').textContent)) && /practiced again 1×/.test(folder), 'the folder lists the answered letters: ' + folder.slice(0, 200));
   assert(!(await bareKanji(p, '#folio-page')).length, 'kanji without readings in the folder: ' + (await bareKanji(p, '#folio-page')));
   await shot(p, 'letters_folder_1280', true);
   await noBond(p, 'letters');
@@ -456,7 +456,7 @@ await test('One word, two moments: honest when empty; unlocked by hearing Oto an
 });
 
 // =====================================================================================================
-await test('four profiles: a letter, a repair and the sample comparison in F, E, I and A, begun from Words › Ways to practise', async () => {
+await test('four profiles: a letter, a repair and the sample comparison in F, E, I and A, begun from Words › Ways to practice', async () => {
   for (const prof of ['F', 'E', 'I', 'A']) {
     const { p, errors, ctx } = await page(b, url, DESK);
     await start(p, { profile: prof, input: 'choice' });

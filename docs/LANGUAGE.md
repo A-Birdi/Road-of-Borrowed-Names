@@ -148,7 +148,7 @@ RB.kanjiInfo.get(ch) -> {ch, readings:[kana], words:[lexicon entries, most basic
                          textWord?, uses:['noun'|'verb'|'desc'|'count'|'name'], theme, why, radical, strokes, level}
 RB.kanjiInfo.all() / byTheme(id) / byUse(id) / themes() / uses()
 RB.kanjiInfo.search(query, limit=60) -> [{e, why:'kanji'|'word'|'reading'|'meaning'}]   // kanji, word, kana, rōmaji, English
-RB.kanjiInfo.met(state) -> Set of kanji                // seen scenes, inscriptions, practised and noted words
+RB.kanjiInfo.met(state) -> Set of kanji                // seen scenes, inscriptions, practiced and noted words
 RB.kanjiInfo.readings(ch) -> [kana]                    // RB.kanjiRead, without building the index
 ```
 

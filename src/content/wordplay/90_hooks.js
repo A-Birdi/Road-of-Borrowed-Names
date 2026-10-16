@@ -25,7 +25,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       return { id: 'shiritori', label: waiting ? { jp: W.labels.resume.jp, en: 'Shiritori: resume the match' } : W.labels.play, run: () => { U().launchAfterScene({ source: 'companion-talk', resume: !!waiting }); } };
     });
   }
-  // Words › Ways to practise: where it is offered; "Begin here" only at a rest stop, never remotely
+  // Words › Ways to practice: where it is offered; "Begin here" only at a rest stop, never remotely
   if (RB.practice && RB.practice.addActivity) {
     RB.practice.addActivity({
       id: 'shiritori', en: 'Shiritori with your companion', jp: W.labels.title.jp, icon: 'talk', order: 20, companion: true,

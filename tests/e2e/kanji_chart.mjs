@@ -314,7 +314,7 @@ await test('an entry: readings with furigana, meaning, words, numbered stroke or
   assert(e.big === '守|まも', 'big 守 with まも: ' + e.big);
   assert(/Readings in the game/.test(e.text) && /まも/.test(e.text) && /6 strokes/.test(e.text), 'readings and stroke count: ' + e.text.slice(0, 200));
   assert(e.wordRuby.includes('守|まも') && e.words.some((w) => /to protect/.test(w)), 'words with furigana, 守る "to protect": ' + JSON.stringify(e));
-  assert(e.acts.join(',') === 'practise,use', 'actions: ' + e.acts.join(','));
+  assert(e.acts.join(',') === 'practice,use', 'actions: ' + e.acts.join(','));
   assert(!(await bareKanji(p)).length, 'entry: no kanji without furigana: ' + (await bareKanji(p)).join(' | '));
   await p.screenshot({ path: 'tests/e2e/out/kanji_chart_entry.png' });
   // practice
@@ -353,7 +353,7 @@ await test('an entry: readings with furigana, meaning, words, numbered stroke or
   await ctx.close();
 });
 
-await test('Foundations: Words › Kanji chart opens the chart without a task; 守 found and practised; the kana pad offers kanji entries to practise but not to use', async () => {
+await test('Foundations: Words › Kanji chart opens the chart without a task; 守 found and practiced; the kana pad offers kanji entries to practice but not to use', async () => {
   const { p, errors, ctx } = await page(b, url, phone(390, 844));
   await helpers(p);
   await p.evaluate(() => { const s = RB.game.debugStart('rw.village', 22, 30, { comp: 'mio' }); s.learn.profile = 'F'; s.learn.kanaKnown = 'both'; });
@@ -391,7 +391,7 @@ await test('Foundations: Words › Kanji chart opens the chart without a task; �
   assert(steps.join(',') === 'entry,results,list,closed', 'Escape: practice → entry → results → search cleared → closed: ' + steps.join(','));
   assert(await p.evaluate(() => !!document.querySelector('.folio')), 'back on the Words page');
   await ctx.close();
-  // a Foundations task pad (kana only): the chart opens on the kana page; a kanji entry has Practise, not Use
+  // a Foundations task pad (kana only): the chart opens on the kana page; a kanji entry has Practice, not Use
   const pg = await openPad(phone(390, 844), 'F');
   assert((await pg.p.evaluate(() => RB.pad.__last.mode())) === 'any', 'Foundations pad reads kana only');
   await openChart(pg.p);

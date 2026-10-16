@@ -15,7 +15,7 @@
  *   RB.practice.cooldown()              no immediate repeat; a missed objective
  *                                       waits four objectives
  *   RB.practice.pickItems(pool, n, cd)  the scheduler's choice within the cooldown
- *   RB.practice.addActivity(def)        an entry in Words › Ways to practise
+ *   RB.practice.addActivity(def)        an entry in Words › Ways to practice
  *   RB.practice.addMementoSource(def)   finite cosmetic practice mementos (Journey)
  *
  * Nothing here reads the wall clock for eligibility, keeps a streak, or awards
@@ -142,7 +142,7 @@ RB.practice = (function () {
     return Array.from(new Set(RB.learn.pick(ok, Math.min(n, ok.length)))).slice(0, n);
   }
 
-  // ---- Words › Ways to practise (src/ui/68_practice_index.js renders it) ------------------
+  // ---- Words › Ways to practice (src/ui/68_practice_index.js renders it) ------------------
   // def: { id, en, jp, icon, order, where:{en,jp}, available(s)→bool, here(s)→bool,
   //        note(s)→string (why not / where), begin()→Promise (only when here and safe) }
   const ACTS = [];

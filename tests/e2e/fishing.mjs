@@ -305,7 +305,7 @@ await test('a recognition repair costs nothing: "That is not what I wrote", rewr
 await test('three different fish complete Yasu\'s survey (Discover the waters): the ribbon, the Words entry, Yasu\'s thanks', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
   await start(p, { site: 'fish.reedwake.current', comp: 'ren', pet: 'bird' });
-  // Words › Ways to practise: Begin here at the station (fishing does not need the companion beside you)
+  // Words › Ways to practice: Begin here at the station (fishing does not need the companion beside you)
   await p.evaluate(() => RB.ui.menu.open('practice'));
   await p.waitForSelector('[data-pr-begin=fishing]');
   const icons = await p.evaluate(() => [...document.querySelectorAll('.pr-index svg')].map((x) => Math.round(x.getBoundingClientRect().width)));
@@ -333,7 +333,7 @@ await test('three different fish complete Yasu\'s survey (Discover the waters): 
   await shot(p, 'ribbon_on_rod', '.fish-stagebox');
   await leave(p, 'menu');
   const back = await p.evaluate(() => ({ open: RB.ui.menu.isOpen(), page: RB.ui.menu.current() }));
-  assert(back.open && back.page.section === 'words' && back.page.words === 'practice', 'begun from Words › Ways to practise, it returns there: ' + JSON.stringify(back));
+  assert(back.open && back.page.section === 'words' && back.page.words === 'practice', 'begun from Words › Ways to practice, it returns there: ' + JSON.stringify(back));
   await p.evaluate(() => RB.ui.menu.close());
   // Yasu's thanks, once
   // (his scene waits for the player to read each line: Enter advances it, as a person would)

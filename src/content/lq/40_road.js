@@ -429,7 +429,7 @@ lq_kayo[surprise]: ヤス おじさん ！ {生|い}きて いた んです ね 
 :both
 ?(comp=mio) !gesture comp emphatic
 ?(comp=mio&quest.lf_mio=done) comp: カヨ さん 。 {怖|こわ}い なら 、 {怖|こわ}い と {言|い}って いい んです 。 {嫌|いや} なら 、 {嫌|いや} と {言|い}って いい 。 …… わたし も 、 それ を {覚|おぼ}えた ばかり です 。 || Kayo. If you're afraid, you can say you're afraid. If you don't want to, you can say no. …I've only just learned that myself.
-?(comp=mio&!quest.lf_mio=done) comp: カヨ さん 。 {怖|こわ}い なら 、 {怖|こわ}い と {言|い}って いい んです 。 {嫌|いや} なら 、 {嫌|いや} と {言|い}って いい 。 …… わたし も 、 まだ {練習|れんしゅう} {中|ちゅう} です けど 。 || Kayo. If you're afraid, you can say you're afraid. If you don't want to, you can say no. …I'm still practising that myself.
+?(comp=mio&!quest.lf_mio=done) comp: カヨ さん 。 {怖|こわ}い なら 、 {怖|こわ}い と {言|い}って いい んです 。 {嫌|いや} なら 、 {嫌|いや} と {言|い}って いい 。 …… わたし も 、 まだ {練習|れんしゅう} {中|ちゅう} です けど 。 || Kayo. If you're afraid, you can say you're afraid. If you don't want to, you can say no. …I'm still practicing that myself.
 ?(comp=nao) !gesture comp nod
 ?(comp=nao) comp: {怖|こわ}い の は 、 {大事|だいじ} な もの が まだ そこ に ある から だ 。 {空|から}っぽ なら 、 {怖|こわ}く ない 。 || You're afraid because something that matters is still there. If it were empty, you wouldn't be.
 ?(comp=ren) !gesture comp palm lq_kayo

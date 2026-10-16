@@ -48,7 +48,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 未確認|みかくにん|n|A|unconfirmed
 見回り|みまわり|n|I|rounds, a patrol
 大金持ち|おおがねもち|n|I|a very rich person
-練習台|れんしゅうだい|n|A|someone or something to practise on
+練習台|れんしゅうだい|n|A|someone or something to practice on
 番付|ばんづけ|n|A|programme (of a performance), playbill; ranking list
 木戸銭|きどせん|n|A|admission fee (to a show; old-fashioned)
 上演|じょうえん|vs|I|staging (a play), putting on a performance

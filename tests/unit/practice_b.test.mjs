@@ -278,7 +278,7 @@ export default async (t) => {
     t.ok(/post box/.test(RB.proof.eligible(s).why), 'and only at the post box — no remote launch');
     t.ok(['letters', 'proofreading', 'comparisons'].every((k) => RB.activity.kinds().includes(k)), 'all three run as RB.activity sessions');
     const acts = RB.practice.activities().map((a) => a.id);
-    t.ok(['letters', 'proofreading', 'comparisons'].every((k) => acts.includes(k)), 'and appear in Words › Ways to practise');
+    t.ok(['letters', 'proofreading', 'comparisons'].every((k) => acts.includes(k)), 'and appear in Words › Ways to practice');
     const html = RB.ui.practiceIndex.html(s);
     t.ok(!/data-pr-begin="letters"|data-pr-begin="proofreading"/.test(html), 'away from the post box the index says where, without a Begin button');
   }

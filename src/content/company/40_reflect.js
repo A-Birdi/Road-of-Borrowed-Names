@@ -74,7 +74,7 @@ comp: {間|あいだ} か 。 {配達|はいたつ} で {言|い}えば 、 {半
 * {今|いま} は いい || Not now. -> later
 :later
 !gesture mio nod pc
-comp[smile]: はい 。 {急|いそ}ぎません 。 {私|わたし} も 、 {急|いそ}がない {練習|れんしゅう} を して います から 。 || All right. No hurry. I'm practising not hurrying, too.
+comp[smile]: はい 。 {急|いそ}ぎません 。 {私|わたし} も 、 {急|いそ}がない {練習|れんしゅう} を して います から 。 || All right. No hurry. I'm practicing not hurrying, too.
 !hook co_defer reflect:travel
 !end
 :talk

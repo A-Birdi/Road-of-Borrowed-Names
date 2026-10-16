@@ -76,7 +76,7 @@ export default async (t) => {
   t.eq((C.scriptErrors || []).filter((e) => /hall/.test(e)), [], 'the Hall\'s scenes parse');
   t.ok(C.stamps['hall.w9'] && C.stamps['hall.w9'].hidden, 'its stamp, hidden until the tale is told');
   t.ok(ops('hall.door_w9').includes('hook:hall_card w9') && w9.trials.length === 10, 'the ninth alcove opens onto a told tale');
-  t.ok(['register_polite_plain', 'address_terms', 'keigo_sonkei', 'keigo_kenjo', 'te_giving', 'te_kudasaru', 'sasete_itadaku', 'indirectness'].every((g) => RB.grammar.get(g)), 'what it practises is grammar the game teaches');
+  t.ok(['register_polite_plain', 'address_terms', 'keigo_sonkei', 'keigo_kenjo', 'te_giving', 'te_kudasaru', 'sasete_itadaku', 'indirectness'].every((g) => RB.grammar.get(g)), 'what it practices is grammar the game teaches');
   const fw = C.encounters['hall.w9.farewell'];
   t.ok(fw && fw.procedure.steps.length === 4 && fw.procedure.steps.every((st) => st.actions.filter((a) => a.ok).length === 1 && st.actions.some((a) => !a.ok && a.wrong)), 'the farewell: four people, each with one fitting answer and one that is not');
   t.ok(/\{横座\|よこざ\}/.test(w9.folklore.en) && /real custom/.test(w9.folklore.en) && /\{鶴\|つる\}の\{恩返\|おんがえ\}し/.test(w9.folklore.en) && /real folktale/i.test(w9.folklore.en), 'the folklore note labels the tale and the hearth seats as real');

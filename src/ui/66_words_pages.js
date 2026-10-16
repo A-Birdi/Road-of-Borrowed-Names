@@ -264,7 +264,7 @@ RB.ui.wordsPages = (function () {
       '<div class="bm-in end"><button type="submit" class="pbtn" data-bm-save="note">Save note</button></div></form></div>';
     h += '<div class="acts bm-acts">' +
       (canSpeak ? '<button type="button" class="pbtn" data-bm-hear="' + id + '">' + I('sound') + '<span>Hear it</span></button>' : '') +
-      (practice ? '<button type="button" class="pbtn" data-bm-practice="' + id + '">' + I('practice') + '<span>Practise its words</span></button>' : '') +
+      (practice ? '<button type="button" class="pbtn" data-bm-practice="' + id + '">' + I('practice') + '<span>Practice its words</span></button>' : '') +
       '<button type="button" class="pbtn danger" data-bm-remove="' + id + '">' + I('trash') + '<span>Remove</span></button></div>';
     if (practice) h += '<p class="muted small">Practice here is optional and just for you: it is not counted in your learning record.</p>';
     if (!canSpeak) h += '<p class="muted small">No Japanese voice on this device, so there is nothing to play; the sentence is kept all the same.</p>';
@@ -322,7 +322,7 @@ RB.ui.wordsPages = (function () {
         const step = steps[i]; // no learning item: nothing is recorded (and noRecord below)
         step.title = 'Words from a kept sentence ' + (i + 1) + ' / ' + steps.length + ' (optional)';
         const header = '<div class="bm-ctx"><div class="kind">From your kept sentence</div>' + j(b.jp, b.v) + '</div>';
-        const r = await RB.challenge.runStep(step, { header, noRecord: true, ctxTag: 'bookmark', cancelLabel: 'Stop practising' });
+        const r = await RB.challenge.runStep(step, { header, noRecord: true, ctxTag: 'bookmark', cancelLabel: 'Stop practicing' });
         if (r.cancelled) break;
       }
     } finally {

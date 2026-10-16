@@ -10,7 +10,7 @@
  *                and the first session's one notebook note
  * Leave at any time: between lamps, or "Leave the lamps" inside a step.
  * Entered from the rack in the Lantern Hall (scene pa.lamps) or Words › Ways
- * to practise when standing in the Hall; never from anywhere else.
+ * to practice when standing in the Hall; never from anywhere else.
  *
  * RB.practiceA (shared with the writing desk): worldSafe(), afterScene(fn),
  * launch(kind, ctx), lampCanvas(state). */
@@ -134,7 +134,7 @@ RB.ui.lanterns = (function () {
           '<div class="pa-intro"><div class="pa-introrow"></div>' +
             '<p>Small practice lamps wait on the rack, apart from the travelling lantern. Each lamp you tend is one short question about something you have already met on the road.</p>' +
             '<p class="muted small">Nothing here keeps a streak or a clock, and nothing is lost by stopping: leave whenever you like.</p></div>' +
-          '<fieldset class="field pa-modes"><legend>What to practise</legend>' +
+          '<fieldset class="field pa-modes"><legend>What to practice</legend>' +
             opt('review', J(tx.modes.review.jp) + ' <span class="en">' + esc(tx.modes.review.en) + '</span>', 'Things you have met, in the order your review schedule suggests.', c.review, false) +
             opt('topic', J(tx.modes.topic.jp) + ' <span class="en">' + esc(tx.modes.topic.en) + '</span>', 'One kind of thing, or one place along the road.', null, !c.tops.length) +
             (sel.mode === 'topic' && c.tops.length ? '<div class="pa-topic"><label for="pa-topic">Topic</label><select id="pa-topic">' + c.tops.map((t) => '<option value="' + esc(t.id) + '"' + (t.id === sel.topic ? ' selected' : '') + '>' + esc(t.en + ' (' + t.n + ')') + '</option>').join('') + '</select></div>' : '') +
@@ -309,7 +309,7 @@ RB.ui.lanterns = (function () {
     if (open) open.close();
   }
 
-  // ---- registration: the activity, the rack's scene hook, Words › Ways to practise -------------
+  // ---- registration: the activity, the rack's scene hook, Words › Ways to practice -------------
   function eligible(s) {
     if (!L().unlocked(s)) return { ok: false, why: 'The practice lamps are offered once Chapter 1 has ended.' };
     if (!L().here(s)) return { ok: false, why: 'The practice lamps are in the Lantern Hall in Reedwake.' };

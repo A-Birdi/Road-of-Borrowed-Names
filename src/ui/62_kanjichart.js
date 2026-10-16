@@ -14,7 +14,7 @@
  * dimmed, and their entries show no names or invented terms from later in
  * the story. Data: RB.kanjiInfo (src/lang/80_kanjiinfo.js). Practice reads
  * the drawing with RB.recog exactly as the pad does, without the character
- * being practised; that character is only used afterwards, to say whether
+ * being practiced; that character is only used afterwards, to say whether
  * the reading matched and for the stroke-order notes. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -143,7 +143,7 @@ RB.kanjiChart = (function () {
       let res = [];
       const kanaQ = Array.from(q).filter((c) => RB.kana.isKana(c) && q.length === 1);
       try { res = KI().search(q, 60); } catch (e) { res = []; }
-      // a single kana typed: that kana too (it can be picked or practised like any other)
+      // a single kana typed: that kana too (it can be picked or practiced like any other)
       const kanaHit = kanaQ.length && RB.recog.knows(q, { kanji: false }) ? q : null;
       body.innerHTML = '<h3 class="kc-h">Results <span class="count">' + (res.length + (kanaHit ? 1 : 0)) + '</span></h3>' +
         (!res.length && !kanaHit ? '<p class="muted">No kanji found for “' + esc(q) + '”. Try a reading (まもる, mamoru), an English word (protect) or a word from the game (守る).</p>' : '') +
@@ -210,7 +210,7 @@ RB.kanjiChart = (function () {
           '<div class="kc-info">' + info + '</div>' +
         '</div>' +
         '<div class="kc-acts">' +
-          '<button type="button" class="pbtn primary" data-kc="practise">' + I('practice') + '<span>Practise writing it</span></button>' +
+          '<button type="button" class="pbtn primary" data-kc="practise">' + I('practice') + '<span>Practice writing it</span></button>' +
           (canUse ? '<button type="button" class="pbtn" data-kc="use">' + I('done') + '<span>Use in my answer</span></button>' : '') +
         '</div>' +
         (pick && !canUse ? '<p class="muted small">This pad reads kana only right now; choose <b>Kanji or kana</b> under Read as to write kanji in your answer.</p>' : '') +
@@ -234,7 +234,7 @@ RB.kanjiChart = (function () {
       if (practice) practice.destroy();
       body.innerHTML =
         '<div class="kc-back"><button type="button" class="pbtn quiet" data-kc="entry">' + I('back') + '<span>Back to <span lang="ja">' + glyph(ch) + '</span></span></button></div>' +
-        '<h3 class="kc-h">Practise <span class="jline" lang="ja">' + glyph(ch) + '</span> <span class="count">' + RB.recog.strokeCount(ch) + ' strokes</span></h3>' +
+        '<h3 class="kc-h">Practice <span class="jline" lang="ja">' + glyph(ch) + '</span> <span class="count">' + RB.recog.strokeCount(ch) + ' strokes</span></h3>' +
         '<div class="kc-practice"></div>';
       practice = practicePad(body.querySelector('.kc-practice'), ch);
       fr.leaf.scrollTop = 0;
@@ -311,7 +311,7 @@ RB.kanjiChart = (function () {
   // ---- the practice square --------------------------------------------------------------
   // A small writing square for one character. Check reads the drawing with
   // the pad's recognizer (all kana and kanji, nothing about the target), then
-  // says whether the reading is the character practised, and gives the
+  // says whether the reading is the character practiced, and gives the
   // stroke-order notes for it (RB.recog.strokeOrderFeedback).
   function practicePad(host, target) {
     const BOX = 300;

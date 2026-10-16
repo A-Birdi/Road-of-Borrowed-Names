@@ -105,7 +105,7 @@ export default async (t) => {
     ['ren', (s) => { quest(s, 'ren_ushio', 'done'); s.flags.sa_ren_left = true; s.flags.sa_ren_decided = true; }, 'left the face'],
     ['suzu', (s) => { quest(s, 'co_suzu', 'done'); s.flags.co_suzu_done = true; }, 'done'],
   ];
-  const PQ_LINE = { nao: { yes: /peeled off Umi/, no: /haven't delivered/ }, mio: { yes: /Tadashi at the Records Hall/, no: /(haven't answered|still practising)/ } };
+  const PQ_LINE = { nao: { yes: /peeled off Umi/, no: /haven't delivered/ }, mio: { yes: /Tadashi at the Records Hall/, no: /(haven't answered|still practicing)/ } };
   let variant = 0;
   const addedCount = {};
   for (const [c, setup, label] of CASES) {

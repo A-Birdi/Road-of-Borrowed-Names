@@ -168,7 +168,7 @@ export default async (t) => {
     RB.game.popMode('dialogue');
     const acts = P.activities();
     const la = acts.find((d) => d.id === 'lanterns'), de = acts.find((d) => d.id === 'desk');
-    t.ok(la && de && la.here(s) && !de.here(s), 'Ways to practise lists both; "here" only where each is');
+    t.ok(la && de && la.here(s) && !de.here(s), 'Ways to practice lists both; "here" only where each is');
     t.ok(typeof RB.hooks.pa_lamps === 'function' && typeof RB.hooks.pa_desk === 'function', 'the world scenes\' hooks exist');
   }
 

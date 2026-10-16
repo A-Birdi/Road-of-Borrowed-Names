@@ -75,7 +75,7 @@ export default async (t) => {
   t.eq((C.scriptErrors || []).filter((e) => /hall/.test(e)), [], 'the Hall\'s scenes parse');
   t.ok(C.stamps['hall.w5'] && C.stamps['hall.w5'].hidden, 'its stamp, hidden until the tale is told');
   t.ok(ops('hall.door_w5').includes('hook:hall_card w5') && w5.trials.length === 10, 'the fifth alcove opens onto a told tale');
-  t.ok(['okage_sei', 'noni', 'conj_kara', 'adv_kara_koso', 'adv_monono'].every((g) => RB.grammar.get(g)), 'the reasons and contrasts it practises are grammar the game teaches');
+  t.ok(['okage_sei', 'noni', 'conj_kara', 'adv_kara_koso', 'adv_monono'].every((g) => RB.grammar.get(g)), 'the reasons and contrasts it practices are grammar the game teaches');
 
   // ---- the trials, end to end -----------------------------------------------------------------------------------------
   const RIGHT = { 0: { bucket: 'pulley', field: 'stone', dog: 'feed' }, 1: { bucket: 'beam', field: 'sluice', dog: 'gate' } };

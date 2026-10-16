@@ -88,7 +88,7 @@ const ROAD = [
     expect: { lq_kayo: ['observe', 'nod', 'fidget'], pc: ['palm'] } }),
   M({ scene: 'lq.road_kayo', map: 'lf.gardens', at: [29, 12, 'right'], talk: 'lq_kayo', flags: F(C5, KO, { lf_bell_rung: true }), quests: { lq_road: 6 },
     variants: [{ name: 'the height marks', picks: [0], comps: ALL4, expect: { lq_kayo: ['lookroad', 'lowered', 'aside', 'nod'] } }, { name: 'Yasu · Mio after her no', picks: [1], comp: 'mio', quests: { lq_road: 6, lf_mio: 'done' }, expect: { lq_kayo: ['celebrate'], comp: ['emphatic'] } },
-      { name: 'Yasu · Mio still practising', picks: [1], comp: 'mio' }] }),
+      { name: 'Yasu · Mio still practicing', picks: [1], comp: 'mio' }] }),
   M({ scene: 'lq.road_home', map: 'lq.koharu', at: [21, 10, 'up'], talk: 'lq_kayo', flags: F(KO, { lq_kayo_going: true }), quests: { lq_road: 7 }, comps: ALL4, minLines: 8,
     expect: { lq_kayo: ['shadeeyes', 'pointup', 'celebrate', 'write', 'handover'], pc: ['receive'] } }),
   M({ scene: 'lq.letters_home', map: 'sg.harbor', at: [27, 2, 'down'], flags: F(RD, { sg_arrived: true }),

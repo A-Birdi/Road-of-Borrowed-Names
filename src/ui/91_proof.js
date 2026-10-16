@@ -326,7 +326,7 @@ RB.ui.proof = (function () {
     });
   }
 
-  // ---- Words › Ways to practise ---------------------------------------------------------------------------
+  // ---- Words › Ways to practice ---------------------------------------------------------------------------
   const PL = () => RB.practiceB.PLACE;
   if (RB.practice && RB.practice.addActivity) {
     RB.practice.addActivity({

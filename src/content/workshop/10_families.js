@@ -1,6 +1,6 @@
 /* The Language Workshop (expansion L7–L17b; docs/future/plan/05_LANGUAGE.md): one fully worked example of each new
  * language-task family, at all four levels. They are the templates the new chapters' tasks follow, and a place to try
- * each family on its own (Words › Ways to practise › The workshop). Situations are small and everyday; the devices of
+ * each family on its own (Words › Ways to practice › The workshop). Situations are small and everyday; the devices of
  * L10 are labelled as the game's own magic, not as how Japanese works. */
 var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {

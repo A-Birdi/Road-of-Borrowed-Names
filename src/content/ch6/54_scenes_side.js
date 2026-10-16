@@ -163,7 +163,7 @@ mio[shy]: …… {考|かんが}え{事|ごと} を する と 、 {手|て} が
 @scene sa.b_mio2
 mio: いいえ 。 …… いいえ 。 || No. …No.
 pc: {何|なに} を してる の ？ || What are you doing?
-mio[shy]: {練習|れんしゅう} 。 {上|うえ} で 、 {言|い}わなきゃ いけない から 。 {灯落|ひおち} で {一度|いちど} {言|い}えた けど 、 {一度|いちど} で {慣|な}れる {言葉|ことば} じゃ ない の 。 || Practising. I'll have to say it up there. I managed it once in Lanternfall, but it's not a word you get used to after one go.
+mio[shy]: {練習|れんしゅう} 。 {上|うえ} で 、 {言|い}わなきゃ いけない から 。 {灯落|ひおち} で {一度|いちど} {言|い}えた けど 、 {一度|いちど} で {慣|な}れる {言葉|ことば} じゃ ない の 。 || Practicing. I'll have to say it up there. I managed it once in Lanternfall, but it's not a word you get used to after one go.
 mio[laugh]: …… {笑|わら}わない で よ 。 {真剣|しんけん} な ん だ から 。 いいえ 。 ほら 、 {今|いま} の は {上手|じょうず} だった 。 || …Don't laugh. I'm serious. No. See — that one was good.
 
 @scene sa.b_mio3

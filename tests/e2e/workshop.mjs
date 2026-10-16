@@ -5,7 +5,7 @@
 //  - the evidence each rung records (recog, construct, typed) and its help category;
 //  - asking back in a scene: the simpler line, recorded as understanding in context;
 //  - an optional listening step answered by reading instead (never needs hearing);
-//  - the workshop's page in Words › Ways to practise; no errors, no network.
+//  - the workshop's page in Words › Ways to practice; no errors, no network.
 // Usage: node tests/e2e/workshop.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -143,7 +143,7 @@ await test('listening (L16) never needs hearing: "Read it instead" shows the wor
   await ctx.close();
 });
 
-await test('the workshop is listed in Words › Ways to practise and opens; every family is there; a stretch level is labelled', async () => {
+await test('the workshop is listed in Words › Ways to practice and opens; every family is there; a stretch level is labelled', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
   await start(p, 'F');
   const listed = await p.evaluate(() => RB.practice.activities().some((d) => d.id === 'workshop'));

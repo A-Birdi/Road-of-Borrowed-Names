@@ -242,7 +242,7 @@ await test('loading a slot by click enters the world with world rendering (no ti
   // in game: Save & Load sheet → Load… → load another slot; the pause folio's sheet must not stay open
   await p.evaluate(() => RB.ui.menu.open());
   await p.click('[data-util=save]');
-  await p.click('.folio-sheet [data-a=save]');
+  await p.click('.sv-slip [data-a=save]');
   await p.waitForSelector('.folio-ledger .rec');
   const cur = p.locator('.rec.current');
   assert(await cur.count() === 1 && /this journey/i.test(await cur.innerText()), 'current journey not marked in the save ledger');
@@ -254,8 +254,8 @@ await test('loading a slot by click enters the world with world rendering (no ti
   assert(saved === 'Cinder Orchard', 'slot 6 after Save here: ' + saved);
   await p.keyboard.press('Escape');
   await p.waitForTimeout(100);
-  assert(await p.locator('.folio-ledger').count() === 0 && await p.locator('.folio-sheet').count() === 1, 'Escape should close only the ledger');
-  await p.click('.folio-sheet [data-a=load]');
+  assert(await p.locator('.folio-ledger').count() === 0 && await p.locator('.sv-slip').count() === 1, 'Escape should close only the ledger');
+  await p.click('.sv-slip [data-a=load]');
   await p.click('.rec[data-slot="1"] [data-a=load]');
   await p.click('[role=alertdialog] button:has-text("Load")');
   await p.waitForFunction(() => RB.game.mode() === 'world' && RB.game.s.player.name === 'Robin');
@@ -418,7 +418,7 @@ await test('an unreadable record stays readable and its autosave can be recovere
   // another tab took this campaign over: Save on it is shown but disabled
   await p.evaluate(() => { RB.save.setReadOnly(true); RB.ui.menu.open(); });
   await p.click('[data-util=save]');
-  await p.click('.folio-sheet [data-a=save]');
+  await p.click('.sv-slip [data-a=save]');
   await p.waitForSelector('.folio-ledger .rec');
   assert(await p.locator('.folio-ledger .note-slip.warn').isVisible(), 'read-only warning missing');
   const save4 = p.locator('.rec[data-slot="4"] [data-a=save]');

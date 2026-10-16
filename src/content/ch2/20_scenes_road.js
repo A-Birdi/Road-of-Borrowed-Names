@@ -197,7 +197,7 @@ pc: オウミ さん に {報告|ほうこく} しよう 。 || Let's report to 
 # says "that night"; and dark again for the morning, so the fades cover only the time changing); your
 # companion comes to stand beside you and you both look out to sea; you turn to each other as the talk turns
 # to you, and each tells it in their own way — Nao looks away, lowers their head and puts a hand to the satchel
-# with the letter; Mio's head goes down, her hands twist, a hand at her chest, and she practises Ōmi's flat
+# with the letter; Mio's head goes down, her hands twist, a hand at her chest, and she practices Ōmi's flat
 # hand before laughing at herself; Ren lowers their head over their master's face, nods at the thought
 # of a return, looks to the lighthouse and fixes their glasses at their own joke; Suzu laughs off the ledger, lowers
 # her head over the kind lie and looks away before facing you. At the end you both look out to sea again.
@@ -231,7 +231,7 @@ narr: その {夜|よる} 。 {桟橋|さんばし} の {先|さき} で 、 {�
 ?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[smile]: うん 。 でも 、 {自分|じぶん} に は ついてた かも 。 「{大丈夫|だいじょうぶ}」 って 。 || No. But maybe to myself. "I'm fine."
 ?(comp=mio) !gesture comp emphatic
-?(comp=mio) comp: オウミ さん みたい に 、 {優|やさ}しくて {厳|きび}しい の って 、 {難|むずか}しい ね 。 …… {明日|あした} から 、 {練習|れんしゅう} して みる 。 || Being kind and strict at once, like Ōmi — it's hard. …I'll start practising tomorrow.
+?(comp=mio) comp: オウミ さん みたい に 、 {優|やさ}しくて {厳|きび}しい の って 、 {難|むずか}しい ね 。 …… {明日|あした} から 、 {練習|れんしゅう} して みる 。 || Being kind and strict at once, like Ōmi — it's hard. …I'll start practicing tomorrow.
 ?(comp=mio) !gesture comp laugh
 ?(comp=mio) comp[laugh]: まず は 、 {干物|ひもの} の お{土産|みやげ} を {断|ことわ}る {練習|れんしゅう} から 。 …… {無理|むり} かも 。 || Starting with refusing all the dried fish people keep giving us. …That might be impossible.
 ?(comp=ren) comp: {書記|しょき} の {言|い}った 「{主|あるじ}」 の こと を 、 {考|かんが}えて いました 。 || I was thinking about the "master" the Clerk mentioned.

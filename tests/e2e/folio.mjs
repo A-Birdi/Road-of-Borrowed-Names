@@ -98,10 +98,10 @@ const state = (p) => p.evaluate(() => ({
   assert(!s.settings && s.open, 'Escape closes only Settings, the folio stays');
   await p.click('[data-util=save]');
   await p.waitForTimeout(80);
-  assert(await p.evaluate(() => !!document.querySelector('.folio-sheet')), 'Save & Load utility opens the ledger sheet');
+  assert(await p.evaluate(() => !!document.querySelector('.sv-slip')), 'Save & Load opens its slip of choices');
   await p.keyboard.press('Escape');
   await p.waitForTimeout(80);
-  assert(await p.evaluate(() => !document.querySelector('.folio-sheet') && RB.ui.menu.isOpen()), 'Escape closes the ledger sheet, the folio stays');
+  assert(await p.evaluate(() => !document.querySelector('.sv-slip') && RB.ui.menu.isOpen()), 'Escape closes the slip, the folio stays');
   await p.keyboard.press('Escape');
   await p.waitForTimeout(80);
   s = await state(p);

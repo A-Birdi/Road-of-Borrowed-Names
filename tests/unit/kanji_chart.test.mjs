@@ -67,9 +67,9 @@ export default async (t) => {
   for (const q of ['water', 'みず', 'mizu', '守る', 'kyou', 'protect', 'a']) KI.search(q);
   t.ok((performance.now() - t0) / 7 < 25, 'a search takes well under 25 ms here');
 
-  // met: from seen scenes, inscriptions and practised words
+  // met: from seen scenes, inscriptions and practiced words
   const met = KI.met({ seen: { 'rw.village_first': true }, words: ['mamoru'], learn: { items: { 'v:雨': {} } }, notebook: [] });
-  t.ok(met.has('川') && met.has('守') && met.has('雨'), 'met: a seen scene (川), an inscription (守 in 守る), a practised word (雨)');
+  t.ok(met.has('川') && met.has('守') && met.has('雨'), 'met: a seen scene (川), an inscription (守 in 守る), a practiced word (雨)');
   t.ok(!met.has('鍵'), 'met: a kanji not yet seen is not met');
   t.eq(KI.met(null).size, 0, 'met(null) is empty');
 };

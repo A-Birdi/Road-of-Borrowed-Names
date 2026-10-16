@@ -76,7 +76,7 @@ export default async (t) => {
   t.eq((C.scriptErrors || []).filter((e) => /hall/.test(e)), [], 'the Hall\'s scenes parse');
   t.ok(C.stamps['hall.w6'] && C.stamps['hall.w6'].hidden, 'its stamp, hidden until the tale is told');
   t.ok(ops('hall.door_w6').includes('hook:hall_card w6') && w6.trials.length === 10, 'the sixth alcove opens onto a told tale');
-  t.ok(['baai', 'igai', 'kagiri', 'cond_nara', 'cond_tara', 'cond_ba', 'cond_to', 'temo', 'prt_sae'].every((g) => RB.grammar.get(g)), 'the conditions and exceptions it practises are grammar the game teaches');
+  t.ok(['baai', 'igai', 'kagiri', 'cond_nara', 'cond_tara', 'cond_ba', 'cond_to', 'temo', 'prt_sae'].every((g) => RB.grammar.get(g)), 'the conditions and exceptions it practices are grammar the game teaches');
 
   // ---- the trials, end to end -----------------------------------------------------------------------------------------
   const ANS = { 0: { ofuku: 'two', hanbei: 'free', koun: 'one', momo: 'one' }, 1: { ofuku: 'free', hanbei: 'two', koun: 'two', momo: 'free' } };

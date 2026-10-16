@@ -23,7 +23,7 @@ RB.script.add(`
 yn_rokubei: {皆|みな} 、 {集|あつ}まった 。 {上|かみ}の{湯|ゆ} 、 {下|しも}の{湯|ゆ} 、 {湯守|ゆもり} 。 {湯|ゆ} の {代|か}わり に は 、 アキ が {座|すわ}る 。 {湯|ゆ} の {顔色|かおいろ} が {分|わ}かる の は 、 あいつ だけ だ 。 || Everyone's here. The Upper House, the Lower House, the bath-keepers. Aki sits in for the spring. She's the only one who can read its face.
 yn_rokubei: {俺|おれ} は {湯守|ゆもり} だ から 、 {中立|ちゅうりつ} に は なれない 。 …… {話|はなし} の {舵|かじ} を 、 {取|と}って くれない か 。 || I'm a bath-keeper, so I can't be neutral. …Would you take the helm of the talk?
 ?(comp=nao&yn_nao_madeup) comp: {全員|ぜんいん} に {言|い}わせて やれ 。 {最後|さいご} まで 。 …… {昨日|きのう} {言|い}った こと は 、 {取|と}り{消|け}す 。 || Let every one of them have their say. All the way. …What I said yesterday, I take back.
-?(comp=mio) comp[smile]: {大丈夫|だいじょうぶ} 。 {断|ことわ}る の も 、 {聞|き}く の も 、 {練習|れんしゅう} して きました から 。 {隣|となり} に います 。 || It's all right. I've practised saying no, and listening. I'm right beside you.
+?(comp=mio) comp[smile]: {大丈夫|だいじょうぶ} 。 {断|ことわ}る の も 、 {聞|き}く の も 、 {練習|れんしゅう} して きました から 。 {隣|となり} に います 。 || It's all right. I've practiced saying no, and listening. I'm right beside you.
 ?(comp=ren&yn_ren_madeup) comp[smile]: {一番|いちばん} {古|ふる}い {名前|なまえ} と 、 {一番|いちばん} {新|あたら}しい {名前|なまえ} 。 {両方|りょうほう} を {同|おな}じ {灯|ひ} に 。 || The oldest name and the newest. Both on the same lamp.
 ?(comp=suzu) comp[smirk]: {幕|まく} が {上|あ}がる わ 。 {台本|だいほん} は ない けど 、 {客|きゃく} は {本気|ほんき} よ 。 || Curtain up. There's no script, but the audience means it.
 !encounter yn.mediation

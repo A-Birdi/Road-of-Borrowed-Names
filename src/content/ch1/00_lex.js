@@ -276,7 +276,7 @@ RB.lex.add(RB.lex.parseTable(`
 でしょ||aux|E|right? (casual でしょう)
 目指す|めざす|v5s|E|to aim for, head for
 第一章|だいいっしょう|n|I|chapter one
-練習中|れんしゅうちゅう|n|E|in the middle of practising
+練習中|れんしゅうちゅう|n|E|in the middle of practicing
 内緒|ないしょ|n|E|secret
 掲示板|けいじばん|n|E|noticeboard
 道標|みちしるべ|n|I|signpost

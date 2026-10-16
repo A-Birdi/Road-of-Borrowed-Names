@@ -295,7 +295,7 @@ nao: {戻|もど}って きた の か 。 {忘|わす}れ{物|もの} ？ …�
 @scene rw.mio_after
 !faceplayer mio
 mio: いらっしゃいませ 。 …… あ 、 お{帰|かえ}り なさい 。 {傷薬|きずぐすり} 、 {足|た}りて います か ？ || Welcome… oh, welcome back. Do you have enough wound salve?
-mio[think]: {最近|さいきん} 、 {夜|よる} は {店|みせ} を {閉|し}める こと に しました 。 {頼|たの}まれて も 、 です 。 …… {少|すこ}し ずつ 、 {練習|れんしゅう} して います 。 || Lately I've started closing the shop at night. Even if people ask. …I'm practising, bit by bit.
+mio[think]: {最近|さいきん} 、 {夜|よる} は {店|みせ} を {閉|し}める こと に しました 。 {頼|たの}まれて も 、 です 。 …… {少|すこ}し ずつ 、 {練習|れんしゅう} して います 。 || Lately I've started closing the shop at night. Even if people ask. …I'm practicing, bit by bit.
 
 @scene rw.ren_after
 !faceplayer ren

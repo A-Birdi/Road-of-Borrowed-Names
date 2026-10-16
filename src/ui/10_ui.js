@@ -500,7 +500,7 @@ RB.ui.help = (function () {
     const s = RB.game.s;
     const key = 'w:' + (info.lemma || tok.surface) + '|' + (info.reading || '');
     if (!s.notebook.find((n) => n.id === key)) {
-      // a Kansai word or form is marked so: it is noted, but never practised as standard vocabulary
+      // a Kansai word or form is marked so: it is noted, but never practiced as standard vocabulary
       s.notebook.push(Object.assign({ kind: 'word', id: key, surface: tok.surface, reading: info.reading || '', m: info.gloss || (info.entry && info.entry.m) || '', t: Date.now() }, info.dia ? { dia: 'kansai' } : {}));
       RB.ui.notice('Added to your field notebook.', 'info');
     } else RB.ui.notice('Already in your notebook.', 'info');

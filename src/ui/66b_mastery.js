@@ -35,14 +35,14 @@ RB.ui.mastery = (function () {
       if (!K) return h + '<p class="muted small">Not met in an answer yet.</p></div>';
       const words = Object.entries(K.words).sort((a, b) => b[1] - a[1]).slice(0, 6);
       h += '<p class="small">Met in ' + words.map(([w, n]) => '<span lang="ja">' + esc(w) + '</span> ×' + n).join(', ') + '.</p>' +
-        '<p class="small">Handwritten in an answer: ' + (K.hand ? K.handOk + ' of ' + K.hand + ' on your own' : 'not practised yet') + (K.practice ? ' · in the chart: ' + K.practice.memory + ' from memory, ' + K.practice.traced + ' traced' : '') + '.</p>' +
+        '<p class="small">Handwritten in an answer: ' + (K.hand ? K.handOk + ' of ' + K.hand + ' on your own' : 'not practiced yet') + (K.practice ? ' · in the chart: ' + K.practice.memory + ' from memory, ' + K.practice.traced + ' traced' : '') + '.</p>' +
         '<p class="muted small">Each reading counts on its own: meeting this kanji in one word says nothing about its other readings.</p>';
       return h + '</div>';
     }
     const p = RB.evidence.profile(s, id);
     if (!p) return h + '<p class="muted small">Not met in an answer yet.</p></div>';
     const m = p.modes;
-    const row = (lab, x) => (x.tries ? x.independent + ' of ' + x.tries + ' on your own' : 'not practised');
+    const row = (lab, x) => (x.tries ? x.independent + ' of ' + x.tries + ' on your own' : 'not practiced');
     h += '<ul class="ms-ev small">' +
       '<li><b>Recognised:</b> ' + (p.recogRecent.of ? p.recogRecent.ok + ' of the last ' + p.recogRecent.of + ' times asked' : 'not asked yet') + '</li>' +
       '<li><b>Used in a sentence:</b> ' + row('', m.construct) + '</li>' +

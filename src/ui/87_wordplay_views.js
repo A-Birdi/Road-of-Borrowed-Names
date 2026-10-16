@@ -208,7 +208,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       if (!step) continue;
       RB.game.pushMode('challenge');
       let res = null;
-      try { res = await RB.challenge.runStep(RB.tasks.prepare ? RB.tasks.prepare(step) : step, { noRecord: true, cancelLabel: 'Stop practising' }); } finally { RB.game.popMode('challenge'); }
+      try { res = await RB.challenge.runStep(RB.tasks.prepare ? RB.tasks.prepare(step) : step, { noRecord: true, cancelLabel: 'Stop practicing' }); } finally { RB.game.popMode('challenge'); }
       if (!res || res.cancelled) break;
       ob.assess('wordplay:' + t.id + ':' + key, step.item, res, { kind: 'wordplay-review' });
     }
@@ -224,7 +224,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       const canPractise = practiseKeys(t).length > 0;
       const h = U.reviewHtml(s, t, sel) + '<div class="row-acts">' +
         '<button class="pbtn" data-wp="analyse">' + I('lens') + 'More analysis</button>' +
-        (canPractise ? '<button class="pbtn" data-wp="practise">' + I('practice') + 'Practise words from this chain</button>' : '') +
+        (canPractise ? '<button class="pbtn" data-wp="practise">' + I('practice') + 'Practice words from this chain</button>' : '') +
         (t.comp === s.comp ? '<button class="pbtn quiet" data-wp="' + (pinned ? 'unpin' : 'pin') + '">' + I('keepsake') + lab(pinned ? 'unpin' : 'pin', pinned ? 'Unpin this chain' : 'Pin this chain') + '</button>' : '') +
         '<button class="pbtn primary" data-wp="back" data-autofocus>' + I('back') + esc(o.back || 'Back') + '</button></div>';
       const r = await U.show(V, h, (el, done) => {

@@ -76,7 +76,7 @@ export default async (t) => {
   t.eq((C.scriptErrors || []).filter((e) => /hall/.test(e)), [], 'the Hall\'s scenes parse');
   t.ok(C.stamps['hall.w7'] && C.stamps['hall.w7'].hidden, 'its stamp, hidden until the tale is told');
   t.ok(ops('hall.door_w7').includes('hook:hall_card w7') && w7.trials.length === 10, 'the seventh alcove opens onto a told tale');
-  t.ok(['no_pronoun', 'omission', 'rei_no', 'kosoado'].every((g) => RB.grammar.get(g)), 'what it practises is grammar the game teaches');
+  t.ok(['no_pronoun', 'omission', 'rei_no', 'kosoado'].every((g) => RB.grammar.get(g)), 'what it practices is grammar the game teaches');
 
   // ---- the trials, end to end -----------------------------------------------------------------------------------------
   const HOOKN = { 0: { h1: 'book', h2: 'umbrella', h3: 'lantern', h4: 'jacket' }, 1: { h1: 'lantern', h2: 'teacup', h3: 'jacket', h4: 'book' } };

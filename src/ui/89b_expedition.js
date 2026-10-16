@@ -1,5 +1,5 @@
 /* Expeditions on screen (expansion P07; plan 04_DUNGEONS.md D1–D4, D10; the rules in src/engine/98_expedition.js):
- *   - the entrance preview card (D4): what is practised, the size, the rules in words, never the solutions; Go down
+ *   - the entrance preview card (D4): what is practiced, the size, the rules in words, never the solutions; Go down
  *     or Not now. What the card says is read from the same definition the expedition then runs by.
  *   - a chip at the top of the map while on an expedition: carried resolve (persistent condition, D2), the floor.
  *   - the Ledger's Map › Expedition page: each floor seen (map knowledge, kept across restarts), the stations with

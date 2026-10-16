@@ -9,7 +9,7 @@
 //  - the end view: the lamps together, the optional reviewed list, the first session's note;
 //  - six lamps from a two-item pool give two lamps; Stop here between lamps; Leave inside a step;
 //  - Introduce something new teaches a card first; Focus on a topic narrows the lamps;
-//  - Words › Ways to practise offers "Begin here" only in the Hall; no story flag, bond, item or
+//  - Words › Ways to practice offers "Begin here" only in the Hall; no story flag, bond, item or
 //    currency changes; keyboard-only and touch paths.
 // Captures: docs/screenshots/practice_a/lamps_*.png. Usage: node tests/e2e/practice_a_lamps.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -232,7 +232,7 @@ async function continueStep(p) { await press(p, '.fbwrap [data-a=continue]'); aw
   await ctx.close();
 }
 
-// ---- Words › Ways to practise: Begin here only in the Hall; keyboard only ----------------------------------------
+// ---- Words › Ways to practice: Begin here only in the Hall; keyboard only ----------------------------------------
 {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
   await start(p, { at: 'village', items: ['v:水', 'v:海', 'v:山'] });

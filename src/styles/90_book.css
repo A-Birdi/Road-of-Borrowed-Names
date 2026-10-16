@@ -140,7 +140,7 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
   box-shadow: 1px 0 0 var(--paper-edge), 3px 2px 0 -1px var(--paper-2), 4px 2px 0 -1px var(--paper-edge), 6px 4px 0 -2px var(--paper-3), 7px 4px 0 -2px var(--paper-edge);
 }
 @media (min-width: 720px) {
-  .folio.book .spread.two > .leaf:first-child {
+  .folio.book .spread.two > .leaf:first-of-type {
     border-radius: 5px 0 0 5px;
     background-image:
       linear-gradient(270deg, var(--bk-gutter), rgba(70, 48, 18, 0.10) 14px, transparent 56px),   /* into the fold */
@@ -447,7 +447,7 @@ body.book-ui .dlg .portrait { border-width: 5px; border-color: #fbf6ea; backgrou
 .folio.book.book-flat .leafbox, .folio.book.book-flat .spread.turn > .leaf, .folio.book.book-flat .spread.turn::before { animation: none; }
 .folio.book.book-flat .spread::before { display: none; }
 .folio.book.book-flat .leaf { background-image: none !important; box-shadow: none !important; }
-@media (min-width: 720px) { .folio.book.book-flat .spread.two > .leaf:first-child { border-right: 1px solid var(--paper-edge); } }
+@media (min-width: 720px) { .folio.book.book-flat .spread.two > .leaf:first-of-type { border-right: 1px solid var(--paper-edge); } }
 .folio.book.book-flat .co-mount { transform: none; }
 .folio.book.book-flat .co-mount::before, .folio.book.book-flat .co-mount::after { display: none; }
 .folio.book.book-flat .nudge-slip, .folio.book.book-flat .co-pending { background-image: none; box-shadow: none; border: 1px solid var(--paper-edge); }
