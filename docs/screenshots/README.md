@@ -179,7 +179,7 @@ in battle".
 | State | 1280×800 (¾ scale) | 390×844 |
 |---|---|---|
 | The battle, with its Settings button | [image](battle_settings/battle_1280x800.webp) | [image](battle_settings/battle_390x844.webp) |
-| The sheet (phone: its groups) | — | [image](battle_settings/sheet_390x844.webp) |
+| The sheet before ST-1 (phone: its list of groups, since replaced by tabs; kept as it was) | — | [image](battle_settings/sheet_390x844.webp) |
 | Speed & motion | [image](battle_settings/sheet_motion_1280x800.webp) | [image](battle_settings/sheet_motion_390x844.webp) |
 | Until the encounter is over (read-only) | [image](battle_settings/sheet_fixed_1280x800.webp) | [image](battle_settings/sheet_fixed_390x844.webp) |
 | Load a journey… asks first | [image](battle_settings/leave_1280x800.webp) | [image](battle_settings/leave_390x844.webp) |

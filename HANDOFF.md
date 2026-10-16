@@ -408,6 +408,23 @@
     turn it off; `tests/e2e/speech_mark.mjs`, `tests/unit/speech_align.test.mjs`). The start's confusion is the voices,
     which wait on Robin's VA-2 picks (C-93). VALIDATION.md "PT-1", REQUIREMENTS.md XP122.
 
+    **ST-1 (Robin, 2026-10-15: Settings laid out like the Ledger):** tabs at the top instead of the left page's list of
+    groups; room for context sentences; option names that read as headings; the switches and radio buttons reshaped to
+    feel on the page; drawn icons beside options (Music performance: Original / Ensemble, after Robin's reference image);
+    a prompt to review every setting that affects ordinary play when a new save is created; the voice settings saying
+    why lines may be silent for now; the spoken-word highlight confirmed and kept apart from Word help. Done:
+    `src/ui/55_settings.js` is a book of the Ledger's family with six tabs (Reading, Learning, Play, Sound, Display,
+    Controls; Storage folded into Controls › Saves; the battle settings, stories and quest guidance moved from Learning
+    to Play), each tab across both pages; a choice is circled in ink (the others pencilled), on/off is a tick box, a
+    level a ruled line with a seal; option icons drawn in code (`OI`); the battle's sheet uses the same tabs. "Before you
+    set out" (`review(s)`) opens before a new journey's story (wizard, New Game+, fresh start from an old save): level,
+    mistakes, challenge, quest markers, reading, volumes and music, voices, the highlight, Suzu's speech, stories,
+    battles; Set out begins the story. Sound › Voices: "No recorded voices yet" (why lines are silent); the highlight
+    is always shown (it was only shown when the device had a Japanese voice, so Robin could not find it). Same setting
+    keys, values and saving. **Open:** when the recordings ship, voices on by default with the choice of recordings,
+    the device's voice or none (the Voices slip says so; change `voiceNote()` and the defaults then). VALIDATION.md
+    "ST-1", REQUIREMENTS.md XP123.
+
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
     "P18 — Plan B", "LP-1" and "VA-1".

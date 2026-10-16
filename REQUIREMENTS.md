@@ -834,6 +834,21 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - Not done: (d) "The start was confusing - needs voices (wip)": the voices, which wait on Robin's VA-2 picks (C-93).
     No look at the opening itself beyond that was asked for. A real device voice's own positions were not tried here
     (headless Chromium has no voice; the browser test uses a stand-in that reports positions as device voices do).
+- [~] XP123 ST-1, Settings laid out like the Ledger, and the settings reviewed when a journey begins (Robin, 2026-10-15).
+  VALIDATION.md "ST-1". Run so far: B `settings_review`, `settings`, `settings_access`, `book`, `folio` pass; the wider
+  regression run (the other suites named below) is still running and is recorded in VALIDATION.md when it finishes.
+  - Done: (a) paper tabs across the top instead of the left page's list of groups, each tab across both pages (B
+    `settings_review`, `settings`, `battle_settings`); (b) every setting named by a heading with a sentence under it (B
+    `settings_review`); (c) the controls drawn on the page: a choice circled in ink, on/off a tick box, a level a ruled
+    line with a seal; the same real controls, keys, values and saving (B `settings_review`, `settings`); (d) drawn
+    option icons, Music performance's Original and Ensemble among them (B `settings_review`, `music_performance`); (e)
+    "Before you set out" before a new journey's story, with every setting that shapes ordinary play; a change there is
+    the journey's (B `settings_review`, `create`, `ui`, `records`, `old_saves`); (f) Sound › Voices says why no line is
+    spoken yet (B `settings_review`); (g) the spoken-word highlight: it existed (Settings › Audio) but showed only when
+    the device had a Japanese voice; now always shown, its own setting, on another tab from Word help (B
+    `settings_review`).
+  - Not done (by design, later): voices on by default with recordings / device voice / none, when the recordings ship.
+    Not heard or seen by a person here; layouts seen in captures (docs/screenshots/settings/).
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
