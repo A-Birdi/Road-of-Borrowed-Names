@@ -11,7 +11,18 @@ The repository is the shared record:
 - **Branch:** `claude/stoic-sagan-n3jvgk` of `A-Birdi/Road-of-Borrowed-Names`.
 - **Lead's session, for coordination:** `session_015RcFBxQ5xp952n4kFB8UbL` (https://claude.ai/code/session_015RcFBxQ5xp952n4kFB8UbL).
 
-## 1 · Generation inputs: READY when `GO.json` names the commit
+## 1 · Generation inputs: READY (`GO.json`)
+
+**Go:** branch `claude/stoic-sagan-n3jvgk`, source commit `ff8a0fa87cfacb322b8c277305eddd9b4cc196fb`. The manifest is
+`docs/future/voice/production/manifest/RECORDING_MANIFEST.json.gz`, and its SHA-256 is in `GO.json`.
+
+To check:
+```
+git fetch origin claude/stoic-sagan-n3jvgk
+git checkout ff8a0fa87cfacb322b8c277305eddd9b4cc196fb
+node tools/voice/production_manifest.mjs --check
+```
+It prints "manifest is current: 14721 recordings + 9095 reference readings, content 65cd38053ad6".
 
 **What the inputs are:**
 - **The scope:** [PRODUCTION_SCOPE.md](PRODUCTION_SCOPE.md), Robin's production authorization kept apart from the auditions, and the agreed cast.

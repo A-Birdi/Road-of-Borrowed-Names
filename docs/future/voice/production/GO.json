@@ -1,0 +1,105 @@
+{
+ "schema": "rbn.voice.go/1",
+ "go": true,
+ "what": "The full-game voice batch may be generated from this source revision and manifest, under PRODUCTION_SCOPE.md and VOICE_DELIVERY.md.",
+ "authorization": "Robin, 2026-10-16: full-game production, kept apart from the audition approvals (PRODUCTION_SCOPE.md)",
+ "repository": "A-Birdi/Road-of-Borrowed-Names",
+ "branch": "claude/stoic-sagan-n3jvgk",
+ "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+ "manifest": {
+  "path": "docs/future/voice/production/manifest/RECORDING_MANIFEST.json.gz",
+  "sha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "bytes": 3142915,
+  "schema": "rbn.voice.production/1",
+  "scriptContentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e",
+  "recordings": 14721,
+  "references": 9095,
+  "notRecordable": 116
+ },
+ "check": [
+  "git fetch origin claude/stoic-sagan-n3jvgk",
+  "git checkout ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "node tools/voice/production_manifest.mjs --check"
+ ],
+ "contract": [
+  "docs/future/voice/production/PRODUCTION_SCOPE.md",
+  "docs/future/voice/production/VOICE_DELIVERY.md",
+  "docs/future/voice/production/VOICE_RUNTIME.md"
+ ],
+ "results": {
+  "schema": "rbn.voice.results/1",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e",
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb"
+ },
+ "notInThisBatch": {
+  "playerNameLines": "116 lines with a run-time name: a second small pass once their neutral-word versions exist (C-93)",
+  "deferredFindings": "12 C-95 findings are Robin's (docs/review/register/DISPOSITIONS.md); their lines are recorded as they are now"
+ },
+ "counts": {
+  "byRole": {
+   "npc": {
+    "recordings": 3662,
+    "chars": 114638,
+    "morae": 117968,
+    "pauses": 15523
+   },
+   "mio": {
+    "recordings": 1079,
+    "chars": 29785,
+    "morae": 30207,
+    "pauses": 4326
+   },
+   "nao": {
+    "recordings": 1182,
+    "chars": 31317,
+    "morae": 32688,
+    "pauses": 4684
+   },
+   "narrator": {
+    "recordings": 4791,
+    "chars": 125072,
+    "morae": 134428,
+    "pauses": 13841
+   },
+   "pc": {
+    "recordings": 636,
+    "chars": 11368,
+    "morae": 11804,
+    "pauses": 1420
+   },
+   "ren": {
+    "recordings": 1121,
+    "chars": 34080,
+    "morae": 35547,
+    "pauses": 4480
+   },
+   "suzu": {
+    "recordings": 2250,
+    "chars": 62500,
+    "morae": 66044,
+    "pauses": 8711
+   }
+  },
+  "references": {
+   "recordings": 9095,
+   "characters": 31003,
+   "morae": 29497,
+   "byKind": {
+    "kana": 234,
+    "kanji": 1838,
+    "word": 6963,
+    "phrase": 60
+   },
+   "saidNotSpelled": [
+    "は → わ",
+    "を → お",
+    "へ → え"
+   ]
+  }
+ },
+ "readiness": "docs/future/voice/production/READINESS.md",
+ "coordination": {
+  "session": "session_015RcFBxQ5xp952n4kFB8UbL",
+  "url": "https://claude.ai/code/session_015RcFBxQ5xp952n4kFB8UbL"
+ }
+}
