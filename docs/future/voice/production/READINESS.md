@@ -23,7 +23,12 @@ The repository is the shared record:
 - 256 accepted reference files verified;
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
-Nothing has been made or pushed yet. Results come back as `results.json` (VOICE_DELIVERY.md §4 and §9).
+Progress (the local worker's checkpoints):
+- **Phase 1 done:** the AivisSpeech narrator, the reference readings, the AivisSpeech and Nemo NPCs, and Mochi. 14,306
+  recordings made, 0 failed.
+- **Phase 2:** Qwen, 9,510 recordings pending; started.
+
+Nothing has been pushed. Results come back as `results.json` (VOICE_DELIVERY.md §4 and §9).
 
 To check:
 ```
