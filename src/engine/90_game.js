@@ -439,7 +439,7 @@ RB.game = (function () {
     if (res === 'win' && opts.place && RB.encounter && opts.where) {
       for (const e of RB.encounter.roamingWon(G.s, opts.place, opts.where.map)) {
         if (e.t === 'lostWord') RB.ui.toast({ kind: 'word', jp: e.jp, en: 'A lost word comes back: ' + e.en });
-        else if (e.t === 'item' && RB.content.items[e.id]) RB.ui.toast({ kind: 'item', jp: RB.content.items[e.id].name.jp, en: RB.content.items[e.id].name.en });
+        else if (e.t === 'item' && RB.content.items[e.id]) RB.ui.toast({ kind: 'item', id: e.id, note: RB.equip.note(RB.content.items[e.id]) });
         else if (e.t === 'cleared') RB.ui.notice('The way is clear now: people will start using it again.', 'info');
         else if (e.t === 'stamp') RB.ui.notice('A field-guide stamp: every kind of creature in this region settled.', 'info');
       }

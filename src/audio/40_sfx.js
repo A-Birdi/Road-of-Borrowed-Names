@@ -309,6 +309,14 @@ RB.audio = RB.audio || {};
     seq(g, o, t, 'celesta', [72, 76, 78, 79, 83], 0.06, 0.3, 0.4, p);
     chord(g, o, t, 'pad', [72, 76, 79, 83], 0.6, 0.8, p);
   });
+  // a page of the travel volume witnessed (LI-3): a low bell blooms under a slow harp figure and a glass note, a
+  // moment set down; its own sound, apart from items (item_get) and keepsakes (discover)
+  def('moment', 2.6, 0.5, 0.35, (g, o, t, p) => {
+    note(g, o, t, 'toll', 57, 0.9, 0.22, p);
+    chord(g, o, t + 0.04, 'pad', [62, 69, 74], 1.4, 0.32, p);
+    seq(g, o, t + 0.06, 'harp', [69, 74, 76, 81], 0.1, 0.4, 0.32, p);
+    note(g, o, t + 0.5, 'glass', 88, 0.9, 0.28, p);
+  });
   def('item_get', 1.5, 0.3, 0.2, (g, o, t, p) => {
     seq(g, o, t, 'pluck', [67, 71, 74, 79], 0.06, 0.2, 0.55, p);
     note(g, o, t + 0.26, 'bell', 83, 0.4, 0.32, p);
@@ -353,7 +361,7 @@ RB.audio = RB.audio || {};
     'step', 'step_snow', 'step_wood', 'bump', 'door', 'confirm', 'cancel', 'cursor', 'text_blip',
     'pen_down', 'pen_stroke', 'pen_up', 'recog_ok', 'recog_unsure', 'answer_right', 'answer_wrong',
     'ward', 'water', 'wind', 'light', 'fire_out', 'reveal', 'heal', 'knot_untie', 'enemy_intent',
-    'enemy_hit', 'party_hit', 'harmony_ready', 'technique', 'discover', 'item_get', 'quest_update',
+    'enemy_hit', 'party_hit', 'harmony_ready', 'technique', 'discover', 'item_get', 'moment', 'quest_update',
     'save', 'lantern', 'bell', 'page', 'splash', 'chest', 'footstep_grass', 'menu_open', 'menu_close',
     'levelup', 'defeat', 'flee', 'harmony_arrive', 'harmony_nao', 'harmony_mio', 'harmony_ren', 'harmony_suzu',
   ];
@@ -369,7 +377,7 @@ RB.audio = RB.audio || {};
   const LEVEL = _.sfxLevel = {
     confirm: -10, cancel: -10, menu_open: -9, menu_close: -9, save: -9, page: -5,
     quest_update: -10, answer_right: -9, answer_wrong: -8, recog_ok: -8, recog_unsure: -7,
-    discover: -9, item_get: -8, reveal: -7, levelup: -8,
+    discover: -9, item_get: -8, reveal: -7, levelup: -8, moment: -8,
   };
   _.sfxPlay = function (g, id, t, opts) {
     const d = X[id];

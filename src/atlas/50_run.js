@@ -53,7 +53,7 @@ RB.hooks = RB.hooks || {};
   async function scene(id) {
     await RB.script.run(id);
   }
-  async function toast(kind, jp, en) { try { await RB.ui.toast({ kind, jp, en }); } catch (e) { /* headless */ } }
+  async function toast(kind, jp, en, id) { try { await RB.ui.toast({ kind, jp, en, id, note: id && C.items[id] ? RB.equip.note(C.items[id]) : undefined }); } catch (e) { /* headless */ } }
   function addNote(id) {
     const s = S();
     if (!C.notes[id] || s.notebook.find((n) => n.id === id)) return false;
@@ -411,7 +411,7 @@ RB.hooks = RB.hooks || {};
         const id = pool[U.rng(run.seed ^ U.hashStr(c.id)).int(pool.length)];
         RB.state.give(s, id, 1);
         run.keepsakes.push(id);
-        await toast('item', C.items[id].name.jp, C.items[id].name.en);
+        await toast('item', C.items[id].name.jp, C.items[id].name.en, id);
         await say('narr', { jp: 'これ は {持|も}ち{帰|かえ}れる 。', en: 'This one you can keep: ' + C.items[id].name.en + '. (Equip it as a keepsake in the Satchel.)' });
       } else {
         await say('narr', { jp: '{中|なか} は {空|から} だった 。 {紙|かみ} に は 「ありがとう 」 と だけ {書|か}いて ある 。', en: 'It is empty. The paper just says "thank you".' });
@@ -671,12 +671,12 @@ RB.hooks = RB.hooks || {};
         const id = offer[Math.max(0, Math.min(offer.length - 1, i))];
         RB.state.give(s, id, 1);
         summary.rewards.push(id);
-        await toast('item', C.items[id].name.jp, C.items[id].name.en);
+        await toast('item', C.items[id].name.jp, C.items[id].name.en, id);
       }
       if (run.lantern) {
         if (run.lantern.hp > 0) {
           await scene('atlas.escort.home');
-          if (!owned(s, 'atlas_cos_lamplet')) { RB.state.give(s, 'atlas_cos_lamplet', 1); summary.rewards.push('atlas_cos_lamplet'); await toast('item', C.items.atlas_cos_lamplet.name.jp, C.items.atlas_cos_lamplet.name.en); }
+          if (!owned(s, 'atlas_cos_lamplet')) { RB.state.give(s, 'atlas_cos_lamplet', 1); summary.rewards.push('atlas_cos_lamplet'); await toast('item', C.items.atlas_cos_lamplet.name.jp, C.items.atlas_cos_lamplet.name.en, 'atlas_cos_lamplet'); }
         } else await say('narr', { jp: '{消|き}えた {灯|あか}り も 、 {一緒|いっしょ}に {帰|かえ}って きた 。', en: 'The lantern that went out comes home with you anyway. Someone will relight it.' });
       }
       const k = Math.min(6, n);
@@ -703,7 +703,7 @@ RB.hooks = RB.hooks || {};
       summary.commission = cmOut;
       if (cmOut.kind === 'survey' && cmOut.survey) await say('narr', { jp: '{調査|ちょうさ} の {帳面|ちょうめん} は 、 {地図師|ちずし} の {地図帳|ちずちょう} に {綴|と}じられる 。', en: 'The survey book goes into the Cartographer\'s Atlas. From now on, the rooms of ' + RB.atlasCommissions.AREAS[cmOut.survey].title.en.toLowerCase() + ' open their way on for you.' });
       else if (cmOut.kind === 'survey' && !cmOut.surveyComplete) await say('narr', { jp: '{確|たし}かめて いない {目印|めじるし} が ある 。 {調査|ちょうさ} は 、 また {今度|こんど} 。', en: 'Some landmarks went unverified: the survey will have to wait for another walk.' });
-      if (cmOut.compass) await toast('item', C.items.atlas_cos_compass.name.jp, C.items.atlas_cos_compass.name.en);
+      if (cmOut.compass) await toast('item', C.items.atlas_cos_compass.name.jp, C.items.atlas_cos_compass.name.en, 'atlas_cos_compass');
     }
     s.atlas.runs = (s.atlas.runs || 0) + 1;
     s.atlas.relicsSeen = Array.from(new Set((s.atlas.relicsSeen || []).concat(run.relics)));
@@ -722,7 +722,7 @@ RB.hooks = RB.hooks || {};
     await scene('atlas.home');
     if (summary.restore) await note('atlas_news_' + summary.restore);
     for (const n of summary.notes) { const nd = C.notes[n]; if (nd) await toast('note', nd.title.jp, nd.title.en); }
-    for (const id of kind === 'defeat' ? summary.rewards : []) await toast('item', C.items[id].name.jp, C.items[id].name.en);
+    for (const id of kind === 'defeat' ? summary.rewards : []) await toast('item', C.items[id].name.jp, C.items[id].name.en, id);
     RB.save.autosave('auto');
     return summary;
   }

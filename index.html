@@ -6118,6 +6118,67 @@ body.reduced-motion .eq-pick { animation: none; }
 .eq-opt-t .en { color: var(--ink-2); font-style: italic; }
 .eq-opt-k { font-size: 0.8em; color: var(--ink-3); }
 body.high-contrast .eq-pick { background-image: none; border-color: #000; }
+
+/* ---- award slips (LI-3, src/ui/15_award.js): one family, three looks -------------------------------------------- */
+.toast.award {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.2em 0.9em;
+  width: min(520px, calc(100vw - 24px)); padding: 0.55em 0.55em 0.55em 0.8em; pointer-events: auto; cursor: pointer; overflow: visible;
+}
+.award .aw-art { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; flex: none; }
+.award .aw-art > img.it-ic { width: 48px; height: 48px; }
+.award .aw-body { display: flex; flex-direction: column; gap: 0.05em; min-width: 0; }
+.award .aw-name { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.6em; }
+.award .aw-name .jline { font-size: 1.12em; }
+.award .tnote { flex-basis: auto; }
+.award .aw-x {
+  align-self: start; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0;
+  background: none; border: 0; border-radius: 3px; color: var(--ink-3); cursor: pointer; pointer-events: auto;
+}
+.award .aw-x svg { width: 1em; height: 1em; }
+.award .aw-x:hover { color: var(--ink); background: rgba(193, 138, 42, 0.14); }
+.award .aw-x:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+/* (over an open book a slip lets clicks through to what lies under it, but its × still closes it) */
+body.in-panel #overlay > .notices > .award .aw-x { pointer-events: auto; }
+/* item: the amber edge of the place you are, the icon on a small dish */
+.award.aw-item { border-left-color: var(--ribbon); }
+.award.aw-item .aw-art { border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fffaf0, #eadfc2 70%); box-shadow: inset 0 0 0 1px var(--paper-edge); }
+/* keepsake: a vermilion edge and label, the picture in a mount with its corners */
+.award.aw-keepsake { border-left-color: var(--vermilion); }
+.award.aw-keepsake .kind, .award .aw-badge { color: var(--vermilion); }
+.award.aw-keepsake .aw-art { position: relative; background: #fbf6ea; outline: 1px solid var(--paper-edge); box-shadow: 0 3px 6px -3px rgba(40, 25, 5, 0.5); transform: rotate(-1.5deg); }
+.award.aw-keepsake .aw-art > canvas { width: 48px !important; height: 48px !important; image-rendering: pixelated; }
+.award.aw-keepsake .aw-art::before, .award.aw-keepsake .aw-art::after { content: ""; position: absolute; width: 10px; height: 10px; pointer-events: none; }
+.award.aw-keepsake .aw-art::before { left: -2px; top: -2px; background: linear-gradient(135deg, var(--bk-corner, #5a4630) 0 46%, transparent 46%); }
+.award.aw-keepsake .aw-art::after { right: -2px; bottom: -2px; background: linear-gradient(315deg, var(--bk-corner, #5a4630) 0 46%, transparent 46%); }
+.award .aw-badge { font-size: 0.7em; font-weight: 700; letter-spacing: 0.08em; font-variant: small-caps; border: 1px solid currentColor; border-radius: 2px; padding: 0 0.35em; justify-self: start; width: max-content; }
+/* moment: the indigo of the volume's cover, your seal pressed */
+.award.aw-moment { border-left-color: var(--cloth-700); }
+.award.aw-moment .kind { color: var(--cloth-600); }
+.award.aw-moment .aw-art svg { width: 48px; height: 48px; transform: rotate(-4deg); }
+/* arriving: from the top in a few quick frames; leaving: up and away */
+.award.aw-in { animation: aw-in 160ms steps(4, end) both; }
+@keyframes aw-in { from { transform: translateY(-140%); opacity: 0.2; } to { transform: none; opacity: 1; } }
+.award.aw-out { animation: aw-out 200ms ease-in both; }
+@keyframes aw-out { to { transform: translateY(-40%); opacity: 0; } }
+/* the gold flare's canvas reaches a little past the slip's border */
+.award .aw-flair { position: absolute; pointer-events: none; image-rendering: pixelated; z-index: 2; }
+body.reduced-motion .award.aw-in, body.reduced-motion .award.aw-out { animation: none; }
+body.reduced-motion .award .aw-flair { display: none; }
+@media (max-width: 520px) { .award .aw-art { width: 48px; height: 48px; } .award .aw-art > img.it-ic { width: 32px; height: 32px; } }
+
+/* ---- the "new" mark: a small amber dot that breathes a soft glow -------------------------------------------------- */
+.new-dot {
+  position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #f0b43c; pointer-events: none;
+  box-shadow: 0 0 0 1.5px var(--paper, #f2e9d3), 0 0 6px 1px rgba(240, 180, 60, 0.75);
+  animation: new-glow 1.8s ease-in-out infinite;
+}
+@keyframes new-glow { 0%, 100% { box-shadow: 0 0 0 1.5px var(--paper, #f2e9d3), 0 0 3px 0 rgba(240, 180, 60, 0.55); } 50% { box-shadow: 0 0 0 1.5px var(--paper, #f2e9d3), 0 0 9px 3px rgba(240, 180, 60, 0.9); } }
+body.reduced-motion .new-dot { animation: none; }
+.ptab > .new-dot { top: 6px; right: 6px; }
+.hbtn.menu-b { position: relative; }
+.hbtn.menu-b > .new-dot { top: 4px; right: 4px; }
+.entry > .mark { position: relative; }
+.entry > .mark > .new-dot { top: -3px; right: -4px; }
 </style>
 </head>
 <body>
@@ -23011,6 +23072,14 @@ RB.audio = RB.audio || {};
     seq(g, o, t, 'celesta', [72, 76, 78, 79, 83], 0.06, 0.3, 0.4, p);
     chord(g, o, t, 'pad', [72, 76, 79, 83], 0.6, 0.8, p);
   });
+  // a page of the travel volume witnessed (LI-3): a low bell blooms under a slow harp figure and a glass note, a
+  // moment set down; its own sound, apart from items (item_get) and keepsakes (discover)
+  def('moment', 2.6, 0.5, 0.35, (g, o, t, p) => {
+    note(g, o, t, 'toll', 57, 0.9, 0.22, p);
+    chord(g, o, t + 0.04, 'pad', [62, 69, 74], 1.4, 0.32, p);
+    seq(g, o, t + 0.06, 'harp', [69, 74, 76, 81], 0.1, 0.4, 0.32, p);
+    note(g, o, t + 0.5, 'glass', 88, 0.9, 0.28, p);
+  });
   def('item_get', 1.5, 0.3, 0.2, (g, o, t, p) => {
     seq(g, o, t, 'pluck', [67, 71, 74, 79], 0.06, 0.2, 0.55, p);
     note(g, o, t + 0.26, 'bell', 83, 0.4, 0.32, p);
@@ -23055,7 +23124,7 @@ RB.audio = RB.audio || {};
     'step', 'step_snow', 'step_wood', 'bump', 'door', 'confirm', 'cancel', 'cursor', 'text_blip',
     'pen_down', 'pen_stroke', 'pen_up', 'recog_ok', 'recog_unsure', 'answer_right', 'answer_wrong',
     'ward', 'water', 'wind', 'light', 'fire_out', 'reveal', 'heal', 'knot_untie', 'enemy_intent',
-    'enemy_hit', 'party_hit', 'harmony_ready', 'technique', 'discover', 'item_get', 'quest_update',
+    'enemy_hit', 'party_hit', 'harmony_ready', 'technique', 'discover', 'item_get', 'moment', 'quest_update',
     'save', 'lantern', 'bell', 'page', 'splash', 'chest', 'footstep_grass', 'menu_open', 'menu_close',
     'levelup', 'defeat', 'flee', 'harmony_arrive', 'harmony_nao', 'harmony_mio', 'harmony_ren', 'harmony_suzu',
   ];
@@ -23071,7 +23140,7 @@ RB.audio = RB.audio || {};
   const LEVEL = _.sfxLevel = {
     confirm: -10, cancel: -10, menu_open: -9, menu_close: -9, save: -9, page: -5,
     quest_update: -10, answer_right: -9, answer_wrong: -8, recog_ok: -8, recog_unsure: -7,
-    discover: -9, item_get: -8, reveal: -7, levelup: -8,
+    discover: -9, item_get: -8, reveal: -7, levelup: -8, moment: -8,
   };
   _.sfxPlay = function (g, id, t, opts) {
     const d = X[id];
@@ -23390,6 +23459,8 @@ RB.state = (function () {
       flags: {}, vars: {},
       quests: {},          // id -> {stage, done, t}
       inv: {},             // itemId -> count
+      newItems: {},        // itemId -> true: given since the Satchel was last looked at (its "new" mark; LI-3)
+      volSeen: [],         // travel-volume pages already announced as a moment recorded (src/ui/15_award.js)
       equip: { charm: null, tool: null, cosmetic: null },
       words: [],           // inscription word ids known
       techniques: [],
@@ -23541,6 +23612,8 @@ RB.state = (function () {
   function give(s, id, n) {
     s.inv[id] = (s.inv[id] || 0) + (n == null ? 1 : n);
     if (s.inv[id] <= 0) delete s.inv[id];
+    // the Satchel's "new" mark, until the Satchel is looked at (LI-3)
+    else if ((n == null || n > 0) && RB.content.items[id]) (s.newItems || (s.newItems = {}))[id] = true;
     // an item that is also a catalogued keepsake is recorded as found, for the journey being played only (the quest
     // guide's simulated states and other copies never are)
     if ((n == null || n > 0) && RB.discovery && RB.discovery.fromItem && RB.game && RB.game.s === s) RB.discovery.fromItem(s, id);
@@ -23851,6 +23924,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const KS = (RB.content && RB.content.keepsakes) || {}, worn = Object.values(from.equip || {});
     for (const id in KS) if (KS[id] && KS[id].item && !rec.found[id] && ((from.inv && from.inv[KS[id].item] > 0) || worn.indexOf(KS[id].item) >= 0)) rec.found[id] = { t: 0 };
     s.seq = clone(isObj(from.seq) ? from.seq : {});
+    // the travel volume's pages the carried illustrations already witness are not news in the new journey (LI-3)
+    try { if (RB.volume) s.volSeen = RB.volume.pages().filter((p) => RB.volume.witnessed(s, p)).map((p) => p.id); } catch (e) { /* (none) */ }
     // pastime records (lead's decision F-03): shiritori's results with each companion, the fishing journal's fish
     // and personal milestones, the practice tallies. Kept pages, displays and activity progress start fresh, as do
     // sessions under way.
@@ -52989,8 +53064,8 @@ RB.script = (function () {
         case 'give': {
           RB.state.give(s, a[0], a[1] ? +a[1] : 1);
           const it = RB.content.items[a[0]];
-          if (it && !c.args.includes('quiet')) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en, n: a[1] ? +a[1] : 1, note: RB.equip.note(it) });
-          RB.audio && RB.audio.sfx('item_get');
+          // one slip with the item's icon, and its one sound (LI-3: no second sound after it); a quiet gift says nothing
+          if (it && !c.args.includes('quiet')) await RB.ui.toast({ kind: 'item', id: a[0], n: a[1] ? +a[1] : 1, note: RB.equip.note(it) });
           break;
         }
         case 'take': RB.state.take(s, a[0], a[1] ? +a[1] : 1); break;
@@ -53020,7 +53095,7 @@ RB.script = (function () {
             const kind = q.done ? 'quest_done' : prev ? 'quest_update' : 'quest_new';
             await RB.ui.toast({ kind, jp: qd.title.jp, en: qd.title.en });
           }
-          if (q.done && qd && qd.reward) applyReward(qd.reward);
+          if (q.done && qd && qd.reward) await applyReward(qd.reward, c.args.includes('quiet'));
           break;
         }
         case 'if': {
@@ -53143,9 +53218,14 @@ RB.script = (function () {
     }
     return o;
   }
-  function applyReward(r) {
+  // a finished quest's reward: its items are announced like any gift (LI-3: they were given silently before)
+  async function applyReward(r, quiet) {
     const s = RB.game.s;
-    if (r.items) for (const k in r.items) RB.state.give(s, k, r.items[k]);
+    if (r.items) for (const k in r.items) {
+      RB.state.give(s, k, r.items[k]);
+      const it = RB.content.items[k];
+      if (it && !quiet) await RB.ui.toast({ kind: 'item', id: k, n: r.items[k], note: RB.equip.note(it) });
+    }
     if (r.words) r.words.forEach((w) => s.words.indexOf(w) < 0 && s.words.push(w));
     if (r.flags) r.flags.forEach((f) => (s.flags[f] = true));
   }
@@ -60048,7 +60128,7 @@ RB.game = (function () {
     if (res === 'win' && opts.place && RB.encounter && opts.where) {
       for (const e of RB.encounter.roamingWon(G.s, opts.place, opts.where.map)) {
         if (e.t === 'lostWord') RB.ui.toast({ kind: 'word', jp: e.jp, en: 'A lost word comes back: ' + e.en });
-        else if (e.t === 'item' && RB.content.items[e.id]) RB.ui.toast({ kind: 'item', jp: RB.content.items[e.id].name.jp, en: RB.content.items[e.id].name.en });
+        else if (e.t === 'item' && RB.content.items[e.id]) RB.ui.toast({ kind: 'item', id: e.id, note: RB.equip.note(RB.content.items[e.id]) });
         else if (e.t === 'cleared') RB.ui.notice('The way is clear now: people will start using it again.', 'info');
         else if (e.t === 'stamp') RB.ui.notice('A field-guide stamp: every kind of creature in this region settled.', 'info');
       }
@@ -64798,6 +64878,12 @@ RB.ui = (function () {
     quest_done: 'Quest complete', info: '', lesson: 'Learned',
   };
   function toast(t) {
+    // an item: the award slip, with its icon (src/ui/15_award.js; LI-3); found by its name when a caller gives only that
+    if (t && t.kind === 'item' && RB.ui.award) {
+      let id = t.id;
+      if (!id && RB.content && RB.content.items) id = Object.keys(RB.content.items).find((k) => RB.content.items[k].name.en === t.en && (!t.jp || RB.content.items[k].name.jp === t.jp)) || null;
+      return RB.ui.award({ kind: 'item', id, jp: t.jp, en: t.en, n: t.n, note: t.note });
+    }
     return new Promise((res) => {
       const n = el('div', 'toast');
       n.setAttribute('role', 'status');
@@ -65554,6 +65640,214 @@ RB.bookType = (function () {
     return (state = Promise.all(loads).then((r) => r.reduce((a, b) => a + b, 0)));
   }
   return { install, installed: () => !!state };
+})();
+
+
+/* ==== src/ui/15_award.js ==== */
+/* Award slips (LI-3, Robin 2026-10-16): what you are given, what you keep and what the travel volume records, each
+ * announced by one slip of the same family:
+ *   - item ("Received"): the item's own icon (src/ui/11_item_art.js), its name, how many, and a line on how it can be
+ *     worn; every gift says so, quest rewards included;
+ *   - keepsake ("Keepsake found"): the keepsake's picture in a mount, its name; an item that is also a keepsake gets
+ *     one slip, the item's, marked as a keepsake too;
+ *   - moment ("Moment recorded"): a page of the travel volume witnessed for the first time, pressed with your seal,
+ *     with its own sound.
+ * Each slides in from the top in a few quick frames, a gold flare runs round its border from the top-left and the
+ * bottom-right corners (twice, or three times for what matters most) and trails off; it stays for a set time (paused
+ * while pointed at or focused) and closes at once with its × or a tap. One sound each, no more. Reduce motion: no
+ * slide and no flare. Nothing here changes what was given.
+ *
+ *   RB.ui.award({ kind: 'item' | 'keepsake' | 'moment', id, jp, en, n, note, art, level, sound }) → Promise
+ *       (resolves when the slip is placed, as RB.ui.toast does, so a scene goes on at once) */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.ui = RB.ui || {};
+
+RB.ui.award = (function () {
+  'use strict';
+  const esc = (t) => RB.util.esc(t);
+  const LABEL = { item: 'Received', keepsake: 'Keepsake found', moment: 'Moment recorded' };
+  const SOUND = { item: 'item_get', keepsake: 'discover', moment: 'moment' };
+  const HOLD = { item: 6000, keepsake: 7000, moment: 7000 }; // (long enough to read a name and its line)
+  const MAX = 3; // slips on screen at once; an older one gives way
+  const live = []; // { el, kind, id, timer, close }
+  const reduce = () => !!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion());
+  const host = () => (typeof document !== 'undefined' ? document.querySelector('#overlay .notices') : null);
+
+  function award(t) {
+    t = t || {};
+    const kind = LABEL[t.kind] ? t.kind : 'item';
+    return new Promise((res) => {
+      const h = host();
+      if (!h) { res(); return; }
+      const d = kind === 'item' && t.id ? RB.content.items[t.id] : null;
+      const jp = t.jp || (d && d.name.jp) || '', en = t.en || (d && d.name.en) || '';
+      const n = RB.ui.el('div', 'toast award aw-' + kind + (t.badge ? ' aw-badged' : ''));
+      n.setAttribute('role', 'status');
+      n.dataset.kind = kind;
+      if (t.id) n.dataset.id = t.id;
+      const art = t.art != null ? t.art : kind === 'item' && t.id ? RB.itemArt.html(t.id, 3) : '';
+      n.innerHTML = '<span class="aw-art" aria-hidden="true">' + (typeof art === 'string' ? art : '') + '</span>' +
+        '<span class="aw-body"><span class="kind">' + esc(LABEL[kind]) + '</span>' +
+        '<span class="aw-name">' + (jp ? RB.ui.jhtml(jp) : '') + '<span class="en">' + esc(en) + (t.n > 1 ? ' ×' + t.n : '') + '</span></span>' +
+        (t.note ? '<span class="tnote">' + esc(t.note) + '</span>' : '') + '</span>' +
+        '<button type="button" class="aw-x" aria-label="Dismiss">' + (RB.ui.folio ? RB.ui.folio.icon('close') : '×') + '</button>';
+      if (art && typeof art !== 'string') n.querySelector('.aw-art').appendChild(art);
+      while (live.length >= MAX) live[0].close(true);
+      h.appendChild(n);
+      const me = { el: n, kind, id: t.id || null, timer: 0, left: HOLD[kind], since: 0, close: null, level: t.level || (kind === 'item' && !(d && d.key) ? 2 : 3) };
+      live.push(me);
+      let gone = false;
+      me.close = (quick) => {
+        if (gone) return;
+        gone = true;
+        clearTimeout(me.timer);
+        const i = live.indexOf(me);
+        if (i >= 0) live.splice(i, 1);
+        if (quick || reduce()) { n.remove(); return; }
+        n.classList.add('aw-out');
+        setTimeout(() => n.remove(), 220);
+      };
+      // the hold: paused while pointed at or focused
+      const run = () => { me.since = Date.now(); clearTimeout(me.timer); me.timer = setTimeout(() => me.close(), me.left); };
+      me.run = run;
+      const pause = () => { if (gone) return; clearTimeout(me.timer); me.left = Math.max(1200, me.left - (Date.now() - me.since)); };
+      n.addEventListener('pointerenter', pause);
+      n.addEventListener('pointerleave', () => { if (!gone) run(); });
+      n.addEventListener('focusin', pause);
+      n.addEventListener('focusout', () => { if (!gone) run(); });
+      n.addEventListener('click', () => me.close());
+      run();
+      if (!reduce()) { n.classList.add('aw-in'); flair(n, me.level); }
+      if (t.sound !== false && RB.audio) RB.audio.sfx(SOUND[kind]);
+      if (kind === 'item') newDot();
+      setTimeout(res, RB.game && RB.game.fastForward && RB.game.fastForward() ? 50 : 350);
+    });
+  }
+
+  // ---- the flare: two gold sparks from the top-left and bottom-right corners, clockwise round the border, trailing,
+  // shedding a few pixel sparks; `revs` times round, the last turn fading ---------------------------------------------
+  function flair(el, revs) {
+    if (typeof requestAnimationFrame === 'undefined') return;
+    const cv = document.createElement('canvas');
+    cv.className = 'aw-flair';
+    cv.setAttribute('aria-hidden', 'true');
+    el.appendChild(cv);
+    const PAD = 12, PX = 2, OFF = 1; // the canvas reaches past the slip; a 2-px pixel grid; the flare rides the edge
+    let W = 0, H = 0, per = 0;
+    const size = () => {
+      const r = el.getBoundingClientRect();
+      W = Math.round(r.width) + OFF * 2; H = Math.round(r.height) + OFF * 2;
+      cv.width = W + PAD * 2; cv.height = H + PAD * 2;
+      cv.style.left = -(PAD + OFF) + 'px'; cv.style.top = -(PAD + OFF) + 'px';
+      per = 2 * (W + H);
+    };
+    size();
+    const g = cv.getContext('2d');
+    // a point at distance d along the border, clockwise from the top-left corner
+    const at = (d) => {
+      d = ((d % per) + per) % per;
+      if (d < W) return [d, 0, 0, -1];
+      if (d < W + H) return [W, d - W, 1, 0];
+      if (d < 2 * W + H) return [W - (d - W - H), H, 0, 1];
+      return [0, H - (d - 2 * W - H), -1, 0];
+    };
+    const LAP = 900; // ms for one turn of the border
+    const total = LAP * revs;
+    const sparks = [];
+    let t0 = 0, last = 0, rnd = 1;
+    const rand = () => { rnd = (rnd * 16807) % 2147483647; return rnd / 2147483647; };
+    const dot = (x, y, c, a, sz) => { sz = sz || PX; g.globalAlpha = a; g.fillStyle = c; g.fillRect(Math.round((x + PAD) / PX) * PX - sz / 2, Math.round((y + PAD) / PX) * PX - sz / 2, sz, sz); };
+    function frame(now) {
+      if (!el.isConnected) return;
+      if (!t0) { t0 = now; last = now; }
+      const k = Math.min(1, (now - t0) / total);
+      const dt = Math.min(50, now - last); last = now;
+      g.clearRect(0, 0, cv.width, cv.height);
+      // the last turn fades and the trail shortens
+      const lastTurn = Math.max(0, (k * revs - (revs - 1)));
+      const fade = 1 - lastTurn;
+      const head = k * revs * per;
+      const trail = per * 0.2 * (0.4 + 0.6 * fade);
+      for (const start of [0, per / 2]) {
+        // a soft glow round the head, then the trail: bright gold at the head, deepening to the ribbon's amber
+        const [hx, hy] = at(start + head);
+        dot(hx, hy, '#ffcf4a', 0.28 * fade, 10);
+        dot(hx, hy, '#ffd75e', 0.5 * fade, 6);
+        for (let s = 0; s <= trail; s += PX) {
+          const [x, y] = at(start + head - s);
+          const a = Math.pow(1 - s / trail, 1.3) * fade;
+          dot(x, y, s < PX * 2 ? '#fff1b0' : s < trail * 0.3 ? '#f5b623' : '#c5841a', a, s < trail * 0.5 ? 3 : PX);
+        }
+        // sparks fly off outward from the head now and then
+        if (fade > 0.05 && rand() < 0.35 * (dt / 16)) {
+          const [x, y, nx, ny] = at(start + head);
+          sparks.push({ x, y, vx: nx * (0.03 + rand() * 0.05) + (rand() - 0.5) * 0.04, vy: ny * (0.03 + rand() * 0.05) + (rand() - 0.5) * 0.04 + 0.01, life: 1 });
+        }
+      }
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const p = sparks[i];
+        p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 0.00012 * dt; p.life -= dt / 420;
+        if (p.life <= 0) { sparks.splice(i, 1); continue; }
+        dot(p.x, p.y, p.life > 0.5 ? '#ffd75e' : '#d4901c', p.life);
+      }
+      g.globalAlpha = 1;
+      if (k < 1 || sparks.length) requestAnimationFrame(frame);
+      else cv.remove();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ---- an item that is also a keepsake: one slip, the item's, marked as a keepsake too ------------------------------
+  function markKeepsake(itemId, ksName) {
+    const me = live.find((x) => x.kind === 'item' && x.id === itemId);
+    if (!me) return false;
+    me.el.classList.add('aw-badged');
+    const k = me.el.querySelector('.kind');
+    if (k && !me.el.querySelector('.aw-badge')) k.insertAdjacentHTML('afterend', '<span class="aw-badge">Keepsake</span>');
+    const body = me.el.querySelector('.aw-body');
+    if (body && !me.el.querySelector('.aw-ks')) body.insertAdjacentHTML('beforeend', '<span class="tnote aw-ks">' + esc('Also kept in Journey › Keepsakes') + '</span>');
+    // (it stays as long as a keepsake's slip would, from now)
+    me.left = HOLD.keepsake;
+    if (me.run) me.run();
+    if (!reduce()) flair(me.el, 1);
+    return true;
+  }
+  // ---- the "new" mark on the map's Ledger button: something given that the Satchel has not shown yet ------------------
+  function newDot() {
+    if (typeof document === 'undefined') return;
+    const s = RB.game && RB.game.s;
+    const any = !!(s && s.newItems && Object.keys(s.newItems).some((id) => s.inv && s.inv[id] > 0));
+    for (const b of document.querySelectorAll('.hbtn.menu-b')) {
+      const d = b.querySelector('.new-dot');
+      if (any && !d) b.insertAdjacentHTML('beforeend', '<span class="new-dot" aria-hidden="true"></span>');
+      else if (!any && d) d.remove();
+      if (any) b.setAttribute('aria-description', 'Something new in the Satchel'); else b.removeAttribute('aria-description');
+    }
+  }
+
+  // ---- the travel volume: a page witnessed for the first time is a moment recorded (after its scene has settled) ------
+  // s.volSeen: the pages already announced in this journey; a journey from before has its witnessed pages taken as
+  // known (nothing old is announced as new)
+  function moments() {
+    const s = RB.game && RB.game.s;
+    if (!s || !RB.volume || !RB.recordsUI || !RB.recordsUI.inCampaign(s)) return;
+    let pages = [];
+    try { pages = RB.volume.pages().filter((p) => RB.volume.witnessed(s, p)); } catch (e) { return; }
+    if (!Array.isArray(s.volSeen)) { s.volSeen = pages.map((p) => p.id); return; }
+    const fresh = pages.filter((p) => s.volSeen.indexOf(p.id) < 0 && p.kind !== 'prologue');
+    fresh.forEach((p, i) => {
+      s.volSeen.push(p.id);
+      const t = p.title || {};
+      const seal = RB.seal && RB.seal.svg ? RB.seal.svg(RB.seal.of(s), 44, '') : '';
+      setTimeout(() => award({ kind: 'moment', id: p.id, jp: t.jp || '', en: t.en || '', note: 'Kept in Journey › Travel volume, pressed with your seal', art: seal, level: 3 }), 250 + i * 900);
+    });
+  }
+  if (RB.bus) {
+    RB.bus.on('story:settled', () => { setTimeout(moments, 120); newDot(); });
+    // a journey begun or loaded: what its volume already holds is not news
+    RB.bus.on('campaign:changing', () => { live.slice().forEach((x) => x.close(true)); });
+  }
+  return Object.assign(award, { markKeepsake, moments, newDot, live: () => live.map((x) => ({ kind: x.kind, id: x.id })), closeAll: () => live.slice().forEach((x) => x.close(true)), HOLD });
 })();
 
 
@@ -81104,6 +81398,7 @@ RB.ui.menu = (function () {
   function close() {
     if (!layer) return;
     closePick(false);
+    if (view.section === 'satchel') seenSatchel();
     remember();
     stopDemo();
     if (tabsApi) tabsApi.destroy();
@@ -81166,10 +81461,24 @@ RB.ui.menu = (function () {
   }
 
   // ---- rendering ---------------------------------------------------------------------------
+  // the "new" mark (LI-3): a glowing dot on the Satchel's tab and on each item given since the Satchel was last looked
+  // at; leaving the Satchel (another tab, or closing the Ledger) counts as having looked
+  function seenSatchel() { const s = RB.game.s; if (s && s.newItems && Object.keys(s.newItems).length) s.newItems = {}; if (RB.ui.award && RB.ui.award.newDot) RB.ui.award.newDot(); }
+  function newMarks() {
+    if (!tabsApi) return;
+    const s = RB.game.s, any = !!(s && s.newItems && Object.keys(s.newItems).some((id) => s.inv[id] > 0));
+    const t = tabsApi.el.querySelector('.ptab[data-id="satchel"]');
+    if (!t) return;
+    let d = t.querySelector('.new-dot');
+    if (any && !d) { t.insertAdjacentHTML('beforeend', '<span class="new-dot" aria-hidden="true"></span>'); t.setAttribute('aria-description', 'New things'); }
+    else if (!any && d) { d.remove(); t.removeAttribute('aria-description'); }
+  }
   function render() {
     closePick(false);
     stopDemo(); stopDemo = () => {};
     const s = RB.game.s;
+    if (lastSec === 'satchel' && view.section !== 'satchel') seenSatchel();
+    newMarks();
     const sec = sectionsFor(s).find((x) => x.id === view.section) || SECTIONS[0];
     if (sec.id !== view.section) view.section = sec.id;
     const comp = s.comp && RB.content.chars[s.comp];
@@ -81807,7 +82116,7 @@ RB.ui.menu = (function () {
     else h += '<ul class="entries">' + inv.map((x) => {
       const worn = !!x.d.slot && EQ().isWorn(s, x.id), z = x.d.slot && EQ().slot(x.d.slot);
       return '<li><button class="entry item-row' + (worn ? ' worn' : z ? ' wearable' : '') + '" data-it="' + x.id + '" aria-current="' + (two && S.sel === x.id) + '"' + (two ? '' : ' aria-expanded="' + (S.open === x.id) + '"') + '>' +
-        '<span class="mark">' + RB.itemArt.html(x.id, 2) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
+        '<span class="mark">' + RB.itemArt.html(x.id, 2) + (s.newItems && s.newItems[x.id] ? '<span class="new-dot" title="New"><span class="sr">New</span></span>' : '') + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
         (x.d.key ? '<span class="kind">' + I('key') + ' important</span>' : '') +
         (z ? '<span class="kind slotline">' + (worn ? wornChip() : '') + '<span>' + lab(z.jp, z.en) + (worn ? '' : ' · can be worn') + '</span></span>' + tagRow(x.d) : '') +
         '</span></button>' + (!two && S.open === x.id ? '<div class="inline-detail">' + itemDetail(x, s) + '</div>' : '') + '</li>';
@@ -85047,7 +85356,8 @@ RB.verbsDev = (function () {
  *   - Shared Journey counts only the current companion's mementos;
  *   - Atlas Finds lists what the Unwritten Atlas actually gave (owned items,
  *     their effects unchanged);
- *   - a brief notice the first time a keepsake is found (non-blocking).
+ *   - a brief notice the first time a keepsake is found (non-blocking): the keepsake's award slip (src/ui/15_award.js),
+ *     or, for a keepsake that is an item just given, a mark on that item's slip.
  * Nothing here awards anything: RB.discovery.keepsake does, once. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -85283,6 +85593,12 @@ RB.ui.keepsakes = (function () {
   function notice(id) {
     const k = K()[id];
     if (!k || typeof document === 'undefined') return;
+    // an item that is also a keepsake: its own slip says so (one slip, one sound; LI-3)
+    if (k.item && RB.ui.award && RB.ui.award.markKeepsake && RB.ui.award.markKeepsake(k.item, k.name.en)) return;
+    if (RB.ui.award) {
+      RB.ui.award({ kind: 'keepsake', id, jp: k.name.jp, en: k.name.en, note: 'See Journey › Keepsakes', art: artCanvas(id, 2), level: 3 });
+      return;
+    }
     const host = document.querySelector('#overlay .notices');
     if (!host) return;
     const n = RB.ui.el('div', 'toast ks-toast');
@@ -107292,7 +107608,7 @@ RB.combat = (function () {
         if (enemy.settle) { await live(say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho)); RB.ui.dialogue.hide(); }
         if (RB.creatures) RB.creatures.settle(s, members, enemy); // a settled observation (no count)
         if (enemy.reward) {
-          for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await live(RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en })); }
+          for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await live(RB.ui.toast({ kind: 'item', id: k, n: enemy.reward.items[k], note: RB.equip.note(it) })); }
           for (const wd of enemy.reward.words || []) if (s.words.indexOf(wd) < 0) { s.words.push(wd); const W = RB.content.words[wd]; if (W) await live(RB.ui.toast({ kind: 'word', jp: W.jp, en: W.en })); }
         }
         s.vars.battlesWon = (s.vars.battlesWon || 0) + 1;
@@ -224583,7 +224899,7 @@ RB.hooks = RB.hooks || {};
   async function scene(id) {
     await RB.script.run(id);
   }
-  async function toast(kind, jp, en) { try { await RB.ui.toast({ kind, jp, en }); } catch (e) { /* headless */ } }
+  async function toast(kind, jp, en, id) { try { await RB.ui.toast({ kind, jp, en, id, note: id && C.items[id] ? RB.equip.note(C.items[id]) : undefined }); } catch (e) { /* headless */ } }
   function addNote(id) {
     const s = S();
     if (!C.notes[id] || s.notebook.find((n) => n.id === id)) return false;
@@ -224941,7 +225257,7 @@ RB.hooks = RB.hooks || {};
         const id = pool[U.rng(run.seed ^ U.hashStr(c.id)).int(pool.length)];
         RB.state.give(s, id, 1);
         run.keepsakes.push(id);
-        await toast('item', C.items[id].name.jp, C.items[id].name.en);
+        await toast('item', C.items[id].name.jp, C.items[id].name.en, id);
         await say('narr', { jp: 'これ は {持|も}ち{帰|かえ}れる 。', en: 'This one you can keep: ' + C.items[id].name.en + '. (Equip it as a keepsake in the Satchel.)' });
       } else {
         await say('narr', { jp: '{中|なか} は {空|から} だった 。 {紙|かみ} に は 「ありがとう 」 と だけ {書|か}いて ある 。', en: 'It is empty. The paper just says "thank you".' });
@@ -225201,12 +225517,12 @@ RB.hooks = RB.hooks || {};
         const id = offer[Math.max(0, Math.min(offer.length - 1, i))];
         RB.state.give(s, id, 1);
         summary.rewards.push(id);
-        await toast('item', C.items[id].name.jp, C.items[id].name.en);
+        await toast('item', C.items[id].name.jp, C.items[id].name.en, id);
       }
       if (run.lantern) {
         if (run.lantern.hp > 0) {
           await scene('atlas.escort.home');
-          if (!owned(s, 'atlas_cos_lamplet')) { RB.state.give(s, 'atlas_cos_lamplet', 1); summary.rewards.push('atlas_cos_lamplet'); await toast('item', C.items.atlas_cos_lamplet.name.jp, C.items.atlas_cos_lamplet.name.en); }
+          if (!owned(s, 'atlas_cos_lamplet')) { RB.state.give(s, 'atlas_cos_lamplet', 1); summary.rewards.push('atlas_cos_lamplet'); await toast('item', C.items.atlas_cos_lamplet.name.jp, C.items.atlas_cos_lamplet.name.en, 'atlas_cos_lamplet'); }
         } else await say('narr', { jp: '{消|き}えた {灯|あか}り も 、 {一緒|いっしょ}に {帰|かえ}って きた 。', en: 'The lantern that went out comes home with you anyway. Someone will relight it.' });
       }
       const k = Math.min(6, n);
@@ -225233,7 +225549,7 @@ RB.hooks = RB.hooks || {};
       summary.commission = cmOut;
       if (cmOut.kind === 'survey' && cmOut.survey) await say('narr', { jp: '{調査|ちょうさ} の {帳面|ちょうめん} は 、 {地図師|ちずし} の {地図帳|ちずちょう} に {綴|と}じられる 。', en: 'The survey book goes into the Cartographer\'s Atlas. From now on, the rooms of ' + RB.atlasCommissions.AREAS[cmOut.survey].title.en.toLowerCase() + ' open their way on for you.' });
       else if (cmOut.kind === 'survey' && !cmOut.surveyComplete) await say('narr', { jp: '{確|たし}かめて いない {目印|めじるし} が ある 。 {調査|ちょうさ} は 、 また {今度|こんど} 。', en: 'Some landmarks went unverified: the survey will have to wait for another walk.' });
-      if (cmOut.compass) await toast('item', C.items.atlas_cos_compass.name.jp, C.items.atlas_cos_compass.name.en);
+      if (cmOut.compass) await toast('item', C.items.atlas_cos_compass.name.jp, C.items.atlas_cos_compass.name.en, 'atlas_cos_compass');
     }
     s.atlas.runs = (s.atlas.runs || 0) + 1;
     s.atlas.relicsSeen = Array.from(new Set((s.atlas.relicsSeen || []).concat(run.relics)));
@@ -225252,7 +225568,7 @@ RB.hooks = RB.hooks || {};
     await scene('atlas.home');
     if (summary.restore) await note('atlas_news_' + summary.restore);
     for (const n of summary.notes) { const nd = C.notes[n]; if (nd) await toast('note', nd.title.jp, nd.title.en); }
-    for (const id of kind === 'defeat' ? summary.rewards : []) await toast('item', C.items[id].name.jp, C.items[id].name.en);
+    for (const id of kind === 'defeat' ? summary.rewards : []) await toast('item', C.items[id].name.jp, C.items[id].name.en, id);
     RB.save.autosave('auto');
     return summary;
   }

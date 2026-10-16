@@ -1714,7 +1714,7 @@ RB.combat = (function () {
         if (enemy.settle) { await live(say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho)); RB.ui.dialogue.hide(); }
         if (RB.creatures) RB.creatures.settle(s, members, enemy); // a settled observation (no count)
         if (enemy.reward) {
-          for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await live(RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en })); }
+          for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await live(RB.ui.toast({ kind: 'item', id: k, n: enemy.reward.items[k], note: RB.equip.note(it) })); }
           for (const wd of enemy.reward.words || []) if (s.words.indexOf(wd) < 0) { s.words.push(wd); const W = RB.content.words[wd]; if (W) await live(RB.ui.toast({ kind: 'word', jp: W.jp, en: W.en })); }
         }
         s.vars.battlesWon = (s.vars.battlesWon || 0) + 1;

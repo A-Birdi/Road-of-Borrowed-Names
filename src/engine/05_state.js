@@ -43,6 +43,8 @@ RB.state = (function () {
       flags: {}, vars: {},
       quests: {},          // id -> {stage, done, t}
       inv: {},             // itemId -> count
+      newItems: {},        // itemId -> true: given since the Satchel was last looked at (its "new" mark; LI-3)
+      volSeen: [],         // travel-volume pages already announced as a moment recorded (src/ui/15_award.js)
       equip: { charm: null, tool: null, cosmetic: null },
       words: [],           // inscription word ids known
       techniques: [],
@@ -194,6 +196,8 @@ RB.state = (function () {
   function give(s, id, n) {
     s.inv[id] = (s.inv[id] || 0) + (n == null ? 1 : n);
     if (s.inv[id] <= 0) delete s.inv[id];
+    // the Satchel's "new" mark, until the Satchel is looked at (LI-3)
+    else if ((n == null || n > 0) && RB.content.items[id]) (s.newItems || (s.newItems = {}))[id] = true;
     // an item that is also a catalogued keepsake is recorded as found, for the journey being played only (the quest
     // guide's simulated states and other copies never are)
     if ((n == null || n > 0) && RB.discovery && RB.discovery.fromItem && RB.game && RB.game.s === s) RB.discovery.fromItem(s, id);

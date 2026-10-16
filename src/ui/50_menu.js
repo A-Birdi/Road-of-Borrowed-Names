@@ -119,6 +119,7 @@ RB.ui.menu = (function () {
   function close() {
     if (!layer) return;
     closePick(false);
+    if (view.section === 'satchel') seenSatchel();
     remember();
     stopDemo();
     if (tabsApi) tabsApi.destroy();
@@ -181,10 +182,24 @@ RB.ui.menu = (function () {
   }
 
   // ---- rendering ---------------------------------------------------------------------------
+  // the "new" mark (LI-3): a glowing dot on the Satchel's tab and on each item given since the Satchel was last looked
+  // at; leaving the Satchel (another tab, or closing the Ledger) counts as having looked
+  function seenSatchel() { const s = RB.game.s; if (s && s.newItems && Object.keys(s.newItems).length) s.newItems = {}; if (RB.ui.award && RB.ui.award.newDot) RB.ui.award.newDot(); }
+  function newMarks() {
+    if (!tabsApi) return;
+    const s = RB.game.s, any = !!(s && s.newItems && Object.keys(s.newItems).some((id) => s.inv[id] > 0));
+    const t = tabsApi.el.querySelector('.ptab[data-id="satchel"]');
+    if (!t) return;
+    let d = t.querySelector('.new-dot');
+    if (any && !d) { t.insertAdjacentHTML('beforeend', '<span class="new-dot" aria-hidden="true"></span>'); t.setAttribute('aria-description', 'New things'); }
+    else if (!any && d) { d.remove(); t.removeAttribute('aria-description'); }
+  }
   function render() {
     closePick(false);
     stopDemo(); stopDemo = () => {};
     const s = RB.game.s;
+    if (lastSec === 'satchel' && view.section !== 'satchel') seenSatchel();
+    newMarks();
     const sec = sectionsFor(s).find((x) => x.id === view.section) || SECTIONS[0];
     if (sec.id !== view.section) view.section = sec.id;
     const comp = s.comp && RB.content.chars[s.comp];
@@ -822,7 +837,7 @@ RB.ui.menu = (function () {
     else h += '<ul class="entries">' + inv.map((x) => {
       const worn = !!x.d.slot && EQ().isWorn(s, x.id), z = x.d.slot && EQ().slot(x.d.slot);
       return '<li><button class="entry item-row' + (worn ? ' worn' : z ? ' wearable' : '') + '" data-it="' + x.id + '" aria-current="' + (two && S.sel === x.id) + '"' + (two ? '' : ' aria-expanded="' + (S.open === x.id) + '"') + '>' +
-        '<span class="mark">' + RB.itemArt.html(x.id, 2) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
+        '<span class="mark">' + RB.itemArt.html(x.id, 2) + (s.newItems && s.newItems[x.id] ? '<span class="new-dot" title="New"><span class="sr">New</span></span>' : '') + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
         (x.d.key ? '<span class="kind">' + I('key') + ' important</span>' : '') +
         (z ? '<span class="kind slotline">' + (worn ? wornChip() : '') + '<span>' + lab(z.jp, z.en) + (worn ? '' : ' · can be worn') + '</span></span>' + tagRow(x.d) : '') +
         '</span></button>' + (!two && S.open === x.id ? '<div class="inline-detail">' + itemDetail(x, s) + '</div>' : '') + '</li>';

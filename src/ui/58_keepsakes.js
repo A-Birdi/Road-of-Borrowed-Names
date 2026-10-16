@@ -18,7 +18,8 @@
  *   - Shared Journey counts only the current companion's mementos;
  *   - Atlas Finds lists what the Unwritten Atlas actually gave (owned items,
  *     their effects unchanged);
- *   - a brief notice the first time a keepsake is found (non-blocking).
+ *   - a brief notice the first time a keepsake is found (non-blocking): the keepsake's award slip (src/ui/15_award.js),
+ *     or, for a keepsake that is an item just given, a mark on that item's slip.
  * Nothing here awards anything: RB.discovery.keepsake does, once. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -254,6 +255,12 @@ RB.ui.keepsakes = (function () {
   function notice(id) {
     const k = K()[id];
     if (!k || typeof document === 'undefined') return;
+    // an item that is also a keepsake: its own slip says so (one slip, one sound; LI-3)
+    if (k.item && RB.ui.award && RB.ui.award.markKeepsake && RB.ui.award.markKeepsake(k.item, k.name.en)) return;
+    if (RB.ui.award) {
+      RB.ui.award({ kind: 'keepsake', id, jp: k.name.jp, en: k.name.en, note: 'See Journey › Keepsakes', art: artCanvas(id, 2), level: 3 });
+      return;
+    }
     const host = document.querySelector('#overlay .notices');
     if (!host) return;
     const n = RB.ui.el('div', 'toast ks-toast');

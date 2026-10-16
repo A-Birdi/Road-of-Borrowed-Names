@@ -259,8 +259,8 @@ RB.script = (function () {
         case 'give': {
           RB.state.give(s, a[0], a[1] ? +a[1] : 1);
           const it = RB.content.items[a[0]];
-          if (it && !c.args.includes('quiet')) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en, n: a[1] ? +a[1] : 1, note: RB.equip.note(it) });
-          RB.audio && RB.audio.sfx('item_get');
+          // one slip with the item's icon, and its one sound (LI-3: no second sound after it); a quiet gift says nothing
+          if (it && !c.args.includes('quiet')) await RB.ui.toast({ kind: 'item', id: a[0], n: a[1] ? +a[1] : 1, note: RB.equip.note(it) });
           break;
         }
         case 'take': RB.state.take(s, a[0], a[1] ? +a[1] : 1); break;
@@ -290,7 +290,7 @@ RB.script = (function () {
             const kind = q.done ? 'quest_done' : prev ? 'quest_update' : 'quest_new';
             await RB.ui.toast({ kind, jp: qd.title.jp, en: qd.title.en });
           }
-          if (q.done && qd && qd.reward) applyReward(qd.reward);
+          if (q.done && qd && qd.reward) await applyReward(qd.reward, c.args.includes('quiet'));
           break;
         }
         case 'if': {
@@ -413,9 +413,14 @@ RB.script = (function () {
     }
     return o;
   }
-  function applyReward(r) {
+  // a finished quest's reward: its items are announced like any gift (LI-3: they were given silently before)
+  async function applyReward(r, quiet) {
     const s = RB.game.s;
-    if (r.items) for (const k in r.items) RB.state.give(s, k, r.items[k]);
+    if (r.items) for (const k in r.items) {
+      RB.state.give(s, k, r.items[k]);
+      const it = RB.content.items[k];
+      if (it && !quiet) await RB.ui.toast({ kind: 'item', id: k, n: r.items[k], note: RB.equip.note(it) });
+    }
     if (r.words) r.words.forEach((w) => s.words.indexOf(w) < 0 && s.words.push(w));
     if (r.flags) r.flags.forEach((f) => (s.flags[f] = true));
   }

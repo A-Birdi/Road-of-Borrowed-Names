@@ -45,3 +45,64 @@ body.reduced-motion .eq-pick { animation: none; }
 .eq-opt-t .en { color: var(--ink-2); font-style: italic; }
 .eq-opt-k { font-size: 0.8em; color: var(--ink-3); }
 body.high-contrast .eq-pick { background-image: none; border-color: #000; }
+
+/* ---- award slips (LI-3, src/ui/15_award.js): one family, three looks -------------------------------------------- */
+.toast.award {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.2em 0.9em;
+  width: min(520px, calc(100vw - 24px)); padding: 0.55em 0.55em 0.55em 0.8em; pointer-events: auto; cursor: pointer; overflow: visible;
+}
+.award .aw-art { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; flex: none; }
+.award .aw-art > img.it-ic { width: 48px; height: 48px; }
+.award .aw-body { display: flex; flex-direction: column; gap: 0.05em; min-width: 0; }
+.award .aw-name { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.6em; }
+.award .aw-name .jline { font-size: 1.12em; }
+.award .tnote { flex-basis: auto; }
+.award .aw-x {
+  align-self: start; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0;
+  background: none; border: 0; border-radius: 3px; color: var(--ink-3); cursor: pointer; pointer-events: auto;
+}
+.award .aw-x svg { width: 1em; height: 1em; }
+.award .aw-x:hover { color: var(--ink); background: rgba(193, 138, 42, 0.14); }
+.award .aw-x:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+/* (over an open book a slip lets clicks through to what lies under it, but its × still closes it) */
+body.in-panel #overlay > .notices > .award .aw-x { pointer-events: auto; }
+/* item: the amber edge of the place you are, the icon on a small dish */
+.award.aw-item { border-left-color: var(--ribbon); }
+.award.aw-item .aw-art { border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fffaf0, #eadfc2 70%); box-shadow: inset 0 0 0 1px var(--paper-edge); }
+/* keepsake: a vermilion edge and label, the picture in a mount with its corners */
+.award.aw-keepsake { border-left-color: var(--vermilion); }
+.award.aw-keepsake .kind, .award .aw-badge { color: var(--vermilion); }
+.award.aw-keepsake .aw-art { position: relative; background: #fbf6ea; outline: 1px solid var(--paper-edge); box-shadow: 0 3px 6px -3px rgba(40, 25, 5, 0.5); transform: rotate(-1.5deg); }
+.award.aw-keepsake .aw-art > canvas { width: 48px !important; height: 48px !important; image-rendering: pixelated; }
+.award.aw-keepsake .aw-art::before, .award.aw-keepsake .aw-art::after { content: ""; position: absolute; width: 10px; height: 10px; pointer-events: none; }
+.award.aw-keepsake .aw-art::before { left: -2px; top: -2px; background: linear-gradient(135deg, var(--bk-corner, #5a4630) 0 46%, transparent 46%); }
+.award.aw-keepsake .aw-art::after { right: -2px; bottom: -2px; background: linear-gradient(315deg, var(--bk-corner, #5a4630) 0 46%, transparent 46%); }
+.award .aw-badge { font-size: 0.7em; font-weight: 700; letter-spacing: 0.08em; font-variant: small-caps; border: 1px solid currentColor; border-radius: 2px; padding: 0 0.35em; justify-self: start; width: max-content; }
+/* moment: the indigo of the volume's cover, your seal pressed */
+.award.aw-moment { border-left-color: var(--cloth-700); }
+.award.aw-moment .kind { color: var(--cloth-600); }
+.award.aw-moment .aw-art svg { width: 48px; height: 48px; transform: rotate(-4deg); }
+/* arriving: from the top in a few quick frames; leaving: up and away */
+.award.aw-in { animation: aw-in 160ms steps(4, end) both; }
+@keyframes aw-in { from { transform: translateY(-140%); opacity: 0.2; } to { transform: none; opacity: 1; } }
+.award.aw-out { animation: aw-out 200ms ease-in both; }
+@keyframes aw-out { to { transform: translateY(-40%); opacity: 0; } }
+/* the gold flare's canvas reaches a little past the slip's border */
+.award .aw-flair { position: absolute; pointer-events: none; image-rendering: pixelated; z-index: 2; }
+body.reduced-motion .award.aw-in, body.reduced-motion .award.aw-out { animation: none; }
+body.reduced-motion .award .aw-flair { display: none; }
+@media (max-width: 520px) { .award .aw-art { width: 48px; height: 48px; } .award .aw-art > img.it-ic { width: 32px; height: 32px; } }
+
+/* ---- the "new" mark: a small amber dot that breathes a soft glow -------------------------------------------------- */
+.new-dot {
+  position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #f0b43c; pointer-events: none;
+  box-shadow: 0 0 0 1.5px var(--paper, #f2e9d3), 0 0 6px 1px rgba(240, 180, 60, 0.75);
+  animation: new-glow 1.8s ease-in-out infinite;
+}
+@keyframes new-glow { 0%, 100% { box-shadow: 0 0 0 1.5px var(--paper, #f2e9d3), 0 0 3px 0 rgba(240, 180, 60, 0.55); } 50% { box-shadow: 0 0 0 1.5px var(--paper, #f2e9d3), 0 0 9px 3px rgba(240, 180, 60, 0.9); } }
+body.reduced-motion .new-dot { animation: none; }
+.ptab > .new-dot { top: 6px; right: 6px; }
+.hbtn.menu-b { position: relative; }
+.hbtn.menu-b > .new-dot { top: 4px; right: 4px; }
+.entry > .mark { position: relative; }
+.entry > .mark > .new-dot { top: -3px; right: -4px; }

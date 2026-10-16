@@ -182,6 +182,12 @@ RB.ui = (function () {
     quest_done: 'Quest complete', info: '', lesson: 'Learned',
   };
   function toast(t) {
+    // an item: the award slip, with its icon (src/ui/15_award.js; LI-3); found by its name when a caller gives only that
+    if (t && t.kind === 'item' && RB.ui.award) {
+      let id = t.id;
+      if (!id && RB.content && RB.content.items) id = Object.keys(RB.content.items).find((k) => RB.content.items[k].name.en === t.en && (!t.jp || RB.content.items[k].name.jp === t.jp)) || null;
+      return RB.ui.award({ kind: 'item', id, jp: t.jp, en: t.en, n: t.n, note: t.note });
+    }
     return new Promise((res) => {
       const n = el('div', 'toast');
       n.setAttribute('role', 'status');

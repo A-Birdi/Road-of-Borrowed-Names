@@ -24,7 +24,7 @@ let failures = 0;
 const ok = (cond, msg) => { if (!cond) { failures++; console.log('  FAIL:', msg); } };
 
 const INTERFACE = ['confirm', 'cancel', 'menu_open', 'menu_close', 'save', 'quest_update', 'page', 'cursor', 'text_blip'];
-const FEEDBACK = ['answer_right', 'answer_wrong', 'recog_ok', 'recog_unsure', 'discover', 'item_get', 'reveal'];
+const FEEDBACK = ['answer_right', 'answer_wrong', 'recog_ok', 'recog_unsure', 'discover', 'item_get', 'reveal', 'moment'];
 // the volume each effect is called with in the game (text_blip is always played at 0.35)
 const CALLED = { text_blip: 0.35 };
 

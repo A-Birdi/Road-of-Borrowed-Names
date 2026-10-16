@@ -172,6 +172,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const KS = (RB.content && RB.content.keepsakes) || {}, worn = Object.values(from.equip || {});
     for (const id in KS) if (KS[id] && KS[id].item && !rec.found[id] && ((from.inv && from.inv[KS[id].item] > 0) || worn.indexOf(KS[id].item) >= 0)) rec.found[id] = { t: 0 };
     s.seq = clone(isObj(from.seq) ? from.seq : {});
+    // the travel volume's pages the carried illustrations already witness are not news in the new journey (LI-3)
+    try { if (RB.volume) s.volSeen = RB.volume.pages().filter((p) => RB.volume.witnessed(s, p)).map((p) => p.id); } catch (e) { /* (none) */ }
     // pastime records (lead's decision F-03): shiritori's results with each companion, the fishing journal's fish
     // and personal milestones, the practice tallies. Kept pages, displays and activity progress start fresh, as do
     // sessions under way.
