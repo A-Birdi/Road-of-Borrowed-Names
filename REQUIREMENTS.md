@@ -835,8 +835,9 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     No look at the opening itself beyond that was asked for. A real device voice's own positions were not tried here
     (headless Chromium has no voice; the browser test uses a stand-in that reports positions as device voices do).
 - [~] XP123 ST-1, Settings laid out like the Ledger, and the settings reviewed when a journey begins (Robin, 2026-10-15).
-  VALIDATION.md "ST-1". Run so far: B `settings_review`, `settings`, `settings_access`, `book`, `folio` pass; the wider
-  regression run (the other suites named below) is still running and is recorded in VALIDATION.md when it finishes.
+  VALIDATION.md "ST-1". Run: B `settings_review`, `settings`, `settings_access`, `book`, `folio`, and the regression
+  batches (32 suites) pass, after three test updates for the new layout. U: whole suite 54,226/0. Still open:
+  `harmony_cutin` run whole and alone (2 failures under load; each failing section passed alone).
   - Done: (a) paper tabs across the top instead of the left page's list of groups, each tab across both pages (B
     `settings_review`, `settings`, `battle_settings`); (b) every setting named by a heading with a sentence under it (B
     `settings_review`); (c) the controls drawn on the page: a choice circled in ink, on/off a tick box, a level a ruled
@@ -849,6 +850,30 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     `settings_review`).
   - Not done (by design, later): voices on by default with recordings / device voice / none, when the recordings ship.
     Not heard or seen by a person here; layouts seen in captures (docs/screenshots/settings/).
+- [~] XP124 LI, the Ledger, items and their slips (Robin, 2026-10-16). VALIDATION.md "LI". B `ledger_li` (30 checks)
+  passes; the browser regression on this build is running.
+  - Done:
+    - (LI-1) Change… on each slot, in the Equipped list and under the portrait: a short list of what fits, the worn one
+      ticked, and Nothing (B `equipment`).
+    - (LI-2) A drawn 16-px icon for each of the 131 items, unique and well formed (U `item_art`; R contact sheets).
+    - (LI-3) One family of award slips for items (quest rewards too), keepsakes and recorded moments. Each has its
+      icon and name, one sound, a 6–7 s hold that pauses while pointed at, a close button, the gold flare and the
+      slide-in. A glowing "new" mark sits on the Ledger and the Satchel. A moment has its own sound (B `ledger_li`,
+      `keepsakes`, `audio_levels`).
+    - (LI-4) The dialogue strip rises into place (B `ledger_li`).
+    - (LI-5) Coloured ribbons for Journey's, Map's and Company's pages, tags on a phone; no empty "Contents";
+      "Practice" everywhere; Save & Load on the cover with a slip of its choices (B `ledger_li`, `folio`,
+      `settings_access`, `title_ledger`).
+    - (LI-6) The Route chart: taller, zooms, drags, names that fit or wait to be pointed at, a pulsing ring with the
+      name of where you are (B `ledger_li`, `quest_guide`, `manybridge`).
+    - (LI-7) Known details: the pin note in ink, People notes across the page saying where in the town, people marked
+      on the diagram, a key in three groups (B `ledger_li`, `world_living`; U `known_spots`).
+    - (LI-8) The narrator's reference readings counted and planned in PRODUCTION_ESTIMATE.md §1b (R; nothing
+      recorded).
+    - (LI-9) Pointing at a word marks its counterpart while Highlight is on (B `ledger_li`).
+  - Not done: the "My Learning", "Reference" line in Robin's message was cut off; asked about it. Nothing here has
+    been seen or heard by a person; captures only.
+  - Reduced motion is respected throughout (B `ledger_li`).
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

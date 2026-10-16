@@ -4331,6 +4331,120 @@ Robin's PC: `docs/future/voice/va2/HANDOFF_VA2.md`. **No voice was generated or 
   the worker's provisional pick, not Robin's casting.
 - **Not done:** Robin's picks; anything in the game's speech.
 
+## LI — the Ledger, items and their slips (Robin, 2026-10-16; LI-1 to LI-9)
+
+Robin's message of 2026-10-16, in nine parts:
+- (LI-1) swap what a slot holds from the Satchel;
+- (LI-2) a drawn icon for every item;
+- (LI-3) award slips with the icon and name, quest rewards too, keepsakes matched but distinct, a normal time with a
+  quick close, a glowing "new" mark, one sound, a sound and slip for a recorded moment, a gold flare round the slip,
+  and a slide in from the top;
+- (LI-4) the dialogue strip rising into place;
+- (LI-5) bookmarks for the sub-pages, no empty "Contents", "Practice" everywhere, Save & Load presented anew;
+- (LI-6) the Route chart;
+- (LI-7) Known details;
+- (LI-8) narrator lines for Listen in the voice plan;
+- (LI-9) pointing at a word marks its counterpart.
+
+Checks on the built index.html (headless Chromium, Linux), 2026-10-16. Not seen or heard by a person here except in
+the captures listed.
+
+- **B `node tests/e2e/ledger_li.mjs`, all 30 checks pass:**
+  - **LI-3:** the slip shows the item's drawn icon and name, with a close button; exactly one sound (`item_get`); it
+    slides in with its flare; the Ledger's button gets the "new" mark with its `new-glow` animation; the close button
+    removes it at once; a recorded moment has its own slip and its own sound (`moment`).
+  - **LI-4:** the strip rises as it opens.
+  - **LI-9:** pointing at 川 marks "river"; pointing at "water" marks 水; with Highlight off nothing is marked.
+  - **LI-5:**
+    - Journey's five pages are five ribbons, each in its own colour, one button each (no copies), with no text tabs
+      left on the page.
+    - Pointing draws a ribbon's name out (its clip goes from `inset(0px 100% 0px 0px)` to `inset(0px)`).
+    - A press turns the page; the running head names it; the ribbon curls on.
+    - Enter on a focused ribbon turns the page and keeps focus on it.
+    - Save & Load is on the cover, the foot is gone, and its slip has three choices with focus on the first. The arrows
+      move along them; Escape closes the slip back to its button.
+    - Words has three sections and no "Contents" heading; the page says "Practice" and never "practis…".
+  - **LI-6:**
+    - Where you are is a pulsing ring named "Reedwake".
+    - All 14 places have names, no shown name runs past the edge, and the zoom-out button is disabled at full view.
+    - Two presses zoom in (the view's width 520 → 231); a drag moves it.
+    - Zoomed in, no name in view crosses the edge.
+  - **LI-7:**
+    - The note is typed in dark ink (luminance 0.12; it was pale on cream).
+    - Oto's note reads "You last saw them outside Hana's Teahouse, in Reedwake" across 482 px, on one line (23 px
+      tall).
+    - An older note without a spot still reads "at Reedwake".
+    - The key has its three groups.
+  - **Phone, 390×844 with touch:** five ribbon tags in a row; the page is 390 px wide.
+  - **Reduced motion:** no slide, no flare, a still ring.
+  - No page errors or network requests in any part.
+- **U `node tests/run-unit.mjs item_art`, 6/0:** all 131 items have an icon; each is well formed, uses at least three
+  inks, and is no near-copy of another (fewer than 12 differing pixels).
+  `node tools/art/item_icons_check.mjs`: "131 of 131 items have icons; problems: 0; near-copies: 0".
+- **U `node tests/run-unit.mjs known_spots`, 8/0:**
+  - "at Reedwake" without a spot;
+  - "outside Hana's Teahouse, in Reedwake" by its door;
+  - "inside Hana's Teahouse" in the room;
+  - "by the way to the Lantern Road, in Reedwake" near the road out;
+  - a part of the town otherwise;
+  - a sighting keeps its spot, rounded to the tile.
+- **U, the whole unit suite after the "Practice" sweep: 54,251 passed, 0 failed.** This run predates the two new unit
+  files, which pass on their own (above).
+- **R, review by eye:**
+  - Five contact sheets of the icons at 4× and 2× on paper and on the cover, one per drawing batch. The agents redrew
+    what misread: tea leaves as a turnip, a shuttle as a hot dog, a scarf as a postbox, and others.
+  - Captures of the Ledger at 1280×800, 1024×768 (touch) and 390×844: the ribbons, their hover, the curl's middle
+    frame, Map, Company, Words, the Save slip, and the Route chart early and late, zoomed, dragged and on a phone.
+  - Known details before and after the fix.
+  - Weaker icons to look at again: `yn_letter`, `cr_message`, `atlas_cos_sash`.
+- **The tab row beside the cover's three buttons, measured in a twelve-chapter journey (six tabs), 1024–1600 px:**
+  the row fits beside Save & Load, Settings and Close from 1200 px up. Between 980 and 1279 px those two show their
+  pictures only. At 1024 px the row scrolls with its arrows, as it already did before this change (the old build's
+  Settings button overlapped the sixth tab there).
+- **Spelling:** 86 "practise…" words became "practice…" in the game's text and docs; code names were kept; the
+  English halves of dialogue lines only.
+- **Regression on this build:** the browser suites the changes touch are running (folio, settings_access,
+  title_ledger, quest_guide, manybridge, book, records, ledger, world_living, distractions, atlas_board, pages_ending,
+  practice_a_lamps, workshop, ui_inventory, kanji_chart, practice_b, wordplay, keepsakes, play_ui); results are added
+  here when they finish. Updated for the new markup: `folio`, `settings_access`, `title_ledger` (the Save slip),
+  `book` (`.leaf:first-of-type`), `quest_guide` (the here ring), `world_living` (the spot words), and the four
+  spelling regexes.
+- **LI-8 (R; nothing runs):** `node tools/voice/reference_count.mjs` counts 8,981 reference recordings (234 kana,
+  1,838 kanji reading lists, 6,909 words; 30,119 characters, 28,551 morae), now in PRODUCTION_ESTIMATE.md §1b.
+
+## ST-1 — Settings laid out like the Ledger, and the settings reviewed when a journey begins (Robin, 2026-10-15)
+
+Checks on the built index.html (headless Chromium, Linux), 2026-10-15 and 16.
+
+- **B `node tests/e2e/settings_review.mjs`, all pass:**
+  - Six paper tabs; each setting under a heading with a sentence.
+  - Circled choices, tick boxes and a ruled slider; the music performance's drawn icons.
+  - Sound says why no line is spoken, and Highlight stands as its own setting apart from Word help.
+  - On a phone at the largest text: six tabs in one row, nothing wider than the screen.
+  - "Before you set out" opens through a real creation and its changes stay; reduced motion stops the circle being
+    drawn in.
+- **First regression batches:**
+  - Pass: `speech_mark`; `keepsakes` 33/33; `create` 383/0; `shift_load_regression` 18/18; `records` 7/0;
+    `old_saves` 4/0; `title_ledger` 18/0; `pad_kanji` 8/0; `quest_guide`; `steamhollow` 5/0; `world` 13/0;
+    `book_final`; `book_surfaces` 7/0; `hanafuda` 3/0; `harmony_appearance` 87/0; `play_ui`.
+  - Fixed, then passed:
+    - `battle_settings`: 9/1; the point search for the dimmed area was made robust, since the wider book left none
+      over the cards; then 10/0.
+    - `dialect_kansai`: the new label "Suzu's speech"; then it passed.
+    - `ui`: 13/1; the New Game+ loop ran on into the new journey's opening and the test now stops at "Set out"; then
+      14/0.
+  - `music_performance`: 24/1 under load, with the cue after the battle still loading; 25/0 alone.
+- **Second batches:**
+  - `learning_ui` 15/0, `ledger`, `battle_settings` 10/0, `music_performance` 25/0.
+  - `settings_review`, `dialect_kansai`, `ui` 14/0, `equipment`, `visual`: all pass.
+  - `audio_levels` first failed with "unknown sfx:moment" because it ran against the build from before LI-3's sound;
+    on the current build it passes.
+- **Not finished: `harmony_cutin`.** It had 2 failures in a loaded batch (11/2). Each failing section passed when run
+  alone: the frozen section on the new build, and the painted-geometry section on both the old and the new build.
+  The whole suite run alone was stopped twice, once by the 30-minute limit and once by a container restart. It is to
+  be completed.
+- **U, the whole unit suite at ST-1: 54,226 passed, 0 failed.**
+
 ## PT-1 — a new learner's first play (a coworker's notes, relayed by Robin, 2026-10-15)
 
 The notes, verbatim: "The start was confusing - needs voices (wip)"; "When the voiced lines are spoken, highlight the

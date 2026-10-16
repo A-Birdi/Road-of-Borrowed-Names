@@ -425,6 +425,30 @@
     the device's voice or none (the Voices slip says so; change `voiceNote()` and the defaults then). VALIDATION.md
     "ST-1", REQUIREMENTS.md XP123.
 
+    **LI (Robin, 2026-10-16: the Ledger, items and their slips):**
+    - Satchel: Change… on each slot opens a short list (worn one ticked, and Nothing). `src/ui/50_menu.js` `pickFor`.
+    - Icons: every item has its own drawn 16-px icon. `src/ui/11_item_art.js`, drawings in `src/content/item_art/`.
+      Tools: `tools/art/item_icons_sheet.mjs` and `item_icons_check.mjs`.
+    - Award slips: items, keepsakes and recorded moments share one family. `src/ui/15_award.js`:
+      - icon and name, one sound each, a held time and a close button, the gold flare, the slide-in;
+      - the glowing "new" mark;
+      - a moment of the Travel volume has its own sound (`moment`).
+    - Dialogue: the strip rises into place (LI-4). Pointing at a word marks its counterpart while Highlight is on
+      (LI-9, `src/ui/22_speech_mark.js`).
+    - Ledger pages: Journey's, Map's and Company's pages are coloured ribbons on the cover by the left page; on a phone
+      or without hover they are tags. `bookmarks()`, `src/styles/94_bookmarks.css`.
+    - Words and spelling: no empty "Contents"; "Practice" spelled so everywhere a player reads it.
+    - Save & Load sits beside Settings and Close and opens a slip of three choices.
+    - Route chart: taller, zoom and drag, names placed to fit, the pulsing ring and name of where you are.
+      `chartWire()`, `src/styles/95_route_chart.css`.
+    - Known details: readable note, People notes fixed and specific (`RB.town.spotWords`), people on the diagram, a
+      key in groups.
+    - Voice plan: the narrator's reference readings are counted (`tools/voice/reference_count.mjs`,
+      PRODUCTION_ESTIMATE.md §1b).
+    - Open: the browser regression run on this build; `harmony_cutin` whole and alone (ST-1); the cut-off "My
+      Learning", "Reference" request. Icons to look at again: `yn_letter`, `cr_message`, `atlas_cos_sash`.
+    - VALIDATION.md "LI", REQUIREMENTS.md XP124.
+
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
     "P18 — Plan B", "LP-1" and "VA-1".

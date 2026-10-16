@@ -321,7 +321,7 @@ RB.ui.settings = (function () {
       'How the Ledger, the dialogue and every other page are drawn. It changes only how things look. “Flat” keeps the book’s type and pages without texture, depth or motion.'),
     muted: () => sw('muted', 'Mute all sound', 'Silences music, effects and voices at once; the levels above are kept for when you turn sound back on.'),
     highlight: () => tick('data-voicehl', RB.game.settings.voice.highlight !== false, 'Highlight each word as it is spoken',
-      'While a line is spoken, the Japanese word being said is marked, and the English words that render it where the translation shows. It follows whichever voice speaks: your device’s voice now, the game’s recorded voices once they are added. Separate from word help.'),
+      'While a line is spoken, the Japanese word being said is marked, and the English words that render it where the translation shows. Pointing at a word in a line, or moving to it with the keyboard, marks its counterpart the same way. The spoken mark follows whichever voice speaks: your device’s voice now, the game’s recorded voices once they are added. Separate from word help.'),
   };
   // Suzu's speech: the control src/ui/56_suzu_speech.js applies (the same one as in Reading)
   function suzuRow(hint) {
