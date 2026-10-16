@@ -4631,7 +4631,22 @@ with a limit both pass (the trim sees both; the ledger equals the cache) and a c
   - two reruns on the same build passed every check at 273×44;
   - it passes at 131918a.
   - It is a layout measurement under load, not the voices.
-- `runtime_publish` and `story_ch1`: see the commit's run below.
+- `runtime_publish` 3/0, after the size guard was added.
+- `story_ch1`: 8 of 8 combinations passed (profiles F and A, each with the four companions, 30–31 checks each). The
+  runner's `exec` now keeps its frames for `position()`.
+- `voice_runtime_vrc1`: 7/0 again on the committed test file.
+
+**U, everything:** the whole unit suite, run in four slices, gave 54,391 passed and 0 failed. That run was on the
+corrected module before two later changes: the browser-digest change and the last test additions. After those, the voice
+tests were rerun:
+- `voicebank_vrc1` 33/0;
+- `voicebank_plan_content` 7/0;
+- `publish_guard` 10/0;
+- `audio_voice` 36/0;
+- `voice_production` 23/0.
+
+`production_manifest.mjs --check` still reports the manifest current (14,721 + 9,095, content 65cd38053ad6). GO.json and
+the manifest are untouched.
 
 **Publishing (VR-C1's notes).**
 - **The size guard:** `tools/publish/site_size.mjs`, with a ceiling of 900,000,000 bytes (10 % under 10^9). It is
