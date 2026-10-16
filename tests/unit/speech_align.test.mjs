@@ -74,7 +74,9 @@ export default async (t) => {
   t.ok(k1.w['申します'] === "i'm" && k1.w['レン'] === 'ren', '申します (humble "to be called") ← "I\'m": ' + JSON.stringify(k1));
   t.ok(k1.g['です'] === "i'm", 'the copula です ← the second sentence\'s "I\'m": ' + JSON.stringify(k1.g));
   t.ok(k1.g['の'] === 'of' || k1.g['の'] === "mio's", 'の ← "of" or the noun\'s "\'s": ' + JSON.stringify(k1.g));
-  t.ok(!k1.g['と'] && !k1.w['と'], 'と (quoting a name) has no English here: ' + JSON.stringify(k1));
+  // (AG-1: と quoting the name belongs to the naming construction X と申します, with 申します, never alone)
+  const naming = k1.a.rels.find((r) => r.fn === 'naming');
+  t.ok(naming && naming.jp.length === 2 && !k1.g['と'], 'と quoting a name is part of the naming construction, not a grammar word of its own: ' + JSON.stringify(naming));
   const k2 = both('{明日|あした} は {行|い}かない 。 {一緒|いっしょ} に {行|い}きましょう か ？', "I won't go tomorrow. Shall we go together?");
   t.ok(k2.w['行かない'] === 'go' && k2.g['行かない'] === "won't", '行かない: "go" (word) and "won\'t" (its negative ending): ' + JSON.stringify(k2));
   t.ok(k2.w['行きましょう'] === 'go' && k2.g['行きましょう'] === 'shall', '行きましょう: "go" and "Shall" (its volitional ending): ' + JSON.stringify(k2));
@@ -94,17 +96,18 @@ export default async (t) => {
       total++;
       const toks = render(c.jp);
       const a = S.align(toks, c.en.replace(/\$name/g, 'Robin'), { name: 'Robin' });
-      const used = a.map.flat();
-      if (used.length) withPair++;
-      if (new Set(used).size !== used.length) twice++;
-      // a grammar pair uses its own English word, except の sharing the 's or "my" of the word before it
-      const gused = a.gmap.flatMap((ks, i) => (toks[i].surface === 'の' && ks.some((k) => used.includes(k)) ? [] : ks));
-      if (gused.some((k) => used.includes(k)) || new Set(gused).size !== gused.length) gtwice++;
-      if (gused.length) withGram++;
+      if (a.map.flat().length) withPair++;
+      if (a.gmap.flat().length) withGram++;
+      // AG-1: an English word may be shared, but only part by part ("I'm" is I + be; "my" is I + 's) or within one
+      // relation (a construction, a noun + verb said as one word): no part of a word is claimed twice
+      twice += S.collisions(a).length;
+      const parts = new Map();
+      for (const r of a.rels) for (const [k, p] of r.claims) parts.set(k, (parts.get(k) || new Set()).add(r.id));
+      for (const [k, ids] of parts) if (ids.size > 1 && a.words[k].parts.length < 2) gtwice++;
     }
   }
   t.ok(withPair / total > 0.9, 'lines with at least one Japanese–English pair: ' + withPair + ' / ' + total);
-  t.ok(twice === 0, 'no English word is marked for two Japanese words (' + twice + ')');
-  t.ok(gtwice === 0, 'no grammar pair reuses an English word already paired (' + gtwice + ')');
+  t.ok(twice === 0, 'no part of an English word is claimed by two relations (' + twice + ')');
+  t.ok(gtwice === 0, 'an English word shared by two relations is always one with parts, each relation its own part (' + gtwice + ')');
   t.ok(withGram / total > 0.5, 'lines with at least one grammar pair: ' + withGram + ' / ' + total);
 };
