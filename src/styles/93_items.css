@@ -1,0 +1,47 @@
+/* Items on the page (LI-1, LI-2): each item's own pixel icon (src/ui/11_item_art.js) in the Satchel's rows, its detail
+ * and the worn list, and the short list a slot's Change… button opens (src/ui/50_menu.js pickFor). */
+
+/* the icons: whole-number scales of a 16-px drawing, never smoothed */
+img.it-ic { display: inline-block; image-rendering: pixelated; image-rendering: crisp-edges; vertical-align: middle; flex: none; }
+.it-ic-line { display: inline-flex; align-items: center; justify-content: center; color: var(--ink-2); flex: none; }
+.it-ic-line svg { width: 80%; height: 80%; }
+.entry > .mark:has(> .it-ic) { width: 32px; height: 32px; margin-top: 0.1em; }
+.folio .entry > .mark > .it-ic { width: 32px; height: 32px; }
+.idetail .ibig:has(> .it-ic) { background: rgba(255, 252, 240, 0.55); }
+.idetail .ibig > img.it-ic { width: 64px; height: 64px; }
+.as-worn .as-ic { margin-right: 0.35em; width: 32px; height: 32px; }
+
+/* the worn list under the appearance study: name, what is worn, its Change button at the end of the line */
+.as-worn li { align-items: center; }
+.as-worn .eq-change { margin-left: auto; min-height: var(--tap); padding: 0 0.6em; font-size: 0.86em; }
+.folio.book .as-worn .eq-change.quiet { color: var(--river); text-decoration: underline; text-underline-offset: 0.2em; border-color: transparent; }
+.eq-slot .eq-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4em 0.8em; justify-content: space-between; }
+.eq-slot .eq-foot > .eq-change { margin-left: auto; }
+/* (a narrow page at the largest text: the button keeps to its row, its word breaking if it must) */
+.eq-change { padding: 0 0.6em; max-width: 100%; overflow-wrap: anywhere; }
+
+/* the list: a slip laid over the page beside the button, inside the book */
+.eq-pick-wrap { position: absolute; inset: 0; z-index: 30; }
+.eq-pick {
+  position: absolute; overflow: auto; overscroll-behavior: contain; padding: 0.45em 0.35em 0.4em;
+  background-color: var(--bk-slip, #f8f1df); background-image: var(--bk-tooth, none); color: var(--ink);
+  border: 1px solid var(--paper-edge); border-radius: 3px;
+  box-shadow: 0 10px 24px -8px rgba(30, 20, 5, 0.55), 0 1px 0 var(--paper-edge);
+  font-family: var(--type-ui, inherit); animation: eq-pick-in 120ms var(--ease) both;
+}
+@keyframes eq-pick-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+body.reduced-motion .eq-pick { animation: none; }
+.eq-pick-h { padding: 0.15em 0.6em 0.35em; font-family: var(--type-latin-display, var(--serif)); font-variant: small-caps; letter-spacing: 0.05em; color: var(--ink-2); border-bottom: 1px solid var(--rule); margin-bottom: 0.25em; }
+.eq-opt {
+  display: grid; grid-template-columns: 1.3em 32px minmax(0, 1fr); align-items: center; gap: 0.55em; width: 100%; min-height: 48px;
+  padding: 0.3em 0.6em; background: none; border: 0; border-radius: 3px; text-align: left; font: inherit; color: inherit; cursor: pointer;
+}
+.eq-opt:hover { background: rgba(193, 138, 42, 0.12); }
+.eq-opt:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+.eq-opt.on { background: rgba(193, 138, 42, 0.16); }
+.eq-opt .eq-tick svg { width: 1.2em; height: 1.2em; color: var(--ink); }
+.eq-opt .it-ic { width: 32px; height: 32px; }
+.eq-opt-t { display: flex; flex-direction: column; min-width: 0; line-height: 1.35; }
+.eq-opt-t .en { color: var(--ink-2); font-style: italic; }
+.eq-opt-k { font-size: 0.8em; color: var(--ink-3); }
+body.high-contrast .eq-pick { background-image: none; border-color: #000; }

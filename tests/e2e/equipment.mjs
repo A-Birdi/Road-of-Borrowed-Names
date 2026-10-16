@@ -258,7 +258,7 @@ const helpers = (p) => p.evaluate(() => {
       wornRow: worn.classList.contains('worn') && /Equipped/i.test((worn.querySelector('.worn-tag') || {}).textContent || ''),
       plainRow: !plain.classList.contains('worn') && !plain.querySelector('.worn-tag') && /can be worn/i.test(plain.textContent),
       tint: getComputedStyle(worn).backgroundColor !== getComputedStyle(plain).backgroundColor,
-      slot: (() => { const li = document.querySelector('.eq-slot[data-slot="cosmetic"]'); return li.classList.contains('worn') && /Hand-knitted scarf/.test(li.textContent) && !!li.querySelector('[data-unequip="cosmetic"]') && !!li.querySelector('.etag[data-tag="look"]'); })(),
+      slot: (() => { const li = document.querySelector('.eq-slot[data-slot="cosmetic"]'); return li.classList.contains('worn') && /Hand-knitted scarf/.test(li.textContent) && !!li.querySelector('[data-pick-slot="cosmetic"]') && !!li.querySelector('.etag[data-tag="look"]'); })(),
       empty: /Empty/.test(document.querySelector('.eq-slot[data-slot="charm"]').textContent),
       count: document.querySelector('.leaf h3 .count').textContent,
     };
@@ -268,7 +268,7 @@ const helpers = (p) => p.evaluate(() => {
   assert(!r.special.length, 'every effect kind has its own keyword (none falls back to "Special effect") ' + r.special);
   assert(!r.unexplained.length && r.keyHasWorn, 'the Key explains every tag shown and the Equipped mark' + (r.unexplained.length ? ' unexplained: ' + r.unexplained : ''));
   assert(r.wornRow && r.plainRow && r.tint, 'the equipped item is marked with an "Equipped" tag on a tinted row; others say they can be worn, untinted');
-  assert(r.slot && r.empty && /1 of 3/.test(r.count), 'the slot summary shows what is worn, its tags and Take off, and empty slots (' + r.count + ')');
+  assert(r.slot && r.empty && /1 of 3/.test(r.count), 'the slot summary shows what is worn, its tags and Change… (LI-1: the slot’s list, Nothing among it), and empty slots (' + r.count + ')');
   // contrast of text on the tinted row and of the tag on its chip
   const c = await p.evaluate(() => {
     const rgb = (s) => s.match(/[\d.]+/g).map(Number);

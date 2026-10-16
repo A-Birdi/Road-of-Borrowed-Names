@@ -118,6 +118,7 @@ RB.ui.menu = (function () {
   }
   function close() {
     if (!layer) return;
+    closePick(false);
     remember();
     stopDemo();
     if (tabsApi) tabsApi.destroy();
@@ -181,6 +182,7 @@ RB.ui.menu = (function () {
 
   // ---- rendering ---------------------------------------------------------------------------
   function render() {
+    closePick(false);
     stopDemo(); stopDemo = () => {};
     const s = RB.game.s;
     const sec = sectionsFor(s).find((x) => x.id === view.section) || SECTIONS[0];
@@ -646,7 +648,8 @@ RB.ui.menu = (function () {
     const F = RB.sprites.FRAME || { w: 40, h: 58 };
     const worn = EQ().SLOTS.map((z) => {
       const id = s.equip[z.id], it = id && RB.content.items[id];
-      return '<li><span class="as-k">' + lab(z.jp, z.en) + '</span><span class="as-v">' + (it ? j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span>' : '<span class="muted">nothing worn</span>') + '</span></li>';
+      return '<li><span class="as-k">' + lab(z.jp, z.en) + '</span><span class="as-v">' + (it ? RB.itemArt.html(id, 2, 'as-ic') + j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span>' : '<span class="muted">nothing worn</span>') + '</span>' +
+        changeBtn(s, z, true) + '</li>';
     }).join('');
     return '<figure class="as-study"><figcaption>' + lab('{旅姿|たびすがた}', 'As you travel') + '</figcaption><div class="as-figs">' +
       '<canvas width="96" height="96" data-prev="' + cos + '" data-dir="face" role="img" aria-label="Your portrait as you look now"></canvas>' +
@@ -696,7 +699,7 @@ RB.ui.menu = (function () {
     const d = x.d;
     const eqd = !!d.slot && EQ().isWorn(s, x.id);
     const z = d.slot && EQ().slot(d.slot);
-    let h = '<div class="idetail' + (eqd ? ' worn' : '') + '"><div class="ibig">' + I(F().itemIcon(x.id, d)) + '</div><h3>' + j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</h3>' +
+    let h = '<div class="idetail' + (eqd ? ' worn' : '') + '"><div class="ibig">' + RB.itemArt.html(x.id, 4) + '</div><h3>' + j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</h3>' +
       (eqd ? '<p class="worn-line">' + wornChip() + '</p>' : '') +
       '<p>' + esc(RB.script.enVars(d.desc || '')) + '</p>' +
       (d.key ? '<p class="note-slip">' + I('key') + ' Important: it can’t be sold, used up or lost.</p>' : '');
@@ -709,6 +712,94 @@ RB.ui.menu = (function () {
     }
     return h + '</div>';
   }
+  // ---- what a slot holds, chosen from a short list (LI-1, Robin 2026-10-16): each slot's Change… button (the Equipped
+  // list, and the worn list under the appearance study) opens the things that fit it, the one worn now ticked, and
+  // Nothing. Choosing one wears it at once (the study and the rows redraw); Escape or a click outside closes the list
+  // and gives the keyboard back to the button. Equip and Take off on an item's own page work as before.
+  function changeBtn(s, z, small) {
+    const fits = Object.keys(s.inv).filter((id) => RB.content.items[id] && RB.content.items[id].slot === z.id).length;
+    if (!fits && !s.equip[z.id]) return '';
+    const word = s.equip[z.id] ? 'Change…' : 'Choose…';
+    return '<button type="button" class="pbtn eq-change' + (small ? ' quiet small' : '') + '" data-pick-slot="' + z.id + '" aria-haspopup="menu" aria-expanded="false" aria-label="' + esc(word.replace('…', '') + ' your ' + z.en.toLowerCase()) + '">' + esc(word) + '</button>';
+  }
+  let pick = null;
+  function closePick(refocus) {
+    if (!pick) return;
+    const p = pick;
+    pick = null;
+    RB.ui.popLayer(p.lay);
+    if (p.anchor && p.anchor.isConnected) p.anchor.setAttribute('aria-expanded', 'false');
+    if (refocus && fr) {
+      const b = fr.box.querySelector('[data-pick-slot="' + p.slot + '"]' + (p.study ? '.small' : ':not(.small)')) || fr.box.querySelector('[data-pick-slot="' + p.slot + '"]');
+      if (b) b.focus({ preventScroll: true });
+    }
+  }
+  function pickFor(slotId, anchor) {
+    closePick(false);
+    const s = RB.game.s, z = EQ().slot(slotId);
+    if (!z || !fr) return;
+    const cur = s.equip[slotId] || null;
+    const fits = Object.keys(s.inv).filter((id) => RB.content.items[id] && RB.content.items[id].slot === slotId);
+    const row = (id) => {
+      const d = id && RB.content.items[id], on = (id || null) === cur;
+      const tags = d ? EQ().tags(d).map((t) => esc(t.en)).join(' · ') : 'Take off what is worn here';
+      return '<button type="button" class="eq-opt' + (on ? ' on' : '') + '" role="menuitemradio" aria-checked="' + on + '" data-pick="' + (id || '') + '">' +
+        '<span class="eq-tick" aria-hidden="true">' + (on ? I('done') : '') + '</span>' +
+        (d ? RB.itemArt.html(id, 2) : '<span class="it-ic it-ic-line" aria-hidden="true">' + I('none') + '</span>') +
+        '<span class="eq-opt-t">' + (d ? j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' : '<span class="en">' + lab('{何|なに}も なし', 'Nothing') + '</span>') +
+        '<span class="eq-opt-k">' + tags + '</span></span></button>';
+    };
+    const wrap = RB.ui.el('div', 'eq-pick-wrap');
+    const box = RB.ui.el('div', 'eq-pick');
+    box.setAttribute('role', 'menu');
+    box.setAttribute('aria-label', 'What to wear as your ' + z.en.toLowerCase());
+    box.innerHTML = '<div class="eq-pick-h">' + lab(z.jp, z.en) + ' <span class="muted small">' + esc(z.where) + '</span></div>' + fits.map(row).join('') + row(null);
+    wrap.appendChild(box);
+    const lay = { el: wrap, name: 'equip-pick', parent: fr.el };
+    lay.onCancel = () => { closePick(true); return true; };
+    pick = { lay, slot: slotId, anchor, study: anchor.classList.contains('small') };
+    RB.ui.pushLayer(lay);
+    anchor.setAttribute('aria-expanded', 'true');
+    // beside the button that opened it, kept inside the book
+    const fb = fr.el.getBoundingClientRect(), ab = anchor.getBoundingClientRect();
+    const w = Math.min(380, fb.width - 24);
+    box.style.width = w + 'px';
+    const left = Math.max(12, Math.min(fb.width - w - 12, ab.right - fb.left - w));
+    const room = fb.bottom - ab.bottom - 16, above = ab.top - fb.top - 16;
+    box.style.left = left + 'px';
+    box.style.maxHeight = Math.max(160, Math.max(room, above)) + 'px';
+    if (room >= Math.min(box.scrollHeight, 260) || room >= above) box.style.top = (ab.bottom - fb.top + 6) + 'px';
+    else box.style.bottom = (fb.bottom - ab.top + 6) + 'px';
+    const opts = () => Array.from(box.querySelectorAll('.eq-opt'));
+    (box.querySelector('.eq-opt.on') || opts()[0]).focus({ preventScroll: true });
+    box.addEventListener('keydown', (e) => {
+      const o = opts(), i = o.indexOf(document.activeElement);
+      let k = null;
+      if (e.key === 'ArrowDown') k = (i + 1) % o.length; else if (e.key === 'ArrowUp') k = (i - 1 + o.length) % o.length;
+      else if (e.key === 'Home') k = 0; else if (e.key === 'End') k = o.length - 1;
+      else if (e.key === 'Tab') { e.preventDefault(); k = (i + (e.shiftKey ? -1 : 1) + o.length) % o.length; }
+      if (k == null) return;
+      e.preventDefault(); e.stopPropagation();
+      o[k].focus();
+    });
+    wrap.addEventListener('pointerdown', (e) => { if (e.target === wrap) { e.preventDefault(); closePick(true); } });
+    box.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-pick]');
+      if (!b) return;
+      const id = b.dataset.pick || null;
+      const was = s.equip[slotId] || null, study = pick && pick.study;
+      if (id && id !== was) EQ().equip(s, id);
+      else if (!id && was) EQ().unequip(s, slotId);
+      RB.audio && RB.audio.sfx(id !== was ? 'confirm' : 'cursor');
+      closePick(false);
+      remember(); render();
+      const live = fr.el.querySelector('.eq-live');
+      const d = RB.content.items[id || was];
+      if (live && id !== was) live.textContent = id ? 'Equipped: ' + d.name.en + '.' : d ? 'Taken off: ' + d.name.en + '.' : '';
+      const again = fr.box.querySelector('[data-pick-slot="' + slotId + '"]' + (study ? '.small' : ':not(.small)'));
+      (again || fr.el).focus({ preventScroll: true });
+    });
+  }
   function satchel(A, B, two) {
     const s = RB.game.s;
     const S = view.satchel;
@@ -719,11 +810,11 @@ RB.ui.menu = (function () {
     let h = '<h3>' + I('worn') + ' ' + lab('{装備|そうび}', 'Equipped') + ' <span class="count">' + filled + ' of ' + EQ().SLOTS.length + ' slots</span></h3><ul class="entries eq-slots">' + EQ().SLOTS.map((z) => {
       const id = s.equip[z.id], it = id && RB.content.items[id];
       const fits = inv.filter((x) => x.d.slot === z.id && x.id !== id).length;
-      return '<li class="entry eq-slot ' + (it ? 'worn' : 'empty') + '" data-slot="' + z.id + '"><span class="mark">' + I(it ? F().itemIcon(id, it) : z.icon) + '</span><div class="eq-body">' +
+      return '<li class="entry eq-slot ' + (it ? 'worn' : 'empty') + '" data-slot="' + z.id + '"><span class="mark">' + (it ? RB.itemArt.html(id, 2) : I(z.icon)) + '</span><div class="eq-body">' +
         '<div class="kind">' + lab(z.jp, z.en) + ' · ' + esc(z.where) + '</div>' +
         (it ? '<div class="t">' + j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span></div>' +
-            '<div class="eq-foot">' + tagRow(it) + '<button class="pbtn" data-unequip="' + z.id + '" aria-label="' + esc('Take off the ' + it.name.en) + '">' + lab('{外|はず}す', 'Take off') + '</button></div>'
-          : '<div class="t muted">' + lab('{空|あ}き', 'Empty') + '</div><div class="muted small">' + (fits ? fits + (fits > 1 ? ' things' : ' thing') + ' you carry can go here.' : 'Nothing you carry fits here yet.') + '</div>') +
+            '<div class="eq-foot">' + tagRow(it) + changeBtn(s, z) + '</div>'
+          : '<div class="t muted">' + lab('{空|あ}き', 'Empty') + '</div><div class="eq-foot"><span class="muted small">' + (fits ? fits + (fits > 1 ? ' things' : ' thing') + ' you carry can go here.' : 'Nothing you carry fits here yet.') + '</span>' + changeBtn(s, z) + '</div>') +
         '</div></li>';
     }).join('') + '</ul>';
     h += '<h3>' + I('satchel') + ' ' + lab('{持|も}ち{物|もの}', 'Carried') + ' <span class="count">' + inv.length + '</span></h3>';
@@ -731,7 +822,7 @@ RB.ui.menu = (function () {
     else h += '<ul class="entries">' + inv.map((x) => {
       const worn = !!x.d.slot && EQ().isWorn(s, x.id), z = x.d.slot && EQ().slot(x.d.slot);
       return '<li><button class="entry item-row' + (worn ? ' worn' : z ? ' wearable' : '') + '" data-it="' + x.id + '" aria-current="' + (two && S.sel === x.id) + '"' + (two ? '' : ' aria-expanded="' + (S.open === x.id) + '"') + '>' +
-        '<span class="mark">' + I(F().itemIcon(x.id, x.d)) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
+        '<span class="mark">' + RB.itemArt.html(x.id, 2) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
         (x.d.key ? '<span class="kind">' + I('key') + ' important</span>' : '') +
         (z ? '<span class="kind slotline">' + (worn ? wornChip() : '') + '<span>' + lab(z.jp, z.en) + (worn ? '' : ' · can be worn') + '</span></span>' + tagRow(x.d) : '') +
         '</span></button>' + (!two && S.open === x.id ? '<div class="inline-detail">' + itemDetail(x, s) + '</div>' : '') + '</li>';
@@ -755,6 +846,8 @@ RB.ui.menu = (function () {
     let live = fr.el.querySelector('.eq-live');
     if (!live) { live = RB.ui.el('p', 'sr eq-live'); live.setAttribute('aria-live', 'polite'); fr.el.appendChild(live); }
     const handler = (e) => {
+      const pk = e.target.closest('[data-pick-slot]');
+      if (pk) { pickFor(pk.dataset.pickSlot, pk); return; }
       const it = e.target.closest('[data-it]');
       const eq = e.target.closest('[data-equip]'), un = e.target.closest('[data-unequip]');
       const page = e.currentTarget;

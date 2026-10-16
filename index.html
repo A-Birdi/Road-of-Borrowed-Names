@@ -6069,6 +6069,55 @@ body.high-contrast .folio-settings .sx-box .bx { fill: #fff; stroke: #000; strok
 body.high-contrast .folio-settings .sx-ring { stroke-width: 3px; }
 body.high-contrast .folio-settings .sx-opt > input:not(:checked) + .sx-face .sx-ic { opacity: 1; }
 body.high-contrast .folio-settings .campaign-box.sx-journey { background: none; }
+
+/* ==== src/styles/93_items.css ==== */
+/* Items on the page (LI-1, LI-2): each item's own pixel icon (src/ui/11_item_art.js) in the Satchel's rows, its detail
+ * and the worn list, and the short list a slot's Change… button opens (src/ui/50_menu.js pickFor). */
+
+/* the icons: whole-number scales of a 16-px drawing, never smoothed */
+img.it-ic { display: inline-block; image-rendering: pixelated; image-rendering: crisp-edges; vertical-align: middle; flex: none; }
+.it-ic-line { display: inline-flex; align-items: center; justify-content: center; color: var(--ink-2); flex: none; }
+.it-ic-line svg { width: 80%; height: 80%; }
+.entry > .mark:has(> .it-ic) { width: 32px; height: 32px; margin-top: 0.1em; }
+.folio .entry > .mark > .it-ic { width: 32px; height: 32px; }
+.idetail .ibig:has(> .it-ic) { background: rgba(255, 252, 240, 0.55); }
+.idetail .ibig > img.it-ic { width: 64px; height: 64px; }
+.as-worn .as-ic { margin-right: 0.35em; width: 32px; height: 32px; }
+
+/* the worn list under the appearance study: name, what is worn, its Change button at the end of the line */
+.as-worn li { align-items: center; }
+.as-worn .eq-change { margin-left: auto; min-height: var(--tap); padding: 0 0.6em; font-size: 0.86em; }
+.folio.book .as-worn .eq-change.quiet { color: var(--river); text-decoration: underline; text-underline-offset: 0.2em; border-color: transparent; }
+.eq-slot .eq-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4em 0.8em; justify-content: space-between; }
+.eq-slot .eq-foot > .eq-change { margin-left: auto; }
+/* (a narrow page at the largest text: the button keeps to its row, its word breaking if it must) */
+.eq-change { padding: 0 0.6em; max-width: 100%; overflow-wrap: anywhere; }
+
+/* the list: a slip laid over the page beside the button, inside the book */
+.eq-pick-wrap { position: absolute; inset: 0; z-index: 30; }
+.eq-pick {
+  position: absolute; overflow: auto; overscroll-behavior: contain; padding: 0.45em 0.35em 0.4em;
+  background-color: var(--bk-slip, #f8f1df); background-image: var(--bk-tooth, none); color: var(--ink);
+  border: 1px solid var(--paper-edge); border-radius: 3px;
+  box-shadow: 0 10px 24px -8px rgba(30, 20, 5, 0.55), 0 1px 0 var(--paper-edge);
+  font-family: var(--type-ui, inherit); animation: eq-pick-in 120ms var(--ease) both;
+}
+@keyframes eq-pick-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+body.reduced-motion .eq-pick { animation: none; }
+.eq-pick-h { padding: 0.15em 0.6em 0.35em; font-family: var(--type-latin-display, var(--serif)); font-variant: small-caps; letter-spacing: 0.05em; color: var(--ink-2); border-bottom: 1px solid var(--rule); margin-bottom: 0.25em; }
+.eq-opt {
+  display: grid; grid-template-columns: 1.3em 32px minmax(0, 1fr); align-items: center; gap: 0.55em; width: 100%; min-height: 48px;
+  padding: 0.3em 0.6em; background: none; border: 0; border-radius: 3px; text-align: left; font: inherit; color: inherit; cursor: pointer;
+}
+.eq-opt:hover { background: rgba(193, 138, 42, 0.12); }
+.eq-opt:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+.eq-opt.on { background: rgba(193, 138, 42, 0.16); }
+.eq-opt .eq-tick svg { width: 1.2em; height: 1.2em; color: var(--ink); }
+.eq-opt .it-ic { width: 32px; height: 32px; }
+.eq-opt-t { display: flex; flex-direction: column; min-width: 0; line-height: 1.35; }
+.eq-opt-t .en { color: var(--ink-2); font-style: italic; }
+.eq-opt-k { font-size: 0.8em; color: var(--ink-3); }
+body.high-contrast .eq-pick { background-image: none; border-color: #000; }
 </style>
 </head>
 <body>
@@ -81054,6 +81103,7 @@ RB.ui.menu = (function () {
   }
   function close() {
     if (!layer) return;
+    closePick(false);
     remember();
     stopDemo();
     if (tabsApi) tabsApi.destroy();
@@ -81117,6 +81167,7 @@ RB.ui.menu = (function () {
 
   // ---- rendering ---------------------------------------------------------------------------
   function render() {
+    closePick(false);
     stopDemo(); stopDemo = () => {};
     const s = RB.game.s;
     const sec = sectionsFor(s).find((x) => x.id === view.section) || SECTIONS[0];
@@ -81582,7 +81633,8 @@ RB.ui.menu = (function () {
     const F = RB.sprites.FRAME || { w: 40, h: 58 };
     const worn = EQ().SLOTS.map((z) => {
       const id = s.equip[z.id], it = id && RB.content.items[id];
-      return '<li><span class="as-k">' + lab(z.jp, z.en) + '</span><span class="as-v">' + (it ? j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span>' : '<span class="muted">nothing worn</span>') + '</span></li>';
+      return '<li><span class="as-k">' + lab(z.jp, z.en) + '</span><span class="as-v">' + (it ? RB.itemArt.html(id, 2, 'as-ic') + j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span>' : '<span class="muted">nothing worn</span>') + '</span>' +
+        changeBtn(s, z, true) + '</li>';
     }).join('');
     return '<figure class="as-study"><figcaption>' + lab('{旅姿|たびすがた}', 'As you travel') + '</figcaption><div class="as-figs">' +
       '<canvas width="96" height="96" data-prev="' + cos + '" data-dir="face" role="img" aria-label="Your portrait as you look now"></canvas>' +
@@ -81632,7 +81684,7 @@ RB.ui.menu = (function () {
     const d = x.d;
     const eqd = !!d.slot && EQ().isWorn(s, x.id);
     const z = d.slot && EQ().slot(d.slot);
-    let h = '<div class="idetail' + (eqd ? ' worn' : '') + '"><div class="ibig">' + I(F().itemIcon(x.id, d)) + '</div><h3>' + j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</h3>' +
+    let h = '<div class="idetail' + (eqd ? ' worn' : '') + '"><div class="ibig">' + RB.itemArt.html(x.id, 4) + '</div><h3>' + j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</h3>' +
       (eqd ? '<p class="worn-line">' + wornChip() + '</p>' : '') +
       '<p>' + esc(RB.script.enVars(d.desc || '')) + '</p>' +
       (d.key ? '<p class="note-slip">' + I('key') + ' Important: it can’t be sold, used up or lost.</p>' : '');
@@ -81645,6 +81697,94 @@ RB.ui.menu = (function () {
     }
     return h + '</div>';
   }
+  // ---- what a slot holds, chosen from a short list (LI-1, Robin 2026-10-16): each slot's Change… button (the Equipped
+  // list, and the worn list under the appearance study) opens the things that fit it, the one worn now ticked, and
+  // Nothing. Choosing one wears it at once (the study and the rows redraw); Escape or a click outside closes the list
+  // and gives the keyboard back to the button. Equip and Take off on an item's own page work as before.
+  function changeBtn(s, z, small) {
+    const fits = Object.keys(s.inv).filter((id) => RB.content.items[id] && RB.content.items[id].slot === z.id).length;
+    if (!fits && !s.equip[z.id]) return '';
+    const word = s.equip[z.id] ? 'Change…' : 'Choose…';
+    return '<button type="button" class="pbtn eq-change' + (small ? ' quiet small' : '') + '" data-pick-slot="' + z.id + '" aria-haspopup="menu" aria-expanded="false" aria-label="' + esc(word.replace('…', '') + ' your ' + z.en.toLowerCase()) + '">' + esc(word) + '</button>';
+  }
+  let pick = null;
+  function closePick(refocus) {
+    if (!pick) return;
+    const p = pick;
+    pick = null;
+    RB.ui.popLayer(p.lay);
+    if (p.anchor && p.anchor.isConnected) p.anchor.setAttribute('aria-expanded', 'false');
+    if (refocus && fr) {
+      const b = fr.box.querySelector('[data-pick-slot="' + p.slot + '"]' + (p.study ? '.small' : ':not(.small)')) || fr.box.querySelector('[data-pick-slot="' + p.slot + '"]');
+      if (b) b.focus({ preventScroll: true });
+    }
+  }
+  function pickFor(slotId, anchor) {
+    closePick(false);
+    const s = RB.game.s, z = EQ().slot(slotId);
+    if (!z || !fr) return;
+    const cur = s.equip[slotId] || null;
+    const fits = Object.keys(s.inv).filter((id) => RB.content.items[id] && RB.content.items[id].slot === slotId);
+    const row = (id) => {
+      const d = id && RB.content.items[id], on = (id || null) === cur;
+      const tags = d ? EQ().tags(d).map((t) => esc(t.en)).join(' · ') : 'Take off what is worn here';
+      return '<button type="button" class="eq-opt' + (on ? ' on' : '') + '" role="menuitemradio" aria-checked="' + on + '" data-pick="' + (id || '') + '">' +
+        '<span class="eq-tick" aria-hidden="true">' + (on ? I('done') : '') + '</span>' +
+        (d ? RB.itemArt.html(id, 2) : '<span class="it-ic it-ic-line" aria-hidden="true">' + I('none') + '</span>') +
+        '<span class="eq-opt-t">' + (d ? j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' : '<span class="en">' + lab('{何|なに}も なし', 'Nothing') + '</span>') +
+        '<span class="eq-opt-k">' + tags + '</span></span></button>';
+    };
+    const wrap = RB.ui.el('div', 'eq-pick-wrap');
+    const box = RB.ui.el('div', 'eq-pick');
+    box.setAttribute('role', 'menu');
+    box.setAttribute('aria-label', 'What to wear as your ' + z.en.toLowerCase());
+    box.innerHTML = '<div class="eq-pick-h">' + lab(z.jp, z.en) + ' <span class="muted small">' + esc(z.where) + '</span></div>' + fits.map(row).join('') + row(null);
+    wrap.appendChild(box);
+    const lay = { el: wrap, name: 'equip-pick', parent: fr.el };
+    lay.onCancel = () => { closePick(true); return true; };
+    pick = { lay, slot: slotId, anchor, study: anchor.classList.contains('small') };
+    RB.ui.pushLayer(lay);
+    anchor.setAttribute('aria-expanded', 'true');
+    // beside the button that opened it, kept inside the book
+    const fb = fr.el.getBoundingClientRect(), ab = anchor.getBoundingClientRect();
+    const w = Math.min(380, fb.width - 24);
+    box.style.width = w + 'px';
+    const left = Math.max(12, Math.min(fb.width - w - 12, ab.right - fb.left - w));
+    const room = fb.bottom - ab.bottom - 16, above = ab.top - fb.top - 16;
+    box.style.left = left + 'px';
+    box.style.maxHeight = Math.max(160, Math.max(room, above)) + 'px';
+    if (room >= Math.min(box.scrollHeight, 260) || room >= above) box.style.top = (ab.bottom - fb.top + 6) + 'px';
+    else box.style.bottom = (fb.bottom - ab.top + 6) + 'px';
+    const opts = () => Array.from(box.querySelectorAll('.eq-opt'));
+    (box.querySelector('.eq-opt.on') || opts()[0]).focus({ preventScroll: true });
+    box.addEventListener('keydown', (e) => {
+      const o = opts(), i = o.indexOf(document.activeElement);
+      let k = null;
+      if (e.key === 'ArrowDown') k = (i + 1) % o.length; else if (e.key === 'ArrowUp') k = (i - 1 + o.length) % o.length;
+      else if (e.key === 'Home') k = 0; else if (e.key === 'End') k = o.length - 1;
+      else if (e.key === 'Tab') { e.preventDefault(); k = (i + (e.shiftKey ? -1 : 1) + o.length) % o.length; }
+      if (k == null) return;
+      e.preventDefault(); e.stopPropagation();
+      o[k].focus();
+    });
+    wrap.addEventListener('pointerdown', (e) => { if (e.target === wrap) { e.preventDefault(); closePick(true); } });
+    box.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-pick]');
+      if (!b) return;
+      const id = b.dataset.pick || null;
+      const was = s.equip[slotId] || null, study = pick && pick.study;
+      if (id && id !== was) EQ().equip(s, id);
+      else if (!id && was) EQ().unequip(s, slotId);
+      RB.audio && RB.audio.sfx(id !== was ? 'confirm' : 'cursor');
+      closePick(false);
+      remember(); render();
+      const live = fr.el.querySelector('.eq-live');
+      const d = RB.content.items[id || was];
+      if (live && id !== was) live.textContent = id ? 'Equipped: ' + d.name.en + '.' : d ? 'Taken off: ' + d.name.en + '.' : '';
+      const again = fr.box.querySelector('[data-pick-slot="' + slotId + '"]' + (study ? '.small' : ':not(.small)'));
+      (again || fr.el).focus({ preventScroll: true });
+    });
+  }
   function satchel(A, B, two) {
     const s = RB.game.s;
     const S = view.satchel;
@@ -81655,11 +81795,11 @@ RB.ui.menu = (function () {
     let h = '<h3>' + I('worn') + ' ' + lab('{装備|そうび}', 'Equipped') + ' <span class="count">' + filled + ' of ' + EQ().SLOTS.length + ' slots</span></h3><ul class="entries eq-slots">' + EQ().SLOTS.map((z) => {
       const id = s.equip[z.id], it = id && RB.content.items[id];
       const fits = inv.filter((x) => x.d.slot === z.id && x.id !== id).length;
-      return '<li class="entry eq-slot ' + (it ? 'worn' : 'empty') + '" data-slot="' + z.id + '"><span class="mark">' + I(it ? F().itemIcon(id, it) : z.icon) + '</span><div class="eq-body">' +
+      return '<li class="entry eq-slot ' + (it ? 'worn' : 'empty') + '" data-slot="' + z.id + '"><span class="mark">' + (it ? RB.itemArt.html(id, 2) : I(z.icon)) + '</span><div class="eq-body">' +
         '<div class="kind">' + lab(z.jp, z.en) + ' · ' + esc(z.where) + '</div>' +
         (it ? '<div class="t">' + j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span></div>' +
-            '<div class="eq-foot">' + tagRow(it) + '<button class="pbtn" data-unequip="' + z.id + '" aria-label="' + esc('Take off the ' + it.name.en) + '">' + lab('{外|はず}す', 'Take off') + '</button></div>'
-          : '<div class="t muted">' + lab('{空|あ}き', 'Empty') + '</div><div class="muted small">' + (fits ? fits + (fits > 1 ? ' things' : ' thing') + ' you carry can go here.' : 'Nothing you carry fits here yet.') + '</div>') +
+            '<div class="eq-foot">' + tagRow(it) + changeBtn(s, z) + '</div>'
+          : '<div class="t muted">' + lab('{空|あ}き', 'Empty') + '</div><div class="eq-foot"><span class="muted small">' + (fits ? fits + (fits > 1 ? ' things' : ' thing') + ' you carry can go here.' : 'Nothing you carry fits here yet.') + '</span>' + changeBtn(s, z) + '</div>') +
         '</div></li>';
     }).join('') + '</ul>';
     h += '<h3>' + I('satchel') + ' ' + lab('{持|も}ち{物|もの}', 'Carried') + ' <span class="count">' + inv.length + '</span></h3>';
@@ -81667,7 +81807,7 @@ RB.ui.menu = (function () {
     else h += '<ul class="entries">' + inv.map((x) => {
       const worn = !!x.d.slot && EQ().isWorn(s, x.id), z = x.d.slot && EQ().slot(x.d.slot);
       return '<li><button class="entry item-row' + (worn ? ' worn' : z ? ' wearable' : '') + '" data-it="' + x.id + '" aria-current="' + (two && S.sel === x.id) + '"' + (two ? '' : ' aria-expanded="' + (S.open === x.id) + '"') + '>' +
-        '<span class="mark">' + I(F().itemIcon(x.id, x.d)) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
+        '<span class="mark">' + RB.itemArt.html(x.id, 2) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
         (x.d.key ? '<span class="kind">' + I('key') + ' important</span>' : '') +
         (z ? '<span class="kind slotline">' + (worn ? wornChip() : '') + '<span>' + lab(z.jp, z.en) + (worn ? '' : ' · can be worn') + '</span></span>' + tagRow(x.d) : '') +
         '</span></button>' + (!two && S.open === x.id ? '<div class="inline-detail">' + itemDetail(x, s) + '</div>' : '') + '</li>';
@@ -81691,6 +81831,8 @@ RB.ui.menu = (function () {
     let live = fr.el.querySelector('.eq-live');
     if (!live) { live = RB.ui.el('p', 'sr eq-live'); live.setAttribute('aria-live', 'polite'); fr.el.appendChild(live); }
     const handler = (e) => {
+      const pk = e.target.closest('[data-pick-slot]');
+      if (pk) { pickFor(pk.dataset.pickSlot, pk); return; }
       const it = e.target.closest('[data-it]');
       const eq = e.target.closest('[data-equip]'), un = e.target.closest('[data-unequip]');
       const page = e.currentTarget;
