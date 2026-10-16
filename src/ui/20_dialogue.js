@@ -137,6 +137,13 @@ RB.ui.dialogue = (function () {
     const fresh = box.classList.contains('hidden');
     if (RB.test && RB.test.auto) auditSpeaker(line);
     box.classList.remove('hidden');
+    // a conversation's first line: the strip rises from the bottom edge, overshoots a few pixels and settles (from
+    // the top when it is docked there); Reduce motion: it is simply there (LI-4)
+    if (fresh && !RB.game.reducedMotion()) {
+      box.classList.add('dlg-in');
+      clearTimeout(say._in);
+      say._in = setTimeout(() => box.classList.remove('dlg-in'), 420);
+    }
     document.body.classList.add('in-dialogue');
     box.classList.toggle('noportrait', !ch || !!line.noPortrait);
     const cv = box.querySelector('.portrait');

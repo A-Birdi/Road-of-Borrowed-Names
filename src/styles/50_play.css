@@ -14,6 +14,10 @@ body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on
 .dlg-sheet .jline .jt.spk, .dlg-sheet .enline .ew.spk { background: rgba(232, 158, 36, 0.62); box-shadow: inset 0 -0.2em 0 #a2560f, 0 0 0 2px rgba(232, 158, 36, 0.35); border-radius: 3px; color: var(--ink); }
 .dlg-sheet .enline .ew.spk { padding: 0 0.08em; margin: 0 -0.08em; }
 body.high-contrast .dlg-sheet .jline .jt.spk, body.high-contrast .dlg-sheet .enline .ew.spk { background: #ffe14d; color: #000; box-shadow: inset 0 -0.18em 0 #000; }
+/* the counterpart of the word under the pointer (LI-9): the same amber, lighter than the spoken mark */
+.dlg-sheet .jline .jt.hov, .dlg-sheet .enline .ew.hov { background: rgba(232, 158, 36, 0.34); box-shadow: inset 0 -0.14em 0 rgba(162, 86, 15, 0.8); border-radius: 3px; }
+.dlg-sheet .enline .ew.hov { padding: 0 0.08em; margin: 0 -0.08em; }
+body.high-contrast .dlg-sheet .jline .jt.hov, body.high-contrast .dlg-sheet .enline .ew.hov { background: #fff3a0; color: #000; box-shadow: inset 0 -0.14em 0 #000; }
 
 /* ---- shared cloth button and generic panel (screens not yet rebuilt) ---- */
 .btn {
@@ -371,3 +375,11 @@ body:not([data-mode="world"]) .hud .menu-b, body:not([data-mode="world"]) .hud .
 .dlg-ask { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; margin-top: 6px; border-radius: 6px; }
 .dlg-ask .dbtn { display: inline-flex; flex-direction: column; align-items: flex-start; min-height: 44px; padding: 4px 10px; }
 .dlg-ask .dbtn .en { opacity: 0.8; }
+
+/* a conversation's first line: the strip slides up from the bottom of the screen and settles a few pixels down to
+   its place (from the top when docked there); the independent translate leaves the centring transform alone (LI-4) */
+.dlg.dlg-in { animation: dlg-rise 300ms cubic-bezier(.2, .8, .3, 1) both; }
+.dlg.top.dlg-in { animation-name: dlg-drop; }
+@keyframes dlg-rise { 0% { translate: 0 120%; } 72% { translate: 0 -7px; } 100% { translate: 0 0; } }
+@keyframes dlg-drop { 0% { translate: 0 -120%; } 72% { translate: 0 7px; } 100% { translate: 0 0; } }
+body.reduced-motion .dlg.dlg-in { animation: none; }

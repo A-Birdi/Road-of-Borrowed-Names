@@ -10,7 +10,8 @@
  * saved.
  *
  *   RB.ui.speechMark.begin(box, line, spoken) → { start(), at(charIndex), follow(getTime, duration), end() } | null
- *   RB.ui.speechMark.stop()  clears any mark (a new line, the box hidden) */
+ *   RB.ui.speechMark.stop()  clears any mark (a new line, the box hidden)
+ * Pointing at a word marks its counterpart in the other language (LI-9; the same setting, the same pairs). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
 
@@ -132,5 +133,63 @@ RB.ui.speechMark = (function () {
     clear(cur.box);
     cur = null;
   }
-  return { begin, stop, active: () => !!cur, wrapEnglish };
+  // ---- pointing at a word (LI-9, Robin 2026-10-16: "hovering over a word in a sentence should highlight its translated
+  // counterpart where applicable if the Highlight setting is On"): a Japanese word under the pointer (or focused) marks
+  // the English words that render it, and an English word marks its Japanese word; nothing where there is no pair
+  // (particles, endings, words the English does not name). The same pairs as the spoken mark; only classes change.
+  let hov = null; // { src, al, back: { englishIndex: tokenIndex } }
+  function pairsFor(box) {
+    const jl = box.querySelector(LINE_SEL);
+    if (!jl || !S() || !RB.ui.help || !RB.ui.help.tokensOf) return null;
+    const src = +jl.dataset.src;
+    if (hov && hov.src === src && hov.box === box) return hov;
+    const tokens = RB.ui.help.tokensOf(src);
+    const line = RB.ui.dialogue && RB.ui.dialogue.shown ? RB.ui.dialogue.shown() : null;
+    if (!tokens || !line) return null;
+    const ctx = RB.ui.help.ctxOf ? RB.ui.help.ctxOf(src) : null;
+    const en = RB.game.s && RB.script.enVars ? RB.script.enVars(line.en || '') : line.en || '';
+    const look = ctx && ctx.dia && RB.dialect ? (t, i) => RB.dialect.lookupIn(tokens, i) || RB.jp.lookup(t) : null;
+    const al = S().align(tokens, en, { lookup: look, name: RB.game.s && RB.game.s.player ? RB.game.s.player.name : null });
+    const back = {};
+    al.map.forEach((ws, i) => (ws || []).forEach((k) => { back[k] = i; }));
+    hov = { src, box, al, back };
+    return hov;
+  }
+  const LINE_SEL = '.main .jline[data-src], .sub .jline[data-src]';
+  function hovClear(box) { (box || document).querySelectorAll('.hov').forEach((e) => e.classList.remove('hov')); }
+  function hovAt(target) {
+    if (!on() || cur) return; // (the spoken mark has the line while a voice speaks)
+    const box = target.closest && target.closest('.dlg');
+    if (!box) return;
+    const p = pairsFor(box);
+    if (!p) return;
+    hovClear(box);
+    const enEl = box.querySelector('.main .enline, .sub .enline');
+    const jt = target.closest('.jline[data-src] .jt[data-i]');
+    if (jt && jt.closest(LINE_SEL)) {
+      const ws = p.al.map[+jt.dataset.i] || [];
+      if (!ws.length || !enEl) return;
+      wrapEnglish(enEl);
+      jt.classList.add('hov');
+      for (const k of ws) { const w = enEl.querySelector('.ew[data-w="' + k + '"]'); if (w) w.classList.add('hov'); }
+      return;
+    }
+    const ew = target.closest('.ew[data-w]');
+    if (ew && enEl && enEl.contains(ew)) {
+      const i = p.back[+ew.dataset.w];
+      if (i == null) return;
+      ew.classList.add('hov');
+      const jl = box.querySelector(LINE_SEL);
+      if (jl) jl.querySelectorAll('.jt[data-i="' + i + '"]').forEach((e) => e.classList.add('hov'));
+    }
+  }
+  if (typeof document !== 'undefined') {
+    document.addEventListener('pointerover', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg')) hovAt(e.target); });
+    document.addEventListener('pointerout', (e) => { const box = e.target && e.target.closest && e.target.closest('.dlg'); if (box && !(e.relatedTarget && box.contains(e.relatedTarget) && (e.relatedTarget.closest('.jt[data-i], .ew[data-w]')))) hovClear(box); });
+    document.addEventListener('focusin', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg .jt[data-i]')) hovAt(e.target); });
+    document.addEventListener('focusout', (e) => { const box = e.target && e.target.closest && e.target.closest('.dlg'); if (box) hovClear(box); });
+    // the English words become pointable as soon as a line shows (wrapped in spans the same way the spoken mark does)
+    document.addEventListener('pointerenter', (e) => { const en = e.target && e.target.closest && e.target.closest('.dlg .main .enline, .dlg .sub .enline'); if (en && on()) wrapEnglish(en); }, true);
+  }
+  return { begin, stop, active: () => !!cur, wrapEnglish, pairsFor };
 })();
