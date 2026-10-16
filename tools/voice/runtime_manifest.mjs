@@ -8,7 +8,8 @@
 //   - a separate Pages repository: ../<voice-repo>/ja-JP/<voiceBuild>/  (the same origin, a-birdi.github.io, so the
 //                                  page's connect-src 'self' already allows it; no absolute URL is written into the game)
 //   - an imported Release pack:    pack:<voiceBuild>  (a file the player chooses; read locally, never fetched)
-// A recording is keyed by the line's key (scene#hash of its markup) and its variant, never by text alone; a manifest
+// A recording is keyed by the line's key (scene#hash of its markup) and its variant (speaker, dialect, and for the player
+// voice A/B and pitch high/low), never by text alone; a manifest
 // built for other lines (another script content hash) is refused, so stale audio is never played as "close enough".
 // The narrator's reference readings (LI-8) sit under `references`, keyed by kind:written|reading.
 // Usage: node tools/voice/runtime_manifest.mjs --results <worker results.json> --voice-build <id>
@@ -40,7 +41,7 @@ export function buildRuntime(production, results, opts) {
     files++; bytes += r.bytes; seconds += r.seconds || 0;
     for (const l of e.lines) {
       (lines[l.key] = lines[l.key] || []).push(Object.assign({ speaker: e.speaker, dialect: e.dialect, delivery: e.delivery, file: r.file, bytes: r.bytes, sha256: r.sha256, seconds: r.seconds || null, textHash: e.textHash },
-        e.voice ? { voice: e.voice } : {}));
+        e.voice ? { voice: e.voice } : {}, e.pitch ? { pitch: e.pitch } : {}));
     }
   }
   // the narrator's reference readings (LI-8), keyed by kind:written|reading (word help, the notebook, the kana chart)

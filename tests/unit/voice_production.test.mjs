@@ -35,9 +35,15 @@ export default async (t) => {
   const bad = m.entries.filter((e) => /[{}|\s]/.test(e.spoken) || /[{}|\s]/.test(e.kana) || e.spoken === e.display);
   t.ok(bad.length === 0, 'nothing spoken carries markup or the learner spacing (' + bad.length + ')');
   t.ok(m.entries.every((e) => e.lines.length >= 1 && e.kana && e.chars > 0), 'every recording serves a line and has its reading');
-  t.ok(m.entries.every((e) => e.speaker !== 'pc' || e.voice === 'A' || e.voice === 'B'), 'the player is recorded as Voice A and Voice B');
+  const pcs = m.entries.filter((e) => e.speaker === 'pc');
+  const pcTexts = new Set(pcs.map((e) => e.delivery + '|' + e.spoken));
+  t.ok(pcs.every((e) => ['A', 'B'].includes(e.voice) && ['high', 'low'].includes(e.pitch)) && pcs.length === pcTexts.size * 4 && new Set(pcs.map((e) => e.id)).size === pcs.length,
+    'the player is recorded as Voice A and Voice B, each High and Low, each variant its own id: ' + pcs.length);
+  t.ok(m.entries.every((e) => e.speaker === 'pc' || e.pitch === null), 'only the player has pitch variants');
   const hana = m.entries.find((e) => e.seams.some((s) => s.joined === '今朝' && s.means === 'いま|あさ'));
   t.ok(!!hana, 'the 今朝 seam (RV-0006) carries the reading the line means: いま|あさ');
+  t.ok(hana && !hana.send.includes('今朝') && hana.send.includes('いまあさ'), 'and what the engine is sent never says 今朝: ' + (hana && hana.send));
+  t.ok(m.entries.every((e) => e.seams.every((x) => !e.send.includes(x.kanji))) && m.entries.every((e) => e.send && !/[{}|\s]/.test(e.send)), 'no seam survives in what any engine is sent');
   t.ok(m.notRecordable.length === sum.notRecordable.lines && m.notRecordable.every((d) => /\$\w+/.test(d.jp)), 'lines with a run-time name are listed apart: ' + m.notRecordable.length);
   t.ok(sum.recordings === m.entries.length && sum.companionAttribution && !('undefined' in sum.companionAttribution), 'the summary agrees: ' + sum.recordings + ' recordings');
   // the narrator's reference readings (LI-8): the same set tools/voice/reference_count.mjs counts, said as said
@@ -50,11 +56,11 @@ export default async (t) => {
   // the runtime manifest
   const { buildRuntime } = await import('../../tools/voice/runtime_manifest.mjs');
   const prod = { schema: 'rbn.voice.production/1', contentHash: 'c'.repeat(64), entries: [
-    { id: 'r1-a', speaker: 'pc', voice: 'A', dialect: 'standard', delivery: 'neutral', textHash: 'x', lines: [{ key: 's.a#1' }] },
+    { id: 'r1-a', speaker: 'pc', voice: 'A', pitch: 'low', dialect: 'standard', delivery: 'neutral', textHash: 'x', lines: [{ key: 's.a#1' }] },
     { id: 'r1-b', speaker: 'suzu', voice: null, dialect: 'kansai', delivery: 'smile', textHash: 'y', lines: [{ key: 's.b#2' }, { key: 's.c#3' }] }] };
   const rec = (f) => ({ file: f, bytes: 1000, sha256: 'a'.repeat(64), seconds: 1.2 });
   const ok = buildRuntime(prod, { contentHash: prod.contentHash, recordings: { 'r1-a': rec('pc/a.opus'), 'r1-b': rec('suzu/b.opus') } }, { voiceBuild: 'vb1' });
-  t.ok(!ok.errors.length && ok.manifest.lines['s.c#3'][0].dialect === 'kansai' && ok.manifest.base === './voices/ja-JP/vb1/' && ok.manifest.totals.files === 2, 'a runtime manifest keyed by line and variant, beside the game by default');
+  t.ok(!ok.errors.length && ok.manifest.lines['s.a#1'][0].pitch === 'low' && ok.manifest.lines['s.a#1'][0].voice === 'A' && ok.manifest.lines['s.c#3'][0].dialect === 'kansai' && ok.manifest.base === './voices/ja-JP/vb1/' && ok.manifest.totals.files === 2, 'a runtime manifest keyed by line and variant, beside the game by default');
   t.ok(buildRuntime(prod, { contentHash: 'd'.repeat(64), recordings: {} }, { voiceBuild: 'vb1' }).errors.some((e) => /another script/.test(e)), 'audio made for another script is refused');
   t.ok(buildRuntime(prod, { recordings: {} }, { voiceBuild: 'vb1', base: 'https://example.org/v/' }).errors.some((e) => /relative/.test(e)), 'an absolute base is refused');
   t.ok(buildRuntime(prod, { recordings: { 'r1-a': { file: 'pc/a.opus' } } }, { voiceBuild: 'vb1' }).errors.some((e) => /size and sha256/.test(e)), 'a file without its size and hash is refused');

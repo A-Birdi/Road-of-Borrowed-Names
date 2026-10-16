@@ -2,14 +2,19 @@
 // companion-branch attribution and pronunciation-seam handling, rebuild it from the corrected script, and provide the
 // local worker the exact source revision and manifest"). One entry per distinct recording, resolved as the game plays:
 //  - companions through the scene's branches (tools/voice/attribution.mjs; RV-0160);
-//  - the player twice, Voice A and Voice B; the narrator once; Suzu's lines again in Kansai where the table changes them;
+//  - the player four times: Voice A and Voice B, each at its High and its Low pitch (C-93: "two separate A/B voices; a
+//    higher and lower pitch options for each"), each variant its own recording id and file; the narrator once; Suzu's
+//    lines again in Kansai where the table changes them;
 //  - distinct by speaker, player voice, dialect, delivery (the line's expression) and spoken text, never by text alone.
 // Each entry keeps the display markup apart from what is spoken, and gives the voice what it needs to say it right:
 //  - spoken          the line without readings and without the learner spacing (NFC), as written;
 //  - spokenNamesKana the same with names given as their own kana (VA-2's method: the line's own reading, never a guess);
 //  - kana            the whole line in the game's own readings;
 //  - seams           where removing the spacing joins two words into a compound read differently ({今|いま} {朝|あさ}
-//                    → 今朝), with the reading the line means; apply through the engine's own mechanism (C-91/VA-1);
+//                    → 今朝), with the reading the line means (kanji → kana);
+//  - send            the text to send to the engine: spokenNamesKana with each seam's kanji written as the reading the
+//                    line means (いま朝 → いまあさ), so no engine reads 今朝 as けさ; an engine with its own reading
+//                    control may send `spoken` and apply names and seams through it instead (C-91/VA-1);
 //  - lines           every line key it serves (scene, file, line), and whether a frozen audition case binds it.
 // Lines with a run-time name ($name …) cannot be recorded as written; they are listed apart (device voice or silence).
 // `references` lists the narrator's reference readings (LI-8), recorded in the same batch with a citation delivery.
@@ -82,7 +87,7 @@ function seams(jp) {
       const hit = es.find((e) => e.r && e.r !== ra + rb);
       if (hit && es.every((e) => e.r !== ra + rb)) {
         // the reading the line means at the join: each word's own reading, kept apart
-        out.push({ joined: w, wouldRead: hit.r, means: ra + '|' + rb, left: a.surface, right: b.surface });
+        out.push({ joined: w, wouldRead: hit.r, means: ra + '|' + rb, left: a.surface, right: b.surface, kanji: ta + hb, kana: ra + rb });
         break;
       }
     }
@@ -108,16 +113,19 @@ const dynamic = [];
 const nonverbal = []; // a line that is only a pause (「……」): a beat, not a recording (VA1_ADDENDUM §17)
 const basis = {};
 const role = (who) => (who === 'narr' ? 'narrator' : who);
-function add(speaker, voice, dialect, jp, l) {
+function add(speaker, voice, dialect, jp, l, pitch) {
   const sp = spoken(jp);
   const delivery = l.expr || 'neutral';
-  const id = 'r1-' + sha([speaker, voice || '', dialect, delivery, sp].join('\u0001')).slice(0, 16);
+  const id = 'r1-' + sha([speaker, voice || '', dialect, delivery, sp].concat(pitch ? [pitch] : []).join('\u0001')).slice(0, 16);
   let e = rec.get(id);
   if (!e) {
     const nm = names(jp);
+    const sm = seams(jp);
+    // what the engine is sent: names in their own kana, each seam's kanji as the reading the line means
+    const send = sm.reduce((t, x) => t.split(x.kanji).join(x.kana), nm.spokenNamesKana);
     e = {
-      id, speaker, voice: voice || null, dialect, delivery, display: jp, spoken: sp, spokenNamesKana: nm.spokenNamesKana,
-      kana: kanaOf(jp), names: nm.names, seams: seams(jp), chars: [...sp].length, morae: moraeOf(jp), pauses: pausesOf(sp),
+      id, speaker, voice: voice || null, pitch: pitch || null, dialect, delivery, display: jp, spoken: sp, spokenNamesKana: nm.spokenNamesKana,
+      send, kana: kanaOf(jp), names: nm.names, seams: sm, chars: [...sp].length, morae: moraeOf(jp), pauses: pausesOf(sp),
       textHash: sha(sp).slice(0, 16), lines: [],
     };
     rec.set(id, e);
@@ -135,7 +143,7 @@ for (const l of L) {
     l.attribution = a.basis;
   }
   for (const s of speakers) {
-    if (s === 'pc') { add('pc', 'A', 'standard', l.jp, l); add('pc', 'B', 'standard', l.jp, l); continue; }
+    if (s === 'pc') { for (const v of ['A', 'B']) for (const p of ['high', 'low']) add('pc', v, 'standard', l.jp, l, p); continue; }
     add(s, null, 'standard', l.jp, l);
     if (s === 'suzu' && RB.dialect && RB.dialect.find) {
       const k = RB.dialect.find(l.jp, l.en, 'kansai');

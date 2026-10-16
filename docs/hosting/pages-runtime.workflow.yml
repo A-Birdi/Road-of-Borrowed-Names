@@ -1,0 +1,49 @@
+# DRAFT, INACTIVE. GitHub runs workflows only from .github/workflows/; this copy does nothing where it is.
+# It publishes the runtime-only set (tools/publish/prepare_runtime.mjs) at the SAME URL,
+# https://a-birdi.github.io/Road-of-Borrowed-Names/, instead of the whole branch (docs/hosting/RUNTIME_PUBLISHING.md).
+# Robin's steps if Robin chooses it (the lead does not change Pages settings):
+#   1. copy this file to .github/workflows/pages-runtime.yml (or ask the lead to);
+#   2. Settings > Pages > Build and deployment > Source: "GitHub Actions";
+#   3. Settings > Environments > github-pages > Deployment branches: allow claude/stoic-sagan-n3jvgk (the environment
+#      allows only the default branch until told otherwise).
+# Free for a public repository; no secrets, keys or paid services. The players' saves live in their browsers under the
+# same origin and are untouched.
+name: Pages (runtime only)
+on:
+  push:
+    branches: [claude/stoic-sagan-n3jvgk]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # only what the runtime set is made from (no screenshots or evidence are fetched)
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            assets/music/ensemble
+            src/audio
+            tools/music/ensemble
+            tools/publish
+            docs/music/ensemble/qa
+            tests/lib
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # index.html is the committed build; the tool checks every file the page names and refuses a missing one
+      - run: node tools/publish/prepare_runtime.mjs --out _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
