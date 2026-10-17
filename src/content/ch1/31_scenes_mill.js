@@ -213,7 +213,7 @@ narr: 「 …… あした も きて ね …… 」 「 …… おかえり …
 !if !item.rw_wheel_pin -> nopin
 !gesture pc observe 10,2 hold
 narr: {歯車|はぐるま} の {真|ま}ん{中|なか} に 、 {軸|じく} を {通|とお}す {穴|あな} が ある 。 {板|いた} に は {番号|ばんごう} の ような {字|じ} が {刻|きざ}まれて いる 。 || There's a hole in the middle of the gears for a pin. Plates carved with something like numbers.
-!lesson kana
+!lesson kana for rw.c_mill_gears
 !challenge rw.c_mill_gears
 !if var._res=0 -> end
 !take rw_wheel_pin
@@ -278,7 +278,7 @@ narr: 「 コウジ の ぶん 」 。 {小|ちい}さな {茶碗|ちゃわん} 
 @scene rw.m2_lantern
 !if rw_loft_done -> done
 narr: {屋根裏|やねうら} の {古|ふる}い {灯|あか}り 。 {水車|すいしゃ}{小屋|ごや} の {灯|あか}り は 、 {村|むら} の {名前|なまえ} を {背負|せお}って いた はず だ 。 || The old lantern in the loft. The mill's lantern used to carry the village's name.
-!lesson kana
+!lesson kana for rw.c_mill_lantern
 !challenge rw.c_mill_lantern
 !if var._res=0 -> end
 !sfx lantern

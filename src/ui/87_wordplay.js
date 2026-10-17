@@ -518,7 +518,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       // ---- moves
       async function onPlay() {
         if (T.busy || finished || a.st.next !== 'pc' || a.st.over) return;
-        if (T.tab === 'hand' && pad && pad.hasPending()) { $('.wp-dmsg').textContent = 'Confirm or clear the character you are writing first: a recognised character is not yet part of your word.'; flash($('.wp-dmsg')); return; }
+        if (T.tab === 'hand' && pad && pad.hasPending()) { $('.wp-dmsg').textContent = 'Add the character you are writing (Add character), or clear it, first: a recognised character is not yet part of your word.'; flash($('.wp-dmsg')); return; }
         if (!T.dtext) { $('.wp-dmsg').textContent = 'Write, type or choose a word beginning with ' + a.st.required + ' first.'; flash($('.wp-dmsg')); return; }
         const d = T.analysis || WP().draft(s, T.dtext, T.pick);
         if (d.status !== 'ok') { renderDraft(); flash($('.wp-dmsg')); if (d.status === 'needs-reading') focusReading(); return; } // an invalid draft is explained; the turn is kept

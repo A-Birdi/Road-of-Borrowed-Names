@@ -90,6 +90,8 @@ RB.ui.create = (function () {
   const MAX_ACC = 2;
   const PRON = [['they', 'they/them'], ['she', 'she/her'], ['he', 'he/him'], ['custom', 'custom…']];
   const cap1 = (s) => String(s).charAt(0).toUpperCase() + String(s).slice(1);
+  // a label's hyphenated name kept on one line ("Light-medium", "Blue-black"): it breaks between words only (FR-1 F16)
+  const nw = (t) => RB.util.esc(t).replace(/(\S+-\S+)/g, '<span class="nw">$1</span>');
   const NAME = {
     skin: (i) => SKIN_NAMES[i] || 'Tone ' + (+i + 1),
     hairColor: (i) => cap1((RB.sprites.HAIR_NAMES || [])[i] || 'colour ' + (+i + 1)),
@@ -118,8 +120,8 @@ RB.ui.create = (function () {
   const LEARN_LOOK = {
     kana: ['Kana so far', [['none', 'From the start', { i: 'kana0' }], ['hira', 'Hiragana', { i: 'kanaH' }], ['both', 'Both kana', { i: 'kanaHK' }]],
       'What you can already read: none yet, hiragana, or hiragana and katakana. Kana you know is not taught again, and every character can still be looked up.'],
-    assist: ['Mistakes in battle', [['assist', 'Assisted', { i: 'assist', d: 'A wrong answer costs nothing.' }], ['normal', 'Standard', { i: 'capped', d: 'A wrong answer costs a little, never much.' }]],
-      'What a wrong answer costs in an encounter. Either way you are shown the right answer and can try again.'],
+    assist: ['Mistakes in battle', [['assist', 'Assisted', { i: 'assist', d: 'Learning mistakes cost nothing. Try again, with help if you like; the creature\u2019s moves still matter.' }], ['normal', 'Standard', { i: 'capped', d: 'A wrong answer costs a little resolve, never much.' }]],
+      'What a wrong answer costs in an encounter. Either way you are shown the right answer and can try again. Separate from the tactical challenge.'],
     difficulty: ['Tactical challenge', [['relaxed', 'Relaxed', { i: 'f1' }], ['normal', 'Standard', { i: 'f2' }], ['hard', 'Demanding', { i: 'f3' }]],
       'How many creatures come, and how hard they press. Separate from the Japanese level.'],
     input: ['Default way to answer', [['hand', 'Handwriting', { i: 'hand' }], ['choice', 'Choices', { i: 'choice' }], ['ime', 'Keyboard / IME', { i: 'ime' }]],
@@ -185,7 +187,8 @@ RB.ui.create = (function () {
         name: '', nameJp: '', pron: 'they', bg: 'courier', custom: { they: 'they', them: 'them', their: 'their', theirs: 'theirs', self: 'themself', plural: true },
         look: { skin: 2, hair: 'short', hairColor: 1, outfit: 0, shape: 'tunic', acc: ['scarf'] },
       };
-      const o = { profile: 'F', kana: 'none', assist: 'normal', difficulty: 'normal', lead: st.lead || 'en', secondary: st.secondary || 'always', uiLang: st.uiLang || 'en', input: st.input || 'hand' };
+      // (mistakes: Assisted unless chosen otherwise, FR-1 F17; the way to answer: the player's own, else handwriting)
+      const o = { profile: 'F', kana: 'none', assist: 'assist', difficulty: 'normal', lead: st.lead || 'en', secondary: st.secondary || 'always', uiLang: st.uiLang || 'en', input: st.input || 'hand' };
       const V = { i: 0, max: 0, jpEdited: false, dir: 'down', blink: false, closed: false, accNote: '' };
       const has = (id) => steps.indexOf(id) >= 0;
       const sheetOn = has('identity') || has('appearance') || has('background');
@@ -226,7 +229,7 @@ RB.ui.create = (function () {
       function swatchGroup(key, legend, list, style) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-swatches">' +
           list.map((c, i) => '<label class="cr-sw cr-sw-' + style + '"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + i + '">' +
-            '<span class="face"><span class="chip" style="' + chipStyle(style, c) + '">' + tick + '</span><span class="nm">' + esc(NAME[key](i)) + '</span></span></label>').join('') +
+            '<span class="face"><span class="chip" style="' + chipStyle(style, c) + '">' + tick + '</span><span class="nm">' + nw(NAME[key](i)) + '</span></span></label>').join('') +
           '</div></fieldset>';
       }
       function chipStyle(style, c) {
@@ -237,7 +240,7 @@ RB.ui.create = (function () {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-tiles cr-tiles-' + key + '">' +
           vals.map((v) => '<label class="cr-tile"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + esc(v) + '"><span class="face">' + tick +
             (thumb === 'port' ? '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="' + FIG_W + '" height="' + FIG_H + '" data-th="' + key + ':' + esc(v) + '"></canvas>') +
-            '<span class="nm">' + esc(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
+            '<span class="nm">' + nw(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
       }
       function entryGroup(key, attr, legend, list, iconOf, sr) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend' + (sr ? ' class="sr"' : '') + '>' + esc(legend) + '</legend><div class="cr-entries">' +
@@ -295,8 +298,12 @@ RB.ui.create = (function () {
             '<button type="button" class="sx-slipbtn" data-a="place"><span class="sx-slipic">' + I('next') + '</span><span class="sx-slipt"><b>Not sure? Try a short placement</b>' +
             '<span>A few questions to suggest a level. Nothing is graded or saved.</span></span></button>' +
             C('kana') +
-            '<h3 class="sx-sec">Challenge</h3>' + C('assist') + C('difficulty') +
-            '<h3 class="sx-sec">Answering and reading</h3>' + C('input') + C('lead') + C('secondary') + C('uiLang') +
+            '<h3 class="sx-sec">Answering</h3>' + C('input') +
+            // (FR-1 F05: the rest is one tap away, with what it is set to, rather than a second full pass)
+            '<details class="cr-more"><summary><span class="cr-more-t">More choices: mistakes, tactics and reading</span>' +
+              '<span class="cr-more-sum"></span></summary>' +
+              '<h3 class="sx-sec">Challenge</h3>' + C('assist') + C('difficulty') +
+              '<h3 class="sx-sec">Reading</h3>' + C('lead') + C('secondary') + C('uiLang') + '</details>' +
             '<p class="note-slip">Furigana is always shown over kanji. Turn on the lightbulb (H or the bulb button) to hover or tap any Japanese for its reading and meaning.</p></div>';
         },
       };
@@ -374,6 +381,8 @@ RB.ui.create = (function () {
         if (cu) cu.hidden = p.pron !== 'custom';
         const kg = page.querySelector('[data-group=kana]');
         if (kg) kg.hidden = o.profile !== 'F';
+        const ms = page.querySelector('.cr-more-sum');
+        if (ms) ms.textContent = moreSum();
         updateSelected();
         updateSuggest();
       }
@@ -458,6 +467,11 @@ RB.ui.create = (function () {
         sync();
         if (k !== 'pron' && k !== 'bg') { drawMain(); drawThumbs(); }
         updateSheet();
+      }
+      // what the folded choices are set to, in one line
+      function moreSum() {
+        const lab = (k) => { const x = LEARN_LOOK[k][1].find((c) => c[0] === o[k]); return x ? x[1] : o[k]; };
+        return 'Mistakes: ' + lab('assist') + ' · Tactics: ' + lab('difficulty') + ' · Dialogue: ' + lab('lead') + ' first, the other ' + lab('secondary').toLowerCase() + ' · Menus: ' + lab('uiLang');
       }
       function setLearn(k, v) {
         o[k] = v;

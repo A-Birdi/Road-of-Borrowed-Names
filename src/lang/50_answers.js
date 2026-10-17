@@ -265,6 +265,19 @@ RB.answers = (function () {
     // particles は/わ, を/お, へ/え
     const pairs = { 'はわ': 'particle_wa', 'わは': 'particle_wa', 'をお': 'particle_o', 'おを': 'particle_o', 'へえ': 'particle_e', 'えへ': 'particle_e' };
     const pk = pairs[want + got];
+    // A single kana asked on its own (FR-1 F04): say it at that scale, a vowel or a kana and its sound, with the
+    // particle use left for the sentences where it is met, not a grammar note on a first character question.
+    if (pk && ctx.single) {
+      const SINGLE = {
+        'おを': 'For the basic vowel o, the answer is お. を sounds the same; you will meet it in sentences later, as a particle.',
+        'をお': 'This one is を (wo, said o). The plain vowel o is お.',
+        'えへ': 'For the basic vowel e, the answer is え. へ is he; you will meet it read e in sentences later, as a particle.',
+        'へえ': 'This one is へ (he). The plain vowel e is え.',
+        'わは': 'This one is わ (wa). は is ha; you will meet it read wa in sentences later, as a particle.',
+        'はわ': 'This one is は (ha). わ is wa.',
+      };
+      return { code: pk, en: SINGLE[want + got] };
+    }
     if (pk) {
       const isPrt = particleAt(acc, j, vars);
       if (pk === 'particle_wa') {
@@ -299,6 +312,7 @@ RB.answers = (function () {
       let why = '';
       if (want === 'っ' || want === 'ッ' || got === 'っ' || got === 'ッ') why = ' A small っ doubles the next consonant (a short pause); a full-size つ is the syllable tsu.';
       else if (/[ゃゅょャュョ]/.test(want + got)) why = ' A small ゃ/ゅ/ょ joins the kana before it into one syllable (きゃ = kya); full-size や/ゆ/よ is a separate syllable (きや = kiya).';
+      else if (ctx.single && !wantSmall) return { code: 'small_large', en: 'On its own, ' + want + ' (' + roma(want) + ') is full-size. A small ' + got + ' only joins the kana before it; that comes later.' };
       else why = ' Small vowels join the kana before them into one syllable.';
       return { code: 'small_large', en: 'Here it should be ' + (wantSmall ? 'small ' : 'full-size ') + want + ', not ' + (wantSmall ? 'full-size ' : 'small ') + got + '.' + why };
     }
@@ -321,7 +335,7 @@ RB.answers = (function () {
       if (o.op === 'swap') {
         out.push({ code: 'swapped', en: 'Two characters are swapped: the answer has ' + o.want + ', you ' + vb() + ' ' + o.got + '.', at: o.j });
       } else if (o.op === 'sub') {
-        const f = explainSub(o.got, o.want, Object.assign({}, ctx, { j: o.j, prev: prevT }));
+        const f = explainSub(o.got, o.want, Object.assign({}, ctx, { j: o.j, prev: prevT, single: b.length === 1 }));
         f.at = o.j;
         f.got = o.got;
         f.want = o.want;

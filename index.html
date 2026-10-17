@@ -1663,6 +1663,17 @@ body.bulb-on .cr-prologue .jline .jt:hover, .cr-prologue .jline .jt.active { bac
 
 body.reduced-motion .cr-route *, body.reduced-motion .cr-sheet * { transition: none !important; animation: none !important; }
 
+/* FR-1 F05: the learning step's further choices, folded under one line that says what they are set to */
+.cr-more { margin: 0.6em 0 0.4em; border-top: 1px solid var(--paper-edge); }
+.cr-more > summary { display: flex; flex-direction: column; gap: 2px; justify-content: center; min-height: var(--tap); padding: 0.45em 0.2em; cursor: pointer; list-style-position: inside; }
+.cr-more > summary .cr-more-t { font-weight: 700; color: var(--ink); }
+.cr-more > summary .cr-more-sum { font-size: 0.88em; color: var(--ink-2); }
+.cr-more[open] > summary .cr-more-sum { display: none; }
+.cr-more > summary:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+/* FR-1 F16: a colour's or a piece's name breaks between its words, never inside one (a hyphenated name keeps together) */
+.cr-sw .nm, .cr-tile .nm { overflow-wrap: normal; word-break: normal; hyphens: manual; text-wrap: balance; }
+.cr-sw .nm .nw, .cr-tile .nm .nw { white-space: nowrap; }
+
 /* ==== src/styles/50_play.css ==== */
 /* In-play interface in folio materials: dialogue sheet and replies, word
  * help (note card / bottom sheet), HUD tags, touch controls, notices and
@@ -2592,6 +2603,7 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .lesson-demo canvas { display: block; width: 100%; max-width: min(240px, 46 * var(--vh)); aspect-ratio: 1; border-radius: var(--r-1); box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 0 var(--paper-3); }
 .lesson-demo figcaption { margin-top: 0.4em; }
 .lesson-note { font-size: 1.02em; border-left: 3px solid var(--rule); padding-left: 0.7em; }
+.lesson-lede { margin: 0 0 0.6em; color: var(--ink-2); font-family: var(--ui-font); }
 .lesson-ex, .lsheet .fb-list { list-style: none; margin: 0; padding: 0; }
 .lesson-ex li { padding: 0.25em 0; border-bottom: 1px solid var(--rule); }
 .lesson-ex li .jline { font-size: 1.2em; margin-right: 0.6em; }
@@ -2603,7 +2615,7 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
   .lsheet.lesson .leaf { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 28px; align-content: start; align-items: start; }
   .lsheet.lesson .lesson-row { grid-column: 1 / -1; }
   .lsheet.lesson .lesson-main { flex-wrap: nowrap; }
-  .lsheet.lesson .lesson-note { margin-top: 0; }
+  .lsheet.lesson .lesson-note, .lsheet.lesson .lesson-lede { margin-top: 0; }
 }
 
 /* activities: who is speaking, the tray and the kitchen, a letter to deliver */
@@ -2857,7 +2869,12 @@ body.high-contrast .kwcard { border-color: #000; }
 .rcard .rc-ans { display: block; margin-top: 0.15em; color: var(--ok-ink); }
 .rcard .rc-ans b { font-weight: 700; }
 /* E5: what the response would do here (the rules' own preview); "none" is marked by words, not colour alone */
-.rcard .rc-here { display: block; margin-top: 0.15em; color: var(--ink, inherit); }
+.rcard .rc-here { display: block; margin-bottom: 0.15em; color: var(--ink, inherit); }
+/* FR-1 F14: the general description and its Answers follow the Here: line, folded to two lines (whole on focus) */
+.rcard .rc-more { display: block; }
+.rcard .rc-more.folded { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.combat-ui .rcard:focus-visible .rc-more.folded { display: block; -webkit-line-clamp: none; line-clamp: none; }
+.rcard .rc-more .rc-ans { display: inline; margin-left: 0.3em; }
 .rcard .rc-here b { font-weight: 700; }
 .rcard .rc-here.none { opacity: 0.78; font-style: italic; }
 .combat-ui .rcard.tech { border-color: var(--ribbon-deep); box-shadow: inset 4px 0 0 var(--ribbon), 0 2px 0 var(--paper-3), 0 3px 0 var(--ribbon-deep); }
@@ -6151,6 +6168,18 @@ body.high-contrast .sx-scope .sx-slipbtn { background: none; border-color: #000;
 .sx-scope .opt.sx-opt, .sx-scope .opt.sx-opt > .sx-face, .sx-scope .opt.sx-opt .sx-mark { max-width: 100%; min-width: 0; box-sizing: border-box; }
 .sx-scope .opt.sx-opt .sx-w { min-width: 0; }
 .sx-scope .opt.sx-opt .sx-en { overflow-wrap: anywhere; }
+/* FR-1 F05: "Before you set out" as a summary of the journey's real settings */
+.sx-sum-card { margin: 0 0 1em; padding: 0.7em 0.9em; border: 1px solid var(--paper-edge); border-left: 4px solid var(--ribbon); border-radius: var(--r-2); background: rgba(255, 250, 240, 0.6); }
+.sx-sum-card .sx-sum-h { margin: 0 0 0.25em; font-size: 1.15em; font-weight: 700; color: var(--ink); }
+.sx-sum-card .sx-sum-sub { margin: 0; line-height: 1.5; color: var(--ink-2); }
+.sx-sum { margin: 0 0 1em; display: grid; gap: 0.55em; }
+.sx-sum-r { display: grid; grid-template-columns: minmax(8.5em, auto) 1fr; gap: 0.2em 0.9em; align-items: baseline; }
+.sx-sum-r dt { font-weight: 700; color: var(--ink); }
+.sx-sum-r dd { margin: 0; color: var(--ink-2); line-height: 1.45; min-width: 0; }
+.sx-sum-link { margin-left: 0.4em; vertical-align: baseline; }
+.sx-sum-acts { margin: 1em 0 0.4em; }
+.sx-sum-note { display: flex; gap: 0.5em; align-items: flex-start; }
+@media (max-width: 520px) { .sx-sum-r { grid-template-columns: 1fr; } }
 
 /* ==== src/styles/93_items.css ==== */
 /* Items on the page (LI-1, LI-2): each item's own pixel icon (src/ui/11_item_art.js) in the Satchel's rows, its detail
@@ -10705,6 +10734,19 @@ RB.answers = (function () {
     // particles は/わ, を/お, へ/え
     const pairs = { 'はわ': 'particle_wa', 'わは': 'particle_wa', 'をお': 'particle_o', 'おを': 'particle_o', 'へえ': 'particle_e', 'えへ': 'particle_e' };
     const pk = pairs[want + got];
+    // A single kana asked on its own (FR-1 F04): say it at that scale, a vowel or a kana and its sound, with the
+    // particle use left for the sentences where it is met, not a grammar note on a first character question.
+    if (pk && ctx.single) {
+      const SINGLE = {
+        'おを': 'For the basic vowel o, the answer is お. を sounds the same; you will meet it in sentences later, as a particle.',
+        'をお': 'This one is を (wo, said o). The plain vowel o is お.',
+        'えへ': 'For the basic vowel e, the answer is え. へ is he; you will meet it read e in sentences later, as a particle.',
+        'へえ': 'This one is へ (he). The plain vowel e is え.',
+        'わは': 'This one is わ (wa). は is ha; you will meet it read wa in sentences later, as a particle.',
+        'はわ': 'This one is は (ha). わ is wa.',
+      };
+      return { code: pk, en: SINGLE[want + got] };
+    }
     if (pk) {
       const isPrt = particleAt(acc, j, vars);
       if (pk === 'particle_wa') {
@@ -10739,6 +10781,7 @@ RB.answers = (function () {
       let why = '';
       if (want === 'っ' || want === 'ッ' || got === 'っ' || got === 'ッ') why = ' A small っ doubles the next consonant (a short pause); a full-size つ is the syllable tsu.';
       else if (/[ゃゅょャュョ]/.test(want + got)) why = ' A small ゃ/ゅ/ょ joins the kana before it into one syllable (きゃ = kya); full-size や/ゆ/よ is a separate syllable (きや = kiya).';
+      else if (ctx.single && !wantSmall) return { code: 'small_large', en: 'On its own, ' + want + ' (' + roma(want) + ') is full-size. A small ' + got + ' only joins the kana before it; that comes later.' };
       else why = ' Small vowels join the kana before them into one syllable.';
       return { code: 'small_large', en: 'Here it should be ' + (wantSmall ? 'small ' : 'full-size ') + want + ', not ' + (wantSmall ? 'full-size ' : 'small ') + got + '.' + why };
     }
@@ -10761,7 +10804,7 @@ RB.answers = (function () {
       if (o.op === 'swap') {
         out.push({ code: 'swapped', en: 'Two characters are swapped: the answer has ' + o.want + ', you ' + vb() + ' ' + o.got + '.', at: o.j });
       } else if (o.op === 'sub') {
-        const f = explainSub(o.got, o.want, Object.assign({}, ctx, { j: o.j, prev: prevT }));
+        const f = explainSub(o.got, o.want, Object.assign({}, ctx, { j: o.j, prev: prevT, single: b.length === 1 }));
         f.at = o.j;
         f.got = o.got;
         f.want = o.want;
@@ -25465,7 +25508,9 @@ RB.state = (function () {
       notebook: [],        // [{kind, id, t}]
       learn: {
         profile: opts.profile || 'F',
-        assist: opts.assist || 'normal', // 'assist' (no mistake cost) | 'normal'
+        // a new journey's language mistakes cost nothing unless chosen otherwise (Robin, FR-1: "No-punishment assists
+        // should be the default"); tactical difficulty below is separate
+        assist: opts.assist || 'assist', // 'assist' (no mistake cost) | 'normal'
         difficulty: opts.difficulty || 'normal', // combat tactics difficulty
         kanaGroup: 0,      // Foundations: next kana group to teach
         items: {},         // mastery records keyed by item id (k:あ, v:みず, g:prt_wa, c:passage)
@@ -25638,8 +25683,32 @@ RB.state = (function () {
     if (stage === 'done') q.done = true;
     else if (stage === 'start') q.stage = Math.max(q.stage, 0);
     else q.stage = Math.max(q.stage, +stage);
+    // a later stage whose condition already holds (its `when`: every request done → "report back"), so the Journal,
+    // the next step and the markers agree (FR-1 F07)
+    const d = !q.done && RB.content && RB.content.quests && RB.content.quests[id];
+    if (d && d.stages) for (let k = d.stages.length - 1; k > q.stage; k--) if (d.stages[k].when && test(s, d.stages[k].when)) { q.stage = k; break; }
     q.t = Date.now();
     return q;
+  }
+  // quests that start and finish by themselves (`auto: { start, done }`, conditions): a journey's first purpose before
+  // anyone has given a quest (FR-1 F06: the letter of introduction for Keeper Tsuru). Called when a scene ends.
+  function autoQuests(s) {
+    const Q = (RB.content && RB.content.quests) || {};
+    let changed = false;
+    for (const id in Q) {
+      const a = Q[id].auto;
+      if (!a) continue;
+      const q = s.quests[id];
+      if (!q && a.start && test(s, a.start) && !(a.done && test(s, a.done))) { setQuest(s, id, 'start'); changed = true; }
+      else if (q && !q.done && a.done && test(s, a.done)) { setQuest(s, id, 'done'); changed = true; }
+    }
+    // an active quest's later stage whose `when` now holds (the last town request done, in whatever order)
+    for (const id in s.quests) {
+      const q = s.quests[id], d = Q[id];
+      if (!q || q.done || !d || !d.stages) continue;
+      for (let k = d.stages.length - 1; k > q.stage; k--) if (d.stages[k].when && test(s, d.stages[k].when)) { q.stage = k; changed = true; break; }
+    }
+    return changed;
   }
   function pronouns(p) {
     const P = {
@@ -25658,7 +25727,7 @@ RB.state = (function () {
     s.awarded[id] = Date.now();
     return true;
   }
-  return { newCampaign, test, peek, give, take, setQuest, pronouns, once, addTerm, PROF_ORDER };
+  return { newCampaign, test, peek, give, take, setQuest, autoQuests, pronouns, once, addTerm, PROF_ORDER };
 })();
 
 
@@ -55202,7 +55271,7 @@ RB.script = (function () {
           if (!r || r.result === 'lose' || r.result === 'flee') { pc = sc.cmds.length; }
           break;
         }
-        case 'lesson': if (RB.sequence) RB.sequence.stopSkip('lesson'); RB.ui.dialogue.hide(); await RB.lessons.run(a[0]); break;
+        case 'lesson': if (RB.sequence) RB.sequence.stopSkip('lesson'); RB.ui.dialogue.hide(); await RB.lessons.run(a[0], a.slice(1)); break;
         case 'teach': if (RB.sequence) RB.sequence.stopSkip('teach'); RB.ui.dialogue.hide(); await RB.lessons.grammarCard(a[0]); break;
         case 'warp': {
           await RB.game.transition(a[0], +a[1], +a[2], a[3] || null, { inScript: true });
@@ -62129,6 +62198,7 @@ RB.game = (function () {
   }
   function afterScene() {
     if (!G.playing) return;
+    if (G.s) RB.state.autoQuests(G.s);
     // the story has settled (chapter ends, quests done): src/engine/58_companion.js follows milestones here
     RB.bus.emit('story:settled', { mode: mode() });
     if (mode() === 'world') {
@@ -70870,6 +70940,8 @@ RB.ui.create = (function () {
   const MAX_ACC = 2;
   const PRON = [['they', 'they/them'], ['she', 'she/her'], ['he', 'he/him'], ['custom', 'custom…']];
   const cap1 = (s) => String(s).charAt(0).toUpperCase() + String(s).slice(1);
+  // a label's hyphenated name kept on one line ("Light-medium", "Blue-black"): it breaks between words only (FR-1 F16)
+  const nw = (t) => RB.util.esc(t).replace(/(\S+-\S+)/g, '<span class="nw">$1</span>');
   const NAME = {
     skin: (i) => SKIN_NAMES[i] || 'Tone ' + (+i + 1),
     hairColor: (i) => cap1((RB.sprites.HAIR_NAMES || [])[i] || 'colour ' + (+i + 1)),
@@ -70898,8 +70970,8 @@ RB.ui.create = (function () {
   const LEARN_LOOK = {
     kana: ['Kana so far', [['none', 'From the start', { i: 'kana0' }], ['hira', 'Hiragana', { i: 'kanaH' }], ['both', 'Both kana', { i: 'kanaHK' }]],
       'What you can already read: none yet, hiragana, or hiragana and katakana. Kana you know is not taught again, and every character can still be looked up.'],
-    assist: ['Mistakes in battle', [['assist', 'Assisted', { i: 'assist', d: 'A wrong answer costs nothing.' }], ['normal', 'Standard', { i: 'capped', d: 'A wrong answer costs a little, never much.' }]],
-      'What a wrong answer costs in an encounter. Either way you are shown the right answer and can try again.'],
+    assist: ['Mistakes in battle', [['assist', 'Assisted', { i: 'assist', d: 'Learning mistakes cost nothing. Try again, with help if you like; the creature\u2019s moves still matter.' }], ['normal', 'Standard', { i: 'capped', d: 'A wrong answer costs a little resolve, never much.' }]],
+      'What a wrong answer costs in an encounter. Either way you are shown the right answer and can try again. Separate from the tactical challenge.'],
     difficulty: ['Tactical challenge', [['relaxed', 'Relaxed', { i: 'f1' }], ['normal', 'Standard', { i: 'f2' }], ['hard', 'Demanding', { i: 'f3' }]],
       'How many creatures come, and how hard they press. Separate from the Japanese level.'],
     input: ['Default way to answer', [['hand', 'Handwriting', { i: 'hand' }], ['choice', 'Choices', { i: 'choice' }], ['ime', 'Keyboard / IME', { i: 'ime' }]],
@@ -70965,7 +71037,8 @@ RB.ui.create = (function () {
         name: '', nameJp: '', pron: 'they', bg: 'courier', custom: { they: 'they', them: 'them', their: 'their', theirs: 'theirs', self: 'themself', plural: true },
         look: { skin: 2, hair: 'short', hairColor: 1, outfit: 0, shape: 'tunic', acc: ['scarf'] },
       };
-      const o = { profile: 'F', kana: 'none', assist: 'normal', difficulty: 'normal', lead: st.lead || 'en', secondary: st.secondary || 'always', uiLang: st.uiLang || 'en', input: st.input || 'hand' };
+      // (mistakes: Assisted unless chosen otherwise, FR-1 F17; the way to answer: the player's own, else handwriting)
+      const o = { profile: 'F', kana: 'none', assist: 'assist', difficulty: 'normal', lead: st.lead || 'en', secondary: st.secondary || 'always', uiLang: st.uiLang || 'en', input: st.input || 'hand' };
       const V = { i: 0, max: 0, jpEdited: false, dir: 'down', blink: false, closed: false, accNote: '' };
       const has = (id) => steps.indexOf(id) >= 0;
       const sheetOn = has('identity') || has('appearance') || has('background');
@@ -71006,7 +71079,7 @@ RB.ui.create = (function () {
       function swatchGroup(key, legend, list, style) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-swatches">' +
           list.map((c, i) => '<label class="cr-sw cr-sw-' + style + '"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + i + '">' +
-            '<span class="face"><span class="chip" style="' + chipStyle(style, c) + '">' + tick + '</span><span class="nm">' + esc(NAME[key](i)) + '</span></span></label>').join('') +
+            '<span class="face"><span class="chip" style="' + chipStyle(style, c) + '">' + tick + '</span><span class="nm">' + nw(NAME[key](i)) + '</span></span></label>').join('') +
           '</div></fieldset>';
       }
       function chipStyle(style, c) {
@@ -71017,7 +71090,7 @@ RB.ui.create = (function () {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-tiles cr-tiles-' + key + '">' +
           vals.map((v) => '<label class="cr-tile"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + esc(v) + '"><span class="face">' + tick +
             (thumb === 'port' ? '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="' + FIG_W + '" height="' + FIG_H + '" data-th="' + key + ':' + esc(v) + '"></canvas>') +
-            '<span class="nm">' + esc(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
+            '<span class="nm">' + nw(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
       }
       function entryGroup(key, attr, legend, list, iconOf, sr) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend' + (sr ? ' class="sr"' : '') + '>' + esc(legend) + '</legend><div class="cr-entries">' +
@@ -71075,8 +71148,12 @@ RB.ui.create = (function () {
             '<button type="button" class="sx-slipbtn" data-a="place"><span class="sx-slipic">' + I('next') + '</span><span class="sx-slipt"><b>Not sure? Try a short placement</b>' +
             '<span>A few questions to suggest a level. Nothing is graded or saved.</span></span></button>' +
             C('kana') +
-            '<h3 class="sx-sec">Challenge</h3>' + C('assist') + C('difficulty') +
-            '<h3 class="sx-sec">Answering and reading</h3>' + C('input') + C('lead') + C('secondary') + C('uiLang') +
+            '<h3 class="sx-sec">Answering</h3>' + C('input') +
+            // (FR-1 F05: the rest is one tap away, with what it is set to, rather than a second full pass)
+            '<details class="cr-more"><summary><span class="cr-more-t">More choices: mistakes, tactics and reading</span>' +
+              '<span class="cr-more-sum"></span></summary>' +
+              '<h3 class="sx-sec">Challenge</h3>' + C('assist') + C('difficulty') +
+              '<h3 class="sx-sec">Reading</h3>' + C('lead') + C('secondary') + C('uiLang') + '</details>' +
             '<p class="note-slip">Furigana is always shown over kanji. Turn on the lightbulb (H or the bulb button) to hover or tap any Japanese for its reading and meaning.</p></div>';
         },
       };
@@ -71154,6 +71231,8 @@ RB.ui.create = (function () {
         if (cu) cu.hidden = p.pron !== 'custom';
         const kg = page.querySelector('[data-group=kana]');
         if (kg) kg.hidden = o.profile !== 'F';
+        const ms = page.querySelector('.cr-more-sum');
+        if (ms) ms.textContent = moreSum();
         updateSelected();
         updateSuggest();
       }
@@ -71238,6 +71317,11 @@ RB.ui.create = (function () {
         sync();
         if (k !== 'pron' && k !== 'bg') { drawMain(); drawThumbs(); }
         updateSheet();
+      }
+      // what the folded choices are set to, in one line
+      function moreSum() {
+        const lab = (k) => { const x = LEARN_LOOK[k][1].find((c) => c[0] === o[k]); return x ? x[1] : o[k]; };
+        return 'Mistakes: ' + lab('assist') + ' · Tactics: ' + lab('difficulty') + ' · Dialogue: ' + lab('lead') + ' first, the other ' + lab('secondary').toLowerCase() + ' · Menus: ' + lab('uiLang');
       }
       function setLearn(k, v) {
         o[k] = v;
@@ -84114,6 +84198,12 @@ RB.ui.menu = (function () {
       const done = qs.filter((x) => x.q.done).sort((a, b) => b.q.t - a.q.t);
       const mains = active.filter((x) => x.d.main || x.id === fid), others = active.filter((x) => !x.d.main && x.id !== fid);
       if (!J.sel || !qs.find((x) => x.id === J.sel)) J.sel = (mains[0] || others[0] || done[0] || {}).id || null;
+      // the quest on the page finished since it was chosen while open: the page turns to the one followed now (FR-1
+      // F08); a finished quest the player opened from the list stays
+      const cur = qs.find((x) => x.id === J.sel);
+      const next = (fid && active.find((x) => x.id === fid)) || mains[0] || others[0];
+      if (cur && cur.q.done && J.selOpen && next) J.sel = next.id;
+      J.selOpen = !!(qs.find((x) => x.id === J.sel) && !qs.find((x) => x.id === J.sel).q.done);
       const row = (x) => {
         const [k, kl] = questKind(x.id, x.d);
         const sel = two && x.id === J.sel;
@@ -84133,11 +84223,18 @@ RB.ui.menu = (function () {
       if (done.length) h += '<details class="done-list"' + (J.doneOpen ? ' open' : '') + '><summary><h3>' + I('done') + ' Completed <span class="count">' + done.length + '</span></h3></summary><ul class="entries">' + done.map(row).join('') + '</ul></details>';
       A.innerHTML = h;
       const selQ = qs.find((x) => x.id === J.sel);
-      B.innerHTML = selQ ? questDetail(selQ) : '<p class="muted">Choose a quest to read its notes.</p>';
+      // another quest on the page: one press back to the one followed (its markers are what the map shows)
+      const back = two && fid && selQ && selQ.id !== fid && active.find((x) => x.id === fid)
+        ? '<p class="j-followed"><button type="button" class="pbtn quiet" data-showq="' + esc(fid) + '">' + I('follow') + '<span>Show the followed quest</span></button></p>' : '';
+      B.innerHTML = back + (selQ ? questDetail(selQ) : '<p class="muted">Choose a quest to read its notes.</p>');
       const dl = A.querySelector('details.done-list');
       if (dl) dl.ontoggle = () => { J.doneOpen = dl.open; };
     }
-    B.onclick = (e) => { guideClick(e); };
+    B.onclick = (e) => {
+      const sq = e.target.closest('[data-showq]');
+      if (sq) { J.sel = sq.dataset.showq; J.selOpen = true; remember(); render(); return; }
+      guideClick(e);
+    };
     A.onclick = (e) => {
       const v = e.target.closest('[data-jv]');
       if (v) { remember(); J.view = v.dataset.jv; render(); return; }
@@ -84145,7 +84242,7 @@ RB.ui.menu = (function () {
       if (guideClick(e)) return;
       const q = e.target.closest('[data-q]');
       if (q) {
-        if (two) { J.sel = q.dataset.q; remember(); render(); }
+        if (two) { J.sel = q.dataset.q; J.selOpen = !(s.quests[J.sel] && s.quests[J.sel].done); remember(); render(); }
         else { J.open = J.open === q.dataset.q ? null : q.dataset.q; remember(); render(); }
       }
     };
@@ -84169,7 +84266,7 @@ RB.ui.menu = (function () {
       'A genuine mistake costs at most 1 resolve per exchange (nothing in Assisted mode). When the recogniser is unsure of your handwriting, it never costs anything. You can always step back from ordinary encounters, and defeat just returns you to the last safe place.',
     ]],
     pad: ['The writing pad', [
-      'Draw one character in the box. The pad shows what it thinks you wrote ("I read this as…") and alternatives. Nothing is submitted until you press Confirm, then Submit.',
+      'Draw one character in the box. The pad shows what it thinks you wrote ("I read this as…") and alternatives. Add character puts what you drew into your answer; nothing is sent until you press Submit.',
       'Tap a character in the answer strip to replace it; tap a gap to insert. Undo removes a stroke; Clear wipes the box. Use 小 for small kana (ゃ, っ…) and the script buttons to choose hiragana or katakana.',
       'If the recogniser can\'t read you, pick the character from the chart. That counts as "assisted" — which is fine, it just isn\'t counted as unaided handwriting.',
       'The chart lists every kana and every kanji in the game, on pages by theme (water, nature, people…) and by use (nouns, verbs…), with a search by kanji, reading, rōmaji, meaning or word. Each kanji shows its readings, meaning, words from the game and its stroke order, and you can practice writing it. Words › Kanji chart opens it any time.',
@@ -86323,10 +86420,48 @@ RB.ui.settings = (function () {
     }
     return ['', ''];
   }
-  // "Before you set out": what shapes ordinary play, on one spread, for a journey just made (ST-1b)
+  // "Before you set out" (ST-1b), first as a summary of what this journey is set to (FR-1 F05: one short page and Set
+  // out, rather than a second pass over every choice made a moment ago); "Adjust details" opens the full spread below
+  let reviewDetail = false;
+  const PROFILE_NAMES = { F: 'Foundations', E: 'Everyday', I: 'Intermediate', A: 'Advanced' };
+  function summaryPages() {
+    const st = RB.game.settings, L = learnObj();
+    const prof = PROFILE_NAMES[L.profile] || L.profile;
+    const fresh = L.profile === 'F' && (L.kanaKnown || 'none') === 'none';
+    const head = fresh ? 'Teach me from the beginning' : L.profile === 'F' ? 'Foundations, with the kana you know' : prof + ' Japanese';
+    const sub = (fresh ? 'New characters come with a model and help, a few at a time. ' : '') +
+      (st.lead === 'ja' ? 'Dialogue leads in Japanese' : 'Dialogue leads in English') +
+      (st.secondary === 'always' ? ', with the other language beneath. ' : st.secondary === 'tap' ? '; tap a line for the other language. ' : '; the other language is hidden. ') +
+      (L.assist === 'assist' ? 'Learning mistakes have no battle cost.' : 'A learning mistake costs a little resolve, never much.');
+    const tact = { relaxed: 'Relaxed', normal: 'Standard', hard: 'Demanding' }[L.difficulty] || L.difficulty;
+    const kana = L.profile !== 'F' ? '' : { none: ' · kana taught from the start', hira: ' · you know hiragana', both: ' · you know both kana' }[L.kanaKnown || 'none'] || '';
+    const vm = RB.voice && RB.voice.mode ? RB.voice.mode() : 'prepared';
+    const voice = st.muted ? 'Muted' : vm === 'none' ? 'No voice' : vm === 'device' ? 'Your device\u2019s voice' : 'Recorded voices where they exist';
+    // what carries over from another journey or an earlier choice and is not the usual start: said, not hidden
+    const unusual = [];
+    if (st.lead === 'ja') unusual.push('Dialogue leads in Japanese');
+    if (st.secondary !== 'always') unusual.push(st.secondary === 'tap' ? 'the other language shows when you tap a line' : 'the other language is hidden');
+    if (st.uiLang === 'ja') unusual.push('menus are in Japanese');
+    if (st.questGuide === 'off') unusual.push('quest markers and hints are off');
+    const row = (k, v, a) => '<div class="sx-sum-r"><dt>' + esc(k) + '</dt><dd>' + esc(v) + (a || '') + '</dd></div>';
+    const a = '<p class="sx-lede">Your journey is ready. This is how it is set up; every choice can be changed later in Settings (the gear at the top of the screen).</p>' +
+      '<div class="sx-sum-card"><p class="sx-sum-h">' + esc(head) + '</p><p class="sx-sum-sub">' + esc(sub) + '</p></div>' +
+      '<dl class="sx-sum">' +
+        row('Japanese', prof + kana) +
+        row('Learning mistakes', L.assist === 'assist' ? 'No battle cost. Try again, with help if you like; the creature\u2019s moves still matter.' : 'Standard: a wrong answer costs a little resolve, never much.') +
+        row('Battles', tact + (L.difficulty === 'hard' ? ' (tactics only; separate from the Japanese)' : '')) +
+        row('Sound', voice + ' · overall level ' + Math.round((st.vol && st.vol.master != null ? st.vol.master : 1) * 100) + '%', ' <button type="button" class="pbtn quiet sx-sum-link" data-a="tab" data-tab="audio">' + I('sound') + '<span>Sound and voices</span></button>') +
+      '</dl>' +
+      (unusual.length ? '<p class="note-slip sx-sum-note" role="note">' + I('warn') + ' <span>Carried over from your settings: ' + esc(unusual.join('; ')) + '. Change it under Reading if that was not meant.</span></p>' : '');
+    const b = R.input() + '<p class="sx-why muted small">Handwriting, choices and the keyboard can be switched during any question.</p>' +
+      '<p class="sx-sum-acts"><button type="button" class="pbtn sx-sum-more" data-a="details">' + I('dots') + '<span>Adjust details</span></button></p>' +
+      '<p class="muted small">Adjust details shows every setting that shapes the road: quest guidance, reading, sound and voices, Suzu\u2019s speech, stories and battles. The tabs above hold the rest.</p>';
+    return [a, b];
+  }
   function startPages() {
+    if (!reviewDetail) return summaryPages();
     return [
-      '<p class="sx-lede">These shape how the road plays. Look them over before the story begins; every one can be changed later in Settings (the gear at the top of the screen, or in the Ledger), and the other tabs above hold the rest.</p>' +
+      '<p class="sx-lede">These shape how the road plays. Every one can be changed later in Settings (the gear at the top of the screen, or in the Ledger), and the other tabs above hold the rest. <button type="button" class="pbtn quiet" data-a="summary">' + I('back') + '<span>Back to the summary</span></button></p>' +
         journeyBox(R.profile(false) + R.assist() + R.difficulty()) +
         sec('Finding the way') + R.questGuide() +
         sec('Reading') + R.lead() + R.secondary() + R.spacing() + R.lightbulb() + R.textSpeed(),
@@ -86359,6 +86494,13 @@ RB.ui.settings = (function () {
         });
       } else if (b.dataset.a === 'resetbinds') {
         st.binds = null; RB.input.setBinds(null); await RB.game.saveSettings(); render();
+      } else if (b.dataset.a === 'details') {
+        reviewDetail = true; render(true);
+        const L0 = L.querySelector('.leaf'); if (L0) L0.focus({ preventScroll: true });
+      } else if (b.dataset.a === 'summary') {
+        reviewDetail = false; render(true);
+      } else if (b.dataset.a === 'tab' && b.dataset.tab) {
+        show_(b.dataset.tab);
       } else if (b.dataset.a === 'voiceclear') {
         // only the game's own kept recordings (its one cache); saves and everything else stay
         const ok = RB.voicebank ? await RB.voicebank.clearKept() : false;
@@ -86455,7 +86597,7 @@ RB.ui.settings = (function () {
   function review(s) {
     if (lay) close();
     return new Promise((res) => {
-      reviewS = s || null; reviewDone = res;
+      reviewS = s || null; reviewDone = res; reviewDetail = false;
       lastMode = 'review'; group = 'start';
       if (RB.audio) RB.audio.sfx('menu_open');
       show('review');
@@ -88668,7 +88810,8 @@ RB.ui.casebook = (function () {
  *   resize or orientation change redraws them unchanged.
  * - The recognizer never sees the expected answer. The pad shows what it
  *   read ("I read this as…"), alternatives and uncertainty; only an
- *   explicit Confirm puts a character into the answer strip.
+ *   explicit Add character (data-a="confirm") puts a character into the answer strip (FR-1 F09: named for what it
+ *   does, apart from the challenge's Submit, which sends the whole answer).
  * - Choosing a non-top candidate or picking from the chart counts as an
  *   assisted character (not the other character of one shape, ロ/口).
  * - "Read as": Kanji or kana (the task's kana plus every kanji in the game),
@@ -88871,7 +89014,7 @@ RB.pad = (function () {
       '<div class="pad-inspect">' +
         '<div class="readas" data-state="empty"></div>' +
         '<div class="cands" role="group" aria-label="Other readings"></div>' +
-        '<button class="pbtn primary pad-confirm" data-a="confirm" disabled>' + I('done') + '<span>Confirm</span></button>' +
+        '<button class="pbtn primary pad-confirm" data-a="confirm" disabled>' + I('done') + '<span>Add character</span></button>' +
         '<div class="rd-morerow"></div>' +
         '<div class="sr" aria-live="polite"></div>' +
       '</div>' +
@@ -89122,7 +89265,7 @@ RB.pad = (function () {
       P.list = [];
       if (PH) {
         // while a pace is stopped for review, one press inserts the character and continues
-        conf.lastChild.textContent = PH.reviewing() ? 'Confirm character & continue' : 'Confirm';
+        conf.lastChild.textContent = PH.reviewing() ? 'Add character & continue' : 'Add character';
         misread.firstChild.disabled = !(r && r.status !== 'empty' && P.strokes.length);
       }
       if (!r || r.status === 'empty') {
@@ -89223,7 +89366,7 @@ RB.pad = (function () {
     }
     function emptyCaption() {
       const orderNotes = P.chars.map((c) => c.order).filter((o) => o && o.confident && o.issues && o.issues.length);
-      if (P.replace >= 0) return 'Write the replacement for <span lang="ja">' + glyph(P.chars[P.replace].ch) + '</span>, then Confirm.';
+      if (P.replace >= 0) return 'Write the replacement for <span lang="ja">' + glyph(P.chars[P.replace].ch) + '</span>, then Add character.';
       if (orderNotes.length && P.chars.length) return esc('Stroke order: ' + orderNotes[orderNotes.length - 1].issues.map((i) => i.en).join(' '));
       if (P.chars.length && P.maxLen > 1) return 'Write the next one, or tap a character in your answer to fix it.';
       return 'Write one character in the box.';
@@ -90409,9 +90552,20 @@ RB.challenge = (function () {
   // (the answer or a model shown). Access and input help (text size, redrawing, a same-shape twin) never count.
   const HELP_RANK = { conceptual: 1, constrain: 2, supplied: 3 };
   function helpCat(cat) { if (!active || !HELP_RANK[cat]) return; if (!active.help || HELP_RANK[cat] > HELP_RANK[active.help]) active.help = cat; }
+  // What the help was, in words, for the line under a helped success (FR-1 F10): "Practiced with word help", not a
+  // generic "Assisted — that's fine". First use first; the evidence record keeps its category (above) as before.
+  const HELP_WHY = { word: 'word help', translation: 'the English shown', model: 'the model shown', suggestions: 'suggested characters', correction: 'a character picked from the alternatives', chart: 'the kana chart', reveal: 'the answer shown', companion: 'a companion\u2019s hint', copy: 'the model to copy', guided: 'a guided example' };
+  function helpWhy(code) { if (active && HELP_WHY[code] && !active.why.includes(code)) active.why.push(code); }
+  function helpLine(step) {
+    if (step.copy) helpWhy('copy'); else if (step.guided) helpWhy('guided');
+    const all = (active ? active.why : []).map((c) => HELP_WHY[c]);
+    if (!all.length) return 'Practiced with help.';
+    return 'Practiced with ' + (all.length > 2 ? all.slice(0, -1).join(', ') + ' and ' + all[all.length - 1] : all.join(' and ')) + '.';
+  }
   function noteHelp(tok) {
     if (!active) return;
     active.helpUsed = true;
+    helpWhy('word');
     // word help on a word that is (part of) the answer narrows it; otherwise it explains the situation
     const ans = active.step && active.step.answer ? plain(active.step.answer) : '';
     const surf = tok && (tok.surface || tok.s) ? String(tok.surface || tok.s) : '';
@@ -90469,8 +90623,13 @@ RB.challenge = (function () {
     const ans = plain(step.answer);
     if (!opts) {
       let d = [];
-      try { d = RB.answers.distractors(ans, { count: 3, kind: Array.from(ans).length === 1 ? 'kana' : 'word' }); } catch (e) { d = []; }
-      opts = [ans].concat(d);
+      try { d = RB.answers.distractors(ans, { count: 12, kind: Array.from(ans).length === 1 ? 'kana' : 'word' }); } catch (e) { d = []; }
+      // Foundations (FR-1 F03): wrong options made of kana this player has met, so a first vowel question isn't a
+      // trap of small kana, katakana twins or rows still to come; those contrasts return once their kana are met.
+      // (Everyone else has met every kana: the first three are the same as before.)
+      const met = (t) => Array.from(t).every((c) => !RB.kana.isKana(c) || RB.learn.kanaKnown(c));
+      const fair = d.filter(met);
+      opts = [ans].concat((fair.length >= 2 ? fair : fair.concat(d.filter((x) => !met(x)))).slice(0, 3));
     }
     const acc = new Set((step.accept || [step.answer]).map(plain));
     // choice mode must always contain a right answer
@@ -90509,10 +90668,10 @@ RB.challenge = (function () {
       let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : step.kind === 'order' ? 'order' : step.kind === 'forge' ? (opts.mode || RB.forge.startRung(st, RB.game.s && RB.game.s.learn.profile)) : 'choice';
       if (step.kind === 'write' && !MODES.some((m) => m.id === mode)) mode = 'hand';
       const res = { ok: false, firstTry: null, mistakes: 0, assisted: false, mode: null, recogMisses: 0 };
-      active = { step, helpUsed: false, help: null };
+      active = { step, helpUsed: false, help: null, why: [] };
       // help given before the task began (a companion pointing at the response in a story battle, E19): it counts as
       // what it supplied, from the first answer
-      if (opts.preHelp) { active.helpUsed = true; helpCat(opts.preHelp); }
+      if (opts.preHelp) { active.helpUsed = true; helpCat(opts.preHelp); helpWhy('companion'); }
       // a step whose blank depends on how it is answered (a modifier phrase, E27: typed whole, handwritten as the
       // modifier and its particle with the rest shown): the fields of the route in use, so only what is written is
       // recorded as written
@@ -90592,7 +90751,7 @@ RB.challenge = (function () {
         if (hear) hear.onclick = () => { try { RB.voice.sayRef(RB.voice.refKey.spoken(step.transcript.jp), RB.jp.reading(step.transcript.jp)); } catch (e) { /* the voice is optional */ } };
         if (readit) readit.onclick = () => { res.read = true; renderCtx(); };
         const tr = trSlot.querySelector('[data-a=tr]');
-        if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; helpCat(step.kind === 'choose' ? 'constrain' : 'conceptual'); if (PH) PH.assist('translation'); renderCtx(); };
+        if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; helpCat(step.kind === 'choose' ? 'constrain' : 'conceptual'); helpWhy('translation'); if (PH) PH.assist('translation'); renderCtx(); };
       }
 
       // ---- 2 · the sheet: one pane per input mode, kept when switching ----
@@ -90607,7 +90766,7 @@ RB.challenge = (function () {
             composeHost: line,
             pace: PH,
             onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); if (PH) PH.draft(); },
-            onAssist: (why) => { if (why !== 'model' || !step.copy) { active.helpUsed = true; helpCat(why === 'model' ? 'supplied' : 'constrain'); } if (why === 'correction' || why === 'suggestions') res.recogRepairs = (res.recogRepairs || 0) + 1; if (PH) PH.assist(why); },
+            onAssist: (why) => { if (why !== 'model' || !step.copy) { active.helpUsed = true; helpCat(why === 'model' ? 'supplied' : 'constrain'); helpWhy(why); } if (why === 'correction' || why === 'suggestions') res.recogRepairs = (res.recogRepairs || 0) + 1; if (PH) PH.assist(why); },
             modelFor: () => Array.from(plain(step.answer))[pad ? Math.min(pad.text().length, Array.from(plain(step.answer)).length - 1) : 0],
           });
         },
@@ -90819,7 +90978,7 @@ RB.challenge = (function () {
         RB.audio && RB.audio.sfx('answer_right');
         // how it was written: "水 (みず) — written in kanji", one-shape characters
         const how = (notes || []).map((n) => '<div class="fb-how" data-note="' + esc(n.code) + '">' + enRuby(n.en) + '</div>').join('');
-        fb('ok', 'Yes.', how + (res.assisted ? '<span class="muted small">' + (res.guided ? 'Guided practice' : 'Assisted') + ' — that\'s fine.</span>' : '') + explainHtml());
+        fb('ok', 'Yes.', how + (res.assisted ? '<span class="muted small fb-help">' + esc(helpLine(step)) + '</span>' : '') + explainHtml());
         const w = wrap.querySelector('.fbwrap');
         const btn = continueBtn();
         btn.onclick = () => finish(false);
@@ -90832,7 +90991,7 @@ RB.challenge = (function () {
         const r = check(text, step, { handwritten: modeUsed === 'hand', input: modeUsed });
         if (r.ok) {
           if (step.kind === 'forge' && r.family != null) consequence(r.family);
-          if (meta.assisted) { active.helpUsed = true; helpCat('constrain'); }
+          if (meta.assisted) { active.helpUsed = true; helpCat('constrain'); if (!active.why.length) helpWhy('suggestions'); }
           res.given = { text: plain(text), mode: modeUsed, matched: r.matched != null ? r.matched : null, family: r.family != null ? r.family : null };
           success(modeUsed, r.notes);
           return;
@@ -90925,7 +91084,7 @@ RB.challenge = (function () {
       function submit() {
         if (locked) return;
         if (mode === 'hand') {
-          if (pad.hasPending()) { RB.ui.notice('Confirm (✓) or clear the character on the pad first.', 'info'); return; }
+          if (pad.hasPending()) { RB.ui.notice('The character on the pad is not in your answer yet: press Add character (or Clear it), then Submit. Nothing was counted.', 'info'); return; }
           if (!pad.text()) { RB.ui.notice('Write and confirm at least one character first.', 'info'); return; }
           evaluate(pad.text(), 'hand', pad.meta());
         } else if (mode === 'ime') submitIme();
@@ -90952,6 +91111,7 @@ RB.challenge = (function () {
       function revealAnswer() {
         active.helpUsed = true;
         helpCat('supplied');
+        helpWhy('reveal');
         res.assisted = true;
         res.revealed = true;
         if (PH) PH.assist('reveal');
@@ -91127,7 +91287,9 @@ RB.challenge = (function () {
     }
   }
 
-  return { run, runStep, practice, active: isActive, noteHelp, teachCard, check, orderOk, choicesFor };
+  // the question being asked (read-only; for tests that answer through the real interface)
+  const current = () => (active ? active.step : null);
+  return { run, runStep, practice, active: isActive, current, noteHelp, teachCard, check, orderOk, choicesFor };
 })();
 
 
@@ -93344,7 +93506,7 @@ RB.pace = (function () {
         else { flags.review++; if (!clk.has('candidate-review') && !clk.has('recognition-repair')) { lastCause = 'candidate-review'; clk.pause('candidate-review'); } }
         render();
       },
-      // the pad says "Confirm character & continue" while a review or repair stopped a visible clock
+      // the pad says "Add character & continue" while a review or repair stopped a visible clock
       reviewing() { return !!(clk && visibleClock() && clk.timed() && (clk.has('candidate-review') || clk.has('recognition-repair'))); },
       confirmed() {
         if (clk && (clk.has('candidate-review') || clk.has('recognition-repair'))) {
@@ -93632,6 +93794,7 @@ RB.lessons = (function () {
   function groupChars(g) {
     return (g.kana || g.chars || []).map((c) => (typeof c === 'string' ? { ch: c } : Object.assign({ ch: c.ch || c.k || c.kana }, c)));
   }
+  const known = (L, ch) => L.taught[ch] || (L.kanaKnown === 'hira' && RB.kana.isHira(ch)) || L.kanaKnown === 'both';
   function nextGroup(s) {
     const L = s.learn;
     L.taught = L.taught || {};
@@ -93639,10 +93802,52 @@ RB.lessons = (function () {
     for (let i = 0; i < gs.length; i++) {
       const cs = groupChars(gs[i]);
       if (!cs.length) continue;
-      const allTaught = cs.every((c) => L.taught[c.ch] || (L.kanaKnown === 'hira' && RB.kana.isHira(c.ch)) || L.kanaKnown === 'both');
-      if (!allTaught) return { g: gs[i], i };
+      if (!cs.every((c) => known(L, c.ch))) return { g: gs[i], i };
     }
     return null;
+  }
+  // A group with only the kana this player hasn't met (a row's kana met earlier, just in time, aren't shown twice).
+  function untaughtOf(s, g) {
+    const L = s.learn;
+    return Object.assign({}, g, { kana: groupChars(g).filter((c) => !known(L, c.ch)) });
+  }
+
+  // Just in time (FR-1 F01/F02): the kana a story challenge's answer needs that this player hasn't met, and only
+  // those, instead of a whole new row the task doesn't use. Read from the raw tier, so looking creates no record.
+  function rawSteps(ch) {
+    if (!ch) return [];
+    if (!ch.tiers) return ch.steps || [];
+    const LV = RB.tasks.LV, p = RB.game.s.learn.profile, keys = Object.keys(LV);
+    for (let l = LV[p]; l >= 0; l--) { const k = keys.find((x) => LV[x] === l); if (ch.tiers[k]) return ch.tiers[k]; }
+    for (let l = LV[p] + 1; l <= 3; l++) { const k = keys.find((x) => LV[x] === l); if (ch.tiers[k]) return ch.tiers[k]; }
+    return [];
+  }
+  // the kana words a step's answer is made of: an order tile 'よん=(four)' is the word よん, meaning four
+  function answerWords(st) {
+    const out = [];
+    const add = (t, m) => {
+      const [w, gl] = String(t).split('=');
+      const ww = RB.tasks.plain(w).replace(/\s+/g, '');
+      if (ww) out.push({ w: ww, m: m || (gl ? gl.replace(/[()]/g, '') : '') });
+    };
+    if (st.kind === 'order') [].concat(st.answer || st.tiles || []).forEach((t) => add(t));
+    else if (st.kind === 'write') add(st.answer, st.explain && st.explain.en);
+    return out;
+  }
+  const JIT_MAX = 4;
+  function kanaFor(s, id) {
+    const L = s.learn;
+    L.taught = L.taught || {};
+    const order = [];
+    groups().forEach((g) => groupChars(g).forEach((c) => { if (c.ch.length === 1 && !order.includes(c.ch)) order.push(c.ch); }));
+    const words = [].concat(...rawSteps(RB.content.challenges[id]).map(answerWords));
+    const need = new Set();
+    words.forEach((x) => Array.from(x.w).forEach((ch) => { if (order.includes(ch) && !known(L, ch)) need.add(ch); }));
+    return { chars: order.filter((ch) => need.has(ch)).slice(0, JIT_MAX), words };
+  }
+  function noteOf(ch) {
+    for (const g of groups()) { const k = (g.kana || []).find((x) => (x.k || x.ch) === ch); if (k) return k.note; }
+    return '';
   }
 
   // Animated numbered stroke demonstration on a small canvas. Plain writing
@@ -93696,7 +93901,7 @@ RB.lessons = (function () {
         const c = cs[idx];
         const rom = RB.kana.romaji(c.ch);
         const ex = (g.examples || g.words || []).filter((e) => (e.w || e.r || '').indexOf(c.ch) >= 0).slice(0, 3);
-        fr.setTitle((g.jp ? RB.ui.jhtml(g.jp) + ' ' : '') + esc(g.title || g.name || 'Kana'), 'Kana ' + (idx + 1) + ' of ' + cs.length);
+        fr.setTitle((g.jp ? RB.ui.jhtml(g.jp) + ' ' : '') + esc(g.title || g.name || 'Kana'), cs.length > 1 ? 'Kana ' + (idx + 1) + ' of ' + cs.length : '');
         fr.leaf.innerHTML =
           '<ol class="lesson-row" aria-label="Kana in this lesson">' + cs.map((x, i) => '<li lang="ja"' + (i === idx ? ' aria-current="true"' : '') + '>' + esc(x.ch) + '</li>').join('') + '</ol>' +
           '<div class="lesson-main">' +
@@ -93705,12 +93910,13 @@ RB.lessons = (function () {
               '<figcaption class="muted small">Numbered strokes from the reference data. The adventure accepts readable variants; order matters only in optional practice.</figcaption></figure>' +
           '</div>' +
           '<div class="lesson-side">' +
+          (g.lede && idx === 0 ? '<p class="lesson-lede">' + esc(g.lede) + '</p>' : '') +
           (c.note ? '<p class="lesson-note">' + RB.learnUi.mixed(c.note.en || c.note) + '</p>' : '') +
           (ex.length ? '<h3>In words</h3><ul class="lesson-ex">' + ex.map((e) => '<li>' + RB.ui.jhtml(e.jp || e.w) + '<span class="en">' + esc(e.m || e.en || '') + '</span></li>').join('') + '</ul>' : '') +
           '</div>';
         fr.foot.innerHTML = (idx > 0 ? '<button class="cbtn" data-a="prev">' + I('back') + '<span>Back</span></button>' : '') +
           '<button class="cbtn" data-a="say">' + I('sound') + '<span>Say it</span></button>' +
-          '<button class="cbtn go" data-a="next" data-ok>' + '<span>' + (idx < cs.length - 1 ? 'Next' : 'Practice these') + '</span>' + I('next') + '</button>';
+          '<button class="cbtn go" data-a="next" data-ok>' + '<span>' + (idx < cs.length - 1 ? 'Next' : g.doneLabel || 'Practice these') + '</span>' + I('next') + '</button>';
         stop = demo(fr.leaf.querySelector('canvas'), c.ch);
         const say = fr.foot.querySelector('[data-a=say]');
         if (!(RB.voice && RB.voice.canSayRef && RB.voice.canSayRef(RB.voice.refKey.kana(c.ch)))) say.classList.add('hidden');
@@ -93730,17 +93936,22 @@ RB.lessons = (function () {
     });
   }
 
-  async function run(which) {
+  // !lesson kana                 the next row (only its kana not met yet), then a short practice pass
+  // !lesson kana for <challenge>  just the kana that challenge's answer needs and this player hasn't met (at most
+  //                               four), straight before it: the task is the practice. Nothing needed, nothing shown.
+  async function run(which, args) {
     const s = RB.game.s;
     if (which === 'kana' || which === 'kana_next' || !which) {
       if (s.learn.profile !== 'F' || s.learn.kanaKnown === 'both') return;
+      if (args && args[0] === 'for' && args[1]) return justInTime(s, args[1]);
       const ng = nextGroup(s);
       if (!ng) return;
-      if (RB.test && RB.test.auto) { groupChars(ng.g).forEach((c) => { s.learn.taught[c.ch] = true; RB.learn.markIntroduced('k:' + c.ch); }); s.learn.kanaGroup = ng.i + 1; return; }
+      const g = untaughtOf(s, ng.g);
+      if (RB.test && RB.test.auto) { groupChars(g).forEach((c) => { s.learn.taught[c.ch] = true; RB.learn.markIntroduced('k:' + c.ch); }); s.learn.kanaGroup = ng.i + 1; return; }
       RB.game.pushMode('challenge');
       try {
-        await showGroup(ng.g);
-        const cs = groupChars(ng.g);
+        await showGroup(g);
+        const cs = groupChars(g);
         cs.forEach((c) => { s.learn.taught[c.ch] = true; RB.learn.markIntroduced('k:' + c.ch); });
         s.learn.kanaGroup = ng.i + 1;
         // one gentle practice pass over the new characters
@@ -93755,6 +93966,20 @@ RB.lessons = (function () {
       return;
     }
   }
+  async function justInTime(s, id) {
+    const { chars, words } = kanaFor(s, id);
+    if (!chars.length) return;
+    const mark = () => chars.forEach((ch) => { s.learn.taught[ch] = true; RB.learn.markIntroduced('k:' + ch); });
+    if (RB.test && RB.test.auto) { mark(); return; }
+    const g = {
+      title: chars.length > 1 ? 'New kana for this task' : 'A new kana for this task',
+      lede: 'This task uses ' + (chars.length > 1 ? chars.length + ' kana' : 'a kana') + ' you haven\u2019t met yet. The rest of ' + (chars.length > 1 ? 'their rows' : 'its row') + ' can wait.',
+      kana: chars.map((ch) => ({ k: ch, note: noteOf(ch) })),
+      words, doneLabel: 'On to the task',
+    };
+    RB.game.pushMode('challenge');
+    try { await showGroup(g); mark(); } finally { RB.game.popMode('challenge'); }
+  }
   // Teach every remaining group at once (used when a player switches to Foundations mid-game).
   function teachAll(s) {
     for (const g of groups()) for (const c of groupChars(g)) { s.learn.taught = s.learn.taught || {}; s.learn.taught[c.ch] = true; }
@@ -93768,7 +93993,7 @@ RB.lessons = (function () {
     RB.learn.rec('g:' + id);
     await RB.challenge.teachCard({ title: 'Grammar:', titleMixed: g.title, jpMixed: g.title, en: g.en, ex: (g.ex || []).slice(0, 3) });
   }
-  return { run, grammarCard, groups, groupChars, nextGroup, teachAll, demo };
+  return { run, grammarCard, groups, groupChars, nextGroup, kanaFor, teachAll, demo };
 })();
 
 
@@ -93806,6 +94031,20 @@ RB.activities = (function () {
   }
   function showEnDefault() {
     return RB.game.s.learn.profile === 'F';
+  }
+  // What a reading with the English beside it is evidence of (FR-1 F11): understanding in context, supported by the
+  // translation; never independent reading of the Japanese. Foundations shows the English from the start, so its
+  // deliveries count as supported (the delivery itself, and the story, are unchanged).
+  function supported(firstTry, assisted, showEn) {
+    return { ok: firstTry, mode: 'choice', assisted: assisted || showEn, ev: 'context', help: assisted || showEn ? 'constrain' : null };
+  }
+  // an optional nudge to notice a word met before, in the letter just read: one line, never a question
+  function metWord(items) {
+    const id = [].concat(items || []).find((x) => typeof x === 'string' && x.slice(0, 2) === 'v:' && RB.learn.introduced(x));
+    const e = id && RB.tasks.findWord(id.slice(2));
+    if (!e) return '';
+    const jp = e.w !== e.r && /[\u4e00-\u9fff]/.test(e.w) ? '{' + e.w + '|' + e.r + '}' : e.r;
+    return '<div class="muted small fb-met">A word you have met before is in this letter: ' + RB.ui.jhtml(jp) + (e.m ? ' (' + RB.learnUi.mixed(e.m) + ')' : '') + '.</div>';
   }
   function trButton() {
     return '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + RB.learnUi.icon('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>';
@@ -93863,7 +94102,7 @@ RB.activities = (function () {
           if (!diffs.length) {
             RB.audio && RB.audio.sfx('answer_right');
             results.push({ ok: firstTry });
-            if (c.items) RB.learn.record(c.items, { ok: firstTry, mode: 'choice', assisted });
+            if (c.items) RB.learn.record(c.items, supported(firstTry, assisted, showEn));
             const thanks = tier(c.thanks) || { jp: 'ありがとう ！', en: 'Thank you!' };
             fbSet(fb, 'ok', 'Just right.', '<div class="fb-jp">' + RB.ui.jhtml(thanks.jp) + '</div><div class="muted">' + esc(thanks.en) + '</div>');
             P.body.querySelectorAll('[data-add], [data-rm]').forEach((x) => (x.disabled = true));
@@ -93924,10 +94163,11 @@ RB.activities = (function () {
         const fb = P.body.querySelector('.fbwrap');
         if (b.getAttribute('data-to') === L.to) {
           RB.audio && RB.audio.sfx('answer_right');
-          if (L.items) RB.learn.record(L.items, { ok: firstTry, mode: 'choice', assisted });
+          const met = metWord(L.items);
+          if (L.items) RB.learn.record(L.items, supported(firstTry, assisted, showEn));
           const why = tier(L.why);
           b.classList.add('on');
-          fbSet(fb, 'ok', 'Delivered.', why ? (why.jp ? '<div class="fb-jp">' + RB.ui.jhtml(why.jp) + '</div>' : '') + '<div>' + esc(why.en) + '</div>' : '');
+          fbSet(fb, 'ok', 'Delivered.', (why ? (why.jp ? '<div class="fb-jp">' + RB.ui.jhtml(why.jp) + '</div>' : '') + '<div>' + esc(why.en) + '</div>' : '') + met);
           P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < list.length - 1 ? 'Next letter' : 'Done');
           P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; assisted = false; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else { deal(); render(); } };
           P.body.querySelectorAll('[data-to]').forEach((x) => (x.disabled = true));
@@ -109362,9 +109602,12 @@ RB.combat = (function () {
       (c.pointed ? '<span class="rc-new rc-point">' + esc(compName()) + ' suggests this</span>' : '') + (c.tried ? '<span class="rc-new rc-tried">Tried</span>' : '') +
       (c.mod ? '<span class="rc-mod">' + RB.ui.jhtml(c.mod.pair.jp) + '</span>' : '') + '</span>' +
       (tgt ? '<span class="rc-tgt' + (r.foes.length > 1 ? ' many' : '') + '">' + esc(tgt) + '</span>' : '') +
-      '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) +
-      (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') +
-      (here ? '<span class="rc-here' + (here.none ? ' none' : '') + '"><b>Here:</b> ' + esc(here.en) + '</span>' : '') + '</span></button>';
+      // FR-1 F14: what it does now leads; what it does in general (and what it answers) follows, folded to two lines
+      // on a card with a Here: line (the whole of it on keyboard focus, as the card's tooltip, and to a screen reader)
+      '<span class="rc-d">' + (c.disabled ? I('warn') + esc(desc) : '') +
+      (here ? '<span class="rc-here' + (here.none ? ' none' : '') + '"><b>Here:</b> ' + esc(here.en) + '</span>' : '') +
+      (c.disabled ? '' : '<span class="rc-more' + (here ? ' folded' : '') + '"' + (here ? ' title="' + esc(desc + (ans.length ? ' Answers: ' + ans.join(', ') + '.' : '')) + '"' : '') + '>' + esc(desc) +
+      (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') + '</span>') + '</span></button>';
   }
   // One short note per exchange, the first time something needs explaining:
   // several creatures, a kind of move never seen before, then a full Harmony,
@@ -120228,7 +120471,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       // ---- moves
       async function onPlay() {
         if (T.busy || finished || a.st.next !== 'pc' || a.st.over) return;
-        if (T.tab === 'hand' && pad && pad.hasPending()) { $('.wp-dmsg').textContent = 'Confirm or clear the character you are writing first: a recognised character is not yet part of your word.'; flash($('.wp-dmsg')); return; }
+        if (T.tab === 'hand' && pad && pad.hasPending()) { $('.wp-dmsg').textContent = 'Add the character you are writing (Add character), or clear it, first: a recognised character is not yet part of your word.'; flash($('.wp-dmsg')); return; }
         if (!T.dtext) { $('.wp-dmsg').textContent = 'Write, type or choose a word beginning with ' + a.st.required + ' first.'; flash($('.wp-dmsg')); return; }
         const d = T.analysis || WP().draft(s, T.dtext, T.pick);
         if (d.status !== 'ok') { renderDraft(); flash($('.wp-dmsg')); if (d.status === 'needs-reading') focusReading(); return; } // an invalid draft is explained; the turn is kept
@@ -133719,11 +133962,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { skin: ['#c8dce8', '#a8bcc8'], hair: ['#8aa0b0', '#a8bcc8', '#e8f4fc'], cloth: ['#8aa0b0', '#6a8090', '#e8f4fc'], style: 'long', eyes: 'soft', acc: ['hood'], hoodCol: '#8aa0b0', bg: '#14202a' } });
 
   // ---- quests --------------------------------------------------------------------
+  // the journey's first purpose, before Tsuru gives a quest: the letter of introduction (FR-1 F06); it starts and ends by
+  // itself (RB.state.autoQuests), so the Journal and the markers say where to go from the first step
+  C.quests.rw_letter = { main: true, chapter: 1, title: { jp: 'ツル さん へ の {紹介状|しょうかいじょう}', en: 'A Letter for Keeper Tsuru' },
+    auto: { start: 'rw_arrived', done: 'rw_met_tsuru' },
+    stages: [
+      { jp: '{紹介状|しょうかいじょう} を {灯守|ひもり} の ツル さん に {届|とど}けよう 。 {葦|あし}ノ{瀬|せ} は この {道|みち} の {東|ひがし} 。', en: 'Bring your letter of introduction to Keeper Tsuru, the lantern keeper of Reedwake. The village is east along this road.', at: { map: 'rw.village', npc: 'tsuru' } },
+    ] };
   C.quests.rw_labels = { main: true, chapter: 1, title: { jp: '{嵐|あらし} の あと の ラベル', en: 'Labels After the Storm' },
     stages: [
       { jp: 'ツル に {頼|たの}まれた 。 {広場|ひろば} の {人|ひと} たち に {話|はなし} を {聞|き}こう 。', en: 'Keeper Tsuru asked for help. Ask around the square: Mio\'s shop, the river warehouse, the bridge, and the teahouse.' },
       { jp: '{白|しろ}く なった ラベル は まだ ある 。 {話|はなし} を {聞|き}いて いない {人|ひと} は ？', en: 'More blank labels to untangle. Who haven\'t you helped yet? (Mio, Nao at the warehouse, Ren at the bridge, Suzu in the square, Hana\'s teahouse.)' },
-      { jp: 'みんな の {話|はなし} を ツル に {伝|つた}えよう 。', en: 'Tell Keeper Tsuru what everyone found. She is in the square.' },
+      { jp: 'みんな の {話|はなし} を ツル に {伝|つた}えよう 。', en: 'Tell Keeper Tsuru what everyone found. She is in the square.',
+        // (every request done: the same condition as Tsuru's report)
+        when: 'rw_bottles_done&rw_letters_done&rw_lanterns_done&rw_suzu_told&rw_hana_cups' },
     ] };
   C.quests.rw_mill = { main: true, chapter: 1, title: { jp: '{呼|よ}び{返|かえ}す {水車|すいしゃ}{小屋|ごや}', en: 'The Mill That Calls Back' },
     stages: [
@@ -134761,7 +135013,7 @@ narr: 「 …… あした も きて ね …… 」 「 …… おかえり …
 !if !item.rw_wheel_pin -> nopin
 !gesture pc observe 10,2 hold
 narr: {歯車|はぐるま} の {真|ま}ん{中|なか} に 、 {軸|じく} を {通|とお}す {穴|あな} が ある 。 {板|いた} に は {番号|ばんごう} の ような {字|じ} が {刻|きざ}まれて いる 。 || There's a hole in the middle of the gears for a pin. Plates carved with something like numbers.
-!lesson kana
+!lesson kana for rw.c_mill_gears
 !challenge rw.c_mill_gears
 !if var._res=0 -> end
 !take rw_wheel_pin
@@ -134826,7 +135078,7 @@ narr: 「 コウジ の ぶん 」 。 {小|ちい}さな {茶碗|ちゃわん} 
 @scene rw.m2_lantern
 !if rw_loft_done -> done
 narr: {屋根裏|やねうら} の {古|ふる}い {灯|あか}り 。 {水車|すいしゃ}{小屋|ごや} の {灯|あか}り は 、 {村|むら} の {名前|なまえ} を {背負|せお}って いた はず だ 。 || The old lantern in the loft. The mill's lantern used to carry the village's name.
-!lesson kana
+!lesson kana for rw.c_mill_lantern
 !challenge rw.c_mill_lantern
 !if var._res=0 -> end
 !sfx lantern

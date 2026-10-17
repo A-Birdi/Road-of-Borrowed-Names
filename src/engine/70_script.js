@@ -364,7 +364,7 @@ RB.script = (function () {
           if (!r || r.result === 'lose' || r.result === 'flee') { pc = sc.cmds.length; }
           break;
         }
-        case 'lesson': if (RB.sequence) RB.sequence.stopSkip('lesson'); RB.ui.dialogue.hide(); await RB.lessons.run(a[0]); break;
+        case 'lesson': if (RB.sequence) RB.sequence.stopSkip('lesson'); RB.ui.dialogue.hide(); await RB.lessons.run(a[0], a.slice(1)); break;
         case 'teach': if (RB.sequence) RB.sequence.stopSkip('teach'); RB.ui.dialogue.hide(); await RB.lessons.grammarCard(a[0]); break;
         case 'warp': {
           await RB.game.transition(a[0], +a[1], +a[2], a[3] || null, { inScript: true });

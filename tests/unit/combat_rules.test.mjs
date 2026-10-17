@@ -12,6 +12,7 @@ export default async (t) => {
   const camp = (o) => {
     const s = RB.state.newCampaign({});
     s.learn.difficulty = o.diff || 'normal';
+    s.learn.assist = o.assist || 'normal'; // these rules are about Standard mistake costs (new journeys default to Assisted)
     s.comp = o.comp || null;
     s.words = o.words || ['mamoru', 'mizu', 'hikari', 'iyasu'];
     return s;

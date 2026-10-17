@@ -501,6 +501,12 @@ RB.ui.menu = (function () {
       const done = qs.filter((x) => x.q.done).sort((a, b) => b.q.t - a.q.t);
       const mains = active.filter((x) => x.d.main || x.id === fid), others = active.filter((x) => !x.d.main && x.id !== fid);
       if (!J.sel || !qs.find((x) => x.id === J.sel)) J.sel = (mains[0] || others[0] || done[0] || {}).id || null;
+      // the quest on the page finished since it was chosen while open: the page turns to the one followed now (FR-1
+      // F08); a finished quest the player opened from the list stays
+      const cur = qs.find((x) => x.id === J.sel);
+      const next = (fid && active.find((x) => x.id === fid)) || mains[0] || others[0];
+      if (cur && cur.q.done && J.selOpen && next) J.sel = next.id;
+      J.selOpen = !!(qs.find((x) => x.id === J.sel) && !qs.find((x) => x.id === J.sel).q.done);
       const row = (x) => {
         const [k, kl] = questKind(x.id, x.d);
         const sel = two && x.id === J.sel;
@@ -520,11 +526,18 @@ RB.ui.menu = (function () {
       if (done.length) h += '<details class="done-list"' + (J.doneOpen ? ' open' : '') + '><summary><h3>' + I('done') + ' Completed <span class="count">' + done.length + '</span></h3></summary><ul class="entries">' + done.map(row).join('') + '</ul></details>';
       A.innerHTML = h;
       const selQ = qs.find((x) => x.id === J.sel);
-      B.innerHTML = selQ ? questDetail(selQ) : '<p class="muted">Choose a quest to read its notes.</p>';
+      // another quest on the page: one press back to the one followed (its markers are what the map shows)
+      const back = two && fid && selQ && selQ.id !== fid && active.find((x) => x.id === fid)
+        ? '<p class="j-followed"><button type="button" class="pbtn quiet" data-showq="' + esc(fid) + '">' + I('follow') + '<span>Show the followed quest</span></button></p>' : '';
+      B.innerHTML = back + (selQ ? questDetail(selQ) : '<p class="muted">Choose a quest to read its notes.</p>');
       const dl = A.querySelector('details.done-list');
       if (dl) dl.ontoggle = () => { J.doneOpen = dl.open; };
     }
-    B.onclick = (e) => { guideClick(e); };
+    B.onclick = (e) => {
+      const sq = e.target.closest('[data-showq]');
+      if (sq) { J.sel = sq.dataset.showq; J.selOpen = true; remember(); render(); return; }
+      guideClick(e);
+    };
     A.onclick = (e) => {
       const v = e.target.closest('[data-jv]');
       if (v) { remember(); J.view = v.dataset.jv; render(); return; }
@@ -532,7 +545,7 @@ RB.ui.menu = (function () {
       if (guideClick(e)) return;
       const q = e.target.closest('[data-q]');
       if (q) {
-        if (two) { J.sel = q.dataset.q; remember(); render(); }
+        if (two) { J.sel = q.dataset.q; J.selOpen = !(s.quests[J.sel] && s.quests[J.sel].done); remember(); render(); }
         else { J.open = J.open === q.dataset.q ? null : q.dataset.q; remember(); render(); }
       }
     };
@@ -556,7 +569,7 @@ RB.ui.menu = (function () {
       'A genuine mistake costs at most 1 resolve per exchange (nothing in Assisted mode). When the recogniser is unsure of your handwriting, it never costs anything. You can always step back from ordinary encounters, and defeat just returns you to the last safe place.',
     ]],
     pad: ['The writing pad', [
-      'Draw one character in the box. The pad shows what it thinks you wrote ("I read this as…") and alternatives. Nothing is submitted until you press Confirm, then Submit.',
+      'Draw one character in the box. The pad shows what it thinks you wrote ("I read this as…") and alternatives. Add character puts what you drew into your answer; nothing is sent until you press Submit.',
       'Tap a character in the answer strip to replace it; tap a gap to insert. Undo removes a stroke; Clear wipes the box. Use 小 for small kana (ゃ, っ…) and the script buttons to choose hiragana or katakana.',
       'If the recogniser can\'t read you, pick the character from the chart. That counts as "assisted" — which is fine, it just isn\'t counted as unaided handwriting.',
       'The chart lists every kana and every kanji in the game, on pages by theme (water, nature, people…) and by use (nouns, verbs…), with a search by kanji, reading, rōmaji, meaning or word. Each kanji shows its readings, meaning, words from the game and its stroke order, and you can practice writing it. Words › Kanji chart opens it any time.',

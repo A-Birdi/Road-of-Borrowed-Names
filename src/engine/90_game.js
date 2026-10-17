@@ -393,6 +393,7 @@ RB.game = (function () {
   }
   function afterScene() {
     if (!G.playing) return;
+    if (G.s) RB.state.autoQuests(G.s);
     // the story has settled (chapter ends, quests done): src/engine/58_companion.js follows milestones here
     RB.bus.emit('story:settled', { mode: mode() });
     if (mode() === 'world') {

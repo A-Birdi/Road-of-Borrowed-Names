@@ -32,6 +32,20 @@ RB.activities = (function () {
   function showEnDefault() {
     return RB.game.s.learn.profile === 'F';
   }
+  // What a reading with the English beside it is evidence of (FR-1 F11): understanding in context, supported by the
+  // translation; never independent reading of the Japanese. Foundations shows the English from the start, so its
+  // deliveries count as supported (the delivery itself, and the story, are unchanged).
+  function supported(firstTry, assisted, showEn) {
+    return { ok: firstTry, mode: 'choice', assisted: assisted || showEn, ev: 'context', help: assisted || showEn ? 'constrain' : null };
+  }
+  // an optional nudge to notice a word met before, in the letter just read: one line, never a question
+  function metWord(items) {
+    const id = [].concat(items || []).find((x) => typeof x === 'string' && x.slice(0, 2) === 'v:' && RB.learn.introduced(x));
+    const e = id && RB.tasks.findWord(id.slice(2));
+    if (!e) return '';
+    const jp = e.w !== e.r && /[\u4e00-\u9fff]/.test(e.w) ? '{' + e.w + '|' + e.r + '}' : e.r;
+    return '<div class="muted small fb-met">A word you have met before is in this letter: ' + RB.ui.jhtml(jp) + (e.m ? ' (' + RB.learnUi.mixed(e.m) + ')' : '') + '.</div>';
+  }
   function trButton() {
     return '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + RB.learnUi.icon('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>';
   }
@@ -88,7 +102,7 @@ RB.activities = (function () {
           if (!diffs.length) {
             RB.audio && RB.audio.sfx('answer_right');
             results.push({ ok: firstTry });
-            if (c.items) RB.learn.record(c.items, { ok: firstTry, mode: 'choice', assisted });
+            if (c.items) RB.learn.record(c.items, supported(firstTry, assisted, showEn));
             const thanks = tier(c.thanks) || { jp: 'ありがとう ！', en: 'Thank you!' };
             fbSet(fb, 'ok', 'Just right.', '<div class="fb-jp">' + RB.ui.jhtml(thanks.jp) + '</div><div class="muted">' + esc(thanks.en) + '</div>');
             P.body.querySelectorAll('[data-add], [data-rm]').forEach((x) => (x.disabled = true));
@@ -149,10 +163,11 @@ RB.activities = (function () {
         const fb = P.body.querySelector('.fbwrap');
         if (b.getAttribute('data-to') === L.to) {
           RB.audio && RB.audio.sfx('answer_right');
-          if (L.items) RB.learn.record(L.items, { ok: firstTry, mode: 'choice', assisted });
+          const met = metWord(L.items);
+          if (L.items) RB.learn.record(L.items, supported(firstTry, assisted, showEn));
           const why = tier(L.why);
           b.classList.add('on');
-          fbSet(fb, 'ok', 'Delivered.', why ? (why.jp ? '<div class="fb-jp">' + RB.ui.jhtml(why.jp) + '</div>' : '') + '<div>' + esc(why.en) + '</div>' : '');
+          fbSet(fb, 'ok', 'Delivered.', (why ? (why.jp ? '<div class="fb-jp">' + RB.ui.jhtml(why.jp) + '</div>' : '') + '<div>' + esc(why.en) + '</div>' : '') + met);
           P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < list.length - 1 ? 'Next letter' : 'Done');
           P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; assisted = false; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else { deal(); render(); } };
           P.body.querySelectorAll('[data-to]').forEach((x) => (x.disabled = true));

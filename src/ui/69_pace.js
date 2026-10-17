@@ -627,7 +627,7 @@ RB.pace = (function () {
         else { flags.review++; if (!clk.has('candidate-review') && !clk.has('recognition-repair')) { lastCause = 'candidate-review'; clk.pause('candidate-review'); } }
         render();
       },
-      // the pad says "Confirm character & continue" while a review or repair stopped a visible clock
+      // the pad says "Add character & continue" while a review or repair stopped a visible clock
       reviewing() { return !!(clk && visibleClock() && clk.timed() && (clk.has('candidate-review') || clk.has('recognition-repair'))); },
       confirmed() {
         if (clk && (clk.has('candidate-review') || clk.has('recognition-repair'))) {

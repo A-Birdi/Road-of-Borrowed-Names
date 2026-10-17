@@ -183,20 +183,20 @@ await test('Ready → word help pauses → Continue → soft expiry → Continue
 });
 
 // ---------------------------------------------------------------------------------------------------
-await test('recognition repair stops the pace and costs nothing ("That is not what I wrote", one-press Confirm character & continue)', async () => {
+await test('recognition repair stops the pace and costs nothing ("That is not what I wrote", one-press Add character & continue)', async () => {
   const { p, errors, ctx } = await open(DESK, { input: 'hand' });
   await p.evaluate((st) => __attempt(st, { pace: 'custom', budgetSec: 60, taskId: 'T/repair', representation: 'kana' }), RIGHT);
   await ready(p);
   await p.evaluate(() => RB.pad.__last._inject(__ink('み')));
   await p.waitForFunction(() => document.querySelector('.readas').getAttribute('data-state') === 'sure');
   const before = await p.evaluate(() => ({ dis: document.querySelector('[data-a=notwrote]').disabled, conf: document.querySelector('[data-a=confirm]').textContent.trim() }));
-  assert(!before.dis && before.conf === 'Confirm', 'the repair is offered even after a confident reading: ' + JSON.stringify(before));
+  assert(!before.dis && before.conf === 'Add character', 'the repair is offered even after a confident reading: ' + JSON.stringify(before));
   await p.click('[data-a=notwrote]');
   await p.waitForFunction(() => __clk().reasons && __clk().reasons.includes('recognition-repair'));
   const a = (await clk(p)).activeMs;
   await p.waitForTimeout(1000);
   const st = await p.evaluate(() => ({ c: __clk(), conf: document.querySelector('[data-a=confirm]').textContent.trim(), bar: document.querySelector('.pace-st').textContent }));
-  assert(st.c.activeMs === a && st.conf === 'Confirm character & continue' && /correcting what the pad read/.test(st.bar), 'repair stops the clock: ' + JSON.stringify(st));
+  assert(st.c.activeMs === a && st.conf === 'Add character & continue' && /correcting what the pad read/.test(st.bar), 'repair stops the clock: ' + JSON.stringify(st));
   await shot(p, 'repair_1280');
   // write it again, then one press inserts it and continues
   await p.evaluate(() => RB.pad.__last._inject(__ink('み', 3)));
@@ -205,7 +205,7 @@ await test('recognition repair stops the pace and costs nothing ("That is not wh
   await p.waitForFunction(() => __clk().state === 'running');
   assert((await p.evaluate(() => RB.pad.__last.text())) === 'み', 'the reviewed character was inserted by the same press');
   // candidate review: tapping another reading stops the pace too; writing it again and
-  // "Confirm character & continue" goes on
+  // "Add character & continue" goes on
   await p.evaluate(() => RB.pad.__last._inject(__ink('ぎ')));
   await p.waitForFunction(() => document.querySelector('.readas').getAttribute('data-state') === 'sure');
   // (C-14: the pad shows one guess; the other readings open with More suggestions, which is the review)
@@ -213,7 +213,7 @@ await test('recognition repair stops the pace and costs nothing ("That is not wh
   await p.click('.cands .cand >> nth=0');
   await p.waitForFunction(() => __clk().reasons && __clk().reasons.includes('candidate-review'));
   const cr = await p.evaluate(() => ({ c: __clk(), conf: document.querySelector('[data-a=confirm]').textContent.trim(), st: document.querySelector('.pace-st').textContent }));
-  assert(cr.c.state === 'paused' && cr.conf === 'Confirm character & continue' && /checking what the pad read/.test(cr.st), 'candidate review pauses: ' + JSON.stringify(cr));
+  assert(cr.c.state === 'paused' && cr.conf === 'Add character & continue' && /checking what the pad read/.test(cr.st), 'candidate review pauses: ' + JSON.stringify(cr));
   await p.click('[data-a=clear]');
   await p.evaluate(() => RB.pad.__last._inject(__ink('ぎ')));
   await p.waitForFunction(() => document.querySelector('.readas').getAttribute('data-state') === 'sure');
@@ -251,7 +251,7 @@ await test('a misread reported after a wrong answer is not a Japanese error: the
   await p.click('.strip .cell:not(.ins) >> nth=1');
   await p.evaluate(() => RB.pad.__last._inject(__ink('ぎ')));
   await p.waitForFunction(() => document.querySelector('.readas').getAttribute('data-state') === 'sure');
-  assert((await p.evaluate(() => document.querySelector('[data-a=confirm]').textContent.trim())) === 'Confirm character & continue', 'one press inserts and continues');
+  assert((await p.evaluate(() => document.querySelector('[data-a=confirm]').textContent.trim())) === 'Add character & continue', 'one press inserts and continues');
   await p.click('[data-a=confirm]');
   await p.waitForFunction(() => __clk().state === 'running');
   await p.click('[data-a=submit]');
@@ -584,7 +584,7 @@ await test('ordinary challenges have no clock: no Pace bar, no Ready, no repair 
   for (const ch of ['み', 'き']) {
     await p.evaluate((ch) => RB.pad.__last._inject(__ink(ch)), ch);
     await p.waitForFunction(() => document.querySelector('.readas').getAttribute('data-state') === 'sure');
-    assert((await p.evaluate(() => document.querySelector('[data-a=confirm]').textContent.trim())) === 'Confirm', 'the confirm label is unchanged');
+    assert((await p.evaluate(() => document.querySelector('[data-a=confirm]').textContent.trim())) === 'Add character', 'the confirm label is unchanged');
     await p.click('[data-a=confirm]');
   }
   await p.click('[data-a=submit]');

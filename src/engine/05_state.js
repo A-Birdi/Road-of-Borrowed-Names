@@ -57,7 +57,9 @@ RB.state = (function () {
       notebook: [],        // [{kind, id, t}]
       learn: {
         profile: opts.profile || 'F',
-        assist: opts.assist || 'normal', // 'assist' (no mistake cost) | 'normal'
+        // a new journey's language mistakes cost nothing unless chosen otherwise (Robin, FR-1: "No-punishment assists
+        // should be the default"); tactical difficulty below is separate
+        assist: opts.assist || 'assist', // 'assist' (no mistake cost) | 'normal'
         difficulty: opts.difficulty || 'normal', // combat tactics difficulty
         kanaGroup: 0,      // Foundations: next kana group to teach
         items: {},         // mastery records keyed by item id (k:あ, v:みず, g:prt_wa, c:passage)
@@ -230,8 +232,32 @@ RB.state = (function () {
     if (stage === 'done') q.done = true;
     else if (stage === 'start') q.stage = Math.max(q.stage, 0);
     else q.stage = Math.max(q.stage, +stage);
+    // a later stage whose condition already holds (its `when`: every request done → "report back"), so the Journal,
+    // the next step and the markers agree (FR-1 F07)
+    const d = !q.done && RB.content && RB.content.quests && RB.content.quests[id];
+    if (d && d.stages) for (let k = d.stages.length - 1; k > q.stage; k--) if (d.stages[k].when && test(s, d.stages[k].when)) { q.stage = k; break; }
     q.t = Date.now();
     return q;
+  }
+  // quests that start and finish by themselves (`auto: { start, done }`, conditions): a journey's first purpose before
+  // anyone has given a quest (FR-1 F06: the letter of introduction for Keeper Tsuru). Called when a scene ends.
+  function autoQuests(s) {
+    const Q = (RB.content && RB.content.quests) || {};
+    let changed = false;
+    for (const id in Q) {
+      const a = Q[id].auto;
+      if (!a) continue;
+      const q = s.quests[id];
+      if (!q && a.start && test(s, a.start) && !(a.done && test(s, a.done))) { setQuest(s, id, 'start'); changed = true; }
+      else if (q && !q.done && a.done && test(s, a.done)) { setQuest(s, id, 'done'); changed = true; }
+    }
+    // an active quest's later stage whose `when` now holds (the last town request done, in whatever order)
+    for (const id in s.quests) {
+      const q = s.quests[id], d = Q[id];
+      if (!q || q.done || !d || !d.stages) continue;
+      for (let k = d.stages.length - 1; k > q.stage; k--) if (d.stages[k].when && test(s, d.stages[k].when)) { q.stage = k; changed = true; break; }
+    }
+    return changed;
   }
   function pronouns(p) {
     const P = {
@@ -250,5 +276,5 @@ RB.state = (function () {
     s.awarded[id] = Date.now();
     return true;
   }
-  return { newCampaign, test, peek, give, take, setQuest, pronouns, once, addTerm, PROF_ORDER };
+  return { newCampaign, test, peek, give, take, setQuest, autoQuests, pronouns, once, addTerm, PROF_ORDER };
 })();

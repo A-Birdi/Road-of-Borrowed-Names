@@ -730,9 +730,12 @@ RB.combat = (function () {
       (c.pointed ? '<span class="rc-new rc-point">' + esc(compName()) + ' suggests this</span>' : '') + (c.tried ? '<span class="rc-new rc-tried">Tried</span>' : '') +
       (c.mod ? '<span class="rc-mod">' + RB.ui.jhtml(c.mod.pair.jp) + '</span>' : '') + '</span>' +
       (tgt ? '<span class="rc-tgt' + (r.foes.length > 1 ? ' many' : '') + '">' + esc(tgt) + '</span>' : '') +
-      '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) +
-      (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') +
-      (here ? '<span class="rc-here' + (here.none ? ' none' : '') + '"><b>Here:</b> ' + esc(here.en) + '</span>' : '') + '</span></button>';
+      // FR-1 F14: what it does now leads; what it does in general (and what it answers) follows, folded to two lines
+      // on a card with a Here: line (the whole of it on keyboard focus, as the card's tooltip, and to a screen reader)
+      '<span class="rc-d">' + (c.disabled ? I('warn') + esc(desc) : '') +
+      (here ? '<span class="rc-here' + (here.none ? ' none' : '') + '"><b>Here:</b> ' + esc(here.en) + '</span>' : '') +
+      (c.disabled ? '' : '<span class="rc-more' + (here ? ' folded' : '') + '"' + (here ? ' title="' + esc(desc + (ans.length ? ' Answers: ' + ans.join(', ') + '.' : '')) + '"' : '') + '>' + esc(desc) +
+      (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') + '</span>') + '</span></button>';
   }
   // One short note per exchange, the first time something needs explaining:
   // several creatures, a kind of move never seen before, then a full Harmony,

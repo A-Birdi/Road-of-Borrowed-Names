@@ -128,7 +128,7 @@ export default async (t) => {
   at(100); c.pause('candidate-review');
   at(900); c.resume();
   at(1000);
-  t.eq(c.active(), 200, '"Confirm character & continue" ends a candidate review in one action');
+  t.eq(c.active(), 200, '"Add character & continue" ends a candidate review in one action');
   c.pause('recognition-repair');
   at(5000); c.pause('help'); c.resume();
   t.ok(!c.running() && c.has('help') && !c.has('recognition-repair'), 'continuing leaves repair, but help still open keeps it stopped');

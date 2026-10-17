@@ -25,9 +25,20 @@ RB.challenge = (function () {
   // (the answer or a model shown). Access and input help (text size, redrawing, a same-shape twin) never count.
   const HELP_RANK = { conceptual: 1, constrain: 2, supplied: 3 };
   function helpCat(cat) { if (!active || !HELP_RANK[cat]) return; if (!active.help || HELP_RANK[cat] > HELP_RANK[active.help]) active.help = cat; }
+  // What the help was, in words, for the line under a helped success (FR-1 F10): "Practiced with word help", not a
+  // generic "Assisted — that's fine". First use first; the evidence record keeps its category (above) as before.
+  const HELP_WHY = { word: 'word help', translation: 'the English shown', model: 'the model shown', suggestions: 'suggested characters', correction: 'a character picked from the alternatives', chart: 'the kana chart', reveal: 'the answer shown', companion: 'a companion\u2019s hint', copy: 'the model to copy', guided: 'a guided example' };
+  function helpWhy(code) { if (active && HELP_WHY[code] && !active.why.includes(code)) active.why.push(code); }
+  function helpLine(step) {
+    if (step.copy) helpWhy('copy'); else if (step.guided) helpWhy('guided');
+    const all = (active ? active.why : []).map((c) => HELP_WHY[c]);
+    if (!all.length) return 'Practiced with help.';
+    return 'Practiced with ' + (all.length > 2 ? all.slice(0, -1).join(', ') + ' and ' + all[all.length - 1] : all.join(' and ')) + '.';
+  }
   function noteHelp(tok) {
     if (!active) return;
     active.helpUsed = true;
+    helpWhy('word');
     // word help on a word that is (part of) the answer narrows it; otherwise it explains the situation
     const ans = active.step && active.step.answer ? plain(active.step.answer) : '';
     const surf = tok && (tok.surface || tok.s) ? String(tok.surface || tok.s) : '';
@@ -85,8 +96,13 @@ RB.challenge = (function () {
     const ans = plain(step.answer);
     if (!opts) {
       let d = [];
-      try { d = RB.answers.distractors(ans, { count: 3, kind: Array.from(ans).length === 1 ? 'kana' : 'word' }); } catch (e) { d = []; }
-      opts = [ans].concat(d);
+      try { d = RB.answers.distractors(ans, { count: 12, kind: Array.from(ans).length === 1 ? 'kana' : 'word' }); } catch (e) { d = []; }
+      // Foundations (FR-1 F03): wrong options made of kana this player has met, so a first vowel question isn't a
+      // trap of small kana, katakana twins or rows still to come; those contrasts return once their kana are met.
+      // (Everyone else has met every kana: the first three are the same as before.)
+      const met = (t) => Array.from(t).every((c) => !RB.kana.isKana(c) || RB.learn.kanaKnown(c));
+      const fair = d.filter(met);
+      opts = [ans].concat((fair.length >= 2 ? fair : fair.concat(d.filter((x) => !met(x)))).slice(0, 3));
     }
     const acc = new Set((step.accept || [step.answer]).map(plain));
     // choice mode must always contain a right answer
@@ -125,10 +141,10 @@ RB.challenge = (function () {
       let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : step.kind === 'order' ? 'order' : step.kind === 'forge' ? (opts.mode || RB.forge.startRung(st, RB.game.s && RB.game.s.learn.profile)) : 'choice';
       if (step.kind === 'write' && !MODES.some((m) => m.id === mode)) mode = 'hand';
       const res = { ok: false, firstTry: null, mistakes: 0, assisted: false, mode: null, recogMisses: 0 };
-      active = { step, helpUsed: false, help: null };
+      active = { step, helpUsed: false, help: null, why: [] };
       // help given before the task began (a companion pointing at the response in a story battle, E19): it counts as
       // what it supplied, from the first answer
-      if (opts.preHelp) { active.helpUsed = true; helpCat(opts.preHelp); }
+      if (opts.preHelp) { active.helpUsed = true; helpCat(opts.preHelp); helpWhy('companion'); }
       // a step whose blank depends on how it is answered (a modifier phrase, E27: typed whole, handwritten as the
       // modifier and its particle with the rest shown): the fields of the route in use, so only what is written is
       // recorded as written
@@ -208,7 +224,7 @@ RB.challenge = (function () {
         if (hear) hear.onclick = () => { try { RB.voice.sayRef(RB.voice.refKey.spoken(step.transcript.jp), RB.jp.reading(step.transcript.jp)); } catch (e) { /* the voice is optional */ } };
         if (readit) readit.onclick = () => { res.read = true; renderCtx(); };
         const tr = trSlot.querySelector('[data-a=tr]');
-        if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; helpCat(step.kind === 'choose' ? 'constrain' : 'conceptual'); if (PH) PH.assist('translation'); renderCtx(); };
+        if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; helpCat(step.kind === 'choose' ? 'constrain' : 'conceptual'); helpWhy('translation'); if (PH) PH.assist('translation'); renderCtx(); };
       }
 
       // ---- 2 · the sheet: one pane per input mode, kept when switching ----
@@ -223,7 +239,7 @@ RB.challenge = (function () {
             composeHost: line,
             pace: PH,
             onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); if (PH) PH.draft(); },
-            onAssist: (why) => { if (why !== 'model' || !step.copy) { active.helpUsed = true; helpCat(why === 'model' ? 'supplied' : 'constrain'); } if (why === 'correction' || why === 'suggestions') res.recogRepairs = (res.recogRepairs || 0) + 1; if (PH) PH.assist(why); },
+            onAssist: (why) => { if (why !== 'model' || !step.copy) { active.helpUsed = true; helpCat(why === 'model' ? 'supplied' : 'constrain'); helpWhy(why); } if (why === 'correction' || why === 'suggestions') res.recogRepairs = (res.recogRepairs || 0) + 1; if (PH) PH.assist(why); },
             modelFor: () => Array.from(plain(step.answer))[pad ? Math.min(pad.text().length, Array.from(plain(step.answer)).length - 1) : 0],
           });
         },
@@ -435,7 +451,7 @@ RB.challenge = (function () {
         RB.audio && RB.audio.sfx('answer_right');
         // how it was written: "水 (みず) — written in kanji", one-shape characters
         const how = (notes || []).map((n) => '<div class="fb-how" data-note="' + esc(n.code) + '">' + enRuby(n.en) + '</div>').join('');
-        fb('ok', 'Yes.', how + (res.assisted ? '<span class="muted small">' + (res.guided ? 'Guided practice' : 'Assisted') + ' — that\'s fine.</span>' : '') + explainHtml());
+        fb('ok', 'Yes.', how + (res.assisted ? '<span class="muted small fb-help">' + esc(helpLine(step)) + '</span>' : '') + explainHtml());
         const w = wrap.querySelector('.fbwrap');
         const btn = continueBtn();
         btn.onclick = () => finish(false);
@@ -448,7 +464,7 @@ RB.challenge = (function () {
         const r = check(text, step, { handwritten: modeUsed === 'hand', input: modeUsed });
         if (r.ok) {
           if (step.kind === 'forge' && r.family != null) consequence(r.family);
-          if (meta.assisted) { active.helpUsed = true; helpCat('constrain'); }
+          if (meta.assisted) { active.helpUsed = true; helpCat('constrain'); if (!active.why.length) helpWhy('suggestions'); }
           res.given = { text: plain(text), mode: modeUsed, matched: r.matched != null ? r.matched : null, family: r.family != null ? r.family : null };
           success(modeUsed, r.notes);
           return;
@@ -541,7 +557,7 @@ RB.challenge = (function () {
       function submit() {
         if (locked) return;
         if (mode === 'hand') {
-          if (pad.hasPending()) { RB.ui.notice('Confirm (✓) or clear the character on the pad first.', 'info'); return; }
+          if (pad.hasPending()) { RB.ui.notice('The character on the pad is not in your answer yet: press Add character (or Clear it), then Submit. Nothing was counted.', 'info'); return; }
           if (!pad.text()) { RB.ui.notice('Write and confirm at least one character first.', 'info'); return; }
           evaluate(pad.text(), 'hand', pad.meta());
         } else if (mode === 'ime') submitIme();
@@ -568,6 +584,7 @@ RB.challenge = (function () {
       function revealAnswer() {
         active.helpUsed = true;
         helpCat('supplied');
+        helpWhy('reveal');
         res.assisted = true;
         res.revealed = true;
         if (PH) PH.assist('reveal');
@@ -743,5 +760,7 @@ RB.challenge = (function () {
     }
   }
 
-  return { run, runStep, practice, active: isActive, noteHelp, teachCard, check, orderOk, choicesFor };
+  // the question being asked (read-only; for tests that answer through the real interface)
+  const current = () => (active ? active.step : null);
+  return { run, runStep, practice, active: isActive, current, noteHelp, teachCard, check, orderOk, choicesFor };
 })();

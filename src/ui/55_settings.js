@@ -500,10 +500,48 @@ RB.ui.settings = (function () {
     }
     return ['', ''];
   }
-  // "Before you set out": what shapes ordinary play, on one spread, for a journey just made (ST-1b)
+  // "Before you set out" (ST-1b), first as a summary of what this journey is set to (FR-1 F05: one short page and Set
+  // out, rather than a second pass over every choice made a moment ago); "Adjust details" opens the full spread below
+  let reviewDetail = false;
+  const PROFILE_NAMES = { F: 'Foundations', E: 'Everyday', I: 'Intermediate', A: 'Advanced' };
+  function summaryPages() {
+    const st = RB.game.settings, L = learnObj();
+    const prof = PROFILE_NAMES[L.profile] || L.profile;
+    const fresh = L.profile === 'F' && (L.kanaKnown || 'none') === 'none';
+    const head = fresh ? 'Teach me from the beginning' : L.profile === 'F' ? 'Foundations, with the kana you know' : prof + ' Japanese';
+    const sub = (fresh ? 'New characters come with a model and help, a few at a time. ' : '') +
+      (st.lead === 'ja' ? 'Dialogue leads in Japanese' : 'Dialogue leads in English') +
+      (st.secondary === 'always' ? ', with the other language beneath. ' : st.secondary === 'tap' ? '; tap a line for the other language. ' : '; the other language is hidden. ') +
+      (L.assist === 'assist' ? 'Learning mistakes have no battle cost.' : 'A learning mistake costs a little resolve, never much.');
+    const tact = { relaxed: 'Relaxed', normal: 'Standard', hard: 'Demanding' }[L.difficulty] || L.difficulty;
+    const kana = L.profile !== 'F' ? '' : { none: ' · kana taught from the start', hira: ' · you know hiragana', both: ' · you know both kana' }[L.kanaKnown || 'none'] || '';
+    const vm = RB.voice && RB.voice.mode ? RB.voice.mode() : 'prepared';
+    const voice = st.muted ? 'Muted' : vm === 'none' ? 'No voice' : vm === 'device' ? 'Your device\u2019s voice' : 'Recorded voices where they exist';
+    // what carries over from another journey or an earlier choice and is not the usual start: said, not hidden
+    const unusual = [];
+    if (st.lead === 'ja') unusual.push('Dialogue leads in Japanese');
+    if (st.secondary !== 'always') unusual.push(st.secondary === 'tap' ? 'the other language shows when you tap a line' : 'the other language is hidden');
+    if (st.uiLang === 'ja') unusual.push('menus are in Japanese');
+    if (st.questGuide === 'off') unusual.push('quest markers and hints are off');
+    const row = (k, v, a) => '<div class="sx-sum-r"><dt>' + esc(k) + '</dt><dd>' + esc(v) + (a || '') + '</dd></div>';
+    const a = '<p class="sx-lede">Your journey is ready. This is how it is set up; every choice can be changed later in Settings (the gear at the top of the screen).</p>' +
+      '<div class="sx-sum-card"><p class="sx-sum-h">' + esc(head) + '</p><p class="sx-sum-sub">' + esc(sub) + '</p></div>' +
+      '<dl class="sx-sum">' +
+        row('Japanese', prof + kana) +
+        row('Learning mistakes', L.assist === 'assist' ? 'No battle cost. Try again, with help if you like; the creature\u2019s moves still matter.' : 'Standard: a wrong answer costs a little resolve, never much.') +
+        row('Battles', tact + (L.difficulty === 'hard' ? ' (tactics only; separate from the Japanese)' : '')) +
+        row('Sound', voice + ' · overall level ' + Math.round((st.vol && st.vol.master != null ? st.vol.master : 1) * 100) + '%', ' <button type="button" class="pbtn quiet sx-sum-link" data-a="tab" data-tab="audio">' + I('sound') + '<span>Sound and voices</span></button>') +
+      '</dl>' +
+      (unusual.length ? '<p class="note-slip sx-sum-note" role="note">' + I('warn') + ' <span>Carried over from your settings: ' + esc(unusual.join('; ')) + '. Change it under Reading if that was not meant.</span></p>' : '');
+    const b = R.input() + '<p class="sx-why muted small">Handwriting, choices and the keyboard can be switched during any question.</p>' +
+      '<p class="sx-sum-acts"><button type="button" class="pbtn sx-sum-more" data-a="details">' + I('dots') + '<span>Adjust details</span></button></p>' +
+      '<p class="muted small">Adjust details shows every setting that shapes the road: quest guidance, reading, sound and voices, Suzu\u2019s speech, stories and battles. The tabs above hold the rest.</p>';
+    return [a, b];
+  }
   function startPages() {
+    if (!reviewDetail) return summaryPages();
     return [
-      '<p class="sx-lede">These shape how the road plays. Look them over before the story begins; every one can be changed later in Settings (the gear at the top of the screen, or in the Ledger), and the other tabs above hold the rest.</p>' +
+      '<p class="sx-lede">These shape how the road plays. Every one can be changed later in Settings (the gear at the top of the screen, or in the Ledger), and the other tabs above hold the rest. <button type="button" class="pbtn quiet" data-a="summary">' + I('back') + '<span>Back to the summary</span></button></p>' +
         journeyBox(R.profile(false) + R.assist() + R.difficulty()) +
         sec('Finding the way') + R.questGuide() +
         sec('Reading') + R.lead() + R.secondary() + R.spacing() + R.lightbulb() + R.textSpeed(),
@@ -536,6 +574,13 @@ RB.ui.settings = (function () {
         });
       } else if (b.dataset.a === 'resetbinds') {
         st.binds = null; RB.input.setBinds(null); await RB.game.saveSettings(); render();
+      } else if (b.dataset.a === 'details') {
+        reviewDetail = true; render(true);
+        const L0 = L.querySelector('.leaf'); if (L0) L0.focus({ preventScroll: true });
+      } else if (b.dataset.a === 'summary') {
+        reviewDetail = false; render(true);
+      } else if (b.dataset.a === 'tab' && b.dataset.tab) {
+        show_(b.dataset.tab);
       } else if (b.dataset.a === 'voiceclear') {
         // only the game's own kept recordings (its one cache); saves and everything else stay
         const ok = RB.voicebank ? await RB.voicebank.clearKept() : false;
@@ -632,7 +677,7 @@ RB.ui.settings = (function () {
   function review(s) {
     if (lay) close();
     return new Promise((res) => {
-      reviewS = s || null; reviewDone = res;
+      reviewS = s || null; reviewDone = res; reviewDetail = false;
       lastMode = 'review'; group = 'start';
       if (RB.audio) RB.audio.sfx('menu_open');
       show('review');

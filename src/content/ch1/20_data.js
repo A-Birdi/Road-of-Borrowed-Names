@@ -32,11 +32,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { skin: ['#c8dce8', '#a8bcc8'], hair: ['#8aa0b0', '#a8bcc8', '#e8f4fc'], cloth: ['#8aa0b0', '#6a8090', '#e8f4fc'], style: 'long', eyes: 'soft', acc: ['hood'], hoodCol: '#8aa0b0', bg: '#14202a' } });
 
   // ---- quests --------------------------------------------------------------------
+  // the journey's first purpose, before Tsuru gives a quest: the letter of introduction (FR-1 F06); it starts and ends by
+  // itself (RB.state.autoQuests), so the Journal and the markers say where to go from the first step
+  C.quests.rw_letter = { main: true, chapter: 1, title: { jp: 'ツル さん へ の {紹介状|しょうかいじょう}', en: 'A Letter for Keeper Tsuru' },
+    auto: { start: 'rw_arrived', done: 'rw_met_tsuru' },
+    stages: [
+      { jp: '{紹介状|しょうかいじょう} を {灯守|ひもり} の ツル さん に {届|とど}けよう 。 {葦|あし}ノ{瀬|せ} は この {道|みち} の {東|ひがし} 。', en: 'Bring your letter of introduction to Keeper Tsuru, the lantern keeper of Reedwake. The village is east along this road.', at: { map: 'rw.village', npc: 'tsuru' } },
+    ] };
   C.quests.rw_labels = { main: true, chapter: 1, title: { jp: '{嵐|あらし} の あと の ラベル', en: 'Labels After the Storm' },
     stages: [
       { jp: 'ツル に {頼|たの}まれた 。 {広場|ひろば} の {人|ひと} たち に {話|はなし} を {聞|き}こう 。', en: 'Keeper Tsuru asked for help. Ask around the square: Mio\'s shop, the river warehouse, the bridge, and the teahouse.' },
       { jp: '{白|しろ}く なった ラベル は まだ ある 。 {話|はなし} を {聞|き}いて いない {人|ひと} は ？', en: 'More blank labels to untangle. Who haven\'t you helped yet? (Mio, Nao at the warehouse, Ren at the bridge, Suzu in the square, Hana\'s teahouse.)' },
-      { jp: 'みんな の {話|はなし} を ツル に {伝|つた}えよう 。', en: 'Tell Keeper Tsuru what everyone found. She is in the square.' },
+      { jp: 'みんな の {話|はなし} を ツル に {伝|つた}えよう 。', en: 'Tell Keeper Tsuru what everyone found. She is in the square.',
+        // (every request done: the same condition as Tsuru's report)
+        when: 'rw_bottles_done&rw_letters_done&rw_lanterns_done&rw_suzu_told&rw_hana_cups' },
     ] };
   C.quests.rw_mill = { main: true, chapter: 1, title: { jp: '{呼|よ}び{返|かえ}す {水車|すいしゃ}{小屋|ごや}', en: 'The Mill That Calls Back' },
     stages: [

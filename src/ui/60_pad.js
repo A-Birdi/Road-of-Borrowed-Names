@@ -9,7 +9,8 @@
  *   resize or orientation change redraws them unchanged.
  * - The recognizer never sees the expected answer. The pad shows what it
  *   read ("I read this as…"), alternatives and uncertainty; only an
- *   explicit Confirm puts a character into the answer strip.
+ *   explicit Add character (data-a="confirm") puts a character into the answer strip (FR-1 F09: named for what it
+ *   does, apart from the challenge's Submit, which sends the whole answer).
  * - Choosing a non-top candidate or picking from the chart counts as an
  *   assisted character (not the other character of one shape, ロ/口).
  * - "Read as": Kanji or kana (the task's kana plus every kanji in the game),
@@ -212,7 +213,7 @@ RB.pad = (function () {
       '<div class="pad-inspect">' +
         '<div class="readas" data-state="empty"></div>' +
         '<div class="cands" role="group" aria-label="Other readings"></div>' +
-        '<button class="pbtn primary pad-confirm" data-a="confirm" disabled>' + I('done') + '<span>Confirm</span></button>' +
+        '<button class="pbtn primary pad-confirm" data-a="confirm" disabled>' + I('done') + '<span>Add character</span></button>' +
         '<div class="rd-morerow"></div>' +
         '<div class="sr" aria-live="polite"></div>' +
       '</div>' +
@@ -463,7 +464,7 @@ RB.pad = (function () {
       P.list = [];
       if (PH) {
         // while a pace is stopped for review, one press inserts the character and continues
-        conf.lastChild.textContent = PH.reviewing() ? 'Confirm character & continue' : 'Confirm';
+        conf.lastChild.textContent = PH.reviewing() ? 'Add character & continue' : 'Add character';
         misread.firstChild.disabled = !(r && r.status !== 'empty' && P.strokes.length);
       }
       if (!r || r.status === 'empty') {
@@ -564,7 +565,7 @@ RB.pad = (function () {
     }
     function emptyCaption() {
       const orderNotes = P.chars.map((c) => c.order).filter((o) => o && o.confident && o.issues && o.issues.length);
-      if (P.replace >= 0) return 'Write the replacement for <span lang="ja">' + glyph(P.chars[P.replace].ch) + '</span>, then Confirm.';
+      if (P.replace >= 0) return 'Write the replacement for <span lang="ja">' + glyph(P.chars[P.replace].ch) + '</span>, then Add character.';
       if (orderNotes.length && P.chars.length) return esc('Stroke order: ' + orderNotes[orderNotes.length - 1].issues.map((i) => i.en).join(' '));
       if (P.chars.length && P.maxLen > 1) return 'Write the next one, or tap a character in your answer to fix it.';
       return 'Write one character in the box.';

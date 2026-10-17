@@ -218,3 +218,15 @@ body.high-contrast .sx-scope .sx-slipbtn { background: none; border-color: #000;
 .sx-scope .opt.sx-opt, .sx-scope .opt.sx-opt > .sx-face, .sx-scope .opt.sx-opt .sx-mark { max-width: 100%; min-width: 0; box-sizing: border-box; }
 .sx-scope .opt.sx-opt .sx-w { min-width: 0; }
 .sx-scope .opt.sx-opt .sx-en { overflow-wrap: anywhere; }
+/* FR-1 F05: "Before you set out" as a summary of the journey's real settings */
+.sx-sum-card { margin: 0 0 1em; padding: 0.7em 0.9em; border: 1px solid var(--paper-edge); border-left: 4px solid var(--ribbon); border-radius: var(--r-2); background: rgba(255, 250, 240, 0.6); }
+.sx-sum-card .sx-sum-h { margin: 0 0 0.25em; font-size: 1.15em; font-weight: 700; color: var(--ink); }
+.sx-sum-card .sx-sum-sub { margin: 0; line-height: 1.5; color: var(--ink-2); }
+.sx-sum { margin: 0 0 1em; display: grid; gap: 0.55em; }
+.sx-sum-r { display: grid; grid-template-columns: minmax(8.5em, auto) 1fr; gap: 0.2em 0.9em; align-items: baseline; }
+.sx-sum-r dt { font-weight: 700; color: var(--ink); }
+.sx-sum-r dd { margin: 0; color: var(--ink-2); line-height: 1.45; min-width: 0; }
+.sx-sum-link { margin-left: 0.4em; vertical-align: baseline; }
+.sx-sum-acts { margin: 1em 0 0.4em; }
+.sx-sum-note { display: flex; gap: 0.5em; align-items: flex-start; }
+@media (max-width: 520px) { .sx-sum-r { grid-template-columns: 1fr; } }
