@@ -24,7 +24,11 @@ The repository is the shared record:
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
 Progress (the local worker's checkpoints, latest first):
-- **2026-10-17, after the pause: RESUMED** on the same pinned source ff8a0fa and manifest 513ec3ff…, with the
+- **2026-10-17, after the resumption:** phase 1 finished again (the AivisSpeech narrator, the reference readings, the
+  AivisSpeech and Nemo NPCs, and Mochi), with the same counts as at the pause: 20,731 made, 3,085 pending, 0 failed. So
+  the resumed pass made nothing new in phase 1, and what is left is Qwen's (the pause listed the rest of Ren, Suzu and
+  the last Qwen NPCs). Qwen is starting. Status only; no request to the lead.
+- 2026-10-17, after the pause (superseded by the line above): RESUMED on the same pinned source ff8a0fa and manifest 513ec3ff…, with the
   runaway-length guard on Qwen takes (normal takes unchanged). The counts are as at the pause: 20,731 made, 3,085
   pending, 0 failed. Nothing pushed. Status only; no request to the lead.
 - 2026-10-17, later (the pause; superseded by the resumption above): PAUSED at Robin's request (the GPU is needed for a while). Saved: 20,731 recordings made,
