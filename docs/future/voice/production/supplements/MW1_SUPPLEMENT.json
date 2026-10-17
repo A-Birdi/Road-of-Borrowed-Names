@@ -10,7 +10,7 @@
  },
  "builtFrom": {
   "branch": "claude/stoic-sagan-n3jvgk",
-  "commit": "the MW-1 commit on the branch (HANDOFF.md, MW-1)",
+  "commit": "6917fe07ce6925747f8e9e804923d1dc6bf6aec8",
   "scriptContentHash": "3c59018e3137b6c9e7ae79938b6dd18f3943195ff1e11a3b0e3f8742f5cd4e34",
   "command": "node tools/voice/production_manifest.mjs --out <scratch dir>, compared by id with the GO manifest"
  },
