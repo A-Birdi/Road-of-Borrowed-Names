@@ -90,8 +90,10 @@ RB.ui.create = (function () {
   const MAX_ACC = 2;
   const PRON = [['they', 'they/them'], ['she', 'she/her'], ['he', 'he/him'], ['custom', 'custom…']];
   const cap1 = (s) => String(s).charAt(0).toUpperCase() + String(s).slice(1);
-  // a label's hyphenated name kept on one line ("Light-medium", "Blue-black"): it breaks between words only (FR-1 F16)
-  const nw = (t) => RB.util.esc(t).replace(/(\S+-\S+)/g, '<span class="nw">$1</span>');
+  // FR-1 F16: a compound piece name may break where its parts meet ("Head-|band" on a narrow phone), never mid-part
+  // ("Headban|d"); a soft hyphen shows only when the line breaks there, and the label reads as one word to a screen reader
+  const SHY = { Headband: 'Head\u00adband', Ponytail: 'Pony\u00adtail', Earrings: 'Ear\u00adrings' };
+  const label = (t) => esc(SHY[t] || t);
   const NAME = {
     skin: (i) => SKIN_NAMES[i] || 'Tone ' + (+i + 1),
     hairColor: (i) => cap1((RB.sprites.HAIR_NAMES || [])[i] || 'colour ' + (+i + 1)),
@@ -229,7 +231,7 @@ RB.ui.create = (function () {
       function swatchGroup(key, legend, list, style) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-swatches">' +
           list.map((c, i) => '<label class="cr-sw cr-sw-' + style + '"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + i + '">' +
-            '<span class="face"><span class="chip" style="' + chipStyle(style, c) + '">' + tick + '</span><span class="nm">' + nw(NAME[key](i)) + '</span></span></label>').join('') +
+            '<span class="face"><span class="chip" style="' + chipStyle(style, c) + '">' + tick + '</span><span class="nm">' + label(NAME[key](i)) + '</span></span></label>').join('') +
           '</div></fieldset>';
       }
       function chipStyle(style, c) {
@@ -240,7 +242,7 @@ RB.ui.create = (function () {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-tiles cr-tiles-' + key + '">' +
           vals.map((v) => '<label class="cr-tile"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + esc(v) + '"><span class="face">' + tick +
             (thumb === 'port' ? '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="' + FIG_W + '" height="' + FIG_H + '" data-th="' + key + ':' + esc(v) + '"></canvas>') +
-            '<span class="nm">' + nw(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
+            '<span class="nm">' + label(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
       }
       function entryGroup(key, attr, legend, list, iconOf, sr) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend' + (sr ? ' class="sr"' : '') + '>' + esc(legend) + '</legend><div class="cr-entries">' +
@@ -281,7 +283,7 @@ RB.ui.create = (function () {
             '<div class="hint" id="acc-hint">Up to two. Choosing a third takes off the one you chose first.</div>' +
             '<div class="cr-tiles cr-tiles-acc">' + RB.sprites.ACCESSORIES.map((a) =>
               '<label class="cr-tile cr-acc"><input type="checkbox" data-acc="' + esc(a) + '" aria-describedby="acc-hint"><span class="face"><span class="box" aria-hidden="true">' + I('done') + '</span>' +
-              '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="acc:' + esc(a) + '"></canvas><span class="nm">' + esc(NAME.acc(a)) + '</span></span></label>').join('') +
+              '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="acc:' + esc(a) + '"></canvas><span class="nm">' + label(NAME.acc(a)) + '</span></span></label>').join('') +
             '</div><p class="cr-accnote" aria-live="polite"></p></fieldset>';
         },
         background() {

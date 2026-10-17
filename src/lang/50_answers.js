@@ -528,7 +528,9 @@ RB.answers = (function () {
     // Different real word?
     const other = lexWordFor(n);
     const isAccepted = other && cands.some((c) => fold(c.surface) === fold(other.w) || fold(c.reading) === fold(other.r));
-    if (other && !isAccepted) {
+    // a single kana asked on its own (FR-1 F04): another kana there is a kana, not a word (い is not "the stomach")
+    const single = Array.from(best.t).length === 1 && Array.from(n).length === 1;
+    if (other && !isAccepted && !single) {
       fb.push({ code: 'other_word', en: "That's " + RB.jp.rubyize(other.w, other.r) + ', "' + esc(other.m) + '".', jp: RB.jp.rubyize(other.w, other.r) });
     }
     // Whole-word script difference

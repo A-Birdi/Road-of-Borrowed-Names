@@ -265,14 +265,16 @@ RB.props = (function () {
     c.beginPath(); c.arc(x + 22, y + 12, 3.5, 0, 7); c.fill();
     px(c, x + 28, y + 6, 4, 1, p.wood[2]);
   });
-  def('lantern', { light: 36 }, (c, x, y, p, t) => {
+  // top / topW (FR-1 F12): how far a thing's picture stands above its footprint, in tiles, and how wide that part is
+  // (a share of its width, centred): a tap on that part of the picture is a tap on the thing (50_world.js tapTile)
+  def('lantern', { light: 36, top: 0.7, topW: 0.6 }, (c, x, y, p, t) => {
     px(c, x + 6, y + 4, 4, 10, p.wood[2]);
     px(c, x + 4, y - 2, 8, 7, '#3a2e2a');
     const f = 0.8 + Math.sin(t / 260) * 0.15;
     c.fillStyle = `rgba(255,200,110,${f})`;
     c.fillRect(x + 5, y - 1, 6, 5);
   });
-  def('deadlantern', {}, (c, x, y, p) => {
+  def('deadlantern', { top: 0.7, topW: 0.6 }, (c, x, y, p) => {
     px(c, x + 6, y + 4, 4, 10, p.wood[2]);
     px(c, x + 4, y - 2, 8, 7, '#3a2e2a');
     px(c, x + 5, y - 1, 6, 5, '#5a5660');

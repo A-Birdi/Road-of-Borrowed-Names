@@ -975,6 +975,28 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     - the voice site keeps the current build and the one before it; older files are pruned only on request.
   - **Not done:** real recordings heard; Firefox and Safari (not installed here); phones; `HOSTED_BASE` (Robin's host
     choice).
+- [~] XP131 FR-1, the Foundations clarity pass (Robin, 2026-10-17): "Prioritize a clearer, more rewarding early learning
+  path without holding up exploration. Preserve handwriting as a first-class way to play. Default new journeys to
+  no-punishment assistance while preserving explicit choices, existing saves and separate tactical difficulty." The
+  record is docs/review/fr1/FR1_REPORT.md (F01–F17 dispositions, screenshots) and VALIDATION.md "FR-1".
+  - **Done** (B `fr1_opening` choices and pen to the end of the boss, `fr1_defaults` 15/0, `fr1_targets` 24/0,
+    `fr1_group_sample`, `create` 384/0, `settings_review`, `learning_ui` 15/0, `combat_ui` 7/0, `encounters` 10/0,
+    `story_ch1` 8/8, `quest_guide`, `settings`, `pace` 13/0; U `fr1_foundations` 25/0, the full unit run 54,430/0):
+    - new journeys default to Assisted mistakes at every level; an explicit Standard is kept; tactics separate; a save's
+      own setting kept, a missing one defaulted (F17);
+    - a shorter Learning step and a summary-first "Before you set out" that names anything unusual (F05);
+    - kana introduced just in time for the task that needs them (the gears: よ ん, not the h row; the loft lantern:
+      nothing new), rows show only what is still new (F01, F02);
+    - Foundations options made of met kana (F03); single-kana feedback at its own scale (F04);
+    - the letter quest, the report stage in any order, the Journal turning to the followed quest (F06–F08);
+    - "Add character" on the pad (F09); help lines that name the help (F10); letters with English recorded as
+      supported context reading (F11);
+    - a tap on a lantern's drawn lamp uses it (F12); battle cards lead with "Here:" (F14);
+    - compound labels break at a soft hyphen, Back stays whole (F16);
+    - the boss and a group battle finished on Foundations + Demanding + Assisted; no rebalance (F15);
+    - 0 new spoken lines; the production manifest unchanged (65cd38053ad6); Local's batch untouched.
+  - **Not done:** F13 (art, deferred to the AC1_ART queue with captures); Firefox and Safari; phones (emulated only); a
+    real beginner's play; the letters' "met before" note seen in a browser.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

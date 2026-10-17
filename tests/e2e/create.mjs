@@ -170,6 +170,9 @@ function judge(tag, L, opts) {
   ok(await p.isVisible('[data-group=kana]'), 'Foundations shows the kana question');
   await p.click('[data-k=profile][data-v=I]');
   ok(!(await p.isVisible('[data-group=kana]')), 'other levels hide the kana question');
+  // mistakes, tactics and reading are folded under one line that says what they are (FR-1 F05): open it to change them
+  ok(/Mistakes: Assisted/.test(await p.textContent('.cr-learn details.cr-more summary')) && !(await p.isVisible('[data-k=assist][data-v=assist]')), 'the further choices are folded, their summary says Mistakes: Assisted (the new default)');
+  await p.click('.cr-learn details.cr-more > summary');
   await p.click('[data-k=assist][data-v=assist]');
   await p.click('[data-k=difficulty][data-v=hard]');
   await p.click('[data-k=input][data-v=choice]');
@@ -230,7 +233,8 @@ for (const [w, h, scale] of VPS) {
     // scroll to the end of the page: the last control is reachable above the foot
     const end = await p.evaluate(() => {
       const pg = document.querySelector('.cr-page');
-      const last = Array.from(pg.querySelectorAll('input, button')).filter((x) => x.offsetParent).pop();
+      // (the Learning step's further choices are folded in a <details>: closed, its summary line is the control)
+      const last = Array.from(pg.querySelectorAll('input, button, summary')).filter((x) => x.offsetParent && (x.tagName === 'SUMMARY' || !x.closest('details:not([open])'))).pop();
       last.scrollIntoView({ block: 'nearest' });
       const r = last.getBoundingClientRect(), pr = pg.getBoundingClientRect(), f = document.querySelector('.folio-foot').getBoundingClientRect();
       // a choice taller than the page (long text at 200 %) is reachable when its top reaches the page

@@ -535,6 +535,28 @@
       - The plan knows the next line at 60 % of positions. Most stops are hooks, choices, registered conditions and
         challenges. Widening it means declaring pure condition heads; it was not done, to stay conservative.
 
+    **FR-1, the Foundations clarity pass (Robin, 2026-10-17):** findings F01–F17 reproduced or checked first, then
+    bounded fixes. docs/review/fr1/FR1_REPORT.md (dispositions, before/after, screenshots), VALIDATION.md "FR-1",
+    REQUIREMENTS.md XP131.
+    - New journeys default to Assisted mistakes (`RB.state.newCampaign`, the creation wizard); explicit choices and
+      saved settings are kept; tactics separate. `normal` was not bulk-replaced.
+    - Creation's Learning step folds mistakes, tactics and reading under one summary line; "Before you set out" opens
+      on a summary (55_settings.js `summaryPages`) with Adjust details for every field.
+    - `!lesson kana for <challenge>` (70_lessons.js `kanaFor`, `justInTime`) introduces only the kana a task needs and
+      the player has not met (at most four); used at the gears and the loft lantern. Row lessons show only what is new.
+    - Foundations choice options are made of met kana (65_challenge.js `choicesFor`); single-kana feedback at its scale
+      (50_answers.js); help lines name the help; letters/orders with English recorded as supported context reading.
+    - The letter quest `rw_letter` (`auto`, `RB.state.autoQuests` after each scene); quest stages may carry `when`
+      (the report stage); the Journal turns to the followed quest and offers "Show the followed quest".
+    - The pad's confirm is "Add character"; a lantern's drawn lamp is a tap target (props `top`/`topW`,
+      50_world.js `tallTopAt`); battle cards lead with "Here:"; compound creation labels break at a soft hyphen.
+    - Tests: U `fr1_foundations`; B `fr1_opening` (the opening route driver: `--input choice|hand`, `--order`, `--shots`),
+      `fr1_defaults`, `fr1_targets`, `fr1_group_sample`.
+    - Voice: 0 new spoken lines; the production manifest is unchanged (65cd38053ad6); the note to Local is
+      READINESS.md §5.
+    - Open: F13 (the stair-well and the waterwheel's attachment) waits for the art queue under AC1_ART; Firefox,
+      Safari and phones were not tried; a real beginner's play.
+
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
     "P18 — Plan B", "LP-1" and "VA-1".

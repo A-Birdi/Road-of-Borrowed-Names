@@ -134,6 +134,13 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
   await p.click('[data-a=go]');
   await p.waitForSelector('.folio-review', { timeout: 15000 });
   await wait(p, 500);
+  // the summary first (FR-1 F05): what is set in a few lines, the answer mode on the page, the Sound tab and every
+  // other setting one press away
+  const sum = await p.evaluate(() => { const f = document.querySelector('.folio-review'); return { text: f.innerText, input: !!f.querySelector('input[data-set="input"]'), details: !!f.querySelector('[data-a="details"]'), sound: !!f.querySelector('[data-a="tab"][data-tab="audio"]'), go: !!f.querySelector('[data-review-go]'), fields: f.querySelectorAll('input[data-set="assist"], input[data-set="questGuide"], input[data-set="lead"]').length }; });
+  assert(/Everyday/.test(sum.text) && /No battle cost/.test(sum.text) && /Battles\s*Standard/.test(sum.text) && sum.input && sum.details && sum.sound && sum.go && !sum.fields,
+    'the summary: level, mistakes, battles, sound (with its tab), the answer mode, Adjust details and Set out, not every setting again: ' + JSON.stringify(Object.assign({}, sum, { text: sum.text.slice(0, 400) })));
+  await p.click('.folio-review [data-a="details"]');
+  await wait(p, 300);
   const r = await p.evaluate(() => {
     const f = document.querySelector('.folio-review');
     const has = (s) => !!f.querySelector(s);

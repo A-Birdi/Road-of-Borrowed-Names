@@ -11,6 +11,7 @@ export default async (t) => {
   // ---- F17: the default, explicit choices, saves ----
   t.eq(RB.state.newCampaign().learn.assist, 'assist', 'a new journey without a choice: Assisted (no mistake cost)');
   t.eq(RB.state.newCampaign({ assist: 'normal' }).learn.assist, 'normal', 'an explicit Standard choice is kept');
+  t.eq(['E', 'I', 'A'].map((pr) => RB.state.newCampaign({ profile: pr }).learn.assist), ['assist', 'assist', 'assist'], 'every level starts Assisted unless chosen otherwise');
   t.eq(RB.state.newCampaign({ difficulty: 'hard' }).learn.difficulty, 'hard', 'tactical difficulty stays its own axis');
   if (RB.save && RB.save.migrate) {
     const old = RB.state.newCampaign({ assist: 'normal' });
@@ -30,6 +31,9 @@ export default async (t) => {
   t.eq(g.chars, ['よ', 'ん'], 'the gear plates need only よ and ん, not the h row');
   t.ok(g.words.some((w) => w.w === 'よん' && w.m === 'four'), 'the words are the task\'s own (よん, four)');
   t.eq(RB.lessons.kanaFor(s, 'rw.c_mill_lantern').chars, [], 'the loft lantern (あしのせ) needs nothing new');
+  const s2 = Object.assign({}, s, { learn: Object.assign({}, s.learn, { taught: Object.assign({}, s.learn.taught, { よ: true, ん: true }) }) });
+  t.eq(RB.lessons.kanaFor(s2, 'rw.c_mill_gears').chars, [], 'with よ and ん already met, the gears need nothing (no repeat on a second visit)');
+  t.eq(RB.lessons.kanaFor(Object.assign({}, s, { learn: Object.assign({}, s.learn, { kanaKnown: 'hira' }) }), 'rw.c_mill_gears').chars, [], 'someone who knows hiragana gets no introduction');
   t.ok(!Object.keys(RB.game.s.learn.items || {}).length, 'looking creates no learning record');
   // a plain row lesson after a just-in-time introduction shows only what is still new
   s.learn.taught['よ'] = true;
@@ -45,6 +49,14 @@ export default async (t) => {
   const o = RB.challenge.choicesFor({ kind: 'write', item: 'k:お', answer: 'お', accept: ['お'], mode: 'kana', single: true }).map((x) => x.text);
   t.ok(o.includes('お') && o.length >= 3, 'the お question keeps the answer and at least two others: ' + o.join(' '));
   t.ok(o.every((x) => 'あいうえお'.includes(x)), 'and every option is a vowel already met (no ぉ, を, オ yet): ' + o.join(' '));
+  // every vowel, at many review-clock turns (the order and the candidates drawn change with the turn)
+  let unfair = [];
+  for (const ch of 'あいうえお') for (let turn = 0; turn < 12; turn++) {
+    s.learn.clockN = turn; if (RB.learn.tick) RB.learn.tick();
+    const os = RB.challenge.choicesFor({ kind: 'write', item: 'k:' + ch, answer: ch, accept: [ch], mode: 'kana', single: true }).map((x) => x.text);
+    if (os.length < 3 || os.some((x) => !'あいうえお'.includes(x))) unfair.push(ch + ':' + os.join(''));
+  }
+  t.eq(unfair, [], 'after the vowel lesson, every vowel question offers only vowels (at least three options)');
   s.learn.kanaKnown = 'both';
   const o2 = RB.challenge.choicesFor({ kind: 'write', item: 'k:お', answer: 'お', accept: ['お'], mode: 'kana', single: true }).map((x) => x.text);
   t.ok(o2.some((x) => !'あいうえお'.includes(x)), 'someone who knows every kana still gets the contrasts: ' + o2.join(' '));
@@ -55,6 +67,7 @@ export default async (t) => {
   t.ok(/basic vowel o/.test(fb('を', 'お')) && !/object particle/.test(fb('を', 'お')), 'を for お: the basic vowel, not a grammar note: ' + fb('を', 'お'));
   t.ok(/full-size/.test(fb('ぉ', 'お')), 'ぉ for お: on its own it is full-size: ' + fb('ぉ', 'お'));
   t.ok(/object particle/.test(fb('みずお', 'みずを')), 'in a word, the particle explanation stays: ' + fb('みずお', 'みずを'));
+  t.ok(!/stomach/.test(fb('い', 'う')) && /う \(u\)/.test(fb('い', 'う')), 'い for う: the kana and its sound, not the word 胃: ' + fb('い', 'う'));
 
   // ---- F06–F08: the letter quest and the report stage ----
   const q = RB.state.newCampaign();

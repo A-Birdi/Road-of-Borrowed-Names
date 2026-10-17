@@ -1301,6 +1301,8 @@ body.reduced-motion .pbtn.mg-t svg { transition: none; }
 .folio-create .folio-foot .cbtn { flex: 0 1 auto; justify-content: center; text-align: center; }
 .folio-create .folio-foot .spacer { flex: 1 1 0; }
 .cr-back.gone { visibility: hidden; }
+/* FR-1 F16: "Back" keeps its word whole ("Bac|k" at 390 px); the primary button is the one that gives way */
+.folio-create .folio-foot .cr-back { flex: none; white-space: nowrap; }
 /* the one forward action: a paper button on the cloth, marked by the ribbon */
 .cbtn.cr-primary { background: var(--paper); color: var(--ink); border-color: var(--paper); font-weight: 700; box-shadow: inset 0 -3px 0 var(--ribbon); padding: 0.2em 1.1em; line-height: 1.25; }
 .cbtn.cr-primary:hover { background: #fffaf0; }
@@ -1670,9 +1672,9 @@ body.reduced-motion .cr-route *, body.reduced-motion .cr-sheet * { transition: n
 .cr-more > summary .cr-more-sum { font-size: 0.88em; color: var(--ink-2); }
 .cr-more[open] > summary .cr-more-sum { display: none; }
 .cr-more > summary:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
-/* FR-1 F16: a colour's or a piece's name breaks between its words, never inside one (a hyphenated name keeps together) */
-.cr-sw .nm, .cr-tile .nm { overflow-wrap: normal; word-break: normal; hyphens: manual; text-wrap: balance; }
-.cr-sw .nm .nw, .cr-tile .nm .nw { white-space: nowrap; }
+/* FR-1 F16: a name breaks between its words, after its hyphen ("Light-|medium") or at a compound's soft hyphen
+   ("Head-|band", 40_create.js), in balanced lines */
+.cr-sw .nm, .cr-tile .nm { hyphens: manual; text-wrap: balance; }
 
 /* ==== src/styles/50_play.css ==== */
 /* In-play interface in folio materials: dialogue sheet and replies, word
@@ -10997,7 +10999,9 @@ RB.answers = (function () {
     // Different real word?
     const other = lexWordFor(n);
     const isAccepted = other && cands.some((c) => fold(c.surface) === fold(other.w) || fold(c.reading) === fold(other.r));
-    if (other && !isAccepted) {
+    // a single kana asked on its own (FR-1 F04): another kana there is a kana, not a word (い is not "the stomach")
+    const single = Array.from(best.t).length === 1 && Array.from(n).length === 1;
+    if (other && !isAccepted && !single) {
       fb.push({ code: 'other_word', en: "That's " + RB.jp.rubyize(other.w, other.r) + ', "' + esc(other.m) + '".', jp: RB.jp.rubyize(other.w, other.r) });
     }
     // Whole-word script difference
@@ -29164,14 +29168,16 @@ RB.props = (function () {
     c.beginPath(); c.arc(x + 22, y + 12, 3.5, 0, 7); c.fill();
     px(c, x + 28, y + 6, 4, 1, p.wood[2]);
   });
-  def('lantern', { light: 36 }, (c, x, y, p, t) => {
+  // top / topW (FR-1 F12): how far a thing's picture stands above its footprint, in tiles, and how wide that part is
+  // (a share of its width, centred): a tap on that part of the picture is a tap on the thing (50_world.js tapTile)
+  def('lantern', { light: 36, top: 0.7, topW: 0.6 }, (c, x, y, p, t) => {
     px(c, x + 6, y + 4, 4, 10, p.wood[2]);
     px(c, x + 4, y - 2, 8, 7, '#3a2e2a');
     const f = 0.8 + Math.sin(t / 260) * 0.15;
     c.fillStyle = `rgba(255,200,110,${f})`;
     c.fillRect(x + 5, y - 1, 6, 5);
   });
-  def('deadlantern', {}, (c, x, y, p) => {
+  def('deadlantern', { top: 0.7, topW: 0.6 }, (c, x, y, p) => {
     px(c, x + 6, y + 4, 4, 10, p.wood[2]);
     px(c, x + 4, y - 2, 8, 7, '#3a2e2a');
     px(c, x + 5, y - 1, 6, 5, '#5a5660');
@@ -42489,11 +42495,22 @@ RB.world = (function () {
     faceTo(p, t[0], t[1]);
     interact();
   }
-  function tapTile(tx, ty) {
+  // a tap inside the drawn top of a tall interactive thing whose footprint is the tile below (a lantern's lamp; its
+  // prop's top/topW, 25_props.js): that thing. The rest of the tile, around and above the picture, is ground as before.
+  function tallTopAt(tx, ty, at) {
+    if (!at) return null;
+    const pr = propAt(tx, ty + 1);
+    const pd = pr && RB.props.P[pr.p];
+    if (!pd || !pd.top || pr.y !== ty + 1) return null;
+    const w = pr.w || pd.w || 1, u = (tx - pr.x + at.fx) / w, half = (pd.topW || 1) / 2;
+    return u >= 0.5 - half && u <= 0.5 + half && at.fy >= 1 - pd.top ? pr : null;
+  }
+  function tapTile(tx, ty, at) {
     if (!W.map || RB.game.mode() !== 'world') return;
     const p = W.player;
     W.pathTarget = null;
-    const target = tapTargetAt(tx, ty);
+    let target = tapTargetAt(tx, ty);
+    if (!target) { const tall = tallTopAt(tx, ty, at); if (tall) target = { kind: 'prop', ref: tall }; }
     const solid = blocked(tx, ty, { except: p, ignorePlayer: true });
     if (!target) {
       if (tx === p.x && ty === p.y) return;
@@ -49292,7 +49309,8 @@ RB.render = (function () {
     const rect = canvas.getBoundingClientRect();
     const gx = ((e.clientX - rect.left) * dpr) / (artPx * ART) + cam.x;
     const gy = ((e.clientY - rect.top) * dpr) / (artPx * ART) + cam.y;
-    RB.world.tapTile(Math.floor(gx / TS), Math.floor(gy / TS));
+    const tx = Math.floor(gx / TS), ty = Math.floor(gy / TS);
+    RB.world.tapTile(tx, ty, { fx: gx / TS - tx, fy: gy / TS - ty }); // where in the tile, for a tall thing's drawn top
   }
 
   // Small thumbnail of the current view for save slots (data URL).
@@ -70940,8 +70958,10 @@ RB.ui.create = (function () {
   const MAX_ACC = 2;
   const PRON = [['they', 'they/them'], ['she', 'she/her'], ['he', 'he/him'], ['custom', 'custom…']];
   const cap1 = (s) => String(s).charAt(0).toUpperCase() + String(s).slice(1);
-  // a label's hyphenated name kept on one line ("Light-medium", "Blue-black"): it breaks between words only (FR-1 F16)
-  const nw = (t) => RB.util.esc(t).replace(/(\S+-\S+)/g, '<span class="nw">$1</span>');
+  // FR-1 F16: a compound piece name may break where its parts meet ("Head-|band" on a narrow phone), never mid-part
+  // ("Headban|d"); a soft hyphen shows only when the line breaks there, and the label reads as one word to a screen reader
+  const SHY = { Headband: 'Head\u00adband', Ponytail: 'Pony\u00adtail', Earrings: 'Ear\u00adrings' };
+  const label = (t) => esc(SHY[t] || t);
   const NAME = {
     skin: (i) => SKIN_NAMES[i] || 'Tone ' + (+i + 1),
     hairColor: (i) => cap1((RB.sprites.HAIR_NAMES || [])[i] || 'colour ' + (+i + 1)),
@@ -71079,7 +71099,7 @@ RB.ui.create = (function () {
       function swatchGroup(key, legend, list, style) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-swatches">' +
           list.map((c, i) => '<label class="cr-sw cr-sw-' + style + '"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + i + '">' +
-            '<span class="face"><span class="chip" style="' + chipStyle(style, c) + '">' + tick + '</span><span class="nm">' + nw(NAME[key](i)) + '</span></span></label>').join('') +
+            '<span class="face"><span class="chip" style="' + chipStyle(style, c) + '">' + tick + '</span><span class="nm">' + label(NAME[key](i)) + '</span></span></label>').join('') +
           '</div></fieldset>';
       }
       function chipStyle(style, c) {
@@ -71090,7 +71110,7 @@ RB.ui.create = (function () {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-tiles cr-tiles-' + key + '">' +
           vals.map((v) => '<label class="cr-tile"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + esc(v) + '"><span class="face">' + tick +
             (thumb === 'port' ? '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="' + FIG_W + '" height="' + FIG_H + '" data-th="' + key + ':' + esc(v) + '"></canvas>') +
-            '<span class="nm">' + nw(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
+            '<span class="nm">' + label(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
       }
       function entryGroup(key, attr, legend, list, iconOf, sr) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend' + (sr ? ' class="sr"' : '') + '>' + esc(legend) + '</legend><div class="cr-entries">' +
@@ -71131,7 +71151,7 @@ RB.ui.create = (function () {
             '<div class="hint" id="acc-hint">Up to two. Choosing a third takes off the one you chose first.</div>' +
             '<div class="cr-tiles cr-tiles-acc">' + RB.sprites.ACCESSORIES.map((a) =>
               '<label class="cr-tile cr-acc"><input type="checkbox" data-acc="' + esc(a) + '" aria-describedby="acc-hint"><span class="face"><span class="box" aria-hidden="true">' + I('done') + '</span>' +
-              '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="acc:' + esc(a) + '"></canvas><span class="nm">' + esc(NAME.acc(a)) + '</span></span></label>').join('') +
+              '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="acc:' + esc(a) + '"></canvas><span class="nm">' + label(NAME.acc(a)) + '</span></span></label>').join('') +
             '</div><p class="cr-accnote" aria-live="polite"></p></fieldset>';
         },
         background() {
@@ -86437,7 +86457,7 @@ RB.ui.settings = (function () {
     const kana = L.profile !== 'F' ? '' : { none: ' · kana taught from the start', hira: ' · you know hiragana', both: ' · you know both kana' }[L.kanaKnown || 'none'] || '';
     const vm = RB.voice && RB.voice.mode ? RB.voice.mode() : 'prepared';
     const voice = st.muted ? 'Muted' : vm === 'none' ? 'No voice' : vm === 'device' ? 'Your device\u2019s voice' : 'Recorded voices where they exist';
-    // what carries over from another journey or an earlier choice and is not the usual start: said, not hidden
+    // what differs from the usual start (carried over from earlier settings, or set by the level chosen): said, not hidden
     const unusual = [];
     if (st.lead === 'ja') unusual.push('Dialogue leads in Japanese');
     if (st.secondary !== 'always') unusual.push(st.secondary === 'tap' ? 'the other language shows when you tap a line' : 'the other language is hidden');
@@ -86452,7 +86472,7 @@ RB.ui.settings = (function () {
         row('Battles', tact + (L.difficulty === 'hard' ? ' (tactics only; separate from the Japanese)' : '')) +
         row('Sound', voice + ' · overall level ' + Math.round((st.vol && st.vol.master != null ? st.vol.master : 1) * 100) + '%', ' <button type="button" class="pbtn quiet sx-sum-link" data-a="tab" data-tab="audio">' + I('sound') + '<span>Sound and voices</span></button>') +
       '</dl>' +
-      (unusual.length ? '<p class="note-slip sx-sum-note" role="note">' + I('warn') + ' <span>Carried over from your settings: ' + esc(unusual.join('; ')) + '. Change it under Reading if that was not meant.</span></p>' : '');
+      (unusual.length ? '<p class="note-slip sx-sum-note" role="note">' + I('warn') + ' <span>Not the usual start: ' + esc(unusual.join('; ')) + '. Adjust details (Reading) changes it if that was not meant.</span></p>' : '');
     const b = R.input() + '<p class="sx-why muted small">Handwriting, choices and the keyboard can be switched during any question.</p>' +
       '<p class="sx-sum-acts"><button type="button" class="pbtn sx-sum-more" data-a="details">' + I('dots') + '<span>Adjust details</span></button></p>' +
       '<p class="muted small">Adjust details shows every setting that shapes the road: quest guidance, reading, sound and voices, Suzu\u2019s speech, stories and battles. The tabs above hold the rest.</p>';
@@ -90623,10 +90643,11 @@ RB.challenge = (function () {
     const ans = plain(step.answer);
     if (!opts) {
       let d = [];
-      try { d = RB.answers.distractors(ans, { count: 12, kind: Array.from(ans).length === 1 ? 'kana' : 'word' }); } catch (e) { d = []; }
+      try { d = RB.answers.distractors(ans, { count: 99, kind: Array.from(ans).length === 1 ? 'kana' : 'word' }); } catch (e) { d = []; }
       // Foundations (FR-1 F03): wrong options made of kana this player has met, so a first vowel question isn't a
       // trap of small kana, katakana twins or rows still to come; those contrasts return once their kana are met.
-      // (Everyone else has met every kana: the first three are the same as before.)
+      // (Everyone else has met every kana: the first three are the same as before. The whole candidate list is asked for,
+      // so a row's own kana are found among the rest.)
       const met = (t) => Array.from(t).every((c) => !RB.kana.isKana(c) || RB.learn.kanaKnown(c));
       const fair = d.filter(met);
       opts = [ans].concat((fair.length >= 2 ? fair : fair.concat(d.filter((x) => !met(x)))).slice(0, 3));

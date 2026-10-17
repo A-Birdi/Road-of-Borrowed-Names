@@ -815,7 +815,8 @@ RB.render = (function () {
     const rect = canvas.getBoundingClientRect();
     const gx = ((e.clientX - rect.left) * dpr) / (artPx * ART) + cam.x;
     const gy = ((e.clientY - rect.top) * dpr) / (artPx * ART) + cam.y;
-    RB.world.tapTile(Math.floor(gx / TS), Math.floor(gy / TS));
+    const tx = Math.floor(gx / TS), ty = Math.floor(gy / TS);
+    RB.world.tapTile(tx, ty, { fx: gx / TS - tx, fy: gy / TS - ty }); // where in the tile, for a tall thing's drawn top
   }
 
   // Small thumbnail of the current view for save slots (data URL).

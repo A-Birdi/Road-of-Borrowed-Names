@@ -517,7 +517,7 @@ RB.ui.settings = (function () {
     const kana = L.profile !== 'F' ? '' : { none: ' · kana taught from the start', hira: ' · you know hiragana', both: ' · you know both kana' }[L.kanaKnown || 'none'] || '';
     const vm = RB.voice && RB.voice.mode ? RB.voice.mode() : 'prepared';
     const voice = st.muted ? 'Muted' : vm === 'none' ? 'No voice' : vm === 'device' ? 'Your device\u2019s voice' : 'Recorded voices where they exist';
-    // what carries over from another journey or an earlier choice and is not the usual start: said, not hidden
+    // what differs from the usual start (carried over from earlier settings, or set by the level chosen): said, not hidden
     const unusual = [];
     if (st.lead === 'ja') unusual.push('Dialogue leads in Japanese');
     if (st.secondary !== 'always') unusual.push(st.secondary === 'tap' ? 'the other language shows when you tap a line' : 'the other language is hidden');
@@ -532,7 +532,7 @@ RB.ui.settings = (function () {
         row('Battles', tact + (L.difficulty === 'hard' ? ' (tactics only; separate from the Japanese)' : '')) +
         row('Sound', voice + ' · overall level ' + Math.round((st.vol && st.vol.master != null ? st.vol.master : 1) * 100) + '%', ' <button type="button" class="pbtn quiet sx-sum-link" data-a="tab" data-tab="audio">' + I('sound') + '<span>Sound and voices</span></button>') +
       '</dl>' +
-      (unusual.length ? '<p class="note-slip sx-sum-note" role="note">' + I('warn') + ' <span>Carried over from your settings: ' + esc(unusual.join('; ')) + '. Change it under Reading if that was not meant.</span></p>' : '');
+      (unusual.length ? '<p class="note-slip sx-sum-note" role="note">' + I('warn') + ' <span>Not the usual start: ' + esc(unusual.join('; ')) + '. Adjust details (Reading) changes it if that was not meant.</span></p>' : '');
     const b = R.input() + '<p class="sx-why muted small">Handwriting, choices and the keyboard can be switched during any question.</p>' +
       '<p class="sx-sum-acts"><button type="button" class="pbtn sx-sum-more" data-a="details">' + I('dots') + '<span>Adjust details</span></button></p>' +
       '<p class="muted small">Adjust details shows every setting that shapes the road: quest guidance, reading, sound and voices, Suzu\u2019s speech, stories and battles. The tabs above hold the rest.</p>';

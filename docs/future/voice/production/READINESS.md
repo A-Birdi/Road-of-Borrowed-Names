@@ -112,3 +112,18 @@ evidence (VALIDATION.md "VR-C1").
 ## 4 · The voiced offline package: BUILT AND TESTED (Chromium)
 
 `node tools/publish/offline_package.mjs --site <voice site> --out <dir>` builds the package. It uses the same accepted recordings, the same files and the same site; opening its `index.html` from disk plays them. It is a separate delivery from the hosted game; the hosted game never needs it.
+
+## 5 · Status note to Local: FR-1 (2026-10-17)
+
+FR-1 (Robin's Foundations clarity pass, `docs/review/fr1/FR1_REPORT.md`) is UI and learning-path work. Local's current
+voice batch stays pinned and running unchanged:
+
+> FR-1 needs 0 new spoken lines. Existing reference audio is reused.
+> No change to your batch inputs or accepted audio is requested.
+
+What was checked: `node tools/voice/production_manifest.mjs --check` reports the manifest current (14,721 recordings and
+9,095 reference readings, content `65cd38053ad6`), the same as before FR-1. `GO.json`, the production manifest, the
+spoken script lines, speakers, readings and recording IDs are untouched. The two script edits FR-1 made are stage
+directions on lines that already existed (`!lesson kana` → `!lesson kana for <challenge>` in `rw.m1_gears` and
+`rw.m2_lantern`), in place, so no line number moved. The new UI wording (the summary, "Add character", the help
+lines, the single-kana feedback, the lesson sheet) is written text only.

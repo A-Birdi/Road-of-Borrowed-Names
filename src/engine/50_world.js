@@ -1053,11 +1053,22 @@ RB.world = (function () {
     faceTo(p, t[0], t[1]);
     interact();
   }
-  function tapTile(tx, ty) {
+  // a tap inside the drawn top of a tall interactive thing whose footprint is the tile below (a lantern's lamp; its
+  // prop's top/topW, 25_props.js): that thing. The rest of the tile, around and above the picture, is ground as before.
+  function tallTopAt(tx, ty, at) {
+    if (!at) return null;
+    const pr = propAt(tx, ty + 1);
+    const pd = pr && RB.props.P[pr.p];
+    if (!pd || !pd.top || pr.y !== ty + 1) return null;
+    const w = pr.w || pd.w || 1, u = (tx - pr.x + at.fx) / w, half = (pd.topW || 1) / 2;
+    return u >= 0.5 - half && u <= 0.5 + half && at.fy >= 1 - pd.top ? pr : null;
+  }
+  function tapTile(tx, ty, at) {
     if (!W.map || RB.game.mode() !== 'world') return;
     const p = W.player;
     W.pathTarget = null;
-    const target = tapTargetAt(tx, ty);
+    let target = tapTargetAt(tx, ty);
+    if (!target) { const tall = tallTopAt(tx, ty, at); if (tall) target = { kind: 'prop', ref: tall }; }
     const solid = blocked(tx, ty, { except: p, ignorePlayer: true });
     if (!target) {
       if (tx === p.x && ty === p.y) return;

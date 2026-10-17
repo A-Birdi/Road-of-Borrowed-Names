@@ -96,10 +96,11 @@ RB.challenge = (function () {
     const ans = plain(step.answer);
     if (!opts) {
       let d = [];
-      try { d = RB.answers.distractors(ans, { count: 12, kind: Array.from(ans).length === 1 ? 'kana' : 'word' }); } catch (e) { d = []; }
+      try { d = RB.answers.distractors(ans, { count: 99, kind: Array.from(ans).length === 1 ? 'kana' : 'word' }); } catch (e) { d = []; }
       // Foundations (FR-1 F03): wrong options made of kana this player has met, so a first vowel question isn't a
       // trap of small kana, katakana twins or rows still to come; those contrasts return once their kana are met.
-      // (Everyone else has met every kana: the first three are the same as before.)
+      // (Everyone else has met every kana: the first three are the same as before. The whole candidate list is asked for,
+      // so a row's own kana are found among the rest.)
       const met = (t) => Array.from(t).every((c) => !RB.kana.isKana(c) || RB.learn.kanaKnown(c));
       const fair = d.filter(met);
       opts = [ans].concat((fair.length >= 2 ? fair : fair.concat(d.filter((x) => !met(x)))).slice(0, 3));

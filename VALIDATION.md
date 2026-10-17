@@ -4668,6 +4668,79 @@ the manifest are untouched.
 
 The synthetic-tone browser runs are not evidence for any of these.
 
+## FR-1 — Foundations clarity pass (Robin's packet, 2026-10-17)
+
+Robin: "Prioritize a clearer, more rewarding early learning path without holding up exploration. Preserve handwriting as
+a first-class way to play. Default new journeys to no-punishment assistance while preserving explicit choices, existing
+saves and separate tactical difficulty." Findings F01–F17, each reproduced or checked before it was treated as a defect.
+The report with every disposition and the screenshots: docs/review/fr1/FR1_REPORT.md. Nothing of the voice production
+inputs, the audio, the casting or Local's batch was touched.
+
+**The opening, played through the interface (B, Chromium).** `tests/e2e/fr1_opening.mjs`: New Game on a fresh
+profile, creation by clicks (Foundations, no kana, Demanding tactics), "Before you set out", the road lantern, Tsuru,
+the five requests, the report, the Mill Road, the gears, the loft lantern and the Mill Echo; every lesson page,
+question, letter, choice and battle turn through the UI; travel between places by the test's placement helper; answers
+chosen by the script.
+- Before (build 7c07fa9, choices): 35 questions, 7 lessons (35 kana) before the boss, 6 battle turns, then the run
+  stopped at the Mirror phase card (the driver did not yet handle that card). The journey was made with Standard
+  mistakes nobody chose.
+- After (final build, choices): 34 questions, 6 lesson sheets (27 kana: five rows and よ ん for the gears) before the
+  boss, the boss won in 8 turns (Mirror and Plea phases), page errors 0. Assisted mistakes, Demanding tactics.
+- After (final build, the pen, requests in the reverse order Hana, Suzu, Mio, Nao, Ren): 26 answers, all written with
+  drawn reference strokes and accepted; Submit before Add character showed "The character on the pad is not in your
+  answer yet: press Add character (or Clear it), then Submit. Nothing was counted."; Remove, a redraw and a switch to
+  Choices and back kept the answer (あし → あ → あし → あし); the boss won; page errors 0.
+
+**Reproduced first (B unless marked).**
+- F17: the new journey's `learn.assist` was `normal` with no choice made (also R: `RB.state.newCampaign`, the wizard).
+- F05: the Learning step showed 8 fields, the review 14.
+- F16: at 390 px and 320 px "Headband" was cut "Headban|d" and "Back" "Bac|k" (measured; desktop, 844×390, 150 % text
+  were clean).
+- F06/F07/F08: Journal "Nothing pressing" while carrying the letter; "Who haven't you helped yet?" after every request;
+  the completed quest kept on the page after the report.
+- F01/F02: the h row before the gears and the m row before the loft lantern; the gear plates need よ and ん, unmet.
+- F03: the first vowel options included ぉ, を, ゔ, つ, katakana twins and untaught rows; the loft-lantern options っ, じ.
+- F11: letters read with the English shown recorded as unassisted recognition (the learning-record spy).
+- F12: a click or tap on a lantern's drawn lamp walked behind it (mouse and touch emulation, road and south lanterns);
+  the action key from the front worked; the millstone's picture lies within its footprint.
+- F14: cards led with the description, "Here:" last.
+- F10: not reproduced as reported: no help line appeared without help (the gear success had none in either run).
+- F04: R (the single-kana お/を wording); in the final route a wrong vowel also drew "That's 胃, the stomach", fixed too.
+
+**Checks of the result.**
+- B `fr1_defaults` 15/0: an Everyday journey with nothing touched is Assisted with Standard tactics; the Learning step's
+  fold says "Mistakes: Assisted"; the summary says no battle cost and Standard battles and reports nothing unusual;
+  Adjust details shows every setting; with an inherited hidden second language and an explicit Standard + Demanding,
+  the summary says "Not the usual start: the other language is hidden", and Standard is kept in the journey, its first
+  autosave and after a reload.
+- B `fr1_targets` 24/0, three consecutive runs: footprint and drawn lamp use the lantern; beside and above the picture
+  walk; the millstone inspects on its footprint and walks above it; mouse and touch emulation.
+- B `fr1_group_sample`: the Stacks' three fog wisps, Foundations + Demanding + Assisted, Ren, the chapter-2 fixture's
+  words: won in 13 turns, resolve 10→1; a wrong answer on purpose, 0 slip costs; enemy moves landed. A sample, not a
+  balance verdict.
+- B F16 measurement after: no label cut mid-word or overflowing at 1280×800, 390×844, 844×390, 150 % text, 390 px at
+  150 %, 320×640 (the soft hyphen's line was checked on a crop: "Head-" / "band"); Back on one line at 390 px.
+- B `create` 384/0, `settings_review` all passed (the summary first, then Adjust details holds every field), on the final
+  build. B `learning_ui` 15/0, `combat_ui` 7/0, `encounters` 10/0, `story_ch1` 8/8 (profiles F and A, each of the four
+  companions, the Mill Echo won), `quest_guide` all passed, `settings` all ok, `pace` 13/0, on the build just before the last two text-only
+  edits (the single-kana "other word" line, the summary note's wording), which none of them read.
+- U `fr1_foundations` 25/0: the default at every level, an explicit Standard kept, tactics separate, a save's setting
+  kept on load and only a missing one defaulted; the gears need よ ん, nothing with them met or with hiragana known, the
+  loft lantern nothing, looking makes no record, the next row unchanged; every vowel's options are vowels after the
+  vowel lesson, someone knowing all kana keeps the contrasts; single-kana feedback (を/お, ぉ/お, い/う) and the word
+  particle note kept; the letter quest starts on arrival and ends on meeting Tsuru; every request done in any order
+  reaches the report stage.
+- U the full run on the final source: 54,430 passed, 0 failed (`combat_rules` now states Standard for its slip-cost
+  rules; `quest_guide` covers the new quest's place).
+- `node tools/validate.mjs`: no errors. `node tools/voice/production_manifest.mjs --check`: current, 14,721 recordings
+  + 9,095 reference readings, content 65cd38053ad6, unchanged.
+
+**Not done.**
+- F13 (the stair-well and the waterwheel's attachment): deferred to the art queue under AC1_ART, captured.
+- Firefox and Safari: not installed here. Phones: emulated in desktop Chromium only.
+- A real beginner: none; the routes are a scripted player, not learning evidence.
+- The letters' "a word you have met before" note: not seen in a browser (no letter word had been met on this route).
+
 ## C-95 corrections — RV-1's findings applied, kept or deferred (Robin's bounded editorial authorization, 2026-10-16)
 
 **What was decided.**

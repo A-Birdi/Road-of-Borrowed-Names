@@ -57,7 +57,7 @@ await p.fill('.folio-create #nm', 'Aki');
 const next = async () => { await p.click('.folio-foot .cr-primary:not([hidden])'); await wait(p, 300); };
 await next();
 await shot(p, 'creation-appearance');
-const labels = await p.evaluate(() => Array.from(document.querySelectorAll('.cr-tile .nm, .cr-sw .nm')).filter((e) => e.offsetParent).map((e) => ({ t: e.textContent, w: Math.round(e.getBoundingClientRect().width), h: Math.round(e.getBoundingClientRect().height), lines: Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight || '16')) })).filter((x) => /Headband|Undyed|linen/i.test(x.t)));
+const labels = await p.evaluate(() => Array.from(document.querySelectorAll('.cr-tile .nm, .cr-sw .nm')).filter((e) => e.offsetParent).map((e) => ({ t: e.textContent.replace(/\u00ad/g, ''), w: Math.round(e.getBoundingClientRect().width), h: Math.round(e.getBoundingClientRect().height), lines: Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight || '16')) })).filter((x) => /Headband|Undyed|linen/i.test(x.t)));
 note('appearance-labels', { labels });
 await next();
 await next();
@@ -123,7 +123,8 @@ async function answerChallenge(st) {
       note('options', { opts });
       await p.evaluate((ans) => { const bs = Array.from(document.querySelectorAll('.chal .mc .btn')).filter((x) => !x.disabled); const r = bs.find((x) => RB.tasks.plain(x.textContent).trim() === ans); (r || bs[0]).click(); }, target);
     } else {
-      for (const ch of Array.from(target)) {
+      const strip = () => p.evaluate(() => Array.from(document.querySelectorAll('.chal .cell:not(.ins)')).map((x) => x.textContent.trim()).join(''));
+      for (const [ci, ch] of Array.from(target).entries()) {
         await drawChar(ch);
         await wait(p, 250);
         if (POLICY.submitBeforeConfirm) {
@@ -136,6 +137,27 @@ async function answerChallenge(st) {
         }
         await p.click('.chal [data-a=confirm]');
         await wait(p, 200);
+        // the pen's editing (FR-1 B): Remove the character just added and write it again; switch to Choices and back:
+        // what is in the answer stays
+        if (POLICY.handProbe && ci === 1) {
+          POLICY.handProbe = false;
+          const before = await strip();
+          await p.click('.chal [data-a=del]');
+          await wait(p, 200);
+          const removed = await strip();
+          await drawChar(ch);
+          await wait(p, 250);
+          await p.click('.chal [data-a=confirm]');
+          await wait(p, 200);
+          const again = await strip();
+          await p.click('.chal .ptab[data-id="choice"]');
+          await wait(p, 250);
+          await p.click('.chal .ptab[data-id="hand"]');
+          await wait(p, 300);
+          const back = await strip();
+          note('hand-probe', { before, removed, again, afterSwitch: back });
+          await shot(p, 'hand-probe');
+        }
       }
       await p.click('.chal [data-a=submit]');
     }
@@ -296,7 +318,7 @@ try {
   await at(10, 2); await drive(worldIdle, 120000, 'gears');
   await at(2, 2); await drive(worldIdle, 30000, 'ladder');
   for (const [x, y] of [[4, 4], [9, 3], [9, 6], [11, 7]]) { await at(x, y); await drive(worldIdle, 30000, 'loft ' + x + ',' + y); }
-  if (INPUT === 'hand') POLICY.submitBeforeConfirm = true;
+  if (INPUT === 'hand') { POLICY.submitBeforeConfirm = true; POLICY.handProbe = true; }
   await at(6, 2); await drive(worldIdle, 120000, 'loft lantern');
   await go('rw.mill1', 7, 8, 'up');
   await p.evaluate(() => { RB.test.place(6, 7, 'up'); RB.script.run('rw.m1_boss'); });
