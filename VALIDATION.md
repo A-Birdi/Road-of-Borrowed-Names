@@ -4741,6 +4741,49 @@ chosen by the script.
 - A real beginner: none; the routes are a scripted player, not learning evidence.
 - The letters' "a word you have met before" note: not seen in a browser (no letter word had been met on this route).
 
+## FR-1V — the one-kana blank and its word (Astra's verification of 71d4a95, 2026-10-17)
+
+Astra verified FR-1 at 71d4a95 and found one gap: a one-kana blank in a Foundations word task still credited the
+parent word as independently answered, so FR1_REPORT.md §3's "a one-kana blank records the kana, not the word" was not
+true. Astra's isolated diagnostic ran the four learning modules (`src/learn/10_mastery.js`, `20_tasks.js`, `30_meter.js`,
+`40_evidence.js`; their Git blobs are identical to this branch's before the fix). Robin: reproduce it, separate the
+assessed target from supported word exposure, test the scheduler and the evidence records, preserve saves, invent no
+provenance.
+
+**Reproduced first.**
+- U `tests/unit/fr1_partial_word.test.mjs` on the unmodified source (the fix stashed): 16 passed, 23 failed. The mill
+  lantern's あしのせ with only the vowels met is asked as あ + しのせ, items `['k:あ', 'v:葦ノ瀬']`. Answered right by
+  pen, keyboard or choice, v:葦ノ瀬 got box 1, ok 1 and independent `hand` / `typed` / `recog` evidence. A slip on あ took
+  an earlier word record from box 2 to 1 and counted a mistake against it (not in Astra's list). A sight of an earlier
+  record put its review later. The controls passed: the whole word from met kana is credited, a copy model is supported.
+- B `tests/e2e/fr1_partial_word.mjs` against the build at 71d4a95 (the step through the real challenge sheet): 10
+  failures, the same records.
+
+**The fix.**
+- `RB.tasks.prepare`: the blank's `item` is `['k:あ']`; the word is `exposure`.
+- `RB.learn.record` takes `exposure`: those ids are seen with support (`modes.assisted`), kept due (never later), with
+  no box, streak, ok or mistake change; the totals count one answer.
+- `RB.evidence.add`: one log line for each exposure, marked `p: 1`, `h: 'supplied'`, `x: 1`; no try counted, never
+  independent; `profile()`'s recent-recognition count leaves `p` lines out.
+- Callers: the challenge runner's `finish` (it also marks the word met), practice objectives (lanterns, fishing), the
+  test harness's automatic answers.
+- Saves: no migration; a loaded save's learning records are unchanged. Old blanks' credit is not reconstructed, since
+  no record kept which answers were blanks.
+
+**Checked after the fix.**
+- U `fr1_partial_word` 39/0: the prepared targets for blank, whole word and copy; pen, keyboard and choices; a wrong
+  first answer; an earlier word record (box, evidence, due); the whole-word and copy controls; a revealed blank; a
+  save loaded unchanged.
+- B `fr1_partial_word` all passed on this build, through the challenge sheet: pen (drawn reference strokes, Add
+  character, Submit), keyboard, choices; the whole-word, copy and "I don't know" controls; no page errors.
+- U full run (`node tests/run-unit.mjs`, 150 files): 54,469 passed, 0 failed.
+- B on this build, the suites that answer through the challenge sheet and practice objectives: `learning_ui` 15/0,
+  `practice_a_lamps` 51/51, `fishing` 11/0.
+- `node tools/validate.mjs`: no errors (the two lexicon-conflict warnings are earlier ones).
+- `node tools/voice/production_manifest.mjs --check`: "manifest is current: 14721 recordings + 9095 reference
+  readings, content 65cd38053ad6", unchanged. Local's batch inputs are untouched; 0 new spoken lines.
+- Not run: the full browser matrix and campaign runs (not requested).
+
 ## C-95 corrections — RV-1's findings applied, kept or deferred (Robin's bounded editorial authorization, 2026-10-16)
 
 **What was decided.**

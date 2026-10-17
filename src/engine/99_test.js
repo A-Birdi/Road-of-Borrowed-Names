@@ -61,7 +61,7 @@ RB.test = (function () {
       if (!step.transcript || !step.transcript.jp) T.problems.push({ where, msg: 'listen: no transcript' });
       if (!step.options || !step.options.some((o) => o.ok)) T.problems.push({ where, msg: 'listen: no correct option' });
     } else T.problems.push({ where, msg: 'unknown step kind ' + step.kind });
-    if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false, kind: step.kind, ctx: /^battle /.test(String(where || '')) ? 'battle:' + String(where).split(' ')[1] : String(where || '') });
+    if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false, kind: step.kind, ctx: /^battle /.test(String(where || '')) ? 'battle:' + String(where).split(' ')[1] : String(where || ''), exposure: step.exposure || null });
     return { ok: true, firstTry: true, mistakes: 0, assisted: false, mode: 'choice' };
   }
   // Simulate an Inkweaving encounter with perfect answers, through the real

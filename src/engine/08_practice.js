@@ -103,9 +103,11 @@ RB.practice = (function () {
         done.add(objId);
         const mode = res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice';
         if (s) tally(s, o.kind || (session && session.kind) || 'practice', { n: 1, ok: res.firstTry !== false ? 1 : 0, assisted: res.assisted ? 1 : 0, exposed: o.exposed ? 1 : 0 });
-        if (!first || o.exposed || o.paced || !item) { if (item) [].concat(item).forEach((i) => RB.learn.markIntroduced(i)); return false; }
-        RB.learn.record(item, { ok: res.firstTry !== false, mode, assisted: !!res.assisted, ctx: 'practice:' + ((session && session.kind) || o.kind || '') });
-        [].concat(item).forEach((i) => RB.learn.markIntroduced(i));
+        // o.exposure: the word around a one-kana blank (RB.tasks.prepare): met, not answered (FR-1V)
+        const met = [].concat(item || [], o.exposure || []);
+        if (!first || o.exposed || o.paced || !item) { met.forEach((i) => RB.learn.markIntroduced(i)); return false; }
+        RB.learn.record(item, { ok: res.firstTry !== false, mode, assisted: !!res.assisted, ctx: 'practice:' + ((session && session.kind) || o.kind || ''), exposure: o.exposure || null });
+        met.forEach((i) => RB.learn.markIntroduced(i));
         return true;
       },
       seen: (objId) => done.has(objId),

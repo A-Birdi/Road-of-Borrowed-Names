@@ -554,8 +554,13 @@
       `fr1_defaults`, `fr1_targets`, `fr1_group_sample`.
     - Voice: 0 new spoken lines; the production manifest is unchanged (65cd38053ad6); the note to Local is
       READINESS.md §5.
-    - Open: F13 (the stair-well and the waterwheel's attachment) waits for the art queue under AC1_ART; Firefox,
-      Safari and phones were not tried; a real beginner's play.
+    - Open: F13 (the stair-well and the waterwheel's attachment) waits in the art queue under AC1_ART (Next concrete
+      actions, item 3); Firefox, Safari and phones were not tried; a real beginner's play.
+    - **FR-1V (Astra's verification of 71d4a95):** a one-kana blank credited its parent word as answered (promotion,
+      independent evidence, and a slip set the word back). Reproduced (U and B), fixed: the blank's `item` is the kana,
+      the word is `exposure` (RB.tasks.prepare), recorded as seen and supported, never credited (10_mastery `record`,
+      40_evidence `add`; callers: challenge `finish`, practice, the test harness). No save migration. Tests: U
+      `fr1_partial_word`, B `fr1_partial_word`. FR1_REPORT.md §3 corrected, §8 added.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
@@ -1117,6 +1122,9 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    Firefox and Safari/WebKit (not installed here, not tested).
 3. A human look at the art (docs/screenshots/, `art_shots.mjs`) — quality
    was judged only by the author from captures.
+   **Art queue, deferred (FR-1 F13, under docs/future/plan/AC1_ART.md):** the Old Mill's stair-well (a flat grey block
+   beside detailed planking) and the exterior waterwheel's attachment (no visible axle into the mill wall). Captures:
+   docs/review/fr1/shots/f13-mill-interior.jpg, f13-waterwheel.jpg. Not started; learning fixes came first.
 4. Listen to the new boss theme (checked at signal level only) and play a
    few battles with a companion to judge the Harmony notes and keyword
    cards; try the pad's kanji reading with real handwriting.

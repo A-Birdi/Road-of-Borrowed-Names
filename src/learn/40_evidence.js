@@ -63,6 +63,20 @@ RB.evidence = (function () {
       // kanji: the words they appear in (with that word's reading), and whether they were written by hand
       if (id.slice(0, 2) === 'v:') kanjiOf(s, id.slice(2), r, entry, indep);
     }
+    // supported exposure (FR-1V; RB.learn.record's `exposure`): the word around a one-kana blank, met with the rest of it
+    // supplied. One line in its log, marked p (part of it asked) with the help that supplied the rest; not an attempt
+    // at it (no try counted) and never independent evidence.
+    for (const id of [].concat(r.exposure || [])) {
+      if (!id || list.indexOf(id) >= 0) continue;
+      const it = s.learn.items[id];
+      if (!it) continue;
+      const e = Object.assign({}, entry, { h: 'supplied', x: 1, p: 1 });
+      const log = it.log || (it.log = []);
+      log.push(e);
+      if (log.length > LOG) log.splice(0, log.length - LOG);
+      it.lastDay = today;
+      if (id.slice(0, 2) === 'v:') kanjiOf(s, id.slice(2), r, e, false);
+    }
   }
   function kanjiRec(s, ch) {
     const K = s.learn.kanji || (s.learn.kanji = {});
@@ -102,7 +116,7 @@ RB.evidence = (function () {
     const it = s && s.learn && s.learn.items[id];
     if (!it) return null;
     const ev = it.ev || {}, tries = it.evTry || {};
-    const recent = (it.log || []).slice(-10);
+    const recent = (it.log || []).filter((e) => !e.p).slice(-10); // (a sight of it in a one-kana blank is not an answer)
     return {
       id, box: it.box, seen: it.seen,
       recogRecent: { ok: recent.filter((e) => (e.m === 'recog' || e.m === 'context') && e.f && !e.h).length, of: recent.filter((e) => e.m === 'recog' || e.m === 'context').length },

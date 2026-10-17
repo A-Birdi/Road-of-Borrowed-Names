@@ -216,7 +216,10 @@ RB.tasks = (function () {
           step.answer = chars[i];
           step.accept = [chars[i]];
           step.mode = 'kana';
-          step.item = ['k:' + chars[i]].concat(step.item ? [].concat(step.item) : []);
+          // what is assessed is the one kana written; the word around it is met with the rest supplied (FR-1V): kept
+          // as supported exposure (RB.learn.record's `exposure`), never credited as the word answered
+          step.exposure = [].concat(step.exposure || [], step.item ? [].concat(step.item) : []);
+          step.item = ['k:' + chars[i]];
           step.prompt = { en: (step.prompt && step.prompt.en ? step.prompt.en + ' ' : '') + 'Write the missing kana (' + RB.kana.romaji(chars[i]) + ').' };
           step.single = true;
           // authored whole-word choices no longer fit a one-kana blank:

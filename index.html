@@ -26408,9 +26408,11 @@ RB.practice = (function () {
         done.add(objId);
         const mode = res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice';
         if (s) tally(s, o.kind || (session && session.kind) || 'practice', { n: 1, ok: res.firstTry !== false ? 1 : 0, assisted: res.assisted ? 1 : 0, exposed: o.exposed ? 1 : 0 });
-        if (!first || o.exposed || o.paced || !item) { if (item) [].concat(item).forEach((i) => RB.learn.markIntroduced(i)); return false; }
-        RB.learn.record(item, { ok: res.firstTry !== false, mode, assisted: !!res.assisted, ctx: 'practice:' + ((session && session.kind) || o.kind || '') });
-        [].concat(item).forEach((i) => RB.learn.markIntroduced(i));
+        // o.exposure: the word around a one-kana blank (RB.tasks.prepare): met, not answered (FR-1V)
+        const met = [].concat(item || [], o.exposure || []);
+        if (!first || o.exposed || o.paced || !item) { met.forEach((i) => RB.learn.markIntroduced(i)); return false; }
+        RB.learn.record(item, { ok: res.firstTry !== false, mode, assisted: !!res.assisted, ctx: 'practice:' + ((session && session.kind) || o.kind || ''), exposure: o.exposure || null });
+        met.forEach((i) => RB.learn.markIntroduced(i));
         return true;
       },
       seen: (objId) => done.has(objId),
@@ -60342,7 +60344,7 @@ RB.lanterns = (function () {
   // o.exposed: the answer was in view just before (a new word's card): practice, not recall
   function tend(s, ob, objId, id, step, res, o) {
     if (!res || res.cancelled) return { lit: false, missed: false, counted: false };
-    const counted = ob.assess(objId, step.item || id, res, { kind: 'lanterns', s, exposed: !!(o && o.exposed) });
+    const counted = ob.assess(objId, step.item || id, res, { kind: 'lanterns', s, exposed: !!(o && o.exposed), exposure: step.exposure || null });
     const missed = res.firstTry === false;
     const L = st(s);
     L.recent.push({ id, missed });
@@ -65718,7 +65720,7 @@ RB.test = (function () {
       if (!step.transcript || !step.transcript.jp) T.problems.push({ where, msg: 'listen: no transcript' });
       if (!step.options || !step.options.some((o) => o.ok)) T.problems.push({ where, msg: 'listen: no correct option' });
     } else T.problems.push({ where, msg: 'unknown step kind ' + step.kind });
-    if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false, kind: step.kind, ctx: /^battle /.test(String(where || '')) ? 'battle:' + String(where).split(' ')[1] : String(where || '') });
+    if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false, kind: step.kind, ctx: /^battle /.test(String(where || '')) ? 'battle:' + String(where).split(' ')[1] : String(where || ''), exposure: step.exposure || null });
     return { ok: true, firstTry: true, mistakes: 0, assisted: false, mode: 'choice' };
   }
   // Simulate an Inkweaving encounter with perfect answers, through the real
@@ -65939,7 +65941,9 @@ RB.learn = (function () {
     return id.slice(0, 1);
   }
 
-  // result: {ok, mode:'choice'|'ime'|'hand', assisted, ctx}
+  // result: {ok, mode:'choice'|'ime'|'hand', assisted, ctx, exposure?}
+  // exposure (FR-1V): items met in this answer but not asked, such as the word around a one-kana blank. They are seen,
+  // with support, and kept due for a later look; never promoted, demoted or counted in the totals as answered.
   function record(id, result) {
     if (!id) return null;
     const ids = Array.isArray(id) ? id : [id];
@@ -65980,6 +65984,14 @@ RB.learn = (function () {
       }
       r.last = now;
       r.due = now + INTERVALS[r.box];
+    }
+    for (const i of [].concat(result.exposure || [])) {
+      if (!i || ids.indexOf(i) >= 0) continue;
+      const r = rec(i);
+      r.seen++;
+      r.modes.assisted++;
+      r.last = now;
+      r.due = Math.min(r.due, now + INTERVALS[r.box]); // a sight of it never puts its review off
     }
     if (result.assisted) st.assisted++;
     else if (result.mode === 'choice') st.recog++;
@@ -66282,7 +66294,10 @@ RB.tasks = (function () {
           step.answer = chars[i];
           step.accept = [chars[i]];
           step.mode = 'kana';
-          step.item = ['k:' + chars[i]].concat(step.item ? [].concat(step.item) : []);
+          // what is assessed is the one kana written; the word around it is met with the rest supplied (FR-1V): kept
+          // as supported exposure (RB.learn.record's `exposure`), never credited as the word answered
+          step.exposure = [].concat(step.exposure || [], step.item ? [].concat(step.item) : []);
+          step.item = ['k:' + chars[i]];
           step.prompt = { en: (step.prompt && step.prompt.en ? step.prompt.en + ' ' : '') + 'Write the missing kana (' + RB.kana.romaji(chars[i]) + ').' };
           step.single = true;
           // authored whole-word choices no longer fit a one-kana blank:
@@ -66456,6 +66471,20 @@ RB.evidence = (function () {
       // kanji: the words they appear in (with that word's reading), and whether they were written by hand
       if (id.slice(0, 2) === 'v:') kanjiOf(s, id.slice(2), r, entry, indep);
     }
+    // supported exposure (FR-1V; RB.learn.record's `exposure`): the word around a one-kana blank, met with the rest of it
+    // supplied. One line in its log, marked p (part of it asked) with the help that supplied the rest; not an attempt
+    // at it (no try counted) and never independent evidence.
+    for (const id of [].concat(r.exposure || [])) {
+      if (!id || list.indexOf(id) >= 0) continue;
+      const it = s.learn.items[id];
+      if (!it) continue;
+      const e = Object.assign({}, entry, { h: 'supplied', x: 1, p: 1 });
+      const log = it.log || (it.log = []);
+      log.push(e);
+      if (log.length > LOG) log.splice(0, log.length - LOG);
+      it.lastDay = today;
+      if (id.slice(0, 2) === 'v:') kanjiOf(s, id.slice(2), r, e, false);
+    }
   }
   function kanjiRec(s, ch) {
     const K = s.learn.kanji || (s.learn.kanji = {});
@@ -66495,7 +66524,7 @@ RB.evidence = (function () {
     const it = s && s.learn && s.learn.items[id];
     if (!it) return null;
     const ev = it.ev || {}, tries = it.evTry || {};
-    const recent = (it.log || []).slice(-10);
+    const recent = (it.log || []).filter((e) => !e.p).slice(-10); // (a sight of it in a one-kana blank is not an answer)
     return {
       id, box: it.box, seen: it.seen,
       recogRecent: { ok: recent.filter((e) => (e.m === 'recog' || e.m === 'context') && e.f && !e.h).length, of: recent.filter((e) => e.m === 'recog' || e.m === 'context').length },
@@ -91195,9 +91224,10 @@ RB.challenge = (function () {
           RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag, kind: step.kind,
             // the evidence log (L1): what was actually shown and supplied (src/learn/40_evidence.js)
             ev: RB.evidence ? (step.kind === 'listen' && res.read ? 'context' : RB.evidence.modeOf(step, res.mode)) : null, help: res.help, exposed: !!(step.copy || step.guided),
-            repairs: res.recogRepairs || 0, written: res.mode === 'hand' && res.given && res.given.text ? res.given.text : null, task: step.id || null });
+            repairs: res.recogRepairs || 0, written: res.mode === 'hand' && res.given && res.given.text ? res.given.text : null, task: step.id || null,
+            exposure: step.exposure || null }); // (the word around a one-kana blank: met, not answered)
         }
-        if (step.item) [].concat(step.item).forEach((i) => RB.learn.markIntroduced(i));
+        if (step.item) [].concat(step.item, step.exposure || []).forEach((i) => RB.learn.markIntroduced(i));
         resolve(res);
       }
       wrap.addEventListener('click', (e) => {
@@ -119063,7 +119093,7 @@ RB.ui.fishing = (function () {
     const obj = C.obj || (C.obj = RB.practice.objectives(session));
     const out = F.commitCatch(s, a.seq, {
       result: res, paced, exposed,
-      assess: () => obj.assess('fish:' + a.seq + ':' + a.variant, step.item, res, { kind: 'fishing', exposed, paced: isPaced }),
+      assess: () => obj.assess('fish:' + a.seq + ':' + a.variant, step.item, res, { kind: 'fishing', exposed, paced: isPaced, exposure: step.exposure || null }),
     });
     if (!out.ok) return 'leave';
     C.done++;

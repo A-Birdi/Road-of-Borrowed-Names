@@ -995,8 +995,13 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     - compound labels break at a soft hyphen, Back stays whole (F16);
     - the boss and a group battle finished on Foundations + Demanding + Assisted; no rebalance (F15);
     - 0 new spoken lines; the production manifest unchanged (65cd38053ad6); Local's batch untouched.
-  - **Not done:** F13 (art, deferred to the AC1_ART queue with captures); Firefox and Safari; phones (emulated only); a
-    real beginner's play; the letters' "met before" note seen in a browser.
+  - **Corrected (FR-1V, Astra's verification of 71d4a95):** a one-kana blank credited its parent word as independently
+    answered (and a slip on it set the word back). Reproduced (U 23 failures, B 10, on the old source and build), fixed:
+    the blank assesses the kana and records the word as supported exposure only; saves unchanged. U `fr1_partial_word`
+    39/0, B `fr1_partial_word` passed; U full run 54,469/0; B `learning_ui`, `practice_a_lamps`, `fishing` passed.
+    VALIDATION.md "FR-1V".
+  - **Not done:** F13 (art, deferred to the AC1_ART queue with captures, listed in HANDOFF.md's next actions); Firefox
+    and Safari; phones (emulated only); a real beginner's play; the letters' "met before" note seen in a browser.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

@@ -33,7 +33,9 @@ RB.learn = (function () {
     return id.slice(0, 1);
   }
 
-  // result: {ok, mode:'choice'|'ime'|'hand', assisted, ctx}
+  // result: {ok, mode:'choice'|'ime'|'hand', assisted, ctx, exposure?}
+  // exposure (FR-1V): items met in this answer but not asked, such as the word around a one-kana blank. They are seen,
+  // with support, and kept due for a later look; never promoted, demoted or counted in the totals as answered.
   function record(id, result) {
     if (!id) return null;
     const ids = Array.isArray(id) ? id : [id];
@@ -74,6 +76,14 @@ RB.learn = (function () {
       }
       r.last = now;
       r.due = now + INTERVALS[r.box];
+    }
+    for (const i of [].concat(result.exposure || [])) {
+      if (!i || ids.indexOf(i) >= 0) continue;
+      const r = rec(i);
+      r.seen++;
+      r.modes.assisted++;
+      r.last = now;
+      r.due = Math.min(r.due, now + INTERVALS[r.box]); // a sight of it never puts its review off
     }
     if (result.assisted) st.assisted++;
     else if (result.mode === 'choice') st.recog++;

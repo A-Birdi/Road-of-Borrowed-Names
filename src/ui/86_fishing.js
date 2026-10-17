@@ -216,7 +216,7 @@ RB.ui.fishing = (function () {
     const obj = C.obj || (C.obj = RB.practice.objectives(session));
     const out = F.commitCatch(s, a.seq, {
       result: res, paced, exposed,
-      assess: () => obj.assess('fish:' + a.seq + ':' + a.variant, step.item, res, { kind: 'fishing', exposed, paced: isPaced }),
+      assess: () => obj.assess('fish:' + a.seq + ':' + a.variant, step.item, res, { kind: 'fishing', exposed, paced: isPaced, exposure: step.exposure || null }),
     });
     if (!out.ok) return 'leave';
     C.done++;

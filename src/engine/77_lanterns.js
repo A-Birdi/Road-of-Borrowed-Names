@@ -177,7 +177,7 @@ RB.lanterns = (function () {
   // o.exposed: the answer was in view just before (a new word's card): practice, not recall
   function tend(s, ob, objId, id, step, res, o) {
     if (!res || res.cancelled) return { lit: false, missed: false, counted: false };
-    const counted = ob.assess(objId, step.item || id, res, { kind: 'lanterns', s, exposed: !!(o && o.exposed) });
+    const counted = ob.assess(objId, step.item || id, res, { kind: 'lanterns', s, exposed: !!(o && o.exposed), exposure: step.exposure || null });
     const missed = res.firstTry === false;
     const L = st(s);
     L.recent.push({ id, missed });

@@ -49,7 +49,7 @@ Before = the build at `7c07fa9`; after = this branch's final build. A second aft
 | F10 | not reproduced as reported / fixed | No help label appeared without help (the gear success carried none in either run). A helped success now names the help: "Practiced with word help", "…with the English shown", "…with the model to copy", "…with the kana chart", "…with the answer shown", instead of "Assisted — that's fine." The evidence record's help category is unchanged. | B route (boss copy steps); R |
 | F11 | reproduced / fixed | Letters (and orders) read with the English beside them were recorded as unassisted recognition. They are now recorded as context reading, supported (`assisted`, help `constrain`); the deliveries and the story are unchanged. An optional one-line note names a word met before when one is in the letter (not seen in this route: no letter word had been met). | B route (records); R (the note) |
 | F12 | reproduced / fixed (lantern); retained (millstone) | A click or tap on a lantern's drawn lamp (which stands in the tile above its footprint) walked behind it. A tap inside that drawn part now uses the lantern; beside and above the picture is still ground. The millstone's picture lies inside its 2×2 footprint: a click on it inspects it, above it walks; the confrontation starts on stepping in front of it after the loft, as designed. The action key from the front was already right for all three. | B `fr1_targets` (mouse + touch emulation, 3 runs) |
-| F13 | deferred with exact reason | Captured: the stair-well is a flat grey block beside detailed planking; the waterwheel has no visible axle into the mill wall. This is region-kit art under `docs/future/plan/AC1_ART.md`, P3 after the learning fixes, and is left for the art queue with these captures. | B captures |
+| F13 | deferred with exact reason | Captured: the stair-well is a flat grey block beside detailed planking; the waterwheel has no visible axle into the mill wall. This is region-kit art under `docs/future/plan/AC1_ART.md`, P3 after the learning fixes, and is left for the art queue with these captures; it is listed there in HANDOFF.md (Next concrete actions, item 3). Still deferred after FR-1V. | B captures |
 | F14 | reproduced / fixed | Cards led with the general description and ended with "Here:". The "Here:" line (what it does now, "No effect here: …" kept) now leads; the description and "Answers:" follow, folded to two lines (whole on keyboard focus, as the tooltip and to a screen reader). The phase cards (Mirror, Plea) appear when the phase begins. | B route (battle shot); R |
 | F15 | retained with rationale | The boss was finished on Foundations + Demanding + Assisted (8 turns; won). One group battle sampled (the Stacks, three creatures, Demanding, Assisted): won in 13 turns at 1/10 resolve, a deliberate wrong answer cost nothing, enemy moves landed. A sample, not a balance verdict: no rebalance. | B route; B `fr1_group_sample` |
 | F16 | reproduced / fixed | At 390 px and 320 px "Headband" broke as "Headban/d" and "Back" as "Bac/k". Compound piece names carry a soft hyphen ("Head-/band"); Back keeps its word. Desktop, 844×390, 150 % text and 390 px at 150 % were measured before and after; no other label is cut mid-word or overflows. Text size is unchanged. | B measurement + captures |
@@ -57,10 +57,20 @@ Before = the build at `7c07fa9`; after = this branch's final build. A second aft
 
 ## 3 · Learning evidence kept distinct
 
-Meaning, recognition, recall and handwriting stay separate records: copy steps are recorded as guided (exposed), a
-one-kana blank records the kana, not the word; letters read with English are context reading, supported; a just-in-time
-introduction marks only the kana it showed as met, never a row; the help line names the help without changing what the
-evidence log keeps.
+Meaning, recognition, recall and handwriting stay separate records: copy steps are recorded as guided (exposed); letters
+read with English are context reading, supported; a just-in-time introduction marks only the kana it showed as met,
+never a row; the help line names the help without changing what the evidence log keeps.
+
+**Correction (FR-1V, after Astra's verification of 71d4a95).** The first version of this section also said that "a
+one-kana blank records the kana, not the word". That was not true of the code at 4c304d8 / 71d4a95: `RB.tasks.prepare`
+kept the word's id beside the blanked kana (`['k:あ', 'v:葦ノ瀬']`), and the one answer was recorded for both, so the
+word was promoted (box 0 → 1) and given independent handwriting, typed or recognition evidence for writing or choosing
+one kana; a slip on that kana also set the word back. Reproduced before fixing (§8). It is true now: the blanked kana is
+the assessed item, and the word is recorded as supported exposure (seen, kept due for a later look, one log line marked
+as part-asked with the rest supplied), never promoted, set back or given independent evidence by the blank. A whole word
+written from met kana is still credited as before; a copy model and a revealed answer stay supported, not independent.
+Records made before the fix are left as they are: the log never recorded which past answers were blanks, so that
+history is not reconstructed.
 
 Interruptions are replaced, not added: before the boss the opening now shows 27 kana in six lesson sheets instead of 35
 in seven; no new mandatory drill, quota, timer or detour was added. Familiar reuse after intervening play, from the final
@@ -116,3 +126,35 @@ Recorded in `docs/future/voice/production/READINESS.md` §5:
 
 Findings without a before/after pair: `f12-road-lantern.jpg` (the lamp above its footprint), `f13-mill-interior.jpg`,
 `f13-waterwheel.jpg` (the deferred art), `f15-group-battle.jpg` (the sampled group battle).
+
+## 8 · FR-1V: the one-kana blank and its word (Astra's verification follow-up, 2026-10-17)
+
+Astra found that an adapted one-kana blank still credited its parent word as independently answered, contradicting §3,
+and supplied an isolated diagnostic over the four learning modules at 71d4a95 (their Git blobs match this branch's
+before the fix).
+
+**Reproduced first.**
+- U `tests/unit/fr1_partial_word.test.mjs` run against the unmodified source: 23 of 39 checks failed. For the pen, the
+  keyboard and choices alike, v:葦ノ瀬 got box 1, ok 1 and independent `hand` / `typed` / `recog` evidence from
+  answering あ; a slip on あ also took an earlier word record from box 2 to 1 and counted a mistake against it; an
+  earlier record's review was put later. The whole-word and copy-model controls passed, as Astra's did.
+- B `tests/e2e/fr1_partial_word.mjs` (the mill lantern's step through the real challenge sheet: drawn strokes with Add
+  character and Submit, typing, choosing) against the build at 71d4a95: 10 failures, the same records.
+
+**Fixed.**
+- `src/learn/20_tasks.js` `prepare`: a one-kana blank's `item` is the kana only; the word moves to `exposure`.
+- `src/learn/10_mastery.js` `record`: `exposure` ids are seen with support (`modes.assisted`) and kept due (their review
+  never put later); no box, streak, ok or mistake change; the totals count the answer once.
+- `src/learn/40_evidence.js`: an exposure gets one log line marked `p` (part asked), `h: 'supplied'`, `x: 1`; no try
+  counted, no independent evidence; the item page's recent-recognition count leaves such lines out.
+- The callers pass it: the challenge runner (`finish`, which also marks the word met), practice objectives (lanterns,
+  fishing) and the test harness's automatic answers.
+- Saves: nothing is migrated or rewritten; a loaded save's records are byte-identical (U).
+
+**Checked.** U `fr1_partial_word` 39/0; B `fr1_partial_word` all passed on this build (pen, keyboard, choices: k:あ box
+1 with its independent evidence, the word box 0, no evidence, one exposure line, met, one answer in the totals; the
+whole word credited; the copy model supported; "I don't know" supported for the kana and the word only met). No new
+lessons, no campaign matrix, no casting or audio. The full unit run passed (54,469 / 0); B `learning_ui` 15/0,
+`practice_a_lamps` 51/51 and `fishing` 11/0 on this build; the voice manifest check is unchanged (content
+65cd38053ad6), so 0 new spoken lines.
+

@@ -648,9 +648,10 @@ RB.challenge = (function () {
           RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag, kind: step.kind,
             // the evidence log (L1): what was actually shown and supplied (src/learn/40_evidence.js)
             ev: RB.evidence ? (step.kind === 'listen' && res.read ? 'context' : RB.evidence.modeOf(step, res.mode)) : null, help: res.help, exposed: !!(step.copy || step.guided),
-            repairs: res.recogRepairs || 0, written: res.mode === 'hand' && res.given && res.given.text ? res.given.text : null, task: step.id || null });
+            repairs: res.recogRepairs || 0, written: res.mode === 'hand' && res.given && res.given.text ? res.given.text : null, task: step.id || null,
+            exposure: step.exposure || null }); // (the word around a one-kana blank: met, not answered)
         }
-        if (step.item) [].concat(step.item).forEach((i) => RB.learn.markIntroduced(i));
+        if (step.item) [].concat(step.item, step.exposure || []).forEach((i) => RB.learn.markIntroduced(i));
         resolve(res);
       }
       wrap.addEventListener('click', (e) => {
