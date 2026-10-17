@@ -23,10 +23,14 @@ The repository is the shared record:
 - 256 accepted reference files verified;
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
-Progress (the local worker's checkpoints):
-- **Phase 1 done:** the AivisSpeech narrator, the reference readings, the AivisSpeech and Nemo NPCs, and Mochi. 14,306
-  recordings made, 0 failed.
-- **Phase 2:** Qwen, 9,510 recordings pending; started.
+Progress (the local worker's checkpoints, latest first):
+- **2026-10-17:** phase 1 finished (the AivisSpeech narrator, the reference readings, the AivisSpeech and Nemo NPCs,
+  and Mochi): 18,781 recordings made, 5,035 pending, 0 failed (18,781 + 5,035 = 23,816, the manifest's count). Qwen
+  started. The whole-game batch was then resumed on the same pinned source ff8a0fa and manifest 513ec3ff…, with a
+  runaway-length guard added to Qwen takes; normal takes are unchanged. Status only; no request to the lead.
+- 2026-10-16 (superseded by the counts above): phase 1 done, 14,306 made, 0 failed; Qwen, 9,510 pending, started.
+
+FR-1 (§5) changed none of the inputs above: the manifest check still reports content 65cd38053ad6.
 
 Nothing has been pushed. Results come back as `results.json` (VOICE_DELIVERY.md §4 and §9).
 
