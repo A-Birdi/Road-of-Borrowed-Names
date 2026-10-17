@@ -183,7 +183,8 @@ await test('a real battle in the cellars: the blow carried, the mistake given ba
   await start(p, { map: 'rw.cellar1', x: 16, y: 4, comp: null, profile: 'F' });
   await p.evaluate(() => {
     RB.game.settings.input = 'choice';
-    const s = RB.game.s; s.words = ['mamoru', 'mizu', 'hikari'];
+    // Standard mistakes, chosen: a new journey's default is Assisted since FR-1 (F17), where a mistake costs nothing
+    const s = RB.game.s; s.words = ['mamoru', 'mizu', 'hikari']; s.learn.assist = 'normal';
     const run = RB.challenge.runStep;
     RB.challenge.runStep = (step, o) => { window.__step = step; return run(step, o); };
     window.__right = () => {

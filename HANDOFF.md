@@ -588,7 +588,9 @@
       The note to Local is READINESS.md §1.
     - **Tests:** U `mw1_mill_flow`; B `mw1_mill_flow`. These were updated for the new flow: `ar1_mill_art` (U, B),
       `battle_places`, the geometry record (`rw.mill1`, `lf.records`; deliberate), `story_ch1`, `playtest_repairs`
-      (RBN-01; RBN-07's stale wording from FR-1), `fr1_opening` and `battle_backdrops`.
+      (RBN-01; RBN-07's stale wording from FR-1), `fr1_opening`, `battle_backdrops` and `expedition` (the cellars
+      battle now chooses Standard mistakes, since FR-1 made Assisted the default). 21 affected browser suites pass
+      (VALIDATION.md "MW-1").
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
