@@ -49,7 +49,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'u1b', enemy: 'mb.tangle', x: 3, y: 15, patrol: 1, bg: 'undercroft' },
       { id: 'u1c', enemy: 'mb.crab', x: 18, y: 18, patrol: 2, bg: 'undercroft' },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mb.lockhouse', tx: 8, ty: 5, dir: 'down', scene: 'mb.under_up' },
+      { x: 31, y: 3, to: 'mb.under2', tx: 3, ty: 3, dir: 'down', scene: 'mb.under_down1' },
+    ],
     onEnter: [{ scene: 'mb.under_arrive', if: '!mb_under_seen' }],
     spawn: { default: [3, 3, 'down'], from_house: [3, 3, 'down'], from_below: [30, 3, 'left'] },
   });
@@ -87,7 +90,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'u2c', enemy: 'mb.tangle', x: 20, y: 19, patrol: 2, bg: 'undercroft', aggro: true },
       { id: 'u2d', enemy: 'mb.barge', x: 34, y: 14, patrol: 1, bg: 'undercroft', intro: intro('{誰|だれ} も {乗|の}って いない {荷舟|にぶね} が 、 {勝手|かって} に {動|うご}いて {来|く}る 。', 'An empty barge comes gliding along by itself.') },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mb.under1', tx: 30, ty: 3, dir: 'left', scene: 'mb.under_up2' },
+      { x: 34, y: 2, to: 'mb.under3', tx: 3, ty: 3, dir: 'down', scene: 'mb.under_down2' },
+    ],
     spawn: { default: [3, 3, 'down'], from_above: [3, 3, 'down'], from_below: [34, 3, 'down'] },
   });
 
@@ -117,7 +123,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'u3a', enemy: 'mb.barge', x: 26, y: 8, patrol: 1, bg: 'undercroft' },
       { id: 'u3b', enemy: 'mb.snail', x: 7, y: 17, patrol: 1, bg: 'undercroft', if: 'mb_u3_down' },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mb.under2', tx: 34, ty: 3, dir: 'down', scene: 'mb.under_up3' },
+      { x: 23, y: 18, to: 'mb.firstbridge', tx: 13, ty: 14, dir: 'up', scene: 'mb.firstbridge_door' },
+    ],
     spawn: { default: [3, 3, 'down'], from_above: [3, 3, 'down'], lower: [7, 17, 'right'], from_bridge: [23, 17, 'up'] },
   });
 
@@ -143,7 +152,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'shrine', x: 13, y: 2, scene: 'mb.firstbridge_shrine' },
     ],
     npcs: [{ id: 'mb_bridgespirit', char: 'mb_bridgespirit', x: 13, y: 11, dir: 'down', if: '!mb_bridge_named', talk: 'mb.boss_go' }],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 13, y: 15, to: 'mb.under3', tx: 23, ty: 17, dir: 'up', scene: 'mb.firstbridge_back' },
+    ],
     onEnter: [{ scene: 'mb.firstbridge_arrive', if: '!mb_firstbridge_seen' }],
     spawn: { default: [13, 14, 'up'], from_lock: [13, 14, 'up'] },
   });

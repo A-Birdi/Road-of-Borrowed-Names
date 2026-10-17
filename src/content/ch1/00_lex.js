@@ -204,6 +204,7 @@ RB.lex.add(RB.lex.parseTable(`
 回り出す|まわりだす|v5s|I|to start turning
 梯子|はしご|n|I|ladder
 がたん||adv|I|(sound) bang, clunk
+どすん||adv|I|(sound) thud (something heavy landing)
 押さえる|おさえる|v1|E|to hold down
 石臼|いしうす|n|I|millstone
 変わり者|かわりもの|n|I|eccentric, odd one

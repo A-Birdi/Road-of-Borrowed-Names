@@ -1002,6 +1002,24 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     VALIDATION.md "FR-1V".
   - **Not done:** (F13 is done: AR-1 Mill, approved by Robin, docs/review/ar1_mill/); Firefox
     and Safari; phones (emulated only); a real beginner's play; the letters' "met before" note seen in a browser.
+- [~] XP132 MW-1, the mill follows the gears (Robin, 2026-10-17): "any travel tile that acts as a door or elevation
+  change should be walkable to traverse them … The grindstone should remain inanimate until the gears are fixed … The
+  Mill echo should not be optionally avoidable … The wheel outside … should state why it isn't moving in a way to nudge
+  players upstairs. The ladder could fall down with a thud … If the basement is blocked prior to the gears being fixed,
+  it should be obvious why and how they're then made accessible by this action." VALIDATION.md "MW-1".
+  - **Done** (U `mw1_mill_flow` 100/0; B `mw1_mill_flow` all passed; `ar1_mill_art` U 12/0, B 20/0; `story_ch1` 8/8):
+    - the mill's stairs and ladder are walked onto. The stairs are shut until the gears are mended, and say why (the
+      flooded pit, the stopped gears). The ladder drops with a thud in the gears scene, after the line that drains the
+      pit;
+    - the millstone is still until the gears are mended; the wheel's look after the gears points to the loft;
+    - the Mill Echo meets you coming down from the loft, and its approach spans the room. After a defeat, every way to
+      the door or the stairs meets it again (B);
+    - 19 stairs, ladders and doors that played a scene when used are walk-on exits. The Steam Vents and stacks doors
+      say why they are shut;
+    - voice: a narrator-only, append-only supplement (6 lines, 1 reference, 3 retired); GO and the batch untouched.
+  - **Not done / Robin's call:** the cases listed as discrepancies (threshold prompts, vehicles, the stage lift, bath
+    curtains, stairs that lead nowhere, the stacks key door, the lockhouse hatch); checkpoints on scene exits; Firefox,
+    Safari and phones; recording the supplement (after the batch).
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

@@ -81,10 +81,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.build(15, 12, '#', (k) => { k.rect(1, 2, 13, 9, '_'); k.set(7, 11, '_'); k.rect(11, 8, 2, 2, '+'); }),
     props: [
       { p: 'exitmat', x: 7, y: 10 },
-      { p: 'millstone', x: 6, y: 4, scene: 'rw.m1_stone' },
+      // the millstone stands still until the gears are mended: nothing drives it (MW-1)
+      { p: 'millstone', x: 6, y: 4, o: { still: true }, if: '!rw_gears', scene: 'rw.m1_stone' },
+      { p: 'millstone', x: 6, y: 4, if: 'rw_gears', scene: 'rw.m1_stone' },
       { p: 'gears', x: 10, y: 2, o: { jammed: true }, if: '!rw_gears', scene: 'rw.m1_gears' },
       { p: 'gears', x: 10, y: 2, if: 'rw_gears' },
-      { p: 'ladder', x: 2, y: 2, scene: 'rw.m1_ladder' },
+      // the loft's ladder is up there until the gears free the trapdoor and it drops (MW-1)
+      { p: 'ladder', x: 2, y: 2, if: 'rw_gears', scene: 'rw.m1_ladder' },
       { p: 'stairs', x: 12, y: 9, o: { well: 'down' }, scene: 'rw.m1_stairs' }, // drawn as the stair-well going down (AR-1 Mill)
       { p: 'crate', x: 1, y: 8 }, { p: 'crate', x: 2, y: 9 }, { p: 'barrel', x: 13, y: 4 }, { p: 'hay', x: 1, y: 6 },
       { p: 'sign', x: 9, y: 9, text: { jp: '{粉|こな} は {乾|かわ}いた ところ に {置|お}く こと 。', en: '(A notice in the miller\'s hand) Keep flour in a dry place.' } },
@@ -93,9 +96,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'm1a', enemy: 'rw.dustmoth', x: 3, y: 4, patrol: 1, if: 'rw_gears' },
       { id: 'm1b', enemy: 'rw.inkblot', x: 11, y: 6, if: 'rw_loft_done&!rw_echo_done' },
     ],
-    exits: [{ x: 7, y: 11, to: 'rw.millroad', tx: 9, ty: 5, dir: 'down' }],
-    triggers: [{ x: 5, y: 6, w: 4, h: 2, scene: 'rw.m1_boss', if: 'rw_loft_done&!rw_echo_done' }],
-    onEnter: [{ scene: 'rw.m1_enter', once: true }],
+    // the stairs and the ladder are walked onto, as the door is (MW-1): the stairs are shut (flooded) until the gears
+    // are mended, and say so; the ladder is only there once they are
+    exits: [
+      { x: 7, y: 11, to: 'rw.millroad', tx: 9, ty: 5, dir: 'down' },
+      { x: 12, y: 9, to: 'rw.mill0', tx: 2, ty: 7, dir: 'up', locked: 'rw.m1_stairs', unlock: 'rw_gears' },
+      { x: 2, y: 2, to: 'rw.mill2', tx: 2, ty: 6, dir: 'up', if: 'rw_gears' },
+    ],
+    // the Mill Echo cannot be walked round (MW-1): it meets you as you come down from the loft (once: an arrival event
+    // also runs after every scene, so a repeating one would start the fight again after a defeat), and the whole width
+    // of the room between the ladder and the ways out is its approach (after a defeat you wake by the ladder, above it)
+    triggers: [{ x: 1, y: 6, w: 13, h: 2, scene: 'rw.m1_boss', if: 'rw_loft_done&!rw_echo_done' }],
+    onEnter: [{ scene: 'rw.m1_enter', once: true }, { scene: 'rw.m1_boss', if: 'rw_loft_done&!rw_echo_done', once: true }],
     spawn: { default: [7, 10, 'up'] },
   };
   C.maps['rw.mill2'] = {

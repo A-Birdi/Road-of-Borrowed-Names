@@ -17,12 +17,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   const view = (id, v) => { if (C.maps[id]) C.maps[id].battleView = Object.assign({}, C.maps[id].battleView || {}, v); };
 
-  // The mill's ground floor: the ladder on the west wall goes up to the loft
-  // through a trapdoor that the jammed gear shaft holds shut until the gears
-  // are mended (scene rw.m1_ladder); the stairs at the east front go down to
-  // the wheel pit (rw.m1_stairs); the gear train is on the north wall.
+  // The mill's ground floor: the loft's ladder drops through its trapdoor on
+  // the west wall once the gears are mended (MW-1: before that it is not
+  // there); the stairs at the east front go down to the wheel pit (flooded
+  // until the gears are mended); the gear train is on the north wall. (Every
+  // battle here comes after the gears: the hatch is open in all of them.)
   view('rw.mill1', {
-    note: 'Ground floor: ladder up on the west wall (hatch shut until the gears are mended), gear train on the north wall, stairs down to the wheel pit at the east front.',
+    note: 'Ground floor: the ladder up to the loft on the west wall (it drops down once the gears are mended), gear train on the north wall, stairs down to the wheel pit at the east front.',
     stairs: { '12,9': 'down' },
     ladders: { '2,2': { hatch: 'rw_gears' } },
   });

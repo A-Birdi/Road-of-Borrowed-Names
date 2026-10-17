@@ -82,6 +82,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     exits: [
       { x: 14, y: 21, w: 2, h: 1, to: 'kr.cave1', sp: 'from_cave2', dir: 'down' },
+      // the stairs down: walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 25, y: 3, to: 'kr.cave3', tx: 5, ty: 14, dir: 'right', scene: 'kr.cave_down', if: 'kr_cave2_open' },
     ],
     spawn: { default: [14, 20, 'up'], from_cave1: [14, 20, 'up'], from_cave3: [24, 4, 'left'] },
   });
@@ -105,7 +107,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     triggers: [
       { x: 10, y: 6, w: 5, h: 1, scene: 'kr.ghost_lectern', if: '!kr_ghost_calmed' },
     ],
-    exits: [],
+    exits: [{ x: 4, y: 14, to: 'kr.cave2', tx: 24, ty: 4, dir: 'left', scene: 'kr.cave_up' }], // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
     spawn: { default: [5, 14, 'right'], from_cave2: [5, 14, 'right'] },
   });
 

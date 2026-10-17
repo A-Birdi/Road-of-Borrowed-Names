@@ -147,6 +147,10 @@ they read as dressed stone. The millstone is also the focal object of the Mill E
 - Before the Echo, its look line says it is "faintly warm to the touch, though no one is turning it".
 - Before the gears are mended, the wheel and gears that would drive it are jammed.
 - If Robin wants it to stand still until then, it is a one-line per-instance option: this is Robin's decision.
+- **Decided in MW-1 (Robin, 2026-10-17):** it stands still until the gears are mended, then turns. The drawing honours
+  `o.still` (the art's frame 0); the mill's instance had not set it, so "no still option" above means the instance, not
+  the prop. MW-1 gives the room two instances of this same drawing: `still` while `!rw_gears`, turning after. The
+  picture is unchanged. Its look after the gears says it turns, heavily, almost hot.
 
 ## Capture recipe (tools/review/ar1_mill_capture.mjs)
 

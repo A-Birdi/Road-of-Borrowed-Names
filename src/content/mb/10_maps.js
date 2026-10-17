@@ -266,4 +266,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { if: 'quest.mb_main>=5', scene: 'mb.matsu_negotiate' },
       { scene: 'mb.matsu_first' }] }],
   });
+  // the stair down to the lock, once the passage is open: walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+  C.maps['mb.lockhouse'].exits.push({ x: 8, y: 6, to: 'mb.under1', tx: 3, ty: 3, dir: 'down', scene: 'mb.under_go', if: 'mb_passage' });
 })(RB.content, RB.mapkit);

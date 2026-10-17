@@ -285,7 +285,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     exits: [
       { x: 8, y: 11, to: 'lf.town', tx: 11, ty: 11, dir: 'down' },
-      { x: 14, y: 3, to: 'lf.stacks', tx: 2, ty: 3, dir: 'down', if: 'lf_stacks_open' },
+      // locked: walking onto it uses it, as the key does (MW-1)
+      { x: 14, y: 3, to: 'lf.stacks', tx: 2, ty: 3, dir: 'down', locked: 'lf.stacks_door', unlock: 'lf_stacks_open' },
     ],
     ambient: { dark: 0.12, playerLight: 50 },
     spawn: { default: [8, 10, 'up'] },

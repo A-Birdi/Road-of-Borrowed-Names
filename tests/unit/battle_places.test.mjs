@@ -137,9 +137,12 @@ export default async (t) => {
   const gj = jam.structure.find((s) => s.id === 'gears'), gf = fix.structure.find((s) => s.id === 'gears');
   t.ok(gj && gj.o && gj.o.jammed && gf && !(gf.o && gf.o.jammed), 'the gears: jammed before they are mended, free after');
   const lj = jam.structure.find((s) => s.id === 'ladder'), lf = fix.structure.find((s) => s.id === 'ladder');
-  t.ok(lj.ladder.hatch === 'shut' && lf.ladder.hatch === 'open', 'the loft hatch over the ladder: shut while the gear shaft jams it, open after (' + lj.ladder.hatch + ' / ' + lf.ladder.hatch + ')');
-  t.ok(st(jam).includes('prop:gears@10,2?!rw_gears=1') && st(fix).includes('prop:gears@10,2?rw_gears=1') && st(jam).includes('view:hatch@2,2?rw_gears=0'), 'the record\'s state keys say so: ' + st(jam).join(' '));
-  t.ok(jam.sig !== fix.sig && JSON.stringify(jam.accessories) === JSON.stringify(fix.accessories), 'the signature (part of every cache key) differs; the seeded choice does not');
+  t.ok(!lj && lf && lf.ladder.hatch === 'open', 'the loft\'s ladder: up in the loft while the gears are jammed (MW-1: it drops when they are mended), down through the open hatch after (' + (lj ? lj.ladder.hatch : 'none') + ' / ' + (lf && lf.ladder.hatch) + ')');
+  t.ok(st(jam).includes('prop:gears@10,2?!rw_gears=1') && st(fix).includes('prop:gears@10,2?rw_gears=1') && st(jam).includes('prop:ladder@2,2?rw_gears=0') && st(fix).includes('prop:ladder@2,2?rw_gears=1'), 'the record\'s state keys say so: ' + st(jam).join(' '));
+  // (the seeded choice: which accessories, where in the room and which variant; where each one stands may move, as the
+  // ladder's corner is free before it drops (MW-1). No battle happens here before the gears, so that room is never shown.)
+  const choice = (c) => JSON.stringify(c.accessories.map((q) => [q.cluster, q.zone, q.side, q.order, q.variant]));
+  t.ok(jam.sig !== fix.sig && choice(jam) === choice(fix), 'the signature (part of every cache key) differs; the seeded choice does not');
   const reeds = (o) => { const e = placed('rw.millroad', { enemy: 'rw.reedling', x: 7, y: 18 }); return BP.compose(e, e.where, 5, { test: flags(Object.assign({ rw_mill_open: true }, o)) }); };
   const rStand = reeds({ rw_mr_nao: false }), rCut = reeds({ rw_mr_nao: true });
   const bed = (c) => c.context.concat(c.lines.map((l) => ({ id: l.group, at: l.from.split('@')[1] }))).filter((i) => /^12,1[4-7]$/.test(i.at)).length;

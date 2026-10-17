@@ -42204,6 +42204,9 @@ RB.world = (function () {
     if (W.turnHold > 0) return;
     p.dir = dir;
     if (blocked(nx, ny, { except: p, ignorePlayer: true })) {
+      // a way on set in a wall (a door in a cliff): walking into it is using it, as stepping onto stairs is
+      const wx = RB.maps.exitAt(W.map, nx, ny);
+      if (wx && wx.scene) { W.path = null; useExit(wx, false); return; }
       if (!W.bumpT || W.time - W.bumpT > 300) { RB.audio && RB.audio.sfx('bump'); W.bumpT = W.time; }
       W.path = null;
       return;
@@ -42251,6 +42254,7 @@ RB.world = (function () {
         return;
       }
       W.path = null;
+      if (ex.scene) { useExit(ex, true); return; }
       RB.game.transition(ex.to, ex.tx, ex.ty, ex.dir || p.dir, { sp: ex.sp });
       return;
     }
@@ -42271,6 +42275,20 @@ RB.world = (function () {
       W.pathTarget = null;
       if (pt) arriveAt(pt);
     }
+  }
+  // An exit that is a scene (MW-1, Robin: a travel tile is walked onto, never only used): stairs, a ladder or a door
+  // whose way on asks first, explains why it is shut, or tells you something on the way. Stepping onto it, or walking
+  // into it when it is set in a wall, plays the same scene that using the thing plays. You are back off it first, as at
+  // a locked door; the scene moves you on (!warp) or leaves you where you stood.
+  function useExit(ex, stepped) {
+    const p = W.player, st = s();
+    if (stepped) {
+      const back = DIRS[OPP[p.dir]];
+      p.x += back[0]; p.y += back[1]; p.fx = p.x; p.fy = p.y;
+      st.x = p.x; st.y = p.y;
+    }
+    if (ex.locked && (!ex.unlock || !RB.state.test(st, ex.unlock))) { RB.script.run(ex.locked); return; }
+    RB.script.run(ex.scene, { exit: ex, prop: propAt(ex.x, ex.y) || undefined });
   }
   function faceTo(a, x, y) {
     a.glanceFrom = null; a.glanceT = 6000 + wrand() * 6000;
@@ -133393,6 +133411,7 @@ RB.lex.add(RB.lex.parseTable(`
 回り出す|まわりだす|v5s|I|to start turning
 梯子|はしご|n|I|ladder
 がたん||adv|I|(sound) bang, clunk
+どすん||adv|I|(sound) thud (something heavy landing)
 押さえる|おさえる|v1|E|to hold down
 石臼|いしうす|n|I|millstone
 変わり者|かわりもの|n|I|eccentric, odd one
@@ -133927,10 +133946,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.build(15, 12, '#', (k) => { k.rect(1, 2, 13, 9, '_'); k.set(7, 11, '_'); k.rect(11, 8, 2, 2, '+'); }),
     props: [
       { p: 'exitmat', x: 7, y: 10 },
-      { p: 'millstone', x: 6, y: 4, scene: 'rw.m1_stone' },
+      // the millstone stands still until the gears are mended: nothing drives it (MW-1)
+      { p: 'millstone', x: 6, y: 4, o: { still: true }, if: '!rw_gears', scene: 'rw.m1_stone' },
+      { p: 'millstone', x: 6, y: 4, if: 'rw_gears', scene: 'rw.m1_stone' },
       { p: 'gears', x: 10, y: 2, o: { jammed: true }, if: '!rw_gears', scene: 'rw.m1_gears' },
       { p: 'gears', x: 10, y: 2, if: 'rw_gears' },
-      { p: 'ladder', x: 2, y: 2, scene: 'rw.m1_ladder' },
+      // the loft's ladder is up there until the gears free the trapdoor and it drops (MW-1)
+      { p: 'ladder', x: 2, y: 2, if: 'rw_gears', scene: 'rw.m1_ladder' },
       { p: 'stairs', x: 12, y: 9, o: { well: 'down' }, scene: 'rw.m1_stairs' }, // drawn as the stair-well going down (AR-1 Mill)
       { p: 'crate', x: 1, y: 8 }, { p: 'crate', x: 2, y: 9 }, { p: 'barrel', x: 13, y: 4 }, { p: 'hay', x: 1, y: 6 },
       { p: 'sign', x: 9, y: 9, text: { jp: '{粉|こな} は {乾|かわ}いた ところ に {置|お}く こと 。', en: '(A notice in the miller\'s hand) Keep flour in a dry place.' } },
@@ -133939,9 +133961,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'm1a', enemy: 'rw.dustmoth', x: 3, y: 4, patrol: 1, if: 'rw_gears' },
       { id: 'm1b', enemy: 'rw.inkblot', x: 11, y: 6, if: 'rw_loft_done&!rw_echo_done' },
     ],
-    exits: [{ x: 7, y: 11, to: 'rw.millroad', tx: 9, ty: 5, dir: 'down' }],
-    triggers: [{ x: 5, y: 6, w: 4, h: 2, scene: 'rw.m1_boss', if: 'rw_loft_done&!rw_echo_done' }],
-    onEnter: [{ scene: 'rw.m1_enter', once: true }],
+    // the stairs and the ladder are walked onto, as the door is (MW-1): the stairs are shut (flooded) until the gears
+    // are mended, and say so; the ladder is only there once they are
+    exits: [
+      { x: 7, y: 11, to: 'rw.millroad', tx: 9, ty: 5, dir: 'down' },
+      { x: 12, y: 9, to: 'rw.mill0', tx: 2, ty: 7, dir: 'up', locked: 'rw.m1_stairs', unlock: 'rw_gears' },
+      { x: 2, y: 2, to: 'rw.mill2', tx: 2, ty: 6, dir: 'up', if: 'rw_gears' },
+    ],
+    // the Mill Echo cannot be walked round (MW-1): it meets you as you come down from the loft (once: an arrival event
+    // also runs after every scene, so a repeating one would start the fight again after a defeat), and the whole width
+    // of the room between the ladder and the ways out is its approach (after a defeat you wake by the ladder, above it)
+    triggers: [{ x: 1, y: 6, w: 13, h: 2, scene: 'rw.m1_boss', if: 'rw_loft_done&!rw_echo_done' }],
+    onEnter: [{ scene: 'rw.m1_enter', once: true }, { scene: 'rw.m1_boss', if: 'rw_loft_done&!rw_echo_done', once: true }],
     spawn: { default: [7, 10, 'up'] },
   };
   C.maps['rw.mill2'] = {
@@ -135180,7 +135211,12 @@ suzu: {私|わたし} は ここ で {崖|がけ} の お{客|きゃく} を {�
 narr: {大|おお}きな {石|いし} だ 。 {動|うご}かない 。 || A big rock. It won't budge.
 
 @scene rw.mr_wheel
+!if rw_gears -> strain
 narr: {水車|すいしゃ} は {止|と}まって いる 。 {水|みず} が {羽根|はね} を {押|お}して も 、 きしむ だけ で {回|まわ}らない 。 || The waterwheel is still. The water pushes against the paddles; it only creaks, it doesn't turn.
+!end
+:strain
+narr: {水車|すいしゃ} は きしみ ながら {揺|ゆ}れる が 、 まだ {回|まわ}らない 。 || The waterwheel creaks and strains, but it still won't turn.
+narr: {屋根|やね} の {下|した} から 、 {声|こえ} が もれて くる 。 {屋根裏|やねうら} で {何|なに} か が 、 {水車|すいしゃ} を {止|と}めて いる よう だ 。 || Voices are leaking out from under the roof. Something up in the loft seems to be holding the wheel back.
 
 @scene rw.mr_marker
 narr: 「 {北|きた} 、 {水車|すいしゃ}{小屋|ごや} 。 {南|みなみ} 、 {葦|あし}ノ{瀬|せ} 。 」 {石|いし} の {字|じ} は {無事|ぶじ} だ 。 || "North: the water mill. South: Ashinose." The carved words are safe.
@@ -135195,7 +135231,8 @@ narr: 「 …… あした も きて ね …… 」 「 …… おかえり …
 
 @scene rw.m1_gears
 # Staged: you lean in to the jammed gears; you reach in and set the pin; at the faint heat you turn to the
-# millstone, and the bang of the trapdoor makes you look up at the ladder.
+# millstone; the water draining under the stairs makes you turn to them (they open now: MW-1), and the thud of the
+# loft's ladder dropping through the trapdoor makes you look up at it (it is there from now on).
 !if !item.rw_wheel_pin -> nopin
 !gesture pc observe 10,2 hold
 narr: {歯車|はぐるま} の {真|ま}ん{中|なか} に 、 {軸|じく} を {通|とお}す {穴|あな} が ある 。 {板|いた} に は {番号|ばんごう} の ような {字|じ} が {刻|きざ}まれて いる 。 || There's a hole in the middle of the gears for a pin. Plates carved with something like numbers.
@@ -135210,9 +135247,13 @@ narr: {床|ゆか} の {下|した} の {水路|すいろ} に 、 {冷|つめ}�
 !word mizu
 !gesture pc listen 6,4
 narr: 「 みず 」 。 {熱|あつ}く なった もの を {冷|ひ}やす {言葉|ことば} だ 。 {部屋|へや} の {真|ま}ん{中|なか} の {石臼|いしうす} から 、 かすか に {熱|ねつ} を {感|かん}じる 。 || Mizu — water: a word that cools whatever has grown hot. From the millstone in the middle of the room, you feel a faint heat.
-!gesture pc flinch 2,2
-narr: {梯子|はしご} の {上|うえ} の {扉|とびら} が 、 がたん と {開|ひら}いた 。 || The trapdoor above the ladder bangs open.
+!gesture pc listen 12,9
+!sfx water
+narr: {階段|かいだん} の {下|した} から 、 {水|みず} の {引|ひ}いて いく {音|おと} が する 。 これ で {下|した} へ {降|お}りられる 。 || From below the stairs comes the sound of the water draining away. Now you can go down.
 !set rw_gears
+!gesture pc flinch 2,2
+!sfx door
+narr: {天井|てんじょう} の {扉|とびら} が がたん と {開|ひら}き 、 {梯子|はしご} が どすん と {落|お}ちて きた 。 || The trapdoor in the ceiling bangs open, and a ladder drops down with a thud.
 !quest rw_mill 2
 !autosave
 !end
@@ -135221,22 +135262,25 @@ narr: {梯子|はしご} の {上|うえ} の {扉|とびら} が 、 がたん 
 narr: {歯車|はぐるま} の {真|ま}ん{中|なか} の {軸|じく} が {抜|ぬ}けて いる 。 これ では {回|まわ}らない 。 {誰|だれ} か が {持|も}って いった の だろう か 。 || The pin through the middle of the gears is missing. They won't turn like this. Did someone take it?
 
 @scene rw.m1_ladder
-!if !rw_gears -> shut
+# (the ladder is only there once the gears are mended: it dropped from the loft then; walking onto it climbs, MW-1)
 !warp rw.mill2 2 6 up
-!end
-:shut
-narr: {梯子|はしご} の {上|うえ} の {扉|とびら} は 、 {止|と}まった {歯車|はぐるま} の {軸|じく} に {押|お}さえられて {開|ひら}かない 。 || The trapdoor at the top of the ladder is held shut by the jammed gear shaft.
 
 @scene rw.m1_stairs
+# Walking onto the stairs goes down once the gears are mended (the map's exit); until then they are shut, and this
+# says why and what opens them (MW-1). Using them from beside does the same.
 !if !rw_gears -> dark
 !warp rw.mill0 2 7 up
 !end
 :dark
-narr: {階段|かいだん} の {下|した} は {水|みず} の {音|おと} で いっぱい だ 。 {水車|すいしゃ} が {止|と}まって いる {間|あいだ} は 、 {危|あぶ}なくて {降|お}りられない 。 || The stairs lead down into the roar of water. While the wheel is jammed it's too dangerous to go down.
+narr: {階段|かいだん} の {下|した} は 、 あふれた {水|みず} で いっぱい だ 。 {歯車|はぐるま} が {止|と}まって いて 、 {水|みず} が {水路|すいろ} に {戻|もど}らない 。 これ では {降|お}りられない 。 || Below the stairs, the pit is full of overflowing water. With the gears stopped, it can't run back into the millrace. No way down like this.
 
 @scene rw.m1_stone
 !if rw_echo_done -> quiet
+!if rw_gears -> turning
 narr: {大|おお}きな {石臼|いしうす} 。 {触|さわ}る と 、 かすか に {温|あたた}かい 。 {誰|だれ} も {回|まわ}して いない のに 。 || A great millstone. It's faintly warm to the touch, though no one is turning it.
+!end
+:turning
+narr: {石臼|いしうす} が {重|おも}たげ に {回|まわ}って いる 。 {触|さわ}る と 、 {熱|あつ}い くらい だ 。 || The millstone turns, heavily. To the touch, it's almost hot.
 !end
 :quiet
 narr: {石臼|いしうす} は {静|しず}か に {回|まわ}って いる 。 もう {温|あたた}かく ない 。 || The millstone turns quietly. It isn't warm anymore.
@@ -153298,7 +153342,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     exits: [
       { x: 8, y: 11, to: 'lf.town', tx: 11, ty: 11, dir: 'down' },
-      { x: 14, y: 3, to: 'lf.stacks', tx: 2, ty: 3, dir: 'down', if: 'lf_stacks_open' },
+      // locked: walking onto it uses it, as the key does (MW-1)
+      { x: 14, y: 3, to: 'lf.stacks', tx: 2, ty: 3, dir: 'down', locked: 'lf.stacks_door', unlock: 'lf_stacks_open' },
     ],
     ambient: { dark: 0.12, playerLight: 50 },
     spawn: { default: [8, 10, 'up'] },
@@ -174988,6 +175033,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     exits: [
       { x: 2, y: 3, to: 'rw.cellar1', tx: 30, ty: 5, dir: 'down' },
+      // the shortcut ladder up: walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 31, y: 3, to: 'rw.cellar1', tx: 8, ty: 21, dir: 'up', scene: 'xp.cellars_ladder' },
     ],
     spawn: { default: [4, 4, 'down'] },
   });
@@ -195670,6 +195717,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     exits: [
       { x: 0, y: 18, w: 1, h: 2, to: 'kr.ridge', sp: 'from_lodge', dir: 'left' },
       { x: 39, y: 18, w: 1, h: 2, to: 'kr.descent', sp: 'from_lodge', dir: 'right', if: 'kr_vigil_done' },
+      // the scriptorium's door in the cliff: walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 20, y: 3, to: 'kr.cave1', tx: 14, ty: 18, dir: 'up', scene: 'kr.cave_go' },
     ],
     onEnter: [{ scene: 'kr.lodge_arrive', if: '!kr_lodge_seen' }, { scene: 'kr.evening', if: 'kr_night&!kr_evening_seen' }],
     spawn: { default: [1, 18, 'right'], from_ridge: [1, 18, 'right'], from_descent: [38, 18, 'left'], from_cave: [20, 5, 'down'] },
@@ -195859,6 +195908,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     exits: [
       { x: 14, y: 21, w: 2, h: 1, to: 'kr.cave1', sp: 'from_cave2', dir: 'down' },
+      // the stairs down: walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 25, y: 3, to: 'kr.cave3', tx: 5, ty: 14, dir: 'right', scene: 'kr.cave_down', if: 'kr_cave2_open' },
     ],
     spawn: { default: [14, 20, 'up'], from_cave1: [14, 20, 'up'], from_cave3: [24, 4, 'left'] },
   });
@@ -195882,7 +195933,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     triggers: [
       { x: 10, y: 6, w: 5, h: 1, scene: 'kr.ghost_lectern', if: '!kr_ghost_calmed' },
     ],
-    exits: [],
+    exits: [{ x: 4, y: 14, to: 'kr.cave2', tx: 24, ty: 4, dir: 'left', scene: 'kr.cave_up' }], // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
     spawn: { default: [5, 14, 'right'], from_cave2: [5, 14, 'right'] },
   });
 
@@ -200734,6 +200785,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { if: 'quest.mb_main>=5', scene: 'mb.matsu_negotiate' },
       { scene: 'mb.matsu_first' }] }],
   });
+  // the stair down to the lock, once the passage is open: walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+  C.maps['mb.lockhouse'].exits.push({ x: 8, y: 6, to: 'mb.under1', tx: 3, ty: 3, dir: 'down', scene: 'mb.under_go', if: 'mb_passage' });
 })(RB.content, RB.mapkit);
 
 
@@ -200789,7 +200842,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'u1b', enemy: 'mb.tangle', x: 3, y: 15, patrol: 1, bg: 'undercroft' },
       { id: 'u1c', enemy: 'mb.crab', x: 18, y: 18, patrol: 2, bg: 'undercroft' },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mb.lockhouse', tx: 8, ty: 5, dir: 'down', scene: 'mb.under_up' },
+      { x: 31, y: 3, to: 'mb.under2', tx: 3, ty: 3, dir: 'down', scene: 'mb.under_down1' },
+    ],
     onEnter: [{ scene: 'mb.under_arrive', if: '!mb_under_seen' }],
     spawn: { default: [3, 3, 'down'], from_house: [3, 3, 'down'], from_below: [30, 3, 'left'] },
   });
@@ -200827,7 +200883,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'u2c', enemy: 'mb.tangle', x: 20, y: 19, patrol: 2, bg: 'undercroft', aggro: true },
       { id: 'u2d', enemy: 'mb.barge', x: 34, y: 14, patrol: 1, bg: 'undercroft', intro: intro('{誰|だれ} も {乗|の}って いない {荷舟|にぶね} が 、 {勝手|かって} に {動|うご}いて {来|く}る 。', 'An empty barge comes gliding along by itself.') },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mb.under1', tx: 30, ty: 3, dir: 'left', scene: 'mb.under_up2' },
+      { x: 34, y: 2, to: 'mb.under3', tx: 3, ty: 3, dir: 'down', scene: 'mb.under_down2' },
+    ],
     spawn: { default: [3, 3, 'down'], from_above: [3, 3, 'down'], from_below: [34, 3, 'down'] },
   });
 
@@ -200857,7 +200916,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'u3a', enemy: 'mb.barge', x: 26, y: 8, patrol: 1, bg: 'undercroft' },
       { id: 'u3b', enemy: 'mb.snail', x: 7, y: 17, patrol: 1, bg: 'undercroft', if: 'mb_u3_down' },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mb.under2', tx: 34, ty: 3, dir: 'down', scene: 'mb.under_up3' },
+      { x: 23, y: 18, to: 'mb.firstbridge', tx: 13, ty: 14, dir: 'up', scene: 'mb.firstbridge_door' },
+    ],
     spawn: { default: [3, 3, 'down'], from_above: [3, 3, 'down'], lower: [7, 17, 'right'], from_bridge: [23, 17, 'up'] },
   });
 
@@ -200883,7 +200945,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'shrine', x: 13, y: 2, scene: 'mb.firstbridge_shrine' },
     ],
     npcs: [{ id: 'mb_bridgespirit', char: 'mb_bridgespirit', x: 13, y: 11, dir: 'down', if: '!mb_bridge_named', talk: 'mb.boss_go' }],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 13, y: 15, to: 'mb.under3', tx: 23, ty: 17, dir: 'up', scene: 'mb.firstbridge_back' },
+    ],
     onEnter: [{ scene: 'mb.firstbridge_arrive', if: '!mb_firstbridge_seen' }],
     spawn: { default: [13, 14, 'up'], from_lock: [13, 14, 'up'] },
   });
@@ -203436,7 +203500,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'n1b', enemy: 'mp.imp', x: 16, y: 4, patrol: 2, bg: 'understage', intro: intro('{活字|かつじ} で できた {小鬼|こおに} が 、 {逆|さか}さま の {字|じ} を ばらまいて いる 。', 'An imp made of loose type is scattering letters about, all of them backwards.') },
       { id: 'n1c', enemy: 'mp.kuroko', x: 4, y: 15, patrol: 0, bg: 'understage', if: 'mp_kuroko1', intro: intro('{黒子|くろこ} の {姿|すがた} を した {影|かげ} 。 {名前|なまえ} を {呼|よ}ばれて 、 やっと 「いる」 こと に なった 。', 'A shadow dressed as a kuroko. Named aloud, it is there at last.') },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mp.theatre', tx: 8, ty: 5, dir: 'down', scene: 'mp.under_up' },
+      { x: 27, y: 15, to: 'mp.under2', tx: 3, ty: 3, dir: 'down', scene: 'mp.under_down1' },
+    ],
     onEnter: [{ scene: 'mp.under_arrive', if: '!mp_under_seen' }],
     spawn: { default: [3, 3, 'down'], from_theatre: [3, 3, 'down'], from_below: [27, 14, 'up'] },
   });
@@ -203470,7 +203537,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'n2b', enemy: 'mp.moth', x: 26, y: 8, patrol: 2, bg: 'understage', group: { normal: ['mp.moth'], hard: ['mp.moth', 'mp.imp'] } },
       { id: 'n2c', enemy: 'mp.imp', x: 24, y: 14, patrol: 2, bg: 'understage', aggro: true, group: { normal: ['mp.moth'], hard: ['mp.moth', 'mp.moth'] } },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mp.under1', tx: 27, ty: 14, dir: 'up', scene: 'mp.under_up2' },
+      { x: 28, y: 18, to: 'mp.under3', tx: 3, ty: 3, dir: 'down', scene: 'mp.under_down2' },
+    ],
     spawn: { default: [3, 3, 'down'], from_above: [3, 3, 'down'], from_below: [28, 17, 'up'] },
   });
 
@@ -203498,7 +203568,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'n3a', enemy: 'mp.golem', x: 20, y: 10, patrol: 1, bg: 'understage' },
       { id: 'n3b', enemy: 'mp.kuroko', x: 22, y: 16, patrol: 0, bg: 'understage', if: 'mp_kuroko2' },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mp.under2', tx: 28, ty: 17, dir: 'up', scene: 'mp.under_up3' },
+      { x: 13, y: 17, to: 'mp.bottom', tx: 13, ty: 14, dir: 'up', scene: 'mp.bottom_door' },
+    ],
     onEnter: [{ scene: 'mp.ikutsuka', if: '!mod_ikutsuka' }],
     spawn: { default: [3, 3, 'down'], from_above: [3, 3, 'down'], from_bottom: [13, 16, 'up'] },
   });
@@ -203521,7 +203594,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'mp_typecase', x: 2, y: 2 }, { p: 'mp_typecase', x: 23, y: 2 },
     ],
     npcs: [{ id: 'mp_naraku', char: 'mp_naraku', x: 13, y: 10, dir: 'down', if: '!mp_under_done', talk: 'mp.boss_go' }],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 13, y: 15, to: 'mp.under3', tx: 13, ty: 16, dir: 'up', scene: 'mp.bottom_back' },
+    ],
     onEnter: [{ scene: 'mp.bottom_arrive', if: '!mp_bottom_seen' }],
     spawn: { default: [13, 14, 'up'], from_well: [13, 14, 'up'] },
   });
@@ -219121,7 +219196,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     exits: [
       { x: 19, y: 0, w: 2, h: 1, to: 'yn.upper', sp: 'from_lower', dir: 'up' },
       { x: 39, y: 15, w: 1, h: 2, to: 'yn.terraces', sp: 'from_lower', dir: 'right' },
-      { x: 37, y: 26, w: 1, h: 1, to: 'yn.vents1', sp: 'from_lower', dir: 'down', if: 'yn_vents_open' },
+      // shut until the vents are opened: walking onto it then says why (MW-1), as using it does
+      { x: 37, y: 26, w: 1, h: 1, to: 'yn.vents1', sp: 'from_lower', dir: 'down', locked: 'yn.vents_door', unlock: 'yn_vents_open' },
     ],
     triggers: [{ x: 25, y: 15, w: 1, h: 2, scene: 'yn.bridge_quarrel', if: 'yn_rooms_done&yn_shimo_heard&!yn_quarrel' }],
     onEnter: [{ scene: 'yn.lower_first', if: '!yn_lower_seen' }],
@@ -222165,12 +222241,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   const view = (id, v) => { if (C.maps[id]) C.maps[id].battleView = Object.assign({}, C.maps[id].battleView || {}, v); };
 
-  // The mill's ground floor: the ladder on the west wall goes up to the loft
-  // through a trapdoor that the jammed gear shaft holds shut until the gears
-  // are mended (scene rw.m1_ladder); the stairs at the east front go down to
-  // the wheel pit (rw.m1_stairs); the gear train is on the north wall.
+  // The mill's ground floor: the loft's ladder drops through its trapdoor on
+  // the west wall once the gears are mended (MW-1: before that it is not
+  // there); the stairs at the east front go down to the wheel pit (flooded
+  // until the gears are mended); the gear train is on the north wall. (Every
+  // battle here comes after the gears: the hatch is open in all of them.)
   view('rw.mill1', {
-    note: 'Ground floor: ladder up on the west wall (hatch shut until the gears are mended), gear train on the north wall, stairs down to the wheel pit at the east front.',
+    note: 'Ground floor: the ladder up to the loft on the west wall (it drops down once the gears are mended), gear train on the north wall, stairs down to the wheel pit at the east front.',
     stairs: { '12,9': 'down' },
     ladders: { '2,2': { hatch: 'rw_gears' } },
   });

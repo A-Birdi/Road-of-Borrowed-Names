@@ -45,7 +45,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'n1b', enemy: 'mp.imp', x: 16, y: 4, patrol: 2, bg: 'understage', intro: intro('{活字|かつじ} で できた {小鬼|こおに} が 、 {逆|さか}さま の {字|じ} を ばらまいて いる 。', 'An imp made of loose type is scattering letters about, all of them backwards.') },
       { id: 'n1c', enemy: 'mp.kuroko', x: 4, y: 15, patrol: 0, bg: 'understage', if: 'mp_kuroko1', intro: intro('{黒子|くろこ} の {姿|すがた} を した {影|かげ} 。 {名前|なまえ} を {呼|よ}ばれて 、 やっと 「いる」 こと に なった 。', 'A shadow dressed as a kuroko. Named aloud, it is there at last.') },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mp.theatre', tx: 8, ty: 5, dir: 'down', scene: 'mp.under_up' },
+      { x: 27, y: 15, to: 'mp.under2', tx: 3, ty: 3, dir: 'down', scene: 'mp.under_down1' },
+    ],
     onEnter: [{ scene: 'mp.under_arrive', if: '!mp_under_seen' }],
     spawn: { default: [3, 3, 'down'], from_theatre: [3, 3, 'down'], from_below: [27, 14, 'up'] },
   });
@@ -79,7 +82,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'n2b', enemy: 'mp.moth', x: 26, y: 8, patrol: 2, bg: 'understage', group: { normal: ['mp.moth'], hard: ['mp.moth', 'mp.imp'] } },
       { id: 'n2c', enemy: 'mp.imp', x: 24, y: 14, patrol: 2, bg: 'understage', aggro: true, group: { normal: ['mp.moth'], hard: ['mp.moth', 'mp.moth'] } },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mp.under1', tx: 27, ty: 14, dir: 'up', scene: 'mp.under_up2' },
+      { x: 28, y: 18, to: 'mp.under3', tx: 3, ty: 3, dir: 'down', scene: 'mp.under_down2' },
+    ],
     spawn: { default: [3, 3, 'down'], from_above: [3, 3, 'down'], from_below: [28, 17, 'up'] },
   });
 
@@ -107,7 +113,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'n3a', enemy: 'mp.golem', x: 20, y: 10, patrol: 1, bg: 'understage' },
       { id: 'n3b', enemy: 'mp.kuroko', x: 22, y: 16, patrol: 0, bg: 'understage', if: 'mp_kuroko2' },
     ],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 3, y: 2, to: 'mp.under2', tx: 28, ty: 17, dir: 'up', scene: 'mp.under_up3' },
+      { x: 13, y: 17, to: 'mp.bottom', tx: 13, ty: 14, dir: 'up', scene: 'mp.bottom_door' },
+    ],
     onEnter: [{ scene: 'mp.ikutsuka', if: '!mod_ikutsuka' }],
     spawn: { default: [3, 3, 'down'], from_above: [3, 3, 'down'], from_bottom: [13, 16, 'up'] },
   });
@@ -130,7 +139,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'mp_typecase', x: 2, y: 2 }, { p: 'mp_typecase', x: 23, y: 2 },
     ],
     npcs: [{ id: 'mp_naraku', char: 'mp_naraku', x: 13, y: 10, dir: 'down', if: '!mp_under_done', talk: 'mp.boss_go' }],
-    exits: [],
+    exits: [ // walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 13, y: 15, to: 'mp.under3', tx: 13, ty: 16, dir: 'up', scene: 'mp.bottom_back' },
+    ],
     onEnter: [{ scene: 'mp.bottom_arrive', if: '!mp_bottom_seen' }],
     spawn: { default: [13, 14, 'up'], from_well: [13, 14, 'up'] },
   });

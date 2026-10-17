@@ -242,6 +242,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     exits: [
       { x: 0, y: 18, w: 1, h: 2, to: 'kr.ridge', sp: 'from_lodge', dir: 'left' },
       { x: 39, y: 18, w: 1, h: 2, to: 'kr.descent', sp: 'from_lodge', dir: 'right', if: 'kr_vigil_done' },
+      // the scriptorium's door in the cliff: walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 20, y: 3, to: 'kr.cave1', tx: 14, ty: 18, dir: 'up', scene: 'kr.cave_go' },
     ],
     onEnter: [{ scene: 'kr.lodge_arrive', if: '!kr_lodge_seen' }, { scene: 'kr.evening', if: 'kr_night&!kr_evening_seen' }],
     spawn: { default: [1, 18, 'right'], from_ridge: [1, 18, 'right'], from_descent: [38, 18, 'left'], from_cave: [20, 5, 'down'] },

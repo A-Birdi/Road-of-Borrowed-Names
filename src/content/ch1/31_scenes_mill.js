@@ -194,7 +194,12 @@ suzu: {私|わたし} は ここ で {崖|がけ} の お{客|きゃく} を {�
 narr: {大|おお}きな {石|いし} だ 。 {動|うご}かない 。 || A big rock. It won't budge.
 
 @scene rw.mr_wheel
+!if rw_gears -> strain
 narr: {水車|すいしゃ} は {止|と}まって いる 。 {水|みず} が {羽根|はね} を {押|お}して も 、 きしむ だけ で {回|まわ}らない 。 || The waterwheel is still. The water pushes against the paddles; it only creaks, it doesn't turn.
+!end
+:strain
+narr: {水車|すいしゃ} は きしみ ながら {揺|ゆ}れる が 、 まだ {回|まわ}らない 。 || The waterwheel creaks and strains, but it still won't turn.
+narr: {屋根|やね} の {下|した} から 、 {声|こえ} が もれて くる 。 {屋根裏|やねうら} で {何|なに} か が 、 {水車|すいしゃ} を {止|と}めて いる よう だ 。 || Voices are leaking out from under the roof. Something up in the loft seems to be holding the wheel back.
 
 @scene rw.mr_marker
 narr: 「 {北|きた} 、 {水車|すいしゃ}{小屋|ごや} 。 {南|みなみ} 、 {葦|あし}ノ{瀬|せ} 。 」 {石|いし} の {字|じ} は {無事|ぶじ} だ 。 || "North: the water mill. South: Ashinose." The carved words are safe.
@@ -209,7 +214,8 @@ narr: 「 …… あした も きて ね …… 」 「 …… おかえり …
 
 @scene rw.m1_gears
 # Staged: you lean in to the jammed gears; you reach in and set the pin; at the faint heat you turn to the
-# millstone, and the bang of the trapdoor makes you look up at the ladder.
+# millstone; the water draining under the stairs makes you turn to them (they open now: MW-1), and the thud of the
+# loft's ladder dropping through the trapdoor makes you look up at it (it is there from now on).
 !if !item.rw_wheel_pin -> nopin
 !gesture pc observe 10,2 hold
 narr: {歯車|はぐるま} の {真|ま}ん{中|なか} に 、 {軸|じく} を {通|とお}す {穴|あな} が ある 。 {板|いた} に は {番号|ばんごう} の ような {字|じ} が {刻|きざ}まれて いる 。 || There's a hole in the middle of the gears for a pin. Plates carved with something like numbers.
@@ -224,9 +230,13 @@ narr: {床|ゆか} の {下|した} の {水路|すいろ} に 、 {冷|つめ}�
 !word mizu
 !gesture pc listen 6,4
 narr: 「 みず 」 。 {熱|あつ}く なった もの を {冷|ひ}やす {言葉|ことば} だ 。 {部屋|へや} の {真|ま}ん{中|なか} の {石臼|いしうす} から 、 かすか に {熱|ねつ} を {感|かん}じる 。 || Mizu — water: a word that cools whatever has grown hot. From the millstone in the middle of the room, you feel a faint heat.
-!gesture pc flinch 2,2
-narr: {梯子|はしご} の {上|うえ} の {扉|とびら} が 、 がたん と {開|ひら}いた 。 || The trapdoor above the ladder bangs open.
+!gesture pc listen 12,9
+!sfx water
+narr: {階段|かいだん} の {下|した} から 、 {水|みず} の {引|ひ}いて いく {音|おと} が する 。 これ で {下|した} へ {降|お}りられる 。 || From below the stairs comes the sound of the water draining away. Now you can go down.
 !set rw_gears
+!gesture pc flinch 2,2
+!sfx door
+narr: {天井|てんじょう} の {扉|とびら} が がたん と {開|ひら}き 、 {梯子|はしご} が どすん と {落|お}ちて きた 。 || The trapdoor in the ceiling bangs open, and a ladder drops down with a thud.
 !quest rw_mill 2
 !autosave
 !end
@@ -235,22 +245,25 @@ narr: {梯子|はしご} の {上|うえ} の {扉|とびら} が 、 がたん 
 narr: {歯車|はぐるま} の {真|ま}ん{中|なか} の {軸|じく} が {抜|ぬ}けて いる 。 これ では {回|まわ}らない 。 {誰|だれ} か が {持|も}って いった の だろう か 。 || The pin through the middle of the gears is missing. They won't turn like this. Did someone take it?
 
 @scene rw.m1_ladder
-!if !rw_gears -> shut
+# (the ladder is only there once the gears are mended: it dropped from the loft then; walking onto it climbs, MW-1)
 !warp rw.mill2 2 6 up
-!end
-:shut
-narr: {梯子|はしご} の {上|うえ} の {扉|とびら} は 、 {止|と}まった {歯車|はぐるま} の {軸|じく} に {押|お}さえられて {開|ひら}かない 。 || The trapdoor at the top of the ladder is held shut by the jammed gear shaft.
 
 @scene rw.m1_stairs
+# Walking onto the stairs goes down once the gears are mended (the map's exit); until then they are shut, and this
+# says why and what opens them (MW-1). Using them from beside does the same.
 !if !rw_gears -> dark
 !warp rw.mill0 2 7 up
 !end
 :dark
-narr: {階段|かいだん} の {下|した} は {水|みず} の {音|おと} で いっぱい だ 。 {水車|すいしゃ} が {止|と}まって いる {間|あいだ} は 、 {危|あぶ}なくて {降|お}りられない 。 || The stairs lead down into the roar of water. While the wheel is jammed it's too dangerous to go down.
+narr: {階段|かいだん} の {下|した} は 、 あふれた {水|みず} で いっぱい だ 。 {歯車|はぐるま} が {止|と}まって いて 、 {水|みず} が {水路|すいろ} に {戻|もど}らない 。 これ では {降|お}りられない 。 || Below the stairs, the pit is full of overflowing water. With the gears stopped, it can't run back into the millrace. No way down like this.
 
 @scene rw.m1_stone
 !if rw_echo_done -> quiet
+!if rw_gears -> turning
 narr: {大|おお}きな {石臼|いしうす} 。 {触|さわ}る と 、 かすか に {温|あたた}かい 。 {誰|だれ} も {回|まわ}して いない のに 。 || A great millstone. It's faintly warm to the touch, though no one is turning it.
+!end
+:turning
+narr: {石臼|いしうす} が {重|おも}たげ に {回|まわ}って いる 。 {触|さわ}る と 、 {熱|あつ}い くらい だ 。 || The millstone turns, heavily. To the touch, it's almost hot.
 !end
 :quiet
 narr: {石臼|いしうす} は {静|しず}か に {回|まわ}って いる 。 もう {温|あたた}かく ない 。 || The millstone turns quietly. It isn't warm anymore.

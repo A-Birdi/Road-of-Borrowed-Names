@@ -282,6 +282,8 @@ for (const id in C.maps) {
     for (const e of m.exits) {
       let ok = false;
       for (let yy = e.y; yy < e.y + e.h; yy++) for (let xx = e.x; xx < e.x + e.w; xx++) if (seen.has(xx + ',' + yy)) ok = true;
+      // a way on set in a wall that plays a scene is used by walking into it (50_world.js tryMovePlayer, MW-1)
+      if (!ok && e.scene) for (let yy = e.y; yy < e.y + e.h; yy++) for (let xx = e.x; xx < e.x + e.w; xx++) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (seen.has((xx + dx) + ',' + (yy + dy))) ok = true;
       if (!ok) Wn('map ' + id + ': exit to ' + e.to + ' at ' + e.x + ',' + e.y + ' is not reachable from the default spawn');
     }
     for (const n of def.npcs || []) {

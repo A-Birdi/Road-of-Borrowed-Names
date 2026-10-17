@@ -134,7 +134,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     exits: [
       { x: 19, y: 0, w: 2, h: 1, to: 'yn.upper', sp: 'from_lower', dir: 'up' },
       { x: 39, y: 15, w: 1, h: 2, to: 'yn.terraces', sp: 'from_lower', dir: 'right' },
-      { x: 37, y: 26, w: 1, h: 1, to: 'yn.vents1', sp: 'from_lower', dir: 'down', if: 'yn_vents_open' },
+      // shut until the vents are opened: walking onto it then says why (MW-1), as using it does
+      { x: 37, y: 26, w: 1, h: 1, to: 'yn.vents1', sp: 'from_lower', dir: 'down', locked: 'yn.vents_door', unlock: 'yn_vents_open' },
     ],
     triggers: [{ x: 25, y: 15, w: 1, h: 2, scene: 'yn.bridge_quarrel', if: 'yn_rooms_done&yn_shimo_heard&!yn_quarrel' }],
     onEnter: [{ scene: 'yn.lower_first', if: '!yn_lower_seen' }],

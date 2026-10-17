@@ -293,7 +293,7 @@ if (!CAPTURE) {
       const ka = ra.origin.state.join(' '), kb = rb.origin.state.join(' ');
       assert(ka !== kb && ra.origin.sig !== rb.origin.sig && ra.last.layerKey !== rb.last.layerKey, label + ': the state keys differ (' + ka + ' → ' + kb + '), so do the signature and the cache key');
       assert(sa !== sb, label + ': and the drawn layer differs (' + sa + ' → ' + sb + ')');
-      if (label === 'mill-gears') assert(ra.origin.anchors.includes('prop:ladder@2,2>hatch-shut') && rb.origin.anchors.includes('prop:ladder@2,2>hatch-open') && ra.last.structure.some((s) => s.id === 'gears'), label + ': the hatch over the ladder shut while the gears are jammed, open after');
+      if (label === 'mill-gears') assert(!ra.origin.anchors.some((a) => a.startsWith('prop:ladder@2,2')) && rb.origin.anchors.includes('prop:ladder@2,2>hatch-open') && ra.last.structure.some((s) => s.id === 'gears'), label + ': the loft\'s ladder is up in the loft while the gears are jammed (MW-1: it drops when they are mended), down through the open hatch after');
       if (label === 'millroad-reeds') assert(ra.origin.context.concat(ra.origin.lines).some((f) => /reeds@12,1[4-7]/.test(f)) && !rb.origin.context.concat(rb.origin.lines).some((f) => /reeds@12,1[4-7]/.test(f)), label + ': the reed bed across the track before Nao clears it, none after');
       if (label === 'millroad-wheel') assert(ra.origin.state.includes('prop:millwheel@14,2?!rw_echo_done=1') && rb.origin.state.includes('prop:millwheel@14,2?rw_echo_done=1'), label + ': the still wheel before the Echo is settled, the turning one after');
     }

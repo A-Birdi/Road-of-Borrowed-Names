@@ -68,14 +68,14 @@ for (const profile of profiles) for (const comp of comps) {
     await T.use(10, 2);
     check('gears fixed', s.flags.rw_gears);
     check('word mizu learned at the gears, before the Echo uses Heat', s.words.includes('mizu'));
-    await T.use(2, 2);
+    // the loft's ladder dropped with the gears (MW-1): walking onto it climbs
+    T.place(2, 3, 'up'); await T.step('up');
     check('in loft', RB.world.W.map.id === 'rw.mill2');
     await T.use(4, 4); await T.use(9, 3); await T.use(9, 6); await T.use(11, 7);
     await T.use(6, 2);
     check('loft lantern', s.flags.rw_loft_done);
-    await T.go('rw.mill1', 7, 8, 'up');
-    T.place(6, 7, 'up');
-    await RB.script.run('rw.m1_boss');
+    // down the loft's ladder: the Mill Echo meets you at its foot (MW-1: it cannot be walked round)
+    T.place(2, 7, 'down'); await T.step('down');
     await T.idle(30000);
     check('echo settled, bridge fixed', s.flags.rw_echo_done && s.flags.bridge_fixed);
     check('koji back', s.flags.rw_koji_back);

@@ -631,6 +631,9 @@ RB.world = (function () {
     if (W.turnHold > 0) return;
     p.dir = dir;
     if (blocked(nx, ny, { except: p, ignorePlayer: true })) {
+      // a way on set in a wall (a door in a cliff): walking into it is using it, as stepping onto stairs is
+      const wx = RB.maps.exitAt(W.map, nx, ny);
+      if (wx && wx.scene) { W.path = null; useExit(wx, false); return; }
       if (!W.bumpT || W.time - W.bumpT > 300) { RB.audio && RB.audio.sfx('bump'); W.bumpT = W.time; }
       W.path = null;
       return;
@@ -678,6 +681,7 @@ RB.world = (function () {
         return;
       }
       W.path = null;
+      if (ex.scene) { useExit(ex, true); return; }
       RB.game.transition(ex.to, ex.tx, ex.ty, ex.dir || p.dir, { sp: ex.sp });
       return;
     }
@@ -698,6 +702,20 @@ RB.world = (function () {
       W.pathTarget = null;
       if (pt) arriveAt(pt);
     }
+  }
+  // An exit that is a scene (MW-1, Robin: a travel tile is walked onto, never only used): stairs, a ladder or a door
+  // whose way on asks first, explains why it is shut, or tells you something on the way. Stepping onto it, or walking
+  // into it when it is set in a wall, plays the same scene that using the thing plays. You are back off it first, as at
+  // a locked door; the scene moves you on (!warp) or leaves you where you stood.
+  function useExit(ex, stepped) {
+    const p = W.player, st = s();
+    if (stepped) {
+      const back = DIRS[OPP[p.dir]];
+      p.x += back[0]; p.y += back[1]; p.fx = p.x; p.fy = p.y;
+      st.x = p.x; st.y = p.y;
+    }
+    if (ex.locked && (!ex.unlock || !RB.state.test(st, ex.unlock))) { RB.script.run(ex.locked); return; }
+    RB.script.run(ex.scene, { exit: ex, prop: propAt(ex.x, ex.y) || undefined });
   }
   function faceTo(a, x, y) {
     a.glanceFrom = null; a.glanceT = 6000 + wrand() * 6000;

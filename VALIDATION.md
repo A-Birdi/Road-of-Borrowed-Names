@@ -4783,6 +4783,89 @@ The full account is docs/review/ar1_mill/AR1_MILL_REPORT.md.
 
 **Judged by Robin:** both changes approved from the before/after package. The tests prove behaviour, not the picture.
 
+## MW-1 — the mill follows the gears; a travel tile is walked onto (Robin, 2026-10-17)
+
+Robin, with the AR-1 Mill approval: "The stairs should not need to be interacted with as they're a traveling tile - any
+travel tile that acts as a door or elevation change should be walkable to traverse them. If there's a clear
+discrepancy with that idea do tell. The grindstone should remain inanimate until the gears are fixed … The Mill echo
+should not be optionally avoidable … The wheel outside may be viewed after repairing the gears, and should state why it
+isn't moving in a way to nudge players upstairs. The ladder could fall down with a thud from the upper floor once the
+gears are moving again. If the basement is blocked prior to the gears being fixed, it should be obvious why and how
+they're then made accessible by this action."
+
+**What changed.**
+- **Engine** (50_world.js): an exit may carry `scene` (`useExit`). Stepping onto it, or walking into it where it is
+  set in a wall, steps you back and plays the scene that using the thing plays.
+- **The mill:**
+  - The stairs are a locked exit until `rw_gears`. Their scene says the pit is flooded because the stopped gears keep
+    the water from the millrace.
+  - The ladder is absent until the gears scene drops it: the pit drains, then the trapdoor bangs open and the ladder
+    drops with a thud, with `!set rw_gears` between the two lines.
+  - The millstone is still until the gears are mended (two instances of the same drawing).
+  - The wheel's look after the gears points to the loft.
+  - The Echo is an arrival event from the loft (once) plus a trigger across the room's full width.
+- **Elsewhere:** 19 walk-on scene exits. The Steam Vents and stacks doors became `locked`/`unlock` exits that say why
+  they are shut.
+- **Found and fixed while testing:**
+  - A repeating arrival event (`once: false`) re-ran after every scene. After a lost Echo fight, the fight restarted
+    at once, 23 times in one browser run. It is now `once: true`; the full-width trigger is what makes the Echo
+    unavoidable.
+  - The validator now counts a wall scene-exit as reachable from a neighbouring tile.
+- **Not converted, reported to Robin:** threshold prompts, vehicles, the stage lift, bath curtains, stairs that lead
+  nowhere, the stacks key door, the lockhouse hatch. The new scene exits set no checkpoint or autosave (`!warp`).
+
+**Checks** (on this working tree; the build was rebuilt after the last source change):
+- U `mw1_mill_flow` 100/0:
+  - the mill's exits, with walkable props on the exit tiles;
+  - landing tiles off exits;
+  - the gears scene's drain → set → thud order, and どすん in the lexicon;
+  - the ladder only with `rw_gears`;
+  - the stairs' reason;
+  - the millstone's two instances and looks;
+  - the wheel's post-gears lines;
+  - the Echo band spans the room: a search from the ladder foot finds no way to the door or stairs that avoids it;
+  - the arrival event runs once;
+  - every scene exit: its scene exists, warps to the exit's `to`, matches its thing's scene, and lands off exits;
+  - the vents and stacks doors.
+- U updated for the new flow, all passing:
+  - `ar1_mill_art` 12/0;
+  - `battle_places`: in the jammed state there is no ladder, and the state keys name it. The seeded accessory choice
+    is still compared, but not where each accessory stands, because the ladder's corner is free before it drops.
+    No battle happens there before the gears.
+  - `overworld_geometry` re-recorded (`RECORD=1`) for this deliberate change; the diff touches only `rw.mill1` and
+    `lf.records`.
+- U full run before those three fixes: 54,563 passed, 2 failed (`battle_places`, `overworld_geometry`; both then fixed
+  as above and passing).
+- B `mw1_mill_flow` (new; Chromium, real key presses for steps), all passed:
+  - jammed stairs from the front and the side: stepped back, told why;
+  - no ladder, and its tile is bare floor;
+  - the millstone frames identical while still;
+  - the gears scene played for real (the game's test player): no ladder before the thud line, ladder and exit from it
+    on;
+  - the millstone turns afterwards;
+  - mended stairs from the front and the side go down; the ladder climbs;
+  - the millstone's and the wheel's looks before and after;
+  - the Echo met coming down the loft ladder (combat stubbed to lose): one fight, waking at 2,4 (the checkpoint);
+  - from there, walking to the door, the stairs and both corners meets it once each;
+  - all 19 scene exits walked through;
+  - the lockhouse's "not yet" keeps you beside the stairs; the lodge's cave door before the moths explains;
+  - the vents and stacks doors shut (explain) and open (go through);
+  - no page errors.
+- B updated, passing:
+  - `ar1_mill_art` 20/0;
+  - `story_ch1` 8/8 campaigns: the ladder climbed by walking, the Echo met walking down from the loft, won;
+  - `playtest_repairs` RBN-01 ×3 with the ladder after the gears;
+  - RBN-07 passing after its assertion was updated to FR-1's wording. FR-1 (33fc2a0) changed "Guided practice — that's
+    fine" to "Practiced with … a guided example", and that old text is in no source file, so this failure came before
+    MW-1.
+- B unchanged suites, passing: `battle_backdrops`, `mill_road`, `fr1_targets`, `staging_ch12_cases`,
+  `staging_ch56_cases`.
+- `node tools/validate.mjs`: no errors; 17 warnings, the same as before MW-1.
+- Voice: the manifest rebuilt into a scratch folder and compared by id with the GO manifest (513ec3ff…). It has
+  6 new narrator entries, 1 new narrator reference (どすん) and 3 retired entries, recorded in
+  `supplements/MW1_SUPPLEMENT.json`. 28 entries in ch1/31_mill keep their ids and keys; only their line numbers moved.
+  GO.json and the frozen manifest are unchanged.
+
 ## FR-1V — the one-kana blank and its word (Astra's verification of 71d4a95, 2026-10-17)
 
 Astra verified FR-1 at 71d4a95 and found one gap: a one-kana blank in a Foundations word task still credited the

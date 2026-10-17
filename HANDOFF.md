@@ -562,6 +562,34 @@
       40_evidence `add`; callers: challenge `finish`, practice, the test harness). No save migration. Tests: U
       `fr1_partial_word`, B `fr1_partial_word`. FR1_REPORT.md §3 corrected, §8 added.
 
+    **MW-1, the mill follows the gears; a travel tile is walked onto (Robin, 2026-10-17).** VALIDATION.md "MW-1",
+    REQUIREMENTS.md XP132.
+    - **Engine:** an exit may carry `scene` (50_world.js `useExit`). Stepping onto it plays the scene its thing's own use
+      plays, and so does walking into it when it is set in a wall. You are stepped back first, as at a locked door. The
+      exit keeps `to`/`tx`/`ty`, so the route chart, quest guide and Known map see it as before.
+    - **The Old Mill (rw.mill1):**
+      - The stairs are an exit, locked until `rw_gears`. Walked onto before then, they say the pit is flooded because the
+        stopped gears keep the water from the millrace.
+      - The loft's ladder is not there until the gears are mended. In the gears scene, the pit drains (now you can go
+        down), then the trapdoor bangs open and the ladder drops with a thud (どすん, new lexicon word).
+      - The millstone stands still until the gears are mended, then turns; its look says so.
+      - The wheel outside, looked at after the gears, strains but will not turn; voices under the roof point to the loft.
+      - The Mill Echo meets you as you come down from the loft (once). Its approach is the room's whole width (rows 6–7),
+        so after a defeat (you wake by the ladder) every way to the door or the stairs meets it again.
+    - **Elsewhere:** 19 stairs, ladders and doors that played a scene when used are walk-on exits: the Scriptorium Cave's
+      door and stairs, the Undercroft's and Understage's stairs and doors, and the Flood Cellars' shortcut ladder. The
+      Steam Vents and stacks doors were exits hidden until opened; walked onto while shut, they now say why.
+    - **Not converted; reported to Robin:** the "Go down?" prompts on dungeon thresholds (now asked on walking), vehicles,
+      the theatre's stage lift, the bath curtains, stairs that lead nowhere, the stacks key door (walking onto it uses the
+      key, then a second step goes down), and the lockhouse's closed hatch. The new scene exits move you by `!warp`, so
+      they set no checkpoint or autosave; the mill's stairs and ladder are plain exits and do.
+    - **Voice:** docs/future/voice/production/supplements/MW1_SUPPLEMENT.json, narrator only and append-only: 6 lines,
+      1 reference reading and 3 retired lines, to record after the batch. GO.json and the frozen manifest are unchanged.
+      The note to Local is READINESS.md §1.
+    - **Tests:** U `mw1_mill_flow`; B `mw1_mill_flow`. These were updated for the new flow: `ar1_mill_art` (U, B),
+      `battle_places`, the geometry record (`rw.mill1`, `lf.records`; deliberate), `story_ch1`, `playtest_repairs`
+      (RBN-01; RBN-07's stale wording from FR-1), `fr1_opening` and `battle_backdrops`.
+
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
     "P18 — Plan B", "LP-1" and "VA-1".

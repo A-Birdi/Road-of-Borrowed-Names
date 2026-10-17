@@ -135,6 +135,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     exits: [
       { x: 2, y: 3, to: 'rw.cellar1', tx: 30, ty: 5, dir: 'down' },
+      // the shortcut ladder up: walked onto, as the thing is used (MW-1: a travel tile is walked onto; the scene is the one using it plays)
+      { x: 31, y: 3, to: 'rw.cellar1', tx: 8, ty: 21, dir: 'up', scene: 'xp.cellars_ladder' },
     ],
     spawn: { default: [4, 4, 'down'] },
   });

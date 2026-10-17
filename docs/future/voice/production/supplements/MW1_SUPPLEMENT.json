@@ -1,0 +1,242 @@
+{
+ "schema": "rbn.voice.supplement/1",
+ "id": "MW1",
+ "what": "Narrator-only, append-only supplement for MW-1 (Robin, 2026-10-17: the Old Mill follows the gears). New ids only (VOICE_DELIVERY.md §8). Not part of the running batch; recorded after it, with the same narrator voice, delivery and encoding.",
+ "authorization": "Robin, 2026-10-16: full-game production (PRODUCTION_SCOPE.md); FR-1: a narrator-only, append-only supplement after the current batch where new spoken lines are needed. Nothing here generates audio.",
+ "after": {
+  "goSourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "goManifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "goScriptContentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "builtFrom": {
+  "branch": "claude/stoic-sagan-n3jvgk",
+  "commit": "the MW-1 commit on the branch (HANDOFF.md, MW-1)",
+  "scriptContentHash": "3c59018e3137b6c9e7ae79938b6dd18f3943195ff1e11a3b0e3f8742f5cd4e34",
+  "command": "node tools/voice/production_manifest.mjs --out <scratch dir>, compared by id with the GO manifest"
+ },
+ "counts": {
+  "entries": 6,
+  "references": 1,
+  "retired": 3,
+  "chars": 187,
+  "morae": 202
+ },
+ "entries": [
+  {
+   "id": "r1-103e01f252363937",
+   "speaker": "narrator",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{石臼|いしうす} が {重|おも}たげ に {回|まわ}って いる 。 {触|さわ}る と 、 {熱|あつ}い くらい だ 。",
+   "spoken": "石臼が重たげに回っている。触ると、熱いくらいだ。",
+   "spokenNamesKana": "石臼が重たげに回っている。触ると、熱いくらいだ。",
+   "send": "石臼が重たげに回っている。触ると、熱いくらいだ。",
+   "kana": "いしうすがおもたげにまわっている。さわると、あついくらいだ。",
+   "names": [],
+   "seams": [],
+   "chars": 24,
+   "morae": 27,
+   "pauses": 3,
+   "textHash": "a15c021f19eb2f22",
+   "lines": [
+    {
+     "key": "rw.m1_stone#a5b36fff6e",
+     "scene": "rw.m1_stone",
+     "file": "ch1/31_mill",
+     "line": 262
+    }
+   ]
+  },
+  {
+   "id": "r1-8f4b9aa7d6c6e953",
+   "speaker": "narrator",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{階段|かいだん} の {下|した} は 、 あふれた {水|みず} で いっぱい だ 。 {歯車|はぐるま} が {止|と}まって いて 、 {水|みず} が {水路|すいろ} に {戻|もど}らない 。 これ では {降|お}りられない 。",
+   "spoken": "階段の下は、あふれた水でいっぱいだ。歯車が止まっていて、水が水路に戻らない。これでは降りられない。",
+   "spokenNamesKana": "階段の下は、あふれた水でいっぱいだ。歯車が止まっていて、水がすいろに戻らない。これでは降りられない。",
+   "send": "階段の下は、あふれた水でいっぱいだ。歯車が止まっていて、水がすいろに戻らない。これでは降りられない。",
+   "kana": "かいだんのしたは、あふれたみずでいっぱいだ。はぐるまがとまっていて、みずがすいろにもどらない。これではおりられない。",
+   "names": [
+    {
+     "surface": "水路",
+     "reading": "すいろ"
+    }
+   ],
+   "seams": [],
+   "chars": 49,
+   "morae": 53,
+   "pauses": 5,
+   "textHash": "24519070ff651203",
+   "lines": [
+    {
+     "key": "rw.m1_stairs#c3e1c6ec15",
+     "scene": "rw.m1_stairs",
+     "file": "ch1/31_mill",
+     "line": 254
+    }
+   ]
+  },
+  {
+   "id": "r1-b279efeb3bfc1fe4",
+   "speaker": "narrator",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{天井|てんじょう} の {扉|とびら} が がたん と {開|ひら}き 、 {梯子|はしご} が どすん と {落|お}ちて きた 。",
+   "spoken": "天井の扉ががたんと開き、梯子がどすんと落ちてきた。",
+   "spokenNamesKana": "天井の扉ががたんと開き、梯子がどすんと落ちてきた。",
+   "send": "天井の扉ががたんと開き、梯子がどすんと落ちてきた。",
+   "kana": "てんじょうのとびらががたんとひらき、はしごがどすんとおちてきた。",
+   "names": [],
+   "seams": [],
+   "chars": 25,
+   "morae": 29,
+   "pauses": 2,
+   "textHash": "1b6b8e3077ba2dae",
+   "lines": [
+    {
+     "key": "rw.m1_gears#fe6f849cd7",
+     "scene": "rw.m1_gears",
+     "file": "ch1/31_mill",
+     "line": 235
+    }
+   ]
+  },
+  {
+   "id": "r1-b817903b15df787b",
+   "speaker": "narrator",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{階段|かいだん} の {下|した} から 、 {水|みず} の {引|ひ}いて いく {音|おと} が する 。 これ で {下|した} へ {降|お}りられる 。",
+   "spoken": "階段の下から、水の引いていく音がする。これで下へ降りられる。",
+   "spokenNamesKana": "階段の下から、水の引いていく音がする。これで下へ降りられる。",
+   "send": "階段の下から、水の引いていく音がする。これで下へ降りられる。",
+   "kana": "かいだんのしたから、みずのひいていくおとがする。これでしたへおりられる。",
+   "names": [],
+   "seams": [],
+   "chars": 30,
+   "morae": 33,
+   "pauses": 3,
+   "textHash": "5e654e9aa6560777",
+   "lines": [
+    {
+     "key": "rw.m1_gears#f15e04c6cf",
+     "scene": "rw.m1_gears",
+     "file": "ch1/31_mill",
+     "line": 231
+    }
+   ]
+  },
+  {
+   "id": "r1-d11124da63c3c891",
+   "speaker": "narrator",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{水車|すいしゃ} は きしみ ながら {揺|ゆ}れる が 、 まだ {回|まわ}らない 。",
+   "spoken": "水車はきしみながら揺れるが、まだ回らない。",
+   "spokenNamesKana": "水車はきしみながら揺れるが、まだ回らない。",
+   "send": "水車はきしみながら揺れるが、まだ回らない。",
+   "kana": "すいしゃはきしみながらゆれるが、まだまわらない。",
+   "names": [],
+   "seams": [],
+   "chars": 21,
+   "morae": 21,
+   "pauses": 2,
+   "textHash": "fdf3b70b51060eea",
+   "lines": [
+    {
+     "key": "rw.mr_wheel#7cd63802f5",
+     "scene": "rw.mr_wheel",
+     "file": "ch1/31_mill",
+     "line": 197
+    }
+   ]
+  },
+  {
+   "id": "r1-feba99cbd745473e",
+   "speaker": "narrator",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{屋根|やね} の {下|した} から 、 {声|こえ} が もれて くる 。 {屋根裏|やねうら} で {何|なに} か が 、 {水車|すいしゃ} を {止|と}めて いる よう だ 。",
+   "spoken": "屋根の下から、声がもれてくる。屋根裏で何かが、水車を止めているようだ。",
+   "spokenNamesKana": "屋根の下から、声がもれてくる。やねうらで何かが、水車を止めているようだ。",
+   "send": "屋根の下から、声がもれてくる。やねうらで何かが、水車を止めているようだ。",
+   "kana": "やねのしたから、こえがもれてくる。やねうらでなにかが、すいしゃをとめているようだ。",
+   "names": [
+    {
+     "surface": "屋根裏",
+     "reading": "やねうら"
+    }
+   ],
+   "seams": [],
+   "chars": 35,
+   "morae": 36,
+   "pauses": 4,
+   "textHash": "8e51b1e180069ba4",
+   "lines": [
+    {
+     "key": "rw.mr_wheel#e22f1f8139",
+     "scene": "rw.mr_wheel",
+     "file": "ch1/31_mill",
+     "line": 198
+    }
+   ]
+  }
+ ],
+ "references": [
+  {
+   "id": "r1-ref-356973b2029addfb",
+   "key": "word:どすん|どすん",
+   "kind": "word",
+   "speaker": "narrator",
+   "delivery": "citation",
+   "written": "どすん",
+   "reading": "どすん",
+   "spoken": "どすん",
+   "chars": 3,
+   "morae": 3
+  }
+ ],
+ "retired": {
+  "note": "Lines MW-1 removed or rewrote. Their recordings (if the batch has made them) are kept for one site build and then drop out of its indexes (§8.4); nothing is deleted.",
+  "ids": [
+   {
+    "id": "r1-1c0a04f1cc6b7847",
+    "speaker": "narrator",
+    "spoken": "梯子の上の扉は、止まった歯車の軸に押さえられて開かない。",
+    "lines": [
+     "rw.m1_ladder#78ade99588"
+    ]
+   },
+   {
+    "id": "r1-262032c0c6d9432b",
+    "speaker": "narrator",
+    "spoken": "階段の下は水の音でいっぱいだ。水車が止まっている間は、危なくて降りられない。",
+    "lines": [
+     "rw.m1_stairs#3d5f2a67c1"
+    ]
+   },
+   {
+    "id": "r1-436958030e2f29b6",
+    "speaker": "narrator",
+    "spoken": "梯子の上の扉が、がたんと開いた。",
+    "lines": [
+     "rw.m1_gears#66108ee6ee"
+    ]
+   }
+  ]
+ },
+ "unchanged": "Every other id is as in the GO manifest; 28 entries in ch1/31_mill keep their ids and keys, only their line numbers moved."
+}

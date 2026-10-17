@@ -1,4 +1,5 @@
-// AR-1 Mill (the Old Mill's art, F13), in the built game: the art pass leaves the mill playing exactly as before. Into the
+// AR-1 Mill (the Old Mill's art, F13), in the built game: the art pass leaves the mill playing as before (and as MW-1 left
+// it: the stairs' line now says the pit is flooded; tests/e2e/mw1_mill_flow.mjs holds the rest of that change). Into the
 // mill by its door and out again; the stairs refuse while the wheel is jammed and take you down once the gears are
 // mended, from the landing and from beside; back up from the Wheel Pit onto the landing; the millstone's look; the
 // Mill Echo's approach; the jammed wheel's look. Then the drawings themselves: the stair-well is in the floor (dark
@@ -62,7 +63,7 @@ for (const [x, y, dir] of [[12, 10, 'up'], [11, 9, 'right'], [12, 8, 'down']]) {
   await start('rw.mill1', x, y, dir, {});
   await face(dir);
   w = await where();
-  ok(w.map === 'rw.mill1' && /too dangerous to go down/.test(await said()), 'jammed: the stairs from ' + x + ',' + y + ' say it is too dangerous, and you stay');
+  ok(w.map === 'rw.mill1' && /No way down like this/.test(await said()), 'jammed: the stairs from ' + x + ',' + y + ' say the pit is flooded, and you stay');
 }
 for (const [x, y, dir] of [[12, 8, 'down'], [11, 9, 'right'], [12, 10, 'up']]) {
   await start('rw.mill1', x, y, dir, { rw_gears: true });

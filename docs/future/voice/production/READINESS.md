@@ -60,6 +60,11 @@ It prints "manifest is current: 14721 recordings + 9095 reference readings, cont
 - **12 deferred findings:** these are Robin's decisions. Their lines are recorded as they are now. A later change re-records only those lines (new ids).
 - **116 lines with the player's name:** a second small pass, once their neutral-word versions are written (C-93).
 - **Hosting:** generation does not wait for a host or a deployment.
+- **MW-1 supplement (2026-10-17):** Robin's Old Mill flow change adds 6 narrator lines and 1 narrator reference reading
+  (どすん), and retires 3 lines: [supplements/MW1_SUPPLEMENT.json](supplements/MW1_SUPPLEMENT.json) (187 characters).
+  It is recorded after the batch, with the same narrator voice, delivery and encoding. The batch's inputs are unchanged
+  (`GO.json`: ff8a0fa, 513ec3ff…). At the branch head, `--check` now reports that the script has moved past the GO
+  manifest. That is expected; it does not touch the batch, which checks out ff8a0fa.
 
 ## 2 · Runtime integration: BUILT AND TESTED, NOT YET WITH REAL RECORDINGS
 

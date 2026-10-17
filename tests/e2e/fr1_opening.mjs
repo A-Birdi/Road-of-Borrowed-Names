@@ -320,8 +320,8 @@ try {
   for (const [x, y] of [[4, 4], [9, 3], [9, 6], [11, 7]]) { await at(x, y); await drive(worldIdle, 30000, 'loft ' + x + ',' + y); }
   if (INPUT === 'hand') { POLICY.submitBeforeConfirm = true; POLICY.handProbe = true; }
   await at(6, 2); await drive(worldIdle, 120000, 'loft lantern');
-  await go('rw.mill1', 7, 8, 'up');
-  await p.evaluate(() => { RB.test.place(6, 7, 'up'); RB.script.run('rw.m1_boss'); });
+  // down the loft's ladder: the Mill Echo meets you at its foot (MW-1: it cannot be walked round)
+  await p.evaluate(() => { RB.test.place(2, 7, 'down'); RB.world._tryMove('down'); });
   await wait(p, 300);
   await drive((st) => worldIdle(st) && !st.cards, 300000, 'mill echo');
   const after = await p.evaluate(() => { const s = RB.game.s; return { echo: !!s.flags.rw_echo_done, pc: s.resolve && s.resolve.pc, taught: Object.keys(s.learn.taught || {}).join(''), group: s.learn.kanaGroup }; });

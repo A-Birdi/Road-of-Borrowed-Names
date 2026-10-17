@@ -31,10 +31,13 @@ async function mill(p, x, y, flags) {
     s.learn.kanaKnown = 'both';
     window.__runs = [];
     const run = RB.script.run;
-    RB.script.run = function (id, o) { window.__runs.push(id); return run.apply(this, arguments); };
+    // the ladder climbs to the loft (a map change): here only its being reached is counted
+    RB.script.run = function (id, o) { window.__runs.push(id); if (id === 'rw.m1_ladder') return; return run.apply(this, arguments); };
   }, [x, y, flags || {}]);
   await wait(p, 400);
 }
+// the loft's ladder is only there once the gears are mended (MW-1); the dust moth that wakes then is kept out of the way
+const LADDER = { rw_gears: true, 'foe:rw.mill1:m1a': true };
 const tilePt = (p, x, y) => p.evaluate(([x, y]) => { const a = RB.render.tileToCss(x, y), c = RB.render.tileToCss(x + 1, y + 1); return { x: (a.x + c.x) / 2, y: (a.y + c.y) / 2 }; }, [x, y]);
 async function clickTile(p, x, y) {
   let a = await tilePt(p, x, y);
@@ -56,7 +59,7 @@ const ladderRuns = (s) => s.runs.filter((r) => r === 'rw.m1_ladder').length;
 
 await test('RBN-01 the mill ladder: a distant click walks beside it, faces it and opens its scene once; again from beside it; the action key the same', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
-  await mill(p, 7, 9);
+  await mill(p, 7, 9, LADDER);
   await clickTile(p, 2, 2);
   let s = await settle(p);
   await wait(p, 300);
@@ -82,7 +85,7 @@ await test('RBN-01 the mill ladder: a distant click walks beside it, faces it an
 
 await test('RBN-01 standing on the ladder: a click steps off and interacts once; a walk interrupted by a key does nothing; the stairs from afar', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
-  await mill(p, 2, 2);
+  await mill(p, 2, 2, LADDER);
   await clickTile(p, 2, 2);
   let s = await settle(p);
   await wait(p, 300);
@@ -99,7 +102,8 @@ await test('RBN-01 standing on the ladder: a click steps off and interacts once;
   await wait(p, 900);
   s = await pos(p);
   assert(ladderRuns(s) === 0, 'an interrupted walk interacts with nothing: ' + JSON.stringify(s));
-  // the stairs (12,9) from afar
+  // the stairs (12,9) from afar, while the gears are still jammed: their scene says why they are shut
+  await p.evaluate(() => { RB.game.s.flags.rw_gears = false; });
   await clickTile(p, 12, 9);
   await settle(p);
   await wait(p, 400);
@@ -212,7 +216,8 @@ await test('RBN-07 the gears (Elementary): the guided first look says so on the 
   await p.click('.chal [data-a=submit]');
   await p.waitForSelector('.fbwrap', { timeout: 8000 }).then((h) => h.dispose());
   const fb = await p.evaluate(() => document.querySelector('.fbwrap').textContent.replace(/\s+/g, ' '));
-  assert(/Guided practice — that's fine/.test(fb), 'the result is said to be guided practice: ' + fb);
+  // (FR-1 F10 says what the help was, in words: "Practiced with word help and a guided example.")
+  assert(/Practiced with [^.]*a guided example/.test(fb), 'the result is said to be guided practice: ' + fb);
   await p.click('.fbwrap .fb-go'); // the record is written when the task closes
   await p.waitForFunction(() => window.__act, null, { timeout: 8000 });
   const rec = await p.evaluate(() => { const r = RB.game.s.learn.items['c:rw_gears_e']; return r && { ok: r.ok, assisted: r.modes.assisted, seen: r.seen }; });
