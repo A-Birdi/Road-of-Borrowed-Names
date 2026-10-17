@@ -24,7 +24,12 @@ The repository is the shared record:
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
 Progress (the local worker's checkpoints, latest first):
-- **2026-10-17:** phase 1 finished (the AivisSpeech narrator, the reference readings, the AivisSpeech and Nemo NPCs,
+- **2026-10-17, later: PAUSED** at Robin's request (the GPU is needed for a while). Saved: 20,731 recordings made,
+  3,085 pending, 0 failed (20,731 + 3,085 = 23,816, the GO manifest's count). Still to make: the rest of Ren, Suzu and
+  the last Qwen NPCs, then the MW-1 supplement as recorded at 5a8353c (6 narrator lines and 1 reference reading, on
+  top of the 23,816). It resumes by exact input identity from the same pinned inputs. Nothing pushed. Status only; no
+  request to the lead.
+- 2026-10-17 (superseded by the counts above): phase 1 finished (the AivisSpeech narrator, the reference readings, the AivisSpeech and Nemo NPCs,
   and Mochi): 18,781 recordings made, 5,035 pending, 0 failed (18,781 + 5,035 = 23,816, the manifest's count). Qwen
   started. The whole-game batch was then resumed on the same pinned source ff8a0fa and manifest 513ec3ff…, with a
   runaway-length guard added to Qwen takes; normal takes are unchanged. Status only; no request to the lead.
