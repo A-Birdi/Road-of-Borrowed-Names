@@ -35,7 +35,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 14, y: 19, w: 3, h: 3, roof: 'thatch', wall: 'wood', door: null, windows: [1] },
     ],
     props: [
-      { p: 'millwheel', x: 14, y: 2, o: { still: true }, if: '!rw_echo_done', scene: 'rw.mr_wheel' },
+      { p: 'millwheel', x: 14, y: 2, o: { still: true, jammed: true }, if: '!rw_echo_done', scene: 'rw.mr_wheel' }, // jammed: drawn so (AR-1 Mill)
       { p: 'millwheel', x: 14, y: 2, if: 'rw_echo_done' },
       { p: 'deadlantern', x: 7, y: 17, scene: 'rw.mr_lantern', if: '!rw_mr_ren' },
       { p: 'lantern', x: 7, y: 17, if: 'rw_mr_ren' },
@@ -85,7 +85,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'gears', x: 10, y: 2, o: { jammed: true }, if: '!rw_gears', scene: 'rw.m1_gears' },
       { p: 'gears', x: 10, y: 2, if: 'rw_gears' },
       { p: 'ladder', x: 2, y: 2, scene: 'rw.m1_ladder' },
-      { p: 'stairs', x: 12, y: 9, scene: 'rw.m1_stairs' },
+      { p: 'stairs', x: 12, y: 9, o: { well: 'down' }, scene: 'rw.m1_stairs' }, // drawn as the stair-well going down (AR-1 Mill)
       { p: 'crate', x: 1, y: 8 }, { p: 'crate', x: 2, y: 9 }, { p: 'barrel', x: 13, y: 4 }, { p: 'hay', x: 1, y: 6 },
       { p: 'sign', x: 9, y: 9, text: { jp: '{粉|こな} は {乾|かわ}いた ところ に {置|お}く こと 。', en: '(A notice in the miller\'s hand) Keep flour in a dry place.' } },
     ],

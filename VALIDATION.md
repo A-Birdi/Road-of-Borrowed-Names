@@ -4741,6 +4741,48 @@ chosen by the script.
 - A real beginner: none; the routes are a scripted player, not learning evidence.
 - The letters' "a word you have met before" note: not seen in a browser (no letter word had been met on this route).
 
+## AR-1 Mill — the Old Mill's art (FR-1 F13), approved by Robin and pushed (2026-10-17)
+
+Robin's handoff calls this AR-1; that id already names the 2026-10-13 illustrations pass, so it is recorded as AR-1 Mill.
+The full account is docs/review/ar1_mill/AR1_MILL_REPORT.md.
+
+**Status.**
+- Prepared as an unpushed candidate (local commit 2dcd9d4 on `ar1-mill-candidate`) and shown to Robin as matched
+  before/after captures and clips.
+- Robin approved both changes; the candidate was then pushed unchanged (the same build, f4477b81…).
+
+**Baseline and candidate.**
+- Baseline: 2a0faed, index.html SHA-256 7bffe0fc…e721e.
+- Candidate: index.html SHA-256 f4477b81…89bc.
+
+**What changed.**
+- The stair-well: a per-instance variant of the shared stairs, baked into the floor.
+- The wheel: a lean-to and axle into the mill, the wheel in the race, jammed and turning states.
+- The millstone: reviewed and retained.
+
+**Checked.**
+- B, the captures (tools/review/ar1_mill_capture.mjs; Chromium):
+  - the fake clock paused and stepped, seeded randomness;
+  - 1280 × 800 at DPR 1, and 390 × 844 at DPR 2 (an emulation);
+  - before/after pixel-identical outside the stair-well block and the wheel box;
+  - the Wheel Pit identical;
+  - three clips, 9–10 s, sampled at 33.3 ms of game time.
+- U `ar1_mill_art` 12/0; U full run 54,481 / 0.
+- B `ar1_mill_art` 20/0: the mill door, the stairs jammed and mended from three sides, the pit and back, the
+  millstone's looks, the Mill Echo's approach, the jammed wheel's look, the stair-well's dark, and the wheel never
+  turning when jammed, turning when working, still under reduced motion, with its axle and lean-to fixed.
+- B `mill_road` 36/36, `backdrops` 61/0, `battle_backdrops` 38/0.
+- B shared reach: five other stair maps and both mill battle backdrops pixel-identical before and after.
+- B render cost: three alternating runs, steady and first frames within run-to-run spread, sprite cache unchanged
+  (±2). The figures are in the report.
+- `node tools/validate.mjs`: no errors.
+- Voice: GO.json and the manifest byte-identical to 2a0faed; manifest check "content 65cd38053ad6"; 0 new spoken
+  lines.
+
+**Not tested.** Firefox, Safari, real phones, real GPU hardware, and the live frame rate.
+
+**Judged by Robin:** both changes approved from the before/after package. The tests prove behaviour, not the picture.
+
 ## FR-1V — the one-kana blank and its word (Astra's verification of 71d4a95, 2026-10-17)
 
 Astra verified FR-1 at 71d4a95 and found one gap: a one-kana blank in a Foundations word task still credited the

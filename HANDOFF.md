@@ -554,7 +554,7 @@
       `fr1_defaults`, `fr1_targets`, `fr1_group_sample`.
     - Voice: 0 new spoken lines; the production manifest is unchanged (65cd38053ad6); the note to Local is
       READINESS.md §5.
-    - Open: F13 (the stair-well and the waterwheel's attachment) waits in the art queue under AC1_ART (Next concrete
+    - F13 (the stair-well and the waterwheel's attachment): done in AR-1 Mill, approved by Robin (Next concrete
       actions, item 3); Firefox, Safari and phones were not tried; a real beginner's play.
     - **FR-1V (Astra's verification of 71d4a95):** a one-kana blank credited its parent word as answered (promotion,
       independent evidence, and a slip set the word back). Reproduced (U and B), fixed: the blank's `item` is the kana,
@@ -1122,9 +1122,11 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    Firefox and Safari/WebKit (not installed here, not tested).
 3. A human look at the art (docs/screenshots/, `art_shots.mjs`) — quality
    was judged only by the author from captures.
-   **Art queue, deferred (FR-1 F13, under docs/future/plan/AC1_ART.md):** the Old Mill's stair-well (a flat grey block
-   beside detailed planking) and the exterior waterwheel's attachment (no visible axle into the mill wall). Captures:
-   docs/review/fr1/shots/f13-mill-interior.jpg, f13-waterwheel.jpg. Not started; learning fixes came first.
+   **Art queue (FR-1 F13): AR-1 Mill, approved by Robin and pushed (2026-10-17).** The Old Mill's stair-well and the
+   exterior waterwheel's attachment, with the millstone reviewed. Robin reviewed the before/after package and approved
+   both changes ("Both art changes are excellent, push them both."). The approved candidate (local commit 2dcd9d4,
+   build f4477b81…) is on the task branch unchanged. Report and evidence: docs/review/ar1_mill/AR1_MILL_REPORT.md.
+   Robin's art gate stands for later art: a before/after for Robin before pushing art.
 4. Listen to the new boss theme (checked at signal level only) and play a
    few battles with a companion to judge the Harmony notes and keyword
    cards; try the pad's kanji reading with real handwriting.

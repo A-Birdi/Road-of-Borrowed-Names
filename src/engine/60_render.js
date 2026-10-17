@@ -199,6 +199,12 @@ RB.render = (function () {
         else legacy(c, () => t.draw(c, px / ART, py / ART, pal, RB.tiles.hh(x, y), nb));
       }
     if (RB.tileArt && RB.tileArt.flush) RB.tileArt.flush(); // tile art batches its output per row
+    // a thing that lies at floor level or below it (the mill's stair-well: src/engine/27_propart.js spec.bake) is
+    // ground, baked in with the tiles; only things always there (never one that comes and goes with the story)
+    for (const p of m.props) {
+      const pd = !p.if && RB.props.P[p.p];
+      if (pd && pd.bake2) pd.bake2(c, (p.x + g.x) * ATS, (p.y + g.y) * ATS, pal, Object.assign({ cx: p.x, cy: p.y }, p.o || {}));
+    }
     // the regional kit with the light (src/engine/66_worldkit.js): its ground dressing outdoors, baked in once
     if (RB.worldLook && RB.worldLook.kitOn(m)) RB.worldKit.dressGround(c, m, g);
     m.staticLayer = cv;

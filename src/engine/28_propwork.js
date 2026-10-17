@@ -635,11 +635,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   // Water wheel: two rims joined by radial paddles, six spokes, an iron hub;
   // turns through eight cached frames (still with o.still).
+  // AR-1 Mill (F13): it is the mill's, not an ornament beside it. A squared axle runs from the mill's east wall (under
+  // the eave, which covers its end) to the hub, carried by a timber lean-to standing in the race between the wall and
+  // the wheel: two posts and a head beam, the axle in an iron-strapped bearing on each post (the Mill study's lean-to,
+  // docs/future/work/P01_STUDY.md, adopted on its own). The wheel's lower part is in the race: below the waterline it
+  // takes the water's colour. Turning, the paddles throw white water where they meet the race and drip as they rise on
+  // the downstream (west) side, and the race runs on west under the lean-to; jammed (o.jammed, while the echo holds it),
+  // the race only piles against the upstream paddles, where a twig is caught. Each state keeps its meaning in a still
+  // frame (reduced motion). The axle, the lean-to and the hub's place never move: only the wheel turns about it.
+  const WL = 47; // the waterline, art px below the footprint's top
   art('millwheel', {
-    box: [-6, -10, 76, 76],
+    box: [-40, -14, 112, 82],
+    v: (o) => (o.jammed ? 1 : 0),
     f: (t, o) => (o.still ? 0 : Math.floor(((t / 1600) % (PI / 6)) / (PI / 48)) % 8),
     draw(g, M, v, f) {
       const w5 = M.wood, cx = 32, cy = 24, a = (f * PI) / 48;
+      // the lean-to: weathered timber a shade darker than the wheel, which stands in front of it; the posts (in shade
+      // under the head beam and the axle), the head beam into the wall
+      const l5 = w5.map((c) => mix(c, K.COOL, 0.16));
+      for (const x of [-27, -9]) {
+        post(g, x, -9, 5, WL + 9, l5);
+        R(g, x, -8, 5, 1, l5[0]); R(g, x + 1, 27, 4, 1, l5[0]);
+        R(g, x, 37, 5, WL - 37, 'rgba(20,30,46,0.32)'); R(g, x + 1, 39, 1, 2, mix(M.water[3], l5[3], 0.4)); // wet near the race
+      }
+      plank(g, -40, -13, 47, 5, l5, 7);
+      // the axle from the wall to the hub, an iron strap where each post carries it
+      plank(g, -40, 21, 70, 6, l5, 9);
+      for (const x of [-28, -10]) { R(g, x, 20, 7, 8, IR[2]); R(g, x, 20, 7, 1, IR[4]); R(g, x, 27, 7, 1, IR[0]); R(g, x + 1, 22, 1, 1, IR[3]); }
+      // the wheel, over the axle's end
       for (let i = 0; i < 12; i++) {
         const an = a + (i * PI) / 6, c = Math.cos(an), s = Math.sin(an), px = -s, py = c;
         const x0 = cx + c * 20, y0 = cy + s * 20, x1 = cx + c * 32, y1 = cy + s * 32;
@@ -649,6 +672,36 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ring(g, cx, cy, 25, 29, w5);
       ring(g, cx, cy, 17, 20, w5);
       spokeWheel(g, cx, cy, 17, 6, a, w5, 5);
+      // the hub: an iron boss on the axle's end, lit on its upper left, with four bolts turning with the wheel
+      ell(g, cx, cy, 6.5, 6.5, IR[1]); ell(g, cx, cy, 5.5, 5.5, IR[2]);
+      R(g, cx - 3, cy - 5, 4, 1, IR[4]); R(g, cx - 5, cy - 3, 1, 3, IR[3]);
+      for (let k = 0; k < 4; k++) { const an = a + (k * PI) / 2 + PI / 4; R(g, Math.round(cx + Math.cos(an) * 3.6), Math.round(cy + Math.sin(an) * 3.6), 1, 1, IR[4]); }
+      ell(g, cx, cy, 1.6, 1.6, IR[0]);
+    },
+    over(g, M, v, f) {
+      const wt = M.water, cx = 32, white = '#f4fbff', foam = mix(wt[3], wt[2], 0.3);
+      // under the race: what is below the waterline takes the water's colour
+      g.globalCompositeOperation = 'source-atop';
+      R(g, -40, WL + 1, 112, 30, K.rgba(mix(wt[0], '#1c2c48', 0.35), 0.62));
+      g.globalCompositeOperation = 'source-over';
+      R(g, cx - 22, WL, 44, 1, mix(wt[2], wt[3], 0.35));
+      for (const x of [-27, -9]) R(g, x - 1, WL, 7, 1, v ? wt[3] : foam); // the race round each post's foot
+      if (v) {
+        // jammed: the water piles against the upstream paddles, a twig caught there, the race beyond calm
+        for (const [x, w] of [[cx + 9, 4], [cx + 15, 5], [cx + 21, 2]]) { R(g, x, WL - 1, w, 1, wt[3]); R(g, x + 1, WL + 1, w - 1, 1, wt[2]); }
+        line(g, cx + 14, WL - 2, cx + 20, WL + 1, M.trunk[1], 1); R(g, cx + 17, WL - 2, 2, 1, M.leaf[2]);
+        return;
+      }
+      // turning: white water where the paddles go in (east) and come out (west), drips from the rising paddles,
+      // and the race running on west, under the lean-to
+      for (let k = 0; k < 7; k++) {
+        const e = (k * 5 + f * 3) % 9, w2 = (k * 7 + f * 2) % 8;
+        R(g, cx + 13 + e, WL - 1 - (k % 2), 2 + (k % 2), 2, k % 3 ? white : foam);
+        R(g, cx - 22 + w2, WL - 1 - (k % 3 ? 0 : 1), 2, 2, k % 2 ? white : foam);
+      }
+      R(g, cx + 14, WL, 9, 1, white); R(g, cx - 23, WL, 8, 1, white); // where the paddles go in and come out
+      for (let k = 0; k < 4; k++) R(g, cx - 25 + k * 2, WL - 3 - ((f * 3 + k * 5) % 11), 1, 1, foam);
+      for (let k = 0; k < 4; k++) R(g, -6 + ((k * 11 - f * 2) % 16 + 16) % 16 - 8, WL + 3 + k * 2, 3, 1, k % 2 ? foam : wt[2]);
     },
     shadow: () => [32, 58, 24, 3, 0.2],
   });
@@ -898,10 +951,69 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     shadow: () => [16, 30, 15, 3, 0.34],
   });
+  // The mill's stair-well (AR-1 Mill, F13; o.well 'down', the one at rw.mill1 12,9): the stone stair down to the wheel
+  // pit, seen from above as it goes down toward you under the floor, baked into the ground (27_propart.js spec.bake).
+  // The landing it opens from (the three stone tiles north and west of it) is a stone apron a finger proud of the
+  // planks: lit along its top and left edges, shaded along its right and lower ones, with a contact shadow on the planks
+  // there, and damp for a few pixels round the opening. The opening: stone coping where it meets the landing (north,
+  // west), the floor's timber trimmers where it meets the planks (south, east), nailed like the boards. Four stone
+  // treads fall away from the coping's face, each lower one darker and damper, worn pale in the middle of the nosing
+  // where feet go; the shaft's shaded west wall and dim east wall close in as they go down; the darkest strip is only
+  // the gap under the near trimmer, where the stair runs on under the floor.
+  function stairWell(g, M) {
+    const s5 = M.stone, w5 = M.wood, DEEP = '#120e18', WET = '#2a3a4c';
+    const sh = (a) => 'rgba(22,16,40,' + a + ')';
+    // the apron: the room's damp stone, a shade under the dry planks' light; its edges and its contact shadow on the
+    // planks (to the lower right, away from the light)
+    R(g, -32, -32, 64, 32, sh(0.1)); R(g, -32, 0, 32, 32, sh(0.1));
+    const lip = mix(s5[3], s5[4], 0.45);
+    R(g, -32, -32, 64, 1, lip); R(g, -32, -31, 1, 63, lip);
+    R(g, 31, -31, 1, 31, s5[1]); R(g, -31, 31, 31, 1, s5[1]);
+    R(g, 32, -31, 1, 31, sh(0.34)); R(g, 33, -30, 1, 30, sh(0.16));
+    R(g, -31, 32, 31, 1, sh(0.34)); R(g, -30, 33, 30, 1, sh(0.16));
+    for (let i = 0; i < 3; i++) { R(g, -3, -1 - i, 35, 1, sh(0.13 - i * 0.04)); R(g, -1 - i, 0, 1, 28, sh(0.13 - i * 0.04)); }
+    // the shaft
+    R(g, 0, 0, 32, 32, DEEP);
+    // four treads, the coping's face above the first
+    R(g, 3, 3, 26, 2, mix(s5[1], DEEP, 0.12)); R(g, 3, 4, 26, 1, mix(s5[1], DEEP, 0.3));
+    const tread = [0.06, 0.28, 0.48, 0.64], riser = [0.3, 0.5, 0.64, 0.76], joint = [14, 8, 17, 11];
+    for (let i = 0; i < 4; i++) {
+      const y = 5 + i * 6, th = i < 3 ? 4 : 3, wl = 1 + i, wr = i < 2 ? 1 : 2;
+      const x0 = 3 + wl, x1 = 29 - wr, w = x1 - x0;
+      let tc = mix(s5[3], DEEP, tread[i]);
+      if (i >= 2) tc = mix(tc, WET, 0.2);
+      R(g, x0, y, w, th, tc);
+      R(g, x0, y, 2, th, mix(tc, DEEP, 0.38)); // the west coping's shadow
+      R(g, x0, y + th - 1, w, 1, mix(tc, s5[4], i < 2 ? 0.24 : 0.14)); // the nosing
+      R(g, x0 + 8, y + th - 1, 9, 1, mix(tc, s5[4], 0.42 - i * 0.08)); // worn where feet go
+      R(g, 3 + joint[i], y, 1, th - 1, mix(tc, DEEP, 0.32));
+      if (i < 3) R(g, x0, y + th, w, 2, mix(s5[1], DEEP, riser[i]));
+      // the shaft's walls: the west one in shade, the east one dimly lit, closing in with depth
+      R(g, 3, y, wl, i < 3 ? 6 : 5, mix(s5[0], DEEP, 0.32 + i * 0.1));
+      R(g, x1, y, wr, i < 3 ? 6 : 5, mix(s5[2], DEEP, 0.34 + i * 0.12));
+    }
+    R(g, 25, 20, 2, 1, mix(WET, '#c8d8e8', 0.45)); R(g, 16, 25, 1, 1, mix(WET, '#c8d8e8', 0.35)); // wet glints
+    R(g, 7, 26, 20, 2, DEEP); // the stair runs on under the floor
+    // the coping: north and west, lit on its outer edge, a joint between its stones
+    const cp = mix(s5[3], s5[2], 0.4);
+    R(g, 0, 0, 29, 3, cp); R(g, 0, 0, 29, 1, s5[3]); R(g, 0, 2, 29, 1, s5[2]);
+    R(g, 0, 0, 3, 28, cp); R(g, 0, 0, 1, 28, s5[3]); R(g, 2, 3, 1, 25, s5[2]);
+    for (const x of [10, 21]) R(g, x, 0, 1, 3, s5[1]);
+    for (const y of [12, 22]) R(g, 0, y, 3, 1, s5[1]);
+    R(g, 0, 0, 29, 3, sh(0.1)); R(g, 0, 3, 3, 25, sh(0.1)); // the same damp stone as the apron
+    // the trimmers: the east one, then the south one across the whole opening, lit on top, nailed
+    R(g, 29, 0, 3, 28, w5[3]); R(g, 29, 0, 1, 28, w5[1]); R(g, 31, 0, 1, 28, w5[2]);
+    R(g, 30, 7, 1, 6, w5[2]); R(g, 30, 17, 1, 4, w5[2]);
+    R(g, 0, 28, 32, 4, w5[3]); R(g, 0, 28, 32, 1, w5[1]); R(g, 0, 29, 32, 1, w5[4]); R(g, 0, 31, 32, 1, w5[2]);
+    R(g, 6, 30, 7, 1, w5[2]); R(g, 19, 30, 5, 1, w5[2]);
+    for (const [x, y] of [[30, 4], [30, 23], [2, 30], [27, 30]]) R(g, x, y, 1, 1, K.FIX.iron[1]);
+  }
   // Stone steps up (interactable way on): treads lit, risers dark, worn in
-  // the middle, framed by darker side stones.
+  // the middle, framed by darker side stones. o.well 'down': the mill's stair-well above (all of it floor).
   art('stairs', {
     box: [0, 0, 32, 32], outline: false,
+    v: (o) => (o.well === 'down' ? 1 : 0),
+    bake: { box: [-34, -34, 68, 68], when: (v) => v === 1, draw: stairWell },
     draw(g, M) {
       const s5 = M.stone;
       for (let i = 0; i < 4; i++) {

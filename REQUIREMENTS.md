@@ -1000,7 +1000,7 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     the blank assesses the kana and records the word as supported exposure only; saves unchanged. U `fr1_partial_word`
     39/0, B `fr1_partial_word` passed; U full run 54,469/0; B `learning_ui`, `practice_a_lamps`, `fishing` passed.
     VALIDATION.md "FR-1V".
-  - **Not done:** F13 (art, deferred to the AC1_ART queue with captures, listed in HANDOFF.md's next actions); Firefox
+  - **Not done:** (F13 is done: AR-1 Mill, approved by Robin, docs/review/ar1_mill/); Firefox
     and Safari; phones (emulated only); a real beginner's play; the letters' "met before" note seen in a browser.
 
 ## Evidence index (see VALIDATION.md for commands and dates)

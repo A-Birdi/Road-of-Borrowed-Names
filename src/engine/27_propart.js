@@ -29,14 +29,31 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // [cx, cy, rx, ry, alpha]; spec.ground(...) drawn under the sprite, above the
   // shadow; spec.ink for interactables; spec.outline === false to skip it;
   // spec.live(c, x, y, pal, t, o) for cheap per-frame extras.
+  // spec.bake = { box, when(v), draw(g, M, v, info, pal) }: a variant's part that lies at floor level or below it (a
+  // stair-well's opening and its surround), baked once into the map's ground with the tiles (pd.bake2, called by
+  // RB.render's static layer), so it is under everyone and under the light; a variant with nothing above the floor
+  // draws nothing in the sorted pass.
   function art(id, spec) {
     const pd = P[id];
     if (!pd) return;
     const [bx, by, bw, bh] = spec.box;
+    if (spec.bake) pd.bake2 = function (c, x, y, pal, o) {
+      const info = K.palInfo(pal);
+      const v = spec.v ? spec.v(o || {}, info) : 0;
+      if (!spec.bake.when(v)) return false;
+      const [qx, qy, qw, qh] = spec.bake.box;
+      const cv = K.cached(id + '|bake|' + info.key + '|' + v, () => K.make(qw, qh, (g) => {
+        g.translate(-qx, -qy);
+        spec.bake.draw(g, K.mat(pal), v, info, pal);
+      }));
+      c.drawImage(cv, x + qx, y + qy);
+      return true;
+    };
     pd.draw2 = function (c, x, y, pal, t, o) {
       o = o || {};
       const info = K.palInfo(pal);
       const v = spec.v ? spec.v(o, info) : 0;
+      if (spec.bake && spec.bake.when(v)) return; // all of it is in the ground
       const f = spec.f ? spec.f(t || 0, o) : 0;
       const key = id + '|' + info.key + '|' + v + '|' + f;
       const cv = K.cached(key, () => K.make(bw, bh, (g) => {
