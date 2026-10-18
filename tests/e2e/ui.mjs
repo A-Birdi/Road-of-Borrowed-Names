@@ -2,7 +2,7 @@
 // loading take the edition a new journey has in this build (RB.edition.forNew(): twelve chapters since C-84), so a
 // reload continues them; old six-chapter saves have their own suite (old_saves.mjs).
 // Usage: node tests/e2e/ui.mjs [filter]
-import { serve, launch, page, chromium, companionTurn, setOut } from './lib.mjs';
+import { serve, launch, page, chromium, companionTurn, setOut, beginJourney } from './lib.mjs';
 
 const only = process.argv[2];
 const { srv, url } = await serve();
@@ -37,8 +37,8 @@ await test('new game through title, prologue skip, creation, setup', async () =>
   await p.click('[data-a=next]'); // -> Background
   await p.click('[data-a=next]'); // -> Learning setup
   await p.click('[data-k=profile][data-v=E]');
-  await p.click('[data-a=go]');
-  await setOut(p); // (settings looked over before the story begins, ST-1b)
+  await beginJourney(p); // (Learning → Summary → Begin the journey: CW-1)
+  await setOut(p);
   await p.waitForFunction(() => RB.game.mode() === 'dialogue' || RB.game.mode() === 'world', null, { timeout: 10000 });
   const st = await p.evaluate(() => ({ name: RB.game.s.player.name, jp: RB.game.s.player.nameJp, prof: RB.game.s.learn.profile, map: RB.game.s.map, hair: RB.game.s.player.look.hair, acc: RB.game.s.player.look.acc }));
   assert(st.name === 'Aki' && st.jp === 'アキ' && st.prof === 'E' && st.map === 'rw.road' && st.hair === 'bun' && st.acc.includes('glasses'), JSON.stringify(st));
@@ -472,8 +472,8 @@ await test('direct file:// mode boots, reports storage honestly, no network', as
   await p.click('text=Skip prologue');
   await p.click('.csheet button:has-text("Skip the prologue")'); // (asked first: the prologue is unseen on this profile; src/ui/43_sequence.js)
   await p.fill('#nm', 'Filer');
-  for (let i = 0; i < 3; i++) await p.click('[data-a=next]'); // Identity -> Appearance -> Background -> Learning setup
-  await p.click('[data-a=go]');
+  for (let i = 0; i < 3; i++) await p.click('[data-a=next]'); // Identity -> Appearance -> Background -> Learning
+  await beginJourney(p);
   await setOut(p);
   await p.waitForFunction(() => RB.game.G.playing === true);
   assert(!errors.length, errors.join('; '));

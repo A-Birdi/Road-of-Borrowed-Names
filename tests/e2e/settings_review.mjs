@@ -10,12 +10,13 @@
 //   2. Sound: why no line may be spoken (no recorded voices yet), and the spoken-word highlight as its own setting,
 //      shown with no Japanese voice on the device (headless Chromium has none), apart from Word help;
 //   3. phone 390×844 at the largest text: six tabs in one row, one page, nothing wider than the screen;
-//   4. a new journey through the title and the creation steps: "Before you set out" opens before the story, with what
-//      shapes ordinary play; a change there (the Japanese level, the music's volume) is the new journey's; Set out
-//      begins the story;
+//   4. a new journey through the title and the setup book (CW-1): its Summary ("Before you set out") is the last look,
+//      with no review after it; its More journey settings opens this book over it, with what shapes ordinary play; a
+//      change there (the Japanese level, the music's volume, Suzu's speech) is the new journey's, applied when it
+//      begins; 4b. a New Game+ journey keeps the review, which begins the story when the player sets out;
 //   5. reduced motion: the circle is not drawn in.
 // Usage: node tests/e2e/settings_review.mjs
-import { serve, launch, page } from './lib.mjs';
+import { serve, launch, page, settled } from './lib.mjs';
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -121,7 +122,7 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
   await p.context().close();
 }
 
-// ---- 4: a new journey: "Before you set out" ---------------------------------------------------------------------
+// ---- 4: a new journey: its Summary ("Before you set out", CW-1) and the Settings book over it ----------------------
 {
   const { p, errors, requests } = await page(b, url, { viewport: { width: 1280, height: 800 } });
   await p.click('text=New Game');
@@ -131,47 +132,80 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
   await p.fill('#nm', 'Kit');
   for (let i = 0; i < 3; i++) await p.click('[data-a=next]');
   await p.click('[data-k=profile][data-v=E]');
-  await p.click('[data-a=go]');
-  await p.waitForSelector('.folio-review', { timeout: 15000 });
-  await wait(p, 500);
-  // the summary first (FR-1 F05): what is set in a few lines, the answer mode on the page, the Sound tab and every
-  // other setting one press away
-  const sum = await p.evaluate(() => { const f = document.querySelector('.folio-review'); return { text: f.innerText, input: !!f.querySelector('input[data-set="input"]'), details: !!f.querySelector('[data-a="details"]'), sound: !!f.querySelector('[data-a="tab"][data-tab="audio"]'), go: !!f.querySelector('[data-review-go]'), fields: f.querySelectorAll('input[data-set="assist"], input[data-set="questGuide"], input[data-set="lead"]').length }; });
-  assert(/Everyday/.test(sum.text) && /No battle cost/.test(sum.text) && /Battles\s*Standard/.test(sum.text) && sum.input && sum.details && sum.sound && sum.go && !sum.fields,
-    'the summary: level, mistakes, battles, sound (with its tab), the answer mode, Adjust details and Set out, not every setting again: ' + JSON.stringify(Object.assign({}, sum, { text: sum.text.slice(0, 400) })));
-  await p.click('.folio-review [data-a="details"]');
+  await p.click('[data-a=next]');
+  await settled(p);
+  await p.waitForSelector('.folio-create[data-step=summary] .cr-sumpage');
+  // the Summary: what is set in ruled rows with Edit, the sound with its own button, every other setting one press away
+  const sum = await p.evaluate(() => { const f = document.querySelector('.cr-sumpage'); return { text: f.innerText, sound: !!f.querySelector('[data-a=sound]'), more: !!f.querySelector('[data-a=more]'), go: !!document.querySelector('.folio-create [data-a=go]:not([hidden])'), review: !!document.querySelector('.folio-review'), playing: RB.game.G.playing }; });
+  assert(/Elementary/.test(sum.text) && /Assisted: no learning-error battle cost/.test(sum.text) && /Tactical challenge\s*Standard/i.test(sum.text) && sum.sound && sum.more && sum.go && !sum.review && !sum.playing,
+    'the Summary: level, mistakes, tactics, sound (with its button), More journey settings and Begin; no review, nothing begun: ' + JSON.stringify(Object.assign({}, sum, { text: sum.text.slice(0, 300) })));
+  await p.click('.cr-sumpage [data-a=more]');
+  await p.waitForSelector('.folio-draft .ptab');
   await wait(p, 300);
-  const r = await p.evaluate(() => {
-    const f = document.querySelector('.folio-review');
-    const has = (s) => !!f.querySelector(s);
-    return { top: RB.ui.topLayer().name, playing: RB.game.G.playing, story: RB.script.isRunning(), tab: (document.querySelector('.folio-review .ptab[aria-selected="true"]') || {}).dataset,
-      tabs: [...f.querySelectorAll('.ptab')].map((x) => x.dataset.id).join(), level: (f.querySelector('input[data-set="profile"]:checked') || {}).value,
-      every: ['input[data-set="profile"]', 'input[data-set="assist"]', 'input[data-set="difficulty"]', 'input[data-set="questGuide"]', 'input[data-set="lead"]', 'input[data-set="secondary"]', '[data-sw="spacing"]', '[data-sw="lightbulb"]',
-        'input[data-set="textSpeed"]', '[data-range="vol.master"]', '[data-range="vol.music"]', '[data-range="vol.sfx"]', 'input[data-set="musicPerformance"]', 'input[data-suzu-speech]', 'input[data-set="outcomeView"]',
-        'input[data-set="bathScenes"]', 'input[data-set="battleAnim"]', '[data-voicehl]'].filter((s) => !has(s)), voices: /No recorded voices yet/.test(f.textContent), go: !!f.querySelector('[data-review-go]') };
-  });
-  assert(r.top === 'settings-review' && !r.playing && !r.story, 'the review opens before the story begins: ' + JSON.stringify(r));
-  assert(r.tab && r.tab.id === 'start' && /^start,reading,learning,play,audio,display,controls$/.test(r.tabs), '"Before you set out" first, every other tab beside it: ' + r.tabs);
-  assert(!r.every.length && r.voices && r.go && r.level === 'E', 'it holds what shapes ordinary play (level as chosen: ' + r.level + '; missing: ' + r.every.join(', ') + ')');
-  // a change here is the new journey's
-  await p.click('.folio-review label.opt:has(input[data-set="profile"][value="A"])');
+  const seen = new Set();
+  let miss = [];
+  for (const id of ['reading', 'learning', 'play', 'audio', 'display', 'controls']) {
+    await p.evaluate((id) => RB.ui.settings.tab(id), id);
+    await wait(p, 150);
+    (await p.evaluate(() => { const f = document.querySelector('.folio-draft'); return ['input[data-set="profile"]', 'input[data-set="assist"]', 'input[data-set="difficulty"]', 'input[data-set="questGuide"]', 'input[data-set="lead"]', 'input[data-set="secondary"]', '[data-sw="spacing"]', '[data-sw="lightbulb"]',
+      'input[data-set="textSpeed"]', '[data-range="vol.master"]', '[data-range="vol.music"]', '[data-range="vol.sfx"]', 'input[data-set="musicPerformance"]', 'input[data-suzu-speech]', 'input[data-set="outcomeView"]',
+      'input[data-set="bathScenes"]', 'input[data-set="battleAnim"]', '[data-voicehl]'].filter((x) => !!f.querySelector(x)); })).forEach((x) => seen.add(x));
+  }
+  const r = await p.evaluate(() => ({ top: RB.ui.topLayer().name, playing: RB.game.G.playing, story: RB.script.isRunning(), tabs: [...document.querySelectorAll('.folio-draft .ptab')].map((x) => x.dataset.id).join(), level: (document.querySelector('.folio-draft input[data-set="profile"]:checked') || {}).value }));
+  await p.evaluate(() => RB.ui.settings.tab('learning'));
+  await wait(p, 150);
+  const level = await p.evaluate(() => (document.querySelector('.folio-draft input[data-set="profile"]:checked') || {}).value);
+  miss = ['input[data-set="profile"]', 'input[data-set="assist"]', 'input[data-set="difficulty"]', 'input[data-set="questGuide"]', 'input[data-set="lead"]', 'input[data-set="secondary"]', '[data-sw="spacing"]', '[data-sw="lightbulb"]', 'input[data-set="textSpeed"]', '[data-range="vol.master"]', '[data-range="vol.music"]', '[data-range="vol.sfx"]', 'input[data-set="musicPerformance"]', 'input[data-suzu-speech]', 'input[data-set="outcomeView"]', 'input[data-set="bathScenes"]', 'input[data-set="battleAnim"]', '[data-voicehl]'].filter((x) => !seen.has(x));
+  assert(r.top === 'settings-draft' && !r.playing && !r.story && /^reading,learning,play,audio,display,controls$/.test(r.tabs), 'More journey settings opens the Settings book over the Summary, before the story: ' + JSON.stringify(r));
+  assert(!miss.length && level === 'E', 'it holds what shapes ordinary play (level as chosen: ' + level + '; missing: ' + miss.join(', ') + ')');
+  // a change there is the new journey's, kept in the setup until it begins
+  await p.click('.folio-draft label.opt:has(input[data-set="profile"][value="A"])');
   await wait(p, 250);
-  await p.evaluate(() => { const x = document.querySelector('.folio-review [data-range="vol.music"]'); x.value = '0.25'; x.dispatchEvent(new Event('input', { bubbles: true })); });
-  await p.click('.folio-review label.opt:has(input[data-suzu-speech][value="kansai"])');
+  await p.evaluate(() => RB.ui.settings.tab('audio'));
+  await wait(p, 150);
+  await p.evaluate(() => { const x = document.querySelector('.folio-draft [data-range="vol.music"]'); x.value = '0.25'; x.dispatchEvent(new Event('input', { bubbles: true })); });
+  await p.evaluate(() => RB.ui.settings.tab('reading'));
+  await wait(p, 150);
+  await p.click('.folio-draft label.opt:has(input[data-suzu-speech][value="kansai"])');
   await wait(p, 300);
-  assert(await p.evaluate(() => !!document.querySelector('.folio-review input[data-suzu-speech][value="kansai"]:checked') && RB.game.settings.suzuSpeech === 'kansai'), 'Suzu\'s speech chosen here');
-  // the other tabs are there too
-  await sel(p, 'audio');
-  assert(await p.evaluate(() => !!document.querySelector('.folio-review [data-range="vol.voice"]')), 'the Sound tab opens inside the review');
-  await sel(p, 'start');
-  await p.click('.folio-review [data-review-go]');
+  const mid = await p.evaluate(async () => ({ shown: !!document.querySelector('.folio-draft input[data-suzu-speech][value="kansai"]:checked'), suzu: RB.game.settings.suzuSpeech || 'standard', saved: ((await RB.save.loadSettings()) || {}).suzuSpeech || 'standard', music: RB.game.settings.vol.music }));
+  assert(mid.shown && mid.suzu === 'standard' && mid.saved === 'standard' && mid.music === 0.25, 'Suzu\'s speech chosen here waits for Begin; the music\'s volume is heard at once: ' + JSON.stringify(mid));
+  await p.keyboard.press('Escape');
+  await p.waitForFunction(() => !RB.ui.settings.isOpen());
+  assert(await p.evaluate(() => document.querySelector('.folio-create').getAttribute('data-step') === 'summary' && /Advanced/.test(document.querySelector('.cr-sumpage').innerText) && !RB.game.G.playing), 'Escape returns to the Summary, which shows Advanced; nothing has begun');
+  await p.click('.folio-create [data-a=go]');
   await p.waitForFunction(() => RB.game.G.playing === true && !RB.ui.settings.isOpen(), null, { timeout: 15000 });
   await wait(p, 800);
-  const s = await p.evaluate(async () => ({ level: RB.game.s.learn.profile, name: RB.game.s.player.name, music: RB.game.settings.vol.music, saved: (await RB.save.loadSettings()).vol.music, mode: RB.game.mode(), map: RB.game.s.map,
+  const s = await p.evaluate(async () => ({ level: RB.game.s.learn.profile, name: RB.game.s.player.name, music: RB.game.settings.vol.music, saved: (await RB.save.loadSettings()).vol.music, suzu: (await RB.save.loadSettings()).suzuSpeech, mode: RB.game.mode(), map: RB.game.s.map,
     auto: await (async () => { const r = await RB.save.read(1, 'auto').catch(() => null); return r && r.state && r.state.learn.profile; })() }));
-  assert(s.level === 'A' && s.name === 'Kit' && s.music === 0.25 && s.saved === 0.25, 'Set out: the journey begins with the level chosen in the review, the volume kept: ' + JSON.stringify(s));
+  assert(s.level === 'A' && s.name === 'Kit' && s.music === 0.25 && s.saved === 0.25 && s.suzu === 'kansai', 'Begin: the journey begins with the level chosen in the editor, the volume and Suzu\'s speech kept: ' + JSON.stringify(s));
   assert(s.auto === 'A' && (s.mode === 'dialogue' || s.mode === 'world') && s.map === 'rw.road', 'the first autosave has it, and the story has begun: ' + JSON.stringify(s));
   assert(!errors.length && !requests.length, 'no page errors, nothing fetched: ' + errors.concat(requests).join('; '));
+  await p.context().close();
+}
+
+// ---- 4b: New Game+ keeps its review ("Before you set out" in the Settings book, ST-1b) ------------------------------
+{
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await p.evaluate(async () => {
+    const s = RB.state.newCampaign({ profile: 'I', edition: RB.edition.forNew() });
+    s.player.name = 'Veteran'; s.comp = 'ren'; s.flags.postgame = true; s.map = 'rw.village'; s.x = 22; s.y = 30;
+    await RB.save.writeSlot(1, s, {});
+  });
+  await p.reload(); await p.waitForFunction(() => window.__RB_READY__ === true);
+  await p.click('text=New Game');
+  await p.click('.slot[data-slot="2"] [data-a=start]');
+  await p.click('[role=alertdialog] >> text=New Game+ from slot 1');
+  for (let i = 0; i < 400 && !(await p.evaluate(() => RB.ui.settings.reviewing())); i++) {
+    if (await p.evaluate(() => RB.ui.dialogue.isOpen())) await p.evaluate(() => RB.ui.dialogue.advance(true));
+    await p.waitForTimeout(50);
+  }
+  const ng = await p.evaluate(() => ({ reviewing: RB.ui.settings.reviewing(), create: !!document.querySelector('.folio-create'), playing: RB.game.G.playing, start: !!document.querySelector('.folio-review .ptab[data-id="start"]') }));
+  assert(ng.reviewing && !ng.create && !ng.playing && ng.start, 'a New Game+ journey still opens its review, with no setup book: ' + JSON.stringify(ng));
+  await p.click('.folio-review [data-review-go]');
+  await p.waitForFunction(() => RB.game.G.playing === true, null, { timeout: 15000 });
+  assert(await p.evaluate(() => RB.game.s.ngplus === 1 && RB.game.s.player.name === 'Veteran'), 'Set out begins the New Game+ journey');
+  assert(!errors.length, 'no page errors: ' + errors.join('; '));
   await p.context().close();
 }
 

@@ -103,10 +103,27 @@ export async function companionTurn(p, o) {
   return null;
 }
 
-// A new journey opens Settings on "Before you set out" (ST-1b, src/ui/55_settings.js review()) before its story
-// begins: set out from it with the real button (the review is the subject of tests/e2e/settings_review.mjs).
+// The setup book (CW-1, src/ui/40_create.js) turns printed leaves between its steps on wide screens: wait until no leaf
+// is turning (a phone, or Reduce motion, moves at once and this returns at once).
+export async function settled(p, timeout) {
+  await p.waitForFunction(() => !document.querySelector('.folio-create.cr-turning, .cr-stage.lt-on'), null, { timeout: timeout || 5000 });
+}
+// A new journey begins from its last step, the Summary ("Before you set out", CW-1): from any step of the setup, go on
+// to it with the real buttons and press Begin the journey.
+export async function beginJourney(p) {
+  for (let i = 0; i < 6; i++) {
+    await settled(p);
+    if (await p.isVisible('.folio-create .folio-foot [data-a=go]')) break;
+    await p.click('.folio-create .folio-foot .cr-primary:not([hidden])');
+  }
+  await p.click('.folio-create .folio-foot [data-a=go]');
+}
+// Before its story begins, a New Game+ journey opens Settings on "Before you set out" (ST-1b, src/ui/55_settings.js
+// review()): set out from it with the real button (the review is the subject of tests/e2e/settings_review.mjs). A fresh
+// journey has no such review since CW-1 (its Summary was the last look): then this only waits for the journey to begin.
 export async function setOut(p, opts = {}) {
-  await p.waitForSelector('.folio-review [data-review-go]', { timeout: opts.timeout || 15000 });
+  const h = await p.waitForFunction(() => (document.querySelector('.folio-review [data-review-go]') ? 'review' : !document.querySelector('.folio-create') && RB.game.G && RB.game.G.playing === true ? 'play' : null), null, { timeout: opts.timeout || 15000 });
+  if ((await h.jsonValue()) !== 'review') return;
   await p.click('.folio-review [data-review-go]');
   await p.waitForFunction(() => !(RB.ui.settings.reviewing && RB.ui.settings.reviewing()), null, { timeout: 5000 });
 }

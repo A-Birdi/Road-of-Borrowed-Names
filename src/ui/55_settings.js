@@ -12,6 +12,14 @@
  * markers; reading; sound and voices; Suzu's speech; how stories and battles are told), with every other tab still
  * there, and resolves when the player sets out.
  *
+ * editDraft(o): the Summary of a new journey's setup (src/ui/40_create.js, CW-1) opens the same book over the journey
+ * being set up, before anything exists: every tab, the same rows and keys, reading and writing the setup's draft (its
+ * preferences and its learning choices) instead of the browser's settings and the journey last played. Nothing is saved
+ * there: the draft is applied once, when the journey begins (applyDraft). A few choices are previewed on the live
+ * settings so they can be heard or seen at once (the volumes, mute, music, the device voice, text size, contrast,
+ * motion, the book's look, keys); each one's value before is kept, so a setup left unfinished puts back only those
+ * (restorePreview). Closing it (its button, Escape, outside the book) returns to the Summary; it never begins anything.
+ *
  * In battle (openBattle(); the battle's Settings button or the menu key) the same settings and the same controls,
  * presentation only: options that change no rule, reward or learning difficulty (IN_BATTLE); the others are listed
  * read-only until the encounter is over. The encounter is paused while the sheet is open (RB.battleSeq.pause). No
@@ -50,12 +58,16 @@ RB.ui.settings = (function () {
   let lay = null, fr = null, tabsApi = null, group = null, mq = null, sampleCache = null;
   let mode = 'normal', lastMode = 'normal'; // 'normal' | 'battle' (presentation only) | 'review' (a new journey)
   let reviewS = null, reviewDone = null;
+  // a new journey's setup (editDraft): { prefs, learning, owned, onChange, setLearn, name, done }
+  let draft = null;
   const scroll = {};
   const battle = () => mode === 'battle';
   const tabsFor = () => (mode === 'battle' ? BATTLE_TABS : mode === 'review' ? [START_TAB].concat(TABS) : TABS);
   // the journey these settings belong to: the one being created (review), or the one being played
   const cs = () => reviewS || RB.game.s || null;
-  const learnObj = () => (cs() ? cs().learn : {});
+  const learnObj = () => (draft ? draft.learning : cs() ? cs().learn : {});
+  // the preferences shown: the setup's draft while one is open, else the browser's
+  const S = () => (draft ? draft.prefs : RB.game.settings);
 
   function open(tab) {
     if (lay) return;
@@ -70,17 +82,18 @@ RB.ui.settings = (function () {
     if (!tabsFor().some((t) => t.id === group)) group = tabsFor()[0].id;
     if (RB.bookType) RB.bookType.install(); // the book's type, if the idle start hasn't made it yet
     const style = RB.game.settings && RB.game.settings.ledgerStyle === 'flat' ? 'flat' : 'book';
-    const review = mode === 'review';
+    const review = mode === 'review', drafting = mode === 'draft';
     fr = RB.ui.folio.frame({
-      onClose: review ? finishReview : close,
-      closeLabel: battle() ? 'Back to the encounter' : review ? 'Set out' : 'Back', closeIcon: review ? 'next' : 'back',
-      cls: 'folio-settings' + (battle() ? ' folio-bset' : '') + (review ? ' folio-review' : ''), book: style,
+      onClose: review ? finishReview : drafting ? closeDraft : close,
+      closeLabel: battle() ? 'Back to the encounter' : review ? 'Set out' : drafting ? 'Return to summary' : 'Back', closeIcon: review ? 'next' : 'back',
+      cls: 'folio-settings' + (battle() ? ' folio-bset' : '') + (review ? ' folio-review' : '') + (drafting ? ' folio-draft' : ''), book: style,
     });
-    fr.setTitle(RB.ui.label('{設定|せってい}', 'Settings'), battle() ? 'During this encounter: how it looks, reads and sounds' : review ? 'Before you set out' : cs() ? 'Some choices belong to this campaign' : 'Preferences for every campaign');
-    lay = { el: fr.scrim, name: battle() ? 'battle-settings' : review ? 'settings-review' : 'settings' };
-    lay.onCancel = review ? finishReview : close;
+    fr.setTitle(RB.ui.label('{設定|せってい}', 'Settings'), battle() ? 'During this encounter: how it looks, reads and sounds' : review ? 'Before you set out' : drafting ? 'For the journey you are about to begin' : cs() ? 'Some choices belong to this campaign' : 'Preferences for every campaign');
+    lay = { el: fr.scrim, name: battle() ? 'battle-settings' : review ? 'settings-review' : drafting ? 'settings-draft' : 'settings' };
+    lay.onCancel = review ? finishReview : drafting ? closeDraft : close;
     if (battle()) { battleFoot(); lay.onAction = (a) => { if (a === 'menu') { close(); return true; } return false; }; }
     else if (review) reviewFoot();
+    else if (drafting) draftFoot();
     else fr.foot.innerHTML = '<p class="sx-foot">' + I('save') + '<span>Changes take effect straight away and are remembered in this browser.</span></p>';
     RB.ui.pushLayer(lay);
     tabsApi = RB.ui.folio.tabs(fr.tabslot, tabsFor(), group, (id) => { remember(); group = id; render(true); }, { label: 'Settings', panelId: 'settings-page' });
@@ -140,6 +153,7 @@ RB.ui.settings = (function () {
     if (battle()) return 'During this encounter';
     const s = cs();
     if (mode === 'review') return s && s.player ? esc(s.player.name) + '’s new journey' : 'A new journey';
+    if (mode === 'draft') return draft && draft.name ? esc(draft.name) + '’s new journey' : 'Your new journey';
     return s && s.player ? esc(s.player.name) + '’s journey' : 'For every journey';
   }
   function runHead(tab, two) {
@@ -223,7 +237,7 @@ RB.ui.settings = (function () {
   const why = (t) => (t ? '<p class="hint sx-why">' + esc(t) + '</p>' : '');
   // opts: [value, words, { i: icon, jp: Japanese name, d: a line under it }]
   function radios(key, label, opts, obj, hint) {
-    const cur = (obj === 'learn' ? learnObj() : obj === 'voice' ? RB.game.settings.voice : RB.game.settings)[key];
+    const cur = (obj === 'learn' ? learnObj() : obj === 'voice' ? S().voice : S())[key];
     const name = 'r' + (++uid) + key;
     const stack = opts.some((o) => o[2] && o[2].d);
     return '<fieldset class="field sx-field" data-field="' + esc(key) + '"><legend class="sx-h">' + esc(label) + '</legend>' + why(hint) +
@@ -236,10 +250,11 @@ RB.ui.settings = (function () {
   }
   // ST-2: the same circled choices for a page that keeps its own state (the creation step): each input carries the
   // caller's attributes (attr="key" data-v="value"); the caller marks the checked one
-  function choice(key, attr, label, opts, hint) {
+  // (x.srLegend: the group's name for assistive technology only, where a heading above already says it)
+  function choice(key, attr, label, opts, hint, x0) {
     const name = 'c' + (++uid) + key;
     const stack = opts.some((o) => o[2] && o[2].d);
-    return '<fieldset class="field sx-field" data-field="' + esc(key) + '" data-group="' + esc(key) + '"><legend class="sx-h">' + esc(label) + '</legend>' + why(hint) +
+    return '<fieldset class="field sx-field" data-field="' + esc(key) + '" data-group="' + esc(key) + '"><legend class="sx-h' + (x0 && x0.srLegend ? ' sr' : '') + '">' + esc(label) + '</legend>' + why(hint) +
       '<div class="opts sx-opts' + (stack ? ' stack' : '') + '">' + opts.map(([v, l, x]) => {
         x = x || {};
         return '<label class="opt sx-opt"><input type="radio" name="' + name + '" ' + attr + '="' + esc(key) + '" data-v="' + esc(String(v)) + '">' +
@@ -253,7 +268,7 @@ RB.ui.settings = (function () {
       '<span class="sx-box">' + TICK + '</span><span class="sx-h">' + esc(label) + '</span><span class="state">' + (on ? 'On' : 'Off') + '</span></label>' + why(hint) + '</div>';
   }
   function sw(key, label, hint, invert) {
-    const st = RB.game.settings;
+    const st = S();
     const on = (key === 'contrast' ? st.contrast === 'high' : !!st[key]) !== !!invert;
     return tick('data-sw="' + esc(key) + '"' + (invert ? ' data-inv="1"' : ''), on, label, hint);
   }
@@ -268,7 +283,7 @@ RB.ui.settings = (function () {
   const pct = (v) => Math.round(v * 100) + '%';
   // the volumes as one table: the name of each, its level
   function mixer(rows) {
-    const st = RB.game.settings;
+    const st = S();
     return '<div class="sx-mix">' + rows.map(([path, label]) => {
       const id = 'sl' + (++uid), k = path.split('.');
       return '<label class="sx-mix-l" for="' + id + '">' + esc(label) + '</label>' + rangeHtml(id, path, st[k[0]][k[1]], 0, 1, 0.05, pct);
@@ -283,7 +298,7 @@ RB.ui.settings = (function () {
     return sampleCache;
   }
   function preview() {
-    const st = RB.game.settings;
+    const st = S();
     const smp = sample();
     const ja = st.lead === 'ja';
     const main = ja ? RB.ui.jhtml(smp.jp) : '<span class="enline">' + esc(smp.en) + '</span>';
@@ -337,19 +352,19 @@ RB.ui.settings = (function () {
       hint || 'Ask me opens your companion’s menu each exchange. With a plan, they act on it by themselves, in their own way (Nao still reads, Ren still wards), and the menu opens only when they have nothing of that kind.'),
     // (Harmony addendum §7.4: the portrait layer only — the technique, its stage performance and the banner stay)
     harmonyFlourish: (hint) => sw('harmonyFlourish', 'Harmony portrait flourish', hint || 'A short paired portrait of you and your companion as a coordinated technique begins. Off keeps the technique, its performance on the stage and its name at the top.'),
-    textScale: () => slider('textScale', 'Text size', RB.game.settings.textScale, 0.85, 1.5, 0.05, pct, 'Every page, line and button, together.'),
+    textScale: () => slider('textScale', 'Text size', S().textScale, 0.85, 1.5, 0.05, pct, 'Every page, line and button, together.'),
     contrast: () => sw('contrast', 'High contrast', 'Black ink on white paper, without the paper’s grain, and stronger outlines.'),
     reducedMotion: (hint) => sw('reducedMotion', 'Reduce motion', hint || 'Removes sliding and bouncing; changes still show immediately.'),
     worldLight: () => sw('worldLight', 'Light and shadow', 'Sunlight, cast shadows and lamplight on every map, and daylight through a room’s windows. Off gives a flatter picture that is quicker to draw; nothing in your journey changes.'),
     ledgerStyle: () => radios('ledgerStyle', 'The Wayfarer’s Ledger', [['book', 'The book', { i: 'book' }], ['flat', 'The book, flat', { i: 'flat' }]], null,
       'How the Ledger, the dialogue and every other page are drawn. It changes only how things look. “Flat” keeps the book’s type and pages without texture, depth or motion.'),
     muted: () => sw('muted', 'Mute all sound', 'Silences music, effects and voices at once; the levels above are kept for when you turn sound back on.'),
-    highlight: () => tick('data-voicehl', RB.game.settings.voice.highlight !== false, 'Highlight each word as it is spoken',
+    highlight: () => tick('data-voicehl', S().voice.highlight !== false, 'Highlight each word as it is spoken',
       'While a line is spoken, the Japanese word being said is marked, and the English words that render it where the translation shows. Pointing at a word in a line, or moving to it with the keyboard, marks its counterpart the same way. The spoken mark follows whichever voice speaks: your device’s voice now, the game’s recorded voices once they are added. Separate from word help.'),
   };
   // Suzu's speech: the control src/ui/56_suzu_speech.js applies (the same one as in Reading)
   function suzuRow(hint) {
-    const v = RB.ui.suzuSpeech ? RB.ui.suzuSpeech.value() : 'standard';
+    const v = draft ? (S().suzuSpeech === 'kansai' ? 'kansai' : 'standard') : RB.ui.suzuSpeech ? RB.ui.suzuSpeech.value() : 'standard';
     const r = (val, label, jp) => '<label class="opt sx-opt"><input type="radio" name="suzuSpeech' + (++uid) + '" data-suzu-speech value="' + val + '"' + (v === val ? ' checked' : '') + '>' +
       '<span class="sx-face"><span class="sx-mark"><span class="sx-w"><span class="sx-jp">' + ruby(jp) + '</span><span class="sx-en">' + label + '</span></span>' + RING + '</span></span></label>';
     return '<fieldset class="field sx-field" data-speech-field><legend class="sx-h">Suzu’s speech</legend>' + why(hint || 'How Suzu talks, wherever she speaks. Kansai-ben is the regional dialect of Osaka and Kyoto; word help explains its forms. Questions always use standard Japanese.') +
@@ -360,8 +375,9 @@ RB.ui.settings = (function () {
   // which voice speaks (src/audio/54_voice_route.js), and what this copy of the game can play
   function voiceNote() {
     const vb = RB.voicebank;
-    const st = RB.game.settings;
-    const mode = RB.voice && RB.voice.mode ? RB.voice.mode() : 'prepared';
+    const st = S();
+    const vm0 = draft && st.voice ? st.voice.mode : null;
+    const mode = draft ? (['prepared', 'device', 'none'].indexOf(vm0) >= 0 ? vm0 : 'prepared') : RB.voice && RB.voice.mode ? RB.voice.mode() : 'prepared';
     let slip = '';
     if (!vb || !vb.configured()) {
       const alone = typeof location !== 'undefined' && !/^https?:$/.test(location.protocol);
@@ -387,7 +403,7 @@ RB.ui.settings = (function () {
     return h;
   }
   function deviceVoice() {
-    const st = RB.game.settings;
+    const st = S();
     const vs = RB.voice ? RB.voice.status() : { supported: false, localJaCount: 0, note: 'Speech synthesis is not available.' };
     const voices = RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices() : [];
     let h = '<div class="field sx-field"><p class="sx-h">Your device’s Japanese voice</p>';
@@ -445,12 +461,12 @@ RB.ui.settings = (function () {
   function extras(g, page) { return (EXTRA[g] || []).filter((x) => x.page === page).map((x) => x.f({ radios, sw, slider, esc }) || '').join(''); }
   function journeyBox(inner) {
     const s = cs();
+    if (draft) return '<div class="campaign-box sx-journey"><div class="kind">' + I('ledger') + ' For this new journey' + (draft.name ? ' (' + esc(draft.name) + ')' : '') + '</div>' + inner + '</div>';
     return '<div class="campaign-box sx-journey"><div class="kind">' + I('ledger') + ' Saved with this journey' + (s && s.player ? ' (' + esc(s.player.name) + ')' : '') + '</div>' + inner + '</div>';
   }
   function pages(g) {
     if (battle()) return battlePages(g);
     if (g === 'start') return startPages();
-    const st = RB.game.settings;
     switch (g) {
       case 'reading': {
         const sz = extras('reading', 'b');
@@ -461,7 +477,7 @@ RB.ui.settings = (function () {
       }
       case 'learning':
         return [
-          (cs() ? journeyBox(R.profile(true) + R.assist() + R.difficulty())
+          (draft || cs() ? journeyBox(R.profile(true) + R.assist() + R.difficulty())
             : '<p class="note-slip">Japanese level, mistakes and tactical challenge are chosen for each campaign when you start it, and can be changed here during play.</p>') + extras('learning', 'a'),
           sec('Answering') + R.input() + R.padKanji() + R.strokePractice() + extras('learning', 'b'),
         ];
@@ -503,7 +519,8 @@ RB.ui.settings = (function () {
   // "Before you set out" (ST-1b), first as a summary of what this journey is set to (FR-1 F05: one short page and Set
   // out, rather than a second pass over every choice made a moment ago); "Adjust details" opens the full spread below
   let reviewDetail = false;
-  const PROFILE_NAMES = { F: 'Foundations', E: 'Everyday', I: 'Intermediate', A: 'Advanced' };
+  // (CW-1: one name for each level wherever a journey is set up, as in creation: E is Elementary)
+  const PROFILE_NAMES = { F: 'Foundations', E: 'Elementary', I: 'Intermediate', A: 'Advanced' };
   function summaryPages() {
     const st = RB.game.settings, L = learnObj();
     const prof = PROFILE_NAMES[L.profile] || L.profile;
@@ -553,7 +570,69 @@ RB.ui.settings = (function () {
     ];
   }
 
+  // ---- a new journey's draft (editDraft): the same rows, the setup's values ----------------------------------------
+  // what can be previewed on the live settings while a journey is being set up (heard or seen at once)
+  const PREVIEW = { 'vol.master': 1, 'vol.music': 1, 'vol.sfx': 1, 'vol.voice': 1, muted: 1, musicPerformance: 1, 'voice.uri': 1, 'voice.rate': 1, textScale: 1, contrast: 1, reducedMotion: 1, ledgerStyle: 1, binds: 1 };
+  const clone = (v) => (v && typeof v === 'object' ? RB.util.deepClone(v) : v);
+  const getP = (o, path) => { const k = path.split('.'); return k.length > 1 ? (o[k[0]] || {})[k[1]] : o[k[0]]; };
+  const setP = (o, path, v) => { const k = path.split('.'); if (k.length > 1) { o[k[0]] = o[k[0]] || {}; o[k[0]][k[1]] = v; } else o[k[0]] = v; };
+  // a preference chosen in the draft: kept there, previewed if it is one of those, and reported to the setup
+  function put(path, v) {
+    setP(draft.prefs, path, clone(v));
+    if (PREVIEW[path]) {
+      const own = draft.owned;
+      if (!Object.prototype.hasOwnProperty.call(own, path)) own[path] = clone(getP(RB.game.settings, path));
+      setP(RB.game.settings, path, clone(v));
+      if (path === 'binds') RB.input.setBinds(v || null);
+      RB.game.applySettings();
+    }
+    if (draft.onChange) draft.onChange(path, v);
+  }
+  // the journey begins: what the draft changed goes onto the browser's settings, key by key (the caller saves)
+  function applyDraft(prefs, paths) {
+    if (!prefs || !paths) return;
+    paths.forEach((path) => {
+      setP(RB.game.settings, path, clone(getP(prefs, path)));
+      if (path === 'binds') RB.input.setBinds(RB.game.settings.binds || null);
+    });
+  }
+  // the setup is left unfinished: only what it previewed goes back, each to the value it had (never a whole old copy)
+  function restorePreview(owned) {
+    if (!owned) return;
+    const keys = Object.keys(owned);
+    keys.forEach((path) => {
+      setP(RB.game.settings, path, owned[path]);
+      if (path === 'binds') RB.input.setBinds(owned[path] || null);
+      delete owned[path];
+    });
+    if (keys.length) RB.game.applySettings();
+  }
+  function draftFoot() {
+    fr.foot.innerHTML = '<p class="sx-foot">' + I('journey') + '<span>These apply when you begin the journey. Sound and how pages look show straight away.</span></p>' +
+      '<button type="button" class="cbtn sx-go" data-draft-back>' + I('back') + '<span>Return to summary</span></button>';
+    fr.foot.onclick = (e) => { const b = e.target.closest('[data-draft-back]'); if (b && e.detail < 2) closeDraft(); };
+  }
+  // opens over the setup's Summary on tab o.initialTab; resolves when it is closed (it never begins the journey)
+  function editDraft(o) {
+    if (lay) close();
+    return new Promise((res) => {
+      draft = { prefs: o.preferences, learning: o.learning || {}, owned: o.owned || {}, onChange: o.onChange, setLearn: o.setLearn, name: o.name || '', done: res };
+      lastMode = 'draft';
+      if (RB.audio) RB.audio.sfx('menu_open');
+      show('draft', o.initialTab || 'reading');
+    });
+  }
+  function closeDraft() {
+    if (mode !== 'draft') return;
+    const d = draft;
+    close();
+    draft = null;
+    lastMode = 'normal'; group = null;
+    if (d && d.done) d.done();
+  }
+
   // ---- behaviour (unchanged persistence: apply now, save now; sliders debounce) --------------
+  // (with a draft open: into the draft, nothing saved; see put)
   function wire(L) {
     L.onclick = async (e) => {
       const b = e.target.closest('[data-bind],[data-a]');
@@ -567,13 +646,14 @@ RB.ui.settings = (function () {
           const binds = RB.util.deepClone(RB.input.getBinds());
           for (const k in binds) binds[k] = binds[k].filter((c) => c !== code);
           binds[a] = [code].concat(binds[a].slice(0, 1));
-          st.binds = binds;
-          RB.input.setBinds(binds);
-          RB.game.saveSettings();
+          if (draft) put('binds', binds);
+          else { st.binds = binds; RB.input.setBinds(binds); RB.game.saveSettings(); }
           render();
         });
       } else if (b.dataset.a === 'resetbinds') {
-        st.binds = null; RB.input.setBinds(null); await RB.game.saveSettings(); render();
+        if (draft) put('binds', null);
+        else { st.binds = null; RB.input.setBinds(null); await RB.game.saveSettings(); }
+        render();
       } else if (b.dataset.a === 'details') {
         reviewDetail = true; render(true);
         const L0 = L.querySelector('.leaf'); if (L0) L0.focus({ preventScroll: true });
@@ -597,7 +677,31 @@ RB.ui.settings = (function () {
       const st = RB.game.settings;
       // in battle only what changes no rule: anything else is refused, whatever sent it
       if (battle() && !allowedNow(t)) { render(); return; }
-      if (t.matches('input[type=radio][data-set]')) {
+      if (draft && t.matches('[data-suzu-speech]')) {
+        // (the setup's draft: not the document's own handler, which saves it at once)
+        e.stopPropagation();
+        put('suzuSpeech', t.value === 'kansai' ? 'kansai' : 'standard');
+        render(); focusSame(t);
+      } else if (draft && t.matches('input[type=radio][data-set]')) {
+        let v = t.value;
+        if (v === 'true') v = true; else if (v === 'false') v = false;
+        // (a level chosen here has the same effects as on the learning step: the setup applies it)
+        if (t.dataset.obj === 'learn') { if (draft.setLearn) draft.setLearn(t.dataset.set, v); else learnObj()[t.dataset.set] = v; }
+        else if (t.dataset.obj === 'voice') { put('voice.' + t.dataset.set, v); if (RB.voice && RB.voice.cancel) RB.voice.cancel(); }
+        else put(t.dataset.set, v);
+        if (t.dataset.set === 'ledgerStyle' && fr) fr.setBook(RB.game.settings.ledgerStyle === 'flat' ? 'flat' : 'book');
+        render();
+        focusSame(t);
+      } else if (draft && t.matches('[data-sw]')) {
+        const k = t.dataset.sw;
+        put(k, k === 'contrast' ? (t.checked ? 'high' : 'normal') : t.dataset.inv ? !t.checked : t.checked);
+        render(); focusSame(t);
+      } else if (draft && t.matches('[data-voiceauto], [data-voiceautorec], [data-voicehl]')) {
+        put(t.matches('[data-voiceauto]') ? 'voice.auto' : t.matches('[data-voiceautorec]') ? 'voice.autoRec' : 'voice.highlight', t.checked);
+        render(); focusSame(t);
+      } else if (draft && t.matches('[data-voice]')) {
+        put('voice.uri', t.value); if (RB.voice && RB.voice.speak) RB.voice.speak('こんにちは');
+      } else if (t.matches('input[type=radio][data-set]')) {
         let v = t.value;
         if (v === 'true') v = true; else if (v === 'false') v = false;
         if (t.dataset.obj === 'learn') learnObj()[t.dataset.set] = v;
@@ -636,6 +740,13 @@ RB.ui.settings = (function () {
       if (!r) return;
       if (battle() && !IN_BATTLE[r.dataset.range]) return;
       const st = RB.game.settings;
+      if (draft) {
+        put(r.dataset.range, +r.value);
+        const out0 = r.parentNode.querySelector('output');
+        if (out0) out0.textContent = r.dataset.range === 'voice.rate' ? (+r.value).toFixed(2) + '×' : Math.round(+r.value * 100) + '%';
+        r.parentNode.style.setProperty('--v', at(+r.value, +r.min, +r.max));
+        return;
+      }
       const path = r.dataset.range.split('.');
       if (path.length === 2) st[path[0]][path[1]] = +r.value; else st[path[0]] = +r.value;
       const out = r.parentNode.querySelector('output');
@@ -881,6 +992,7 @@ RB.ui.settings = (function () {
   }
 
   return {
+    editDraft, applyDraft, restorePreview, drafting: () => !!(lay && mode === 'draft'), optIcon: icon,
     open, close, addRows, review, choice, isOpen: () => !!lay, openBattle, battleReady, inBattle: () => !!(lay && battle()),
     reviewing: () => !!(lay && mode === 'review'), tab: show_, suzuRow, current: () => (lay ? group : null), TABS, BATTLE_TABS,
   };

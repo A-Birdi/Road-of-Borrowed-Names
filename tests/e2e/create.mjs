@@ -1,6 +1,6 @@
 // New-campaign creation in the built index.html, with real clicks, keys and
-// typing: the four steps (Identity, Appearance, Background, Learning setup)
-// into the world; Back keeps every entry and never replays the prologue; the
+// typing: the five steps (Identity, Appearance, Background, Learning, Summary;
+// CW-1) into the world; Back keeps every entry and never replays the prologue; the
 // accessory limit is kept and announced; Enter in a text field never submits
 // the flow; phone compositions at 320/360/390 px (also at 200 % text) and in
 // landscape have no horizontal overflow, no clipped labels and ≥44 px
@@ -9,7 +9,7 @@
 // mistaken for one); Inspect, placement and the New Game+ choice work; the
 // campaign starts with exactly what was chosen.
 // Usage: node tests/e2e/create.mjs
-import { serve, launch, page, setOut } from './lib.mjs';
+import { serve, launch, page, setOut, settled } from './lib.mjs';
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -24,8 +24,9 @@ async function toCreation(p, slot) {
   await p.click('.csheet button:has-text("Skip the prologue")'); // (asked first: the prologue is unseen on this profile; src/ui/43_sequence.js)
   await p.waitForSelector('.folio-create #nm');
 }
-const step = (p) => p.evaluate(() => { const f = document.querySelector('.folio-create'); return f ? f.getAttribute('data-step') : null; });
-const checked = (p) => p.evaluate(() => Array.from(document.querySelectorAll('.cr-page input:checked')).map((i) => (i.dataset.set || i.dataset.k || 'acc') + '=' + (i.dataset.v || i.dataset.acc || i.dataset.cp)).sort().join(' '));
+// (on a wide screen a step's pages turn as printed leaves before the next step is live: read the step once they have)
+const step = async (p) => { await settled(p); return p.evaluate(() => { const f = document.querySelector('.folio-create'); return f ? f.getAttribute('data-step') : null; }); };
+const checked = async (p) => { await settled(p); return p.evaluate(() => Array.from(document.querySelectorAll('.cr-body .cr-page input:checked')).map((i) => (i.dataset.set || i.dataset.k || 'acc') + '=' + (i.dataset.v || i.dataset.acc || i.dataset.cp)).sort().join(' ')); };
 // spies: a replayed prologue would play its song and install a new render override
 const spy = (p) => p.evaluate(() => {
   window.__cr = { songs: [], overrides: 0 };
@@ -166,12 +167,14 @@ function judge(tag, L, opts) {
   const t1 = await p.evaluate(() => document.activeElement && (document.activeElement.dataset.a || document.activeElement.dataset.step || document.activeElement.dataset.v || document.activeElement.tagName));
   ok(t1 && t1 !== 'next', 'Tab moves focus on from Next (' + t1 + ')');
   await p.click('[data-a=next]');
-  ok(await step(p) === 'learning', 'Next goes to Learning setup');
+  ok(await step(p) === 'learning', 'Next goes to Learning');
   ok(await p.isVisible('[data-group=kana]'), 'Foundations shows the kana question');
   await p.click('[data-k=profile][data-v=I]');
   ok(!(await p.isVisible('[data-group=kana]')), 'other levels hide the kana question');
-  // mistakes, tactics and reading are folded under one line that says what they are (FR-1 F05): open it to change them
-  ok(/Mistakes: Assisted/.test(await p.textContent('.cr-learn details.cr-more summary')) && !(await p.isVisible('[data-k=assist][data-v=assist]')), 'the further choices are folded, their summary says Mistakes: Assisted (the new default)');
+  // CW-1: mistakes and tactics are in view on the right page (Assisted, the new default); only the reading preferences
+  // are folded, under a line that says what they are set to
+  ok(await p.isVisible('[data-k=assist][data-v=assist]') && await p.isChecked('[data-k=assist][data-v=assist]') && await p.isVisible('[data-k=difficulty][data-v=normal]'), 'mistakes (Assisted) and tactics are in view without opening anything');
+  ok(/English first/.test(await p.textContent('.cr-learn details.cr-more summary')) && !(await p.isVisible('[data-k=lead][data-v=en]')), 'the reading preferences are folded, their line says what they are (English first)');
   // it reads as a fold that opens (Robin, 2026-10-18): a chevron in a circle and "Show", no browser triangle needed
   const fold = () => p.evaluate(() => { const s = document.querySelector('.cr-learn details.cr-more > summary'), ic = s.querySelector('.cr-more-ic svg'), vis = (q) => { const e = s.querySelector(q); return !!e && getComputedStyle(e).display !== 'none' && e.getBoundingClientRect().width > 0; }; return { ic: !!ic && ic.getBoundingClientRect().width > 0, rot: ic ? getComputedStyle(ic).transform : '', show: vis('.cr-more-show'), hide: vis('.cr-more-hide'), open: s.parentElement.open }; });
   let fd = await fold();
@@ -190,9 +193,14 @@ function judge(tag, L, opts) {
   ok(await checked(p) === learnSel, 'learning choices are kept after going back and forth');
   nr = await noReplay(p);
   ok(!nr.songs && !nr.overrides && !nr.prologue, 'no prologue replay across all steps');
+  ok(await p.isVisible('.cr-next') && /Summary/.test(await p.textContent('.cr-next')) && await p.isHidden('[data-a=go]'), 'Learning offers Next: Summary, not Begin');
+  await p.click('[data-a=next]');
+  ok(await step(p) === 'summary', 'Next goes to the Summary');
+  const sum = await p.evaluate(() => document.querySelector('.cr-sumsheet').innerText + '\n' + document.querySelector('.cr-sumpage').innerText);
+  ok(/Aki/.test(sum) && /アキ/.test(sum) && /xe\/xem/.test(sum) && /Wandering student/.test(sum) && /Intermediate/.test(sum) && /Assisted: no learning-error battle cost/.test(sum) && /Demanding/.test(sum) && /Choices/.test(sum), 'the Summary shows what was chosen');
   ok(await p.isHidden('.cr-next') && await p.isVisible('[data-a=go]'), 'the last step offers Begin instead of Next');
   await p.click('[data-a=go]');
-  await setOut(p); // (settings looked over before the story begins, ST-1b)
+  await setOut(p); // (no second review on a fresh journey since CW-1: this waits for the story to begin)
   await p.waitForFunction(() => RB.game.G.playing === true && (RB.game.mode() === 'dialogue' || RB.game.mode() === 'world'), null, { timeout: 15000 });
   const s = await p.evaluate(() => ({ edition: RB.game.s.edition, player: RB.game.s.player, learn: { profile: RB.game.s.learn.profile, assist: RB.game.s.learn.assist, difficulty: RB.game.s.learn.difficulty, kana: RB.game.s.learn.kanaKnown }, input: RB.game.settings.input, map: RB.game.s.map, layers: document.querySelectorAll('.folio-create').length }));
   const L = s.player.look;
@@ -234,22 +242,28 @@ for (const [w, h, scale] of VPS) {
   const tag = w + 'x' + h + (scale !== 1 ? ' @' + scale * 100 + '%' : '');
   const landscape = w > h && h < 540;
   const opts = { minPage: landscape ? 150 : phone ? (scale > 1 ? 200 : 300) : 300, maxSheet: phone && !landscape ? (scale > 1 ? 130 : 120) : null };
-  for (const st of ['identity', 'appearance', 'background', 'learning']) {
+  for (const st of ['identity', 'appearance', 'background', 'learning', 'summary']) {
     ok(await step(p) === st, tag + ': on ' + st);
-    judge(tag + ' ' + st, await layout(p), opts);
+    // (the Summary's traveller is no compact slip: it is that page's subject)
+    judge(tag + ' ' + st, await layout(p), st === 'summary' ? Object.assign({}, opts, { maxSheet: null }) : opts);
     // scroll to the end of the page: the last control is reachable above the foot
     const end = await p.evaluate(() => {
-      const pg = document.querySelector('.cr-page');
+      const pg = document.querySelector('.cr-page.cr-r') || document.querySelector('.cr-page');
       // (the Learning step's further choices are folded in a <details>: closed, its summary line is the control)
       const last = Array.from(pg.querySelectorAll('input, button, summary')).filter((x) => x.offsetParent && (x.tagName === 'SUMMARY' || !x.closest('details:not([open])'))).pop();
       last.scrollIntoView({ block: 'nearest' });
-      const r = last.getBoundingClientRect(), pr = pg.getBoundingClientRect(), f = document.querySelector('.folio-foot').getBoundingClientRect();
+      // (the page that scrolls: the leaf, or on a phone the two pages of Learning or the Summary, read in one scroll)
+      const box = (() => { for (let e = last.parentElement; e; e = e.parentElement) { const o = getComputedStyle(e).overflowY; if ((o === 'auto' || o === 'scroll') && e.scrollHeight > e.clientHeight + 1) return e; } return pg; })();
+      // (a control taller than that page, at 200 % on a phone, is reached from its top)
+      if (last.getBoundingClientRect().height > box.getBoundingClientRect().height) last.scrollIntoView({ block: 'start' });
+      const r = last.getBoundingClientRect(), pr = box.getBoundingClientRect(), f = document.querySelector('.folio-foot').getBoundingClientRect();
       // a choice taller than the page (long text at 200 %) is reachable when its top reaches the page
-      if (r.height > pr.height) return Math.abs(r.top - pr.top) <= 2 && pr.bottom <= f.top + 1;
-      return r.top >= pr.top - 1 && r.bottom <= pr.bottom + 1 && r.bottom <= f.top + 1;
+      const info = { r: [Math.round(r.top), Math.round(r.bottom)], box: [Math.round(pr.top), Math.round(pr.bottom)], foot: Math.round(f.top) };
+      if (r.height > pr.height) return Object.assign(info, { ok: Math.abs(r.top - pr.top) <= 2 && pr.bottom <= f.top + 1 });
+      return Object.assign(info, { ok: r.top >= pr.top - 1 && r.bottom <= pr.bottom + 1 && r.bottom <= f.top + 1 });
     });
-    ok(end, tag + ' ' + st + ': the last control can be scrolled into view inside the page');
-    if (st !== 'learning') await p.click('[data-a=next]');
+    ok(end.ok, tag + ' ' + st + ': the last control can be scrolled into view inside the page' + (end.ok ? '' : ' ' + JSON.stringify(end)));
+    if (st !== 'summary') await p.click('[data-a=next]');
   }
   ok(!errors.length, tag + ': no page errors ' + errors.join('; '));
   await ctx.close();

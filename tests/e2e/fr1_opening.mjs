@@ -11,7 +11,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { serve, launch, page } from './lib.mjs';
+import { serve, launch, page, settled } from './lib.mjs';
 
 const A = process.argv.slice(2);
 const opt = (k, d) => { const i = A.indexOf(k); return i >= 0 ? A[i + 1] : d; };
@@ -54,7 +54,7 @@ await p.click('text=Skip prologue');
 await p.click('.csheet button:has-text("Skip the prologue")');
 await p.waitForSelector('.folio-create #nm');
 await p.fill('.folio-create #nm', 'Aki');
-const next = async () => { await p.click('.folio-foot .cr-primary:not([hidden])'); await wait(p, 300); };
+const next = async () => { await p.click('.folio-foot .cr-primary:not([hidden])'); await wait(p, 300); await settled(p); };
 await next();
 await shot(p, 'creation-appearance');
 const labels = await p.evaluate(() => Array.from(document.querySelectorAll('.cr-tile .nm, .cr-sw .nm')).filter((e) => e.offsetParent).map((e) => ({ t: e.textContent.replace(/\u00ad/g, ''), w: Math.round(e.getBoundingClientRect().width), h: Math.round(e.getBoundingClientRect().height), lines: Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight || '16')) })).filter((x) => /Headband|Undyed|linen/i.test(x.t)));
@@ -72,13 +72,14 @@ await p.evaluate((inp) => {
 }, INPUT);
 note('learning-picked', await p.evaluate(() => Object.assign({}, window.__picked, { checked: Array.from(document.querySelectorAll('.cr-learn input:checked')).map((i) => i.dataset.k + '=' + i.dataset.v) })));
 await next();
-await p.waitForSelector('.folio-review', { timeout: 15000 });
+// (CW-1: the setup's fifth step, the Summary, "Before you set out"; Begin the journey there, with no review after it)
+await p.waitForSelector('.folio-create[data-step=summary] .cr-sumpage', { timeout: 15000 });
 await wait(p, 400);
-const review = await p.evaluate(() => ({ text: document.querySelector('.folio-review .spread').innerText.slice(0, 1600), fields: Array.from(document.querySelectorAll('.folio-review fieldset[data-field]')).map((f) => f.getAttribute('data-field')), learn: Object.assign({}, RB.ui.settings && RB.game.s ? {} : {}) }));
-note('review', { fields: review.fields, chars: review.text.length });
+const review = await p.evaluate(() => ({ text: document.querySelector('.cr-sumpage').innerText.slice(0, 1600), rows: Array.from(document.querySelectorAll('.cr-sumpage [data-row]')).map((f) => f.getAttribute('data-row')) }));
+note('summary', { rows: review.rows, chars: review.text.length });
 await shot(p, 'before-you-set-out');
-await p.click('.folio-review [data-review-go]');
-await p.waitForFunction(() => !(RB.ui.settings.reviewing && RB.ui.settings.reviewing()), null, { timeout: 8000 });
+await p.click('.folio-create [data-a=go]');
+await p.waitForFunction(() => RB.game.G.playing === true && !document.querySelector('.folio-create'), null, { timeout: 15000 });
 const learn0 = await p.evaluate(() => { const L = RB.game.s.learn; return { profile: L.profile, assist: L.assist, difficulty: L.difficulty, kanaKnown: L.kanaKnown, input: RB.game.settings.input }; });
 note('journey-made', learn0);
 

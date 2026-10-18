@@ -21,7 +21,7 @@ import http from 'node:http';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import assert from 'node:assert/strict';
-import { chromium, root, setOut } from './lib.mjs';
+import { chromium, root, setOut, beginJourney } from './lib.mjs';
 
 const args = process.argv.slice(2);
 const opt = (key, fallback) => (args.includes(key) ? args[args.indexOf(key) + 1] : fallback);
@@ -203,10 +203,11 @@ try {
     const sure = page.locator('.csheet button:has-text("Skip the prologue")');
     if (await sure.count()) await sure.click();
     await page.locator('#nm').fill('Regression hero');
-    for (let i = 0; i < 3; i++) await page.locator('[data-a="next"]').click(); // four creation steps
+    for (let i = 0; i < 3; i++) await page.locator('[data-a="next"]').click(); // to Learning (the fourth of five steps)
     await page.locator('[data-k="profile"][data-v="E"]').click();
-    await page.locator('[data-k="input"][data-v="choice"]').click(); await page.locator('[data-a="go"]').click();
-    await setOut(page); // (settings looked over before the story begins, ST-1b)
+    await page.locator('[data-k="input"][data-v="choice"]').click();
+    await beginJourney(page); // (Learning → Summary → Begin the journey: CW-1)
+    await setOut(page);
     await settleWorld(); // presses Enter through the opening until the world is settled
     if (await page.evaluate(() => RB.game.mode()) !== 'world') {
       // say where it is stuck before failing
