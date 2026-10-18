@@ -1021,6 +1021,18 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     curtains, stairs that lead nowhere, the stacks key door, the lockhouse hatch); checkpoints on scene exits; Firefox,
     Safari and phones; recording the supplement (after the batch).
 
+- [~] XP133 Wataru's line and a listening page (Robin, 2026-10-18, relayed by the local worker): "instruct the Cloud
+  chat to help you reconcile Wataru's line and then Cloud should provide me a listening page for anything needing
+  review". VALIDATION.md "Wataru's line reconciled (SC1) and Robin's listening page".
+  - **Done** (U `voice_review_page` 24/0; B 15/15 on a scratch folder of tone files):
+    - SC1: `r1-6ab18b4d8dcef181` keeps its id and is sent as 「やめさせないんですか。」, aiming at about 1.67 s
+      (`supplements/SEND_CORRECTIONS.json`, VOICE_DELIVERY.md §7 step 8);
+    - `docs/future/voice/production/run/REVIEW_LISTENING.html` (`tools/voice/review_page.mjs`): all 151 recordings to
+      review, played from the batch folder by relative path. Keep / Redo / an earlier take, with notes and "Copy my
+      decisions". No audio in the repository.
+  - **Not done / with others:** the new take (the worker); Robin's listening and decisions; the real audio in a real
+    browser on Windows (not tested here).
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

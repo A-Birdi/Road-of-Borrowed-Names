@@ -490,7 +490,11 @@
         - the audio stays on Robin's PC;
         - the run records are in `docs/future/voice/production/run/` (38a397f, the worker's own push), and checked
           here against the GO manifest and the supplement;
-        - one take is flagged for a listen: Wataru's 「……辞めさせないんですか。」 (READINESS.md progress list).
+        - Wataru's flagged 「……辞めさせないんですか。」 is reconciled: the same id is sent as 「やめさせないんですか。」
+          (SC1, `supplements/SEND_CORRECTIONS.json`; VOICE_DELIVERY.md §7 step 8). The worker records it;
+        - Robin's listening page for the 151 takes to review is `docs/future/voice/production/run/REVIEW_LISTENING.html`
+          (`tools/voice/review_page.mjs`). It is opened from the batch folder and plays the takes beside it. Robin's
+          "Copy my decisions" text comes back here (READINESS.md progress list).
     - **The recorded-voice runtime** (VR-1, VR-2; `docs/future/voice/production/VOICE_RUNTIME.md`):
       - `src/audio/52_voicebank.js` loads a voice site:
         - per-scene indexes, and content-named, stable recording URLs;

@@ -179,6 +179,14 @@ saying the same words are two.
 5. **Seams are written as the reading the line means.** Where removing the spacing joins two words into a compound with a different reading (21 recordings), the kanji are replaced by each word's own reading from the line: 今朝 is sent as いまあさ, never けさ. The result is `send`.
 6. **Particles in reference readings are sent as said.** は → わ, へ → え, を → お.
 7. **Never sent:** the speaker label, the English, a run-time variable (those lines are listed in `notRecordable`), or a line that is only a pause (`nonverbal`).
+8. **A send correction for one recording.** Where an engine cannot say a recording's `send` (words skipped or rushed on
+   every seed), Cloud may give that recording a corrected send: the reading the line means, in kana, with a silent
+   opening beat left out. The display and `spoken` do not change, so the id, the line keys and the recording's place in
+   the site stay. The new take replaces the file in the results (its entry adds `send`), and the replaced takes move to
+   `superseded/<stamp>/`. Corrections are listed, append-only, in
+   [supplements/SEND_CORRECTIONS.json](supplements/SEND_CORRECTIONS.json) (the first: SC1, Wataru's
+   「……辞めさせないんですか。」 sent as 「やめさせないんですか。」, Robin 2026-10-18). A line whose words change is never handled
+   this way: it gets a new id (§8).
 
 An engine with its own reading control may send `spoken` and apply steps 4–5 through that control. The casting record
 says which was done.

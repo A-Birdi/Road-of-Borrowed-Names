@@ -24,6 +24,34 @@ The repository is the shared record:
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
 Progress (the local worker's checkpoints, latest first):
+- **2026-10-18: the answers to Robin's two requests** (relayed by the worker: "reconcile Wataru's line … a listening
+  page for anything needing review"):
+  1. **Wataru's line: the same id, with a new send.** Record `r1-6ab18b4d8dcef181` (key sg.omi_wataru#a036d6675c,
+     delivery surprise) again with the send **「やめさせないんですか。」**. Keep the same voice and use a length-fit seed
+     search.
+     - **Display:** unchanged, 「……{辞|や}めさせないんですか。」.
+     - **Target:** about **1.67 s**, with a window of 1.43–1.93 s. That is 10 morae at Wataru's own median pace in
+       this batch, 5.99 a second. The 2.9 s you used counted 11 morae and a beat for the opening 「……」.
+     - **The record:** SC1 in [supplements/SEND_CORRECTIONS.json](supplements/SEND_CORRECTIONS.json). The rule is
+       [VOICE_DELIVERY.md](VOICE_DELIVERY.md) §7 step 8.
+     - **The results:** put the new take at `wataru/r1-6ab18b4d8dcef181.opus` in `results.json`, and add
+       `"send": "やめさせないんですか。"` to its entry. Move the 1.17 s take to `superseded/<stamp>/` beside the two
+       earlier takes.
+     - **Not a supplement:** this is not a new id like MW-1's. Nothing in the site's lookup changes. The new audio
+       gets a new content name, so no player's kept copy goes stale.
+     - **Then:** add the new take to `REVIEW_LIST.json`'s open item, with the 1.17 s take under `earlierTakes`. Rebuild
+       the page (2 below). Its card then says "Recorded with the corrected send".
+  2. **The listening page: `docs/future/voice/production/run/REVIEW_LISTENING.html`.**
+     - **To use it:** copy it into the batch folder, the one holding `<speaker>/` and `superseded/`, and send Robin
+       that file.
+     - **Or build it there:** `node tools/voice/review_page.mjs --batch <batch folder>` writes
+       `<batch folder>/REVIEW_LISTENING.html` and lists any named take that is not in the folder.
+     - **What it holds:** the list, written in. The takes play by their relative paths. There is no audio in it and in
+       the repository, and nothing is fetched or sent.
+     - **On each card:** play, the earlier takes, and Keep / Redo / an earlier take instead, plus a note. "Copy my
+       decisions" and "Save my decisions" give text with a JSON line (`rbn.voice.review-decisions/1`).
+     - **Unmarked takes stand as made.** Wataru's line needs a decision.
+     - **Checks:** VALIDATION.md "Wataru's line reconciled (SC1) and Robin's listening page".
 - **2026-10-18: the run records are in the repository** (38a397f, the worker's own push, new files only):
   [run/RUN_SUMMARY.md](run/RUN_SUMMARY.md), `run/results.json.gz` (`results.json` gzipped), `run/results_MW1.json` and
   `run/POST_CHECK.json`.
@@ -38,12 +66,12 @@ Progress (the local worker's checkpoints, latest first):
     - all 23,816 GO manifest ids (14,721 recordings + 9,095 references) have a result, and none are pending or failed;
     - `results_MW1.json` covers the supplement's 7 ids and nothing else;
     - none of the four files carries a local path or a credential.
-  - **Open:** `r1-6ab18b4d8dcef181` (Wataru, surprise, 「……辞めさせないんですか。」, sg.omi_wataru) is 1.17 s for 10 morae
-    on all 12 seeds tried, and is flagged. The expected 2.9 s counts the opening 「……」, which the trim removes from
-    every line; the 14 other short 「……」 lines are 0.5–0.8 s and were judged not errors. Its actual pace is about
-    8.5 morae a second: brisk for a surprised line, not impossible. **A listen decides.** If it sounds clipped, a
-    send text without the 「……」 is a new id: an NPC take, outside the narrator-only supplement rule, so it is
-    Robin's call.
+  - **Open, then reconciled (see the entry above):** `r1-6ab18b4d8dcef181` (Wataru, surprise,
+    「……辞めさせないんですか。」, sg.omi_wataru) is 1.17 s for 10 morae on all 12 seeds tried, and is flagged. The
+    expected 2.9 s counts the opening 「……」, which the trim removes from every line; the 14 other short 「……」 lines
+    are 0.5–0.8 s and were judged not errors. Its actual pace is about 8.5 morae a second: brisk for a surprised line,
+    not impossible. *(Corrected: this note first said a send without the 「……」 would be a new id. It would not. The
+    id comes from the spoken text, which does not change; SC1 keeps the id.)*
   - **Fixed after the worker's note:** `voice_site.mjs`, `site_size.mjs`, `voice/lines.mjs` and the music
     `export_events.mjs` compared `import.meta.url` with `'file://' + argv[1]`. On Windows that never matches, so the
     commands exited silently. They now compare with `pathToFileURL(path.resolve(argv[1]))`, as `scene_manifest.mjs`

@@ -1,0 +1,48 @@
+{
+ "schema": "rbn.voice.send-correction/1",
+ "what": "Per-recording corrections to what the engine is sent (VOICE_DELIVERY.md §7, step 8). Append-only. The line, its display and its spoken text are unchanged, so each recording keeps its id, its key and its place in the site; only the text the engine is given changes. The new take replaces the current file in the results, as the length-check redos did; the replaced takes move to superseded/<stamp>/ and stay. Nothing here generates audio.",
+ "after": {
+  "goSourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "goManifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "goScriptContentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "corrections": [
+  {
+   "ref": "SC1",
+   "id": "r1-6ab18b4d8dcef181",
+   "speaker": "wataru",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "surprise",
+   "lines": [
+    {
+     "key": "sg.omi_wataru#a036d6675c",
+     "scene": "sg.omi_wataru",
+     "file": "ch2/21_scenes_main",
+     "line": 539,
+     "en": "…You're not dismissing me?"
+    }
+   ],
+   "display": "…… {辞|や}めさせない ん です か 。",
+   "spoken": "……辞めさせないんですか。",
+   "sendWas": "……辞めさせないんですか。",
+   "send": "やめさせないんですか。",
+   "sendMorae": 10,
+   "decided": "Robin, 2026-10-18 (relayed by the local worker): reconcile Wataru's line; the engine input is Cloud's choice, the display unchanged.",
+   "why": [
+    "The reading. 辞 is read や here (the line's own furigana), but on its own it is most often じ (辞書, 辞典). The kana is the reading the line means, sent the way names and seams already are (§7, steps 4-5), so the engine has nothing to guess.",
+    "The opening 「……」 is a silent beat, not a sound: the scene shows it, and a line that is only 「……」 is not recorded at all (nonverbal). Wataru's other takes that open with 「……」 run at his ordinary pace (「……何か、分かりましたか。」: 10 morae in 1.78 s), so the engine gives the beat little or no time anyway (judged from the lengths; not listened to here). Leaving it out costs little and removes the one part of the text the engine could stumble on at the very start.",
+    "The engine is Wataru's locked Qwen3-TTS reference (a Base model: no style control), so the delivery is carried by the voice and the words alone; nothing else in the send changes. The full stop stays as written."
+   ],
+   "lengthFit": {
+    "basis": "Wataru's own takes in this batch: 48 unflagged recordings, median 5.99 morae per second (10th-90th percentile 5.18-6.98)",
+    "targetSeconds": 1.67,
+    "windowSeconds": [1.43, 1.93],
+    "note": "10 morae and no pause inside the line. The 2.9 s first expected for this line counted 11 morae and a beat for the opening 「……」; by Wataru's own pace the current 1.17 s take (8.5 morae per second) is quick rather than certainly missing words (three of his unflagged takes run at 8.6 to 9.5). Robin's listening of the current and earlier takes decides between them and the new one."
+   },
+   "results": "Same id. Put the new take at wataru/r1-6ab18b4d8dcef181.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"やめさせないんですか。\" to that entry, and move the 1.17 s take to superseded/<stamp>/ beside the two earlier ones. The site gives the new audio a new content name (rec/wataru/r1-6ab18b4d8dcef181.<sha12>.opus), so nothing a player kept goes stale.",
+   "status": "send chosen; to be recorded by the local worker with the same voice and a length-fit seed search"
+  }
+ ]
+}

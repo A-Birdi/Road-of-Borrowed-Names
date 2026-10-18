@@ -4842,6 +4842,59 @@ Reproduced in a capture before the change (`docs/review/fr1/shots/f05_fold_befor
 **Not tested.** Firefox, Safari and real phones. Firefox draws `<summary>` markers differently; `list-style: none` is
 set, but it was not seen there.
 
+## Wataru's line reconciled (SC1) and Robin's listening page (Robin, 2026-10-18, relayed by the local worker)
+
+Robin: "instruct the Cloud chat to help you reconcile Wataru's line and then Cloud should provide me a listening page
+for anything needing review". The worker's list is `docs/future/voice/production/run/REVIEW_LIST.json` (da3ef7d).
+
+**Wataru's line (`r1-6ab18b4d8dcef181`, sg.omi_wataru, 「……辞めさせないんですか。」).**
+- **Decision:** the same id with a new send, 「やめさせないんですか。」. It is recorded as SC1 in
+  `docs/future/voice/production/supplements/SEND_CORRECTIONS.json`, and the rule is VOICE_DELIVERY.md §7 step 8.
+- **Why the id stays:** the id comes from the speaker, delivery and spoken text. None of them changes. The display
+  stays as written, and so does every line key.
+- **Correction to an earlier record:** READINESS.md said a send without the 「……」 would be a new id. That was wrong:
+  only a change to the spoken text makes a new id.
+- **Why this send:**
+  - 辞 alone is most often じ. The kana is the reading the line means, in the same way names and seams are already sent.
+  - The opening 「……」 is a silent beat.
+- **Measured from `results.json.gz`, not heard:**
+  - Wataru's 48 other takes run at a median 5.99 morae a second (5.18–6.98 from the 10th to the 90th percentile).
+  - The current take is 8.5 morae a second. Three unflagged Wataru takes run at 8.6–9.5.
+  - So the take may be rushed rather than missing words. The length target for the new take is about 1.67 s
+    (1.43–1.93).
+- **Untouched:** GO, the manifest and every other input. Nothing was generated here.
+
+**The listening page.** `tools/voice/review_page.mjs` writes `REVIEW_LIST.json` into one HTML file,
+`docs/future/voice/production/run/REVIEW_LISTENING.html` (132 KB). Robin opens it from the batch folder.
+- **What it shows:**
+  - every take plays from its relative path in that folder: 162 files, the current and earlier takes;
+  - each card has the line with readings, the English, the line before it, why it is listed, the sent text where it
+    differs, and SC1 on Wataru's card;
+  - Keep, Redo, or an earlier take instead, plus a note;
+  - "Hear the start" and "Hear the end" on the edge-flagged takes;
+  - play-through, and "Hide marked takes";
+  - "Copy my decisions" and "Save my decisions", as text with a JSON line.
+- **One decision per recording:** 151 recordings fill 160 listings, because 9 are in two groups. Each of those
+  shows both reasons.
+- **What it does not do:** it embeds no audio and fetches nothing. A decision made on a different take of the same
+  id is flagged and not counted.
+- **U** `voice_review_page` 24/0:
+  - SC1 matches the GO entry: the same id, display, spoken text, delivery and keys;
+  - the send has no kanji, equals the line's kana with the opening beat dropped, and has 10 morae;
+  - the page lists every take once, by relative path, with no audio, address or local path in it;
+  - the committed page is current with the list.
+- **B** (Chromium, `file://`, against a scratch folder of tone files at the listed lengths, not real voices): 15/15.
+  - All 171 players load, 0 missing. 769 readings are drawn as ruby, with no markup left.
+  - A decision on one card shows on its twin, and the count is per recording.
+  - "Hear the end" plays the last 0.8 s; "Hear the start" stops at 0.8 s.
+  - Play-through moves to the next take.
+  - The export carries the redo, the earlier take, the note, the keep and the JSON.
+  - Decisions survive a reload, and "Hide marked" hides the 4 marked cards.
+  - A removed file says so on its card and in the count.
+  - A changed take is flagged.
+  - At 390 px there is no sideways scroll. There are no page errors except the file removed on purpose.
+- **Not tested:** the real audio (it is on Robin's PC), Windows, Firefox and Safari.
+
 ## MW-1 — the mill follows the gears; a travel tile is walked onto (Robin, 2026-10-17)
 
 Robin, with the AR-1 Mill approval: "The stairs should not need to be interacted with as they're a traveling tile - any
