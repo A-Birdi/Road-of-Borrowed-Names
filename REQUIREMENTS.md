@@ -1030,8 +1030,9 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     - `docs/future/voice/production/run/REVIEW_LISTENING.html` (`tools/voice/review_page.mjs`): all 151 recordings to
       review, played from the batch folder by relative path. Keep / Redo / an earlier take, with notes and "Copy my
       decisions". No audio in the repository.
-  - **Not done / with others:** the new take (the worker); Robin's listening and decisions; the real audio in a real
-    browser on Windows (not tested here).
+  - **Not done / with others:** Robin's listening and decisions; the real audio in a real browser on Windows (not
+    tested here). The new take is recorded (the worker, a541476: 1.24 s, flagged, three earlier takes kept), and the
+    committed page is rebuilt from that list.
 - [~] XP134 CW-1, the traveller's setup book (Robin, 2026-10-18): "Implement CW-1 from this package … The demo is a design
   and interaction reference, not a replacement for the game's real creation, Settings or save systems. Keep Local's
   voice production unchanged. Return the actual-game before/after and motion evidence, then wait for my approval before

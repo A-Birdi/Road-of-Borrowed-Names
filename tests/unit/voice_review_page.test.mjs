@@ -49,7 +49,10 @@ export default async (t) => {
   const data = JSON.parse(html.match(/<script type="application\/json" id="list">([\s\S]*?)<\/script>/)[1]);
   t.eq(data.batch, list.batch, 'page: the batch it reviews');
   const w = data.groups.find((g) => g.key === 'open').items[0];
-  t.eq([w.id, w.sc && w.sc.send, w.sc && w.sc.recorded, w.earlier.length], ['r1-6ab18b4d8dcef181', 'やめさせないんですか。', false, 2], 'page: Wataru\'s card carries SC1 (not yet recorded) and its two earlier takes');
+  // (the list moves on as takes are recorded: whether SC1 is recorded, and how many earlier takes there are, come from it)
+  const wl = list.groups.find((g) => g.key === 'open').items.find((i) => i.id === 'r1-6ab18b4d8dcef181');
+  t.eq([w.id, w.sc && w.sc.send, w.sc && w.sc.recorded, w.earlier.length], ['r1-6ab18b4d8dcef181', 'やめさせないんですか。', wl.sent === 'やめさせないんですか。', (wl.earlierTakes || []).length],
+    'page: Wataru\'s card carries SC1, recorded as the list says (' + (wl.sent === 'やめさせないんですか。') + '), with every earlier take (' + (wl.earlierTakes || []).length + ')');
   t.ok(data.groups.every((g) => g.items.every((i) => i.jp && !/\{[^}]*\|/.test(i.jp))), 'page: every card has its line, readings drawn, no markup left');
   t.ok(data.groups.flatMap((g) => g.items).filter((i) => i.also.length).length === 2 * (total - recordings), 'page: a recording in two groups shows the other reason on both cards');
   t.eq(fs.readFileSync(P('docs/future/voice/production/run/REVIEW_LISTENING.html'), 'utf8'), html, 'the committed page is current with the list (node tools/voice/review_page.mjs)');

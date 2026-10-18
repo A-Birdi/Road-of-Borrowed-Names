@@ -4995,6 +4995,13 @@ they're then made accessible by this action."
 
 Approval: Robin, 2026-10-18, after the evidence gallery: "Looks good … You can push the changes you prepared here." The
 approved candidate (`cw1-candidate` at faad98b, build `a50da7d2…`) was merged into the task branch unchanged.
+After the merge (bcb1b54, on top of the voice worker's a541476): `node tools/build.mjs` gives the approved build byte for
+byte (`a50da7d2…`, 23,818,136 bytes); B `cw1_setup_book` 86/0, `create` 447/0, `ui` 14/0; the whole unit suite
+54,644 passed, 2 failed, both in `voice_review_page` (VR-W's test, not CW-1's): it had pinned the review list's earlier
+state (SC1 not yet recorded, two earlier takes), and the committed REVIEW_LISTENING.html was older than the worker's
+updated list. The test now reads both from the list, and the page is rebuilt from it with `node
+tools/voice/review_page.mjs` (151 recordings in 160 listings, 163 files named, as the worker found on Robin's PC);
+`voice_review_page` 24/0 after the change (the whole suite was not re-run for it).
 
 Robin: "Implement CW-1 from this package … The demo is a design and interaction reference, not a replacement for the
 game's real creation, Settings or save systems. Keep Local's voice production unchanged. Return the actual-game
