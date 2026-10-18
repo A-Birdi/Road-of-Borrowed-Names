@@ -81,6 +81,13 @@ RB.ui.leafTurn = (function () {
     const onResize = () => stop();
     document.addEventListener('visibilitychange', onVis);
     window.addEventListener('resize', onResize);
+    // Reduce motion turned on (the game's or the system's) settles at once; a turn that never finishes is settled too
+    const mo = typeof MutationObserver !== 'undefined' ? new MutationObserver(() => { if (o.reduce()) stop(); }) : null;
+    if (mo) mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    const mq = typeof matchMedia !== 'undefined' ? matchMedia('(prefers-reduced-motion: reduce)') : null;
+    const onMq = () => { if (mq.matches) stop(); };
+    if (mq && mq.addEventListener) mq.addEventListener('change', onMq);
+    const dog = setTimeout(stop, P.totalMs + 1500);
     const wait = (ms) => new Promise((r) => { wake = r; setTimeout(() => { wake = null; r(); }, ms); });
     const put = (slot, el) => { slot.appendChild(el); if (el.__st) el.scrollTop = el.__st; };
     async function go() {
@@ -140,6 +147,9 @@ RB.ui.leafTurn = (function () {
     const done = go().catch(() => 'failed').finally(() => {
       document.removeEventListener('visibilitychange', onVis);
       window.removeEventListener('resize', onResize);
+      if (mo) mo.disconnect();
+      if (mq && mq.removeEventListener) mq.removeEventListener('change', onMq);
+      clearTimeout(dog);
       anims.forEach((a) => { try { a.cancel(); } catch (e) { /* gone */ } });
       anims.clear();
       current = null;

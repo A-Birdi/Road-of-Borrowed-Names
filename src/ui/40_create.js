@@ -388,9 +388,9 @@ RB.ui.create = (function () {
         const lvl = Math.round(((pr.vol && pr.vol.master != null) ? pr.vol.master : 1) * 100);
         const vb = RB.voicebank;
         const can = !!(vb && vb.configured && vb.configured() && vb.active && vb.active());
-        const out = [pr.muted ? 'Muted' : 'Sound on · overall ' + lvl + '%'];
+        const out = [pr.muted ? 'Muted' : 'Sound on, overall ' + lvl + '%'];
         if (mode === 'prepared') {
-          out.push('Recorded voices' + (can ? '' : ': none in this copy, so your device’s voice speaks where it has one'));
+          out.push('Recorded voices' + (can ? '' : ' (none in this copy; your device’s voice instead)'));
           out.push(v.player === 'A' || v.player === 'B' ? 'Your lines: Voice ' + v.player + ', ' + (v.pitch === 'low' ? 'lower' : 'higher') : 'Your lines: silent');
         } else out.push(mode === 'device' ? 'Your device’s voice' : 'No voice');
         return out;
@@ -510,7 +510,7 @@ RB.ui.create = (function () {
       }
 
       // -- the live spread ---------------------------------------------------------------------------------------------
-      const leaves = () => Array.from(body.children);
+      const leaves = () => Array.from(body.querySelectorAll(':scope > .cr-l, :scope > .cr-r'));
       // what a step looked like when it was left: its pages' scroll, and its fold
       function remember() {
         const id = steps[V.i];
@@ -528,7 +528,7 @@ RB.ui.create = (function () {
         fr.el.setAttribute('data-step', id);
         const [l, r] = spread(id, D());
         body.className = 'cr-body cr-on-' + id;
-        body.innerHTML = l + r;
+        body.innerHTML = l + r + corners();
         // Japanese words inside choice labels are read through the label; keep Tab on the controls
         body.querySelectorAll('label .jt').forEach((j) => { j.tabIndex = -1; });
         const per = V.per[id] || {};
@@ -545,6 +545,15 @@ RB.ui.create = (function () {
         else if (focus === 'keep' && document.activeElement && fr.foot.contains(document.activeElement) && document.activeElement.offsetParent && !document.activeElement.hidden && !document.activeElement.classList.contains('gone')) { /* focus stays on the foot */ }
         else if (focus) { const h = body.querySelector('#cr-h'); h && h.focus({ preventScroll: true }); }
         if (steps.length > 1) say('Step ' + (V.i + 1) + ' of ' + steps.length + ': ' + S.en);
+      }
+      // the folded corners at the foot of the pages (a pointer's second way to turn; the buttons stay the way): the left
+      // page's back a step, the right page's on (or back to the Summary during an edit); none to Begin
+      function corners() {
+        const nm = (k) => STEPS[steps[k]].short || STEPS[steps[k]].en;
+        const prv = V.i > 0 ? 'Back: ' + nm(V.i - 1) : null;
+        const nxt = V.i < steps.length - 1 ? (V.edit ? 'Return to summary' : 'Next: ' + nm(V.i + 1)) : null;
+        const c = (side, a, t) => '<button type="button" class="cr-corner ' + side + '" data-a="' + a + '" tabindex="-1" aria-hidden="true" title="' + esc(t) + '"></button>';
+        return (prv ? c('l', 'cback', prv) : '') + (nxt ? c('r', 'cnext', nxt) : '');
       }
       function foot() {
         const last = V.i === steps.length - 1;
@@ -823,6 +832,11 @@ RB.ui.create = (function () {
           b.setAttribute('aria-expanded', on ? 'true' : 'false');
           b.innerHTML = I(on ? 'cr-collapse' : 'cr-expand') + '<span class="tx">' + (on ? 'Close view' : 'Inspect') + '</span>';
           RB.audio && RB.audio.sfx('page');
+        } else if (a === 'cback' || a === 'cnext') {
+          if (e.detail > 1) return;
+          if (a === 'cback') navigate(V.i - 1, 'corner');
+          else if (V.edit) backToSummary();
+          else navigate(V.i + 1, 'corner');
         } else if (a === 'sound') editor('audio', b);
         else if (a === 'more') editor('reading', b);
       });
@@ -837,6 +851,10 @@ RB.ui.create = (function () {
         else if (a === 'return') backToSummary();
         else if (a === 'go') { RB.audio && RB.audio.sfx('cursor'); finish(); }
       });
+      // a held Enter or Space repeats: it never presses a step's button again (one press, one move)
+      fr.el.addEventListener('keydown', (e) => {
+        if (e.repeat && (e.key === 'Enter' || e.key === ' ') && e.target && e.target.closest && e.target.closest('button')) { e.preventDefault(); e.stopPropagation(); }
+      }, true);
       fr.tabslot.addEventListener('click', (e) => {
         const b = e.target.closest('button[data-step]');
         if (!b || b.disabled) return;

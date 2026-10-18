@@ -435,8 +435,10 @@ body.high-contrast .cr-more > summary { background: none; border-color: #000; }
 /* the four levels, stacked, each with its whole description under its name (the half page has no room beside it) */
 .folio-create .cr-lp .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
 .folio-create .cr-lp .sx-opts.stack .sx-d { padding: 0 0.4em 0.35em 1.1em; }
-/* (on the right, Learning mistakes keeps each line beside its choice, in a narrower column than Settings' own) */
-.folio-create .cr-rp .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: 9.5em minmax(0, 1fr); }
+/* (on the right of a wide spread, Learning mistakes keeps each line beside its choice, in a narrower column than
+   Settings' own; on a phone it goes under it, as the levels do) */
+@media (min-width: 760px) and (min-height: 540px) { .folio-create .cr-rp .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: 9.5em minmax(0, 1fr); } }
+@media not all and (min-width: 760px) and (min-height: 540px) { .folio-create .cr-rp .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: minmax(0, 1fr); } .folio-create .cr-rp .sx-opts.stack .sx-d { padding: 0 0.4em 0.35em 1.1em; } }
 .folio-create .cr-learn .opt.sx-opt .sx-mark { padding: 0.35em 0.85em; }
 .cr-learn .sx-slipbtn { margin: 0.4em 0 1.1em; }
 .cr-readfold { margin: 1.2em 0 0.6em; }
@@ -461,8 +463,11 @@ body.high-contrast .cr-more > summary { background: none; border-color: #000; }
 .cr-sumsheet .cr-reg { display: block; order: 2; margin: 0.2em 0 0; border-top: 1px solid var(--rule); }
 .cr-sumsheet .cr-note { display: block; order: 3; margin: 0.6em 0 0; }
 .folio-create .cr-reg > .cr-sg, .folio-create .cr-row { display: grid; grid-template-columns: 7.6em minmax(0, 1fr) auto; grid-template-areas: "t v ed"; column-gap: 0.8em; align-items: baseline; padding: 0.5em 0.1em 0.5em; border-bottom: 1px solid var(--rule); }
-.folio-create .cr-row { grid-template-columns: 9.2em minmax(0, 1fr) auto; }
-.cr-sg dt, .cr-row dt { grid-area: t; font-family: var(--type-latin-display, var(--serif)); font-variant: small-caps; letter-spacing: 0.04em; font-size: 1.02em; color: var(--ink-2); }
+.folio-create .cr-row { grid-template-columns: 9.4em minmax(0, 1fr) auto; padding: 0.42em 0.1em; }
+.folio-create .cr-row.cr-row-sound { grid-template-areas: "t v v" ". ed ed"; }
+.folio-create .cr-row.cr-row-sound dd.cr-ed { justify-self: start; margin-top: 0.2em; }
+.cr-sumsheet .cr-note { line-height: 1.45; }
+.cr-sg dt, .cr-row dt { grid-area: t; font-family: var(--type-latin-display, var(--serif)); font-variant: small-caps; letter-spacing: 0.03em; font-size: 0.9em; line-height: 1.3; color: var(--ink-2); }
 .cr-sg dd, .cr-row dd { grid-area: v; margin: 0; color: var(--ink); line-height: 1.45; overflow-wrap: anywhere; min-width: 0; }
 .cr-sg dd.cr-ed, .cr-row dd.cr-ed { grid-area: ed; margin: 0; align-self: center; }
 .cr-bgd { display: block; color: var(--ink-2); font-size: 0.94em; }
@@ -485,10 +490,12 @@ body.high-contrast .cr-more > summary { background: none; border-color: #000; }
 .cr-stage.lt-on { display: block; }
 .cr-body.cr-under { visibility: hidden; }
 .folio-create.cr-turning .cr-route, .folio-create.cr-turning .folio-foot .cbtn { pointer-events: none; }
-.lt-base { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.lt-base { position: absolute; inset: 0; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 .lt-slot { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
 .lt-slot > .lt-print, .lt-face > .lt-print { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; margin: 0; }
-.lt-leaf { position: absolute; top: 0; bottom: 0; width: 50%; transform-style: preserve-3d; will-change: transform; }
+.lt-leaf { position: absolute; top: 0; bottom: 0; z-index: 2; width: 50%; transform-style: preserve-3d; will-change: transform; }
+/* each printed page keeps its own layers (a choice's tick badge never shows through the leaf over it) */
+.lt-print { isolation: isolate; }
 .lt-fwd { left: 50%; }
 .lt-bwd { left: 0; }
 .lt-face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
@@ -507,4 +514,75 @@ body.high-contrast .lt-shade { display: none; }
 /* the right page of Learning: a quiet running head, like the traveller's on the sheet, so the three decisions fit */
 .folio-create .cr-learn > .cr-kicker { margin: 0 0 0.2em; padding-bottom: 0.3em; border-bottom: 1px solid var(--rule); font: 600 0.8em var(--ui-font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
 .folio-create .cr-learn > .cr-kicker + .cr-sect { margin-top: 0.7em; }
-.folio-create .cr-learn .sx-en { white-space: nowrap; }
+@media (min-width: 760px) and (min-height: 540px) { .folio-create .cr-learn .sx-en { white-space: nowrap; } }
+/* the Summary's rows on a narrow page (a phone, or large text): the name above its value, Edit beside the name */
+.cr-sumsheet, .cr-sumpage { container-type: inline-size; }
+@container (max-width: 31em) {
+  .folio-create .cr-reg > .cr-sg, .folio-create .cr-row, .folio-create .cr-row.cr-row-sound { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "t ed" "v v"; align-items: center; }
+  .folio-create .cr-row.cr-row-sound { grid-template-areas: "t t" "v v" "ed ed"; }
+  .folio-create .cr-edit { white-space: normal; text-align: left; }
+}
+/* CW-1 ornaments (drawn here as compact SVG; sources in docs/review/cw1/ornaments/): gilt corners, two sprigs, a rule terminal */
+.folio-create {
+  --cw-c-tl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke-linecap='round'%3E%3Cpath d='M10 40V10h19' stroke='%23a5813b' stroke-width='1.1'/%3E%3Cpath d='M13 40V13h12' stroke='%23a5813b' stroke-width='.7' opacity='.75'/%3E%3Cpath d='M29.2 10c1.9-2.4 4.6-2.9 6.8-.9-2 2.4-4.7 2.6-6.8.9z' fill='%238f9c62' opacity='.9'/%3E%3Cpath d='M29.2 10c2.1.8 3.9.6 5.3-.4' stroke='%236b7a45' stroke-width='.5'/%3E%3Cpath d='M10 6.6l3.4 3.4L10 13.4 6.6 10z' fill='%23b58f42'/%3E%3Ccircle cx='10' cy='10' r='.9' fill='%23f3e6c4'/%3E%3C/svg%3E");
+  --cw-c-tr: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke-linecap='round'%3E%3Cg transform='matrix(-1 0 0 1 40 0)'%3E%3Cpath d='M10 40V10h19' stroke='%23a5813b' stroke-width='1.1'/%3E%3Cpath d='M13 40V13h12' stroke='%23a5813b' stroke-width='.7' opacity='.75'/%3E%3Cpath d='M29.2 10c1.9-2.4 4.6-2.9 6.8-.9-2 2.4-4.7 2.6-6.8.9z' fill='%238f9c62' opacity='.9'/%3E%3Cpath d='M29.2 10c2.1.8 3.9.6 5.3-.4' stroke='%236b7a45' stroke-width='.5'/%3E%3Cpath d='M10 6.6l3.4 3.4L10 13.4 6.6 10z' fill='%23b58f42'/%3E%3Ccircle cx='10' cy='10' r='.9' fill='%23f3e6c4'/%3E%3C/g%3E%3C/svg%3E");
+  --cw-c-bl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke-linecap='round'%3E%3Cg transform='matrix(1 0 0 -1 0 40)'%3E%3Cpath d='M10 40V10h19' stroke='%23a5813b' stroke-width='1.1'/%3E%3Cpath d='M13 40V13h12' stroke='%23a5813b' stroke-width='.7' opacity='.75'/%3E%3Cpath d='M29.2 10c1.9-2.4 4.6-2.9 6.8-.9-2 2.4-4.7 2.6-6.8.9z' fill='%238f9c62' opacity='.9'/%3E%3Cpath d='M29.2 10c2.1.8 3.9.6 5.3-.4' stroke='%236b7a45' stroke-width='.5'/%3E%3Cpath d='M10 6.6l3.4 3.4L10 13.4 6.6 10z' fill='%23b58f42'/%3E%3Ccircle cx='10' cy='10' r='.9' fill='%23f3e6c4'/%3E%3C/g%3E%3C/svg%3E");
+  --cw-c-br: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke-linecap='round'%3E%3Cg transform='matrix(-1 0 0 -1 40 40)'%3E%3Cpath d='M10 40V10h19' stroke='%23a5813b' stroke-width='1.1'/%3E%3Cpath d='M13 40V13h12' stroke='%23a5813b' stroke-width='.7' opacity='.75'/%3E%3Cpath d='M29.2 10c1.9-2.4 4.6-2.9 6.8-.9-2 2.4-4.7 2.6-6.8.9z' fill='%238f9c62' opacity='.9'/%3E%3Cpath d='M29.2 10c2.1.8 3.9.6 5.3-.4' stroke='%236b7a45' stroke-width='.5'/%3E%3Cpath d='M10 6.6l3.4 3.4L10 13.4 6.6 10z' fill='%23b58f42'/%3E%3Ccircle cx='10' cy='10' r='.9' fill='%23f3e6c4'/%3E%3C/g%3E%3C/svg%3E");
+  --cw-sprig-l: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 66' fill='none' stroke-linecap='round'%3E%3Cpath d='M14.5 65c-1.5-11 .2-22 2-32 1.3-8 1-16-1.5-27' stroke='%236a5a3c' stroke-width='1.1'/%3E%3Cg fill='%238ea576'%3E%3Cpath d='M15.6 52c-4.6-.6-8.6-3.4-10-8 4.4-.2 8.4 2.6 10 8z'/%3E%3Cpath d='M16.2 43c4.3-1.6 8.6-1 11.5 2.4-4 1.6-8.3.8-11.5-2.4z'/%3E%3Cpath d='M16.9 33c-4.2-1.4-7.2-4.8-7.6-9.3 4 .8 7 4 7.6 9.3z'/%3E%3Cpath d='M17.3 25c3.5-2.6 7.6-3.1 11-1.1-3.3 2.6-7.5 3-11 1.1z'/%3E%3Cpath d='M16.6 15.4c-3.4-2.4-5.2-6.3-4.6-10.4 3.4 1.9 5.2 5.7 4.6 10.4z'/%3E%3C/g%3E%3Cg fill='%236f8c5c' opacity='.55'%3E%3Cpath d='M15.6 52c-3-1.6-5.4-3.8-6.6-6.6'/%3E%3Cpath d='M15.6 52c-2.6-1.2-5.2-3.4-6.8-6.4 2 2.2 4.3 4.6 6.8 6.4z'/%3E%3Cpath d='M16.9 33c-2.4-2-4-4.6-4.8-7.4 1.6 2.6 3.3 5.2 4.8 7.4z'/%3E%3Cpath d='M16.6 15.4c-1.9-2.6-2.9-5.4-3-8.4 1.1 2.8 2.1 5.6 3 8.4z'/%3E%3C/g%3E%3Cg stroke='%23c9a14c' stroke-width='.6' opacity='.8'%3E%3Cpath d='M18 43.6c2.5-.7 5-.4 7.4 1'/%3E%3Cpath d='M19 25.2c2-1 4.3-1.4 6.6-.9'/%3E%3C/g%3E%3Ccircle cx='15.2' cy='5.4' r='1.3' fill='%23c9a14c'/%3E%3C/svg%3E");
+  --cw-sprig-r: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 50' fill='none' stroke-linecap='round'%3E%3Cpath d='M9 49.5c.6-8.6 2.8-16.4 6.6-23.4 3-5.4 5-11.4 5.4-18.4' stroke='%236a5a3c' stroke-width='1'/%3E%3Cg fill='%238ea576'%3E%3Cpath d='M10.6 39.4c-3.9-.9-6.9-3.8-7.6-7.9 3.8.4 6.8 3.3 7.6 7.9z'/%3E%3Cpath d='M13.6 31.2c3.6-1.8 7.4-1.6 10.1.8-3.5 1.8-7.2 1.6-10.1-.8z'/%3E%3Cpath d='M16.8 23.2c-3.2-1.8-5.2-5.1-5.1-8.9 3.1 1.5 5.1 4.8 5.1 8.9z'/%3E%3Cpath d='M19.6 15.2c2.2-2.7 5.4-3.7 8.6-2.8-2.1 2.7-5.3 3.6-8.6 2.8z'/%3E%3C/g%3E%3Cg fill='%236f8c5c' opacity='.55'%3E%3Cpath d='M10.6 39.4c-2.4-1.4-4.5-3.6-5.6-6.3 1.8 2.3 3.6 4.4 5.6 6.3z'/%3E%3Cpath d='M16.8 23.2c-1.8-2-3-4.4-3.4-7 1.2 2.4 2.3 4.8 3.4 7z'/%3E%3C/g%3E%3Cpath d='M15.2 31.9c2.4-.8 4.8-.8 7 .1' stroke='%23c9a14c' stroke-width='.55' opacity='.85'/%3E%3Ccircle cx='21' cy='6.6' r='1.15' fill='%23c9a14c'/%3E%3C/svg%3E");
+  --cw-term: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 8'%3E%3Cpath d='M0 4h6.5M13.5 4H20' stroke='%23a5813b' stroke-width='.8'/%3E%3Cpath d='M10 1l3 3-3 3-3-3z' fill='%23b58f42'/%3E%3Ccircle cx='10' cy='4' r='.7' fill='%23f3e6c4'/%3E%3C/svg%3E");
+}
+/* Where they go (wide spreads only): in each page's outer margin, which text never enters, even scrolled; as the page's
+ * own background, so they never scroll, never add height, are never read out or pressed, and are printed on a turning
+ * leaf with the page. Gilt rules run down the outer edge between two corners; a sprig climbs the left page's rule near
+ * the top and a smaller one the right page's near the bottom (two to a spread). The same on every step. */
+.folio-create { --cr-grain: var(--bk-tooth, none); }
+.folio-create .cr-l { --cr-orn: var(--cw-c-tl), var(--cw-c-bl), var(--cw-sprig-l), linear-gradient(var(--gilt), var(--gilt)), linear-gradient(var(--gilt2), var(--gilt2)); }
+.folio-create .cr-r { --cr-orn: var(--cw-c-tr), var(--cw-c-br), var(--cw-sprig-r), linear-gradient(var(--gilt), var(--gilt)), linear-gradient(var(--gilt2), var(--gilt2)); }
+body.high-contrast .folio-create, body.book-flat .folio-create { --cr-grain: none; }
+body.high-contrast .folio-create .cr-l, body.high-contrast .folio-create .cr-r, body.cr-no-ornament .folio-create .cr-l, body.cr-no-ornament .folio-create .cr-r { --cr-orn: none, none, none, none, none; }
+@media (min-width: 760px) and (min-height: 540px) {
+  .folio-create .cr-l, .folio-create .cr-r { --gilt: rgba(165, 129, 59, 0.75); --gilt2: rgba(165, 129, 59, 0.45); }
+  .folio-create .leaf.cr-l, .folio-create .cr-sheet.cr-l { padding-left: 46px; }
+  .folio-create .leaf.cr-r { padding-right: 46px; }
+  /* (over the paper's grain, which the book gives every page: the live pages and their printed copies alike) */
+  body.book-ui .folio.folio-create :is(.cr-body, .lt-slot, .lt-face) > .cr-l {
+    background-image: var(--cr-orn), var(--cr-grain);
+    background-position: 0 0, 0 100%, 5px 46px, 10px 40px, 13px 40px, 0 0;
+    background-size: 40px 40px, 40px 40px, 30px 66px, 1px calc(100% - 80px), 1px calc(100% - 80px), auto;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+  }
+  body.book-ui .folio.folio-create :is(.cr-body, .lt-slot, .lt-face) > .cr-r {
+    background-image: var(--cr-orn), var(--cr-grain);
+    background-position: 100% 0, 100% 100%, right 4px bottom 48px, right 10px top 40px, right 13px top 40px, 0 0;
+    background-size: 40px 40px, 40px 40px, 30px 50px, 1px calc(100% - 80px), 1px calc(100% - 80px), auto;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+  }
+  .folio-create .cr-major, .folio-create .leaf h3.cr-h { position: relative; }
+  .folio-create .cr-major::after, .folio-create .leaf h3.cr-h::after {
+    content: ""; position: absolute; right: -4px; bottom: -4.5px; width: 20px; height: 8px; pointer-events: none; background: var(--cw-term) no-repeat center / 20px 8px;
+  }
+}
+body.high-contrast .folio-create .cr-major::after, body.high-contrast .folio-create .leaf h3.cr-h::after, body.cr-no-ornament .folio-create .cr-major::after, body.cr-no-ornament .folio-create .leaf h3.cr-h::after { display: none; }
+
+/* ---- the corner of the page: a second way to turn it (Back/Next stay the way) --------------------------------------
+ * A folded corner at the outer foot of each page that can be turned: the right page's to the next step (or back to the
+ * Summary during an edit), the left page's to the one before. Never on the Summary's right page (Begin is the button
+ * only). It lifts a little after a short pause under the pointer, settles back twice at most, then rests; with Reduce
+ * motion, the book flat or high contrast it only darkens. It is a pointer's shortcut; the keyboard has the buttons. */
+.cr-body { position: relative; }
+.cr-corner { position: absolute; bottom: 0; z-index: 3; width: 44px; height: 44px; padding: 0; margin: 0; border: 0; background: none; cursor: pointer; touch-action: manipulation; }
+.cr-corner.r { right: 0; }
+.cr-corner.l { left: 0; }
+.cr-corner::before { content: ""; position: absolute; bottom: 0; width: 24px; height: 24px; transition: width 140ms cubic-bezier(.3,.1,.2,1), height 140ms cubic-bezier(.3,.1,.2,1); transition-delay: 0ms;
+  background: linear-gradient(var(--cr-fold-dir, 315deg), rgba(0, 0, 0, 0) 49%, rgba(90, 64, 24, 0.28) 50%, #e8dbb9 56%, #f6edd5 100%); }
+.cr-corner.r::before { right: 0; --cr-fold-dir: 315deg; border-top-left-radius: 2px; filter: drop-shadow(-1px -1px 1px rgba(60, 40, 10, 0.25)); }
+.cr-corner.l::before { left: 0; --cr-fold-dir: 45deg; border-top-right-radius: 2px; filter: drop-shadow(1px -1px 1px rgba(60, 40, 10, 0.25)); }
+.cr-corner:hover::before { width: 33px; height: 33px; transition-delay: 100ms; animation: cr-fold-pulse 1950ms ease-in-out 240ms 2; }
+@keyframes cr-fold-pulse { 0%, 100% { transform: none; } 16% { transform: scale(1.08); } 33% { transform: none; } }
+.cr-corner.r::before { transform-origin: 100% 100%; }
+.cr-corner.l::before { transform-origin: 0 100%; }
+body.reduced-motion .cr-corner::before, body.book-flat .cr-corner::before, body.high-contrast .cr-corner::before { transition: none; animation: none !important; }
+body.reduced-motion .cr-corner:hover::before, body.book-flat .cr-corner:hover::before { width: 24px; height: 24px; background: linear-gradient(var(--cr-fold-dir), rgba(0, 0, 0, 0) 49%, rgba(60, 40, 10, 0.5) 50%, #dccca4 56%, #ecdfbf 100%); }
+@media (prefers-reduced-motion: reduce) { .cr-corner::before { transition: none; animation: none !important; } }
+@media not all and (min-width: 760px) and (min-height: 540px) { .cr-corner { display: none; } }
