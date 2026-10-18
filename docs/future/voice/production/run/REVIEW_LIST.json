@@ -18,12 +18,14 @@
      "pitch": null,
      "delivery": "surprise",
      "spoken": "……辞めさせないんですか。",
-     "sent": "……辞めさせないんですか。",
+     "sent": "やめさせないんですか。",
+     "sentWas": "……辞めさせないんですか。",
+     "sendCorrection": "SC1",
      "lineKeys": [
       "sg.omi_wataru#a036d6675c"
      ],
      "file": "wataru/r1-6ab18b4d8dcef181.opus",
-     "seconds": 1.17,
+     "seconds": 1.24,
      "why": "about 1 s for 11 morae on every seed, where a normal pace is about 2.9 s: words are likely skipped",
      "earlierTakes": [
       {
@@ -33,6 +35,10 @@
       {
        "file": "superseded/20261018T113530/wataru/r1-6ab18b4d8dcef181.opus",
        "seconds": 0.94
+      },
+      {
+       "file": "superseded/20261018T152927/wataru/r1-6ab18b4d8dcef181.opus",
+       "seconds": 1.17
       }
      ]
     }

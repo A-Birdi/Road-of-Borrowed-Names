@@ -74,9 +74,15 @@ peak, and length in proportion to its text. **All present, decoding and matching
   a normal pace (every other take is under 1.5×, effect tails included), and 1 was cut short. Each was regenerated
   with the next seeds and the cap. The old files and masters are kept in a `superseded` folder on Robin's PC, and each
   is listed under `superseded` in the results with its reason. Seven now fit their text.
-- **One line still open:** `r1-6ab18b4d8dcef181` (wataru, 「……辞めさせないんですか。」) comes out at about 1 s for 11
-  morae on all 12 seeds tried. Its result carries a flag; it needs a listen, or a send-text adjustment if Cloud
-  prefers (for example without the opening 「……」), recorded as a new id.
+- **One line reconciled, for listening:** `r1-6ab18b4d8dcef181` (wataru, 「……辞めさせないんですか。」) came out at about
+  1 s on all 12 seeds tried.
+  - **The fix (2026-10-18, SC1):** the lead's send correction keeps the id and sends 「やめさせないんですか。」
+    (`supplements/SEND_CORRECTIONS.json` at fcacaf3, SHA-256 `0fbe5888…`; VOICE_DELIVERY.md §7 step 8).
+  - **The new take:** all 12 seeds were clean, at 0.97–1.24 s, under the 1.43–1.93 s window, which is drawn from
+    Wataru's median pace. The closest, 1.24 s, is kept, with `send`, `sendCorrection` and a flag in its result.
+  - **Reading it:** the lengths are this consistent across seeds, so Wataru most likely says the whole line quickly
+    rather than skipping words. Listening decides. The three earlier takes (0.94, 0.94 and 1.17 s) are kept in
+    `superseded/` and are on the listening page beside it.
 - **Pauses:** Robin paused the batch once (2026-10-17 18:53–19:12) to use the GPU; it resumed by exact input
   identity, with nothing remade.
 - **Identity:** an early diagnostic on Mio's first 311 lines (speaker-embedding similarity to her approved takes:
