@@ -115,3 +115,41 @@ exits silently there) built a site from `results.json` + `results_MW1.json` and 
 - GitHub Pages allows 1 GB per site. `voice_site.mjs` measures the whole site folder against 900,000,000 bytes.
   Whether the voices fit beside the game depends on the hosting audit (`docs/hosting/RUNTIME_PUBLISHING.md`).
 - Nothing of the audio has been pushed. Robin decides where it is published once the size is confirmed.
+
+## Review round 1 (Robin's listening, 2026-10-18)
+
+Robin's decisions: 50 redo, 101 keep, the rest stands (`review_round1_decisions.json`). What was done (each replaced
+take kept in `superseded/` on Robin's PC and listed under `superseded` in the results with its reason):
+- **Narrator single words (35):** read straight, as Robin asked ('no need for real emotion there'): AivisSpeech
+  intonation 0.6, tempo dynamics 0.8, no padding around the word; the best of 3 takes; a text-aware trim (below).
+  `engineParams` and `trim` are in each result.
+- **Send corrections (the lead's, SEND_CORRECTIONS.json at 3502f53):** SC2 (札 as ふだ) recorded at 1.82 s, in its
+  window. SC3 (no comma before か) recorded at 3.62 s, the closest of 12 seeds (3.14–3.60 s), at the window's lower
+  edge: without the comma the pause goes too.
+- **Lighter reverb** (Robin: the Tide Clerk, the Gardener of Unsent Words and the Nameless Bridge, 'just a slight
+  adjustment'): all 15 of their lines re-rendered from the kept masters (the same takes) with presets `hush_light`
+  and `ancient_light`, about 30% shorter and 35% quieter reverb. The cast records the change, and `castingSuperseded`
+  keeps the earlier record. The Kiln Warden and the Lord of the Understage are unchanged.
+- **Abrupt endings (5):** the same seeds (the same performance) with the text-aware trim, which keeps a creaky or
+  devoiced final syllable.
+- **Other Qwen redos (6):** new seeds with a length-fit search. Uno's 「かわやへようこそ…」 needed a further 16-seed
+  search (the 8-seed one ran away or misfit) and now fits at 3.49 s.
+- **The MW-1 narrator line** 「石臼が…」: a new take.
+- **A worker error, repaired:** a re-render run not given the send corrections remade Wataru's SC1 line with its old
+  send. The kept take was re-rendered from its master: the same performance, 1.24 s, but not byte-identical, because
+  the master is 24 kHz. The result says so (`restored`). The tool now refuses any run that is missing a recorded
+  correction.
+
+**The trim finding.** The first trim began at the first voiced frame whenever more than 0.20 s of sound came before
+it, keeping 0.06 s. A strong opening fricative (the さ and は rows) was then cut: Robin's 'ふ is effectively silent'.
+Under that threshold, a breath before a vowel was kept: the narrator's 'gasping'. The text-aware trim (`text/2`)
+reads the line's first and last kana:
+- a voiceless opening keeps up to 0.25 s before the voice;
+- a voiced opening is cut close to the voice, which drops the breath;
+- the end keeps a creaky (40 Hz floor) or devoiced final syllable.
+`CLIP_SCAN.json` counts the delivered takes whose opening fricative was still sounding where the file begins: **1,196**
+(1,082 narrator reference readings, 49 narrator lines, about 65 Qwen lines). Qwen's faint h/f openings were not
+clipped. Robin is asked before any unmarked take is changed. Seven narrator samples are fixed for listening.
+
+**Review round 2:** `REVIEW_LIST_round2.json` (72 takes, each beside the take it replaced). The page is built in the
+batch folder with `review_page.mjs`. The technical checks pass on all 23,823 files.

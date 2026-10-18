@@ -14,19 +14,6 @@
    "master": "masters/narrator_15912b91d46be278.flac",
    "casting": "narrator"
   },
-  "r1-103e01f252363937": {
-   "file": "narrator/r1-103e01f252363937.opus",
-   "bytes": 28706,
-   "sha256": "997d0a8f278a46e3c894d87d0f6d6f7db716a96ee366c2213aa78f1b1d7e773a",
-   "seconds": 3.93,
-   "lufs": -20.0,
-   "peakDb": -4.08,
-   "tries": 1,
-   "flags": [],
-   "identity": "e49f5080dde093f2ad58fee65659fb7ef9cbcb9e476115cbe67c303bab9df6be",
-   "master": "masters/narrator_3aea199f03b5e5ba.flac",
-   "casting": "narrator"
-  },
   "r1-b279efeb3bfc1fe4": {
    "file": "narrator/r1-b279efeb3bfc1fe4.opus",
    "bytes": 29272,
@@ -91,6 +78,28 @@
    "identity": "4e0f4752121e571a9d8c8940c005a51b80bad7ac864825cc967ba9a46d5949ce",
    "master": "masters/narrator_ebcc1987e62a986e.flac",
    "casting": "narrator"
+  },
+  "r1-103e01f252363937": {
+   "file": "narrator/r1-103e01f252363937.opus",
+   "bytes": 28848,
+   "sha256": "fbb9f585790b936c0291d0e1d2f0cb466059ce2c9ea89980925e5831e7b4320c",
+   "seconds": 3.95,
+   "lufs": -20.0,
+   "peakDb": -3.83,
+   "tries": 3,
+   "flags": [],
+   "identity": "e49f5080dde093f2ad58fee65659fb7ef9cbcb9e476115cbe67c303bab9df6be",
+   "master": "masters/narrator_3aea199f03b5e5ba.flac",
+   "casting": "narrator",
+   "redo": {
+    "reason": "Robin's review round 1 (2026-10-18): redo (new take, text trim)",
+    "seedOffset": 0
+   },
+   "trim": {
+    "trim": "text/2",
+    "lead": 0.015,
+    "keptAfterVoice": 0.015
+   }
   }
  },
  "pending": [],
@@ -143,8 +152,27 @@
   }
  },
  "progress": {
-  "made": 7,
-  "elapsedSeconds": 12,
-  "at": "2026-10-18T11:14:48"
+  "made": 1,
+  "elapsedSeconds": 4,
+  "at": "2026-10-18T18:55:29"
+ },
+ "superseded": {
+  "r1-103e01f252363937": [
+   {
+    "file": "narrator/r1-103e01f252363937.opus",
+    "bytes": 28706,
+    "sha256": "997d0a8f278a46e3c894d87d0f6d6f7db716a96ee366c2213aa78f1b1d7e773a",
+    "seconds": 3.93,
+    "lufs": -20.0,
+    "peakDb": -4.08,
+    "tries": 1,
+    "flags": [],
+    "identity": "e49f5080dde093f2ad58fee65659fb7ef9cbcb9e476115cbe67c303bab9df6be",
+    "master": "masters/narrator_3aea199f03b5e5ba.flac",
+    "casting": "narrator",
+    "reason": "Robin's review round 1 (2026-10-18): redo (new take, text trim)",
+    "movedTo": "superseded/20261018T185524"
+   }
+  ]
  }
 }

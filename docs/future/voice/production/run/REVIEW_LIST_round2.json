@@ -1,0 +1,1499 @@
+{
+ "schema": "rbn.voice.review/1",
+ "round": 2,
+ "what": "Review round 2: the takes made from Robin's round-1 decisions (2026-10-18). Paths are relative to the batch folder.",
+ "batch": {
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "manifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "groups": [
+  {
+   "key": "redone",
+   "title": "Your redos (new take, with the one you heard)",
+   "items": [
+    {
+     "id": "r1-07de6919eca7094d",
+     "speaker": "mb_uno",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "暗くなったのに……運河の方かい？",
+     "sent": "暗くなったのに……運河の方かい？",
+     "lineKeys": [
+      "mb.uno_evening#bd7cfcbd8e"
+     ],
+     "file": "mb_uno/r1-07de6919eca7094d.opus",
+     "seconds": 2.63,
+     "why": "redo from your round-1 review; new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T190104/mb_uno/r1-07de6919eca7094d.opus",
+       "seconds": 5.28
+      }
+     ]
+    },
+    {
+     "id": "r1-239e829694ef0c3e",
+     "speaker": "mb_uno",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "川屋へようこそ。休んでいく？川の音で、よく眠れるよ。",
+     "sent": "かわやへようこそ。休んでいく？川の音で、よく眠れるよ。",
+     "lineKeys": [
+      "mb.uno_rest#d65c5d6513"
+     ],
+     "file": "mb_uno/r1-239e829694ef0c3e.opus",
+     "seconds": 3.63,
+     "why": "redo from your round-1 review; new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T191251/mb_uno/r1-239e829694ef0c3e.opus",
+       "seconds": 12.62
+      }
+     ]
+    },
+    {
+     "id": "r1-9f584f51e6a3e826",
+     "speaker": "mb_uno",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "夕飯出来てるよ。座って──",
+     "sent": "夕飯出来てるよ。座って──",
+     "lineKeys": [
+      "mb.uno_evening#2712d40616"
+     ],
+     "file": "mb_uno/r1-9f584f51e6a3e826.opus",
+     "seconds": 4.14,
+     "why": "redo from your round-1 review; new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T190104/mb_uno/r1-9f584f51e6a3e826.opus",
+       "seconds": 3.605
+      }
+     ]
+    },
+    {
+     "id": "r1-e73b4120e8097b9c",
+     "speaker": "wataru",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "そしたら嵐で、船がまた壊れて。督促状が来て。開けるのが怖くて、まだ開けていません。",
+     "sent": "そしたら嵐で、船がまた壊れて。督促状が来て。開けるのが怖くて、まだ開けていません。",
+     "lineKeys": [
+      "sg.wataru_confront#b7064a0ebf"
+     ],
+     "file": "wataru/r1-e73b4120e8097b9c.opus",
+     "seconds": 7.64,
+     "why": "redo from your round-1 review; new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T190104/wataru/r1-e73b4120e8097b9c.opus",
+       "seconds": 7.295
+      }
+     ]
+    },
+    {
+     "id": "r1-103e01f252363937",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "石臼が重たげに回っている。触ると、熱いくらいだ。",
+     "sent": "石臼が重たげに回っている。触ると、熱いくらいだ。",
+     "lineKeys": [
+      "rw.m1_stone#a5b36fff6e"
+     ],
+     "file": "narrator/r1-103e01f252363937.opus",
+     "seconds": 3.95,
+     "why": "redo from your round-1 review; new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185524/narrator/r1-103e01f252363937.opus",
+       "seconds": 3.93
+      }
+     ]
+    },
+    {
+     "id": "r1-2d3ac586bb0e7209",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "言われた通りにしか行かない舟、か。……正直な奴だ。",
+     "sent": "言われた通りにしか行かない舟か。……正直な奴だ。",
+     "lineKeys": [
+      "mb.ks_token_shelf#212c320964"
+     ],
+     "file": "nao/r1-2d3ac586bb0e7209.opus",
+     "seconds": 3.62,
+     "why": "redo from your round-1 review; new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T191743/nao/r1-2d3ac586bb0e7209.opus",
+       "seconds": 3.85
+      }
+     ],
+     "sentWas": "言われた通りにしか行かない舟、か。……正直な奴だ。",
+     "sendCorrection": "SC3",
+     "yourNote": "The overall delivery is good, except the か with a strange delay likely caused from the comma."
+    },
+    {
+     "id": "r1-37abf7b89ce47f63",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "think",
+     "spoken": "言葉を一つ取られた町です。……もし一つだけ守れるとしたら、あなたはどの言葉を守りますか。",
+     "sent": "言葉を一つ取られた町です。……もし一つだけ守れるとしたら、あなたはどの言葉を守りますか。",
+     "lineKeys": [
+      "co.inv_lf_word#3cd42335c7"
+     ],
+     "file": "ren/r1-37abf7b89ce47f63.opus",
+     "seconds": 6.775,
+     "why": "redo from your round-1 review; same performance, new trim",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185821/ren/r1-37abf7b89ce47f63.opus",
+       "seconds": 6.715
+      }
+     ],
+     "yourNote": "The か at the end is abruptly cut off."
+    },
+    {
+     "id": "r1-6843cbc80ebf3837",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「潮硝子」の札を拾った。",
+     "sent": "「潮硝子」のふだを拾った。",
+     "lineKeys": [
+      "hall.w10.tab_sg#87dfc51991"
+     ],
+     "file": "narrator/r1-6843cbc80ebf3837.opus",
+     "seconds": 1.815,
+     "why": "redo from your round-1 review; new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T191725/narrator/r1-6843cbc80ebf3837.opus",
+       "seconds": 1.99
+      }
+     ],
+     "sentWas": "「潮硝子」の札を拾った。",
+     "sendCorrection": "SC2",
+     "yourNote": "札 is pronounced “さつ” rather than its intended \"ふだ\""
+    },
+    {
+     "id": "r1-6f1cdb7fd90eccee",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "書いてある順じゃなくて、前と後で決まる順。上手くいったね。",
+     "sent": "書いてある順じゃなくて、前と後で決まる順。上手くいったね。",
+     "lineKeys": [
+      "hall.w3.c_water#e55c898145",
+      "hall.w3.c_lamp#e55c898145",
+      "hall.w3.c_wood#e55c898145",
+      "hall.w3.c_priest#e55c898145"
+     ],
+     "file": "mio/r1-6f1cdb7fd90eccee.opus",
+     "seconds": 4.595,
+     "why": "redo from your round-1 review; new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T190104/mio/r1-6f1cdb7fd90eccee.opus",
+       "seconds": 5.195
+      }
+     ],
+     "yourNote": "The very end has a trailing whoosh after the ね"
+    },
+    {
+     "id": "r1-8c7bf9aacc724631",
+     "speaker": "umi",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "父は灯の道を上っていったそうです。一度、会いに行ってみようかと思っています。……決めてはいません。思っているだけ。",
+     "sent": "父はひの道を上っていったそうです。一度、会いに行ってみようかと思っています。……決めてはいません。思っているだけ。",
+     "lineKeys": [
+      "lf.umi_post#1f56682ef4"
+     ],
+     "file": "umi/r1-8c7bf9aacc724631.opus",
+     "seconds": 8.565,
+     "why": "redo from your round-1 review; new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T190104/umi/r1-8c7bf9aacc724631.opus",
+       "seconds": 9.305
+      }
+     ]
+    },
+    {
+     "id": "r1-cb5b954654f749d9",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "潮。海の水の満ち引き。風向き。風がどこから来るか。",
+     "sent": "潮。海の水の満ち引き。風向き。風がどこから来るか。",
+     "lineKeys": [
+      "sea.tetsu_words#2b01647684"
+     ],
+     "file": "tetsu/r1-cb5b954654f749d9.opus",
+     "seconds": 5.59,
+     "why": "redo from your round-1 review; same performance, new trim",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185821/tetsu/r1-cb5b954654f749d9.opus",
+       "seconds": 5.675
+      }
+     ],
+     "yourNote": "Abrupt ending"
+    },
+    {
+     "id": "r1-d545789528b0b95f",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "消えた灯には、番人は要りません。……墓の灯は、別ですが。",
+     "sent": "消えたひには、番人は要りません。……墓のひは、別ですが。",
+     "lineKeys": [
+      "sa.choose_archive#0f158c6b29"
+     ],
+     "file": "ren/r1-d545789528b0b95f.opus",
+     "seconds": 5.365,
+     "why": "redo from your round-1 review; same performance, new trim",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185821/ren/r1-d545789528b0b95f.opus",
+       "seconds": 5.375
+      }
+     ],
+     "yourNote": "Abrupt ending"
+    },
+    {
+     "id": "r1-e3a2b9f6c80bd396",
+     "speaker": "sa_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "もし見つけたら、文の続きを読んでいただけますか。当書記の感情は……未分類ですが。",
+     "sent": "もし見つけたら、文の続きを読んでいただけますか。当書記の感情は……未分類ですが。",
+     "lineKeys": [
+      "sa.clerk_first#50864cae8c"
+     ],
+     "file": "sa_clerk/r1-e3a2b9f6c80bd396.opus",
+     "seconds": 6.885,
+     "why": "redo from your round-1 review; same performance, new trim",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185821/sa_clerk/r1-e3a2b9f6c80bd396.opus",
+       "seconds": 6.857
+      }
+     ],
+     "yourNote": "Abrupt ending"
+    },
+    {
+     "id": "r1-f25c42a39756bbfb",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "鐘の話、聞いたか。皆、鐘が鳴ったら水路へ走ったって。頭が忘れても、足が道を覚えてた。",
+     "sent": "鐘の話、聞いたか。皆、鐘が鳴ったらすいろへ走ったって。頭が忘れても、足が道を覚えてた。",
+     "lineKeys": [
+      "co.b_nao4#d8c80dccd9"
+     ],
+     "file": "nao/r1-f25c42a39756bbfb.opus",
+     "seconds": 7.71,
+     "why": "redo from your round-1 review; same performance, new trim",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185821/nao/r1-f25c42a39756bbfb.opus",
+       "seconds": 7.675
+      }
+     ],
+     "yourNote": "Abrupt ending"
+    },
+    {
+     "id": "r1-ref-0325246ccbaa2cd4",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ひとびと",
+     "sent": "ひとびと",
+     "lineKeys": [],
+     "file": "ref/r1-ref-0325246ccbaa2cd4.opus",
+     "seconds": 0.9,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-0325246ccbaa2cd4.opus",
+       "seconds": 0.89
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-034fa9ed10e3ea45",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しょざいふめい",
+     "sent": "しょざいふめい",
+     "lineKeys": [],
+     "file": "ref/r1-ref-034fa9ed10e3ea45.opus",
+     "seconds": 1.16,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-034fa9ed10e3ea45.opus",
+       "seconds": 1.17
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-1d786957af12a37b",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "おっしゃる",
+     "sent": "おっしゃる",
+     "lineKeys": [],
+     "file": "ref/r1-ref-1d786957af12a37b.opus",
+     "seconds": 0.725,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-1d786957af12a37b.opus",
+       "seconds": 0.845
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-2bab5bdb1e5539fb",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "おおいし",
+     "sent": "おおいし",
+     "lineKeys": [],
+     "file": "ref/r1-ref-2bab5bdb1e5539fb.opus",
+     "seconds": 0.92,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-2bab5bdb1e5539fb.opus",
+       "seconds": 0.875
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-442384d60cc59db7",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "せたけ",
+     "sent": "せたけ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-442384d60cc59db7.opus",
+     "seconds": 0.91,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-442384d60cc59db7.opus",
+       "seconds": 0.9
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-6de7e0ab9993b5d8",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "よめいり",
+     "sent": "よめいり",
+     "lineKeys": [],
+     "file": "ref/r1-ref-6de7e0ab9993b5d8.opus",
+     "seconds": 0.865,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-6de7e0ab9993b5d8.opus",
+       "seconds": 0.88
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-7ba70032dda74083",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ソウベエ",
+     "sent": "ソウベエ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-7ba70032dda74083.opus",
+     "seconds": 0.925,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-7ba70032dda74083.opus",
+       "seconds": 1.14
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-7c955999a39b29bb",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "わかりやすい",
+     "sent": "わかりやすい",
+     "lineKeys": [],
+     "file": "ref/r1-ref-7c955999a39b29bb.opus",
+     "seconds": 1.14,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-7c955999a39b29bb.opus",
+       "seconds": 1.1
+      }
+     ],
+     "yourNote": "\"Gasping\" on both ends"
+    },
+    {
+     "id": "r1-ref-7ce0a1f65d517736",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "そろ",
+     "sent": "そろ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-7ce0a1f65d517736.opus",
+     "seconds": 0.835,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-7ce0a1f65d517736.opus",
+       "seconds": 0.82
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-7d69eea325c2f41a",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ぴくぴく",
+     "sent": "ぴくぴく",
+     "lineKeys": [],
+     "file": "ref/r1-ref-7d69eea325c2f41a.opus",
+     "seconds": 1.23,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-7d69eea325c2f41a.opus",
+       "seconds": 1.22
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-86c2f0a432961c1d",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "または",
+     "sent": "または",
+     "lineKeys": [],
+     "file": "ref/r1-ref-86c2f0a432961c1d.opus",
+     "seconds": 0.805,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-86c2f0a432961c1d.opus",
+       "seconds": 0.8
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-911aaa0a7761c49e",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ばかす",
+     "sent": "ばかす",
+     "lineKeys": [],
+     "file": "ref/r1-ref-911aaa0a7761c49e.opus",
+     "seconds": 0.845,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-911aaa0a7761c49e.opus",
+       "seconds": 0.845
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-91d716f388c98422",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "かいしょ",
+     "sent": "かいしょ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-91d716f388c98422.opus",
+     "seconds": 0.945,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-91d716f388c98422.opus",
+       "seconds": 1.13
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-99bd62e1b425b4d1",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "さんり",
+     "sent": "さんり",
+     "lineKeys": [],
+     "file": "ref/r1-ref-99bd62e1b425b4d1.opus",
+     "seconds": 1.1,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-99bd62e1b425b4d1.opus",
+       "seconds": 1.01
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-a3999c8ac20a5b09",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "いんちょう",
+     "sent": "いんちょう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-a3999c8ac20a5b09.opus",
+     "seconds": 0.975,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-a3999c8ac20a5b09.opus",
+       "seconds": 0.86
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-a918801e2d9bc1e6",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "わたしども",
+     "sent": "わたしども",
+     "lineKeys": [],
+     "file": "ref/r1-ref-a918801e2d9bc1e6.opus",
+     "seconds": 1.18,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-a918801e2d9bc1e6.opus",
+       "seconds": 1.22
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-ac50a97184a061ec",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "こわ",
+     "sent": "こわ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-ac50a97184a061ec.opus",
+     "seconds": 0.74,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-ac50a97184a061ec.opus",
+       "seconds": 0.75
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-ac766d409bbc66e8",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "にっしゃびょう",
+     "sent": "にっしゃびょう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-ac766d409bbc66e8.opus",
+     "seconds": 1.22,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-ac766d409bbc66e8.opus",
+       "seconds": 1.145
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-b06952501818dfed",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ぼこう",
+     "sent": "ぼこう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b06952501818dfed.opus",
+     "seconds": 0.735,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-b06952501818dfed.opus",
+       "seconds": 0.75
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-b8dafacc2283970b",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "うめ",
+     "sent": "うめ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b8dafacc2283970b.opus",
+     "seconds": 0.655,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-b8dafacc2283970b.opus",
+       "seconds": 0.725
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-b8f801f6ac6359dc",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ぶんるいめい",
+     "sent": "ぶんるいめい",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b8f801f6ac6359dc.opus",
+     "seconds": 1.235,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-b8f801f6ac6359dc.opus",
+       "seconds": 1.005
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-ba64791790c74617",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "まじめ",
+     "sent": "まじめ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-ba64791790c74617.opus",
+     "seconds": 0.785,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-ba64791790c74617.opus",
+       "seconds": 0.71
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-c5852ab0cc882c25",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "うめ",
+     "sent": "うめ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-c5852ab0cc882c25.opus",
+     "seconds": 0.655,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-c5852ab0cc882c25.opus",
+       "seconds": 0.725
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-cc7f754d77618486",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "もうす",
+     "sent": "もうす",
+     "lineKeys": [],
+     "file": "ref/r1-ref-cc7f754d77618486.opus",
+     "seconds": 0.765,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-cc7f754d77618486.opus",
+       "seconds": 0.78
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-d31ca70b82bbd4c8",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "うめる",
+     "sent": "うめる",
+     "lineKeys": [],
+     "file": "ref/r1-ref-d31ca70b82bbd4c8.opus",
+     "seconds": 0.835,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-d31ca70b82bbd4c8.opus",
+       "seconds": 0.78
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-d44b56e3beb15853",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "こわ",
+     "sent": "こわ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-d44b56e3beb15853.opus",
+     "seconds": 0.74,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-d44b56e3beb15853.opus",
+       "seconds": 0.75
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-da481d87c2913609",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しの",
+     "sent": "しの",
+     "lineKeys": [],
+     "file": "ref/r1-ref-da481d87c2913609.opus",
+     "seconds": 0.76,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-da481d87c2913609.opus",
+       "seconds": 0.73
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-db5b0c331547f281",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ふそくぶん",
+     "sent": "ふそくぶん",
+     "lineKeys": [],
+     "file": "ref/r1-ref-db5b0c331547f281.opus",
+     "seconds": 0.94,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-db5b0c331547f281.opus",
+       "seconds": 0.92
+      }
+     ],
+     "yourNote": "ふ is effectively silent"
+    },
+    {
+     "id": "r1-ref-e41a9ae640439d08",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "すごす",
+     "sent": "すごす",
+     "lineKeys": [],
+     "file": "ref/r1-ref-e41a9ae640439d08.opus",
+     "seconds": 0.84,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-e41a9ae640439d08.opus",
+       "seconds": 0.79
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-e5bf48bf7ab94ff8",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しおどまり",
+     "sent": "しおどまり",
+     "lineKeys": [],
+     "file": "ref/r1-ref-e5bf48bf7ab94ff8.opus",
+     "seconds": 1.23,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-e5bf48bf7ab94ff8.opus",
+       "seconds": 1.24
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-e7f81d92b452ef62",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "オタキ",
+     "sent": "オタキ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-e7f81d92b452ef62.opus",
+     "seconds": 0.935,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-e7f81d92b452ef62.opus",
+       "seconds": 0.84
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-eac72dc84c240460",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "なんじっかい",
+     "sent": "なんじっかい",
+     "lineKeys": [],
+     "file": "ref/r1-ref-eac72dc84c240460.opus",
+     "seconds": 1.015,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-eac72dc84c240460.opus",
+       "seconds": 1.01
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-ebc01860454d9a89",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ばかり",
+     "sent": "ばかり",
+     "lineKeys": [],
+     "file": "ref/r1-ref-ebc01860454d9a89.opus",
+     "seconds": 0.765,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-ebc01860454d9a89.opus",
+       "seconds": 0.745
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-f1f9f7f4191a1c43",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "あっち",
+     "sent": "あっち",
+     "lineKeys": [],
+     "file": "ref/r1-ref-f1f9f7f4191a1c43.opus",
+     "seconds": 0.695,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-f1f9f7f4191a1c43.opus",
+       "seconds": 0.69
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-f35ae1ea691b10dc",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "まわりみち",
+     "sent": "まわりみち",
+     "lineKeys": [],
+     "file": "ref/r1-ref-f35ae1ea691b10dc.opus",
+     "seconds": 1.045,
+     "why": "redo from your round-1 review; read straight, no breath",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185400/ref/r1-ref-f35ae1ea691b10dc.opus",
+       "seconds": 1.06
+      }
+     ]
+    }
+   ],
+   "count": 49
+  },
+  {
+   "key": "reverb",
+   "title": "Lighter reverb: the Tide Clerk, the Gardener of Unsent Words, the Nameless Bridge (same takes)",
+   "items": [
+    {
+     "id": "r1-1d2fbdf3b44d19a5",
+     "speaker": "ko_gardener",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……人が来るのは、何百年ぶりか。葉守ですら、ここへは下りてこない。",
+     "sent": "……人が来るのは、何百年ぶりか。葉守ですら、ここへは下りてこない。",
+     "lineKeys": [
+      "ko.gardener#8f048c160a"
+     ],
+     "file": "ko_gardener/r1-1d2fbdf3b44d19a5.opus",
+     "seconds": 7.681,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/ko_gardener/r1-1d2fbdf3b44d19a5.opus",
+       "seconds": 8.46
+      }
+     ]
+    },
+    {
+     "id": "r1-34c73b31bdc1a295",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宛名を消したのは私ではない。潮が消す。静寂が消す。私は、片付けるだけだ。",
+     "sent": "宛名を消したのは私ではない。潮が消す。静寂が消す。私は、片付けるだけだ。",
+     "lineKeys": [
+      "sg.da_boss#8d552b9446"
+     ],
+     "file": "sg_clerk/r1-34c73b31bdc1a295.opus",
+     "seconds": 8.662,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/sg_clerk/r1-34c73b31bdc1a295.opus",
+       "seconds": 9.211
+      }
+     ]
+    },
+    {
+     "id": "r1-3e1f5965da859337",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "手紙を持っていけ。返送は……取り消す。",
+     "sent": "手紙を持っていけ。返送は……取り消す。",
+     "lineKeys": [
+      "sg.da_boss_after#9df5419dd9"
+     ],
+     "file": "sg_clerk/r1-3e1f5965da859337.opus",
+     "seconds": 4.573,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/sg_clerk/r1-3e1f5965da859337.opus",
+       "seconds": 5.108
+      }
+     ]
+    },
+    {
+     "id": "r1-413f45c38a8bd993",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……本庁は、納得しないだろう。名は増えるほど争いを生む、と本庁の主は言う。静かなほうが、人は傷つかない、と。",
+     "sent": "……本庁は、納得しないだろう。名は増えるほど争いを生む、と本庁の主は言う。静かなほうが、人は傷つかない、と。",
+     "lineKeys": [
+      "sg.da_boss_after#3f40401469"
+     ],
+     "file": "sg_clerk/r1-413f45c38a8bd993.opus",
+     "seconds": 10.552,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/sg_clerk/r1-413f45c38a8bd993.opus",
+       "seconds": 10.973
+      }
+     ]
+    },
+    {
+     "id": "r1-4142b50b447246e7",
+     "speaker": "mb_bridgespirit",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……渡るな。間違った所へ、誰も渡らせない。私は……私は、何という橋だったか。",
+     "sent": "……渡るな。間違った所へ、誰も渡らせない。私は……私は、何という橋だったか。",
+     "lineKeys": [
+      "mb.firstbridge_arrive#360f629810"
+     ],
+     "file": "mb_bridgespirit/r1-4142b50b447246e7.opus",
+     "seconds": 9.747,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/mb_bridgespirit/r1-4142b50b447246e7.opus",
+       "seconds": 10.505
+      }
+     ]
+    },
+    {
+     "id": "r1-4dd8ba4f35accea7",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "規定にはない方法だ。",
+     "sent": "規定にはない方法だ。",
+     "lineKeys": [
+      "sg.da_boss_after#228e6057fd"
+     ],
+     "file": "sg_clerk/r1-4dd8ba4f35accea7.opus",
+     "seconds": 2.301,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/sg_clerk/r1-4dd8ba4f35accea7.opus",
+       "seconds": 2.861
+      }
+     ],
+     "yourNote": "The reverb makes it difficult to hear the enunciation properly"
+    },
+    {
+     "id": "r1-6db1670a96cca6fa",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宛名判読不能。返送。次。",
+     "sent": "宛名判読不能。返送。次。",
+     "lineKeys": [
+      "sg.da_boss#b4cac4c057"
+     ],
+     "file": "sg_clerk/r1-6db1670a96cca6fa.opus",
+     "seconds": 4.528,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/sg_clerk/r1-6db1670a96cca6fa.opus",
+       "seconds": 5.119
+      }
+     ]
+    },
+    {
+     "id": "r1-90718d7497de10d9",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "窓口は一つ。順番を守れ。次。",
+     "sent": "窓口は一つ。順番を守れ。次。",
+     "lineKeys": [
+      "sg.da_boss#8c9abf7554"
+     ],
+     "file": "sg_clerk/r1-90718d7497de10d9.opus",
+     "seconds": 4.048,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/sg_clerk/r1-90718d7497de10d9.opus",
+       "seconds": 4.64
+      }
+     ]
+    },
+    {
+     "id": "r1-9d16dc25757ff87e",
+     "speaker": "mb_bridgespirit",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "近づくな。名のない橋を、誰も渡ってはならない。",
+     "sent": "近づくな。名のない橋を、誰も渡ってはならない。",
+     "lineKeys": [
+      "mb.boss_go#bfed4af2c0"
+     ],
+     "file": "mb_bridgespirit/r1-9d16dc25757ff87e.opus",
+     "seconds": 5.034,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/mb_bridgespirit/r1-9d16dc25757ff87e.opus",
+       "seconds": 5.705
+      }
+     ]
+    },
+    {
+     "id": "r1-a17744187a8dfadf",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宛名のない手紙は、誰のものでもない。迷う手紙は、人を迷わせる。返送し、棚に上げ、静かにする。それが規定だ。",
+     "sent": "宛名のない手紙は、誰のものでもない。迷う手紙は、人を迷わせる。返送し、棚に上げ、静かにする。それが規定だ。",
+     "lineKeys": [
+      "sg.da_boss#eb493c4504"
+     ],
+     "file": "sg_clerk/r1-a17744187a8dfadf.opus",
+     "seconds": 11.693,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/sg_clerk/r1-a17744187a8dfadf.opus",
+       "seconds": 12.274
+      }
+     ]
+    },
+    {
+     "id": "r1-bbdaa29950ab28b5",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "次。",
+     "sent": "次。",
+     "lineKeys": [
+      "sg.da_boss#ddf3ad1522"
+     ],
+     "file": "sg_clerk/r1-bbdaa29950ab28b5.opus",
+     "seconds": 1.759,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/sg_clerk/r1-bbdaa29950ab28b5.opus",
+       "seconds": 2.284
+      }
+     ]
+    },
+    {
+     "id": "r1-cb99801f80b6257c",
+     "speaker": "ko_gardener",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "ここの葉は、届けてはならぬ言葉。書いた者が、出さぬと決めた言葉だ。",
+     "sent": "ここの葉は、届けてはならぬ言葉。書いた者が、出さぬと決めた言葉だ。",
+     "lineKeys": [
+      "ko.gardener#2f8e0dc46a"
+     ],
+     "file": "ko_gardener/r1-cb99801f80b6257c.opus",
+     "seconds": 8.405,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/ko_gardener/r1-cb99801f80b6257c.opus",
+       "seconds": 9.114
+      }
+     ]
+    },
+    {
+     "id": "r1-d9b19267d12485a1",
+     "speaker": "ko_gardener",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "近ごろ、上から落ちてくる葉が多すぎて、庭が溢れる。溢れた葉は、風に乗って出てゆく。出ていかせはしない。",
+     "sent": "近ごろ、上から落ちてくる葉が多すぎて、庭が溢れる。溢れた葉は、風に乗って出てゆく。出ていかせはしない。",
+     "lineKeys": [
+      "ko.gardener#478d6d2bb8"
+     ],
+     "file": "ko_gardener/r1-d9b19267d12485a1.opus",
+     "seconds": 10.921,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/ko_gardener/r1-d9b19267d12485a1.opus",
+       "seconds": 11.696
+      }
+     ]
+    },
+    {
+     "id": "r1-e4ea46e7b88eb21c",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……読めない宛名を、読める人がいるのか。",
+     "sent": "……読めない宛名を、読める人がいるのか。",
+     "lineKeys": [
+      "sg.da_boss_after#b416388006"
+     ],
+     "file": "sg_clerk/r1-e4ea46e7b88eb21c.opus",
+     "seconds": 3.462,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/sg_clerk/r1-e4ea46e7b88eb21c.opus",
+       "seconds": 3.976
+      }
+     ]
+    },
+    {
+     "id": "r1-f49e340f895e1ddd",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "書庫の守り人。山の上の、静寂の書庫にいる。名は……棚に上げてある。",
+     "sent": "書庫の守り人。山の上の、静寂の書庫にいる。名は……棚に上げてある。",
+     "lineKeys": [
+      "sg.da_boss_after#0641a37bf3"
+     ],
+     "file": "sg_clerk/r1-f49e340f895e1ddd.opus",
+     "seconds": 7.437,
+     "why": "reverb about 30% shorter and 35% quieter, every line of the voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185553-rerender/sg_clerk/r1-f49e340f895e1ddd.opus",
+       "seconds": 8.092
+      }
+     ]
+    }
+   ],
+   "count": 15
+  },
+  {
+   "key": "clipfix",
+   "title": "Sample fix: an opening さ/は-row sound the old trim clipped (7 narrator takes of 1,131)",
+   "items": [
+    {
+     "id": "r1-9817c71228b4816f",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……灰実の里では、防火帯に名前のついた苗木が植えられたという。",
+     "sent": "……灰実の里では、防火帯に名前のついた苗木が植えられたという。",
+     "lineKeys": [
+      "atlas.home#073f952794"
+     ],
+     "file": "narrator/r1-9817c71228b4816f.opus",
+     "seconds": 4.43,
+     "why": "opening consonant restored; new take (this engine cannot repeat a take)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T191356/narrator/r1-9817c71228b4816f.opus",
+       "seconds": 4.33
+      }
+     ]
+    },
+    {
+     "id": "r1-92efaa6502073606",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "吹き溜まりが、道を塞いでいる。腰までの雪だ。",
+     "sent": "吹き溜まりが、道を塞いでいる。腰までの雪だ。",
+     "lineKeys": [
+      "cr.drift#37bc05b1a8"
+     ],
+     "file": "narrator/r1-92efaa6502073606.opus",
+     "seconds": 3.525,
+     "why": "opening consonant restored; new take (this engine cannot repeat a take)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T191356/narrator/r1-92efaa6502073606.opus",
+       "seconds": 3.49
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-38c446faebeab6ff",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "はしだいく",
+     "sent": "はしだいく",
+     "lineKeys": [],
+     "file": "ref/r1-ref-38c446faebeab6ff.opus",
+     "seconds": 1.22,
+     "why": "opening consonant restored; new take (this engine cannot repeat a take)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T191356/ref/r1-ref-38c446faebeab6ff.opus",
+       "seconds": 0.94
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-b8c37e850e5f708e",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しこう",
+     "sent": "しこう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b8c37e850e5f708e.opus",
+     "seconds": 0.755,
+     "why": "opening consonant restored; new take (this engine cannot repeat a take)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T191356/ref/r1-ref-b8c37e850e5f708e.opus",
+       "seconds": 0.46
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-8d997b6364a6f88b",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "さ",
+     "sent": "さ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-8d997b6364a6f88b.opus",
+     "seconds": 0.72,
+     "why": "opening consonant restored; new take (this engine cannot repeat a take)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T191356/ref/r1-ref-8d997b6364a6f88b.opus",
+       "seconds": 0.45
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-6ada602a0cae2dbe",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しゅう",
+     "sent": "しゅう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-6ada602a0cae2dbe.opus",
+     "seconds": 0.685,
+     "why": "opening consonant restored; new take (this engine cannot repeat a take)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T191356/ref/r1-ref-6ada602a0cae2dbe.opus",
+       "seconds": 0.45
+      }
+     ]
+    },
+    {
+     "id": "r1-ref-e2da10bb61d45248",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "せいじょう",
+     "sent": "せいじょう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-e2da10bb61d45248.opus",
+     "seconds": 1.135,
+     "why": "opening consonant restored; new take (this engine cannot repeat a take)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T191356/ref/r1-ref-e2da10bb61d45248.opus",
+       "seconds": 0.75
+      }
+     ]
+    }
+   ],
+   "count": 7
+  },
+  {
+   "key": "restored",
+   "title": "Wataru's line you kept (SC1), restored after a worker error",
+   "items": [
+    {
+     "id": "r1-6ab18b4d8dcef181",
+     "speaker": "wataru",
+     "voice": null,
+     "pitch": null,
+     "delivery": "surprise",
+     "spoken": "……辞めさせないんですか。",
+     "sent": "やめさせないんですか。",
+     "lineKeys": [
+      "sg.omi_wataru#a036d6675c"
+     ],
+     "file": "wataru/r1-6ab18b4d8dcef181.opus",
+     "seconds": 1.24,
+     "why": "the kept take, re-rendered from its master after a worker run overwrote it; same performance",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T185732-rerender/wataru/r1-6ab18b4d8dcef181.opus",
+       "seconds": 0.935
+      }
+     ],
+     "sentWas": "……辞めさせないんですか。",
+     "sendCorrection": "SC1"
+    }
+   ],
+   "count": 1
+  }
+ ],
+ "counts": {
+  "redone": 49,
+  "reverb": 15,
+  "clipfix": 7,
+  "restored": 1
+ },
+ "waitingForSendCorrections": []
+}

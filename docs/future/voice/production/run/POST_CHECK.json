@@ -218,8 +218,12 @@
    "problem": "level: lufs -22.24, peak -1.0"
   },
   {
+   "id": "r1-4142b50b447246e7",
+   "problem": "level: lufs -22.37, peak -1.0"
+  },
+  {
    "id": "r1-9d16dc25757ff87e",
-   "problem": "level: lufs -22.47, peak -1.0"
+   "problem": "level: lufs -22.96, peak -1.0"
   },
   {
    "id": "r1-0ed027aab9525dc2",
@@ -387,7 +391,15 @@
   },
   {
    "id": "r1-413f45c38a8bd993",
-   "problem": "level: lufs -21.71, peak -1.0"
+   "problem": "level: lufs -22.27, peak -1.0"
+  },
+  {
+   "id": "r1-90718d7497de10d9",
+   "problem": "level: lufs -21.63, peak -1.0"
+  },
+  {
+   "id": "r1-a17744187a8dfadf",
+   "problem": "level: lufs -21.94, peak -1.0"
   },
   {
    "id": "r1-2ffe9a31a6b56cc5",
@@ -484,38 +496,38 @@
  ],
  "all": {
   "files": 23823,
-  "bytes": 552138662,
-  "hours": 20.63
+  "bytes": 552079458,
+  "hours": 20.62
  },
  "main": {
   "files": 23816,
-  "bytes": 551930210,
+  "bytes": 551870864,
   "hours": 20.62
  },
  "MW1": {
   "files": 7,
-  "bytes": 208452,
+  "bytes": 208594,
   "hours": 0.01
  },
  "byRole": {
   "mio": {
    "files": 1079,
-   "bytes": 35828288,
+   "bytes": 35824028,
    "hours": 1.35
   },
   "nao": {
    "files": 1182,
-   "bytes": 38044766,
+   "bytes": 38043743,
    "hours": 1.43
   },
   "narrator": {
    "files": 4797,
-   "bytes": 143649034,
+   "bytes": 143649226,
    "hours": 5.45
   },
   "npc": {
    "files": 3662,
-   "bytes": 144199526,
+   "bytes": 144107856,
    "hours": 5.47
   },
   "pc": {
@@ -525,25 +537,25 @@
   },
   "reference readings": {
    "files": 9096,
-   "bytes": 59432008,
+   "bytes": 59468476,
    "hours": 1.98
   },
   "ren": {
    "files": 1121,
-   "bytes": 44145042,
+   "bytes": 44145562,
    "hours": 1.67
   },
   "suzu": {
    "files": 2250,
-   "bytes": 72932202,
+   "bytes": 72932771,
    "hours": 2.75
   }
  },
  "byEngine": {
   "aivis": {
    "files": 14083,
-   "bytes": 210075584,
-   "hours": 7.69
+   "bytes": 210112244,
+   "hours": 7.7
   },
   "nemo": {
    "files": 229,
@@ -552,7 +564,7 @@
   },
   "qwen3-tts": {
    "files": 9510,
-   "bytes": 333877967,
+   "bytes": 333782103,
    "hours": 12.62
   },
   "sound": {
@@ -562,12 +574,12 @@
   }
  },
  "masters": {
-  "files": 21522,
-  "bytes": 1889378370,
+  "files": 21523,
+  "bytes": 1889382958,
   "format": "FLAC 24 kHz 16-bit mono, lossless, kept locally"
  },
- "flaggedEdges": 131,
- "retried": 350,
+ "flaggedEdges": 90,
+ "retried": 409,
  "lengthOutliers": {
   "rule": "longer than max(2.2x, +6 s) or shorter than 0.4x the voice's own median pace for that text length",
   "long": [],
