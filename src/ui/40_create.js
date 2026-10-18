@@ -301,11 +301,14 @@ RB.ui.create = (function () {
             '<span>A few questions to suggest a level. Nothing is graded or saved.</span></span></button>' +
             C('kana') +
             '<h3 class="sx-sec">Answering</h3>' + C('input') +
-            // (FR-1 F05: the rest is one tap away, with what it is set to, rather than a second full pass)
-            '<details class="cr-more"><summary><span class="cr-more-t">More choices: mistakes, tactics and reading</span>' +
-              '<span class="cr-more-sum"></span></summary>' +
-              '<h3 class="sx-sec">Challenge</h3>' + C('assist') + C('difficulty') +
-              '<h3 class="sx-sec">Reading</h3>' + C('lead') + C('secondary') + C('uiLang') + '</details>' +
+            // (FR-1 F05: the rest is one tap away, with what it is set to, rather than a second full pass. Robin, 2026-10-18:
+            // it read as a statement, not a menu; so it is drawn as a fold that opens: a chevron that turns, and Show/Hide)
+            '<details class="cr-more"><summary><span class="cr-more-ic">' + I('down') + '</span>' +
+              '<span class="cr-more-tx"><span class="cr-more-t">More choices: mistakes, tactics and reading</span>' +
+              '<span class="cr-more-sum"></span></span>' +
+              '<span class="cr-more-act" aria-hidden="true"><span class="cr-more-show">Show</span><span class="cr-more-hide">Hide</span></span></summary>' +
+              '<div class="cr-more-body"><h3 class="sx-sec">Challenge</h3>' + C('assist') + C('difficulty') +
+              '<h3 class="sx-sec">Reading</h3>' + C('lead') + C('secondary') + C('uiLang') + '</div></details>' +
             '<p class="note-slip">Furigana is always shown over kanji. Turn on the lightbulb (H or the bulb button) to hover or tap any Japanese for its reading and meaning.</p></div>';
         },
       };

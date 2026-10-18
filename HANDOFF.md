@@ -562,6 +562,10 @@
       40_evidence `add`; callers: challenge `finish`, practice, the test harness). No save migration. Tests: U
       `fr1_partial_word`, B `fr1_partial_word`. FR1_REPORT.md §3 corrected, §8 added.
 
+    **The creation step's "More choices" fold (Robin, 2026-10-18):** it read as a statement, not a menu. It is now a fold
+    that shows it opens: a card with a turning chevron and Show/Hide, and section heads inside. VALIDATION.md "The
+    creation step's 'More choices' fold"; FR1_REPORT.md F05 follow-up; B `create` checks it.
+
     **MW-1, the mill follows the gears; a travel tile is walked onto (Robin, 2026-10-17).** VALIDATION.md "MW-1",
     REQUIREMENTS.md XP132.
     - **Engine:** an exit may carry `scene` (50_world.js `useExit`). Stepping onto it plays the scene its thing's own use

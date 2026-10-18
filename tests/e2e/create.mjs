@@ -172,7 +172,14 @@ function judge(tag, L, opts) {
   ok(!(await p.isVisible('[data-group=kana]')), 'other levels hide the kana question');
   // mistakes, tactics and reading are folded under one line that says what they are (FR-1 F05): open it to change them
   ok(/Mistakes: Assisted/.test(await p.textContent('.cr-learn details.cr-more summary')) && !(await p.isVisible('[data-k=assist][data-v=assist]')), 'the further choices are folded, their summary says Mistakes: Assisted (the new default)');
+  // it reads as a fold that opens (Robin, 2026-10-18): a chevron in a circle and "Show", no browser triangle needed
+  const fold = () => p.evaluate(() => { const s = document.querySelector('.cr-learn details.cr-more > summary'), ic = s.querySelector('.cr-more-ic svg'), vis = (q) => { const e = s.querySelector(q); return !!e && getComputedStyle(e).display !== 'none' && e.getBoundingClientRect().width > 0; }; return { ic: !!ic && ic.getBoundingClientRect().width > 0, rot: ic ? getComputedStyle(ic).transform : '', show: vis('.cr-more-show'), hide: vis('.cr-more-hide'), open: s.parentElement.open }; });
+  let fd = await fold();
+  ok(fd.ic && fd.show && !fd.hide && !fd.open && (fd.rot === 'none' || fd.rot === 'matrix(1, 0, 0, 1, 0, 0)'), 'the fold shows a chevron and "Show" while closed ' + JSON.stringify(fd));
   await p.click('.cr-learn details.cr-more > summary');
+  await p.waitForTimeout(250);
+  fd = await fold();
+  ok(fd.open && fd.hide && !fd.show && /^matrix\(-1, /.test(fd.rot), 'open, it says "Hide" and the chevron has turned over ' + JSON.stringify(fd));
   await p.click('[data-k=assist][data-v=assist]');
   await p.click('[data-k=difficulty][data-v=hard]');
   await p.click('[data-k=input][data-v=choice]');

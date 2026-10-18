@@ -1665,13 +1665,32 @@ body.bulb-on .cr-prologue .jline .jt:hover, .cr-prologue .jline .jt.active { bac
 
 body.reduced-motion .cr-route *, body.reduced-motion .cr-sheet * { transition: none !important; animation: none !important; }
 
-/* FR-1 F05: the learning step's further choices, folded under one line that says what they are set to */
-.cr-more { margin: 0.6em 0 0.4em; border-top: 1px solid var(--paper-edge); }
-.cr-more > summary { display: flex; flex-direction: column; gap: 2px; justify-content: center; min-height: var(--tap); padding: 0.45em 0.2em; cursor: pointer; list-style-position: inside; }
+/* FR-1 F05: the learning step's further choices, folded under one line that says what they are set to. Drawn as a fold
+   that opens (Robin, 2026-10-18: it read as a statement): a card in the placement slip's family, a circled chevron that
+   turns over when it is open, and Show/Hide on the right; open, its choices hang under it on a ribbon */
+.cr-more { margin: 1em 0 0.6em; }
+.cr-more > summary {
+  display: grid; grid-template-columns: 2.2em minmax(0, 1fr) auto; align-items: center; gap: 0.6em; min-height: var(--tap, 44px);
+  padding: 0.55em 0.8em; border: 1px solid var(--paper-edge, #c9b88f); border-radius: 4px; background: rgba(193, 138, 42, 0.07);
+  cursor: pointer; list-style: none; color: var(--ink);
+}
+.cr-more > summary::-webkit-details-marker { display: none; }
+.cr-more > summary:hover { background: rgba(193, 138, 42, 0.14); }
+.cr-more > summary:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.cr-more-ic { display: inline-flex; align-items: center; justify-content: center; width: 2.2em; height: 2.2em; border-radius: 50%; background: rgba(193, 138, 42, 0.2); color: var(--ink); }
+.cr-more-ic svg { width: 1.1em; height: 1.1em; transition: transform var(--t-quick, 0.15s); }
+.cr-more[open] .cr-more-ic svg { transform: rotate(180deg); }
+.cr-more-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .cr-more > summary .cr-more-t { font-weight: 700; color: var(--ink); }
 .cr-more > summary .cr-more-sum { font-size: 0.88em; color: var(--ink-2); }
 .cr-more[open] > summary .cr-more-sum { display: none; }
-.cr-more > summary:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.cr-more-act { font-size: 0.9em; font-weight: 600; color: var(--river, #3b5f7a); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+.cr-more-hide, .cr-more[open] .cr-more-show { display: none; }
+.cr-more[open] .cr-more-hide { display: inline; }
+.cr-more-body { margin: 0 0 0 0.8em; padding: 0.2em 0 0.6em 0.9em; border-left: 3px solid var(--ribbon); }
+.cr-more-body > .sx-sec:first-child { margin-top: 0.6em; }
+body.reduced-motion .cr-more-ic svg { transition: none; }
+body.high-contrast .cr-more > summary { background: none; border-color: #000; }
 /* FR-1 F16: a name breaks between its words, after its hyphen ("Light-|medium") or at a compound's soft hyphen
    ("Head-|band", 40_create.js), in balanced lines */
 .cr-sw .nm, .cr-tile .nm { hyphens: manual; text-wrap: balance; }
@@ -6149,7 +6168,8 @@ body.high-contrast :is(.folio-settings, .sx-scope) .campaign-box.sx-journey { ba
 
 /* ---- ST-2: the creation step's learning page in the same look (.sx-scope, src/ui/40_create.js) ---------------- */
 .sx-scope { container-type: inline-size; }
-.sx-scope > .sx-sec { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; font-size: 1.12em; font-weight: 600; color: var(--ink-2);
+/* (and the section heads inside the creation step's fold, 40_create.js .cr-more-body) */
+.sx-scope > .sx-sec, .sx-scope .cr-more-body > .sx-sec { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; font-size: 1.12em; font-weight: 600; color: var(--ink-2);
   border-bottom: 1px solid var(--rule); padding-bottom: 0.25em; margin: 1.7em 0 0.3em; }
 .sx-scope > .sx-sec:first-child { margin-top: 0.3em; }
 /* a slip on the page that opens something (the optional placement): a pencilled card with its line, not a pill button */
@@ -71351,11 +71371,14 @@ RB.ui.create = (function () {
             '<span>A few questions to suggest a level. Nothing is graded or saved.</span></span></button>' +
             C('kana') +
             '<h3 class="sx-sec">Answering</h3>' + C('input') +
-            // (FR-1 F05: the rest is one tap away, with what it is set to, rather than a second full pass)
-            '<details class="cr-more"><summary><span class="cr-more-t">More choices: mistakes, tactics and reading</span>' +
-              '<span class="cr-more-sum"></span></summary>' +
-              '<h3 class="sx-sec">Challenge</h3>' + C('assist') + C('difficulty') +
-              '<h3 class="sx-sec">Reading</h3>' + C('lead') + C('secondary') + C('uiLang') + '</details>' +
+            // (FR-1 F05: the rest is one tap away, with what it is set to, rather than a second full pass. Robin, 2026-10-18:
+            // it read as a statement, not a menu; so it is drawn as a fold that opens: a chevron that turns, and Show/Hide)
+            '<details class="cr-more"><summary><span class="cr-more-ic">' + I('down') + '</span>' +
+              '<span class="cr-more-tx"><span class="cr-more-t">More choices: mistakes, tactics and reading</span>' +
+              '<span class="cr-more-sum"></span></span>' +
+              '<span class="cr-more-act" aria-hidden="true"><span class="cr-more-show">Show</span><span class="cr-more-hide">Hide</span></span></summary>' +
+              '<div class="cr-more-body"><h3 class="sx-sec">Challenge</h3>' + C('assist') + C('difficulty') +
+              '<h3 class="sx-sec">Reading</h3>' + C('lead') + C('secondary') + C('uiLang') + '</div></details>' +
             '<p class="note-slip">Furigana is always shown over kanji. Turn on the lightbulb (H or the bulb button) to hover or tap any Japanese for its reading and meaning.</p></div>';
         },
       };

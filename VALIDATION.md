@@ -4783,6 +4783,38 @@ The full account is docs/review/ar1_mill/AR1_MILL_REPORT.md.
 
 **Judged by Robin:** both changes approved from the before/after package. The tests prove behaviour, not the picture.
 
+## The creation step's "More choices" fold reads as a fold (Robin, 2026-10-18)
+
+Robin, with a screenshot of the Learning step: "The 'more choices: ...' menu doesn't read as a menu literally. It
+presents itself as a statement, rather than a collapsible header."
+
+**Cause.** The fold (FR-1 F05) is a `<details>`. Its summary was laid out with `display: flex`, and that drops the
+browser's disclosure triangle, so closed it was a bold line and a sentence with nothing that said it opens.
+Reproduced in a capture before the change (`docs/review/fr1/shots/f05_fold_before_closed.png`).
+
+**Change** (40_create.js, 45_create.css, 92_settings.css):
+- the summary is a card in the family of the placement slip above it;
+- a circled chevron turns over when the fold is open;
+- Show/Hide sits on the right (`aria-hidden`; the summary's own expanded state is what assistive technology reads);
+- open, the choices hang under it on a ribbon;
+- the fold's "Challenge" and "Reading" heads now have the page's small-caps section style. Before, they were plain bold
+  because the section rule reached only direct children.
+
+**Checks.**
+- B `create` 386/0, including the new checks:
+  - closed: the chevron is visible, "Show" is visible, no rotation;
+  - open: "Hide" is visible and the chevron is turned over.
+- B `settings_review` passed; `prologue` 100/0. `node tools/validate.mjs`: no errors.
+- B `fr1_defaults` passed when run alone. In one run alongside three other browser suites, a single check ("after a
+  reload, the save still has Standard") read the save back as null. Run alone straight after, it passed. Recorded as a
+  timing failure under load, not a regression of this change, which touches no save code.
+- Captures (Chromium), closed, hovered and open: 1053 × 787, and 390 × 844 (an emulation). Before: `f05_fold_before_closed.png`;
+  after: `f05_fold_after_closed.png`, `f05_fold_after_open.png` and `f05_fold_after_phone.png`, all in
+  docs/review/fr1/shots/.
+
+**Not tested.** Firefox, Safari and real phones. Firefox draws `<summary>` markers differently; `list-style: none` is
+set, but it was not seen there.
+
 ## MW-1 — the mill follows the gears; a travel tile is walked onto (Robin, 2026-10-17)
 
 Robin, with the AR-1 Mill approval: "The stairs should not need to be interacted with as they're a traveling tile - any

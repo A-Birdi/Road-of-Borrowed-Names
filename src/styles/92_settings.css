@@ -197,7 +197,8 @@ body.high-contrast :is(.folio-settings, .sx-scope) .campaign-box.sx-journey { ba
 
 /* ---- ST-2: the creation step's learning page in the same look (.sx-scope, src/ui/40_create.js) ---------------- */
 .sx-scope { container-type: inline-size; }
-.sx-scope > .sx-sec { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; font-size: 1.12em; font-weight: 600; color: var(--ink-2);
+/* (and the section heads inside the creation step's fold, 40_create.js .cr-more-body) */
+.sx-scope > .sx-sec, .sx-scope .cr-more-body > .sx-sec { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; font-size: 1.12em; font-weight: 600; color: var(--ink-2);
   border-bottom: 1px solid var(--rule); padding-bottom: 0.25em; margin: 1.7em 0 0.3em; }
 .sx-scope > .sx-sec:first-child { margin-top: 0.3em; }
 /* a slip on the page that opens something (the optional placement): a pencilled card with its line, not a pill button */
