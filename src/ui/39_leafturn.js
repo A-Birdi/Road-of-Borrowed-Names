@@ -88,7 +88,12 @@ RB.ui.leafTurn = (function () {
     const onMq = () => { if (mq.matches) stop(); };
     if (mq && mq.addEventListener) mq.addEventListener('change', onMq);
     const dog = setTimeout(stop, P.totalMs + 1500);
-    const wait = (ms) => new Promise((r) => { wake = r; setTimeout(() => { wake = null; r(); }, ms); });
+    const wait = (ms) => new Promise((r) => { wake = r; setTimeout(() => { wake = null; r(); }, Math.max(0, ms)); });
+    // Every leaf is placed on the document's timeline from one start: leaf k starts at t0 + k·(leaf + gap), and the turn
+    // settles at t0 + total. A late frame (a slow machine, a busy page) is absorbed by the next leaf, never added to the
+    // sum: the riffle keeps the contract's length rather than growing by a frame or two per leaf.
+    const clock = () => (document.timeline && typeof document.timeline.currentTime === 'number' ? document.timeline.currentTime : performance.now());
+    let t0 = null;
     const put = (slot, el) => { slot.appendChild(el); if (el.__st) el.scrollTop = el.__st; };
     async function go() {
       const S = o.stage;
@@ -99,6 +104,9 @@ RB.ui.leafTurn = (function () {
       S.appendChild(base);
       for (let k = 0; k < P.hops.length; k++) {
         if (skipped || !o.live() || o.reduce()) return 'skipped';
+        // the next leaf waits for its place on the timeline with the last one still lying where it landed; its pages
+        // and its motion then appear together, in one task
+        if (k) { await wait(t0 + k * (P.leafMs + P.gapMs) - performance.now()); if (skipped || !o.live() || o.reduce()) return 'skipped'; }
         const h = P.hops[k], F = faces(h.from, h.to);
         // the stationary pages beneath, and the moving leaf with its two printed faces
         base.innerHTML = '';
@@ -126,6 +134,7 @@ RB.ui.leafTurn = (function () {
         const fsh = document.createElement('div'), bsh = document.createElement('div');
         fsh.className = 'lt-shade lt-fsh'; bsh.className = 'lt-shade lt-bsh';
         front.appendChild(fsh); back.appendChild(bsh);
+        if (t0 === null) t0 = clock();
         const t = { duration: P.leafMs, easing: P.easing, fill: 'forwards' };
         // the leaf crosses the spine without stopping edge-on; the shade falls on the page it uncovers, then lifts
         const turnA = leaf.animate([{ transform: 'rotateY(0deg)' }, { transform: 'rotateY(' + F.angle + 'deg)' }], t);
@@ -134,14 +143,13 @@ RB.ui.leafTurn = (function () {
         const a3 = cover.animate([{ opacity: 0 }, { opacity: 0.12, offset: 0.55 }, { opacity: 0.32, offset: 0.86 }, { opacity: 0 }], t);
         const a4 = fsh.animate([{ opacity: 0 }, { opacity: 0.5, offset: 0.48 }, { opacity: 0.5 }], t);
         const a5 = bsh.animate([{ opacity: 0.5 }, { opacity: 0.45, offset: 0.52 }, { opacity: 0 }], t);
-        [turnA, a2, a3, a4, a5].forEach((a) => anims.add(a));
+        [turnA, a2, a3, a4, a5].forEach((a) => { anims.add(a); try { a.startTime = t0 + k * (P.leafMs + P.gapMs); } catch (e) { /* no timeline: plays from now */ } });
         current = turnA;
         try { await turnA.finished; } catch (e) { /* cancelled: settle below */ }
         [turnA, a2, a3, a4, a5].forEach((a) => anims.delete(a));
-        if (k < P.hops.length - 1 && P.gapMs) await wait(P.gapMs);
       }
       if (skipped || !o.live()) return 'skipped';
-      await wait(P.settleMs);
+      await wait(t0 + P.totalMs - performance.now());
       return skipped ? 'skipped' : 'turned';
     }
     const done = go().catch(() => 'failed').finally(() => {

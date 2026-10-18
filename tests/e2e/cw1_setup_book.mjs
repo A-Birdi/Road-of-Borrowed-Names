@@ -40,7 +40,8 @@ const watchMounts = (p) => p.evaluate(() => { window.__m = 0; const b = document
 // a move timed in the page: from the press to the live destination, and how many leaves turned
 async function timed(p, press) {
   await p.evaluate(() => {
-    window.__t = { leaves: 0, t0: 0, t1: 0 };
+    window.__t = { leaves: 0, t0: 0, c0: 0 };
+    if (!window.__tc) { window.__tc = true; document.addEventListener('click', () => { if (!window.__t.c0) window.__t.c0 = performance.now(); }, true); }
     const run = RB.ui.leafTurn.run;
     if (!run.__w) { RB.ui.leafTurn.run = function (o) { const h = run.call(this, o); window.__t.leaves = h.plan.n; return h; }; RB.ui.leafTurn.run.__w = true; }
   });
@@ -48,7 +49,8 @@ async function timed(p, press) {
   await press();
   await p.waitForFunction(() => document.querySelector('.cr-stage.lt-on'), null, { timeout: 2000 }).catch(() => {});
   await p.waitForFunction(() => !document.querySelector('.cr-stage.lt-on') && !document.querySelector('.folio-create.cr-turning'), null, { timeout: 5000 });
-  return p.evaluate(() => ({ leaves: window.__t.leaves, ms: Math.round(performance.now() - window.__t.t0) }));
+  // ms: from before the press (Playwright's own round trip included); page: from the click event to the live destination
+  return p.evaluate(() => ({ leaves: window.__t.leaves, ms: Math.round(performance.now() - window.__t.t0), page: Math.round(performance.now() - window.__t.c0) }));
 }
 
 // ---- F01-F05, F07, F09, F15, F17: a fresh journey through the real route ---------------------------------------
@@ -115,7 +117,7 @@ async function timed(p, press) {
   const fields = await p.evaluate(async () => {
     const seen = new Set();
     for (let i = 0; i < 5; i++) {
-      document.querySelectorAll('.cr-body [data-set], .cr-body [data-k], .cr-body [data-acc], .cr-body #nm, .cr-body #nj, .cr-body [data-cp]').forEach((e) => seen.add(e.dataset.set || e.dataset.k || (e.dataset.acc ? 'acc' : e.id || 'cp:' + e.dataset.cp)));
+      document.querySelectorAll('.cr-body [data-set], .cr-body [data-k], .cr-body [data-acc], .cr-body #nm, .cr-body #nj, .cr-body [data-cp]').forEach((e) => seen.add(e.dataset.set || e.dataset.k || (e.dataset.acc ? 'acc' : e.dataset.cp ? 'cp:' + e.dataset.cp : e.id)));
       const nx = document.querySelector('.folio-create .folio-foot .cr-primary:not([hidden]):not([data-a=go])'); if (!nx) break; nx.click();
       await new Promise((r) => setTimeout(r, 900));
     }
@@ -168,7 +170,7 @@ async function timed(p, press) {
   // F11 + M04: Identity is four leaves back, and four forward to return
   const t1 = await timed(p, () => p.click('[data-sg=identity] .cr-edit'));
   ok(await step(p) === 'identity' && t1.leaves === 4, 'F11/M04 Edit identity: four leaves back (' + t1.leaves + ', ' + t1.ms + ' ms)');
-  T['5→1'] = t1.ms;
+  T['5→1'] = t1;
   ok(await p.inputValue('#nm') === 'Wayfarerwayfarer' && await p.isChecked('input[data-set=pron][data-v=custom]'), 'F11 the identity is as it was');
   // F16: a blank name stops the way back, with its own error, focused
   await p.fill('#nm', '   ');
@@ -177,7 +179,7 @@ async function timed(p, press) {
   await p.fill('#nm', 'Wayfarer');
   const t2 = await timed(p, () => p.click('.cr-ret'));
   ok(await step(p) === 'summary' && t2.leaves === 4, 'M04 Return: four leaves forward (' + t2.leaves + ', ' + t2.ms + ' ms)');
-  T['1→5'] = t2.ms;
+  T['1→5'] = t2;
   const s11 = await p.evaluate(() => document.querySelector('.cr-sumpage').innerText + document.querySelector('.cr-sumsheet').innerText);
   ok(/Intermediate/.test(s11) && /Relaxed/.test(s11) && /Wayfarer/.test(s11), 'F11 nothing else lost on the way');
   ok(!errors.length, 'no page errors ' + errors.join('; '));
@@ -190,7 +192,7 @@ async function timed(p, press) {
   await p.evaluate(() => { RB.game.debugStart('rw.village', 22, 30, {}); RB.game.s.learn.profile = 'I'; RB.game.s.learn.difficulty = 'hard'; });
   await p.waitForTimeout(400);
   await p.evaluate(() => RB.game.toTitle()); await p.waitForTimeout(400);
-  const before = await p.evaluate(async () => ({ master: RB.game.settings.vol.master, saved: (await RB.save.loadSettings()).vol.master, guide: RB.game.settings.questGuide, old: RB.game.s && RB.game.s.learn ? RB.game.s.learn.profile : null }));
+  const before = await p.evaluate(async () => ({ master: RB.game.settings.vol.master, saved: ((await RB.save.loadSettings()) || { vol: {} }).vol.master, guide: RB.game.settings.questGuide, old: RB.game.s && RB.game.s.learn ? RB.game.s.learn.profile : null }));
   await openBook(p);
   for (let i = 0; i < 4; i++) await next(p);
   await p.click('.cr-sumpage [data-a=more]');
@@ -208,7 +210,7 @@ async function timed(p, press) {
   ok(await p.evaluate(() => !RB.ui.settings.isOpen() && document.querySelector('.folio-create').dataset.step === 'summary' && !RB.game.G.playing && !window.__R), 'F13 Escape returns to the Summary; nothing begins');
   ok(await p.evaluate(() => /Elementary/.test(document.querySelector('.cr-sumpage').innerText) && /quest markers and hints are off/.test(document.querySelector('.cr-sumpage').innerText)), 'F13 the Summary shows the editor\'s choices');
   await p.evaluate(() => RB.ui.create.dispose()); await p.waitForTimeout(200);
-  const after = await p.evaluate(async () => ({ master: RB.game.settings.vol.master, saved: (await RB.save.loadSettings()).vol.master, guide: RB.game.settings.questGuide, r: window.__R, open: !!document.querySelector('.folio-create'), stage: document.querySelectorAll('.cr-stage').length }));
+  const after = await p.evaluate(async () => ({ master: RB.game.settings.vol.master, saved: ((await RB.save.loadSettings()) || { vol: {} }).vol.master, guide: RB.game.settings.questGuide, r: window.__R, open: !!document.querySelector('.folio-create'), stage: document.querySelectorAll('.cr-stage').length }));
   ok(after.master === before.master && after.saved === before.saved && after.guide === before.guide && after.r === null && !after.open && !after.stage, 'F14 a teardown puts the previewed volume back, saves nothing, resolves no journey ' + JSON.stringify([before, after]));
   ok(!errors.length, 'no page errors ' + errors.join('; '));
   await p.context().close();
@@ -291,7 +293,7 @@ async function timed(p, press) {
   for (let i = 0; i < 3; i++) await next(p);
   await p.evaluate(() => { window.__m = 0; window.__s.sfx = []; });
   const t3 = await timed(p, () => p.click('.cr-route button[data-step="0"]'));
-  T['4→1'] = t3.ms;
+  T['4→1'] = t3;
   const m3 = await p.evaluate(() => ({ step: document.querySelector('.folio-create').dataset.step, mounts: window.__m, page: window.__s.sfx.filter((x) => x === 'page').length }));
   ok(t3.leaves === 3 && m3.step === 'identity' && m3.mounts === 1, 'M03 4→1: three leaves, Identity alone mounted ' + JSON.stringify([t3, m3]));
   ok(t3.ms >= 604 * 0.85 && t3.ms <= 604 * 1.6, 'M03 about 604 ms from the press (' + t3.ms + ' ms; headless Chromium, the nominal plan 604)');
@@ -440,7 +442,8 @@ async function timed(p, press) {
 
 // ---- reduced motion from the start, and a phone: no leaves, the same five steps ------------------------------------------
 for (const [w, h, rm] of [[1440, 900, true], [390, 844, false]]) {
-  const { p, errors } = await page(b, url, { viewport: { width: w, height: h }, reducedMotion: rm ? 'reduce' : 'no-preference', touch: w < 700, mobile: w < 700 });
+  const { p, errors } = await page(b, url, { viewport: { width: w, height: h }, touch: w < 700, mobile: w < 700 });
+  await p.emulateMedia({ reducedMotion: rm ? 'reduce' : 'no-preference' });
   await openBook(p);
   let turned = 0;
   await p.evaluate(() => { window.__lt = 0; new MutationObserver(() => { if (document.querySelector('.cr-stage.lt-on')) window.__lt++; }).observe(document.querySelector('.cr-stage'), { attributes: true, childList: true }); });
@@ -452,7 +455,9 @@ for (const [w, h, rm] of [[1440, 900, true], [390, 844, false]]) {
   await p.context().close();
 }
 
-console.log('timings (headless Chromium, from the press to the live destination): ' + JSON.stringify(T));
+// the contract's totals (4 leaves 696 ms, 3 leaves 604 ms), within the brief's ±15 %, measured in the page
+for (const [k, want] of [['5→1', 696], ['1→5', 696], ['4→1', 604]]) if (T[k]) ok(Math.abs(T[k].page - want) <= want * 0.15, 'timing ' + k + ': ' + T[k].page + ' ms from the click to the live page (contract ' + want + ' ms ±15 %)');
+console.log('timings (headless Chromium; ms = from before the press, page = from the click event to the live destination): ' + JSON.stringify(T));
 await b.close(); srv.close();
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

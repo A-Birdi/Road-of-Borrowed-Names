@@ -4,7 +4,7 @@
 // details), or the candidate's five steps. Deterministic enough to compare: Playwright's fake clock is paused and moved
 // only by the recipe, Math.random is seeded, and the creation figure's idle blink (its 3.6 s interval) is held off in
 // both builds alike. Nothing is saved: each viewport is a fresh browser profile, and the journey is never begun.
-// Usage: node tools/review/cw1_capture.mjs <build.html> <outDir> [--sizes=1440x900,1280x720] [--tag=before]
+// Usage: node tools/review/cw1_capture.mjs <build.html> <outDir> [--sizes=1440x900,1280x720] [--text=1.5] [--profile=F|E|I|A] [--ui=ja] [--no-ornament]
 import http from 'node:http';
 import fs from 'node:fs';
 let pw;
@@ -30,7 +30,7 @@ const INIT = `(() => {
   const si = window.setInterval; window.setInterval = function (f, ms) { if (ms === 3600) return 0; return si.apply(this, arguments); };
 })();`;
 // the traveller, the same in both builds
-const T = { name: 'Robin', pron: 'she', hair: 'ponytail', outfit: '2', shape: 'coat', acc: ['glasses', 'flower'], bg: 'student', profile: 'E', input: 'hand', assist: 'assist', difficulty: 'hard' };
+const T = { name: 'Robin', pron: 'she', hair: 'ponytail', outfit: '2', shape: 'coat', acc: ['glasses', 'flower'], bg: 'student', profile: arg('profile', 'E'), input: 'hand', assist: 'assist', difficulty: 'hard' };
 const shots = [];
 
 async function run(w, h) {
@@ -53,7 +53,9 @@ async function run(w, h) {
     await p.screenshot({ path: f });
     shots.push(f);
   };
-  await ev((ts) => { RB.game.settings.textScale = ts; RB.game.applySettings(); }, textScale);
+  await ev((o) => { RB.game.settings.textScale = o.ts; if (o.ui) RB.game.settings.uiLang = o.ui; RB.game.applySettings(); }, { ts: textScale, ui: arg('ui', '') });
+  // (the candidate's ornaments off, for the side-by-side: a review-only body class, never a player setting)
+  if (process.argv.includes('--no-ornament')) await ev(() => document.body.classList.add('cr-no-ornament'));
   // New Game → slot 1 → Skip prologue
   await ev(() => { const b = [...document.querySelectorAll('button')].find((x) => /New Game/.test(x.textContent)); b.click(); });
   await click('.slot[data-slot="1"] [data-a=start]');
@@ -77,6 +79,8 @@ async function run(w, h) {
   };
   const next = async () => { await ev(() => { const b = document.querySelector('.folio-create .folio-foot .cr-primary:not([hidden])'); b.click(); }); await settle(); };
   const pick = (sel) => ev((s) => { const i = document.querySelector(s); if (!i) throw new Error('missing ' + s); i.click(); }, sel);
+  // every page of the book that scrolls, to its top or its end (the same rule in both builds)
+  const scrollAll = (end) => ev((end) => { document.querySelectorAll('.folio-create *').forEach((l) => { if (l.scrollHeight > l.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(l).overflowY)) l.scrollTop = end ? l.scrollHeight : 0; }); }, end);
   // Identity
   await ev((t) => { const nm = document.querySelector('#nm'); nm.focus(); nm.value = t.name; nm.dispatchEvent(new Event('input', { bubbles: true })); nm.blur(); }, T);
   await pick('input[data-set=pron][data-v=' + T.pron + ']');
@@ -87,7 +91,7 @@ async function run(w, h) {
   await pick('input[data-set=outfit][data-v="' + T.outfit + '"]');
   await pick('input[data-set=shape][data-v=' + T.shape + ']');
   for (const a of T.acc) await pick('input[data-acc=' + a + ']');
-  await ev(() => { document.querySelectorAll('.folio-create .leaf, .folio-create .cr-leaf').forEach((l) => { l.scrollTop = 0; }); });
+  await scrollAll(false);
   await shot('2_appearance');
   await next();
   // Background
@@ -101,20 +105,20 @@ async function run(w, h) {
   if (folded) await click(fold); // (baseline: assist and tactics live in the fold)
   for (const k of ['assist', 'difficulty']) await pick('input[data-k=' + k + '][data-v=' + T[k] + ']');
   if (folded) await click(fold);
-  await ev(() => { document.querySelectorAll('.folio-create .leaf, .folio-create .cr-leaf').forEach((l) => { l.scrollTop = 0; }); });
+  await scrollAll(false);
   await shot('4_learning');
-  await ev(() => { document.querySelectorAll('.folio-create .leaf, .folio-create .cr-leaf').forEach((l) => { l.scrollTop = l.scrollHeight; }); });
+  await scrollAll(true);
   await shot('4_learning_scrolled');
   await click(fold);
   await ev(() => { const d = document.querySelector('.folio-create details[open]'); if (d) d.scrollIntoView({ block: 'start' }); });
   await shot('4_learning_fold_open');
   await click(fold);
-  await ev(() => { document.querySelectorAll('.folio-create .leaf, .folio-create .cr-leaf').forEach((l) => { l.scrollTop = 0; }); });
+  await scrollAll(false);
   if (await has('.folio-create .cr-route [data-step="4"]')) {
     // the candidate: the fifth step, Summary
     await next();
     await shot('5_summary');
-    await ev(() => { document.querySelectorAll('.folio-create .cr-leaf').forEach((l) => { l.scrollTop = l.scrollHeight; }); });
+    await scrollAll(true);
     await shot('5_summary_scrolled');
   } else {
     // the baseline: Begin, then the departure review over the not-yet-started journey
@@ -130,7 +134,7 @@ async function run(w, h) {
 
 const report = {};
 for (const [w, h] of sizes) report[w + 'x' + h] = await run(w, h);
-fs.writeFileSync(out + '/capture.json', JSON.stringify({ build: html, textScale, sizes: sizes.map((s) => s.join('x')), report, shots: shots.map((f) => f.split('/').pop()) }, null, 1));
+fs.writeFileSync(out + '/capture.json', JSON.stringify({ build: html, textScale, uiLang: arg('ui', 'default'), profile: T.profile, ornaments: !process.argv.includes('--no-ornament'), sizes: sizes.map((s) => s.join('x')), report, shots: shots.map((f) => f.split('/').pop()) }, null, 1));
 await browser.close();
 srv.close();
 console.log(JSON.stringify(report));

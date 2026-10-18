@@ -866,7 +866,14 @@ RB.ui.create = (function () {
         if (V.turn) { V.turn.skip(); return; }
         if (V.nav === 'idle' && V.i > 0) navigate(V.i - 1, 'key');
       };
-      layer.onAction = (a, e) => (a === 'menu' ? tabKey(fr.el, e) : false);
+      // the game's keys answer buttons only; a fold's own heading (the reading fold, More choices) opens and closes on
+      // Enter or Space too, once a press, never while a leaf turns
+      layer.onAction = (a, e) => {
+        if (a === 'menu') return tabKey(fr.el, e);
+        const f = document.activeElement;
+        if (a === 'ok' && f && f.tagName === 'SUMMARY' && body.contains(f)) { if (V.nav === 'idle') f.click(); return true; }
+        return false;
+      };
 
       // -- software keyboard -----------------------------------------------------------------
       // While a text field is focused and the visual viewport is much shorter than

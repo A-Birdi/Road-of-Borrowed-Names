@@ -439,6 +439,10 @@ body.high-contrast .cr-more > summary { background: none; border-color: #000; }
    Settings' own; on a phone it goes under it, as the levels do) */
 @media (min-width: 760px) and (min-height: 540px) { .folio-create .cr-rp .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: 9.5em minmax(0, 1fr); } }
 @media not all and (min-width: 760px) and (min-height: 540px) { .folio-create .cr-rp .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: minmax(0, 1fr); } .folio-create .cr-rp .sx-opts.stack .sx-d { padding: 0 0.4em 0.35em 1.1em; } }
+/* large text on a wide screen: the page is narrow in its own letters (about 20 at 150 %), so each choice's words go
+   beneath it, as Your Japanese's do, rather than in a column too thin to read */
+.folio-create .cr-rp { container-type: inline-size; }
+@container (max-width: 23em) { .folio-create .cr-rp .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: minmax(0, 1fr); } .folio-create .cr-rp .sx-opts.stack .sx-d { padding: 0 0.4em 0.35em 1.1em; } }
 .folio-create .cr-learn .opt.sx-opt .sx-mark { padding: 0.35em 0.85em; }
 .cr-learn .sx-slipbtn { margin: 0.4em 0 1.1em; }
 .cr-readfold { margin: 1.2em 0 0.6em; }
@@ -520,6 +524,8 @@ body.high-contrast .lt-shade { display: none; }
 @container (max-width: 31em) {
   .folio-create .cr-reg > .cr-sg, .folio-create .cr-row, .folio-create .cr-row.cr-row-sound { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "t ed" "v v"; align-items: center; }
   .folio-create .cr-row.cr-row-sound { grid-template-areas: "t t" "v v" "ed ed"; }
+  /* (no Edit beside its name: the name keeps the same line height as the rows that have one) */
+  .folio-create .cr-row.cr-row-sound > dt { min-height: var(--tap, 44px); display: flex; align-items: center; }
   .folio-create .cr-edit { white-space: normal; text-align: left; }
 }
 /* CW-1 ornaments (drawn here as compact SVG; sources in docs/review/cw1/ornaments/): gilt corners, two sprigs, a rule terminal */
