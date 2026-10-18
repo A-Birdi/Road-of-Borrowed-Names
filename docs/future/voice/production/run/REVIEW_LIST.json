@@ -1,0 +1,2452 @@
+{
+ "schema": "rbn.voice.review/1",
+ "what": "Takes for Robin to listen to after the whole-game batch (records only; the audio is on Robin's PC). Paths are relative to the batch folder.",
+ "batch": {
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "manifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "groups": [
+  {
+   "key": "open",
+   "title": "Still wrong after 12 seeds (needs a decision)",
+   "items": [
+    {
+     "id": "r1-6ab18b4d8dcef181",
+     "speaker": "wataru",
+     "voice": null,
+     "pitch": null,
+     "delivery": "surprise",
+     "spoken": "……辞めさせないんですか。",
+     "sent": "……辞めさせないんですか。",
+     "lineKeys": [
+      "sg.omi_wataru#a036d6675c"
+     ],
+     "file": "wataru/r1-6ab18b4d8dcef181.opus",
+     "seconds": 1.17,
+     "why": "about 1 s for 11 morae on every seed, where a normal pace is about 2.9 s: words are likely skipped",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T112908/wataru/r1-6ab18b4d8dcef181.opus",
+       "seconds": 0.935
+      },
+      {
+       "file": "superseded/20261018T113530/wataru/r1-6ab18b4d8dcef181.opus",
+       "seconds": 0.94
+      }
+     ]
+    }
+   ],
+   "count": 1
+  },
+  {
+   "key": "redone",
+   "title": "Regenerated after the length check (new take, with the replaced take for comparison)",
+   "items": [
+    {
+     "id": "r1-07de6919eca7094d",
+     "speaker": "mb_uno",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "暗くなったのに……運河の方かい？",
+     "sent": "暗くなったのに……運河の方かい？",
+     "lineKeys": [
+      "mb.uno_evening#bd7cfcbd8e"
+     ],
+     "file": "mb_uno/r1-07de6919eca7094d.opus",
+     "seconds": 5.28,
+     "why": "the replaced take ran far longer than its text (likely a runaway) or was cut short",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T112908/mb_uno/r1-07de6919eca7094d.opus",
+       "seconds": 9.68
+      }
+     ]
+    },
+    {
+     "id": "r1-239e829694ef0c3e",
+     "speaker": "mb_uno",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "川屋へようこそ。休んでいく？川の音で、よく眠れるよ。",
+     "sent": "かわやへようこそ。休んでいく？川の音で、よく眠れるよ。",
+     "lineKeys": [
+      "mb.uno_rest#d65c5d6513"
+     ],
+     "file": "mb_uno/r1-239e829694ef0c3e.opus",
+     "seconds": 4.675,
+     "why": "the replaced take ran far longer than its text (likely a runaway) or was cut short",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T112908/mb_uno/r1-239e829694ef0c3e.opus",
+       "seconds": 16.4
+      },
+      {
+       "file": "superseded/20261018T113530/mb_uno/r1-239e829694ef0c3e.opus",
+       "seconds": 12.78
+      }
+     ]
+    },
+    {
+     "id": "r1-60727e5d739b009b",
+     "speaker": "ko_otoha",
+     "voice": null,
+     "pitch": null,
+     "delivery": "sad",
+     "spoken": "近ごろは、葉が多すぎる。見たことのない、紙の切れ端のような葉まで混じっている。木が、疲れているのです。",
+     "sent": "近ごろは、葉が多すぎる。見たことのない、紙の切れ端のような葉まで混じっている。木が、疲れているのです。",
+     "lineKeys": [
+      "ko.otoha_first#a31cfd6902"
+     ],
+     "file": "ko_otoha/r1-60727e5d739b009b.opus",
+     "seconds": 8.345,
+     "why": "the replaced take ran far longer than its text (likely a runaway) or was cut short",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T112908/ko_otoha/r1-60727e5d739b009b.opus",
+       "seconds": 38.335
+      }
+     ]
+    },
+    {
+     "id": "r1-9f584f51e6a3e826",
+     "speaker": "mb_uno",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "夕飯出来てるよ。座って──",
+     "sent": "夕飯出来てるよ。座って──",
+     "lineKeys": [
+      "mb.uno_evening#2712d40616"
+     ],
+     "file": "mb_uno/r1-9f584f51e6a3e826.opus",
+     "seconds": 3.605,
+     "why": "the replaced take ran far longer than its text (likely a runaway) or was cut short",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T112908/mb_uno/r1-9f584f51e6a3e826.opus",
+       "seconds": 5.84
+      },
+      {
+       "file": "superseded/20261018T113530/mb_uno/r1-9f584f51e6a3e826.opus",
+       "seconds": 0.56
+      }
+     ]
+    },
+    {
+     "id": "r1-bbdaa29950ab28b5",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "次。",
+     "sent": "次。",
+     "lineKeys": [
+      "sg.da_boss#ddf3ad1522"
+     ],
+     "file": "sg_clerk/r1-bbdaa29950ab28b5.opus",
+     "seconds": 2.284,
+     "why": "the replaced take ran far longer than its text (likely a runaway) or was cut short",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T112908/sg_clerk/r1-bbdaa29950ab28b5.opus",
+       "seconds": 2.475
+      }
+     ]
+    },
+    {
+     "id": "r1-de52bf8bed34866f",
+     "speaker": "hall_kero",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "僕は、西の井戸に百年住んでいる。井の中の蛙、だけどね。井戸のことなら、誰よりも知っているよ。",
+     "sent": "僕は、西の井戸に百年住んでいる。井の中の蛙、だけどね。井戸のことなら、誰よりも知っているよ。",
+     "lineKeys": [
+      "hall.w5.kero#fc5e197562"
+     ],
+     "file": "hall_kero/r1-de52bf8bed34866f.opus",
+     "seconds": 10.96,
+     "why": "the replaced take ran far longer than its text (likely a runaway) or was cut short",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T112908/hall_kero/r1-de52bf8bed34866f.opus",
+       "seconds": 32.052
+      }
+     ]
+    },
+    {
+     "id": "r1-e73b4120e8097b9c",
+     "speaker": "wataru",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "そしたら嵐で、船がまた壊れて。督促状が来て。開けるのが怖くて、まだ開けていません。",
+     "sent": "そしたら嵐で、船がまた壊れて。督促状が来て。開けるのが怖くて、まだ開けていません。",
+     "lineKeys": [
+      "sg.wataru_confront#b7064a0ebf"
+     ],
+     "file": "wataru/r1-e73b4120e8097b9c.opus",
+     "seconds": 7.295,
+     "why": "the replaced take ran far longer than its text (likely a runaway) or was cut short",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T112908/wataru/r1-e73b4120e8097b9c.opus",
+       "seconds": 22.725
+      }
+     ]
+    }
+   ],
+   "count": 7
+  },
+  {
+   "key": "mw1",
+   "title": "New narrator lines and reading from the MW-1 supplement",
+   "items": [
+    {
+     "id": "r1-103e01f252363937",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "石臼が重たげに回っている。触ると、熱いくらいだ。",
+     "sent": "石臼が重たげに回っている。触ると、熱いくらいだ。",
+     "lineKeys": [
+      "rw.m1_stone#a5b36fff6e"
+     ],
+     "file": "narrator/r1-103e01f252363937.opus",
+     "seconds": 3.93,
+     "why": "new line (MW-1)"
+    },
+    {
+     "id": "r1-8f4b9aa7d6c6e953",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "階段の下は、あふれた水でいっぱいだ。歯車が止まっていて、水が水路に戻らない。これでは降りられない。",
+     "sent": "階段の下は、あふれた水でいっぱいだ。歯車が止まっていて、水がすいろに戻らない。これでは降りられない。",
+     "lineKeys": [
+      "rw.m1_stairs#c3e1c6ec15"
+     ],
+     "file": "narrator/r1-8f4b9aa7d6c6e953.opus",
+     "seconds": 7.14,
+     "why": "new line (MW-1)"
+    },
+    {
+     "id": "r1-b279efeb3bfc1fe4",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "天井の扉ががたんと開き、梯子がどすんと落ちてきた。",
+     "sent": "天井の扉ががたんと開き、梯子がどすんと落ちてきた。",
+     "lineKeys": [
+      "rw.m1_gears#fe6f849cd7"
+     ],
+     "file": "narrator/r1-b279efeb3bfc1fe4.opus",
+     "seconds": 4.0,
+     "why": "new line (MW-1)"
+    },
+    {
+     "id": "r1-b817903b15df787b",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "階段の下から、水の引いていく音がする。これで下へ降りられる。",
+     "sent": "階段の下から、水の引いていく音がする。これで下へ降りられる。",
+     "lineKeys": [
+      "rw.m1_gears#f15e04c6cf"
+     ],
+     "file": "narrator/r1-b817903b15df787b.opus",
+     "seconds": 4.49,
+     "why": "new line (MW-1)"
+    },
+    {
+     "id": "r1-d11124da63c3c891",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "水車はきしみながら揺れるが、まだ回らない。",
+     "sent": "水車はきしみながら揺れるが、まだ回らない。",
+     "lineKeys": [
+      "rw.mr_wheel#7cd63802f5"
+     ],
+     "file": "narrator/r1-d11124da63c3c891.opus",
+     "seconds": 3.08,
+     "why": "new line (MW-1)"
+    },
+    {
+     "id": "r1-feba99cbd745473e",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "屋根の下から、声がもれてくる。屋根裏で何かが、水車を止めているようだ。",
+     "sent": "屋根の下から、声がもれてくる。やねうらで何かが、水車を止めているようだ。",
+     "lineKeys": [
+      "rw.mr_wheel#e22f1f8139"
+     ],
+     "file": "narrator/r1-feba99cbd745473e.opus",
+     "seconds": 5.19,
+     "why": "new line (MW-1)"
+    },
+    {
+     "id": "r1-ref-356973b2029addfb",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "どすん",
+     "sent": "どすん",
+     "lineKeys": [],
+     "file": "ref/r1-ref-356973b2029addfb.opus",
+     "seconds": 0.65,
+     "why": "new reference reading (MW-1)"
+    }
+   ],
+   "count": 7
+  },
+  {
+   "key": "edges",
+   "title": "Extra sound before or after the voice (0.2-0.35 s), flagged by the clean-ending check",
+   "items": [
+    {
+     "id": "r1-105db867e8f5d0ae",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "closed",
+     "spoken": "……誰も読めない名前は、無いのと同じです。私が読めて、よかった。",
+     "sent": "……誰も読めない名前は、無いのと同じです。私が読めて、よかった。",
+     "lineKeys": [
+      "ko.ren_toro_all#b7e55f1c7f"
+     ],
+     "file": "ren/r1-105db867e8f5d0ae.opus",
+     "seconds": 5.375,
+     "why": "edge after trim: pre 0.03 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-112e9e6e25627595",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "さっきのしりとり、長く繋がったな。俺は、あんたの出口を残すのに必死だった。",
+     "sent": "さっきのしりとり、長く繋がったな。俺は、あんたの出口を残すのに必死だった。",
+     "lineKeys": [
+      "wp.reflect_nao#55f3db438d"
+     ],
+     "file": "nao/r1-112e9e6e25627595.opus",
+     "seconds": 6.235,
+     "why": "edge after trim: pre 0.09 s, tail 0.21 s"
+    },
+    {
+     "id": "r1-11ce81ea3ba87ad3",
+     "speaker": "yn_ginnojo",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……失礼。湯治の客のギンノジョウだ。昔、八百橋の芝居町で、少し人を笑わせていた。",
+     "sent": "……失礼。湯治の客のギンノジョウだ。昔、やおばしの芝居町で、少し人を笑わせていた。",
+     "lineKeys": [
+      "yn.ginnojo#47c3b44748"
+     ],
+     "file": "yn_ginnojo/r1-11ce81ea3ba87ad3.opus",
+     "seconds": 8.155,
+     "why": "edge after trim: pre 0.20 s, tail 0.00 s"
+    },
+    {
+     "id": "r1-15ae096935bef728",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "smirk",
+     "spoken": "目がいいな。……三本目だ。前の二本は、川と崖に落とした。",
+     "sent": "目がいいな。……三本目だ。前の二本は、川と崖に落とした。",
+     "lineKeys": [
+      "co.t_nao_pencil#736a5f3e00"
+     ],
+     "file": "nao/r1-15ae096935bef728.opus",
+     "seconds": 5.33,
+     "why": "edge after trim: pre 0.02 s, tail 0.22 s"
+    },
+    {
+     "id": "r1-1743624308e405cb",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "向こう岸の石。「渡し場」と彫ってある。下の方に、後から小さく彫り足した字。「コウジ」。",
+     "sent": "向こう岸の石。「渡し場」と彫ってある。下の方に、後から小さく彫り足した字。「コウジ」。",
+     "lineKeys": [
+      "rw.far_marker#bb9c1ba88f"
+     ],
+     "file": "narrator/r1-1743624308e405cb.opus",
+     "seconds": 6.01,
+     "why": "edge after trim: pre 0.04 s, tail 0.21 s"
+    },
+    {
+     "id": "r1-1aa440cef172cb7c",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "机の上に、宛名の薄れた手紙が山のように積んである。",
+     "sent": "机の上に、宛名の薄れた手紙が山のように積んである。",
+     "lineKeys": [
+      "mb.deadletter_desk#161bcb406b"
+     ],
+     "file": "narrator/r1-1aa440cef172cb7c.opus",
+     "seconds": 3.96,
+     "why": "edge after trim: pre 0.23 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-1cab8c9e13e3ef0d",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "closed",
+     "spoken": "……聞こえた。名前を呼んでもらうと、声って戻るんだね。薬には、できないこと。",
+     "sent": "……聞こえた。名前を呼んでもらうと、声って戻るんだね。薬には、できないこと。",
+     "lineKeys": [
+      "sa2.hushed#94068c7520"
+     ],
+     "file": "mio/r1-1cab8c9e13e3ef0d.opus",
+     "seconds": 6.21,
+     "why": "edge after trim: pre 0.20 s, tail 0.07 s"
+    },
+    {
+     "id": "r1-1e0a58ad2ec3f19c",
+     "speaker": "ko_kihei",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "また会ったな。……俺はキヘイ。昔、この島の船乗りだった。",
+     "sent": "また会ったな。……俺はキヘイ。昔、この島の船乗りだった。",
+     "lineKeys": [
+      "ko.kihei_ask#e8f47ffcf8"
+     ],
+     "file": "ko_kihei/r1-1e0a58ad2ec3f19c.opus",
+     "seconds": 6.892,
+     "why": "edge after trim: pre 0.03 s, tail 0.45 s"
+    },
+    {
+     "id": "r1-21c6dcf18969a559",
+     "speaker": "pc",
+     "voice": "B",
+     "pitch": "high",
+     "delivery": "neutral",
+     "spoken": "知り合いの家？",
+     "sent": "知り合いの家？",
+     "lineKeys": [
+      "sg.b_nao_isamu#4335f3d94a"
+     ],
+     "file": "pc/r1-21c6dcf18969a559.opus",
+     "seconds": 1.22,
+     "why": "edge after trim: pre 0.20 s, tail 0.03 s"
+    },
+    {
+     "id": "r1-25113880dac6e9ec",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "smile",
+     "spoken": "少し休もう。生姜の飴、あげる。体が温まるよ。",
+     "sent": "少し休もう。生姜の飴、あげる。体が温まるよ。",
+     "lineKeys": [
+      "sg.da_reading_first#25cddc1019"
+     ],
+     "file": "mio/r1-25113880dac6e9ec.opus",
+     "seconds": 5.24,
+     "why": "edge after trim: pre 0.21 s, tail 0.03 s"
+    },
+    {
+     "id": "r1-265bad36188d0af1",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "smile",
+     "spoken": "具合を聞かれる側になるの、最初は落ち着かなかったのよ。今は、少し慣れた。",
+     "sent": "具合を聞かれる側になるの、最初は落ち着かなかったのよ。今は、少し慣れた。",
+     "lineKeys": [
+      "end.mio.core#a1fe9ffb53"
+     ],
+     "file": "mio/r1-265bad36188d0af1.opus",
+     "seconds": 5.94,
+     "why": "edge after trim: pre 0.04 s, tail 0.21 s"
+    },
+    {
+     "id": "r1-2d3ac586bb0e7209",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "言われた通りにしか行かない舟、か。……正直な奴だ。",
+     "sent": "言われた通りにしか行かない舟、か。……正直な奴だ。",
+     "lineKeys": [
+      "mb.ks_token_shelf#212c320964"
+     ],
+     "file": "nao/r1-2d3ac586bb0e7209.opus",
+     "seconds": 3.85,
+     "why": "edge after trim: pre 0.01 s, tail 0.24 s"
+    },
+    {
+     "id": "r1-3347019f558be406",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "回れ。土砂の上は歩くな。足の下で動くぞ。",
+     "sent": "回れ。土砂の上は歩くな。足の下で動くぞ。",
+     "lineKeys": [
+      "cr.pass1_slide#66bd885851"
+     ],
+     "file": "nao/r1-3347019f558be406.opus",
+     "seconds": 4.095,
+     "why": "edge after trim: pre 0.05 s, tail 0.21 s"
+    },
+    {
+     "id": "r1-34fe3a70274c4375",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "laugh",
+     "spoken": "……何も起きない日か。配達人には、一番贅沢な日だ。",
+     "sent": "……何も起きない日か。配達人には、一番贅沢な日だ。",
+     "lineKeys": [
+      "co.reflect_keep_nao#17d522de9e"
+     ],
+     "file": "nao/r1-34fe3a70274c4375.opus",
+     "seconds": 4.03,
+     "why": "edge after trim: pre 0.02 s, tail 0.26 s"
+    },
+    {
+     "id": "r1-37abdbde0005bf5e",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "今日は、話よりお茶にしようか。",
+     "sent": "今日は、話よりお茶にしようか。",
+     "lineKeys": [
+      "road.mio.quiet1#58d4cafdd3"
+     ],
+     "file": "mio/r1-37abdbde0005bf5e.opus",
+     "seconds": 2.51,
+     "why": "edge after trim: pre 0.09 s, tail 0.22 s"
+    },
+    {
+     "id": "r1-37abf7b89ce47f63",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "think",
+     "spoken": "言葉を一つ取られた町です。……もし一つだけ守れるとしたら、あなたはどの言葉を守りますか。",
+     "sent": "言葉を一つ取られた町です。……もし一つだけ守れるとしたら、あなたはどの言葉を守りますか。",
+     "lineKeys": [
+      "co.inv_lf_word#3cd42335c7"
+     ],
+     "file": "ren/r1-37abf7b89ce47f63.opus",
+     "seconds": 6.715,
+     "why": "edge after trim: pre 0.07 s, tail 0.19 s"
+    },
+    {
+     "id": "r1-3e1f5965da859337",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "手紙を持っていけ。返送は……取り消す。",
+     "sent": "手紙を持っていけ。返送は……取り消す。",
+     "lineKeys": [
+      "sg.da_boss_after#9df5419dd9"
+     ],
+     "file": "sg_clerk/r1-3e1f5965da859337.opus",
+     "seconds": 5.108,
+     "why": "edge after trim: pre 0.04 s, tail 0.25 s"
+    },
+    {
+     "id": "r1-3e5c6944b89b29e4",
+     "speaker": "sousuke",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "灯守の道に灯りが戻ったので、冬でも尾根を越えて手紙が出せるようになりました。",
+     "sent": "灯守の道にあかりが戻ったので、冬でも尾根を越えて手紙が出せるようになりました。",
+     "lineKeys": [
+      "kr.lw_sb_ridgepost_sousuke#59dc1417ab"
+     ],
+     "file": "sousuke/r1-3e5c6944b89b29e4.opus",
+     "seconds": 5.12,
+     "why": "edge after trim: pre 0.03 s, tail 0.22 s"
+    },
+    {
+     "id": "r1-403597d1e01eb4fd",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "答えも、言った。この宿は継げない。今は、お前と道の最後まで行く。……顔を見て言えた。手紙で逃げなかった。",
+     "sent": "答えも、言った。この宿は継げない。今は、お前と道の最後まで行く。……顔を見て言えた。手紙で逃げなかった。",
+     "lineKeys": [
+      "cr.porch_nao#ffd2e2f034"
+     ],
+     "file": "nao/r1-403597d1e01eb4fd.opus",
+     "seconds": 10.37,
+     "why": "edge after trim: pre 0.07 s, tail 0.31 s"
+    },
+    {
+     "id": "r1-40bd9ceef0d656ea",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "angry",
+     "spoken": "番ね。人の手紙の宛名まで持っていく番人か。",
+     "sent": "番ね。人の手紙の宛名まで持っていく番人か。",
+     "lineKeys": [
+      "sa.kasane_meet#0938dab9de"
+     ],
+     "file": "nao/r1-40bd9ceef0d656ea.opus",
+     "seconds": 3.54,
+     "why": "edge after trim: pre 0.02 s, tail 0.18 s"
+    },
+    {
+     "id": "r1-413f45c38a8bd993",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……本庁は、納得しないだろう。名は増えるほど争いを生む、と本庁の主は言う。静かなほうが、人は傷つかない、と。",
+     "sent": "……本庁は、納得しないだろう。名は増えるほど争いを生む、と本庁の主は言う。静かなほうが、人は傷つかない、と。",
+     "lineKeys": [
+      "sg.da_boss_after#3f40401469"
+     ],
+     "file": "sg_clerk/r1-413f45c38a8bd993.opus",
+     "seconds": 10.973,
+     "why": "edge after trim: pre 0.04 s, tail 0.41 s"
+    },
+    {
+     "id": "r1-4142b50b447246e7",
+     "speaker": "mb_bridgespirit",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……渡るな。間違った所へ、誰も渡らせない。私は……私は、何という橋だったか。",
+     "sent": "……渡るな。間違った所へ、誰も渡らせない。私は……私は、何という橋だったか。",
+     "lineKeys": [
+      "mb.firstbridge_arrive#360f629810"
+     ],
+     "file": "mb_bridgespirit/r1-4142b50b447246e7.opus",
+     "seconds": 10.505,
+     "why": "edge after trim: pre 0.03 s, tail 1.48 s"
+    },
+    {
+     "id": "r1-449589a248d0525b",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "キクエさんの札の真似。……正直な札は、書くのに時間がかかるの。",
+     "sent": "キクエさんの札の真似。……正直な札は、書くのに時間がかかるの。",
+     "lineKeys": [
+      "sa2.end_mio#51824c5530"
+     ],
+     "file": "mio/r1-449589a248d0525b.opus",
+     "seconds": 5.03,
+     "why": "edge after trim: pre 0.21 s, tail 0.05 s"
+    },
+    {
+     "id": "r1-4685253e93d5dcbc",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……でも、そっちのほうがいい。拒否できる人が受け取った手紙は、ちゃんと届いたってことだから。",
+     "sent": "……でも、そっちのほうがいい。拒否できる人が受け取った手紙は、ちゃんと届いたってことだから。",
+     "lineKeys": [
+      "lf.b_nao4#abfc81811e"
+     ],
+     "file": "nao/r1-4685253e93d5dcbc.opus",
+     "seconds": 5.74,
+     "why": "edge after trim: pre 0.03 s, tail 0.21 s"
+    },
+    {
+     "id": "r1-4cc662f6385d27c3",
+     "speaker": "co_isao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "ん？ああ、これか。知らんうちにあった。職人にはよくあることだ。",
+     "sent": "ん？ああ、これか。知らんうちにあった。職人にはよくあることだ。",
+     "lineKeys": [
+      "co.isao_first#022bf588c9"
+     ],
+     "file": "co_isao/r1-4cc662f6385d27c3.opus",
+     "seconds": 5.125,
+     "why": "edge after trim: pre 0.03 s, tail 0.32 s"
+    },
+    {
+     "id": "r1-4dd8ba4f35accea7",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "規定にはない方法だ。",
+     "sent": "規定にはない方法だ。",
+     "lineKeys": [
+      "sg.da_boss_after#228e6057fd"
+     ],
+     "file": "sg_clerk/r1-4dd8ba4f35accea7.opus",
+     "seconds": 2.861,
+     "why": "edge after trim: pre 0.04 s, tail 0.78 s"
+    },
+    {
+     "id": "r1-5297d37698163754",
+     "speaker": "kasane",
+     "voice": null,
+     "pitch": null,
+     "delivery": "smile",
+     "spoken": "ウシオさんの札と同じですね。「本人が選ぶまで預かること」。",
+     "sent": "ウシオさんの札と同じですね。「本人が選ぶまで預かること」。",
+     "lineKeys": [
+      "sa.choose_mem#945286f37b"
+     ],
+     "file": "kasane/r1-5297d37698163754.opus",
+     "seconds": 4.83,
+     "why": "edge after trim: pre 0.04 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-55a26897981d918f",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "surprise",
+     "spoken": "……キクエさん。母の、古いお友達です。",
+     "sent": "……キクエさん。母の、古いお友達です。",
+     "lineKeys": [
+      "cr.mio_kikue#165224b666"
+     ],
+     "file": "mio/r1-55a26897981d918f.opus",
+     "seconds": 3.13,
+     "why": "edge after trim: pre 0.20 s, tail 0.10 s"
+    },
+    {
+     "id": "r1-57d57b1788bacb98",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "closed",
+     "spoken": "……少し、灯守の用事があります。一人で行かせてください。",
+     "sent": "……少し、灯守の用事があります。一人で行かせてください。",
+     "lineKeys": [
+      "kr.ren_evening#b7988567e0"
+     ],
+     "file": "ren/r1-57d57b1788bacb98.opus",
+     "seconds": 4.68,
+     "why": "edge after trim: pre 0.21 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-5828101634f027be",
+     "speaker": "pc",
+     "voice": "B",
+     "pitch": "high",
+     "delivery": "neutral",
+     "spoken": "三つとも見ました。でも……全部が同じ原因ではないと思います。",
+     "sent": "三つとも見ました。でも……全部が同じ原因ではないと思います。",
+     "lineKeys": [
+      "sg.omi_report#ddca17fa47"
+     ],
+     "file": "pc/r1-5828101634f027be.opus",
+     "seconds": 5.355,
+     "why": "edge after trim: pre 0.03 s, tail 0.19 s"
+    },
+    {
+     "id": "r1-597be2e6b4e7a4ab",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「尾根の灯」。何十年暗かった灯籠に、灯がともった。",
+     "sent": "「尾根のひ」。何十年暗かったとうろうに、ひがともった。",
+     "lineKeys": [
+      "kr.ren_lantern#fa087297b6"
+     ],
+     "file": "narrator/r1-597be2e6b4e7a4ab.opus",
+     "seconds": 3.67,
+     "why": "edge after trim: pre 0.02 s, tail 0.28 s"
+    },
+    {
+     "id": "r1-66fa3d5b1ad52ed9",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "待ってたなら、自分で止めればよかったんだ。",
+     "sent": "待ってたなら、自分で止めればよかったんだ。",
+     "lineKeys": [
+      "sa.after_battle#39856833c7"
+     ],
+     "file": "nao/r1-66fa3d5b1ad52ed9.opus",
+     "seconds": 2.67,
+     "why": "edge after trim: pre 0.02 s, tail 0.18 s"
+    },
+    {
+     "id": "r1-6843cbc80ebf3837",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「潮硝子」の札を拾った。",
+     "sent": "「潮硝子」の札を拾った。",
+     "lineKeys": [
+      "hall.w10.tab_sg#87dfc51991"
+     ],
+     "file": "narrator/r1-6843cbc80ebf3837.opus",
+     "seconds": 1.99,
+     "why": "edge after trim: pre 0.21 s, tail 0.08 s"
+    },
+    {
+     "id": "r1-6ab73af7274acf32",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "記録にないことも、線は覚えていたわけだ。",
+     "sent": "記録にないことも、線は覚えていたわけだ。",
+     "lineKeys": [
+      "cr.lw_co_tally_open#e60d697811"
+     ],
+     "file": "nao/r1-6ab73af7274acf32.opus",
+     "seconds": 2.91,
+     "why": "edge after trim: pre 0.05 s, tail 0.26 s"
+    },
+    {
+     "id": "r1-6db1670a96cca6fa",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宛名判読不能。返送。次。",
+     "sent": "宛名判読不能。返送。次。",
+     "lineKeys": [
+      "sg.da_boss#b4cac4c057"
+     ],
+     "file": "sg_clerk/r1-6db1670a96cca6fa.opus",
+     "seconds": 5.119,
+     "why": "edge after trim: pre 0.03 s, tail 0.21 s"
+    },
+    {
+     "id": "r1-6dec1e57be17bd34",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "think",
+     "spoken": "旅は、一応終わった。なのに、帰り道が一本じゃなくなった。",
+     "sent": "旅は、一応終わった。なのに、帰り道が一本じゃなくなった。",
+     "lineKeys": [
+      "co.t_nao_back#adb6db2d4e"
+     ],
+     "file": "nao/r1-6dec1e57be17bd34.opus",
+     "seconds": 5.26,
+     "why": "edge after trim: pre 0.04 s, tail 0.22 s"
+    },
+    {
+     "id": "r1-6df45a4187c6819f",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "草を刈る音って、落ち着くな。誰かが明日のことを考えてる音だ。",
+     "sent": "草を刈る音って、落ち着くな。誰かが明日のことを考えてる音だ。",
+     "lineKeys": [
+      "sa.epi_co#7bc26f71fc"
+     ],
+     "file": "nao/r1-6df45a4187c6819f.opus",
+     "seconds": 4.89,
+     "why": "edge after trim: pre 0.15 s, tail 0.18 s"
+    },
+    {
+     "id": "r1-6f1cdb7fd90eccee",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "書いてある順じゃなくて、前と後で決まる順。上手くいったね。",
+     "sent": "書いてある順じゃなくて、前と後で決まる順。上手くいったね。",
+     "lineKeys": [
+      "hall.w3.c_water#e55c898145",
+      "hall.w3.c_lamp#e55c898145",
+      "hall.w3.c_wood#e55c898145",
+      "hall.w3.c_priest#e55c898145"
+     ],
+     "file": "mio/r1-6f1cdb7fd90eccee.opus",
+     "seconds": 5.195,
+     "why": "edge after trim: pre 0.09 s, tail 1.02 s"
+    },
+    {
+     "id": "r1-73971b4a48ed204b",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "瓶のラベル、少しでも曲がっていると気になるの。旅の間も、毎晩直してた。",
+     "sent": "瓶のラベル、少しでも曲がっていると気になるの。旅の間も、毎晩直してた。",
+     "lineKeys": [
+      "road.mio.h1#c1b4fce07e"
+     ],
+     "file": "mio/r1-73971b4a48ed204b.opus",
+     "seconds": 5.84,
+     "why": "edge after trim: pre 0.03 s, tail 0.19 s"
+    },
+    {
+     "id": "r1-7994f06872fde57b",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "smirk",
+     "spoken": "もう笑ってるだろ。……いいよ。続きを聞いたら、もっと笑うから。",
+     "sent": "もう笑ってるだろ。……いいよ。続きを聞いたら、もっと笑うから。",
+     "lineKeys": [
+      "sb.quiet_nao#54a818e09a"
+     ],
+     "file": "nao/r1-7994f06872fde57b.opus",
+     "seconds": 5.17,
+     "why": "edge after trim: pre 0.03 s, tail 0.23 s"
+    },
+    {
+     "id": "r1-7d9ffe16250b7689",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "closed",
+     "spoken": "さっきは、言い過ぎた。悪かった。",
+     "sent": "さっきは、言い過ぎた。悪かった。",
+     "lineKeys": [
+      "yn.nao_footbath#0d86986250"
+     ],
+     "file": "nao/r1-7d9ffe16250b7689.opus",
+     "seconds": 3.05,
+     "why": "edge after trim: pre 0.09 s, tail 0.25 s"
+    },
+    {
+     "id": "r1-80a88372c537f64c",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "近づいてみると、古い切り株だった。旅人と並んで、杉並木の終わりまで歩いた。",
+     "sent": "近づいてみると、古い切り株だった。たびびとと並んで、すぎなみきの終わりまで歩いた。",
+     "lineKeys": [
+      "cr.lw_bear#7c79369763"
+     ],
+     "file": "narrator/r1-80a88372c537f64c.opus",
+     "seconds": 5.95,
+     "why": "edge after trim: pre 0.20 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-838f0d2ba013edc2",
+     "speaker": "yn_yasuke",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……少し休んでから下りる。下の音を、ここで聞いていたいんだ。",
+     "sent": "……少し休んでから下りる。下の音を、ここで聞いていたいんだ。",
+     "lineKeys": [
+      "yn.yasuke_idle#3493301456"
+     ],
+     "file": "yn_yasuke/r1-838f0d2ba013edc2.opus",
+     "seconds": 4.71,
+     "why": "edge after trim: pre 0.20 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-843c4bdf2779c224",
+     "speaker": "hall_soan",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "そうか。現れるのは、語り手自身だったか。",
+     "sent": "そうか。現れるのは、語り手自身だったか。",
+     "lineKeys": [
+      "hall.w10.end#faad1a89d0"
+     ],
+     "file": "hall_soan/r1-843c4bdf2779c224.opus",
+     "seconds": 4.354,
+     "why": "edge after trim: pre 0.15 s, tail 0.27 s"
+    },
+    {
+     "id": "r1-84c34d93242de457",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "smile",
+     "spoken": "「わかってる」って口に出せたのは、今夜が初めてかもな。灯落は、次の町だ。",
+     "sent": "「わかってる」って口に出せたのは、今夜が初めてかもな。ひおちは、次の町だ。",
+     "lineKeys": [
+      "sb.quiet_nao#56f1e5b086"
+     ],
+     "file": "nao/r1-84c34d93242de457.opus",
+     "seconds": 6.2,
+     "why": "edge after trim: pre 0.02 s, tail 0.25 s"
+    },
+    {
+     "id": "r1-89a98565c85aa709",
+     "speaker": "pc",
+     "voice": "B",
+     "pitch": "low",
+     "delivery": "neutral",
+     "spoken": "洪水があった日なのに……。",
+     "sent": "洪水があった日なのに……。",
+     "lineKeys": [
+      "lf.records_ledger#96afa62f0d"
+     ],
+     "file": "pc/r1-89a98565c85aa709.opus",
+     "seconds": 1.85,
+     "why": "edge after trim: pre 0.02 s, tail 0.19 s"
+    },
+    {
+     "id": "r1-89f94065f53538cc",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "灯り堂の灯籠の名前、全部読める。当たり前になったけど、前は当たり前じゃなかった。",
+     "sent": "あかり堂のとうろうの名前、全部読める。当たり前になったけど、前は当たり前じゃなかった。",
+     "lineKeys": [
+      "road.nao.o2#807fc9d8af"
+     ],
+     "file": "nao/r1-89f94065f53538cc.opus",
+     "seconds": 7.01,
+     "why": "edge after trim: pre 0.04 s, tail 0.25 s"
+    },
+    {
+     "id": "r1-8ae9c9dbe952f457",
+     "speaker": "ko_kihei",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "陸の港で、手紙を一通書いた。出す前に、船が出た。船は戻らなかった。",
+     "sent": "陸の港で、手紙を一通書いた。出す前に、船が出た。船は戻らなかった。",
+     "lineKeys": [
+      "ko.kihei_ask#ac93712c1e"
+     ],
+     "file": "ko_kihei/r1-8ae9c9dbe952f457.opus",
+     "seconds": 8.461,
+     "why": "edge after trim: pre 0.02 s, tail 0.27 s"
+    },
+    {
+     "id": "r1-8c7bf9aacc724631",
+     "speaker": "umi",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "父は灯の道を上っていったそうです。一度、会いに行ってみようかと思っています。……決めてはいません。思っているだけ。",
+     "sent": "父はひの道を上っていったそうです。一度、会いに行ってみようかと思っています。……決めてはいません。思っているだけ。",
+     "lineKeys": [
+      "lf.umi_post#1f56682ef4"
+     ],
+     "file": "umi/r1-8c7bf9aacc724631.opus",
+     "seconds": 9.305,
+     "why": "edge after trim: pre 0.20 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-9272f69f9a6f26d3",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "ギンノジョウは番付を畳み、背筋を伸ばした。急に、四十年若く見えた。",
+     "sent": "ギンノジョウは番付を畳み、背筋を伸ばした。急に、四十年若く見えた。",
+     "lineKeys": [
+      "yn.ginnojo#f9f00aaa65"
+     ],
+     "file": "narrator/r1-9272f69f9a6f26d3.opus",
+     "seconds": 5.4,
+     "why": "edge after trim: pre 0.02 s, tail 0.25 s"
+    },
+    {
+     "id": "r1-939066b87ddff9f7",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "sad",
+     "spoken": "師匠の教えは、一字一句覚えています。でも、顔が……思い出せないのです。今夜、初めてそれが怖くなりました。",
+     "sent": "師匠の教えは、一字一句覚えています。でも、顔が……思い出せないのです。今夜、初めてそれが怖くなりました。",
+     "lineKeys": [
+      "sg.ch2_end#d933dbeed3"
+     ],
+     "file": "ren/r1-939066b87ddff9f7.opus",
+     "seconds": 12.375,
+     "why": "edge after trim: pre 0.13 s, tail 0.24 s"
+    },
+    {
+     "id": "r1-93a4adf641a379cf",
+     "speaker": "lf_hayato",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "かしこまりました。",
+     "sent": "かしこまりました。",
+     "lineKeys": [
+      "lf.town_intro#18d991faca"
+     ],
+     "file": "lf_hayato/r1-93a4adf641a379cf.opus",
+     "seconds": 0.815,
+     "why": "edge after trim: pre 0.08 s, tail 0.18 s"
+    },
+    {
+     "id": "r1-94825b0c21784dc7",
+     "speaker": "cr_jinpachi",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "それと、海の方から旅の一座が峠を越えて、谷へ下りたそうです。芝居をするとか。",
+     "sent": "それと、海の方から旅の一座がとうげを越えて、谷へ下りたそうです。芝居をするとか。",
+     "lineKeys": [
+      "yn.call#01541a0fe0"
+     ],
+     "file": "cr_jinpachi/r1-94825b0c21784dc7.opus",
+     "seconds": 5.9,
+     "why": "edge after trim: pre 0.12 s, tail 0.19 s"
+    },
+    {
+     "id": "r1-9d16dc25757ff87e",
+     "speaker": "mb_bridgespirit",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "近づくな。名のない橋を、誰も渡ってはならない。",
+     "sent": "近づくな。名のない橋を、誰も渡ってはならない。",
+     "lineKeys": [
+      "mb.boss_go#bfed4af2c0"
+     ],
+     "file": "mb_bridgespirit/r1-9d16dc25757ff87e.opus",
+     "seconds": 5.705,
+     "why": "edge after trim: pre 0.00 s, tail 0.87 s"
+    },
+    {
+     "id": "r1-a17744187a8dfadf",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宛名のない手紙は、誰のものでもない。迷う手紙は、人を迷わせる。返送し、棚に上げ、静かにする。それが規定だ。",
+     "sent": "宛名のない手紙は、誰のものでもない。迷う手紙は、人を迷わせる。返送し、棚に上げ、静かにする。それが規定だ。",
+     "lineKeys": [
+      "sg.da_boss#eb493c4504"
+     ],
+     "file": "sg_clerk/r1-a17744187a8dfadf.opus",
+     "seconds": 12.274,
+     "why": "edge after trim: pre 0.03 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-a2104963b8d9c965",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "レン……葦ノ瀬の灯守の。師匠の顔が思い出せないって、誰にも言えなかったやつだ。",
+     "sent": "レン……葦ノ瀬の灯守の。師匠の顔が思い出せないって、誰にも言えなかったやつだ。",
+     "lineKeys": [
+      "sa.shelf_ren#defe1b17f5"
+     ],
+     "file": "nao/r1-a2104963b8d9c965.opus",
+     "seconds": 6.065,
+     "why": "edge after trim: pre 0.00 s, tail 0.23 s"
+    },
+    {
+     "id": "r1-a47a2db74d8596f5",
+     "speaker": "pc",
+     "voice": "B",
+     "pitch": "high",
+     "delivery": "neutral",
+     "spoken": "灯台の油、ガラス工房のソーダ灰、市場の塩のことで来ました。",
+     "sent": "とうだいの油、ガラス工房のソーダ灰、市場の塩のことで来ました。",
+     "lineKeys": [
+      "sg.wataru_confront#daf8b06332"
+     ],
+     "file": "pc/r1-a47a2db74d8596f5.opus",
+     "seconds": 5.36,
+     "why": "edge after trim: pre 0.05 s, tail 0.28 s"
+    },
+    {
+     "id": "r1-aa65d07e88ba1ea3",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "水の取り合いか。町の喧嘩で、一番古くて一番長いやつだ。",
+     "sent": "水の取り合いか。町の喧嘩で、一番古くて一番長いやつだ。",
+     "lineKeys": [
+      "yn.rokubei_first#d198f1f4e4"
+     ],
+     "file": "nao/r1-aa65d07e88ba1ea3.opus",
+     "seconds": 4.74,
+     "why": "edge after trim: pre 0.02 s, tail 0.27 s"
+    },
+    {
+     "id": "r1-ab6f8f7ea5e9e4e7",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "書き直した宛名だ。雨でにじんだの、破れたの、字が汚すぎて読めなかったの。新しい札に書き直して、古いほうは……捨てられなかった。",
+     "sent": "書き直した宛名だ。雨でにじんだの、破れたの、字が汚すぎて読めなかったの。新しい札に書き直して、古いほうは……捨てられなかった。",
+     "lineKeys": [
+      "sb.quiet_nao#06b554fa55"
+     ],
+     "file": "nao/r1-ab6f8f7ea5e9e4e7.opus",
+     "seconds": 11.685,
+     "why": "edge after trim: pre 0.02 s, tail 0.19 s"
+    },
+    {
+     "id": "r1-b26b8c806ac31db6",
+     "speaker": "mp_naraku",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……役者は名前を忘れても、きっかけさえ守れば動く。名前は重い。重い物は、下へ落ちる。",
+     "sent": "……役者は名前を忘れても、きっかけさえ守れば動く。名前は重い。重い物は、下へ落ちる。",
+     "lineKeys": [
+      "mp.bottom_arrive#c40f122d43"
+     ],
+     "file": "mp_naraku/r1-b26b8c806ac31db6.opus",
+     "seconds": 8.693,
+     "why": "edge after trim: pre 0.03 s, tail 0.22 s"
+    },
+    {
+     "id": "r1-b2815f4b5b1f26d5",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "止まった時計で、二つの宿が喧嘩しているわけか。",
+     "sent": "止まった時計で、二つの宿が喧嘩しているわけか。",
+     "lineKeys": [
+      "yn.divider#aee23cc8fa"
+     ],
+     "file": "nao/r1-b2815f4b5b1f26d5.opus",
+     "seconds": 3.11,
+     "why": "edge after trim: pre 0.03 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-b51400163cb6ad79",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "下の道は、雪崩で埋まっている。灯落へは、この古い尾根の道を行くしかない。",
+     "sent": "下の道は、雪崩で埋まっている。ひおちへは、この古い尾根の道を行くしかない。",
+     "lineKeys": [
+      "kr.arrive#a025026c63"
+     ],
+     "file": "narrator/r1-b51400163cb6ad79.opus",
+     "seconds": 5.38,
+     "why": "edge after trim: pre 0.20 s, tail 0.03 s"
+    },
+    {
+     "id": "r1-bef1bb8f4c416318",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……袖が広い。走れないぞ、これ。今夜は走らなくていいか。",
+     "sent": "……袖が広い。走れないぞ、これ。今夜は走らなくていいか。",
+     "lineKeys": [
+      "mp.fest_eve#01e2f2b5f9"
+     ],
+     "file": "nao/r1-bef1bb8f4c416318.opus",
+     "seconds": 4.59,
+     "why": "edge after trim: pre 0.12 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-c0cbf478215d3b6a",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "レンは焚き火の火を少し分けてもらい、旅の灯りに移した。",
+     "sent": "レンは焚き火の火を少し分けてもらい、旅のあかりに移した。",
+     "lineKeys": [
+      "co.ritual_ren#60b5defe1d"
+     ],
+     "file": "narrator/r1-c0cbf478215d3b6a.opus",
+     "seconds": 3.88,
+     "why": "edge after trim: pre 0.02 s, tail 0.28 s"
+    },
+    {
+     "id": "r1-c2974be6beb8ba11",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "closed",
+     "spoken": "……届いても、読まれない。配達人には、一番重い話だ。",
+     "sent": "……届いても、読まれない。配達人には、一番重い話だ。",
+     "lineKeys": [
+      "yn.senta#c0ae70757c"
+     ],
+     "file": "nao/r1-c2974be6beb8ba11.opus",
+     "seconds": 4.16,
+     "why": "edge after trim: pre 0.00 s, tail 0.23 s"
+    },
+    {
+     "id": "r1-c3d8d5f8d595fcfd",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "laugh",
+     "spoken": "……笑わないでよ。真剣なんだから。いいえ。ほら、今のは上手だった。",
+     "sent": "……笑わないでよ。真剣なんだから。いいえ。ほら、今のは上手だった。",
+     "lineKeys": [
+      "sa.b_mio2#ecd8e46558"
+     ],
+     "file": "mio/r1-c3d8d5f8d595fcfd.opus",
+     "seconds": 5.72,
+     "why": "edge after trim: pre 0.01 s, tail 0.24 s"
+    },
+    {
+     "id": "r1-c9c1e9cec4aaf089",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "smirk",
+     "spoken": "肩までは貸す。鞄の紐をつつくのはなしだ。",
+     "sent": "肩までは貸す。鞄の紐をつつくのはなしだ。",
+     "lineKeys": [
+      "pets.greet.nao.bird#ceaa767031"
+     ],
+     "file": "nao/r1-c9c1e9cec4aaf089.opus",
+     "seconds": 3.63,
+     "why": "edge after trim: pre 0.04 s, tail 0.31 s"
+    },
+    {
+     "id": "r1-cb5b954654f749d9",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "潮。海の水の満ち引き。風向き。風がどこから来るか。",
+     "sent": "潮。海の水の満ち引き。風向き。風がどこから来るか。",
+     "lineKeys": [
+      "sea.tetsu_words#2b01647684"
+     ],
+     "file": "tetsu/r1-cb5b954654f749d9.opus",
+     "seconds": 5.675,
+     "why": "edge after trim: pre 0.21 s, tail 0.04 s"
+    },
+    {
+     "id": "r1-d12e13ee262a0306",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "札をもう一度読もう。誰の後ろに誰、か。",
+     "sent": "札をもう一度読もう。誰の後ろに誰、か。",
+     "lineKeys": [
+      "hall.w2.l4_bearer#3b36a99fe5",
+      "hall.w2.l4_toku#3b36a99fe5",
+      "hall.w2.l4_kozue#3b36a99fe5",
+      "hall.w2.l4_gin#3b36a99fe5",
+      "hall.w2.l4_porter#3b36a99fe5"
+     ],
+     "file": "mio/r1-d12e13ee262a0306.opus",
+     "seconds": 3.52,
+     "why": "edge after trim: pre 0.13 s, tail 0.27 s"
+    },
+    {
+     "id": "r1-d3cc4789f4f89144",
+     "speaker": "co_warden",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……誰も入れるな。窯を守れ。火を外へ出すな。",
+     "sent": "……誰も入れるな。窯を守れ。火を外へ出すな。",
+     "lineKeys": [
+      "co.warden_fight#8cb775fcb7"
+     ],
+     "file": "co_warden/r1-d3cc4789f4f89144.opus",
+     "seconds": 4.903,
+     "why": "edge after trim: pre 0.05 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-d545789528b0b95f",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "消えた灯には、番人は要りません。……墓の灯は、別ですが。",
+     "sent": "消えたひには、番人は要りません。……墓のひは、別ですが。",
+     "lineKeys": [
+      "sa.choose_archive#0f158c6b29"
+     ],
+     "file": "ren/r1-d545789528b0b95f.opus",
+     "seconds": 5.375,
+     "why": "edge after trim: pre 0.12 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-dbd536de0e0d8da6",
+     "speaker": "co_isao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "楔はそのままにしておけ。灯りもな。誰が見ても分かるように。",
+     "sent": "楔はそのままにしておけ。あかりもな。誰が見ても分かるように。",
+     "lineKeys": [
+      "fw.f3_isao#99daf3f07e"
+     ],
+     "file": "co_isao/r1-dbd536de0e0d8da6.opus",
+     "seconds": 4.435,
+     "why": "edge after trim: pre 0.20 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ddf1086a61c83312",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……鐘、自由になった。",
+     "sent": "……鐘、自由になった。",
+     "lineKeys": [
+      "lf.boss_intro#86e6ade85f"
+     ],
+     "file": "nao/r1-ddf1086a61c83312.opus",
+     "seconds": 1.8,
+     "why": "edge after trim: pre 0.06 s, tail 0.27 s"
+    },
+    {
+     "id": "r1-dee6578c4bc615ab",
+     "speaker": "ko_kihei",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "出せなかった手紙は、葉になってここへ来ると聞いた。……探しているが、見つからない。",
+     "sent": "出せなかった手紙は、葉になってここへ来ると聞いた。……探しているが、見つからない。",
+     "lineKeys": [
+      "ko.kihei_ask#2138cbea96"
+     ],
+     "file": "ko_kihei/r1-dee6578c4bc615ab.opus",
+     "seconds": 7.846,
+     "why": "edge after trim: pre 0.04 s, tail 0.28 s"
+    },
+    {
+     "id": "r1-dff750f85a24e3b9",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「全部灯す」でも、「ただし」が一つ。例外を見落とさなくてよかった。",
+     "sent": "「全部ともす」でも、「ただし」が一つ。例外を見落とさなくてよかった。",
+     "lineKeys": [
+      "hall.w6.l_foot#2cd7f855ac",
+      "hall.w6.l_bend#2cd7f855ac",
+      "hall.w6.l_bridge#2cd7f855ac",
+      "hall.w6.l_shrine#2cd7f855ac",
+      "hall.w6.l_top#2cd7f855ac"
+     ],
+     "file": "mio/r1-dff750f85a24e3b9.opus",
+     "seconds": 4.38,
+     "why": "edge after trim: pre 0.06 s, tail 0.22 s"
+    },
+    {
+     "id": "r1-e0d93f2eb6379d6d",
+     "speaker": "pc",
+     "voice": "B",
+     "pitch": "low",
+     "delivery": "neutral",
+     "spoken": "トキワさん。二十年前、ここで火事があったんです。",
+     "sent": "トキワさん。二十年前、ここで火事があったんです。",
+     "lineKeys": [
+      "co.tokiwa_confront#bc14727898"
+     ],
+     "file": "pc/r1-e0d93f2eb6379d6d.opus",
+     "seconds": 4.41,
+     "why": "edge after trim: pre 0.05 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-e3a2b9f6c80bd396",
+     "speaker": "sa_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "もし見つけたら、文の続きを読んでいただけますか。当書記の感情は……未分類ですが。",
+     "sent": "もし見つけたら、文の続きを読んでいただけますか。当書記の感情は……未分類ですが。",
+     "lineKeys": [
+      "sa.clerk_first#50864cae8c"
+     ],
+     "file": "sa_clerk/r1-e3a2b9f6c80bd396.opus",
+     "seconds": 6.857,
+     "why": "edge after trim: pre 0.01 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-e41e55c13209352e",
+     "speaker": "pc",
+     "voice": "B",
+     "pitch": "low",
+     "delivery": "neutral",
+     "spoken": "知り合いの家？",
+     "sent": "知り合いの家？",
+     "lineKeys": [
+      "sg.b_nao_isamu#4335f3d94a"
+     ],
+     "file": "pc/r1-e41e55c13209352e.opus",
+     "seconds": 1.22,
+     "why": "edge after trim: pre 0.20 s, tail 0.03 s"
+    },
+    {
+     "id": "r1-e462c045d05e05e1",
+     "speaker": "ko_kihei",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "ハツの孫が、あの宿を？……戸を、閉めずに。",
+     "sent": "ハツの孫が、あの宿を？……戸を、閉めずに。",
+     "lineKeys": [
+      "ko.kihei_choose#5299249650"
+     ],
+     "file": "ko_kihei/r1-e462c045d05e05e1.opus",
+     "seconds": 5.037,
+     "why": "edge after trim: pre 0.05 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-e4bcc74f1a7951c9",
+     "speaker": "lf_tokuji",
+     "voice": null,
+     "pitch": null,
+     "delivery": "closed",
+     "spoken": "迷っている間に、水が来た。",
+     "sent": "迷っている間に、水が来た。",
+     "lineKeys": [
+      "lf.tokuji_story#04e78074c7"
+     ],
+     "file": "lf_tokuji/r1-e4bcc74f1a7951c9.opus",
+     "seconds": 1.675,
+     "why": "edge after trim: pre 0.02 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-e4ea46e7b88eb21c",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……読めない宛名を、読める人がいるのか。",
+     "sent": "……読めない宛名を、読める人がいるのか。",
+     "lineKeys": [
+      "sg.da_boss_after#b416388006"
+     ],
+     "file": "sg_clerk/r1-e4ea46e7b88eb21c.opus",
+     "seconds": 3.976,
+     "why": "edge after trim: pre 0.01 s, tail 0.47 s"
+    },
+    {
+     "id": "r1-e58fe679499844f2",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "あの方の頼み、もう一度お話ししましょうか。",
+     "sent": "あの方の頼み、もう一度お話ししましょうか。",
+     "lineKeys": [
+      "hall.w9.d_meal#ab9b04917e",
+      "hall.w9.d_fire#ab9b04917e"
+     ],
+     "file": "ren/r1-e58fe679499844f2.opus",
+     "seconds": 3.495,
+     "why": "edge after trim: pre 0.01 s, tail 0.24 s"
+    },
+    {
+     "id": "r1-e760be41241205bf",
+     "speaker": "yn_tokuzo",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……少し休んでから、またお願いできますか。札は、途中まで書いておきます。",
+     "sent": "……少し休んでから、またお願いできますか。札は、途中まで書いておきます。",
+     "lineKeys": [
+      "yn.rooms_start#e1faaa6833"
+     ],
+     "file": "yn_tokuzo/r1-e760be41241205bf.opus",
+     "seconds": 5.93,
+     "why": "edge after trim: pre 0.20 s, tail 0.11 s"
+    },
+    {
+     "id": "r1-f079a003cdcfd0a5",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "closed",
+     "spoken": "何を言ったかは、覚えています。言葉だけは。……ひどいことを言いました。",
+     "sent": "何を言ったかは、覚えています。言葉だけは。……ひどいことを言いました。",
+     "lineKeys": [
+      "sa.shelf_ren#c6bb8e8b04"
+     ],
+     "file": "ren/r1-f079a003cdcfd0a5.opus",
+     "seconds": 5.325,
+     "why": "edge after trim: pre 0.02 s, tail 0.25 s"
+    },
+    {
+     "id": "r1-f25c42a39756bbfb",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "鐘の話、聞いたか。皆、鐘が鳴ったら水路へ走ったって。頭が忘れても、足が道を覚えてた。",
+     "sent": "鐘の話、聞いたか。皆、鐘が鳴ったらすいろへ走ったって。頭が忘れても、足が道を覚えてた。",
+     "lineKeys": [
+      "co.b_nao4#d8c80dccd9"
+     ],
+     "file": "nao/r1-f25c42a39756bbfb.opus",
+     "seconds": 7.675,
+     "why": "edge after trim: pre 0.05 s, tail 0.19 s"
+    },
+    {
+     "id": "r1-f38804867409113f",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "実は、鳥が遠くへ運ぶんだろうな。……木にも、配達があるわけだ。",
+     "sent": "実は、鳥が遠くへ運ぶんだろうな。……木にも、配達があるわけだ。",
+     "lineKeys": [
+      "ko.ks_camphor_seed#50eb679aa6"
+     ],
+     "file": "nao/r1-f38804867409113f.opus",
+     "seconds": 5.32,
+     "why": "edge after trim: pre 0.03 s, tail 0.20 s"
+    },
+    {
+     "id": "r1-f3f571086ec344df",
+     "speaker": "hall_kohaku",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "師匠の字です。私が読みます。何が知りたいですか？",
+     "sent": "師匠の字です。私が読みます。何が知りたいですか？",
+     "lineKeys": [
+      "hall.w10.t6#d9bf7392c3"
+     ],
+     "file": "hall_kohaku/r1-f3f571086ec344df.opus",
+     "seconds": 5.969,
+     "why": "edge after trim: pre 0.21 s, tail 0.00 s"
+    },
+    {
+     "id": "r1-f879fb6867260341",
+     "speaker": "ko_kihei",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "まだ、言い方を考えている。海は気が長い。俺も、長くなった。",
+     "sent": "まだ、言い方を考えている。海は気が長い。俺も、長くなった。",
+     "lineKeys": [
+      "ko.kihei_kept#993a1c3f26"
+     ],
+     "file": "ko_kihei/r1-f879fb6867260341.opus",
+     "seconds": 7.851,
+     "why": "edge after trim: pre 0.02 s, tail 0.27 s"
+    },
+    {
+     "id": "r1-f8c6964278cb9d35",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "三つとも、揃ったね。膳の上が、賑やかになった。",
+     "sent": "三つとも、揃ったね。膳の上が、賑やかになった。",
+     "lineKeys": [
+      "hall.w7.b_rl#9078299184",
+      "hall.w7.b_rs#9078299184",
+      "hall.w7.b_bl#9078299184",
+      "hall.w7.b_bs#9078299184"
+     ],
+     "file": "mio/r1-f8c6964278cb9d35.opus",
+     "seconds": 4.42,
+     "why": "edge after trim: pre 0.02 s, tail 0.22 s"
+    },
+    {
+     "id": "r1-faf1aee031d2ba74",
+     "speaker": "cr_heisuke",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "坂下の印だ。坂の下に、宿が一つ。見たままだ。",
+     "sent": "坂下の印だ。坂の下に、宿が一つ。見たままだ。",
+     "lineKeys": [
+      "cr.seal3#8e617397c0"
+     ],
+     "file": "cr_heisuke/r1-faf1aee031d2ba74.opus",
+     "seconds": 5.21,
+     "why": "edge after trim: pre 0.20 s, tail 0.03 s"
+    },
+    {
+     "id": "r1-ref-002c5b8255772eb1",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-002c5b8255772eb1.opus",
+     "seconds": 1.16,
+     "why": "edge after trim: pre 0.20 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-0325246ccbaa2cd4",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-0325246ccbaa2cd4.opus",
+     "seconds": 0.95,
+     "why": "edge after trim: pre 0.20 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-ref-034fa9ed10e3ea45",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-034fa9ed10e3ea45.opus",
+     "seconds": 1.15,
+     "why": "edge after trim: pre 0.20 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-0a807338c8e1a341",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-0a807338c8e1a341.opus",
+     "seconds": 0.97,
+     "why": "edge after trim: pre 0.20 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-0e3b943898d46736",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-0e3b943898d46736.opus",
+     "seconds": 2.04,
+     "why": "edge after trim: pre 0.21 s, tail 0.07 s"
+    },
+    {
+     "id": "r1-ref-1d786957af12a37b",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-1d786957af12a37b.opus",
+     "seconds": 0.835,
+     "why": "edge after trim: pre 0.01 s, tail 0.19 s"
+    },
+    {
+     "id": "r1-ref-2bab5bdb1e5539fb",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-2bab5bdb1e5539fb.opus",
+     "seconds": 0.88,
+     "why": "edge after trim: pre 0.21 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-ref-2d30c4b2666409f2",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-2d30c4b2666409f2.opus",
+     "seconds": 0.95,
+     "why": "edge after trim: pre 0.20 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-ref-442384d60cc59db7",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-442384d60cc59db7.opus",
+     "seconds": 0.94,
+     "why": "edge after trim: pre 0.20 s, tail 0.03 s"
+    },
+    {
+     "id": "r1-ref-6de7e0ab9993b5d8",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-6de7e0ab9993b5d8.opus",
+     "seconds": 0.99,
+     "why": "edge after trim: pre 0.20 s, tail 0.07 s"
+    },
+    {
+     "id": "r1-ref-7ba70032dda74083",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-7ba70032dda74083.opus",
+     "seconds": 1.06,
+     "why": "edge after trim: pre 0.35 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-7c955999a39b29bb",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-7c955999a39b29bb.opus",
+     "seconds": 1.25,
+     "why": "edge after trim: pre 0.20 s, tail 0.10 s"
+    },
+    {
+     "id": "r1-ref-7ce0a1f65d517736",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-7ce0a1f65d517736.opus",
+     "seconds": 0.73,
+     "why": "edge after trim: pre 0.20 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-7d69eea325c2f41a",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-7d69eea325c2f41a.opus",
+     "seconds": 1.16,
+     "why": "edge after trim: pre 0.20 s, tail 0.03 s"
+    },
+    {
+     "id": "r1-ref-86c2f0a432961c1d",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-86c2f0a432961c1d.opus",
+     "seconds": 0.89,
+     "why": "edge after trim: pre 0.21 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-ref-911aaa0a7761c49e",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-911aaa0a7761c49e.opus",
+     "seconds": 0.98,
+     "why": "edge after trim: pre 0.20 s, tail 0.10 s"
+    },
+    {
+     "id": "r1-ref-91d716f388c98422",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-91d716f388c98422.opus",
+     "seconds": 0.97,
+     "why": "edge after trim: pre 0.20 s, tail 0.10 s"
+    },
+    {
+     "id": "r1-ref-99bd62e1b425b4d1",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-99bd62e1b425b4d1.opus",
+     "seconds": 0.75,
+     "why": "edge after trim: pre 0.00 s, tail 0.25 s"
+    },
+    {
+     "id": "r1-ref-a3999c8ac20a5b09",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-a3999c8ac20a5b09.opus",
+     "seconds": 0.97,
+     "why": "edge after trim: pre 0.20 s, tail 0.10 s"
+    },
+    {
+     "id": "r1-ref-a918801e2d9bc1e6",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-a918801e2d9bc1e6.opus",
+     "seconds": 1.19,
+     "why": "edge after trim: pre 0.13 s, tail 0.19 s"
+    },
+    {
+     "id": "r1-ref-ac50a97184a061ec",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-ac50a97184a061ec.opus",
+     "seconds": 0.74,
+     "why": "edge after trim: pre 0.21 s, tail 0.05 s"
+    },
+    {
+     "id": "r1-ref-ac766d409bbc66e8",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-ac766d409bbc66e8.opus",
+     "seconds": 1.26,
+     "why": "edge after trim: pre 0.21 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-b06952501818dfed",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-b06952501818dfed.opus",
+     "seconds": 0.9,
+     "why": "edge after trim: pre 0.21 s, tail 0.00 s"
+    },
+    {
+     "id": "r1-ref-b8dafacc2283970b",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-b8dafacc2283970b.opus",
+     "seconds": 0.73,
+     "why": "edge after trim: pre 0.21 s, tail 0.09 s"
+    },
+    {
+     "id": "r1-ref-b8f801f6ac6359dc",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-b8f801f6ac6359dc.opus",
+     "seconds": 1.09,
+     "why": "edge after trim: pre 0.21 s, tail 0.10 s"
+    },
+    {
+     "id": "r1-ref-ba64791790c74617",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-ba64791790c74617.opus",
+     "seconds": 0.91,
+     "why": "edge after trim: pre 0.21 s, tail 0.03 s"
+    },
+    {
+     "id": "r1-ref-c5852ab0cc882c25",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-c5852ab0cc882c25.opus",
+     "seconds": 0.73,
+     "why": "edge after trim: pre 0.21 s, tail 0.09 s"
+    },
+    {
+     "id": "r1-ref-cc7f754d77618486",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-cc7f754d77618486.opus",
+     "seconds": 0.84,
+     "why": "edge after trim: pre 0.20 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-ref-d31ca70b82bbd4c8",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-d31ca70b82bbd4c8.opus",
+     "seconds": 0.9,
+     "why": "edge after trim: pre 0.21 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-d44b56e3beb15853",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-d44b56e3beb15853.opus",
+     "seconds": 0.74,
+     "why": "edge after trim: pre 0.21 s, tail 0.05 s"
+    },
+    {
+     "id": "r1-ref-da481d87c2913609",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-da481d87c2913609.opus",
+     "seconds": 0.74,
+     "why": "edge after trim: pre 0.21 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-db5b0c331547f281",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-db5b0c331547f281.opus",
+     "seconds": 0.91,
+     "why": "edge after trim: pre 0.21 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-e41a9ae640439d08",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-e41a9ae640439d08.opus",
+     "seconds": 0.86,
+     "why": "edge after trim: pre 0.20 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-ref-e5bf48bf7ab94ff8",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-e5bf48bf7ab94ff8.opus",
+     "seconds": 1.16,
+     "why": "edge after trim: pre 0.32 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-ref-e7f81d92b452ef62",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-e7f81d92b452ef62.opus",
+     "seconds": 1.01,
+     "why": "edge after trim: pre 0.21 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-ref-eac72dc84c240460",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-eac72dc84c240460.opus",
+     "seconds": 1.17,
+     "why": "edge after trim: pre 0.20 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-ebc01860454d9a89",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-ebc01860454d9a89.opus",
+     "seconds": 0.9,
+     "why": "edge after trim: pre 0.21 s, tail 0.00 s"
+    },
+    {
+     "id": "r1-ref-efa42d12543a3a03",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-efa42d12543a3a03.opus",
+     "seconds": 0.95,
+     "why": "edge after trim: pre 0.20 s, tail 0.02 s"
+    },
+    {
+     "id": "r1-ref-f1f9f7f4191a1c43",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-f1f9f7f4191a1c43.opus",
+     "seconds": 0.86,
+     "why": "edge after trim: pre 0.21 s, tail 0.01 s"
+    },
+    {
+     "id": "r1-ref-f35ae1ea691b10dc",
+     "speaker": null,
+     "voice": null,
+     "pitch": null,
+     "delivery": null,
+     "spoken": null,
+     "sent": null,
+     "lineKeys": [],
+     "file": "ref/r1-ref-f35ae1ea691b10dc.opus",
+     "seconds": 1.15,
+     "why": "edge after trim: pre 0.20 s, tail 0.02 s"
+    }
+   ],
+   "count": 130
+  },
+  {
+   "key": "fxNear",
+   "title": "Supernatural voices whose clean reference was a near (not exact) repeat of the approved take",
+   "items": [
+    {
+     "id": "r1-1d2fbdf3b44d19a5",
+     "speaker": "ko_gardener",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……人が来るのは、何百年ぶりか。葉守ですら、ここへは下りてこない。",
+     "sent": "……人が来るのは、何百年ぶりか。葉守ですら、ここへは下りてこない。",
+     "lineKeys": [
+      "ko.gardener#8f048c160a"
+     ],
+     "file": "ko_gardener/r1-1d2fbdf3b44d19a5.opus",
+     "seconds": 8.46,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-34c73b31bdc1a295",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宛名を消したのは私ではない。潮が消す。静寂が消す。私は、片付けるだけだ。",
+     "sent": "宛名を消したのは私ではない。潮が消す。静寂が消す。私は、片付けるだけだ。",
+     "lineKeys": [
+      "sg.da_boss#8d552b9446"
+     ],
+     "file": "sg_clerk/r1-34c73b31bdc1a295.opus",
+     "seconds": 9.211,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-3e1f5965da859337",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "手紙を持っていけ。返送は……取り消す。",
+     "sent": "手紙を持っていけ。返送は……取り消す。",
+     "lineKeys": [
+      "sg.da_boss_after#9df5419dd9"
+     ],
+     "file": "sg_clerk/r1-3e1f5965da859337.opus",
+     "seconds": 5.108,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-413f45c38a8bd993",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……本庁は、納得しないだろう。名は増えるほど争いを生む、と本庁の主は言う。静かなほうが、人は傷つかない、と。",
+     "sent": "……本庁は、納得しないだろう。名は増えるほど争いを生む、と本庁の主は言う。静かなほうが、人は傷つかない、と。",
+     "lineKeys": [
+      "sg.da_boss_after#3f40401469"
+     ],
+     "file": "sg_clerk/r1-413f45c38a8bd993.opus",
+     "seconds": 10.973,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-4142b50b447246e7",
+     "speaker": "mb_bridgespirit",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……渡るな。間違った所へ、誰も渡らせない。私は……私は、何という橋だったか。",
+     "sent": "……渡るな。間違った所へ、誰も渡らせない。私は……私は、何という橋だったか。",
+     "lineKeys": [
+      "mb.firstbridge_arrive#360f629810"
+     ],
+     "file": "mb_bridgespirit/r1-4142b50b447246e7.opus",
+     "seconds": 10.505,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-4dd8ba4f35accea7",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "規定にはない方法だ。",
+     "sent": "規定にはない方法だ。",
+     "lineKeys": [
+      "sg.da_boss_after#228e6057fd"
+     ],
+     "file": "sg_clerk/r1-4dd8ba4f35accea7.opus",
+     "seconds": 2.861,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-6db1670a96cca6fa",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宛名判読不能。返送。次。",
+     "sent": "宛名判読不能。返送。次。",
+     "lineKeys": [
+      "sg.da_boss#b4cac4c057"
+     ],
+     "file": "sg_clerk/r1-6db1670a96cca6fa.opus",
+     "seconds": 5.119,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-90718d7497de10d9",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "窓口は一つ。順番を守れ。次。",
+     "sent": "窓口は一つ。順番を守れ。次。",
+     "lineKeys": [
+      "sg.da_boss#8c9abf7554"
+     ],
+     "file": "sg_clerk/r1-90718d7497de10d9.opus",
+     "seconds": 4.64,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-9d16dc25757ff87e",
+     "speaker": "mb_bridgespirit",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "近づくな。名のない橋を、誰も渡ってはならない。",
+     "sent": "近づくな。名のない橋を、誰も渡ってはならない。",
+     "lineKeys": [
+      "mb.boss_go#bfed4af2c0"
+     ],
+     "file": "mb_bridgespirit/r1-9d16dc25757ff87e.opus",
+     "seconds": 5.705,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-a17744187a8dfadf",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宛名のない手紙は、誰のものでもない。迷う手紙は、人を迷わせる。返送し、棚に上げ、静かにする。それが規定だ。",
+     "sent": "宛名のない手紙は、誰のものでもない。迷う手紙は、人を迷わせる。返送し、棚に上げ、静かにする。それが規定だ。",
+     "lineKeys": [
+      "sg.da_boss#eb493c4504"
+     ],
+     "file": "sg_clerk/r1-a17744187a8dfadf.opus",
+     "seconds": 12.274,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-bbdaa29950ab28b5",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "次。",
+     "sent": "次。",
+     "lineKeys": [
+      "sg.da_boss#ddf3ad1522"
+     ],
+     "file": "sg_clerk/r1-bbdaa29950ab28b5.opus",
+     "seconds": 2.284,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-cb99801f80b6257c",
+     "speaker": "ko_gardener",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "ここの葉は、届けてはならぬ言葉。書いた者が、出さぬと決めた言葉だ。",
+     "sent": "ここの葉は、届けてはならぬ言葉。書いた者が、出さぬと決めた言葉だ。",
+     "lineKeys": [
+      "ko.gardener#2f8e0dc46a"
+     ],
+     "file": "ko_gardener/r1-cb99801f80b6257c.opus",
+     "seconds": 9.114,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-d9b19267d12485a1",
+     "speaker": "ko_gardener",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "近ごろ、上から落ちてくる葉が多すぎて、庭が溢れる。溢れた葉は、風に乗って出てゆく。出ていかせはしない。",
+     "sent": "近ごろ、上から落ちてくる葉が多すぎて、庭が溢れる。溢れた葉は、風に乗って出てゆく。出ていかせはしない。",
+     "lineKeys": [
+      "ko.gardener#478d6d2bb8"
+     ],
+     "file": "ko_gardener/r1-d9b19267d12485a1.opus",
+     "seconds": 11.696,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-e4ea46e7b88eb21c",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……読めない宛名を、読める人がいるのか。",
+     "sent": "……読めない宛名を、読める人がいるのか。",
+     "lineKeys": [
+      "sg.da_boss_after#b416388006"
+     ],
+     "file": "sg_clerk/r1-e4ea46e7b88eb21c.opus",
+     "seconds": 3.976,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    },
+    {
+     "id": "r1-f49e340f895e1ddd",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "書庫の守り人。山の上の、静寂の書庫にいる。名は……棚に上げてある。",
+     "sent": "書庫の守り人。山の上の、静寂の書庫にいる。名は……棚に上げてある。",
+     "lineKeys": [
+      "sg.da_boss_after#0641a37bf3"
+     ],
+     "file": "sg_clerk/r1-f49e340f895e1ddd.opus",
+     "seconds": 8.092,
+     "why": "speaker flagged before the batch: reference correlation 0.944-0.995 with the approved take"
+    }
+   ],
+   "count": 15
+  }
+ ],
+ "counts": {
+  "open": 1,
+  "redone": 7,
+  "mw1": 7,
+  "edges": 130,
+  "fxNear": 15
+ },
+ "notForReview": {
+  "quietPeakLimited": {
+   "count": 120,
+   "note": "peak at -1.0 dB before reaching -20 LUFS, as designed; listed in POST_CHECK.json"
+  }
+ }
+}
