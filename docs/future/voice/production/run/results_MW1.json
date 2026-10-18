@@ -1,0 +1,150 @@
+{
+ "schema": "rbn.voice.results/1",
+ "recordings": {
+  "r1-feba99cbd745473e": {
+   "file": "narrator/r1-feba99cbd745473e.opus",
+   "bytes": 37679,
+   "sha256": "531e998c15690ff8b425ef3e4c65ab0d3a617639b431fbe1830e7cad2d98cfca",
+   "seconds": 5.19,
+   "lufs": -20.0,
+   "peakDb": -3.64,
+   "tries": 1,
+   "flags": [],
+   "identity": "bcd6e07e66e47d50a11d2d5f67a7b93569107d5acec0e0a40c1c94aef19b0613",
+   "master": "masters/narrator_15912b91d46be278.flac",
+   "casting": "narrator"
+  },
+  "r1-103e01f252363937": {
+   "file": "narrator/r1-103e01f252363937.opus",
+   "bytes": 28706,
+   "sha256": "997d0a8f278a46e3c894d87d0f6d6f7db716a96ee366c2213aa78f1b1d7e773a",
+   "seconds": 3.93,
+   "lufs": -20.0,
+   "peakDb": -4.08,
+   "tries": 1,
+   "flags": [],
+   "identity": "e49f5080dde093f2ad58fee65659fb7ef9cbcb9e476115cbe67c303bab9df6be",
+   "master": "masters/narrator_3aea199f03b5e5ba.flac",
+   "casting": "narrator"
+  },
+  "r1-b279efeb3bfc1fe4": {
+   "file": "narrator/r1-b279efeb3bfc1fe4.opus",
+   "bytes": 29272,
+   "sha256": "33a4fe2aad44cd6fa93b950ae0c457f1c495e93be5992aa4ea734428c505b6c6",
+   "seconds": 4.0,
+   "lufs": -20.0,
+   "peakDb": -3.83,
+   "tries": 1,
+   "flags": [],
+   "identity": "ed24c7d70f3f17911fe1de266282fd3d9004b3277167735aebc66755e341f527",
+   "master": "masters/narrator_a3fb19944e884f15.flac",
+   "casting": "narrator"
+  },
+  "r1-d11124da63c3c891": {
+   "file": "narrator/r1-d11124da63c3c891.opus",
+   "bytes": 22713,
+   "sha256": "9cd28c2ea55616fe32daaf90e2213918f7e8d71481858586cc0cb52eea845993",
+   "seconds": 3.08,
+   "lufs": -20.0,
+   "peakDb": -4.39,
+   "tries": 1,
+   "flags": [],
+   "identity": "a86da124680eb80165cf2b21ba833e4661c4684263cbad9abc799ed7a29494d6",
+   "master": "masters/narrator_bb6fad207e1c691d.flac",
+   "casting": "narrator"
+  },
+  "r1-ref-356973b2029addfb": {
+   "file": "ref/r1-ref-356973b2029addfb.opus",
+   "bytes": 5751,
+   "sha256": "781cc102a32e1282c86d4a0bc57d6f20467182610e29b6ce2f0a35a26017e7bf",
+   "seconds": 0.65,
+   "lufs": -20.0,
+   "peakDb": -5.27,
+   "tries": 1,
+   "flags": [],
+   "identity": "ab731b3a453142943f0fd362becf274d3ba9c4aaef8a5f0f4c100c0a17d2d7c4",
+   "master": "masters/narrator_d27d47182c4dfd72.flac",
+   "casting": "narrator"
+  },
+  "r1-8f4b9aa7d6c6e953": {
+   "file": "narrator/r1-8f4b9aa7d6c6e953.opus",
+   "bytes": 51511,
+   "sha256": "44aba7303376a4afb9dd5cd5d5b6463b8bf0f565a45fb967b3c4c1786b094bd3",
+   "seconds": 7.14,
+   "lufs": -20.0,
+   "peakDb": -3.25,
+   "tries": 1,
+   "flags": [],
+   "identity": "67f40220d6cfa21fe620a82d874be58dc697089d3ef5bda4157c4b968fa3f82e",
+   "master": "masters/narrator_dac1d5078a16ff6f.flac",
+   "casting": "narrator"
+  },
+  "r1-b817903b15df787b": {
+   "file": "narrator/r1-b817903b15df787b.opus",
+   "bytes": 32820,
+   "sha256": "ca5cbf5732e27dcdc955536e82df8acfb7f6024d86909077a75027f7551f5833",
+   "seconds": 4.49,
+   "lufs": -20.0,
+   "peakDb": -4.03,
+   "tries": 1,
+   "flags": [],
+   "identity": "4e0f4752121e571a9d8c8940c005a51b80bad7ac864825cc967ba9a46d5949ce",
+   "master": "masters/narrator_ebcc1987e62a986e.flac",
+   "casting": "narrator"
+  }
+ },
+ "pending": [],
+ "failed": {},
+ "contentHash": "3c59018e3137b6c9e7ae79938b6dd18f3943195ff1e11a3b0e3f8742f5cd4e34",
+ "sourceRevision": "5a8353c443b5eb6ccb1b99d81b83a415cdba3d3a",
+ "manifestSha256": "52e292f27aa2fa71f671f6c9a4c31b1df03a1439a645257ecf703c30d655bf2f",
+ "encoding": {
+  "format": "Ogg Opus",
+  "sampleRate": 48000,
+  "channels": 1,
+  "libsndfileCompressionLevel": 0.8,
+  "lufs": -20
+ },
+ "supplement": {
+  "id": "MW1",
+  "schema": "rbn.voice.supplement/1",
+  "sha256": "52e292f27aa2fa71f671f6c9a4c31b1df03a1439a645257ecf703c30d655bf2f",
+  "pinnedAt": "5a8353c443b5eb6ccb1b99d81b83a415cdba3d3a",
+  "builtFrom": {
+   "branch": "claude/stoic-sagan-n3jvgk",
+   "commit": "6917fe07ce6925747f8e9e804923d1dc6bf6aec8",
+   "scriptContentHash": "3c59018e3137b6c9e7ae79938b6dd18f3943195ff1e11a3b0e3f8742f5cd4e34",
+   "command": "node tools/voice/production_manifest.mjs --out <scratch dir>, compared by id with the GO manifest"
+  },
+  "after": {
+   "goSourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+   "goManifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+   "goScriptContentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+  },
+  "retired": [
+   "r1-1c0a04f1cc6b7847",
+   "r1-262032c0c6d9432b",
+   "r1-436958030e2f29b6"
+  ],
+  "note": "retired ids keep their files from the main results; nothing deleted"
+ },
+ "casting": {
+  "narrator": {
+   "engine": "aivis",
+   "model": "ほのか(~現実20代女子AIボイチェン~リアボVC公式モデル)",
+   "revision": null,
+   "voice": "N2",
+   "style": "normal",
+   "params": {},
+   "pitchSemitones": 0,
+   "fx": null,
+   "edit": null,
+   "referenceSha256": null
+  }
+ },
+ "progress": {
+  "made": 7,
+  "elapsedSeconds": 12,
+  "at": "2026-10-18T11:14:48"
+ }
+}
