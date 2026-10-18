@@ -24,6 +24,49 @@ The repository is the shared record:
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
 Progress (the local worker's checkpoints, latest first):
+- **2026-10-18: send corrections SC2 and SC3** (Robin's listening decisions, relayed by the worker: 50 redo, 101 keep,
+  the rest stands; two of the redos are send corrections). Both are appended to
+  [supplements/SEND_CORRECTIONS.json](supplements/SEND_CORRECTIONS.json); SC1 is unchanged.
+  1. **SC2, the narrator: the same id, 札 sent as ふだ.** Record `r1-6843cbc80ebf3837` (key hall.w10.tab_sg#87dfc51991,
+     neutral) again with the send **「「潮硝子」のふだを拾った。」**, same voice. Robin: "札 is pronounced さつ rather than its
+     intended ふだ". The display already reads {札|ふだ}; only that word changes in the send, so the rest of the delivery
+     stays as it was.
+     - **Target:** about **1.98 s**, window 1.77–2.19 s: 13 morae at the narrator's median pace for one-pause lines of
+       10–16 morae in this batch (287 unflagged takes, 6.55 a second; p10–p90 5.93–7.35). The current take is 1.99 s, so
+       the length search is only a guard.
+  2. **SC3, Nao: the same id, without the comma.** Record `r1-2d3ac586bb0e7209` (key mb.ks_token_shelf#212c320964,
+     neutral) again with the send **「言われた通りにしか行かない舟か。……正直な奴だ。」**, same voice. Robin: "the overall
+     delivery is good, except the か with a strange delay likely caused from the comma". The display keeps its comma.
+     - **Target:** about **4.10 s**, window 3.61–4.78 s: 25 morae with the 「。……」 beat, at Nao's median pace for takes
+       with 「。……」 (212 unflagged takes, 6.09 a second; p10–p90 5.23–6.92). The current take is 3.85 s.
+  3. **The results, as for SC1:** the new take replaces the file in `results.json` at the same path; its entry adds
+     `"send"` (the corrected send) and `"sendCorrection"` (`"SC2"` / `"SC3"`). The replaced take moves to
+     `superseded/<stamp>/`. The review list and the listening page pick the correction up by id (both cards already show
+     "A corrected send is chosen"; they read "Recorded with the corrected send" once `sent` equals it).
+  4. **The rule, widened** ([VOICE_DELIVERY.md](VOICE_DELIVERY.md) §7 step 8): a send correction keeps the line's words,
+     each sent as written or as the reading the line gives it, in kana; only a silent opening 「……」 or a comma may be left
+     out; and it changes no more than the fault needs (one word or one comma where only that is wrong), so a delivery
+     Robin liked stays. The unit test reads each correction against its display.
+  5. **Lines that may share the faults (for listening, not corrected).** Only marked takes are corrected; these are listed
+     so Robin and the worker can check them by ear:
+     - **札 as ふだ:** the 11 other wing-10 tablet lines from the same template (src/content/hall/39a_w10_scenes.js:126):
+       r1-101ef8952e7e0337 (yn), r1-54d0981d49eaa4e0 (lf), r1-56b5e145d3866919 (ko), r1-63813ba6a8b58db8 (mb2),
+       r1-75080f81ee371bec (kr), r1-795eaf956be01c90 (sb), r1-b7f8dfeb3a1d1728 (cr), r1-c58f5afc89a14014 (co),
+       r1-e6415ccd77c70dcb (sa), r1-f150417e65a2ad7c (rw), r1-fca2cb5a8f8a84b3 (mb1). Beyond them, 270 more narrator
+       recordings and 197 other speakers' carry {札|ふだ} (479 in all), and 97 more carry a compound read with ふだ
+       ({名札|なふだ}, {荷札|にふだ}, {木札|きふだ}, {花札|はなふだ}). Ten reference readings mean ふだ: 札 (two), 名札, 荷札,
+       立て札, 木札, 札場, 札橋, 札蟹, 花札 (高札, こうさつ, is meant with さつ).
+     - **「、か。」:** 65 lines end a clause with 「、か。」 (Nao 33, Suzu 20, Mio 3, Omi 2, seven others one each); the same
+       pause may sit in some of them.
+  6. **For the record, the worker's other work on Robin's notes** (as relayed):
+     - **Lighter reverb:** every line of The Tide Clerk (sg_clerk, preset hush), the Gardener of Unsent Words (ko_gardener)
+       and the Nameless Bridge (mb_bridgespirit) re-rendered from the clean masters, the reverb about 30% shorter and 35%
+       quieter. The Kiln Warden and the Lord of the Understage stay as they are (Robin: perfect).
+     - **The trim:** it clipped opening voiceless fricatives (the さ and は rows) whenever more than 0.20 s of sound came
+       before the voice; this is Robin's "ふ is effectively silent" and the narrator's single-word "gasping". The redos use
+       a text-aware trim. A scan finds 1,657 fricative-initial takes with the clipped opening (1,275 narrator reference
+       readings, 113 narrator lines, 136 Suzu, the rest spread); the worker is asking Robin before touching any take that
+       is not marked.
 - **2026-10-18: the answers to Robin's two requests** (relayed by the worker: "reconcile Wataru's line … a listening
   page for anything needing review"):
   1. **Wataru's line: the same id, with a new send.** Record `r1-6ab18b4d8dcef181` (key sg.omi_wataru#a036d6675c,

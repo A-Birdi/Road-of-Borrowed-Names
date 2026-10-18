@@ -43,6 +43,89 @@
    },
    "results": "Same id. Put the new take at wataru/r1-6ab18b4d8dcef181.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"やめさせないんですか。\" to that entry, and move the 1.17 s take to superseded/<stamp>/ beside the two earlier ones. The site gives the new audio a new content name (rec/wataru/r1-6ab18b4d8dcef181.<sha12>.opus), so nothing a player kept goes stale.",
    "status": "send chosen; to be recorded by the local worker with the same voice and a length-fit seed search"
+  },
+  {
+   "ref": "SC2",
+   "id": "r1-6843cbc80ebf3837",
+   "speaker": "narrator",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "hall.w10.tab_sg#87dfc51991",
+     "scene": "hall.w10.tab_sg",
+     "file": null,
+     "line": 104,
+     "en": "You pick up the tablet: \"Saltglass\".",
+     "source": "src/content/hall/39a_w10_scenes.js:126 (the wing-10 tablet line, one scene per place)"
+    }
+   ],
+   "display": "「 {潮|しお}{硝子|がらす} 」 の {札|ふだ} を {拾|ひろ}った 。",
+   "spoken": "「潮硝子」の札を拾った。",
+   "sendWas": "「潮硝子」の札を拾った。",
+   "send": "「潮硝子」のふだを拾った。",
+   "sendMorae": 13,
+   "changes": [
+    "札 sent as its reading, ふだ"
+   ],
+   "decided": "Robin, 2026-10-18, listening decisions (relayed by the local worker; the decisions file is kept locally): redo; '札 is pronounced さつ rather than its intended ふだ'. The display already reads {札|ふだ}.",
+   "why": [
+    "The reading. The line means ふだ (a tablet; its own furigana), but the narrator's engine, AivisSpeech, read the bare kanji as さつ (as in お札, a banknote). Sending the reading for that one word leaves the engine nothing to guess there, the way names and seams are already sent (§7, steps 4-5).",
+    "Only the misread word changes. Robin heard nothing else wrong in the take, so the rest of the send stays as it was, kanji included (潮硝子 was read as meant); a whole-line kana send could change a delivery that was fine.",
+    "The other eleven wing-10 tablet lines are the same sentence with another place name (「…」の札を拾った。), and 270 more narrator lines mean 札 as ふだ. They were not marked and are not corrected here; they are listed for Robin and the worker (READINESS.md, 2026-10-18)."
+   ],
+   "lengthFit": {
+    "basis": "the narrator's own takes in this batch with one pause and 10-16 morae: 287 unflagged recordings, median 6.55 morae per second (10th-90th percentile 5.93-7.35)",
+    "targetSeconds": 1.98,
+    "windowSeconds": [1.77, 2.19],
+    "note": "13 morae either way (ふだ and さつ are both two). The current 1.99 s take is already inside the window: the reading is the problem here, not the length. Robin's listening decides."
+   },
+   "results": "Same id. Put the new take at narrator/r1-6843cbc80ebf3837.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"「潮硝子」のふだを拾った。\" and \"sendCorrection\": \"SC2\" to that entry, and move the current take to superseded/<stamp>/. The site gives the new audio a new content name, so nothing a player kept goes stale.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC3",
+   "id": "r1-2d3ac586bb0e7209",
+   "speaker": "nao",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "mb.ks_token_shelf#212c320964",
+     "scene": "mb.ks_token_shelf",
+     "file": "zzzz_keepsakes/10_mb_mp",
+     "line": 33,
+     "attribution": "condition",
+     "en": "A barge that only goes where it's told. …An honest sort.",
+     "source": "src/content/zzzz_keepsakes/10_mb_mp.js:221"
+    }
+   ],
+   "display": "{言|い}われた {通|とお}り に しか {行|い}かない {舟|ふね} 、 か 。 …… {正直|しょうじき} な {奴|やつ} だ 。",
+   "spoken": "言われた通りにしか行かない舟、か。……正直な奴だ。",
+   "sendWas": "言われた通りにしか行かない舟、か。……正直な奴だ。",
+   "send": "言われた通りにしか行かない舟か。……正直な奴だ。",
+   "sendMorae": 25,
+   "changes": [
+    "the comma before か left out"
+   ],
+   "decided": "Robin, 2026-10-18, listening decisions (relayed by the local worker; the decisions file is kept locally): redo; 'The overall delivery is good, except the か with a strange delay likely caused from the comma.'",
+   "why": [
+    "The pause. In the line the comma marks a reflective beat (a barge, one that only goes where it is told), but the engine made it a stop inside the phrase, so the か that closes the thought arrives late. Without the comma the engine says 舟か as one phrase; the 「……」 before the second sentence stays, so the line keeps its turn.",
+    "Only the comma changes. Robin found the delivery otherwise good, so the words, their kanji and the rest of the punctuation stay as they were; the display keeps its comma.",
+    "A send correction may leave out a comma, as SC1 left out a silent opening beat; the words and their reading never change (VOICE_DELIVERY.md §7, step 8)."
+   ],
+   "lengthFit": {
+    "basis": "Nao's own takes in this batch with a sentence break followed by 「……」: 212 unflagged recordings, median 6.09 morae per second (10th-90th percentile 5.23-6.92)",
+    "targetSeconds": 4.1,
+    "windowSeconds": [3.61, 4.78],
+    "note": "25 morae. The current 3.85 s take is inside the window; the fault is where the pause falls, not the length, so the new take may come out a little shorter. Robin's listening decides."
+   },
+   "results": "Same id. Put the new take at nao/r1-2d3ac586bb0e7209.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"言われた通りにしか行かない舟か。……正直な奴だ。\" and \"sendCorrection\": \"SC3\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
   }
  ]
 }

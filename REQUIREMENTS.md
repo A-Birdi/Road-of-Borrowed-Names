@@ -1033,6 +1033,11 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - **Not done / with others:** Robin's listening and decisions; the real audio in a real browser on Windows (not
     tested here). The new take is recorded (the worker, a541476: 1.24 s, flagged, three earlier takes kept), and the
     committed page is rebuilt from that list.
+  - **Send corrections SC2 and SC3** (Robin's listening decisions, 2026-10-18; VALIDATION.md "Send corrections SC2 and
+    SC3"): the narrator's 「「潮硝子」の札を拾った。」 sent with ふだ for 札, and Nao's 「……舟、か。……」 sent without the comma;
+    the same ids, appended to `SEND_CORRECTIONS.json`. VOICE_DELIVERY.md §7 step 8 widened to one word as its reading or
+    a comma left out. U `voice_review_page` 44/0; the listening page rebuilt. **Not done / with the worker:** recording
+    them; Robin's listening to the takes that may share the faults (listed in READINESS.md).
 - [~] XP134 CW-1, the traveller's setup book (Robin, 2026-10-18): "Implement CW-1 from this package … The demo is a design
   and interaction reference, not a replacement for the game's real creation, Settings or save systems. Keep Local's
   voice production unchanged. Return the actual-game before/after and motion evidence, then wait for my approval before

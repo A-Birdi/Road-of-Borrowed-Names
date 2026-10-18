@@ -1,6 +1,7 @@
 // Robin, 2026-10-18 (relayed by the local worker): reconcile Wataru's line, and a listening page for the takes to review.
 //   - a send correction keeps the recording's id: the line, its display and its spoken text are the GO manifest's; only
-//     the text the engine is given changes, and it is the line's own reading (VOICE_DELIVERY.md §7, step 8);
+//     the text the engine is given changes, and its words are the line's own: each as written or as the reading the line
+//     gives it, only a silent opening 「……」 or a comma left out (VOICE_DELIVERY.md §7, step 8);
 //   - the listening page is the committed review list written into one HTML file: every take by a relative path in the
 //     batch folder, no audio inside it, nothing fetched, and it is current with the list it was built from.
 import fs from 'node:fs';
@@ -16,20 +17,40 @@ export default async (t) => {
   t.eq(sc.schema, 'rbn.voice.send-correction/1', 'send corrections: schema');
   t.eq(sc.after.goScriptContentHash, man.contentHash, 'send corrections are against the GO manifest');
   const SMALL = 'ゃゅょぁぃぅぇぉゎャュョァィゥェォヮ';
+  const morae = (s) => [...s].filter((ch) => /[ぁ-ー]/.test(ch) && !SMALL.includes(ch)).length;
+  // what a send may be, read from the display: each word as written or as its reading, an opening 「……」 or a comma optional
+  const allowed = (display) => {
+    const esc = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const d = display.replace(/ /g, '');
+    const lead = (d.match(/^…+/) || [''])[0];
+    const body = d.slice(lead.length).split(/(\{[^{}|]+\|[^{}|]+\}|、)/).map((p) => {
+      const g = p.match(/^\{([^{}|]+)\|([^{}|]+)\}$/);
+      return g ? '(?:' + esc(g[1]) + '|' + esc(g[2]) + ')' : p === '、' ? '、?' : esc(p);
+    }).join('');
+    return new RegExp('^' + (lead ? '(?:' + lead + ')?' : '') + body + '$');
+  };
   for (const c of sc.corrections) {
     const e = byId.get(c.id);
     t.ok(!!e, c.ref + ': its id is in the GO manifest');
     if (!e) continue;
     t.eq([c.speaker, c.delivery, c.dialect, c.display, c.spoken, c.sendWas], [e.speaker, e.delivery, e.dialect, e.display, e.spoken, e.send], c.ref + ': the line is unchanged (same id)');
     t.eq(c.lines.map((l) => l.key), e.lines.map((l) => l.key), c.ref + ': the same line keys');
-    t.ok(!/[一-鿿々]/.test(c.send), c.ref + ': the send has no kanji left to guess');
-    t.eq(c.send, e.kana.replace(/^…+/, ''), c.ref + ': the send is the line\'s own reading, the opening beat left out');
-    t.eq(c.sendMorae, [...c.send].filter((ch) => /[ぁ-ー]/.test(ch) && !SMALL.includes(ch)).length, c.ref + ': its morae');
+    t.ok(c.send !== c.sendWas, c.ref + ': the send is corrected');
+    t.ok(allowed(e.display).test(c.send), c.ref + ': the send keeps the line\'s words (each as written or as its reading; only an opening 「……」 or a comma left out)');
+    t.eq(c.sendMorae, morae(e.kana.replace(/^…+/, '')), c.ref + ': its morae are the line\'s own');
     const [lo, hi] = c.lengthFit.windowSeconds;
     t.ok(lo < c.lengthFit.targetSeconds && c.lengthFit.targetSeconds < hi, c.ref + ': the length target sits in its window');
   }
   const sc1 = sc.corrections.find((c) => c.ref === 'SC1');
   t.eq([sc1 && sc1.id, sc1 && sc1.send], ['r1-6ab18b4d8dcef181', 'やめさせないんですか。'], 'SC1 is Wataru\'s 「……辞めさせないんですか。」, sent as 「やめさせないんですか。」');
+  const sc2 = sc.corrections.find((c) => c.ref === 'SC2'), sc3 = sc.corrections.find((c) => c.ref === 'SC3');
+  t.eq([sc2 && sc2.id, sc2 && sc2.send], ['r1-6843cbc80ebf3837', '「潮硝子」のふだを拾った。'], 'SC2 is the narrator\'s 「「潮硝子」の札を拾った。」, 札 sent as ふだ');
+  t.eq([sc3 && sc3.id, sc3 && sc3.send], ['r1-2d3ac586bb0e7209', '言われた通りにしか行かない舟か。……正直な奴だ。'], 'SC3 is Nao\'s line, the comma before か left out');
+  t.eq(sc.corrections.map((c) => c.ref), sc.corrections.map((c, i) => 'SC' + (i + 1)), 'send corrections are numbered in order (append-only)');
+  // the rule turns away what it should: a changed word, a dropped mid-line beat
+  t.ok(!allowed('{言|い}われた {通|とお}り 、 か 。 …… {奴|やつ} だ 。').test('言われた通りか。……やつだな。'), 'rule: a changed ending is not a send correction');
+  t.ok(!allowed('{言|い}われた {通|とお}り 、 か 。 …… {奴|やつ} だ 。').test('言われた通り、か。やつだ。'), 'rule: a mid-line 「……」 stays');
+  t.ok(allowed('…… {辞|や}めさせない 、 か 。').test('やめさせないか。'), 'rule: an opening 「……」 and a comma may go');
 
   // the listening page
   const { build, ruby } = await import('../../tools/voice/review_page.mjs');

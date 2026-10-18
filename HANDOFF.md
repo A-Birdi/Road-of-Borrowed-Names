@@ -609,6 +609,13 @@
       battle now chooses Standard mistakes, since FR-1 made Assisted the default). 21 affected browser suites pass
       (VALIDATION.md "MW-1").
 
+    **Send corrections SC2 and SC3 (Robin's listening decisions, 2026-10-18, relayed by the worker; 50 redo, 101 keep).**
+    The narrator's wing-10 tablet line (`r1-6843cbc80ebf3837`) is sent with ふだ for 札; Nao's `r1-2d3ac586bb0e7209` is
+    sent without the comma before か. Same ids; appended to supplements/SEND_CORRECTIONS.json; VOICE_DELIVERY.md §7 step
+    8 widened; the listening page rebuilt. The worker records them. Lines that may share the faults, the worker's
+    lighter reverb (Tide Clerk, Gardener, Nameless Bridge) and the trim finding (1,657 takes, Robin to decide) are in
+    READINESS.md. VALIDATION.md "Send corrections SC2 and SC3", REQUIREMENTS.md XP133.
+
     **CW-1, the traveller's setup book: approved by Robin and pushed (2026-10-18: "Looks good … You can push the
     changes you prepared here").** The candidate (`cw1-candidate` at faad98b) is merged into the task branch unchanged;
     not deployed. VALIDATION.md "CW-1", REQUIREMENTS.md XP134, docs/review/cw1/FIELD_INVENTORY.md.

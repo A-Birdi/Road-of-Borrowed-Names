@@ -4896,6 +4896,39 @@ for anything needing review". The worker's list is `docs/future/voice/production
 - **Whole unit suite**, on the tree pushed as fcacaf3: **54,605 passed, 0 failed** (`node tests/run-unit.mjs`).
 - **Not tested:** the real audio (it is on Robin's PC), Windows, Firefox and Safari.
 
+## Send corrections SC2 and SC3 (Robin's listening decisions, 2026-10-18, relayed by the local worker)
+
+Robin's decisions on the listening page: 50 redo, 101 keep, the rest stands (the decisions file stays on Robin's PC).
+Two of the redos are send corrections, appended to `docs/future/voice/production/supplements/SEND_CORRECTIONS.json`.
+The worker records them; nothing was generated here.
+- **SC2:** the narrator's `r1-6843cbc80ebf3837` (hall.w10.tab_sg), 「「潮硝子」の札を拾った。」. Robin: "札 is pronounced
+  さつ rather than its intended ふだ". It is sent as 「「潮硝子」のふだを拾った。」: only 札 changes, to the reading the line
+  gives it. Target 1.98 s (1.77–2.19); the current take is 1.99 s.
+- **SC3:** Nao's `r1-2d3ac586bb0e7209` (mb.ks_token_shelf), 「言われた通りにしか行かない舟、か。……正直な奴だ。」. Robin: "the
+  か with a strange delay likely caused from the comma". It is sent without that comma; the display keeps it. Target
+  4.10 s (3.61–4.78); the current take is 3.85 s.
+- **Length targets** are from `results.json.gz`, the speaker's own unflagged takes of the same shape (narrator: 287
+  one-pause takes of 10–16 morae, median 6.55 morae a second; Nao: 212 takes with 「。……」, median 6.09), measured, not
+  heard.
+- **Append-only:** the file's bytes up to SC1's closing brace are unchanged (checked before writing); SC1 parses the same.
+- **The rule** (VOICE_DELIVERY.md §7 step 8) now allows one word sent as its reading, or a comma left out, as well as
+  SC1's whole line in kana: the words stay the line's own, only a silent opening 「……」 or a comma may go, and no more
+  is changed than the fault needs. A line whose words change still gets a new id (§8).
+- **Lines that may share the faults** are listed in READINESS.md (2026-10-18, SC2 and SC3) for listening, not corrected:
+  the 11 other wing-10 tablets, 479 recordings with {札|ふだ} in all, 97 with a ふだ compound, 10 reference readings, and
+  65 lines with 「、か。」. The worker's reverb re-render and trim finding are recorded there as relayed.
+- **U** `voice_review_page` 44/0 (was 24):
+  - each correction matches its GO entry (id, speaker, delivery, dialect, display, spoken, the old send, the keys);
+  - each send differs from the old one and matches a pattern read from the display: each word as written or as its
+    reading, an opening 「……」 and commas optional; three cases check the pattern turns away a changed word and a dropped
+    mid-line 「……」 and allows the opening beat and a comma to go;
+  - each correction's morae equal the line's kana (SC1 10, SC2 13, SC3 25), and the length target sits in its window;
+  - SC1, SC2 and SC3 by id and send, numbered in order;
+  - the listening page rebuilt (`node tools/voice/review_page.mjs`; 151 recordings, 160 listings, 163 files) and current:
+    the SC2 and SC3 cards carry "A corrected send is chosen".
+- **Whole unit suite** on this tree: **54,666 passed, 0 failed** (`node tests/run-unit.mjs`).
+- **Not tested:** the new takes (not recorded yet); the real audio.
+
 ## MW-1 — the mill follows the gears; a travel tile is walked onto (Robin, 2026-10-17)
 
 Robin, with the AR-1 Mill approval: "The stairs should not need to be interacted with as they're a traveling tile - any
