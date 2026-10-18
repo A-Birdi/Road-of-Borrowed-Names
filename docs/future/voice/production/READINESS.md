@@ -24,7 +24,14 @@ The repository is the shared record:
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
 Progress (the local worker's checkpoints, latest first):
-- **2026-10-17, after the resumption:** phase 1 finished again (the AivisSpeech narrator, the reference readings, the
+- **2026-10-18: the MW-1 supplement recorded after the batch:** 7 of 7 made, 0 failed: the 6 narrator lines and the
+  どすん reference. It was taken from the record at 5a8353c, and the worker's sha256 (52e292f2…) is that file's: it
+  checks out byte-identical here and has not changed since. Results are in `results_MW1.json`, beside `results.json`.
+  The 3 retired ids keep their files (VOICE_DELIVERY.md §8.4). Nothing pushed. Status only; no request to the lead.
+- **2026-10-18: the batch run FINISHED:** 23,816 recordings made, 0 pending, 0 failed (the GO manifest's whole count).
+  The audio stays on Robin's PC (§9). `results.json` and the run summary come back to this repository after the
+  worker's own checks. Nothing pushed yet. Status only; no request to the lead.
+- 2026-10-17, after the resumption (superseded by the lines above): phase 1 finished again (the AivisSpeech narrator, the reference readings, the
   AivisSpeech and Nemo NPCs, and Mochi), with the same counts as at the pause: 20,731 made, 3,085 pending, 0 failed. So
   the resumed pass made nothing new in phase 1, and what is left is Qwen's (the pause listed the rest of Ren, Suzu and
   the last Qwen NPCs). Qwen is starting. Status only; no request to the lead.
@@ -74,7 +81,8 @@ It prints "manifest is current: 14721 recordings + 9095 reference readings, cont
 - **Hosting:** generation does not wait for a host or a deployment.
 - **MW-1 supplement (2026-10-17):** Robin's Old Mill flow change adds 6 narrator lines and 1 narrator reference reading
   (どすん), and retires 3 lines: [supplements/MW1_SUPPLEMENT.json](supplements/MW1_SUPPLEMENT.json) (187 characters).
-  It is recorded after the batch, with the same narrator voice, delivery and encoding. The batch's inputs are unchanged
+  It is recorded after the batch, with the same narrator voice, delivery and encoding: done on 2026-10-18, 7 of 7, 0
+  failed (`results_MW1.json`; the progress list above). The batch's inputs are unchanged
   (`GO.json`: ff8a0fa, 513ec3ff…). At the branch head, `--check` now reports that the script has moved past the GO
   manifest. That is expected; it does not touch the batch, which checks out ff8a0fa.
 
