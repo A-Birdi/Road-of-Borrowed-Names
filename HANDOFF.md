@@ -605,6 +605,21 @@
       battle now chooses Standard mistakes, since FR-1 made Assisted the default). 21 affected browser suites pass
       (VALIDATION.md "MW-1").
 
+    **CW-1, the traveller's setup book: a candidate on the local branch `cw1-candidate`, awaiting Robin's visual and
+    interaction approval (Robin, 2026-10-18). Nothing pushed, merged or deployed.** VALIDATION.md "CW-1",
+    REQUIREMENTS.md XP134, docs/review/cw1/FIELD_INVENTORY.md.
+    - **What:** five steps (Learning on two pages; a Summary that is the review, with Edit and Return); the Settings
+      book as a draft of the setup, applied at Begin; printed leaf turns (src/ui/39_leafturn.js) to the package's
+      motion contract; folded corners; ornaments as CSS-drawn SVG (sources in docs/review/cw1/ornaments/).
+    - **Tests:** B `cw1_setup_book` (new) 86/0; U `cw1_leafturn` (new) 41/0; migrated to five steps: `create`,
+      `ui`, `fr1_defaults`, `fr1_opening`, `settings_review`, `shift_load_regression` (helpers in tests/e2e/lib.mjs:
+      `settled`, `beginJourney`, a flexible `setOut`).
+    - **Evidence recipes:** `tools/review/cw1_capture.mjs` (matched stills, both builds), `tools/review/cw1_motion.mjs`
+      (live clips, stepped renders, frames, timings). The gallery and ZIP went to Robin; they are not in the repo.
+    - **After approval:** bring `cw1-candidate` onto the task branch (merge, never force), rebuild, re-run
+      `cw1_setup_book`, `create`, `ui` and the unit suite, then push. A material change after approval needs a fresh
+      comparison.
+
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
     "P18 — Plan B", "LP-1" and "VA-1".

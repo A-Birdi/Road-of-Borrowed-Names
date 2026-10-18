@@ -1021,6 +1021,30 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     curtains, stairs that lead nowhere, the stacks key door, the lockhouse hatch); checkpoints on scene exits; Firefox,
     Safari and phones; recording the supplement (after the batch).
 
+- [~] XP134 CW-1, the traveller's setup book (Robin, 2026-10-18): "Implement CW-1 from this package … The demo is a design
+  and interaction reference, not a replacement for the game's real creation, Settings or save systems. Keep Local's
+  voice production unchanged. Return the actual-game before/after and motion evidence, then wait for my approval before
+  pushing or deploying the candidate." VALIDATION.md "CW-1".
+  - **Candidate, awaiting Robin's visual and interaction approval** (local branch `cw1-candidate`; nothing pushed, merged
+    or deployed). B `cw1_setup_book` 86/0 (F01–F18, F20, M01–M18; F19 by `settings_review` §4b and `old_saves`);
+    U `cw1_leafturn` 41/0; the creation-touching suites pass on the candidate build:
+    - five steps (Identity, Appearance, Background, Learning, Summary); the Summary is the review, and nothing opens
+      after Begin on a new journey (New Game+ keeps its review); Begin builds and starts one campaign;
+    - Learning on two pages: Your Japanese (four starting points with their descriptions, placement, Kana so far for F);
+      Your journey (Answering, Learning mistakes and Tactical challenge always shown; the Reading preferences fold);
+    - the Summary: the traveller and how the journey will play, with Edit to the exact group (Return to summary;
+      Identity four leaves back); Sound and More journey settings open Settings as a draft applied once at Begin, with
+      previews rolled back on a teardown;
+    - printed leaf turns to the motion contract (360 ms; 230/180/155 ms per leaf for 2/3/4; 12 ms gaps; 40 ms settle),
+      direct with Reduce motion, the flat book, a narrow window or no animation support; Escape, resize, a hidden tab
+      or Reduce motion settles at once; folded corners (pointer only) and restrained CSS-drawn ornaments;
+    - every field kept with its backing key: docs/review/cw1/FIELD_INVENTORY.md;
+    - voice production unchanged (the manifest from the candidate is byte-identical to the task branch's; narrator
+      delta 0); no AR-1 or other art mixed in.
+  - **Not done / Robin's call:** approval of the look and the motion; one leaf measures +13–19 % over its 400 ms from
+    the first leaf frame to the live page in this software renderer (several leaves +6–7 %); Firefox, Safari, Windows,
+    a GPU browser, phones and screen readers untested.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

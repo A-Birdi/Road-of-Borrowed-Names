@@ -2,8 +2,9 @@
 // fresh browser profile that plays the real New Game route from the title (slot 1, Skip prologue) with the same synthetic
 // traveller as tools/review/cw1_capture.mjs, then records one interaction at normal speed (Playwright's recordVideo;
 // the scene's start is written to motion.json so the clip can be cut to it). Also: frames paused at 25/50/75 % of a
-// leaf, frame intervals and elapsed times measured in the page, and the rendering environment. Nothing is saved to a
-// real profile, and the journey begins only in the 'begin' scene, in its own throwaway profile.
+// leaf, frame-accurate stepped renders at the contract's timing, frame intervals and elapsed times measured in the page,
+// and the rendering environment. Nothing is saved to a real profile, and the journey begins only in the 'begin' scene,
+// in its own throwaway profile.
 // Usage: node tools/review/cw1_motion.mjs <build.html> <outDir> [--size=1440x900] [--scenes=forward,backward,...] [--baseline]
 import http from 'node:http';
 import fs from 'node:fs';
@@ -14,7 +15,7 @@ const [, , html, out] = process.argv;
 const arg = (k, d) => { const a = process.argv.find((x) => x.startsWith('--' + k + '=')); return a ? a.slice(k.length + 3) : d; };
 const [W, H] = arg('size', '1440x900').split('x').map(Number);
 const baseline = process.argv.includes('--baseline');
-const ALL = baseline ? ['base_forward'] : ['forward', 'backward', 'jump', 'edit_return', 'begin', 'reduced', 'flat', 'frames', 'perf'];
+const ALL = baseline ? ['base_forward'] : ['forward', 'backward', 'jump', 'edit_return', 'begin', 'reduced', 'flat', 'frames', 'stepped', 'perf'];
 const scenes = arg('scenes', ALL.join(',')).split(',');
 fs.mkdirSync(out, { recursive: true });
 const body = fs.readFileSync(html);
@@ -210,6 +211,75 @@ for (const sc of scenes) {
     await s.ctx.close();
     report.scenes.frames = Object.assign(rep, { errors: s.errors });
   }
+  if (sc === 'stepped') {
+    // Frame-accurate renders at the contract's own timing (the live recordings above drop frames: Playwright's
+    // screencast in this software renderer captures far fewer frames than the page draws). Each leaf is paused the
+    // moment it is made, set to t = 0, 20, 40 … ms of its duration (50 frames a second), and photographed; the frames are
+    // then joined with their exact durations (the gap between leaves, the settle, a still before and after). Every frame
+    // is the real page at that moment of the turn; only the clock is stepped. Preparation (about 20 ms warm) is not shown.
+    const s = await open({});
+    const dt = 20;
+    // (harness only: the turn's watchdog, its plan's total + 1.5 s, would settle a leaf held for photographs)
+    await s.p.evaluate(() => {
+      const st = window.setTimeout;
+      window.setTimeout = function (f, ms) { const P = window.__plan; if (P && ms === P.totalMs + 1500) return 0; return st.apply(this, arguments); };
+      const run = RB.ui.leafTurn.run;
+      RB.ui.leafTurn.run = function (o) { window.__plan = RB.ui.leafTurn.plan(o.from, o.to); return run.call(this, o); };
+    });
+    const render = async (name, moves) => {
+      const dir = out + '/stepped/' + name;
+      fs.mkdirSync(dir, { recursive: true });
+      const list = [];
+      let idx = 0;
+      const shot = async (ms) => { const f = 'f' + String(idx++).padStart(4, '0') + '.png'; await s.p.screenshot({ path: dir + '/' + f }); list.push([f, ms]); };
+      const info = [];
+      for (const [label, trigger] of moves) {
+        await shot(600);
+        await s.p.evaluate(() => {
+          const st = document.querySelector('.cr-stage');
+          window.__hop = 0;
+          window.__mo && window.__mo.disconnect();
+          window.__mo = new MutationObserver(() => {
+            const lf = st.querySelector('.lt-leaf');
+            if (!lf || lf.__seen) return;
+            lf.__seen = true;
+            st.getAnimations({ subtree: true }).forEach((a) => { a.pause(); a.currentTime = 0; });
+            window.__hop++;
+          });
+          window.__mo.observe(st, { childList: true });
+        });
+        await s.p.evaluate(trigger);
+        const P = await s.p.evaluate(() => { const t = Date.now(); return new Promise((r) => { const w = () => (window.__plan || Date.now() - t > 3000 ? r(window.__plan) : setTimeout(w, 10)); w(); }); });
+        for (let k = 1; k <= P.n; k++) {
+          await s.p.waitForFunction((k) => window.__hop >= k, k, { timeout: 8000 });
+          for (let t = 0; t < P.leafMs; t += dt) {
+            await s.p.evaluate((t) => document.querySelector('.cr-stage').getAnimations({ subtree: true }).forEach((a) => { a.currentTime = t; }), t);
+            await shot(Math.min(dt, P.leafMs - t));
+          }
+          await s.p.evaluate((d) => document.querySelector('.cr-stage').getAnimations({ subtree: true }).forEach((a) => { a.currentTime = d; }), P.leafMs);
+          await shot(k < P.n ? P.gapMs : P.settleMs);
+          await s.p.evaluate(() => document.querySelector('.cr-stage').getAnimations({ subtree: true }).forEach((a) => a.play()));
+        }
+        await settled(s.p);
+        await shot(900);
+        info.push({ label, leaves: P.n, leafMs: P.leafMs, gapMs: P.gapMs, settleMs: P.settleMs, step: await step(s.p) });
+      }
+      await s.p.evaluate(() => { window.__mo && window.__mo.disconnect(); window.__plan = null; });
+      fs.writeFileSync(dir + '/list.txt', list.map(([f, ms]) => "file '" + f + "'\nduration " + (ms / 1000).toFixed(3)).join('\n') + "\nfile '" + list[list.length - 1][0] + "'\n");
+      return { frames: list.length, seconds: list.reduce((n, x) => n + x[1], 0) / 1000, moves: info };
+    };
+    const nx = () => document.querySelector('.folio-create .folio-foot .cr-primary:not([hidden])').click();
+    const bk = () => document.querySelector('.folio-create .folio-foot .cr-back').click();
+    const rep = {};
+    rep.fwd_bwd = await render('fwd_bwd', [['Next: identity → appearance (one leaf)', nx], ['Back: appearance → identity (one leaf)', bk]]);
+    await s.p.evaluate(nx); await settled(s.p);
+    await quick(s.p, 2);
+    rep.jump = await render('jump_4to1', [['route: learning → identity (three leaves)', () => document.querySelector('.cr-route button[data-step="0"]').click()]]);
+    await quick(s.p, 4);
+    rep.edit = await render('edit_5to1_1to5', [['Summary: Edit identity (four leaves back)', () => document.querySelector('[data-sg=identity] .cr-edit').click()], ['Return to summary (four leaves forward)', () => document.querySelector('.cr-ret').click()]]);
+    await s.ctx.close();
+    report.scenes.stepped = Object.assign(rep, { errors: s.errors });
+  }
   if (sc === 'perf') {
     // frame intervals (requestAnimationFrame) during a single leaf and a four-leaf riffle; elapsed time from the click
     // to the live destination; the first turn of a session against later ones; and a no-animation control
@@ -219,24 +289,34 @@ for (const sc of scenes) {
       const x = c && c.getExtension('WEBGL_debug_renderer_info');
       return { renderer: x ? c.getParameter(x.UNMASKED_RENDERER_WEBGL) : 'unknown', dpr: devicePixelRatio, ua: navigator.userAgent };
     });
+    // all stamped in the page: the click, the first frame showing a leaf, and the moment the stage is emptied (the live
+    // destination shown); frame intervals between the click and that moment
     const measure = async (press) => {
       await s.p.evaluate(() => {
-        const R = window.__pf = { f: [], c0: 0, first: 0, end: 0, nodes0: document.querySelectorAll('*').length, peak: 0 };
-        let last = 0, on = true;
+        const R = window.__pf = { f: [], c0: 0, f0: 0, l0: 0, nodes0: document.querySelectorAll('*').length, peak: 0 };
+        let last = 0;
         const st = document.querySelector('.cr-stage');
-        const tick = (t) => { if (!on) return; if (R.c0 && last) R.f.push(t - last); last = t; if (st.classList.contains('lt-on')) { if (!R.first) R.first = performance.now() - R.c0; R.peak = Math.max(R.peak, document.querySelectorAll('*').length); } requestAnimationFrame(tick); };
+        const mo = new MutationObserver(() => { if (R.f0 && !R.l0 && !st.classList.contains('lt-on')) { R.l0 = performance.now(); mo.disconnect(); } });
+        mo.observe(st, { attributes: true, attributeFilter: ['class'] });
+        const tick = (t) => {
+          if (R.l0) return;
+          if (R.c0 && last) R.f.push(t - last);
+          last = t;
+          if (R.c0 && !R.f0 && st.querySelector('.lt-leaf')) R.f0 = performance.now();
+          if (st.classList.contains('lt-on')) R.peak = Math.max(R.peak, document.querySelectorAll('*').length);
+          requestAnimationFrame(tick);
+        };
         requestAnimationFrame(tick);
         document.addEventListener('click', () => { R.c0 = performance.now(); }, { capture: true, once: true });
-        R.stop = () => { on = false; };
       });
       await press();
-      await s.p.waitForTimeout(60);
       await settled(s.p);
+      await s.p.waitForTimeout(50);
       return s.p.evaluate(() => {
-        const R = window.__pf; R.stop();
+        const R = window.__pf;
         const f = R.f.slice().sort((a, b) => a - b);
         const q = (p) => (f.length ? Math.round(f[Math.min(f.length - 1, Math.floor(p * f.length))] * 10) / 10 : null);
-        return { ms: Math.round(performance.now() - R.c0), firstLeafFrameMs: Math.round(R.first), frames: f.length, medianMs: q(0.5), p95Ms: q(0.95), maxMs: f.length ? Math.round(f[f.length - 1]) : null, nodesBefore: R.nodes0, nodesPeak: R.peak, nodesAfter: document.querySelectorAll('*').length };
+        return { clickToLiveMs: Math.round(R.l0 - R.c0), prepMs: Math.round(R.f0 - R.c0), turnMs: Math.round(R.l0 - R.f0), frames: f.length, medianMs: q(0.5), p95Ms: q(0.95), maxMs: f.length ? Math.round(f[f.length - 1]) : null, nodesBefore: R.nodes0, nodesPeak: R.peak, nodesAfter: document.querySelectorAll('*').length };
       });
     };
     const rep = { env };
@@ -249,7 +329,18 @@ for (const sc of scenes) {
     await s.ctx.close();
     // the control: the same moves with Reduce motion (no leaves): the direct switch
     const c = await open({ reduce: true });
-    const t = async (press) => { await c.p.evaluate(() => { window.__c0 = 0; document.addEventListener('click', () => { window.__c0 = performance.now(); }, { capture: true, once: true }); }); await press(); await settled(c.p); return c.p.evaluate(() => Math.round(performance.now() - window.__c0)); };
+    // (with no leaf, the moment the destination is shown is the moment its step is set on the book)
+    const t = async (press) => {
+      await c.p.evaluate(() => {
+        window.__c0 = 0; window.__c1 = 0;
+        const fe = document.querySelector('.folio-create');
+        const mo = new MutationObserver(() => { if (window.__c0 && !window.__c1) { window.__c1 = performance.now(); mo.disconnect(); } });
+        mo.observe(fe, { attributes: true, attributeFilter: ['data-step'] });
+        document.addEventListener('click', () => { window.__c0 = performance.now(); }, { capture: true, once: true });
+      });
+      await press(); await settled(c.p); await c.p.waitForTimeout(50);
+      return c.p.evaluate(() => Math.round(window.__c1 - window.__c0));
+    };
     rep.control_reduced_1to2 = await t(() => c.p.click('.folio-create .folio-foot .cr-primary:not([hidden])'));
     await quick(c.p, 3);
     rep.control_reduced_5to1 = await t(() => c.p.click('[data-sg=identity] .cr-edit'));

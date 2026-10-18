@@ -4937,6 +4937,62 @@ they're then made accessible by this action."
   `supplements/MW1_SUPPLEMENT.json`. 28 entries in ch1/31_mill keep their ids and keys; only their line numbers moved.
   GO.json and the frozen manifest are unchanged.
 
+## CW-1 — the traveller's setup book (candidate on the local branch `cw1-candidate`; not approved, not pushed; Robin, 2026-10-18)
+
+Robin: "Implement CW-1 from this package … The demo is a design and interaction reference, not a replacement for the
+game's real creation, Settings or save systems. Keep Local's voice production unchanged. Return the actual-game
+before/after and motion evidence, then wait for my approval before pushing or deploying the candidate."
+Package RBN_Setup_Book_CW1 (docs 01–09, demo/MOTION_CONTRACT.json). REQUIREMENTS.md XP134.
+
+- **Builds.** Baseline: 934ea53 (the package's source basis), SHA-256 `c50280bbda22d48a64f850266f0f34a9e80b6ea7aa4c04c87f8abe16be81ed94`,
+  23,754,550 bytes. Candidate: SHA-256 `a50da7d26cc0a5710802d358a5cd86e2a3165dc7b2e1db679875ae6b957b13fc`, 23,818,136 bytes
+  (+63,586; the ornaments ≈ 4.7 KB of CSS data-URI SVG; no new files, fonts or requests; CSP unchanged).
+- **Environment.** Headless Chromium 141.0.7390.37 via Playwright 1.56.1, Linux, software rendering (WebGL reports
+  SwiftShader), DPR 1, browser zoom 100 %.
+- **Browser tests on the candidate build (B):**
+  - `tests/e2e/cw1_setup_book.mjs` (new): **86 passed, 0 failed**. F01–F18, F20, M01–M18, keys (IME Enter, the Reading
+    fold on Enter/Space, arrows), the system's Reduce motion and a 390×844 phone (no leaves), timing. Run again alone
+    (86/0) and alongside `create.mjs` and `ui.mjs` (86/0).
+  - `create` 447/0, `ui` 14/0, `fr1_defaults` all passed, `settings_review` all passed (its §4b: New Game+ keeps its
+    review; F19), `fr1_opening` 0 errors, `prologue` 100/0, `shift_load_regression` 18/18, `old_saves` 4/0, `settings`
+    all ok, `battle_settings` 10/0, `records` 7/0, `settings_shots` done, `sequence_manual` 64/0.
+  - On an earlier candidate build (`a6233e75…`, before the last motion and layout refinements): `visual` 134 ok,
+    `expedition` 6/0, `hall` 4/0, `lighthouse_top` 106/0, `quest_guide` all passed. `pursue` was stopped after
+    Chapters 1–3 passed: it starts from `RB.game.debugStart`, not from creation, so it is not a CW-1 check.
+- **Unit (U):** `cw1_leafturn` 41/0 on the candidate (plan, faces, durations and easing against the motion
+  contract); the whole unit suite 54,622/0 on `a6233e75`. `tools/validate.mjs`: no errors.
+- **Voice unchanged.** The recording manifest rebuilt from the candidate is byte-identical to one rebuilt from the
+  task branch (`48f3b5bd…`: 14,724 recordings + 9,096 reference readings, content 3c59018e3137, narrator 4,794):
+  narrator delta 0, no line added or changed. (The committed manifest, content 65cd38053ad6, predates MW-1 on the task
+  branch as well; not CW-1's.) No speech, audio, Local GPU use or pinned input touched. No AR-1 or other art mixed in.
+- **Found and fixed while validating:**
+  - the game's key layer forwards Enter/Space to buttons only, so no `<details>` heading answered the keyboard (the
+    baseline's "More choices" included). The setup book's own layer now opens and closes its folds, once a press.
+  - Multi-leaf turns ran long (≈ 1,050 ms for four leaves against 696): each leaf started when the last reported
+    finished. Leaves are now placed on the document timeline from one start (leaf k at t0 + k·(leaf + gap)).
+  - A first version back-dated that start to before the pages were printed, so a cold first move would have begun
+    part-way through its leaf. The first leaf now starts when it is first shown.
+  - Under load, a turn paused and resumed before it was shown could wait for ever on that first leaf's `ready`
+    (reproduced once in 33 rounds alongside two other suites). It now waits on whichever comes first: shown, finished,
+    or a stop. 100 rounds under the same load: 0 stalls.
+  - The live destination is now built as the last leaf lands, beneath the stage, so the settle covers that work.
+  - The Summary's Sound row label sat 12 px higher than its neighbours; at 150 % text and above the right page's
+    choices put their words beneath them (the side column was about 11 letters wide).
+- **Timings, measured in the page** (click; the first frame showing a leaf; the stage emptied): preparation 16–27 ms
+  warm, 168 ms on the first, cold move into Appearance (the no-animation control's own cold move there: 169 ms).
+  From the first leaf frame to the live page: one leaf 453–477 ms (plan 400; +13–19 %, above the brief's ±15 % here),
+  four leaves 741–744 ms (plan 696; +6–7 %). The leaf animations themselves run the contract's durations; the rest is
+  this renderer's ≈ 30-fps frames and building the destination. Frame intervals: median 16.7–33 ms. Twenty turns leave
+  no nodes, stage children or animations behind (M14).
+- **Evidence for Robin (not in the repository):** a self-contained gallery (matched before/after at 1280×720,
+  1366×768, 1440×900 and 1920×1080; Learning F and A; 125/150/200 % text; Japanese menus; Summary edit/return;
+  live clips and frame-accurate 50 fps stepped renders; frames at 25/50/75 %; 1:1 ornament and spine crops; tests by
+  ID) and a ZIP of the originals with SHA256SUMS. Recipes: `tools/review/cw1_capture.mjs`, `tools/review/cw1_motion.mjs`.
+  The field inventory: `docs/review/cw1/FIELD_INVENTORY.md`.
+- **Not tested:** Firefox and Safari (not installed), Windows, a GPU browser, physical phones and touch, screen
+  readers. Live screen recordings here drop frames (Playwright's screencast in software rendering), hence the stepped
+  renders.
+
 ## FR-1V — the one-kana blank and its word (Astra's verification of 71d4a95, 2026-10-17)
 
 Astra verified FR-1 at 71d4a95 and found one gap: a one-kana blank in a Foundations word task still credited the
