@@ -4783,6 +4783,33 @@ The full account is docs/review/ar1_mill/AR1_MILL_REPORT.md.
 
 **Judged by Robin:** both changes approved from the before/after package. The tests prove behaviour, not the picture.
 
+## The voice run records, checked; the tools' command guard on Windows (2026-10-18)
+
+The local worker pushed the run records (38a397f): `docs/future/voice/production/run/`.
+
+**Checked here** (U-style scripts on the pushed files, not the audio, which is not in the repository):
+- `results.json.gz` decodes, with 23,816 recordings, `pending` empty and `failed` empty.
+- Its pins are the GO ones: source ff8a0fa, manifest 513ec3ff…, content 65cd38053ad6.
+- Every one of the GO manifest's 23,816 ids (14,721 recordings and 9,095 references) has a result.
+- `results_MW1.json` has exactly the supplement's 7 ids.
+- The supplement record the worker pinned (5a8353c) hashes to the worker's 52e292f2….
+- None of the four files carries a local path or a credential (searched).
+
+**Fixed:** four tools compared `import.meta.url` with `'file://' + process.argv[1]`, which never matches on Windows
+(`file:///C:/…`), so their commands exited silently there: `tools/voice/voice_site.mjs`, `tools/voice/lines.mjs`,
+`tools/publish/site_size.mjs` and `tools/music/ensemble/export_events.mjs`. They now compare with
+`pathToFileURL(path.resolve(process.argv[1])).href`, as `tools/scene_manifest.mjs` did.
+
+**Checks of the fix (Linux):**
+- Each command still runs: `voice_site.mjs` prints its usage and exits 2, also when started from another folder.
+- `lines.mjs --who wataru` lists the line, and `site_size.mjs docs/review` measures.
+- `export_events.mjs` passes `node --check`; it was not run, because it writes files.
+- Importing `site_size.mjs` as a module does not run its command.
+- U `voice` 166/0, U `publish` 10/0.
+- **Not tested on Windows** (none here).
+
+**Open:** the flagged take `r1-6ab18b4d8dcef181` is for a listen (READINESS.md).
+
 ## The creation step's "More choices" fold reads as a fold (Robin, 2026-10-18)
 
 Robin, with a screenshot of the Learning step: "The 'more choices: ...' menu doesn't read as a menu literally. It

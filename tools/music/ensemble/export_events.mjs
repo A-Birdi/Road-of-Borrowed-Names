@@ -9,6 +9,7 @@
 // Writes <work>/<id>/score.json, performance.json and source.json (work: RBN_MUSIC_WORK, default tmp/music-ensemble).
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import crypto from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { load, root } from '../../../tests/lib/load.mjs';
@@ -52,7 +53,8 @@ function sourceRecord() {
   return { head, audioSourceDirty: dirty, files: hashes };
 }
 
-if (import.meta.url === 'file://' + process.argv[1]) {
+// run as a command (on Windows too: a file URL is file:///C:/…, never 'file://' + the path the shell gave)
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const ids = process.argv.slice(2).length ? process.argv.slice(2) : PILOTS;
   const all = compile(ids), src = sourceRecord();
   for (const id of ids) {

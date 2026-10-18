@@ -9,6 +9,7 @@
 // Usage: node tools/publish/site_size.mjs <folder> [--max-bytes <n>] [--json]   (exit 1 when over the ceiling)
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 export const PAGES_LIMIT = 1000000000;
 export const DEFAULT_CEILING = 900000000;
@@ -65,7 +66,8 @@ export function measure(dir, o = {}) {
   return r;
 }
 
-if (import.meta.url === 'file://' + process.argv[1]) {
+// run as a command (on Windows too: a file URL is file:///C:/…, never 'file://' + the path the shell gave)
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const a = process.argv.slice(2);
   const dir = a.find((x, i) => !x.startsWith('--') && a[i - 1] !== '--max-bytes');
   if (!dir || !fs.existsSync(dir)) { console.error('usage: node tools/publish/site_size.mjs <folder> [--max-bytes <n>] [--json]'); process.exit(2); }

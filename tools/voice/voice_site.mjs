@@ -25,6 +25,7 @@
 // (--max-bytes, default 900,000,000 bytes: tools/publish/site_size.mjs); over it, exit 1: not to be deployed as it is.
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import zlib from 'node:zlib';
 import crypto from 'node:crypto';
 import { root } from '../../tests/lib/load.mjs';
@@ -128,7 +129,8 @@ export function writeSite(dir, site, recordings, update) {
   }
 }
 
-if (import.meta.url === 'file://' + process.argv[1]) {
+// run as a command (on Windows too: a file URL is file:///C:/…, never 'file://' + the path the shell gave)
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const a = process.argv.slice(2), opt = (k) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : null; };
   if (!opt('--results') || !opt('--voice-build') || !opt('--out')) { console.error('usage: --results <a.json>[,<b.json>] --files <dir>[,<dir>] --voice-build <id> --out <site>/ja-JP [--production <gz>] [--update]'); process.exit(2); }
   const prodPath = opt('--production') || path.join(root, 'docs/future/voice/production/manifest/RECORDING_MANIFEST.json.gz');

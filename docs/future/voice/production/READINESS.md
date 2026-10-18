@@ -24,7 +24,34 @@ The repository is the shared record:
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
 Progress (the local worker's checkpoints, latest first):
-- **2026-10-18: the MW-1 supplement recorded after the batch:** 7 of 7 made, 0 failed: the 6 narrator lines and the
+- **2026-10-18: the run records are in the repository** (38a397f, the worker's own push, new files only):
+  [run/RUN_SUMMARY.md](run/RUN_SUMMARY.md), `run/results.json.gz` (`results.json` gzipped), `run/results_MW1.json` and
+  `run/POST_CHECK.json`.
+  - **The worker reports:**
+    - 23,816 + MW-1's 7 made, 0 failed, 0 pending;
+    - every file decodes and matches its bytes and SHA-256;
+    - `voice_site.mjs` built a site from them locally with 0 errors and 0 missing recordings or references;
+    - the voice folder is 557,980,768 bytes;
+    - the audio (552,138,662 bytes) stays on Robin's PC.
+  - **Checked here** (the lead, on the pushed files):
+    - the results name the GO pins (ff8a0fa, 513ec3ff…, content 65cd38053ad6);
+    - all 23,816 GO manifest ids (14,721 recordings + 9,095 references) have a result, and none are pending or failed;
+    - `results_MW1.json` covers the supplement's 7 ids and nothing else;
+    - none of the four files carries a local path or a credential.
+  - **Open:** `r1-6ab18b4d8dcef181` (Wataru, surprise, 「……辞めさせないんですか。」, sg.omi_wataru) is 1.17 s for 10 morae
+    on all 12 seeds tried, and is flagged. The expected 2.9 s counts the opening 「……」, which the trim removes from
+    every line; the 14 other short 「……」 lines are 0.5–0.8 s and were judged not errors. Its actual pace is about
+    8.5 morae a second: brisk for a surprised line, not impossible. **A listen decides.** If it sounds clipped, a
+    send text without the 「……」 is a new id: an NPC take, outside the narrator-only supplement rule, so it is
+    Robin's call.
+  - **Fixed after the worker's note:** `voice_site.mjs`, `site_size.mjs`, `voice/lines.mjs` and the music
+    `export_events.mjs` compared `import.meta.url` with `'file://' + argv[1]`. On Windows that never matches, so the
+    commands exited silently. They now compare with `pathToFileURL(path.resolve(argv[1]))`, as `scene_manifest.mjs`
+    already did.
+  - **For the hosted site:** pass `voice_site.mjs --production` a manifest rebuilt at the site's revision
+    (`production_manifest.mjs --out <dir>`). The committed manifest is the GO one, and it neither uses the MW-1 ids
+    nor drops the 3 retired ones.
+- 2026-10-18: the MW-1 supplement recorded after the batch: 7 of 7 made, 0 failed: the 6 narrator lines and the
   どすん reference. It was taken from the record at 5a8353c, and the worker's sha256 (52e292f2…) is that file's: it
   checks out byte-identical here and has not changed since. Results are in `results_MW1.json`, beside `results.json`.
   The 3 retired ids keep their files (VOICE_DELIVERY.md §8.4). Nothing pushed. Status only; no request to the lead.

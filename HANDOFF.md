@@ -488,7 +488,9 @@
         - the batch finished: 23,816 made, 0 pending, 0 failed;
         - the MW-1 supplement was recorded after it: 7 of 7, 0 failed, `results_MW1.json`;
         - the audio stays on Robin's PC;
-        - `results.json` and the run summary come back here after the worker's checks (READINESS.md progress list).
+        - the run records are in `docs/future/voice/production/run/` (38a397f, the worker's own push), and checked
+          here against the GO manifest and the supplement;
+        - one take is flagged for a listen: Wataru's 「……辞めさせないんですか。」 (READINESS.md progress list).
     - **The recorded-voice runtime** (VR-1, VR-2; `docs/future/voice/production/VOICE_RUNTIME.md`):
       - `src/audio/52_voicebank.js` loads a voice site:
         - per-scene indexes, and content-named, stable recording URLs;
@@ -512,8 +514,9 @@
         repository.
     - **Open, the lead's:**
       - the 116 lines with the player's name, which need a neutral-word version for recording (C-93);
-      - when the results arrive (the batch and the MW-1 supplement are made): real recordings into a voice site,
-        `HOSTED_BASE`, and timing marks if wanted;
+      - build a voice site from the run records (the batch and the MW-1 supplement are made), with
+        `voice_site.mjs --production` given a manifest rebuilt at the site's revision; then `HOSTED_BASE`, and timing
+        marks if wanted;
       - `tests/e2e/bookmarks.mjs` fails one check at 200 % text on a phone ("Next does not move for the tab"), on the
         previous build too, so it predates this work.
     - VALIDATION.md "C-95 corrections", "VR — the recorded voices" and "Hosting audit"; REQUIREMENTS.md XP121, XP127–XP129.

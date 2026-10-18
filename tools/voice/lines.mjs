@@ -5,6 +5,8 @@
 //   prev / next  the neighbouring spoken lines of the same scene (context for the review, never spoken).
 // Usage: node tools/voice/lines.mjs [--who suzu] [--grep <regex on en/jp>] [--region rw] [--json]
 import crypto from 'node:crypto';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { load } from '../../tests/lib/load.mjs';
 
 globalThis.__RB_TEST__ = true;
@@ -31,7 +33,8 @@ export function allLines() {
   }
   return out;
 }
-if (import.meta.url === 'file://' + process.argv[1]) {
+// run as a command (on Windows too: a file URL is file:///C:/…, never 'file://' + the path the shell gave)
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const a = process.argv.slice(2), opt = (k) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : null; };
   let L = allLines();
   if (opt('--who')) L = L.filter((l) => l.who === opt('--who'));
