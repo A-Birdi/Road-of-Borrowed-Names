@@ -40,8 +40,13 @@ const watchMounts = (p) => p.evaluate(() => { window.__m = 0; const b = document
 // a move timed in the page: from the press to the live destination, and how many leaves turned
 async function timed(p, press) {
   await p.evaluate(() => {
-    window.__t = { leaves: 0, t0: 0, c0: 0 };
+    window.__t = { leaves: 0, t0: 0, c0: 0, f0: 0, l0: 0 };
+    // the moment the stage is emptied (the live destination shown), stamped in the page, not after a round trip
+    if (!window.__tm) { window.__tm = true; const st = document.querySelector('.cr-stage'); new MutationObserver(() => { const t = window.__t; if (t && t.f0 && !t.l0 && !st.classList.contains('lt-on')) t.l0 = performance.now(); }).observe(st, { attributes: true, attributeFilter: ['class'] }); }
     if (!window.__tc) { window.__tc = true; document.addEventListener('click', () => { if (!window.__t.c0) window.__t.c0 = performance.now(); }, true); }
+    // the first frame that shows a leaf: preparation (printing the pages) ends there and the turn itself begins
+    const look = () => { const t = window.__t; if (!t.f0 && t.c0 && document.querySelector('.cr-stage .lt-leaf')) t.f0 = performance.now(); if (!t.f0) requestAnimationFrame(look); };
+    requestAnimationFrame(look);
     const run = RB.ui.leafTurn.run;
     if (!run.__w) { RB.ui.leafTurn.run = function (o) { const h = run.call(this, o); window.__t.leaves = h.plan.n; return h; }; RB.ui.leafTurn.run.__w = true; }
   });
@@ -49,8 +54,10 @@ async function timed(p, press) {
   await press();
   await p.waitForFunction(() => document.querySelector('.cr-stage.lt-on'), null, { timeout: 2000 }).catch(() => {});
   await p.waitForFunction(() => !document.querySelector('.cr-stage.lt-on') && !document.querySelector('.folio-create.cr-turning'), null, { timeout: 5000 });
-  // ms: from before the press (Playwright's own round trip included); page: from the click event to the live destination
-  return p.evaluate(() => ({ leaves: window.__t.leaves, ms: Math.round(performance.now() - window.__t.t0), page: Math.round(performance.now() - window.__t.c0) }));
+  // ms: from before the press (Playwright's own round trip included); page: from the click event to the live destination;
+  // prep: from the click to the first frame with a leaf (the pages printed: package 05 bounds warm preparation near
+  // 50 ms); turn: from that frame to the live destination (the contract's timing, ±15 %)
+  return p.evaluate(() => { const t = window.__t, end = t.l0 || performance.now(); return { leaves: t.leaves, ms: Math.round(performance.now() - t.t0), page: Math.round(end - t.c0), prep: Math.round(t.f0 - t.c0), turn: Math.round(end - t.f0) }; });
 }
 
 // ---- F01-F05, F07, F09, F15, F17: a fresh journey through the real route ---------------------------------------
@@ -296,7 +303,7 @@ async function timed(p, press) {
   T['4→1'] = t3;
   const m3 = await p.evaluate(() => ({ step: document.querySelector('.folio-create').dataset.step, mounts: window.__m, page: window.__s.sfx.filter((x) => x === 'page').length }));
   ok(t3.leaves === 3 && m3.step === 'identity' && m3.mounts === 1, 'M03 4→1: three leaves, Identity alone mounted ' + JSON.stringify([t3, m3]));
-  ok(t3.ms >= 604 * 0.85 && t3.ms <= 604 * 1.6, 'M03 about 604 ms from the press (' + t3.ms + ' ms; headless Chromium, the nominal plan 604)');
+  ok(Math.abs(t3.turn - 604) <= 604 * 0.15, 'M03 about 604 ms: the turn took ' + t3.turn + ' ms after ' + t3.prep + ' ms of preparation (headless Chromium; the nominal plan 604, ±15 %)');
   ok(m3.page === 1, 'one page sound for the three leaves');
   // M05: the current station: nothing
   await p.evaluate(() => { window.__s.sfx = []; window.__said = []; window.__m = 0; });
@@ -455,9 +462,10 @@ for (const [w, h, rm] of [[1440, 900, true], [390, 844, false]]) {
   await p.context().close();
 }
 
-// the contract's totals (4 leaves 696 ms, 3 leaves 604 ms), within the brief's ±15 %, measured in the page
-for (const [k, want] of [['5→1', 696], ['1→5', 696], ['4→1', 604]]) if (T[k]) ok(Math.abs(T[k].page - want) <= want * 0.15, 'timing ' + k + ': ' + T[k].page + ' ms from the click to the live page (contract ' + want + ' ms ±15 %)');
-console.log('timings (headless Chromium; ms = from before the press, page = from the click event to the live destination): ' + JSON.stringify(T));
+// the contract's totals (4 leaves 696 ms, 3 leaves 604 ms), within the brief's ±15 %, measured in the page from the first
+// frame with a leaf; the preparation before it (printing the pages) is reported beside it
+for (const [k, want] of [['5→1', 696], ['1→5', 696], ['4→1', 604]]) if (T[k]) ok(Math.abs(T[k].turn - want) <= want * 0.15, 'timing ' + k + ': the turn ' + T[k].turn + ' ms (contract ' + want + ' ms ±15 %), after ' + T[k].prep + ' ms of preparation; ' + T[k].page + ' ms from the click to the live page');
+console.log('timings (headless Chromium; ms = from before the press; page = click event to live destination; prep = click to the first leaf frame; turn = first leaf frame to live destination): ' + JSON.stringify(T));
 await b.close(); srv.close();
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

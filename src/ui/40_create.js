@@ -627,7 +627,17 @@ RB.ui.create = (function () {
         const frozen = { p: RB.util.deepClone(p), o: Object.assign({}, o), prefs, accNote: '', jpEdited: V.jpEdited, dir: V.dir };
         const n = Math.abs(i - from);
         if (RB.audio) RB.audio.sfx('page'); // one page sound for the whole move, however many leaves
-        let outcome = 'direct';
+        let outcome = 'direct', arrived = false;
+        // the destination is mounted once: as the last leaf lands (beneath the stage, during the settle), or at the end
+        const arrive = () => {
+          if (arrived || V.closed || token !== V.token) return;
+          arrived = true;
+          V.i = i;
+          V.max = Math.max(V.max, i);
+          V.accNote = '';
+          if (steps[i] === 'summary') V.edit = null;
+          mount(after || (how === 'foot' ? 'keep' : true));
+        };
         // focus waits on the book while it turns (never on a printed page)
         if (document.activeElement && body.contains(document.activeElement)) { fr.box.tabIndex = -1; fr.box.focus({ preventScroll: true }); }
         try {
@@ -637,7 +647,7 @@ RB.ui.create = (function () {
             const busy = fr.foot.querySelector('.cr-busy');
             if (n > 1) busy.textContent = (i < from ? 'Turning back ' : 'Turning ') + n + ' pages…';
             body.classList.add('cr-under');
-            V.turn = RB.ui.leafTurn.run({ stage, from, to: i, page: printed(frozen, from), live: () => !V.closed && token === V.token, reduce });
+            V.turn = RB.ui.leafTurn.run({ stage, from, to: i, page: printed(frozen, from), live: () => !V.closed && token === V.token, reduce, landed: arrive });
             outcome = await V.turn.done;
           }
         } catch (e) { outcome = 'failed'; }
@@ -649,13 +659,7 @@ RB.ui.create = (function () {
           fr.foot.querySelector('.cr-busy').textContent = '';
           fr.box.removeAttribute('tabindex');
           V.nav = 'idle';
-          if (!V.closed && token === V.token) {
-            V.i = i;
-            V.max = Math.max(V.max, i);
-            V.accNote = '';
-            if (steps[i] === 'summary') V.edit = null;
-            mount(after || (how === 'foot' ? 'keep' : true));
-          }
+          arrive();
         }
         V.lastTurn = { from, to: i, outcome };
         return true;

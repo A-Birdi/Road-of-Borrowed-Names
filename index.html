@@ -71321,7 +71321,8 @@ RB.ui.leafTurn = (function () {
   }
 
   // ---- the turn ----------------------------------------------------------------------------------------------------
-  // o: { stage, from, to, page(step, side) → printed element, live: () => boolean (still wanted), reduce: () => boolean }
+  // o: { stage, from, to, page(step, side) → printed element, live: () => boolean (still wanted), reduce: () => boolean,
+  //      landed?: () => void (the last leaf is down: build the destination beneath the stage) }
   // Returns a handle { done: Promise<'turned'|'skipped'|'failed'>, skip() }. The caller mounts the destination when
   // done settles, whatever it says, and calls clear().
   function run(o) {
@@ -71341,10 +71342,10 @@ RB.ui.leafTurn = (function () {
     if (mq && mq.addEventListener) mq.addEventListener('change', onMq);
     const dog = setTimeout(stop, P.totalMs + 1500);
     const wait = (ms) => new Promise((r) => { wake = r; setTimeout(() => { wake = null; r(); }, Math.max(0, ms)); });
-    // Every leaf is placed on the document's timeline from one start: leaf k starts at t0 + k·(leaf + gap), and the turn
-    // settles at t0 + total. A late frame (a slow machine, a busy page) is absorbed by the next leaf, never added to the
-    // sum: the riffle keeps the contract's length rather than growing by a frame or two per leaf.
-    const clock = () => (document.timeline && typeof document.timeline.currentTime === 'number' ? document.timeline.currentTime : performance.now());
+    // The first leaf starts when it is first shown (t0: however long its pages took to print, it never starts part-way
+    // through); every later leaf is placed on the document's timeline from that start, leaf k at t0 + k·(leaf + gap),
+    // and the turn settles at t0 + total. A late frame (a slow machine, a busy page) is absorbed by the next leaf, never
+    // added to the sum: the riffle keeps the contract's length rather than growing by a frame or two per leaf.
     let t0 = null;
     const put = (slot, el) => { slot.appendChild(el); if (el.__st) el.scrollTop = el.__st; };
     async function go() {
@@ -71386,7 +71387,6 @@ RB.ui.leafTurn = (function () {
         const fsh = document.createElement('div'), bsh = document.createElement('div');
         fsh.className = 'lt-shade lt-fsh'; bsh.className = 'lt-shade lt-bsh';
         front.appendChild(fsh); back.appendChild(bsh);
-        if (t0 === null) t0 = clock();
         const t = { duration: P.leafMs, easing: P.easing, fill: 'forwards' };
         // the leaf crosses the spine without stopping edge-on; the shade falls on the page it uncovers, then lifts
         const turnA = leaf.animate([{ transform: 'rotateY(0deg)' }, { transform: 'rotateY(' + F.angle + 'deg)' }], t);
@@ -71395,12 +71395,22 @@ RB.ui.leafTurn = (function () {
         const a3 = cover.animate([{ opacity: 0 }, { opacity: 0.12, offset: 0.55 }, { opacity: 0.32, offset: 0.86 }, { opacity: 0 }], t);
         const a4 = fsh.animate([{ opacity: 0 }, { opacity: 0.5, offset: 0.48 }, { opacity: 0.5 }], t);
         const a5 = bsh.animate([{ opacity: 0.5 }, { opacity: 0.45, offset: 0.52 }, { opacity: 0 }], t);
-        [turnA, a2, a3, a4, a5].forEach((a) => { anims.add(a); try { a.startTime = t0 + k * (P.leafMs + P.gapMs); } catch (e) { /* no timeline: plays from now */ } });
+        [turnA, a2, a3, a4, a5].forEach((a) => { anims.add(a); if (k) try { a.startTime = t0 + k * (P.leafMs + P.gapMs); } catch (e) { /* no timeline: plays from now */ } });
         current = turnA;
+        if (!k) {
+          // (whichever comes first: the leaf shown, the leaf done, or a stop. A leaf paused and resumed before it is
+          // shown may never settle its first ready promise, so ready alone could wait for ever)
+          await Promise.race([turnA.ready, turnA.finished, new Promise((r) => { wake = r; })].map((q) => q.catch(() => {})));
+          wake = null;
+          t0 = typeof turnA.startTime === 'number' ? turnA.startTime : performance.now();
+        }
         try { await turnA.finished; } catch (e) { /* cancelled: settle below */ }
         [turnA, a2, a3, a4, a5].forEach((a) => anims.delete(a));
       }
       if (skipped || !o.live()) return 'skipped';
+      // the last leaf has landed: the caller may build the live destination now, beneath the stage (which still shows
+      // its printed copy), so the settle covers that work instead of following it
+      if (o.landed) { try { o.landed(); } catch (e) { /* the caller mounts when the turn ends instead */ } }
       await wait(t0 + P.totalMs - performance.now());
       return skipped ? 'skipped' : 'turned';
     }
@@ -72057,7 +72067,17 @@ RB.ui.create = (function () {
         const frozen = { p: RB.util.deepClone(p), o: Object.assign({}, o), prefs, accNote: '', jpEdited: V.jpEdited, dir: V.dir };
         const n = Math.abs(i - from);
         if (RB.audio) RB.audio.sfx('page'); // one page sound for the whole move, however many leaves
-        let outcome = 'direct';
+        let outcome = 'direct', arrived = false;
+        // the destination is mounted once: as the last leaf lands (beneath the stage, during the settle), or at the end
+        const arrive = () => {
+          if (arrived || V.closed || token !== V.token) return;
+          arrived = true;
+          V.i = i;
+          V.max = Math.max(V.max, i);
+          V.accNote = '';
+          if (steps[i] === 'summary') V.edit = null;
+          mount(after || (how === 'foot' ? 'keep' : true));
+        };
         // focus waits on the book while it turns (never on a printed page)
         if (document.activeElement && body.contains(document.activeElement)) { fr.box.tabIndex = -1; fr.box.focus({ preventScroll: true }); }
         try {
@@ -72067,7 +72087,7 @@ RB.ui.create = (function () {
             const busy = fr.foot.querySelector('.cr-busy');
             if (n > 1) busy.textContent = (i < from ? 'Turning back ' : 'Turning ') + n + ' pages…';
             body.classList.add('cr-under');
-            V.turn = RB.ui.leafTurn.run({ stage, from, to: i, page: printed(frozen, from), live: () => !V.closed && token === V.token, reduce });
+            V.turn = RB.ui.leafTurn.run({ stage, from, to: i, page: printed(frozen, from), live: () => !V.closed && token === V.token, reduce, landed: arrive });
             outcome = await V.turn.done;
           }
         } catch (e) { outcome = 'failed'; }
@@ -72079,13 +72099,7 @@ RB.ui.create = (function () {
           fr.foot.querySelector('.cr-busy').textContent = '';
           fr.box.removeAttribute('tabindex');
           V.nav = 'idle';
-          if (!V.closed && token === V.token) {
-            V.i = i;
-            V.max = Math.max(V.max, i);
-            V.accNote = '';
-            if (steps[i] === 'summary') V.edit = null;
-            mount(after || (how === 'foot' ? 'keep' : true));
-          }
+          arrive();
         }
         V.lastTurn = { from, to: i, outcome };
         return true;
