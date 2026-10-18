@@ -1,10 +1,14 @@
-/* New campaign (src/ui/40_create.js): the stepped registration in the folio —
- * a route of four stations on the cloth, the traveller's sheet (portrait and
- * full figure on paper) and one scrolling page of real controls — plus the
- * prologue's caption slip, the optional placement and the New Game+ choice.
- * Layouts: phones stack a compact traveller slip above the page (with an
- * Inspect view); short landscape puts the traveller in a side column; wide
- * screens show the sheet and the page as a two-page spread. */
+/* New campaign (src/ui/40_create.js): the traveller's setup book (CW-1) —
+ * a route of five stations on the cloth and, for each, a spread of two equal
+ * pages around a spine that never moves: the traveller's sheet (portrait and
+ * full figure on paper) beside a page of real controls for Identity,
+ * Appearance and Background; two pages of choices for Learning; the traveller
+ * and the journey's settings, with Edit, for the Summary — plus the printed
+ * leaves that turn between them, the prologue's caption slip, the optional
+ * placement and the New Game+ choice. Layouts: phones stack a compact
+ * traveller slip above the page (with an Inspect view) and stack two pages of
+ * choices in one scroll; short landscape puts the traveller in a side column;
+ * wide screens show every step as a two-page spread. */
 
 .folio-create [hidden], .folio-place [hidden], .folio-ngplus [hidden], .cr-prologue [hidden] { display: none !important; }
 
@@ -68,7 +72,6 @@
 
 /* ---- body: traveller + page ------------------------------------------------------------ */
 .cr-body { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 6px; min-height: 0; min-width: 0; }
-.no-sheet .cr-body { grid-template-rows: minmax(0, 1fr); }
 .cr-page { min-height: 0; padding-top: 12px; }
 
 /* the traveller (compact slip by default) */
@@ -271,14 +274,16 @@ body.bulb-on .cr-entry .jline .jt { text-decoration: none; }
 
 /* ---- wide: a two-page spread, the traveller's sheet beside the page ---------------------------- */
 @media (min-width: 760px) and (min-height: 540px) {
-  .cr-body { grid-template-columns: minmax(250px, 0.8fr) minmax(0, 1.2fr); grid-template-rows: minmax(0, 1fr); gap: 0; }
-  .no-sheet .cr-body { grid-template-columns: minmax(0, 1fr); }
+  /* (CW-1: two equal pages for every step, so the spine stays where it is) */
+  .cr-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); gap: 0; }
+  .folio.folio-create { width: min(1160px, calc(100vw - 2 * var(--gutter))); }
   .cr-sheet, .cr-sheet.expanded {
     display: flex; flex-direction: column; align-items: stretch; gap: 10px; max-height: none; overflow: auto; overscroll-behavior: contain; touch-action: pan-y pinch-zoom;
     background: var(--paper); border-radius: 3px 0 0 6px; padding: 16px clamp(14px, 2.4vw, 30px) 18px;
     box-shadow: inset -14px 0 18px -14px rgba(60, 40, 10, 0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge);
   }
-  .folio-create:not(.no-sheet) .cr-page { border-left: 0; border-radius: 0 3px 6px 0; box-shadow: inset 14px 0 18px -14px rgba(60, 40, 10, 0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
+  .folio-create .cr-r { border-left: 0; border-radius: 0 3px 6px 0; box-shadow: inset 14px 0 18px -14px rgba(60, 40, 10, 0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
+  .folio-create .leaf.cr-l { border-right: 0; border-radius: 3px 0 0 6px; box-shadow: inset -14px 0 18px -14px rgba(60, 40, 10, 0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
   .cr-sheet .cr-kick { display: block; order: -1; font: 600 0.8em var(--ui-font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--rule); padding-bottom: 0.3em; }
   .cr-sheet .cr-figs, .cr-sheet.expanded .cr-figs { justify-content: center; gap: clamp(14px, 2.2vw, 30px); padding: 6px 0 0; }
   .cr-sheet .cr-port canvas, .cr-sheet.expanded .cr-port canvas { width: 144px; height: 144px; }
@@ -314,7 +319,6 @@ body.bulb-on .cr-entry .jline .jt { text-decoration: none; }
   .folio-create .folio-foot { grid-column: 1 / -1; grid-row: 3; padding-top: 6px; }
   .folio-create .cr-route { padding-bottom: 2px; }
   .cr-body { grid-template-columns: minmax(150px, 0.3fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); gap: 8px; }
-  .no-sheet .cr-body { grid-template-columns: minmax(0, 1fr); }
   .cr-sheet, .cr-sheet.expanded {
     grid-template-columns: minmax(0, 1fr); grid-template-areas: "figs" "sum" "turn" "btn" "reg" "note"; align-content: start; justify-items: center;
     text-align: center; gap: 6px; max-height: none; overflow: auto; overscroll-behavior: contain; touch-action: pan-y pinch-zoom; padding: 8px;
@@ -410,3 +414,97 @@ body.high-contrast .cr-more > summary { background: none; border-color: #000; }
 /* FR-1 F16: a name breaks between its words, after its hyphen ("Light-|medium") or at a compound's soft hyphen
    ("Head-|band", 40_create.js), in balanced lines */
 .cr-sw .nm, .cr-tile .nm { hyphens: manual; text-wrap: balance; }
+
+
+/* ==== CW-1: the traveller's setup book ==================================================================
+ * Headings in the book's display type with their drawn marks; Learning's two pages; the Summary; the footer's
+ * Return to summary; the stage for printed leaf turns (src/ui/39_leafturn.js). */
+.folio-create .cr-major { display: flex; align-items: center; gap: 0.5em; margin: 0.1em 0 0.35em; padding-bottom: 0.3em; border-bottom: 1px solid var(--rule);
+  font-family: var(--type-latin-display, var(--serif)); font-weight: 600; font-size: 1.42em; line-height: 1.15; color: var(--ink); text-wrap: balance; }
+.cr-major .cr-hic { flex: none; display: inline-flex; width: 1.3em; height: 1.3em; color: var(--ink-2); }
+.cr-major .cr-hic svg, .folio-create .cr-hic .sx-ic, .folio-create .cr-shic .sx-ic { width: 100%; height: 100%; margin: 0; }
+.folio-create .cr-rp .cr-major, .folio-create .cr-sumpage .cr-major { font-size: 1.3em; }
+.cr-major:focus { outline: none; }
+.cr-major:focus-visible { outline: 2px dashed var(--focus-paper); outline-offset: 3px; }
+.cr-sect { margin: 1.15em 0 0.4em; }
+.folio-create .cr-sh { display: flex; align-items: center; gap: 0.5em; margin: 0 0 0.1em; font-family: var(--type-latin-display, var(--serif)); font-weight: 600; font-size: 1.16em; color: var(--ink); }
+.cr-shic { flex: none; display: inline-flex; width: 1.35em; height: 1.35em; }
+.cr-shic svg { width: 100%; height: 100%; }
+.cr-learn .cr-sect .sx-field { margin-top: 0.3em; margin-bottom: 0.5em; }
+.cr-learn .cr-lede { margin: 0.3em 0 0.6em; }
+/* the four levels, stacked, each with its whole description under its name (the half page has no room beside it) */
+.folio-create .cr-lp .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+.folio-create .cr-lp .sx-opts.stack .sx-d { padding: 0 0.4em 0.35em 1.1em; }
+/* (on the right, Learning mistakes keeps each line beside its choice, in a narrower column than Settings' own) */
+.folio-create .cr-rp .sx-opts.stack .opt.sx-opt > .sx-face { grid-template-columns: 9.5em minmax(0, 1fr); }
+.folio-create .cr-learn .opt.sx-opt .sx-mark { padding: 0.35em 0.85em; }
+.cr-learn .sx-slipbtn { margin: 0.4em 0 1.1em; }
+.cr-readfold { margin: 1.2em 0 0.6em; }
+.cr-readfold .cr-more-t { font-family: var(--type-latin-display, var(--serif)); font-size: 1.08em; }
+.cr-readnote { margin-top: 0.8em; }
+.cr-busy { color: var(--on-cloth-2); font-size: 0.86em; white-space: nowrap; }
+.cr-busy:empty { display: none; }
+
+/* the Summary: the traveller (left), how the journey will play (right), each with its Edit */
+.cr-sumhead { order: -2; }
+.cr-sheet.cr-sumsheet { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+.cr-sheet.cr-sumsheet > * { flex: none; }
+.cr-sumsheet .cr-sumhead .cr-major { margin-bottom: 0.2em; }
+.cr-sumsheet .cr-figs { order: -1; justify-content: center; gap: 22px; padding: 2px 0 0; }
+.cr-sumsheet .cr-port canvas { width: 144px; height: 144px; }
+.cr-sumsheet .cr-fig canvas { width: 80px; height: 116px; }
+.cr-sumsheet .cr-turn { display: flex; justify-content: center; order: 0; }
+.cr-sumsheet .cr-sum { order: 1; text-align: center; }
+.cr-sumsheet .cr-nm { font-size: 1.45em; }
+.cr-sumsheet .cr-nm .jp-n { display: block; margin: 0.1em 0 0; font-size: 0.62em; }
+.cr-sumsheet .cr-sub, .cr-sumsheet .cr-expand { display: none; }
+.cr-sumsheet .cr-reg { display: block; order: 2; margin: 0.2em 0 0; border-top: 1px solid var(--rule); }
+.cr-sumsheet .cr-note { display: block; order: 3; margin: 0.6em 0 0; }
+.folio-create .cr-reg > .cr-sg, .folio-create .cr-row { display: grid; grid-template-columns: 7.6em minmax(0, 1fr) auto; grid-template-areas: "t v ed"; column-gap: 0.8em; align-items: baseline; padding: 0.5em 0.1em 0.5em; border-bottom: 1px solid var(--rule); }
+.folio-create .cr-row { grid-template-columns: 9.2em minmax(0, 1fr) auto; }
+.cr-sg dt, .cr-row dt { grid-area: t; font-family: var(--type-latin-display, var(--serif)); font-variant: small-caps; letter-spacing: 0.04em; font-size: 1.02em; color: var(--ink-2); }
+.cr-sg dd, .cr-row dd { grid-area: v; margin: 0; color: var(--ink); line-height: 1.45; overflow-wrap: anywhere; min-width: 0; }
+.cr-sg dd.cr-ed, .cr-row dd.cr-ed { grid-area: ed; margin: 0; align-self: center; }
+.cr-bgd { display: block; color: var(--ink-2); font-size: 0.94em; }
+.cr-rows { margin: 0.3em 0 0.9em; border-top: 1px solid var(--rule); }
+.cr-edit { display: inline-flex; align-items: center; gap: 0.35em; white-space: nowrap; }
+.cr-edit svg { width: 1.05em; height: 1.05em; }
+.cr-reassure { margin: 0.4em 0 0.8em; }
+.cr-tonote { display: flex; flex-direction: column; gap: 0.15em; margin: 0 0 0.9em; padding: 0.45em 0.8em; border-left: 3px solid var(--river, #3b5f7a); background: rgba(59, 95, 122, 0.06); color: var(--ink-2); }
+.cr-tonote b { font-weight: 600; color: var(--ink); }
+
+/* phones and short screens: a step with two pages of choices reads them in one scroll */
+@media not all and (min-width: 760px) and (min-height: 540px) {
+  .cr-body.cr-on-learning, .cr-body.cr-on-summary { display: flex; flex-direction: column; overflow: auto; overscroll-behavior: contain; gap: 6px; }
+  .cr-body.cr-on-learning > *, .cr-body.cr-on-summary > * { flex: none; overflow: visible; max-height: none; }
+  .cr-sheet.cr-sumsheet { padding: 12px 14px 14px; }
+}
+
+/* ---- printed leaf turns: the stage over the spread (never over the cloth's head or foot) ---------------- */
+.cr-stage { position: absolute; inset: 0; z-index: 4; display: none; pointer-events: none; overflow: hidden; perspective: 1700px; perspective-origin: 50% 50%; }
+.cr-stage.lt-on { display: block; }
+.cr-body.cr-under { visibility: hidden; }
+.folio-create.cr-turning .cr-route, .folio-create.cr-turning .folio-foot .cbtn { pointer-events: none; }
+.lt-base { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.lt-slot { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+.lt-slot > .lt-print, .lt-face > .lt-print { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; margin: 0; }
+.lt-leaf { position: absolute; top: 0; bottom: 0; width: 50%; transform-style: preserve-3d; will-change: transform; }
+.lt-fwd { left: 50%; }
+.lt-bwd { left: 0; }
+.lt-face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.lt-back { transform: rotateY(180deg); }
+/* a fine edge of paper at the leaf's free side, and shade that falls toward the spine */
+.lt-edge { position: absolute; top: 2px; bottom: 4px; width: 2px; background: linear-gradient(var(--paper-3), var(--paper-edge)); opacity: 0.9; }
+.lt-fwd .lt-edge { right: -1px; }
+.lt-bwd .lt-edge { left: -1px; }
+.lt-shade { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; }
+.lt-slot.lt-l .lt-shade, .lt-face.lt-l .lt-shade { background: linear-gradient(to left, rgba(46, 32, 12, 0.55), rgba(46, 32, 12, 0.12) 45%, rgba(46, 32, 12, 0) 80%); }
+.lt-slot.lt-r .lt-shade, .lt-face.lt-r .lt-shade { background: linear-gradient(to right, rgba(46, 32, 12, 0.55), rgba(46, 32, 12, 0.12) 45%, rgba(46, 32, 12, 0) 80%); }
+.lt-print { pointer-events: none; }
+body.high-contrast .lt-shade { display: none; }
+/* (focus waits on the book itself while a leaf turns: no ring there) */
+.folio-create .leafbox:focus { outline: none; }
+/* the right page of Learning: a quiet running head, like the traveller's on the sheet, so the three decisions fit */
+.folio-create .cr-learn > .cr-kicker { margin: 0 0 0.2em; padding-bottom: 0.3em; border-bottom: 1px solid var(--rule); font: 600 0.8em var(--ui-font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.folio-create .cr-learn > .cr-kicker + .cr-sect { margin-top: 0.7em; }
+.folio-create .cr-learn .sx-en { white-space: nowrap; }

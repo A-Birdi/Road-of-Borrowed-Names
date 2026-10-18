@@ -66,7 +66,16 @@ async function run(w, h) {
     });
   }
   const step = () => p.evaluate(() => document.querySelector('.folio-create').getAttribute('data-step'));
-  const next = () => ev(() => { const b = document.querySelector('.folio-create .folio-foot .cr-primary:not([hidden])'); b.click(); });
+  // (the candidate turns printed leaves on the browser's own animation clock, not the paused one: wait, in real time,
+  // until no leaf is turning; the baseline has none, so this returns at once there)
+  const settle = async () => {
+    for (let i = 0; i < 80; i++) {
+      await ctx.clock.runFor(50);
+      await p.waitForTimeout(25);
+      if (await p.evaluate(() => !document.querySelector('.cr-stage.lt-on') && !document.querySelector('.folio-create.cr-turning'))) return;
+    }
+  };
+  const next = async () => { await ev(() => { const b = document.querySelector('.folio-create .folio-foot .cr-primary:not([hidden])'); b.click(); }); await settle(); };
   const pick = (sel) => ev((s) => { const i = document.querySelector(s); if (!i) throw new Error('missing ' + s); i.click(); }, sel);
   // Identity
   await ev((t) => { const nm = document.querySelector('#nm'); nm.focus(); nm.value = t.name; nm.dispatchEvent(new Event('input', { bubbles: true })); nm.blur(); }, T);
