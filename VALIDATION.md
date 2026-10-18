@@ -4893,6 +4893,7 @@ for anything needing review". The worker's list is `docs/future/voice/production
   - A removed file says so on its card and in the count.
   - A changed take is flagged.
   - At 390 px there is no sideways scroll. There are no page errors except the file removed on purpose.
+- **Whole unit suite**, on the tree pushed as fcacaf3: **54,605 passed, 0 failed** (`node tests/run-unit.mjs`).
 - **Not tested:** the real audio (it is on Robin's PC), Windows, Firefox and Safari.
 
 ## MW-1 — the mill follows the gears; a travel tile is walked onto (Robin, 2026-10-17)
