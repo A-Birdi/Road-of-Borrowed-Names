@@ -1,0 +1,486 @@
+{
+ "schema": "rbn.voice.review-decisions/1",
+ "listSha256": "b9c645b569adeb0c0295c82a327e7e80309dd54665863e7341ec557484faca71",
+ "batch": {
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "manifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "decisions": {
+  "r1-56cc1b4dd1788163": {
+   "decision": "keep",
+   "take": "narrator/r1-56cc1b4dd1788163.opus",
+   "note": ""
+  },
+  "r1-bca50fee45715154": {
+   "decision": "keep",
+   "take": "narrator/r1-bca50fee45715154.opus",
+   "note": ""
+  },
+  "r1-06ec645a6a7a970c": {
+   "decision": "keep",
+   "take": "narrator/r1-06ec645a6a7a970c.opus",
+   "note": ""
+  },
+  "r1-bc6a8c71201225ff": {
+   "decision": "keep",
+   "take": "narrator/r1-bc6a8c71201225ff.opus",
+   "note": ""
+  },
+  "r1-36182b19a4863dcb": {
+   "decision": "keep",
+   "take": "narrator/r1-36182b19a4863dcb.opus",
+   "note": ""
+  },
+  "r1-9652328d5fe161a5": {
+   "decision": "keep",
+   "take": "narrator/r1-9652328d5fe161a5.opus",
+   "note": ""
+  },
+  "r1-89daea4d07213955": {
+   "decision": "keep",
+   "take": "narrator/r1-89daea4d07213955.opus",
+   "note": ""
+  },
+  "r1-7df93670a632a454": {
+   "decision": "keep",
+   "take": "narrator/r1-7df93670a632a454.opus",
+   "note": ""
+  },
+  "r1-667b3eb3eae1ed4e": {
+   "decision": "keep",
+   "take": "narrator/r1-667b3eb3eae1ed4e.opus",
+   "note": ""
+  },
+  "r1-33b62520f3178edf": {
+   "decision": "keep",
+   "take": "narrator/r1-33b62520f3178edf.opus",
+   "note": ""
+  },
+  "r1-a1dc3e69544b6c93": {
+   "decision": "keep",
+   "take": "narrator/r1-a1dc3e69544b6c93.opus",
+   "note": ""
+  },
+  "r1-ref-dedb7ff456554523": {
+   "decision": "keep",
+   "take": "ref/r1-ref-dedb7ff456554523.opus",
+   "note": ""
+  },
+  "r1-ref-109fcfd0ce47b975": {
+   "decision": "keep",
+   "take": "ref/r1-ref-109fcfd0ce47b975.opus",
+   "note": ""
+  },
+  "r1-ref-5f7706af12731c1b": {
+   "decision": "keep",
+   "take": "ref/r1-ref-5f7706af12731c1b.opus",
+   "note": ""
+  },
+  "r1-ref-1591f1f5d4882713": {
+   "decision": "redo",
+   "take": "ref/r1-ref-1591f1f5d4882713.opus",
+   "note": ""
+  },
+  "r1-ref-04fe1015bf54c94a": {
+   "decision": "redo",
+   "take": "ref/r1-ref-04fe1015bf54c94a.opus",
+   "note": ""
+  },
+  "r1-ref-2f7d40012e7c5179": {
+   "decision": "redo",
+   "take": "ref/r1-ref-2f7d40012e7c5179.opus",
+   "note": ""
+  },
+  "r1-ref-1e0753ab1134e52b": {
+   "decision": "redo",
+   "take": "ref/r1-ref-1e0753ab1134e52b.opus",
+   "note": ""
+  },
+  "r1-ref-f05d6a5b3b3f2f96": {
+   "decision": "keep",
+   "take": "ref/r1-ref-f05d6a5b3b3f2f96.opus",
+   "note": ""
+  },
+  "r1-ref-33a23f6f5dec47c4": {
+   "decision": "keep",
+   "take": "ref/r1-ref-33a23f6f5dec47c4.opus",
+   "note": ""
+  },
+  "r1-ref-ab7fa40cbbc99926": {
+   "decision": "keep",
+   "take": "ref/r1-ref-ab7fa40cbbc99926.opus",
+   "note": ""
+  },
+  "r1-ref-e428831127f1e8e3": {
+   "decision": "keep",
+   "take": "ref/r1-ref-e428831127f1e8e3.opus",
+   "note": ""
+  },
+  "r1-cb5b954654f749d9": {
+   "decision": "keep",
+   "take": "tetsu/r1-cb5b954654f749d9.opus",
+   "note": ""
+  },
+  "r1-7a3c660a7c98757a": {
+   "decision": "keep",
+   "take": "narrator/r1-7a3c660a7c98757a.opus",
+   "note": ""
+  },
+  "r1-3272b7e0ca53a20d": {
+   "decision": "keep",
+   "take": "narrator/r1-3272b7e0ca53a20d.opus",
+   "note": ""
+  },
+  "r1-784f03e0d542fe27": {
+   "decision": "keep",
+   "take": "narrator/r1-784f03e0d542fe27.opus",
+   "note": ""
+  },
+  "r1-c22f3e7c0082eb17": {
+   "decision": "keep",
+   "take": "narrator/r1-c22f3e7c0082eb17.opus",
+   "note": ""
+  },
+  "r1-a31de848b1ef7e8f": {
+   "decision": "keep",
+   "take": "narrator/r1-a31de848b1ef7e8f.opus",
+   "note": ""
+  },
+  "r1-44f59876e805df39": {
+   "decision": "keep",
+   "take": "narrator/r1-44f59876e805df39.opus",
+   "note": ""
+  },
+  "r1-6392ada3fe81d8f0": {
+   "decision": "keep",
+   "take": "narrator/r1-6392ada3fe81d8f0.opus",
+   "note": ""
+  },
+  "r1-fcd727a3a415c18b": {
+   "decision": "keep",
+   "take": "narrator/r1-fcd727a3a415c18b.opus",
+   "note": ""
+  },
+  "r1-f41a93917d2e74e2": {
+   "decision": "keep",
+   "take": "narrator/r1-f41a93917d2e74e2.opus",
+   "note": ""
+  },
+  "r1-956e6b043b139f02": {
+   "decision": "keep",
+   "take": "narrator/r1-956e6b043b139f02.opus",
+   "note": ""
+  },
+  "r1-727fcb2071b278a1": {
+   "decision": "keep",
+   "take": "narrator/r1-727fcb2071b278a1.opus",
+   "note": ""
+  },
+  "r1-db5a6308e578ab7b": {
+   "decision": "keep",
+   "take": "narrator/r1-db5a6308e578ab7b.opus",
+   "note": ""
+  },
+  "r1-913eeb9d125a7932": {
+   "decision": "keep",
+   "take": "narrator/r1-913eeb9d125a7932.opus",
+   "note": ""
+  },
+  "r1-60991222d6130ecf": {
+   "decision": "keep",
+   "take": "narrator/r1-60991222d6130ecf.opus",
+   "note": ""
+  },
+  "r1-31364177c13415b2": {
+   "decision": "keep",
+   "take": "narrator/r1-31364177c13415b2.opus",
+   "note": ""
+  },
+  "r1-8a619bcc2d875c73": {
+   "decision": "keep",
+   "take": "narrator/r1-8a619bcc2d875c73.opus",
+   "note": ""
+  },
+  "r1-b6698cdf3f06bdba": {
+   "decision": "keep",
+   "take": "narrator/r1-b6698cdf3f06bdba.opus",
+   "note": ""
+  },
+  "r1-23fc5ce23d2333fc": {
+   "decision": "keep",
+   "take": "narrator/r1-23fc5ce23d2333fc.opus",
+   "note": ""
+  },
+  "r1-82be2d2f8bca6357": {
+   "decision": "keep",
+   "take": "narrator/r1-82be2d2f8bca6357.opus",
+   "note": ""
+  },
+  "r1-24d8e9fc6367e66e": {
+   "decision": "keep",
+   "take": "narrator/r1-24d8e9fc6367e66e.opus",
+   "note": ""
+  },
+  "r1-d6d9927e104c9c46": {
+   "decision": "keep",
+   "take": "narrator/r1-d6d9927e104c9c46.opus",
+   "note": ""
+  },
+  "r1-85a20f18d8f49734": {
+   "decision": "keep",
+   "take": "nao/r1-85a20f18d8f49734.opus",
+   "note": ""
+  },
+  "r1-dff58ca43d2da931": {
+   "decision": "keep",
+   "take": "ren/r1-dff58ca43d2da931.opus",
+   "note": ""
+  },
+  "r1-038c653fb9dcc77b": {
+   "decision": "keep",
+   "take": "suzu/r1-038c653fb9dcc77b.opus",
+   "note": ""
+  },
+  "r1-0f1e5307fb29b91a": {
+   "decision": "keep",
+   "take": "suzu/r1-0f1e5307fb29b91a.opus",
+   "note": ""
+  },
+  "r1-30c34aab55fa7be0": {
+   "decision": "keep",
+   "take": "co_fusa/r1-30c34aab55fa7be0.opus",
+   "note": ""
+  },
+  "r1-e95903621e63a8e7": {
+   "decision": "keep",
+   "take": "cr_otaki/r1-e95903621e63a8e7.opus",
+   "note": ""
+  },
+  "r1-970944da85b3aa3d": {
+   "decision": "keep",
+   "take": "cr_sono/r1-970944da85b3aa3d.opus",
+   "note": ""
+  },
+  "r1-9099a72b2f868665": {
+   "decision": "keep",
+   "take": "cr_sono/r1-9099a72b2f868665.opus",
+   "note": ""
+  },
+  "r1-41bf0a5750cdb1be": {
+   "decision": "keep",
+   "take": "cr_sono/r1-41bf0a5750cdb1be.opus",
+   "note": ""
+  },
+  "r1-59aaaa83b8189f8f": {
+   "decision": "keep",
+   "take": "cr_sono/r1-59aaaa83b8189f8f.opus",
+   "note": ""
+  },
+  "r1-af31602b66d327ad": {
+   "decision": "redo",
+   "take": "hall_kohaku/r1-af31602b66d327ad.opus",
+   "note": "頁 should be pronounced as \"pe-ji\", but here is heard as \"kuri\""
+  },
+  "r1-f1ce3c1bd9493391": {
+   "decision": "keep",
+   "take": "hayate/r1-f1ce3c1bd9493391.opus",
+   "note": ""
+  },
+  "r1-e4b354306723f05f": {
+   "decision": "keep",
+   "take": "kasane/r1-e4b354306723f05f.opus",
+   "note": ""
+  },
+  "r1-6146f1032fa2e366": {
+   "decision": "keep",
+   "take": "kasane/r1-6146f1032fa2e366.opus",
+   "note": ""
+  },
+  "r1-c16623f86a0fbd01": {
+   "decision": "keep",
+   "take": "ko_mitsu/r1-c16623f86a0fbd01.opus",
+   "note": ""
+  },
+  "r1-139fcb0057e03467": {
+   "decision": "redo",
+   "take": "kr_hisae/r1-139fcb0057e03467.opus",
+   "note": "灯守 is mispronounced as a different reading for these Kanji"
+  },
+  "r1-ba3a4132e8ff84c7": {
+   "decision": "keep",
+   "take": "mio/r1-ba3a4132e8ff84c7.opus",
+   "note": ""
+  },
+  "r1-4a729bf0784c69a1": {
+   "decision": "redo",
+   "take": "mio/r1-4a729bf0784c69a1.opus",
+   "note": "台詞 is mispronounced as a different reading for these Kanji"
+  },
+  "r1-7fefaa383a12e42b": {
+   "decision": "keep",
+   "take": "mio/r1-7fefaa383a12e42b.opus",
+   "note": ""
+  },
+  "r1-90e42b91e01af80a": {
+   "decision": "keep",
+   "take": "nao/r1-90e42b91e01af80a.opus",
+   "note": ""
+  },
+  "r1-d9dc6846c325e746": {
+   "decision": "keep",
+   "take": "nao/r1-d9dc6846c325e746.opus",
+   "note": ""
+  },
+  "r1-42001e24d9d659f1": {
+   "decision": "redo",
+   "take": "nao/r1-42001e24d9d659f1.opus",
+   "note": "台詞 is mispronounced as a different reading for these Kanji"
+  },
+  "r1-aedfb6f61d2b04cd": {
+   "decision": "keep",
+   "take": "nao/r1-aedfb6f61d2b04cd.opus",
+   "note": ""
+  },
+  "r1-26c7b976f5d4f713": {
+   "decision": "keep",
+   "take": "nao/r1-26c7b976f5d4f713.opus",
+   "note": ""
+  },
+  "r1-763502789b0ed0c5": {
+   "decision": "keep",
+   "take": "nao/r1-763502789b0ed0c5.opus",
+   "note": ""
+  },
+  "r1-f39bfbb362a57021": {
+   "decision": "redo",
+   "take": "nao/r1-f39bfbb362a57021.opus",
+   "note": "釉 is mispronounced as a different reading for these Kanji\nFurigana suggests \"Kusuri\", but is heard as \"Yuu\""
+  },
+  "r1-d37e00c579b97370": {
+   "decision": "keep",
+   "take": "nao/r1-d37e00c579b97370.opus",
+   "note": ""
+  },
+  "r1-b148da5d0908aedf": {
+   "decision": "keep",
+   "take": "ren/r1-b148da5d0908aedf.opus",
+   "note": ""
+  },
+  "r1-770cb85f979e6bff": {
+   "decision": "keep",
+   "take": "ren/r1-770cb85f979e6bff.opus",
+   "note": ""
+  },
+  "r1-10207e2b62be623c": {
+   "decision": "keep",
+   "take": "ren/r1-10207e2b62be623c.opus",
+   "note": ""
+  },
+  "r1-b30fc716b6531eff": {
+   "decision": "keep",
+   "take": "rokuta/r1-b30fc716b6531eff.opus",
+   "note": ""
+  },
+  "r1-5a68e35fe48f8ea1": {
+   "decision": "keep",
+   "take": "suzu/r1-5a68e35fe48f8ea1.opus",
+   "note": ""
+  },
+  "r1-d09950932bc13687": {
+   "decision": "keep",
+   "take": "suzu/r1-d09950932bc13687.opus",
+   "note": ""
+  },
+  "r1-ce8c8f6b494cdef0": {
+   "decision": "redo",
+   "take": "suzu/r1-ce8c8f6b494cdef0.opus",
+   "note": "しっぽや should be pronounced \"Shippo-ya\" but is instead heard as \"Shippa--\""
+  },
+  "r1-3be36980796daf08": {
+   "decision": "keep",
+   "take": "suzu/r1-3be36980796daf08.opus",
+   "note": ""
+  },
+  "r1-f77b4e24fbe403ce": {
+   "decision": "keep",
+   "take": "suzu/r1-f77b4e24fbe403ce.opus",
+   "note": ""
+  },
+  "r1-203a2615ac6600f8": {
+   "decision": "keep",
+   "take": "suzu/r1-203a2615ac6600f8.opus",
+   "note": ""
+  },
+  "r1-60d1efa8299f2546": {
+   "decision": "keep",
+   "take": "suzu/r1-60d1efa8299f2546.opus",
+   "note": ""
+  },
+  "r1-1bda474e1232eea4": {
+   "decision": "keep",
+   "take": "suzu/r1-1bda474e1232eea4.opus",
+   "note": ""
+  },
+  "r1-88188e716b1720d8": {
+   "decision": "keep",
+   "take": "suzu/r1-88188e716b1720d8.opus",
+   "note": ""
+  },
+  "r1-55a4d3ea4928b582": {
+   "decision": "keep",
+   "take": "suzu/r1-55a4d3ea4928b582.opus",
+   "note": ""
+  },
+  "r1-c1d6fd05d1e9ae46": {
+   "decision": "keep",
+   "take": "suzu/r1-c1d6fd05d1e9ae46.opus",
+   "note": ""
+  },
+  "r1-d35d6354cd7f2507": {
+   "decision": "keep",
+   "take": "suzu/r1-d35d6354cd7f2507.opus",
+   "note": ""
+  },
+  "r1-01379af29d6d0065": {
+   "decision": "keep",
+   "take": "suzu/r1-01379af29d6d0065.opus",
+   "note": ""
+  },
+  "r1-db24c309c072d7d1": {
+   "decision": "keep",
+   "take": "tetsu/r1-db24c309c072d7d1.opus",
+   "note": ""
+  },
+  "r1-5a73a0d6d4bd32c0": {
+   "decision": "keep",
+   "take": "tetsu/r1-5a73a0d6d4bd32c0.opus",
+   "note": ""
+  },
+  "r1-55fad0e1e95ffdab": {
+   "decision": "keep",
+   "take": "tetsu/r1-55fad0e1e95ffdab.opus",
+   "note": ""
+  },
+  "r1-a918014da326477d": {
+   "decision": "keep",
+   "take": "tetsu/r1-a918014da326477d.opus",
+   "note": ""
+  },
+  "r1-4fcaa1f5b370f1ce": {
+   "decision": "keep",
+   "take": "tetsu/r1-4fcaa1f5b370f1ce.opus",
+   "note": ""
+  },
+  "r1-e16f214661597c8b": {
+   "decision": "keep",
+   "take": "tetsu/r1-e16f214661597c8b.opus",
+   "note": ""
+  },
+  "r1-3e7642b4dbb6a51b": {
+   "decision": "keep",
+   "take": "tetsu/r1-3e7642b4dbb6a51b.opus",
+   "note": ""
+  }
+ }
+}

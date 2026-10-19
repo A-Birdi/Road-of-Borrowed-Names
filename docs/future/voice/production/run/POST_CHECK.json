@@ -492,12 +492,12 @@
  ],
  "all": {
   "files": 23823,
-  "bytes": 553988005,
+  "bytes": 554007169,
   "hours": 20.71
  },
  "main": {
   "files": 23816,
-  "bytes": 553779411,
+  "bytes": 553798575,
   "hours": 20.7
  },
  "MW1": {
@@ -508,12 +508,12 @@
  "byRole": {
   "mio": {
    "files": 1079,
-   "bytes": 35829508,
+   "bytes": 35831635,
    "hours": 1.35
   },
   "nao": {
    "files": 1182,
-   "bytes": 38061475,
+   "bytes": 38075157,
    "hours": 1.43
   },
   "narrator": {
@@ -523,7 +523,7 @@
   },
   "npc": {
    "files": 3662,
-   "bytes": 144135024,
+   "bytes": 144138054,
    "hours": 5.47
   },
   "pc": {
@@ -533,7 +533,7 @@
   },
   "reference readings": {
    "files": 9096,
-   "bytes": 61229880,
+   "bytes": 61230924,
    "hours": 2.06
   },
   "ren": {
@@ -543,14 +543,14 @@
   },
   "suzu": {
    "files": 2250,
-   "bytes": 72950074,
+   "bytes": 72949355,
    "hours": 2.75
   }
  },
  "byEngine": {
   "aivis": {
-   "files": 14083,
-   "bytes": 211947597,
+   "files": 14082,
+   "bytes": 211940202,
    "hours": 7.78
   },
   "nemo": {
@@ -559,8 +559,8 @@
    "hours": 0.31
   },
   "qwen3-tts": {
-   "files": 9510,
-   "bytes": 333855297,
+   "files": 9511,
+   "bytes": 333881856,
    "hours": 12.62
   },
   "sound": {
@@ -570,12 +570,12 @@
   }
  },
  "masters": {
-  "files": 21524,
-  "bytes": 1894790105,
+  "files": 21528,
+  "bytes": 1895257811,
   "format": "FLAC 24 kHz 16-bit mono, lossless, kept locally"
  },
- "flaggedEdges": 496,
- "retried": 674,
+ "flaggedEdges": 492,
+ "retried": 675,
  "lengthOutliers": {
   "rule": "longer than max(2.2x, +6 s) or shorter than 0.4x the voice's own median pace for that text length",
   "long": [],

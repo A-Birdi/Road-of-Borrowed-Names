@@ -238,3 +238,27 @@ The technical checks pass on all 23,823 files: present, decoding, bytes and SHA-
   - **On the page.** All 95 are on the round-5 page (`REVIEW_LIST_round5.json`), each beside the take it replaced.
 
 The technical checks pass on all 23,823 files. No audio is pushed.
+
+## Final round and the voice site (Robin, 2026-10-19)
+
+- **Final listening round** (`review_round5_decisions.json`): 85 keep, 10 redo. Robin: further discrepancies will come
+  from a full in-game test, not more listening.
+- **The redos:**
+  - The four reference readings of しん: the narrator's own voice, the 9th take heard as シン.
+  - Suzu's しっぽや: new seeds, the recognizer required to hear シッポヤ, first take.
+  - SC5–SC9 (the lead's, `SEND_CORRECTIONS.json` at 185ad9c): 頁 as ページ, 灯守 as ひもり, 台詞 as せりふ twice, and 釉 as
+    くすり, each heard right. SC5's takes all ran slightly shorter than its guard window; the kept take is 5.32 s and is
+    heard right.
+- **A worker error, repaired.** The cloned ぶんるいめい Robin kept in round 4 was remade by a later batch run: the clone's
+  record carried a casting the tool did not expect, so the tool treated it as not made. It was restored from the same
+  seed (608326) and the same eight reference readings: 1.04 s, 91% voice match. It is not byte-identical to the take
+  Robin heard. Such records now carry `castingOverride`, and the tool counts them as done.
+- **The voice site, built and published:**
+  - `voice_site.mjs` at 185ad9c, voice build `2026-10-19.1`, against the recording manifest at 185ad9c (14,724
+    recordings and 9,096 readings, content 3c59018e3137).
+  - 23,820 files: 13,900 lines and 9,096 references. None missing, none withheld; 3 results unused (MW-1's retired ids).
+  - The folder: 26,894 files, 559,963,914 bytes, 340,036,086 under the 900,000,000-byte guard.
+  - Published on Robin's instruction (2026-10-19: set up the new repository) to **A-Birdi/Road-of-Borrowed-Names-voices**,
+    public: `ja-JP/` at the root, `.nojekyll`, and a README with the voices' credits. Pages is on from `main`, at
+    https://a-birdi.github.io/Road-of-Borrowed-Names-voices/, so `HOSTED_BASE` is `../Road-of-Borrowed-Names-voices/ja-JP/`.
+- **Checks:** the technical checks pass on all 23,823 recorded files.
