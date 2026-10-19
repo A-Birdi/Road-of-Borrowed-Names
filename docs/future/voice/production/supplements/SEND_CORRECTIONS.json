@@ -126,6 +126,47 @@
    },
    "results": "Same id. Put the new take at nao/r1-2d3ac586bb0e7209.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"言われた通りにしか行かない舟か。……正直な奴だ。\" and \"sendCorrection\": \"SC3\" to that entry, and move the current take to superseded/<stamp>/.",
    "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC4",
+   "id": "r1-ref-e5bf48bf7ab94ff8",
+   "kind": "reference",
+   "speaker": "narrator",
+   "delivery": "citation",
+   "key": "word:潮止まり|しおどまり",
+   "written": "潮止まり",
+   "reading": "しおどまり",
+   "spoken": "しおどまり",
+   "sendWas": "しおどまり",
+   "send": "シオドマリ",
+   "sendMorae": 5,
+   "changes": [
+    "the reading sent in katakana"
+   ],
+   "decided": "Robin, 2026-10-18, review round 3 (relayed by the local worker; 12 redo, 21 keep): redo; 'should read as Shi-o-do-ma-ri but is heard as Sho-do-ma-ri - focus on the kana size'.",
+   "why": [
+    "The beats. The word is し・お・ど・ま・り, five morae with お a beat of its own; the narrator's engine, AivisSpeech, runs しお together into one syllable, しょ, so Robin hears shodomari. The same reading in katakana, シオドマリ, kept the five beats in the worker's trials: the local recognizer heard しおどまり in 4 of 6 takes, against 1 of 6 for the hiragana and 1 of 6 for the kanji.",
+    "Only the script changes. The word and its reading stay: katakana writes the same sounds, so this is the reading in kana (VOICE_DELIVERY.md §7, step 8, which now says so). The trials with commas (しお、どまり 0 of 6; し、お、ど、ま、り 0 of 6) would add pauses the word does not have, and did worse.",
+    "A reference reading has no line: what the game shows is the word and its reading. The key, the written word, the reading and spoken do not change, so the id and the word's place in the site's reference index stay."
+   ],
+   "trials": {
+    "by": "the local worker, 6 takes per engine input, each checked by the local recognizer against the reading",
+    "heardAsReading": {
+     "しおどまり": "1/6",
+     "潮止まり": "1/6",
+     "しお、どまり": "0/6",
+     "し、お、ど、ま、り": "0/6",
+     "シオドマリ": "4/6"
+    }
+   },
+   "lengthFit": {
+    "basis": "the narrator's own word readings of 5 morae in this batch: 678 unflagged recordings (results.json.gz at ec82501, before the clip fix's re-makes), median 0.97 s (10th-90th percentile 0.83-1.16)",
+    "targetSeconds": 0.97,
+    "windowSeconds": [0.83, 1.16],
+    "note": "The current take is 1.23 s, above the window, so length does not show this fault, and a take inside the window is no proof either. The recognizer's check against the reading and Robin's listening decide; the window only guards against a stretched or clipped take."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears as しおどまり; put the new take at ref/r1-ref-e5bf48bf7ab94ff8.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"シオドマリ\" and \"sendCorrection\": \"SC4\" to that entry, and move the current take to superseded/<stamp>/. The site gives the new audio a new content name, so nothing a player kept goes stale.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
   }
  ]
 }

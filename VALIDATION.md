@@ -4896,6 +4896,36 @@ for anything needing review". The worker's list is `docs/future/voice/production
 - **Whole unit suite**, on the tree pushed as fcacaf3: **54,605 passed, 0 failed** (`node tests/run-unit.mjs`).
 - **Not tested:** the real audio (it is on Robin's PC), Windows, Firefox and Safari.
 
+## SC4, and reference readings left to the device's voice (the worker, after Robin's review round 3, 2026-10-18)
+
+The worker asked for one send correction and one answer. Nothing was generated here.
+- **SC4:** the narrator's reference reading `r1-ref-e5bf48bf7ab94ff8` (`word:潮止まり|しおどまり`). Robin: "heard as
+  Sho-do-ma-ri". It is sent as シオドマリ, the same reading in katakana, appended to
+  `docs/future/voice/production/supplements/SEND_CORRECTIONS.json` (SC1–SC3 unchanged, checked before writing). The
+  worker's trials (6 takes per input, their local recognizer against the reading): katakana 4/6, hiragana 1/6, kanji
+  1/6, comma spellings 0/6. Those counts are the worker's, not rerun here. VOICE_DELIVERY.md §7 step 8 now names
+  katakana and reference readings.
+- **The answer:** a reference reading with no recording falls back to the device's Japanese voice, and where the device
+  has none, nothing speaks and the control is hidden. A results file can now name such ids in a top-level `withheld`;
+  `tools/voice/voice_site.mjs` leaves them out, counts them as `withheldReferences`, and refuses an id that is not a
+  reference reading or that is also recorded (VOICE_DELIVERY.md §4). Robin has not chosen yet; nothing is withheld.
+- **U** `audio_voice` 46/0 (was 36): with the recordings active and a key the voicebank does not have, `sayRef` returns
+  `device` and the device is given the reading when a local Japanese voice exists; with none it returns `none` and
+  `canSayRef` is false; a recorded key still plays its recording. (The voicebank is a stub here; the browser test below
+  covers the real one.)
+- **U** `voice_production` 27/0 (was 23): a withheld reference is left out of the site and counted as withheld, not
+  missing; recorded-and-withheld is refused; a dialogue id or an unknown id cannot be withheld; `readResults` reads a
+  results file's `withheld` list.
+- **U** `voice_review_page` 52/0 (was 44): SC4 matches its GO reference (id, key, word, reading, spoken), its send is
+  the word or its reading in kana (katakana read as the same sounds), and it says all 5 morae; the rule turns away a
+  different sound (ショドマリ). The listening page is rebuilt: SC4's word is on the round-1 list, so its card now shows
+  the chosen send.
+- **B** `voice_runtime` 9/9, rerun on this tree (its site is built by the changed `voice_site.mjs`): among them, the real
+  voicebank says nothing for a reading with no recording when there is no device voice. The device-voice branch is not
+  browser-tested (headless Chromium has no Japanese voice).
+- **Whole unit suite** on this tree: **54,688 passed, 0 failed** (`node tests/run-unit.mjs`).
+- **Not tested:** the SC4 take (not recorded yet); a real device voice saying a withheld word.
+
 ## Send corrections SC2 and SC3 (Robin's listening decisions, 2026-10-18, relayed by the local worker)
 
 Robin's decisions on the listening page: 50 redo, 101 keep, the rest stands (the decisions file stays on Robin's PC).

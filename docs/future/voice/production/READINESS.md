@@ -24,6 +24,43 @@ The repository is the shared record:
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
 Progress (the local worker's checkpoints, latest first):
+- **2026-10-19: SC4, and references left to the device's voice** (the worker, after Robin's review round 3 of
+  2026-10-18: 12 redo, 21 keep).
+  1. **SC4, the narrator's reading of 潮止まり: the same id, sent in katakana.** Record `r1-ref-e5bf48bf7ab94ff8` (key
+     `word:潮止まり|しおどまり`, citation) again with the send **シオドマリ**, same voice. Robin: "should read as
+     Shi-o-do-ma-ri but is heard as Sho-do-ma-ri - focus on the kana size". In the worker's trials (6 takes per input,
+     checked by the local recognizer against the reading) the katakana kept しお as two beats in 4 of 6, against 1 of 6
+     for しおどまり and for 潮止まり, and 0 of 6 for either comma spelling.
+     - **Which take:** choose among the takes the recognizer hears as しおどまり; Robin's listening decides. The length
+       window (0.83–1.16 s, median 0.97 s over 678 unflagged 5-mora word readings at ec82501) is only a guard: the
+       current take is 1.23 s, so length does not show this fault.
+     - **The results, as before:** the new take at `ref/r1-ref-e5bf48bf7ab94ff8.opus`, its entry with `"send": "シオドマリ"`
+       and `"sendCorrection": "SC4"`, the replaced take to `superseded/<stamp>/`.
+     - **The rule** ([VOICE_DELIVERY.md](VOICE_DELIVERY.md) §7 step 8) now says that the reading may be sent in katakana,
+       which writes the same sounds, and that a reference reading is corrected the same way (word and reading stay).
+  2. **The answer on 大石 (おおいし), 母港 (ぼこう) and 分類名 (ぶんるいめい), and 三里 (さんり) if Robin chooses so: yes, the
+     game falls back.** A reference reading with no recording in the site is said by the device's Japanese voice when
+     the device has one; when it has none, nothing speaks and that word's Listen / Say it control is hidden. This holds
+     in the default "Prepared voices" mode; "Device voice" uses the device anyway, and "No voice" says nothing.
+     (src/audio/54_voice_route.js `sayRef` and `canSayRef`: the recording is asked first, and anything but a playing
+     recording goes to the device.)
+     - **How to mark one, if Robin chooses the device voice:** take its entry out of `recordings` in `results.json` and
+       name the id in a top-level `withheld` instead, with the reason and Robin's decision (VOICE_DELIVERY.md §4):
+       `"withheld": { "r1-ref-2bab5bdb1e5539fb": { "reason": "AivisSpeech says おいしい for おおいし whatever it is sent",
+       "decided": "Robin, <date>: …", "closest": { "file": "…", "bytes": …, "sha256": "…" } } }`. `closest` is optional:
+       the take stays in the batch folder and is not served.
+     - **What voice_site.mjs does with it:** leaves the id out of the reference index and counts it as
+       `withheldReferences`, apart from `missingReferences`. It refuses an id that is not a reference reading in the
+       manifest, and one that is both in `recordings` and `withheld`, so a slip cannot drop a line or serve a withheld
+       take.
+     - **The ids:** 大石 `r1-ref-2bab5bdb1e5539fb`, 母港 `r1-ref-b06952501818dfed`, 分類名 `r1-ref-b8f801f6ac6359dc`,
+       三里 `r1-ref-99bd62e1b425b4d1`. Robin's choice is still open; nothing is withheld yet.
+  3. **For the record, the worker's status** (as relayed): the approved clip fix is finished (1,082 narrator reference
+     readings and 49 narrator lines re-made with recognizer selection and the text-aware trim; 65 Qwen lines re-trimmed
+     on their own seeds); a breath after the word's own decay ("breathy uptick") was cut from 136 masters and their 161
+     recordings re-rendered; the trim is now text/4 (the ending stops at the first dip); Uno now uses a clean reference
+     cut from the accepted take (it held 7 s of babble after the sentence), and all four Uno lines were re-made and kept
+     by Robin. The worker's records follow in the repository.
 - **2026-10-18: send corrections SC2 and SC3** (Robin's listening decisions, relayed by the worker: 50 redo, 101 keep,
   the rest stands; two of the redos are send corrections). Both are appended to
   [supplements/SEND_CORRECTIONS.json](supplements/SEND_CORRECTIONS.json); SC1 is unchanged.

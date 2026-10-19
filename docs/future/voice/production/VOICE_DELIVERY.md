@@ -111,6 +111,21 @@ moved ±2 semitones with the formants kept, as VA-2 made them. The casting recor
 Every file has its exact `bytes` and `sha256`. `casting` is Robin's accepted cast as used, per speaker (and per player
 voice and pitch), with each reference file's hash. It is the casting record C-91 asked for.
 
+**Withheld.** A reference reading that Robin chooses to leave to the device's voice (an engine cannot say it, whatever
+it is sent) is taken out of `recordings` and named in a top-level `withheld` instead:
+
+```json
+  "withheld": {
+    "<r1-ref-… id>": { "reason": "…", "decided": "Robin, <date>: …", "closest": { "file": "…", "bytes": 0, "sha256": "…" } }
+  }
+```
+
+`voice_site.mjs` leaves a withheld id out of the site and counts it as `withheldReferences`, apart from the missing. Only
+a reference reading the manifest lists can be withheld, and never one that also has a recording (the tool refuses
+both). The game then says the word with the device's Japanese voice where the device has one, and hides that word's
+Listen control where it has none (src/audio/54_voice_route.js, `sayRef` and `canSayRef`). The closest take, if kept,
+stays in the batch folder and is not served.
+
 ## 5 · The voice site the game reads (schema `rbn.voice.site/1`)
 
 ```
@@ -134,7 +149,8 @@ A variant is `{ id, sp, d, v?, p?, f, b, h, t, th }`:
 - `f` is the file, `b` its bytes, `h` its SHA-256 and `t` its length in seconds.
 - `th` is the spoken-text hash; the game plays the file only when the line it shows hashes to it.
 
-Missing recordings are counted, and their lines fall back.
+Missing recordings are counted, and their lines fall back. Withheld reference readings (§4) are counted apart and fall
+back the same way: to the device's Japanese voice where there is one, else no sound and no control.
 
 ### Where the site lives
 
@@ -181,15 +197,17 @@ saying the same words are two.
 7. **Never sent:** the speaker label, the English, a run-time variable (those lines are listed in `notRecordable`), or a line that is only a pause (`nonverbal`).
 8. **A send correction for one recording.** Where an engine cannot say a recording's `send` as the line means it (words
    skipped or rushed on every seed, a word misread, a pause where the line has none), Cloud may give that recording a
-   corrected send. The words never change: each is sent as written or as the reading the line gives it, in kana, and
-   only a silent opening 「……」 or a comma may be left out. Change no more than the fault needs: the whole line in kana
+   corrected send. The words never change: each is sent as written or as the reading the line gives it, in kana
+   (hiragana, or katakana, which writes the same sounds), and only a silent opening 「……」 or a comma may be left out.
+   A reference reading is corrected the same way: its word and reading stay, and only the script it is sent in changes. Change no more than the fault needs: the whole line in kana
    where the engine stumbles throughout, one word or one comma where only that is wrong, so a delivery Robin liked
    stays. The display and `spoken` do not change, so the id, the line keys and the recording's place in the site stay.
    The new take replaces the file in the results (its entry adds `send` and `sendCorrection`), and the replaced takes
    move to `superseded/<stamp>/`. Corrections are listed, append-only, in
    [supplements/SEND_CORRECTIONS.json](supplements/SEND_CORRECTIONS.json): SC1, Wataru's 「……辞めさせないんですか。」 sent
    as 「やめさせないんですか。」; SC2, the narrator's 「「潮硝子」の札を拾った。」 with 札 sent as ふだ; SC3, Nao's
-   「言われた通りにしか行かない舟、か。……」 without the comma (Robin, 2026-10-18). A line whose words change is never
+   「言われた通りにしか行かない舟、か。……」 without the comma (Robin, 2026-10-18); SC4, the narrator's reference reading
+   of 潮止まり sent as シオドマリ, so しお keeps its two beats (Robin, review round 3). A line whose words change is never
    handled this way: it gets a new id (§8).
 
 An engine with its own reading control may send `spoken` and apply steps 4–5 through that control. The casting record

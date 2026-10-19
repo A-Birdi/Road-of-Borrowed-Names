@@ -7,6 +7,7 @@
 //   - the voice site: one index per scene, content-named recordings whose addresses do not change when nothing in them
 //     did, partial batches counted, results nothing uses reported.
 import { execFileSync } from 'node:child_process';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -56,7 +57,7 @@ export default async (t) => {
   fs.rmSync(dir, { recursive: true, force: true });
 
   // the voice site (tools/voice/voice_site.mjs): per-scene indexes, content-named recordings, unchanged addresses
-  const { buildSite } = await import('../../tools/voice/voice_site.mjs');
+  const { buildSite, readResults } = await import('../../tools/voice/voice_site.mjs');
   const prod = { schema: 'rbn.voice.production/1', contentHash: 'c'.repeat(64), entries: [
     { id: 'r1-a', speaker: 'pc', voice: 'A', pitch: 'low', dialect: 'standard', delivery: 'neutral', textHash: 'x', lines: [{ key: 's.a#1', scene: 's.a' }] },
     { id: 'r1-b', speaker: 'suzu', voice: null, pitch: null, dialect: 'kansai', delivery: 'smile', textHash: 'y', lines: [{ key: 's.b#2', scene: 's.b' }, { key: 's.c#3', scene: 's.c' }] },
@@ -76,4 +77,22 @@ export default async (t) => {
   const part = buildSite(prod, { 'r1-a': rec('a') }, { voiceBuild: 'vb3' });
   t.ok(!part.errors.length && part.index.totals.missingRecordings === 2 && part.index.totals.missingReferences === 1, 'a partial batch builds a partial site; what is missing is counted (the game falls back for it)');
   t.ok(buildSite(prod, { 'r1-a': { bytes: 1000 } }, { voiceBuild: 'vb1' }).errors.some((e) => /size and sha256/.test(e)), 'a recording without its size and hash is refused');
+  // withheld (VOICE_DELIVERY.md §4): a reference reading Robin leaves to the device's voice is left out and counted apart
+  const wh = buildSite(prod, { 'r1-a': rec('a'), 'r1-b': rec('b'), 'r1-c': rec('c') }, { voiceBuild: 'vb4', withheld: ['r1-ref-a'] });
+  t.ok(!wh.errors.length && wh.index.refs === null && wh.index.totals.withheldReferences === 1 && wh.index.totals.missingReferences === 0 && !wh.files.some((f) => f.id === 'r1-ref-a'),
+    'a withheld reference reading is left out of the site, counted as withheld and not as missing');
+  t.ok(buildSite(prod, { 'r1-ref-a': rec('d') }, { voiceBuild: 'vb4', withheld: ['r1-ref-a'] }).errors.some((e) => /both a recording and withheld/.test(e)), 'a reference cannot be both recorded and withheld');
+  t.ok(buildSite(prod, {}, { voiceBuild: 'vb4', withheld: ['r1-c', 'r1-ref-zz'] }).errors.filter((e) => /only a reference reading/.test(e)).length === 2, 'only a reference reading the manifest lists can be withheld (not a dialogue line, not an unknown id)');
+  {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-withheld-'));
+    const audio = Buffer.from('OggS fixture');
+    fs.mkdirSync(path.join(dir, 'pc'));
+    fs.writeFileSync(path.join(dir, 'pc', 'r1-a.opus'), audio);
+    fs.writeFileSync(path.join(dir, 'results.json'), JSON.stringify({ schema: 'rbn.voice.results/1',
+      recordings: { 'r1-a': { file: 'pc/r1-a.opus', bytes: audio.length, sha256: crypto.createHash('sha256').update(audio).digest('hex'), seconds: 1 } },
+      withheld: { 'r1-ref-a': { reason: 'the engine cannot say it', decided: 'Robin' } } }));
+    const rr = readResults([path.join(dir, 'results.json')], [dir]);
+    t.ok(!rr.errors.length && Object.keys(rr.recordings).join() === 'r1-a' && rr.withheld.join() === 'r1-ref-a', 'readResults reads a results file\'s withheld list beside its recordings');
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 };

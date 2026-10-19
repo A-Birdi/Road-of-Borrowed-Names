@@ -18,6 +18,9 @@
 //          --out <site>/ja-JP [--production <RECORDING_MANIFEST.json.gz>] [--update] [--prune-older] [--max-bytes <n>]
 //   --files: the folder each results file's `file` paths are relative to (one per results file, or one for all);
 //   --update: write into an existing site (new names only; nothing is overwritten or removed).
+// Withheld (VOICE_DELIVERY.md §4): a results file's top-level `withheld` names reference readings Robin chose to leave
+// to the device's voice. They are left out of the site and counted apart from the missing; the game then says them with
+// the device's Japanese voice where there is one (src/audio/54_voice_route.js sayRef), and hides the control where not.
 // Kept from earlier builds (VR-C1): the site keeps what the current build names and what the build before it named, so
 // a page opened before one update still finds its files. Anything older is reported, and removed from this publishing
 // folder only with --prune-older (this folder is a copy for publishing; the accepted audio and its evidence stay
@@ -35,9 +38,16 @@ export const SITE_SCHEMA = 'rbn.voice.site/1';
 const sha = (b) => crypto.createHash('sha256').update(b).digest('hex');
 const AUDIO = /\.(opus|ogg)$/;
 
-// production: the manifest; recordings: { id: { bytes, sha256, seconds, ext } } (checked against the files already)
+// production: the manifest; recordings: { id: { bytes, sha256, seconds, ext } } (checked against the files already);
+// o.withheld: reference ids left out on purpose
 export function buildSite(production, recordings, o) {
   const errors = [];
+  const withheld = new Set(o.withheld || []);
+  const refIds = new Set((production.references || []).map((e) => e.id));
+  for (const id of withheld) {
+    if (!refIds.has(id)) errors.push(id + ': only a reference reading the manifest lists can be withheld');
+    if (recordings[id]) errors.push(id + ': both a recording and withheld');
+  }
   if (production.schema !== 'rbn.voice.production/1') errors.push('unknown production schema ' + production.schema);
   if (!/^[A-Za-z0-9._-]{1,64}$/.test(o.voiceBuild || '')) errors.push('voice build id must be 1–64 of A–Z a–z 0–9 . _ -');
   const fileOf = (dir, id, r) => 'rec/' + dir + '/' + id + '.' + r.sha256.slice(0, 12) + '.' + (r.ext || 'opus');
@@ -63,8 +73,9 @@ export function buildSite(production, recordings, o) {
       (sc.lines[l.key] = sc.lines[l.key] || []).push(v);
     }
   }
-  let missingRefs = 0;
+  let missingRefs = 0, withheldRefs = 0;
   for (const e of production.references || []) {
+    if (withheld.has(e.id)) { withheldRefs++; continue; }
     const f = take(e.id, 'ref');
     if (!f) { missingRefs++; continue; }
     const r = recordings[e.id];
@@ -88,7 +99,7 @@ export function buildSite(production, recordings, o) {
     timing: 'estimated',
     encoding: production.delivery || null,
     scenes: sceneIdx, refs: refsPath,
-    totals: { files: files.length, bytes, seconds: Math.round(seconds * 10) / 10, lines: Object.values(scenes).reduce((n, s) => n + Object.keys(s.lines).length, 0), references: Object.keys(refs).length, missingRecordings: missing, missingReferences: missingRefs, unusedResults: unused.length },
+    totals: { files: files.length, bytes, seconds: Math.round(seconds * 10) / 10, lines: Object.values(scenes).reduce((n, s) => n + Object.keys(s.lines).length, 0), references: Object.keys(refs).length, missingRecordings: missing, missingReferences: missingRefs, withheldReferences: withheldRefs, unusedResults: unused.length },
   };
   out['index.json'] = JSON.stringify(index);
   return { index, out, files, unused, errors };
@@ -96,11 +107,12 @@ export function buildSite(production, recordings, o) {
 
 // the worker's results, each file checked (size and SHA-256) where it is
 export function readResults(list, dirs) {
-  const recordings = {}, errors = [];
+  const recordings = {}, withheld = new Set(), errors = [];
   list.forEach((rp, i) => {
     const res = JSON.parse(fs.readFileSync(rp, 'utf8'));
     if (res.schema && res.schema !== 'rbn.voice.results/1') errors.push(rp + ': unknown results schema ' + res.schema);
     const dir = dirs[i] || dirs[0] || path.dirname(rp);
+    for (const id of Object.keys(res.withheld || {})) withheld.add(id);
     for (const [id, r] of Object.entries(res.recordings || {})) {
       if (!r.file || !AUDIO.test(r.file) || r.file.includes('..') || path.isAbsolute(r.file)) { errors.push(id + ': bad file name ' + r.file); continue; }
       const src = path.join(dir, r.file);
@@ -110,7 +122,7 @@ export function readResults(list, dirs) {
       recordings[id] = { bytes: r.bytes, sha256: r.sha256, seconds: r.seconds || null, ext: r.file.split('.').pop(), src };
     }
   });
-  return { recordings, errors };
+  return { recordings, withheld: [...withheld], errors };
 }
 
 export function writeSite(dir, site, recordings, update) {
@@ -135,8 +147,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   if (!opt('--results') || !opt('--voice-build') || !opt('--out')) { console.error('usage: --results <a.json>[,<b.json>] --files <dir>[,<dir>] --voice-build <id> --out <site>/ja-JP [--production <gz>] [--update]'); process.exit(2); }
   const prodPath = opt('--production') || path.join(root, 'docs/future/voice/production/manifest/RECORDING_MANIFEST.json.gz');
   const production = JSON.parse(zlib.gunzipSync(fs.readFileSync(prodPath)).toString());
-  const { recordings, errors: re } = readResults(opt('--results').split(','), (opt('--files') || '').split(',').filter(Boolean));
-  const site = buildSite(production, recordings, { voiceBuild: opt('--voice-build') });
+  const { recordings, withheld, errors: re } = readResults(opt('--results').split(','), (opt('--files') || '').split(',').filter(Boolean));
+  const site = buildSite(production, recordings, { voiceBuild: opt('--voice-build'), withheld });
   const errors = re.concat(site.errors);
   if (errors.length) { console.error(errors.slice(0, 30).join('\n') + (errors.length > 30 ? '\n… ' + (errors.length - 30) + ' more' : '')); process.exit(1); }
   const out = opt('--out');

@@ -131,4 +131,20 @@ export default async (t) => {
     t.ok(s.supported && s.localJaCount === 2 && s.networkJaCount === 1, 'status counts local vs network voices');
     t.ok(/not recorded voice acting/.test(s.note), 'status note labels synthesis honestly');
   }
+
+  // --- a reference reading with no recording (left out of the voice site, or withheld: VOICE_DELIVERY.md §4) while the
+  //     recordings are active: the device's Japanese voice says it where there is one; where not, nothing speaks and
+  //     the control is hidden (src/audio/54_voice_route.js)
+  for (const voices of [[LOCAL], []]) {
+    const env = makeEnv(voices);
+    const RB = load(['core/00_ns.js', 'audio'], { speechSynthesis: env.synth, SpeechSynthesisUtterance: env.Utt });
+    const asked = [];
+    RB.voicebank = { active: () => true, stop() {}, hasRef: (k) => k === 'word:潮止まり|しおどまり', playRef: async (k) => { asked.push(k); return k === 'word:潮止まり|しおどまり' ? 'playing' : 'none'; } };
+    const has = voices.length > 0;
+    t.ok(RB.voice.canSayRef('word:大石|おおいし') === has, 'no recording: the control shows only with a device voice (' + has + ')');
+    t.eq(await RB.voice.sayRef('word:大石|おおいし', 'おおいし'), has ? 'device' : 'none', 'no recording: ' + (has ? 'the device voice says it' : 'nothing speaks'));
+    t.eq(env.spoken.map((u) => u.text), has ? ['おおいし'] : [], 'the device is given the reading');
+    t.eq(await RB.voice.sayRef('word:潮止まり|しおどまり', 'しおどまり'), 'recorded', 'a recorded reference still plays its recording');
+    t.ok(RB.voice.canSayRef('word:潮止まり|しおどまり') === true && asked.length === 2, 'the recording was asked first both times');
+  }
 };

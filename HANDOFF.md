@@ -609,6 +609,13 @@
       battle now chooses Standard mistakes, since FR-1 made Assisted the default). 21 affected browser suites pass
       (VALIDATION.md "MW-1").
 
+    **SC4 and withheld references (the worker, after Robin's review round 3).** The narrator's reading of 潮止まり
+    (`r1-ref-e5bf48bf7ab94ff8`) is sent as シオドマリ (SEND_CORRECTIONS.json; §7 step 8 names katakana and references).
+    A results file's top-level `withheld` names reference readings tools/voice/voice_site.mjs leaves out of the site
+    (VOICE_DELIVERY.md §4); the game says those with the device's voice, or hides the control. For Robin's choice on
+    大石, 母港, 分類名 (and 三里); nothing withheld yet. READINESS.md (2026-10-19), VALIDATION.md "SC4, and reference
+    readings left to the device's voice", REQUIREMENTS.md XP133.
+
     **Send corrections SC2 and SC3 (Robin's listening decisions, 2026-10-18, relayed by the worker; 50 redo, 101 keep).**
     The narrator's wing-10 tablet line (`r1-6843cbc80ebf3837`) is sent with ふだ for 札; Nao's `r1-2d3ac586bb0e7209` is
     sent without the comma before か. Same ids; appended to supplements/SEND_CORRECTIONS.json; VOICE_DELIVERY.md §7 step
