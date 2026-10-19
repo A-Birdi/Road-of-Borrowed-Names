@@ -17,7 +17,9 @@
  * ならない "must") and an English word may belong to more than one, part by part (私 and です share "I'm"). Pointing
  * at either side marks every relation it belongs to, all its words, in its colour (amber for a word's meaning, blue for
  * grammar). While a voice speaks, the spoken word's relations are marked the same way (.spk, .spk2): one set of
- * relations for both, decided once (the spoken mark keeps the line; pointing waits until it ends, as before). */
+ * relations for both, decided once (the spoken mark keeps the line; pointing waits until it ends, as before).
+ * Where: the dialogue strip (.dlg) and the caption slip of a sequence shown on its own (.seq-view: the prologue, a
+ * Records replay; src/ui/43_sequence.js), which keeps its line on the element (el.__rbLine). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
 
@@ -153,13 +155,14 @@ RB.ui.speechMark = (function () {
   // the English words that render it, and an English word marks its Japanese word; nothing where there is no pair
   // (particles, endings, words the English does not name). The same pairs as the spoken mark; only classes change.
   let hov = null; // { src, box, al, byTok: { tokenIndex: [relation] }, byWord: { englishIndex: [relation] } }
+  const BOX = '.dlg, .seq-view'; // where a spoken line shows: the dialogue strip, a sequence's own caption slip
   function pairsFor(box) {
     const jl = box.querySelector(LINE_SEL);
     if (!jl || !S() || !RB.ui.help || !RB.ui.help.tokensOf) return null;
     const src = +jl.dataset.src;
     if (hov && hov.src === src && hov.box === box) return hov;
     const tokens = RB.ui.help.tokensOf(src);
-    const line = RB.ui.dialogue && RB.ui.dialogue.shown ? RB.ui.dialogue.shown() : null;
+    const line = box.__rbLine || (RB.ui.dialogue && RB.ui.dialogue.shown ? RB.ui.dialogue.shown() : null);
     if (!tokens || !line) return null;
     const al = alignFor(tokens, line, RB.ui.help.ctxOf ? RB.ui.help.ctxOf(src) : null);
     // every relation each word belongs to, on both sides (an English word may be in two: "I'm" for 私 and です)
@@ -176,7 +179,7 @@ RB.ui.speechMark = (function () {
   function hovClear(box) { (box || document).querySelectorAll('.hov, .hov2').forEach((e) => e.classList.remove('hov', 'hov2')); }
   function hovAt(target) {
     if (!on() || cur) return; // (the spoken mark has the line while a voice speaks)
-    const box = target.closest && target.closest('.dlg');
+    const box = target.closest && target.closest(BOX);
     if (!box) return;
     const p = pairsFor(box);
     if (!p) return;
@@ -209,7 +212,7 @@ RB.ui.speechMark = (function () {
   // what a word does in its line, for word help (AG-1): the construction or relation it is part of, what its grammar
   // does when the English has no word for it, or that its role was not worked out. Null outside a dialogue line.
   function explain(el, i) {
-    const box = el && el.closest && el.closest('.dlg');
+    const box = el && el.closest && el.closest(BOX);
     if (!box || !el.closest(LINE_SEL)) return null;
     const p = pairsFor(box);
     if (!p) return null;
@@ -224,12 +227,12 @@ RB.ui.speechMark = (function () {
     return out.length ? out : null;
   }
   if (typeof document !== 'undefined') {
-    document.addEventListener('pointerover', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg')) hovAt(e.target); });
-    document.addEventListener('pointerout', (e) => { const box = e.target && e.target.closest && e.target.closest('.dlg'); if (box && !(e.relatedTarget && box.contains(e.relatedTarget) && (e.relatedTarget.closest('.jt[data-i], .ew[data-w]')))) hovClear(box); });
-    document.addEventListener('focusin', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg .jt[data-i]')) hovAt(e.target); });
-    document.addEventListener('focusout', (e) => { const box = e.target && e.target.closest && e.target.closest('.dlg'); if (box) hovClear(box); });
+    document.addEventListener('pointerover', (e) => { if (e.target && e.target.closest && e.target.closest(BOX)) hovAt(e.target); });
+    document.addEventListener('pointerout', (e) => { const box = e.target && e.target.closest && e.target.closest(BOX); if (box && !(e.relatedTarget && box.contains(e.relatedTarget) && (e.relatedTarget.closest('.jt[data-i], .ew[data-w]')))) hovClear(box); });
+    document.addEventListener('focusin', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg .jt[data-i], .seq-view .jt[data-i]')) hovAt(e.target); });
+    document.addEventListener('focusout', (e) => { const box = e.target && e.target.closest && e.target.closest(BOX); if (box) hovClear(box); });
     // the English words become pointable as soon as a line shows (wrapped in spans the same way the spoken mark does)
-    document.addEventListener('pointerenter', (e) => { const en = e.target && e.target.closest && e.target.closest('.dlg .main .enline, .dlg .sub .enline'); if (en && on()) wrapEnglish(en); }, true);
+    document.addEventListener('pointerenter', (e) => { const en = e.target && e.target.closest && e.target.closest('.dlg .main .enline, .dlg .sub .enline, .seq-view .main .enline, .seq-view .sub .enline'); if (en && on()) wrapEnglish(en); }, true);
   }
   return { begin, stop, active: () => !!cur, wrapEnglish, pairsFor, explain };
 })();

@@ -1090,6 +1090,22 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - **Not done / Robin's:** a play-through on the live URL (not reachable from this session; Robin's in-game test).
     No Pages setting needs changing; publishing only the runtime set stays Robin's choice.
 
+- [~] XP136 Every line spoken, with properly highlightable text, Records too (Robin, 2026-10-19): "every line in-game
+  should have spoken lines with properly highlightable text as well. This goes the same for the Records section,
+  especially because it already has lines usable"; "Other unvoiced lines may not be read without the voice IDE
+  installed locally, like the closed door in Reedwake. The Narrator can effectively read that one; check for others
+  similar"; "The swinging board between Old Yasu and Ren in Reedwake, along with its clamp - no Narrator speaking. Old
+  Yasu's story, when listening, has not begun being spoken." VALIDATION.md "Every line spoken: the first batch".
+  - **Done (code, tests):** the prologue's six captions, Records replays, shut doors and marked objects, every line of
+    the six field puzzles (the swinging screen and its clamp among them) and every oral-history fragment are shown under
+    stable scene ids and listed for recording; the prologue and replays are spoken lines in their slip (marked word,
+    pointing pairs, Voice). B `spoken_lines` 5/5 against a test voice site built from the script; U whole suite
+    54,725/0, `fieldweave` 390/0, `voice_production` 27/0.
+  - **Recordings: Local's.** 309 in supplements/SL1_SUPPLEMENT.json (narrator 251; Yasu, Tetsu, Kasane, Isao, Oyone).
+    Until then these lines stay silent with prepared voices.
+  - **Not done:** about 2,000 more lines the game's code shows (the inventory in VALIDATION.md), Company memory
+    replays, and the panels.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

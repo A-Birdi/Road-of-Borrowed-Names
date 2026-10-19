@@ -609,6 +609,31 @@
       battle now chooses Standard mistakes, since FR-1 made Assisted the default). 21 affected browser suites pass
       (VALIDATION.md "MW-1").
 
+    **Every line spoken, first batch: the prologue, Records replays, doors and objects, field puzzles, oral histories
+    (Robin, 2026-10-19: "every line in-game should have spoken lines with properly highlightable text as well. This
+    goes the same for the Records section"; "the closed door in Reedwake"; "The swinging board between Old Yasu and Ren
+    … along with its clamp - no Narrator speaking. Old Yasu's story, when listening, has not begun being spoken").**
+    - **Why they were silent:** the voice finds a recording by the scene id a line is shown under
+      (`RB.voicebank.wanted`), and these lines were shown by the game's own code with none, and never listed for
+      recording (tools/voice/lines.mjs read only the scenes' `say` commands).
+    - **Now:** each is shown under a stable scene id and listed for recording through `RB.content.spokenLines` /
+      `RB.content.spokenSources` (src/content/00_prologue.js explains both): `prologue` (the six captions, moved to
+      src/content/00_prologue.js unchanged), `code.door` and `code.prop` (src/engine/50_world.js), `code.fw` (every line
+      the six field puzzles can show: looks, actions, weaves, hints, resets, rewards; computed lines run over every
+      arrangement the puzzle allows: src/engine/55_fieldweave.js `spoken()`), `code.history` (each oral-history
+      fragment at every learner level, said by its teller: src/ui/75_activities.js). Records replays' beats carry their
+      scene id (src/engine/58b_records.js).
+    - **The prologue and Records replays are spoken lines in their caption slip** (src/ui/43_sequence.js): Japanese
+      and English as in the dialogue strip, the spoken word marked, pointing pairs words (src/ui/22_speech_mark.js
+      now also covers `.seq-view`), a Voice button, spoken automatically when the strip would be; quiet when left.
+    - **Recordings:** 309 new ones (narrator 251, Yasu 16, Tetsu 16, Kasane 24, Isao 1, Oyone 1) in
+      docs/future/voice/production/supplements/SL1_SUPPLEMENT.json (append-only, after the batch; built by the new
+      tools/voice/supplement.mjs). Until the worker records them these lines are silent with prepared voices, as before
+      (or the device's voice where it has a Japanese one). GO.json and the frozen manifest are unchanged.
+    - **Not yet:** the inventory's other code-shown lines (about 2,000: whereabouts, battle intros, companion reactions
+      and thoughts, Atlas, pages, press, cases …), Company memory replays (`RB.sequence.replay` drops the beats' scene
+      id), and the panels (fishing, shiritori, verbs). REQUIREMENTS.md XP136.
+
     **The repository cleaned; the voices live (Robin, 2026-10-19).** Screenshots, the Ensemble listening media and
     review captures are out of the branch (2,055 files, 479.8 MB; in the history at 185ad9c; `.gitignore` keeps new
     captures out): about 606 MB published, from 1,085.8 MB. Game and voices together would still be about 1,166 MB, so

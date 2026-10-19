@@ -800,6 +800,7 @@ RB.sequence = (function () {
         '<button class="cbtn" type="button" data-a="prev" title="The previous caption again (' + (keyOf('prev') || 'P') + ' or ←)">' + I('sq-prev') + '<span>Previous</span></button>' +
         '<button class="cbtn" type="button" data-a="replay" title="Play this picture again (' + (keyOf('replay') || 'R') + ')">' + I('sq-replay') + '<span>Replay shot</span></button>' +
         '<button class="cbtn" type="button" data-a="hide" aria-pressed="false" title="Hide the caption to see the whole picture (' + (keyOf('hide') || 'I') + ')">' + I('sq-hide') + '<span>Hide text</span></button></div>' +
+        '<button class="cbtn seq-voice" type="button" data-a="voice" title="Say this line again">' + I('sound') + '<span>Voice</span></button>' +
         '<button class="cbtn" type="button" data-a="skip">' + esc((o.skip && o.skip.label) || 'Skip') + '</button>' +
         '<button class="cbtn cr-primary autofocus" type="button" data-a="next"><span>Next</span>' + I('next') + '</button></div>';
       v.cap = cap;
@@ -812,10 +813,41 @@ RB.sequence = (function () {
         const ch = RB.content.chars[who];
         return ch && ch.name ? ch.name.en : '';
       };
+      // Each caption is a spoken line like the dialogue strip's (Robin, 2026-10-19: "every line in-game should have
+      // spoken lines with properly highlightable text"): shown as the strip shows it (Suzu's Kansai, word help, the
+      // pointed word's counterpart), said by its recording or the device's voice (src/audio/54_voice_route.js) as it
+      // appears when lines are spoken automatically, again with Voice, the spoken word marked as it is said
+      // (src/ui/22_speech_mark.js). A beat's line names its scene (sceneId), which is how its recording is found.
+      function quiet() {
+        if (RB.ui.speechMark) RB.ui.speechMark.stop();
+        if (RB.voice && RB.voice.cancel) RB.voice.cancel();
+      }
+      function speakCap() {
+        const c = v.cur;
+        if (!c || !c.display.jp || !RB.voice || !RB.voice.sayLine || v.done) return;
+        const text = RB.jp && RB.jp.reading ? RB.jp.reading(c.display.jp, RB.game.s ? RB.script.jpVars() : undefined) : c.display.jp;
+        const ch = c.source.who && RB.content.chars[c.source.who];
+        const mark = RB.ui.speechMark ? RB.ui.speechMark.begin(cap, c.display, text) : null;
+        RB.voice.sayLine(c.display, c.source, {
+          text, pitch: ch && ch.voice ? ch.voice.pitch : 1,
+          onstart: mark ? () => mark.start() : undefined,
+          onboundary: mark ? (ci) => mark.at(ci) : undefined,
+          follow: mark ? (get, dur) => mark.follow(get, dur) : undefined,
+          onend: mark ? () => mark.end() : undefined,
+        });
+      }
       function caption(line, j, review) {
         const t = cap.querySelector('.txt');
+        quiet();
         const nm = o.speakers ? nameOf(line.who) : '';
-        t.innerHTML = (nm ? '<div class="who">' + esc(nm) + '</div>' : '') + (line.jp ? RB.ui.jhtml(line.jp) : '') + '<div class="en">' + esc(RB.script && RB.game.s ? RB.script.enVars(line.en || '') : line.en || '') + '</div>';
+        const source = Object.assign({}, line, { who: line.who || 'narr' });
+        const display = RB.dialect && RB.dialect.line ? RB.dialect.line(source.who, source) : source;
+        v.cur = { display, source };
+        cap.__rbLine = display;
+        t.innerHTML = (nm ? '<div class="who">' + esc(nm) + '</div>' : '') + (display.jp ? '<div class="main">' + RB.ui.jhtml(display.jp) + '</div>' : '') +
+          '<div class="sub en">' + RB.ui.ehtml(display.en || '') + '</div>';
+        const vb = cap.querySelector('[data-a=voice]');
+        if (vb) vb.hidden = !(display.jp && RB.voice && RB.voice.canSayLine && RB.voice.canSayLine(display, source));
         cap.querySelector('.pg').innerHTML = o.beats.map((x, k) => '<i class="' + (k === j ? 'on' : k < j ? 'past' : '') + '"></i>').join('');
         cap.querySelector('.seq-rv').textContent = review ? 'Looking back — Next returns to where you were' : '';
         cap.classList.toggle('seq-review', !!review);
@@ -833,6 +865,7 @@ RB.sequence = (function () {
         p.toShot(b.shot, b.phase || null);
         p.beat(b.line);
         caption(b.line, j, false);
+        if (RB.voice && RB.voice.autoOn && RB.voice.autoOn()) speakCap();
         if (j === o.beats.length - 1 && o.onSeen) { try { o.onSeen(); } catch (e) { /* (a settings write) */ } }
       }
       function next() {
@@ -877,6 +910,7 @@ RB.sequence = (function () {
       function finish() {
         if (v.done) return;
         v.done = true;
+        quiet();
         cancelTimers(v.timers);
         if (V === v) V = null;
         RB.render.setOverride(null);
@@ -899,6 +933,7 @@ RB.sequence = (function () {
         else if (a === 'prev') prev();
         else if (a === 'replay') { if (p.replay()) S.replays++; }
         else if (a === 'hide') setH(!v.hidden);
+        else if (a === 'voice') speakCap();
         else if (a === 'skip') skip(false);
         if (a && a !== 'hide' && cap.classList.contains('seq-open')) { cap.classList.remove('seq-open'); cap.querySelector('.seq-more').setAttribute('aria-expanded', 'false'); }
       };

@@ -1888,27 +1888,27 @@ body.reduced-motion .cr-corner:hover::before, body.book-flat .cr-corner:hover::b
 .dlg-sheet rt, .choice rt, .help rt, .toast rt, .place rt, .card-slip rt, .banner rt, .csheet rt, .panel rt { color: var(--rt-ink); }
 body.bulb-on .dlg-sheet .jline .jt, body.bulb-on .choice .jline .jt, body.bulb-on .toast .jline .jt,
 body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on .panel .jline .jt { text-decoration-color: var(--jt-line); }
-.dlg-sheet .jline .jt:hover, .dlg-sheet .jline .jt.active, .choice .jline .jt.active, .panel .jline .jt.active { background: rgba(193, 138, 42, 0.2); }
+.dlg-sheet .jline .jt:hover, :is(.dlg-sheet, .seq-view .txt) .jline .jt.active, .choice .jline .jt.active, .panel .jline .jt.active { background: rgba(193, 138, 42, 0.2); }
 /* the word being spoken, in the Japanese and in its English (PT-1c, src/ui/22_speech_mark.js): a strong amber mark
    with an underline, so it reads at a glance; only colour changes (no motion) */
-.dlg-sheet .jline .jt.spk, .dlg-sheet .enline .ew.spk { background: rgba(232, 158, 36, 0.62); box-shadow: inset 0 -0.2em 0 #a2560f, 0 0 0 2px rgba(232, 158, 36, 0.35); border-radius: 3px; color: var(--ink); }
-.dlg-sheet .enline .ew.spk { padding: 0 0.08em; margin: 0 -0.08em; }
-body.high-contrast .dlg-sheet .jline .jt.spk, body.high-contrast .dlg-sheet .enline .ew.spk { background: #ffe14d; color: #000; box-shadow: inset 0 -0.18em 0 #000; }
+:is(.dlg-sheet, .seq-view .txt) .jline .jt.spk, :is(.dlg-sheet, .seq-view .txt) .enline .ew.spk { background: rgba(232, 158, 36, 0.62); box-shadow: inset 0 -0.2em 0 #a2560f, 0 0 0 2px rgba(232, 158, 36, 0.35); border-radius: 3px; color: var(--ink); }
+:is(.dlg-sheet, .seq-view .txt) .enline .ew.spk { padding: 0 0.08em; margin: 0 -0.08em; }
+body.high-contrast :is(.dlg-sheet, .seq-view .txt) .jline .jt.spk, body.high-contrast :is(.dlg-sheet, .seq-view .txt) .enline .ew.spk { background: #ffe14d; color: #000; box-shadow: inset 0 -0.18em 0 #000; }
 /* the counterpart of the word under the pointer (LI-9): the same amber, lighter than the spoken mark */
-.dlg-sheet .jline .jt.hov, .dlg-sheet .enline .ew.hov { background: rgba(232, 158, 36, 0.34); box-shadow: inset 0 -0.14em 0 rgba(162, 86, 15, 0.8); border-radius: 3px; }
-.dlg-sheet .enline .ew.hov { padding: 0 0.08em; margin: 0 -0.08em; }
-body.high-contrast .dlg-sheet .jline .jt.hov, body.high-contrast .dlg-sheet .enline .ew.hov { background: #fff3a0; color: #000; box-shadow: inset 0 -0.14em 0 #000; }
+:is(.dlg-sheet, .seq-view .txt) .jline .jt.hov, :is(.dlg-sheet, .seq-view .txt) .enline .ew.hov { background: rgba(232, 158, 36, 0.34); box-shadow: inset 0 -0.14em 0 rgba(162, 86, 15, 0.8); border-radius: 3px; }
+:is(.dlg-sheet, .seq-view .txt) .enline .ew.hov { padding: 0 0.08em; margin: 0 -0.08em; }
+body.high-contrast :is(.dlg-sheet, .seq-view .txt) .jline .jt.hov, body.high-contrast :is(.dlg-sheet, .seq-view .txt) .enline .ew.hov { background: #fff3a0; color: #000; box-shadow: inset 0 -0.14em 0 #000; }
 /* a grammar counterpart (a particle, the copula, what an ending adds: LI-12): blue, a dotted line under it, so it is told
  * apart from a word's counterpart by its line as well as its colour */
 /* (body first: it outranks the word-help underline's colour, body.bulb-on … .jt) */
-body .dlg-sheet .jline .jt.hov2, body .dlg-sheet .enline .ew.hov2 { background: rgba(60, 118, 170, 0.26); border-radius: 3px;
+body :is(.dlg-sheet, .seq-view .txt) .jline .jt.hov2, body :is(.dlg-sheet, .seq-view .txt) .enline .ew.hov2 { background: rgba(60, 118, 170, 0.26); border-radius: 3px;
   text-decoration: underline dotted rgba(28, 74, 120, 0.95); text-decoration-thickness: 0.12em; text-underline-offset: 0.18em; }
-.dlg-sheet .enline .ew.hov2 { padding: 0 0.08em; margin: 0 -0.08em; }
-body.high-contrast .dlg-sheet .jline .jt.hov2, body.high-contrast .dlg-sheet .enline .ew.hov2 { background: #c8e4ff; color: #000; text-decoration-color: #000; }
+:is(.dlg-sheet, .seq-view .txt) .enline .ew.hov2 { padding: 0 0.08em; margin: 0 -0.08em; }
+body.high-contrast :is(.dlg-sheet, .seq-view .txt) .jline .jt.hov2, body.high-contrast :is(.dlg-sheet, .seq-view .txt) .enline .ew.hov2 { background: #c8e4ff; color: #000; text-decoration-color: #000; }
 /* while a voice speaks, what the spoken word's grammar says in the English (AG-1): blue and dotted like .hov2, stronger */
-.dlg-sheet .enline .ew.spk2 { background: rgba(60, 118, 170, 0.34); border-radius: 3px; padding: 0 0.08em; margin: 0 -0.08em;
+:is(.dlg-sheet, .seq-view .txt) .enline .ew.spk2 { background: rgba(60, 118, 170, 0.34); border-radius: 3px; padding: 0 0.08em; margin: 0 -0.08em;
   text-decoration: underline dotted rgba(28, 74, 120, 0.95); text-decoration-thickness: 0.14em; text-underline-offset: 0.18em; }
-body.high-contrast .dlg-sheet .enline .ew.spk2 { background: #a9d4ff; color: #000; text-decoration-color: #000; }
+body.high-contrast :is(.dlg-sheet, .seq-view .txt) .enline .ew.spk2 { background: #a9d4ff; color: #000; text-decoration-color: #000; }
 
 /* ---- shared cloth button and generic panel (screens not yet rebuilt) ---- */
 .btn {
@@ -42629,6 +42629,20 @@ RB.world = (function () {
     return true;
   }
   const SHUT = { jp: '{戸|と} は {閉|し}まって いる 。 {誰|だれ} も {出|で}て こない 。', en: 'The door is shut. Nobody comes to it.' };
+  // What a shut door or a marked object says is a narrator's line like any other (Robin, 2026-10-19): shown under its
+  // own scene id, so its recording is found, and listed for recording (RB.content.spokenSources, read by
+  // tools/voice/lines.mjs)
+  const DOOR_SCENE = 'code.door', PROP_SCENE = 'code.prop';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [{ scene: DOOR_SCENE, who: 'narr', jp: SHUT.jp, en: SHUT.en, file: 'engine/50_world' }];
+    for (const id in RB.content.maps || {}) {
+      const m = RB.maps.compile(id);
+      for (const d of m.shut || []) if (d.text && d.text.jp) out.push({ scene: DOOR_SCENE, who: 'narr', jp: d.text.jp, en: d.text.en, file: 'map ' + id });
+      for (const p of m.props || []) if (!p.scene && p.text && p.text.jp) out.push({ scene: PROP_SCENE, who: p.who || 'narr', jp: p.text.jp, en: p.text.en, file: 'map ' + id });
+    }
+    return out;
+  });
   function interact() {
     if (W.player.mv) return;
     const [fx, fy] = frontTile();
@@ -42646,14 +42660,14 @@ RB.world = (function () {
     if (pr) {
       if (RB.staging) RB.staging.examined(fx, fy); // those who saw it may look at it afterwards
       if (pr.scene) RB.script.run(pr.scene, { prop: pr });
-      else if (pr.text) RB.script.runInline([{ who: pr.who || 'narr', jp: pr.text.jp, en: pr.text.en }]);
+      else if (pr.text) RB.script.runInline([{ who: pr.who || 'narr', jp: pr.text.jp, en: pr.text.en, sceneId: PROP_SCENE }]);
       return;
     }
     // a building you cannot go into: its door is shut, and says so
     const door = RB.maps.shutDoorAt(W.map, fx, fy);
     if (door && W.player.dir === 'up') {
       const t = door.text || SHUT;
-      RB.script.runInline([{ who: 'narr', jp: t.jp, en: t.en }]);
+      RB.script.runInline([{ who: 'narr', jp: t.jp, en: t.en, sceneId: DOOR_SCENE }]);
       return;
     }
     // companion: talking to your companion gives contextual banter
@@ -44854,6 +44868,11 @@ RB.fieldweave = (function () {
     bell: { jp: '{澄|す}んだ {音|おと} が {響|ひび}いて 、 {消|き}えて いく 。', en: 'A clear note rings out and fades.' },
     support: { jp: '{何|なに} も {起|お}きない 。', en: 'Nothing happens.' },
   };
+  // what a reset says when its puzzle names nothing of its own
+  const RESET_SAY = { jp: '{元|もと} の {形|かたち} に {戻|もど}した 。', en: 'You set everything back the way it was.' };
+  // Every line a puzzle shows (what an object looks like, what an action or a weave does, its hints, its reset, its
+  // reward) is shown under one scene id, so its recording is found (Robin, 2026-10-19: every line spoken).
+  const SCENE = 'code.fw';
   const clone = (o) => (o == null ? o : JSON.parse(JSON.stringify(o)));
   const LOG_MAX = 24;
 
@@ -45170,9 +45189,53 @@ RB.fieldweave = (function () {
     return cmp(v == null ? (typeof want === 'boolean' ? false : 'none') : v, op, want);
   });
 
+  // ---- every line the authored puzzles can show, for the recording list (RB.content.spokenSources, read by
+  // tools/voice/lines.mjs). A computed line (a look's fn, a rule's say) is run over every arrangement the definition
+  // allows (its values), from the start and from each arrangement, finished and not.
+  function spoken() {
+    const out = [], seen = new Set();
+    const add = (l, who, def) => {
+      for (const x of [].concat(l || [])) {
+        if (!x || typeof x.jp !== 'string' || !x.jp) continue;
+        const w = x.who || who || 'narr', k = w + '\u0001' + x.jp;
+        if (seen.has(k)) continue;
+        seen.add(k);
+        out.push({ scene: SCENE, who: w, jp: x.jp, en: x.en || '', expr: x.expr || null, file: def ? 'fieldweave ' + def.id : 'engine/55_fieldweave' });
+      }
+    };
+    const run = (f, args, def) => { try { add(f.apply(null, args), null, def); } catch (e) { /* an arrangement the line was not written for */ } };
+    let s = null;
+    try { s = RB.state.newCampaign(); } catch (e) { s = {}; }
+    for (const def of list()) {
+      const keys = Object.keys(def.values || {});
+      let states = [clone(def.init)];
+      for (const k of keys) states = states.flatMap((st) => def.values[k].map((v) => Object.assign(clone(st), { [k]: v })));
+      if (states.length > 4096) states = [clone(def.init)];
+      for (const extra of [def.solved, def.after && Object.assign(clone(def.init), def.after)]) if (extra) states.push(Object.assign(clone(def.init), clone(extra)));
+      for (const k in def.objects) for (const l of def.objects[k].look || []) {
+        if (typeof l.fn === 'function') { for (const st of states) for (const done of [false, true]) run(l.fn, [st, { done, seen: {}, state: st }, s], def); }
+        else add(l.lines || l, null, def);
+      }
+      for (const r of def.rules) {
+        if (typeof r.say === 'function') { for (const a of states) { run(r.say, [def.init, a, s], def); run(r.say, [a, a, s], def); } }
+        else add(r.say, null, def);
+      }
+      if (typeof def.arrangeSay === 'function') { for (const a of states) run(def.arrangeSay, [def.init, a, s], def); } else add(def.arrangeSay, null, def);
+      add(def.hints, null, def);
+      add(def.resetSay || (def.noReset ? null : RESET_SAY), null, def);
+      add(def.solvedSay, null, def);
+      if (def.reward) add(def.reward.say, null, def);
+    }
+    for (const k in PLAIN) add(PLAIN[k], null, null);
+    return out;
+  }
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(spoken);
+
   return {
     define, get, list, rec, peek, stateOf, view, setHold, match, eligible, methodOf, objectsOn, near, dist,
     lookOf, observe, act, weave, arrange, applies, routine, reset, hint, hintLevel, familyOf, repair, FAMILY, PLAIN,
+    SCENE, RESET_SAY, spoken,
     _weaveRule: weaveRule, _actRule: actRule,
   };
 })();
@@ -48256,7 +48319,8 @@ RB.volume = (function () {
       if (c.op === 'sequence' && a[0] === seqId) { on = (a[1] || 'begin') === 'begin'; if (!on) break; continue; }
       if (!on) continue;
       if (c.op === 'shot') { if (a[0] !== shot) { shot = a[0]; phase = a[1] || null; } else if (a[1]) phase = a[1]; continue; }
-      if (c.op === 'say' && shot) out.push({ shot, phase, line: { who: c.who === 'comp' ? (comp || 'narr') : c.who, expr: c.expr || null, jp: c.jp, en: c.en } });
+      // (sceneId: the scene the line is in, which is how a replay finds its recording, as the scene itself does)
+      if (c.op === 'say' && shot) out.push({ shot, phase, line: { who: c.who === 'comp' ? (comp || 'narr') : c.who, expr: c.expr || null, jp: c.jp, en: c.en, sceneId: def.scene } });
     }
     return out;
   }
@@ -69999,7 +70063,9 @@ RB.portraitDev = (function () {
  * ならない "must") and an English word may belong to more than one, part by part (私 and です share "I'm"). Pointing
  * at either side marks every relation it belongs to, all its words, in its colour (amber for a word's meaning, blue for
  * grammar). While a voice speaks, the spoken word's relations are marked the same way (.spk, .spk2): one set of
- * relations for both, decided once (the spoken mark keeps the line; pointing waits until it ends, as before). */
+ * relations for both, decided once (the spoken mark keeps the line; pointing waits until it ends, as before).
+ * Where: the dialogue strip (.dlg) and the caption slip of a sequence shown on its own (.seq-view: the prologue, a
+ * Records replay; src/ui/43_sequence.js), which keeps its line on the element (el.__rbLine). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
 
@@ -70135,13 +70201,14 @@ RB.ui.speechMark = (function () {
   // the English words that render it, and an English word marks its Japanese word; nothing where there is no pair
   // (particles, endings, words the English does not name). The same pairs as the spoken mark; only classes change.
   let hov = null; // { src, box, al, byTok: { tokenIndex: [relation] }, byWord: { englishIndex: [relation] } }
+  const BOX = '.dlg, .seq-view'; // where a spoken line shows: the dialogue strip, a sequence's own caption slip
   function pairsFor(box) {
     const jl = box.querySelector(LINE_SEL);
     if (!jl || !S() || !RB.ui.help || !RB.ui.help.tokensOf) return null;
     const src = +jl.dataset.src;
     if (hov && hov.src === src && hov.box === box) return hov;
     const tokens = RB.ui.help.tokensOf(src);
-    const line = RB.ui.dialogue && RB.ui.dialogue.shown ? RB.ui.dialogue.shown() : null;
+    const line = box.__rbLine || (RB.ui.dialogue && RB.ui.dialogue.shown ? RB.ui.dialogue.shown() : null);
     if (!tokens || !line) return null;
     const al = alignFor(tokens, line, RB.ui.help.ctxOf ? RB.ui.help.ctxOf(src) : null);
     // every relation each word belongs to, on both sides (an English word may be in two: "I'm" for 私 and です)
@@ -70158,7 +70225,7 @@ RB.ui.speechMark = (function () {
   function hovClear(box) { (box || document).querySelectorAll('.hov, .hov2').forEach((e) => e.classList.remove('hov', 'hov2')); }
   function hovAt(target) {
     if (!on() || cur) return; // (the spoken mark has the line while a voice speaks)
-    const box = target.closest && target.closest('.dlg');
+    const box = target.closest && target.closest(BOX);
     if (!box) return;
     const p = pairsFor(box);
     if (!p) return;
@@ -70191,7 +70258,7 @@ RB.ui.speechMark = (function () {
   // what a word does in its line, for word help (AG-1): the construction or relation it is part of, what its grammar
   // does when the English has no word for it, or that its role was not worked out. Null outside a dialogue line.
   function explain(el, i) {
-    const box = el && el.closest && el.closest('.dlg');
+    const box = el && el.closest && el.closest(BOX);
     if (!box || !el.closest(LINE_SEL)) return null;
     const p = pairsFor(box);
     if (!p) return null;
@@ -70206,12 +70273,12 @@ RB.ui.speechMark = (function () {
     return out.length ? out : null;
   }
   if (typeof document !== 'undefined') {
-    document.addEventListener('pointerover', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg')) hovAt(e.target); });
-    document.addEventListener('pointerout', (e) => { const box = e.target && e.target.closest && e.target.closest('.dlg'); if (box && !(e.relatedTarget && box.contains(e.relatedTarget) && (e.relatedTarget.closest('.jt[data-i], .ew[data-w]')))) hovClear(box); });
-    document.addEventListener('focusin', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg .jt[data-i]')) hovAt(e.target); });
-    document.addEventListener('focusout', (e) => { const box = e.target && e.target.closest && e.target.closest('.dlg'); if (box) hovClear(box); });
+    document.addEventListener('pointerover', (e) => { if (e.target && e.target.closest && e.target.closest(BOX)) hovAt(e.target); });
+    document.addEventListener('pointerout', (e) => { const box = e.target && e.target.closest && e.target.closest(BOX); if (box && !(e.relatedTarget && box.contains(e.relatedTarget) && (e.relatedTarget.closest('.jt[data-i], .ew[data-w]')))) hovClear(box); });
+    document.addEventListener('focusin', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg .jt[data-i], .seq-view .jt[data-i]')) hovAt(e.target); });
+    document.addEventListener('focusout', (e) => { const box = e.target && e.target.closest && e.target.closest(BOX); if (box) hovClear(box); });
     // the English words become pointable as soon as a line shows (wrapped in spans the same way the spoken mark does)
-    document.addEventListener('pointerenter', (e) => { const en = e.target && e.target.closest && e.target.closest('.dlg .main .enline, .dlg .sub .enline'); if (en && on()) wrapEnglish(en); }, true);
+    document.addEventListener('pointerenter', (e) => { const en = e.target && e.target.closest && e.target.closest('.dlg .main .enline, .dlg .sub .enline, .seq-view .main .enline, .seq-view .sub .enline'); if (en && on()) wrapEnglish(en); }, true);
   }
   return { begin, stop, active: () => !!cur, wrapEnglish, pairsFor, explain };
 })();
@@ -71487,17 +71554,8 @@ RB.ui.create = (function () {
   }
 
   // ---- prologue ----------------------------------------------------------------
-  // Six shots, each drawn at art resolution by RB.prologueArt (src/ui/41*_prologue_*.js):
-  // the title's lantern road, Hana's teahouse twice, the riverbank lantern, the bridge,
-  // and the traveller walking up the road into the distance.
-  const SHOTS = [
-    { jp: '{灯|ひ} の {道|みち} は 、 {通|とお}った {場所|ばしょ} の {名前|なまえ} を {覚|おぼ}えている 。', en: 'The lantern roads remember the name of every place they pass through.', draw: 'road' },
-    { jp: '{夜明|よあ}け 、 {茶屋|ちゃや} の ハナ は お{茶|ちゃ} を ふたつ いれた 。', en: 'At dawn, Hana at the teahouse poured two cups of tea.', draw: 'tea' },
-    { jp: 'でも 、 ふたつ{目|め} が {誰|だれ} の ため なのか 、 {思|おも}い{出|だ}せなかった 。', en: 'But she could not remember who the second cup was for.', draw: 'cup' },
-    { jp: '{川|かわ}べり の {灯|あか}り から 、 {名前|なまえ} が ひと{文字|もじ} ずつ {消|き}えていった 。', en: 'On the riverbank, the name on a lantern faded, one letter at a time.', draw: 'lantern' },
-    { jp: '{朝|あさ} に なって も {橋|はし} は あった 。 ただ 、 {向|む}こう{岸|ぎし} に は もう {届|とど}かない 。', en: 'By morning the bridge was still there. It just no longer reached the other bank.', draw: 'bridge' },
-    { jp: 'そして 、 {古|ふる}い {文字|もじ} を {読|よ}める {旅人|たびびと} が ひとり 、 {葦|あし}ノ{瀬|せ} へ {歩|ある}いていた 。', en: 'And a traveller who could still read the old letters was walking toward Reedwake.', draw: 'walker' },
-  ];
+  // Six shots, each drawn at art resolution by RB.prologueArt (src/ui/41*_prologue_*.js), with their captions in
+  // src/content/00_prologue.js (RB.content.prologue): the narrator says each one, under the scene id 'prologue'.
   // On manual advancement (docs/expressive/SHOTS.md §7; the shared player, src/ui/43_sequence.js): each
   // shot dissolves in (from black for the first), plays its one-time action once (the lantern's name
   // leaving it, the walk up the road), then holds for as long as the reader likes — nothing moves on by
@@ -71508,7 +71566,7 @@ RB.ui.create = (function () {
   function prologue() {
     return RB.sequence.view({
       seq: 'prologue', label: 'Prologue', name: 'prologue', music: 'prologue',
-      beats: SHOTS.map((s) => ({ shot: s.draw, line: { jp: s.jp, en: s.en } })),
+      beats: RB.content.prologue.map((s) => ({ shot: s.draw, line: { who: 'narr', jp: s.jp, en: s.en, sceneId: 'prologue' } })),
       seen: () => !!(RB.game.settings && RB.game.settings.prologueSeen),
       // a device setting, not campaign state (older settings records lack it: not yet seen)
       onSeen: () => { const st = RB.game.settings; if (st && !st.prologueSeen) { st.prologueSeen = true; RB.game.saveSettings(); } },
@@ -75723,6 +75781,7 @@ RB.sequence = (function () {
         '<button class="cbtn" type="button" data-a="prev" title="The previous caption again (' + (keyOf('prev') || 'P') + ' or ←)">' + I('sq-prev') + '<span>Previous</span></button>' +
         '<button class="cbtn" type="button" data-a="replay" title="Play this picture again (' + (keyOf('replay') || 'R') + ')">' + I('sq-replay') + '<span>Replay shot</span></button>' +
         '<button class="cbtn" type="button" data-a="hide" aria-pressed="false" title="Hide the caption to see the whole picture (' + (keyOf('hide') || 'I') + ')">' + I('sq-hide') + '<span>Hide text</span></button></div>' +
+        '<button class="cbtn seq-voice" type="button" data-a="voice" title="Say this line again">' + I('sound') + '<span>Voice</span></button>' +
         '<button class="cbtn" type="button" data-a="skip">' + esc((o.skip && o.skip.label) || 'Skip') + '</button>' +
         '<button class="cbtn cr-primary autofocus" type="button" data-a="next"><span>Next</span>' + I('next') + '</button></div>';
       v.cap = cap;
@@ -75735,10 +75794,41 @@ RB.sequence = (function () {
         const ch = RB.content.chars[who];
         return ch && ch.name ? ch.name.en : '';
       };
+      // Each caption is a spoken line like the dialogue strip's (Robin, 2026-10-19: "every line in-game should have
+      // spoken lines with properly highlightable text"): shown as the strip shows it (Suzu's Kansai, word help, the
+      // pointed word's counterpart), said by its recording or the device's voice (src/audio/54_voice_route.js) as it
+      // appears when lines are spoken automatically, again with Voice, the spoken word marked as it is said
+      // (src/ui/22_speech_mark.js). A beat's line names its scene (sceneId), which is how its recording is found.
+      function quiet() {
+        if (RB.ui.speechMark) RB.ui.speechMark.stop();
+        if (RB.voice && RB.voice.cancel) RB.voice.cancel();
+      }
+      function speakCap() {
+        const c = v.cur;
+        if (!c || !c.display.jp || !RB.voice || !RB.voice.sayLine || v.done) return;
+        const text = RB.jp && RB.jp.reading ? RB.jp.reading(c.display.jp, RB.game.s ? RB.script.jpVars() : undefined) : c.display.jp;
+        const ch = c.source.who && RB.content.chars[c.source.who];
+        const mark = RB.ui.speechMark ? RB.ui.speechMark.begin(cap, c.display, text) : null;
+        RB.voice.sayLine(c.display, c.source, {
+          text, pitch: ch && ch.voice ? ch.voice.pitch : 1,
+          onstart: mark ? () => mark.start() : undefined,
+          onboundary: mark ? (ci) => mark.at(ci) : undefined,
+          follow: mark ? (get, dur) => mark.follow(get, dur) : undefined,
+          onend: mark ? () => mark.end() : undefined,
+        });
+      }
       function caption(line, j, review) {
         const t = cap.querySelector('.txt');
+        quiet();
         const nm = o.speakers ? nameOf(line.who) : '';
-        t.innerHTML = (nm ? '<div class="who">' + esc(nm) + '</div>' : '') + (line.jp ? RB.ui.jhtml(line.jp) : '') + '<div class="en">' + esc(RB.script && RB.game.s ? RB.script.enVars(line.en || '') : line.en || '') + '</div>';
+        const source = Object.assign({}, line, { who: line.who || 'narr' });
+        const display = RB.dialect && RB.dialect.line ? RB.dialect.line(source.who, source) : source;
+        v.cur = { display, source };
+        cap.__rbLine = display;
+        t.innerHTML = (nm ? '<div class="who">' + esc(nm) + '</div>' : '') + (display.jp ? '<div class="main">' + RB.ui.jhtml(display.jp) + '</div>' : '') +
+          '<div class="sub en">' + RB.ui.ehtml(display.en || '') + '</div>';
+        const vb = cap.querySelector('[data-a=voice]');
+        if (vb) vb.hidden = !(display.jp && RB.voice && RB.voice.canSayLine && RB.voice.canSayLine(display, source));
         cap.querySelector('.pg').innerHTML = o.beats.map((x, k) => '<i class="' + (k === j ? 'on' : k < j ? 'past' : '') + '"></i>').join('');
         cap.querySelector('.seq-rv').textContent = review ? 'Looking back — Next returns to where you were' : '';
         cap.classList.toggle('seq-review', !!review);
@@ -75756,6 +75846,7 @@ RB.sequence = (function () {
         p.toShot(b.shot, b.phase || null);
         p.beat(b.line);
         caption(b.line, j, false);
+        if (RB.voice && RB.voice.autoOn && RB.voice.autoOn()) speakCap();
         if (j === o.beats.length - 1 && o.onSeen) { try { o.onSeen(); } catch (e) { /* (a settings write) */ } }
       }
       function next() {
@@ -75800,6 +75891,7 @@ RB.sequence = (function () {
       function finish() {
         if (v.done) return;
         v.done = true;
+        quiet();
         cancelTimers(v.timers);
         if (V === v) V = null;
         RB.render.setOverride(null);
@@ -75822,6 +75914,7 @@ RB.sequence = (function () {
         else if (a === 'prev') prev();
         else if (a === 'replay') { if (p.replay()) S.replays++; }
         else if (a === 'hide') setH(!v.hidden);
+        else if (a === 'voice') speakCap();
         else if (a === 'skip') skip(false);
         if (a && a !== 'hide' && cap.classList.contains('seq-open')) { cap.classList.remove('seq-open'); cap.querySelector('.seq-more').setAttribute('aria-expanded', 'false'); }
       };
@@ -88335,7 +88428,7 @@ RB.weave = (function () {
     close(true);
     const before = JSON.parse(JSON.stringify(FW().stateOf(s, T.pz)));
     if (FW().reset(s, T.pz)) {
-      const res = { pz: T.pz, kind: 'reset', before, after: FW().stateOf(s, T.pz), effective: true, say: [def.resetSay || { jp: '{元|もと} の {形|かたち} に {戻|もど}した 。', en: 'You set everything back the way it was.' }], id: 'fw:' + T.pz + ':reset' };
+      const res = { pz: T.pz, kind: 'reset', before, after: FW().stateOf(s, T.pz), effective: true, say: [def.resetSay || FW().RESET_SAY], id: 'fw:' + T.pz + ':reset' };
       try { await present(res, T, {}); } finally { busy = false; RB.game.popMode('weave'); }
     } else { busy = false; RB.game.popMode('weave'); }
   }
@@ -88356,8 +88449,9 @@ RB.weave = (function () {
     await play(res, T);
     FW().setHold(res.pz, null);
     const lines = [];
-    for (const l of res.say || []) lines.push({ who: 'narr', jp: l.jp, en: l.en });
-    if (res.completed && res.first && def.reward && def.reward.say) for (const l of [].concat(def.reward.say)) lines.push({ who: l.who || 'narr', expr: l.expr, jp: l.jp, en: l.en });
+    // (shown under the puzzles' scene id, so each line's recording is found: RB.fieldweave.SCENE)
+    for (const l of res.say || []) lines.push({ who: 'narr', jp: l.jp, en: l.en, sceneId: FW().SCENE });
+    if (res.completed && res.first && def.reward && def.reward.say) for (const l of [].concat(def.reward.say)) lines.push({ who: l.who || 'narr', expr: l.expr, jp: l.jp, en: l.en, sceneId: FW().SCENE });
     // the companion's first, brief reaction to what actually happened
     if (res.completed && res.first && s.comp && RB.company && RB.company.react) {
       const r = RB.company.react(s, { id: 'puzzle:' + res.pz + ':done', event: 'puzzle:' + res.pz, facts: { method: res.method } });
@@ -88637,7 +88731,7 @@ RB.weave = (function () {
     const l = FW().lookOf(s, pz, key);
     if (!l) return;
     if (l.obs) FW().observe(s, pz, l.obs);
-    for (const x of l.lines || [l]) await RB.ui.dialogue.say({ who: x.who || 'narr', jp: x.jp, en: x.en });
+    for (const x of l.lines || [l]) await RB.ui.dialogue.say({ who: x.who || 'narr', jp: x.jp, en: x.en, sceneId: FW().SCENE });
   };
   // !hook fw_hint <puzzle>           one more layer of hint (broad → specific → the route)
   RB.hooks.fw_hint = async (args) => {
@@ -88645,7 +88739,7 @@ RB.weave = (function () {
     if (!def || !def.hints) return;
     const n = FW().hint(s, pz);
     const h = def.hints[n - 1];
-    if (h) await RB.ui.dialogue.say({ who: 'narr', jp: h.jp, en: h.en });
+    if (h) await RB.ui.dialogue.say({ who: 'narr', jp: h.jp, en: h.en, sceneId: FW().SCENE });
   };
   // !hook fw_reset <puzzle>          set a multi-step mechanism back to its start
   RB.hooks.fw_reset = async (args, ctx) => {
@@ -88656,7 +88750,7 @@ RB.weave = (function () {
     RB.ui.dialogue.hide();
     busy = true;
     try {
-      await present({ pz, kind: 'reset', key: ctx && ctx.prop && ctx.prop.o && ctx.prop.o.part, before, after: FW().stateOf(s, pz), effective: true, say: [def.resetSay || { jp: '{元|もと} の {形|かたち} に {戻|もど}した 。', en: 'You set everything back the way it was.' }], id: 'fw:' + pz + ':reset' }, null, { inScene: true, prop: ctx && ctx.prop });
+      await present({ pz, kind: 'reset', key: ctx && ctx.prop && ctx.prop.o && ctx.prop.o.part, before, after: FW().stateOf(s, pz), effective: true, say: [def.resetSay || FW().RESET_SAY], id: 'fw:' + pz + ':reset' }, null, { inScene: true, prop: ctx && ctx.prop });
     } finally { busy = false; }
   };
   // !hook fw_open <puzzle> <object>  "Weave a word on it…" from the inspection menu
@@ -95247,11 +95341,27 @@ RB.activities = (function () {
   }
 
   // ---- oral history ------------------------------------------------------------------------------
+  // The teller says each fragment (Old Yasu's story of Reedwake …) under one scene id, so its recording is found; every
+  // fragment, at every learner's level, is listed for recording (Robin, 2026-10-19: every line spoken).
+  const HISTORY_SCENE = 'code.history';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    for (const id in RB.content.activities) {
+      const a = RB.content.activities[id];
+      if (a.type !== 'history' || !a.teller) continue;
+      for (const f of a.fragments || []) for (const lv of f.jp != null ? [null] : LV) {
+        const x = lv ? f[lv] : f;
+        if (x && x.jp) out.push({ scene: HISTORY_SCENE, who: a.teller, jp: x.jp, en: x.en || '', file: 'activity ' + id });
+      }
+    }
+    return out;
+  });
   async function history(a) {
     RB.game.pushMode('challenge');
     try {
       const frags = a.fragments.map((f) => tier(f));
-      if (a.teller) for (const f of frags) await RB.ui.dialogue.say({ who: a.teller, jp: f.jp, en: f.en });
+      if (a.teller) for (const f of frags) await RB.ui.dialogue.say({ who: a.teller, jp: f.jp, en: f.en, sceneId: HISTORY_SCENE });
       RB.ui.dialogue.hide();
       const order = {
         kind: 'order', title: a.title.en, titleJp: a.title.jp,
@@ -131058,6 +131168,37 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // terms a chapter introduces: no earlier chapter's scene may name them (post-story scenes excepted)
   C.reveals = C.reveals || {};
 })(RB.content);
+
+
+/* ==== src/content/00_prologue.js ==== */
+/* The prologue's six captions, and the list of spoken lines the game shows outside its compiled scenes.
+ *
+ * The prologue (src/ui/40_create.js) shows these over the shots drawn by src/ui/41*_prologue_*.js; the narrator says
+ * them (Robin, 2026-10-19: "every line in-game should have spoken lines").
+ *
+ * RB.content.spokenLines: lines shown by the game's own code rather than by a scene's commands, each with the scene id
+ * the game shows it under. tools/voice/lines.mjs lists them with the scenes' lines, so they are recorded like any
+ * other line; the voicebank (src/audio/52_voicebank.js) finds a line's recording by that scene id and its Japanese.
+ *   { scene, who: 'narr' | 'pc' | a character id, jp, en, expr?, file }
+ * RB.content.spokenSources: functions returning such lines, for a part of the game that makes them from its own data
+ * (a shut door's words, a marked object's: src/engine/50_world.js). The code that shows a line passes the same scene id
+ * (sceneId) to the dialogue strip.
+ */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.content.spokenLines = RB.content.spokenLines || [];
+RB.content.spokenSources = RB.content.spokenSources || [];
+
+// Six shots: the title's lantern road, Hana's teahouse twice, the riverbank lantern, the bridge, and the traveller
+// walking up the road into the distance (draw: the shot's kind for RB.prologueArt).
+RB.content.prologue = [
+  { jp: '{灯|ひ} の {道|みち} は 、 {通|とお}った {場所|ばしょ} の {名前|なまえ} を {覚|おぼ}えている 。', en: 'The lantern roads remember the name of every place they pass through.', draw: 'road' },
+  { jp: '{夜明|よあ}け 、 {茶屋|ちゃや} の ハナ は お{茶|ちゃ} を ふたつ いれた 。', en: 'At dawn, Hana at the teahouse poured two cups of tea.', draw: 'tea' },
+  { jp: 'でも 、 ふたつ{目|め} が {誰|だれ} の ため なのか 、 {思|おも}い{出|だ}せなかった 。', en: 'But she could not remember who the second cup was for.', draw: 'cup' },
+  { jp: '{川|かわ}べり の {灯|あか}り から 、 {名前|なまえ} が ひと{文字|もじ} ずつ {消|き}えていった 。', en: 'On the riverbank, the name on a lantern faded, one letter at a time.', draw: 'lantern' },
+  { jp: '{朝|あさ} に なって も {橋|はし} は あった 。 ただ 、 {向|む}こう{岸|ぎし} に は もう {届|とど}かない 。', en: 'By morning the bridge was still there. It just no longer reached the other bank.', draw: 'bridge' },
+  { jp: 'そして 、 {古|ふる}い {文字|もじ} を {読|よ}める {旅人|たびびと} が ひとり 、 {葦|あし}ノ{瀬|せ} へ {歩|ある}いていた 。', en: 'And a traveller who could still read the old letters was walking toward Reedwake.', draw: 'walker' },
+];
+for (const s of RB.content.prologue) RB.content.spokenLines.push({ scene: 'prologue', who: 'narr', jp: s.jp, en: s.en, file: 'content/00_prologue' });
 
 
 /* ==== src/content/00_world.js ==== */

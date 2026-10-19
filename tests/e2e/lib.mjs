@@ -58,7 +58,12 @@ export async function page(browser, url, opts = {}) {
   // The hosted game reads its voices from the voices' own site (HOSTED_BASE, ../Road-of-Borrowed-Names-voices/ja-JP/),
   // which these local servers never serve: a suite runs as the game did without one (nothing is fetched before a line
   // plays, so this is in time), unless it asks for the shipped base (voiceSite: true; tests/e2e/voice_runtime.mjs).
-  if (!opts.voiceSite) await p.evaluate(() => { const V = window.RB && RB.voicebank; if (V && V.configure && !V._.S.embedded) V.configure({ base: null }); });
+  // (and again after a reload, which brings back the shipped base: the prologue speaks as soon as a new journey starts)
+  if (!opts.voiceSite) {
+    const noSite = () => p.evaluate(() => { const V = window.RB && RB.voicebank; if (V && V.configure && !V._.S.embedded) V.configure({ base: null }); });
+    await noSite();
+    p.on('load', () => { p.waitForFunction(() => window.__RB_READY__ === true, null, { timeout: 15000 }).then(noSite).catch(() => {}); });
+  }
   return { p, ctx, errors, requests, logs };
 }
 

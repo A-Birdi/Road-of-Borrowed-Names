@@ -136,7 +136,12 @@ for (const l of L) {
   if (/\$\w+/.test(l.jp)) { dynamic.push({ key: l.key, scene: l.scene, who: l.who, jp: l.jp, reason: 'run-time name' }); continue; }
   if (!/[ぁ-ゖァ-ヺ一-鿿々]/.test(spoken(l.jp))) { nonverbal.push({ key: l.key, scene: l.scene, who: l.who, jp: l.jp }); continue; }
   let speakers = [role(l.who)];
-  if (l.who === 'comp') {
+  if (l.who === 'comp' && l.code) {
+    // a line the game's code shows (no scene to read branches from): the companions it names
+    speakers = l.comps || ['nao', 'mio', 'ren', 'suzu'];
+    basis.code = (basis.code || 0) + 1;
+    l.attribution = 'code';
+  } else if (l.who === 'comp') {
     const a = companionsOf(l, branchOf(l));
     speakers = a.comps;
     basis[a.basis] = (basis[a.basis] || 0) + 1;

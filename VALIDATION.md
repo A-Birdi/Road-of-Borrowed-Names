@@ -4949,6 +4949,43 @@ the limit, have it set up the new Repo". Figures and decisions: docs/hosting/RUN
   The worker creates it from Robin's PC with the GitHub CLI (Robin's login) and turns on its Pages; READINESS.md.
 - **Whole unit suite** on the cleaned tree (with the About change): **54,725 passed, 0 failed** (`node tests/run-unit.mjs`).
 
+## Every line spoken: the first batch (Robin, 2026-10-19)
+
+Robin: "every line in-game should have spoken lines with properly highlightable text as well. This goes the same for
+the Records section"; "the closed door in Reedwake. The Narrator can effectively read that one; check for others
+similar"; "The swinging board between Old Yasu and Ren in Reedwake, along with its clamp - no Narrator speaking. Old
+Yasu's story, when listening, has not begun being spoken."
+
+- **Found (R, code):** the voice finds a recording by the scene id a line is shown under and its Japanese
+  (`RB.voicebank.wanted`, src/audio/52_voicebank.js); lines shown by the game's own code had no scene id and were never
+  listed for recording (tools/voice/lines.mjs read only scene `say` commands). An inventory of every such line (a
+  helper's count, by running the game's code over its data): about 2,055 distinct lines shown in the dialogue strip
+  (narrator 872, people 600, the player 167, companions about 416) plus about 196 in panels; none needs the player's
+  name; every set is finite. Company memory replays (`RB.sequence.replay`) also drop the scene id their beats keep.
+- **This batch:** the prologue's six captions (`prologue`), Records replays (their scenes' ids), shut doors
+  (`code.door`, 16) and marked objects (`code.prop`, 24), every line the six field puzzles can show (`code.fw`, 207:
+  looks, actions, weaves, hints, resets, rewards; computed lines run over every arrangement each puzzle allows), and
+  every oral-history fragment at each learner level, said by its teller (`code.history`, 56). The texts are unchanged
+  (the prologue's six captions moved to src/content/00_prologue.js, checked identical by script).
+- **B `node tests/e2e/spoken_lines.mjs` 5/5** (headless Chromium, a real voice site built from the current script by
+  tools/voice/voice_site.mjs with test tones for the recordings, no device voice): the prologue speaks each caption from
+  its own narrator recording, marks the spoken word, Voice says it again, pointing at 茶屋 marks "teahouse", and nothing
+  speaks once it is skipped; a Records replay plays its scene's recordings; a shut door through `RB.world.interact()`
+  plays the narrator's recording; the swinging screen's and the clamp's inspection lines (`!hook fw_look f1 screen` /
+  `clamp`) play the narrator's recordings; Old Yasu's story (`RB.activities.run('rw.a_history')`) plays Yasu's.
+- **B, the suites the change touches, on this build:** `prologue` 100/0, `records` 7/0, `sequence_manual` 64/0,
+  `sequence_dev` 9/0, `create` 447/0 (after the test helper re-applies "no voice site" on a reload: the voiced prologue
+  otherwise looked for the shipped voice site, which the test server does not serve; one failure before that fix).
+  `sequence_world` ran 2,243 checks without a failure before its 20-minute limit here.
+- **U** whole suite **54,725/0** on this tree (`fieldweave` and the voice tests rerun after the puzzle and story
+  change: `fieldweave` 390/0, `voice_production` 27/0, `voice_review_page` 89/0, `audio_voice` 46/0,
+  `voicebank_plan_content` 7/0, `scene_manifest` 1,023/0).
+- **Recordings:** 309 new, docs/future/voice/production/supplements/SL1_SUPPLEMENT.json (narrator 251, Yasu 16, Tetsu 16,
+  Kasane 24, Isao 1, Oyone 1; 0 references, 0 retired), built by the new tools/voice/supplement.mjs against the GO
+  manifest and MW1. Until they are recorded these lines are silent with prepared voices, as before.
+- **Not done:** the other code-shown lines, Company memory replays, the panels (fishing, shiritori, verbs). Not tested:
+  real recordings, Firefox, Safari, a device voice.
+
 ## SC5–SC9 (Robin's final listening round, 2026-10-19, relayed by the local worker)
 
 Five send corrections appended to `docs/future/voice/production/supplements/SEND_CORRECTIONS.json` (SC1–SC4 unchanged,

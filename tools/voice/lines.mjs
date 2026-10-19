@@ -31,6 +31,19 @@ export function allLines() {
       });
     });
   }
+  // lines the game shows by its own code, outside the scenes (src/content/00_prologue.js RB.content.spokenLines),
+  // under the scene id it shows them with; a companion's line names the companions who can say it (comps)
+  const seen = new Set(out.map((l) => l.key));
+  const listed = [].concat(RB.content.spokenLines || [], ...(RB.content.spokenSources || []).map((f) => f()));
+  for (const x of listed) {
+    const key = keyOf(x.scene, x.jp);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      key, scene: x.scene, idx: null, file: x.file || null, line: null, who: x.who || 'narr', expr: x.expr || null, if: null, jp: x.jp, plain: spoken(x.jp),
+      en: x.en || '', region: regionOf(x.scene), prev: null, next: null, code: true, comps: x.comps || null,
+    });
+  }
   return out;
 }
 // run as a command (on Windows too: a file URL is file:///C:/…, never 'file://' + the path the shell gave)

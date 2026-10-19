@@ -185,7 +185,8 @@ RB.volume = (function () {
       if (c.op === 'sequence' && a[0] === seqId) { on = (a[1] || 'begin') === 'begin'; if (!on) break; continue; }
       if (!on) continue;
       if (c.op === 'shot') { if (a[0] !== shot) { shot = a[0]; phase = a[1] || null; } else if (a[1]) phase = a[1]; continue; }
-      if (c.op === 'say' && shot) out.push({ shot, phase, line: { who: c.who === 'comp' ? (comp || 'narr') : c.who, expr: c.expr || null, jp: c.jp, en: c.en } });
+      // (sceneId: the scene the line is in, which is how a replay finds its recording, as the scene itself does)
+      if (c.op === 'say' && shot) out.push({ shot, phase, line: { who: c.who === 'comp' ? (comp || 'narr') : c.who, expr: c.expr || null, jp: c.jp, en: c.en, sceneId: def.scene } });
     }
     return out;
   }

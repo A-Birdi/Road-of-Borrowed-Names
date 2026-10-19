@@ -324,7 +324,7 @@ RB.weave = (function () {
     close(true);
     const before = JSON.parse(JSON.stringify(FW().stateOf(s, T.pz)));
     if (FW().reset(s, T.pz)) {
-      const res = { pz: T.pz, kind: 'reset', before, after: FW().stateOf(s, T.pz), effective: true, say: [def.resetSay || { jp: '{元|もと} の {形|かたち} に {戻|もど}した 。', en: 'You set everything back the way it was.' }], id: 'fw:' + T.pz + ':reset' };
+      const res = { pz: T.pz, kind: 'reset', before, after: FW().stateOf(s, T.pz), effective: true, say: [def.resetSay || FW().RESET_SAY], id: 'fw:' + T.pz + ':reset' };
       try { await present(res, T, {}); } finally { busy = false; RB.game.popMode('weave'); }
     } else { busy = false; RB.game.popMode('weave'); }
   }
@@ -345,8 +345,9 @@ RB.weave = (function () {
     await play(res, T);
     FW().setHold(res.pz, null);
     const lines = [];
-    for (const l of res.say || []) lines.push({ who: 'narr', jp: l.jp, en: l.en });
-    if (res.completed && res.first && def.reward && def.reward.say) for (const l of [].concat(def.reward.say)) lines.push({ who: l.who || 'narr', expr: l.expr, jp: l.jp, en: l.en });
+    // (shown under the puzzles' scene id, so each line's recording is found: RB.fieldweave.SCENE)
+    for (const l of res.say || []) lines.push({ who: 'narr', jp: l.jp, en: l.en, sceneId: FW().SCENE });
+    if (res.completed && res.first && def.reward && def.reward.say) for (const l of [].concat(def.reward.say)) lines.push({ who: l.who || 'narr', expr: l.expr, jp: l.jp, en: l.en, sceneId: FW().SCENE });
     // the companion's first, brief reaction to what actually happened
     if (res.completed && res.first && s.comp && RB.company && RB.company.react) {
       const r = RB.company.react(s, { id: 'puzzle:' + res.pz + ':done', event: 'puzzle:' + res.pz, facts: { method: res.method } });
@@ -626,7 +627,7 @@ RB.weave = (function () {
     const l = FW().lookOf(s, pz, key);
     if (!l) return;
     if (l.obs) FW().observe(s, pz, l.obs);
-    for (const x of l.lines || [l]) await RB.ui.dialogue.say({ who: x.who || 'narr', jp: x.jp, en: x.en });
+    for (const x of l.lines || [l]) await RB.ui.dialogue.say({ who: x.who || 'narr', jp: x.jp, en: x.en, sceneId: FW().SCENE });
   };
   // !hook fw_hint <puzzle>           one more layer of hint (broad → specific → the route)
   RB.hooks.fw_hint = async (args) => {
@@ -634,7 +635,7 @@ RB.weave = (function () {
     if (!def || !def.hints) return;
     const n = FW().hint(s, pz);
     const h = def.hints[n - 1];
-    if (h) await RB.ui.dialogue.say({ who: 'narr', jp: h.jp, en: h.en });
+    if (h) await RB.ui.dialogue.say({ who: 'narr', jp: h.jp, en: h.en, sceneId: FW().SCENE });
   };
   // !hook fw_reset <puzzle>          set a multi-step mechanism back to its start
   RB.hooks.fw_reset = async (args, ctx) => {
@@ -645,7 +646,7 @@ RB.weave = (function () {
     RB.ui.dialogue.hide();
     busy = true;
     try {
-      await present({ pz, kind: 'reset', key: ctx && ctx.prop && ctx.prop.o && ctx.prop.o.part, before, after: FW().stateOf(s, pz), effective: true, say: [def.resetSay || { jp: '{元|もと} の {形|かたち} に {戻|もど}した 。', en: 'You set everything back the way it was.' }], id: 'fw:' + pz + ':reset' }, null, { inScene: true, prop: ctx && ctx.prop });
+      await present({ pz, kind: 'reset', key: ctx && ctx.prop && ctx.prop.o && ctx.prop.o.part, before, after: FW().stateOf(s, pz), effective: true, say: [def.resetSay || FW().RESET_SAY], id: 'fw:' + pz + ':reset' }, null, { inScene: true, prop: ctx && ctx.prop });
     } finally { busy = false; }
   };
   // !hook fw_open <puzzle> <object>  "Weave a word on it…" from the inspection menu

@@ -216,11 +216,27 @@ RB.activities = (function () {
   }
 
   // ---- oral history ------------------------------------------------------------------------------
+  // The teller says each fragment (Old Yasu's story of Reedwake …) under one scene id, so its recording is found; every
+  // fragment, at every learner's level, is listed for recording (Robin, 2026-10-19: every line spoken).
+  const HISTORY_SCENE = 'code.history';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    for (const id in RB.content.activities) {
+      const a = RB.content.activities[id];
+      if (a.type !== 'history' || !a.teller) continue;
+      for (const f of a.fragments || []) for (const lv of f.jp != null ? [null] : LV) {
+        const x = lv ? f[lv] : f;
+        if (x && x.jp) out.push({ scene: HISTORY_SCENE, who: a.teller, jp: x.jp, en: x.en || '', file: 'activity ' + id });
+      }
+    }
+    return out;
+  });
   async function history(a) {
     RB.game.pushMode('challenge');
     try {
       const frags = a.fragments.map((f) => tier(f));
-      if (a.teller) for (const f of frags) await RB.ui.dialogue.say({ who: a.teller, jp: f.jp, en: f.en });
+      if (a.teller) for (const f of frags) await RB.ui.dialogue.say({ who: a.teller, jp: f.jp, en: f.en, sceneId: HISTORY_SCENE });
       RB.ui.dialogue.hide();
       const order = {
         kind: 'order', title: a.title.en, titleJp: a.title.jp,

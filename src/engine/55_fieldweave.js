@@ -52,6 +52,11 @@ RB.fieldweave = (function () {
     bell: { jp: '{澄|す}んだ {音|おと} が {響|ひび}いて 、 {消|き}えて いく 。', en: 'A clear note rings out and fades.' },
     support: { jp: '{何|なに} も {起|お}きない 。', en: 'Nothing happens.' },
   };
+  // what a reset says when its puzzle names nothing of its own
+  const RESET_SAY = { jp: '{元|もと} の {形|かたち} に {戻|もど}した 。', en: 'You set everything back the way it was.' };
+  // Every line a puzzle shows (what an object looks like, what an action or a weave does, its hints, its reset, its
+  // reward) is shown under one scene id, so its recording is found (Robin, 2026-10-19: every line spoken).
+  const SCENE = 'code.fw';
   const clone = (o) => (o == null ? o : JSON.parse(JSON.stringify(o)));
   const LOG_MAX = 24;
 
@@ -368,9 +373,53 @@ RB.fieldweave = (function () {
     return cmp(v == null ? (typeof want === 'boolean' ? false : 'none') : v, op, want);
   });
 
+  // ---- every line the authored puzzles can show, for the recording list (RB.content.spokenSources, read by
+  // tools/voice/lines.mjs). A computed line (a look's fn, a rule's say) is run over every arrangement the definition
+  // allows (its values), from the start and from each arrangement, finished and not.
+  function spoken() {
+    const out = [], seen = new Set();
+    const add = (l, who, def) => {
+      for (const x of [].concat(l || [])) {
+        if (!x || typeof x.jp !== 'string' || !x.jp) continue;
+        const w = x.who || who || 'narr', k = w + '\u0001' + x.jp;
+        if (seen.has(k)) continue;
+        seen.add(k);
+        out.push({ scene: SCENE, who: w, jp: x.jp, en: x.en || '', expr: x.expr || null, file: def ? 'fieldweave ' + def.id : 'engine/55_fieldweave' });
+      }
+    };
+    const run = (f, args, def) => { try { add(f.apply(null, args), null, def); } catch (e) { /* an arrangement the line was not written for */ } };
+    let s = null;
+    try { s = RB.state.newCampaign(); } catch (e) { s = {}; }
+    for (const def of list()) {
+      const keys = Object.keys(def.values || {});
+      let states = [clone(def.init)];
+      for (const k of keys) states = states.flatMap((st) => def.values[k].map((v) => Object.assign(clone(st), { [k]: v })));
+      if (states.length > 4096) states = [clone(def.init)];
+      for (const extra of [def.solved, def.after && Object.assign(clone(def.init), def.after)]) if (extra) states.push(Object.assign(clone(def.init), clone(extra)));
+      for (const k in def.objects) for (const l of def.objects[k].look || []) {
+        if (typeof l.fn === 'function') { for (const st of states) for (const done of [false, true]) run(l.fn, [st, { done, seen: {}, state: st }, s], def); }
+        else add(l.lines || l, null, def);
+      }
+      for (const r of def.rules) {
+        if (typeof r.say === 'function') { for (const a of states) { run(r.say, [def.init, a, s], def); run(r.say, [a, a, s], def); } }
+        else add(r.say, null, def);
+      }
+      if (typeof def.arrangeSay === 'function') { for (const a of states) run(def.arrangeSay, [def.init, a, s], def); } else add(def.arrangeSay, null, def);
+      add(def.hints, null, def);
+      add(def.resetSay || (def.noReset ? null : RESET_SAY), null, def);
+      add(def.solvedSay, null, def);
+      if (def.reward) add(def.reward.say, null, def);
+    }
+    for (const k in PLAIN) add(PLAIN[k], null, null);
+    return out;
+  }
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(spoken);
+
   return {
     define, get, list, rec, peek, stateOf, view, setHold, match, eligible, methodOf, objectsOn, near, dist,
     lookOf, observe, act, weave, arrange, applies, routine, reset, hint, hintLevel, familyOf, repair, FAMILY, PLAIN,
+    SCENE, RESET_SAY, spoken,
     _weaveRule: weaveRule, _actRule: actRule,
   };
 })();

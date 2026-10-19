@@ -852,6 +852,20 @@ RB.world = (function () {
     return true;
   }
   const SHUT = { jp: '{戸|と} は {閉|し}まって いる 。 {誰|だれ} も {出|で}て こない 。', en: 'The door is shut. Nobody comes to it.' };
+  // What a shut door or a marked object says is a narrator's line like any other (Robin, 2026-10-19): shown under its
+  // own scene id, so its recording is found, and listed for recording (RB.content.spokenSources, read by
+  // tools/voice/lines.mjs)
+  const DOOR_SCENE = 'code.door', PROP_SCENE = 'code.prop';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [{ scene: DOOR_SCENE, who: 'narr', jp: SHUT.jp, en: SHUT.en, file: 'engine/50_world' }];
+    for (const id in RB.content.maps || {}) {
+      const m = RB.maps.compile(id);
+      for (const d of m.shut || []) if (d.text && d.text.jp) out.push({ scene: DOOR_SCENE, who: 'narr', jp: d.text.jp, en: d.text.en, file: 'map ' + id });
+      for (const p of m.props || []) if (!p.scene && p.text && p.text.jp) out.push({ scene: PROP_SCENE, who: p.who || 'narr', jp: p.text.jp, en: p.text.en, file: 'map ' + id });
+    }
+    return out;
+  });
   function interact() {
     if (W.player.mv) return;
     const [fx, fy] = frontTile();
@@ -869,14 +883,14 @@ RB.world = (function () {
     if (pr) {
       if (RB.staging) RB.staging.examined(fx, fy); // those who saw it may look at it afterwards
       if (pr.scene) RB.script.run(pr.scene, { prop: pr });
-      else if (pr.text) RB.script.runInline([{ who: pr.who || 'narr', jp: pr.text.jp, en: pr.text.en }]);
+      else if (pr.text) RB.script.runInline([{ who: pr.who || 'narr', jp: pr.text.jp, en: pr.text.en, sceneId: PROP_SCENE }]);
       return;
     }
     // a building you cannot go into: its door is shut, and says so
     const door = RB.maps.shutDoorAt(W.map, fx, fy);
     if (door && W.player.dir === 'up') {
       const t = door.text || SHUT;
-      RB.script.runInline([{ who: 'narr', jp: t.jp, en: t.en }]);
+      RB.script.runInline([{ who: 'narr', jp: t.jp, en: t.en, sceneId: DOOR_SCENE }]);
       return;
     }
     // companion: talking to your companion gives contextual banter
