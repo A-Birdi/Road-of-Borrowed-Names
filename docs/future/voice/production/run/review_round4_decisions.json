@@ -1,0 +1,71 @@
+{
+ "schema": "rbn.voice.review-decisions/1",
+ "listSha256": "d1be5dc2d360ea26b1d8165db5d43bb32a1f3bd543c3b02aaa91e55c0c303d2c",
+ "batch": {
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "manifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "decisions": {
+  "r1-cb5b954654f749d9": {
+   "decision": "redo",
+   "take": "tetsu/r1-cb5b954654f749d9.opus",
+   "note": "潮 is still being read halfway through as -io or -hio, not Shio."
+  },
+  "r1-ref-7ce0a1f65d517736": {
+   "decision": "keep",
+   "take": "ref/r1-ref-7ce0a1f65d517736.opus",
+   "note": ""
+  },
+  "r1-ref-7d69eea325c2f41a": {
+   "decision": "keep",
+   "take": "ref/r1-ref-7d69eea325c2f41a.opus",
+   "note": ""
+  },
+  "r1-ref-911aaa0a7761c49e": {
+   "decision": "keep",
+   "take": "ref/r1-ref-911aaa0a7761c49e.opus",
+   "note": ""
+  },
+  "r1-ref-b8dafacc2283970b": {
+   "decision": "keep",
+   "take": "ref/r1-ref-b8dafacc2283970b.opus",
+   "note": ""
+  },
+  "r1-ref-c5852ab0cc882c25": {
+   "decision": "keep",
+   "take": "ref/r1-ref-c5852ab0cc882c25.opus",
+   "note": ""
+  },
+  "r1-ref-d31ca70b82bbd4c8": {
+   "decision": "keep",
+   "take": "ref/r1-ref-d31ca70b82bbd4c8.opus",
+   "note": ""
+  },
+  "r1-ref-e5bf48bf7ab94ff8": {
+   "decision": "keep",
+   "take": "ref/r1-ref-e5bf48bf7ab94ff8.opus",
+   "note": ""
+  },
+  "r1-ref-b8f801f6ac6359dc": {
+   "decision": "keep",
+   "take": "ref/r1-ref-b8f801f6ac6359dc.opus",
+   "note": ""
+  },
+  "r1-ref-2bab5bdb1e5539fb": {
+   "decision": "keep",
+   "take": "ref/r1-ref-2bab5bdb1e5539fb.opus",
+   "note": ""
+  },
+  "r1-ref-b06952501818dfed": {
+   "decision": "keep",
+   "take": "ref/r1-ref-b06952501818dfed.opus",
+   "note": ""
+  },
+  "r1-ref-99bd62e1b425b4d1": {
+   "decision": "keep",
+   "take": "ref/r1-ref-99bd62e1b425b4d1.opus",
+   "note": ""
+  }
+ }
+}

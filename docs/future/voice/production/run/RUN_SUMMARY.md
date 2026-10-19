@@ -216,3 +216,25 @@ The technical checks pass on all 23,823 files: present, decoding, bytes and SHA-
     the narrator's take and the device voice (`withheld`).
 - **The reading check, second pass:** up to 12 takes for the 152 clip-fix takes the recognizer could not confirm; 49
   were then heard right. 103 are listed for listening (`REVIEW_LIST_reading.json`).
+
+## Round 4 and the reading review (Robin, 2026-10-19)
+
+- **Round 4** (`review_round4_decisions.json`): 11 keep, 1 redo. Robin kept the narrator's own closest takes for
+  おおいし, ぼこう and さんり, and the cloned ぶんるいめい.
+- **The reading review** (`review_reading_decisions.json`): 53 keep, 27 earlier, 22 redo. The 27 earlier takes are
+  back (`restoredFrom`).
+- **The cause behind Robin's ふ/し notes, found and fixed.**
+  - **A worker bug.** The text-aware trim read a line's opening sound from its written text. A line opening on a
+    kanji (宿坊, 支度, 飛脚, 襖, 潮…) was judged to open on a vowel, so it was cut 0.02 s before the voice, removing a
+    voiceless or devoiced opening syllable (しゅく → "gubou", Tetsu's 潮 → "-io").
+  - **The fix (text/5).** The trim now reads from the entry's kana reading. An opening i/u syllable devoiced before a
+    voiceless consonant (ふか, した, ひき, しゅく) is kept across the next consonant's closure, one gap of up to 0.12 s.
+  - **Correction to the round-1 note above.** "Qwen's faint h/f openings were not clipped" was wrong: those samples
+    opened on kanji and met this bug.
+  - **Re-made.** 94 text-trimmed takes were affected; Robin had kept 10 of them, which stay. 51 Qwen lines were re-made
+    on their own seeds (the same performance), with the opening now kept a median 0.085 s before the voice instead of
+    0.02 s. 32 narrator lines and Robin's 11 single words were re-made with the recognizer choosing; 30 of those 43
+    are now heard right. Tetsu was re-made with a new seed: it opens right, ends on its own, and is heard at 0.96.
+  - **On the page.** All 95 are on the round-5 page (`REVIEW_LIST_round5.json`), each beside the take it replaced.
+
+The technical checks pass on all 23,823 files. No audio is pushed.

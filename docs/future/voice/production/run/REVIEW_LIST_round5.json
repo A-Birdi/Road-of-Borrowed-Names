@@ -1,0 +1,2282 @@
+{
+ "schema": "rbn.voice.review/1",
+ "round": 5,
+ "what": "Review round 5: the reading review's redos and the openings restored (2026-10-19). Paths are relative to the batch folder.",
+ "batch": {
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "manifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "groups": [
+  {
+   "key": "yours",
+   "title": "Your redos from the reading review (and Tetsu's 潮): the opening now read from the kana reading",
+   "items": [
+    {
+     "id": "r1-56cc1b4dd1788163",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宿坊の柱の石に、字が彫ってある。",
+     "sent": "宿坊の柱の石に、字が彫ってある。",
+     "lineKeys": [
+      "kr.lodge_inscription#e1125a60e2"
+     ],
+     "file": "narrator/r1-56cc1b4dd1788163.opus",
+     "seconds": 2.725,
+     "why": "new take; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-56cc1b4dd1788163.opus",
+       "seconds": 2.43
+      }
+     ],
+     "recognizer": {
+      "heard": "宿坊の柱の石に地が彫ってある",
+      "heardKana": "シュクボオノハシラノイシニチガホッテアル",
+      "expectedKana": "シュクボオノハシラノイシニジガホッテアル",
+      "match": true
+     },
+     "yourNote": "Not correct at all: 宿坊 - \"shu ku bou\" is being read as: \"gubou\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+    },
+    {
+     "id": "r1-bca50fee45715154",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宿場の灯が、下から上まで、七つ全部点いている。",
+     "sent": "宿場のひが、下から上まで、七つ全部点いている。",
+     "lineKeys": [
+      "cr.summit_view#194dc1eb6a"
+     ],
+     "file": "narrator/r1-bca50fee45715154.opus",
+     "seconds": 3.895,
+     "why": "new take; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-bca50fee45715154.opus",
+       "seconds": 3.66
+      }
+     ],
+     "recognizer": {
+      "heard": "宿場の日が下から上まで7つ全部ついている",
+      "heardKana": "シュクバノヒガシタカラウエマデナナツゼンブツイテイル",
+      "expectedKana": "シュクバノヒガシタカラウエマデナナツゼンブツイテイル",
+      "match": true
+     },
+     "yourNote": "Not correct at all: 宿場 - \"shu ku ba\" is being read as: \"guba\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+    },
+    {
+     "id": "r1-06ec645a6a7a970c",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "襖の紙が、一箇所破れている。覗けば、中が見えるだろう。",
+     "sent": "襖の紙が、一箇所破れている。覗けば、中が見えるだろう。",
+     "lineKeys": [
+      "hall.w9.d_peek#2021f61a6c"
+     ],
+     "file": "narrator/r1-06ec645a6a7a970c.opus",
+     "seconds": 4.675,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-06ec645a6a7a970c.opus",
+       "seconds": 4.4
+      }
+     ],
+     "recognizer": {
+      "heard": "すまの紙が一箇所破れているのぞけば中が見えるだろう",
+      "heardKana": "スマノカミガイッカショヤブレテイルノゾケバナカガミエルダロオ",
+      "expectedKana": "フスマノカミガイッカショヤブレテイルノゾケバナカガミエルダロオ",
+      "match": false
+     },
+     "yourNote": "襖 is omitting the ふ pronunciation, leading with \"suma\""
+    },
+    {
+     "id": "r1-bc6a8c71201225ff",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宿場の外れの石。「宿は七つ、峠は一つ。」",
+     "sent": "宿場の外れの石。「宿は七つ、とうげは一つ。」",
+     "lineKeys": [
+      "cr.oiwake_stone#f7d50659ca"
+     ],
+     "file": "narrator/r1-bc6a8c71201225ff.opus",
+     "seconds": 3.81,
+     "why": "new take; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-bc6a8c71201225ff.opus",
+       "seconds": 3.345
+      }
+     ],
+     "recognizer": {
+      "heard": "宿場の外れの石宿は7つ峠は1つ",
+      "heardKana": "シュクバノハズレノイシヤドワナナツトオゲワヒトツ",
+      "expectedKana": "シュクバノハズレノイシヤドワナナツトオゲワヒトツ",
+      "match": true
+     },
+     "yourNote": "Not correct at all: 宿場 - \"shu ku ba\" is being read as: \"guba\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+    },
+    {
+     "id": "r1-36182b19a4863dcb",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宿坊の人なら、この灯籠のことを知っているかもしれない。",
+     "sent": "宿坊の人なら、このとうろうのことを知っているかもしれない。",
+     "lineKeys": [
+      "kr.ruin_lanterns#7268624f68"
+     ],
+     "file": "narrator/r1-36182b19a4863dcb.opus",
+     "seconds": 3.77,
+     "why": "new take; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-36182b19a4863dcb.opus",
+       "seconds": 3.545
+      }
+     ],
+     "recognizer": {
+      "heard": "宿坊の人ならこの灯籠のことを知っているかもしれない",
+      "heardKana": "シュクボオノヒトナラコノトオロオノコトオシッテイルカモシレナイ",
+      "expectedKana": "シュクボオノヒトナラコノトオロオノコトオシッテイルカモシレナイ",
+      "match": true
+     },
+     "yourNote": "Not correct at all: 宿坊 - \"shu ku bou\" is being read as: \"gubou\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+    },
+    {
+     "id": "r1-9652328d5fe161a5",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "飛脚の鈴を見つけた。",
+     "sent": "飛脚の鈴を見つけた。",
+     "lineKeys": [
+      "cr.ks_bell#37f873270f"
+     ],
+     "file": "narrator/r1-9652328d5fe161a5.opus",
+     "seconds": 1.83,
+     "why": "new take; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-9652328d5fe161a5.opus",
+       "seconds": 1.545
+      }
+     ],
+     "recognizer": {
+      "heard": "飛脚の鈴を見つけた",
+      "heardKana": "ヒキャクノスズオミツケタ",
+      "expectedKana": "ヒキャクノスズオミツケタ",
+      "match": true
+     },
+     "yourNote": "飛脚 is being pronounced as \"kyaku\" - omitting the \"hi\" at the start of the word\nThe rest is fine"
+    },
+    {
+     "id": "r1-89daea4d07213955",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「支度が整い次第、鐘楼へ参ります」",
+     "sent": "「支度が整い次第、しょうろうへ参ります」",
+     "lineKeys": [
+      "hall.w3.card1#0fdabdae62"
+     ],
+     "file": "narrator/r1-89daea4d07213955.opus",
+     "seconds": 2.92,
+     "why": "new take; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-89daea4d07213955.opus",
+       "seconds": 2.695
+      }
+     ],
+     "recognizer": {
+      "heard": "支度が整い次第小牢へ参ります",
+      "heardKana": "シタクガトトノイシダイショウロオエマイリマス",
+      "expectedKana": "シタクガトトノイシダイショオロオエマイリマス",
+      "match": true
+     },
+     "yourNote": "支度 is missing the \"shi\" at the start, it leads with \"-taku\"\nThe rest is fine"
+    },
+    {
+     "id": "r1-7df93670a632a454",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宿坊の上に、星が出ている。ヒサエの灯のまわりに、モキチの家族とキキョウが集まっている。",
+     "sent": "宿坊の上に、星が出ている。ヒサエのひのまわりに、モキチの家族とキキョウが集まっている。",
+     "lineKeys": [
+      "kr.evening#e0acacf93f"
+     ],
+     "file": "narrator/r1-7df93670a632a454.opus",
+     "seconds": 6.22,
+     "why": "new take; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-7df93670a632a454.opus",
+       "seconds": 5.795
+      }
+     ],
+     "recognizer": {
+      "heard": "宿坊の上に星が出ている被災の日の周りにモキチの家族と帰郷が集まっている",
+      "heardKana": "シュクボオノウエニホシガデテイルヒサイノヒノマワリニモキチノカゾクトキキョオガアツマッテイル",
+      "expectedKana": "シュクボオノウエニホシガデテイルヒサエノヒノマワリニモキチノカゾクトキキョオガアツマッテイル",
+      "match": true
+     },
+     "yourNote": "Not correct at all: 宿坊 - \"shu ku bou\" is being read as: \"gubou\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+    },
+    {
+     "id": "r1-667b3eb3eae1ed4e",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "盃が、台の上で光っている。",
+     "sent": "盃が、台の上で光っている。",
+     "lineKeys": [
+      "hall.w2.cups_after#0d9581016e"
+     ],
+     "file": "narrator/r1-667b3eb3eae1ed4e.opus",
+     "seconds": 2.575,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-667b3eb3eae1ed4e.opus",
+       "seconds": 2.21
+      }
+     ],
+     "recognizer": {
+      "heard": "杯が台の上で光っている",
+      "heardKana": "ハイガダイノウエデヒカッテイル",
+      "expectedKana": "サカズキガダイノウエデヒカッテイル",
+      "match": false
+     },
+     "yourNote": "盃 is omitting the さ"
+    },
+    {
+     "id": "r1-33b62520f3178edf",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宿坊に戻ったのは、夜明け近くだった。振り返ると、道の灯が一本の線になっていた。",
+     "sent": "宿坊に戻ったのは、夜明け近くだった。振り返ると、道のひが一本の線になっていた。",
+     "lineKeys": [
+      "rt.ren_walk#7fb38615f1"
+     ],
+     "file": "narrator/r1-33b62520f3178edf.opus",
+     "seconds": 6.125,
+     "why": "new take; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-33b62520f3178edf.opus",
+       "seconds": 5.87
+      }
+     ],
+     "recognizer": {
+      "heard": "宿坊に戻ったのは夜明け近くだった振り返ると道の日が一本の線になっていた",
+      "heardKana": "シュクボオニモドッタノワヨアケチカクダッタフリカエルトミチノヒガイッポンノセンニナッテイタ",
+      "expectedKana": "シュクボオニモドッタノワヨアケチカクダッタフリカエルトミチノヒガイッポンノセンニナッテイタ",
+      "match": true
+     },
+     "yourNote": "Not correct at all: 宿坊 - \"shu ku bou\" is being read as: \"gubou\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+    },
+    {
+     "id": "r1-a1dc3e69544b6c93",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宿場の常夜灯は、消えている。名主の家は、一番奥だ。",
+     "sent": "宿場の常夜灯は、消えている。名主の家は、一番奥だ。",
+     "lineKeys": [
+      "cr.arrive7#3b4f0c411a"
+     ],
+     "file": "narrator/r1-a1dc3e69544b6c93.opus",
+     "seconds": 4.715,
+     "why": "new take; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-a1dc3e69544b6c93.opus",
+       "seconds": 4.37
+      }
+     ],
+     "recognizer": {
+      "heard": "宿場の常夜灯は消えている名主の家は一番奥だ",
+      "heardKana": "シュクバノジョオヤトオワキエテイルナヌシノイエワイチバンオクダ",
+      "expectedKana": "シュクバノジョオヤトオワキエテイルナヌシノイエワイチバンオクダ",
+      "match": true
+     },
+     "yourNote": "Not correct at all: 宿場 - \"shu ku ba\" is being read as: \"guba\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+    },
+    {
+     "id": "r1-ref-dedb7ff456554523",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しちねんまえ",
+     "sent": "しちねんまえ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-dedb7ff456554523.opus",
+     "seconds": 1.31,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-dedb7ff456554523.opus",
+       "seconds": 1.385
+      }
+     ],
+     "recognizer": {
+      "heard": "7年前",
+      "heardKana": "ナナネンマエ",
+      "expectedKana": "シチネンマエ",
+      "match": false
+     },
+     "yourNote": "Odd breathy H-leading sound, otherwise okay, slight trim might work"
+    },
+    {
+     "id": "r1-ref-109fcfd0ce47b975",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "そ、ぞ",
+     "sent": "そ、ぞ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-109fcfd0ce47b975.opus",
+     "seconds": 0.77,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-109fcfd0ce47b975.opus",
+       "seconds": 0.834
+      }
+     ],
+     "recognizer": {
+      "heard": "そんぞ",
+      "heardKana": "ソンゾ",
+      "expectedKana": "ソゾ",
+      "match": false
+     }
+    },
+    {
+     "id": "r1-ref-5f7706af12731c1b",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しつれん",
+     "sent": "しつれん",
+     "lineKeys": [],
+     "file": "ref/r1-ref-5f7706af12731c1b.opus",
+     "seconds": 0.89,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-5f7706af12731c1b.opus",
+       "seconds": 0.99
+      }
+     ],
+     "recognizer": {
+      "heard": "失礼",
+      "heardKana": "シツレエ",
+      "expectedKana": "シツレン",
+      "match": false
+     },
+     "yourNote": "\"Shi\" is off"
+    },
+    {
+     "id": "r1-ref-1591f1f5d4882713",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しん",
+     "sent": "しん",
+     "lineKeys": [],
+     "file": "ref/r1-ref-1591f1f5d4882713.opus",
+     "seconds": 0.9,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-1591f1f5d4882713.opus",
+       "seconds": 0.795
+      }
+     ],
+     "recognizer": {
+      "heard": "シーン",
+      "heardKana": "シイン",
+      "expectedKana": "シン",
+      "match": false
+     },
+     "yourNote": "\"Shi\" pronunciation problem"
+    },
+    {
+     "id": "r1-ref-04fe1015bf54c94a",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しん",
+     "sent": "しん",
+     "lineKeys": [],
+     "file": "ref/r1-ref-04fe1015bf54c94a.opus",
+     "seconds": 0.9,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-04fe1015bf54c94a.opus",
+       "seconds": 0.795
+      }
+     ],
+     "recognizer": {
+      "heard": "シーン",
+      "heardKana": "シイン",
+      "expectedKana": "シン",
+      "match": false
+     },
+     "yourNote": "\"Shi\" pronunciation problem"
+    },
+    {
+     "id": "r1-ref-2f7d40012e7c5179",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しん",
+     "sent": "しん",
+     "lineKeys": [],
+     "file": "ref/r1-ref-2f7d40012e7c5179.opus",
+     "seconds": 0.9,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-2f7d40012e7c5179.opus",
+       "seconds": 0.795
+      }
+     ],
+     "recognizer": {
+      "heard": "シーン",
+      "heardKana": "シイン",
+      "expectedKana": "シン",
+      "match": false
+     },
+     "yourNote": "\"Shi\" pronunciation problem"
+    },
+    {
+     "id": "r1-ref-1e0753ab1134e52b",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しん",
+     "sent": "しん",
+     "lineKeys": [],
+     "file": "ref/r1-ref-1e0753ab1134e52b.opus",
+     "seconds": 0.9,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-1e0753ab1134e52b.opus",
+       "seconds": 0.795
+      }
+     ],
+     "recognizer": {
+      "heard": "シーン",
+      "heardKana": "シイン",
+      "expectedKana": "シン",
+      "match": false
+     },
+     "yourNote": "\"Shi\" pronunciation problem"
+    },
+    {
+     "id": "r1-ref-f05d6a5b3b3f2f96",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ふきょか",
+     "sent": "ふきょか",
+     "lineKeys": [],
+     "file": "ref/r1-ref-f05d6a5b3b3f2f96.opus",
+     "seconds": 0.942,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-f05d6a5b3b3f2f96.opus",
+       "seconds": 0.745
+      }
+     ],
+     "recognizer": {
+      "heard": "不況か",
+      "heardKana": "フキョオカ",
+      "expectedKana": "フキョカ",
+      "match": false
+     },
+     "yourNote": "\"fu\" is not pronounced at all and is heard as \"kyoka\""
+    },
+    {
+     "id": "r1-ref-33a23f6f5dec47c4",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ふきざお",
+     "sent": "ふきざお",
+     "lineKeys": [],
+     "file": "ref/r1-ref-33a23f6f5dec47c4.opus",
+     "seconds": 1.14,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-33a23f6f5dec47c4.opus",
+       "seconds": 0.892
+      }
+     ],
+     "recognizer": {
+      "heard": "吹き竿を",
+      "heardKana": "フキザオオ",
+      "expectedKana": "フキザオ",
+      "match": false
+     },
+     "yourNote": "\"fu\" is not pronounced"
+    },
+    {
+     "id": "r1-ref-ab7fa40cbbc99926",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ふた",
+     "sent": "ふた",
+     "lineKeys": [],
+     "file": "ref/r1-ref-ab7fa40cbbc99926.opus",
+     "seconds": 0.78,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-ab7fa40cbbc99926.opus",
+       "seconds": 0.54
+      }
+     ],
+     "recognizer": {
+      "heard": "した",
+      "heardKana": "シタ",
+      "expectedKana": "フタ",
+      "match": false
+     },
+     "yourNote": "\"fu\" is not pronounced enough"
+    },
+    {
+     "id": "r1-ref-e428831127f1e8e3",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ふた",
+     "sent": "ふた",
+     "lineKeys": [],
+     "file": "ref/r1-ref-e428831127f1e8e3.opus",
+     "seconds": 0.78,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/ref/r1-ref-e428831127f1e8e3.opus",
+       "seconds": 0.54
+      }
+     ],
+     "recognizer": {
+      "heard": "した",
+      "heardKana": "シタ",
+      "expectedKana": "フタ",
+      "match": false
+     },
+     "yourNote": "\"fu\" is not pronounced enough but will settle here"
+    },
+    {
+     "id": "r1-cb5b954654f749d9",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "潮。海の水の満ち引き。風向き。風がどこから来るか。",
+     "sent": "潮。海の水の満ち引き。風向き。風がどこから来るか。",
+     "lineKeys": [
+      "sea.tetsu_words#2b01647684"
+     ],
+     "file": "tetsu/r1-cb5b954654f749d9.opus",
+     "seconds": 6.735,
+     "why": "new take; the recognizer could not confirm it (see what it heard)",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T022132/tetsu/r1-cb5b954654f749d9.opus",
+       "seconds": 6.5
+      }
+     ]
+    }
+   ],
+   "count": 23
+  },
+  {
+   "key": "openings",
+   "title": "Openings restored: a line starting with a kanji had been cut as if it opened on a vowel (Qwen lines: the same performance)",
+   "items": [
+    {
+     "id": "r1-7a3c660a7c98757a",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "札が足りない。嵌める穴が、まだ空いている。窯の部屋のどこかに落ちているはずだ。",
+     "sent": "札が足りない。嵌める穴が、まだ空いている。窯の部屋のどこかに落ちているはずだ。",
+     "lineKeys": [
+      "co.kiln_wall#0b4ea874f8"
+     ],
+     "file": "narrator/r1-7a3c660a7c98757a.opus",
+     "seconds": 5.765,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-7a3c660a7c98757a.opus",
+       "seconds": 5.57
+      }
+     ],
+     "recognizer": {
+      "heard": "札が足りないハメル穴がまだ開いている窯の部屋のどこかに落ちているはずだ",
+      "heardKana": "サツガタリナイハメルアナガマダヒライテイルカマノヘヤノドコカニオチテイルハズダ",
+      "expectedKana": "サツガタリナイハメルアナガマダアイテイルカマノヘヤノドコカニオチテイルハズダ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-3272b7e0ca53a20d",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "里の人なら、この灯籠の名前を知っているかもしれない。",
+     "sent": "里の人なら、このとうろうの名前を知っているかもしれない。",
+     "lineKeys": [
+      "kr.toro_fox#ae5f0b93bc"
+     ],
+     "file": "narrator/r1-3272b7e0ca53a20d.opus",
+     "seconds": 3.72,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-3272b7e0ca53a20d.opus",
+       "seconds": 3.585
+      }
+     ],
+     "recognizer": {
+      "heard": "里の人ならこの灯籠の名前を知っているかもしれない",
+      "heardKana": "サトノヒトナラコノトオロオノナマエオシッテイルカモシレナイ",
+      "expectedKana": "サトノヒトナラコノトオロオノナマエオシッテイルカモシレナイ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-784f03e0d542fe27",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "古い当番表。「警鐘当番」。曜日ごとに、鐘を鳴らす人の名前が並んでいる。",
+     "sent": "古い当番表。「警鐘当番」。曜日ごとに、鐘を鳴らす人の名前が並んでいる。",
+     "lineKeys": [
+      "lf.roster#523d6d9d1d"
+     ],
+     "file": "narrator/r1-784f03e0d542fe27.opus",
+     "seconds": 5.905,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-784f03e0d542fe27.opus",
+       "seconds": 5.74
+      }
+     ],
+     "recognizer": {
+      "heard": "古い当番票、軽症当番、曜日ごとに鐘を鳴らす人の名前が並んでいる。",
+      "heardKana": "フルイトオバンヒョオケエショオトオバンヨオビゴトニカネオナラスヒトノナマエガナランデイル",
+      "expectedKana": "フルイトオバンヒョウケエショオトオバンヨオビゴトニカネオナラスヒトノナマエガナランデイル",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-c22f3e7c0082eb17",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「下の水門」の車輪。",
+     "sent": "「下の水門」の車輪。",
+     "lineKeys": [
+      "lf.wheel_lower#d1ed1fb563"
+     ],
+     "file": "narrator/r1-c22f3e7c0082eb17.opus",
+     "seconds": 1.73,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-c22f3e7c0082eb17.opus",
+       "seconds": 1.46
+      }
+     ],
+     "recognizer": {
+      "heard": "下の水門のシャリー",
+      "heardKana": "シタノスイモンノシャリイ",
+      "expectedKana": "シタノスイモンノシャリン",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-a31de848b1ef7e8f",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「必要なら開ける。」",
+     "sent": "「必要なら開ける。」",
+     "lineKeys": [
+      "sa.study_desk#16e20affc1"
+     ],
+     "file": "narrator/r1-a31de848b1ef7e8f.opus",
+     "seconds": 1.445,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-a31de848b1ef7e8f.opus",
+       "seconds": 1.07
+      }
+     ],
+     "recognizer": {
+      "heard": "必要なら開ける",
+      "heardKana": "ヒツヨオナラアケル",
+      "expectedKana": "ヒツヨオナラアケル",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-44f59876e805df39",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "少し離れて、腰を下ろす。風の音だけがする。",
+     "sent": "少し離れて、腰を下ろす。風の音だけがする。",
+     "lineKeys": [
+      "pets.cat.cat#7e607ca679"
+     ],
+     "file": "narrator/r1-44f59876e805df39.opus",
+     "seconds": 3.77,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-44f59876e805df39.opus",
+       "seconds": 3.45
+      }
+     ],
+     "recognizer": {
+      "heard": "少し離れて腰を下ろす風の音だけがする",
+      "heardKana": "スコシハナレテコシオオロスカゼノオトダケガスル",
+      "expectedKana": "スコシハナレテコシオオロスカゼノオトダケガスル",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-6392ada3fe81d8f0",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "関守の机。古い通行の記録が開いてある。五十年前の冬のページには、何も書いていない。関を通った飛脚は、いなかった。",
+     "sent": "関守の机。古い通行の記録が開いてある。五十年前の冬のページには、何も書いていない。関を通った飛脚は、いなかった。",
+     "lineKeys": [
+      "cr.ujie_desk#ced66731d2"
+     ],
+     "file": "narrator/r1-6392ada3fe81d8f0.opus",
+     "seconds": 9.065,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-6392ada3fe81d8f0.opus",
+       "seconds": 9.24
+      }
+     ],
+     "recognizer": {
+      "heard": "席処理の机古い通行の記録が開いてある50年前の冬のページには何も書いていない席を通った飛脚はいなかった",
+      "heardKana": "セキショリノツクエフルイツウコオノキロクガヒライテアルゴジュウネンマエノフユノペエジニワナニモカイテイナイセキオトオッタヒキャクワイナカッタ",
+      "expectedKana": "セキモリノツクエフルイツウコオノキロクガヒライテアルゴジュウネンマエノフユノペエジニワナニモカイテイナイセキオトオッタヒキャクワイナカッタ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-fcd727a3a415c18b",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「好きなのを取って」",
+     "sent": "「好きなのを取って」",
+     "lineKeys": [
+      "hall.w7.card3#f11e88b6cb"
+     ],
+     "file": "narrator/r1-fcd727a3a415c18b.opus",
+     "seconds": 1.47,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-fcd727a3a415c18b.opus",
+       "seconds": 1.08
+      }
+     ],
+     "recognizer": {
+      "heard": "好きなのを撮って",
+      "heardKana": "スキナノオトッテ",
+      "expectedKana": "スキナノオトッテ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-f41a93917d2e74e2",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "古い潮の暦の石。刻みの読み方は、もう分かる。",
+     "sent": "古い潮の暦の石。刻みの読み方は、もう分かる。",
+     "lineKeys": [
+      "cr.lw_ko_tide_after#0900fe6a04"
+     ],
+     "file": "narrator/r1-f41a93917d2e74e2.opus",
+     "seconds": 4.025,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-f41a93917d2e74e2.opus",
+       "seconds": 3.83
+      }
+     ],
+     "recognizer": {
+      "heard": "古い塩の小読みの石刻みの読み方はもう分かる",
+      "heardKana": "フルイシオノコヨミノイシキザミノヨミカタワモオワカル",
+      "expectedKana": "フルイシオノコヨミノイシキザミノヨミカタワモオワカル",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-956e6b043b139f02",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "下に、小さな字で日付。先月から、毎週書き直されている。",
+     "sent": "下に、小さな字で日付。先月から、毎週書き直されている。",
+     "lineKeys": [
+      "lf.records_notice#7542eb762b"
+     ],
+     "file": "narrator/r1-956e6b043b139f02.opus",
+     "seconds": 4.87,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-956e6b043b139f02.opus",
+       "seconds": 4.61
+      }
+     ],
+     "recognizer": {
+      "heard": "下に小さな字で日付け、先月から毎週書き直されている。",
+      "heardKana": "シタニチイサナジデヒズケセンゲツカラマイシュウカキナオサレテイル",
+      "expectedKana": "シタニチイサナジデヒズケセンゲツカラマイシュウカキナオサレテイル",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-727fcb2071b278a1",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "下の一行は、線で消されている。",
+     "sent": "下の一行は、線で消されている。",
+     "lineKeys": [
+      "lf.cafe_menu#25f70e3784"
+     ],
+     "file": "narrator/r1-727fcb2071b278a1.opus",
+     "seconds": 2.675,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-727fcb2071b278a1.opus",
+       "seconds": 2.445
+      }
+     ],
+     "recognizer": {
+      "heard": "下の1個は線で消されている",
+      "heardKana": "シタノイッコワセンデケサレテイル",
+      "expectedKana": "シタノイッコオワセンデケサレテイル",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-db5a6308e578ab7b",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「返事は、まだ来ないの？」「来ないわ。船が出なくなってから、一通も。」",
+     "sent": "「返事は、まだ来ないの？」「来ないわ。船が出なくなってから、一通も。」",
+     "lineKeys": [
+      "ko.shell_a#9d88604b37"
+     ],
+     "file": "narrator/r1-db5a6308e578ab7b.opus",
+     "seconds": 4.59,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-db5a6308e578ab7b.opus",
+       "seconds": 4.455
+      }
+     ],
+     "recognizer": {
+      "heard": "返事はまだ来ないの来ないわ船が出なくなってからいつも",
+      "heardKana": "ヘンジワマダコナイノコナイワセンガデナクナッテカライツモ",
+      "expectedKana": "ヘンジワマダコナイノコナイワフネガデナクナッテカライッツウモ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-913eeb9d125a7932",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「笛と櫛が、蔵にしまってある。笛の方を、仏壇に供えてほしい。」",
+     "sent": "「笛と櫛が、蔵にしまってある。笛の方を、仏壇に供えてほしい。」",
+     "lineKeys": [
+      "hall.w7.t6#007df42092"
+     ],
+     "file": "narrator/r1-913eeb9d125a7932.opus",
+     "seconds": 4.65,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-913eeb9d125a7932.opus",
+       "seconds": 4.645
+      }
+     ],
+     "recognizer": {
+      "heard": "笛と串が蔵にしまってある笛の方を仏壇に備えてほしい",
+      "heardKana": "フエトクシガクラニシマッテアルフエノホオオブツダンニソナエテホシイ",
+      "expectedKana": "フエトクシガクラニシマッテアルフエノホオオブツダンニソナエテホシイ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-60991222d6130ecf",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "札が全部収まり、上の窓が開いた。窯全体が、長い息を吐いたように鳴った。",
+     "sent": "札が全部収まり、上の窓が開いた。窯全体が、長い息を吐いたように鳴った。",
+     "lineKeys": [
+      "co.kiln_wall#744143afb1"
+     ],
+     "file": "narrator/r1-60991222d6130ecf.opus",
+     "seconds": 6.03,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-60991222d6130ecf.opus",
+       "seconds": 5.79
+      }
+     ],
+     "recognizer": {
+      "heard": "札が全部収まり上の窓が開いた窯全体が長い息を吐いたようになった",
+      "heardKana": "サツガゼンブオサマリウエノマドガヒライタカマゼンタイガナガイイキオハイタヨオニナッタ",
+      "expectedKana": "サツガゼンブオサマリウエノマドガヒライタカマゼンタイガナガイイキオハイタヨオニナッタ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-31364177c13415b2",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "札に、字を書き足した。「あらゆる波から舟を守ってください」。",
+     "sent": "札に、字を書き足した。「あらゆる波から舟を守ってください」。",
+     "lineKeys": [
+      "sz.lw_open_charm#516e0aa795"
+     ],
+     "file": "narrator/r1-31364177c13415b2.opus",
+     "seconds": 4.595,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-31364177c13415b2.opus",
+       "seconds": 4.325
+      }
+     ],
+     "recognizer": {
+      "heard": "札に字を書きたした払える波から船を守ってください",
+      "heardKana": "サツニジオカキタシタハラエルナミカラフネオマモッテクダサイ",
+      "expectedKana": "サツニジオカキタシタアラユルナミカラフネオマモッテクダサイ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-8a619bcc2d875c73",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "白い箱を持った。",
+     "sent": "白い箱を持った。",
+     "lineKeys": [
+      "hall.w2.g_white#38c244dc88"
+     ],
+     "file": "narrator/r1-8a619bcc2d875c73.opus",
+     "seconds": 1.6,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-8a619bcc2d875c73.opus",
+       "seconds": 1.235
+      }
+     ],
+     "recognizer": {
+      "heard": "白い箱を持った",
+      "heardKana": "シロイハコオモッタ",
+      "expectedKana": "シロイハコオモッタ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-b6698cdf3f06bdba",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "札が新しくなっている。「読む時は静かに。議論は中庭で。大いにどうぞ。」",
+     "sent": "札が新しくなっている。「読む時は静かに。議論は中庭で。大いにどうぞ。」",
+     "lineKeys": [
+      "sa.reading_plaque#f3d813cdf3"
+     ],
+     "file": "narrator/r1-b6698cdf3f06bdba.opus",
+     "seconds": 5.685,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-b6698cdf3f06bdba.opus",
+       "seconds": 5.525
+      }
+     ],
+     "recognizer": {
+      "heard": "札が新しくなっている読む時は静かに、議論は中庭で大いにどうぞ。",
+      "heardKana": "サツガアタラシクナッテイルヨムトキワシズカニギロンワナカニワデオオイニドオゾ",
+      "expectedKana": "サツガアタラシクナッテイルヨムトキワシズカニギロンワナカニワデオオイニドオゾ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-23fc5ce23d2333fc",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宿場の灯が、下から六つ点いている。一番上の雲居の灯だけが、まだ暗い。",
+     "sent": "宿場のひが、下から六つ点いている。一番上の雲居のひだけが、まだ暗い。",
+     "lineKeys": [
+      "cr.summit_view#71f1a4277d"
+     ],
+     "file": "narrator/r1-23fc5ce23d2333fc.opus",
+     "seconds": 5.725,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-23fc5ce23d2333fc.opus",
+       "seconds": 5.41
+      }
+     ],
+     "recognizer": {
+      "heard": "宿場の日が下から6つついている一番上の曇いの日だけがまだ暗い",
+      "heardKana": "シュクバノヒガシタカラロクツツイテイルイチバンウエノクモリイノヒダケガマダクライ",
+      "expectedKana": "シュクバノヒガシタカラムッツツイテイルイチバンウエノクモイノヒダケガマダクライ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-82be2d2f8bca6357",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "札を全部付け直した。「助かった！字が読める人は、頼りになるね。」",
+     "sent": "札を全部付け直した。「助かった！字が読める人は、頼りになるね。」",
+     "lineKeys": [
+      "sg.lw_road_tags#dab9b36f66"
+     ],
+     "file": "narrator/r1-82be2d2f8bca6357.opus",
+     "seconds": 5.105,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-82be2d2f8bca6357.opus",
+       "seconds": 4.825
+      }
+     ],
+     "recognizer": {
+      "heard": "札を全部つけ直した助かった字が読める人は頼りになるね",
+      "heardKana": "サツオゼンブツケナオシタタスカッタジガヨメルヒトワタヨリニナルネ",
+      "expectedKana": "サツオゼンブツケナオシタタスカッタジガヨメルヒトワタヨリニナルネ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-24d8e9fc6367e66e",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "札の一行目を思い出す。「東の扉を開けないと、西の栓は抜けない。」",
+     "sent": "札の一行目を思い出す。「東の扉を開けないと、西の栓は抜けない。」",
+     "lineKeys": [
+      "lf.west_plug#eb6395d479"
+     ],
+     "file": "narrator/r1-24d8e9fc6367e66e.opus",
+     "seconds": 5.105,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-24d8e9fc6367e66e.opus",
+       "seconds": 4.91
+      }
+     ],
+     "recognizer": {
+      "heard": "札の一行目を思い出す東の扉を開けないと西の線は抜けない",
+      "heardKana": "サツノイッコオメオオモイダスヒガシノトビラオアケナイトニシノセンワヌケナイ",
+      "expectedKana": "サツノイッコオメオオモイダスヒガシノトビラオアケナイトニシノセンワヌケナイ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-d6d9927e104c9c46",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "橋の袂の石。「昔、此の橋、葛にて編む。」",
+     "sent": "橋の袂の石。「昔、此の橋、葛にて編む。」",
+     "lineKeys": [
+      "cr.bridge_stone#31a2e071b6"
+     ],
+     "file": "narrator/r1-d6d9927e104c9c46.opus",
+     "seconds": 3.88,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015317/narrator/r1-d6d9927e104c9c46.opus",
+       "seconds": 3.735
+      }
+     ],
+     "recognizer": {
+      "heard": "橋のたもとの石、昔、この橋、かすらに手編む。",
+      "heardKana": "ハシノタモトノイシムカシコノハシカスラニテアム",
+      "expectedKana": "ハシノタモトノイシムカシコノハシカズラニテアム",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-85a20f18d8f49734",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "二月も？誰かが「来ないよ」って言えば済む話なのに。",
+     "sent": "二月も？誰かが「来ないよ」って言えば済む話なのに。",
+     "lineKeys": [
+      "lf.tsuya#17f18f2c30"
+     ],
+     "file": "nao/r1-85a20f18d8f49734.opus",
+     "seconds": 3.97,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/nao/r1-85a20f18d8f49734.opus",
+       "seconds": 3.89
+      }
+     ]
+    },
+    {
+     "id": "r1-dff58ca43d2da931",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "smirk",
+     "spoken": "方角の記述は、あなたにお願いします。念のため。",
+     "sent": "方角の記述は、あなたにお願いします。念のため。",
+     "lineKeys": [
+      "pages.offer#4b9bd03111"
+     ],
+     "file": "ren/r1-dff58ca43d2da931.opus",
+     "seconds": 4.485,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/ren/r1-dff58ca43d2da931.opus",
+       "seconds": 4.39
+      }
+     ]
+    },
+    {
+     "id": "r1-038c653fb9dcc77b",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "「本日休業」の札、書いてあげようか？",
+     "sent": "「本日休業」の札、書いてあげようか？",
+     "lineKeys": [
+      "lf.mioc#fa442cb349"
+     ],
+     "file": "suzu/r1-038c653fb9dcc77b.opus",
+     "seconds": 2.674,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-038c653fb9dcc77b.opus",
+       "seconds": 2.594
+      }
+     ]
+    },
+    {
+     "id": "r1-0f1e5307fb29b91a",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "返却の依頼、受付完了。特急でな。",
+     "sent": "返却の依頼、受付完了。特急でな。",
+     "lineKeys": [
+      "sa.after_battle#0a97899bf7"
+     ],
+     "file": "suzu/r1-0f1e5307fb29b91a.opus",
+     "seconds": 3.252,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-0f1e5307fb29b91a.opus",
+       "seconds": 3.187
+      }
+     ]
+    },
+    {
+     "id": "r1-30c34aab55fa7be0",
+     "speaker": "co_fusa",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "部屋は空いてるわよ。休んでいく？",
+     "sent": "部屋は空いてるわよ。休んでいく？",
+     "lineKeys": [
+      "co.fusa#4fb2962f3d"
+     ],
+     "file": "co_fusa/r1-30c34aab55fa7be0.opus",
+     "seconds": 2.54,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/co_fusa/r1-30c34aab55fa7be0.opus",
+       "seconds": 2.435
+      }
+     ]
+    },
+    {
+     "id": "r1-e95903621e63a8e7",
+     "speaker": "cr_otaki",
+     "voice": null,
+     "pitch": null,
+     "delivery": "surprise",
+     "spoken": "飛脚が沢に！大変、沢を下って探さなきゃ。若い衆、行って！",
+     "sent": "飛脚がさわに！大変、さわを下って探さなきゃ。若い衆、行って！",
+     "lineKeys": [
+      "cr.relay3#eeb1a95db2"
+     ],
+     "file": "cr_otaki/r1-e95903621e63a8e7.opus",
+     "seconds": 5.935,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/cr_otaki/r1-e95903621e63a8e7.opus",
+       "seconds": 5.83
+      }
+     ]
+    },
+    {
+     "id": "r1-970944da85b3aa3d",
+     "speaker": "cr_sono",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "祖父の名前を、毎日見られるんですね。……ありがとう。",
+     "sent": "祖父の名前を、毎日見られるんですね。……ありがとう。",
+     "lineKeys": [
+      "cr.family#97ff8e1054"
+     ],
+     "file": "cr_sono/r1-970944da85b3aa3d.opus",
+     "seconds": 4.18,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/cr_sono/r1-970944da85b3aa3d.opus",
+       "seconds": 4.035
+      }
+     ]
+    },
+    {
+     "id": "r1-9099a72b2f868665",
+     "speaker": "cr_sono",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "祖父は、ゲンタという飛脚でした。……坂下では、祖父が金を持って逃げたと言われています。",
+     "sent": "祖父は、ゲンタという飛脚でした。……坂下では、祖父が金を持って逃げたと言われています。",
+     "lineKeys": [
+      "cr.sono#2480a3fbb3"
+     ],
+     "file": "cr_sono/r1-9099a72b2f868665.opus",
+     "seconds": 6.43,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/cr_sono/r1-9099a72b2f868665.opus",
+       "seconds": 6.525
+      }
+     ]
+    },
+    {
+     "id": "r1-41bf0a5750cdb1be",
+     "speaker": "cr_sono",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "祖母は、祖父は雪の峠で谷へ落ちたんだと言っていました。逃げる人じゃない、と。……でも、見た人は誰もいないんです。",
+     "sent": "祖母は、祖父は雪のとうげで谷へ落ちたんだと言っていました。逃げる人じゃない、と。……でも、見た人は誰もいないんです。",
+     "lineKeys": [
+      "cr.sono#4837497d87"
+     ],
+     "file": "cr_sono/r1-41bf0a5750cdb1be.opus",
+     "seconds": 8.345,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/cr_sono/r1-41bf0a5750cdb1be.opus",
+       "seconds": 8.21
+      }
+     ]
+    },
+    {
+     "id": "r1-59aaaa83b8189f8f",
+     "speaker": "cr_sono",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "祖父のものです。予備の笠と法被。本物は、峠へ持って行きました。",
+     "sent": "祖父のものです。予備の笠と法被。本物は、とうげへ持って行きました。",
+     "lineKeys": [
+      "cr.saka_shelf#371ab4a975"
+     ],
+     "file": "cr_sono/r1-59aaaa83b8189f8f.opus",
+     "seconds": 5.27,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/cr_sono/r1-59aaaa83b8189f8f.opus",
+       "seconds": 5.12
+      }
+     ]
+    },
+    {
+     "id": "r1-af31602b66d327ad",
+     "speaker": "hall_kohaku",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "師匠、頁はもう書けています。語らせてください。",
+     "sent": "師匠、頁はもう書けています。語らせてください。",
+     "lineKeys": [
+      "hall.w10.t9#008fe5d567"
+     ],
+     "file": "hall_kohaku/r1-af31602b66d327ad.opus",
+     "seconds": 5.01,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/hall_kohaku/r1-af31602b66d327ad.opus",
+       "seconds": 4.701
+      }
+     ]
+    },
+    {
+     "id": "r1-f1ce3c1bd9493391",
+     "speaker": "hayate",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "吹き溜まりは崩しておいた。だが、下の道は雪崩で埋まった。春までは通れない。",
+     "sent": "吹き溜まりは崩しておいた。だが、下の道は雪崩で埋まった。春までは通れない。",
+     "lineKeys": [
+      "kr.hayate_road#2366603835"
+     ],
+     "file": "hayate/r1-f1ce3c1bd9493391.opus",
+     "seconds": 6.275,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/hayate/r1-f1ce3c1bd9493391.opus",
+       "seconds": 5.955
+      }
+     ]
+    },
+    {
+     "id": "r1-e4b354306723f05f",
+     "speaker": "kasane",
+     "voice": null,
+     "pitch": null,
+     "delivery": "surprise",
+     "spoken": "……知っています。置いたのは、わたしですから。",
+     "sent": "……知っています。置いたのは、わたしですから。",
+     "lineKeys": [
+      "sa.after_battle#14e227909d"
+     ],
+     "file": "kasane/r1-e4b354306723f05f.opus",
+     "seconds": 3.51,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/kasane/r1-e4b354306723f05f.opus",
+       "seconds": 3.15
+      }
+     ]
+    },
+    {
+     "id": "r1-6146f1032fa2e366",
+     "speaker": "kasane",
+     "voice": null,
+     "pitch": null,
+     "delivery": "angry",
+     "spoken": "必要ない。文面は約束よ。高瀬は開けない。鐘楼も、誰も開けない。",
+     "sent": "必要ない。文面は約束よ。高瀬は開けない。しょうろうも、誰も開けない。",
+     "lineKeys": [
+      "sa.shelf_kasane#2982349fb9"
+     ],
+     "file": "kasane/r1-6146f1032fa2e366.opus",
+     "seconds": 6.7,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/kasane/r1-6146f1032fa2e366.opus",
+       "seconds": 6.405
+      }
+     ]
+    },
+    {
+     "id": "r1-c16623f86a0fbd01",
+     "speaker": "ko_mitsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "smile",
+     "spoken": "船で来たお客さん！珍しいわね。お腹すいてるでしょう。魚のお汁があるわよ。",
+     "sent": "船で来たお客さん！珍しいわね。お腹すいてるでしょう。魚のお汁があるわよ。",
+     "lineKeys": [
+      "ko.mitsu_early#7daca3b7ca"
+     ],
+     "file": "ko_mitsu/r1-c16623f86a0fbd01.opus",
+     "seconds": 7.21,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/ko_mitsu/r1-c16623f86a0fbd01.opus",
+       "seconds": 7.105
+      }
+     ]
+    },
+    {
+     "id": "r1-139fcb0057e03467",
+     "speaker": "kr_hisae",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "灯守の約束だよ。待っている。",
+     "sent": "灯守の約束だよ。待っている。",
+     "lineKeys": [
+      "kr.hisae_vigil#e117d421a2"
+     ],
+     "file": "kr_hisae/r1-139fcb0057e03467.opus",
+     "seconds": 2.47,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/kr_hisae/r1-139fcb0057e03467.opus",
+       "seconds": 2.375
+      }
+     ]
+    },
+    {
+     "id": "r1-ba3a4132e8ff84c7",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "angry",
+     "spoken": "好きで覚えた役の名前を、重いなんて言わせない！",
+     "sent": "好きで覚えた役の名前を、重いなんて言わせない！",
+     "lineKeys": [
+      "mp.bottom_arrive#03bfdc7780"
+     ],
+     "file": "mio/r1-ba3a4132e8ff84c7.opus",
+     "seconds": 3.585,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/mio/r1-ba3a4132e8ff84c7.opus",
+       "seconds": 3.31
+      }
+     ]
+    },
+    {
+     "id": "r1-4a729bf0784c69a1",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "台詞を一緒に読んでみませんか。名前より先に、役が戻るかもしれない。",
+     "sent": "台詞を一緒に読んでみませんか。名前より先に、役が戻るかもしれない。",
+     "lineKeys": [
+      "mp.saku_first#4e3e0901f7"
+     ],
+     "file": "mio/r1-4a729bf0784c69a1.opus",
+     "seconds": 5.45,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/mio/r1-4a729bf0784c69a1.opus",
+       "seconds": 5.345
+      }
+     ]
+    },
+    {
+     "id": "r1-7fefaa383a12e42b",
+     "speaker": "mio",
+     "voice": null,
+     "pitch": null,
+     "delivery": "worry",
+     "spoken": "湿気がすごい。薬の瓶、蓋を確かめておくね。",
+     "sent": "湿気がすごい。薬の瓶、蓋を確かめておくね。",
+     "lineKeys": [
+      "lf.tower_arrive#5034e2c28e"
+     ],
+     "file": "mio/r1-7fefaa383a12e42b.opus",
+     "seconds": 3.735,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/mio/r1-7fefaa383a12e42b.opus",
+       "seconds": 3.39
+      }
+     ]
+    },
+    {
+     "id": "r1-90e42b91e01af80a",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "返事のない手紙を待つのは、一番体に悪い。……届けてやるよ。逆方向の配達だけど。",
+     "sent": "返事のない手紙を待つのは、一番体に悪い。……届けてやるよ。逆方向の配達だけど。",
+     "lineKeys": [
+      "sa.isamu_first#1935470ac7"
+     ],
+     "file": "nao/r1-90e42b91e01af80a.opus",
+     "seconds": 6.805,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/nao/r1-90e42b91e01af80a.opus",
+       "seconds": 6.7
+      }
+     ]
+    },
+    {
+     "id": "r1-d9dc6846c325e746",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "配達の箱と同じだ。あから順に、五十音で並べる。",
+     "sent": "配達の箱と同じだ。あから順に、五十音で並べる。",
+     "lineKeys": [
+      "sg.da_catalog#64d1dd1bcd"
+     ],
+     "file": "nao/r1-d9dc6846c325e746.opus",
+     "seconds": 4.345,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/nao/r1-d9dc6846c325e746.opus",
+       "seconds": 4.22
+      }
+     ]
+    },
+    {
+     "id": "r1-42001e24d9d659f1",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "台詞、一緒に読んでみるか。名前より先に、役が戻るかもしれない。",
+     "sent": "台詞、一緒に読んでみるか。名前より先に、役が戻るかもしれない。",
+     "lineKeys": [
+      "mp.saku_first#f7f397738f"
+     ],
+     "file": "nao/r1-42001e24d9d659f1.opus",
+     "seconds": 4.85,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/nao/r1-42001e24d9d659f1.opus",
+       "seconds": 4.725
+      }
+     ]
+    },
+    {
+     "id": "r1-aedfb6f61d2b04cd",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "配達人も同じだ。宛名が読めなきゃ、ただの紙を運んでるだけ。",
+     "sent": "配達人も同じだ。宛名が読めなきゃ、ただの紙を運んでるだけ。",
+     "lineKeys": [
+      "sg.omi_intro#4c397d4c41"
+     ],
+     "file": "nao/r1-aedfb6f61d2b04cd.opus",
+     "seconds": 5.15,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/nao/r1-aedfb6f61d2b04cd.opus",
+       "seconds": 5.025
+      }
+     ]
+    },
+    {
+     "id": "r1-26c7b976f5d4f713",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "angry",
+     "spoken": "人の手紙で鶴を折るなよ。",
+     "sent": "人の手紙で鶴を折るなよ。",
+     "lineKeys": [
+      "sg.da_stacks_first#8a01724371"
+     ],
+     "file": "nao/r1-26c7b976f5d4f713.opus",
+     "seconds": 1.785,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/nao/r1-26c7b976f5d4f713.opus",
+       "seconds": 1.65
+      }
+     ]
+    },
+    {
+     "id": "r1-763502789b0ed0c5",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "星が降りてくるなんて、聞いたことないぞ。",
+     "sent": "星が降りてくるなんて、聞いたことないぞ。",
+     "lineKeys": [
+      "gd.sb#ab4f5788bb"
+     ],
+     "file": "nao/r1-763502789b0ed0c5.opus",
+     "seconds": 2.895,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/nao/r1-763502789b0ed0c5.opus",
+       "seconds": 2.765
+      }
+     ]
+    },
+    {
+     "id": "r1-f39bfbb362a57021",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "灰の釉、か。燃えた後のもので、きれいなもんを作る。悪くない。",
+     "sent": "灰の釉、か。燃えた後のもので、きれいなもんを作る。悪くない。",
+     "lineKeys": [
+      "co.nobu#6ead6abc43"
+     ],
+     "file": "nao/r1-f39bfbb362a57021.opus",
+     "seconds": 5.1,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/nao/r1-f39bfbb362a57021.opus",
+       "seconds": 4.985
+      }
+     ]
+    },
+    {
+     "id": "r1-d37e00c579b97370",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……配達物が一つ増えた。一番重いやつだ。丁寧に届けよう。",
+     "sent": "……配達物が一つ増えた。一番重いやつだ。丁寧に届けよう。",
+     "lineKeys": [
+      "co.core_page#07019bce1f"
+     ],
+     "file": "nao/r1-d37e00c579b97370.opus",
+     "seconds": 5.09,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/nao/r1-d37e00c579b97370.opus",
+       "seconds": 4.965
+      }
+     ]
+    },
+    {
+     "id": "r1-b148da5d0908aedf",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "shy",
+     "spoken": "失礼しました。今のは、解説の要らないほうの駄洒落です。",
+     "sent": "失礼しました。今のは、解説の要らないほうの駄洒落です。",
+     "lineKeys": [
+      "sa.toya_read#7515bc44aa"
+     ],
+     "file": "ren/r1-b148da5d0908aedf.opus",
+     "seconds": 5.0,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/ren/r1-b148da5d0908aedf.opus",
+       "seconds": 4.725
+      }
+     ]
+    },
+    {
+     "id": "r1-770cb85f979e6bff",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "think",
+     "spoken": "「必要なら」。誰にとっての必要かを、誰も書かなかった。灯守の約束も、気をつけないと同じ落とし穴にはまります。",
+     "sent": "「必要なら」。誰にとっての必要かを、誰も書かなかった。灯守の約束も、気をつけないと同じ落とし穴にはまります。",
+     "lineKeys": [
+      "lf.yae_minutes#b9b4f904cc"
+     ],
+     "file": "ren/r1-770cb85f979e6bff.opus",
+     "seconds": 10.1,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/ren/r1-770cb85f979e6bff.opus",
+       "seconds": 9.765
+      }
+     ]
+    },
+    {
+     "id": "r1-10207e2b62be623c",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "式は、盃を交わして終わります。誰から誰へ、順番があるのです。",
+     "sent": "式は、盃を交わして終わります。誰から誰へ、順番があるのです。",
+     "lineKeys": [
+      "hall.w2.f3_first#6cac8bc6d2"
+     ],
+     "file": "ren/r1-10207e2b62be623c.opus",
+     "seconds": 5.98,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/ren/r1-10207e2b62be623c.opus",
+       "seconds": 5.655
+      }
+     ]
+    },
+    {
+     "id": "r1-b30fc716b6531eff",
+     "speaker": "rokuta",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "吹雪でチヨの天文台が崩れたら、優勝は取り消しだよな？",
+     "sent": "吹雪でチヨの天文台が崩れたら、優勝は取り消しだよな？",
+     "lineKeys": [
+      "sb.storm_kids#e6f76aefb5"
+     ],
+     "file": "rokuta/r1-b30fc716b6531eff.opus",
+     "seconds": 4.39,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/rokuta/r1-b30fc716b6531eff.opus",
+       "seconds": 4.285
+      }
+     ]
+    },
+    {
+     "id": "r1-5a68e35fe48f8ea1",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "判子帳が埋まるのって、満員御礼みたいで気持ちいいわ。",
+     "sent": "判子帳が埋まるのって、満員御礼みたいで気持ちいいわ。",
+     "lineKeys": [
+      "cr.seals_done#3758058b6b"
+     ],
+     "file": "suzu/r1-5a68e35fe48f8ea1.opus",
+     "seconds": 3.689,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-5a68e35fe48f8ea1.opus",
+       "seconds": 3.572
+      }
+     ]
+    },
+    {
+     "id": "r1-d09950932bc13687",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "返事のない請求は、時効にならない。全部有効だよ。覚えておいて。",
+     "sent": "返事のない請求は、時効にならない。全部有効だよ。覚えておいて。",
+     "lineKeys": [
+      "sa.mem_requests#c6eec71d89"
+     ],
+     "file": "suzu/r1-d09950932bc13687.opus",
+     "seconds": 5.132,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-d09950932bc13687.opus",
+       "seconds": 5.043
+      }
+     ]
+    },
+    {
+     "id": "r1-ce8c8f6b494cdef0",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "laugh",
+     "spoken": "拍手の代わりに、しっぽや!",
+     "sent": "拍手の代わりに、しっぽや!",
+     "lineKeys": [
+      "pets.dog.dog#b34ba3d4eb"
+     ],
+     "file": "suzu/r1-ce8c8f6b494cdef0.opus",
+     "seconds": 1.993,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-ce8c8f6b494cdef0.opus",
+       "seconds": 1.894
+      }
+     ]
+    },
+    {
+     "id": "r1-3be36980796daf08",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "laugh",
+     "spoken": "拍手の代わりに、しっぽ!",
+     "sent": "拍手の代わりに、しっぽ!",
+     "lineKeys": [
+      "pets.dog.dog#b34ba3d4eb"
+     ],
+     "file": "suzu/r1-3be36980796daf08.opus",
+     "seconds": 1.941,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-3be36980796daf08.opus",
+       "seconds": 1.838
+      }
+     ]
+    },
+    {
+     "id": "r1-f77b4e24fbe403ce",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……返事、遅くなったけど。遅すぎる手紙はないって、誰かが言ってたものね。",
+     "sent": "……返事、遅くなったけど。遅すぎる手紙はないって、誰かが言ってたものね。",
+     "lineKeys": [
+      "cr.suzu_reply#db8e92f90c"
+     ],
+     "file": "suzu/r1-f77b4e24fbe403ce.opus",
+     "seconds": 5.17,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-f77b4e24fbe403ce.opus",
+       "seconds": 5.071
+      }
+     ]
+    },
+    {
+     "id": "r1-203a2615ac6600f8",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "百年続いた芝居にも、千秋楽はあるのよ。",
+     "sent": "百年続いた芝居にも、千秋楽はあるのよ。",
+     "lineKeys": [
+      "kr.chapter_end#78a350f4d4"
+     ],
+     "file": "suzu/r1-203a2615ac6600f8.opus",
+     "seconds": 3.445,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-203a2615ac6600f8.opus",
+       "seconds": 3.346
+      }
+     ]
+    },
+    {
+     "id": "r1-60d1efa8299f2546",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "札の決まり、先に読もう。例外が多そうだ。",
+     "sent": "札の決まり、先に読もう。例外が多そうだ。",
+     "lineKeys": [
+      "hall.w6.ibuki#3fbfa92a02"
+     ],
+     "file": "suzu/r1-60d1efa8299f2546.opus",
+     "seconds": 3.126,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-60d1efa8299f2546.opus",
+       "seconds": 3.022
+      }
+     ]
+    },
+    {
+     "id": "r1-1bda474e1232eea4",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "橋が届かへんの、うちのせいちゃうよな？……冗談や。半分はな。",
+     "sent": "橋が届かへんの、うちのせいちゃうよな？……冗談や。半分はな。",
+     "lineKeys": [
+      "rw.suzu_again#707f6719c6"
+     ],
+     "file": "suzu/r1-1bda474e1232eea4.opus",
+     "seconds": 4.756,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-1bda474e1232eea4.opus",
+       "seconds": 4.658
+      }
+     ]
+    },
+    {
+     "id": "r1-88188e716b1720d8",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……灰実の里で、ヒロにほんまのこと話してから、時々考えるねん。",
+     "sent": "……灰実の里で、ヒロにほんまのこと話してから、時々考えるねん。",
+     "lineKeys": [
+      "sb.quiet_suzu#21925f76bf"
+     ],
+     "file": "suzu/r1-88188e716b1720d8.opus",
+     "seconds": 4.667,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-88188e716b1720d8.opus",
+       "seconds": 4.564
+      }
+     ]
+    },
+    {
+     "id": "r1-55a4d3ea4928b582",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "laugh",
+     "spoken": "拍手！氷の幕が上がったよ。",
+     "sent": "拍手！氷の幕が上がったよ。",
+     "lineKeys": [
+      "sb.stair_ice#f0749f0e38"
+     ],
+     "file": "suzu/r1-55a4d3ea4928b582.opus",
+     "seconds": 2.139,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-55a4d3ea4928b582.opus",
+       "seconds": 2.035
+      }
+     ]
+    },
+    {
+     "id": "r1-c1d6fd05d1e9ae46",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "返却一件。帳簿につけとくな。今日の最初の黒字や。",
+     "sent": "返却一件。帳簿につけとくな。今日の最初の黒字や。",
+     "lineKeys": [
+      "sa.shelf_isamu#f5e029fe76"
+     ],
+     "file": "suzu/r1-c1d6fd05d1e9ae46.opus",
+     "seconds": 4.103,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-c1d6fd05d1e9ae46.opus",
+       "seconds": 4.009
+      }
+     ]
+    },
+    {
+     "id": "r1-d35d6354cd7f2507",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "広場で揉めてる声、最高の音楽やな。入場料取りたいくらいやわ。",
+     "sent": "広場で揉めてる声、最高の音楽やな。入場料取りたいくらいやわ。",
+     "lineKeys": [
+      "sa.epi_lf#7574d88904"
+     ],
+     "file": "suzu/r1-d35d6354cd7f2507.opus",
+     "seconds": 4.427,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-d35d6354cd7f2507.opus",
+       "seconds": 4.333
+      }
+     ]
+    },
+    {
+     "id": "r1-01379af29d6d0065",
+     "speaker": "suzu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "返事が来ないのと、出した手紙が帰ってくるの。どっちが堪えるかな。……後のほうだね。",
+     "sent": "返事が来ないのと、出した手紙が帰ってくるの。どっちが堪えるかな。……後のほうだね。",
+     "lineKeys": [
+      "sb.hoshino#a2c619453a"
+     ],
+     "file": "suzu/r1-01379af29d6d0065.opus",
+     "seconds": 6.223,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/suzu/r1-01379af29d6d0065.opus",
+       "seconds": 6.124
+      }
+     ]
+    },
+    {
+     "id": "r1-db24c309c072d7d1",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "潮は変わらん。人は変わる。悪くない。",
+     "sent": "潮は変わらん。人は変わる。悪くない。",
+     "lineKeys": [
+      "sg.tetsu_post#6bd27b5040"
+     ],
+     "file": "tetsu/r1-db24c309c072d7d1.opus",
+     "seconds": 3.86,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/tetsu/r1-db24c309c072d7d1.opus",
+       "seconds": 3.56
+      }
+     ]
+    },
+    {
+     "id": "r1-5a73a0d6d4bd32c0",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "島は遠い。半日かかる。……波は穏やかだ。",
+     "sent": "島は遠い。半日かかる。……波は穏やかだ。",
+     "lineKeys": [
+      "ko.ferry_tetsu#4e79cc1148"
+     ],
+     "file": "tetsu/r1-5a73a0d6d4bd32c0.opus",
+     "seconds": 5.03,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/tetsu/r1-5a73a0d6d4bd32c0.opus",
+       "seconds": 4.695
+      }
+     ]
+    },
+    {
+     "id": "r1-55fad0e1e95ffdab",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "潮は待ってくれんが、また満ちる。",
+     "sent": "潮は待ってくれんが、また満ちる。",
+     "lineKeys": [
+      "sea.tetsu_trial#9fc83421ad"
+     ],
+     "file": "tetsu/r1-55fad0e1e95ffdab.opus",
+     "seconds": 2.69,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/tetsu/r1-55fad0e1e95ffdab.opus",
+       "seconds": 2.39
+      }
+     ]
+    },
+    {
+     "id": "r1-a918014da326477d",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "潮と風向き。また聞く。",
+     "sent": "潮と風向き。また聞く。",
+     "lineKeys": [
+      "sea.tetsu_words#7daec7093d"
+     ],
+     "file": "tetsu/r1-a918014da326477d.opus",
+     "seconds": 2.925,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/tetsu/r1-a918014da326477d.opus",
+       "seconds": 2.585
+      }
+     ]
+    },
+    {
+     "id": "r1-4fcaa1f5b370f1ce",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "潮は。",
+     "sent": "潮は。",
+     "lineKeys": [
+      "sea.tetsu_trial#a431a3e74f"
+     ],
+     "file": "tetsu/r1-4fcaa1f5b370f1ce.opus",
+     "seconds": 0.98,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/tetsu/r1-4fcaa1f5b370f1ce.opus",
+       "seconds": 0.66
+      }
+     ]
+    },
+    {
+     "id": "r1-e16f214661597c8b",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……潮が変わる。",
+     "sent": "……潮が変わる。",
+     "lineKeys": [
+      "sg.tetsu_idle#f03b408e58"
+     ],
+     "file": "tetsu/r1-e16f214661597c8b.opus",
+     "seconds": 1.355,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/tetsu/r1-e16f214661597c8b.opus",
+       "seconds": 1.015
+      }
+     ]
+    },
+    {
+     "id": "r1-3e7642b4dbb6a51b",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "……心配は要らん。俺も乗っている。",
+     "sent": "……心配は要らん。俺も乗っている。",
+     "lineKeys": [
+      "sea.tetsu_trial#266c952d79"
+     ],
+     "file": "tetsu/r1-3e7642b4dbb6a51b.opus",
+     "seconds": 3.17,
+     "why": "the opening sound restored; Qwen lines are the same performance, narrator lines a new take",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261019T015659/tetsu/r1-3e7642b4dbb6a51b.opus",
+       "seconds": 2.905
+      }
+     ]
+    }
+   ],
+   "count": 72
+  }
+ ],
+ "counts": {
+  "yours": 23,
+  "openings": 72
+ }
+}

@@ -1,0 +1,526 @@
+{
+ "schema": "rbn.voice.review-decisions/1",
+ "listSha256": "05c20cf8581659878eb5666365ad658804f55e0ab3b94e656d1ceec2caf288e2",
+ "batch": {
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "manifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "decisions": {
+  "r1-56cc1b4dd1788163": {
+   "decision": "redo",
+   "take": "narrator/r1-56cc1b4dd1788163.opus",
+   "note": "Not correct at all: 宿坊 - \"shu ku bou\" is being read as: \"gubou\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+  },
+  "r1-bca50fee45715154": {
+   "decision": "redo",
+   "take": "narrator/r1-bca50fee45715154.opus",
+   "note": "Not correct at all: 宿場 - \"shu ku ba\" is being read as: \"guba\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+  },
+  "r1-06ec645a6a7a970c": {
+   "decision": "redo",
+   "take": "narrator/r1-06ec645a6a7a970c.opus",
+   "note": "襖 is omitting the ふ pronunciation, leading with \"suma\""
+  },
+  "r1-bc6a8c71201225ff": {
+   "decision": "redo",
+   "take": "narrator/r1-bc6a8c71201225ff.opus",
+   "note": "Not correct at all: 宿場 - \"shu ku ba\" is being read as: \"guba\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+  },
+  "r1-36182b19a4863dcb": {
+   "decision": "redo",
+   "take": "narrator/r1-36182b19a4863dcb.opus",
+   "note": "Not correct at all: 宿坊 - \"shu ku bou\" is being read as: \"gubou\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+  },
+  "r1-6f15e7a88ae13768": {
+   "decision": "keep",
+   "take": "narrator/r1-6f15e7a88ae13768.opus",
+   "note": ""
+  },
+  "r1-9652328d5fe161a5": {
+   "decision": "redo",
+   "take": "narrator/r1-9652328d5fe161a5.opus",
+   "note": "飛脚 is being pronounced as \"kyaku\" - omitting the \"hi\" at the start of the word\nThe rest is fine"
+  },
+  "r1-89daea4d07213955": {
+   "decision": "redo",
+   "take": "narrator/r1-89daea4d07213955.opus",
+   "note": "支度 is missing the \"shi\" at the start, it leads with \"-taku\"\nThe rest is fine"
+  },
+  "r1-509f3f83d5eaeaf3": {
+   "decision": "keep",
+   "take": "narrator/r1-509f3f83d5eaeaf3.opus",
+   "note": ""
+  },
+  "r1-7df93670a632a454": {
+   "decision": "redo",
+   "take": "narrator/r1-7df93670a632a454.opus",
+   "note": "Not correct at all: 宿坊 - \"shu ku bou\" is being read as: \"gubou\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+  },
+  "r1-667b3eb3eae1ed4e": {
+   "decision": "redo",
+   "take": "narrator/r1-667b3eb3eae1ed4e.opus",
+   "note": "盃 is omitting the さ"
+  },
+  "r1-33b62520f3178edf": {
+   "decision": "redo",
+   "take": "narrator/r1-33b62520f3178edf.opus",
+   "note": "Not correct at all: 宿坊 - \"shu ku bou\" is being read as: \"gubou\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+  },
+  "r1-a1dc3e69544b6c93": {
+   "decision": "redo",
+   "take": "narrator/r1-a1dc3e69544b6c93.opus",
+   "note": "Not correct at all: 宿場 - \"shu ku ba\" is being read as: \"guba\" or a lighter K reading as G, while omitting \"shu\" entirely\nThe rest was fine"
+  },
+  "r1-ref-7bce55227fabd16b": {
+   "decision": "keep",
+   "take": "ref/r1-ref-7bce55227fabd16b.opus",
+   "note": ""
+  },
+  "r1-ref-af36303bc31275dd": {
+   "decision": "keep",
+   "take": "ref/r1-ref-af36303bc31275dd.opus",
+   "note": ""
+  },
+  "r1-ref-b24ee5343a840e34": {
+   "decision": "keep",
+   "take": "ref/r1-ref-b24ee5343a840e34.opus",
+   "note": ""
+  },
+  "r1-ref-4527f8044bc91e6c": {
+   "decision": "keep",
+   "take": "ref/r1-ref-4527f8044bc91e6c.opus",
+   "note": ""
+  },
+  "r1-ref-3bb1d886831818b0": {
+   "decision": "keep",
+   "take": "ref/r1-ref-3bb1d886831818b0.opus",
+   "note": ""
+  },
+  "r1-ref-f185923dd2eb8b73": {
+   "decision": "keep",
+   "take": "ref/r1-ref-f185923dd2eb8b73.opus",
+   "note": ""
+  },
+  "r1-ref-f73a410efe65f1ff": {
+   "decision": "keep",
+   "take": "ref/r1-ref-f73a410efe65f1ff.opus",
+   "note": ""
+  },
+  "r1-ref-86accb28e141a6f9": {
+   "decision": "keep",
+   "take": "ref/r1-ref-86accb28e141a6f9.opus",
+   "note": ""
+  },
+  "r1-ref-e2d45e684aa66cc8": {
+   "decision": "keep",
+   "take": "ref/r1-ref-e2d45e684aa66cc8.opus",
+   "note": ""
+  },
+  "r1-ref-bacde55ede089ee0": {
+   "decision": "keep",
+   "take": "ref/r1-ref-bacde55ede089ee0.opus",
+   "note": ""
+  },
+  "r1-ref-49638330dbf8aeba": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-49638330dbf8aeba.opus",
+   "note": ""
+  },
+  "r1-ref-1bdbde0f548a53de": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-1bdbde0f548a53de.opus",
+   "note": ""
+  },
+  "r1-ref-f69e9244db908b20": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-f69e9244db908b20.opus",
+   "note": ""
+  },
+  "r1-ref-d5224c10ddee12e7": {
+   "decision": "keep",
+   "take": "ref/r1-ref-d5224c10ddee12e7.opus",
+   "note": ""
+  },
+  "r1-ref-0543cff1aedaff14": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-0543cff1aedaff14.opus",
+   "note": ""
+  },
+  "r1-ref-23dbfa7225748800": {
+   "decision": "keep",
+   "take": "ref/r1-ref-23dbfa7225748800.opus",
+   "note": ""
+  },
+  "r1-ref-62ecfd7080854d2c": {
+   "decision": "keep",
+   "take": "ref/r1-ref-62ecfd7080854d2c.opus",
+   "note": ""
+  },
+  "r1-ref-aa4d56b3e2410bd9": {
+   "decision": "keep",
+   "take": "ref/r1-ref-aa4d56b3e2410bd9.opus",
+   "note": ""
+  },
+  "r1-ref-c8b4ab53d796445f": {
+   "decision": "keep",
+   "take": "ref/r1-ref-c8b4ab53d796445f.opus",
+   "note": ""
+  },
+  "r1-ref-b0878c879e510db2": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-b0878c879e510db2.opus",
+   "note": ""
+  },
+  "r1-ref-199abedc7e61c4b0": {
+   "decision": "keep",
+   "take": "ref/r1-ref-199abedc7e61c4b0.opus",
+   "note": ""
+  },
+  "r1-ref-554915602b621dab": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-554915602b621dab.opus",
+   "note": ""
+  },
+  "r1-ref-7282ca8511951547": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-7282ca8511951547.opus",
+   "note": ""
+  },
+  "r1-ref-19ba762a3d3816f1": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-19ba762a3d3816f1.opus",
+   "note": ""
+  },
+  "r1-ref-dedb7ff456554523": {
+   "decision": "redo",
+   "take": "ref/r1-ref-dedb7ff456554523.opus",
+   "note": "Odd breathy H-leading sound, otherwise okay, slight trim might work"
+  },
+  "r1-ref-6b8e6349fe49e583": {
+   "decision": "keep",
+   "take": "ref/r1-ref-6b8e6349fe49e583.opus",
+   "note": ""
+  },
+  "r1-ref-109fcfd0ce47b975": {
+   "decision": "redo",
+   "take": "ref/r1-ref-109fcfd0ce47b975.opus",
+   "note": ""
+  },
+  "r1-ref-168a2ffe06930bb6": {
+   "decision": "keep",
+   "take": "ref/r1-ref-168a2ffe06930bb6.opus",
+   "note": ""
+  },
+  "r1-ref-5f7706af12731c1b": {
+   "decision": "redo",
+   "take": "ref/r1-ref-5f7706af12731c1b.opus",
+   "note": "\"Shi\" is off"
+  },
+  "r1-ref-a7a386db2cd3efbe": {
+   "decision": "keep",
+   "take": "ref/r1-ref-a7a386db2cd3efbe.opus",
+   "note": ""
+  },
+  "r1-ref-1c66118ff1f05db1": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-1c66118ff1f05db1.opus",
+   "note": ""
+  },
+  "r1-ref-565c5748ff1b3610": {
+   "decision": "keep",
+   "take": "ref/r1-ref-565c5748ff1b3610.opus",
+   "note": ""
+  },
+  "r1-ref-cb466eedc3eca3ad": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-cb466eedc3eca3ad.opus",
+   "note": ""
+  },
+  "r1-ref-29dc691bc01c885c": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-29dc691bc01c885c.opus",
+   "note": ""
+  },
+  "r1-ref-2806b1be848b46ee": {
+   "decision": "keep",
+   "take": "ref/r1-ref-2806b1be848b46ee.opus",
+   "note": ""
+  },
+  "r1-ref-1758ee1d4e3c95f0": {
+   "decision": "keep",
+   "take": "ref/r1-ref-1758ee1d4e3c95f0.opus",
+   "note": ""
+  },
+  "r1-ref-7a52df5bc5af57fd": {
+   "decision": "keep",
+   "take": "ref/r1-ref-7a52df5bc5af57fd.opus",
+   "note": ""
+  },
+  "r1-ref-8c518205ea8c8282": {
+   "decision": "keep",
+   "take": "ref/r1-ref-8c518205ea8c8282.opus",
+   "note": "\"fu\" is not pronounced enough but will settle here"
+  },
+  "r1-ref-1591f1f5d4882713": {
+   "decision": "redo",
+   "take": "ref/r1-ref-1591f1f5d4882713.opus",
+   "note": "\"Shi\" pronunciation problem"
+  },
+  "r1-ref-04fe1015bf54c94a": {
+   "decision": "redo",
+   "take": "ref/r1-ref-04fe1015bf54c94a.opus",
+   "note": "\"Shi\" pronunciation problem"
+  },
+  "r1-ref-2f7d40012e7c5179": {
+   "decision": "redo",
+   "take": "ref/r1-ref-2f7d40012e7c5179.opus",
+   "note": "\"Shi\" pronunciation problem"
+  },
+  "r1-ref-1e0753ab1134e52b": {
+   "decision": "redo",
+   "take": "ref/r1-ref-1e0753ab1134e52b.opus",
+   "note": "\"Shi\" pronunciation problem"
+  },
+  "r1-ref-654e278f8082c0d0": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-654e278f8082c0d0.opus",
+   "note": ""
+  },
+  "r1-ref-4b4e95d6058f4056": {
+   "decision": "keep",
+   "take": "ref/r1-ref-4b4e95d6058f4056.opus",
+   "note": ""
+  },
+  "r1-ref-3bd0eeda885cb790": {
+   "decision": "keep",
+   "take": "ref/r1-ref-3bd0eeda885cb790.opus",
+   "note": ""
+  },
+  "r1-ref-12b7f41206f0ee07": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-12b7f41206f0ee07.opus",
+   "note": ""
+  },
+  "r1-ref-812f60edc35facc8": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-812f60edc35facc8.opus",
+   "note": ""
+  },
+  "r1-ref-e149ab1cb07f3b7d": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-e149ab1cb07f3b7d.opus",
+   "note": ""
+  },
+  "r1-ref-54518e88f4f59322": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-54518e88f4f59322.opus",
+   "note": ""
+  },
+  "r1-ref-0e99d561b22df61f": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-0e99d561b22df61f.opus",
+   "note": ""
+  },
+  "r1-ref-988753ae7fba281c": {
+   "decision": "keep",
+   "take": "ref/r1-ref-988753ae7fba281c.opus",
+   "note": ""
+  },
+  "r1-ref-ca29ee9fd206486e": {
+   "decision": "keep",
+   "take": "ref/r1-ref-ca29ee9fd206486e.opus",
+   "note": ""
+  },
+  "r1-ref-f05d6a5b3b3f2f96": {
+   "decision": "redo",
+   "take": "ref/r1-ref-f05d6a5b3b3f2f96.opus",
+   "note": "\"fu\" is not pronounced at all and is heard as \"kyoka\""
+  },
+  "r1-ref-741f0f0caa94874d": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-741f0f0caa94874d.opus",
+   "note": ""
+  },
+  "r1-ref-48c28bf252d612f5": {
+   "decision": "keep",
+   "take": "ref/r1-ref-48c28bf252d612f5.opus",
+   "note": ""
+  },
+  "r1-ref-4f53ebc7939d97e2": {
+   "decision": "keep",
+   "take": "ref/r1-ref-4f53ebc7939d97e2.opus",
+   "note": ""
+  },
+  "r1-ref-598ff5d079d5f2d9": {
+   "decision": "keep",
+   "take": "ref/r1-ref-598ff5d079d5f2d9.opus",
+   "note": ""
+  },
+  "r1-ref-a56c0cda92a95945": {
+   "decision": "keep",
+   "take": "ref/r1-ref-a56c0cda92a95945.opus",
+   "note": ""
+  },
+  "r1-ref-fd764dc6f516e777": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-fd764dc6f516e777.opus",
+   "note": ""
+  },
+  "r1-ref-33a23f6f5dec47c4": {
+   "decision": "redo",
+   "take": "ref/r1-ref-33a23f6f5dec47c4.opus",
+   "note": "\"fu\" is not pronounced"
+  },
+  "r1-ref-56decb7b67531852": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-56decb7b67531852.opus",
+   "note": ""
+  },
+  "r1-ref-fb9e706026a658f1": {
+   "decision": "keep",
+   "take": "ref/r1-ref-fb9e706026a658f1.opus",
+   "note": ""
+  },
+  "r1-ref-4afaa0fea074312b": {
+   "decision": "keep",
+   "take": "ref/r1-ref-4afaa0fea074312b.opus",
+   "note": ""
+  },
+  "r1-ref-b2accc9a9ed6ccc0": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-b2accc9a9ed6ccc0.opus",
+   "note": ""
+  },
+  "r1-ref-fb748f921969e5f9": {
+   "decision": "keep",
+   "take": "ref/r1-ref-fb748f921969e5f9.opus",
+   "note": ""
+  },
+  "r1-ref-a8df25d98f260a9f": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-a8df25d98f260a9f.opus",
+   "note": ""
+  },
+  "r1-ref-1a81c07c60c62c8d": {
+   "decision": "keep",
+   "take": "ref/r1-ref-1a81c07c60c62c8d.opus",
+   "note": ""
+  },
+  "r1-ref-ef5377c6f6053cb6": {
+   "decision": "keep",
+   "take": "ref/r1-ref-ef5377c6f6053cb6.opus",
+   "note": ""
+  },
+  "r1-ref-e21c99e2d8ddd8bc": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-e21c99e2d8ddd8bc.opus",
+   "note": ""
+  },
+  "r1-ref-d46b0b241a7aa454": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-d46b0b241a7aa454.opus",
+   "note": ""
+  },
+  "r1-ref-6ac3a8449c21a3c6": {
+   "decision": "keep",
+   "take": "ref/r1-ref-6ac3a8449c21a3c6.opus",
+   "note": ""
+  },
+  "r1-ref-550f1731b931897f": {
+   "decision": "keep",
+   "take": "ref/r1-ref-550f1731b931897f.opus",
+   "note": ""
+  },
+  "r1-ref-d309362ab019f251": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-d309362ab019f251.opus",
+   "note": ""
+  },
+  "r1-ref-7fd1f869607d259e": {
+   "decision": "keep",
+   "take": "ref/r1-ref-7fd1f869607d259e.opus",
+   "note": ""
+  },
+  "r1-ref-806ccac91558200a": {
+   "decision": "keep",
+   "take": "ref/r1-ref-806ccac91558200a.opus",
+   "note": ""
+  },
+  "r1-ref-f7723354633bde4a": {
+   "decision": "keep",
+   "take": "ref/r1-ref-f7723354633bde4a.opus",
+   "note": ""
+  },
+  "r1-ref-fc42535a1630b4b7": {
+   "decision": "keep",
+   "take": "ref/r1-ref-fc42535a1630b4b7.opus",
+   "note": ""
+  },
+  "r1-ref-3115681ae0efa0bc": {
+   "decision": "keep",
+   "take": "ref/r1-ref-3115681ae0efa0bc.opus",
+   "note": ""
+  },
+  "r1-ref-92f6204759e23d81": {
+   "decision": "keep",
+   "take": "ref/r1-ref-92f6204759e23d81.opus",
+   "note": ""
+  },
+  "r1-ref-f36191b09209b294": {
+   "decision": "keep",
+   "take": "ref/r1-ref-f36191b09209b294.opus",
+   "note": ""
+  },
+  "r1-ref-759c1893c472f9ff": {
+   "decision": "keep",
+   "take": "ref/r1-ref-759c1893c472f9ff.opus",
+   "note": ""
+  },
+  "r1-ref-7b83d96958d2a929": {
+   "decision": "keep",
+   "take": "ref/r1-ref-7b83d96958d2a929.opus",
+   "note": ""
+  },
+  "r1-ref-d79363685074cd03": {
+   "decision": "keep",
+   "take": "ref/r1-ref-d79363685074cd03.opus",
+   "note": ""
+  },
+  "r1-ref-9753d761cd4cd2d5": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-9753d761cd4cd2d5.opus",
+   "note": ""
+  },
+  "r1-ref-c2c868d4052d48c1": {
+   "decision": "keep",
+   "take": "ref/r1-ref-c2c868d4052d48c1.opus",
+   "note": ""
+  },
+  "r1-ref-1d846554efcd8c1f": {
+   "decision": "earlier",
+   "take": "superseded/20261018T221219/ref/r1-ref-1d846554efcd8c1f.opus",
+   "note": ""
+  },
+  "r1-ref-2afe23b481717efd": {
+   "decision": "keep",
+   "take": "ref/r1-ref-2afe23b481717efd.opus",
+   "note": ""
+  },
+  "r1-ref-ab7fa40cbbc99926": {
+   "decision": "redo",
+   "take": "ref/r1-ref-ab7fa40cbbc99926.opus",
+   "note": "\"fu\" is not pronounced enough"
+  },
+  "r1-ref-e428831127f1e8e3": {
+   "decision": "redo",
+   "take": "ref/r1-ref-e428831127f1e8e3.opus",
+   "note": "\"fu\" is not pronounced enough but will settle here"
+  },
+  "r1-ref-dcbd72e49e429325": {
+   "decision": "keep",
+   "take": "ref/r1-ref-dcbd72e49e429325.opus",
+   "note": ""
+  }
+ }
+}
