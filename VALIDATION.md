@@ -5034,7 +5034,14 @@ Yasu's story, when listening, has not begun being spoken."
   things already there). Where a named person already stood for a unique event (Kōhachi's cart, Sakuzō, Matahei, Gohei,
   Rokusuke) they stay as they were and the event adds the thing the scene is about beside them. New tool:
   tools/review/map_ascii.mjs (a map as text, for placing). An event without a placement would still run on arrival
-  (none is left).
+  (none is left). *A named person seen once:* where an event places a named person on a map they already stand on
+  (Kumazō on the steps, Shōzō at the fox bridge, Jūzō at the stele, Seiji at the pass; found by the Keepers' Road
+  agent, who evaluated every placement's condition), their usual placement steps aside while the event waits
+  (05_author.js `asides`, once all the region files have run), so a scene's gestures find the one you are talking to;
+  `road_events` checks every such person is not also in their usual place (6 new checks; it fails without the step
+  aside). The geometry comparison with the base commit (`overworld_geometry`) leaves road-event placements out, as it
+  does the development fixtures: they stand only while their event waits, and `road_events` checks they block no way
+  out (it reported the seven six-chapter roads' placements as changed geometry).
 - **The route chart's coast (MC-1; "The map shows it and Saltglass, along with other nearby places as in the
   ocean").** The sea was a fixed decorative curve that knew nothing of where places stand: Saltglass, Sazanami,
   Manybridge and Ashihara Shinden fell below it. The coast is now a line through authored points running just below
@@ -5074,9 +5081,20 @@ Yasu's story, when listening, has not begun being spoken."
 - **"Have you seen…?" spoken (SL-3; "The 'have you seen' dialogue interactions have no voiced lines from either the
   player nor the NPC I've talked to - tried with Bunta and Tomo").** Your question and the answer are shown under the
   scene id `code.wb` and every one this content can produce is listed for recording (src/ui/53w_whereabouts.js;
-  src/engine/53_town.js `answersOf`): 748 lines, the question about each of 162 people in your voice and 586 answers
-  (sightings by the asker's map and the ones beside it, usual places, recollections, refusals, not knowing). The
-  answers' Japanese does not name the person, so one recording serves several English lines.
+  src/engine/53_town.js `answersOf`): 806 lines, the question about each of 162 people in your voice and 644 answers
+  from 113 askers (sightings by the asker's map and the ones beside it, usual places, recollections, refusals, not
+  knowing). The answers' Japanese does not name the person, so one recording serves several English lines. *Two
+  faults the browser test found before this was pushed:* the answers listed sightings only through a map's ways out,
+  while the game also counts its buildings' doors (`whereabouts` reads `neighbours`), so Tomo's "I saw them just now,
+  over by Hana's Teahouse" was never listed; and the recording list (tools/voice/lines.mjs) kept a code-shown line once
+  for its first speaker, so the same words from a second asker had no recording (it listed 452 of them, not the 748
+  first claimed here). Both fixed: `answersOf` counts doors (53_town.js `allLinks`), and a code-shown line is listed
+  once for each speaker (scene lines already were); the other code-shown scenes are unchanged (door 16, prop 24, fw
+  207, history 56, battle 266, prologue 6). B `spoken_lines` 7/0 (new: the question and Tomo's answer, through
+  `interact()`, Tomo's recording heard); U `voice_production` 27/0, `voicebank_plan_content` 7/0. *For recording:*
+  docs/future/voice/production/supplements/SL3_SUPPLEMENT.json (append-only, after the GO manifest, MW1 and SL1; built
+  from 4782bd0): 1,292 new recordings, all `code.wb` — the 162 questions in each of the player's four voices (648)
+  and 644 answers from 113 askers — 0 retired; nothing else in the script is new since SL1. No audio was made.
 - **Battle icons (IC-1; "Given the Icon expansion in the inventory, we could probably use new icons for the battle menus
   and enemy Intent"):** the item icons' renderer is now a maker of registries (src/ui/11_item_art.js `RB.pixelIcons`):
   `RB.itemArt` as before, and `RB.battleArt` for the battle's own drawn 16×16 icons, keyed by move (`move_<kind>`, a
@@ -5091,6 +5109,16 @@ Yasu's story, when listening, has not begun being spoken."
   (Kōhachi by his cart, his card on its post) looked at. U `road_events` 1,001/0 (new), `town` 87/0, `living_world`
   110/0, `routine_talk` 318/0, `chart_coast` 16/0, `combat_rules` 248/0, `stampbook_sb1` 39/0, `records` 272/0,
   `voice_production` 27/0, `scene_manifest` 1,023/0, `item_art` 6/0, `audio_songs` 3,238/0.
+- **B, the pushed build (4782bd0 sources, built in a clean worktree without the unfinished battle icons):**
+  `spoken_lines` 7/0, `living_world` 9/0, `world_living` 4/0, `records` 7/0, `music_inherit` 8/0, `combat_ui` 7/0
+  (the last five on ad07b64, whose game sources are the same). U on that tree: `road_events` 1,007/0,
+  `overworld_geometry` 3/0, `living_world` 110/0, `routine_talk` 318/0, `town` 87/0, `voice_production` 27/0,
+  `voicebank_plan_content` 7/0; `tools/validate.mjs` no errors. Voice runtime on the same build: `voice_runtime` 10/0;
+  `voice_runtime_vrc1` 6/1 — the slow-cache case ("a cache that answers after 3 s: the line plays") is over its 2 s
+  bound (2,533 ms with the supplement build running alongside, 2,236 ms alone). It fails the same way on e976ea1, the
+  branch head before this round (2,190 ms), so it predates these changes (none touches src/audio); it last passed 7/0
+  at VR-C1 (cfa5335), before the voice site went live (7d93c54 set HOSTED_BASE). Not fixed here; queued to be
+  root-caused on its own.
 
 ## Playtest fixes: the Stamp Book, revisits, Sae (Robin, 2026-10-19)
 

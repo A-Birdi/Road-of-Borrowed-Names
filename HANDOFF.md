@@ -651,8 +651,15 @@
       (src/ui/15_award.js `stamps`), **"Have you seen…?" spoken** (`code.wb`, src/engine/53_town.js `answersOf`),
       **battle icon registry** (`RB.battleArt`, src/ui/80_combat.js `BI`; the drawings in src/content/battle_art/ when
       they land).
-    - **Next:** AR-3 (the Mill-boss cutscene: blue water, a landing under the hut and the bridge's end, river lines under
-      the banks, the teahouse hands); the battle icons' drawings; the SL-3 recording supplement; AG-2 stays local.
+    - **After the first push of this round:** a named person a road event places where they already stand steps aside
+      while it waits (05_author.js `asides`); "Have you seen…?" answers count buildings' doors, and the recording list
+      (tools/voice/lines.mjs) lists a code-shown line once per speaker (code.wb 806). SL3 supplement (1,292
+      recordings, all code.wb: 648 questions in the player's four voices, 644 answers) is ready for Local after the
+      current batch: docs/future/voice/production/supplements/SL3_SUPPLEMENT.json.
+    - **Next:** AR-3 is drawn and waiting for Robin's look, local only (src/ui/43a_seq_ch1.js: blue water, the river's
+      lines between a base and a front layer, a spit of land under the hut and the bridge's end, Kōji's cup on his own
+      arm, hands along the forearm via `RB.portraitBody.elbow`; a before/after sheet was sent). The battle icons'
+      drawings; AG-2 stays local.
 
     **Playtest fixes (Robin, 2026-10-19): the Stamp Book, revisits, Sae.** VALIDATION.md "Playtest fixes: the Stamp
     Book, revisits, Sae"; REQUIREMENTS.md XP137, XP138.
