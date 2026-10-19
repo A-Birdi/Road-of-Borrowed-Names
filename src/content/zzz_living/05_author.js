@@ -20,7 +20,11 @@
  *     those who know them, and the people who can be asked after others (every placement of them, on maps given).
  *   L.beat(town, { id, when, en, jp }) — a change beat (W1); its content is conditioned on `beat.<town>.<id>` or on
  *     its own `when`.
- *   L.road(id, { maps, unique, variants, rate, stamp, when }) — road events (W5; none until `when` holds); L.seal(id, { map, x, y, p, needs, hint,
+ *   L.road(id, { maps, unique, variants, rate, stamp, when }) — road events (W5; none until `when` holds). Each event
+ *     ({ id, scene, when }) stands on the road with `at: { map, who: [{ char, x, y, dir, id }], props: [{ p, x, y, meet }] }`:
+ *     its people (talking to any of them runs its scene; `id` defaults to the char, so a scene's gestures find a
+ *     named speaker) and its things (`meet: true` on one examined to run the scene; the rest are only there), while
+ *     `roadev.<road>.<event>` holds (src/engine/53_town.js). `map` defaults to the road's first. L.seal(id, { map, x, y, p, needs, hint,
  *     opens, scene, openedLabel, after: { p, scene, o } }) — a return key (W6): a prop with the hint, examined
  *     through `!hook sealed`; `after` is what stands there once it is open (the sealed prop then goes).
  *   L.talk('map:id', [{ if, scene }]) — new talk at the head of a placement's list (in place: every routine slot of
@@ -127,6 +131,24 @@ RB.living = (function (C) {
     }
     C.roadEvents[id] = D;
     C.living.roads.push(id);
+    // each event's people and things, there while it stands on the road (RE-1)
+    for (const e of [D.unique].concat(D.variants || []).filter(Boolean)) {
+      if (!e.at) continue;
+      const map = e.at.map || D.maps[0], cond = 'roadev.' + id + '.' + e.id;
+      if (D.maps.indexOf(map) < 0) throw new Error('living: road event ' + id + '.' + e.id + ' placed off its road: ' + map);
+      for (const w of e.at.who || []) {
+        mapOf(map).npcs.push(Object.assign({ id: w.id || w.char, char: w.char, x: w.x, y: w.y, dir: w.dir || 'down', if: cond, talk: [{ scene: e.scene }], roadEvent: id + '.' + e.id },
+          w.perform ? { perform: w.perform } : {}, w.wander ? { wander: w.wander } : {}));
+      }
+      for (const pr of e.at.props || []) {
+        const q = Object.assign({}, pr, { if: cond, roadEvent: id + '.' + e.id });
+        delete q.meet;
+        if (pr.meet) q.scene = e.scene;
+        mapOf(map).props.push(q);
+      }
+      C.living.roadPlaces = C.living.roadPlaces || [];
+      C.living.roadPlaces.push({ road: id, id: e.id, map });
+    }
   }
   // new talk at the head of a placement's list (a change beat's new line, a road event's follow-up), kept in order
   function talk(ref, entries) {

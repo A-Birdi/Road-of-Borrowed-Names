@@ -199,10 +199,22 @@ RB.ui.award = (function () {
       setTimeout(() => award({ kind: 'moment', id: p.id, jp: t.jp || '', en: t.en || '', note: 'Kept in Journey › Travel volume, pressed with your seal', art: seal, level: 3 }), 250 + i * 900);
     });
   }
+  // ---- the Road Stamp Book: a stamp pressed (at its stand, or at once when it has none) has its slip, the stamp's own
+  // design pressed onto it (Robin, 2026-10-19: "Pressing a Stamp at Reedwake has no toast popup stating that it was
+  // done, only shown in dialogue"); several at once come one after another, three at most (the third says how many more)
+  function stamps(ids, where) {
+    const S = (RB.content && RB.content.stamps) || {}, list = (ids || []).filter((id) => S[id]);
+    const at = where && RB.content.stampStands && RB.content.stampStands[where] ? ' at ' + RB.content.stampStands[where].title.en : '';
+    list.slice(0, MAX).forEach((id, i) => {
+      const d = S[id], more = i === MAX - 1 && list.length > MAX ? ' (and ' + (list.length - MAX) + ' more)' : '';
+      const art = RB.ui.records && RB.ui.records.stampSvg ? RB.ui.records.stampSvg(d, 'pressed', d.title.en) : '';
+      setTimeout(() => award({ kind: 'stamp', id, jp: d.title.jp, en: d.title.en, note: (d.note || d.criteria).en + ' Pressed' + at + more + '. Kept in Journey › Stamp book.', art, ink: d.design && d.design.ink }), i * 900);
+    });
+  }
   if (RB.bus) {
     RB.bus.on('story:settled', () => { setTimeout(moments, 120); newDot(); });
     // a journey begun or loaded: what its volume already holds is not news
     RB.bus.on('campaign:changing', () => { live.slice().forEach((x) => x.close(true)); });
   }
-  return Object.assign(award, { markKeepsake, moments, newDot, live: () => live.map((x) => ({ kind: x.kind, id: x.id })), closeAll: () => live.slice().forEach((x) => x.close(true)), HOLD });
+  return Object.assign(award, { markKeepsake, moments, stamps, newDot, live: () => live.map((x) => ({ kind: x.kind, id: x.id })), closeAll: () => live.slice().forEach((x) => x.close(true)), HOLD });
 })();

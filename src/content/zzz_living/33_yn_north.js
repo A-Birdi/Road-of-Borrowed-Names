@@ -40,8 +40,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { eyes: 'round', style: 'short', acc: [], bg: '#2a2e36' } };
   C.maps['yn.north'].npcs.push({ id: 'lw_genpachi', x: 17, y: 21, dir: 'up', if: '!lw_yn_north_guest_done', talk: 'yn.lw_road_north_guest' });
   L.road('yn_north', { maps: ['yn.north'],
-    unique: { id: 'guest', scene: 'yn.lw_road_north_guest' },
-    variants: [{ id: 'rocks', scene: 'yn.lw_road_north_rocks' }, { id: 'herbs', scene: 'yn.lw_road_north_herbs' }, { id: 'note', scene: 'yn.lw_road_north_note' }],
+    // each stands where it happens (RE-1): Genpachi already stands on the road (above), so his event adds only the stump
+    // he rested on; the leaning sign at the bend where the road turns up under the east cliff, stones fallen below it;
+    // the herb child with a basket beside the road's west climb; the note weighed down at the waystone's foot, a
+    // traveller bent over it
+    unique: { id: 'guest', scene: 'yn.lw_road_north_guest', at: { props: [{ p: 'stump', x: 16, y: 22, meet: true }] } },
+    variants: [
+      { id: 'rocks', scene: 'yn.lw_road_north_rocks', at: { props: [{ p: 'sign', x: 24, y: 12, meet: true }, { p: 'rock', x: 26, y: 10 }, { p: 'rock', x: 27, y: 11 }] } },
+      { id: 'herbs', scene: 'yn.lw_road_north_herbs', at: { who: [{ char: 'lw_rd_child2', x: 10, y: 16, dir: 'left' }], props: [{ p: 'ko_basket', x: 11, y: 16 }] } },
+      { id: 'note', scene: 'yn.lw_road_north_note', at: { who: [{ char: 'lw_rd_traveller', x: 17, y: 4, dir: 'left' }], props: [{ p: 'pet_papers_tidy', x: 16, y: 4, meet: true }] } },
+    ],
     stamp: { title: ['{北|きた} の {道|みち}', 'the North Road'], motif: 'path', ink: '#5a6070' } });
   C.notes.lw_inn_yukata = { title: T('The inn\'s yukata', '{宿|やど} の {浴衣|ゆかた}'), fiction: false,
     jp: '{温泉|おんせん} の {宿|やど} で は 、 {客|きゃく} に {浴衣|ゆかた} を {貸|か}す 。 {宿|やど} の {名前|なまえ} や {印|しるし} が {染|そ}めて ある こと も {多|おお}い 。 {客|きゃく} は {浴衣|ゆかた} の まま 、 {町|まち} の {湯|ゆ} を {巡|めぐ}って {歩|ある}く 。',

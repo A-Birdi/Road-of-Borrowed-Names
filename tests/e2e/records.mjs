@@ -72,6 +72,9 @@ await test('a twelve-chapter journey: a stamp pressed at its stand; the seal; a 
   await p.evaluate(() => RB.world.interact());
   await p.waitForFunction(() => RB.ui.dialogue.isOpen(), null, { timeout: 8000 });
   assert(/press the stamp/.test(await p.evaluate(() => RB.ui.dialogue.shown().en)), 'pressed at the stand');
+  // its slip, with the line (Robin, 2026-10-19: "Pressing a Stamp at Reedwake has no toast popup")
+  const slip = await p.evaluate(() => { const n = document.querySelector('.toast.award.aw-stamp[data-id="ch.rw"]'); return n ? { kind: n.querySelector('.kind').textContent, text: n.textContent, art: !!n.querySelector('.aw-art svg') } : null; });
+  assert(slip && /Stamp pressed/.test(slip.kind) && /Reedwake/.test(slip.text) && /at Reedwake/.test(slip.text) && slip.art, 'a "Stamp pressed" slip for it, saying where: ' + JSON.stringify(slip));
   await settle(p);
   assert(await p.evaluate(() => !!RB.game.s.records.stamps['ch.rw'] && RB.game.s.records.stamps['ch.rw'].at === 'reedwake'), 'recorded once, with where');
   // the travel volume: the seal

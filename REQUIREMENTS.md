@@ -1121,6 +1121,22 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   `living_world` 9/0 (RV-2, RV-3).
 
 ## Evidence index (see VALIDATION.md for commands and dates)
+- [~] XP139 Road events stand on the road (Robin, 2026-10-19: "These random events on the paths should have actual NPCs
+  where the event is meant to take place, along with any relevant props. It should not force you into the interaction as
+  soon as you enter"): all 66 events placed, nothing run on arrival, met by going to their people or things. U
+  `road_events` 1,001/0, B `living_world` 9/0 (VALIDATION.md "Playtest fixes, second round"). Robin's look still to
+  come.
+- [x] XP140 The route chart's coastal places stand on land, Kotonoha on its island; ferries cross open sea. U
+  `chart_coast` 16/0.
+- [x] XP141 A map without music plays its surroundings' song on a load or from the title, never the title's. B
+  `music_inherit` 8/0.
+- [x] XP142 Heat's extra force goes through a ward word, a standing ward taking it first; one Demanding group rebalanced
+  to keep the difficulty curve. U `combat_rules` 248/0, `combat` 2,107/0.
+- [x] XP143 A "Stamp pressed" slip for stamps pressed at a stand or by the book itself. B `records` 7/0.
+- [~] XP144 "Have you seen…?" spoken: question and answers under `code.wb`, 748 lines listed for recording (Local's).
+- [~] XP145 Battle icons drawn for moves and responses (IC-1): the registry and the screen's use are in; the drawings to
+  come.
+
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).
 - R4.1/R4.2: ui.mjs new-game test (prologue skip → creation → setup → world).

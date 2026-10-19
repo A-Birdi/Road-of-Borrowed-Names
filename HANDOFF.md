@@ -639,6 +639,21 @@
       would need takes the canvas under its minimum); Voice A / Voice B read "More feminine." / "More masculine."; Pat
       brings the pet's picture into view and shows its line. VALIDATION.md "Every line spoken: the first batch".
 
+    **Playtest fixes, second round (Robin, 2026-10-19).** VALIDATION.md "Playtest fixes, second round"; REQUIREMENTS.md
+    XP139–XP145.
+    - **Road events stand on the road** (src/engine/53_town.js `roadEventAt`/`eventHere`/`placedAt`, the `roadev` term;
+      src/engine/90_game.js runs only an unplaced event on arrival; src/content/zzz_living/05_author.js `at`;
+      06_road_folk.js; each region file's `L.road`). Validator: tests/unit/road_events.test.mjs. Placing tool:
+      tools/review/map_ascii.mjs.
+    - **Chart coast** (src/ui/50_menu.js `COAST`, `ISLES`, `coastPath`), **music on fresh entries** (src/engine/
+      50_world.js `songAround`, `fresh`), **Heat through a ward word** (src/engine/95_combat.js `wardBlock`; the g1
+      Demanding group in src/content/ch6/20_maps.js; tests/fixtures/combat_golden.json regenerated), **stamp slips**
+      (src/ui/15_award.js `stamps`), **"Have you seen…?" spoken** (`code.wb`, src/engine/53_town.js `answersOf`),
+      **battle icon registry** (`RB.battleArt`, src/ui/80_combat.js `BI`; the drawings in src/content/battle_art/ when
+      they land).
+    - **Next:** AR-3 (the Mill-boss cutscene: blue water, a landing under the hut and the bridge's end, river lines under
+      the banks, the teahouse hands); the battle icons' drawings; the SL-3 recording supplement; AG-2 stays local.
+
     **Playtest fixes (Robin, 2026-10-19): the Stamp Book, revisits, Sae.** VALIDATION.md "Playtest fixes: the Stamp
     Book, revisits, Sae"; REQUIREMENTS.md XP137, XP138.
     - **Stamp Book** (src/content/records/00_stamps.js, src/engine/58b_records.js, src/ui/15_award.js, 66c_records.js):

@@ -8,8 +8,9 @@
 //  - LW-03/04: Reedwake after setting out: Oto in his routine's place, his place's first line said once then his
 //    usual talk; Hana asked "Have you seen…?" about him.
 //  - LW-05: the Journey names Reedwake as changed after the festival elsewhere.
-//  - LW-06: walking onto the Reedwake road from the village: the pedlar's cart; a load on the road: nothing. The
-//    flood stone: a hint, then (once waiting is learned) it opens.
+//  - LW-06 / RE-1: walking onto the Reedwake road from the village: the pedlar by his cart, nothing run on arrival;
+//    talked to, his event; a load on the road: nothing. The flood stone: a hint, then (once waiting is learned) it
+//    opens.
 //  - LW-08: on the harbour, someone across the map is not "seen" on arrival; brought into view, they are.
 //  - LW-09: Ashihara's smith, whose placement moves (same id) when the forge moves while you watch, walks to it.
 // Usage: node tests/e2e/living_world.mjs
@@ -202,13 +203,20 @@ await test('RV-3: Sae on the mill road after the wheel turns thanks you, without
   await ctx.close();
 });
 
-await test('LW-06: walking onto the Reedwake road meets the pedlar (a load on the road does not); the flood stone waits for waiting', async () => {
+await test('LW-06 / RE-1: on the Reedwake road the pedlar stands by his cart, and the event is his to tell when you go to him (nothing runs on arrival; a load on the road holds no event); the flood stone waits for waiting', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
   await start(p, 'rw.road', 20, 10, DONE);
   assert(await p.evaluate(() => RB.game.mode() === 'world' && !RB.ui.dialogue.isOpen()), 'starting on the road: no event');
   await start(p, 'rw.village', 2, 30, DONE, { dir: 'left' });
+  await p.evaluate(() => { RB.game.transition('rw.road', 30, 9, 'left'); });
+  await p.waitForFunction(() => RB.game.s.map === 'rw.road' && RB.game.mode() === 'world', null, { timeout: 8000 });
+  await p.waitForTimeout(1200);
+  // (Robin, 2026-10-19: "It should not force you into the interaction as soon as you enter")
+  const arrived = await p.evaluate(() => ({ open: RB.ui.dialogue.isOpen(), run: RB.script.isRunning(), here: RB.town.eventHere(RB.game.s, 'rw_road'), card: RB.world.W.map.props.some((pr) => pr.roadEvent === 'rw_road.cart' && RB.state.test(RB.game.s, pr.if)), kohachi: RB.world.W.npcs.some((n) => n.id === 'lw_kohachi') }));
+  assert(!arrived.open && !arrived.run && arrived.here && arrived.here.id === 'cart' && arrived.card && arrived.kohachi, 'walking onto the road runs nothing: the pedlar and his card are there to go to: ' + JSON.stringify(arrived));
   // (the test's own player answers the wheel card: RB.test's automatic mode solves a challenge's steps)
-  await p.evaluate(() => { RB.test.enable(); RB.game.transition('rw.road', 30, 9, 'left'); });
+  await p.evaluate(() => RB.test.enable());
+  assert(await talkTo(p, 'lw_kohachi'), 'faced the pedlar');
   for (let i = 0; i < 100 && !(await p.evaluate(() => !!RB.game.s.flags.lw_rw_cart_done)); i++) await p.waitForTimeout(200);
   const st = await p.evaluate(() => { RB.test.disable(); return { road: RB.game.s.world.roads.rw_road, said: RB.game.s.backlog.filter((l) => l.who === 'lw_kohachi').length, note: RB.game.s.notebook.some((e) => e.id === 'lw_carters_cards') }; });
   assert(st.said >= 2 && st.road && st.road.unique === 'solved' && st.note, 'walking onto the road: the pedlar\'s cart, the card read, solved, and a note: ' + JSON.stringify(st));

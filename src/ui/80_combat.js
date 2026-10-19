@@ -218,6 +218,21 @@ RB.combat = (function () {
     for (const [t, n] of TAG_ICON) if (tags.indexOf(t) >= 0) return n;
     return 'words';
   }
+  // The battle's drawn icons (IC-1; RB.battleArt, src/content/battle_art/): a creature's move ('move_<kind>', a
+  // move to be read 'move_reading'), a response ('resp_<kind>': a word by its first tag, or unravel, wait, answer,
+  // truth, tech, proc), a state on it; each falls back to its line drawing. big: the response cards' and the
+  // telegraph's size (32 px), else 16.
+  const BI = (key, line, big) => (RB.battleArt && RB.battleArt.has(key) ? RB.battleArt.html(key, big ? 2 : 1, 'bt-ic') : I(line));
+  const moveArt = (it, big) => BI('move_' + (it && READING[it.kind] && READING[it.kind].icon ? 'reading' : (it && it.kind) || 'strike'), moveIcon(it), big);
+  function cardKey(c) {
+    if (['wait', 'proc', 'resolve', 'unravel', 'answer', 'truth', 'tech'].indexOf(c.kind) >= 0) return c.kind === 'resolve' ? 'proc' : c.kind;
+    const tags = (c.word && c.word.tags) || [];
+    for (const [t] of TAG_ICON) if (tags.indexOf(t) >= 0) return t === 'anchor' ? 'stone' : t === 'warm' ? 'fire' : t;
+    return 'word';
+  }
+  const cardArt = (c, big) => BI('resp_' + cardKey(c), cardIcon(c), big);
+  const STATUS_ART = { heat: 'move_heat', shroud: 'move_shroud', charge: 'move_charge', silence: 'move_silence', 'ward:pc': 'resp_ward', 'ward:comp': 'resp_ward' };
+  const stateArt = (x) => (!x.icon && STATUS_ART[x.key] ? BI(STATUS_ART[x.key], STATUS_ICON[x.key]) : I(x.icon || STATUS_ICON[x.key]));
   function compName() {
     const s = RB.game.s;
     return s.comp && RB.content.chars[s.comp] ? RB.content.chars[s.comp].name.en : 'companion';
@@ -319,7 +334,7 @@ RB.combat = (function () {
     const it = st.foes[i].intent;
     const line = intentLine(it, i);
     const g = gistOf(i, it);
-    const face = I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '');
+    const face = moveArt(it, true) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '');
     // (the task slip carries the states as plain text; on screen they are on the foe's slip)
     const states = compact ? statusList(i) : [];
     let h = '<div class="it-label">' + (compact ? '<span class="it-kind">' + face + '</span>' : kw(kkey('intent', i), 'it-kind', face + Q())) +
@@ -399,9 +414,9 @@ RB.combat = (function () {
         (st.foes.length >= 4 ? '<span class="fs-letter" aria-hidden="true">' + 'ABCDE'[order.indexOf(i)] + '</span>' : '') +
         '<span class="fs-n" aria-hidden="true">' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span>' + markHtml(i) + '</span>' +
         '<span class="fs-l2" aria-hidden="true"><span class="fs-k">' + (down ? '<span class="fs-done">' + I('done') + 'Settled</span>' : knotsHtml(i)) + '</span>' +
-        (down || !it ? '' : '<span class="fs-it">' + (od ? '<span class="fs-ord" aria-hidden="true">' + od.n + '</span>' : '') + I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') +
-          (od && od.aim ? '<span class="fs-aim">→ ' + esc(aimEn(od.aim)) + '</span>' : '') + (it2 ? '<span class="fs-and">and ' + I(moveIcon(it2)) + esc(moveLabel(it2)) + '</span>' : '') + '</span>') + '</span>' +
-        (states.length ? '<span class="fs-st" aria-hidden="true">' + states.map((x) => '<span class="pill">' + I(x.icon || STATUS_ICON[x.key]) + esc(x.label) + '</span>').join('') + '</span>' : '') +
+        (down || !it ? '' : '<span class="fs-it">' + (od ? '<span class="fs-ord" aria-hidden="true">' + od.n + '</span>' : '') + moveArt(it) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') +
+          (od && od.aim ? '<span class="fs-aim">→ ' + esc(aimEn(od.aim)) + '</span>' : '') + (it2 ? '<span class="fs-and">and ' + moveArt(it2) + esc(moveLabel(it2)) + '</span>' : '') + '</span>') + '</span>' +
+        (states.length ? '<span class="fs-st" aria-hidden="true">' + states.map((x) => '<span class="pill">' + stateArt(x) + esc(x.label) + '</span>').join('') + '</span>' : '') +
         '</button>';
     }
     return '<span class="fs-h" id="cb-tgt-h">' + I('aim') + '<span>' + (can ? 'Target' : 'Creatures') + '</span>' + kw('target', 'fs-help', Q(), ' — how to choose whom you act on') + '</span>' +
@@ -423,7 +438,7 @@ RB.combat = (function () {
       ui.foe.classList.remove('group');
       ui.foe.innerHTML = '<div class="fplate solo" data-foe="' + T + '"><span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' +
         '<span class="foe-k' + (states.length ? ' has-st' : '') + '">' + knotsHtml(T) + (states.length ? '<span class="it-states" role="group" aria-label="Its state">' +
-          states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(x.icon || STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span></div>';
+          states.map((x) => kw(x.key, 'st', '<span class="pill">' + stateArt(x) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span></div>';
     }
     // the telegraph panel, by intent display (battle addendum §13.3, §13.6). Adaptive: a routine move
     // is its creature's badge (symbol and strength; its words, what it does and the translation in the
@@ -440,7 +455,7 @@ RB.combat = (function () {
         const sts = statusList(i).filter((x) => x.key !== 'silence');
         return '<div class="it-block' + (i === T ? ' it-target' : ' it-other') + '" data-foe="' + i + '"><div class="it-who">' + (i === T ? I('aim') : '') + '<span>' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span>' + markHtml(i) + '</span>' +
           (tag ? '<span class="it-tag">' + tag + '</span>' : '') +
-          (sts.length ? '<span class="it-states" role="group" aria-label="Its state">' + sts.map((x) => kw(kkey(x.key, i), 'st', '<span class="pill">' + I(x.icon || STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</div>' + intentHtml(false, i) + '</div>';
+          (sts.length ? '<span class="it-states" role="group" aria-label="Its state">' + sts.map((x) => kw(kkey(x.key, i), 'st', '<span class="pill">' + stateArt(x) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</div>' + intentHtml(false, i) + '</div>';
       };
       const lay = RB.battleStage.lay();
       const order = lay && lay.visual && lay.visual.length === st.foes.length ? lay.visual : st.foes.map((_, k) => k);
@@ -469,7 +484,7 @@ RB.combat = (function () {
     const member = (who, name, v, max, ward) => '<div class="pm' + (aimed.indexOf(who) >= 0 ? ' aimed' : '') + (pvA.indexOf(who) >= 0 ? ' cb-pv' : '') + '">' +
       '<div class="pm-h"><span class="pm-n">' + esc(name) + '</span>' +
       (aimed.indexOf(who) >= 0 ? '<span class="aimtag">' + I('aim') + 'its aim</span>' : '') +
-      (ward ? kw('ward:' + who, 'pm-w', '<span class="pill">' + I('shield') + '<span class="wl">Ward </span>' + ward + '</span>', ' in front of ' + name + ' — what this means') : '') + '</div>' +
+      (ward ? kw('ward:' + who, 'pm-w', '<span class="pill">' + BI('resp_ward', 'shield') + '<span class="wl">Ward </span>' + ward + '</span>', ' in front of ' + name + ' — what this means') : '') + '</div>' +
       '<div class="pm-r"><div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div>' +
       '<span class="pm-v"><span class="sr">Resolve </span>' + v + ' / ' + max + '</span></div></div>';
     const v = V();
@@ -661,13 +676,13 @@ RB.combat = (function () {
     let what = '';
     if (READING[it.kind]) what = it.kind === 'plea' ? 'It is asking you something. Read what it asks.' : 'It is telling you something. Read what it says.';
     else what = L().withFoe(st, i, () => RB.combatHelp.intentInfo(st, it, words())).what;
-    return '<div class="ic-k">' + I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</div>' +
+    return '<div class="ic-k">' + moveArt(it, true) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</div>' +
       (line.jp ? '<div class="ic-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>' : '') +
       (line.en && enShown() ? '<div class="ic-en">' + esc(line.en) + '</div>' : '') +
       (line.en && !enShown() ? '<button type="button" class="pbtn quiet tr ic-tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '') +
       (what ? '<p class="ic-what">' + what + '</p>' : '') +
       // the order (C-70) and a second move (E26), when there are
-      (() => { const od = !badgeSnap ? ordOf(i) : null; const it2 = !badgeSnap && st.foes[i].intent2; return (od ? '<p class="ic-ord">' + esc('Acts ' + NTH[od.n] + (od.aim ? ', aimed at ' + aimEn(od.aim) : '') + '.') + '</p>' : '') + (it2 ? '<p class="ic-and">' + I(moveIcon(it2)) + esc('And then: ' + moveLabel(it2) + '. ' + (L().withFoe(st, i, () => RB.combatHelp.gist(st, it2)) || '')) + '</p>' : ''); })() +
+      (() => { const od = !badgeSnap ? ordOf(i) : null; const it2 = !badgeSnap && st.foes[i].intent2; return (od ? '<p class="ic-ord">' + esc('Acts ' + NTH[od.n] + (od.aim ? ', aimed at ' + aimEn(od.aim) : '') + '.') + '</p>' : '') + (it2 ? '<p class="ic-and">' + moveArt(it2) + esc('And then: ' + moveLabel(it2) + '. ' + (L().withFoe(st, i, () => RB.combatHelp.gist(st, it2)) || '')) + '</p>' : ''); })() +
       (!badgeSnap && RB.game.s.comp === 'nao' && (st.foes[i].nextIntents || []).length ? '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(st.foes[i].nextIntents.map(moveLabel).join(', then ')) + '.”</span></div>' : '') +
       '<div class="ic-f">' + kw(kkey('intent', i), 'pbtn quiet ic-more', '<span>How to answer it</span>', ' — opens a note') + '</div>';
   }
@@ -715,7 +730,14 @@ RB.combat = (function () {
       else if (f.t === 'water') { out.push('cools the Heat on ' + nm(f.foe)); }
       else if (f.t === 'light') { out.push('clears the mist on ' + nm(f.foe)); }
       else if (f.t === 'bind') { out.push('stops ' + nm(f.foe) + ' gathering force'); said.add(f.foe + ':charge'); }
-      else if (f.t === 'ward') { if (f.block) { out.push('blocks the blow aimed at ' + (f.target === 'party' ? 'you both' : who(f.target))); said.add(f.foe + ':blow'); } else out.push('raises a ward (' + (f.n || 2) + ') in front of ' + who(f.target)); }
+      else if (f.t === 'ward') {
+        if (f.block) {
+          // (Heat's extra force still comes through: src/engine/95_combat.js foeAct)
+          const fo = st.foes[f.foe], H = L().HEAT, hb = fo && fo.heat ? Math.min(fo.heat, H.max) * H.per : 0;
+          out.push('blocks the blow aimed at ' + (f.target === 'party' ? 'you both' : who(f.target)) + (hb ? ' (its Heat\'s +' + hb + ' still comes through)' : ''));
+          said.add(f.foe + ':blow');
+        } else out.push('raises a ward (' + (f.n || 2) + ') in front of ' + who(f.target));
+      }
       else if (f.t === 'heal') { if (f.gain > 0) out.push('restores resolve (' + f.aim.filter((w) => f.d[w] > 0).map((w) => who(w) + ' +' + f.d[w]).join(', ') + ')'); else none = f.aim.length > 1 ? 'you are both at full resolve' : 'you are at full resolve'; }
       else if (f.t === 'settle') { out.push('answers its plea, and a knot loosens'); said.add(f.foe + ':plea'); }
       else if (f.t === 'reveal') { out.push('sees through the false promise'); said.add(f.foe + ':lie'); }
@@ -748,7 +770,7 @@ RB.combat = (function () {
     const ans = fresh ? L().answers(c.word).map((k) => L().INTENTS[k].label) : [];
     const ready = c.kind === 'tech' && !c.disabled; // a technique waiting for the companion doesn't glow
     return '<button class="resp rcard' + (fresh ? ' fresh' : '') + (ready ? ' tech' : '') + (c.pointed ? ' pointed' : '') + (c.tried ? ' tried' : '') + (c.mod ? ' modded' : '') + '" data-i="' + i + '"' + (c.id != null ? ' data-cid="' + esc(String(c.id)) + '"' : '') + ' data-foes="' + r.foes.join(',') + '" data-allies="' + r.allies.join(',') + '"' + (c.disabled ? ' disabled' : '') + '>' +
-      '<span class="ic">' + I(cardIcon(c)) + '</span>' +
+      '<span class="ic">' + cardArt(c, true) + '</span>' +
       '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span>' +
       (fresh ? '<span class="rc-new">New</span>' : '') + (ready ? '<span class="rc-new">With ' + esc(compName()) + '</span>' : '') +
       (c.pointed ? '<span class="rc-new rc-point">' + esc(compName()) + ' suggests this</span>' : '') + (c.tried ? '<span class="rc-new rc-tried">Tried</span>' : '') +
@@ -1076,7 +1098,7 @@ RB.combat = (function () {
     return '<div class="cb-situ">' + who.map((i) =>
       '<div class="cs-foe">' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span> ' + knotsHtml(i) + '</div>' +
       '<div class="cs-intent">' + intentHtml(true, i) + '</div>').join('') +
-      '<div class="cs-chose">' + I(cardIcon(card)) + '<span>You chose <b>' + esc(card.en) + '</b>' + (tgt ? ' — <b>' + esc(tgt) + '</b>' : '') + '. The encounter waits while you write.</span></div></div>';
+      '<div class="cs-chose">' + cardArt(card) + '<span>You chose <b>' + esc(card.en) + '</b>' + (tgt ? ' — <b>' + esc(tgt) + '</b>' : '') + '. The encounter waits while you write.</span></div></div>';
   }
   // (a creature's intro, its phase lines and what is said once it is settled are shown under one scene id, so their
   // recordings are found: Robin, 2026-10-19, "After defeating an enemy, the Narrator does not voice the dialogue given")
@@ -1160,6 +1182,7 @@ RB.combat = (function () {
         msg = (isGroup() ? 'The ' + shortEn(fi) + ' strikes ' + nm(f.who) : nm(f.who) + ' is struck') + ' (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ')' + (f.held ? ' — the salts keep them standing' : '') + '.'; break;
       }
       case 'block': v.ward[f.who] = Math.max(0, (v.ward[f.who] || 0) - f.n); sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
+      case 'heatThrough': msg = who('Its Heat pushes through the ward word: +' + f.n + ' still comes at ' + nm(f.who) + '.'); break;
       case 'heat': fo.heat = f.n; sfx('enemy_intent'); msg = who('It overheats: Heat ' + f.n + ' — its blows now hit +' + (f.bonus != null ? f.bonus : f.n) + ' harder until it is cooled.'); break;
       case 'shroud': fo.shroud = true; sfx('wind'); msg = who('Mist swallows its knots.'); break;
       case 'charge': fo.charged = true; sfx('enemy_intent'); msg = who('It gathers itself: its next blow will hit +2 harder.'); break;

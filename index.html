@@ -3069,6 +3069,11 @@ body.high-contrast .kwcard { border-color: #000; }
 .combat-ui .rcard:active { transform: translateY(1px); }
 .rcard .ic { grid-area: ic; width: 28px; height: 28px; color: var(--ink-2); }
 .rcard .ic svg { width: 100%; height: 100%; }
+/* the battle's drawn icons (IC-1; src/content/battle_art/): 16 px pictures at whole scales, never smoothed; on a
+   response card always 32 px (two pixels each) whatever the line drawing's size there */
+.combat-ui img.bt-ic { image-rendering: pixelated; flex: none; vertical-align: middle; }
+.combat-ui .rcard .ic:has(> img.bt-ic) { width: 32px; height: 32px; }
+.combat-ui .rcard .ic > img.bt-ic { width: 32px; height: 32px; display: block; }
 .rcard .rc-w { grid-area: w; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.5em; min-width: 0; }
 .rcard .rc-jp .jline { font-size: 1.2em; line-height: 1.9; }
 .rcard .rc-en { color: var(--ink-2); font-weight: 600; }
@@ -41870,7 +41875,15 @@ RB.world = (function () {
     refreshActors();
     placeCompanion();
     unstick(W.player);
-    if (m.def.music && RB.audio) RB.audio.playSong(musicFor(m.def, st));
+    // A map without a song of its own keeps whatever the world is playing (a house keeps its village's). Coming into
+    // the world (a new journey, a load) or from the title, nothing of the world is playing: then it plays the song of
+    // the place it opens onto (Robin, 2026-10-19: "Loading into an area that doesn't set the BGM will retain the
+    // currently playing / previous BGM, such as the Title Screen theme when loading into the Lantern Hall")
+    if (RB.audio) {
+      const now = RB.audio.currentSong ? RB.audio.currentSong() : null;
+      const song = musicFor(m.def, st) || (opts.fresh || !now || FRONT_SONGS[now] ? songAround(m, st) : null);
+      if (song) RB.audio.playSong(song);
+    }
     RB.render.invalidate();
     RB.bus.emit('map:enter', { id: mapId });
   }
@@ -41883,6 +41896,25 @@ RB.world = (function () {
   function musicFor(def, st) {
     if (!def || !def.music) return null;
     return typeof def.music === 'function' ? def.music(st) : pickMusic(def.music, st);
+  }
+  // songs that are not the world's (the title's)
+  const FRONT_SONGS = { title: 1 };
+  // the song of the nearest place a map opens onto (through its ways out, a few steps at most), for a map without one
+  function songAround(m, st) {
+    const seen = new Set([m.id]);
+    let level = [m];
+    for (let d = 0; d < 4 && level.length; d++) {
+      const next = [];
+      for (const cm of level) for (const ex of cm.exits || []) {
+        if (!ex.to || seen.has(ex.to) || !RB.content.maps[ex.to]) continue;
+        seen.add(ex.to);
+        const song = musicFor(RB.content.maps[ex.to], st);
+        if (song) return song;
+        try { next.push(RB.maps.compile(ex.to)); } catch (e) { /* a way out to a map that cannot be built is passed over */ }
+      }
+      level = next;
+    }
+    return null;
   }
   function playerLook() {
     const l = RB.equip.look(s()); // own look + the equipped keepsake (src/engine/07_equip.js)
@@ -44548,6 +44580,8 @@ RB.town = (function () {
     arrival = !(opts && opts.inScript) && s.map && s.map !== mapId ? { to: mapId, from: s.map, moves: R.moves } : null;
     const id = townOf(mapId);
     const from = s.map ? townOf(s.map) : null;
+    // leaving a road: what stood on it is gone (a later visit has its own)
+    for (const rid in R.roads) { const D = (C().roadEvents || {})[rid]; if (R.roads[rid] && R.roads[rid].here && D && (D.maps || []).indexOf(mapId) < 0) R.roads[rid].here = null; }
     // leaving a town: remember when, and what it cares about as it was
     if (from && from !== id) {
       const t = townRec(s, from);
@@ -44657,6 +44691,25 @@ RB.town = (function () {
     const guess = here[0] || null;
     return { kind: 'uncertain', target, map: guess, line: LINES.uncertain(who, guess ? placeOf(guess) : null), note: { target, map: guess, kind: 'uncertain' } };
   }
+  // Every answer an asker could give, by the rules above, with the content as it stands (for recording: the
+  // "Have you seen…?" lines are spoken, src/ui/53w_whereabouts.js lists them; Robin, 2026-10-19: "The 'have you seen'
+  // dialogue interactions have no voiced lines from either the player nor the NPC"). A sighting is on the asker's
+  // map or one beside it; a loose acquaintance's recollection names a map the target can stand on, or none.
+  function answersOf(asker) {
+    const rels = C().relations || {}, rel = rels[asker] || {}, out = [];
+    if (rel.friendly === false) return [rel.refusal || LINES.refusal()];
+    out.push(LINES.unknown());
+    const placed = (p) => { const m = new Set(); for (const id in C().maps) for (const n of C().maps[id].npcs || []) if ((n.char || n.id) === p) m.add(id); return m; };
+    const mine = placed(asker);
+    for (const target in rel.knows || {}) {
+      const where = placed(target), who = nameOf(target);
+      for (const m of mine) for (const nb of [m].concat((C().maps[m].exits || []).map((e) => e.to).filter(Boolean))) if (where.has(nb)) out.push(LINES.sighting(placeOf(nb), nb === m));
+      if (rel.knows[target] === 'routine') out.push((rels[target] || {}).usual || LINES.routine(who, usualPlaces(target)));
+      else { out.push(LINES.uncertain(who, null)); for (const m of where) out.push(LINES.uncertain(who, placeOf(m))); }
+    }
+    const seen = new Set();
+    return out.filter((l) => l && l.jp && !seen.has(l.jp) && seen.add(l.jp));
+  }
   // a resident's usual places: the maps their routine slots are on, in slot order ([{ map, en, jp }])
   function usualPlaces(person) {
     const out = [];
@@ -44727,8 +44780,13 @@ RB.town = (function () {
     for (const id in R) if ((R[id].maps || []).indexOf(mapId) >= 0) return id;
     return null;
   }
-  // Entering a road's map: the scene to run now, if any. The unique event until it is solved (offered again each
-  // visit after leaving it); afterwards a variant on the road's chance, drawn from the campaign's stream.
+  // Entering a road's map: the visit's event, if any (its scene's id). The unique event until it is solved (offered
+  // again each visit after leaving it); afterwards a variant on the road's chance, drawn from the campaign's stream.
+  // The event stands on the road (Robin, 2026-10-19: "These random events on the paths should have actual NPCs where
+  // the event is meant to take place, along with any relevant props. It should not force you into the interaction as
+  // soon as you enter"): its people and things (`at` in its registration, src/content/zzz_living/05_author.js) are
+  // there while `roadev.<road>.<event>` holds, from this arrival until it is seen through or you leave the road, and
+  // its scene runs when you go to them. An event without `at` still runs on arrival (90_game.js).
   function roadEventAt(s, mapId) {
     const id = roadOf(mapId);
     if (!id) return null;
@@ -44744,13 +44802,24 @@ RB.town = (function () {
     if (r.visit === R.moves) return null;
     if (r.visit === R.moves - 1 && r.lastMap && (D.maps || []).indexOf(r.lastMap) >= 0) { r.visit = R.moves; r.lastMap = mapId; return null; }
     r.visit = R.moves; r.lastMap = mapId;
-    if (D.unique && !r.solved[D.unique.id]) { r.unique = 'offered'; r.offered++; return D.unique.scene; }
+    r.here = null;
+    if (D.unique && !r.solved[D.unique.id]) { r.unique = 'offered'; r.offered++; r.here = { id: D.unique.id }; return D.unique.scene; }
     const open = (D.variants || []).filter((v) => !v.when || RB.state.test(s, v.when));
     if (!open.length || !RB.streams) return null;
     if (RB.streams.next(s, 'road:' + id) >= (D.rate != null ? D.rate : 0.2)) return null;
     const v = open[Math.floor(RB.streams.next(s, 'road:' + id) * open.length)];
+    r.here = { id: v.id };
     return v.scene;
   }
+  // the event standing on a road now ({ road, id, ev } or null): chosen on arrival, not yet seen through
+  function eventHere(s, roadId) {
+    const r = rec(s).roads[roadId], D = (C().roadEvents || {})[roadId];
+    if (!r || !r.here || r.here.done || !D) return null;
+    const ev = [D.unique].concat(D.variants || []).find((e) => e && e.id === r.here.id);
+    return ev ? { road: roadId, id: ev.id, ev } : null;
+  }
+  // the event standing on this map's road has people or things placed for it (else its scene runs on arrival)
+  function placedAt(s, mapId) { const id = roadOf(mapId); const h = id && eventHere(s, id); return !!(h && h.ev.at); }
   // a map's enter event (its story) runs on this arrival (90_game.js runEnterEvents): it is the visit's event, and a
   // road's does not follow on its heels
   function storyOnArrival(mapId) { if (arrival && arrival.to === mapId) arrival.story = true; }
@@ -44759,6 +44828,7 @@ RB.town = (function () {
     const R = rec(s);
     const r = R.roads[road] || (R.roads[road] = { unique: null, solved: {}, offered: 0 });
     r.solved[id] = true;
+    if (r.here && r.here.id === id) r.here.done = true; // seen through: its people go on their way
     const D = (C().roadEvents || {})[road];
     if (D && D.unique && id === D.unique.id) r.unique = 'solved';
     const all = D ? [D.unique].concat(D.variants || []).filter(Boolean).every((e) => r.solved[e.id]) : false;
@@ -44810,6 +44880,8 @@ RB.town = (function () {
   if (RB.state && RB.state.addTerm) {
     // slot.<person>=k : the resident's current routine slot
     RB.state.addTerm('slot', (s, rest, op, val, num, cmp) => cmp(slotOf(s, rest), op || '=', num(val == null ? 1 : val)));
+    // roadev.<road>.<event> : that event stands on the road now (its people and things are there)
+    RB.state.addTerm('roadev', (s, rest) => { const i = String(rest).indexOf('.'); const h = eventHere(s, String(rest).slice(0, i)); return !!(h && h.id === String(rest).slice(i + 1)); });
     // beat.<town>.<id> : a town's change beat is active
     RB.state.addTerm('beat', (s, rest) => { const [t, b] = String(rest).split('.'); return beats(s, t).some((x) => x.id === b); });
   }
@@ -44873,9 +44945,9 @@ RB.town = (function () {
   };
 
   return {
-    rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, askable, findable, usualPlaces, note, seen, spotWords,
+    rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, answersOf, askable, findable, usualPlaces, note, seen, spotWords,
     pastTalk, talkOption,
-    roadOf, roadEventAt, storyOnArrival, LINES,
+    roadOf, roadEventAt, eventHere, placedAt, storyOnArrival, LINES,
     roadDone, unfinished, sealedOn, canOpen, examine, noticed,
   };
 })();
@@ -48293,13 +48365,20 @@ RB.stampBook = (function () {
     const T = ST()[stand].title;
     if (got.length) {
       const names = got.map((id) => S()[id].title);
+      // the slip, with the line (src/ui/15_award.js stamps)
+      if (RB.ui && RB.ui.award && RB.ui.award.stamps) RB.ui.award.stamps(got, stand);
       await RB.script.runInline([{ who: 'narr', jp: '{判|はん} を {押|お}した 。 ' + names.map((n) => '「' + n.jp + '」').join(' '), en: 'You press the stamp' + (got.length > 1 ? 's' : '') + ' into your book: ' + names.map((n) => n.en).join(', ') + '.' }]);
       if (RB.save && RB.save.autosave) RB.save.autosave('progress');
     } else {
       await RB.script.runInline([{ who: 'narr', jp: (T ? T.jp + ' の ' : '') + '{判|はん} が {置|お}いて ある 。 {今|いま} は {押|お}す もの が ない 。', en: (T ? T.en + ': ' : '') + 'a stamp stand. Nothing to press here yet.' }]);
     }
   };
-  if (RB.bus) RB.bus.on('story:settled', () => { const s = RB.game && RB.game.s; if (s) settle(s); });
+  // the stamps the story's settling presses have their slips too (src/ui/15_award.js stamps)
+  if (RB.bus) RB.bus.on('story:settled', () => {
+    const s = RB.game && RB.game.s;
+    const got = s ? settle(s) : [];
+    if (got.length && RB.ui && RB.ui.award && RB.ui.award.stamps) setTimeout(() => RB.ui.award.stamps(got), 400);
+  });
   return { earned, pressed, pressAt, settle, ready, book, press1, known };
 })();
 
@@ -62583,7 +62662,7 @@ RB.game = (function () {
     G.playing = true;
     setBase('world');
     const start = RB.content.start || { map: 'rw.home', x: 3, y: 3, dir: 'down', scene: null };
-    RB.world.enter(start.map, start.x, start.y, start.dir);
+    RB.world.enter(start.map, start.x, start.y, start.dir, { fresh: true });
     if (RB.town) RB.town.visited(G.s, start.map); // (being in a town is a visit: its changes so far are seen)
     // A successful campaign entry owns world rendering, regardless of caller.
     RB.input.clearHeld();
@@ -62630,7 +62709,7 @@ RB.game = (function () {
     G.playing = true;
     setBase('world');
     RB.maps.invalidate();
-    RB.world.enter(G.s.map, G.s.x, G.s.y, G.s.dir);
+    RB.world.enter(G.s.map, G.s.x, G.s.y, G.s.dir, { fresh: true });
     if (RB.town) RB.town.visited(G.s, G.s.map); // (being in a town is a visit: its changes so far are seen)
     // Clear title/creation backdrops only after the saved map entered successfully.
     RB.input.clearHeld();
@@ -62715,9 +62794,10 @@ RB.game = (function () {
       RB.script.run(ev.scene);
       return;
     }
-    // a road's event (W5): the unique one until it is solved, then now and then a variant
+    // a road's event (W5): the unique one until it is solved, then now and then a variant. One placed on the road
+    // stands there, met when you go to it (src/engine/53_town.js); one without a place runs at once
     const re = RB.town && RB.town.roadEventAt(G.s, m.id);
-    if (re && RB.content.scenes[re]) RB.script.run(re);
+    if (re && RB.content.scenes[re]) { if (RB.town.placedAt(G.s, m.id)) RB.world.refreshActors(); else RB.script.run(re); }
   }
   function afterScene() {
     if (!G.playing) return;
@@ -62772,11 +62852,8 @@ RB.game = (function () {
         if (e.t === 'lostWord') RB.ui.toast({ kind: 'word', jp: e.jp, en: 'A lost word comes back: ' + e.en });
         else if (e.t === 'item' && RB.content.items[e.id]) RB.ui.toast({ kind: 'item', id: e.id, note: RB.equip.note(RB.content.items[e.id]) });
         else if (e.t === 'cleared') RB.ui.notice('The way is clear now: people will start using it again.', 'info');
-        else if (e.t === 'stamp' && RB.content.stamps[e.id]) {
-          // the Stamp Book's slip: the stamp's own design pressed onto it (src/ui/15_award.js)
-          const d = RB.content.stamps[e.id];
-          RB.ui.award({ kind: 'stamp', id: e.id, jp: d.title.jp, en: d.title.en, note: (d.note || d.criteria).en + ' Kept in Journey › Stamp book.', art: RB.ui.records ? RB.ui.records.stampSvg(d, 'pressed', d.title.en) : '', ink: d.design.ink });
-        }
+        // the Stamp Book's slip: the stamp's own design pressed onto it (src/ui/15_award.js stamps)
+        else if (e.t === 'stamp' && RB.content.stamps[e.id]) RB.ui.award.stamps([e.id]);
       }
     }
     if (res === 'win') {
@@ -62879,7 +62956,7 @@ RB.game = (function () {
     RB.render.setOverride(null);
     G.playing = true;
     setBase('world');
-    RB.world.enter(mapId, x, y, opts.dir || 'down');
+    RB.world.enter(mapId, x, y, opts.dir || 'down', { fresh: true });
     if (RB.town) RB.town.visited(G.s, mapId); // (being in a town is a visit: its changes so far are seen)
     RB.ui.hud.show();
     return st;
@@ -63339,6 +63416,7 @@ RB.combatLogic = (function () {
     const answered = st.foes.map(() => false);
     const tagged = (o, i) => Object.assign(o, { foe: i == null ? T : i });
     st.mistakeCostThisRound = 0;
+    st.wardBlock = []; st.wardBlock2 = []; // the blows a ward word turns this exchange: whom each was aimed at
     if (result.mistakes > 0 && !st.assist) {
       // small, capped consequence: one point of resolve, once per exchange
       st.mistakeCostThisRound = 1;
@@ -63378,7 +63456,7 @@ RB.combatLogic = (function () {
         // otherwise it lingers (2 points) for later blows.
         const order = [T].concat(standing(st).filter((i) => i !== T));
         const blocker = order.find((i) => withFoe(st, i, (f) => f.intent && f.intent.counters.indexOf('ward') >= 0 && f.intent.target === card.target && f.intent.kind !== 'charge' && !answered[i]));
-        if (blocker != null) { answered[blocker] = true; fx.push({ t: 'ward', target: card.target, block: true, foe: blocker }); }
+        if (blocker != null) { answered[blocker] = true; st.wardBlock[blocker] = card.target; fx.push({ t: 'ward', target: card.target, block: true, foe: blocker }); }
         else { st.ward[card.target] += 2; fx.push({ t: 'ward', target: card.target, n: 2 }); }
       }
       if (tags.indexOf('heal') >= 0) {
@@ -63427,7 +63505,7 @@ RB.combatLogic = (function () {
         if (card.kind === 'answer' && i === T && it2.kind === 'plea') { answered2[i] = true; continue; }
         for (const tg of tags) {
           if (it2.counters.indexOf(tg) < 0) continue;
-          if (tg === 'ward') { if (it2.target === card.target && it2.target !== 'both' && !fx.some((e) => e.t === 'ward' && e.block)) { answered2[i] = true; fx.push({ t: 'ward', target: card.target, block: true, foe: i, second: true }); } continue; }
+          if (tg === 'ward') { if (it2.target === card.target && it2.target !== 'both' && !fx.some((e) => e.t === 'ward' && e.block)) { answered2[i] = true; (st.wardBlock2 = st.wardBlock2 || [])[i] = card.target; fx.push({ t: 'ward', target: card.target, block: true, foe: i, second: true }); } continue; }
           const r = TAG_REACH[tg];
           if (r === 'all' || r === 'party' || ((r === 'target' || !r) && i === T)) answered2[i] = true;
         }
@@ -63643,9 +63721,10 @@ RB.combatLogic = (function () {
     const fx = [];
     const f = st.foes[st.cur];
     const soft = (f && f.soften) || 0;
-    const dmg = (who, p) => {
+    // (raw: the power as given, nothing added: Heat's force through a ward word, below)
+    const dmg = (who, p, raw) => {
       if (who === 'comp' && !st.compId) who = 'pc';
-      let power = Math.max(0, p + st.diff.powerMod + heatBonus(st) + condPower(st, f) - soft);
+      let power = raw ? p : Math.max(0, p + st.diff.powerMod + heatBonus(st) + condPower(st, f) - soft);
       if (who !== 'pc' && who !== 'comp') { land(who, power); return; }
       // a modifier's lasting ward meets the blow first (E27)
       if (st.mods && RB.modifiers) { power = RB.modifiers.onBlow(st, who, power, it, fx); if (power <= 0) return; }
@@ -63713,6 +63792,13 @@ RB.combatLogic = (function () {
       }
     } else {
       fx.push({ t: 'countered', kind: it.kind, by: f && f.stunned ? f.stunned : undefined, headedOff: it.then ? true : undefined });
+      // Heat's extra force goes through a ward word (Robin, 2026-10-19: "it could block the initial strike damage
+      // fully as it does, but Heat's additional damage should proceed through the block. It would still be blocked by
+      // any existing Ward"): the blow itself is turned; what Heat adds lands on the one it was aimed at, a standing
+      // ward taking it first
+      const second = !!(f && f.intent2 && it === f.intent2);
+      const aimed = ((second ? st.wardBlock2 : st.wardBlock) || [])[st.cur];
+      if (aimed && BASE_POWER[it.kind] && heatBonus(st) > 0) { fx.push({ t: 'heatThrough', who: aimed, n: heatBonus(st) }); dmg(aimed, heatBonus(st), true); }
       if (it.kind === 'charge') st.charged = false;
       // a plan over two exchanges (E26): answering the first step heads off the second
       if (it.then && f) { f.pi++; f.headedOff = it.then; }
@@ -67975,7 +68061,8 @@ RB.ui.tick = function (dt, t) { RB.ui.hud.tick(dt, t); };
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
 
-RB.itemArt = (function () {
+// (one maker, two registries: the items' icons, and the battle's: its moves and its responses, RB.battleArt, IC-1)
+RB.pixelIcons = function (fallback) {
   'use strict';
   const N = 16;
   const OUT = '#2a2024'; // the outline ink of the keepsakes' pixel art (src/content/discovery/60_keepsakes.js)
@@ -68037,16 +68124,21 @@ RB.itemArt = (function () {
   function html(id, scale, cls) {
     const s = Math.max(1, Math.round(scale || 2));
     const u = has(id) ? url(id) : '';
-    if (!u) {
-      // (an item without its own picture yet: the folio's line drawing for its kind)
-      const d = RB.content && RB.content.items && RB.content.items[id];
-      const ic = RB.ui.folio ? RB.ui.folio.icon(RB.ui.folio.itemIcon ? RB.ui.folio.itemIcon(id, d) : 'pouch') : '';
-      return '<span class="it-ic it-ic-line' + (cls ? ' ' + cls : '') + '" style="width:' + N * s + 'px;height:' + N * s + 'px" aria-hidden="true">' + ic + '</span>';
-    }
+    if (!u) return '<span class="it-ic it-ic-line' + (cls ? ' ' + cls : '') + '" style="width:' + N * s + 'px;height:' + N * s + 'px" aria-hidden="true">' + (fallback ? fallback(id) : '') + '</span>';
     return '<img class="it-ic' + (cls ? ' ' + cls : '') + '" src="' + u + '" width="' + N * s + '" height="' + N * s + '" alt="" aria-hidden="true" draggable="false">';
   }
   return { def, has, get, ids, url, html, problems, paint, SIZE: N, OUT };
-})();
+};
+// (an item without its own picture yet: the folio's line drawing for its kind)
+RB.itemArt = RB.pixelIcons((id) => {
+  const d = RB.content && RB.content.items && RB.content.items[id];
+  return RB.ui.folio ? RB.ui.folio.icon(RB.ui.folio.itemIcon ? RB.ui.folio.itemIcon(id, d) : 'pouch') : '';
+});
+// The battle's icons (IC-1, Robin 2026-10-19: "Given the Icon expansion in the inventory, we could probably use new
+// icons for the battle menus and enemy Intent"): one per move a creature telegraphs and per kind of response, keyed
+// by the line icon's name they replace (src/ui/80_combat.js); drawn in src/content/battle_art/. One without its own
+// picture falls back to the line drawing.
+RB.battleArt = RB.pixelIcons((id) => (RB.learnUi && RB.learnUi.icon ? RB.learnUi.icon(id) : ''));
 
 
 /* ==== src/ui/11z_items_dev.js ==== */
@@ -68666,12 +68758,24 @@ RB.ui.award = (function () {
       setTimeout(() => award({ kind: 'moment', id: p.id, jp: t.jp || '', en: t.en || '', note: 'Kept in Journey › Travel volume, pressed with your seal', art: seal, level: 3 }), 250 + i * 900);
     });
   }
+  // ---- the Road Stamp Book: a stamp pressed (at its stand, or at once when it has none) has its slip, the stamp's own
+  // design pressed onto it (Robin, 2026-10-19: "Pressing a Stamp at Reedwake has no toast popup stating that it was
+  // done, only shown in dialogue"); several at once come one after another, three at most (the third says how many more)
+  function stamps(ids, where) {
+    const S = (RB.content && RB.content.stamps) || {}, list = (ids || []).filter((id) => S[id]);
+    const at = where && RB.content.stampStands && RB.content.stampStands[where] ? ' at ' + RB.content.stampStands[where].title.en : '';
+    list.slice(0, MAX).forEach((id, i) => {
+      const d = S[id], more = i === MAX - 1 && list.length > MAX ? ' (and ' + (list.length - MAX) + ' more)' : '';
+      const art = RB.ui.records && RB.ui.records.stampSvg ? RB.ui.records.stampSvg(d, 'pressed', d.title.en) : '';
+      setTimeout(() => award({ kind: 'stamp', id, jp: d.title.jp, en: d.title.en, note: (d.note || d.criteria).en + ' Pressed' + at + more + '. Kept in Journey › Stamp book.', art, ink: d.design && d.design.ink }), i * 900);
+    });
+  }
   if (RB.bus) {
     RB.bus.on('story:settled', () => { setTimeout(moments, 120); newDot(); });
     // a journey begun or loaded: what its volume already holds is not news
     RB.bus.on('campaign:changing', () => { live.slice().forEach((x) => x.close(true)); });
   }
-  return Object.assign(award, { markKeepsake, moments, newDot, live: () => live.map((x) => ({ kind: x.kind, id: x.id })), closeAll: () => live.slice().forEach((x) => x.close(true)), HOLD });
+  return Object.assign(award, { markKeepsake, moments, stamps, newDot, live: () => live.map((x) => ({ kind: x.kind, id: x.id })), closeAll: () => live.slice().forEach((x) => x.close(true)), HOLD });
 })();
 
 
@@ -85792,6 +85896,23 @@ RB.ui.menu = (function () {
   const CH = { W: 520, SY: 1.4, ZMAX: 4, LBL: 13 };
   CH.H = Math.round(320 * CH.SY);
   const cxy = (p) => [p.pos[0], p.pos[1] * CH.SY];
+  // The coast, west to east, in the places' own units (before the chart's vertical stretch): the sea lies south of it.
+  // Every place stands north of it but an island (src/ui/50_menu.js chart; tests/unit/chart_coast.test.mjs).
+  const COAST = [[0, 284], [64, 274], [112, 268], [170, 282], [240, 290], [310, 288], [356, 286], [430, 278], [520, 276]];
+  const ISLES = { kotonoha: [24, 11] }; // a place out at sea: its island's half-width and half-height
+  // the coast's y at x (straight between its points: the curve drawn through them stays within a unit or two of it)
+  const coastAt = (x) => { for (let i = 1; i < COAST.length; i++) if (x <= COAST[i][0]) { const [a, b] = [COAST[i - 1], COAST[i]]; return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]); } return COAST[COAST.length - 1][1]; };
+  // a smooth line through the coast's points (Catmull-Rom as cubic Béziers)
+  function coastPath() {
+    const P = COAST;
+    let d = 'M' + P[0][0] + ' ' + P[0][1];
+    for (let i = 0; i < P.length - 1; i++) {
+      const p0 = P[Math.max(0, i - 1)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(P.length - 1, i + 2)];
+      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+      d += ' C' + c1.map((v) => +v.toFixed(1)).join(' ') + ' ' + c2.map((v) => +v.toFixed(1)).join(' ') + ' ' + p2.join(' ');
+    }
+    return d;
+  }
   let chartRO = null;
   function chartState() {
     const M = view.map;
@@ -85821,8 +85942,11 @@ RB.ui.menu = (function () {
     const W = CH.W, H = CH.H, NS = ' vector-effect="non-scaling-stroke"';
     const ts = Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1));
     const fs = CH.LBL * ts * k;
-    // paper, folds and the sea/mountain washes (decorative)
-    let svg = '<rect width="' + W + '" height="' + H + '" fill="#efe3c6"/><g transform="scale(1 ' + CH.SY + ')"><path d="M0 252 Q120 222 200 252 T 520 232 L520 320 L0 320Z" fill="#cfdbd6"/><path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/></g>';
+    // paper, folds and the sea/mountain washes; the coast runs just below the coastal places, so the harbours and the
+    // hamlets up the coast stand on land, and an island the ferry reaches (Kotonoha) is drawn as one (Robin, 2026-10-19:
+    // Saltglass, Sazanami and the places near them were drawn in the sea)
+    const isles = places.filter((p) => ISLES[p.id]).map((p) => '<ellipse cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" rx="' + ISLES[p.id][0] + '" ry="' + ISLES[p.id][1] + '" fill="#efe3c6" stroke="#9fb5b0" stroke-width="1.2"' + NS + '/>').join('');
+    let svg = '<rect width="' + W + '" height="' + H + '" fill="#efe3c6"/><g transform="scale(1 ' + CH.SY + ')"><path d="' + coastPath() + ' L520 320 L0 320Z" fill="#cfdbd6"/><path d="' + coastPath() + '" fill="none" stroke="#9fb5b0" stroke-width="1.2"' + NS + '/>' + isles + '<path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/></g>';
     svg += '<path d="M173 0V' + H + 'M346 0V' + H + 'M0 ' + H / 2 + 'H520" stroke="#b9a57a" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"' + NS + '/>';
     for (const [a, b, ro] of RB.content.roads || []) {
       const A = RB.content.places[a], B = RB.content.places[b];
@@ -85832,7 +85956,8 @@ RB.ui.menu = (function () {
       const [ax, ay] = cxy(A), [bx, by] = cxy(B);
       // a ferry's route: a curve over the sea, in the sea's ink
       if (ro && ro.sea) {
-        const mx = (ax + bx) / 2, my = Math.max(ay, by) + 36;
+        // (its middle well out from the coast: a quadratic's midpoint is a quarter of each end and half its control)
+        const mx = (ax + bx) / 2, my = Math.max(Math.max(ay, by) + 36, 2 * (coastAt(mx) * CH.SY + 22) - (ay + by) / 2);
         svg += '<path d="M' + ax + ' ' + ay + ' Q' + mx + ' ' + my + ' ' + bx + ' ' + by + '" fill="none" stroke="' + (known ? '#2c5470' : '#7a98a8') + '" stroke-width="' + (known ? 2.2 : 1.6) + '" stroke-dasharray="' + (known ? '7 4' : '2 6') + '"' + NS + '/>';
         continue;
       }
@@ -86128,7 +86253,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits
@@ -86681,6 +86806,24 @@ RB.whereabouts = (function () {
     return RB.script.run('wb.ask', { npc: n.id, talk: scene, asker: personOf(n) });
   }
   const nameOf = (p) => { const c = RB.content.chars[p]; return c && c.name ? c.name : { en: p, jp: p }; };
+  // The question and the answers are spoken lines (Robin, 2026-10-19: "The 'have you seen' dialogue interactions have
+  // no voiced lines from either the player nor the NPC I've talked to - tried with Bunta and Tomo"): shown under one
+  // scene id, so their recordings are found, and every one this content can produce is listed for recording
+  // (RB.content.spokenSources, read by tools/voice/lines.mjs)
+  const SCENE = 'code.wb';
+  const question = (p) => { const nm = nameOf(p); return { jp: (nm.jp || nm.en) + ' を {見|み}かけません でした か ？', en: 'Have you seen ' + nm.en + '?' }; };
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    if (!RB.town) return out;
+    for (const p of RB.town.findable()) out.push(Object.assign({ scene: SCENE, who: 'pc', file: 'ui/53w_whereabouts' }, question(p)));
+    for (const a in RB.content.relations || {}) {
+      if (!(RB.content.relations[a] || {}).knows && (RB.content.relations[a] || {}).friendly !== false) continue;
+      const who = RB.content.chars[a] ? a : 'narr';
+      for (const l of RB.town.answersOf(a)) out.push({ scene: SCENE, who, jp: l.jp, en: l.en, file: 'engine/53_town' });
+    }
+    return out;
+  });
   const said = (s, o) => s.backlog.push({ who: 'pc', jp: o.jp, en: o.en, choice: true });
   async function pickPerson(s, people) {
     let at = 0;
@@ -86714,14 +86857,13 @@ RB.whereabouts = (function () {
     if (o.k === 'none') return;
     const target = await pickPerson(s, people);
     if (!target) return;
-    const nm = nameOf(target);
-    await RB.ui.dialogue.say({ who: 'pc', jp: (nm.jp || nm.en) + ' を {見|み}かけません でした か ？', en: 'Have you seen ' + nm.en + '?' });
+    await RB.ui.dialogue.say(Object.assign({ who: 'pc', sceneId: SCENE }, question(target)));
     const ans = RB.town.whereabouts(s, asker, target, s.map);
     const who = RB.content.chars[asker] ? asker : 'narr';
-    await RB.ui.dialogue.say({ who, jp: ans.line.jp, en: ans.line.en });
+    await RB.ui.dialogue.say({ who, jp: ans.line.jp, en: ans.line.en, sceneId: SCENE });
     if (RB.town.note(s, asker, ans) && RB.ui.toast) RB.ui.toast('Noted in Map › Known details (what you were told, not where they are now).');
   };
-  return { ask, PAGE };
+  return { ask, PAGE, SCENE, question };
 })();
 
 
@@ -110327,6 +110469,21 @@ RB.combat = (function () {
     for (const [t, n] of TAG_ICON) if (tags.indexOf(t) >= 0) return n;
     return 'words';
   }
+  // The battle's drawn icons (IC-1; RB.battleArt, src/content/battle_art/): a creature's move ('move_<kind>', a
+  // move to be read 'move_reading'), a response ('resp_<kind>': a word by its first tag, or unravel, wait, answer,
+  // truth, tech, proc), a state on it; each falls back to its line drawing. big: the response cards' and the
+  // telegraph's size (32 px), else 16.
+  const BI = (key, line, big) => (RB.battleArt && RB.battleArt.has(key) ? RB.battleArt.html(key, big ? 2 : 1, 'bt-ic') : I(line));
+  const moveArt = (it, big) => BI('move_' + (it && READING[it.kind] && READING[it.kind].icon ? 'reading' : (it && it.kind) || 'strike'), moveIcon(it), big);
+  function cardKey(c) {
+    if (['wait', 'proc', 'resolve', 'unravel', 'answer', 'truth', 'tech'].indexOf(c.kind) >= 0) return c.kind === 'resolve' ? 'proc' : c.kind;
+    const tags = (c.word && c.word.tags) || [];
+    for (const [t] of TAG_ICON) if (tags.indexOf(t) >= 0) return t === 'anchor' ? 'stone' : t === 'warm' ? 'fire' : t;
+    return 'word';
+  }
+  const cardArt = (c, big) => BI('resp_' + cardKey(c), cardIcon(c), big);
+  const STATUS_ART = { heat: 'move_heat', shroud: 'move_shroud', charge: 'move_charge', silence: 'move_silence', 'ward:pc': 'resp_ward', 'ward:comp': 'resp_ward' };
+  const stateArt = (x) => (!x.icon && STATUS_ART[x.key] ? BI(STATUS_ART[x.key], STATUS_ICON[x.key]) : I(x.icon || STATUS_ICON[x.key]));
   function compName() {
     const s = RB.game.s;
     return s.comp && RB.content.chars[s.comp] ? RB.content.chars[s.comp].name.en : 'companion';
@@ -110428,7 +110585,7 @@ RB.combat = (function () {
     const it = st.foes[i].intent;
     const line = intentLine(it, i);
     const g = gistOf(i, it);
-    const face = I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '');
+    const face = moveArt(it, true) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '');
     // (the task slip carries the states as plain text; on screen they are on the foe's slip)
     const states = compact ? statusList(i) : [];
     let h = '<div class="it-label">' + (compact ? '<span class="it-kind">' + face + '</span>' : kw(kkey('intent', i), 'it-kind', face + Q())) +
@@ -110508,9 +110665,9 @@ RB.combat = (function () {
         (st.foes.length >= 4 ? '<span class="fs-letter" aria-hidden="true">' + 'ABCDE'[order.indexOf(i)] + '</span>' : '') +
         '<span class="fs-n" aria-hidden="true">' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span>' + markHtml(i) + '</span>' +
         '<span class="fs-l2" aria-hidden="true"><span class="fs-k">' + (down ? '<span class="fs-done">' + I('done') + 'Settled</span>' : knotsHtml(i)) + '</span>' +
-        (down || !it ? '' : '<span class="fs-it">' + (od ? '<span class="fs-ord" aria-hidden="true">' + od.n + '</span>' : '') + I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') +
-          (od && od.aim ? '<span class="fs-aim">→ ' + esc(aimEn(od.aim)) + '</span>' : '') + (it2 ? '<span class="fs-and">and ' + I(moveIcon(it2)) + esc(moveLabel(it2)) + '</span>' : '') + '</span>') + '</span>' +
-        (states.length ? '<span class="fs-st" aria-hidden="true">' + states.map((x) => '<span class="pill">' + I(x.icon || STATUS_ICON[x.key]) + esc(x.label) + '</span>').join('') + '</span>' : '') +
+        (down || !it ? '' : '<span class="fs-it">' + (od ? '<span class="fs-ord" aria-hidden="true">' + od.n + '</span>' : '') + moveArt(it) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') +
+          (od && od.aim ? '<span class="fs-aim">→ ' + esc(aimEn(od.aim)) + '</span>' : '') + (it2 ? '<span class="fs-and">and ' + moveArt(it2) + esc(moveLabel(it2)) + '</span>' : '') + '</span>') + '</span>' +
+        (states.length ? '<span class="fs-st" aria-hidden="true">' + states.map((x) => '<span class="pill">' + stateArt(x) + esc(x.label) + '</span>').join('') + '</span>' : '') +
         '</button>';
     }
     return '<span class="fs-h" id="cb-tgt-h">' + I('aim') + '<span>' + (can ? 'Target' : 'Creatures') + '</span>' + kw('target', 'fs-help', Q(), ' — how to choose whom you act on') + '</span>' +
@@ -110532,7 +110689,7 @@ RB.combat = (function () {
       ui.foe.classList.remove('group');
       ui.foe.innerHTML = '<div class="fplate solo" data-foe="' + T + '"><span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' +
         '<span class="foe-k' + (states.length ? ' has-st' : '') + '">' + knotsHtml(T) + (states.length ? '<span class="it-states" role="group" aria-label="Its state">' +
-          states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(x.icon || STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span></div>';
+          states.map((x) => kw(x.key, 'st', '<span class="pill">' + stateArt(x) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span></div>';
     }
     // the telegraph panel, by intent display (battle addendum §13.3, §13.6). Adaptive: a routine move
     // is its creature's badge (symbol and strength; its words, what it does and the translation in the
@@ -110549,7 +110706,7 @@ RB.combat = (function () {
         const sts = statusList(i).filter((x) => x.key !== 'silence');
         return '<div class="it-block' + (i === T ? ' it-target' : ' it-other') + '" data-foe="' + i + '"><div class="it-who">' + (i === T ? I('aim') : '') + '<span>' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span>' + markHtml(i) + '</span>' +
           (tag ? '<span class="it-tag">' + tag + '</span>' : '') +
-          (sts.length ? '<span class="it-states" role="group" aria-label="Its state">' + sts.map((x) => kw(kkey(x.key, i), 'st', '<span class="pill">' + I(x.icon || STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</div>' + intentHtml(false, i) + '</div>';
+          (sts.length ? '<span class="it-states" role="group" aria-label="Its state">' + sts.map((x) => kw(kkey(x.key, i), 'st', '<span class="pill">' + stateArt(x) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</div>' + intentHtml(false, i) + '</div>';
       };
       const lay = RB.battleStage.lay();
       const order = lay && lay.visual && lay.visual.length === st.foes.length ? lay.visual : st.foes.map((_, k) => k);
@@ -110578,7 +110735,7 @@ RB.combat = (function () {
     const member = (who, name, v, max, ward) => '<div class="pm' + (aimed.indexOf(who) >= 0 ? ' aimed' : '') + (pvA.indexOf(who) >= 0 ? ' cb-pv' : '') + '">' +
       '<div class="pm-h"><span class="pm-n">' + esc(name) + '</span>' +
       (aimed.indexOf(who) >= 0 ? '<span class="aimtag">' + I('aim') + 'its aim</span>' : '') +
-      (ward ? kw('ward:' + who, 'pm-w', '<span class="pill">' + I('shield') + '<span class="wl">Ward </span>' + ward + '</span>', ' in front of ' + name + ' — what this means') : '') + '</div>' +
+      (ward ? kw('ward:' + who, 'pm-w', '<span class="pill">' + BI('resp_ward', 'shield') + '<span class="wl">Ward </span>' + ward + '</span>', ' in front of ' + name + ' — what this means') : '') + '</div>' +
       '<div class="pm-r"><div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div>' +
       '<span class="pm-v"><span class="sr">Resolve </span>' + v + ' / ' + max + '</span></div></div>';
     const v = V();
@@ -110770,13 +110927,13 @@ RB.combat = (function () {
     let what = '';
     if (READING[it.kind]) what = it.kind === 'plea' ? 'It is asking you something. Read what it asks.' : 'It is telling you something. Read what it says.';
     else what = L().withFoe(st, i, () => RB.combatHelp.intentInfo(st, it, words())).what;
-    return '<div class="ic-k">' + I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</div>' +
+    return '<div class="ic-k">' + moveArt(it, true) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</div>' +
       (line.jp ? '<div class="ic-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>' : '') +
       (line.en && enShown() ? '<div class="ic-en">' + esc(line.en) + '</div>' : '') +
       (line.en && !enShown() ? '<button type="button" class="pbtn quiet tr ic-tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '') +
       (what ? '<p class="ic-what">' + what + '</p>' : '') +
       // the order (C-70) and a second move (E26), when there are
-      (() => { const od = !badgeSnap ? ordOf(i) : null; const it2 = !badgeSnap && st.foes[i].intent2; return (od ? '<p class="ic-ord">' + esc('Acts ' + NTH[od.n] + (od.aim ? ', aimed at ' + aimEn(od.aim) : '') + '.') + '</p>' : '') + (it2 ? '<p class="ic-and">' + I(moveIcon(it2)) + esc('And then: ' + moveLabel(it2) + '. ' + (L().withFoe(st, i, () => RB.combatHelp.gist(st, it2)) || '')) + '</p>' : ''); })() +
+      (() => { const od = !badgeSnap ? ordOf(i) : null; const it2 = !badgeSnap && st.foes[i].intent2; return (od ? '<p class="ic-ord">' + esc('Acts ' + NTH[od.n] + (od.aim ? ', aimed at ' + aimEn(od.aim) : '') + '.') + '</p>' : '') + (it2 ? '<p class="ic-and">' + moveArt(it2) + esc('And then: ' + moveLabel(it2) + '. ' + (L().withFoe(st, i, () => RB.combatHelp.gist(st, it2)) || '')) + '</p>' : ''); })() +
       (!badgeSnap && RB.game.s.comp === 'nao' && (st.foes[i].nextIntents || []).length ? '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(st.foes[i].nextIntents.map(moveLabel).join(', then ')) + '.”</span></div>' : '') +
       '<div class="ic-f">' + kw(kkey('intent', i), 'pbtn quiet ic-more', '<span>How to answer it</span>', ' — opens a note') + '</div>';
   }
@@ -110824,7 +110981,14 @@ RB.combat = (function () {
       else if (f.t === 'water') { out.push('cools the Heat on ' + nm(f.foe)); }
       else if (f.t === 'light') { out.push('clears the mist on ' + nm(f.foe)); }
       else if (f.t === 'bind') { out.push('stops ' + nm(f.foe) + ' gathering force'); said.add(f.foe + ':charge'); }
-      else if (f.t === 'ward') { if (f.block) { out.push('blocks the blow aimed at ' + (f.target === 'party' ? 'you both' : who(f.target))); said.add(f.foe + ':blow'); } else out.push('raises a ward (' + (f.n || 2) + ') in front of ' + who(f.target)); }
+      else if (f.t === 'ward') {
+        if (f.block) {
+          // (Heat's extra force still comes through: src/engine/95_combat.js foeAct)
+          const fo = st.foes[f.foe], H = L().HEAT, hb = fo && fo.heat ? Math.min(fo.heat, H.max) * H.per : 0;
+          out.push('blocks the blow aimed at ' + (f.target === 'party' ? 'you both' : who(f.target)) + (hb ? ' (its Heat\'s +' + hb + ' still comes through)' : ''));
+          said.add(f.foe + ':blow');
+        } else out.push('raises a ward (' + (f.n || 2) + ') in front of ' + who(f.target));
+      }
       else if (f.t === 'heal') { if (f.gain > 0) out.push('restores resolve (' + f.aim.filter((w) => f.d[w] > 0).map((w) => who(w) + ' +' + f.d[w]).join(', ') + ')'); else none = f.aim.length > 1 ? 'you are both at full resolve' : 'you are at full resolve'; }
       else if (f.t === 'settle') { out.push('answers its plea, and a knot loosens'); said.add(f.foe + ':plea'); }
       else if (f.t === 'reveal') { out.push('sees through the false promise'); said.add(f.foe + ':lie'); }
@@ -110857,7 +111021,7 @@ RB.combat = (function () {
     const ans = fresh ? L().answers(c.word).map((k) => L().INTENTS[k].label) : [];
     const ready = c.kind === 'tech' && !c.disabled; // a technique waiting for the companion doesn't glow
     return '<button class="resp rcard' + (fresh ? ' fresh' : '') + (ready ? ' tech' : '') + (c.pointed ? ' pointed' : '') + (c.tried ? ' tried' : '') + (c.mod ? ' modded' : '') + '" data-i="' + i + '"' + (c.id != null ? ' data-cid="' + esc(String(c.id)) + '"' : '') + ' data-foes="' + r.foes.join(',') + '" data-allies="' + r.allies.join(',') + '"' + (c.disabled ? ' disabled' : '') + '>' +
-      '<span class="ic">' + I(cardIcon(c)) + '</span>' +
+      '<span class="ic">' + cardArt(c, true) + '</span>' +
       '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span>' +
       (fresh ? '<span class="rc-new">New</span>' : '') + (ready ? '<span class="rc-new">With ' + esc(compName()) + '</span>' : '') +
       (c.pointed ? '<span class="rc-new rc-point">' + esc(compName()) + ' suggests this</span>' : '') + (c.tried ? '<span class="rc-new rc-tried">Tried</span>' : '') +
@@ -111185,7 +111349,7 @@ RB.combat = (function () {
     return '<div class="cb-situ">' + who.map((i) =>
       '<div class="cs-foe">' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span> ' + knotsHtml(i) + '</div>' +
       '<div class="cs-intent">' + intentHtml(true, i) + '</div>').join('') +
-      '<div class="cs-chose">' + I(cardIcon(card)) + '<span>You chose <b>' + esc(card.en) + '</b>' + (tgt ? ' — <b>' + esc(tgt) + '</b>' : '') + '. The encounter waits while you write.</span></div></div>';
+      '<div class="cs-chose">' + cardArt(card) + '<span>You chose <b>' + esc(card.en) + '</b>' + (tgt ? ' — <b>' + esc(tgt) + '</b>' : '') + '. The encounter waits while you write.</span></div></div>';
   }
   // (a creature's intro, its phase lines and what is said once it is settled are shown under one scene id, so their
   // recordings are found: Robin, 2026-10-19, "After defeating an enemy, the Narrator does not voice the dialogue given")
@@ -111269,6 +111433,7 @@ RB.combat = (function () {
         msg = (isGroup() ? 'The ' + shortEn(fi) + ' strikes ' + nm(f.who) : nm(f.who) + ' is struck') + ' (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ')' + (f.held ? ' — the salts keep them standing' : '') + '.'; break;
       }
       case 'block': v.ward[f.who] = Math.max(0, (v.ward[f.who] || 0) - f.n); sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
+      case 'heatThrough': msg = who('Its Heat pushes through the ward word: +' + f.n + ' still comes at ' + nm(f.who) + '.'); break;
       case 'heat': fo.heat = f.n; sfx('enemy_intent'); msg = who('It overheats: Heat ' + f.n + ' — its blows now hit +' + (f.bonus != null ? f.bonus : f.n) + ' harder until it is cooled.'); break;
       case 'shroud': fo.shroud = true; sfx('wind'); msg = who('Mist swallows its knots.'); break;
       case 'charge': fo.charged = true; sfx('enemy_intent'); msg = who('It gathers itself: its next blow will hit +2 harder.'); break;
@@ -159639,7 +159804,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [],
     foes: [
-      { id: 'g1', enemy: 'sa.ghost', x: 11, y: 9, patrol: 1, aggro: true, group: { normal: ['sa.ghost'], hard: ['sa.ghost', 'sa.crane'] } },
+      // (Demanding: one Nameless Lantern, not two, since Heat's force comes through a ward word (CB-1, 2026-10-19): two
+      // heated Strikes on you alone made it a spike in the difficulty curve, tests/unit/combat_curve.test.mjs)
+      { id: 'g1', enemy: 'sa.ghost', x: 11, y: 9, patrol: 1, aggro: true, group: { normal: ['sa.ghost'], hard: ['sa.moth', 'sa.crane'] } },
       { id: 'g2', enemy: 'sa.ghost', x: 16, y: 18, patrol: 2, aggro: true, group: { normal: ['sa.crane'], hard: ['sa.crane', 'sa.moth'] } },
       { id: 'c1', enemy: 'sa.crane', x: 25, y: 10, patrol: 1, group: { normal: ['sa.crane'], hard: ['sa.crane', 'sa.crane'] } },
     ],
@@ -223885,7 +224052,11 @@ RB.lex.add(RB.lex.parseTable(`
  *     those who know them, and the people who can be asked after others (every placement of them, on maps given).
  *   L.beat(town, { id, when, en, jp }) — a change beat (W1); its content is conditioned on `beat.<town>.<id>` or on
  *     its own `when`.
- *   L.road(id, { maps, unique, variants, rate, stamp, when }) — road events (W5; none until `when` holds); L.seal(id, { map, x, y, p, needs, hint,
+ *   L.road(id, { maps, unique, variants, rate, stamp, when }) — road events (W5; none until `when` holds). Each event
+ *     ({ id, scene, when }) stands on the road with `at: { map, who: [{ char, x, y, dir, id }], props: [{ p, x, y, meet }] }`:
+ *     its people (talking to any of them runs its scene; `id` defaults to the char, so a scene's gestures find a
+ *     named speaker) and its things (`meet: true` on one examined to run the scene; the rest are only there), while
+ *     `roadev.<road>.<event>` holds (src/engine/53_town.js). `map` defaults to the road's first. L.seal(id, { map, x, y, p, needs, hint,
  *     opens, scene, openedLabel, after: { p, scene, o } }) — a return key (W6): a prop with the hint, examined
  *     through `!hook sealed`; `after` is what stands there once it is open (the sealed prop then goes).
  *   L.talk('map:id', [{ if, scene }]) — new talk at the head of a placement's list (in place: every routine slot of
@@ -223992,6 +224163,24 @@ RB.living = (function (C) {
     }
     C.roadEvents[id] = D;
     C.living.roads.push(id);
+    // each event's people and things, there while it stands on the road (RE-1)
+    for (const e of [D.unique].concat(D.variants || []).filter(Boolean)) {
+      if (!e.at) continue;
+      const map = e.at.map || D.maps[0], cond = 'roadev.' + id + '.' + e.id;
+      if (D.maps.indexOf(map) < 0) throw new Error('living: road event ' + id + '.' + e.id + ' placed off its road: ' + map);
+      for (const w of e.at.who || []) {
+        mapOf(map).npcs.push(Object.assign({ id: w.id || w.char, char: w.char, x: w.x, y: w.y, dir: w.dir || 'down', if: cond, talk: [{ scene: e.scene }], roadEvent: id + '.' + e.id },
+          w.perform ? { perform: w.perform } : {}, w.wander ? { wander: w.wander } : {}));
+      }
+      for (const pr of e.at.props || []) {
+        const q = Object.assign({}, pr, { if: cond, roadEvent: id + '.' + e.id });
+        delete q.meet;
+        if (pr.meet) q.scene = e.scene;
+        mapOf(map).props.push(q);
+      }
+      C.living.roadPlaces = C.living.roadPlaces || [];
+      C.living.roadPlaces.push({ road: id, id: e.id, map });
+    }
   }
   // new talk at the head of a placement's list (a change beat's new line, a road event's follow-up), kept in order
   function talk(ref, entries) {
@@ -224013,6 +224202,52 @@ RB.living = (function (C) {
   // the scene script gathered by the region files, added once they have all run (zzz_living/99_end.js)
   function flush() { if (script.trim()) RB.script.add(script, 'src/content/zzz_living/05_author.js'); script = ''; } // (scenes written out by these helpers: their source is this file)
   return { T, and, town, routine, away, knows, cold, usual, asks, beat, road, seal, talk, scenes, flush };
+})(RB.content);
+
+
+/* ==== src/content/zzz_living/06_road_folk.js ==== */
+/* The people a road's events are met through (RE-1; Robin, 2026-10-19: "These random events on the paths should have
+ * actual NPCs where the event is meant to take place"): figures for the unnamed travellers, children, fishers and
+ * sellers the events' narration describes. Named people (Kōhachi with his cart, Kumazō, Jūzō …) stand as themselves;
+ * these are for everyone else. Each region file places them with `at` on its road's events (05_author.js L.road). */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const F = (id, name, pitch, look, portrait, o) => { C.chars[id] = Object.assign({ name, voice: { pitch }, look, portrait }, o || {}); };
+  F('lw_rd_child', T('A child', '{子|こ}ども'), 1.32,
+    { skin: 2, hair: 'bob', hairColor: 1, cloth: ['#c8603a', '#a44c2c', '#f2e6cc'], shape: 'tunic', acc: [] },
+    { eyes: 'round', style: 'bob', blush: true, bg: '#3a2418' }, { size: 'child' });
+  F('lw_rd_child2', T('A child', '{子|こ}ども'), 1.3,
+    { skin: 3, hair: 'spiky', hairColor: 0, cloth: ['#4a7a9a', '#3a6280', '#efe6d0'], shape: 'tunic', acc: [] },
+    { eyes: 'round', style: 'spiky', blush: true, bg: '#1e2c38' }, { size: 'child' });
+  F('lw_rd_fisher', T('An old fisher', '{年|とし}{寄|よ}り の {漁師|りょうし}'), 0.82,
+    { skin: 4, hair: 'shaved', hairColor: 4, cloth: ['#3e5a6a', '#2e4652', '#d8ccb0'], shape: 'tunic', acc: ['headband'], bandCol: '#e8e0cc' },
+    { eyes: 'narrow', style: 'shaved', acc: ['headband'], bandCol: '#e8e0cc', beard: true, bg: '#1c2a32' });
+  F('lw_rd_seller', T('A fish-seller', '{魚売|さかなう}り'), 1.02,
+    { skin: 2, hair: 'wrap', hairColor: 1, cloth: ['#6a4a8a', '#56386e', '#f0e4c8'], shape: 'apron', acc: ['scarf'], scarfCol: '#d8b860' },
+    { eyes: 'soft', style: 'wrap', bg: '#2a2034' });
+  F('lw_rd_traveller', T('A traveller', '{旅人|たびびと}'), 0.94,
+    { skin: 1, hair: 'short', hairColor: 2, cloth: ['#7a6a4a', '#62553a', '#e8dcc0'], shape: 'robe', acc: ['hat', 'satchel'], hatCol: '#b89a60' },
+    { eyes: 'soft', style: 'short', acc: ['hat'], hatCol: '#b89a60', bg: '#2a2418' });
+  F('lw_rd_traveller2', T('A traveller', '{旅人|たびびと}'), 1.08,
+    { skin: 3, hair: 'ponytail', hairColor: 0, cloth: ['#4a6a4a', '#3a5438', '#ece2c8'], shape: 'coat', acc: ['satchel'] },
+    { eyes: 'round', style: 'ponytail', bg: '#1c2a1c' });
+  F('lw_rd_pilgrim', T('A pilgrim', '{巡礼|じゅんれい} の {人|ひと}'), 0.98,
+    { skin: 2, hair: 'shaved', hairColor: 3, cloth: ['#ece8dc', '#d4cebe', '#b8b0a0'], shape: 'robe', acc: ['hat', 'cane'], hatCol: '#d8c890' },
+    { eyes: 'narrow', style: 'shaved', acc: ['hat'], hatCol: '#d8c890', bg: '#2e2c26' });
+  F('lw_rd_courier', T('A courier', '{飛脚|ひきゃく}'), 1.1,
+    { skin: 3, hair: 'short', hairColor: 0, cloth: ['#3a5a8a', '#2c466c', '#f0e4c8'], shape: 'tunic', acc: ['headband', 'satchel'], bandCol: '#f0e4c8' },
+    { eyes: 'sharp', style: 'short', acc: ['headband'], bandCol: '#f0e4c8', bg: '#1a2436' });
+  F('lw_rd_parent', T('A parent', '{親|おや}'), 0.96,
+    { skin: 2, hair: 'bun', hairColor: 1, cloth: ['#8a5a4a', '#6e463a', '#ecdcc4'], shape: 'robe', acc: ['basket'] },
+    { eyes: 'soft', style: 'bun', bg: '#2e1e18' });
+  F('lw_rd_elder', T('An old traveller', '{年|とし}{寄|よ}り の {旅人|たびびと}'), 0.86,
+    { skin: 1, hair: 'bun', hairColor: 4, cloth: ['#5a5a6a', '#464654', '#e4dcc8'], shape: 'robe', acc: ['cane', 'hat'], hatCol: '#a89a70' },
+    { eyes: 'narrow', style: 'bun', acc: ['hat'], hatCol: '#a89a70', bg: '#24242c' });
+  F('lw_rd_worker', T('A worker', '{働|はたら}く {人|ひと}'), 0.9,
+    { skin: 4, hair: 'short', hairColor: 0, cloth: ['#6a5a3a', '#54472c', '#d8c8a0'], shape: 'tunic', acc: ['headband', 'toolbelt'], bandCol: '#d8c8a0' },
+    { eyes: 'sharp', style: 'short', acc: ['headband'], bandCol: '#d8c8a0', bg: '#262014' });
 })(RB.content);
 
 
@@ -224100,9 +224335,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- W5: the Reedwake road -----------------------------------------------------------------------------------------
   C.maps['rw.road'].npcs.push({ id: 'lw_kohachi', x: 17, y: 9, dir: 'down', if: 'departed&!lw_rw_cart_done', talk: 'sg.lw_road_rw_cart' });
   C.maps['rw.road'].props.push({ p: 'cart', x: 18, y: 8, if: 'departed&!lw_rw_cart_done' });
+  // each stands where it happens (RE-1): Kōhachi by his cart (placed above), the card to mend it on a post beside it;
+  // the wind-turned waymarker (showing its blank back) beside the old carved stone; the letter on the road, the
+  // courier come back for it; the child with the stick behind the geese, crossing towards the pond
   L.road('rw_road', { maps: ['rw.road'],
-    unique: { id: 'cart', scene: 'sg.lw_road_rw_cart' },
-    variants: [{ id: 'marker', scene: 'sg.lw_road_rw_marker' }, { id: 'letter', scene: 'sg.lw_road_rw_letter' }, { id: 'geese', scene: 'sg.lw_road_rw_geese' }],
+    unique: { id: 'cart', scene: 'sg.lw_road_rw_cart', at: { props: [{ p: 'fw_postnote', x: 20, y: 8, meet: true }] } },
+    variants: [
+      { id: 'marker', scene: 'sg.lw_road_rw_marker', at: { props: [{ p: 'signblank', x: 21, y: 11, meet: true }] } },
+      { id: 'letter', scene: 'sg.lw_road_rw_letter', at: { who: [{ char: 'lw_rd_courier', x: 12, y: 10, dir: 'left' }], props: [{ p: 'pet_papers', x: 10, y: 10, meet: true }] } },
+      { id: 'geese', scene: 'sg.lw_road_rw_geese', at: { who: [{ char: 'lw_rd_child2', x: 15, y: 11, dir: 'up' }] } },
+    ],
     stamp: { title: ['{葦|あし}ノ{瀬|せ} の {道|みち}', 'the Reedwake road'], ink: '#7a5a2a' } });
   C.notes.lw_carters_cards = { title: T('Carters\' cards', '{荷車|にぐるま} の {札|ふだ}'), fiction: true,
     jp: '{街道|かいどう} を {行|い}く {荷車|にぐるま} に は 、 {直|なお}し{方|かた} を {書|か}いた {小|ちい}さな {札|ふだ} が {下|さ}がって いる 。 {字|じ} が {読|よ}めれば 、 {通|とお}りがかり の {誰|だれ} でも {直|なお}せる よう に 。',
@@ -224275,9 +224517,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { eyes: 'round', style: 'short', acc: ['headband'], bandCol: '#d8d0b8', bg: '#2e3024' } };
   C.maps['rw.millroad'].npcs.push({ id: 'lw_sakuzo', x: 9, y: 21, dir: 'down', if: 'departed&!lw_rw_mill_sacks_done', talk: 'rw.lw_road_mill_sacks' });
   C.maps['rw.millroad'].props.push({ p: 'cart', x: 8, y: 20, if: 'departed&!lw_rw_mill_sacks_done' });
+  // each stands where it happens (RE-1): Sakuzō by his cart (placed above), a sack unloaded at either end of it; the
+  // oil note on a post beside the narrows lantern; a reed-cutter on the river bank in the reeds, the sign by him; a
+  // child under the turning wheel, the sign beside the mill
   L.road('rw_mill', { maps: ['rw.millroad'], when: 'departed',
-    unique: { id: 'sacks', scene: 'rw.lw_road_mill_sacks' },
-    variants: [{ id: 'oil', scene: 'rw.lw_road_mill_oil' }, { id: 'reeds', scene: 'rw.lw_road_mill_reeds' }, { id: 'fish', scene: 'rw.lw_road_mill_fish' }],
+    unique: { id: 'sacks', scene: 'rw.lw_road_mill_sacks', at: { props: [{ p: 'lf_floursacks', x: 7, y: 20, meet: true }, { p: 'lf_floursacks', x: 10, y: 20, meet: true }] } },
+    variants: [
+      { id: 'oil', scene: 'rw.lw_road_mill_oil', at: { props: [{ p: 'fw_postnote', x: 8, y: 17, meet: true }] } },
+      { id: 'reeds', scene: 'rw.lw_road_mill_reeds', at: { who: [{ char: 'lw_rd_worker', x: 17, y: 10, dir: 'right' }], props: [{ p: 'sign', x: 17, y: 8, meet: true }] } },
+      { id: 'fish', scene: 'rw.lw_road_mill_fish', at: { who: [{ char: 'lw_rd_child', x: 15, y: 4, dir: 'up' }], props: [{ p: 'sign', x: 13, y: 4, meet: true }] } },
+    ],
     stamp: { title: ['{水車|すいしゃ}{小屋|ごや} へ の {道|みち}', 'the Mill Road'], motif: 'path', ink: '#4a6a3a' } });
   C.notes.lw_water_mills = { title: T('Water mills', '{水車|すいしゃ}{小屋|ごや}'), fiction: false,
     jp: '{水車|すいしゃ}{小屋|ごや} は 、 {昔|むかし} 、 {多|おお}く の {村|むら} の {川|かわ} に あった 。 そば@蕎麦=(buckwheat) や {麦|むぎ} を {粉|こな} に {挽|ひ}いたり 、 {米|こめ} を {白|しろ}く したり した 。 {村|むら} の {人|ひと} は {順番|じゅんばん} に {使|つか}った 。',
@@ -224495,11 +224744,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // (the Reedwake road next to it has a cart, a waymarker, a letter and geese: 11_rw_world.js; these are the coast's own)
   L.road('sg_road', {
     maps: ['sg.road'],
-    unique: { id: 'child', scene: 'sg.lw_road_child' },
+    // each stands where it happens (RE-1): the child under the fork's lantern; the fisher where the path drops to the
+    // beach, by the rocks, a net by them; the fish-seller resting by the bench, three baskets in a row; a traveller lost
+    // in the fog at the fork
+    unique: { id: 'child', scene: 'sg.lw_road_child', at: { who: [{ char: 'lw_rd_child', x: 17, y: 9, dir: 'down' }] } },
     variants: [
-      { id: 'crab', scene: 'sg.lw_road_crab' },
-      { id: 'tags', scene: 'sg.lw_road_tags', when: 'ch2_done' },
-      { id: 'fog', scene: 'sg.lw_road_fog', when: 'ch2_done&!ed>=2|mb2_done' },
+      { id: 'crab', scene: 'sg.lw_road_crab', at: { who: [{ char: 'lw_rd_fisher', x: 23, y: 16, dir: 'right' }], props: [{ p: 'net', x: 20, y: 17 }] } },
+      { id: 'tags', scene: 'sg.lw_road_tags', when: 'ch2_done', at: { who: [{ char: 'lw_rd_seller', x: 9, y: 13, dir: 'left' }],
+        props: [{ p: 'ko_basket', x: 4, y: 14, meet: true }, { p: 'ko_basket', x: 5, y: 14, meet: true }, { p: 'ko_basket', x: 6, y: 14, meet: true }] } },
+      { id: 'fog', scene: 'sg.lw_road_fog', when: 'ch2_done&!ed>=2|mb2_done', at: { who: [{ char: 'lw_rd_traveller', x: 18, y: 9, dir: 'down' }] } },
     ],
     stamp: { title: ['{海沿|うみぞ}い の {道|みち}', 'The Coast Road'], motif: 'path', ink: '#3a6a7a' },
   });
@@ -225629,8 +225882,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.maps['yn.descent'].npcs.push({ id: 'lw_yohei', x: 9, y: 6, dir: 'left', if: '!lw_yn_descent_done', talk: 'yn.lw_road_descent_yunohana' });
   C.maps['yn.descent'].props.push({ p: 'sign', x: 7, y: 7, scene: 'yn.lw_descent_board' });
   L.road('yn_descent', { maps: ['yn.descent'],
-    unique: { id: 'yunohana', scene: 'yn.lw_road_descent_yunohana' },
-    variants: [{ id: 'eggs', scene: 'yn.lw_road_descent_eggs' }, { id: 'manners', scene: 'yn.lw_road_descent_manners' }, { id: 'inns', scene: 'yn.lw_road_descent_inns' }],
+    // each stands where it happens (RE-1): Yohei already stands at his vent by the bath-keepers' board (above), so his
+    // event adds only his basket at its rim; the egg pool beside the vent below the second bend, a traveller reaching in;
+    // the bath rules posted near the town end, a first-timer before them; the family at the viewing bench with the guide
+    unique: { id: 'yunohana', scene: 'yn.lw_road_descent_yunohana', at: { props: [{ p: 'ko_basket', x: 9, y: 7, meet: true }] } },
+    variants: [
+      { id: 'eggs', scene: 'yn.lw_road_descent_eggs', at: { who: [{ char: 'lw_rd_traveller2', x: 17, y: 12, dir: 'left' }], props: [{ p: 'yn_pool', x: 15, y: 12, meet: true }] } },
+      { id: 'manners', scene: 'yn.lw_road_descent_manners', at: { who: [{ char: 'lw_rd_traveller', x: 25, y: 22, dir: 'up' }], props: [{ p: 'noticeboard', x: 24, y: 21, meet: true }] } },
+      { id: 'inns', scene: 'yn.lw_road_descent_inns', at: { who: [{ char: 'lw_rd_parent', x: 16, y: 9, dir: 'left' }, { char: 'lw_rd_child', x: 13, y: 9, dir: 'right' }, { char: 'lw_rd_child2', x: 17, y: 9, dir: 'down' }] } },
+    ],
     stamp: { title: ['{湯煙|ゆけむり} の {坂|さか}', 'the Steaming Slope'], motif: 'path', ink: '#8a4a2a' } });
   C.notes.lw_yunohana = { title: T('Yu-no-hana', '{湯|ゆ}の{花|はな}'), fiction: false,
     jp: '「{湯|ゆ}の{花|はな}」 は 、 {温泉|おんせん} の {湧|わ}く {穴|あな} の {周|まわ}り に できる 、 {白|しろ}い {粉|こな} の よう な もの 。 {温泉|おんせん} の {町|まち} で は 、 これ を {集|あつ}めて 、 {家|いえ} の {風呂|ふろ} に {入|い}れる {土産|みやげ} に する 。',
@@ -225862,8 +226122,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { eyes: 'round', style: 'short', acc: [], bg: '#2a2e36' } };
   C.maps['yn.north'].npcs.push({ id: 'lw_genpachi', x: 17, y: 21, dir: 'up', if: '!lw_yn_north_guest_done', talk: 'yn.lw_road_north_guest' });
   L.road('yn_north', { maps: ['yn.north'],
-    unique: { id: 'guest', scene: 'yn.lw_road_north_guest' },
-    variants: [{ id: 'rocks', scene: 'yn.lw_road_north_rocks' }, { id: 'herbs', scene: 'yn.lw_road_north_herbs' }, { id: 'note', scene: 'yn.lw_road_north_note' }],
+    // each stands where it happens (RE-1): Genpachi already stands on the road (above), so his event adds only the stump
+    // he rested on; the leaning sign at the bend where the road turns up under the east cliff, stones fallen below it;
+    // the herb child with a basket beside the road's west climb; the note weighed down at the waystone's foot, a
+    // traveller bent over it
+    unique: { id: 'guest', scene: 'yn.lw_road_north_guest', at: { props: [{ p: 'stump', x: 16, y: 22, meet: true }] } },
+    variants: [
+      { id: 'rocks', scene: 'yn.lw_road_north_rocks', at: { props: [{ p: 'sign', x: 24, y: 12, meet: true }, { p: 'rock', x: 26, y: 10 }, { p: 'rock', x: 27, y: 11 }] } },
+      { id: 'herbs', scene: 'yn.lw_road_north_herbs', at: { who: [{ char: 'lw_rd_child2', x: 10, y: 16, dir: 'left' }], props: [{ p: 'ko_basket', x: 11, y: 16 }] } },
+      { id: 'note', scene: 'yn.lw_road_north_note', at: { who: [{ char: 'lw_rd_traveller', x: 17, y: 4, dir: 'left' }], props: [{ p: 'pet_papers_tidy', x: 16, y: 4, meet: true }] } },
+    ],
     stamp: { title: ['{北|きた} の {道|みち}', 'the North Road'], motif: 'path', ink: '#5a6070' } });
   C.notes.lw_inn_yukata = { title: T('The inn\'s yukata', '{宿|やど} の {浴衣|ゆかた}'), fiction: false,
     jp: '{温泉|おんせん} の {宿|やど} で は 、 {客|きゃく} に {浴衣|ゆかた} を {貸|か}す 。 {宿|やど} の {名前|なまえ} や {印|しるし} が {染|そ}めて ある こと も {多|おお}い 。 {客|きゃく} は {浴衣|ゆかた} の まま 、 {町|まち} の {湯|ゆ} を {巡|めぐ}って {歩|ある}く 。',
@@ -226054,9 +226322,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   road.npcs = road.npcs || [];
   road.npcs.push({ id: 'lw_matahei', x: 15, y: 8, dir: 'left', if: '!lw_co_kaki_done', talk: 'co.lw_road_kaki' });
   road.props.push({ p: 'cart', x: 12, y: 7, if: '!lw_co_kaki_done' }, { p: 'crate', x: 14, y: 7, if: '!lw_co_kaki_done' });
+  // each stands where it happens (RE-1): Matahei by his tipped cart (placed above), the two baskets to sort into at
+  // his feet; the smouldering campfire on the verge under the dry grass, its board beside it; the fallen scarecrow (a
+  // heap of straw) among the persimmon trees past the fence gap; the puzzled traveller on the road below the signpost
   L.road('co_road', { maps: ['co.road'],
-    unique: { id: 'kaki', scene: 'co.lw_road_kaki' },
-    variants: [{ id: 'embers', scene: 'co.lw_road_embers' }, { id: 'scarecrow', scene: 'co.lw_road_scarecrow' }, { id: 'way', scene: 'co.lw_road_way' }],
+    unique: { id: 'kaki', scene: 'co.lw_road_kaki', at: { props: [{ p: 'ko_basket', x: 13, y: 8, meet: true }, { p: 'ko_basket', x: 14, y: 8, meet: true }] } },
+    variants: [
+      { id: 'embers', scene: 'co.lw_road_embers', at: { props: [{ p: 'campfire', x: 27, y: 9, meet: true }, { p: 'sign', x: 26, y: 9, meet: true }] } },
+      { id: 'scarecrow', scene: 'co.lw_road_scarecrow', at: { props: [{ p: 'hay', x: 20, y: 15, meet: true }] } },
+      { id: 'way', scene: 'co.lw_road_way', at: { who: [{ char: 'lw_rd_traveller2', x: 31, y: 11, dir: 'up' }] } },
+    ],
     stamp: { title: ['{灰実|はいみ} へ の {坂道|さかみち}', 'the Orchard Road'], motif: 'path', ink: '#a8502a' } });
   C.notes.lw_co_shibugaki = { title: T('Astringent persimmons', '{渋柿|しぶがき}'), fiction: false,
     jp: '{渋柿|しぶがき} は 、 そのまま で は {渋|しぶ}くて {食|た}べられない 。 {皮|かわ} を むいて {干|ほ}す と 、 {甘|あま}い {干|ほ}し{柿|がき} に なる 。 {甘柿|あまがき} は 、 {木|き} から {取|と}って すぐ {食|た}べられる 。',
@@ -226307,9 +226582,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { eyes: 'narrow', style: 'short', acc: ['hat', 'scarf'], hatCol: '#6a5a4a', scarfCol: '#8a6a4a', bg: '#2a2a2e' } };
   C.maps['sb.road'].npcs.push({ id: 'lw_gohei', x: 16, y: 8, dir: 'up', if: '!lw_sb_slope_done', talk: 'sb.lw_road_slope' });
   C.maps['sb.road'].props.push({ p: 'crate', x: 15, y: 8, if: '!lw_sb_slope_done' });
+  // each stands where it happens (RE-1): Gohei below the slope (placed above), the half-buried sign he looks up at, a
+  // drift against it; the goat in the slope road just above the crossing; a traveller down from Snowbell before the
+  // iced signpost; a parent and child at the board before the shrine
   L.road('sb_road', { maps: ['sb.road'],
-    unique: { id: 'slope', scene: 'sb.lw_road_slope' },
-    variants: [{ id: 'goat', scene: 'sb.lw_road_goat' }, { id: 'sign', scene: 'sb.lw_road_sign' }, { id: 'snowshoes', scene: 'sb.lw_road_snowshoes' }],
+    unique: { id: 'slope', scene: 'sb.lw_road_slope', at: { props: [{ p: 'sign', x: 16, y: 7, meet: true }, { p: 'sb_drift', x: 17, y: 7 }] } },
+    variants: [
+      { id: 'goat', scene: 'sb.lw_road_goat', at: { props: [{ p: 'sb_snowgoat', x: 19, y: 10, meet: true }] } },
+      { id: 'sign', scene: 'sb.lw_road_sign', at: { who: [{ char: 'lw_rd_traveller', x: 16, y: 12, dir: 'up' }] } },
+      { id: 'snowshoes', scene: 'sb.lw_road_snowshoes', at: { who: [{ char: 'lw_rd_parent', x: 20, y: 7, dir: 'up' }, { char: 'lw_rd_child2', x: 21, y: 7, dir: 'up' }],
+        props: [{ p: 'sign', x: 20, y: 6, meet: true }] } },
+    ],
     stamp: { title: ['{雪鈴|ゆきすず} の {坂道|さかみち}', 'the Snowbell Road'], motif: 'path', ink: '#4a6a8a' } });
   C.notes.lw_sb_avalanche = { title: T('Crossing an avalanche slope', '{雪崩|なだれ} の {斜面|しゃめん}'), fiction: false,
     jp: '{雪崩|なだれ} の {起|お}き そう な {斜面|しゃめん} は 、 {一人|ひとり} ずつ 、 {止|と}まらず に {渡|わた}る 。 {昼|ひる} に なる と {雪|ゆき} が {緩|ゆる}む ので 、 {朝|あさ} の うち に {渡|わた}る 。',
@@ -226583,16 +226866,43 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- W5: the road's variants, after each map's own event ----------------------------------------------------------
   L.road('kr_steps', { maps: ['kr.steps'],
-    variants: [{ id: 'rain', scene: 'kr.lw_road_steps_rain', when: 'kr_cedar_cleared' }, { id: 'marks', scene: 'kr.lw_road_steps_marks', when: 'kr_cedar_cleared' }, { id: 'pilgrims', scene: 'kr.lw_road_steps_pilgrims', when: 'kr_cedar_cleared' }],
+    // each stands where it happens (RE-1): Kumazō before a faded board in the nook at the foot of the steps, where the
+    // pilgrims start up; Kumazō among the cedars by the Cedar Light, marking trunks; two pilgrims resting in the clearing
+    // beside the steps halfway up
+    variants: [
+      { id: 'rain', scene: 'kr.lw_road_steps_rain', when: 'kr_cedar_cleared', at: { who: [{ char: 'kr_kumazo', x: 9, y: 31, dir: 'up' }], props: [{ p: 'signblank', x: 9, y: 30, meet: true }] } },
+      { id: 'marks', scene: 'kr.lw_road_steps_marks', when: 'kr_cedar_cleared', at: { who: [{ char: 'kr_kumazo', x: 17, y: 16, dir: 'right' }] } },
+      { id: 'pilgrims', scene: 'kr.lw_road_steps_pilgrims', when: 'kr_cedar_cleared', at: { who: [{ char: 'lw_rd_pilgrim', x: 12, y: 20, dir: 'left' }, { char: 'lw_rd_pilgrim', id: 'lw_rd_pilgrim_2', x: 13, y: 21, dir: 'up' }] } },
+    ],
     stamp: { title: ['{杉|すぎ} の {石段|いしだん}', 'the Cedar Steps'], motif: 'path', ink: '#4e6a3a' } });
   L.road('kr_fox', { maps: ['kr.fox'],
-    variants: [{ id: 'plank', scene: 'kr.lw_road_fox_plank', when: 'kr_l_fox' }, { id: 'yomeiri', scene: 'kr.lw_road_fox_yomeiri', when: 'kr_l_fox' }, { id: 'mist', scene: 'kr.lw_road_fox_mist', when: 'kr_l_fox' }],
+    // each stands at the bridge's near foot (RE-1): Shōzō above the bridge's end with a bare board for his notice; the
+    // children below the path, looking out at the bridge in the sun-shower; the old board by the Fox Light in the mist
+    variants: [
+      { id: 'plank', scene: 'kr.lw_road_fox_plank', when: 'kr_l_fox', at: { who: [{ char: 'kr_shozo', x: 23, y: 11, dir: 'down' }], props: [{ p: 'signblank', x: 22, y: 11 }] } },
+      { id: 'yomeiri', scene: 'kr.lw_road_fox_yomeiri', when: 'kr_l_fox', at: { who: [{ char: 'lw_rd_child', x: 21, y: 15, dir: 'right' }, { char: 'lw_rd_child2', x: 22, y: 15, dir: 'up' }] } },
+      { id: 'mist', scene: 'kr.lw_road_fox_mist', when: 'kr_l_fox', at: { props: [{ p: 'sign', x: 22, y: 11, meet: true }] } },
+    ],
     stamp: { title: ['{狐橋|きつねばし}', 'Fox Bridge'], motif: 'path', ink: '#b8783a' } });
   L.road('kr_ridge', { maps: ['kr.ridge'],
-    variants: [{ id: 'copy', scene: 'kr.lw_road_ridge_copy', when: 'kr_moths_done' }, { id: 'fork', scene: 'kr.lw_road_ridge_fork', when: 'kr_moths_done' }, { id: 'wind', scene: 'kr.lw_road_ridge_wind', when: 'kr_moths_done' }],
+    // each stands where it happens (RE-1): Jūzō at the keepers' stele with his copy weighed down beside him; two
+    // travellers either side of the fork's waystone; Jūzō at the east edge of the stele's terrace, his sheets blown
+    // across the grass towards the path
+    variants: [
+      { id: 'copy', scene: 'kr.lw_road_ridge_copy', when: 'kr_moths_done', at: { who: [{ char: 'kr_juzo', x: 14, y: 9, dir: 'up' }], props: [{ p: 'pet_papers_tidy', x: 15, y: 9, meet: true }] } },
+      { id: 'fork', scene: 'kr.lw_road_ridge_fork', when: 'kr_moths_done', at: { who: [{ char: 'lw_rd_traveller', x: 18, y: 15, dir: 'right' }, { char: 'lw_rd_traveller2', x: 20, y: 15, dir: 'left' }] } },
+      { id: 'wind', scene: 'kr.lw_road_ridge_wind', when: 'kr_moths_done', at: { who: [{ char: 'kr_juzo', x: 16, y: 10, dir: 'right' }],
+        props: [{ p: 'pet_papers', x: 18, y: 9, meet: true }, { p: 'pet_papers', x: 17, y: 11, meet: true }, { p: 'pet_papers', x: 15, y: 12, meet: true }] } },
+    ],
     stamp: { title: ['{紅葉|もみじ} の {尾根|おね}', 'the Maple Ridge'], motif: 'path', ink: '#a8402a' } });
   L.road('kr_descent', { maps: ['kr.descent'],
-    variants: [{ id: 'far', scene: 'kr.lw_road_descent_far', when: 'kr_done' }, { id: 'water', scene: 'kr.lw_road_descent_water', when: 'kr_done' }, { id: 'clouds', scene: 'kr.lw_road_descent_clouds', when: 'kr_done' }],
+    // each stands where it happens (RE-1): the breathless traveller and Seiji at the pass's waystone (the far traveller
+    // just east of it, come up from that side); the early traveller east of the pass, looking out over the valley
+    variants: [
+      { id: 'far', scene: 'kr.lw_road_descent_far', when: 'kr_done', at: { who: [{ char: 'lw_rd_traveller', x: 21, y: 14, dir: 'left' }] } },
+      { id: 'water', scene: 'kr.lw_road_descent_water', when: 'kr_done', at: { who: [{ char: 'kr_seiji', x: 20, y: 14, dir: 'up' }] } },
+      { id: 'clouds', scene: 'kr.lw_road_descent_clouds', when: 'kr_done', at: { who: [{ char: 'lw_rd_elder', x: 31, y: 13, dir: 'right' }] } },
+    ],
     stamp: { title: ['{峠|とうげ}', 'the Pass'], motif: 'path', ink: '#5a5a6a' } });
   C.notes.lw_kr_yomeiri = { title: T('The fox\'s wedding', '{狐|きつね} の {嫁入|よめい}り'), fiction: false,
     jp: '{晴|は}れて いる のに {降|ふ}る {雨|あめ} を 、 「{狐|きつね} の {嫁入|よめい}り 」 と いう 。 {狐|きつね} が {人|ひと} に {見|み}られない よう に 、 {雨|あめ} に {隠|かく}れて {嫁入|よめい}り を する 、 と {言|い}われて きた 。',
@@ -226984,9 +227294,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const R = C.maps['lf.road'];
   R.npcs.push({ id: 'lw_lf_carter', x: 22, y: 14, dir: 'left', if: '!lw_lf_oil_done', talk: 'lf.lw_road_oil' });
   R.props.push({ p: 'cart', x: 20, y: 14, if: '!lw_lf_oil_done' }, { p: 'barrel', x: 19, y: 15, if: '!lw_lf_oil_done' });
+  // each stands where it happens (RE-1): Rokusuke by his cart (placed above), the leaking cask with its card beside
+  // it; the blown notice lying on the road; an old traveller with a bundle resting at the bench; Nagi's card on a post
+  // beside the road's own lantern by the way up
   L.road('lf_road', { maps: ['lf.road'],
-    unique: { id: 'oil', scene: 'lf.lw_road_oil' },
-    variants: [{ id: 'notice', scene: 'lf.lw_road_notice' }, { id: 'bench', scene: 'lf.lw_road_bench' }, { id: 'lantern', scene: 'lf.lw_road_lantern' }],
+    unique: { id: 'oil', scene: 'lf.lw_road_oil', at: { props: [{ p: 'barrel', x: 21, y: 15, meet: true }] } },
+    variants: [
+      { id: 'notice', scene: 'lf.lw_road_notice', at: { props: [{ p: 'pet_papers', x: 13, y: 13, meet: true }] } },
+      { id: 'bench', scene: 'lf.lw_road_bench', at: { who: [{ char: 'lw_rd_elder', x: 16, y: 15, dir: 'down' }] } },
+      { id: 'lantern', scene: 'lf.lw_road_lantern', at: { props: [{ p: 'fw_postnote', x: 22, y: 10, meet: true }] } },
+    ],
     stamp: { title: ['{灯|ひ} の {道|みち}', 'the Lantern Road'], ink: '#4a4a8a' } });
   C.notes.lw_lf_oil = { title: T('Lamp oil', '{灯|あか}り の {油|あぶら}'), fiction: false,
     jp: '{昔|むかし} の {行灯|あんどん} は 、 {菜種油|なたねあぶら} を {燃|も}やして いた 。 {油|あぶら} を {売|う}り {歩|ある}く {人|ひと} も いた 。',
@@ -227470,7 +227787,40 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.chars.lw_cr_hunter = { name: T('A hunter', '{猟師|りょうし}'), voice: { pitch: 0.78 },
     look: { skin: 4, hair: 'short', hairColor: 0, cloth: ['#5a4a3a', '#46382c', '#c8b890'], shape: 'coat', acc: ['hat'], hatCol: '#6a5a44' },
     portrait: { eyes: 'sharp', style: 'short', acc: ['hat'], hatCol: '#6a5a44', beard: true, bg: '#241e18' } };
-  const V = (id) => ({ id, scene: 'cr.lw_' + id });
+  // each event stands where it happens (RE-1), by event id (05_author.js L.road `at`; on the pass, the map it is on):
+  //   the Cedar Avenue: the runner sits under the cedars of the west avenue; the frightened traveller between the
+  //     cedars of the east avenue, the dark thing (a stump) behind them; the rota card on a post by the milestone mound
+  //   the Stone Steps: a waystone on the east steps with the red cloths (a ribboned post) by it; the yellowed notice
+  //     by the old slide's rock at the gorge's west mouth; Sada resting by the road, his loads beside him
+  //   the Stream: the traveller at the shallows (the old road's ford), the gauge post beside them; the child on the far
+  //     bank with the jar, the card at the water's edge; Yahei upstream on the bank above the ford, a felled log by him
+  //   the Ledge: the two travellers arguing where the roads part; Rin's stakes along the main road east of the gorge,
+  //     a gap where one was pulled up, her card on one; Genji and Kuri stopped on the main road
+  //   the Fog Slope: the lost traveller off the road in the meadow; the hunter at the gorge's mouth, where the tracks
+  //     cross the road; the dropped papers on the road, the two travellers a little further on
+  //   the High Pass: the card by the shelter's woodpile (cr.pass2); the child at the first turn by the waystone, the
+  //     parent behind at the corner (cr.pass1); a waystone's head above the fresh snow, drifts round it (cr.pass3)
+  const AT = {
+    runner: { who: [{ char: 'lw_cr_runner', x: 9, y: 13, dir: 'up' }] },
+    bear: { who: [{ char: 'lw_cr_traveller', x: 25, y: 13, dir: 'down' }], props: [{ p: 'stump', x: 26, y: 15 }] },
+    rota: { props: [{ p: 'fw_postnote', x: 5, y: 14, meet: true }] },
+    cloth: { props: [{ p: 'signblank', x: 28, y: 13, meet: true }, { p: 'pet_post', x: 29, y: 13, meet: true }] },
+    pebbles: { props: [{ p: 'fw_postnote', x: 11, y: 10, meet: true }] },
+    loads: { who: [{ char: 'cr_sada', x: 6, y: 10, dir: 'down' }], props: [{ p: 'crate', x: 7, y: 10 }, { p: 'crate', x: 8, y: 10 }] },
+    gauge: { who: [{ char: 'lw_rd_traveller2', x: 15, y: 2, dir: 'right' }], props: [{ p: 'pet_post_fixed', x: 16, y: 2, meet: true }] },
+    kajika: { who: [{ char: 'lw_cr_child', x: 20, y: 2, dir: 'left' }], props: [{ p: 'fw_postnote', x: 19, y: 2, meet: true }, { p: 'kr_jar', x: 20, y: 1 }] },
+    logs: { who: [{ char: 'cr_yahei', x: 19, y: 1, dir: 'down' }], props: [{ p: 'kr_cedar', x: 20, y: 1 }] },
+    lines: { who: [{ char: 'lw_rd_traveller', x: 6, y: 8, dir: 'right' }, { char: 'lw_rd_traveller2', x: 7, y: 8, dir: 'left' }] },
+    stakes: { props: [{ p: 'pet_post_fixed', x: 23, y: 13, meet: true }, { p: 'fw_postnote', x: 25, y: 13, meet: true }, { p: 'pet_post_fixed', x: 29, y: 13, meet: true }] },
+    horse: { who: [{ char: 'cr_genji', x: 30, y: 12, dir: 'right' }], props: [{ p: 'cr_horse', x: 31, y: 12, meet: true }] },
+    voice: { who: [{ char: 'lw_cr_traveller', x: 6, y: 17, dir: 'left' }] },
+    tracks: { who: [{ char: 'lw_cr_hunter', x: 11, y: 10, dir: 'down' }] },
+    papers: { who: [{ char: 'lw_rd_traveller', x: 29, y: 13, dir: 'right' }, { char: 'lw_rd_traveller2', x: 30, y: 13, dir: 'left' }], props: [{ p: 'pet_papers', x: 25, y: 12, meet: true }] },
+    shelter: { map: 'cr.pass2', props: [{ p: 'fw_postnote', x: 31, y: 8, meet: true }] },
+    turns: { map: 'cr.pass1', who: [{ char: 'lw_rd_child', x: 6, y: 28, dir: 'right' }, { char: 'lw_rd_parent', x: 3, y: 28, dir: 'right' }] },
+    stones: { map: 'cr.pass3', props: [{ p: 'stone_marker', x: 9, y: 11, meet: true }, { p: 'sb_drift', x: 8, y: 11 }, { p: 'sb_drift', x: 10, y: 11 }] },
+  };
+  const V = (id) => Object.assign({ id, scene: 'cr.lw_' + id }, AT[id] ? { at: AT[id] } : {});
   const road = (rid, maps, when, ids, title, ink) => L.road(rid, { maps, variants: ids.map((id) => Object.assign(V(id), { when })), stamp: { title, ink } });
   road('cr_leg1', ['cr.leg1'], 'cr_done', ['runner', 'bear', 'rota'], ['{杉並木|すぎなみき}', 'the Cedar Avenue'], '#3e5a34');
   road('cr_leg2', ['cr.leg2'], 'cr_done', ['cloth', 'pebbles', 'loads'], ['{石畳|いしだたみ}', 'the Stone Steps'], '#6a6a6a');
@@ -227899,9 +228249,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
 切れ端|きれはし|n|I|a scrap, an offcut (of paper or cloth)
 `), 'living');
 
+  // each stands where it happens (RE-1): the name slip caught on a thorn bush under the middle terrace; the paper crane
+  // glinting in a bush by the waystone at the foot of the road; the flower card by the box of sandals; a traveller
+  // going up, at that box
   L.road('sa_road', { maps: ['sa.road'],
-    unique: { id: 'slip', scene: 'sa.lw_road_slip' },
-    variants: [{ id: 'crane', scene: 'sa.lw_road_crane' }, { id: 'grey', scene: 'sa.lw_road_grey' }, { id: 'sandals', scene: 'sa.lw_road_sandals' }],
+    unique: { id: 'slip', scene: 'sa.lw_road_slip', at: { props: [{ p: 'bush', x: 20, y: 14, meet: true }, { p: 'pet_papers', x: 19, y: 14, meet: true }] } },
+    variants: [
+      { id: 'crane', scene: 'sa.lw_road_crane', at: { props: [{ p: 'bush', x: 11, y: 23, meet: true }, { p: 'sparkle', x: 12, y: 23, meet: true }] } },
+      { id: 'grey', scene: 'sa.lw_road_grey', at: { props: [{ p: 'fw_note', x: 23, y: 8, meet: true }] } },
+      { id: 'sandals', scene: 'sa.lw_road_sandals', at: { who: [{ char: 'lw_rd_traveller', x: 26, y: 8, dir: 'left' }] } },
+    ],
     stamp: { title: ['{書庫|しょこ} への {坂道|さかみち}', 'the Archive road'], ink: '#5a5a6e' } });
   C.items.lw_sa_slip = { name: T('Name slip: "Fish Street"', '{名札|なふだ} 「{魚|さかな}{通|どお}り」'), key: true,
     desc: 'A name slip from one of Lanternfall\'s lamp shades, caught on a thorn on the Archive road on its way uphill. Nagi has long since written the street\'s names again. A keepsake.' };

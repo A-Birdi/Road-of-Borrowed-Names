@@ -100,9 +100,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const R = C.maps['lf.road'];
   R.npcs.push({ id: 'lw_lf_carter', x: 22, y: 14, dir: 'left', if: '!lw_lf_oil_done', talk: 'lf.lw_road_oil' });
   R.props.push({ p: 'cart', x: 20, y: 14, if: '!lw_lf_oil_done' }, { p: 'barrel', x: 19, y: 15, if: '!lw_lf_oil_done' });
+  // each stands where it happens (RE-1): Rokusuke by his cart (placed above), the leaking cask with its card beside
+  // it; the blown notice lying on the road; an old traveller with a bundle resting at the bench; Nagi's card on a post
+  // beside the road's own lantern by the way up
   L.road('lf_road', { maps: ['lf.road'],
-    unique: { id: 'oil', scene: 'lf.lw_road_oil' },
-    variants: [{ id: 'notice', scene: 'lf.lw_road_notice' }, { id: 'bench', scene: 'lf.lw_road_bench' }, { id: 'lantern', scene: 'lf.lw_road_lantern' }],
+    unique: { id: 'oil', scene: 'lf.lw_road_oil', at: { props: [{ p: 'barrel', x: 21, y: 15, meet: true }] } },
+    variants: [
+      { id: 'notice', scene: 'lf.lw_road_notice', at: { props: [{ p: 'pet_papers', x: 13, y: 13, meet: true }] } },
+      { id: 'bench', scene: 'lf.lw_road_bench', at: { who: [{ char: 'lw_rd_elder', x: 16, y: 15, dir: 'down' }] } },
+      { id: 'lantern', scene: 'lf.lw_road_lantern', at: { props: [{ p: 'fw_postnote', x: 22, y: 10, meet: true }] } },
+    ],
     stamp: { title: ['{灯|ひ} の {道|みち}', 'the Lantern Road'], ink: '#4a4a8a' } });
   C.notes.lw_lf_oil = { title: T('Lamp oil', '{灯|あか}り の {油|あぶら}'), fiction: false,
     jp: '{昔|むかし} の {行灯|あんどん} は 、 {菜種油|なたねあぶら} を {燃|も}やして いた 。 {油|あぶら} を {売|う}り {歩|ある}く {人|ひと} も いた 。',

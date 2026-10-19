@@ -130,11 +130,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // (the Reedwake road next to it has a cart, a waymarker, a letter and geese: 11_rw_world.js; these are the coast's own)
   L.road('sg_road', {
     maps: ['sg.road'],
-    unique: { id: 'child', scene: 'sg.lw_road_child' },
+    // each stands where it happens (RE-1): the child under the fork's lantern; the fisher where the path drops to the
+    // beach, by the rocks, a net by them; the fish-seller resting by the bench, three baskets in a row; a traveller lost
+    // in the fog at the fork
+    unique: { id: 'child', scene: 'sg.lw_road_child', at: { who: [{ char: 'lw_rd_child', x: 17, y: 9, dir: 'down' }] } },
     variants: [
-      { id: 'crab', scene: 'sg.lw_road_crab' },
-      { id: 'tags', scene: 'sg.lw_road_tags', when: 'ch2_done' },
-      { id: 'fog', scene: 'sg.lw_road_fog', when: 'ch2_done&!ed>=2|mb2_done' },
+      { id: 'crab', scene: 'sg.lw_road_crab', at: { who: [{ char: 'lw_rd_fisher', x: 23, y: 16, dir: 'right' }], props: [{ p: 'net', x: 20, y: 17 }] } },
+      { id: 'tags', scene: 'sg.lw_road_tags', when: 'ch2_done', at: { who: [{ char: 'lw_rd_seller', x: 9, y: 13, dir: 'left' }],
+        props: [{ p: 'ko_basket', x: 4, y: 14, meet: true }, { p: 'ko_basket', x: 5, y: 14, meet: true }, { p: 'ko_basket', x: 6, y: 14, meet: true }] } },
+      { id: 'fog', scene: 'sg.lw_road_fog', when: 'ch2_done&!ed>=2|mb2_done', at: { who: [{ char: 'lw_rd_traveller', x: 18, y: 9, dir: 'down' }] } },
     ],
     stamp: { title: ['{海沿|うみぞ}い の {道|みち}', 'The Coast Road'], motif: 'path', ink: '#3a6a7a' },
   });

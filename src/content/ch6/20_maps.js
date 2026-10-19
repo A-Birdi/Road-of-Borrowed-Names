@@ -311,7 +311,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [],
     foes: [
-      { id: 'g1', enemy: 'sa.ghost', x: 11, y: 9, patrol: 1, aggro: true, group: { normal: ['sa.ghost'], hard: ['sa.ghost', 'sa.crane'] } },
+      // (Demanding: one Nameless Lantern, not two, since Heat's force comes through a ward word (CB-1, 2026-10-19): two
+      // heated Strikes on you alone made it a spike in the difficulty curve, tests/unit/combat_curve.test.mjs)
+      { id: 'g1', enemy: 'sa.ghost', x: 11, y: 9, patrol: 1, aggro: true, group: { normal: ['sa.ghost'], hard: ['sa.moth', 'sa.crane'] } },
       { id: 'g2', enemy: 'sa.ghost', x: 16, y: 18, patrol: 2, aggro: true, group: { normal: ['sa.crane'], hard: ['sa.crane', 'sa.moth'] } },
       { id: 'c1', enemy: 'sa.crane', x: 25, y: 10, patrol: 1, group: { normal: ['sa.crane'], hard: ['sa.crane', 'sa.crane'] } },
     ],

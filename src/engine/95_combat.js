@@ -439,6 +439,7 @@ RB.combatLogic = (function () {
     const answered = st.foes.map(() => false);
     const tagged = (o, i) => Object.assign(o, { foe: i == null ? T : i });
     st.mistakeCostThisRound = 0;
+    st.wardBlock = []; st.wardBlock2 = []; // the blows a ward word turns this exchange: whom each was aimed at
     if (result.mistakes > 0 && !st.assist) {
       // small, capped consequence: one point of resolve, once per exchange
       st.mistakeCostThisRound = 1;
@@ -478,7 +479,7 @@ RB.combatLogic = (function () {
         // otherwise it lingers (2 points) for later blows.
         const order = [T].concat(standing(st).filter((i) => i !== T));
         const blocker = order.find((i) => withFoe(st, i, (f) => f.intent && f.intent.counters.indexOf('ward') >= 0 && f.intent.target === card.target && f.intent.kind !== 'charge' && !answered[i]));
-        if (blocker != null) { answered[blocker] = true; fx.push({ t: 'ward', target: card.target, block: true, foe: blocker }); }
+        if (blocker != null) { answered[blocker] = true; st.wardBlock[blocker] = card.target; fx.push({ t: 'ward', target: card.target, block: true, foe: blocker }); }
         else { st.ward[card.target] += 2; fx.push({ t: 'ward', target: card.target, n: 2 }); }
       }
       if (tags.indexOf('heal') >= 0) {
@@ -527,7 +528,7 @@ RB.combatLogic = (function () {
         if (card.kind === 'answer' && i === T && it2.kind === 'plea') { answered2[i] = true; continue; }
         for (const tg of tags) {
           if (it2.counters.indexOf(tg) < 0) continue;
-          if (tg === 'ward') { if (it2.target === card.target && it2.target !== 'both' && !fx.some((e) => e.t === 'ward' && e.block)) { answered2[i] = true; fx.push({ t: 'ward', target: card.target, block: true, foe: i, second: true }); } continue; }
+          if (tg === 'ward') { if (it2.target === card.target && it2.target !== 'both' && !fx.some((e) => e.t === 'ward' && e.block)) { answered2[i] = true; (st.wardBlock2 = st.wardBlock2 || [])[i] = card.target; fx.push({ t: 'ward', target: card.target, block: true, foe: i, second: true }); } continue; }
           const r = TAG_REACH[tg];
           if (r === 'all' || r === 'party' || ((r === 'target' || !r) && i === T)) answered2[i] = true;
         }
@@ -743,9 +744,10 @@ RB.combatLogic = (function () {
     const fx = [];
     const f = st.foes[st.cur];
     const soft = (f && f.soften) || 0;
-    const dmg = (who, p) => {
+    // (raw: the power as given, nothing added: Heat's force through a ward word, below)
+    const dmg = (who, p, raw) => {
       if (who === 'comp' && !st.compId) who = 'pc';
-      let power = Math.max(0, p + st.diff.powerMod + heatBonus(st) + condPower(st, f) - soft);
+      let power = raw ? p : Math.max(0, p + st.diff.powerMod + heatBonus(st) + condPower(st, f) - soft);
       if (who !== 'pc' && who !== 'comp') { land(who, power); return; }
       // a modifier's lasting ward meets the blow first (E27)
       if (st.mods && RB.modifiers) { power = RB.modifiers.onBlow(st, who, power, it, fx); if (power <= 0) return; }
@@ -813,6 +815,13 @@ RB.combatLogic = (function () {
       }
     } else {
       fx.push({ t: 'countered', kind: it.kind, by: f && f.stunned ? f.stunned : undefined, headedOff: it.then ? true : undefined });
+      // Heat's extra force goes through a ward word (Robin, 2026-10-19: "it could block the initial strike damage
+      // fully as it does, but Heat's additional damage should proceed through the block. It would still be blocked by
+      // any existing Ward"): the blow itself is turned; what Heat adds lands on the one it was aimed at, a standing
+      // ward taking it first
+      const second = !!(f && f.intent2 && it === f.intent2);
+      const aimed = ((second ? st.wardBlock2 : st.wardBlock) || [])[st.cur];
+      if (aimed && BASE_POWER[it.kind] && heatBonus(st) > 0) { fx.push({ t: 'heatThrough', who: aimed, n: heatBonus(st) }); dmg(aimed, heatBonus(st), true); }
       if (it.kind === 'charge') st.charged = false;
       // a plan over two exchanges (E26): answering the first step heads off the second
       if (it.then && f) { f.pi++; f.headedOff = it.then; }

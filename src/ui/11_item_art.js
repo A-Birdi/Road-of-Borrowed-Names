@@ -14,7 +14,8 @@
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
 
-RB.itemArt = (function () {
+// (one maker, two registries: the items' icons, and the battle's: its moves and its responses, RB.battleArt, IC-1)
+RB.pixelIcons = function (fallback) {
   'use strict';
   const N = 16;
   const OUT = '#2a2024'; // the outline ink of the keepsakes' pixel art (src/content/discovery/60_keepsakes.js)
@@ -76,13 +77,18 @@ RB.itemArt = (function () {
   function html(id, scale, cls) {
     const s = Math.max(1, Math.round(scale || 2));
     const u = has(id) ? url(id) : '';
-    if (!u) {
-      // (an item without its own picture yet: the folio's line drawing for its kind)
-      const d = RB.content && RB.content.items && RB.content.items[id];
-      const ic = RB.ui.folio ? RB.ui.folio.icon(RB.ui.folio.itemIcon ? RB.ui.folio.itemIcon(id, d) : 'pouch') : '';
-      return '<span class="it-ic it-ic-line' + (cls ? ' ' + cls : '') + '" style="width:' + N * s + 'px;height:' + N * s + 'px" aria-hidden="true">' + ic + '</span>';
-    }
+    if (!u) return '<span class="it-ic it-ic-line' + (cls ? ' ' + cls : '') + '" style="width:' + N * s + 'px;height:' + N * s + 'px" aria-hidden="true">' + (fallback ? fallback(id) : '') + '</span>';
     return '<img class="it-ic' + (cls ? ' ' + cls : '') + '" src="' + u + '" width="' + N * s + '" height="' + N * s + '" alt="" aria-hidden="true" draggable="false">';
   }
   return { def, has, get, ids, url, html, problems, paint, SIZE: N, OUT };
-})();
+};
+// (an item without its own picture yet: the folio's line drawing for its kind)
+RB.itemArt = RB.pixelIcons((id) => {
+  const d = RB.content && RB.content.items && RB.content.items[id];
+  return RB.ui.folio ? RB.ui.folio.icon(RB.ui.folio.itemIcon ? RB.ui.folio.itemIcon(id, d) : 'pouch') : '';
+});
+// The battle's icons (IC-1, Robin 2026-10-19: "Given the Icon expansion in the inventory, we could probably use new
+// icons for the battle menus and enemy Intent"): one per move a creature telegraphs and per kind of response, keyed
+// by the line icon's name they replace (src/ui/80_combat.js); drawn in src/content/battle_art/. One without its own
+// picture falls back to the line drawing.
+RB.battleArt = RB.pixelIcons((id) => (RB.learnUi && RB.learnUi.icon ? RB.learnUi.icon(id) : ''));

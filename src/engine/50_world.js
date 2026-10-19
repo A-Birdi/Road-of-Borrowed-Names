@@ -65,7 +65,15 @@ RB.world = (function () {
     refreshActors();
     placeCompanion();
     unstick(W.player);
-    if (m.def.music && RB.audio) RB.audio.playSong(musicFor(m.def, st));
+    // A map without a song of its own keeps whatever the world is playing (a house keeps its village's). Coming into
+    // the world (a new journey, a load) or from the title, nothing of the world is playing: then it plays the song of
+    // the place it opens onto (Robin, 2026-10-19: "Loading into an area that doesn't set the BGM will retain the
+    // currently playing / previous BGM, such as the Title Screen theme when loading into the Lantern Hall")
+    if (RB.audio) {
+      const now = RB.audio.currentSong ? RB.audio.currentSong() : null;
+      const song = musicFor(m.def, st) || (opts.fresh || !now || FRONT_SONGS[now] ? songAround(m, st) : null);
+      if (song) RB.audio.playSong(song);
+    }
     RB.render.invalidate();
     RB.bus.emit('map:enter', { id: mapId });
   }
@@ -78,6 +86,25 @@ RB.world = (function () {
   function musicFor(def, st) {
     if (!def || !def.music) return null;
     return typeof def.music === 'function' ? def.music(st) : pickMusic(def.music, st);
+  }
+  // songs that are not the world's (the title's)
+  const FRONT_SONGS = { title: 1 };
+  // the song of the nearest place a map opens onto (through its ways out, a few steps at most), for a map without one
+  function songAround(m, st) {
+    const seen = new Set([m.id]);
+    let level = [m];
+    for (let d = 0; d < 4 && level.length; d++) {
+      const next = [];
+      for (const cm of level) for (const ex of cm.exits || []) {
+        if (!ex.to || seen.has(ex.to) || !RB.content.maps[ex.to]) continue;
+        seen.add(ex.to);
+        const song = musicFor(RB.content.maps[ex.to], st);
+        if (song) return song;
+        try { next.push(RB.maps.compile(ex.to)); } catch (e) { /* a way out to a map that cannot be built is passed over */ }
+      }
+      level = next;
+    }
+    return null;
   }
   function playerLook() {
     const l = RB.equip.look(s()); // own look + the equipped keepsake (src/engine/07_equip.js)

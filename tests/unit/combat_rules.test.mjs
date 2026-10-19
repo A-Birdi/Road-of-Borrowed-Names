@@ -56,6 +56,40 @@ export default async (t) => {
     t.eq(st.heat, 0, 'an answered Heat move leaves no Heat');
   }
 
+  // ---- Heat through a ward word (Robin, 2026-10-19: "it could block the initial strike damage fully as it does, but
+  // Heat's additional damage should proceed through the block. It would still be blocked by any existing Ward") ----
+  {
+    const e = foe(['heat', 'strike', 'heat', 'strike', 'strike']);
+    const st = L.init(e, camp({}), {});
+    const protect = () => ({ kind: 'word', word: W('mamoru'), target: st.intent.target });
+    exchange(st, e, unravel); // Heat 1
+    const pc0 = st.pc;
+    const fx = exchange(st, e, protect());
+    t.ok(fx.some((f) => f.t === 'countered'), 'the ward word still turns the Strike itself');
+    t.ok(fx.some((f) => f.t === 'heatThrough' && f.n === 1), 'its Heat\'s +1 comes through the block');
+    t.eq(pc0 - st.pc, 1, 'so the one it was aimed at takes 1 (not 3, not 0)');
+    exchange(st, e, unravel); // Heat 2
+    st.ward.pc = 1; // a ward already standing (from an earlier round)
+    const pc1 = st.pc;
+    const fx2 = exchange(st, e, protect());
+    t.ok(fx2.some((f) => f.t === 'heatThrough' && f.n === 2) && fx2.some((f) => f.t === 'block' && f.n === 1), 'at Heat 2, +2 comes through; the standing ward takes 1 of it');
+    t.eq([pc1 - st.pc, st.ward.pc], [1, 0], 'so 1 lands and the old ward is spent');
+    // no Heat: the block is whole, as before
+    const e2 = foe(['strike', 'strike']);
+    const st2 = L.init(e2, camp({}), {});
+    const p0 = st2.pc;
+    const fx3 = exchange(st2, e2, { kind: 'word', word: W('mamoru'), target: st2.intent.target });
+    t.ok(p0 === st2.pc && !fx3.some((f) => f.t === 'heatThrough'), 'without Heat a ward word still blocks the whole blow');
+    // cooled first: nothing comes through
+    const e3 = foe(['heat', 'strike', 'strike']);
+    const st3 = L.init(e3, camp({}), {});
+    exchange(st3, e3, unravel);
+    exchange(st3, e3, { kind: 'word', word: W('mizu') });
+    const p3 = st3.pc;
+    exchange(st3, e3, { kind: 'word', word: W('mamoru'), target: st3.intent.target });
+    t.eq(p3, st3.pc, 'once water cools the Heat, a ward word blocks the whole blow again');
+  }
+
   // ---- what a blow will do: blowOf agrees with enemyAct ----------------------------------
   for (const diff of ['relaxed', 'normal', 'hard']) {
     for (const kind of ['strike', 'sweep', 'flood', 'gust', 'chill', 'lie', 'mirror']) {

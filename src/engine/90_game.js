@@ -255,7 +255,7 @@ RB.game = (function () {
     G.playing = true;
     setBase('world');
     const start = RB.content.start || { map: 'rw.home', x: 3, y: 3, dir: 'down', scene: null };
-    RB.world.enter(start.map, start.x, start.y, start.dir);
+    RB.world.enter(start.map, start.x, start.y, start.dir, { fresh: true });
     if (RB.town) RB.town.visited(G.s, start.map); // (being in a town is a visit: its changes so far are seen)
     // A successful campaign entry owns world rendering, regardless of caller.
     RB.input.clearHeld();
@@ -302,7 +302,7 @@ RB.game = (function () {
     G.playing = true;
     setBase('world');
     RB.maps.invalidate();
-    RB.world.enter(G.s.map, G.s.x, G.s.y, G.s.dir);
+    RB.world.enter(G.s.map, G.s.x, G.s.y, G.s.dir, { fresh: true });
     if (RB.town) RB.town.visited(G.s, G.s.map); // (being in a town is a visit: its changes so far are seen)
     // Clear title/creation backdrops only after the saved map entered successfully.
     RB.input.clearHeld();
@@ -387,9 +387,10 @@ RB.game = (function () {
       RB.script.run(ev.scene);
       return;
     }
-    // a road's event (W5): the unique one until it is solved, then now and then a variant
+    // a road's event (W5): the unique one until it is solved, then now and then a variant. One placed on the road
+    // stands there, met when you go to it (src/engine/53_town.js); one without a place runs at once
     const re = RB.town && RB.town.roadEventAt(G.s, m.id);
-    if (re && RB.content.scenes[re]) RB.script.run(re);
+    if (re && RB.content.scenes[re]) { if (RB.town.placedAt(G.s, m.id)) RB.world.refreshActors(); else RB.script.run(re); }
   }
   function afterScene() {
     if (!G.playing) return;
@@ -444,11 +445,8 @@ RB.game = (function () {
         if (e.t === 'lostWord') RB.ui.toast({ kind: 'word', jp: e.jp, en: 'A lost word comes back: ' + e.en });
         else if (e.t === 'item' && RB.content.items[e.id]) RB.ui.toast({ kind: 'item', id: e.id, note: RB.equip.note(RB.content.items[e.id]) });
         else if (e.t === 'cleared') RB.ui.notice('The way is clear now: people will start using it again.', 'info');
-        else if (e.t === 'stamp' && RB.content.stamps[e.id]) {
-          // the Stamp Book's slip: the stamp's own design pressed onto it (src/ui/15_award.js)
-          const d = RB.content.stamps[e.id];
-          RB.ui.award({ kind: 'stamp', id: e.id, jp: d.title.jp, en: d.title.en, note: (d.note || d.criteria).en + ' Kept in Journey › Stamp book.', art: RB.ui.records ? RB.ui.records.stampSvg(d, 'pressed', d.title.en) : '', ink: d.design.ink });
-        }
+        // the Stamp Book's slip: the stamp's own design pressed onto it (src/ui/15_award.js stamps)
+        else if (e.t === 'stamp' && RB.content.stamps[e.id]) RB.ui.award.stamps([e.id]);
       }
     }
     if (res === 'win') {
@@ -551,7 +549,7 @@ RB.game = (function () {
     RB.render.setOverride(null);
     G.playing = true;
     setBase('world');
-    RB.world.enter(mapId, x, y, opts.dir || 'down');
+    RB.world.enter(mapId, x, y, opts.dir || 'down', { fresh: true });
     if (RB.town) RB.town.visited(G.s, mapId); // (being in a town is a visit: its changes so far are seen)
     RB.ui.hud.show();
     return st;

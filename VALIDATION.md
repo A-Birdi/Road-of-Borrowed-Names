@@ -5018,6 +5018,80 @@ Yasu's story, when listening, has not begun being spoken."
 - **Not done:** the other code-shown lines, Company memory replays, the panels (fishing, shiritori, verbs). Not tested:
   real recordings, Firefox, Safari, a device voice.
 
+## Playtest fixes, second round: road events placed, the chart's coast, music, Heat, stamps, "Have you seen…?" (Robin, 2026-10-19)
+
+- **Road events stand on the road (RE-1; "These random events on the paths should have actual NPCs where the event is
+  meant to take place, along with any relevant props. It should not force you into the interaction as soon as you
+  enter").** Walking onto a road still chooses the visit's event (the unique one until it is solved, then a variant on
+  the road's chance, as before); a placed event runs nothing on arrival (src/engine/90_game.js) but stands there
+  (`roadev.<road>.<event>`, src/engine/53_town.js) until it is seen through (its people go on their way) or you leave
+  the road. Its people (talking to them runs its scene) and things (`meet: true` on one examined to run it) are
+  registered with the event (`at`, src/content/zzz_living/05_author.js); unnamed people are road folk
+  (src/content/zzz_living/06_road_folk.js: a child, a fisher, a fish-seller, travellers, a pilgrim, a courier, a
+  parent, an old traveller, a worker); named speakers stand as themselves. All 66 events on 21 roads are placed (the
+  coast road by the lead; the other roads by three agents, each event's placement read from its scene's own words and
+  checked by the lead: on its road, on open reachable ground, every way out still reachable, clear of the people and
+  things already there). Where a named person already stood for a unique event (Kōhachi's cart, Sakuzō, Matahei, Gohei,
+  Rokusuke) they stay as they were and the event adds the thing the scene is about beside them. New tool:
+  tools/review/map_ascii.mjs (a map as text, for placing). An event without a placement would still run on arrival
+  (none is left).
+- **The route chart's coast (MC-1; "The map shows it and Saltglass, along with other nearby places as in the
+  ocean").** The sea was a fixed decorative curve that knew nothing of where places stand: Saltglass, Sazanami,
+  Manybridge and Ashihara Shinden fell below it. The coast is now a line through authored points running just below
+  the coastal places (src/ui/50_menu.js `COAST`), drawn smooth through them; Kotonoha, reached only by ferry (the
+  bottom-left "unexplored" Robin saw), stands on its own island; a ferry's route bends out to sea, clear of the coast.
+  U `chart_coast` 16/0 (new: every place on land by more than its dot, the island with sea round it, the drawn curve
+  within 3 units of the line checked). B: the chart rendered and looked at, all places known and a Chapter 2 journey
+  (scratchpad captures); `ledger_li`, `ports` 2/0, `manybridge` 3/0.
+- **Music after a load (MU-1; "Loading into an area that doesn't set the BGM will retain the currently playing /
+  previous BGM, such as the Title Screen theme when loading into the Lantern Hall").** A map without a song keeps
+  whatever the world plays (a house keeps its village's). Coming into the world (a new journey, a load, a debug start:
+  src/engine/90_game.js passes `fresh`) or while the title's song plays, it now plays the song of the place it opens
+  onto (src/engine/50_world.js `songAround`: through its ways out, four steps at most). Walking in from the village
+  keeps the village's song, and a song a scene asked for is kept, as before. B `music_inherit` 8/0 (new), `audio_zones`
+  91/0, `battle_settings` passed.
+- **Heat through a ward word (CB-1; "Heat in battle should nudge damage through Protects - it could block the initial
+  strike damage fully as it does, but Heat's additional damage should proceed through the block. It would still be
+  blocked by any existing Ward").** A ward word raised before a Strike's target still turns the blow; what Heat adds
+  (+1 a level, at most +2) now lands on the one it was aimed at, a ward already standing taking it first
+  (src/engine/95_combat.js foeAct; the first and a second move alike). The battle says so ("Its Heat pushes through
+  the ward word") and a ward word's Here: line says it in advance ("blocks the blow aimed at you (its Heat's +1 still
+  comes through)"). U `combat_rules` 248/0 (new checks: +1 through at Heat 1; +2 at Heat 2 with a standing ward of 1
+  taking 1; no Heat, no change; once cooled, none). The difficulty curve: across all 100 group cases the average
+  barely moves (a group's exchanges over its lead alone, on average −0.16 → −0.12; resolve lost +2.4% → +3.5%; measured
+  before the regrouping below), but one Demanding
+  group, the Still Archive conduits' g1 with no companion (two Nameless Lanterns, whose pattern is Heat then Strike,
+  and a crane), went from +4 to +6–9 exchanges over its lead alone under every slip pattern, past the curve's limit of
+  5. Its Demanding group is now one Lantern with a moth and a crane (+2), its Standard group unchanged
+  (src/content/ch6/20_maps.js; the reason in a comment). The recorded battles (tests/fixtures/combat_golden.json) were
+  regenerated after the 25 that changed were listed: all involve a Heat creature or that group. U `combat` 2,107/0,
+  `battle` 19,919/0, `encounters` 184/0.
+- **A slip for a stamp pressed at its stand (SB-2; "Pressing a Stamp at Reedwake has no toast popup stating that it
+  was done, only shown in dialogue").** Pressing at a stand now shows the "Stamp pressed" slip (the stamp's design, its
+  ink, "Pressed at Reedwake") with the line; stamps the story's settling presses get it too, several one after another
+  (three at most, the third saying how many more); the field guide's goes the same way (src/ui/15_award.js `stamps`).
+  B `records` 7/0 (the stand press: a slip naming the stand), `ledger_li` all passed.
+- **"Have you seen…?" spoken (SL-3; "The 'have you seen' dialogue interactions have no voiced lines from either the
+  player nor the NPC I've talked to - tried with Bunta and Tomo").** Your question and the answer are shown under the
+  scene id `code.wb` and every one this content can produce is listed for recording (src/ui/53w_whereabouts.js;
+  src/engine/53_town.js `answersOf`): 748 lines, the question about each of 162 people in your voice and 586 answers
+  (sightings by the asker's map and the ones beside it, usual places, recollections, refusals, not knowing). The
+  answers' Japanese does not name the person, so one recording serves several English lines.
+- **Battle icons (IC-1; "Given the Icon expansion in the inventory, we could probably use new icons for the battle menus
+  and enemy Intent"):** the item icons' renderer is now a maker of registries (src/ui/11_item_art.js `RB.pixelIcons`):
+  `RB.itemArt` as before, and `RB.battleArt` for the battle's own drawn 16×16 icons, keyed by move (`move_<kind>`, a
+  move to be read `move_reading`), response (`resp_<kind>`) and state; the battle screen asks for them (src/ui/
+  80_combat.js `BI`) at 32 px on the response cards and the telegraph and 16 px in slips and pills, and falls back to
+  the line drawing where none is drawn. The icons themselves are being drawn (an agent, then the lead's look); until
+  they land the screen is as before. U `item_art` 6/0; B `combat_ui` 7/0, `battle_cycle` stable.
+- **B, this build:** `world_living` 4/0, `living_world` 9/0 (LW-06 rewritten for RE-1: walking onto the Reedwake road runs nothing, the
+  pedlar and his card stand there, talking to him runs his event, solved and noted), `verbs` 5/0, `combat_ui` 7/0,
+  `battle_cycle` stable, `records` 7/0, `ledger_li` all passed, `music_inherit` 8/0, `audio_zones` 91/0, `ports` 2/0,
+  `manybridge` 3/0; screenshots of the coast road (the child under the fork's lantern, nothing open) and the Reedwake road
+  (Kōhachi by his cart, his card on its post) looked at. U `road_events` 1,001/0 (new), `town` 87/0, `living_world`
+  110/0, `routine_talk` 318/0, `chart_coast` 16/0, `combat_rules` 248/0, `stampbook_sb1` 39/0, `records` 272/0,
+  `voice_production` 27/0, `scene_manifest` 1,023/0, `item_art` 6/0, `audio_songs` 3,238/0.
+
 ## Playtest fixes: the Stamp Book, revisits, Sae (Robin, 2026-10-19)
 
 - **Stamp Book (SB-1).** Investigated read-only by a review agent, its patch read and applied by the lead (Japanese
@@ -5042,7 +5116,8 @@ Yasu's story, when listening, has not begun being spoken."
   - U `stampbook_sb1` 39/0 (new; fails on the code before), `records` 272/0, `encounters` 184/0, `expedition_cellars`
     51/0, `guardians` 66/0, `atlas_commissions` 40/0, `cr_ch10` 151/0, `ko_side` 108/0, `festival` 14/0, `book_type`
     60/0, `review_ledger` 2/0 (34 entries added by the lead after reading the 53 new lines). B `records` 7/0,
-    `ledger_li` all passed (with a stamp-slip check and its reduced-motion check). U whole suite 54,782/0.
+    `ledger_li` all passed (with a stamp-slip check and its reduced-motion check). U whole suite 55,100/0 on the
+    committed tree (e976ea1, a clean checkout).
   - Not done: stamps pressed later by the book's own settling (milestones, pastimes, the cellars) are still pressed
     without a slip; "On the roads" stamps have no chapter, so they list in definition order.
 - **Revisits (RV-2; "Oto, Mame or Kiku played both their newer locale-based lines for revisits, followed by their

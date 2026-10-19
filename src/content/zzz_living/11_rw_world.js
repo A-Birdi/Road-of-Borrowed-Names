@@ -38,9 +38,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- W5: the Reedwake road -----------------------------------------------------------------------------------------
   C.maps['rw.road'].npcs.push({ id: 'lw_kohachi', x: 17, y: 9, dir: 'down', if: 'departed&!lw_rw_cart_done', talk: 'sg.lw_road_rw_cart' });
   C.maps['rw.road'].props.push({ p: 'cart', x: 18, y: 8, if: 'departed&!lw_rw_cart_done' });
+  // each stands where it happens (RE-1): Kōhachi by his cart (placed above), the card to mend it on a post beside it;
+  // the wind-turned waymarker (showing its blank back) beside the old carved stone; the letter on the road, the
+  // courier come back for it; the child with the stick behind the geese, crossing towards the pond
   L.road('rw_road', { maps: ['rw.road'],
-    unique: { id: 'cart', scene: 'sg.lw_road_rw_cart' },
-    variants: [{ id: 'marker', scene: 'sg.lw_road_rw_marker' }, { id: 'letter', scene: 'sg.lw_road_rw_letter' }, { id: 'geese', scene: 'sg.lw_road_rw_geese' }],
+    unique: { id: 'cart', scene: 'sg.lw_road_rw_cart', at: { props: [{ p: 'fw_postnote', x: 20, y: 8, meet: true }] } },
+    variants: [
+      { id: 'marker', scene: 'sg.lw_road_rw_marker', at: { props: [{ p: 'signblank', x: 21, y: 11, meet: true }] } },
+      { id: 'letter', scene: 'sg.lw_road_rw_letter', at: { who: [{ char: 'lw_rd_courier', x: 12, y: 10, dir: 'left' }], props: [{ p: 'pet_papers', x: 10, y: 10, meet: true }] } },
+      { id: 'geese', scene: 'sg.lw_road_rw_geese', at: { who: [{ char: 'lw_rd_child2', x: 15, y: 11, dir: 'up' }] } },
+    ],
     stamp: { title: ['{葦|あし}ノ{瀬|せ} の {道|みち}', 'the Reedwake road'], ink: '#7a5a2a' } });
   C.notes.lw_carters_cards = { title: T('Carters\' cards', '{荷車|にぐるま} の {札|ふだ}'), fiction: true,
     jp: '{街道|かいどう} を {行|い}く {荷車|にぐるま} に は 、 {直|なお}し{方|かた} を {書|か}いた {小|ちい}さな {札|ふだ} が {下|さ}がって いる 。 {字|じ} が {読|よ}めれば 、 {通|とお}りがかり の {誰|だれ} でも {直|なお}せる よう に 。',

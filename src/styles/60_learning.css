@@ -711,6 +711,11 @@ body.high-contrast .kwcard { border-color: #000; }
 .combat-ui .rcard:active { transform: translateY(1px); }
 .rcard .ic { grid-area: ic; width: 28px; height: 28px; color: var(--ink-2); }
 .rcard .ic svg { width: 100%; height: 100%; }
+/* the battle's drawn icons (IC-1; src/content/battle_art/): 16 px pictures at whole scales, never smoothed; on a
+   response card always 32 px (two pixels each) whatever the line drawing's size there */
+.combat-ui img.bt-ic { image-rendering: pixelated; flex: none; vertical-align: middle; }
+.combat-ui .rcard .ic:has(> img.bt-ic) { width: 32px; height: 32px; }
+.combat-ui .rcard .ic > img.bt-ic { width: 32px; height: 32px; display: block; }
 .rcard .rc-w { grid-area: w; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.5em; min-width: 0; }
 .rcard .rc-jp .jline { font-size: 1.2em; line-height: 1.9; }
 .rcard .rc-en { color: var(--ink-2); font-weight: 600; }

@@ -104,9 +104,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   road.npcs = road.npcs || [];
   road.npcs.push({ id: 'lw_matahei', x: 15, y: 8, dir: 'left', if: '!lw_co_kaki_done', talk: 'co.lw_road_kaki' });
   road.props.push({ p: 'cart', x: 12, y: 7, if: '!lw_co_kaki_done' }, { p: 'crate', x: 14, y: 7, if: '!lw_co_kaki_done' });
+  // each stands where it happens (RE-1): Matahei by his tipped cart (placed above), the two baskets to sort into at
+  // his feet; the smouldering campfire on the verge under the dry grass, its board beside it; the fallen scarecrow (a
+  // heap of straw) among the persimmon trees past the fence gap; the puzzled traveller on the road below the signpost
   L.road('co_road', { maps: ['co.road'],
-    unique: { id: 'kaki', scene: 'co.lw_road_kaki' },
-    variants: [{ id: 'embers', scene: 'co.lw_road_embers' }, { id: 'scarecrow', scene: 'co.lw_road_scarecrow' }, { id: 'way', scene: 'co.lw_road_way' }],
+    unique: { id: 'kaki', scene: 'co.lw_road_kaki', at: { props: [{ p: 'ko_basket', x: 13, y: 8, meet: true }, { p: 'ko_basket', x: 14, y: 8, meet: true }] } },
+    variants: [
+      { id: 'embers', scene: 'co.lw_road_embers', at: { props: [{ p: 'campfire', x: 27, y: 9, meet: true }, { p: 'sign', x: 26, y: 9, meet: true }] } },
+      { id: 'scarecrow', scene: 'co.lw_road_scarecrow', at: { props: [{ p: 'hay', x: 20, y: 15, meet: true }] } },
+      { id: 'way', scene: 'co.lw_road_way', at: { who: [{ char: 'lw_rd_traveller2', x: 31, y: 11, dir: 'up' }] } },
+    ],
     stamp: { title: ['{灰実|はいみ} へ の {坂道|さかみち}', 'the Orchard Road'], motif: 'path', ink: '#a8502a' } });
   C.notes.lw_co_shibugaki = { title: T('Astringent persimmons', '{渋柿|しぶがき}'), fiction: false,
     jp: '{渋柿|しぶがき} は 、 そのまま で は {渋|しぶ}くて {食|た}べられない 。 {皮|かわ} を むいて {干|ほ}す と 、 {甘|あま}い {干|ほ}し{柿|がき} に なる 。 {甘柿|あまがき} は 、 {木|き} から {取|と}って すぐ {食|た}べられる 。',

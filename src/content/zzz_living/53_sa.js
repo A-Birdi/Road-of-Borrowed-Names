@@ -21,9 +21,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
 切れ端|きれはし|n|I|a scrap, an offcut (of paper or cloth)
 `), 'living');
 
+  // each stands where it happens (RE-1): the name slip caught on a thorn bush under the middle terrace; the paper crane
+  // glinting in a bush by the waystone at the foot of the road; the flower card by the box of sandals; a traveller
+  // going up, at that box
   L.road('sa_road', { maps: ['sa.road'],
-    unique: { id: 'slip', scene: 'sa.lw_road_slip' },
-    variants: [{ id: 'crane', scene: 'sa.lw_road_crane' }, { id: 'grey', scene: 'sa.lw_road_grey' }, { id: 'sandals', scene: 'sa.lw_road_sandals' }],
+    unique: { id: 'slip', scene: 'sa.lw_road_slip', at: { props: [{ p: 'bush', x: 20, y: 14, meet: true }, { p: 'pet_papers', x: 19, y: 14, meet: true }] } },
+    variants: [
+      { id: 'crane', scene: 'sa.lw_road_crane', at: { props: [{ p: 'bush', x: 11, y: 23, meet: true }, { p: 'sparkle', x: 12, y: 23, meet: true }] } },
+      { id: 'grey', scene: 'sa.lw_road_grey', at: { props: [{ p: 'fw_note', x: 23, y: 8, meet: true }] } },
+      { id: 'sandals', scene: 'sa.lw_road_sandals', at: { who: [{ char: 'lw_rd_traveller', x: 26, y: 8, dir: 'left' }] } },
+    ],
     stamp: { title: ['{書庫|しょこ} への {坂道|さかみち}', 'the Archive road'], ink: '#5a5a6e' } });
   C.items.lw_sa_slip = { name: T('Name slip: "Fish Street"', '{名札|なふだ} 「{魚|さかな}{通|どお}り」'), key: true,
     desc: 'A name slip from one of Lanternfall\'s lamp shades, caught on a thorn on the Archive road on its way uphill. Nagi has long since written the street\'s names again. A keepsake.' };

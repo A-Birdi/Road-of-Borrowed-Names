@@ -28,9 +28,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { eyes: 'round', style: 'short', acc: ['headband'], bandCol: '#d8d0b8', bg: '#2e3024' } };
   C.maps['rw.millroad'].npcs.push({ id: 'lw_sakuzo', x: 9, y: 21, dir: 'down', if: 'departed&!lw_rw_mill_sacks_done', talk: 'rw.lw_road_mill_sacks' });
   C.maps['rw.millroad'].props.push({ p: 'cart', x: 8, y: 20, if: 'departed&!lw_rw_mill_sacks_done' });
+  // each stands where it happens (RE-1): Sakuzō by his cart (placed above), a sack unloaded at either end of it; the
+  // oil note on a post beside the narrows lantern; a reed-cutter on the river bank in the reeds, the sign by him; a
+  // child under the turning wheel, the sign beside the mill
   L.road('rw_mill', { maps: ['rw.millroad'], when: 'departed',
-    unique: { id: 'sacks', scene: 'rw.lw_road_mill_sacks' },
-    variants: [{ id: 'oil', scene: 'rw.lw_road_mill_oil' }, { id: 'reeds', scene: 'rw.lw_road_mill_reeds' }, { id: 'fish', scene: 'rw.lw_road_mill_fish' }],
+    unique: { id: 'sacks', scene: 'rw.lw_road_mill_sacks', at: { props: [{ p: 'lf_floursacks', x: 7, y: 20, meet: true }, { p: 'lf_floursacks', x: 10, y: 20, meet: true }] } },
+    variants: [
+      { id: 'oil', scene: 'rw.lw_road_mill_oil', at: { props: [{ p: 'fw_postnote', x: 8, y: 17, meet: true }] } },
+      { id: 'reeds', scene: 'rw.lw_road_mill_reeds', at: { who: [{ char: 'lw_rd_worker', x: 17, y: 10, dir: 'right' }], props: [{ p: 'sign', x: 17, y: 8, meet: true }] } },
+      { id: 'fish', scene: 'rw.lw_road_mill_fish', at: { who: [{ char: 'lw_rd_child', x: 15, y: 4, dir: 'up' }], props: [{ p: 'sign', x: 13, y: 4, meet: true }] } },
+    ],
     stamp: { title: ['{水車|すいしゃ}{小屋|ごや} へ の {道|みち}', 'the Mill Road'], motif: 'path', ink: '#4a6a3a' } });
   C.notes.lw_water_mills = { title: T('Water mills', '{水車|すいしゃ}{小屋|ごや}'), fiction: false,
     jp: '{水車|すいしゃ}{小屋|ごや} は 、 {昔|むかし} 、 {多|おお}く の {村|むら} の {川|かわ} に あった 。 そば@蕎麦=(buckwheat) や {麦|むぎ} を {粉|こな} に {挽|ひ}いたり 、 {米|こめ} を {白|しろ}く したり した 。 {村|むら} の {人|ひと} は {順番|じゅんばん} に {使|つか}った 。',

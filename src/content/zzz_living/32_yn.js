@@ -103,8 +103,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.maps['yn.descent'].npcs.push({ id: 'lw_yohei', x: 9, y: 6, dir: 'left', if: '!lw_yn_descent_done', talk: 'yn.lw_road_descent_yunohana' });
   C.maps['yn.descent'].props.push({ p: 'sign', x: 7, y: 7, scene: 'yn.lw_descent_board' });
   L.road('yn_descent', { maps: ['yn.descent'],
-    unique: { id: 'yunohana', scene: 'yn.lw_road_descent_yunohana' },
-    variants: [{ id: 'eggs', scene: 'yn.lw_road_descent_eggs' }, { id: 'manners', scene: 'yn.lw_road_descent_manners' }, { id: 'inns', scene: 'yn.lw_road_descent_inns' }],
+    // each stands where it happens (RE-1): Yohei already stands at his vent by the bath-keepers' board (above), so his
+    // event adds only his basket at its rim; the egg pool beside the vent below the second bend, a traveller reaching in;
+    // the bath rules posted near the town end, a first-timer before them; the family at the viewing bench with the guide
+    unique: { id: 'yunohana', scene: 'yn.lw_road_descent_yunohana', at: { props: [{ p: 'ko_basket', x: 9, y: 7, meet: true }] } },
+    variants: [
+      { id: 'eggs', scene: 'yn.lw_road_descent_eggs', at: { who: [{ char: 'lw_rd_traveller2', x: 17, y: 12, dir: 'left' }], props: [{ p: 'yn_pool', x: 15, y: 12, meet: true }] } },
+      { id: 'manners', scene: 'yn.lw_road_descent_manners', at: { who: [{ char: 'lw_rd_traveller', x: 25, y: 22, dir: 'up' }], props: [{ p: 'noticeboard', x: 24, y: 21, meet: true }] } },
+      { id: 'inns', scene: 'yn.lw_road_descent_inns', at: { who: [{ char: 'lw_rd_parent', x: 16, y: 9, dir: 'left' }, { char: 'lw_rd_child', x: 13, y: 9, dir: 'right' }, { char: 'lw_rd_child2', x: 17, y: 9, dir: 'down' }] } },
+    ],
     stamp: { title: ['{湯煙|ゆけむり} の {坂|さか}', 'the Steaming Slope'], motif: 'path', ink: '#8a4a2a' } });
   C.notes.lw_yunohana = { title: T('Yu-no-hana', '{湯|ゆ}の{花|はな}'), fiction: false,
     jp: '「{湯|ゆ}の{花|はな}」 は 、 {温泉|おんせん} の {湧|わ}く {穴|あな} の {周|まわ}り に できる 、 {白|しろ}い {粉|こな} の よう な もの 。 {温泉|おんせん} の {町|まち} で は 、 これ を {集|あつ}めて 、 {家|いえ} の {風呂|ふろ} に {入|い}れる {土産|みやげ} に する 。',

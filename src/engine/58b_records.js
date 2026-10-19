@@ -91,13 +91,20 @@ RB.stampBook = (function () {
     const T = ST()[stand].title;
     if (got.length) {
       const names = got.map((id) => S()[id].title);
+      // the slip, with the line (src/ui/15_award.js stamps)
+      if (RB.ui && RB.ui.award && RB.ui.award.stamps) RB.ui.award.stamps(got, stand);
       await RB.script.runInline([{ who: 'narr', jp: '{判|はん} を {押|お}した 。 ' + names.map((n) => '「' + n.jp + '」').join(' '), en: 'You press the stamp' + (got.length > 1 ? 's' : '') + ' into your book: ' + names.map((n) => n.en).join(', ') + '.' }]);
       if (RB.save && RB.save.autosave) RB.save.autosave('progress');
     } else {
       await RB.script.runInline([{ who: 'narr', jp: (T ? T.jp + ' の ' : '') + '{判|はん} が {置|お}いて ある 。 {今|いま} は {押|お}す もの が ない 。', en: (T ? T.en + ': ' : '') + 'a stamp stand. Nothing to press here yet.' }]);
     }
   };
-  if (RB.bus) RB.bus.on('story:settled', () => { const s = RB.game && RB.game.s; if (s) settle(s); });
+  // the stamps the story's settling presses have their slips too (src/ui/15_award.js stamps)
+  if (RB.bus) RB.bus.on('story:settled', () => {
+    const s = RB.game && RB.game.s;
+    const got = s ? settle(s) : [];
+    if (got.length && RB.ui && RB.ui.award && RB.ui.award.stamps) setTimeout(() => RB.ui.award.stamps(got), 400);
+  });
   return { earned, pressed, pressAt, settle, ready, book, press1, known };
 })();
 

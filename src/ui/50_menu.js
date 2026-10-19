@@ -1009,6 +1009,23 @@ RB.ui.menu = (function () {
   const CH = { W: 520, SY: 1.4, ZMAX: 4, LBL: 13 };
   CH.H = Math.round(320 * CH.SY);
   const cxy = (p) => [p.pos[0], p.pos[1] * CH.SY];
+  // The coast, west to east, in the places' own units (before the chart's vertical stretch): the sea lies south of it.
+  // Every place stands north of it but an island (src/ui/50_menu.js chart; tests/unit/chart_coast.test.mjs).
+  const COAST = [[0, 284], [64, 274], [112, 268], [170, 282], [240, 290], [310, 288], [356, 286], [430, 278], [520, 276]];
+  const ISLES = { kotonoha: [24, 11] }; // a place out at sea: its island's half-width and half-height
+  // the coast's y at x (straight between its points: the curve drawn through them stays within a unit or two of it)
+  const coastAt = (x) => { for (let i = 1; i < COAST.length; i++) if (x <= COAST[i][0]) { const [a, b] = [COAST[i - 1], COAST[i]]; return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]); } return COAST[COAST.length - 1][1]; };
+  // a smooth line through the coast's points (Catmull-Rom as cubic Béziers)
+  function coastPath() {
+    const P = COAST;
+    let d = 'M' + P[0][0] + ' ' + P[0][1];
+    for (let i = 0; i < P.length - 1; i++) {
+      const p0 = P[Math.max(0, i - 1)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(P.length - 1, i + 2)];
+      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+      d += ' C' + c1.map((v) => +v.toFixed(1)).join(' ') + ' ' + c2.map((v) => +v.toFixed(1)).join(' ') + ' ' + p2.join(' ');
+    }
+    return d;
+  }
   let chartRO = null;
   function chartState() {
     const M = view.map;
@@ -1038,8 +1055,11 @@ RB.ui.menu = (function () {
     const W = CH.W, H = CH.H, NS = ' vector-effect="non-scaling-stroke"';
     const ts = Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1));
     const fs = CH.LBL * ts * k;
-    // paper, folds and the sea/mountain washes (decorative)
-    let svg = '<rect width="' + W + '" height="' + H + '" fill="#efe3c6"/><g transform="scale(1 ' + CH.SY + ')"><path d="M0 252 Q120 222 200 252 T 520 232 L520 320 L0 320Z" fill="#cfdbd6"/><path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/></g>';
+    // paper, folds and the sea/mountain washes; the coast runs just below the coastal places, so the harbours and the
+    // hamlets up the coast stand on land, and an island the ferry reaches (Kotonoha) is drawn as one (Robin, 2026-10-19:
+    // Saltglass, Sazanami and the places near them were drawn in the sea)
+    const isles = places.filter((p) => ISLES[p.id]).map((p) => '<ellipse cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" rx="' + ISLES[p.id][0] + '" ry="' + ISLES[p.id][1] + '" fill="#efe3c6" stroke="#9fb5b0" stroke-width="1.2"' + NS + '/>').join('');
+    let svg = '<rect width="' + W + '" height="' + H + '" fill="#efe3c6"/><g transform="scale(1 ' + CH.SY + ')"><path d="' + coastPath() + ' L520 320 L0 320Z" fill="#cfdbd6"/><path d="' + coastPath() + '" fill="none" stroke="#9fb5b0" stroke-width="1.2"' + NS + '/>' + isles + '<path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/></g>';
     svg += '<path d="M173 0V' + H + 'M346 0V' + H + 'M0 ' + H / 2 + 'H520" stroke="#b9a57a" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"' + NS + '/>';
     for (const [a, b, ro] of RB.content.roads || []) {
       const A = RB.content.places[a], B = RB.content.places[b];
@@ -1049,7 +1069,8 @@ RB.ui.menu = (function () {
       const [ax, ay] = cxy(A), [bx, by] = cxy(B);
       // a ferry's route: a curve over the sea, in the sea's ink
       if (ro && ro.sea) {
-        const mx = (ax + bx) / 2, my = Math.max(ay, by) + 36;
+        // (its middle well out from the coast: a quadratic's midpoint is a quarter of each end and half its control)
+        const mx = (ax + bx) / 2, my = Math.max(Math.max(ay, by) + 36, 2 * (coastAt(mx) * CH.SY + 22) - (ay + by) / 2);
         svg += '<path d="M' + ax + ' ' + ay + ' Q' + mx + ' ' + my + ' ' + bx + ' ' + by + '" fill="none" stroke="' + (known ? '#2c5470' : '#7a98a8') + '" stroke-width="' + (known ? 2.2 : 1.6) + '" stroke-dasharray="' + (known ? '7 4' : '2 6') + '"' + NS + '/>';
         continue;
       }
@@ -1345,7 +1366,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits

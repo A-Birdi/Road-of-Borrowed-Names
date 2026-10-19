@@ -27,7 +27,7 @@ const { RB: RBN } = await import('../../tools/voice/lines.mjs');
 const REPLAY = 'ch1.bridge';
 const replayScene = RBN.sequence.get(REPLAY).scene;
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-spoken-'));
-const fx = makeVoiceSite(tmp, { scenes: ['prologue', replayScene, 'code.door', 'code.fw', 'code.history', 'code.battle'], refs: [] });
+const fx = makeVoiceSite(tmp, { scenes: ['prologue', replayScene, 'code.door', 'code.fw', 'code.history', 'code.battle', 'code.wb'], refs: [] });
 const TYPES = { '.html': 'text/html; charset=utf-8', '.opus': 'audio/ogg', '.json': 'application/json' };
 const srv = http.createServer((req, res) => {
   const p = decodeURIComponent(req.url.split('?')[0]);
@@ -170,6 +170,40 @@ await test('a battle\'s lines are the narrator\'s recordings (the intro; the set
   const s = await vb(p);
   const line = await p.evaluate(() => { const l = RB.ui.dialogue.shown(); return l ? l.jp : ''; });
   assert(/^rec\/narrator\//.test(s.plays[0]) && /光/.test(line), 'the intro is the narrator\'s recording: ' + s.plays.join(',') + ' / ' + line);
+  assert(!pg.errors.length, pg.errors.join(' | '));
+  await p.context().close();
+});
+
+// Robin, 2026-10-19: "The 'have you seen' dialogue interactions have no voiced lines from either the player nor the NPC
+// I've talked to - tried with Bunta and Tomo." Asked after Hana, Tomo's answer is Tomo's recording, and your question is
+// shown under the same scene id (your own voice's recording when one is made).
+await test('"Have you seen…?": the question and Tomo\'s answer are spoken lines', async () => {
+  const pg = await open(), p = pg.p;
+  await p.evaluate(() => {
+    const s = RB.game.debugStart('rw.village', 8, 24, { flags: { departed: true, ch1_done: true, sg_arrived: true } });
+    RB.game.settings.textSpeed = 'instant'; RB.game.applySettings();
+    RB.town.seen(s, 'hana', 'rw.tea');
+    const tomo = RB.world.W.npcs.find((n) => n.id === 'tomo');
+    const o = tomo.def.talk.find((x) => !x.if || RB.state.test(s, x.if));
+    s.seen[o.scene] = true;
+    RB.test.place(tomo.x + 1, tomo.y, 'left');
+    tomo.def.wander = 0;
+    RB.world.interact();
+  });
+  const state = () => p.evaluate(() => ({ choices: [...document.querySelectorAll('.choice')].map((c) => c.textContent.trim()), line: RB.ui.dialogue.isOpen() ? RB.ui.dialogue.shown() : null, mode: RB.game.mode(), plays: window.__vb().plays }));
+  // wait for a condition on the page, reporting what was there if it never comes
+  const until = async (what, fn, arg) => { try { await p.waitForFunction(fn, arg, { timeout: 10000, polling: 100 }); } catch (e) { throw new Error(what + ' never came: ' + JSON.stringify(await state())); } };
+  const pick = async (src) => {
+    await until('a choice ' + src, (src) => [...document.querySelectorAll('.choice')].some((c) => new RegExp(src).test(c.textContent)), src);
+    await p.evaluate((src) => [...document.querySelectorAll('.choice')].find((c) => new RegExp(src).test(c.textContent)).click(), src);
+  };
+  await pick('Have you seen');
+  await pick('Hana');
+  await until('your question', () => { const l = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); return !!(l && l.who === 'pc' && /Hana/.test(l.en)); });
+  await p.waitForTimeout(400);
+  await p.evaluate(() => RB.ui.dialogue.advance(true));
+  await until('Tomo\'s answer', () => { const l = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); return !!(l && l.who === 'tomo'); });
+  await until('Tomo\'s recording', () => window.__vb().plays.some((f) => /^rec\/tomo\//.test(f)));
   assert(!pg.errors.length, pg.errors.join(' | '));
   await p.context().close();
 });

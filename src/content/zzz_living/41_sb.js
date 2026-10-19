@@ -100,9 +100,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { eyes: 'narrow', style: 'short', acc: ['hat', 'scarf'], hatCol: '#6a5a4a', scarfCol: '#8a6a4a', bg: '#2a2a2e' } };
   C.maps['sb.road'].npcs.push({ id: 'lw_gohei', x: 16, y: 8, dir: 'up', if: '!lw_sb_slope_done', talk: 'sb.lw_road_slope' });
   C.maps['sb.road'].props.push({ p: 'crate', x: 15, y: 8, if: '!lw_sb_slope_done' });
+  // each stands where it happens (RE-1): Gohei below the slope (placed above), the half-buried sign he looks up at, a
+  // drift against it; the goat in the slope road just above the crossing; a traveller down from Snowbell before the
+  // iced signpost; a parent and child at the board before the shrine
   L.road('sb_road', { maps: ['sb.road'],
-    unique: { id: 'slope', scene: 'sb.lw_road_slope' },
-    variants: [{ id: 'goat', scene: 'sb.lw_road_goat' }, { id: 'sign', scene: 'sb.lw_road_sign' }, { id: 'snowshoes', scene: 'sb.lw_road_snowshoes' }],
+    unique: { id: 'slope', scene: 'sb.lw_road_slope', at: { props: [{ p: 'sign', x: 16, y: 7, meet: true }, { p: 'sb_drift', x: 17, y: 7 }] } },
+    variants: [
+      { id: 'goat', scene: 'sb.lw_road_goat', at: { props: [{ p: 'sb_snowgoat', x: 19, y: 10, meet: true }] } },
+      { id: 'sign', scene: 'sb.lw_road_sign', at: { who: [{ char: 'lw_rd_traveller', x: 16, y: 12, dir: 'up' }] } },
+      { id: 'snowshoes', scene: 'sb.lw_road_snowshoes', at: { who: [{ char: 'lw_rd_parent', x: 20, y: 7, dir: 'up' }, { char: 'lw_rd_child2', x: 21, y: 7, dir: 'up' }],
+        props: [{ p: 'sign', x: 20, y: 6, meet: true }] } },
+    ],
     stamp: { title: ['{雪鈴|ゆきすず} の {坂道|さかみち}', 'the Snowbell Road'], motif: 'path', ink: '#4a6a8a' } });
   C.notes.lw_sb_avalanche = { title: T('Crossing an avalanche slope', '{雪崩|なだれ} の {斜面|しゃめん}'), fiction: false,
     jp: '{雪崩|なだれ} の {起|お}き そう な {斜面|しゃめん} は 、 {一人|ひとり} ずつ 、 {止|と}まらず に {渡|わた}る 。 {昼|ひる} に なる と {雪|ゆき} が {緩|ゆる}む ので 、 {朝|あさ} の うち に {渡|わた}る 。',

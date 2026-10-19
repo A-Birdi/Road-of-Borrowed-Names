@@ -90,6 +90,8 @@ RB.town = (function () {
     arrival = !(opts && opts.inScript) && s.map && s.map !== mapId ? { to: mapId, from: s.map, moves: R.moves } : null;
     const id = townOf(mapId);
     const from = s.map ? townOf(s.map) : null;
+    // leaving a road: what stood on it is gone (a later visit has its own)
+    for (const rid in R.roads) { const D = (C().roadEvents || {})[rid]; if (R.roads[rid] && R.roads[rid].here && D && (D.maps || []).indexOf(mapId) < 0) R.roads[rid].here = null; }
     // leaving a town: remember when, and what it cares about as it was
     if (from && from !== id) {
       const t = townRec(s, from);
@@ -199,6 +201,25 @@ RB.town = (function () {
     const guess = here[0] || null;
     return { kind: 'uncertain', target, map: guess, line: LINES.uncertain(who, guess ? placeOf(guess) : null), note: { target, map: guess, kind: 'uncertain' } };
   }
+  // Every answer an asker could give, by the rules above, with the content as it stands (for recording: the
+  // "Have you seen…?" lines are spoken, src/ui/53w_whereabouts.js lists them; Robin, 2026-10-19: "The 'have you seen'
+  // dialogue interactions have no voiced lines from either the player nor the NPC"). A sighting is on the asker's
+  // map or one beside it; a loose acquaintance's recollection names a map the target can stand on, or none.
+  function answersOf(asker) {
+    const rels = C().relations || {}, rel = rels[asker] || {}, out = [];
+    if (rel.friendly === false) return [rel.refusal || LINES.refusal()];
+    out.push(LINES.unknown());
+    const placed = (p) => { const m = new Set(); for (const id in C().maps) for (const n of C().maps[id].npcs || []) if ((n.char || n.id) === p) m.add(id); return m; };
+    const mine = placed(asker);
+    for (const target in rel.knows || {}) {
+      const where = placed(target), who = nameOf(target);
+      for (const m of mine) for (const nb of [m].concat((C().maps[m].exits || []).map((e) => e.to).filter(Boolean))) if (where.has(nb)) out.push(LINES.sighting(placeOf(nb), nb === m));
+      if (rel.knows[target] === 'routine') out.push((rels[target] || {}).usual || LINES.routine(who, usualPlaces(target)));
+      else { out.push(LINES.uncertain(who, null)); for (const m of where) out.push(LINES.uncertain(who, placeOf(m))); }
+    }
+    const seen = new Set();
+    return out.filter((l) => l && l.jp && !seen.has(l.jp) && seen.add(l.jp));
+  }
   // a resident's usual places: the maps their routine slots are on, in slot order ([{ map, en, jp }])
   function usualPlaces(person) {
     const out = [];
@@ -269,8 +290,13 @@ RB.town = (function () {
     for (const id in R) if ((R[id].maps || []).indexOf(mapId) >= 0) return id;
     return null;
   }
-  // Entering a road's map: the scene to run now, if any. The unique event until it is solved (offered again each
-  // visit after leaving it); afterwards a variant on the road's chance, drawn from the campaign's stream.
+  // Entering a road's map: the visit's event, if any (its scene's id). The unique event until it is solved (offered
+  // again each visit after leaving it); afterwards a variant on the road's chance, drawn from the campaign's stream.
+  // The event stands on the road (Robin, 2026-10-19: "These random events on the paths should have actual NPCs where
+  // the event is meant to take place, along with any relevant props. It should not force you into the interaction as
+  // soon as you enter"): its people and things (`at` in its registration, src/content/zzz_living/05_author.js) are
+  // there while `roadev.<road>.<event>` holds, from this arrival until it is seen through or you leave the road, and
+  // its scene runs when you go to them. An event without `at` still runs on arrival (90_game.js).
   function roadEventAt(s, mapId) {
     const id = roadOf(mapId);
     if (!id) return null;
@@ -286,13 +312,24 @@ RB.town = (function () {
     if (r.visit === R.moves) return null;
     if (r.visit === R.moves - 1 && r.lastMap && (D.maps || []).indexOf(r.lastMap) >= 0) { r.visit = R.moves; r.lastMap = mapId; return null; }
     r.visit = R.moves; r.lastMap = mapId;
-    if (D.unique && !r.solved[D.unique.id]) { r.unique = 'offered'; r.offered++; return D.unique.scene; }
+    r.here = null;
+    if (D.unique && !r.solved[D.unique.id]) { r.unique = 'offered'; r.offered++; r.here = { id: D.unique.id }; return D.unique.scene; }
     const open = (D.variants || []).filter((v) => !v.when || RB.state.test(s, v.when));
     if (!open.length || !RB.streams) return null;
     if (RB.streams.next(s, 'road:' + id) >= (D.rate != null ? D.rate : 0.2)) return null;
     const v = open[Math.floor(RB.streams.next(s, 'road:' + id) * open.length)];
+    r.here = { id: v.id };
     return v.scene;
   }
+  // the event standing on a road now ({ road, id, ev } or null): chosen on arrival, not yet seen through
+  function eventHere(s, roadId) {
+    const r = rec(s).roads[roadId], D = (C().roadEvents || {})[roadId];
+    if (!r || !r.here || r.here.done || !D) return null;
+    const ev = [D.unique].concat(D.variants || []).find((e) => e && e.id === r.here.id);
+    return ev ? { road: roadId, id: ev.id, ev } : null;
+  }
+  // the event standing on this map's road has people or things placed for it (else its scene runs on arrival)
+  function placedAt(s, mapId) { const id = roadOf(mapId); const h = id && eventHere(s, id); return !!(h && h.ev.at); }
   // a map's enter event (its story) runs on this arrival (90_game.js runEnterEvents): it is the visit's event, and a
   // road's does not follow on its heels
   function storyOnArrival(mapId) { if (arrival && arrival.to === mapId) arrival.story = true; }
@@ -301,6 +338,7 @@ RB.town = (function () {
     const R = rec(s);
     const r = R.roads[road] || (R.roads[road] = { unique: null, solved: {}, offered: 0 });
     r.solved[id] = true;
+    if (r.here && r.here.id === id) r.here.done = true; // seen through: its people go on their way
     const D = (C().roadEvents || {})[road];
     if (D && D.unique && id === D.unique.id) r.unique = 'solved';
     const all = D ? [D.unique].concat(D.variants || []).filter(Boolean).every((e) => r.solved[e.id]) : false;
@@ -352,6 +390,8 @@ RB.town = (function () {
   if (RB.state && RB.state.addTerm) {
     // slot.<person>=k : the resident's current routine slot
     RB.state.addTerm('slot', (s, rest, op, val, num, cmp) => cmp(slotOf(s, rest), op || '=', num(val == null ? 1 : val)));
+    // roadev.<road>.<event> : that event stands on the road now (its people and things are there)
+    RB.state.addTerm('roadev', (s, rest) => { const i = String(rest).indexOf('.'); const h = eventHere(s, String(rest).slice(0, i)); return !!(h && h.id === String(rest).slice(i + 1)); });
     // beat.<town>.<id> : a town's change beat is active
     RB.state.addTerm('beat', (s, rest) => { const [t, b] = String(rest).split('.'); return beats(s, t).some((x) => x.id === b); });
   }
@@ -415,9 +455,9 @@ RB.town = (function () {
   };
 
   return {
-    rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, askable, findable, usualPlaces, note, seen, spotWords,
+    rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, answersOf, askable, findable, usualPlaces, note, seen, spotWords,
     pastTalk, talkOption,
-    roadOf, roadEventAt, storyOnArrival, LINES,
+    roadOf, roadEventAt, eventHere, placedAt, storyOnArrival, LINES,
     roadDone, unfinished, sealedOn, canOpen, examine, noticed,
   };
 })();

@@ -122,16 +122,43 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- W5: the road's variants, after each map's own event ----------------------------------------------------------
   L.road('kr_steps', { maps: ['kr.steps'],
-    variants: [{ id: 'rain', scene: 'kr.lw_road_steps_rain', when: 'kr_cedar_cleared' }, { id: 'marks', scene: 'kr.lw_road_steps_marks', when: 'kr_cedar_cleared' }, { id: 'pilgrims', scene: 'kr.lw_road_steps_pilgrims', when: 'kr_cedar_cleared' }],
+    // each stands where it happens (RE-1): Kumazō before a faded board in the nook at the foot of the steps, where the
+    // pilgrims start up; Kumazō among the cedars by the Cedar Light, marking trunks; two pilgrims resting in the clearing
+    // beside the steps halfway up
+    variants: [
+      { id: 'rain', scene: 'kr.lw_road_steps_rain', when: 'kr_cedar_cleared', at: { who: [{ char: 'kr_kumazo', x: 9, y: 31, dir: 'up' }], props: [{ p: 'signblank', x: 9, y: 30, meet: true }] } },
+      { id: 'marks', scene: 'kr.lw_road_steps_marks', when: 'kr_cedar_cleared', at: { who: [{ char: 'kr_kumazo', x: 17, y: 16, dir: 'right' }] } },
+      { id: 'pilgrims', scene: 'kr.lw_road_steps_pilgrims', when: 'kr_cedar_cleared', at: { who: [{ char: 'lw_rd_pilgrim', x: 12, y: 20, dir: 'left' }, { char: 'lw_rd_pilgrim', id: 'lw_rd_pilgrim_2', x: 13, y: 21, dir: 'up' }] } },
+    ],
     stamp: { title: ['{杉|すぎ} の {石段|いしだん}', 'the Cedar Steps'], motif: 'path', ink: '#4e6a3a' } });
   L.road('kr_fox', { maps: ['kr.fox'],
-    variants: [{ id: 'plank', scene: 'kr.lw_road_fox_plank', when: 'kr_l_fox' }, { id: 'yomeiri', scene: 'kr.lw_road_fox_yomeiri', when: 'kr_l_fox' }, { id: 'mist', scene: 'kr.lw_road_fox_mist', when: 'kr_l_fox' }],
+    // each stands at the bridge's near foot (RE-1): Shōzō above the bridge's end with a bare board for his notice; the
+    // children below the path, looking out at the bridge in the sun-shower; the old board by the Fox Light in the mist
+    variants: [
+      { id: 'plank', scene: 'kr.lw_road_fox_plank', when: 'kr_l_fox', at: { who: [{ char: 'kr_shozo', x: 23, y: 11, dir: 'down' }], props: [{ p: 'signblank', x: 22, y: 11 }] } },
+      { id: 'yomeiri', scene: 'kr.lw_road_fox_yomeiri', when: 'kr_l_fox', at: { who: [{ char: 'lw_rd_child', x: 21, y: 15, dir: 'right' }, { char: 'lw_rd_child2', x: 22, y: 15, dir: 'up' }] } },
+      { id: 'mist', scene: 'kr.lw_road_fox_mist', when: 'kr_l_fox', at: { props: [{ p: 'sign', x: 22, y: 11, meet: true }] } },
+    ],
     stamp: { title: ['{狐橋|きつねばし}', 'Fox Bridge'], motif: 'path', ink: '#b8783a' } });
   L.road('kr_ridge', { maps: ['kr.ridge'],
-    variants: [{ id: 'copy', scene: 'kr.lw_road_ridge_copy', when: 'kr_moths_done' }, { id: 'fork', scene: 'kr.lw_road_ridge_fork', when: 'kr_moths_done' }, { id: 'wind', scene: 'kr.lw_road_ridge_wind', when: 'kr_moths_done' }],
+    // each stands where it happens (RE-1): Jūzō at the keepers' stele with his copy weighed down beside him; two
+    // travellers either side of the fork's waystone; Jūzō at the east edge of the stele's terrace, his sheets blown
+    // across the grass towards the path
+    variants: [
+      { id: 'copy', scene: 'kr.lw_road_ridge_copy', when: 'kr_moths_done', at: { who: [{ char: 'kr_juzo', x: 14, y: 9, dir: 'up' }], props: [{ p: 'pet_papers_tidy', x: 15, y: 9, meet: true }] } },
+      { id: 'fork', scene: 'kr.lw_road_ridge_fork', when: 'kr_moths_done', at: { who: [{ char: 'lw_rd_traveller', x: 18, y: 15, dir: 'right' }, { char: 'lw_rd_traveller2', x: 20, y: 15, dir: 'left' }] } },
+      { id: 'wind', scene: 'kr.lw_road_ridge_wind', when: 'kr_moths_done', at: { who: [{ char: 'kr_juzo', x: 16, y: 10, dir: 'right' }],
+        props: [{ p: 'pet_papers', x: 18, y: 9, meet: true }, { p: 'pet_papers', x: 17, y: 11, meet: true }, { p: 'pet_papers', x: 15, y: 12, meet: true }] } },
+    ],
     stamp: { title: ['{紅葉|もみじ} の {尾根|おね}', 'the Maple Ridge'], motif: 'path', ink: '#a8402a' } });
   L.road('kr_descent', { maps: ['kr.descent'],
-    variants: [{ id: 'far', scene: 'kr.lw_road_descent_far', when: 'kr_done' }, { id: 'water', scene: 'kr.lw_road_descent_water', when: 'kr_done' }, { id: 'clouds', scene: 'kr.lw_road_descent_clouds', when: 'kr_done' }],
+    // each stands where it happens (RE-1): the breathless traveller and Seiji at the pass's waystone (the far traveller
+    // just east of it, come up from that side); the early traveller east of the pass, looking out over the valley
+    variants: [
+      { id: 'far', scene: 'kr.lw_road_descent_far', when: 'kr_done', at: { who: [{ char: 'lw_rd_traveller', x: 21, y: 14, dir: 'left' }] } },
+      { id: 'water', scene: 'kr.lw_road_descent_water', when: 'kr_done', at: { who: [{ char: 'kr_seiji', x: 20, y: 14, dir: 'up' }] } },
+      { id: 'clouds', scene: 'kr.lw_road_descent_clouds', when: 'kr_done', at: { who: [{ char: 'lw_rd_elder', x: 31, y: 13, dir: 'right' }] } },
+    ],
     stamp: { title: ['{峠|とうげ}', 'the Pass'], motif: 'path', ink: '#5a5a6a' } });
   C.notes.lw_kr_yomeiri = { title: T('The fox\'s wedding', '{狐|きつね} の {嫁入|よめい}り'), fiction: false,
     jp: '{晴|は}れて いる のに {降|ふ}る {雨|あめ} を 、 「{狐|きつね} の {嫁入|よめい}り 」 と いう 。 {狐|きつね} が {人|ひと} に {見|み}られない よう に 、 {雨|あめ} に {隠|かく}れて {嫁入|よめい}り を する 、 と {言|い}われて きた 。',

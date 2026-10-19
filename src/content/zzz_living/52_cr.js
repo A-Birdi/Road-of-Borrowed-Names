@@ -135,7 +135,40 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.chars.lw_cr_hunter = { name: T('A hunter', '{猟師|りょうし}'), voice: { pitch: 0.78 },
     look: { skin: 4, hair: 'short', hairColor: 0, cloth: ['#5a4a3a', '#46382c', '#c8b890'], shape: 'coat', acc: ['hat'], hatCol: '#6a5a44' },
     portrait: { eyes: 'sharp', style: 'short', acc: ['hat'], hatCol: '#6a5a44', beard: true, bg: '#241e18' } };
-  const V = (id) => ({ id, scene: 'cr.lw_' + id });
+  // each event stands where it happens (RE-1), by event id (05_author.js L.road `at`; on the pass, the map it is on):
+  //   the Cedar Avenue: the runner sits under the cedars of the west avenue; the frightened traveller between the
+  //     cedars of the east avenue, the dark thing (a stump) behind them; the rota card on a post by the milestone mound
+  //   the Stone Steps: a waystone on the east steps with the red cloths (a ribboned post) by it; the yellowed notice
+  //     by the old slide's rock at the gorge's west mouth; Sada resting by the road, his loads beside him
+  //   the Stream: the traveller at the shallows (the old road's ford), the gauge post beside them; the child on the far
+  //     bank with the jar, the card at the water's edge; Yahei upstream on the bank above the ford, a felled log by him
+  //   the Ledge: the two travellers arguing where the roads part; Rin's stakes along the main road east of the gorge,
+  //     a gap where one was pulled up, her card on one; Genji and Kuri stopped on the main road
+  //   the Fog Slope: the lost traveller off the road in the meadow; the hunter at the gorge's mouth, where the tracks
+  //     cross the road; the dropped papers on the road, the two travellers a little further on
+  //   the High Pass: the card by the shelter's woodpile (cr.pass2); the child at the first turn by the waystone, the
+  //     parent behind at the corner (cr.pass1); a waystone's head above the fresh snow, drifts round it (cr.pass3)
+  const AT = {
+    runner: { who: [{ char: 'lw_cr_runner', x: 9, y: 13, dir: 'up' }] },
+    bear: { who: [{ char: 'lw_cr_traveller', x: 25, y: 13, dir: 'down' }], props: [{ p: 'stump', x: 26, y: 15 }] },
+    rota: { props: [{ p: 'fw_postnote', x: 5, y: 14, meet: true }] },
+    cloth: { props: [{ p: 'signblank', x: 28, y: 13, meet: true }, { p: 'pet_post', x: 29, y: 13, meet: true }] },
+    pebbles: { props: [{ p: 'fw_postnote', x: 11, y: 10, meet: true }] },
+    loads: { who: [{ char: 'cr_sada', x: 6, y: 10, dir: 'down' }], props: [{ p: 'crate', x: 7, y: 10 }, { p: 'crate', x: 8, y: 10 }] },
+    gauge: { who: [{ char: 'lw_rd_traveller2', x: 15, y: 2, dir: 'right' }], props: [{ p: 'pet_post_fixed', x: 16, y: 2, meet: true }] },
+    kajika: { who: [{ char: 'lw_cr_child', x: 20, y: 2, dir: 'left' }], props: [{ p: 'fw_postnote', x: 19, y: 2, meet: true }, { p: 'kr_jar', x: 20, y: 1 }] },
+    logs: { who: [{ char: 'cr_yahei', x: 19, y: 1, dir: 'down' }], props: [{ p: 'kr_cedar', x: 20, y: 1 }] },
+    lines: { who: [{ char: 'lw_rd_traveller', x: 6, y: 8, dir: 'right' }, { char: 'lw_rd_traveller2', x: 7, y: 8, dir: 'left' }] },
+    stakes: { props: [{ p: 'pet_post_fixed', x: 23, y: 13, meet: true }, { p: 'fw_postnote', x: 25, y: 13, meet: true }, { p: 'pet_post_fixed', x: 29, y: 13, meet: true }] },
+    horse: { who: [{ char: 'cr_genji', x: 30, y: 12, dir: 'right' }], props: [{ p: 'cr_horse', x: 31, y: 12, meet: true }] },
+    voice: { who: [{ char: 'lw_cr_traveller', x: 6, y: 17, dir: 'left' }] },
+    tracks: { who: [{ char: 'lw_cr_hunter', x: 11, y: 10, dir: 'down' }] },
+    papers: { who: [{ char: 'lw_rd_traveller', x: 29, y: 13, dir: 'right' }, { char: 'lw_rd_traveller2', x: 30, y: 13, dir: 'left' }], props: [{ p: 'pet_papers', x: 25, y: 12, meet: true }] },
+    shelter: { map: 'cr.pass2', props: [{ p: 'fw_postnote', x: 31, y: 8, meet: true }] },
+    turns: { map: 'cr.pass1', who: [{ char: 'lw_rd_child', x: 6, y: 28, dir: 'right' }, { char: 'lw_rd_parent', x: 3, y: 28, dir: 'right' }] },
+    stones: { map: 'cr.pass3', props: [{ p: 'stone_marker', x: 9, y: 11, meet: true }, { p: 'sb_drift', x: 8, y: 11 }, { p: 'sb_drift', x: 10, y: 11 }] },
+  };
+  const V = (id) => Object.assign({ id, scene: 'cr.lw_' + id }, AT[id] ? { at: AT[id] } : {});
   const road = (rid, maps, when, ids, title, ink) => L.road(rid, { maps, variants: ids.map((id) => Object.assign(V(id), { when })), stamp: { title, ink } });
   road('cr_leg1', ['cr.leg1'], 'cr_done', ['runner', 'bear', 'rota'], ['{杉並木|すぎなみき}', 'the Cedar Avenue'], '#3e5a34');
   road('cr_leg2', ['cr.leg2'], 'cr_done', ['cloth', 'pebbles', 'loads'], ['{石畳|いしだたみ}', 'the Stone Steps'], '#6a6a6a');
