@@ -45,8 +45,11 @@ Progress (the local worker's checkpoints, latest first):
        is a draft from the casting record here) at the root, commit, `git push origin main`.
      - When Pages has published it, check that `https://a-birdi.github.io/Road-of-Borrowed-Names-voices/ja-JP/index.json`
        answers with `"voiceBuild":"vb1-3c59018e3137"`, and say so.
-  3. **Cloud:** then set `HOSTED_BASE` to `'../Road-of-Borrowed-Names-voices/ja-JP/'` (src/audio/52_voicebank.js),
-     rebuild, rerun the voice browser tests and push. Pages republishes the game within minutes; the next session of
+  - **Done (the worker, 29a8f2c):** A-Birdi/Road-of-Borrowed-Names-voices, main `b2496a81`, voice build
+    `2026-10-19.1` (the id the worker chose instead of `vb1-3c59018e3137`), 26,894 files, 559,963,914 bytes; index and
+    a recording checked over the web.
+  3. **Cloud (done 2026-10-19):** `HOSTED_BASE` set to `'../Road-of-Borrowed-Names-voices/ja-JP/'`
+     (src/audio/52_voicebank.js), rebuilt, voice browser tests rerun, pushed. Pages republishes the game within minutes; the next session of
      each player reads the voices. Until then the game plays as now. Saves are untouched (the voices keep their own
      cache, `rbn-voice-v1`).
   - **Checked here:** the same build with that base, served as github.io serves the two sites (scratch check, not

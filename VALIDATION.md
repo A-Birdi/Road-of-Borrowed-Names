@@ -4918,7 +4918,17 @@ the limit, have it set up the new Repo". Figures and decisions: docs/hosting/RUN
   '../Road-of-Borrowed-Names-voices/ja-JP/'`, served at `/Road-of-Borrowed-Names/` beside a synthetic voice site at
   `/Road-of-Borrowed-Names-voices/ja-JP/`, as github.io serves two project sites. A line plays its recording, opened
   either as the folder or as `index.html`, with no page error and no other request. With the voice site missing, one
-  request, no page error, and the line falls back. The committed game still has `HOSTED_BASE = null`.
+  request, no page error, and the line falls back. Rerun on the committed build once `HOSTED_BASE` was set: the same.
+- **Going live:** the worker created A-Birdi/Road-of-Borrowed-Names-voices and published the voice site (main
+  `b2496a81`, build `2026-10-19.1`, 26,894 files, 559,963,914 bytes; the worker checked the index and a recording's
+  SHA-256 over the web; github.io is not reachable from this session). Then `HOSTED_BASE =
+  '../Road-of-Borrowed-Names-voices/ja-JP/'` here:
+  - B `voice_runtime` 9/9: its first test now checks the shipped page's base is that path, that nothing is fetched
+    before a line plays, and that a missing site costs one request (the browser's one 404 line, nothing of the game's);
+    the other eight unchanged.
+  - B `runtime_publish` 3/3 (the runtime set from this build); U `audio_voice` 46/0, `voicebank_vrc1` 33/0,
+    `voice_production` 27/0, `voice_review_page` 89/0.
+  - **Not tested here:** the live URL in a browser (unreachable from this session); Firefox, Safari, phones.
 - **About & credits:** now says where music and voices come from in both cases (hosted, or the file alone) and credits
   the voices. B `title_ledger` 18/0 (About opens and lays out).
 - **The voice repository:** creating it from this session was refused (`403 Resource not accessible by integration`).

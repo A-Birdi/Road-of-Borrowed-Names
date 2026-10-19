@@ -609,12 +609,13 @@
       battle now chooses Standard mistakes, since FR-1 made Assisted the default). 21 affected browser suites pass
       (VALIDATION.md "MW-1").
 
-    **The repository cleaned; going live prepared (Robin, 2026-10-19).** Screenshots, the Ensemble listening media and
+    **The repository cleaned; the voices live (Robin, 2026-10-19).** Screenshots, the Ensemble listening media and
     review captures are out of the branch (2,055 files, 479.8 MB; in the history at 185ad9c; `.gitignore` keeps new
     captures out): about 606 MB published, from 1,085.8 MB. Game and voices together would still be about 1,166 MB, so
     the voices get their own site: the worker creates A-Birdi/Road-of-Borrowed-Names-voices with Robin's GitHub CLI
-    (this session may not; 403), turns on its Pages, builds it (`vb1-3c59018e3137`, READINESS.md 2026-10-19) and pushes; then
-    `HOSTED_BASE = '../Road-of-Borrowed-Names-voices/ja-JP/'` in src/audio/52_voicebank.js, rebuild, voice tests, push.
+    (this session may not; 403), turned on its Pages and published build `2026-10-19.1` (main `b2496a81`); then
+    `HOSTED_BASE = '../Road-of-Borrowed-Names-voices/ja-JP/'` in src/audio/52_voicebank.js, rebuilt, voice tests, pushed.
+    No Pages setting needs changing.
     About & credits now credits the voices. REQUIREMENTS.md XP135; docs/hosting/RUNTIME_PUBLISHING.md.
 
     **SC5–SC9 (Robin's final listening round, 2026-10-19: "get these redos sorted, then push the voices live").** Five

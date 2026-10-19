@@ -2,7 +2,8 @@
 // a real voice site built by tools/voice/voice_site.mjs from the current script, with synthetic test tones standing in
 // for the recordings (tests/e2e/voice_fixture.mjs). Headless Chromium here has no Japanese system voice, so every
 // recording heard proves the voices do not depend on one.
-//  - the shipped page with no voice site configured fetches nothing;
+//  - the shipped page reads its voice site from ../Road-of-Borrowed-Names-voices/ja-JP/ (the voices' own Pages
+//    repository, same origin), only once a line plays; a site that does not answer costs one quiet request;
 //  - a line plays its own recording (speaker, Suzu's Kansai, the player's voice and pitch, or silence for None); the
 //    Voice button shows without a device voice; the spoken mark follows the recording's clock;
 //  - looking ahead fetches only the next few lines; nothing before play;
@@ -75,14 +76,23 @@ const says = cmds.filter((c) => c.jp);
 const hiro = says.find((c) => c.who === 'hiro'), pcLine = says.find((c) => c.who === 'pc');
 const suzuK = says.find((c) => c.who === 'comp' && (shard.lines[keyOfCmd(c)] || []).some((v) => v.d === 'k'));
 
-await test('the shipped page with no voice site fetches nothing, and there is no Japanese voice on this machine', async () => {
-  const p = await open({ noConfig: true });
-  const st = await p.p.evaluate(() => ({ cfg: RB.voicebank.configured(), voices: RB.voice.japaneseVoices().length, mode: RB.voice.mode(), auto: RB.voice.autoOn() }));
+await test('the shipped page asks its own voice site only when a line plays; a missing site costs one quiet request; there is no Japanese voice on this machine', async () => {
+  // every request to the hosted voice site, from before the page loads (here that site does not exist: 404)
+  const context = await b.newContext({ viewport: { width: 1280, height: 800 } });
+  const site = [];
+  context.on('request', (r) => { if (/\/Road-of-Borrowed-Names-voices\//.test(r.url())) site.push(r.url().replace(/^https?:\/\/[^/]+/, '')); });
+  const p = await open({ noConfig: true, context });
+  const st = await p.p.evaluate(() => ({ base: RB.voicebank._.S.base, cfg: RB.voicebank.configured(), voices: RB.voice.japaneseVoices().length, mode: RB.voice.mode(), auto: RB.voice.autoOn() }));
+  const before = site.length;
   await p.p.evaluate((i) => window.__line(i), hiro.i);
   await p.p.waitForTimeout(800);
-  assert(!st.cfg && st.mode === 'prepared' && p.reqs.length === 0, 'no site configured, nothing fetched: ' + JSON.stringify(st) + ' ' + p.reqs.join(','));
+  assert(st.base === '../Road-of-Borrowed-Names-voices/ja-JP/' && st.cfg && st.mode === 'prepared', 'the voice site is the voices\' repository beside the game: ' + JSON.stringify(st));
+  assert(before === 0 && p.reqs.length === 0, 'nothing fetched before a line plays: ' + before);
+  assert(site.join() === '/Road-of-Borrowed-Names-voices/ja-JP/index.json', 'the line asks the site for its index once, and a missing site is not asked again at once: ' + site.join(','));
   assert(st.voices === 0, 'this machine has a Japanese system voice (' + st.voices + '); the independence checks below would not prove it');
-  assert(!p.errors.length, p.errors.join(' | '));
+  // the browser's own console line for that 404 is the only one; nothing of the game's
+  const miss = p.errors.filter((e) => /Failed to load resource: the server responded with a status of 404/.test(e));
+  assert(miss.length === 1 && p.errors.length === 1, p.errors.join(' | '));
   await p.context.close();
 });
 

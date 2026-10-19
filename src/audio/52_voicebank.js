@@ -43,9 +43,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.voicebank = (function () {
   'use strict';
   const G = globalThis;
-  // Where the hosted game finds its voice site, relative to the page (docs/hosting/RUNTIME_PUBLISHING.md: Robin's
-  // choice). null: no voice site yet; Prepared voices then falls back to the device's voice for every line.
-  const HOSTED_BASE = null;
+  // Where the hosted game finds its voice site, relative to the page (docs/hosting/RUNTIME_PUBLISHING.md, 4a): the
+  // voices' own Pages repository on the same origin, https://a-birdi.github.io/Road-of-Borrowed-Names-voices/ (Robin,
+  // 2026-10-19). Asked only when a line is about to be spoken; a site that does not answer is a passing miss, and
+  // Prepared voices then falls back to the device's voice.
+  const HOSTED_BASE = '../Road-of-Borrowed-Names-voices/ja-JP/';
   const CACHE = 'rbn-voice-v1';
   const META = '__rbn_voice_meta__.json';
   const START_MS = 2000; // C-83: a prepared clip has about 2 s to start

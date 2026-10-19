@@ -51,11 +51,13 @@ importer rebuilds `assets/harmony/` from. The twelve `zz_*.html` test builds in 
 
 So the voices need their own site (4a below), and the game's site keeps about 394 MB of room under 1 GB.
 
-**The voice repository.** Creating it from here was tried and refused: the GitHub integration this session uses may
-not create repositories (`403 Resource not accessible by integration`). The local worker creates it from Robin's PC
-with the GitHub CLI, signed in as A-Birdi: **A-Birdi/Road-of-Borrowed-Names-voices**, public, Pages from **main**,
-**/ (root)** (free for a public repository). If done by hand: https://github.com/new, then Settings › Pages ›
-"Deploy from a branch", main, / (root).
+**The voice repository: live.** Creating it from here was tried and refused: the GitHub integration this session uses
+may not create repositories (`403 Resource not accessible by integration`). The local worker created it from Robin's PC
+with the GitHub CLI, signed in as A-Birdi, on Robin's instruction: **A-Birdi/Road-of-Borrowed-Names-voices**, public,
+Pages from **main**, **/ (root)**, main at `b2496a81`, served at https://a-birdi.github.io/Road-of-Borrowed-Names-voices/.
+The worker measured 26,894 files and 559,963,914 bytes, none missing or withheld, MW-1's 3 retired ids unused, and
+checked that `ja-JP/index.json` answers 200 and that a fetched recording's SHA-256 matches. (This session cannot reach
+github.io through its proxy, so that check is the worker's, not repeated here.)
 
 **Its layout** (the worker builds it; `.nojekyll` makes Pages serve the files as they are, with no Jekyll pass over
 about 27,000 files):
@@ -63,14 +65,20 @@ about 27,000 files):
 ```
 .nojekyll                     empty
 README.md or CREDITS.md       what it is and the credits (a draft: docs/hosting/voices-site/README.md)
-ja-JP/index.json              voice build vb1-3c59018e3137 (script content 3c59018e3137)
+ja-JP/index.json              voice build 2026-10-19.1 (script content 3c59018e3137)
 ja-JP/idx/s/<scene>.<sha12>.json
 ja-JP/idx/refs.<sha12>.json
 ja-JP/rec/<speaker>/<id>.<sha12>.opus
 ```
 
-The game reads it at `../Road-of-Borrowed-Names-voices/ja-JP/` (`HOSTED_BASE`), the same origin. The worker's commands
-and the order of going live are in `docs/future/voice/production/READINESS.md` (2026-10-19, going live).
+The game reads it at `../Road-of-Borrowed-Names-voices/ja-JP/` (`HOSTED_BASE` in src/audio/52_voicebank.js, set
+2026-10-19), the same origin, so the page's `connect-src 'self'` already allows it. The order of going live is in
+`docs/future/voice/production/READINESS.md` (2026-10-19, going live).
+
+**Pages settings: none to change.** The game's site still publishes the branch root (`claude/stoic-sagan-n3jvgk`),
+now about 606 MB, inside the limit. Publishing only the runtime set (§2; about 524 MB; Settings › Pages › Source
+"GitHub Actions" with the draft workflow) would also stop publishing the source, tests and records; it is no longer
+needed for the size, and stays Robin's choice.
 
 Nothing in this page was deployed, and no Pages setting was changed. The tools write local folders only.
 

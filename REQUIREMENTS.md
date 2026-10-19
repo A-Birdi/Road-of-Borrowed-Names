@@ -1072,7 +1072,7 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - **Not done / Robin's call:** one leaf measures +13–19 % over its 400 ms from
     the first leaf frame to the live page in this software renderer (several leaves +6–7 %); Firefox, Safari, Windows,
     a GPU browser, phones and screen readers untested.
-- [~] XP135 The repository cleaned and the voices' going live prepared (Robin, 2026-10-19, relayed by the local
+- [~] XP135 The repository cleaned and the voices gone live (Robin, 2026-10-19, relayed by the local
   worker): "get these redos sorted, then push the voices live"; "Ask Cloud to set up the Github properly. This includes
   removing screenshots, test builds, and other unnecessary files … See the size difference after that and, if it still
   exceeds the limit, have it set up the new Repo". VALIDATION.md "The repository clean-up, and going live prepared";
@@ -1082,11 +1082,11 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     evidence in GitHub" for the published branch. About & credits says where the voices come from and credits them
     (B `title_ledger` 18/0); U whole suite 54,725/0 on the cleaned tree. The voice base checked in a github.io-like layout (scratch, B). The voices' site layout,
     build id (`vb1-3c59018e3137`), README and the worker's commands are written down.
-  - **Not done / with others:** the voice repository (creating it here was refused, 403: the worker creates
-    A-Birdi/Road-of-Borrowed-Names-voices with Robin's GitHub CLI and turns on its Pages) and builds and pushes the
-    voice site; then
-    `HOSTED_BASE` is set and pushed here. Publishing only the runtime set (a Pages setting) is no longer needed for the
-    size, and stays Robin's choice.
+  - **Live:** the worker created A-Birdi/Road-of-Borrowed-Names-voices with Robin's GitHub CLI (creating it here was
+    refused, 403) and published the voice site (build `2026-10-19.1`, 559,963,914 bytes); `HOSTED_BASE =
+    '../Road-of-Borrowed-Names-voices/ja-JP/'` set and pushed here (B `voice_runtime` 9/9, `runtime_publish` 3/3).
+  - **Not done / Robin's:** a play-through on the live URL (not reachable from this session; Robin's in-game test).
+    No Pages setting needs changing; publishing only the runtime set stays Robin's choice.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
