@@ -30,6 +30,7 @@ async function start(p, map, x, y, flags, o) {
     for (const ev of def.onEnter || []) f['enter:' + map + ':' + ev.scene] = true;
     const s = RB.game.debugStart(map, x, y, { comp: 'nao', flags: f, dir: (o && o.dir) || 'down', edition: RB.edition.forNew() });
     if (o && o.vars) Object.assign(s.vars, o.vars);
+    if (o && o.quests) Object.assign(s.quests, o.quests);
     if (o && o.slots) { RB.town.rec(s); for (const t in o.slots) s.world.towns[t] = { tick: 1, slots: o.slots[t], leftAt: null, flags: {}, rests: 0 }; }
     RB.world.W.quietUntil = 1e15;
     RB.game.settings.textSpeed = 'instant';
@@ -157,6 +158,46 @@ await test('LW-03/04/05: Reedwake after setting out: Oto in his routine\'s place
   const j = await p.evaluate(() => document.body.textContent.replace(/\s+/g, ' '));
   assert(/Reedwake/.test(j) && /changed/i.test(j), 'the Journey says Reedwake has changed');
   await p.evaluate(() => RB.ui.menu.close());
+  assert(!errors.length, 'no errors: ' + errors.join(' | '));
+  await ctx.close();
+});
+
+await test('RV-2: back in Reedwake after Chapter 1, at a routine\'s place its line replaces what was said just after the bridge, each time (Mame at Bunta\'s, Kiku on the green, Oto by the well); an open quest\'s reminder still follows', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const F = Object.assign({ rw_echo_done: true, rw_charm_given: true }, DONE);
+  const Q = { rw_boots: { stage: 9, done: true }, rw_tools: { stage: 9, done: true }, rw_crossroads: { stage: 9, done: true } };
+  const slots = { reedwake: { oto: 2, kiku: 2, mame: 3 } };
+  const id = (who) => p.evaluate((who) => { const n = RB.world.W.npcs.find((a) => (a.def.char || a.id) === who); return n ? n.id : null; }, who);
+  const cases = [['mame', 'rw.carpenter', 3, 6, /wood shavings/], ['kiku', 'rw.village', 13, 28, /thread some sun/], ['oto', 'rw.village', 22, 20, /cold water in this well/]];
+  for (const [who, map, x, y, line] of cases) {
+    await start(p, map, x, y, F, { slots, quests: Q });
+    const n = await id(who);
+    assert(n && /_r\d$/.test(n), who + ' at a routine\'s place: ' + n);
+    for (const k of [1, 2]) {
+      assert(await talkTo(p, n), 'faced ' + who);
+      const said = await lines(p);
+      assert(said.length === 1 && said[0].who === who && line.test(said[0].en), who + ', talk ' + k + ': the routine\'s line alone: ' + JSON.stringify(said));
+    }
+  }
+  // the crossroads sign still blank (its quest open): Mame's reminder follows the routine's line
+  await start(p, 'rw.carpenter', 3, 6, F, { slots, quests: Object.assign({}, Q, { rw_crossroads: { stage: 1 } }) });
+  assert(await talkTo(p, await id('mame')), 'faced Mame');
+  const open = await lines(p);
+  assert(/wood shavings/.test(open[0].en) && open.some((l) => /west crossroads/.test(l.en || '')), 'the open quest\'s reminder still said: ' + JSON.stringify(open));
+  assert(!errors.length, 'no errors: ' + errors.join(' | '));
+  await ctx.close();
+});
+
+await test('RV-3: Sae on the mill road after the wheel turns thanks you, without asking for the gear pin again', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await start(p, 'rw.millroad', 17, 23, Object.assign({ rw_mill_open: true, rw_mr_mio: true, rw_echo_done: true }, DONE));
+  assert(await talkTo(p, 'sae'), 'faced Sae');
+  const after = await lines(p);
+  assert(after.length === 1 && /wheel turning/.test(after[0].en) && !after.some((l) => /gear pin/.test(l.en || '')), 'after: thanks only: ' + JSON.stringify(after));
+  await start(p, 'rw.millroad', 17, 23, { rw_mill_open: true, rw_mr_mio: true });
+  assert(await talkTo(p, 'sae'), 'faced Sae (before)');
+  const before = await lines(p);
+  assert(before.length === 1 && /gear pin/.test(before[0].en), 'before the wheel turns: the pin asked for: ' + JSON.stringify(before));
   assert(!errors.length, 'no errors: ' + errors.join(' | '));
   await ctx.close();
 });

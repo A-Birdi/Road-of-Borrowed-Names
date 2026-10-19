@@ -355,16 +355,52 @@ RB.town = (function () {
     // beat.<town>.<id> : a town's change beat is active
     RB.state.addTerm('beat', (s, rest) => { const [t, b] = String(rest).split('.'); return beats(s, t).some((x) => x.id === b); });
   }
+  // At a routine's place, talk left from before the routine began is replaced by the routine's own line (Robin,
+  // 2026-10-19: back in Reedwake after Chapter 1, Oto, Mame and Kiku said their new lines and then the ones from just
+  // after the bridge, "where the new locale dialogue should just replace it entirely for that section, given the
+  // context changed"): plain talk (lines and gestures, nothing done) whose condition names nothing of the routine's
+  // time. Still said: anything that does something (a quest step, a gift), an open quest's reminder (the option's
+  // condition, or a line in it, naming a quest started and not done), a change beat, a
+  // line not yet heard by design (`!seen.…`), and lines for the town's later story (its `after`, the flags it cares
+  // about, the postgame). The person's own place (slot 1) is unchanged.
+  const TALK_OPS = { say: 1, gesture: 1, faceplayer: 1, look: 1, prop: 1, sfx: 1, emote: 1, wait: 1, pose: 1, shake: 1, speakerless: 1 };
+  // the quests a condition names that are open now (started, not done)
+  const openQuests = (s, cond) => String(cond || '').split(/[|&]/).map((x) => x.trim().replace(/^!/, '').split(/>=|<=|!=|==|=|>|</)[0])
+    .filter((k) => /^quest\./.test(k) && s.quests[k.slice(6)] && !s.quests[k.slice(6)].done);
+  function pastTalk(s, person, opt) {
+    if (!opt || !opt.scene) return false;
+    const sc = (C().scenes || {})[opt.scene];
+    if (!sc || !sc.cmds.every((c) => TALK_OPS[c.op])) return false;
+    // a line in it that reminds of an open quest, said now
+    if (sc.cmds.some((c) => c.if && openQuests(s, c.if).length && RB.state.test(s, c.if))) return false;
+    const T = towns()[Object.keys(towns()).find((id) => (towns()[id].residents || {})[person])];
+    if (!T) return false;
+    const later = [T.after].concat(T.care || [], ['post', 'postgame']);
+    for (const raw of String(opt.if || '').split(/[|&]/)) {
+      const t = raw.trim().replace(/^!/, ''), key = t.split(/>=|<=|!=|==|=|>|</)[0];
+      if (!key) continue;
+      if (later.indexOf(key) >= 0 || /^(beat|seen)\./.test(key)) return false;
+      if (/^quest\./.test(key) && !/=done$/.test(t) && openQuests(s, t).length) return false;
+    }
+    return true;
+  }
+  // the talk option a person's list resolves to now
+  const talkOption = (s, def) => {
+    const list = typeof def.talk === 'string' ? [{ scene: def.talk }] : def.talk || [];
+    for (const o of list) if (!o.if || RB.state.test(s, o.if)) return o;
+    return null;
+  };
   // the scene hooks
   RB.hooks = RB.hooks || {};
   // A routine's place says its own first line once (src/content/zzz_living/10_towns.js), then what the person would
-  // say anywhere: their talk, resolved as usual without that line, so the story's next step is never held back.
+  // say anywhere: their talk, resolved as usual without that line, so the story's next step is never held back; talk
+  // from before the routine began is not said after it (pastTalk above).
   RB.hooks.usual_talk = async (a, ctx) => {
     const s = RB.game && RB.game.s, W = RB.world && RB.world.W;
     const n = W && ctx && (W.npcs || []).find((x) => x.id === ctx.npc);
     if (!s || !n || !n.def) return;
-    const list = typeof n.def.talk === 'string' ? [{ scene: n.def.talk }] : n.def.talk || [];
-    for (const o of list) if (!o.if || RB.state.test(s, o.if)) { await RB.script.run(o.scene, { npc: n.id }); return; }
+    const o = talkOption(s, n.def);
+    if (o && !(n.def.slotScene && pastTalk(s, n.def.char || n.id, o))) await RB.script.run(o.scene, { npc: n.id });
   };
   RB.hooks.road_done = async (a) => { if (RB.game && RB.game.s) roadDone(RB.game.s, a[0], a[1]); };
   RB.hooks.sealed = async (a) => {
@@ -380,6 +416,7 @@ RB.town = (function () {
 
   return {
     rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, askable, findable, usualPlaces, note, seen, spotWords,
+    pastTalk, talkOption,
     roadOf, roadEventAt, storyOnArrival, LINES,
     roadDone, unfinished, sealedOn, canOpen, examine, noticed,
   };

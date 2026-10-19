@@ -6480,6 +6480,18 @@ body.in-panel #overlay > .notices > .award .aw-x { pointer-events: auto; }
 .award.aw-moment { border-left-color: var(--cloth-700); }
 .award.aw-moment .kind { color: var(--cloth-600); }
 .award.aw-moment .aw-art svg { width: 48px; height: 48px; transform: rotate(-4deg); }
+/* stamp: the edge in the stamp's own ink; the stamp comes down onto the slip and lands with a ring of that ink */
+.award.aw-stamp { border-left-color: var(--aw-ink, var(--vermilion)); }
+.award.aw-stamp .kind { color: var(--aw-ink, var(--vermilion)); }
+.award.aw-stamp .aw-art { position: relative; }
+.award.aw-stamp .aw-art svg { width: 48px; height: 48px; transform: rotate(-6deg); }
+.award.aw-stamp.aw-in .aw-art svg { animation: aw-press 360ms 140ms steps(6, end) both; }
+@keyframes aw-press { 0% { transform: translateY(-10px) scale(1.7) rotate(-16deg); opacity: 0; } 70% { transform: scale(0.9) rotate(-5deg); opacity: 1; } 100% { transform: rotate(-6deg); } }
+.award.aw-stamp.aw-in .aw-art::after {
+  content: ""; position: absolute; inset: 6px; border-radius: 50%; border: 2px solid var(--aw-ink, var(--vermilion)); pointer-events: none;
+  opacity: 0; animation: aw-ink 480ms 380ms ease-out both;
+}
+@keyframes aw-ink { from { transform: scale(0.7); opacity: 0.6; } to { transform: scale(1.4); opacity: 0; } }
 /* arriving: from the top in a few quick frames; leaving: up and away */
 .award.aw-in { animation: aw-in 160ms steps(4, end) both; }
 @keyframes aw-in { from { transform: translateY(-140%); opacity: 0.2; } to { transform: none; opacity: 1; } }
@@ -6487,7 +6499,8 @@ body.in-panel #overlay > .notices > .award .aw-x { pointer-events: auto; }
 @keyframes aw-out { to { transform: translateY(-40%); opacity: 0; } }
 /* the gold flare's canvas reaches a little past the slip's border */
 .award .aw-flair { position: absolute; pointer-events: none; image-rendering: pixelated; z-index: 2; }
-body.reduced-motion .award.aw-in, body.reduced-motion .award.aw-out { animation: none; }
+body.reduced-motion .award.aw-in, body.reduced-motion .award.aw-out, body.reduced-motion .award.aw-stamp .aw-art svg { animation: none; }
+body.reduced-motion .award.aw-stamp .aw-art::after { display: none; }
 body.reduced-motion .award .aw-flair { display: none; }
 @media (max-width: 520px) { .award .aw-art { width: 48px; height: 48px; } .award .aw-art > img.it-ic { width: 32px; height: 32px; } }
 
@@ -24432,6 +24445,12 @@ RB.audio = RB.audio || {};
     seq(g, o, t + 0.06, 'harp', [69, 74, 76, 81], 0.1, 0.4, 0.32, p);
     note(g, o, t + 0.5, 'glass', 88, 0.9, 0.28, p);
   });
+  // a stamp pressed into the Road Stamp Book (its award slip): the block's soft thud on paper, then two small notes
+  def('stamp', 1.2, 0.3, 0.2, (g, o, t, p) => {
+    tone(g, o, t, { type: 'triangle', f: 150 * p, f2: 90 * p, glide: 0.08, a: 0.002, hold: 0.03, r: 0.12, v: 0.12 });
+    whoosh(g, o, t, { type: 'lowpass', f: 900, q: 0.7, a: 0.002, hold: 0.02, r: 0.08, v: 0.08 });
+    seq(g, o, t + 0.16, 'pluck', [79, 84], 0.07, 0.2, 0.45, p);
+  });
   def('item_get', 1.5, 0.3, 0.2, (g, o, t, p) => {
     seq(g, o, t, 'pluck', [67, 71, 74, 79], 0.06, 0.2, 0.55, p);
     note(g, o, t + 0.26, 'bell', 83, 0.4, 0.32, p);
@@ -24492,7 +24511,7 @@ RB.audio = RB.audio || {};
   const LEVEL = _.sfxLevel = {
     confirm: -10, cancel: -10, menu_open: -9, menu_close: -9, save: -9, page: -5,
     quest_update: -10, answer_right: -9, answer_wrong: -8, recog_ok: -8, recog_unsure: -7,
-    discover: -9, item_get: -8, reveal: -7, levelup: -8, moment: -8,
+    discover: -9, item_get: -8, reveal: -7, levelup: -8, moment: -8, stamp: -8,
   };
   _.sfxPlay = function (g, id, t, opts) {
     const d = X[id];
@@ -42622,15 +42641,18 @@ RB.world = (function () {
   function talkTo(n) {
     const st = s();
     const def = n.def;
-    let scene = null;
+    let scene = null, chosen = null;
     if (typeof def.talk === 'string') scene = def.talk;
     else if (Array.isArray(def.talk)) {
-      for (const opt of def.talk) if (!opt.if || RB.state.test(st, opt.if)) { scene = opt.scene; break; }
+      for (const opt of def.talk) if (!opt.if || RB.state.test(st, opt.if)) { scene = opt.scene; chosen = opt; break; }
     }
     if (!scene) return false;
     if (!def.noFace) faceTo(n, W.player.x, W.player.y);
-    // a routine's place (LW-03): its own first line, once, then what they would say anywhere (the usual_talk hook)
-    if (def.slotScene && RB.content.scenes[def.slotScene] && !st.seen[def.slotScene]) { RB.script.run(def.slotScene, { npc: n.id }); return true; }
+    // a routine's place (LW-03): its own first line, once, then what they would say anywhere (the usual_talk hook);
+    // talk from before the routine began is replaced there by that line, said again (RB.town.pastTalk)
+    const slot = def.slotScene && RB.content.scenes[def.slotScene] ? def.slotScene : null;
+    if (slot && !st.seen[slot]) { RB.script.run(slot, { npc: n.id }); return true; }
+    if (slot && chosen && RB.town && RB.town.pastTalk(st, def.char || n.id, chosen)) scene = slot;
     // someone who can be asked after others (W3): talk, or "Have you seen…?". Something new to say (a scene not yet
     // heard: the story's next step, a quest's) is said at once, never behind the question (LW-04)
     if (def.asks && RB.town && RB.whereabouts && RB.state.test(st, 'seen.' + scene)) { RB.whereabouts.ask(n, scene); return true; }
@@ -44791,16 +44813,52 @@ RB.town = (function () {
     // beat.<town>.<id> : a town's change beat is active
     RB.state.addTerm('beat', (s, rest) => { const [t, b] = String(rest).split('.'); return beats(s, t).some((x) => x.id === b); });
   }
+  // At a routine's place, talk left from before the routine began is replaced by the routine's own line (Robin,
+  // 2026-10-19: back in Reedwake after Chapter 1, Oto, Mame and Kiku said their new lines and then the ones from just
+  // after the bridge, "where the new locale dialogue should just replace it entirely for that section, given the
+  // context changed"): plain talk (lines and gestures, nothing done) whose condition names nothing of the routine's
+  // time. Still said: anything that does something (a quest step, a gift), an open quest's reminder (the option's
+  // condition, or a line in it, naming a quest started and not done), a change beat, a
+  // line not yet heard by design (`!seen.…`), and lines for the town's later story (its `after`, the flags it cares
+  // about, the postgame). The person's own place (slot 1) is unchanged.
+  const TALK_OPS = { say: 1, gesture: 1, faceplayer: 1, look: 1, prop: 1, sfx: 1, emote: 1, wait: 1, pose: 1, shake: 1, speakerless: 1 };
+  // the quests a condition names that are open now (started, not done)
+  const openQuests = (s, cond) => String(cond || '').split(/[|&]/).map((x) => x.trim().replace(/^!/, '').split(/>=|<=|!=|==|=|>|</)[0])
+    .filter((k) => /^quest\./.test(k) && s.quests[k.slice(6)] && !s.quests[k.slice(6)].done);
+  function pastTalk(s, person, opt) {
+    if (!opt || !opt.scene) return false;
+    const sc = (C().scenes || {})[opt.scene];
+    if (!sc || !sc.cmds.every((c) => TALK_OPS[c.op])) return false;
+    // a line in it that reminds of an open quest, said now
+    if (sc.cmds.some((c) => c.if && openQuests(s, c.if).length && RB.state.test(s, c.if))) return false;
+    const T = towns()[Object.keys(towns()).find((id) => (towns()[id].residents || {})[person])];
+    if (!T) return false;
+    const later = [T.after].concat(T.care || [], ['post', 'postgame']);
+    for (const raw of String(opt.if || '').split(/[|&]/)) {
+      const t = raw.trim().replace(/^!/, ''), key = t.split(/>=|<=|!=|==|=|>|</)[0];
+      if (!key) continue;
+      if (later.indexOf(key) >= 0 || /^(beat|seen)\./.test(key)) return false;
+      if (/^quest\./.test(key) && !/=done$/.test(t) && openQuests(s, t).length) return false;
+    }
+    return true;
+  }
+  // the talk option a person's list resolves to now
+  const talkOption = (s, def) => {
+    const list = typeof def.talk === 'string' ? [{ scene: def.talk }] : def.talk || [];
+    for (const o of list) if (!o.if || RB.state.test(s, o.if)) return o;
+    return null;
+  };
   // the scene hooks
   RB.hooks = RB.hooks || {};
   // A routine's place says its own first line once (src/content/zzz_living/10_towns.js), then what the person would
-  // say anywhere: their talk, resolved as usual without that line, so the story's next step is never held back.
+  // say anywhere: their talk, resolved as usual without that line, so the story's next step is never held back; talk
+  // from before the routine began is not said after it (pastTalk above).
   RB.hooks.usual_talk = async (a, ctx) => {
     const s = RB.game && RB.game.s, W = RB.world && RB.world.W;
     const n = W && ctx && (W.npcs || []).find((x) => x.id === ctx.npc);
     if (!s || !n || !n.def) return;
-    const list = typeof n.def.talk === 'string' ? [{ scene: n.def.talk }] : n.def.talk || [];
-    for (const o of list) if (!o.if || RB.state.test(s, o.if)) { await RB.script.run(o.scene, { npc: n.id }); return; }
+    const o = talkOption(s, n.def);
+    if (o && !(n.def.slotScene && pastTalk(s, n.def.char || n.id, o))) await RB.script.run(o.scene, { npc: n.id });
   };
   RB.hooks.road_done = async (a) => { if (RB.game && RB.game.s) roadDone(RB.game.s, a[0], a[1]); };
   RB.hooks.sealed = async (a) => {
@@ -44816,6 +44874,7 @@ RB.town = (function () {
 
   return {
     rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, askable, findable, usualPlaces, note, seen, spotWords,
+    pastTalk, talkOption,
     roadOf, roadEventAt, storyOnArrival, LINES,
     roadDone, unfinished, sealedOn, canOpen, examine, noticed,
   };
@@ -48145,12 +48204,14 @@ RB.content.company = RB.content.company || {
  * C-52, C-55, C-66): the Road Stamp Book, the travel volume and the traveller's own seal. They read what the journey
  * did and keep their marks in the save's records (RB.records, src/engine/05b_foundations.js), which New Game+ carries.
  *
- *   RB.stampBook  stamps[id] = { family, title, criteria { en, jp }, hidden, chapter, when: cond | fn(s), stand,
- *                 design: { shape, motif, ink } }; stands[id] = { map, x, y, title }.
+ *   RB.stampBook  stamps[id] = { family, title, criteria { en, jp }, hidden, known: cond | fn(s), veil { en, jp },
+ *                 chapter, when: cond | fn(s), stand, design: { shape, motif, ink } }; stands[id] = { map, x, y, title }.
  *                 A stamp is *earned* when its criteria hold, and *pressed* (recorded, once) at its stand in the
  *                 world, or at once when it has none. No stamp asks for an input mode, going without help, a
  *                 streak, a time, a mastery star (C-13) or a festival score (C-55). Hidden stamps show neutral,
- *                 spoiler-safe criteria ("A side story in Chapter 7").
+ *                 spoiler-safe criteria ("A side story in Chapter 7"). A stamp whose place the journey may not
+ *                 have reached yet (`known`) shows veiled, in its `veil` words, until it is. The chapter-keyed
+ *                 families (chapters, people helped, the field guide) list their stamps in story order.
  *   RB.volume     the travel volume's pages: every illustrated sequence (src/ui/43_sequence.js), and pages content
  *                 adds. *Witnessed* = the moment happened in this campaign (skipped or helped counts; no time spent
  *                 watching is asked). Viewable in a campaign (R2 §6): what was witnessed, every page of a finished
@@ -48199,6 +48260,15 @@ RB.stampBook = (function () {
   }
   // the earned stamps waiting at a stand
   const ready = (s, standId) => Object.keys(S()).filter((id) => S()[id].stand === standId && earned(s, id) && !pressed(s, id));
+  // its place is known to this journey (a stamp without `known` always is)
+  function known(s, d) {
+    if (!d.known) return true;
+    try { return typeof d.known === 'function' ? !!d.known(s) : RB.state.test(s, d.known); } catch (e) { return false; }
+  }
+  // the families whose stamps belong to a chapter: listed in story order (the twelve-chapter numbers, F-21), any
+  // without a chapter after the story's
+  const STORY = { chapter: 1, region: 1, guide: 1 };
+  const storyNo = (d) => (d.chapter && RB.volume ? RB.volume.numberOf({ chapter: d.chapter }) || 13 : 13);
   // the book: every stamp in order, with its state ('pressed' | 'ready' (earned, its stand waiting) | 'open')
   function book(s) {
     const out = [];
@@ -48206,9 +48276,12 @@ RB.stampBook = (function () {
       const d = S()[id];
       const st = pressed(s, id) ? 'pressed' : earned(s, id) && d.stand ? 'ready' : 'open';
       const rec = st === 'pressed' ? (s.records.stamps[id] || {}) : null;
-      out.push({ id, d, state: st, at: rec ? rec.at : null, t: rec ? rec.t : null, rec, veiled: st === 'open' && !!d.hidden });
+      const veiled = st === 'open' && (!!d.hidden || !known(s, d));
+      out.push({ id, d, state: st, at: rec ? rec.at : null, t: rec ? rec.t : null, rec, veiled, criteria: veiled && d.veil ? d.veil : d.criteria });
     }
-    return out;
+    const fam = [...new Set(out.map((x) => x.d.family))];
+    const key = (x, i) => [fam.indexOf(x.d.family), STORY[x.d.family] ? storyNo(x.d) : 0, i];
+    return out.map((x, i) => key(x, i).concat([x])).sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]).map((k) => k[3]);
   }
   // a stand in the world: content places a prop with scene 'rb.stand' and o.stand = <id>
   RB.hooks = RB.hooks || {};
@@ -48227,7 +48300,7 @@ RB.stampBook = (function () {
     }
   };
   if (RB.bus) RB.bus.on('story:settled', () => { const s = RB.game && RB.game.s; if (s) settle(s); });
-  return { earned, pressed, pressAt, settle, ready, book, press1 };
+  return { earned, pressed, pressAt, settle, ready, book, press1, known };
 })();
 
 RB.volume = (function () {
@@ -62699,7 +62772,11 @@ RB.game = (function () {
         if (e.t === 'lostWord') RB.ui.toast({ kind: 'word', jp: e.jp, en: 'A lost word comes back: ' + e.en });
         else if (e.t === 'item' && RB.content.items[e.id]) RB.ui.toast({ kind: 'item', id: e.id, note: RB.equip.note(RB.content.items[e.id]) });
         else if (e.t === 'cleared') RB.ui.notice('The way is clear now: people will start using it again.', 'info');
-        else if (e.t === 'stamp') RB.ui.notice('A field-guide stamp: every kind of creature in this region settled.', 'info');
+        else if (e.t === 'stamp' && RB.content.stamps[e.id]) {
+          // the Stamp Book's slip: the stamp's own design pressed onto it (src/ui/15_award.js)
+          const d = RB.content.stamps[e.id];
+          RB.ui.award({ kind: 'stamp', id: e.id, jp: d.title.jp, en: d.title.en, note: (d.note || d.criteria).en + ' Kept in Journey › Stamp book.', art: RB.ui.records ? RB.ui.records.stampSvg(d, 'pressed', d.title.en) : '', ink: d.design.ink });
+        }
       }
     }
     if (res === 'win') {
@@ -65377,13 +65454,10 @@ RB.encounter = (function () {
       const all = (m.foes || []).every((f) => s.flags['foe:' + mapId + ':' + f.id]);
       if (all) { s.flags['cleared:' + m.route] = true; out.push({ t: 'cleared', route: m.route }); }
     }
-    if (RB.edition && RB.edition.of(s) >= 2 && RB.records && place.enemy) {
-      const region = (C.enemies[place.enemy] || {}).region;
-      if (region && RB.creatures && s.creatures) {
-        const kinds = Object.keys(C.enemies).filter((id) => C.enemies[id].region === region && !C.enemies[id].boss);
-        const done = kinds.every((id) => s.creatures[id] && s.creatures[id].settled);
-        if (kinds.length && done && RB.records.award(s, 'stamps', 'guide:' + region)) out.push({ t: 'stamp', id: 'guide:' + region });
-      }
+    // the region's field-guide stamp (a Stamp Book stamp, src/content/records/00_stamps.js: its bosses not counted)
+    if (RB.edition && RB.edition.of(s) >= 2 && RB.stampBook && place.enemy) {
+      const id = (C.guideRegion || {})[(C.enemies[place.enemy] || {}).region];
+      if (id && RB.stampBook.press1(s, id, null)) out.push({ t: 'stamp', id });
     }
     return out;
   }
@@ -68398,13 +68472,15 @@ RB.bookType = (function () {
  *   - keepsake ("Keepsake found"): the keepsake's picture in a mount, its name; an item that is also a keepsake gets
  *     one slip, the item's, marked as a keepsake too;
  *   - moment ("Moment recorded"): a page of the travel volume witnessed for the first time, pressed with your seal,
- *     with its own sound.
+ *     with its own sound;
+ *   - stamp ("Stamp pressed"): a stamp of the Road Stamp Book pressed at once (the field guide's): the stamp's own
+ *     design comes down onto the slip and lands with a ring of its ink; the slip's edge is in that ink.
  * Each slides in from the top in a few quick frames, a gold flare runs round its border from the top-left and the
  * bottom-right corners (twice, or three times for what matters most) and trails off; it stays for a set time (paused
  * while pointed at or focused) and closes at once with its × or a tap. One sound each, no more. Reduce motion: no
- * slide and no flare. Nothing here changes what was given.
+ * slide, no flare and no press. Nothing here changes what was given.
  *
- *   RB.ui.award({ kind: 'item' | 'keepsake' | 'moment', id, jp, en, n, note, art, level, sound }) → Promise
+ *   RB.ui.award({ kind: 'item' | 'keepsake' | 'moment' | 'stamp', id, jp, en, n, note, art, level, sound, ink }) → Promise
  *       (resolves when the slip is placed, as RB.ui.toast does, so a scene goes on at once) */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
@@ -68412,9 +68488,9 @@ RB.ui = RB.ui || {};
 RB.ui.award = (function () {
   'use strict';
   const esc = (t) => RB.util.esc(t);
-  const LABEL = { item: 'Received', keepsake: 'Keepsake found', moment: 'Moment recorded' };
-  const SOUND = { item: 'item_get', keepsake: 'discover', moment: 'moment' };
-  const HOLD = { item: 6000, keepsake: 7000, moment: 7000 }; // (long enough to read a name and its line)
+  const LABEL = { item: 'Received', keepsake: 'Keepsake found', moment: 'Moment recorded', stamp: 'Stamp pressed' };
+  const SOUND = { item: 'item_get', keepsake: 'discover', moment: 'moment', stamp: 'stamp' };
+  const HOLD = { item: 6000, keepsake: 7000, moment: 7000, stamp: 7000 }; // (long enough to read a name and its line)
   const MAX = 3; // slips on screen at once; an older one gives way
   const live = []; // { el, kind, id, timer, close }
   const reduce = () => !!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion());
@@ -68432,6 +68508,7 @@ RB.ui.award = (function () {
       n.setAttribute('role', 'status');
       n.dataset.kind = kind;
       if (t.id) n.dataset.id = t.id;
+      if (t.ink) n.style.setProperty('--aw-ink', t.ink);
       const art = t.art != null ? t.art : kind === 'item' && t.id ? RB.itemArt.html(t.id, 3) : '';
       n.innerHTML = '<span class="aw-art" aria-hidden="true">' + (typeof art === 'string' ? art : '') + '</span>' +
         '<span class="aw-body"><span class="kind">' + esc(LABEL[kind]) + '</span>' +
@@ -93190,7 +93267,7 @@ RB.ui.records = (function () {
   const J = (x) => (x && x.jp ? RB.ui.jhtml(x.jp) : '');
   const both = (x) => (x ? '<span class="rb-jp">' + J(x) + '</span><span class="en">' + esc(x.en || '') + '</span>' : '');
   const FAMILY = [
-    ['chapter', 'Chapters', '{章|しょう}'], ['region', 'People helped', '{頼|たの}み'], ['dungeon', 'Places explored', '{探索|たんさく}'],
+    ['chapter', 'Chapters', '{章|しょう}'], ['region', 'People helped', '{頼|たの}み'], ['guide', 'Field guide', '{生|い}き{物|もの} の {記録|きろく}'], ['dungeon', 'Places explored', '{探索|たんさく}'],
     ['pastime', 'Pastimes', '{遊|あそ}び'], ['guardian', 'Old guardians', '{古|ふる}い {守|まも}り{手|て}'], ['milestone', 'Along the way', '{道|みち}すがら'],
     ['language', 'What I can do', 'できる こと'], ['road', 'On the roads', '{道中|どうちゅう}'],
   ];
@@ -93254,7 +93331,7 @@ RB.ui.records = (function () {
         const gd = x.state === 'pressed' && x.d.family === 'guardian' && RB.guardians ? RB.guardians.noteOf(x.rec) : '';
         const note = gd ? gd + (x.t ? ' ' + fmt(x.t) + '.' : '') : x.state === 'pressed' ? 'Pressed' + (x.at && stands[x.at] ? ' at ' + stands[x.at].title.en : '') + (x.t ? ', ' + fmt(x.t) : '')
           : x.state === 'ready' ? 'Earned: press it at the stand in ' + (st ? st.title.en : 'its town') + '.'
-          : x.d.criteria.en;
+          : x.criteria.en;
         return '<li class="rb-st ' + x.state + '" data-stamp="' + esc(x.id) + '">' + stampSvg(x.d, x.state, STATE_WORD[x.state] + ': ' + title.en) +
           '<div class="rb-st-t">' + both(title) + '<span class="rb-st-n">' + esc(note) + '</span></div></li>';
       }).join('') + '</ul>';
@@ -136054,8 +136131,9 @@ sae: {粉屋|こなや} の サエ です 。 {父|ちち} の {水車|すいし
 narr: サエ は {震|ふる}えて いて 、 それ {以上|いじょう} {話|はな}せない 。 {隣|となり} で ミオ が {薬|くすり} の {箱|はこ} を {開|ひら}いて いる 。 || Sae is shaking and can't say more. Next to her, Mio is opening a box of medicines.
 
 @scene rw.mr_sae2
+# (the pin asked for only until the wheel turns: Robin, 2026-10-19, after Chapter 1 she still asked for it, then thanked you)
 !faceplayer sae
-sae: {歯車|はぐるま} の {軸|じく} 、 {使|つか}って ください 。 {父|ちち} なら 、 きっと そう {言|い}う から 。 || Use the gear pin, please. It's what my father would have said.
+?(!rw_echo_done) sae: {歯車|はぐるま} の {軸|じく} 、 {使|つか}って ください 。 {父|ちち} なら 、 きっと そう {言|い}う から 。 || Use the gear pin, please. It's what my father would have said.
 ?(rw_echo_done) sae[smile]: {水車|すいしゃ} が {回|まわ}る {音|おと} 、 {久|ひさ}しぶり に {聞|き}きました 。 ありがとう 。 || I haven't heard the wheel turning in so long. Thank you.
 
 @scene rw.mr_mio
@@ -176084,8 +176162,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (yasu) yasu.talk.unshift({ if: 'ed>=2&ch2_done&!xpk_cellars_heard', scene: 'xp.cellars_yasu' }, { if: 'ed>=2&xpk_cellars_done&!xpk_cellars_thanked', scene: 'xp.cellars_yasu_done' });
 
   // ---- the stamp: the cellars drained (a dungeon's stamp, like the Atlas's) ---------------------------------------
+  // Its place opens once Chapter 2 is over (the hatch above): until then the book shows it veiled, in words that name
+  // no place, so a Chapter 1 journey does not take it for the Old Mill's wheel pit (owner's report, 2026-10-19).
   C.stamps = C.stamps || {};
-  C.stamps['xp.cellars'] = { id: 'xp.cellars', family: 'dungeon', title: T('The cellars drained', '{地下|ちか} の {水|みず} を {抜|ぬ}く'), criteria: T('Drain the Flood Cellars and open the outflow door.', '{倉庫|そうこ} の {地下|ちか} の {水|みず} を {抜|ぬ}く'), when: 'ed>=2&xpk_cellars_done', stand: null, design: { shape: 'square', motif: 'stairs', ink: '#2a5a6a' } };
+  C.stamps['xp.cellars'] = { id: 'xp.cellars', family: 'dungeon', title: T('The cellars drained', '{地下|ちか} の {水|みず} を {抜|ぬ}く'), criteria: T('Drain the Flood Cellars under the River Warehouse and open the outflow door.', '{倉庫|そうこ} の {地下|ちか} の {水|みず} を {抜|ぬ}く'), known: 'ch2_done', veil: T('An expedition, once Chapter 2 is over.', '{第|だい}2{章|しょう} の {後|あと} の {探索|たんさく}'), when: 'ed>=2&xpk_cellars_done', stand: null, design: { shape: 'square', motif: 'stairs', ink: '#2a5a6a' } };
 })(RB.content, RB.mapkit);
 
 
@@ -213374,10 +213454,11 @@ narr: {郵便|ゆうびん} の {箱|はこ} 。 {横|よこ} の {棚|たな} �
 /* ==== src/content/records/00_stamps.js ==== */
 /* The Road Stamp Book's stamps and stands (expansion P06, K1; src/engine/58b_records.js). Stamps for meaningful
  * moments only: each chapter's story, a region's people helped (every side story this journey could have; one that
- * belongs to another companion's journey counts as done), the Atlas, pastimes, natural milestones and the first
- * "What I can do" of each kind. None asks for an input mode, going without help, a streak, a time, a mastery star
- * (C-13) or a festival score (C-55). The stands stand in each region's town, only in journeys of the twelve-chapter
- * edition until the release (F-21); the new chapters add their own stamps and stands. */
+ * belongs to another companion's journey counts as done), the Atlas, pastimes, natural milestones, the field guide
+ * (every kind of creature that roams a region) and the first "What I can do" of each kind. None asks for an input
+ * mode, going without help, a streak, a time, a mastery star (C-13) or a festival score (C-55). The stands stand in
+ * each region's town, only in journeys of the twelve-chapter edition until the release (F-21); the new chapters add
+ * their own stamps and stands. */
 var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
@@ -213408,6 +213489,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const add = (id, d) => { C.stamps[id] = Object.assign({ id }, d); };
 
   // ---- chapters and regions ---------------------------------------------------------------------------------------
+  // (n: the chapter's old number, which its quests and flags keep; no: the number the player sees, its place in the
+  // twelve-chapter story order, since the book belongs to that edition: Cinder Orchard is Chapter 5 there, not 3)
+  const storyNo = (key) => RB.edition.ORDER.indexOf(key) + 1;
   const CH = [
     ['rw', 1, 'ch1_done', 'reedwake', 'bridge', '#b8322a', T('Reedwake', '{葦|あし}ノ{瀬|せ}')],
     ['sg', 2, 'ch2_done', 'saltglass', 'wave', '#2a4f8a', T('Saltglass', '{潮|しお}{硝子|がらす}')],
@@ -213416,11 +213500,51 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ['lf', 5, 'ch5_done', 'lanternfall', 'lantern', '#8a5a1e', T('Lanternfall', '{灯落|ひおち}')],
   ];
   for (const [key, n, flag, stand, motif, ink, title] of CH) {
-    add('ch.' + key, { family: 'chapter', chapter: n, title, criteria: T('Chapter ' + n + ': the main story.', '{第|だい}' + n + '{章|しょう}'), hidden: n > 2, when: ED + '&' + flag, stand, design: { shape: 'round', motif, ink } });
-    add('side.' + key, { family: 'region', chapter: n, title: T(title.en + ': everyone helped', title.jp + ' の {頼|たの}み'), criteria: T('Every side story in Chapter ' + n + ' that your journey could have.', '{第|だい}' + n + '{章|しょう} の {寄|よ}り{道|みち}'), hidden: n > 2, when: (s) => RB.edition.of(s) >= 2 && sidesDone(n)(s), stand, design: { shape: 'square', motif, ink } });
+    const no = storyNo(key);
+    add('ch.' + key, { family: 'chapter', chapter: n, title, criteria: T('Chapter ' + no + ': the main story.', '{第|だい}' + no + '{章|しょう}'), hidden: n > 2, when: ED + '&' + flag, stand, design: { shape: 'round', motif, ink } });
+    add('side.' + key, { family: 'region', chapter: n, title: T(title.en + ': everyone helped', title.jp + ' の {頼|たの}み'), criteria: T('Every side story in Chapter ' + no + ' that your journey could have.', '{第|だい}' + no + '{章|しょう} の {寄|よ}り{道|みち}'), hidden: n > 2, when: (s) => RB.edition.of(s) >= 2 && sidesDone(n)(s), stand, design: { shape: 'square', motif, ink } });
   }
-  add('ch.sa', { family: 'chapter', chapter: 6, title: T('The end of the road', '{旅|たび} の {終|お}わり'), criteria: T('Chapter 6: the main story.', '{第|だい}6{章|しょう}'), hidden: true, when: ED + '&postgame', stand: null, design: { shape: 'round', motif: 'book', ink: '#3a3a3a' } });
-  add('side.sa', { family: 'region', chapter: 6, title: T('The last requests', '{最後|さいご} の {頼|たの}み'), criteria: T('Every side story in Chapter 6 that your journey could have.', '{第|だい}6{章|しょう} の {寄|よ}り{道|みち}'), hidden: true, when: (s) => RB.edition.of(s) >= 2 && sidesDone(6)(s), stand: null, design: { shape: 'square', motif: 'book', ink: '#3a3a3a' } });
+  const last = storyNo('sa');
+  add('ch.sa', { family: 'chapter', chapter: 6, title: T('The end of the road', '{旅|たび} の {終|お}わり'), criteria: T('Chapter ' + last + ': the main story.', '{第|だい}' + last + '{章|しょう}'), hidden: true, when: ED + '&postgame', stand: null, design: { shape: 'round', motif: 'book', ink: '#3a3a3a' } });
+  add('side.sa', { family: 'region', chapter: 6, title: T('The last requests', '{最後|さいご} の {頼|たの}み'), criteria: T('Every side story in Chapter ' + last + ' that your journey could have.', '{第|だい}' + last + '{章|しょう} の {寄|よ}り{道|みち}'), hidden: true, when: (s) => RB.edition.of(s) >= 2 && sidesDone(6)(s), stand: null, design: { shape: 'square', motif: 'book', ink: '#3a3a3a' } });
+
+  // ---- the field guide (E24 option 6): every kind of creature that roams a region, settled ------------------------
+  // One stamp a region, pressed as soon as it is earned (src/engine/97_encounter.js roamingWon presses and announces
+  // it after a roaming creature is settled). A region's bosses (its story's creature, its old guardian) have stamps of
+  // their own and are not counted. Until a creature of the region has been met it shows veiled, in neutral words.
+  // (The vents under Steamhollow are one region with the valley here: a guide of one kind would be no guide.)
+  const GUIDE = [
+    // [region (the stamp's id), regions it also covers, chapter key, place, motif, ink]
+    ['reedwake', [], 'rw', stands.reedwake.title, 'bridge', '#b8322a'],
+    ['saltglass', [], 'sg', stands.saltglass.title, 'wave', '#2a4f8a'],
+    ['manybridge', [], 'mb1', T('Manybridge', '{八百橋|やおばし}'), 'plaque', '#2c3e6a'],
+    ['cinder', [], 'co', stands.cinder.title, 'leaf', '#4a6a2a'],
+    ['snowbell', [], 'sb', stands.snowbell.title, 'bell', '#5a4a8a'],
+    ['keepers', [], 'kr', T('the Keepers\' Road', '{灯守|ひもり} の {道|みち}'), 'lantern', '#7a3a1e'],
+    ['lanternfall', [], 'lf', stands.lanternfall.title, 'lantern', '#8a5a1e'],
+    ['kotonoha', [], 'ko', T('Kotonoha', '{言|こと}の{葉|は}{島|じま}'), 'scroll', '#3a6a4a'],
+    ['cloudroad', [], 'cr', T('the Cloudroad', '{雲路|くもじ}'), 'mountain', '#4a5a7a'],
+    ['steamhollow', ['yn_vents'], 'yn', T('Steamhollow', '{湯|ゆ}ノ{谷|たに}'), 'steam', '#8a3a2e'],
+    ['still', [], 'sa', T('the Still Archive', '{静寂|しじま} の {書庫|しょこ}'), 'book', '#3a3a3a'],
+  ];
+  C.guideRegion = C.guideRegion || {}; // a creature's region -> its field-guide stamp
+  const Cap = (x) => x[0].toUpperCase() + x.slice(1);
+  for (const [region, more, key, place, motif, ink] of GUIDE) {
+    const regions = [region].concat(more), id = 'guide:' + region, no = storyNo(key);
+    const inRegion = (eid) => !!C.enemies[eid] && regions.indexOf(C.enemies[eid].region) >= 0;
+    for (const r of regions) C.guideRegion[r] = id;
+    add(id, { family: 'guide', chapter: key, title: T(Cap(place.en) + ': every kind settled', place.jp + ' の {生|い}き{物|もの}'),
+      criteria: T('Settle every kind of creature that roams ' + place.en + ' (not its bosses: they have stamps of their own).', place.jp + ' の {生|い}き{物|もの} が みな {静|しず}まる'),
+      veil: T('Every kind of creature that roams a place in Chapter ' + no + '.', '{第|だい}' + no + '{章|しょう} の {生|い}き{物|もの}'),
+      note: T('Every kind of creature that roams ' + place.en + ', settled. Its bosses are not counted.', place.jp + ' の {生|い}き{物|もの} が みな {静|しず}まる'),
+      known: (s) => Object.keys(s.creatures || {}).some(inRegion),
+      when: (s) => {
+        if (RB.edition.of(s) < 2) return false;
+        const kinds = Object.keys(C.enemies).filter((e) => inRegion(e) && !C.enemies[e].boss);
+        return kinds.length > 0 && kinds.every((e) => s.creatures && s.creatures[e] && s.creatures[e].settled);
+      },
+      stand: null, design: { shape: 'oval', motif, ink } });
+  }
 
   // ---- the Atlas, pastimes --------------------------------------------------------------------------------------------
   add('atlas.first', { family: 'dungeon', title: T('The Unwritten Atlas', '{白紙|はくし} の {地図帳|ちずちょう}'), criteria: T('Return from an expedition after the story.', '{探索|たんさく} から {帰|かえ}る'), hidden: true, when: (s) => RB.edition.of(s) >= 2 && !!(s.atlas && s.atlas.runs > 0), stand: null, design: { shape: 'hexagon', motif: 'book', ink: '#2a4f8a' } });

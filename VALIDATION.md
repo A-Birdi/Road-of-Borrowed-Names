@@ -5018,6 +5018,52 @@ Yasu's story, when listening, has not begun being spoken."
 - **Not done:** the other code-shown lines, Company memory replays, the panels (fishing, shiritori, verbs). Not tested:
   real recordings, Firefox, Safari, a device voice.
 
+## Playtest fixes: the Stamp Book, revisits, Sae (Robin, 2026-10-19)
+
+- **Stamp Book (SB-1).** Investigated read-only by a review agent, its patch read and applied by the lead (Japanese
+  re-checked: the Still Archive's name spaced as elsewhere, 静寂 の 書庫).
+  - *"Defeating every creature in this area" with the Mill's boss unmet:* the field-guide stamp counts every kind that
+    roams a region and not its bosses (they have stamps of their own; a boss fight never passes through the roaming
+    win that checks it). Reedwake's three roaming kinds all roam inside the Mill, so it was earned there. The count is
+    unchanged; its words now say so ("Reedwake: every kind settled"; "… not its bosses: they have stamps of their own"),
+    and the vents under Steamhollow count with the valley (one kind alone was no guide).
+  - *The slip was slight:* it was the plain notice line. It is now an award slip of its own kind, "Stamp pressed", in
+    the Item Get family: the stamp's own design comes down onto it and lands with a ring of its ink, the edge in that
+    ink, the gold flare, its own short sound; reduced motion: no slide, flare or press.
+  - *"The cellars drained" after the Mill's basement:* a different place (the Flood Cellars under the River Warehouse, an
+    expedition that opens after Chapter 2). The stamp named it to a Chapter 1 player; it now shows veiled ("An
+    expedition, once Chapter 2 is over.") until Chapter 2 is done, and its words name the River Warehouse.
+  - *No section for it:* the field-guide stamps were recorded but no book page listed them. The book has a "Field
+    guide" section (生き物 の 記録), one stamp a region, veiled until a creature of that region is met; saves that earned
+    one show it pressed (same ids).
+  - *Chapter order 10, 9, 7, 3, 4, 1, 2, 3, 4, 5, 6, 11:* reproduced exactly. The book listed stamps in the order the
+    content files defined them, and the six original chapters used their old numbers. Chapters, People helped and the
+    Field guide now list in story order by the travel volume's own numbering (1–12, no repeats).
+  - U `stampbook_sb1` 39/0 (new; fails on the code before), `records` 272/0, `encounters` 184/0, `expedition_cellars`
+    51/0, `guardians` 66/0, `atlas_commissions` 40/0, `cr_ch10` 151/0, `ko_side` 108/0, `festival` 14/0, `book_type`
+    60/0, `review_ledger` 2/0 (34 entries added by the lead after reading the 53 new lines). B `records` 7/0,
+    `ledger_li` all passed (with a stamp-slip check and its reduced-motion check). U whole suite 54,782/0.
+  - Not done: stamps pressed later by the book's own settling (milestones, pastimes, the cellars) are still pressed
+    without a slip; "On the roads" stamps have no chapter, so they list in definition order.
+- **Revisits (RV-2; "Oto, Mame or Kiku played both their newer locale-based lines for revisits, followed by their
+  dialogue that is spoken during the post-bridge-repair section … the new locale dialogue should just replace it
+  entirely for that section").** A routine's place said its own line once and then the person's usual talk, so a
+  story step is never held back; after Chapter 1 that usual talk was still what they said just after the bridge. Now
+  (src/engine/53_town.js `pastTalk`), at a routine's place, plain talk from before the routine began is replaced by the
+  routine's line, each time. Still said: a quest step or a gift (Mame's charm), an open quest's reminder (Oto's boots;
+  Mame's line about the blank crossroads sign while that quest is open), a change beat, a line not yet heard by design,
+  and lines for the town's later story and the postgame. Across every town's routine places, 50 talk scenes are
+  replaced there; the person's own place (slot 1) is unchanged. U `routine_talk` 318/0 (new), `living_world` 110/0,
+  `town` 87/0. B `living_world` 9/0 with a new check on Robin's three, each talked to twice at a routine's place after
+  Chapter 1 (the routine's line alone both times), and the crossroads reminder still following while its quest is open.
+- **Sae (RV-3; "Talking to Sae after chapter 1 has her repeat 'Use the gear pin, please.' as if we hadn't done that
+  already, followed by her resolution dialogue").** Her second scene asked for the pin before every thank-you; the
+  request is now said only until the wheel turns (`?(!rw_echo_done)`, the text unchanged). B `living_world` RV-3: after,
+  the thanks alone; before, the request alone. 28 other scenes that add a later line after earlier ones were read
+  (notices, signs, idle talk): each reads as an old notice or line followed by a new one, so left as they are.
+- B also: `mill_road` 36/36, `story_ch1` passed, `world_living` 4/0. U `scene_manifest` 1,023/0, `voice_production`
+  27/0, `mw1_mill_flow` 100/0, `voicebank_plan_content` 7/0, `content` 7/0. No text changed, so no recording changes.
+
 ## SC5–SC9 (Robin's final listening round, 2026-10-19, relayed by the local worker)
 
 Five send corrections appended to `docs/future/voice/production/supplements/SEND_CORRECTIONS.json` (SC1–SC4 unchanged,

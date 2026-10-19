@@ -836,15 +836,18 @@ RB.world = (function () {
   function talkTo(n) {
     const st = s();
     const def = n.def;
-    let scene = null;
+    let scene = null, chosen = null;
     if (typeof def.talk === 'string') scene = def.talk;
     else if (Array.isArray(def.talk)) {
-      for (const opt of def.talk) if (!opt.if || RB.state.test(st, opt.if)) { scene = opt.scene; break; }
+      for (const opt of def.talk) if (!opt.if || RB.state.test(st, opt.if)) { scene = opt.scene; chosen = opt; break; }
     }
     if (!scene) return false;
     if (!def.noFace) faceTo(n, W.player.x, W.player.y);
-    // a routine's place (LW-03): its own first line, once, then what they would say anywhere (the usual_talk hook)
-    if (def.slotScene && RB.content.scenes[def.slotScene] && !st.seen[def.slotScene]) { RB.script.run(def.slotScene, { npc: n.id }); return true; }
+    // a routine's place (LW-03): its own first line, once, then what they would say anywhere (the usual_talk hook);
+    // talk from before the routine began is replaced there by that line, said again (RB.town.pastTalk)
+    const slot = def.slotScene && RB.content.scenes[def.slotScene] ? def.slotScene : null;
+    if (slot && !st.seen[slot]) { RB.script.run(slot, { npc: n.id }); return true; }
+    if (slot && chosen && RB.town && RB.town.pastTalk(st, def.char || n.id, chosen)) scene = slot;
     // someone who can be asked after others (W3): talk, or "Have you seen…?". Something new to say (a scene not yet
     // heard: the story's next step, a quest's) is said at once, never behind the question (LW-04)
     if (def.asks && RB.town && RB.whereabouts && RB.state.test(st, 'seen.' + scene)) { RB.whereabouts.ask(n, scene); return true; }

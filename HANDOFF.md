@@ -639,6 +639,18 @@
       would need takes the canvas under its minimum); Voice A / Voice B read "More feminine." / "More masculine."; Pat
       brings the pet's picture into view and shows its line. VALIDATION.md "Every line spoken: the first batch".
 
+    **Playtest fixes (Robin, 2026-10-19): the Stamp Book, revisits, Sae.** VALIDATION.md "Playtest fixes: the Stamp
+    Book, revisits, Sae"; REQUIREMENTS.md XP137, XP138.
+    - **Stamp Book** (src/content/records/00_stamps.js, src/engine/58b_records.js, src/ui/15_award.js, 66c_records.js):
+      field-guide stamps are Stamp Book stamps now (one a region, `guide:<region>`, pressed by `roamingWon` through
+      `RB.stampBook.press1`, announced by a "Stamp pressed" award slip); a stamp may carry `known` + `veil` (shown
+      veiled until its place is known: the Flood Cellars until Chapter 2); the chapter-keyed families sort by
+      `RB.volume.numberOf`. The field guide still leaves bosses out (Robin may want them in: change the boss filter and
+      also check after scripted wins).
+    - **Revisits** (src/engine/53_town.js `pastTalk`, used by src/engine/50_world.js `talkTo` and the `usual_talk` hook):
+      at a routine's place, plain talk from before the routine began is replaced by the routine's line.
+    - **Sae** (src/content/ch1/31_scenes_mill.js): the gear pin asked for only until the wheel turns.
+
     **The repository cleaned; the voices live (Robin, 2026-10-19).** Screenshots, the Ensemble listening media and
     review captures are out of the branch (2,055 files, 479.8 MB; in the history at 185ad9c; `.gitignore` keeps new
     captures out): about 606 MB published, from 1,085.8 MB. Game and voices together would still be about 1,166 MB, so

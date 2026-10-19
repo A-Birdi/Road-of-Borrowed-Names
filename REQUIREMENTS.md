@@ -1109,6 +1109,16 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     (R); Pat brings the pet's picture into view and shows its line (B probe).
   - **Not done:** about 2,000 more lines the game's code shows (the inventory in VALIDATION.md), Company memory
     replays, and the panels.
+- [x] XP137 The Stamp Book after Robin's Chapter 1 playtest (2026-10-19): the field-guide stamp's words say it counts a
+  region's roaming kinds and not its bosses; a "Stamp pressed" award slip in the Item Get family; "The cellars drained"
+  veiled until Chapter 2 (a different place from the Mill's basement); a "Field guide" section; Chapters, People helped
+  and the Field guide in story order 1–12 without repeats. U `stampbook_sb1` 39/0 and the related suites, B `records`,
+  `ledger_li` (VALIDATION.md "Playtest fixes: the Stamp Book, revisits, Sae"). Not done: a slip for stamps the book
+  presses later; the road stamps' order.
+- [x] XP138 Revisits say what fits the time (Robin, 2026-10-19): at a routine's place the routine's line replaces talk
+  from before the routine began (Oto, Mame, Kiku after Chapter 1), quest steps, gifts, open quests' reminders, change
+  beats and later lines still said; Sae asks for the gear pin only until the wheel turns. U `routine_talk` 318/0, B
+  `living_world` 9/0 (RV-2, RV-3).
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

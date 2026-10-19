@@ -24,8 +24,9 @@ sae: {粉屋|こなや} の サエ です 。 {父|ちち} の {水車|すいし
 narr: サエ は {震|ふる}えて いて 、 それ {以上|いじょう} {話|はな}せない 。 {隣|となり} で ミオ が {薬|くすり} の {箱|はこ} を {開|ひら}いて いる 。 || Sae is shaking and can't say more. Next to her, Mio is opening a box of medicines.
 
 @scene rw.mr_sae2
+# (the pin asked for only until the wheel turns: Robin, 2026-10-19, after Chapter 1 she still asked for it, then thanked you)
 !faceplayer sae
-sae: {歯車|はぐるま} の {軸|じく} 、 {使|つか}って ください 。 {父|ちち} なら 、 きっと そう {言|い}う から 。 || Use the gear pin, please. It's what my father would have said.
+?(!rw_echo_done) sae: {歯車|はぐるま} の {軸|じく} 、 {使|つか}って ください 。 {父|ちち} なら 、 きっと そう {言|い}う から 。 || Use the gear pin, please. It's what my father would have said.
 ?(rw_echo_done) sae[smile]: {水車|すいしゃ} が {回|まわ}る {音|おと} 、 {久|ひさ}しぶり に {聞|き}きました 。 ありがとう 。 || I haven't heard the wheel turning in so long. Thank you.
 
 @scene rw.mr_mio
