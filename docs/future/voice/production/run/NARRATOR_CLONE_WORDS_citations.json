@@ -1,0 +1,173 @@
+{
+ "method": {
+  "reference": {
+   "readings": [
+    {
+     "id": "r1-ref-73c7ff1993764735",
+     "sha256": "a0cf94fe0be052780d143ec7c491a8583e94877cdb5eb50581fbdba5b28fca8f"
+    },
+    {
+     "id": "r1-ref-9de658955120da6f",
+     "sha256": "c796e91a25d1058a2c505d0325b085dd618b608e6fa08ccc37af1319abc3afac"
+    },
+    {
+     "id": "r1-ref-eb1c44cb02ca3713",
+     "sha256": "db9f9fe3cf78700bd6057944ca7474752d26dbe18dae81ffc352fee0f3f0a940"
+    },
+    {
+     "id": "r1-ref-1110d0012c97f623",
+     "sha256": "73c4dfd64f79fc7d359aec66cd219153626f553f85e7e905c091150dbf83290f"
+    },
+    {
+     "id": "r1-ref-c95d9bffc6bd60ad",
+     "sha256": "7d9f3f18df91e8992f4c76532cd21b0190e3bf46230214a44cdcc51d8350a70e"
+    },
+    {
+     "id": "r1-ref-713dfe7618d55c16",
+     "sha256": "30e86347924b6bea0384339f852b5fbbdc5dffb1b080b88988fe65e16427f5f9"
+    },
+    {
+     "id": "r1-ref-1da184d87a446fc9",
+     "sha256": "78f6fc5a30e7b3202d1e3789bf7407f7c5a2db43276c7f44b6aaef68b6241143"
+    },
+    {
+     "id": "r1-ref-4ad52115436abb72",
+     "sha256": "d36b71e0bf07d0962ee104c889e3fe7e03bfe54a3ebcc2fc59e7d4733eb52a06"
+    }
+   ]
+  },
+  "referenceText": "しょう、しんごう、しめる、ふべん、そとうみ、はしご、すず、りん、すいこむ。",
+  "refMode": "citations",
+  "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base@fd4b254389122332181a7c3db7f27e918eec64e3",
+  "match": "100% = median similarity of 40 narrator readings to their centroid; 0% = median of 40 other characters' takes",
+  "narratorMedian": 0.9788,
+  "othersMedian": 0.9473
+ },
+ "words": {
+  "r1-ref-b8f801f6ac6359dc": {
+   "word": "ぶんるいめい",
+   "current": {
+    "file": "ref/r1-ref-b8f801f6ac6359dc.opus",
+    "voiceMatch": 86.1
+   },
+   "tries": [
+    {
+     "seed": 608315,
+     "heard": "ブンルイメ",
+     "match": false,
+     "voiceMatch": 73.8,
+     "seconds": 1.035
+    },
+    {
+     "seed": 608316,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 63.3,
+     "seconds": 0.9
+    },
+    {
+     "seed": 608317,
+     "heard": "ブンルイイメエジ",
+     "match": false,
+     "voiceMatch": 46.7,
+     "seconds": 0.905
+    },
+    {
+     "seed": 608318,
+     "heard": "ブンルイイメイ",
+     "match": false,
+     "voiceMatch": 84.4,
+     "seconds": 1.06
+    },
+    {
+     "seed": 608319,
+     "heard": "ワカルイメイ",
+     "match": false,
+     "voiceMatch": 73.2,
+     "seconds": 0.99
+    },
+    {
+     "seed": 608320,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 53.3,
+     "seconds": 1.075
+    },
+    {
+     "seed": 608321,
+     "heard": "ブンルイメ",
+     "match": false,
+     "voiceMatch": 50.8,
+     "seconds": 0.875
+    },
+    {
+     "seed": 608322,
+     "heard": "ブンルイメ",
+     "match": false,
+     "voiceMatch": 87.4,
+     "seconds": 0.99
+    },
+    {
+     "seed": 608323,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 59.1,
+     "seconds": 0.975
+    },
+    {
+     "seed": 608324,
+     "heard": "ブンルイメ",
+     "match": false,
+     "voiceMatch": 90.9,
+     "seconds": 1.0
+    },
+    {
+     "seed": 608325,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 70.3,
+     "seconds": 0.865
+    },
+    {
+     "seed": 608326,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 91.0,
+     "seconds": 1.04
+    },
+    {
+     "seed": 608327,
+     "heard": "ブンルイメ",
+     "match": false,
+     "voiceMatch": 38.0,
+     "seconds": 0.835
+    },
+    {
+     "seed": 608328,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 71.4,
+     "seconds": 0.98
+    },
+    {
+     "seed": 608329,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 75.6,
+     "seconds": 0.94
+    },
+    {
+     "seed": 608330,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 70.8,
+     "seconds": 0.97
+    }
+   ],
+   "chosen": {
+    "seed": 608326,
+    "voiceMatch": 91.0
+   }
+  }
+ }
+}

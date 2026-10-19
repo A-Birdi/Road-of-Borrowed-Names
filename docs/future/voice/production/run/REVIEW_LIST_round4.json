@@ -165,33 +165,78 @@
       }
      ],
      "yourNote": "Breathy uptick at the end"
-    },
+    }
+   ],
+   "count": 7
+  },
+  {
+   "key": "sc4",
+   "title": "しおどまり sent in katakana (SC4), heard as しおどまり",
+   "items": [
     {
-     "id": "r1-ref-99bd62e1b425b4d1",
+     "id": "r1-ref-e5bf48bf7ab94ff8",
      "speaker": "narrator",
      "voice": null,
      "pitch": null,
      "delivery": "citation",
-     "spoken": "さんり",
-     "sent": "さんり",
+     "spoken": "しおどまり",
+     "sent": "シオドマリ",
      "lineKeys": [],
-     "file": "ref/r1-ref-99bd62e1b425b4d1.opus",
-     "seconds": 0.79,
-     "why": "new take or the same take with the breath after the word cut; heard right by the recognizer",
+     "file": "ref/r1-ref-e5bf48bf7ab94ff8.opus",
+     "seconds": 1.011,
+     "why": "new take with the corrected send シオドマリ; heard right on the first take",
      "earlierTakes": [
       {
-       "file": "superseded/20261018T234225-rerender/ref/r1-ref-99bd62e1b425b4d1.opus",
-       "seconds": 0.99
+       "file": "superseded/20261019T001844/ref/r1-ref-e5bf48bf7ab94ff8.opus",
+       "seconds": 1.223
       }
      ],
-     "yourNote": "Breathy uptick at the end"
+     "recognizer": {
+      "heard": "しおどまり",
+      "heardKana": "シオドマリ",
+      "expectedKana": "シオドマリ",
+      "match": true
+     },
+     "yourNote": "It should read as \"Shi-o-do-ma-ri\", but is being heard as \"Sho-do-ma-ri\" - focus on the kana's size here"
     }
    ],
-   "count": 8
+   "count": 1
   },
   {
-   "key": "stubborn",
-   "title": "This voice cannot read these words right (12 takes each); the closest is kept",
+   "key": "clone",
+   "title": "ぶんるいめい in another voice model: Qwen3-TTS cloned from the narrator, voice match 91%, heard right",
+   "items": [
+    {
+     "id": "r1-ref-b8f801f6ac6359dc",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ぶんるいめい",
+     "sent": "ぶんるいめい",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b8f801f6ac6359dc.opus",
+     "seconds": 1.04,
+     "why": "the narrator voice could not say it; this take is the cloned voice (91% voice match); the earlier take is the narrator voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234353/ref/r1-ref-b8f801f6ac6359dc.opus",
+       "seconds": 0.97
+      }
+     ],
+     "recognizer": {
+      "heard": "分類名",
+      "heardKana": "ブンルイメエ",
+      "expectedKana": "ブンルイメイ",
+      "match": true
+     }
+    }
+   ],
+   "count": 1
+  },
+  {
+   "key": "choose",
+   "title": "Choose: the narrator voice (misread), the cloned voice (said right, under 90% match), or the device voice",
    "items": [
     {
      "id": "r1-ref-2bab5bdb1e5539fb",
@@ -204,11 +249,12 @@
      "lineKeys": [],
      "file": "ref/r1-ref-2bab5bdb1e5539fb.opus",
      "seconds": 0.755,
-     "why": "no take was heard right; see the note on the device voice",
+     "why": "the narrator's closest take (misread). The earlier take beside it is another voice model: Qwen3-TTS cloned from the narrator, heard right, voice match 53% (90% was asked). Keep = the narrator's take; Use the earlier take = the cloned voice; Redo = leave this word to the device's voice",
      "earlierTakes": [
       {
-       "file": "superseded/20261018T234353/ref/r1-ref-2bab5bdb1e5539fb.opus",
-       "seconds": 0.795
+       "file": "candidates/qwen-clone-sentence/r1-ref-2bab5bdb1e5539fb-seed564404.opus",
+       "seconds": 0.72,
+       "label": "Qwen3-TTS cloned from the narrator, voice match 53%"
       }
      ],
      "recognizer": {
@@ -229,11 +275,12 @@
      "lineKeys": [],
      "file": "ref/r1-ref-b06952501818dfed.opus",
      "seconds": 0.655,
-     "why": "no take was heard right; see the note on the device voice",
+     "why": "the narrator's closest take (misread). The earlier take beside it is another voice model: Qwen3-TTS cloned from the narrator, heard right, voice match 27% (90% was asked). Keep = the narrator's take; Use the earlier take = the cloned voice; Redo = leave this word to the device's voice",
      "earlierTakes": [
       {
-       "file": "superseded/20261018T234353/ref/r1-ref-b06952501818dfed.opus",
-       "seconds": 0.779
+       "file": "candidates/qwen-clone-sentence/r1-ref-b06952501818dfed-seed824409.opus",
+       "seconds": 0.53,
+       "label": "Qwen3-TTS cloned from the narrator, voice match 27%"
       }
      ],
      "recognizer": {
@@ -245,36 +292,34 @@
      "yourNote": "Heard as \"Dokou\" previously, now heard as \"Kokoa\""
     },
     {
-     "id": "r1-ref-b8f801f6ac6359dc",
+     "id": "r1-ref-99bd62e1b425b4d1",
      "speaker": "narrator",
      "voice": null,
      "pitch": null,
      "delivery": "citation",
-     "spoken": "ぶんるいめい",
-     "sent": "ぶんるいめい",
+     "spoken": "さんり",
+     "sent": "さんり",
      "lineKeys": [],
-     "file": "ref/r1-ref-b8f801f6ac6359dc.opus",
-     "seconds": 0.885,
-     "why": "no take was heard right; see the note on the device voice",
+     "file": "ref/r1-ref-99bd62e1b425b4d1.opus",
+     "seconds": 0.79,
+     "why": "the narrator's closest take (misread). The earlier take beside it is another voice model: Qwen3-TTS cloned from the narrator, heard right, voice match 64% (90% was asked). Keep = the narrator's take; Use the earlier take = the cloned voice; Redo = leave this word to the device's voice",
      "earlierTakes": [
       {
-       "file": "superseded/20261018T234353/ref/r1-ref-b8f801f6ac6359dc.opus",
-       "seconds": 0.97
+       "file": "candidates/qwen-clone-citations/r1-ref-99bd62e1b425b4d1-seed5316.opus",
+       "seconds": 0.65,
+       "label": "Qwen3-TTS cloned from the narrator, voice match 64%"
       }
      ],
-     "recognizer": {
-      "heard": "分類目",
-      "heardKana": "ブンルイメ",
-      "expectedKana": "ブンルイメイ",
-      "match": false
-     }
+     "yourNote": "Breathy uptick at the end"
     }
    ],
    "count": 3
   }
  ],
  "counts": {
-  "redone": 8,
-  "stubborn": 3
+  "redone": 7,
+  "sc4": 1,
+  "clone": 1,
+  "choose": 3
  }
 }

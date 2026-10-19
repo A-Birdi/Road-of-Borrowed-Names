@@ -1,0 +1,501 @@
+{
+ "method": {
+  "reference": "work/clips/N2-neutral.opus",
+  "referenceSha256": "d180e10161b5ea780858c68cb973c06d570f1ca44ce45083162811379e29efd1",
+  "referenceText": "運河の上に、橋が次から次へと架かっている。八百の橋の町、やおばしだ。",
+  "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base@fd4b254389122332181a7c3db7f27e918eec64e3",
+  "match": "100% = median similarity of 40 narrator readings to their centroid; 0% = median of 40 other characters' takes",
+  "narratorMedian": 0.9788,
+  "othersMedian": 0.9473
+ },
+ "words": {
+  "r1-ref-2bab5bdb1e5539fb": {
+   "word": "おおいし",
+   "current": {
+    "file": "ref/r1-ref-2bab5bdb1e5539fb.opus",
+    "voiceMatch": 89.7
+   },
+   "tries": [
+    {
+     "seed": 564397,
+     "heard": "オオイシ",
+     "match": true,
+     "voiceMatch": 41.8,
+     "seconds": 0.74
+    },
+    {
+     "seed": 564398,
+     "heard": "オオイシ",
+     "match": true,
+     "voiceMatch": -24.0,
+     "seconds": 0.74
+    },
+    {
+     "seed": 564399,
+     "heard": "オイシイ",
+     "match": false,
+     "voiceMatch": 54.6,
+     "seconds": 0.855
+    },
+    {
+     "seed": 564400,
+     "heard": "オオイシ",
+     "match": true,
+     "voiceMatch": 14.4,
+     "seconds": 0.72
+    },
+    {
+     "seed": 564401,
+     "heard": "オイシイ",
+     "match": false,
+     "voiceMatch": 29.7,
+     "seconds": 0.55
+    },
+    {
+     "seed": 564402,
+     "heard": "オイシイ",
+     "match": false,
+     "voiceMatch": 36.3,
+     "seconds": 0.82
+    },
+    {
+     "seed": 564403,
+     "heard": "オオイシ",
+     "match": true,
+     "voiceMatch": 46.0,
+     "seconds": 0.78
+    },
+    {
+     "seed": 564404,
+     "heard": "オオイシ",
+     "match": true,
+     "voiceMatch": 53.0,
+     "seconds": 0.72
+    },
+    {
+     "seed": 564405,
+     "heard": "オイシイ",
+     "match": false,
+     "voiceMatch": -22.8,
+     "seconds": 0.625
+    },
+    {
+     "seed": 564406,
+     "heard": "オイシイ",
+     "match": false,
+     "voiceMatch": 63.8,
+     "seconds": 0.89
+    },
+    {
+     "seed": 564407,
+     "heard": "オイシイ",
+     "match": false,
+     "voiceMatch": 10.8,
+     "seconds": 0.87
+    },
+    {
+     "seed": 564408,
+     "heard": "オイシイ",
+     "match": false,
+     "voiceMatch": 44.3,
+     "seconds": 0.755
+    },
+    {
+     "seed": 564409,
+     "heard": "オオイシ",
+     "match": true,
+     "voiceMatch": 21.4,
+     "seconds": 0.72
+    },
+    {
+     "seed": 564410,
+     "heard": "オイシイ",
+     "match": false,
+     "voiceMatch": 45.8,
+     "seconds": 0.77
+    },
+    {
+     "seed": 564411,
+     "heard": "オイシイ",
+     "match": false,
+     "voiceMatch": 43.1,
+     "seconds": 0.74
+    },
+    {
+     "seed": 564412,
+     "heard": "オイシイ",
+     "match": false,
+     "voiceMatch": 38.5,
+     "seconds": 0.76
+    }
+   ],
+   "chosen": null
+  },
+  "r1-ref-b06952501818dfed": {
+   "word": "ぼこう",
+   "current": {
+    "file": "ref/r1-ref-b06952501818dfed.opus",
+    "voiceMatch": 35.1
+   },
+   "tries": [
+    {
+     "seed": 824407,
+     "heard": "ボコオ",
+     "match": true,
+     "voiceMatch": 7.1,
+     "seconds": 0.635
+    },
+    {
+     "seed": 824408,
+     "heard": "ボコ",
+     "match": false,
+     "voiceMatch": 11.4,
+     "seconds": 0.59
+    },
+    {
+     "seed": 824409,
+     "heard": "ボコオ",
+     "match": true,
+     "voiceMatch": 26.9,
+     "seconds": 0.53
+    },
+    {
+     "seed": 824410,
+     "heard": "ボク",
+     "match": false,
+     "voiceMatch": 15.1,
+     "seconds": 0.655
+    },
+    {
+     "seed": 824411,
+     "heard": "ボクオ",
+     "match": false,
+     "voiceMatch": -5.3,
+     "seconds": 0.525
+    },
+    {
+     "seed": 824412,
+     "heard": "ボコ",
+     "match": false,
+     "voiceMatch": 34.8,
+     "seconds": 0.695
+    },
+    {
+     "seed": 824413,
+     "heard": "ボクオ",
+     "match": false,
+     "voiceMatch": 11.2,
+     "seconds": 0.56
+    },
+    {
+     "seed": 824414,
+     "heard": "ボク",
+     "match": false,
+     "voiceMatch": -6.1,
+     "seconds": 0.54
+    },
+    {
+     "seed": 824415,
+     "heard": "ボクオ",
+     "match": false,
+     "voiceMatch": -19.7,
+     "seconds": 0.77
+    },
+    {
+     "seed": 824416,
+     "heard": "ボコオ",
+     "match": true,
+     "voiceMatch": -9.0,
+     "seconds": 0.58
+    },
+    {
+     "seed": 824417,
+     "heard": "ボコ",
+     "match": false,
+     "voiceMatch": 6.0,
+     "seconds": 0.545
+    },
+    {
+     "seed": 824418,
+     "heard": "ボコ",
+     "match": false,
+     "voiceMatch": 15.4,
+     "seconds": 0.52
+    },
+    {
+     "seed": 824419,
+     "heard": "ボコオ",
+     "match": true,
+     "voiceMatch": -16.4,
+     "seconds": 0.625
+    },
+    {
+     "seed": 824420,
+     "heard": "ココ",
+     "match": false,
+     "voiceMatch": -17.1,
+     "seconds": 0.615
+    },
+    {
+     "seed": 824421,
+     "heard": "ボクオ",
+     "match": false,
+     "voiceMatch": 12.1,
+     "seconds": 0.635
+    },
+    {
+     "seed": 824422,
+     "heard": "ボコオ",
+     "match": true,
+     "voiceMatch": -24.1,
+     "seconds": 0.635
+    }
+   ],
+   "chosen": null
+  },
+  "r1-ref-b8f801f6ac6359dc": {
+   "word": "ぶんるいめい",
+   "current": {
+    "file": "ref/r1-ref-b8f801f6ac6359dc.opus",
+    "voiceMatch": 86.1
+   },
+   "tries": [
+    {
+     "seed": 608315,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 58.2,
+     "seconds": 0.865
+    },
+    {
+     "seed": 608316,
+     "heard": "ブンルイメ",
+     "match": false,
+     "voiceMatch": 73.5,
+     "seconds": 0.97
+    },
+    {
+     "seed": 608317,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 54.9,
+     "seconds": 0.905
+    },
+    {
+     "seed": 608318,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 68.0,
+     "seconds": 0.865
+    },
+    {
+     "seed": 608319,
+     "heard": "ブンルイメ",
+     "match": false,
+     "voiceMatch": 55.1,
+     "seconds": 0.865
+    },
+    {
+     "seed": 608320,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 51.4,
+     "seconds": 0.89
+    },
+    {
+     "seed": 608321,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 28.0,
+     "seconds": 0.875
+    },
+    {
+     "seed": 608322,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 61.4,
+     "seconds": 0.93
+    },
+    {
+     "seed": 608323,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 60.7,
+     "seconds": 0.925
+    },
+    {
+     "seed": 608324,
+     "heard": "ブンルイメ",
+     "match": false,
+     "voiceMatch": 56.0,
+     "seconds": 0.82
+    },
+    {
+     "seed": 608325,
+     "heard": "ブンルイメ",
+     "match": false,
+     "voiceMatch": 56.3,
+     "seconds": 0.92
+    },
+    {
+     "seed": 608326,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 54.7,
+     "seconds": 0.915
+    },
+    {
+     "seed": 608327,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 31.7,
+     "seconds": 0.95
+    },
+    {
+     "seed": 608328,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 53.9,
+     "seconds": 0.905
+    },
+    {
+     "seed": 608329,
+     "heard": "ドンルイメ",
+     "match": false,
+     "voiceMatch": 66.0,
+     "seconds": 0.88
+    },
+    {
+     "seed": 608330,
+     "heard": "ブンルイメエ",
+     "match": true,
+     "voiceMatch": 36.4,
+     "seconds": 0.94
+    }
+   ],
+   "chosen": null
+  },
+  "r1-ref-99bd62e1b425b4d1": {
+   "word": "さんり",
+   "current": {
+    "file": "ref/r1-ref-99bd62e1b425b4d1.opus",
+    "voiceMatch": 85.4
+   },
+   "tries": [
+    {
+     "seed": 5304,
+     "heard": "サンディ",
+     "match": false,
+     "voiceMatch": -1.4,
+     "seconds": 0.705
+    },
+    {
+     "seed": 5305,
+     "heard": "サンリ",
+     "match": true,
+     "voiceMatch": 37.3,
+     "seconds": 0.685
+    },
+    {
+     "seed": 5306,
+     "heard": "サンリ",
+     "match": true,
+     "voiceMatch": 35.9,
+     "seconds": 0.64
+    },
+    {
+     "seed": 5307,
+     "heard": "サンディ",
+     "match": false,
+     "voiceMatch": 44.4,
+     "seconds": 0.73
+    },
+    {
+     "seed": 5308,
+     "heard": "サンリ",
+     "match": true,
+     "voiceMatch": 51.9,
+     "seconds": 0.635
+    },
+    {
+     "seed": 5309,
+     "heard": "サンリイ",
+     "match": false,
+     "voiceMatch": 45.7,
+     "seconds": 0.685
+    },
+    {
+     "seed": 5310,
+     "heard": "サンリ",
+     "match": true,
+     "voiceMatch": 16.5,
+     "seconds": 0.7
+    },
+    {
+     "seed": 5311,
+     "heard": "サンリ",
+     "match": true,
+     "voiceMatch": 53.7,
+     "seconds": 0.675
+    },
+    {
+     "seed": 5312,
+     "heard": "サンディ",
+     "match": false,
+     "voiceMatch": -7.2,
+     "seconds": 0.695
+    },
+    {
+     "seed": 5313,
+     "heard": "サンリイ",
+     "match": false,
+     "voiceMatch": 19.0,
+     "seconds": 0.685
+    },
+    {
+     "seed": 5314,
+     "heard": "サンリイ",
+     "match": false,
+     "voiceMatch": -37.0,
+     "seconds": 0.65
+    },
+    {
+     "seed": 5315,
+     "heard": "サンリ",
+     "match": true,
+     "voiceMatch": 45.2,
+     "seconds": 0.625
+    },
+    {
+     "seed": 5316,
+     "heard": "サンリ",
+     "match": true,
+     "voiceMatch": 35.1,
+     "seconds": 0.685
+    },
+    {
+     "seed": 5317,
+     "heard": "サンリイ",
+     "match": false,
+     "voiceMatch": 41.6,
+     "seconds": 0.64
+    },
+    {
+     "seed": 5318,
+     "heard": "サンリ",
+     "match": true,
+     "voiceMatch": 40.6,
+     "seconds": 0.675
+    },
+    {
+     "seed": 5319,
+     "heard": "サンリ",
+     "match": true,
+     "voiceMatch": 50.2,
+     "seconds": 0.615
+    }
+   ],
+   "chosen": null
+  }
+ }
+}

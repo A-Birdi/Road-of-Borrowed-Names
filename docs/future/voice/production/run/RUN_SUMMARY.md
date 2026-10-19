@@ -196,3 +196,23 @@ batch folder with `review_page.mjs`. The technical checks pass on all 23,823 fil
   - Two path strings were mangled by shell escaping and caught before they ran.
 
 The technical checks pass on all 23,823 files: present, decoding, bytes and SHA-256 as recorded. No audio is pushed.
+
+## After round 3 (2026-10-19)
+
+- **SC4 recorded:** しおどまり sent as シオドマリ, 1.01 s (window 0.83–1.16 s), heard right on the first take.
+- **Another voice model for words the narrator voice cannot say** (Robin: 'try another voice model exclusively for
+  these difficult words, trying to match the existing model's voice approximation by 90%+'):
+  - **The method:** Qwen3-TTS Base, cloned from the narrator. A take must be heard right, and its voice match must
+    reach 90%. The match uses speaker embeddings from Qwen's own encoder: 100% is the median similarity of 40 narrator
+    readings to their centroid, and 0% the median of 40 other characters' takes. It is noisy on very short words: the
+    narrator's own takes of these words score 35–90%.
+  - **Cloned from the narrator's sentence (N2-neutral):** the words are heard right far more often (6, 5, 11 and 9 of
+    16), but the voice match reaches only 27–74%.
+  - **Cloned from 8 of the narrator's own word readings:** ぶんるいめい reached 91% and was heard right; it is now its
+    recording, under casting key `narrator/qwen-clone`, which has its own casting record (`voiceMatch` and `seed` in
+    the result).
+  - **Not reached:** おおいし (53%), ぼこう (27%) and さんり (64%). Their best cloned takes are listening candidates
+    in `candidates/` on Robin's PC, beside the narrator's closest takes, for Robin to choose among the cloned voice,
+    the narrator's take and the device voice (`withheld`).
+- **The reading check, second pass:** up to 12 takes for the 152 clip-fix takes the recognizer could not confirm; 49
+  were then heard right. 103 are listed for listening (`REVIEW_LIST_reading.json`).
