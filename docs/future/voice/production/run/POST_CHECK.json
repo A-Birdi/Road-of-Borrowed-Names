@@ -307,15 +307,15 @@
   },
   {
    "id": "r1-b7b8aba0aeec82d8",
-   "problem": "level: lufs -22.76, peak -1.0"
-  },
-  {
-   "id": "r1-b9b7b663d17f39a6",
-   "problem": "level: lufs -22.1, peak -1.0"
+   "problem": "level: lufs -23.85, peak -1.0"
   },
   {
    "id": "r1-c0b8b109d76cb870",
    "problem": "level: lufs -22.56, peak -1.0"
+  },
+  {
+   "id": "r1-d9dc6846c325e746",
+   "problem": "level: lufs -22.45, peak -1.0"
   },
   {
    "id": "r1-e4b54e6857afb3c4",
@@ -399,7 +399,7 @@
   },
   {
    "id": "r1-a17744187a8dfadf",
-   "problem": "level: lufs -21.94, peak -1.0"
+   "problem": "level: lufs -22.31, peak -1.0"
   },
   {
    "id": "r1-2ffe9a31a6b56cc5",
@@ -496,13 +496,13 @@
  ],
  "all": {
   "files": 23823,
-  "bytes": 552079458,
-  "hours": 20.62
+  "bytes": 553931649,
+  "hours": 20.71
  },
  "main": {
   "files": 23816,
-  "bytes": 551870864,
-  "hours": 20.62
+  "bytes": 553723055,
+  "hours": 20.7
  },
  "MW1": {
   "files": 7,
@@ -512,22 +512,22 @@
  "byRole": {
   "mio": {
    "files": 1079,
-   "bytes": 35824028,
+   "bytes": 35824379,
    "hours": 1.35
   },
   "nao": {
    "files": 1182,
-   "bytes": 38043743,
+   "bytes": 38054049,
    "hours": 1.43
   },
   "narrator": {
    "files": 4797,
-   "bytes": 143649226,
+   "bytes": 143683953,
    "hours": 5.45
   },
   "npc": {
    "files": 3662,
-   "bytes": 144107856,
+   "bytes": 144104211,
    "hours": 5.47
   },
   "pc": {
@@ -537,25 +537,25 @@
   },
   "reference readings": {
    "files": 9096,
-   "bytes": 59468476,
-   "hours": 1.98
+   "bytes": 61273381,
+   "hours": 2.06
   },
   "ren": {
    "files": 1121,
-   "bytes": 44145562,
+   "bytes": 44144009,
    "hours": 1.67
   },
   "suzu": {
    "files": 2250,
-   "bytes": 72932771,
+   "bytes": 72939871,
    "hours": 2.75
   }
  },
  "byEngine": {
   "aivis": {
    "files": 14083,
-   "bytes": 210112244,
-   "hours": 7.7
+   "bytes": 211951876,
+   "hours": 7.78
   },
   "nemo": {
    "files": 229,
@@ -564,7 +564,7 @@
   },
   "qwen3-tts": {
    "files": 9510,
-   "bytes": 333782103,
+   "bytes": 333794662,
    "hours": 12.62
   },
   "sound": {
@@ -575,11 +575,11 @@
  },
  "masters": {
   "files": 21523,
-  "bytes": 1889382958,
+  "bytes": 1894376503,
   "format": "FLAC 24 kHz 16-bit mono, lossless, kept locally"
  },
- "flaggedEdges": 90,
- "retried": 409,
+ "flaggedEdges": 528,
+ "retried": 716,
  "lengthOutliers": {
   "rule": "longer than max(2.2x, +6 s) or shorter than 0.4x the voice's own median pace for that text length",
   "long": [],

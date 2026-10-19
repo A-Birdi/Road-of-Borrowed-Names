@@ -1,0 +1,851 @@
+{
+ "schema": "rbn.voice.review/1",
+ "round": 3,
+ "what": "Review round 3: the takes made from Robin's round-2 decisions (2026-10-18). Paths are relative to the batch folder.",
+ "batch": {
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "manifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "groups": [
+  {
+   "key": "uno",
+   "title": "Uno: all four lines re-made from a clean reference (the accepted take without the 7 s of babble after it)",
+   "items": [
+    {
+     "id": "r1-07de6919eca7094d",
+     "speaker": "mb_uno",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "暗くなったのに……運河の方かい？",
+     "sent": "暗くなったのに……運河の方かい？",
+     "lineKeys": [
+      "mb.uno_evening#bd7cfcbd8e"
+     ],
+     "file": "mb_uno/r1-07de6919eca7094d.opus",
+     "seconds": 2.91,
+     "why": "new take from the clean reference; ends on its own and is heard right",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212937/mb_uno/r1-07de6919eca7094d.opus",
+       "seconds": 2.63
+      }
+     ],
+     "yourNote": "I'm hearing \"gurako...\" at the beginning, and it's not read properly at all from there. It gets abruptly cut off"
+    },
+    {
+     "id": "r1-146a0acff926bcf0",
+     "speaker": "mb_uno",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "おはよう。朝ご飯は潮硝子の干物だよ。誰かさんが舟で送ってくれたからね。",
+     "sent": "おはよう。朝ご飯はしおがらすの干物だよ。誰かさんが舟で送ってくれたからね。",
+     "lineKeys": [
+      "mb.uno_rest#68d95ef734"
+     ],
+     "file": "mb_uno/r1-146a0acff926bcf0.opus",
+     "seconds": 6.255,
+     "why": "new take from the clean reference; ends on its own and is heard right",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T220924/mb_uno/r1-146a0acff926bcf0.opus",
+       "seconds": 9.325
+      }
+     ]
+    },
+    {
+     "id": "r1-239e829694ef0c3e",
+     "speaker": "mb_uno",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "川屋へようこそ。休んでいく？川の音で、よく眠れるよ。",
+     "sent": "かわやへようこそ。休んでいく？川の音で、よく眠れるよ。",
+     "lineKeys": [
+      "mb.uno_rest#d65c5d6513"
+     ],
+     "file": "mb_uno/r1-239e829694ef0c3e.opus",
+     "seconds": 5.25,
+     "why": "new take from the clean reference; ends on its own and is heard right",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212937/mb_uno/r1-239e829694ef0c3e.opus",
+       "seconds": 3.63
+      }
+     ]
+    },
+    {
+     "id": "r1-9f584f51e6a3e826",
+     "speaker": "mb_uno",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "夕飯出来てるよ。座って──",
+     "sent": "夕飯出来てるよ。座って──",
+     "lineKeys": [
+      "mb.uno_evening#2712d40616"
+     ],
+     "file": "mb_uno/r1-9f584f51e6a3e826.opus",
+     "seconds": 2.32,
+     "why": "new take from the clean reference; ends on its own and is heard right",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212937/mb_uno/r1-9f584f51e6a3e826.opus",
+       "seconds": 4.14
+      }
+     ]
+    }
+   ],
+   "count": 4
+  },
+  {
+   "key": "endings",
+   "title": "Cut endings: new takes that end on their own (the engine had stopped mid-syllable)",
+   "items": [
+    {
+     "id": "r1-e73b4120e8097b9c",
+     "speaker": "wataru",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "そしたら嵐で、船がまた壊れて。督促状が来て。開けるのが怖くて、まだ開けていません。",
+     "sent": "そしたら嵐で、船がまた壊れて。督促状が来て。開けるのが怖くて、まだ開けていません。",
+     "lineKeys": [
+      "sg.wataru_confront#b7064a0ebf"
+     ],
+     "file": "wataru/r1-e73b4120e8097b9c.opus",
+     "seconds": 7.085,
+     "why": "new take; the engine output fades out by itself before it ends",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212937/wataru/r1-e73b4120e8097b9c.opus",
+       "seconds": 7.64
+      }
+     ],
+     "yourNote": "Abruptly cut off at the end"
+    },
+    {
+     "id": "r1-37abf7b89ce47f63",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "think",
+     "spoken": "言葉を一つ取られた町です。……もし一つだけ守れるとしたら、あなたはどの言葉を守りますか。",
+     "sent": "言葉を一つ取られた町です。……もし一つだけ守れるとしたら、あなたはどの言葉を守りますか。",
+     "lineKeys": [
+      "co.inv_lf_word#3cd42335c7"
+     ],
+     "file": "ren/r1-37abf7b89ce47f63.opus",
+     "seconds": 6.645,
+     "why": "new take; the engine output fades out by itself before it ends",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212937/ren/r1-37abf7b89ce47f63.opus",
+       "seconds": 6.775
+      }
+     ],
+     "yourNote": "Abruptly cut off at the end"
+    },
+    {
+     "id": "r1-cb5b954654f749d9",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "潮。海の水の満ち引き。風向き。風がどこから来るか。",
+     "sent": "潮。海の水の満ち引き。風向き。風がどこから来るか。",
+     "lineKeys": [
+      "sea.tetsu_words#2b01647684"
+     ],
+     "file": "tetsu/r1-cb5b954654f749d9.opus",
+     "seconds": 5.73,
+     "why": "new take; the engine output fades out by itself before it ends",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212937/tetsu/r1-cb5b954654f749d9.opus",
+       "seconds": 5.59
+      }
+     ],
+     "yourNote": "The か at the end is slightly cut off, as if he were still speaking"
+    },
+    {
+     "id": "r1-d545789528b0b95f",
+     "speaker": "ren",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "消えた灯には、番人は要りません。……墓の灯は、別ですが。",
+     "sent": "消えたひには、番人は要りません。……墓のひは、別ですが。",
+     "lineKeys": [
+      "sa.choose_archive#0f158c6b29"
+     ],
+     "file": "ren/r1-d545789528b0b95f.opus",
+     "seconds": 5.225,
+     "why": "new take; the engine output fades out by itself before it ends",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212937/ren/r1-d545789528b0b95f.opus",
+       "seconds": 5.365
+      }
+     ],
+     "yourNote": "It's still cut off abruptly at the end"
+    },
+    {
+     "id": "r1-e3a2b9f6c80bd396",
+     "speaker": "sa_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "もし見つけたら、文の続きを読んでいただけますか。当書記の感情は……未分類ですが。",
+     "sent": "もし見つけたら、文の続きを読んでいただけますか。当書記の感情は……未分類ですが。",
+     "lineKeys": [
+      "sa.clerk_first#50864cae8c"
+     ],
+     "file": "sa_clerk/r1-e3a2b9f6c80bd396.opus",
+     "seconds": 7.144,
+     "why": "new take; the engine output fades out by itself before it ends",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212937/sa_clerk/r1-e3a2b9f6c80bd396.opus",
+       "seconds": 6.885
+      }
+     ],
+     "yourNote": "Still has the \"ga\" cut off"
+    },
+    {
+     "id": "r1-f25c42a39756bbfb",
+     "speaker": "nao",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "鐘の話、聞いたか。皆、鐘が鳴ったら水路へ走ったって。頭が忘れても、足が道を覚えてた。",
+     "sent": "鐘の話、聞いたか。皆、鐘が鳴ったらすいろへ走ったって。頭が忘れても、足が道を覚えてた。",
+     "lineKeys": [
+      "co.b_nao4#d8c80dccd9"
+     ],
+     "file": "nao/r1-f25c42a39756bbfb.opus",
+     "seconds": 8.41,
+     "why": "new take; the engine output fades out by itself before it ends",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212937/nao/r1-f25c42a39756bbfb.opus",
+       "seconds": 7.71
+      }
+     ],
+     "yourNote": "Still slightly cut off"
+    },
+    {
+     "id": "r1-a17744187a8dfadf",
+     "speaker": "sg_clerk",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "宛名のない手紙は、誰のものでもない。迷う手紙は、人を迷わせる。返送し、棚に上げ、静かにする。それが規定だ。",
+     "sent": "宛名のない手紙は、誰のものでもない。迷う手紙は、人を迷わせる。返送し、棚に上げ、静かにする。それが規定だ。",
+     "lineKeys": [
+      "sg.da_boss#eb493c4504"
+     ],
+     "file": "sg_clerk/r1-a17744187a8dfadf.opus",
+     "seconds": 11.98,
+     "why": "new take; the engine output fades out by itself before it ends",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212937/sg_clerk/r1-a17744187a8dfadf.opus",
+       "seconds": 11.693
+      }
+     ],
+     "yourNote": "The \"da\" at the end is cut off oddly"
+    }
+   ],
+   "count": 7
+  },
+  {
+   "key": "words",
+   "title": "Single words: new takes the recognizer hears right (up to 12 tries each), read straight",
+   "items": [
+    {
+     "id": "r1-ref-034fa9ed10e3ea45",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しょざいふめい",
+     "sent": "しょざいふめい",
+     "lineKeys": [],
+     "file": "ref/r1-ref-034fa9ed10e3ea45.opus",
+     "seconds": 1.274,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-034fa9ed10e3ea45.opus",
+       "seconds": 1.16
+      }
+     ],
+     "recognizer": {
+      "heard": "所在不明",
+      "heardKana": "ショザイフメエ",
+      "expectedKana": "ショザイフメイ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-ref-7ba70032dda74083",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ソウベエ",
+     "sent": "ソウベエ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-7ba70032dda74083.opus",
+     "seconds": 0.87,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-7ba70032dda74083.opus",
+       "seconds": 0.925
+      }
+     ],
+     "recognizer": {
+      "heard": "そうべえ",
+      "heardKana": "ソオベエ",
+      "expectedKana": "ソオベエ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-ref-7ce0a1f65d517736",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "そろ",
+     "sent": "そろ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-7ce0a1f65d517736.opus",
+     "seconds": 0.951,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-7ce0a1f65d517736.opus",
+       "seconds": 0.835
+      }
+     ],
+     "recognizer": {
+      "heard": "そろ",
+      "heardKana": "ソロ",
+      "expectedKana": "ソロ",
+      "match": true
+     },
+     "yourNote": "Still gasp-y at the beginning"
+    },
+    {
+     "id": "r1-ref-7d69eea325c2f41a",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ぴくぴく",
+     "sent": "ぴくぴく",
+     "lineKeys": [],
+     "file": "ref/r1-ref-7d69eea325c2f41a.opus",
+     "seconds": 1.262,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-7d69eea325c2f41a.opus",
+       "seconds": 1.23
+      }
+     ],
+     "recognizer": {
+      "heard": "ピクピク",
+      "heardKana": "ピクピク",
+      "expectedKana": "ピクピク",
+      "match": true
+     },
+     "yourNote": "Hearing \"P-hi-ku-ki-ku\""
+    },
+    {
+     "id": "r1-ref-911aaa0a7761c49e",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ばかす",
+     "sent": "ばかす",
+     "lineKeys": [],
+     "file": "ref/r1-ref-911aaa0a7761c49e.opus",
+     "seconds": 0.705,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-911aaa0a7761c49e.opus",
+       "seconds": 0.845
+      }
+     ],
+     "recognizer": {
+      "heard": "バカス",
+      "heardKana": "バカス",
+      "expectedKana": "バカス",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-ref-a3999c8ac20a5b09",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "いんちょう",
+     "sent": "いんちょう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-a3999c8ac20a5b09.opus",
+     "seconds": 0.899,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-a3999c8ac20a5b09.opus",
+       "seconds": 0.975
+      }
+     ],
+     "recognizer": {
+      "heard": "委員長",
+      "heardKana": "イインチョオ",
+      "expectedKana": "インチョオ",
+      "match": true
+     },
+     "yourNote": "Sounds as \"Hinchou\" when the H should not be sounded out"
+    },
+    {
+     "id": "r1-ref-b8dafacc2283970b",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "うめ",
+     "sent": "うめ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b8dafacc2283970b.opus",
+     "seconds": 0.615,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-b8dafacc2283970b.opus",
+       "seconds": 0.655
+      }
+     ],
+     "recognizer": {
+      "heard": "梅",
+      "heardKana": "ウメ",
+      "expectedKana": "ウメ",
+      "match": true
+     },
+     "yourNote": "Too breathy at the start"
+    },
+    {
+     "id": "r1-ref-c5852ab0cc882c25",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "うめ",
+     "sent": "うめ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-c5852ab0cc882c25.opus",
+     "seconds": 0.615,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-c5852ab0cc882c25.opus",
+       "seconds": 0.655
+      }
+     ],
+     "recognizer": {
+      "heard": "梅",
+      "heardKana": "ウメ",
+      "expectedKana": "ウメ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-ref-cc7f754d77618486",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "もうす",
+     "sent": "もうす",
+     "lineKeys": [],
+     "file": "ref/r1-ref-cc7f754d77618486.opus",
+     "seconds": 0.705,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-cc7f754d77618486.opus",
+       "seconds": 0.765
+      }
+     ],
+     "recognizer": {
+      "heard": "もうす",
+      "heardKana": "モオス",
+      "expectedKana": "モオス",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-ref-d31ca70b82bbd4c8",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "うめる",
+     "sent": "うめる",
+     "lineKeys": [],
+     "file": "ref/r1-ref-d31ca70b82bbd4c8.opus",
+     "seconds": 0.765,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-d31ca70b82bbd4c8.opus",
+       "seconds": 0.835
+      }
+     ],
+     "recognizer": {
+      "heard": "埋める",
+      "heardKana": "ウメル",
+      "expectedKana": "ウメル",
+      "match": true
+     },
+     "yourNote": "Sounds like laughter or giggling -- not neutral enough, too airy"
+    },
+    {
+     "id": "r1-ref-da481d87c2913609",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しの",
+     "sent": "しの",
+     "lineKeys": [],
+     "file": "ref/r1-ref-da481d87c2913609.opus",
+     "seconds": 0.834,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-da481d87c2913609.opus",
+       "seconds": 0.76
+      }
+     ],
+     "recognizer": {
+      "heard": "シノ",
+      "heardKana": "シノ",
+      "expectedKana": "シノ",
+      "match": true
+     },
+     "yourNote": "Hearing Pishino"
+    },
+    {
+     "id": "r1-ref-e5bf48bf7ab94ff8",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しおどまり",
+     "sent": "しおどまり",
+     "lineKeys": [],
+     "file": "ref/r1-ref-e5bf48bf7ab94ff8.opus",
+     "seconds": 1.223,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-e5bf48bf7ab94ff8.opus",
+       "seconds": 1.23
+      }
+     ],
+     "recognizer": {
+      "heard": "しおどまり",
+      "heardKana": "シオドマリ",
+      "expectedKana": "シオドマリ",
+      "match": true
+     },
+     "yourNote": "Gasp-y at the start"
+    },
+    {
+     "id": "r1-ref-eac72dc84c240460",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "なんじっかい",
+     "sent": "なんじっかい",
+     "lineKeys": [],
+     "file": "ref/r1-ref-eac72dc84c240460.opus",
+     "seconds": 0.977,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-eac72dc84c240460.opus",
+       "seconds": 1.015
+      }
+     ],
+     "recognizer": {
+      "heard": "何十回",
+      "heardKana": "ナンジュッカイ",
+      "expectedKana": "ナンジッカイ",
+      "match": true
+     },
+     "yourNote": "H sound at the start where it should not be"
+    },
+    {
+     "id": "r1-ref-f1f9f7f4191a1c43",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "あっち",
+     "sent": "あっち",
+     "lineKeys": [],
+     "file": "ref/r1-ref-f1f9f7f4191a1c43.opus",
+     "seconds": 0.66,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-f1f9f7f4191a1c43.opus",
+       "seconds": 0.695
+      }
+     ],
+     "recognizer": {
+      "heard": "あっち",
+      "heardKana": "アッチ",
+      "expectedKana": "アッチ",
+      "match": true
+     }
+    },
+    {
+     "id": "r1-ref-6ada602a0cae2dbe",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "しゅう",
+     "sent": "しゅう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-6ada602a0cae2dbe.opus",
+     "seconds": 0.67,
+     "why": "new take, heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-6ada602a0cae2dbe.opus",
+       "seconds": 0.685
+      }
+     ],
+     "recognizer": {
+      "heard": "シュー",
+      "heardKana": "シュウ",
+      "expectedKana": "シュウ",
+      "match": true
+     }
+    }
+   ],
+   "count": 15
+  },
+  {
+   "key": "stubborn",
+   "title": "Still misheard after 12 takes (the closest kept; your ear decides)",
+   "items": [
+    {
+     "id": "r1-ref-2bab5bdb1e5539fb",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "おおいし",
+     "sent": "おおいし",
+     "lineKeys": [],
+     "file": "ref/r1-ref-2bab5bdb1e5539fb.opus",
+     "seconds": 0.795,
+     "why": "no take was heard right; the closest is kept",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-2bab5bdb1e5539fb.opus",
+       "seconds": 0.92
+      }
+     ],
+     "recognizer": {
+      "heard": "おいしい",
+      "heardKana": "オイシイ",
+      "expectedKana": "オオイシ",
+      "match": false
+     }
+    },
+    {
+     "id": "r1-ref-91d716f388c98422",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "かいしょ",
+     "sent": "かいしょ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-91d716f388c98422.opus",
+     "seconds": 0.86,
+     "why": "no take was heard right; the closest is kept",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-91d716f388c98422.opus",
+       "seconds": 0.945
+      }
+     ],
+     "recognizer": {
+      "heard": "解消",
+      "heardKana": "カイショオ",
+      "expectedKana": "カイショ",
+      "match": false
+     },
+     "yourNote": "Gasp-y at the beginning"
+    },
+    {
+     "id": "r1-ref-99bd62e1b425b4d1",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "さんり",
+     "sent": "さんり",
+     "lineKeys": [],
+     "file": "ref/r1-ref-99bd62e1b425b4d1.opus",
+     "seconds": 0.99,
+     "why": "no take was heard right; the closest is kept",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-99bd62e1b425b4d1.opus",
+       "seconds": 1.1
+      }
+     ],
+     "recognizer": {
+      "heard": "サンリー",
+      "heardKana": "サンリイ",
+      "expectedKana": "サンリ",
+      "match": false
+     },
+     "yourNote": "Still gasp-y and airy at both ends"
+    },
+    {
+     "id": "r1-ref-ac766d409bbc66e8",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "にっしゃびょう",
+     "sent": "にっしゃびょう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-ac766d409bbc66e8.opus",
+     "seconds": 1.06,
+     "why": "no take was heard right; the closest is kept",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-ac766d409bbc66e8.opus",
+       "seconds": 1.22
+      }
+     ],
+     "recognizer": {
+      "heard": "西矢病",
+      "heardKana": "ニシヤビョオ",
+      "expectedKana": "ニッシヤビョオ",
+      "match": false
+     },
+     "yourNote": "Nisshabyou is heard as Nishiabeyou"
+    },
+    {
+     "id": "r1-ref-b06952501818dfed",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ぼこう",
+     "sent": "ぼこう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b06952501818dfed.opus",
+     "seconds": 0.779,
+     "why": "no take was heard right; the closest is kept",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-b06952501818dfed.opus",
+       "seconds": 0.735
+      }
+     ],
+     "recognizer": {
+      "heard": "ここ",
+      "heardKana": "ココ",
+      "expectedKana": "ボコオ",
+      "match": false
+     },
+     "yourNote": "Heard as \"Dokou\""
+    },
+    {
+     "id": "r1-ref-b8f801f6ac6359dc",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ぶんるいめい",
+     "sent": "ぶんるいめい",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b8f801f6ac6359dc.opus",
+     "seconds": 0.97,
+     "why": "no take was heard right; the closest is kept",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/ref/r1-ref-b8f801f6ac6359dc.opus",
+       "seconds": 1.235
+      }
+     ],
+     "recognizer": {
+      "heard": "分類目",
+      "heardKana": "ブンルイメ",
+      "expectedKana": "ブンルイメイ",
+      "match": false
+     },
+     "yourNote": "Too breathy throughout"
+    },
+    {
+     "id": "r1-92efaa6502073606",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "吹き溜まりが、道を塞いでいる。腰までの雪だ。",
+     "sent": "吹き溜まりが、道を塞いでいる。腰までの雪だ。",
+     "lineKeys": [
+      "cr.drift#37bc05b1a8"
+     ],
+     "file": "narrator/r1-92efaa6502073606.opus",
+     "seconds": 3.505,
+     "why": "no take was heard right; the closest is kept",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T212234/narrator/r1-92efaa6502073606.opus",
+       "seconds": 3.525
+      }
+     ],
+     "recognizer": {
+      "heard": "気だまりが道を塞いでいる腰までの雪だ",
+      "heardKana": "キダマリガミチオフサイデイルコシマデノユキダ",
+      "expectedKana": "フキダマリガミチオフサイデイルコシマデノユキダ",
+      "match": false
+     },
+     "yourNote": "The first Kanji is voiced but a little short/cut."
+    }
+   ],
+   "count": 7
+  }
+ ],
+ "counts": {
+  "uno": 4,
+  "endings": 7,
+  "words": 15,
+  "stubborn": 7
+ }
+}

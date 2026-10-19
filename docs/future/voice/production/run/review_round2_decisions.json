@@ -1,0 +1,371 @@
+{
+ "schema": "rbn.voice.review-decisions/1",
+ "listSha256": "4e69844065933bddbd95020fd4ba82d84489abc17787c50fc640ff96cb8b7be6",
+ "batch": {
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "manifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "decisions": {
+  "r1-07de6919eca7094d": {
+   "decision": "redo",
+   "take": "mb_uno/r1-07de6919eca7094d.opus",
+   "note": "I'm hearing \"gurako...\" at the beginning, and it's not read properly at all from there. It gets abruptly cut off"
+  },
+  "r1-239e829694ef0c3e": {
+   "decision": "redo",
+   "take": "mb_uno/r1-239e829694ef0c3e.opus",
+   "note": ""
+  },
+  "r1-9f584f51e6a3e826": {
+   "decision": "redo",
+   "take": "mb_uno/r1-9f584f51e6a3e826.opus",
+   "note": ""
+  },
+  "r1-e73b4120e8097b9c": {
+   "decision": "redo",
+   "take": "wataru/r1-e73b4120e8097b9c.opus",
+   "note": "Abruptly cut off at the end"
+  },
+  "r1-103e01f252363937": {
+   "decision": "keep",
+   "take": "narrator/r1-103e01f252363937.opus",
+   "note": ""
+  },
+  "r1-2d3ac586bb0e7209": {
+   "decision": "keep",
+   "take": "nao/r1-2d3ac586bb0e7209.opus",
+   "note": ""
+  },
+  "r1-37abf7b89ce47f63": {
+   "decision": "redo",
+   "take": "ren/r1-37abf7b89ce47f63.opus",
+   "note": "Abruptly cut off at the end"
+  },
+  "r1-6843cbc80ebf3837": {
+   "decision": "keep",
+   "take": "narrator/r1-6843cbc80ebf3837.opus",
+   "note": ""
+  },
+  "r1-6f1cdb7fd90eccee": {
+   "decision": "keep",
+   "take": "mio/r1-6f1cdb7fd90eccee.opus",
+   "note": ""
+  },
+  "r1-8c7bf9aacc724631": {
+   "decision": "keep",
+   "take": "umi/r1-8c7bf9aacc724631.opus",
+   "note": ""
+  },
+  "r1-cb5b954654f749d9": {
+   "decision": "redo",
+   "take": "tetsu/r1-cb5b954654f749d9.opus",
+   "note": "The か at the end is slightly cut off, as if he were still speaking"
+  },
+  "r1-d545789528b0b95f": {
+   "decision": "redo",
+   "take": "ren/r1-d545789528b0b95f.opus",
+   "note": "It's still cut off abruptly at the end"
+  },
+  "r1-e3a2b9f6c80bd396": {
+   "decision": "redo",
+   "take": "sa_clerk/r1-e3a2b9f6c80bd396.opus",
+   "note": "Still has the \"ga\" cut off"
+  },
+  "r1-f25c42a39756bbfb": {
+   "decision": "redo",
+   "take": "nao/r1-f25c42a39756bbfb.opus",
+   "note": "Still slightly cut off"
+  },
+  "r1-ref-0325246ccbaa2cd4": {
+   "decision": "keep",
+   "take": "ref/r1-ref-0325246ccbaa2cd4.opus",
+   "note": ""
+  },
+  "r1-ref-034fa9ed10e3ea45": {
+   "decision": "redo",
+   "take": "ref/r1-ref-034fa9ed10e3ea45.opus",
+   "note": ""
+  },
+  "r1-ref-1d786957af12a37b": {
+   "decision": "keep",
+   "take": "ref/r1-ref-1d786957af12a37b.opus",
+   "note": ""
+  },
+  "r1-ref-2bab5bdb1e5539fb": {
+   "decision": "redo",
+   "take": "ref/r1-ref-2bab5bdb1e5539fb.opus",
+   "note": ""
+  },
+  "r1-ref-442384d60cc59db7": {
+   "decision": "keep",
+   "take": "ref/r1-ref-442384d60cc59db7.opus",
+   "note": ""
+  },
+  "r1-ref-6de7e0ab9993b5d8": {
+   "decision": "keep",
+   "take": "ref/r1-ref-6de7e0ab9993b5d8.opus",
+   "note": ""
+  },
+  "r1-ref-7ba70032dda74083": {
+   "decision": "redo",
+   "take": "ref/r1-ref-7ba70032dda74083.opus",
+   "note": ""
+  },
+  "r1-ref-7c955999a39b29bb": {
+   "decision": "keep",
+   "take": "ref/r1-ref-7c955999a39b29bb.opus",
+   "note": ""
+  },
+  "r1-ref-7ce0a1f65d517736": {
+   "decision": "redo",
+   "take": "ref/r1-ref-7ce0a1f65d517736.opus",
+   "note": "Still gasp-y at the beginning"
+  },
+  "r1-ref-7d69eea325c2f41a": {
+   "decision": "redo",
+   "take": "ref/r1-ref-7d69eea325c2f41a.opus",
+   "note": "Hearing \"P-hi-ku-ki-ku\""
+  },
+  "r1-ref-86c2f0a432961c1d": {
+   "decision": "keep",
+   "take": "ref/r1-ref-86c2f0a432961c1d.opus",
+   "note": ""
+  },
+  "r1-ref-911aaa0a7761c49e": {
+   "decision": "redo",
+   "take": "ref/r1-ref-911aaa0a7761c49e.opus",
+   "note": ""
+  },
+  "r1-ref-91d716f388c98422": {
+   "decision": "redo",
+   "take": "ref/r1-ref-91d716f388c98422.opus",
+   "note": "Gasp-y at the beginning"
+  },
+  "r1-ref-99bd62e1b425b4d1": {
+   "decision": "redo",
+   "take": "ref/r1-ref-99bd62e1b425b4d1.opus",
+   "note": "Still gasp-y and airy at both ends"
+  },
+  "r1-ref-a3999c8ac20a5b09": {
+   "decision": "redo",
+   "take": "ref/r1-ref-a3999c8ac20a5b09.opus",
+   "note": "Sounds as \"Hinchou\" when the H should not be sounded out"
+  },
+  "r1-ref-a918801e2d9bc1e6": {
+   "decision": "keep",
+   "take": "ref/r1-ref-a918801e2d9bc1e6.opus",
+   "note": ""
+  },
+  "r1-ref-ac50a97184a061ec": {
+   "decision": "keep",
+   "take": "ref/r1-ref-ac50a97184a061ec.opus",
+   "note": ""
+  },
+  "r1-ref-ac766d409bbc66e8": {
+   "decision": "redo",
+   "take": "ref/r1-ref-ac766d409bbc66e8.opus",
+   "note": "Nisshabyou is heard as Nishiabeyou"
+  },
+  "r1-ref-b06952501818dfed": {
+   "decision": "redo",
+   "take": "ref/r1-ref-b06952501818dfed.opus",
+   "note": "Heard as \"Dokou\""
+  },
+  "r1-ref-b8dafacc2283970b": {
+   "decision": "redo",
+   "take": "ref/r1-ref-b8dafacc2283970b.opus",
+   "note": "Too breathy at the start"
+  },
+  "r1-ref-b8f801f6ac6359dc": {
+   "decision": "redo",
+   "take": "ref/r1-ref-b8f801f6ac6359dc.opus",
+   "note": "Too breathy throughout"
+  },
+  "r1-ref-ba64791790c74617": {
+   "decision": "keep",
+   "take": "ref/r1-ref-ba64791790c74617.opus",
+   "note": ""
+  },
+  "r1-ref-c5852ab0cc882c25": {
+   "decision": "redo",
+   "take": "ref/r1-ref-c5852ab0cc882c25.opus",
+   "note": ""
+  },
+  "r1-ref-cc7f754d77618486": {
+   "decision": "redo",
+   "take": "ref/r1-ref-cc7f754d77618486.opus",
+   "note": ""
+  },
+  "r1-ref-d31ca70b82bbd4c8": {
+   "decision": "redo",
+   "take": "ref/r1-ref-d31ca70b82bbd4c8.opus",
+   "note": "Sounds like laughter or giggling -- not neutral enough, too airy"
+  },
+  "r1-ref-d44b56e3beb15853": {
+   "decision": "keep",
+   "take": "ref/r1-ref-d44b56e3beb15853.opus",
+   "note": ""
+  },
+  "r1-ref-da481d87c2913609": {
+   "decision": "redo",
+   "take": "ref/r1-ref-da481d87c2913609.opus",
+   "note": "Hearing Pishino"
+  },
+  "r1-ref-db5b0c331547f281": {
+   "decision": "keep",
+   "take": "ref/r1-ref-db5b0c331547f281.opus",
+   "note": ""
+  },
+  "r1-ref-e41a9ae640439d08": {
+   "decision": "keep",
+   "take": "ref/r1-ref-e41a9ae640439d08.opus",
+   "note": ""
+  },
+  "r1-ref-e5bf48bf7ab94ff8": {
+   "decision": "redo",
+   "take": "ref/r1-ref-e5bf48bf7ab94ff8.opus",
+   "note": "Gasp-y at the start"
+  },
+  "r1-ref-e7f81d92b452ef62": {
+   "decision": "keep",
+   "take": "ref/r1-ref-e7f81d92b452ef62.opus",
+   "note": ""
+  },
+  "r1-ref-eac72dc84c240460": {
+   "decision": "redo",
+   "take": "ref/r1-ref-eac72dc84c240460.opus",
+   "note": "H sound at the start where it should not be"
+  },
+  "r1-ref-ebc01860454d9a89": {
+   "decision": "keep",
+   "take": "ref/r1-ref-ebc01860454d9a89.opus",
+   "note": ""
+  },
+  "r1-ref-f1f9f7f4191a1c43": {
+   "decision": "redo",
+   "take": "ref/r1-ref-f1f9f7f4191a1c43.opus",
+   "note": ""
+  },
+  "r1-ref-f35ae1ea691b10dc": {
+   "decision": "keep",
+   "take": "ref/r1-ref-f35ae1ea691b10dc.opus",
+   "note": ""
+  },
+  "r1-1d2fbdf3b44d19a5": {
+   "decision": "keep",
+   "take": "ko_gardener/r1-1d2fbdf3b44d19a5.opus",
+   "note": ""
+  },
+  "r1-34c73b31bdc1a295": {
+   "decision": "keep",
+   "take": "sg_clerk/r1-34c73b31bdc1a295.opus",
+   "note": ""
+  },
+  "r1-3e1f5965da859337": {
+   "decision": "keep",
+   "take": "sg_clerk/r1-3e1f5965da859337.opus",
+   "note": ""
+  },
+  "r1-413f45c38a8bd993": {
+   "decision": "keep",
+   "take": "sg_clerk/r1-413f45c38a8bd993.opus",
+   "note": ""
+  },
+  "r1-4142b50b447246e7": {
+   "decision": "keep",
+   "take": "mb_bridgespirit/r1-4142b50b447246e7.opus",
+   "note": ""
+  },
+  "r1-4dd8ba4f35accea7": {
+   "decision": "keep",
+   "take": "sg_clerk/r1-4dd8ba4f35accea7.opus",
+   "note": ""
+  },
+  "r1-6db1670a96cca6fa": {
+   "decision": "keep",
+   "take": "sg_clerk/r1-6db1670a96cca6fa.opus",
+   "note": ""
+  },
+  "r1-90718d7497de10d9": {
+   "decision": "keep",
+   "take": "sg_clerk/r1-90718d7497de10d9.opus",
+   "note": ""
+  },
+  "r1-9d16dc25757ff87e": {
+   "decision": "keep",
+   "take": "mb_bridgespirit/r1-9d16dc25757ff87e.opus",
+   "note": ""
+  },
+  "r1-a17744187a8dfadf": {
+   "decision": "redo",
+   "take": "sg_clerk/r1-a17744187a8dfadf.opus",
+   "note": "The \"da\" at the end is cut off oddly"
+  },
+  "r1-bbdaa29950ab28b5": {
+   "decision": "keep",
+   "take": "sg_clerk/r1-bbdaa29950ab28b5.opus",
+   "note": ""
+  },
+  "r1-cb99801f80b6257c": {
+   "decision": "keep",
+   "take": "ko_gardener/r1-cb99801f80b6257c.opus",
+   "note": ""
+  },
+  "r1-d9b19267d12485a1": {
+   "decision": "keep",
+   "take": "ko_gardener/r1-d9b19267d12485a1.opus",
+   "note": ""
+  },
+  "r1-e4ea46e7b88eb21c": {
+   "decision": "keep",
+   "take": "sg_clerk/r1-e4ea46e7b88eb21c.opus",
+   "note": ""
+  },
+  "r1-f49e340f895e1ddd": {
+   "decision": "keep",
+   "take": "sg_clerk/r1-f49e340f895e1ddd.opus",
+   "note": ""
+  },
+  "r1-9817c71228b4816f": {
+   "decision": "keep",
+   "take": "narrator/r1-9817c71228b4816f.opus",
+   "note": ""
+  },
+  "r1-92efaa6502073606": {
+   "decision": "redo",
+   "take": "narrator/r1-92efaa6502073606.opus",
+   "note": "The first Kanji is voiced but a little short/cut."
+  },
+  "r1-ref-38c446faebeab6ff": {
+   "decision": "earlier",
+   "take": "superseded/20261018T191356/ref/r1-ref-38c446faebeab6ff.opus",
+   "note": ""
+  },
+  "r1-ref-b8c37e850e5f708e": {
+   "decision": "keep",
+   "take": "ref/r1-ref-b8c37e850e5f708e.opus",
+   "note": ""
+  },
+  "r1-ref-8d997b6364a6f88b": {
+   "decision": "earlier",
+   "take": "superseded/20261018T191356/ref/r1-ref-8d997b6364a6f88b.opus",
+   "note": ""
+  },
+  "r1-ref-6ada602a0cae2dbe": {
+   "decision": "redo",
+   "take": "ref/r1-ref-6ada602a0cae2dbe.opus",
+   "note": ""
+  },
+  "r1-ref-e2da10bb61d45248": {
+   "decision": "earlier",
+   "take": "superseded/20261018T191356/ref/r1-ref-e2da10bb61d45248.opus",
+   "note": ""
+  },
+  "r1-6ab18b4d8dcef181": {
+   "decision": "keep",
+   "take": "wataru/r1-6ab18b4d8dcef181.opus",
+   "note": ""
+  }
+ }
+}

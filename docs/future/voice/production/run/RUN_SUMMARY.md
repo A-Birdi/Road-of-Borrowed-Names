@@ -153,3 +153,46 @@ clipped. Robin is asked before any unmarked take is changed. Seven narrator samp
 
 **Review round 2:** `REVIEW_LIST_round2.json` (72 takes, each beside the take it replaced). The page is built in the
 batch folder with `review_page.mjs`. The technical checks pass on all 23,823 files.
+
+## Review rounds 2 and 3 (Robin, 2026-10-18), and the clip fix
+
+- **Round 2** (`review_round2_decisions.json`: 37 keep, 32 redo, 3 earlier). The three earlier takes are back
+  (`restoredFrom` in their results).
+- **Round 3** (`review_round3_decisions.json`: 21 keep, 12 redo).
+
+**What the redos found:**
+- **Cut endings were the engine's, not the trim's.** Qwen sometimes ends its output while the last syllable is
+  still sounding: Tetsu's raw take ended 0.09 s after the voice, at -17 dB. A redo now needs a take whose raw
+  output ends at least 38 dB down on its own (`--natural-end`). All 7 cut endings passed; Robin kept 6 of them, and
+  Tetsu's was redone for its opening.
+- **Uno's reference was faulty.** The accepted audition take (16.5 s) holds the sentence and then 7 s of babble the
+  transcript does not have, which misled the clone. A clean reference was cut from the same take (FINAL_CAST records
+  it; the accepted take is unchanged). All four Uno lines were re-made, and Robin kept them. `REF_SCAN.json` checked
+  all 256 Qwen references; no other one holds extra speech.
+- **A reading check, with Robin's approval.** A local recognizer, Kotoba-Whisper v2.0 (Apache-2.0, weights only),
+  compares a take with the expected reading, both read into sounds by AivisSpeech's own reader. Against Robin's
+  round-2 verdicts on single words, it flagged 18 of the 21 Robin redid, and 6 of the 16 kept. It now chooses among
+  takes (`--asr-select`); a single word must sound the same, and a line must open the same and be at least 85% alike.
+- **The trim is now `text/4`:**
+  - a voiceless opening is followed back from the voice while it stays within 45 dB of the peak (35 dB for the
+    narrator's single words), stopping at a gap;
+  - a voiced opening is cut 0.02 s before the voice (no aspirated 'h');
+  - the ending follows the voice's own decay only to its first dip, and a short, weak burst after a dip at the very
+    end (Robin's 'breathy uptick') is dropped.
+  136 narrator masters that had kept such a breath were re-cut and their 161 recordings re-rendered: the same takes,
+  with the original masters kept.
+- **Words this narrator voice cannot say.** 30+ takes each were tried, across kana, kanji, katakana, kana spelled
+  one by one, a lead-in phrase, both styles and slower speeds (`SEND_VARIANT_TEST.json`): おおいし (heard おいしい), ぼこう
+  (ここ) and ぶんるいめい (ぶんるいめ). しおどまり reads right in katakana (4 of 6); SC4 has been asked of the lead.
+- **The clip fix (Robin: 'Fix the 1,196')** was re-planned after round 2:
+  - 1,082 narrator reference readings were re-made, read straight, with recognizer selection;
+  - 49 narrator lines were re-made, and 65 Qwen lines re-trimmed on their own seeds;
+  - a second pass of up to 12 takes ran for the 152 the recognizer could not confirm. 103 remain unconfirmed, often
+    the recognizer writing a homophone or hearing a stretched final vowel, and are listed for Robin in
+    `REVIEW_LIST_reading.json`.
+- **Worker errors, repaired:**
+  - Holding the clip-fix run part-way left 1,007 takes set aside: they were restored, with their hashes checked. A
+    redo now sets each take aside only as it is re-made, so a stop leaves nothing missing.
+  - Two path strings were mangled by shell escaping and caught before they ran.
+
+The technical checks pass on all 23,823 files: present, decoding, bytes and SHA-256 as recorded. No audio is pushed.

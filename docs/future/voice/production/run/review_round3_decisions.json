@@ -1,0 +1,176 @@
+{
+ "schema": "rbn.voice.review-decisions/1",
+ "listSha256": "df4c4c9036e74cd897eca2dac5297c2ff1e6e883df83253340162fe93f3157f2",
+ "batch": {
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "manifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "decisions": {
+  "r1-07de6919eca7094d": {
+   "decision": "keep",
+   "take": "mb_uno/r1-07de6919eca7094d.opus",
+   "note": ""
+  },
+  "r1-146a0acff926bcf0": {
+   "decision": "keep",
+   "take": "mb_uno/r1-146a0acff926bcf0.opus",
+   "note": ""
+  },
+  "r1-239e829694ef0c3e": {
+   "decision": "keep",
+   "take": "mb_uno/r1-239e829694ef0c3e.opus",
+   "note": ""
+  },
+  "r1-9f584f51e6a3e826": {
+   "decision": "keep",
+   "take": "mb_uno/r1-9f584f51e6a3e826.opus",
+   "note": ""
+  },
+  "r1-e73b4120e8097b9c": {
+   "decision": "keep",
+   "take": "wataru/r1-e73b4120e8097b9c.opus",
+   "note": ""
+  },
+  "r1-37abf7b89ce47f63": {
+   "decision": "keep",
+   "take": "ren/r1-37abf7b89ce47f63.opus",
+   "note": ""
+  },
+  "r1-cb5b954654f749d9": {
+   "decision": "redo",
+   "take": "tetsu/r1-cb5b954654f749d9.opus",
+   "note": "The first character is not well spoken, hearing it as \"-io\" instead of \"Shio\""
+  },
+  "r1-d545789528b0b95f": {
+   "decision": "keep",
+   "take": "ren/r1-d545789528b0b95f.opus",
+   "note": ""
+  },
+  "r1-e3a2b9f6c80bd396": {
+   "decision": "keep",
+   "take": "sa_clerk/r1-e3a2b9f6c80bd396.opus",
+   "note": ""
+  },
+  "r1-f25c42a39756bbfb": {
+   "decision": "keep",
+   "take": "nao/r1-f25c42a39756bbfb.opus",
+   "note": ""
+  },
+  "r1-a17744187a8dfadf": {
+   "decision": "keep",
+   "take": "sg_clerk/r1-a17744187a8dfadf.opus",
+   "note": ""
+  },
+  "r1-ref-034fa9ed10e3ea45": {
+   "decision": "keep",
+   "take": "ref/r1-ref-034fa9ed10e3ea45.opus",
+   "note": ""
+  },
+  "r1-ref-7ba70032dda74083": {
+   "decision": "keep",
+   "take": "ref/r1-ref-7ba70032dda74083.opus",
+   "note": ""
+  },
+  "r1-ref-7ce0a1f65d517736": {
+   "decision": "redo",
+   "take": "ref/r1-ref-7ce0a1f65d517736.opus",
+   "note": "Still breathy"
+  },
+  "r1-ref-7d69eea325c2f41a": {
+   "decision": "redo",
+   "take": "ref/r1-ref-7d69eea325c2f41a.opus",
+   "note": "Still hearing \"P-hikukiku\" - try having it enunciate each kana individually? There's something being misspoken every time"
+  },
+  "r1-ref-911aaa0a7761c49e": {
+   "decision": "redo",
+   "take": "ref/r1-ref-911aaa0a7761c49e.opus",
+   "note": "Ending has a breathy uptick"
+  },
+  "r1-ref-a3999c8ac20a5b09": {
+   "decision": "keep",
+   "take": "ref/r1-ref-a3999c8ac20a5b09.opus",
+   "note": ""
+  },
+  "r1-ref-b8dafacc2283970b": {
+   "decision": "redo",
+   "take": "ref/r1-ref-b8dafacc2283970b.opus",
+   "note": "Breathy uptick at the end"
+  },
+  "r1-ref-c5852ab0cc882c25": {
+   "decision": "redo",
+   "take": "ref/r1-ref-c5852ab0cc882c25.opus",
+   "note": "Breathy uptick at the end"
+  },
+  "r1-ref-cc7f754d77618486": {
+   "decision": "keep",
+   "take": "ref/r1-ref-cc7f754d77618486.opus",
+   "note": ""
+  },
+  "r1-ref-d31ca70b82bbd4c8": {
+   "decision": "redo",
+   "take": "ref/r1-ref-d31ca70b82bbd4c8.opus",
+   "note": "Breathy uptick at the end"
+  },
+  "r1-ref-da481d87c2913609": {
+   "decision": "keep",
+   "take": "ref/r1-ref-da481d87c2913609.opus",
+   "note": ""
+  },
+  "r1-ref-e5bf48bf7ab94ff8": {
+   "decision": "redo",
+   "take": "ref/r1-ref-e5bf48bf7ab94ff8.opus",
+   "note": "It should read as \"Shi-o-do-ma-ri\", but is being heard as \"Sho-do-ma-ri\" - focus on the kana's size here"
+  },
+  "r1-ref-eac72dc84c240460": {
+   "decision": "keep",
+   "take": "ref/r1-ref-eac72dc84c240460.opus",
+   "note": ""
+  },
+  "r1-ref-f1f9f7f4191a1c43": {
+   "decision": "keep",
+   "take": "ref/r1-ref-f1f9f7f4191a1c43.opus",
+   "note": ""
+  },
+  "r1-ref-6ada602a0cae2dbe": {
+   "decision": "keep",
+   "take": "ref/r1-ref-6ada602a0cae2dbe.opus",
+   "note": ""
+  },
+  "r1-ref-2bab5bdb1e5539fb": {
+   "decision": "redo",
+   "take": "ref/r1-ref-2bab5bdb1e5539fb.opus",
+   "note": ""
+  },
+  "r1-ref-91d716f388c98422": {
+   "decision": "keep",
+   "take": "ref/r1-ref-91d716f388c98422.opus",
+   "note": ""
+  },
+  "r1-ref-99bd62e1b425b4d1": {
+   "decision": "redo",
+   "take": "ref/r1-ref-99bd62e1b425b4d1.opus",
+   "note": "Breathy uptick at the end"
+  },
+  "r1-ref-ac766d409bbc66e8": {
+   "decision": "keep",
+   "take": "ref/r1-ref-ac766d409bbc66e8.opus",
+   "note": ""
+  },
+  "r1-ref-b06952501818dfed": {
+   "decision": "redo",
+   "take": "ref/r1-ref-b06952501818dfed.opus",
+   "note": "Heard as \"Dokou\" previously, now heard as \"Kokoa\""
+  },
+  "r1-ref-b8f801f6ac6359dc": {
+   "decision": "redo",
+   "take": "ref/r1-ref-b8f801f6ac6359dc.opus",
+   "note": ""
+  },
+  "r1-92efaa6502073606": {
+   "decision": "keep",
+   "take": "narrator/r1-92efaa6502073606.opus",
+   "note": ""
+  }
+ }
+}

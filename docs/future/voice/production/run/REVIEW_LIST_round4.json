@@ -1,0 +1,280 @@
+{
+ "schema": "rbn.voice.review/1",
+ "round": 4,
+ "what": "Review round 4: the takes made from Robin's round-3 decisions (2026-10-18). Paths are relative to the batch folder.",
+ "batch": {
+  "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "manifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "contentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e"
+ },
+ "groups": [
+  {
+   "key": "redone",
+   "title": "Your round-3 redos: breath endings cut, そろ and ぴくぴく re-made, Tetsu re-made (opening heard right)",
+   "items": [
+    {
+     "id": "r1-cb5b954654f749d9",
+     "speaker": "tetsu",
+     "voice": null,
+     "pitch": null,
+     "delivery": "neutral",
+     "spoken": "潮。海の水の満ち引き。風向き。風がどこから来るか。",
+     "sent": "潮。海の水の満ち引き。風向き。風がどこから来るか。",
+     "lineKeys": [
+      "sea.tetsu_words#2b01647684"
+     ],
+     "file": "tetsu/r1-cb5b954654f749d9.opus",
+     "seconds": 6.5,
+     "why": "new take or the same take with the breath after the word cut; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234507/tetsu/r1-cb5b954654f749d9.opus",
+       "seconds": 5.73
+      }
+     ],
+     "yourNote": "The first character is not well spoken, hearing it as \"-io\" instead of \"Shio\""
+    },
+    {
+     "id": "r1-ref-7ce0a1f65d517736",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "そろ",
+     "sent": "そろ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-7ce0a1f65d517736.opus",
+     "seconds": 0.95,
+     "why": "new take or the same take with the breath after the word cut; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234328/ref/r1-ref-7ce0a1f65d517736.opus",
+       "seconds": 0.951
+      }
+     ],
+     "recognizer": {
+      "heard": "そろ",
+      "heardKana": "ソロ",
+      "expectedKana": "ソロ",
+      "match": true
+     },
+     "yourNote": "Still breathy"
+    },
+    {
+     "id": "r1-ref-7d69eea325c2f41a",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ぴくぴく",
+     "sent": "ぴくぴく",
+     "lineKeys": [],
+     "file": "ref/r1-ref-7d69eea325c2f41a.opus",
+     "seconds": 1.33,
+     "why": "new take or the same take with the breath after the word cut; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234353/ref/r1-ref-7d69eea325c2f41a.opus",
+       "seconds": 1.262
+      }
+     ],
+     "recognizer": {
+      "heard": "ピクピク",
+      "heardKana": "ピクピク",
+      "expectedKana": "ピクピク",
+      "match": true
+     },
+     "yourNote": "Still hearing \"P-hikukiku\" - try having it enunciate each kana individually? There's something being misspoken every time"
+    },
+    {
+     "id": "r1-ref-911aaa0a7761c49e",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ばかす",
+     "sent": "ばかす",
+     "lineKeys": [],
+     "file": "ref/r1-ref-911aaa0a7761c49e.opus",
+     "seconds": 0.603,
+     "why": "new take or the same take with the breath after the word cut; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234225-rerender/ref/r1-ref-911aaa0a7761c49e.opus",
+       "seconds": 0.705
+      }
+     ],
+     "yourNote": "Ending has a breathy uptick"
+    },
+    {
+     "id": "r1-ref-b8dafacc2283970b",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "うめ",
+     "sent": "うめ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b8dafacc2283970b.opus",
+     "seconds": 0.463,
+     "why": "new take or the same take with the breath after the word cut; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234225-rerender/ref/r1-ref-b8dafacc2283970b.opus",
+       "seconds": 0.615
+      }
+     ],
+     "yourNote": "Breathy uptick at the end"
+    },
+    {
+     "id": "r1-ref-c5852ab0cc882c25",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "うめ",
+     "sent": "うめ",
+     "lineKeys": [],
+     "file": "ref/r1-ref-c5852ab0cc882c25.opus",
+     "seconds": 0.463,
+     "why": "new take or the same take with the breath after the word cut; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234225-rerender/ref/r1-ref-c5852ab0cc882c25.opus",
+       "seconds": 0.615
+      }
+     ],
+     "yourNote": "Breathy uptick at the end"
+    },
+    {
+     "id": "r1-ref-d31ca70b82bbd4c8",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "うめる",
+     "sent": "うめる",
+     "lineKeys": [],
+     "file": "ref/r1-ref-d31ca70b82bbd4c8.opus",
+     "seconds": 0.573,
+     "why": "new take or the same take with the breath after the word cut; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234225-rerender/ref/r1-ref-d31ca70b82bbd4c8.opus",
+       "seconds": 0.765
+      }
+     ],
+     "yourNote": "Breathy uptick at the end"
+    },
+    {
+     "id": "r1-ref-99bd62e1b425b4d1",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "さんり",
+     "sent": "さんり",
+     "lineKeys": [],
+     "file": "ref/r1-ref-99bd62e1b425b4d1.opus",
+     "seconds": 0.79,
+     "why": "new take or the same take with the breath after the word cut; heard right by the recognizer",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234225-rerender/ref/r1-ref-99bd62e1b425b4d1.opus",
+       "seconds": 0.99
+      }
+     ],
+     "yourNote": "Breathy uptick at the end"
+    }
+   ],
+   "count": 8
+  },
+  {
+   "key": "stubborn",
+   "title": "This voice cannot read these words right (12 takes each); the closest is kept",
+   "items": [
+    {
+     "id": "r1-ref-2bab5bdb1e5539fb",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "おおいし",
+     "sent": "おおいし",
+     "lineKeys": [],
+     "file": "ref/r1-ref-2bab5bdb1e5539fb.opus",
+     "seconds": 0.755,
+     "why": "no take was heard right; see the note on the device voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234353/ref/r1-ref-2bab5bdb1e5539fb.opus",
+       "seconds": 0.795
+      }
+     ],
+     "recognizer": {
+      "heard": "おいしい",
+      "heardKana": "オイシイ",
+      "expectedKana": "オオイシ",
+      "match": false
+     }
+    },
+    {
+     "id": "r1-ref-b06952501818dfed",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ぼこう",
+     "sent": "ぼこう",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b06952501818dfed.opus",
+     "seconds": 0.655,
+     "why": "no take was heard right; see the note on the device voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234353/ref/r1-ref-b06952501818dfed.opus",
+       "seconds": 0.779
+      }
+     ],
+     "recognizer": {
+      "heard": "ここを",
+      "heardKana": "ココオ",
+      "expectedKana": "ボコオ",
+      "match": false
+     },
+     "yourNote": "Heard as \"Dokou\" previously, now heard as \"Kokoa\""
+    },
+    {
+     "id": "r1-ref-b8f801f6ac6359dc",
+     "speaker": "narrator",
+     "voice": null,
+     "pitch": null,
+     "delivery": "citation",
+     "spoken": "ぶんるいめい",
+     "sent": "ぶんるいめい",
+     "lineKeys": [],
+     "file": "ref/r1-ref-b8f801f6ac6359dc.opus",
+     "seconds": 0.885,
+     "why": "no take was heard right; see the note on the device voice",
+     "earlierTakes": [
+      {
+       "file": "superseded/20261018T234353/ref/r1-ref-b8f801f6ac6359dc.opus",
+       "seconds": 0.97
+      }
+     ],
+     "recognizer": {
+      "heard": "分類目",
+      "heardKana": "ブンルイメ",
+      "expectedKana": "ブンルイメイ",
+      "match": false
+     }
+    }
+   ],
+   "count": 3
+  }
+ ],
+ "counts": {
+  "redone": 8,
+  "stubborn": 3
+ }
+}
