@@ -317,6 +317,12 @@ RB.audio = RB.audio || {};
     seq(g, o, t + 0.06, 'harp', [69, 74, 76, 81], 0.1, 0.4, 0.32, p);
     note(g, o, t + 0.5, 'glass', 88, 0.9, 0.28, p);
   });
+  // a stamp pressed into the Road Stamp Book (its award slip): the block's soft thud on paper, then two small notes
+  def('stamp', 1.2, 0.3, 0.2, (g, o, t, p) => {
+    tone(g, o, t, { type: 'triangle', f: 150 * p, f2: 90 * p, glide: 0.08, a: 0.002, hold: 0.03, r: 0.12, v: 0.12 });
+    whoosh(g, o, t, { type: 'lowpass', f: 900, q: 0.7, a: 0.002, hold: 0.02, r: 0.08, v: 0.08 });
+    seq(g, o, t + 0.16, 'pluck', [79, 84], 0.07, 0.2, 0.45, p);
+  });
   def('item_get', 1.5, 0.3, 0.2, (g, o, t, p) => {
     seq(g, o, t, 'pluck', [67, 71, 74, 79], 0.06, 0.2, 0.55, p);
     note(g, o, t + 0.26, 'bell', 83, 0.4, 0.32, p);
@@ -377,7 +383,7 @@ RB.audio = RB.audio || {};
   const LEVEL = _.sfxLevel = {
     confirm: -10, cancel: -10, menu_open: -9, menu_close: -9, save: -9, page: -5,
     quest_update: -10, answer_right: -9, answer_wrong: -8, recog_ok: -8, recog_unsure: -7,
-    discover: -9, item_get: -8, reveal: -7, levelup: -8, moment: -8,
+    discover: -9, item_get: -8, reveal: -7, levelup: -8, moment: -8, stamp: -8,
   };
   _.sfxPlay = function (g, id, t, opts) {
     const d = X[id];

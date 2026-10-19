@@ -5,13 +5,15 @@
  *   - keepsake ("Keepsake found"): the keepsake's picture in a mount, its name; an item that is also a keepsake gets
  *     one slip, the item's, marked as a keepsake too;
  *   - moment ("Moment recorded"): a page of the travel volume witnessed for the first time, pressed with your seal,
- *     with its own sound.
+ *     with its own sound;
+ *   - stamp ("Stamp pressed"): a stamp of the Road Stamp Book pressed at once (the field guide's): the stamp's own
+ *     design comes down onto the slip and lands with a ring of its ink; the slip's edge is in that ink.
  * Each slides in from the top in a few quick frames, a gold flare runs round its border from the top-left and the
  * bottom-right corners (twice, or three times for what matters most) and trails off; it stays for a set time (paused
  * while pointed at or focused) and closes at once with its × or a tap. One sound each, no more. Reduce motion: no
- * slide and no flare. Nothing here changes what was given.
+ * slide, no flare and no press. Nothing here changes what was given.
  *
- *   RB.ui.award({ kind: 'item' | 'keepsake' | 'moment', id, jp, en, n, note, art, level, sound }) → Promise
+ *   RB.ui.award({ kind: 'item' | 'keepsake' | 'moment' | 'stamp', id, jp, en, n, note, art, level, sound, ink }) → Promise
  *       (resolves when the slip is placed, as RB.ui.toast does, so a scene goes on at once) */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
@@ -19,9 +21,9 @@ RB.ui = RB.ui || {};
 RB.ui.award = (function () {
   'use strict';
   const esc = (t) => RB.util.esc(t);
-  const LABEL = { item: 'Received', keepsake: 'Keepsake found', moment: 'Moment recorded' };
-  const SOUND = { item: 'item_get', keepsake: 'discover', moment: 'moment' };
-  const HOLD = { item: 6000, keepsake: 7000, moment: 7000 }; // (long enough to read a name and its line)
+  const LABEL = { item: 'Received', keepsake: 'Keepsake found', moment: 'Moment recorded', stamp: 'Stamp pressed' };
+  const SOUND = { item: 'item_get', keepsake: 'discover', moment: 'moment', stamp: 'stamp' };
+  const HOLD = { item: 6000, keepsake: 7000, moment: 7000, stamp: 7000 }; // (long enough to read a name and its line)
   const MAX = 3; // slips on screen at once; an older one gives way
   const live = []; // { el, kind, id, timer, close }
   const reduce = () => !!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion());
@@ -39,6 +41,7 @@ RB.ui.award = (function () {
       n.setAttribute('role', 'status');
       n.dataset.kind = kind;
       if (t.id) n.dataset.id = t.id;
+      if (t.ink) n.style.setProperty('--aw-ink', t.ink);
       const art = t.art != null ? t.art : kind === 'item' && t.id ? RB.itemArt.html(t.id, 3) : '';
       n.innerHTML = '<span class="aw-art" aria-hidden="true">' + (typeof art === 'string' ? art : '') + '</span>' +
         '<span class="aw-body"><span class="kind">' + esc(LABEL[kind]) + '</span>' +

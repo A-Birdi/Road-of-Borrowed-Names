@@ -83,6 +83,18 @@ body.in-panel #overlay > .notices > .award .aw-x { pointer-events: auto; }
 .award.aw-moment { border-left-color: var(--cloth-700); }
 .award.aw-moment .kind { color: var(--cloth-600); }
 .award.aw-moment .aw-art svg { width: 48px; height: 48px; transform: rotate(-4deg); }
+/* stamp: the edge in the stamp's own ink; the stamp comes down onto the slip and lands with a ring of that ink */
+.award.aw-stamp { border-left-color: var(--aw-ink, var(--vermilion)); }
+.award.aw-stamp .kind { color: var(--aw-ink, var(--vermilion)); }
+.award.aw-stamp .aw-art { position: relative; }
+.award.aw-stamp .aw-art svg { width: 48px; height: 48px; transform: rotate(-6deg); }
+.award.aw-stamp.aw-in .aw-art svg { animation: aw-press 360ms 140ms steps(6, end) both; }
+@keyframes aw-press { 0% { transform: translateY(-10px) scale(1.7) rotate(-16deg); opacity: 0; } 70% { transform: scale(0.9) rotate(-5deg); opacity: 1; } 100% { transform: rotate(-6deg); } }
+.award.aw-stamp.aw-in .aw-art::after {
+  content: ""; position: absolute; inset: 6px; border-radius: 50%; border: 2px solid var(--aw-ink, var(--vermilion)); pointer-events: none;
+  opacity: 0; animation: aw-ink 480ms 380ms ease-out both;
+}
+@keyframes aw-ink { from { transform: scale(0.7); opacity: 0.6; } to { transform: scale(1.4); opacity: 0; } }
 /* arriving: from the top in a few quick frames; leaving: up and away */
 .award.aw-in { animation: aw-in 160ms steps(4, end) both; }
 @keyframes aw-in { from { transform: translateY(-140%); opacity: 0.2; } to { transform: none; opacity: 1; } }
@@ -90,7 +102,8 @@ body.in-panel #overlay > .notices > .award .aw-x { pointer-events: auto; }
 @keyframes aw-out { to { transform: translateY(-40%); opacity: 0; } }
 /* the gold flare's canvas reaches a little past the slip's border */
 .award .aw-flair { position: absolute; pointer-events: none; image-rendering: pixelated; z-index: 2; }
-body.reduced-motion .award.aw-in, body.reduced-motion .award.aw-out { animation: none; }
+body.reduced-motion .award.aw-in, body.reduced-motion .award.aw-out, body.reduced-motion .award.aw-stamp .aw-art svg { animation: none; }
+body.reduced-motion .award.aw-stamp .aw-art::after { display: none; }
 body.reduced-motion .award .aw-flair { display: none; }
 @media (max-width: 520px) { .award .aw-art { width: 48px; height: 48px; } .award .aw-art > img.it-ic { width: 32px; height: 32px; } }
 

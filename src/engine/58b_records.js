@@ -2,12 +2,14 @@
  * C-52, C-55, C-66): the Road Stamp Book, the travel volume and the traveller's own seal. They read what the journey
  * did and keep their marks in the save's records (RB.records, src/engine/05b_foundations.js), which New Game+ carries.
  *
- *   RB.stampBook  stamps[id] = { family, title, criteria { en, jp }, hidden, chapter, when: cond | fn(s), stand,
- *                 design: { shape, motif, ink } }; stands[id] = { map, x, y, title }.
+ *   RB.stampBook  stamps[id] = { family, title, criteria { en, jp }, hidden, known: cond | fn(s), veil { en, jp },
+ *                 chapter, when: cond | fn(s), stand, design: { shape, motif, ink } }; stands[id] = { map, x, y, title }.
  *                 A stamp is *earned* when its criteria hold, and *pressed* (recorded, once) at its stand in the
  *                 world, or at once when it has none. No stamp asks for an input mode, going without help, a
  *                 streak, a time, a mastery star (C-13) or a festival score (C-55). Hidden stamps show neutral,
- *                 spoiler-safe criteria ("A side story in Chapter 7").
+ *                 spoiler-safe criteria ("A side story in Chapter 7"). A stamp whose place the journey may not
+ *                 have reached yet (`known`) shows veiled, in its `veil` words, until it is. The chapter-keyed
+ *                 families (chapters, people helped, the field guide) list their stamps in story order.
  *   RB.volume     the travel volume's pages: every illustrated sequence (src/ui/43_sequence.js), and pages content
  *                 adds. *Witnessed* = the moment happened in this campaign (skipped or helped counts; no time spent
  *                 watching is asked). Viewable in a campaign (R2 §6): what was witnessed, every page of a finished
@@ -56,6 +58,15 @@ RB.stampBook = (function () {
   }
   // the earned stamps waiting at a stand
   const ready = (s, standId) => Object.keys(S()).filter((id) => S()[id].stand === standId && earned(s, id) && !pressed(s, id));
+  // its place is known to this journey (a stamp without `known` always is)
+  function known(s, d) {
+    if (!d.known) return true;
+    try { return typeof d.known === 'function' ? !!d.known(s) : RB.state.test(s, d.known); } catch (e) { return false; }
+  }
+  // the families whose stamps belong to a chapter: listed in story order (the twelve-chapter numbers, F-21), any
+  // without a chapter after the story's
+  const STORY = { chapter: 1, region: 1, guide: 1 };
+  const storyNo = (d) => (d.chapter && RB.volume ? RB.volume.numberOf({ chapter: d.chapter }) || 13 : 13);
   // the book: every stamp in order, with its state ('pressed' | 'ready' (earned, its stand waiting) | 'open')
   function book(s) {
     const out = [];
@@ -63,9 +74,12 @@ RB.stampBook = (function () {
       const d = S()[id];
       const st = pressed(s, id) ? 'pressed' : earned(s, id) && d.stand ? 'ready' : 'open';
       const rec = st === 'pressed' ? (s.records.stamps[id] || {}) : null;
-      out.push({ id, d, state: st, at: rec ? rec.at : null, t: rec ? rec.t : null, rec, veiled: st === 'open' && !!d.hidden });
+      const veiled = st === 'open' && (!!d.hidden || !known(s, d));
+      out.push({ id, d, state: st, at: rec ? rec.at : null, t: rec ? rec.t : null, rec, veiled, criteria: veiled && d.veil ? d.veil : d.criteria });
     }
-    return out;
+    const fam = [...new Set(out.map((x) => x.d.family))];
+    const key = (x, i) => [fam.indexOf(x.d.family), STORY[x.d.family] ? storyNo(x.d) : 0, i];
+    return out.map((x, i) => key(x, i).concat([x])).sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]).map((k) => k[3]);
   }
   // a stand in the world: content places a prop with scene 'rb.stand' and o.stand = <id>
   RB.hooks = RB.hooks || {};
@@ -84,7 +98,7 @@ RB.stampBook = (function () {
     }
   };
   if (RB.bus) RB.bus.on('story:settled', () => { const s = RB.game && RB.game.s; if (s) settle(s); });
-  return { earned, pressed, pressAt, settle, ready, book, press1 };
+  return { earned, pressed, pressAt, settle, ready, book, press1, known };
 })();
 
 RB.volume = (function () {

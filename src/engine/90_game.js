@@ -444,7 +444,11 @@ RB.game = (function () {
         if (e.t === 'lostWord') RB.ui.toast({ kind: 'word', jp: e.jp, en: 'A lost word comes back: ' + e.en });
         else if (e.t === 'item' && RB.content.items[e.id]) RB.ui.toast({ kind: 'item', id: e.id, note: RB.equip.note(RB.content.items[e.id]) });
         else if (e.t === 'cleared') RB.ui.notice('The way is clear now: people will start using it again.', 'info');
-        else if (e.t === 'stamp') RB.ui.notice('A field-guide stamp: every kind of creature in this region settled.', 'info');
+        else if (e.t === 'stamp' && RB.content.stamps[e.id]) {
+          // the Stamp Book's slip: the stamp's own design pressed onto it (src/ui/15_award.js)
+          const d = RB.content.stamps[e.id];
+          RB.ui.award({ kind: 'stamp', id: e.id, jp: d.title.jp, en: d.title.en, note: (d.note || d.criteria).en + ' Kept in Journey › Stamp book.', art: RB.ui.records ? RB.ui.records.stampSvg(d, 'pressed', d.title.en) : '', ink: d.design.ink });
+        }
       }
     }
     if (res === 'win') {

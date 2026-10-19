@@ -59,6 +59,12 @@
   "jp": "{倉庫|そうこ} の {地下|ちか} の {水|みず} を {抜|ぬ}く",
   "en": "Drain the Flood Cellars and open the outflow door."
  },
+ "stamp:xp.cellars#w1iewl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}2{章|しょう} の {後|あと} の {探索|たんさく}",
+  "en": "An expedition, once Chapter 2 is over."
+ },
  "stamp:gd.rw#2cauzm": {
   "status": "self-reviewed",
   "ref": "self-reviewed (P15e, the old guardians): each line read in full against the lexicon, the grammar points' notes and the regions' own terms (雲路峠, 沈鐘, 釜の主); fixed: は for a leaf in kana-only lines (read as the particle) now はっぱ, 車 alone for the waterwheel now 水車, the pass named by its own name",
@@ -497,11 +503,11 @@
   "jp": "{灰実|はいみ}の{里|さと}",
   "en": "Cinder Orchard"
  },
- "stamp:ch.co#1gkwds8": {
+ "stamp:ch.co#1jey82q": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
-  "jp": "{第|だい}3{章|しょう}",
-  "en": "Chapter 3: the main story."
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}5{章|しょう}",
+  "en": "Chapter 5: the main story."
  },
  "stamp:side.co#1i1o7yx": {
   "status": "self-reviewed",
@@ -509,11 +515,11 @@
   "jp": "{灰実|はいみ}の{里|さと} の {頼|たの}み",
   "en": "Cinder Orchard: everyone helped"
  },
- "stamp:side.co#ehvl4b": {
+ "stamp:side.co#ejybuh": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
-  "jp": "{第|だい}3{章|しょう} の {寄|よ}り{道|みち}",
-  "en": "Every side story in Chapter 3 that your journey could have."
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}5{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 5 that your journey could have."
  },
  "stamp:ch.sb#apgu19": {
   "status": "self-reviewed",
@@ -521,11 +527,11 @@
   "jp": "{雪鈴|ゆきすず}",
   "en": "Snowbell"
  },
- "stamp:ch.sb#1liul47": {
+ "stamp:ch.sb#17m7069": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
-  "jp": "{第|だい}4{章|しょう}",
-  "en": "Chapter 4: the main story."
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}6{章|しょう}",
+  "en": "Chapter 6: the main story."
  },
  "stamp:side.sb#6s7f9f": {
   "status": "self-reviewed",
@@ -533,11 +539,11 @@
   "jp": "{雪鈴|ゆきすず} の {頼|たの}み",
   "en": "Snowbell: everyone helped"
  },
- "stamp:side.sb#1d1a1ym": {
+ "stamp:side.sb#1vj7ing": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
-  "jp": "{第|だい}4{章|しょう} の {寄|よ}り{道|みち}",
-  "en": "Every side story in Chapter 4 that your journey could have."
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}6{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 6 that your journey could have."
  },
  "stamp:ch.lf#yjxig4": {
   "status": "self-reviewed",
@@ -545,11 +551,11 @@
   "jp": "{灯落|ひおち}",
   "en": "Lanternfall"
  },
- "stamp:ch.lf#1jey82q": {
+ "stamp:ch.lf#11nowsj": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
-  "jp": "{第|だい}5{章|しょう}",
-  "en": "Chapter 5: the main story."
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}8{章|しょう}",
+  "en": "Chapter 8: the main story."
  },
  "stamp:side.lf#98yjm2": {
   "status": "self-reviewed",
@@ -557,11 +563,11 @@
   "jp": "{灯落|ひおち} の {頼|たの}み",
   "en": "Lanternfall: everyone helped"
  },
- "stamp:side.lf#ejybuh": {
+ "stamp:side.lf#1uo1px6": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
-  "jp": "{第|だい}5{章|しょう} の {寄|よ}り{道|みち}",
-  "en": "Every side story in Chapter 5 that your journey could have."
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}8{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 8 that your journey could have."
  },
  "stamp:ch.sa#bhirnd": {
   "status": "self-reviewed",
@@ -569,11 +575,11 @@
   "jp": "{旅|たび} の {終|お}わり",
   "en": "The end of the road"
  },
- "stamp:ch.sa#17m7069": {
+ "stamp:ch.sa#28si94": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
-  "jp": "{第|だい}6{章|しょう}",
-  "en": "Chapter 6: the main story."
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}12{章|しょう}",
+  "en": "Chapter 12: the main story."
  },
  "stamp:side.sa#qy0ove": {
   "status": "self-reviewed",
@@ -581,11 +587,209 @@
   "jp": "{最後|さいご} の {頼|たの}み",
   "en": "The last requests"
  },
- "stamp:side.sa#1vj7ing": {
+ "stamp:side.sa#1nsu1u3": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
-  "jp": "{第|だい}6{章|しょう} の {寄|よ}り{道|みち}",
-  "en": "Every side story in Chapter 6 that your journey could have."
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}12{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 12 that your journey could have."
+ },
+ "stamp:guide:reedwake#1uuy062": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{葦|あし}ノ{瀬|せ} の {生|い}き{物|もの}",
+  "en": "Reedwake: every kind settled"
+ },
+ "stamp:guide:reedwake#1qs70gi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{葦|あし}ノ{瀬|せ} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams Reedwake, settled. Its bosses are not counted."
+ },
+ "stamp:guide:reedwake#2lrjq7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}1{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 1."
+ },
+ "stamp:guide:saltglass#o3rrk2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{潮|しお}{硝子|がらす} の {生|い}き{物|もの}",
+  "en": "Saltglass: every kind settled"
+ },
+ "stamp:guide:saltglass#1j0nllm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{潮|しお}{硝子|がらす} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams Saltglass, settled. Its bosses are not counted."
+ },
+ "stamp:guide:saltglass#ti1hdu": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}2{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 2."
+ },
+ "stamp:guide:manybridge#bp13gb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{八百橋|やおばし} の {生|い}き{物|もの}",
+  "en": "Manybridge: every kind settled"
+ },
+ "stamp:guide:manybridge#9vf5hv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{八百橋|やおばし} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams Manybridge, settled. Its bosses are not counted."
+ },
+ "stamp:guide:manybridge#1popwtx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}3{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 3."
+ },
+ "stamp:guide:cinder#8pc4c8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{灰実|はいみ}の{里|さと} の {生|い}き{物|もの}",
+  "en": "Cinder Orchard: every kind settled"
+ },
+ "stamp:guide:cinder#nf4clw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{灰実|はいみ}の{里|さと} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams Cinder Orchard, settled. Its bosses are not counted."
+ },
+ "stamp:guide:cinder#56fyvf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}5{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 5."
+ },
+ "stamp:guide:snowbell#11mk062": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{雪鈴|ゆきすず} の {生|い}き{物|もの}",
+  "en": "Snowbell: every kind settled"
+ },
+ "stamp:guide:snowbell#n57s7m": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{雪鈴|ゆきすず} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams Snowbell, settled. Its bosses are not counted."
+ },
+ "stamp:guide:snowbell#yjh5ry": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}6{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 6."
+ },
+ "stamp:guide:keepers#syvizi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{灯守|ひもり} の {道|みち} の {生|い}き{物|もの}",
+  "en": "The Keepers' Road: every kind settled"
+ },
+ "stamp:guide:keepers#zrzbjq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{灯守|ひもり} の {道|みち} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams the Keepers' Road, settled. Its bosses are not counted."
+ },
+ "stamp:guide:keepers#lc63r5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}7{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 7."
+ },
+ "stamp:guide:lanternfall#1efwx9d": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{灯落|ひおち} の {生|い}き{物|もの}",
+  "en": "Lanternfall: every kind settled"
+ },
+ "stamp:guide:lanternfall#h0rjkl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{灯落|ひおち} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams Lanternfall, settled. Its bosses are not counted."
+ },
+ "stamp:guide:lanternfall#1v1m9xw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}8{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 8."
+ },
+ "stamp:guide:kotonoha#phj8jb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{言|こと}の{葉|は}{島|じま} の {生|い}き{物|もの}",
+  "en": "Kotonoha: every kind settled"
+ },
+ "stamp:guide:kotonoha#fazkvj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{言|こと}の{葉|は}{島|じま} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams Kotonoha, settled. Its bosses are not counted."
+ },
+ "stamp:guide:kotonoha#1djrdlz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}9{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 9."
+ },
+ "stamp:guide:cloudroad#1af7yem": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{雲路|くもじ} の {生|い}き{物|もの}",
+  "en": "The Cloudroad: every kind settled"
+ },
+ "stamp:guide:cloudroad#1c21vra": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{雲路|くもじ} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams the Cloudroad, settled. Its bosses are not counted."
+ },
+ "stamp:guide:cloudroad#g6jdfj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}10{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 10."
+ },
+ "stamp:guide:steamhollow#18iytvu": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{湯|ゆ}ノ{谷|たに} の {生|い}き{物|もの}",
+  "en": "Steamhollow: every kind settled"
+ },
+ "stamp:guide:steamhollow#e26iyq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{湯|ゆ}ノ{谷|たに} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams Steamhollow, settled. Its bosses are not counted."
+ },
+ "stamp:guide:steamhollow#3vki0c": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}11{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 11."
+ },
+ "stamp:guide:still#35cdeg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{静寂|しじま} の {書庫|しょこ} の {生|い}き{物|もの}",
+  "en": "The Still Archive: every kind settled"
+ },
+ "stamp:guide:still#xa4wac": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{静寂|しじま} の {書庫|しょこ} の {生|い}き{物|もの} が みな {静|しず}まる",
+  "en": "Every kind of creature that roams the Still Archive, settled. Its bosses are not counted."
+ },
+ "stamp:guide:still#mz7imt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (SB-1, Stamp Book fix after Robin's playtest of 2026-10-19): chapter numbers in the twelve-chapter story order (第N章, 第N章 の 寄り道); the Flood Cellars' veiled words (第2章 の 後 の 探索); the field guide's titles and criteria (X の 生き物; X の 生き物 が みな 静まる, 静まる as the creatures notebook uses it; 第N章 の 生き物); place names as the stamp stands and region titles write them; read in full against the lexicon and standard textbook grammar",
+  "jp": "{第|だい}12{章|しょう} の {生|い}き{物|もの}",
+  "en": "Every kind of creature that roams a place in Chapter 12."
  },
  "stamp:atlas.first#sf1ya9": {
   "status": "self-reviewed",

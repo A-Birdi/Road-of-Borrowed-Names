@@ -23,7 +23,7 @@ RB.ui.records = (function () {
   const J = (x) => (x && x.jp ? RB.ui.jhtml(x.jp) : '');
   const both = (x) => (x ? '<span class="rb-jp">' + J(x) + '</span><span class="en">' + esc(x.en || '') + '</span>' : '');
   const FAMILY = [
-    ['chapter', 'Chapters', '{章|しょう}'], ['region', 'People helped', '{頼|たの}み'], ['dungeon', 'Places explored', '{探索|たんさく}'],
+    ['chapter', 'Chapters', '{章|しょう}'], ['region', 'People helped', '{頼|たの}み'], ['guide', 'Field guide', '{生|い}き{物|もの} の {記録|きろく}'], ['dungeon', 'Places explored', '{探索|たんさく}'],
     ['pastime', 'Pastimes', '{遊|あそ}び'], ['guardian', 'Old guardians', '{古|ふる}い {守|まも}り{手|て}'], ['milestone', 'Along the way', '{道|みち}すがら'],
     ['language', 'What I can do', 'できる こと'], ['road', 'On the roads', '{道中|どうちゅう}'],
   ];
@@ -87,7 +87,7 @@ RB.ui.records = (function () {
         const gd = x.state === 'pressed' && x.d.family === 'guardian' && RB.guardians ? RB.guardians.noteOf(x.rec) : '';
         const note = gd ? gd + (x.t ? ' ' + fmt(x.t) + '.' : '') : x.state === 'pressed' ? 'Pressed' + (x.at && stands[x.at] ? ' at ' + stands[x.at].title.en : '') + (x.t ? ', ' + fmt(x.t) : '')
           : x.state === 'ready' ? 'Earned: press it at the stand in ' + (st ? st.title.en : 'its town') + '.'
-          : x.d.criteria.en;
+          : x.criteria.en;
         return '<li class="rb-st ' + x.state + '" data-stamp="' + esc(x.id) + '">' + stampSvg(x.d, x.state, STATE_WORD[x.state] + ': ' + title.en) +
           '<div class="rb-st-t">' + both(title) + '<span class="rb-st-n">' + esc(note) + '</span></div></li>';
       }).join('') + '</ul>';

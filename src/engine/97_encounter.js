@@ -900,13 +900,10 @@ RB.encounter = (function () {
       const all = (m.foes || []).every((f) => s.flags['foe:' + mapId + ':' + f.id]);
       if (all) { s.flags['cleared:' + m.route] = true; out.push({ t: 'cleared', route: m.route }); }
     }
-    if (RB.edition && RB.edition.of(s) >= 2 && RB.records && place.enemy) {
-      const region = (C.enemies[place.enemy] || {}).region;
-      if (region && RB.creatures && s.creatures) {
-        const kinds = Object.keys(C.enemies).filter((id) => C.enemies[id].region === region && !C.enemies[id].boss);
-        const done = kinds.every((id) => s.creatures[id] && s.creatures[id].settled);
-        if (kinds.length && done && RB.records.award(s, 'stamps', 'guide:' + region)) out.push({ t: 'stamp', id: 'guide:' + region });
-      }
+    // the region's field-guide stamp (a Stamp Book stamp, src/content/records/00_stamps.js: its bosses not counted)
+    if (RB.edition && RB.edition.of(s) >= 2 && RB.stampBook && place.enemy) {
+      const id = (C.guideRegion || {})[(C.enemies[place.enemy] || {}).region];
+      if (id && RB.stampBook.press1(s, id, null)) out.push({ t: 'stamp', id });
     }
     return out;
   }

@@ -1,7 +1,8 @@
 // The Ledger and award round of 2026-10-16 (LI-3 to LI-13), in the built game:
 //   1. LI-3: a received item's slip shows its drawn icon and name, plays one sound, can be closed at once, and puts a
 //      glowing "new" mark on the Ledger's button; a recorded moment has its own slip and sound; slips slide in with a
-//      gold flare round them;
+//      gold flare round them; a stamp pressed at once (the field guide's) has its own slip: its design pressed down
+//      onto it in its ink, the flare, its own sound;
 //   2. LI-4 / LI-9: the dialogue strip rises into place; pointing at a Japanese word marks its English counterpart (and
 //      the other way), and with the Highlight setting off nothing is marked; LI-12: a verb ("I'm" for 申します) and an
 //      ending ("won't" for 行かない, in the grammar colour, blue and dotted) pair too;
@@ -68,6 +69,19 @@ const start = (p, map, x, y) => p.evaluate(([map, x, y]) => {
     return { slip: !!n, kind: n ? n.querySelector('.kind').textContent : '', sounds: calls };
   });
   assert(moment.slip && /Moment recorded/.test(moment.kind) && moment.sounds.join() === 'moment', 'LI-3: a recorded moment has its own slip and its own sound: ' + JSON.stringify(moment));
+  await p.evaluate(() => document.querySelectorAll('.toast.award').forEach((n) => n.remove()));
+  const stamp = await p.evaluate(async () => {
+    const calls = [];
+    const was = RB.audio.sfx;
+    RB.audio.sfx = function (id) { calls.push(id); return was.apply(this, arguments); };
+    const d = RB.content.stamps['guide:reedwake'];
+    RB.ui.award({ kind: 'stamp', id: d.id, jp: d.title.jp, en: d.title.en, note: d.note.en, art: RB.ui.records.stampSvg(d, 'pressed', d.title.en), ink: d.design.ink });
+    await new Promise((r) => setTimeout(r, 120));
+    RB.audio.sfx = was;
+    const n = document.querySelector('.toast.award.aw-stamp'), svg = n && n.querySelector('.aw-art svg.rb-stamp');
+    return { slip: !!n, kind: n ? n.querySelector('.kind').textContent : '', press: svg ? getComputedStyle(svg).animationName : '', flare: !!(n && n.querySelector('.aw-flair')), sounds: calls };
+  });
+  assert(stamp.slip && /Stamp pressed/.test(stamp.kind) && stamp.press === 'aw-press' && stamp.flare && stamp.sounds.join() === 'stamp', 'a stamp pressed at once: its own slip, its design pressed down, the flare, its own sound: ' + JSON.stringify(stamp));
   await p.evaluate(() => document.querySelectorAll('.toast.award').forEach((n) => n.remove()));
 
   // the dialogue strip, and pointing at a word
@@ -284,15 +298,19 @@ const start = (p, map, x, y) => p.evaluate(([map, x, y]) => {
   await wait(p, 200);
   const rm = await p.evaluate(async () => {
     RB.ui.toast({ kind: 'item', id: 'rw_letter', en: RB.content.items.rw_letter.name.en });
+    const d = RB.content.stamps['guide:reedwake'];
+    RB.ui.award({ kind: 'stamp', id: d.id, jp: d.title.jp, en: d.title.en, art: RB.ui.records.stampSvg(d, 'pressed', d.title.en), ink: d.design.ink, sound: false });
     await new Promise((r) => setTimeout(r, 120));
     const n = document.querySelector('.toast.award');
     const flare = n && n.querySelector('.aw-flair');
-    return { slide: n ? n.classList.contains('aw-in') : null, flare: !!(flare && getComputedStyle(flare).display !== 'none') };
+    const st = document.querySelector('.toast.award.aw-stamp'), svg = st && st.querySelector('.aw-art svg');
+    return { slide: n ? n.classList.contains('aw-in') : null, flare: !!(flare && getComputedStyle(flare).display !== 'none'), press: svg ? getComputedStyle(svg).animationName : null, stampSlide: st ? st.classList.contains('aw-in') : null };
   });
   await p.evaluate(() => { document.querySelectorAll('.toast.award').forEach((n) => n.remove()); RB.ui.menu.open('map'); });
   await wait(p, 600);
   const ring = await p.evaluate(() => getComputedStyle(document.querySelector('.here-pulse')).animationName);
   assert(rm.slide === false && !rm.flare && ring === 'none', 'reduced motion: no slide, no flare, the ring still: ' + JSON.stringify({ rm, ring }));
+  assert(rm.stampSlide === false && rm.press === 'none', 'reduced motion: the stamp slip neither slides nor presses: ' + JSON.stringify(rm));
   assert(!errors.length, 'no page errors with reduced motion: ' + errors.join(' | '));
   await p.context().close();
 }

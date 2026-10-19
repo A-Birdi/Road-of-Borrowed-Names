@@ -173,6 +173,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (yasu) yasu.talk.unshift({ if: 'ed>=2&ch2_done&!xpk_cellars_heard', scene: 'xp.cellars_yasu' }, { if: 'ed>=2&xpk_cellars_done&!xpk_cellars_thanked', scene: 'xp.cellars_yasu_done' });
 
   // ---- the stamp: the cellars drained (a dungeon's stamp, like the Atlas's) ---------------------------------------
+  // Its place opens once Chapter 2 is over (the hatch above): until then the book shows it veiled, in words that name
+  // no place, so a Chapter 1 journey does not take it for the Old Mill's wheel pit (owner's report, 2026-10-19).
   C.stamps = C.stamps || {};
-  C.stamps['xp.cellars'] = { id: 'xp.cellars', family: 'dungeon', title: T('The cellars drained', '{地下|ちか} の {水|みず} を {抜|ぬ}く'), criteria: T('Drain the Flood Cellars and open the outflow door.', '{倉庫|そうこ} の {地下|ちか} の {水|みず} を {抜|ぬ}く'), when: 'ed>=2&xpk_cellars_done', stand: null, design: { shape: 'square', motif: 'stairs', ink: '#2a5a6a' } };
+  C.stamps['xp.cellars'] = { id: 'xp.cellars', family: 'dungeon', title: T('The cellars drained', '{地下|ちか} の {水|みず} を {抜|ぬ}く'), criteria: T('Drain the Flood Cellars under the River Warehouse and open the outflow door.', '{倉庫|そうこ} の {地下|ちか} の {水|みず} を {抜|ぬ}く'), known: 'ch2_done', veil: T('An expedition, once Chapter 2 is over.', '{第|だい}2{章|しょう} の {後|あと} の {探索|たんさく}'), when: 'ed>=2&xpk_cellars_done', stand: null, design: { shape: 'square', motif: 'stairs', ink: '#2a5a6a' } };
 })(RB.content, RB.mapkit);

@@ -1,9 +1,10 @@
 /* The Road Stamp Book's stamps and stands (expansion P06, K1; src/engine/58b_records.js). Stamps for meaningful
  * moments only: each chapter's story, a region's people helped (every side story this journey could have; one that
- * belongs to another companion's journey counts as done), the Atlas, pastimes, natural milestones and the first
- * "What I can do" of each kind. None asks for an input mode, going without help, a streak, a time, a mastery star
- * (C-13) or a festival score (C-55). The stands stand in each region's town, only in journeys of the twelve-chapter
- * edition until the release (F-21); the new chapters add their own stamps and stands. */
+ * belongs to another companion's journey counts as done), the Atlas, pastimes, natural milestones, the field guide
+ * (every kind of creature that roams a region) and the first "What I can do" of each kind. None asks for an input
+ * mode, going without help, a streak, a time, a mastery star (C-13) or a festival score (C-55). The stands stand in
+ * each region's town, only in journeys of the twelve-chapter edition until the release (F-21); the new chapters add
+ * their own stamps and stands. */
 var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
@@ -34,6 +35,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const add = (id, d) => { C.stamps[id] = Object.assign({ id }, d); };
 
   // ---- chapters and regions ---------------------------------------------------------------------------------------
+  // (n: the chapter's old number, which its quests and flags keep; no: the number the player sees, its place in the
+  // twelve-chapter story order, since the book belongs to that edition: Cinder Orchard is Chapter 5 there, not 3)
+  const storyNo = (key) => RB.edition.ORDER.indexOf(key) + 1;
   const CH = [
     ['rw', 1, 'ch1_done', 'reedwake', 'bridge', '#b8322a', T('Reedwake', '{葦|あし}ノ{瀬|せ}')],
     ['sg', 2, 'ch2_done', 'saltglass', 'wave', '#2a4f8a', T('Saltglass', '{潮|しお}{硝子|がらす}')],
@@ -42,11 +46,51 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ['lf', 5, 'ch5_done', 'lanternfall', 'lantern', '#8a5a1e', T('Lanternfall', '{灯落|ひおち}')],
   ];
   for (const [key, n, flag, stand, motif, ink, title] of CH) {
-    add('ch.' + key, { family: 'chapter', chapter: n, title, criteria: T('Chapter ' + n + ': the main story.', '{第|だい}' + n + '{章|しょう}'), hidden: n > 2, when: ED + '&' + flag, stand, design: { shape: 'round', motif, ink } });
-    add('side.' + key, { family: 'region', chapter: n, title: T(title.en + ': everyone helped', title.jp + ' の {頼|たの}み'), criteria: T('Every side story in Chapter ' + n + ' that your journey could have.', '{第|だい}' + n + '{章|しょう} の {寄|よ}り{道|みち}'), hidden: n > 2, when: (s) => RB.edition.of(s) >= 2 && sidesDone(n)(s), stand, design: { shape: 'square', motif, ink } });
+    const no = storyNo(key);
+    add('ch.' + key, { family: 'chapter', chapter: n, title, criteria: T('Chapter ' + no + ': the main story.', '{第|だい}' + no + '{章|しょう}'), hidden: n > 2, when: ED + '&' + flag, stand, design: { shape: 'round', motif, ink } });
+    add('side.' + key, { family: 'region', chapter: n, title: T(title.en + ': everyone helped', title.jp + ' の {頼|たの}み'), criteria: T('Every side story in Chapter ' + no + ' that your journey could have.', '{第|だい}' + no + '{章|しょう} の {寄|よ}り{道|みち}'), hidden: n > 2, when: (s) => RB.edition.of(s) >= 2 && sidesDone(n)(s), stand, design: { shape: 'square', motif, ink } });
   }
-  add('ch.sa', { family: 'chapter', chapter: 6, title: T('The end of the road', '{旅|たび} の {終|お}わり'), criteria: T('Chapter 6: the main story.', '{第|だい}6{章|しょう}'), hidden: true, when: ED + '&postgame', stand: null, design: { shape: 'round', motif: 'book', ink: '#3a3a3a' } });
-  add('side.sa', { family: 'region', chapter: 6, title: T('The last requests', '{最後|さいご} の {頼|たの}み'), criteria: T('Every side story in Chapter 6 that your journey could have.', '{第|だい}6{章|しょう} の {寄|よ}り{道|みち}'), hidden: true, when: (s) => RB.edition.of(s) >= 2 && sidesDone(6)(s), stand: null, design: { shape: 'square', motif: 'book', ink: '#3a3a3a' } });
+  const last = storyNo('sa');
+  add('ch.sa', { family: 'chapter', chapter: 6, title: T('The end of the road', '{旅|たび} の {終|お}わり'), criteria: T('Chapter ' + last + ': the main story.', '{第|だい}' + last + '{章|しょう}'), hidden: true, when: ED + '&postgame', stand: null, design: { shape: 'round', motif: 'book', ink: '#3a3a3a' } });
+  add('side.sa', { family: 'region', chapter: 6, title: T('The last requests', '{最後|さいご} の {頼|たの}み'), criteria: T('Every side story in Chapter ' + last + ' that your journey could have.', '{第|だい}' + last + '{章|しょう} の {寄|よ}り{道|みち}'), hidden: true, when: (s) => RB.edition.of(s) >= 2 && sidesDone(6)(s), stand: null, design: { shape: 'square', motif: 'book', ink: '#3a3a3a' } });
+
+  // ---- the field guide (E24 option 6): every kind of creature that roams a region, settled ------------------------
+  // One stamp a region, pressed as soon as it is earned (src/engine/97_encounter.js roamingWon presses and announces
+  // it after a roaming creature is settled). A region's bosses (its story's creature, its old guardian) have stamps of
+  // their own and are not counted. Until a creature of the region has been met it shows veiled, in neutral words.
+  // (The vents under Steamhollow are one region with the valley here: a guide of one kind would be no guide.)
+  const GUIDE = [
+    // [region (the stamp's id), regions it also covers, chapter key, place, motif, ink]
+    ['reedwake', [], 'rw', stands.reedwake.title, 'bridge', '#b8322a'],
+    ['saltglass', [], 'sg', stands.saltglass.title, 'wave', '#2a4f8a'],
+    ['manybridge', [], 'mb1', T('Manybridge', '{八百橋|やおばし}'), 'plaque', '#2c3e6a'],
+    ['cinder', [], 'co', stands.cinder.title, 'leaf', '#4a6a2a'],
+    ['snowbell', [], 'sb', stands.snowbell.title, 'bell', '#5a4a8a'],
+    ['keepers', [], 'kr', T('the Keepers\' Road', '{灯守|ひもり} の {道|みち}'), 'lantern', '#7a3a1e'],
+    ['lanternfall', [], 'lf', stands.lanternfall.title, 'lantern', '#8a5a1e'],
+    ['kotonoha', [], 'ko', T('Kotonoha', '{言|こと}の{葉|は}{島|じま}'), 'scroll', '#3a6a4a'],
+    ['cloudroad', [], 'cr', T('the Cloudroad', '{雲路|くもじ}'), 'mountain', '#4a5a7a'],
+    ['steamhollow', ['yn_vents'], 'yn', T('Steamhollow', '{湯|ゆ}ノ{谷|たに}'), 'steam', '#8a3a2e'],
+    ['still', [], 'sa', T('the Still Archive', '{静寂|しじま} の {書庫|しょこ}'), 'book', '#3a3a3a'],
+  ];
+  C.guideRegion = C.guideRegion || {}; // a creature's region -> its field-guide stamp
+  const Cap = (x) => x[0].toUpperCase() + x.slice(1);
+  for (const [region, more, key, place, motif, ink] of GUIDE) {
+    const regions = [region].concat(more), id = 'guide:' + region, no = storyNo(key);
+    const inRegion = (eid) => !!C.enemies[eid] && regions.indexOf(C.enemies[eid].region) >= 0;
+    for (const r of regions) C.guideRegion[r] = id;
+    add(id, { family: 'guide', chapter: key, title: T(Cap(place.en) + ': every kind settled', place.jp + ' の {生|い}き{物|もの}'),
+      criteria: T('Settle every kind of creature that roams ' + place.en + ' (not its bosses: they have stamps of their own).', place.jp + ' の {生|い}き{物|もの} が みな {静|しず}まる'),
+      veil: T('Every kind of creature that roams a place in Chapter ' + no + '.', '{第|だい}' + no + '{章|しょう} の {生|い}き{物|もの}'),
+      note: T('Every kind of creature that roams ' + place.en + ', settled. Its bosses are not counted.', place.jp + ' の {生|い}き{物|もの} が みな {静|しず}まる'),
+      known: (s) => Object.keys(s.creatures || {}).some(inRegion),
+      when: (s) => {
+        if (RB.edition.of(s) < 2) return false;
+        const kinds = Object.keys(C.enemies).filter((e) => inRegion(e) && !C.enemies[e].boss);
+        return kinds.length > 0 && kinds.every((e) => s.creatures && s.creatures[e] && s.creatures[e].settled);
+      },
+      stand: null, design: { shape: 'oval', motif, ink } });
+  }
 
   // ---- the Atlas, pastimes --------------------------------------------------------------------------------------------
   add('atlas.first', { family: 'dungeon', title: T('The Unwritten Atlas', '{白紙|はくし} の {地図帳|ちずちょう}'), criteria: T('Return from an expedition after the story.', '{探索|たんさく} から {帰|かえ}る'), hidden: true, when: (s) => RB.edition.of(s) >= 2 && !!(s.atlas && s.atlas.runs > 0), stand: null, design: { shape: 'hexagon', motif: 'book', ink: '#2a4f8a' } });
