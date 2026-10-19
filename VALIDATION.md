@@ -4908,7 +4908,7 @@ the limit, have it set up the new Repo". Figures and decisions: docs/hosting/RUN
 - **Checked before removing (code review):** nothing the game, its build, the runtime set, the unit tests or the tools
   read is in those folders. The suites write `docs/screenshots/` and never read it back. One suite reads its own fresh
   captures within the run (`ui_inventory`). `runtime_publish` only checks the folder is not published.
-- **Measured:** 5,319 files / 1,085,763,409 bytes before; 3,264 files / about 606.0 MB after. The voice site from the
+- **Measured:** 5,319 files / 1,085,763,409 bytes before; 3,266 files / 606,037,934 bytes at 7d93c54 (Pages deployed it: success). The voice site from the
   real results against today's script: 26,894 files / 559,888,335 bytes. Together about 1,166 MB, so the voices get
   their own site.
 - **Today's script against the results:** the manifest rebuilt from this tree (content `3c59018e3137`) is GO plus

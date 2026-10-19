@@ -45,7 +45,7 @@ importer rebuilds `assets/harmony/` from. The twelve `zz_*.html` test builds in 
 | | Files | Bytes |
 | --- | ---: | ---: |
 | Published before (185ad9c) | 5,319 | 1,085,763,409 (12.0 MB over 1 GiB) |
-| Published after the clean-up | 3,264 | about 606.0 MB |
+| Published after the clean-up (7d93c54, the voices switched on) | 3,266 | 606,037,934 |
 | The voice site, built from the real results against today's script (`voice_site.mjs`, before SC5–SC9) | 26,894 | 559,888,335 |
 | Game and voices in one site | | about 1,166 MB: **still over the limit** |
 
