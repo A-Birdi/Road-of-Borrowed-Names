@@ -190,7 +190,16 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 /* C-14: the other readings wait behind this; it says it counts as assisted. Its own line, so the one guess and its
    same-shape twin keep their row. */
 .rd-morerow { flex: 1 0 100%; display: flex; min-width: 0; }
-.rd-morerow:empty { display: none; }
+/* On a desk-sized screen the reading area holds the room its usual states need, so the canvas above and the tools below
+ * keep their size and place while a character is written (Robin, 2026-10-19: "The writing pane changes its size slightly
+ * as new suggestions appear, and as the 'Not sure' line is added below it as you draw strokes"): the row of other
+ * readings is held even when empty, and the caption keeps two lines. (On a phone the canvas keeps its larger size and
+ * everything stays on screen, as before.) */
+@media (min-width: 900px) and (min-height: 560px) {
+  .rd-morerow { min-height: 44px; }
+  .rd-morerow:empty { display: flex; visibility: hidden; }
+  .rd-cap { min-height: calc(2 * 1.3em); align-items: flex-start; }
+}
 .rd-more { padding: 0 0.6em; font-size: 0.85em; max-width: 100%; white-space: normal; text-align: left; min-height: 44px; }
 .rd-more .aside { opacity: 0.8; }
 .fbwrap .fb-how { margin: 0.2em 0 0.4em; font-size: 1.05em; }

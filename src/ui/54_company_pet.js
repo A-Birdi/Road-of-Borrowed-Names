@@ -208,7 +208,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (rn) { V.rename = rn.dataset.petRename; V.err = null; V.draft = null; V.draftR = null; api.remember(); api.render(); const i = root.ownerDocument.querySelector('#pet-name'); if (i) { i.focus(); i.select(); } return; }
       if (t.closest('[data-pet-cancel]')) { V.rename = null; V.err = null; V.draft = null; V.draftR = null; api.render(); refocus('[data-pet-rename]'); return; }
       if (t.closest('[data-pet-reset]')) { P().resetName(s, V.petSel); V.rename = null; V.err = null; V.draft = null; V.draftR = null; api.render(); refocus('[data-pet-rename]'); say('Name reset to ' + P().species(V.petSel).name + '.'); return; }
-      if (t.closest('[data-pet-pat]')) { if (pv) pv.pat = performance.now(); P().sound(V.petSel, 'pat'); say('You pat ' + P().record(s, V.petSel).name + '.'); return; }
+      if (t.closest('[data-pet-pat]')) {
+        // the animal answers on its picture at the top of the page: brought into view first (Robin, 2026-10-19: "Clicking
+        // to 'Pat' the Cat pet seems not to do anything": the page was scrolled down to the button, the picture out of
+        // sight), and the line said where it can be seen, not only to a screen reader
+        if (live) live.scrollIntoView({ block: 'nearest', behavior: RB.game.reducedMotion() ? 'auto' : 'smooth' });
+        if (pv) pv.pat = performance.now();
+        P().sound(V.petSel, 'pat');
+        say('You pat ' + P().record(s, V.petSel).name + '.');
+        const m = root.querySelector('.pet-live-msg'); if (m) { m.classList.remove('sr'); m.classList.add('note-slip'); }
+        return;
+      }
       if (t.closest('[data-pet-greet]')) {
         const why = P().canGreet(s);
         if (why !== true) { say(why); const m = root.querySelector('.pet-live-msg'); if (m) { m.classList.remove('sr'); m.classList.add('note-slip'); } return; }

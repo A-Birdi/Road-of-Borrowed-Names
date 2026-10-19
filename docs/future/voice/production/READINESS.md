@@ -275,16 +275,24 @@ It prints "manifest is current: 14721 recordings + 9095 reference readings, cont
   failed (`results_MW1.json`; the progress list above). The batch's inputs are unchanged
   (`GO.json`: ff8a0fa, 513ec3ff…). At the branch head, `--check` now reports that the script has moved past the GO
   manifest. That is expected; it does not touch the batch, which checks out ff8a0fa.
-- **SL-1 supplement (2026-10-19, Robin: "every line in-game should have spoken lines"):** 309 new recordings for lines
-  the game's own code shows, now under stable scene ids: the prologue's captions, shut doors, marked objects, every line
-  of the six field puzzles (the swinging screen and its clamp in Reedwake among them) and every oral-history fragment
-  (Old Yasu's story of Reedwake among them): narrator 251, Yasu 16, Tetsu 16, Kasane 24, Isao 1, Oyone 1; no reference,
-  nothing retired. [supplements/SL1_SUPPLEMENT.json](supplements/SL1_SUPPLEMENT.json) (9,045 characters), built from
-  abf574d (script content hash `0c81df5559aa…`) by `node tools/voice/supplement.mjs`. Recorded after the batch and the
-  send corrections, with each speaker's accepted voice, delivery and encoding, into `results_SL1.json`.
-  - **The voice site:** a site built from a commit at or after abf574d has the new scene shards; with no SL-1 results
-    yet, `voice_site.mjs` reports these 309 as `missingRecordings` and the game simply has no recording for them (as
+- **SL-1 supplement (2026-10-19, Robin: "every line in-game should have spoken lines"):** 574 new recordings for lines
+  the game's own code shows, now under stable scene ids: the prologue's captions, shut doors, marked objects (the Old
+  Mill's notice among them), every line of the six field puzzles (the swinging screen and its clamp in Reedwake among
+  them), every oral-history fragment (Old Yasu's story of Reedwake among them) and every battle line (each creature's
+  intro and its line once settled, phases): narrator 515, Yasu 16, Tetsu 16, Kasane 25, Isao 1, Oyone 1; no reference,
+  nothing retired. [supplements/SL1_SUPPLEMENT.json](supplements/SL1_SUPPLEMENT.json): its `builtFrom` names the commit
+  and script content hash; `node tools/voice/supplement.mjs` rebuilds it. Recorded after the batch and the send
+  corrections, with each speaker's accepted voice, delivery and encoding, into `results_SL1.json`.
+  - **The voice site:** a site built from a commit at or after this supplement has the new scene shards; with no SL-1
+    results yet, `voice_site.mjs` reports these as `missingRecordings` and the game simply has no recording for them (as
     today). The live build `2026-10-19.1` (3c59018e3137) is unaffected until it is rebuilt.
+- **SC10 (Robin, 2026-10-19, playing):** Nao's 「葦、見てきたな。どう思った？」 (`r1-e1b3503be1963951`) read 葦 as
+  "goku"; it is sent with あし (SEND_CORRECTIONS.json). Fifteen other recordings send a bare 葦 and were not reported:
+  worth a listen while SC10 is recorded (an SC each for any that misread): `r1-439a8bb23eeac272` (Mitsue),
+  `r1-ae5db8c3a54e390e` (Mame), `r1-6d88befa2dc31281` and `r1-c2611cde557ba239` (Nao), and the narrator's
+  `r1-0f5f09c8bada8bf4`, `r1-37541eb3f610145b`, `r1-435699ffffe3c7e4`, `r1-451603efdb79f504`, `r1-6014d737464b850e`,
+  `r1-6a44581301cb2dc5`, `r1-97d84117506b9dab`, `r1-c52251d2650145bb`, `r1-cad6de0625049d05`, `r1-ec3f8099c556c7d6`,
+  `r1-fa2f6867c0bd8f8a`.
 
 ## 2 · Runtime integration: BUILT AND TESTED, NOT YET WITH REAL RECORDINGS
 

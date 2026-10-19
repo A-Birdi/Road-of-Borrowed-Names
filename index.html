@@ -2548,7 +2548,16 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 /* C-14: the other readings wait behind this; it says it counts as assisted. Its own line, so the one guess and its
    same-shape twin keep their row. */
 .rd-morerow { flex: 1 0 100%; display: flex; min-width: 0; }
-.rd-morerow:empty { display: none; }
+/* On a desk-sized screen the reading area holds the room its usual states need, so the canvas above and the tools below
+ * keep their size and place while a character is written (Robin, 2026-10-19: "The writing pane changes its size slightly
+ * as new suggestions appear, and as the 'Not sure' line is added below it as you draw strokes"): the row of other
+ * readings is held even when empty, and the caption keeps two lines. (On a phone the canvas keeps its larger size and
+ * everything stays on screen, as before.) */
+@media (min-width: 900px) and (min-height: 560px) {
+  .rd-morerow { min-height: 44px; }
+  .rd-morerow:empty { display: flex; visibility: hidden; }
+  .rd-cap { min-height: calc(2 * 1.3em); align-items: flex-start; }
+}
 .rd-more { padding: 0 0.6em; font-size: 0.85em; max-width: 100%; white-space: normal; text-align: left; min-height: 44px; }
 .rd-more .aside { opacity: 0.8; }
 .fbwrap .fb-how { margin: 0.2em 0 0.4em; font-size: 1.05em; }
@@ -86850,7 +86859,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (rn) { V.rename = rn.dataset.petRename; V.err = null; V.draft = null; V.draftR = null; api.remember(); api.render(); const i = root.ownerDocument.querySelector('#pet-name'); if (i) { i.focus(); i.select(); } return; }
       if (t.closest('[data-pet-cancel]')) { V.rename = null; V.err = null; V.draft = null; V.draftR = null; api.render(); refocus('[data-pet-rename]'); return; }
       if (t.closest('[data-pet-reset]')) { P().resetName(s, V.petSel); V.rename = null; V.err = null; V.draft = null; V.draftR = null; api.render(); refocus('[data-pet-rename]'); say('Name reset to ' + P().species(V.petSel).name + '.'); return; }
-      if (t.closest('[data-pet-pat]')) { if (pv) pv.pat = performance.now(); P().sound(V.petSel, 'pat'); say('You pat ' + P().record(s, V.petSel).name + '.'); return; }
+      if (t.closest('[data-pet-pat]')) {
+        // the animal answers on its picture at the top of the page: brought into view first (Robin, 2026-10-19: "Clicking
+        // to 'Pat' the Cat pet seems not to do anything": the page was scrolled down to the button, the picture out of
+        // sight), and the line said where it can be seen, not only to a screen reader
+        if (live) live.scrollIntoView({ block: 'nearest', behavior: RB.game.reducedMotion() ? 'auto' : 'smooth' });
+        if (pv) pv.pat = performance.now();
+        P().sound(V.petSel, 'pat');
+        say('You pat ' + P().record(s, V.petSel).name + '.');
+        const m = root.querySelector('.pet-live-msg'); if (m) { m.classList.remove('sr'); m.classList.add('note-slip'); }
+        return;
+      }
       if (t.closest('[data-pet-greet]')) {
         const why = P().canGreet(s);
         if (why !== true) { say(why); const m = root.querySelector('.pet-live-msg'); if (m) { m.classList.remove('sr'); m.classList.add('note-slip'); } return; }
@@ -87320,7 +87339,7 @@ RB.ui.settings = (function () {
       ['device', 'Your device’s voice', { i: 'device', d: 'Only the Japanese voice installed on this device.' }],
       ['none', 'No voice', { i: 'none', d: 'Nothing is spoken; every line can still be read.' }]], 'voice', null);
     if (mode === 'prepared') {
-      h += radios('player', 'Your own lines', [['none', 'Silent', { i: 'none' }], ['A', 'Voice A', { i: 'vA' }], ['B', 'Voice B', { i: 'vB' }]], 'voice',
+      h += radios('player', 'Your own lines', [['none', 'Silent', { i: 'none' }], ['A', 'Voice A', { i: 'vA', d: 'More feminine.' }], ['B', 'Voice B', { i: 'vB', d: 'More masculine.' }]], 'voice',
         'Your character’s lines in the recorded voices. The words on screen are always yours; a line with your name in it is spoken by your device’s voice, which can say it.');
       if (st.voice.player === 'A' || st.voice.player === 'B') h += radios('pitch', 'Pitch', [['high', 'Higher', { i: 'pHi' }], ['low', 'Lower', { i: 'pLo' }]], 'voice', null);
       if (recordingsSpeak(mode)) {
@@ -110034,6 +110053,30 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.combat = (function () {
   'use strict';
   const esc = RB.util.esc;
+  // Every line a battle says (a creature's intro and the line once it is settled, at each learner level, each map's
+  // own; a guardian's phase lines) is shown under this scene id and listed for recording (RB.content.spokenSources,
+  // read by tools/voice/lines.mjs; Robin, 2026-10-19: every line spoken). An authored conclusion with only English has
+  // nothing to say aloud.
+  const BATTLE_SCENE = 'code.battle';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    const add = (line, who, file) => {
+      if (!line) return;
+      const tiers = line.jp != null || line.en != null ? [line] : ['F', 'E', 'I', 'A'].map((k) => line[k]).filter(Boolean);
+      for (const x of tiers) if (x && x.jp) out.push({ scene: BATTLE_SCENE, who: who || 'narr', jp: x.jp, en: x.en || '', file });
+    };
+    for (const id in RB.content.enemies || {}) {
+      const e = RB.content.enemies[id];
+      add(e.intro, e.introWho, 'enemy ' + id); add(e.settle, e.settleWho, 'enemy ' + id);
+      for (const ph of e.phases || []) add(ph.line, ph.who, 'enemy ' + id);
+    }
+    for (const id in RB.content.maps || {}) for (const f of RB.content.maps[id].foes || []) {
+      const e = (RB.content.enemies || {})[f.enemy] || {};
+      add(f.intro, f.introWho != null ? f.introWho : e.introWho, 'map ' + id); add(f.settle, f.settleWho != null ? f.settleWho : e.settleWho, 'map ' + id);
+    }
+    return out;
+  });
   const L = () => RB.combatLogic;
   // the encounter platform (src/engine/97_encounter.js): the exchange's steps, the cards on offer, conclusions
   const ENC = () => RB.encounter;
@@ -111067,8 +111110,10 @@ RB.combat = (function () {
       '<div class="cs-intent">' + intentHtml(true, i) + '</div>').join('') +
       '<div class="cs-chose">' + I(cardIcon(card)) + '<span>You chose <b>' + esc(card.en) + '</b>' + (tgt ? ' — <b>' + esc(tgt) + '</b>' : '') + '. The encounter waits while you write.</span></div></div>';
   }
+  // (a creature's intro, its phase lines and what is said once it is settled are shown under one scene id, so their
+  // recordings are found: Robin, 2026-10-19, "After defeating an enemy, the Narrator does not voice the dialogue given")
   function say(line, who) {
-    return RB.ui.dialogue.say({ who: who || 'narr', jp: line.jp, en: line.en });
+    return RB.ui.dialogue.say({ who: who || 'narr', jp: line.jp, en: line.en, sceneId: BATTLE_SCENE });
   }
   // ---- the exchange log: every result as a line, kept for the whole exchange and
   // left under the responses afterwards as a recap (the resolved word with its

@@ -1096,13 +1096,17 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   installed locally, like the closed door in Reedwake. The Narrator can effectively read that one; check for others
   similar"; "The swinging board between Old Yasu and Ren in Reedwake, along with its clamp - no Narrator speaking. Old
   Yasu's story, when listening, has not begun being spoken." VALIDATION.md "Every line spoken: the first batch".
-  - **Done (code, tests):** the prologue's six captions, Records replays, shut doors and marked objects, every line of
-    the six field puzzles (the swinging screen and its clamp among them) and every oral-history fragment are shown under
-    stable scene ids and listed for recording; the prologue and replays are spoken lines in their slip (marked word,
-    pointing pairs, Voice). B `spoken_lines` 5/5 against a test voice site built from the script; U whole suite
-    54,725/0, `fieldweave` 390/0, `voice_production` 27/0.
-  - **Recordings: Local's.** 309 in supplements/SL1_SUPPLEMENT.json (narrator 251; Yasu, Tetsu, Kasane, Isao, Oyone).
-    Until then these lines stay silent with prepared voices.
+  - **Done (code, tests):** the prologue's six captions, Records replays, shut doors and marked objects (the Old Mill's
+    notice among them), every line of the six field puzzles (the swinging screen and its clamp among them), every
+    oral-history fragment and every battle line (intro, the line once settled, phases) are shown under stable scene ids
+    and listed for recording; the prologue and replays are spoken lines in their slip (marked word, pointing pairs,
+    Voice). B `spoken_lines` 6/6 against a test voice site built from the script; U whole suite 54,725/0, `fieldweave`
+    390/0, `voice_production` 27/0, `combat` 2,100/0, `battle` 19,927/0.
+  - **Recordings: Local's.** 574 in supplements/SL1_SUPPLEMENT.json (narrator 515; Yasu, Tetsu, Kasane, Isao, Oyone).
+    Until then these lines stay silent with prepared voices. SC10 (Nao's 葦 read "goku") is Local's too.
+  - **Also from the playtest:** the writing pad keeps one size while a character is written in a desktop window (B
+    probe; a phone still changes, recorded in VALIDATION.md); Voice A / Voice B labelled more feminine / more masculine
+    (R); Pat brings the pet's picture into view and shows its line (B probe).
   - **Not done:** about 2,000 more lines the game's code shows (the inventory in VALIDATION.md), Company memory
     replays, and the panels.
 

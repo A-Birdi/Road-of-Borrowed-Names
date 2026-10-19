@@ -4963,26 +4963,58 @@ Yasu's story, when listening, has not begun being spoken."
   (narrator 872, people 600, the player 167, companions about 416) plus about 196 in panels; none needs the player's
   name; every set is finite. Company memory replays (`RB.sequence.replay`) also drop the scene id their beats keep.
 - **This batch:** the prologue's six captions (`prologue`), Records replays (their scenes' ids), shut doors
-  (`code.door`, 16) and marked objects (`code.prop`, 24), every line the six field puzzles can show (`code.fw`, 207:
-  looks, actions, weaves, hints, resets, rewards; computed lines run over every arrangement each puzzle allows), and
-  every oral-history fragment at each learner level, said by its teller (`code.history`, 56). The texts are unchanged
+  (`code.door`, 16) and marked objects (`code.prop`, 24: the Old Mill's notice among them), every line the six field
+  puzzles can show (`code.fw`, 207: looks, actions, weaves, hints, resets, rewards; computed lines run over every
+  arrangement each puzzle allows), every oral-history fragment at each learner level, said by its teller
+  (`code.history`, 56), and every battle line (`code.battle`, 266: each creature's intro and its line once settled,
+  phase lines, each map's own; Robin: "After defeating an enemy, the Narrator does not voice the dialogue given"). 136
+  authored encounter conclusions have English only, so nothing to say aloud (not changed). The texts are unchanged
   (the prologue's six captions moved to src/content/00_prologue.js, checked identical by script).
-- **B `node tests/e2e/spoken_lines.mjs` 5/5** (headless Chromium, a real voice site built from the current script by
+- **B `node tests/e2e/spoken_lines.mjs` 6/6** (headless Chromium, a real voice site built from the current script by
   tools/voice/voice_site.mjs with test tones for the recordings, no device voice): the prologue speaks each caption from
   its own narrator recording, marks the spoken word, Voice says it again, pointing at 茶屋 marks "teahouse", and nothing
   speaks once it is skipped; a Records replay plays its scene's recordings; a shut door through `RB.world.interact()`
   plays the narrator's recording; the swinging screen's and the clamp's inspection lines (`!hook fw_look f1 screen` /
-  `clamp`) play the narrator's recordings; Old Yasu's story (`RB.activities.run('rw.a_history')`) plays Yasu's.
+  `clamp`) play the narrator's recordings; Old Yasu's story (`RB.activities.run('rw.a_history')`) plays Yasu's; a
+  battle's intro (`RB.game.startBattle('rw.reedling')`) plays the narrator's recording (the line once settled is said by
+  the same function, R).
 - **B, the suites the change touches, on this build:** `prologue` 100/0, `records` 7/0, `sequence_manual` 64/0,
   `sequence_dev` 9/0, `create` 447/0 (after the test helper re-applies "no voice site" on a reload: the voiced prologue
-  otherwise looked for the shipped voice site, which the test server does not serve; one failure before that fix).
-  `sequence_world` ran 2,243 checks without a failure before its 20-minute limit here.
+  otherwise looked for the shipped voice site, which the test server does not serve; one failure before that fix),
+  `fieldweave` 89/89, `mill_road` 36/36, `learning_ui` 15/0, `fr1_opening` (errors 0), `story_ch1`, `pets_weave`,
+  `speech_mark`, `speech_relations`, `ledger_li`, `voice_runtime` 10/0, `sequence_chapters_56` 196/0 (alone; run beside
+  other suites it timed out clicking Next, on the build before this change too). `sequence_world` ran 2,243 checks without
+  a failure before its 20-minute limit here. `audit_fixes` 3/1: "a copy step … recorded as guided practice" fails the
+  same way on the build before this change (537516a), so not this change's; left as found.
 - **U** whole suite **54,725/0** on this tree (`fieldweave` and the voice tests rerun after the puzzle and story
   change: `fieldweave` 390/0, `voice_production` 27/0, `voice_review_page` 89/0, `audio_voice` 46/0,
   `voicebank_plan_content` 7/0, `scene_manifest` 1,023/0).
-- **Recordings:** 309 new, docs/future/voice/production/supplements/SL1_SUPPLEMENT.json (narrator 251, Yasu 16, Tetsu 16,
-  Kasane 24, Isao 1, Oyone 1; 0 references, 0 retired), built by the new tools/voice/supplement.mjs against the GO
+- **Recordings:** 574 new, docs/future/voice/production/supplements/SL1_SUPPLEMENT.json (narrator 515, Yasu 16, Tetsu 16,
+  Kasane 25, Isao 1, Oyone 1; 0 references, 0 retired), built by the new tools/voice/supplement.mjs against the GO
   manifest and MW1. Until they are recorded these lines are silent with prepared voices, as before.
+- **SC10 (Robin: "葦 is read as 'Goku' when it should be read as 'Ashi'", Nao's 「葦、見てきたな。どう思った？」):**
+  `r1-e1b3503be1963951` is sent with あし for 葦 (SEND_CORRECTIONS.json, §7 step 8); the take is 2.74 s against a
+  1.72–2.46 s window for its 13 morae. U `voice_review_page` 96/0. Fifteen other recordings send a bare 葦 (not 葦ノ瀬 or
+  葦原新田) and were not reported; READINESS.md lists them for the worker to listen to.
+- **The writing pad keeps its size on a desktop (Robin: "The writing pane changes its size slightly as new suggestions
+  appear, and as the 'Not sure' line is added below it as you draw strokes"):** measured in headless Chromium
+  (scratch probe: み stroke by stroke, a scribble, ね, the other readings asked for, cleared), the canvas went 397 → 349 px
+  at 1280×800 when the "other readings" row appeared. In a window at least 900×560 the reading area now keeps its
+  tallest height (that row held when empty, the "Not sure" caption two lines): **one canvas size, 332 px, through every
+  state at 1280×800** (B, the probe, R on the CSS). 1024×640 and 800×600 already held one size (the 180 px floor) and
+  still do. **A 390×844 phone still changes (275, 214, 231, 210 px)**: reserving the same space there left the canvas at
+  214–231 px, under the 234 px `learning_ui` requires, so the phone is left as it was. B `learning_ui` 15/0,
+  `book_surfaces` 7/0, `pad_kanji` 7/1 (the 郁 case, which fails the same way on 537516a). Earlier tries (a fixed
+  height at the first frame; the reservation at every size) failed `learning_ui` and were removed.
+- **Voice A / Voice B (Robin: "should denote Type A being more Feminine, and Type B being more Masculine"):** the Sound
+  settings choice for the player's own lines now reads "Voice A: More feminine." and "Voice B: More masculine." (R; the
+  wording only, the voices are unchanged).
+- **Pat (Robin: "Clicking to 'Pat' the Cat pet seems not to do anything"):** the cat did answer, on its picture at the
+  top of the page, which was out of sight with the page scrolled down to the button, and the line was for screen readers
+  only. Pat now brings the picture into view (smoothly, or at once with reduced motion) and shows "You pat Koma." under
+  it (B, scratch probe at 1280×800: the picture changes after Pat, the line is visible, no page errors; screenshot
+  looked at). B `company_pets` all ok, `pets` 20/0, `settings` all ok, `settings_review` all ok; U `pets` 378/0,
+  `company` 268/0, `combat` 2,100/0.
 - **Not done:** the other code-shown lines, Company memory replays, the panels (fishing, shiritori, verbs). Not tested:
   real recordings, Firefox, Safari, a device voice.
 

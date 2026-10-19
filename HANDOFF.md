@@ -621,18 +621,23 @@
       src/content/00_prologue.js unchanged), `code.door` and `code.prop` (src/engine/50_world.js), `code.fw` (every line
       the six field puzzles can show: looks, actions, weaves, hints, resets, rewards; computed lines run over every
       arrangement the puzzle allows: src/engine/55_fieldweave.js `spoken()`), `code.history` (each oral-history
-      fragment at every learner level, said by its teller: src/ui/75_activities.js). Records replays' beats carry their
-      scene id (src/engine/58b_records.js).
+      fragment at every learner level, said by its teller: src/ui/75_activities.js), `code.battle` (each creature's
+      intro, its line once settled and phase lines, each map's own: src/ui/80_combat.js). Records replays' beats carry
+      their scene id (src/engine/58b_records.js).
     - **The prologue and Records replays are spoken lines in their caption slip** (src/ui/43_sequence.js): Japanese
       and English as in the dialogue strip, the spoken word marked, pointing pairs words (src/ui/22_speech_mark.js
       now also covers `.seq-view`), a Voice button, spoken automatically when the strip would be; quiet when left.
-    - **Recordings:** 309 new ones (narrator 251, Yasu 16, Tetsu 16, Kasane 24, Isao 1, Oyone 1) in
+    - **Recordings:** 574 new ones (narrator 515, Yasu 16, Tetsu 16, Kasane 25, Isao 1, Oyone 1) in
       docs/future/voice/production/supplements/SL1_SUPPLEMENT.json (append-only, after the batch; built by the new
       tools/voice/supplement.mjs). Until the worker records them these lines are silent with prepared voices, as before
       (or the device's voice where it has a Japanese one). GO.json and the frozen manifest are unchanged.
     - **Not yet:** the inventory's other code-shown lines (about 2,000: whereabouts, battle intros, companion reactions
       and thoughts, Atlas, pages, press, cases …), Company memory replays (`RB.sequence.replay` drops the beats' scene
       id), and the panels (fishing, shiritori, verbs). REQUIREMENTS.md XP136.
+    - **With it (Robin's playtest, 2026-10-19):** SC10 sends Nao's 葦 as あし (it was read "goku"); the writing pad keeps
+      one size while a character is written in a desktop window (at least 900×560; a phone still changes, the space it
+      would need takes the canvas under its minimum); Voice A / Voice B read "More feminine." / "More masculine."; Pat
+      brings the pet's picture into view and shows its line. VALIDATION.md "Every line spoken: the first batch".
 
     **The repository cleaned; the voices live (Robin, 2026-10-19).** Screenshots, the Ensemble listening media and
     review captures are out of the branch (2,055 files, 479.8 MB; in the history at 185ad9c; `.gitignore` keeps new

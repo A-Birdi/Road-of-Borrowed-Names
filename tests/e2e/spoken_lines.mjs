@@ -27,7 +27,7 @@ const { RB: RBN } = await import('../../tools/voice/lines.mjs');
 const REPLAY = 'ch1.bridge';
 const replayScene = RBN.sequence.get(REPLAY).scene;
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-spoken-'));
-const fx = makeVoiceSite(tmp, { scenes: ['prologue', replayScene, 'code.door', 'code.fw', 'code.history'], refs: [] });
+const fx = makeVoiceSite(tmp, { scenes: ['prologue', replayScene, 'code.door', 'code.fw', 'code.history', 'code.battle'], refs: [] });
 const TYPES = { '.html': 'text/html; charset=utf-8', '.opus': 'audio/ogg', '.json': 'application/json' };
 const srv = http.createServer((req, res) => {
   const p = decodeURIComponent(req.url.split('?')[0]);
@@ -154,6 +154,22 @@ await test('Old Yasu tells his story of Reedwake in his own recordings', async (
   const s = await vb(p);
   const line = await p.evaluate(() => { const l = RB.ui.dialogue.shown(); return l ? { who: l.who, jp: l.jp } : null; });
   assert(/^rec\/yasu\//.test(s.plays[0]) && line && line.who === 'yasu', 'the first fragment is Yasu\'s recording: ' + s.plays.join(',') + ' / ' + JSON.stringify(line));
+  assert(!pg.errors.length, pg.errors.join(' | '));
+  await p.context().close();
+});
+
+// Robin, 2026-10-19: "After defeating an enemy, the Narrator does not voice the dialogue given." A battle's lines (its
+// intro, a phase, the line once the creature is settled) are said through one function, under one scene id: the intro
+// here, in the narrator's recording.
+await test('a battle\'s lines are the narrator\'s recordings (the intro; the settled line goes the same way)', async () => {
+  const pg = await open(), p = pg.p;
+  await p.evaluate(() => { RB.game.debugStart('rw.road', 14, 9, {}); RB.game.settings.textSpeed = 'instant'; RB.game.applySettings(); });
+  await p.waitForTimeout(300);
+  await p.evaluate(() => { RB.game.startBattle('rw.reedling', {}); });
+  await played(p, 1);
+  const s = await vb(p);
+  const line = await p.evaluate(() => { const l = RB.ui.dialogue.shown(); return l ? l.jp : ''; });
+  assert(/^rec\/narrator\//.test(s.plays[0]) && /光/.test(line), 'the intro is the narrator\'s recording: ' + s.plays.join(',') + ' / ' + line);
   assert(!pg.errors.length, pg.errors.join(' | '));
   await p.context().close();
 });

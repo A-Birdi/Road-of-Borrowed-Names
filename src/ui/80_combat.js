@@ -21,6 +21,30 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.combat = (function () {
   'use strict';
   const esc = RB.util.esc;
+  // Every line a battle says (a creature's intro and the line once it is settled, at each learner level, each map's
+  // own; a guardian's phase lines) is shown under this scene id and listed for recording (RB.content.spokenSources,
+  // read by tools/voice/lines.mjs; Robin, 2026-10-19: every line spoken). An authored conclusion with only English has
+  // nothing to say aloud.
+  const BATTLE_SCENE = 'code.battle';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    const add = (line, who, file) => {
+      if (!line) return;
+      const tiers = line.jp != null || line.en != null ? [line] : ['F', 'E', 'I', 'A'].map((k) => line[k]).filter(Boolean);
+      for (const x of tiers) if (x && x.jp) out.push({ scene: BATTLE_SCENE, who: who || 'narr', jp: x.jp, en: x.en || '', file });
+    };
+    for (const id in RB.content.enemies || {}) {
+      const e = RB.content.enemies[id];
+      add(e.intro, e.introWho, 'enemy ' + id); add(e.settle, e.settleWho, 'enemy ' + id);
+      for (const ph of e.phases || []) add(ph.line, ph.who, 'enemy ' + id);
+    }
+    for (const id in RB.content.maps || {}) for (const f of RB.content.maps[id].foes || []) {
+      const e = (RB.content.enemies || {})[f.enemy] || {};
+      add(f.intro, f.introWho != null ? f.introWho : e.introWho, 'map ' + id); add(f.settle, f.settleWho != null ? f.settleWho : e.settleWho, 'map ' + id);
+    }
+    return out;
+  });
   const L = () => RB.combatLogic;
   // the encounter platform (src/engine/97_encounter.js): the exchange's steps, the cards on offer, conclusions
   const ENC = () => RB.encounter;
@@ -1054,8 +1078,10 @@ RB.combat = (function () {
       '<div class="cs-intent">' + intentHtml(true, i) + '</div>').join('') +
       '<div class="cs-chose">' + I(cardIcon(card)) + '<span>You chose <b>' + esc(card.en) + '</b>' + (tgt ? ' — <b>' + esc(tgt) + '</b>' : '') + '. The encounter waits while you write.</span></div></div>';
   }
+  // (a creature's intro, its phase lines and what is said once it is settled are shown under one scene id, so their
+  // recordings are found: Robin, 2026-10-19, "After defeating an enemy, the Narrator does not voice the dialogue given")
   function say(line, who) {
-    return RB.ui.dialogue.say({ who: who || 'narr', jp: line.jp, en: line.en });
+    return RB.ui.dialogue.say({ who: who || 'narr', jp: line.jp, en: line.en, sceneId: BATTLE_SCENE });
   }
   // ---- the exchange log: every result as a line, kept for the whole exchange and
   // left under the responses afterwards as a recap (the resolved word with its

@@ -400,7 +400,7 @@ RB.ui.settings = (function () {
       ['device', 'Your device’s voice', { i: 'device', d: 'Only the Japanese voice installed on this device.' }],
       ['none', 'No voice', { i: 'none', d: 'Nothing is spoken; every line can still be read.' }]], 'voice', null);
     if (mode === 'prepared') {
-      h += radios('player', 'Your own lines', [['none', 'Silent', { i: 'none' }], ['A', 'Voice A', { i: 'vA' }], ['B', 'Voice B', { i: 'vB' }]], 'voice',
+      h += radios('player', 'Your own lines', [['none', 'Silent', { i: 'none' }], ['A', 'Voice A', { i: 'vA', d: 'More feminine.' }], ['B', 'Voice B', { i: 'vB', d: 'More masculine.' }]], 'voice',
         'Your character’s lines in the recorded voices. The words on screen are always yours; a line with your name in it is spoken by your device’s voice, which can say it.');
       if (st.voice.player === 'A' || st.voice.player === 'B') h += radios('pitch', 'Pitch', [['high', 'Higher', { i: 'pHi' }], ['low', 'Lower', { i: 'pLo' }]], 'voice', null);
       if (recordingsSpeak(mode)) {

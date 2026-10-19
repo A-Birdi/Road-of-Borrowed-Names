@@ -370,6 +370,46 @@
    },
    "results": "Same id. Choose among the takes the recognizer hears with くすり; put the new take at nao/r1-f39bfbb362a57021.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"灰のくすり、か。燃えた後のもので、きれいなもんを作る。悪くない。\" and \"sendCorrection\": \"SC9\" to that entry, and move the current take to superseded/<stamp>/.",
    "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC10",
+   "id": "r1-e1b3503be1963951",
+   "speaker": "nao",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "rw.mr_nao#4d97cb5819",
+     "scene": "rw.mr_nao",
+     "file": "ch1/31_mill",
+     "line": 83,
+     "en": "You've been looking at the reeds. What did you make of them?",
+     "source": "src/content/ch1/31_scenes_mill.js:87"
+    }
+   ],
+   "display": "{葦|あし} 、 {見|み}て きた な 。 どう {思|おも}った ？",
+   "spoken": "葦、見てきたな。どう思った？",
+   "sendWas": "葦、見てきたな。どう思った？",
+   "send": "あし、見てきたな。どう思った？",
+   "sendMorae": 13,
+   "changes": [
+    "葦 sent as its reading, あし"
+   ],
+   "decided": "Robin, 2026-10-19, playing the game (reported directly): '葦 is read as \"Goku\" when it should be read as \"Ashi\"'.",
+   "why": [
+    "The reading. The line means あし (its own furigana, {葦|あし}), but Nao's engine, Qwen3-TTS, read the bare kanji another way. Sending that one word in the kana of its furigana leaves the engine nothing to guess there (§7, step 8).",
+    "Only that word changes. The rest of the send stays as it was, kanji and punctuation included, so the delivery Robin otherwise heard stays; the display and spoken do not change, so the id and the line key stay."
+   ],
+   "lengthFit": {
+    "basis": "Nao's own unflagged takes in this batch: 1157 recordings, median 6.40 morae per second (10th-90th percentile 5.29-7.57)",
+    "targetSeconds": 2.03,
+    "windowSeconds": [1.72, 2.46],
+    "note": "13 morae. The current 2.74 s take is outside the window; the reading is the fault, not the length. The recognizer hearing あし decides; the window is only a guard."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears with あし; put the new take at nao/r1-e1b3503be1963951.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"あし、見てきたな。どう思った？\" and \"sendCorrection\": \"SC10\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
   }
  ]
 }
