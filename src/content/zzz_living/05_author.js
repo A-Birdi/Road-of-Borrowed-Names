@@ -168,6 +168,21 @@ RB.living = (function (C) {
     C.living.seals.push(id);
   }
   // the scene script gathered by the region files, added once they have all run (zzz_living/99_end.js)
-  function flush() { if (script.trim()) RB.script.add(script, 'src/content/zzz_living/05_author.js'); script = ''; } // (scenes written out by these helpers: their source is this file)
+  // A named person a road event stands on its map (Kumazō on the steps, Jūzō at the stele) is there already in their
+  // usual place: while the event waits, the usual one steps aside, so only one of them is ever seen and the scene's
+  // gestures find the one you are talking to. (Once the event is seen through, the usual placement returns, and the
+  // same id walks back to it: src/engine/50_world.js refreshActors.)
+  function asides() {
+    for (const id in C.maps) {
+      const npcs = C.maps[id].npcs || [], ev = {};
+      for (const n of npcs) if (n.roadEvent) (ev[n.id] = ev[n.id] || []).push('!roadev.' + n.roadEvent);
+      for (const n of npcs) {
+        if (n.roadEvent || !ev[n.id] || n.asideFor) continue;
+        n.if = and(n.if, ev[n.id].join('&'));
+        n.asideFor = ev[n.id].slice();
+      }
+    }
+  }
+  function flush() { asides(); if (script.trim()) RB.script.add(script, 'src/content/zzz_living/05_author.js'); script = ''; } // (scenes written out by these helpers: their source is this file)
   return { T, and, town, routine, away, knows, cold, usual, asks, beat, road, seal, talk, scenes, flush };
 })(RB.content);

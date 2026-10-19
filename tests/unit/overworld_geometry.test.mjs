@@ -53,8 +53,10 @@ export default async (t) => {
     rec.structs = m.structs.map((s) => [s.x, s.y, s.w, s.h, s.door == null ? null : s.door, s.to || null]);
     // (placements only the expansion can show are left out: the twelve-chapter edition's (ed>=2) and the
     // development fixtures' (dev_verbs, dev_perform). A six-chapter game never meets them, so its geometry is the
-    // base's; the expansion's own tests check what they place: tests/unit/verbs, perform, records.)
-    const six = (x) => !(x.if && /(^|[&|])(ed>=2|dev_verbs|dev_perform)(?=$|[&|])/.test(String(x.if)));
+    // base's; the expansion's own tests check what they place: tests/unit/verbs, perform, records. A road event's
+    // people and things (RE-1, `roadev.<road>.<event>`) stand only while that event waits on its road, in either
+    // edition; tests/unit/road_events checks they stand on open ground and block no way out.)
+    const six = (x) => !(x.if && /(^|[&|])(ed>=2|dev_verbs|dev_perform|roadev\.[\w.]+)(?=$|[&|])/.test(String(x.if)));
     rec.triggers = h(m.triggers.filter(six).map((q) => [q.x, q.y, q.w, q.h, q.if || null, q.scene || q.run || null]));
     rec.spawn = h(m.def.spawn || null);
     rec.props = h(m.props.filter(six).map((p) => { const d = RB.props.P[p.p] || {}; return [p.p, p.x, p.y, p.w || d.w, p.h || d.h, !!(d.block && p.block !== false), p.if || null, !!(p.scene || p.text)]; }));

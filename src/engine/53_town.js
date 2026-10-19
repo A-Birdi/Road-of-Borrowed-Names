@@ -205,6 +205,8 @@ RB.town = (function () {
   // "Have you seen…?" lines are spoken, src/ui/53w_whereabouts.js lists them; Robin, 2026-10-19: "The 'have you seen'
   // dialogue interactions have no voiced lines from either the player nor the NPC"). A sighting is on the asker's
   // map or one beside it; a loose acquaintance's recollection names a map the target can stand on, or none.
+  // every map one step from mapId, open now or not: its exits and its buildings' doors (as neighbours() reads them)
+  const allLinks = (mapId) => { const d = C().maps[mapId] || {}; return (d.exits || []).map((e) => e.to).concat((d.structs || []).filter((b) => b.door != null).map((b) => b.to)).filter(Boolean); };
   function answersOf(asker) {
     const rels = C().relations || {}, rel = rels[asker] || {}, out = [];
     if (rel.friendly === false) return [rel.refusal || LINES.refusal()];
@@ -213,7 +215,7 @@ RB.town = (function () {
     const mine = placed(asker);
     for (const target in rel.knows || {}) {
       const where = placed(target), who = nameOf(target);
-      for (const m of mine) for (const nb of [m].concat((C().maps[m].exits || []).map((e) => e.to).filter(Boolean))) if (where.has(nb)) out.push(LINES.sighting(placeOf(nb), nb === m));
+      for (const m of mine) for (const nb of [m].concat(allLinks(m))) if (where.has(nb)) out.push(LINES.sighting(placeOf(nb), nb === m));
       if (rel.knows[target] === 'routine') out.push((rels[target] || {}).usual || LINES.routine(who, usualPlaces(target)));
       else { out.push(LINES.uncertain(who, null)); for (const m of where) out.push(LINES.uncertain(who, placeOf(m))); }
     }

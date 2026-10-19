@@ -105,6 +105,18 @@ export default async (t) => {
         const sc = C.scenes[e.scene];
         const speakers = new Set(sc.cmds.filter((c) => c.op === 'say' && c.who && c.who !== 'narr' && c.who !== 'pc' && c.who !== 'comp').map((c) => c.who));
         for (const w of who) if (speakers.has(w.char)) t.ok((w.id || w.char) === w.char, rid + '.' + e.id + ': ' + w.char + ' stands as themselves');
+        // and is seen once: while the event stands, their usual place on this map is empty (whatever else holds)
+        {
+          const s2 = camp({ departed: true });
+          s2.world = s2.world || {};
+          RB.town.eventHere(s2, rid); // (fills the world record)
+          s2.world.roads[rid] = { unique: null, solved: {}, offered: 0, here: { id: e.id } };
+          for (const w of who) {
+            const id = w.id || w.char;
+            for (const n of m.def.npcs || []) if (!n.roadEvent && n.id === id) t.ok(!RB.state.test(s2, n.if), rid + '.' + e.id + ': ' + id + ' is not also in their usual place at ' + n.x + ',' + n.y);
+          }
+          RB.game.s = st;
+        }
       }
     }
     t.ok(placed > 0, 'road events placed: ' + placed + ' of ' + events + (unplaced.length ? ' (not yet: ' + unplaced.join(', ') + ')' : ''));
