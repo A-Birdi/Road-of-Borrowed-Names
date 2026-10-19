@@ -609,6 +609,9 @@
       battle now chooses Standard mistakes, since FR-1 made Assisted the default). 21 affected browser suites pass
       (VALIDATION.md "MW-1").
 
+    **SC5–SC9 (Robin's final listening round, 2026-10-19: "get these redos sorted, then push the voices live").** Five
+    one-word send corrections (頁, 灯守, 台詞 ×2, 釉) in SEND_CORRECTIONS.json; the worker records them.
+
     **SC4 and withheld references (the worker, after Robin's review round 3).** The narrator's reading of 潮止まり
     (`r1-ref-e5bf48bf7ab94ff8`) is sent as シオドマリ (SEND_CORRECTIONS.json; §7 step 8 names katakana and references).
     A results file's top-level `withheld` names reference readings tools/voice/voice_site.mjs leaves out of the site

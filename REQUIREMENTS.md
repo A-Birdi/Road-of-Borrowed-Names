@@ -1044,7 +1044,11 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     `SEND_CORRECTIONS.json`; §7 step 8 names katakana and references. A results file's top-level `withheld` names
     reference readings `voice_site.mjs` leaves out (counted apart; only manifest references, never also recorded); the
     game says them with the device's voice, or hides the control. U `audio_voice` 46/0, `voice_production` 27/0,
-    `voice_review_page` 52/0. **Not done / with others:** recording SC4; Robin's choice for 大石, 母港, 分類名 (and 三里).
+    `voice_review_page` 52/0. Since: SC4 recorded (be13b33); Robin kept the narrator's closest takes for 大石, 母港 and
+    三里 and the cloned 分類名 (round 4), so nothing is withheld.
+  - **SC5–SC9** (Robin's final listening round, 2026-10-19; VALIDATION.md "SC5–SC9"): 頁, 灯守, 台詞 ×2 and 釉 sent in
+    the kana of their furigana. U `voice_review_page` 89/0. **Not done / with the worker:** recording them; restoring
+    the kept cloned 分類名 (READINESS.md, 2026-10-19).
 - [~] XP134 CW-1, the traveller's setup book (Robin, 2026-10-18): "Implement CW-1 from this package … The demo is a design
   and interaction reference, not a replacement for the game's real creation, Settings or save systems. Keep Local's
   voice production unchanged. Return the actual-game before/after and motion evidence, then wait for my approval before

@@ -24,6 +24,27 @@ The repository is the shared record:
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
 Progress (the local worker's checkpoints, latest first):
+- **2026-10-19: SC5–SC9, from Robin's final listening round** (85 keep, 10 redo; Robin: "get these redos sorted, then
+  push the voices live"; anything further comes from a full in-game test, not more listening). Appended to
+  [supplements/SEND_CORRECTIONS.json](supplements/SEND_CORRECTIONS.json); SC1–SC4 unchanged. Each send is the line's
+  own send with one kanji word spelled in the kana of its furigana; the display, spoken text, id and key stay.
+
+  | | Recording | Line | Send | Target (window) | Now |
+  | --- | --- | --- | --- | --- | --- |
+  | SC5 | `r1-af31602b66d327ad` | Kohaku, hall.w10.t9#008fe5d567 | 「師匠、ページはもう書けています。語らせてください。」 | 4.67 s (3.93–7.52; 7 takes only) | 5.01 s |
+  | SC6 | `r1-139fcb0057e03467` | Hisae, kr.hisae_vigil#e117d421a2 | 「ひもりの約束だよ。待っている。」 | 2.51 s (2.18–2.82) | 2.47 s |
+  | SC7 | `r1-4a729bf0784c69a1` | Mio, mp.saku_first#4e3e0901f7 | 「せりふを一緒に読んでみませんか。名前より先に、役が戻るかもしれない。」 | 5.74 s (4.97–6.91) | 5.45 s |
+  | SC8 | `r1-42001e24d9d659f1` | Nao, mp.saku_first#f7f397738f | 「せりふ、一緒に読んでみるか。名前より先に、役が戻るかもしれない。」 | 5.16 s (4.36–6.24) | 4.85 s |
+  | SC9 | `r1-f39bfbb362a57021` | Nao, co.nobu#6ead6abc43 | 「灰のくすり、か。燃えた後のもので、きれいなもんを作る。悪くない。」 | 4.85 s (4.10–5.86) | 5.10 s |
+
+  - **Which take:** the worker's seed search, keeping a take only when the recognizer hears the corrected reading; the
+    windows (each speaker's own unflagged takes, morae per second) are only a guard. Results as before: `send` and
+    `sendCorrection` on the entry, the replaced take to `superseded/<stamp>/`.
+  - **Not listened for, by Robin's word:** other Qwen3-TTS takes of these words (頁 34, 灯守 169, 台詞 151, 釉 1) are
+    left to the in-game test.
+  - **Still open from f995b1a:** ぶんるいめい (`r1-ref-b8f801f6ac6359dc`). Robin kept the cloned take in round 4
+    (sha256 `219acd698574…`, 1.04 s, `narrator/qwen-clone`); the results now hold an AivisSpeech take (`a9a1e4947c15…`,
+    0.885 s) and the clone is not in `superseded`. To restore the kept clone before the site is built.
 - **2026-10-19: SC4, and references left to the device's voice** (the worker, after Robin's review round 3 of
   2026-10-18: 12 redo, 21 keep).
   1. **SC4, the narrator's reading of 潮止まり: the same id, sent in katakana.** Record `r1-ref-e5bf48bf7ab94ff8` (key

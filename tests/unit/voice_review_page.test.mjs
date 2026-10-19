@@ -61,6 +61,13 @@ export default async (t) => {
   t.eq([sc3 && sc3.id, sc3 && sc3.send], ['r1-2d3ac586bb0e7209', '言われた通りにしか行かない舟か。……正直な奴だ。'], 'SC3 is Nao\'s line, the comma before か left out');
   const sc4 = sc.corrections.find((c) => c.ref === 'SC4');
   t.eq([sc4 && sc4.id, sc4 && sc4.key, sc4 && sc4.send], ['r1-ref-e5bf48bf7ab94ff8', 'word:潮止まり|しおどまり', 'シオドマリ'], 'SC4 is the narrator\'s reading of 潮止まり, sent in katakana');
+  // SC5–SC9 (Robin's final listening round, 2026-10-19): one word each, sent in the kana of its own furigana
+  t.eq(sc.corrections.filter((c) => /^SC[5-9]$/.test(c.ref)).map((c) => [c.id, c.changes.join()]), [
+    ['r1-af31602b66d327ad', '頁 sent as its reading, ページ'], ['r1-139fcb0057e03467', '灯守 sent as its reading, ひもり'],
+    ['r1-4a729bf0784c69a1', '台詞 sent as its reading, せりふ'], ['r1-42001e24d9d659f1', '台詞 sent as its reading, せりふ'],
+    ['r1-f39bfbb362a57021', '釉 sent as its reading, くすり']], 'SC5–SC9: Kohaku\'s 頁, Hisae\'s 灯守, Mio\'s and Nao\'s 台詞, Nao\'s 釉');
+  t.ok(sc.corrections.filter((c) => /^SC[5-9]$/.test(c.ref)).every((c) => { const [k, r] = c.changes[0].match(/^(\S+) sent as its reading, (\S+)$/).slice(1); return c.sendWas.replace(k, r) === c.send && c.display.includes('{' + k + '|' + r + '}'); }),
+    'SC5–SC9: the old send with that one word replaced by the reading the display gives it');
   t.eq(sc.corrections.map((c) => c.ref), sc.corrections.map((c, i) => 'SC' + (i + 1)), 'send corrections are numbered in order (append-only)');
   // the rule turns away what it should: a changed word, a dropped mid-line beat
   t.ok(!allowed('{言|い}われた {通|とお}り 、 か 。 …… {奴|やつ} だ 。').test('言われた通りか。……やつだな。'), 'rule: a changed ending is not a send correction');

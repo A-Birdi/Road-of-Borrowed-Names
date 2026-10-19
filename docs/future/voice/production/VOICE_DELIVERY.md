@@ -207,7 +207,9 @@ saying the same words are two.
    [supplements/SEND_CORRECTIONS.json](supplements/SEND_CORRECTIONS.json): SC1, Wataru's 「……辞めさせないんですか。」 sent
    as 「やめさせないんですか。」; SC2, the narrator's 「「潮硝子」の札を拾った。」 with 札 sent as ふだ; SC3, Nao's
    「言われた通りにしか行かない舟、か。……」 without the comma (Robin, 2026-10-18); SC4, the narrator's reference reading
-   of 潮止まり sent as シオドマリ, so しお keeps its two beats (Robin, review round 3). A line whose words change is never
+   of 潮止まり sent as シオドマリ, so しお keeps its two beats (Robin, review round 3); SC5–SC9, one word each sent in
+   the kana of its furigana where Qwen3-TTS read the kanji another way: Kohaku's 頁 (ページ), Hisae's 灯守 (ひもり), Mio's
+   and Nao's 台詞 (せりふ), Nao's 釉 (くすり) (Robin's final round, 2026-10-19). A line whose words change is never
    handled this way: it gets a new id (§8).
 
 An engine with its own reading control may send `spoken` and apply steps 4–5 through that control. The casting record

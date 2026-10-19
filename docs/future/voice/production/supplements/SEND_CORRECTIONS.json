@@ -167,6 +167,209 @@
    },
    "results": "Same id. Choose among the takes the recognizer hears as しおどまり; put the new take at ref/r1-ref-e5bf48bf7ab94ff8.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"シオドマリ\" and \"sendCorrection\": \"SC4\" to that entry, and move the current take to superseded/<stamp>/. The site gives the new audio a new content name, so nothing a player kept goes stale.",
    "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC5",
+   "id": "r1-af31602b66d327ad",
+   "speaker": "hall_kohaku",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "hall.w10.t9#008fe5d567",
+     "scene": "hall.w10.t9",
+     "file": null,
+     "line": 1028,
+     "en": "Master, the pages are written. Let it be told.",
+     "source": "src/content/hall/39a_w10_scenes.js:378"
+    }
+   ],
+   "display": "{師匠|ししょう} 、 {頁|ページ} は もう {書|か}けて います 。 {語|かた}らせて ください 。",
+   "spoken": "師匠、頁はもう書けています。語らせてください。",
+   "sendWas": "師匠、頁はもう書けています。語らせてください。",
+   "send": "師匠、ページはもう書けています。語らせてください。",
+   "sendMorae": 24,
+   "changes": [
+    "頁 sent as its reading, ページ"
+   ],
+   "decided": "Robin, 2026-10-19, the final listening round (relayed by the local worker; 85 keep, 10 redo): redo; 'heard as kuri, should be pe-ji'.",
+   "why": [
+    "The reading. The line means ページ (its own furigana, {頁|ページ}), but Kohaku's engine, Qwen3-TTS, read the bare kanji another way. Sending that one word in the kana of its furigana leaves the engine nothing to guess there (§7, step 8).",
+    "Only that word changes. The rest of the send stays as it was, kanji and punctuation included, so the delivery Robin otherwise heard stays; the display and spoken do not change, so the id and the line key stay."
+   ],
+   "lengthFit": {
+    "basis": "Kohaku's own unflagged takes in this batch: 7 recordings, median 5.14 morae per second (10th-90th percentile 3.19-6.10); few takes, so a wide window",
+    "targetSeconds": 4.67,
+    "windowSeconds": [3.93, 7.52],
+    "note": "24 morae. The current 5.01 s take is inside the window; the reading is the fault, not the length. The recognizer hearing ページ decides; the window is only a guard."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears with ページ; put the new take at hall_kohaku/r1-af31602b66d327ad.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"師匠、ページはもう書けています。語らせてください。\" and \"sendCorrection\": \"SC5\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC6",
+   "id": "r1-139fcb0057e03467",
+   "speaker": "kr_hisae",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "kr.hisae_vigil#e117d421a2",
+     "scene": "kr.hisae_vigil",
+     "file": "kr/company",
+     "line": 175,
+     "en": "A keeper's promise, then. I'll wait.",
+     "source": "src/content/kr/24_scenes_comp.js:192"
+    }
+   ],
+   "display": "{灯守|ひもり} の {約束|やくそく} だ よ 。 {待|ま}って いる 。",
+   "spoken": "灯守の約束だよ。待っている。",
+   "sendWas": "灯守の約束だよ。待っている。",
+   "send": "ひもりの約束だよ。待っている。",
+   "sendMorae": 15,
+   "changes": [
+    "灯守 sent as its reading, ひもり"
+   ],
+   "decided": "Robin, 2026-10-19, the final listening round (relayed by the local worker; 85 keep, 10 redo): redo; 灯守 read with a reading other than its furigana, ひもり (the worker's summary).",
+   "why": [
+    "The reading. The line means ひもり (its own furigana, {灯守|ひもり}), but Hisae's engine, Qwen3-TTS, read the bare kanji another way. Sending that one word in the kana of its furigana leaves the engine nothing to guess there (§7, step 8).",
+    "Only that word changes. The rest of the send stays as it was, kanji and punctuation included, so the delivery Robin otherwise heard stays; the display and spoken do not change, so the id and the line key stay."
+   ],
+   "lengthFit": {
+    "basis": "Hisae's own unflagged takes in this batch: 47 recordings, median 5.98 morae per second (10th-90th percentile 5.31-6.89)",
+    "targetSeconds": 2.51,
+    "windowSeconds": [2.18, 2.82],
+    "note": "15 morae. The current 2.47 s take is inside the window; the reading is the fault, not the length. The recognizer hearing ひもり decides; the window is only a guard."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears with ひもり; put the new take at kr_hisae/r1-139fcb0057e03467.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"ひもりの約束だよ。待っている。\" and \"sendCorrection\": \"SC6\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC7",
+   "id": "r1-4a729bf0784c69a1",
+   "speaker": "mio",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "mp.saku_first#4e3e0901f7",
+     "scene": "mp.saku_first",
+     "file": "mp/21_scenes_stage.js",
+     "line": 158,
+     "attribution": "condition",
+     "en": "Shall we read your lines together? The part might come back before the name does.",
+     "source": "src/content/mp/21_scenes_stage.js:166"
+    }
+   ],
+   "display": "{台詞|せりふ} を {一緒|いっしょ} に {読|よ}んで みません か 。 {名前|なまえ} より {先|さき} に 、 {役|やく} が {戻|もど}る かも しれない 。",
+   "spoken": "台詞を一緒に読んでみませんか。名前より先に、役が戻るかもしれない。",
+   "sendWas": "台詞を一緒に読んでみませんか。名前より先に、役が戻るかもしれない。",
+   "send": "せりふを一緒に読んでみませんか。名前より先に、役が戻るかもしれない。",
+   "sendMorae": 36,
+   "changes": [
+    "台詞 sent as its reading, せりふ"
+   ],
+   "decided": "Robin, 2026-10-19, the final listening round (relayed by the local worker; 85 keep, 10 redo): redo; 台詞 read with a reading other than its furigana, せりふ (the worker's summary).",
+   "why": [
+    "The reading. The line means せりふ (its own furigana, {台詞|せりふ}), but Mio's engine, Qwen3-TTS, read the bare kanji another way. Sending that one word in the kana of its furigana leaves the engine nothing to guess there (§7, step 8).",
+    "Only that word changes. The rest of the send stays as it was, kanji and punctuation included, so the delivery Robin otherwise heard stays; the display and spoken do not change, so the id and the line key stay."
+   ],
+   "lengthFit": {
+    "basis": "Mio's own unflagged takes in this batch: 1067 recordings, median 6.27 morae per second (10th-90th percentile 5.21-7.24)",
+    "targetSeconds": 5.74,
+    "windowSeconds": [4.97, 6.91],
+    "note": "36 morae. The current 5.45 s take is inside the window; the reading is the fault, not the length. The recognizer hearing せりふ decides; the window is only a guard."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears with せりふ; put the new take at mio/r1-4a729bf0784c69a1.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"せりふを一緒に読んでみませんか。名前より先に、役が戻るかもしれない。\" and \"sendCorrection\": \"SC7\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC8",
+   "id": "r1-42001e24d9d659f1",
+   "speaker": "nao",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "mp.saku_first#f7f397738f",
+     "scene": "mp.saku_first",
+     "file": "mp/21_scenes_stage.js",
+     "line": 159,
+     "attribution": "condition",
+     "en": "Shall we read your lines together? The part might come back before the name does.",
+     "source": "src/content/mp/21_scenes_stage.js:167"
+    }
+   ],
+   "display": "{台詞|せりふ} 、 {一緒|いっしょ} に {読|よ}んで みる か 。 {名前|なまえ} より {先|さき} に 、 {役|やく} が {戻|もど}る かも しれない 。",
+   "spoken": "台詞、一緒に読んでみるか。名前より先に、役が戻るかもしれない。",
+   "sendWas": "台詞、一緒に読んでみるか。名前より先に、役が戻るかもしれない。",
+   "send": "せりふ、一緒に読んでみるか。名前より先に、役が戻るかもしれない。",
+   "sendMorae": 33,
+   "changes": [
+    "台詞 sent as its reading, せりふ"
+   ],
+   "decided": "Robin, 2026-10-19, the final listening round (relayed by the local worker; 85 keep, 10 redo): redo; 台詞 read with a reading other than its furigana, せりふ (the worker's summary).",
+   "why": [
+    "The reading. The line means せりふ (its own furigana, {台詞|せりふ}), but Nao's engine, Qwen3-TTS, read the bare kanji another way. Sending that one word in the kana of its furigana leaves the engine nothing to guess there (§7, step 8).",
+    "Only that word changes. The rest of the send stays as it was, kanji and punctuation included, so the delivery Robin otherwise heard stays; the display and spoken do not change, so the id and the line key stay."
+   ],
+   "lengthFit": {
+    "basis": "Nao's own unflagged takes in this batch: 1157 recordings, median 6.40 morae per second (10th-90th percentile 5.29-7.57)",
+    "targetSeconds": 5.16,
+    "windowSeconds": [4.36, 6.24],
+    "note": "33 morae. The current 4.85 s take is inside the window; the reading is the fault, not the length. The recognizer hearing せりふ decides; the window is only a guard."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears with せりふ; put the new take at nao/r1-42001e24d9d659f1.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"せりふ、一緒に読んでみるか。名前より先に、役が戻るかもしれない。\" and \"sendCorrection\": \"SC8\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC9",
+   "id": "r1-f39bfbb362a57021",
+   "speaker": "nao",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "co.nobu#6ead6abc43",
+     "scene": "co.nobu",
+     "file": "ch3/pottery",
+     "line": 54,
+     "attribution": "condition",
+     "en": "An ash glaze. Making something beautiful out of what's left after burning. I like that.",
+     "source": "src/content/ch3/44_scenes_people2.js:404"
+    }
+   ],
+   "display": "{灰|はい} の {釉|くすり} 、 か 。 {燃|も}えた {後|あと} の もの で 、 きれい な もん を {作|つく}る 。 {悪|わる}く ない 。",
+   "spoken": "灰の釉、か。燃えた後のもので、きれいなもんを作る。悪くない。",
+   "sendWas": "灰の釉、か。燃えた後のもので、きれいなもんを作る。悪くない。",
+   "send": "灰のくすり、か。燃えた後のもので、きれいなもんを作る。悪くない。",
+   "sendMorae": 31,
+   "changes": [
+    "釉 sent as its reading, くすり"
+   ],
+   "decided": "Robin, 2026-10-19, the final listening round (relayed by the local worker; 85 keep, 10 redo): redo; 'heard as yuu, furigana くすり'.",
+   "why": [
+    "The reading. The line means くすり (its own furigana, {釉|くすり}), but Nao's engine, Qwen3-TTS, read the bare kanji another way. Sending that one word in the kana of its furigana leaves the engine nothing to guess there (§7, step 8).",
+    "Only that word changes. The rest of the send stays as it was, kanji and punctuation included, so the delivery Robin otherwise heard stays; the display and spoken do not change, so the id and the line key stay."
+   ],
+   "lengthFit": {
+    "basis": "Nao's own unflagged takes in this batch: 1157 recordings, median 6.40 morae per second (10th-90th percentile 5.29-7.57)",
+    "targetSeconds": 4.85,
+    "windowSeconds": [4.1, 5.86],
+    "note": "31 morae. The current 5.1 s take is inside the window; the reading is the fault, not the length. The recognizer hearing くすり decides; the window is only a guard."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears with くすり; put the new take at nao/r1-f39bfbb362a57021.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"灰のくすり、か。燃えた後のもので、きれいなもんを作る。悪くない。\" and \"sendCorrection\": \"SC9\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
   }
  ]
 }

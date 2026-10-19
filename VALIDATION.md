@@ -4896,6 +4896,18 @@ for anything needing review". The worker's list is `docs/future/voice/production
 - **Whole unit suite**, on the tree pushed as fcacaf3: **54,605 passed, 0 failed** (`node tests/run-unit.mjs`).
 - **Not tested:** the real audio (it is on Robin's PC), Windows, Firefox and Safari.
 
+## SC5–SC9 (Robin's final listening round, 2026-10-19, relayed by the local worker)
+
+Five send corrections appended to `docs/future/voice/production/supplements/SEND_CORRECTIONS.json` (SC1–SC4 unchanged,
+checked before writing): Kohaku's 頁 → ページ, Hisae's 灯守 → ひもり, Mio's and Nao's 台詞 → せりふ, Nao's 釉 → くすり,
+each the old send with that one word replaced by the reading its display gives it (checked by the generator and by the
+test). Length windows from each speaker's own unflagged takes in `results.json.gz` (Kohaku has 7, so a wide window).
+Nothing was generated here.
+- **U** `voice_review_page` 89/0 (was 52): SC5–SC9 pass the general checks (same id, line, keys; the send keeps the
+  line's words; morae; window) and are pinned by id and change; the listening page is current (none of the five is on
+  the round-1 list).
+- **Not tested:** the new takes (to be recorded).
+
 ## SC4, and reference readings left to the device's voice (the worker, after Robin's review round 3, 2026-10-18)
 
 The worker asked for one send correction and one answer. Nothing was generated here.
