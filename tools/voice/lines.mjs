@@ -32,13 +32,15 @@ export function allLines() {
     });
   }
   // lines the game shows by its own code, outside the scenes (src/content/00_prologue.js RB.content.spokenLines),
-  // under the scene id it shows them with; a companion's line names the companions who can say it (comps)
-  const seen = new Set(out.map((l) => l.key));
+  // under the scene id it shows them with; a companion's line names the companions who can say it (comps). Listed once
+  // for each speaker: the same words from two people are two recordings ("I saw them just now, over by Hana's Teahouse"
+  // is Hana's neighbours' answer and Tomo's; the line's key is the scene and the words, the recording the speaker's)
+  const seen = new Set(out.map((l) => l.key + '|' + l.who));
   const listed = [].concat(RB.content.spokenLines || [], ...(RB.content.spokenSources || []).map((f) => f()));
   for (const x of listed) {
     const key = keyOf(x.scene, x.jp);
-    if (seen.has(key)) continue;
-    seen.add(key);
+    if (seen.has(key + '|' + (x.who || 'narr'))) continue;
+    seen.add(key + '|' + (x.who || 'narr'));
     out.push({
       key, scene: x.scene, idx: null, file: x.file || null, line: null, who: x.who || 'narr', expr: x.expr || null, if: null, jp: x.jp, plain: spoken(x.jp),
       en: x.en || '', region: regionOf(x.scene), prev: null, next: null, code: true, comps: x.comps || null,
