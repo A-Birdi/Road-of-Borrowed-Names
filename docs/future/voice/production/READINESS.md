@@ -275,6 +275,16 @@ It prints "manifest is current: 14721 recordings + 9095 reference readings, cont
   failed (`results_MW1.json`; the progress list above). The batch's inputs are unchanged
   (`GO.json`: ff8a0fa, 513ec3ff…). At the branch head, `--check` now reports that the script has moved past the GO
   manifest. That is expected; it does not touch the batch, which checks out ff8a0fa.
+- **SL-1 supplement (2026-10-19, Robin: "every line in-game should have spoken lines"):** 309 new recordings for lines
+  the game's own code shows, now under stable scene ids: the prologue's captions, shut doors, marked objects, every line
+  of the six field puzzles (the swinging screen and its clamp in Reedwake among them) and every oral-history fragment
+  (Old Yasu's story of Reedwake among them): narrator 251, Yasu 16, Tetsu 16, Kasane 24, Isao 1, Oyone 1; no reference,
+  nothing retired. [supplements/SL1_SUPPLEMENT.json](supplements/SL1_SUPPLEMENT.json) (9,045 characters), built from
+  abf574d (script content hash `0c81df5559aa…`) by `node tools/voice/supplement.mjs`. Recorded after the batch and the
+  send corrections, with each speaker's accepted voice, delivery and encoding, into `results_SL1.json`.
+  - **The voice site:** a site built from a commit at or after abf574d has the new scene shards; with no SL-1 results
+    yet, `voice_site.mjs` reports these 309 as `missingRecordings` and the game simply has no recording for them (as
+    today). The live build `2026-10-19.1` (3c59018e3137) is unaffected until it is rebuilt.
 
 ## 2 · Runtime integration: BUILT AND TESTED, NOT YET WITH REAL RECORDINGS
 
