@@ -14,6 +14,64 @@ Robin, 2026-10-16:
 The game's URL is **https://a-birdi.github.io/Road-of-Borrowed-Names/** and stays so under every option below. Saves
 live in each player's browser, under that origin. Nothing here touches them.
 
+## 2026-10-19: the clean-up, the measured figures, and the voice repository
+
+Robin, 2026-10-19 (relayed by the local worker): "Ask Cloud to set up the Github properly. This includes removing
+screenshots, test builds, and other unnecessary files that are bloat / old and unused now, from the Github. See the
+size difference after that and, if it still exceeds the limit, have it set up the new Repo using its Github skill (if
+it has one)."
+
+**A change of decision.** This replaces the 2026-10-16 "Keep all development evidence in GitHub" for the published
+branch. Screenshots, clips and listening media leave the branch. The git history keeps them: every file removed is in
+commit `185ad9c`, and `git checkout 185ad9c -- <path>` brings one back. `.gitignore` now keeps the browser suites' and
+review tools' captures out of future commits.
+
+**What was removed** (one ordinary commit; nothing rewritten, nothing force-pushed):
+
+| | Files | Bytes |
+| --- | ---: | ---: |
+| `docs/screenshots/` (captures and clips written by the browser suites) | 1,860 | 321,364,473 |
+| `docs/music/ensemble/listen/`, `listen.html`, `listen_all.html` (the Ensemble listening pages and their audio) | 151 | 153,409,846 |
+| `docs/review/fr1/shots/`, `docs/review/ar1_mill/shots/` (review captures) | 44 | 4,987,636 |
+| **All** | **2,055** | **479,761,955** |
+
+**Kept, because something reads it:** `assets/music/` (the Ensemble recordings the game plays, Opus and MP3),
+`docs/music/ensemble/qa/` (published with them as GPL-2 source), `docs/review/language/` (the review ledger the unit
+tests read), the voice production records in `docs/future/voice/production/`, `tests/fixtures/`, and the art sources the
+importer rebuilds `assets/harmony/` from. The twelve `zz_*.html` test builds in a local checkout were never committed.
+
+**The figures** (tracked bytes, `git ls-tree -r -l`):
+
+| | Files | Bytes |
+| --- | ---: | ---: |
+| Published before (185ad9c) | 5,319 | 1,085,763,409 (12.0 MB over 1 GiB) |
+| Published after the clean-up | 3,264 | about 606.0 MB |
+| The voice site, built from the real results against today's script (`voice_site.mjs`, before SC5–SC9) | 26,894 | 559,888,335 |
+| Game and voices in one site | | about 1,166 MB: **still over the limit** |
+
+So the voices need their own site (4a below), and the game's site keeps about 394 MB of room under 1 GB.
+
+**The voice repository.** Creating it from here was tried and refused: the GitHub integration this session uses may
+not create repositories (`403 Resource not accessible by integration`). The local worker creates it from Robin's PC
+with the GitHub CLI, signed in as A-Birdi: **A-Birdi/Road-of-Borrowed-Names-voices**, public, Pages from **main**,
+**/ (root)** (free for a public repository). If done by hand: https://github.com/new, then Settings › Pages ›
+"Deploy from a branch", main, / (root).
+
+**Its layout** (the worker builds it; `.nojekyll` makes Pages serve the files as they are, with no Jekyll pass over
+about 27,000 files):
+
+```
+.nojekyll                     empty
+README.md or CREDITS.md       what it is and the credits (a draft: docs/hosting/voices-site/README.md)
+ja-JP/index.json              voice build vb1-3c59018e3137 (script content 3c59018e3137)
+ja-JP/idx/s/<scene>.<sha12>.json
+ja-JP/idx/refs.<sha12>.json
+ja-JP/rec/<speaker>/<id>.<sha12>.opus
+```
+
+The game reads it at `../Road-of-Borrowed-Names-voices/ja-JP/` (`HOSTED_BASE`), the same origin. The worker's commands
+and the order of going live are in `docs/future/voice/production/READINESS.md` (2026-10-19, going live).
+
 Nothing in this page was deployed, and no Pages setting was changed. The tools write local folders only.
 
 ## The four figures

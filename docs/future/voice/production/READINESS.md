@@ -24,6 +24,37 @@ The repository is the shared record:
 - the order: AivisSpeech, Nemo and the sourced sound first, then Qwen.
 
 Progress (the local worker's checkpoints, latest first):
+- **2026-10-19: going live** (Robin: "get these redos sorted, then push the voices live"; and "set up the Github
+  properly … if it still exceeds the limit, have it set up the new Repo"). The game's branch is cleaned (2,055 files,
+  479.8 MB of screenshots and listening media out; about 606 MB left). Game and voices together would be about
+  1,166 MB, so the voices get their own site, as planned (docs/hosting/RUNTIME_PUBLISHING.md, 2026-10-19).
+  1. **The worker, with Robin's GitHub CLI login:** create the public repository
+     **A-Birdi/Road-of-Borrowed-Names-voices** and turn on its Pages from **main**, **/ (root)**. (This session's
+     GitHub integration may not create repositories: it was tried, 403.)
+  2. **The worker** (after SC5–SC9 are recorded; no force push):
+     - At the game commit that goes live (this one or later) rebuild the manifest from today's script:
+       `node tools/voice/production_manifest.mjs --out <tmp>/pm`. It must print `"contentHash":"3c59018e3137"` (the
+       GO script plus MW-1's six lines and one reference, less MW-1's three retired lines). If it prints another hash,
+       stop and say so.
+     - Build into the clone: `node tools/voice/voice_site.mjs --production <tmp>/pm/RECORDING_MANIFEST.json.gz
+       --results <batch>/results.json,<batch>/results_MW1.json --files <audio folder of each> --voice-build
+       vb1-3c59018e3137 --out <clone>/ja-JP`. Expect `missingRecordings` 0, `missingReferences` 0,
+       `withheldReferences` 0, `unusedResults` 3 (MW-1's retired lines, not served), about 23,820 recordings and
+       3,074 indexes, under the 900,000,000-byte ceiling.
+     - Add an empty `.nojekyll` and the credits (CREDITS.md from the cast record; `docs/hosting/voices-site/README.md`
+       is a draft from the casting record here) at the root, commit, `git push origin main`.
+     - When Pages has published it, check that `https://a-birdi.github.io/Road-of-Borrowed-Names-voices/ja-JP/index.json`
+       answers with `"voiceBuild":"vb1-3c59018e3137"`, and say so.
+  3. **Cloud:** then set `HOSTED_BASE` to `'../Road-of-Borrowed-Names-voices/ja-JP/'` (src/audio/52_voicebank.js),
+     rebuild, rerun the voice browser tests and push. Pages republishes the game within minutes; the next session of
+     each player reads the voices. Until then the game plays as now. Saves are untouched (the voices keep their own
+     cache, `rbn-voice-v1`).
+  - **Checked here:** the same build with that base, served as github.io serves the two sites (scratch check, not
+    committed): a line plays its recording from `/Road-of-Borrowed-Names-voices/ja-JP/`, with the page at
+    `/Road-of-Borrowed-Names/` and at `/Road-of-Borrowed-Names/index.html`; with the voice site missing, one request,
+    no page error, and the line falls back.
+  - **Done now:** About & credits says where the voices come from in both cases and credits them (narrator
+    「声は(x.com/dopoiro)のAI」, AivisSpeech models, VOICEVOX Nemo, Qwen3-TTS).
 - **2026-10-19: SC5–SC9, from Robin's final listening round** (85 keep, 10 redo; Robin: "get these redos sorted, then
   push the voices live"; anything further comes from a full in-game test, not more listening). Appended to
   [supplements/SEND_CORRECTIONS.json](supplements/SEND_CORRECTIONS.json); SC1–SC4 unchanged. Each send is the line's

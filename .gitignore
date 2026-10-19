@@ -17,3 +17,10 @@ art/harmony/incoming/
 voice-audition/
 # Python bytecode caches (tools/music/ensemble imports rs1.py)
 __pycache__/
+# development captures, clips and listening media: written by the browser suites and review tools, never committed
+# (Robin, 2026-10-19: keep the published branch free of screenshots and other bloat; the history keeps what was here)
+docs/screenshots/
+docs/music/ensemble/listen/
+docs/music/ensemble/listen.html
+docs/music/ensemble/listen_all.html
+docs/review/*/shots/

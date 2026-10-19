@@ -4896,6 +4896,35 @@ for anything needing review". The worker's list is `docs/future/voice/production
 - **Whole unit suite**, on the tree pushed as fcacaf3: **54,605 passed, 0 failed** (`node tests/run-unit.mjs`).
 - **Not tested:** the real audio (it is on Robin's PC), Windows, Firefox and Safari.
 
+## The repository clean-up, and going live prepared (Robin, 2026-10-19, relayed by the local worker)
+
+Robin: "Ask Cloud to set up the Github properly. This includes removing screenshots, test builds, and other unnecessary
+files that are bloat / old and unused now, from the Github. See the size difference after that and, if it still exceeds
+the limit, have it set up the new Repo". Figures and decisions: docs/hosting/RUNTIME_PUBLISHING.md (2026-10-19).
+- **Removed** in one ordinary commit: `docs/screenshots/` (1,860 files), the Ensemble listening pages and their audio
+  (151), the FR-1 and AR-1 review captures (44): 2,055 files, 479,761,955 bytes. Every screenshot or clip path named
+  elsewhere in these records is in commit `185ad9c` (`git checkout 185ad9c -- <path>`). `.gitignore` keeps new
+  captures out.
+- **Checked before removing (code review):** nothing the game, its build, the runtime set, the unit tests or the tools
+  read is in those folders. The suites write `docs/screenshots/` and never read it back. One suite reads its own fresh
+  captures within the run (`ui_inventory`). `runtime_publish` only checks the folder is not published.
+- **Measured:** 5,319 files / 1,085,763,409 bytes before; 3,264 files / about 606.0 MB after. The voice site from the
+  real results against today's script: 26,894 files / 559,888,335 bytes. Together about 1,166 MB, so the voices get
+  their own site.
+- **Today's script against the results:** the manifest rebuilt from this tree (content `3c59018e3137`) is GO plus
+  MW-1. With `results.json.gz` and `results_MW1.json`, all 14,724 entries and 9,096 references have a recording; MW-1's
+  3 retired lines are the only results left unused. `buildSite` on those results gives 0 errors and 0 missing.
+- **The voice base, in a browser (scratch check, not committed):** the built page with `HOSTED_BASE =
+  '../Road-of-Borrowed-Names-voices/ja-JP/'`, served at `/Road-of-Borrowed-Names/` beside a synthetic voice site at
+  `/Road-of-Borrowed-Names-voices/ja-JP/`, as github.io serves two project sites. A line plays its recording, opened
+  either as the folder or as `index.html`, with no page error and no other request. With the voice site missing, one
+  request, no page error, and the line falls back. The committed game still has `HOSTED_BASE = null`.
+- **About & credits:** now says where music and voices come from in both cases (hosted, or the file alone) and credits
+  the voices. B `title_ledger` 18/0 (About opens and lays out).
+- **The voice repository:** creating it from this session was refused (`403 Resource not accessible by integration`).
+  The worker creates it from Robin's PC with the GitHub CLI (Robin's login) and turns on its Pages; READINESS.md.
+- **Whole unit suite** on the cleaned tree (with the About change): **54,725 passed, 0 failed** (`node tests/run-unit.mjs`).
+
 ## SC5–SC9 (Robin's final listening round, 2026-10-19, relayed by the local worker)
 
 Five send corrections appended to `docs/future/voice/production/supplements/SEND_CORRECTIONS.json` (SC1–SC4 unchanged,

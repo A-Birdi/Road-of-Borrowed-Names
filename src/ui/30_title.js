@@ -1008,9 +1008,15 @@ RB.ui.title = (function () {
     fr.setTitle('About &amp; credits', '');
     fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0" aria-label="About">' +
       '<p class="about-credit"><span class="role">Project Development:</span> <span class="name">' + esc(RB.CREDIT.name) + '</span></p>' +
-      '<p>An original Japanese-learning adventure. Story, art, music and code are procedural and self-contained in this one file; nothing is downloaded while you play.</p>' +
+      '<p>An original Japanese-learning adventure. Story, art, code and the original score are procedural and self-contained in this one file. The hosted game also fetches its recorded music (Ensemble) and its recorded voices as they are needed; a copy of this file on its own plays the original score and uses your device\'s voice instead.</p>' +
       '<p>The world, its lantern roads and its magic are fiction. The Japanese is ordinary Japanese; where the story invents a term it is labelled as fictional in the notebook.</p>' +
-      '<p>Voices, when present, come from speech synthesis already installed on your device. They are not recorded performances, and they are not a pronunciation reference.</p>' +
+      '<p>Voices: the cast\'s lines and the reference readings were recorded with speech synthesis (AI voices, not human performances) and play from the game\'s voice site where this copy has one. Elsewhere, your device\'s own Japanese voice is used if it has one. Neither is a pronunciation authority: where a reading matters, the furigana is the reference.</p>' +
+      '<h3>' + I('sound') + ' Voices</h3><ul class="voice-credits">' +
+      '<li>Narrator: 「<ruby>声<rt>こえ</rt></ruby>は(x.com/dopoiro)のAI」 (AivisSpeech)</li>' +
+      '<li>AivisSpeech voice models from AivisHub: まお, コハク, るな and others (ACML 1.0)</li>' +
+      '<li>VOICEVOX Nemo</li>' +
+      '<li>Qwen3-TTS (Apache-2.0), most of the cast</li>' +
+      '<li>The full list is published with the voices.</li></ul>' +
       '<h3>' + I('book') + ' Third-party data</h3><pre class="notice-text">' + esc(RB.NOTICE || 'See the notice comment at the top of this file.') + '</pre></div></div>';
     lay = { el: fr.scrim, name: 'about' };
     lay.onCancel = close;
