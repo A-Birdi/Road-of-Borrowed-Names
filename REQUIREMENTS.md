@@ -1085,6 +1085,8 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - **Live:** the worker created A-Birdi/Road-of-Borrowed-Names-voices with Robin's GitHub CLI (creating it here was
     refused, 403) and published the voice site (build `2026-10-19.1`, 559,963,914 bytes); `HOSTED_BASE =
     '../Road-of-Borrowed-Names-voices/ja-JP/'` set and pushed here (B `voice_runtime` 9/9, `runtime_publish` 3/3).
+  - **Since:** one "speak automatically" switch in Settings › Audio, the one in effect (Robin: there were two); B
+    `voice_runtime` 10/10, `settings_review`, `speech_mark` pass.
   - **Not done / Robin's:** a play-through on the live URL (not reachable from this session; Robin's in-game test).
     No Pages setting needs changing; publishing only the runtime set stays Robin's choice.
 

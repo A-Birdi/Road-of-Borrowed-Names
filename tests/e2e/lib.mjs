@@ -55,6 +55,10 @@ export async function page(browser, url, opts = {}) {
   });
   await p.goto(url);
   await p.waitForFunction(() => window.__RB_READY__ === true, null, { timeout: 15000 });
+  // The hosted game reads its voices from the voices' own site (HOSTED_BASE, ../Road-of-Borrowed-Names-voices/ja-JP/),
+  // which these local servers never serve: a suite runs as the game did without one (nothing is fetched before a line
+  // plays, so this is in time), unless it asks for the shipped base (voiceSite: true; tests/e2e/voice_runtime.mjs).
+  if (!opts.voiceSite) await p.evaluate(() => { const V = window.RB && RB.voicebank; if (V && V.configure && !V._.S.embedded) V.configure({ base: null }); });
   return { p, ctx, errors, requests, logs };
 }
 

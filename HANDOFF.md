@@ -615,7 +615,9 @@
     the voices get their own site: the worker creates A-Birdi/Road-of-Borrowed-Names-voices with Robin's GitHub CLI
     (this session may not; 403), turned on its Pages and published build `2026-10-19.1` (main `b2496a81`); then
     `HOSTED_BASE = '../Road-of-Borrowed-Names-voices/ja-JP/'` in src/audio/52_voicebank.js, rebuilt, voice tests, pushed.
-    No Pages setting needs changing.
+    No Pages setting needs changing. Settings › Audio now shows one "speak automatically" switch, the one in effect
+    (Robin saw two once the recordings played); browser suites run without a voice site unless they ask
+    (`page(…, { voiceSite: true })`, tests/e2e/lib.mjs).
     About & credits now credits the voices. REQUIREMENTS.md XP135; docs/hosting/RUNTIME_PUBLISHING.md.
 
     **SC5–SC9 (Robin's final listening round, 2026-10-19: "get these redos sorted, then push the voices live").** Five

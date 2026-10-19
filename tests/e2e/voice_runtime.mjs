@@ -52,7 +52,7 @@ const VOICES = /\/voices-test\//;
 async function open(o = {}) {
   const context = o.context || (await b.newContext({ viewport: { width: 1280, height: 800 } }));
   if (o.init) await context.addInitScript(o.init);
-  const pg = await page(b, url, { context });
+  const pg = await page(b, url, { context, voiceSite: true });
   const reqs = [];
   pg.p.on('request', (r) => { if (VOICES.test(r.url())) reqs.push(r.url().replace(/^.*\/voices-test\//, '')); });
   await pg.p.evaluate(([cfg, comp]) => {
@@ -194,6 +194,28 @@ await test('clearing the kept recordings touches nothing else: other caches, oth
   await p.context.close();
 });
 
+// Robin, 2026-10-19: Settings showed two "speak automatically" switches once the recordings played. One switch shows,
+// the one that decides: the recordings' while they speak, the device voice's when it speaks, none with No voice.
+await test('Settings shows one switch for speaking lines as they appear, the one in effect for who speaks', async () => {
+  const p = await open();
+  // a stand-in Japanese voice on the device (this machine has none), so the device voice's switch can show at all
+  await p.p.evaluate(() => { RB.voice.japaneseVoices = () => [{ voiceURI: 'test-ja', name: 'Test voice', lang: 'ja-JP', localService: true }]; });
+  const ticks = (mode) => p.p.evaluate(async (mode) => {
+    RB.game.settings.voice.mode = mode; RB.game.applySettings();
+    if (RB.ui.settings.isOpen()) RB.ui.settings.close();
+    RB.ui.settings.open('audio');
+    await new Promise((r) => setTimeout(r, 300));
+    const n = (sel) => [...document.querySelectorAll(sel)].filter((e) => e.closest('label') && e.closest('label').offsetParent).length;
+    return { rec: n('[data-voiceautorec]'), device: n('[data-voiceauto]'), active: RB.voicebank.active(), autoOn: RB.voice.autoOn() };
+  }, mode);
+  const prep = await ticks('prepared'), dev = await ticks('device'), none = await ticks('none');
+  assert(prep.active && prep.rec === 1 && prep.device === 0, 'Recorded voices: only "Play the voices automatically" (' + JSON.stringify(prep) + ')');
+  assert(dev.rec === 0 && dev.device === 1, 'Your device’s voice: only "Speak dialogue automatically" (' + JSON.stringify(dev) + ')');
+  assert(none.rec === 0 && none.device === 0 && !none.autoOn, 'No voice: neither (' + JSON.stringify(none) + ')');
+  assert(!p.errors.length, p.errors.join(' | '));
+  await p.context.close();
+});
+
 await test('No voice, Mute and a voice level of zero fetch and play nothing', async () => {
   for (const [name, set] of [['none', (st) => { st.voice.mode = 'none'; }], ['muted', (st) => { st.muted = true; }], ['zero', (st) => { st.vol.voice = 0; }]]) {
     const p = await open();
@@ -236,7 +258,7 @@ await test('the voiced offline package plays its recordings from file: with noth
   const out = path.join(tmp, 'package');
   execFileSync(process.execPath, [path.join(root, 'tools/publish/offline_package.mjs'), '--site', fx.site, '--out', out], { cwd: root, stdio: 'pipe' });
   const context = await b.newContext();
-  const pg = await page(b, 'file://' + path.join(out, 'index.html'), { context });
+  const pg = await page(b, 'file://' + path.join(out, 'index.html'), { context, voiceSite: true });
   const net = [];
   pg.p.on('request', (r) => { if (!/^(data|blob):/.test(r.url())) net.push(r.url()); });
   await pg.p.evaluate(() => {

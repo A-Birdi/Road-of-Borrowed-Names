@@ -372,12 +372,20 @@ RB.ui.settings = (function () {
   }
 
   // ---- voices: why a line may be silent, the device's voice, following along ---------------------
+  // which voice speaks, as this page edits it: the draft's choice in the setup book, else the game's
+  function voiceMode() {
+    const st = S();
+    const vm0 = draft && st.voice ? st.voice.mode : null;
+    return draft ? (['prepared', 'device', 'none'].indexOf(vm0) >= 0 ? vm0 : 'prepared') : RB.voice && RB.voice.mode ? RB.voice.mode() : 'prepared';
+  }
+  // the recordings speak here: then "Play the voices automatically" decides for every line, a line with no recording
+  // included (src/audio/54_voice_route.js autoOn), and the device voice's own switch has nothing to do
+  const recordingsSpeak = (mode) => mode === 'prepared' && !!(RB.voicebank && RB.voicebank.active());
   // which voice speaks (src/audio/54_voice_route.js), and what this copy of the game can play
   function voiceNote() {
     const vb = RB.voicebank;
     const st = S();
-    const vm0 = draft && st.voice ? st.voice.mode : null;
-    const mode = draft ? (['prepared', 'device', 'none'].indexOf(vm0) >= 0 ? vm0 : 'prepared') : RB.voice && RB.voice.mode ? RB.voice.mode() : 'prepared';
+    const mode = voiceMode();
     let slip = '';
     if (!vb || !vb.configured()) {
       const alone = typeof location !== 'undefined' && !/^https?:$/.test(location.protocol);
@@ -395,8 +403,8 @@ RB.ui.settings = (function () {
       h += radios('player', 'Your own lines', [['none', 'Silent', { i: 'none' }], ['A', 'Voice A', { i: 'vA' }], ['B', 'Voice B', { i: 'vB' }]], 'voice',
         'Your character’s lines in the recorded voices. The words on screen are always yours; a line with your name in it is spoken by your device’s voice, which can say it.');
       if (st.voice.player === 'A' || st.voice.player === 'B') h += radios('pitch', 'Pitch', [['high', 'Higher', { i: 'pHi' }], ['low', 'Lower', { i: 'pLo' }]], 'voice', null);
-      if (vb && vb.active()) {
-        h += tick('data-voiceautorec', st.voice.autoRec !== false, 'Play the voices automatically', 'On: each line is spoken as it appears, and the next few lines are fetched ahead. Off: a line is spoken when you press its Voice button.');
+      if (recordingsSpeak(mode)) {
+        h += tick('data-voiceautorec', st.voice.autoRec !== false, 'Play the voices automatically', 'On: each line is spoken as it appears (a line with no recording by your device’s voice, if it has one), and the next few lines are fetched ahead. Off: a line is spoken when you press its Voice button.');
         if (vb.configured() && typeof location !== 'undefined' && /^https?:$/.test(location.protocol)) h += '<div class="field sx-field"><p class="sx-h">Kept on this device</p><p class="hint sx-why" data-voicekept>Recordings already heard are kept, up to 150 MB, so they play at once next time. Your saves are separate and never touched.</p><button type="button" class="pbtn quiet" data-a="voiceclear">Clear the kept recordings</button></div>';
       }
     }
@@ -413,7 +421,9 @@ RB.ui.settings = (function () {
     }
     h += '<p class="hint sx-why">' + esc(vs.note || '') + '</p><div class="sx-row"><label class="lab" for="vsel">Voice</label><select id="vsel" data-voice>' +
       voices.map((v) => '<option value="' + esc(v.voiceURI) + '"' + (st.voice.uri === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') + '</select></div></div>';
-    h += tick('data-voiceauto', !!st.voice.auto, 'Speak dialogue automatically', 'Off: a line is spoken when you press its Voice button. On: each line is spoken as it appears.');
+    // one switch for speaking as lines appear: this one only while the device's voice is the one that speaks
+    const mode = voiceMode();
+    if (mode !== 'none' && !recordingsSpeak(mode)) h += tick('data-voiceauto', !!st.voice.auto, 'Speak dialogue automatically', 'Off: a line is spoken when you press its Voice button. On: each line is spoken as it appears.');
     h += slider('voice.rate', 'Speech rate', st.voice.rate, 0.6, 1.3, 0.05, (v) => v.toFixed(2) + '×');
     return h;
   }

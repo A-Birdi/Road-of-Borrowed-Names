@@ -4929,6 +4929,20 @@ the limit, have it set up the new Repo". Figures and decisions: docs/hosting/RUN
   - B `runtime_publish` 3/3 (the runtime set from this build); U `audio_voice` 46/0, `voicebank_vrc1` 33/0,
     `voice_production` 27/0, `voice_review_page` 89/0.
   - **Not tested here:** the live URL in a browser (unreachable from this session); Firefox, Safari, phones.
+- **Two "speak automatically" switches (Robin, 2026-10-19).** Once the recordings played, Settings › Audio showed
+  both "Play the voices automatically" (the recordings') and "Speak dialogue automatically" (the device voice's,
+  which then decided nothing). Now one shows, the one in effect: the recordings' while they speak (it covers a line
+  with no recording too, which falls back through the same path), the device voice's when that is who speaks, neither
+  with No voice (src/ui/55_settings.js). B `voice_runtime` 10/10 with a new test of the three modes (a stand-in device
+  voice, since this machine has none); against the old code it fails (both shown). B `cw1_setup_book` 86/0 (the setup book's draft
+  Settings uses the same rows).
+- **Found on the way: the base switch broke two suites' assumptions.** With `HOSTED_BASE` set, a page served by these
+  local test servers asked for a voice site they never serve: `settings_review` no longer saw its "no recorded voices
+  yet" note and `speech_mark` met 404s. The shared helper (tests/e2e/lib.mjs `page()`) now runs a suite as the game
+  ran without a voice site unless it asks for the shipped base (`voiceSite: true`, as `voice_runtime` does). B
+  `settings_review` all passed, `speech_mark` all passed, `shift_load_regression` 18/18 after. Of the suites that open
+  pages themselves over http, `shift_load_regression` passes as it is; `art_shots`, `perf`, `portrait_shots` and
+  `visual` were not rerun.
 - **About & credits:** now says where music and voices come from in both cases (hosted, or the file alone) and credits
   the voices. B `title_ledger` 18/0 (About opens and lays out).
 - **The voice repository:** creating it from this session was refused (`403 Resource not accessible by integration`).
