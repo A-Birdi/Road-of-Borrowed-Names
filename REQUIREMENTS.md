@@ -1233,7 +1233,12 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   ("The road on": west to the Orchard Road, then north, until `sb_arrived`; then the climb to the hamlet, until
   `sb_hamlet_seen`); a main quest's `next`, checked by `validate.mjs`; no marker, gate, line or voice key changed
   (`54339ee`); B `road_on` 11/0 (CC-008 fails 4), `route_after_ch2` 29/0, `quest_guide` all passed; U whole suite
-  57,664/0. In source, for the next build. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  57,664/0. In source, for the next build.
+  RBN-QA-032 (Robin approved 2026-10-20 from the frames, to review in play): the festival lookout's vista shown as
+  pictures over the lines that describe it (src/ui/42c_interlude_lookout.js, new art, provisional under AC-1): the
+  village and its firebreaks, the stage and Hiro's seat (Suzu dancing unless she is the companion), the road and the
+  snowy peaks; every other line on the platform; no line, voice key, flag or gate changed (`8cfedf2`); B
+  `lookout_vista` (new; CC-008 fails 7). In source, for the next build. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand

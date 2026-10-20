@@ -5538,6 +5538,10 @@ Yasu's story, when listening, has not begun being spoken."
     Voice: no line changed; voice ids hash the speaker, voice, dialect, delivery and spoken text only
     (tools/voice/production_manifest.mjs), so the added ops move none. Frames (CC-008 against the candidate, Suzu;
     Nao's dancing Suzu; 2000×1090; a phone) sent to Robin.
+  - **RBN-QA-032 in source (Robin approved 2026-10-20 from the frames, to review in play; `8cfedf2`, cherry-picked
+    from `523f9ba`):** `git diff 523f9ba 8cfedf2 -- src tests tools data assets` is empty (the candidate's tests above
+    ran on the same code); on a scratch build of `8cfedf2`: B `lookout_vista` 22/0; `validate.mjs` no errors. Not yet in
+    a deployed candidate.
   - **RBN-QA-035 candidate (`qa035-snowbell`, `a1f014d`; Robin: walking is fine if the whole path is shown; not
     pushed):** scripted frames along the walk against CC-008, sent to Robin. No suite run yet (`story_ch4` on
     approval).

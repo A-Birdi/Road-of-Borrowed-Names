@@ -715,7 +715,8 @@
     - **RBN-QA-034 candidate, with Robin (not pushed):** the Snowbell Road's avalanche slope (`sb.lw_road_slope`): read
       right, Gohei crosses first, then you, then your companion (18,3 / 18,4 / 19,4), before the narration; Gohei
       turns for "Phew…" and goes on up after the companion's word. Local branch `qa034-slope` (`ed767e2`); frames sent.
-    - **RBN-QA-032 candidate, with Robin (Robin chose A, 2026-10-20; not pushed):** the festival lookout's vista
+    - **RBN-QA-032 IN SOURCE (Robin approved 2026-10-20 from the frames, `8cfedf2`, for the next build; Robin will
+      review it in play when reaching the scene):** the festival lookout's vista
       (`co.reflection` on `co.lookout`, whose surround draws the village at 0.4 scale; no scene camera op). An
       `!interlude co_lookout` picture over the vista lines only (src/ui/42c_interlude_lookout.js, new art under AC-1,
       framed by the lookout's roof edge, posts and rail): `village` (the lit square at the foot of the terraced
@@ -723,8 +724,8 @@
       (the stage hung red and white, the audience, Suzu dancing unless she is with you, Hiro's seat apart with the
       cloth, the slip and the one lit globe) for Suzu's seat line or "Suzu is dancing"; `north` (the road winding up
       to the peaks, glints on the snow) for the snow line. Fades between, as at the tide-watcher's window; every other
-      line on the platform. Local branch `qa032-vista` (`523f9ba`); B `lookout_vista` (new); frames sent to Robin. On
-      approval: cherry-pick, build, run `lookout_vista`, `story_ch3`, `interludes`.
+      line on the platform. Cherry-picked from `qa032-vista` (`523f9ba`); B `lookout_vista` (new, in the default
+      suite).
     - **RBN-QA-012's third sign (Agnes 20:44Z):** the Snowbell Road junction (`sb.road` 16,11) narrates three arms with
       snow on the Lanternfall arm; it joins the opt-in sign variants, with its own snow state, not a global change.
     - **RBN-QA-027 addendum candidate, with Robin (not pushed):** `co.suzu_truth` opened "Before we go in…" inside,
