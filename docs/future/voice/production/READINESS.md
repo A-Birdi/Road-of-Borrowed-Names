@@ -293,6 +293,15 @@ It prints "manifest is current: 14721 recordings + 9095 reference readings, cont
   `r1-0f5f09c8bada8bf4`, `r1-37541eb3f610145b`, `r1-435699ffffe3c7e4`, `r1-451603efdb79f504`, `r1-6014d737464b850e`,
   `r1-6a44581301cb2dc5`, `r1-97d84117506b9dab`, `r1-c52251d2650145bb`, `r1-cad6de0625049d05`, `r1-ec3f8099c556c7d6`,
   `r1-fa2f6867c0bd8f8a`.
+- **SC11–SC14 (the local worker's recognizer check of those fifteen, 2026-10-20, relayed by Robin):** four were likely
+  misread and are now sent with あし, each as SC10 (SEND_CORRECTIONS.json; display, spoken, id and key unchanged):
+  - SC11 `r1-6d88befa2dc31281` (Nao, Qwen3-TTS; heard ググ);
+  - SC12 `r1-c2611cde557ba239` (Nao, Qwen3-TTS; heard グ);
+  - SC13 `r1-439a8bb23eeac272` (Mitsue, Qwen3-TTS; heard グダ);
+  - SC14 `r1-ae5db8c3a54e390e` (Mame, AivisSpeech; heard 足し, probably たし).
+  Nine of the narrator's were heard right (あし) and stay. Two of the narrator's were heard as はし, which may be the
+  recognizer or a breathy h before あ: `r1-6014d737464b850e` and `r1-fa2f6867c0bd8f8a`. They stay as they are for
+  Robin's ear (an SC each if Robin hears はし).
 
 ## 2 · Runtime integration: BUILT AND TESTED, NOT YET WITH REAL RECORDINGS
 

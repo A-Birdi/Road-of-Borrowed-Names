@@ -410,6 +410,172 @@
    },
    "results": "Same id. Choose among the takes the recognizer hears with あし; put the new take at nao/r1-e1b3503be1963951.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"あし、見てきたな。どう思った？\" and \"sendCorrection\": \"SC10\" to that entry, and move the current take to superseded/<stamp>/.",
    "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC11",
+   "id": "r1-6d88befa2dc31281",
+   "speaker": "nao",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "rw.mr_nao#a5bc3a90e9",
+     "scene": "rw.mr_nao",
+     "file": "ch1/31_mill",
+     "line": 98,
+     "frozen": [
+      "VA-1 NAO01"
+     ],
+     "en": "There's another way. Behind the shed, past the tall reeds — an animal track that goes all the way up.",
+     "source": "src/content/ch1/31_scenes_mill.js:103"
+    }
+   ],
+   "display": "{別|べつ} の {道|みち} も ある 。 {小屋|こや} の {裏|うら} 、 {背|せ} の {高|たか}い {葦|あし} の {向|む}こう 。 {獣道|けものみち} が {上|うえ} まで {続|つづ}いてる 。",
+   "spoken": "別の道もある。小屋の裏、背の高い葦の向こう。獣道が上まで続いてる。",
+   "sendWas": "別の道もある。小屋の裏、背の高い葦の向こう。獣道が上まで続いてる。",
+   "send": "別の道もある。小屋の裏、背の高いあしの向こう。獣道が上まで続いてる。",
+   "sendMorae": 39,
+   "changes": [
+    "葦 sent as its reading, あし"
+   ],
+   "decided": "The local worker's recognizer check of the bare-葦 recordings READINESS listed with SC10 (2026-10-20, relayed by Robin): likely misread, the recognizer heard ググ where the line says あし; an SC each, as SC10.",
+   "why": [
+    "The reading. The line means あし (its own furigana, {葦|あし}), but Nao's engine, Qwen3-TTS, read the bare kanji another way (the recognizer heard ググ). Sending that one word in the kana of its furigana leaves the engine nothing to guess there (§7, step 8).",
+    "Only that word changes. The rest of the send stays as it was, kanji and punctuation included, so the delivery otherwise accepted stays; the display and spoken do not change, so the id and the line key stay."
+   ],
+   "lengthFit": {
+    "basis": "Nao's own unflagged takes in this batch: 1158 recordings, median 6.39 morae per second (10th-90th percentile 5.28-7.57)",
+    "targetSeconds": 6.1,
+    "windowSeconds": [5.15, 7.38],
+    "note": "39 morae. The current 5.89 s take is inside the window; the reading is the fault, not the length. The recognizer hearing あし decides; the window is only a guard."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears with あし; put the new take at nao/r1-6d88befa2dc31281.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"別の道もある。小屋の裏、背の高いあしの向こう。獣道が上まで続いてる。\" and \"sendCorrection\": \"SC11\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC12",
+   "id": "r1-c2611cde557ba239",
+   "speaker": "nao",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "rw.mr_nao#75c56a36cd",
+     "scene": "rw.mr_nao",
+     "file": "ch1/31_mill",
+     "line": 106,
+     "en": "Got it. …Feels bad breaking reeds, but they grow back in spring. Paths don't.",
+     "source": "src/content/ch1/31_scenes_mill.js:111"
+    }
+   ],
+   "display": "{了解|りょうかい} 。 …… {葦|あし} を {折|お}る の は {悪|わる}い けど 、 {春|はる} に は また {生|は}える 。 {道|みち} は {生|は}えない 。",
+   "spoken": "了解。……葦を折るのは悪いけど、春にはまた生える。道は生えない。",
+   "sendWas": "了解。……葦を折るのは悪いけど、春にはまた生える。道は生えない。",
+   "send": "了解。……あしを折るのは悪いけど、春にはまた生える。道は生えない。",
+   "sendMorae": 32,
+   "changes": [
+    "葦 sent as its reading, あし"
+   ],
+   "decided": "The local worker's recognizer check of the bare-葦 recordings READINESS listed with SC10 (2026-10-20, relayed by Robin): likely misread, the recognizer heard グ where the line says あし; an SC each, as SC10.",
+   "why": [
+    "The reading. The line means あし (its own furigana, {葦|あし}), but Nao's engine, Qwen3-TTS, read the bare kanji another way (the recognizer heard グ). Sending that one word in the kana of its furigana leaves the engine nothing to guess there (§7, step 8).",
+    "Only that word changes. The rest of the send stays as it was, kanji and punctuation included, so the delivery otherwise accepted stays; the display and spoken do not change, so the id and the line key stay."
+   ],
+   "lengthFit": {
+    "basis": "Nao's own unflagged takes in this batch: 1158 recordings, median 6.39 morae per second (10th-90th percentile 5.28-7.57)",
+    "targetSeconds": 5.0,
+    "windowSeconds": [4.23, 6.06],
+    "note": "32 morae. The current 6.02 s take is inside the window; the reading is the fault, not the length. The recognizer hearing あし decides; the window is only a guard."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears with あし; put the new take at nao/r1-c2611cde557ba239.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"了解。……あしを折るのは悪いけど、春にはまた生える。道は生えない。\" and \"sendCorrection\": \"SC12\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC13",
+   "id": "r1-439a8bb23eeac272",
+   "speaker": "as_mitsue",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "as.festival#174ed5860f",
+     "scene": "as.festival",
+     "file": null,
+     "line": 291,
+     "en": "Everyone. This time last year, this was reed plain. Now there are roads with names, rules, and neighbours who've made up.",
+     "source": "src/content/settle/20_scenes.js:256"
+    }
+   ],
+   "display": "{皆|みな}さん 。 {去年|きょねん} の {今頃|いまごろ} 、 ここ は {葦|あし} の {原|はら} でした 。 {今|いま} は 、 {名前|なまえ} の ある {道|みち} と {決|き}まり が あって 、 {仲直|なかなお}り した {隣同士|となりどうし} が います 。",
+   "spoken": "皆さん。去年の今頃、ここは葦の原でした。今は、名前のある道と決まりがあって、仲直りした隣同士がいます。",
+   "sendWas": "皆さん。去年の今頃、ここは葦の原でした。今は、名前のある道と決まりがあって、仲直りした隣同士がいます。",
+   "send": "皆さん。去年の今頃、ここはあしの原でした。今は、名前のある道と決まりがあって、仲直りした隣同士がいます。",
+   "sendMorae": 59,
+   "changes": [
+    "葦 sent as its reading, あし"
+   ],
+   "decided": "The local worker's recognizer check of the bare-葦 recordings READINESS listed with SC10 (2026-10-20, relayed by Robin): likely misread, the recognizer heard グダ where the line says あし; an SC each, as SC10.",
+   "why": [
+    "The reading. The line means あし (its own furigana, {葦|あし}), but Mitsue's engine, Qwen3-TTS, read the bare kanji another way (the recognizer heard グダ). Sending that one word in the kana of its furigana leaves the engine nothing to guess there (§7, step 8).",
+    "Only that word changes. The rest of the send stays as it was, kanji and punctuation included, so the delivery otherwise accepted stays; the display and spoken do not change, so the id and the line key stay."
+   ],
+   "lengthFit": {
+    "basis": "Mitsue's own unflagged takes in this batch: 26 recordings, median 6.97 morae per second (10th-90th percentile 6.19-8.34)",
+    "targetSeconds": 8.47,
+    "windowSeconds": [7.07, 9.53],
+    "note": "59 morae. The current 9.15 s take is inside the window; the reading is the fault, not the length. The recognizer hearing あし decides; the window is only a guard."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears with あし; put the new take at as_mitsue/r1-439a8bb23eeac272.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"皆さん。去年の今頃、ここはあしの原でした。今は、名前のある道と決まりがあって、仲直りした隣同士がいます。\" and \"sendCorrection\": \"SC13\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
+  },
+  {
+   "ref": "SC14",
+   "id": "r1-ae5db8c3a54e390e",
+   "speaker": "mame",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "lines": [
+    {
+     "key": "rw.mame_charm#027912dd64",
+     "scene": "rw.mame_charm",
+     "file": "ch1/33_village",
+     "line": 258,
+     "frozen": [
+      "VA-2"
+     ],
+     "en": "You fixed the sign! This is for you — a charm woven from reeds. Mame made it!",
+     "source": "src/content/ch1/33_scenes_village.js:262"
+    }
+   ],
+   "display": "{看板|かんばん} 、 {直|なお}して くれた ！ これ 、 あげる 。 {葦|あし} で {編|あ}んだ お{守|まも}り 。 マメ が {作|つく}った ！",
+   "spoken": "看板、直してくれた！これ、あげる。葦で編んだお守り。マメが作った！",
+   "sendWas": "看板、直してくれた！これ、あげる。葦で編んだお守り。マメが作った！",
+   "send": "看板、直してくれた！これ、あげる。あしで編んだお守り。マメが作った！",
+   "sendMorae": 33,
+   "changes": [
+    "葦 sent as its reading, あし"
+   ],
+   "decided": "The local worker's recognizer check of the bare-葦 recordings READINESS listed with SC10 (2026-10-20, relayed by Robin): likely misread, the recognizer heard 足し (probably たし) where the line says あし; an SC each, as SC10.",
+   "why": [
+    "The reading. The line means あし (its own furigana, {葦|あし}), but Mame's engine, AivisSpeech, read the bare kanji another way (the recognizer heard 足し (probably たし)). Sending that one word in the kana of its furigana leaves the engine nothing to guess there (§7, step 8).",
+    "Only that word changes. The rest of the send stays as it was, kanji and punctuation included, so the delivery otherwise accepted stays; the display and spoken do not change, so the id and the line key stay."
+   ],
+   "lengthFit": {
+    "basis": "Mame's own unflagged takes in this batch: 13 recordings, median 5.67 morae per second (10th-90th percentile 4.59-6.42)",
+    "targetSeconds": 5.82,
+    "windowSeconds": [5.14, 7.2],
+    "note": "33 morae. The current 5.68 s take is inside the window; the reading is the fault, not the length. The recognizer hearing あし decides; the window is only a guard."
+   },
+   "results": "Same id. Choose among the takes the recognizer hears with あし; put the new take at mame/r1-ae5db8c3a54e390e.opus in results.json with its bytes, sha256 and seconds, add \"send\": \"看板、直してくれた！これ、あげる。あしで編んだお守り。マメが作った！\" and \"sendCorrection\": \"SC14\" to that entry, and move the current take to superseded/<stamp>/.",
+   "status": "send chosen; to be recorded by the local worker with the same voice"
   }
  ]
 }
