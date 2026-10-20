@@ -684,6 +684,36 @@
       light's window glow and the night's window light skip it): grey thatch, weathered timber, dusty dark panes, no
       lamp, no flower boxes; only Koharuno's four houses set it. Local branch `qa026-koharuno` (`bb8b5b3`). Robin's
       call: whether the tree-keeper's hut stays aged after Kayo goes home.
+    - **RBN-QA-031 candidate, with Robin (not pushed):** `co.tokiwa_page`: after "…I'm the one who opened it." Tokiwa
+      walks to the desk (5,4) and you turn to watch, so the page falls onto the desk the line names. Local branch
+      `qa031-desk` (`b1d8cc1`); frames sent to Robin (CC-031).
+    - **RBN-QA-030 candidate, with Robin (not pushed):** the Kiln Warden stands in `co.kiln_core` (its existing golem
+      look) at 7,4 while `!co_warden_down`, steps to 7,5 after "…slowly rises to its feet.", and a `!refresh` after the
+      fight clears it (globe and page left). Not talkable; the fight is still the heart's scene on entry. Local branch
+      `qa030-warden` (`7f24d63`); frames sent to Robin. On approval, cherry-pick, build, run `story_ch3`.
+    - **RBN-QA-033 candidate, with Robin (not pushed):** between Cinder Orchard and Snowbell no main quest is open, so the
+      Journey said "Nothing pressing" while the narration pointed north (the way is west to the Orchard Road, then
+      north). A main quest may now carry `next: { jp, en, until }`, shown in "Now" as "The road on" once it is done
+      until `until` holds (src/ui/50_menu.js; a list: the first not yet past); `co_main`'s names west and the Orchard
+      Road until `sb_arrived`, then the climb north to the hamlet until `sb_hamlet_seen` (Agnes's 20:53Z endpoint). No
+      marker (between chapters nothing is followed, as RBN-QA-011). `validate.mjs` checks `next`. Local branch
+      `qa033-roadon` (`7f948bf`); B `road_on` (new). Alternative offered: the journal text only.
+    - **RBN-QA-035 (options, Robin's choice):** `sb.hamlet_first` plays at the hamlet's south edge (22,33); the bell
+      post (22,15) and Kanta (19,19) are out of frame. (A) blocking only: walk up into the square, Kanta comes over;
+      (B) with RBN-QA-013's proposed `!view x y` / `!view -` for the observatory line. Not built.
+    - **RBN-QA-034 candidate, with Robin (not pushed):** the Snowbell Road's avalanche slope (`sb.lw_road_slope`): read
+      right, Gohei crosses first, then you, then your companion (18,3 / 18,4 / 19,4), before the narration; Gohei
+      turns for "Phew…" and goes on up after the companion's word. Local branch `qa034-slope` (`ed767e2`); frames sent.
+    - **RBN-QA-032 (options, Robin's choice):** the festival lookout's vista (`co.reflection` on `co.lookout`, whose
+      surround draws the village at 0.4 scale; no scene camera op). (A, recommended) an `!interlude` vista picture over
+      the vista lines (the village and firebreaks, Hiro's seat with its one globe, the northern peaks); (B) an opt-in
+      scene camera pan for surround maps (the seat stays tiny). Not built.
+    - **RBN-QA-012's third sign (Agnes 20:44Z):** the Snowbell Road junction (`sb.road` 16,11) narrates three arms with
+      snow on the Lanternfall arm; it joins the opt-in sign variants, with its own snow state, not a global change.
+    - **RBN-QA-027 addendum (Agnes 17:43Z):** `co.suzu_truth` opens "Before we go in…" while you already stand inside
+      before Hiro (talked to Hiro with Suzu, or to Suzu in the workshop); the narration's blowpipe, the ribbon laid on
+      the workbench and the book are not staged. Scoped (the lead-in and its challenge outside the door, back in to
+      Hiro; `glasswork`/`cool` holds; the ribbon), candidate to follow on `qa027-suzu`.
     - **The kiln's inside nudge** (Agnes's observation on CC-006, being scoped): inside the Great Kiln the step is
       `'open'`, so the nudge is the generic "You can't take this further just yet"; proposal in CC-020 (the kiln step
       only: name its next place, or an `'open'` nudge of its own).

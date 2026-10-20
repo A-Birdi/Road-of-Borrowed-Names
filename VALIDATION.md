@@ -5487,6 +5487,27 @@ Yasu's story, when listening, has not begun being spoken."
   - **Candidate CC-008:** `index.html` sha256 `203e2bd31f4c7926bf362d45f439a485fe13f84da3e32ca6271ef32c2dd152e4`, built
     from `45fb382` (CC-007 plus T02's counting wording). On this exact file (B): `kana_homophones` 208/0, `learning_ui`
     15/0. Voice: none.
+  - **Agnes's posts 19:51Z–20:47Z (RBN-QA-031 to 034, the QA-012 addendum), candidates with Robin, none pushed:**
+    - RBN-QA-031 (`qa031-desk`, `b1d8cc1`): scripted frames at the page reading, "slips from his fingers", "I
+      remember" and "Please — laugh", CC-008 against the candidate, for Suzu, Mio, Nao and Ren; sent to Robin. No
+      suite run.
+    - RBN-QA-030 (`qa030-warden`, `7f24d63`): scripted frames on the candidate's build against CC-008 (Suzu; the
+      fight auto-played by the test harness): the Warden at 7,4 on entry, 7,5 for its line and Suzu's, gone after
+      the fight with the globe and the page. `validate.mjs` no errors (code review: the dialect table is keyed by
+      text, so the added `!walkto` moves no Kansai line). No suite run.
+    - RBN-QA-033 (`qa033-roadon`, `7f948bf`): first revision (one note, until `sb_arrived`): B `road_on` 11/0, on
+      CC-008's `index.html` 7/4 (the four way-on checks); B `route_after_ch2` 29/0, `quest_guide` all passed; U whole
+      suite 57,664/0; `validate.mjs` no errors (and an error when a kanji in `next` lacks its reading, checked by a
+      temporary edit). Current revision (a second note for the Snowbell Road until `sb_hamlet_seen`, after Agnes's
+      20:53Z endpoint): B `road_on` 11/0 (on Snowbell's road the second note), `quest_guide` all passed; U `quest`
+      150/0, `content` 7/0; `validate.mjs` no errors. Frames (the Journey, CC-008 against the first revision) sent
+      to Robin.
+    - RBN-QA-035: code review only (positions in src/content/ch4/20_maps.js; `sb.hamlet_first`). Options only.
+    - RBN-QA-034 (`qa034-slope`, `ed767e2`): scripted frames (Suzu) at "read it with me", the crossing line, "Phew"
+      and after, CC-008 against the candidate; positions 18,3 / 18,4 / 19,4, Gohei gone on up. No suite run.
+    - RBN-QA-032: CC-008 frames at the vista lines (Suzu) confirm the report; the camera stays on the platform. Code
+      review: no scene camera op in src/engine/70_script.js; the surround is drawn at 0.4. Options only.
+    - Voice: none of these changes a spoken line or voice key (the owner's voice pause holds).
   - **Candidate CC-007:** `index.html` sha256 `343f54b86303630beb3efee932c7f2fceca0a7cfd90e51019671b1c051d29f97`, built
     from `026965b` (T01, T02 and RBN-QA-028 on top of CC-006's source); byte-identical to the scratch build the suites
     above ran on. On this exact file (B): `kana_homophones` 174/0, `shino_thanks` 28/0, `story_ch3 E nao` 38 checks
