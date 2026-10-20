@@ -701,7 +701,7 @@
       answer keys: T01 ぢ/づ, T02 multi-kanji exam words, T03 shared glosses, C09 かねる). T01 and T02 confirmed by Agnes as genuine
       defects; repair plans and tests posted (CC-026). C09 re-tiered to a pedagogical-example question, LX03 to
       ambiguous, T04 narrowed. **T01 and T02 implemented (Robin's approval, revised per Agnes 13:33Z), FIX_READY in
-      source for the next candidate:** `learn/20_tasks.js` (じ/ぢ, ず/づ, ジ/ヂ, ズ/ヅ asked by base kana + dakuten, real
+      source (`026965b`) and in candidate CC-007 (`343f54b8…`, with RBN-QA-028), READY_FOR_QA:** `learn/20_tasks.js` (じ/ぢ, ず/づ, ジ/ヂ, ズ/ヅ asked by base kana + dakuten, real
       words only for their completions, the same hint on the Foundations one-kana blank), `lang/50_answers.js` (the
       `same_sound` note; still wrong), `learn/60_exams.js` (multi-kanji words name the target's place among the word's
       kanji, 々 counted, kana not; distractors exclude the word's characters; 々's option without the word's reading).

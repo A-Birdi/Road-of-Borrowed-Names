@@ -5447,6 +5447,10 @@ Yasu's story, when listening, has not begun being spoken."
       line changes (prompts, notes and explanations are not voiced).
     - Existing suites on the same scratch build: B `learning_ui` 15/0, `fr1_partial_word` all passed, `fr1_targets` all
       passed, `practice_a_lamps` 51/51. U whole suite on the source: 57,659 passed, 0 failed. `validate.mjs`: no errors.
+  - **Candidate CC-007:** `index.html` sha256 `343f54b86303630beb3efee932c7f2fceca0a7cfd90e51019671b1c051d29f97`, built
+    from `026965b` (T01, T02 and RBN-QA-028 on top of CC-006's source); byte-identical to the scratch build the suites
+    above ran on. On this exact file (B): `kana_homophones` 174/0, `shino_thanks` 28/0, `story_ch3 E nao` 38 checks
+    passed, `side_ch3` all three profiles passed (13, 14, 14 checks), `spoken_lines` 30/0. Voice: none.
     - Found on the way, NOT changed (outside the approval; for the owner): 25 F/E "not a word" lexicon entries are in
       the kana word pool for every other kana's completions and for meaning distractors; the katakana extended lesson's
       small ァィゥェォ share rōmaji with アイウエオ and ウォ with ヲ, so its practice pass can ask them by rōmaji alone;
