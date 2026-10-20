@@ -430,15 +430,16 @@ await test('Company: what is on the companion\'s mind has a Voice button, the co
 
 // ---- VL-2: the second pass, each through the game's own code -------------------------------------------------------
 // a new recording of this speaker under this scene, after n0 plays (something said before it does not count)
+// (n0: the time to count from, playsNow(); the voicebank keeps only its last 60 notes, so plays are told by their time)
 const heardNew = async (p, speaker, scene, n0, what) => {
   try {
-    await p.waitForFunction(([sp, sc, n0]) => { const S = RB.voicebank._.S, pl = S.log.filter((x) => x.k === 'play'); return pl.length > n0 && pl[pl.length - 1].f.startsWith('rec/' + sp + '/') && S.lastScene === sc; }, [speaker, scene, n0], { timeout: 10000, polling: 50 });
+    await p.waitForFunction(([sp, sc, t0]) => { const S = RB.voicebank._.S; return S.log.some((x) => x.k === 'play' && x.t >= t0 && x.f.startsWith('rec/' + sp + '/')) && S.lastScene === sc; }, [speaker, scene, n0], { timeout: 10000, polling: 50 });
   } catch (e) {
     const st = await p.evaluate(() => ({ plays: window.__vb().plays, last: RB.voicebank._.S.lastScene }));
     throw new Error(what + ': no new recording of ' + speaker + ' for ' + scene + ' — ' + JSON.stringify(st));
   }
 };
-const playsNow = (p) => p.evaluate(() => window.__vb().plays.length);
+const playsNow = (p) => p.evaluate(() => Date.now());
 // your own lines are heard in your voice (Voice A, high)
 const myVoice = (p) => p.evaluate(() => { const v = RB.game.settings.voice; v.player = 'A'; v.pitch = 'high'; });
 
@@ -447,7 +448,7 @@ await test('a battle\'s telegraph has a Voice button: the narrator\'s recording,
   await at(p, 'rw.road', 14, 9, { comp: 'mio', flags: { departed: true } });
   await p.evaluate(() => { const s = RB.game.s; s.learn.profile = 'E'; s.learn.difficulty = 'relaxed'; RB.game.settings.intentDisplay = 'expanded'; RB.game.settings.battleAnim = 'instant'; RB.game.applySettings(); RB.game.startBattle('rw.dustmoth', {}); });
   // the intro is said; then the decision: the telegraph, in full (Expanded)
-  for (let i = 0; i < 200 && !(await p.evaluate(() => !!document.querySelector('.combat-ui .intent .say-line [data-say-voice]'))); i++) {
+  for (let i = 0; i < 200 && !(await p.evaluate(() => RB.combat.phase() === 'choose' && !!document.querySelector('.combat-ui .intent .say-line'))); i++) {
     await p.evaluate(() => { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); });
     await p.waitForTimeout(80);
   }
@@ -546,8 +547,9 @@ await test('asking back: your question is said in your voice, then the answer (c
   const n0 = await playsNow(p);
   await p.click('.dlg-ask [data-ask="0"]');
   await heardNew(p, 'pc', 'code.ask', n0, 'your question');
-  // then Kōji says it once more
-  await heardNew(p, 'koji', 'ws.ask', n0 + 1, 'the answer after it');
+  // then Kōji says it once more (after the question)
+  const t1 = await p.evaluate(() => { const pl = RB.voicebank._.S.log.filter((x) => x.k === 'play' && x.f.startsWith('rec/pc/')); return pl[pl.length - 1].t; });
+  await heardNew(p, 'koji', 'ws.ask', t1, 'the answer after it');
   const b = await p.evaluate(() => RB.game.s.backlog.slice(-2).map((l) => l.who + '|' + (l.sceneId || '')));
   assert(b[0] === 'pc|code.ask' && b[1] === 'koji|ws.ask', 'the history keeps both with their scenes: ' + b.join(', '));
   await done(pg);
@@ -555,12 +557,9 @@ await test('asking back: your question is said in your voice, then the answer (c
 
 await test('hanafuda: your call is said in your voice as you make it (code.hanafuda)', async () => {
   const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 22, 30, { comp: 'suzu', flags: { departed: true, pt_hanafuda: true } });
   await myVoice(p);
-  await p.evaluate(() => {
-    const s = RB.game.debugStart('rw.village', 22, 30, { comp: 'suzu', flags: { departed: true, pt_hanafuda: true } });
-    s.edition = 2; RB.game.settings.textSpeed = 'instant';
-    RB.activity.launch('hanafuda', { source: 'distractions' });
-  });
+  await p.evaluate(() => { RB.game.s.edition = 2; RB.game.settings.lightbulb = false; RB.activity.launch('hanafuda', { source: 'distractions' }); });
   await p.waitForSelector('.hf-menu');
   await p.click('input[name="hf-len"][value="1"]');
   await p.click('[data-a="start"]');
