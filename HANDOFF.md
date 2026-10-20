@@ -668,6 +668,9 @@
       glass fills the doorway and runs over its frame; once broken, the doorway stands open, dark, the heat glowing
       inside, glass left on the frame and the step. Local branch `qa024-kiln` (`c6ddc17`). On approval, cherry-pick,
       build, and run B `kiln_door` (15/0 on the candidate) and `story_ch3`.
+    - **RBN-QA-029 candidate, with Robin (not pushed):** the Great Kiln's instruction wall draws its two vents upper and
+      lower, only the upper opening (`co_kilnwall`); local branch `qa029-kilnwall` (`30444f8`). On approval,
+      cherry-pick, build, run `story_ch3` and `staging_chapters --ch=3`.
     - **RBN-QA-027 candidate, with Robin (not pushed):** with Suzu, `co.suzu_ask` (Hiro's story) said "Outside the
       workshop…" while you stood inside by Hiro and Isao; now you walk to the door, fade, and her lines are said just
       outside the workshop's door in co.village (you 43,19, Suzu 42,19), where you are left. Local branch `qa027-suzu`

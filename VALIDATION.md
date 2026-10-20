@@ -5375,6 +5375,17 @@ Yasu's story, when listening, has not begun being spoken."
     feedback/explanation literals quote kanji without ruby; ui/89v_sail.js shows 丸 bare). Claude re-checked 14 of the
     18 error locations in source. Not covered: the 4,170 single-reading forms (a consistency check cannot see them).
     Nothing changed. Phase 2b (grammar and register in context: base scenes, expansion scenes, learning text) started.
+  - RBN-QA-029 (Agnes 12:32Z, CC-006, the Great Kiln's instruction wall): the scene's two vents are "upper and lower"
+    and only the upper opens; the wall prop `co_kilnwall` (co.kiln 11,3) drew them side by side at one height and its
+    open state slid both plates. Candidate (local branch `qa029-kilnwall`, `30444f8`, not pushed; with Robin): the panel
+    at the left, the two dampers one above the other at the right; shut, each covered by its plate; open, only the
+    upper plate slides down, its throat glowing. Footprint, collision, puzzle, text, answers and progression unchanged.
+    On the candidate's build: B `story_ch3` (E, Nao) passed; `validate.mjs` no errors; matched frames (shut and open,
+    CC-006 against the candidate) sent to Robin. Voice none.
+  - The audit re-tiered (CC-022) after Agnes's qualifications (ひらける is also the potential of transitive 開く: each
+    開ける finding now cites the English's intended meaning; 開け閉め certain; P02 kept; F08/F09/F18 and 三十の何 open;
+    後→ご lower severity; F10 is お outside the reading, the braces balanced) and Local's CL-036 (21 of 22 matched
+    AivisSpeech/Nemo recordings already say the proposed reading; F08's does not; 31 Qwen unknown). Nothing changed.
   - RBN-QA-027 (Agnes 11:18Z, CC-005, Suzu's "A Seat Kept Until Spring"): after Hiro's story `co.suzu_ask` walked you
     and Suzu to 6,8/5,8 inside the workshop, then the narrator said "Outside the workshop, Suzu looks back just once."
     and her private lines played there, by Hiro and Isao; free control resumed inside. Candidate (local branch
