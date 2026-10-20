@@ -135,7 +135,9 @@ const CH2 = [
   { ch: 2, scene: 'sg.tamae_after', map: 'sg.inn', at: [9, 5, 'up'], talk: 'tamae', flags: SB, variants: [{ name: 'rest', comp: 'mio', picks: [0] }, { name: 'good luck', comp: 'ren', picks: [1] }], expect: { tamae: ['present', 'laugh'] } },
   { ch: 2, scene: 'sg.tamae_post', map: 'sg.inn', at: [9, 5, 'up'], talk: 'tamae', comp: 'nao', flags: F(SE, { postgame: true }), variants: [{ name: 'rest', picks: [0] }, { name: 'another time', picks: [1] }], expect: { tamae: ['laugh', 'present'] } },
   { ch: 2, scene: 'sg.nao_cameo', map: 'sg.inn', at: [3, 6, 'up'], talk: 'nao', flags: S0, quests: { sg_main: 1 }, comps: ['mio', 'ren', 'suzu'], expect: { nao: ['strap', 'point', 'lookroad'] } },
-  { ch: 2, scene: 'sg.tetsu_history', map: 'sg.harbor', at: [34, 30, 'up'], talk: 'tetsu', flags: SR, quests: { sg_main: 5 }, comp: 'ren', variants: [{ name: 'told', picks: [0], expect: { tetsu: ['lookroad', 'lowered'] } }, { name: 'another time', picks: [1] }] },
+  { ch: 2, scene: 'sg.tetsu_history', map: 'sg.harbor', at: [34, 30, 'up'], talk: 'tetsu', flags: SR, quests: { sg_main: 5 }, comp: 'ren', variants: [{ name: 'told', picks: [0], expect: { tetsu: ['lookroad', 'lowered'] } }, { name: 'another time', picks: [1] },
+    // (RBN-QA-009: back from the archive, his opening says so; the story is the same)
+    { name: 'back from the archive · told', flags: { sg_boss_done: true }, picks: [0], expect: { tetsu: ['lookroad', 'lowered'] } }] },
   { ch: 2, scene: 'sg.dir_check', map: 'sg.harbor', at: [32, 17, 'left'], talk: 'kiyo', flags: F(SC, { sg_dir_daigo: true, sg_dir_tobi: true, sg_dir_kiyo: true }), vars: { sg_dirs: 3 }, quests: { sg_main: 2, sg_cove: 0 }, comps: ALL4, expect: { pc: ['point', 'size'] } },
   { ch: 2, scene: 'sg.sota_start', map: 'sg.harbor', at: [18, 29, 'up'], talk: 'sota', flags: SC, quests: { sg_main: 2 }, comp: 'mio', expect: { sota: ['point', 'aside', 'forehead'] } },
   { ch: 2, scene: 'sg.sota_nets', map: 'sg.harbor', at: [18, 29, 'up'], talk: 'sota', flags: SC, quests: { sg_main: 2, sg_cove: 3 }, items: { sg_nets: 1 },

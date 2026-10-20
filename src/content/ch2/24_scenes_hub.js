@@ -111,8 +111,14 @@ tetsu: …… {潮|しお} が {変|か}わる 。 || …Tide's turning.
 
 @scene sg.tetsu_history
 # Staged: Tetsu looks out towards the island as he remembers, then back at you; his head goes down at his
-# father taking off his hat.
+# father taking off his hat. Offered from the archive's call onwards: his opening knows whether you have been
+# there yet (Agnes, RBN-QA-009); the story he offers is the same either way.
+!if sg_boss_done -> back
 tetsu: {沈|しず}んだ {書庫|しょこ} へ {行|い}く の か 。 || Going to the drowned archive, are you.
+!goto offer
+:back
+tetsu: {沈|しず}んだ {書庫|しょこ} から {戻|もど}った の か 。 || Back from the drowned archive, are you.
+:offer
 !gesture tetsu lookroad left
 tetsu: …… {子|こ}ども の {頃|ころ} 、 {親父|おやじ} の {船|ふね} で {島|しま} の {近|ちか}く を {通|とお}った 。 {聞|き}きたい か 。 || …When I was a boy, I passed near the island on my father's boat. Want to hear it?
 !choice
