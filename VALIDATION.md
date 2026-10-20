@@ -5503,6 +5503,9 @@ Yasu's story, when listening, has not begun being spoken."
       150/0, `content` 7/0; `validate.mjs` no errors. Frames (the Journey, CC-008 against the first revision) sent
       to Robin.
     - RBN-QA-035: code review only (positions in src/content/ch4/20_maps.js; `sb.hamlet_first`). Options only.
+    - RBN-QA-037 (`qa037-hoshino`, `762f86c`): scripted frames (entering, the opening narration, "Is that the post?")
+      CC-008 against the candidate: Hoshino at 8,2 facing the window on entering and at the opening; `validate.mjs`
+      no errors; B `story_ch4 I ren go` 53/53 on the candidate's build (118 Snowbell scenes seen). Posted as CC-034.
     - RBN-QA-036 (`qa036-counter`, `7bf0030`): B `counter_tap` (new) 8/0 on the candidate's build (from the door a
       tap on Yae walks to 13,4, faces up, Yae speaks; already at 13,4 facing down, a tap turns you and she speaks; the
       counter tapped from below talks to her, from the door it is read at its left end 11,3; Natsume, with a free place
