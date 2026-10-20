@@ -695,8 +695,11 @@
       proposed: 何 なに→なん ×23, 後 あと→ご ×2; send-correction candidates). Phase 2a (game-wide furigana consistency, CC-021) done: 18 furigana
       errors on 36 lines, 10 pedagogy inconsistencies, the furigana rule's enforcement gap in English feedback fields.
       CC-020 gave the 25 phase-1 candidates in context and corrected the identifier wording (a ruby-only fix keeps the
-      recording id; the lookup key changes). Phase 2b (grammar and register in context: base scenes, expansion scenes,
-      learning text; "examined N of M") is running as three read-only reviewers. No fixes from findings alone;
+      recording id; the lookup key changes). Phase 2b done (CC-024, CC-025): base scenes 9,078 of 9,078
+      (16 findings, no grammar errors); expansion scenes and code-spoken lines 9,222 of 9,857 (32 findings: the
+      machine-undo template's を after a verb, Nao's 私, Suzu's register); learning text in full (22 findings, 8 wrong
+      answer keys: T01 ぢ/づ, T02 multi-kanji exam words, T03 shared glosses, C09 かねる). T01, T02, C09 proposed as
+      bounded functional fixes if the owner and Agnes agree; the rest are the owner's decisions. No fixes from findings alone;
       send corrections, if Robin approves, as SC10-SC14.
     - **RBN-QA-012's second sign (Agnes 09:39Z):** the terraces' crossroads (`co.terraces` 18,17) narrates four arms;
       the prop is the shared rectangular `sign`. Both signs become opt-in variants (three arms in Reedwake, four on the

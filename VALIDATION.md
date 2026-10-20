@@ -5396,6 +5396,19 @@ Yasu's story, when listening, has not begun being spoken."
     Hall wing 10 Intermediate sayings that contradict their shared English (左に折れた vs "turn right"), Ren's 初めて見ました
     translated "never seen", 記録からまで, Suzu's standard voice shifting register in sb/sa (a rough count by chapter
     agrees), 郵便受け for a posting box, 四語 for a two-or-three-word note. Nothing changed.
+  - The language audit, phases 2b-2 and 2b-3 (report only; read-only sub-agents; CC-025). 2b-2, scenes outside the base
+    chapters and the code-spoken lines: 9,222 of 9,857 unique items read in full (all 6,231 scene items; 2,991 of 3,626
+    code-spoken; 635 template output checked by script); 32 findings, among them X01 (high: the machine-undo template
+    `A.jp + ' を元に戻した'`, engine/55b_verbs.js:445, puts を after a verb phrase), X06 (high: Nao's 私 ×3 for 俺),
+    X11 (Suzu's 開けない translated "answer"), X07/X08 (one polite voice in every resident's whereabouts answers; Suzu's
+    standard register in lq/xp/atlas). 2b-3, learning and teaching text: every family read in full (405 challenge sets,
+    1,891 steps; 357 drills; 150 grammar points; 31 kana groups; 6,964 lexicon entries; 18 activities; 37 practice_b;
+    597 Atlas lines; exam and task templates with pools measured); 22 findings, 8 wrong answer keys, among them T01
+    (high: ぢ/づ bare items accept only ぢ/づ for "ji"/"zu"), T02 (high: the exam's "write the kanji in <word>" accepts one
+    kanji of a multi-kanji word), T03 (shared glosses), C09 (high: 〜かねる keyed as physical inability), LX03 (沸く
+    glossed as transitive). Claude re-checked T01, T02, C09, LX03, X01, X06 and X11 in source; the third X06 line is at
+    atlas/50_run.js:493. Report saved at the session scratchpad's audit/phase2b_learning/REPORT.md. Nothing changed;
+    T01, T02 and C09 proposed as bounded functional fixes if the owner and Agnes agree.
   - RBN-QA-027 (Agnes 11:18Z, CC-005, Suzu's "A Seat Kept Until Spring"): after Hiro's story `co.suzu_ask` walked you
     and Suzu to 6,8/5,8 inside the workshop, then the narrator said "Outside the workshop, Suzu looks back just once."
     and her private lines played there, by Hiro and Isao; free control resumed inside. Candidate (local branch
