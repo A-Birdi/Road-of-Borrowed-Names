@@ -29,7 +29,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(2, 5, 3, 15, '+');          // the west walkway
       k.rect(5, 17, 22, 3, '+');         // the south walkway
       k.rect(8, 7, 18, 9, 'd');          // the basin
-      k.rect(26, 2, 3, 3, 'w');          // the drowned stretch of the north walkway (passable once drained)
+      // the drowned stretch of the north walkway (26-28, 2-4) is walkway stone under the floodwater (the lf_flood props
+      // below), so once the basin drains it reads as the walkway the narrator says rises (Agnes, RBN-QA-015)
       k.rect(29, 2, 4, 3, '+');          // beyond it, the way down
       k.scatter('w', 10, 901, [2, 2, 24, 3], '+');
     }),
@@ -71,7 +72,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(17, 5, 4, 2, '+');          // the gate house above it
       k.rect(33, 5, 3, 16, '+');         // the east walkway (reached by the punt)
       k.rect(33, 2, 3, 3, '+');          // the way down
-      k.rect(31, 18, 2, 3, 'w');         // the south walkway's end, under water until the punt is through
+      // the south walkway's end (31-32, 18-20): walkway stone under the floodwater until the punt is through (RBN-QA-015)
     }),
     props: [
       { p: 'stairs', x: 3, y: 2, scene: 'mb.under_up2' },
