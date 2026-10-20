@@ -1,0 +1,128 @@
+{
+ "schema": "rbn.voice.supplement/1",
+ "id": "SL9",
+ "what": "RBN-QA-021: the press's readers when the printed page is a notice: Hana's (rw.tea), Masa's soba line and Kansuke's (Manybridge) reactions worded for a notice (mp.press_react), beside their story wordings in SL4, which are kept; and any other line the script gained since SL8",
+ "authorization": "Robin, 2026-10-20: 'Create the relevant missing voice lines and ensure they're pushed live … Coordinate with the local agent entirely.'",
+ "after": {
+  "goSourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "goManifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "goScriptContentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e",
+  "earlierSupplements": [
+   "MW1",
+   "SL1",
+   "SL3",
+   "SL4",
+   "SL5",
+   "SL6",
+   "SL7",
+   "SL8"
+  ]
+ },
+ "builtFrom": {
+  "branch": "claude/stoic-sagan-n3jvgk",
+  "commit": "972d1d6545fe470f23d9f05ac7628d8b087b3886",
+  "scriptContentHash": "b985db26c2d1b8d4619d799624ae954159053b29541b9aeb2b3fe9722f01b8f4",
+  "command": "node tools/voice/supplement.mjs --id SL9 (tools/voice/production_manifest.mjs into a scratch directory, compared by id with the GO manifest and the earlier supplements)"
+ },
+ "counts": {
+  "entries": 3,
+  "references": 0,
+  "retired": 0,
+  "chars": 56,
+  "morae": 53,
+  "bySpeaker": {
+   "hana": 1,
+   "mb_kansuke": 1,
+   "mb_masa": 1
+  }
+ },
+ "entries": [
+  {
+   "id": "r1-c255ad3b63175f6d",
+   "speaker": "hana",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{旅|たび} の {途中|とちゅう} で 、 {知|し}らせ を {刷|す}った の ね 。 {読|よ}んだ わ よ 。",
+   "spoken": "旅の途中で、知らせを刷ったのね。読んだわよ。",
+   "spokenNamesKana": "旅の途中で、知らせを刷ったのね。読んだわよ。",
+   "send": "旅の途中で、知らせを刷ったのね。読んだわよ。",
+   "kana": "たびのとちゅうで、しらせをすったのね。よんだわよ。",
+   "names": [],
+   "seams": [],
+   "chars": 22,
+   "morae": 21,
+   "pauses": 3,
+   "textHash": "227de6cc4b1f01f5",
+   "lines": [
+    {
+     "key": "mp.press_react#830496e53b",
+     "scene": "mp.press_react",
+     "file": "press hana",
+     "line": null
+    }
+   ]
+  },
+  {
+   "id": "r1-a59a418913e187e8",
+   "speaker": "mb_kansuke",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{読|よ}んだ よ 。 {知|し}らせ は 、 {短|みじか}い ほど いい 。",
+   "spoken": "読んだよ。知らせは、短いほどいい。",
+   "spokenNamesKana": "読んだよ。知らせは、短いほどいい。",
+   "send": "読んだよ。知らせは、短いほどいい。",
+   "kana": "よんだよ。しらせは、みじかいほどいい。",
+   "names": [],
+   "seams": [],
+   "chars": 17,
+   "morae": 16,
+   "pauses": 3,
+   "textHash": "97e5823c4b6865c1",
+   "lines": [
+    {
+     "key": "mp.press_react#8941891183",
+     "scene": "mp.press_react",
+     "file": "press mb_kansuke",
+     "line": null
+    }
+   ]
+  },
+  {
+   "id": "r1-acdc42fe89bea683",
+   "speaker": "mb_masa",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{蕎麦|そば} の {知|し}らせ は 、 {全部|ぜんぶ} いい {知|し}らせ よ ！",
+   "spoken": "蕎麦の知らせは、全部いい知らせよ！",
+   "spokenNamesKana": "蕎麦の知らせは、全部いい知らせよ！",
+   "send": "蕎麦の知らせは、全部いい知らせよ！",
+   "kana": "そばのしらせは、ぜんぶいいしらせよ！",
+   "names": [],
+   "seams": [],
+   "chars": 17,
+   "morae": 16,
+   "pauses": 2,
+   "textHash": "b19c24bc025ddf59",
+   "lines": [
+    {
+     "key": "mp.press_react#e586ed9581",
+     "scene": "mp.press_react",
+     "file": "press mb_masa",
+     "line": null
+    }
+   ]
+  }
+ ],
+ "references": [],
+ "retired": {
+  "note": "GO ids the current script no longer uses. Their recordings (if made) are kept for one site build and then drop out of its indexes (§8.4); nothing is deleted.",
+  "ids": []
+ },
+ "unchanged": "Every other id is as in the GO manifest and the earlier supplements (MW1, SL1, SL3, SL4, SL5, SL6, SL7, SL8)."
+}

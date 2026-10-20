@@ -445,3 +445,13 @@ nothing retired. Built from `4e144ec`, after MW1, SL1 and SL3.
     (`r1-b6278c13586a0674`) is unchanged.
   - **Recording:** the narrator as in SL6 (AivisSpeech); Omi with his cast and engine (Qwen3-TTS clone) and the same
     gates as before.
+- **SL9 (`supplements/SL9_SUPPLEMENT.json`)**: three new recordings, one each for Hana, Kansuke and Masa (53 morae
+  together), with no new references and nothing retired. It was built from `972d1d6` (RBN-QA-021: `8132972`), after SL8.
+  They are the press's readers when the printed page is a notice (`mp.press_react`; src/content/mp/30_press.js,
+  `byKind.notice`): the same rule as the story's, worded for a notice. Each story wording, in SL4, is kept and is still
+  said for a story:
+  - Hana: 旅の途中で、知らせを刷ったのね。読んだわよ。 (`r1-c255ad3b63175f6d`; the story's, `r1-ec158dedda174160`, kept)
+  - Kansuke: 読んだよ。知らせは、短いほどいい。 (`r1-a59a418913e187e8`; the story's, `r1-f364b5f5098f5c9e`, kept)
+  - Masa: 蕎麦の知らせは、全部いい知らせよ！ (`r1-acdc42fe89bea683`; the story's, `r1-397bf9eace122bea`, kept)
+  - **Recording:** each speaker with the cast and engine of their SL4 lines (Hana: Qwen3-TTS), the same gates. Until
+    SL9 is recorded, the three use the device's voice.
