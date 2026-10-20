@@ -5066,6 +5066,25 @@ Yasu's story, when listening, has not begun being spoken."
     and reduced motion give the same places; coming back in plays nothing and nobody walks in; asking Mio still makes
     her the one chosen. B `staging_chapters --ch=1 --only=rw.hall` 173/0 (172/1 before the doorway fix: the waiting
     arrivals shared the door tile, unseen). U `living_world` 110/0, `town` 87/0, `practice_b` 96/0.
+    Regression on the same build: B `departures` (all), `walk_round` (all), `story_ch1` 8/8 (both profiles, each
+    companion), `living_world` 9/0; `staging_variants` 958/4 with pursue running alongside, the four being "no stuck
+    input" after Mio's and Ren's questline scenes, which pass alone on this build and on CL-001's (158/0 each).
+    `pursue` (E, Nao, the six chapters and an Atlas expedition): 7/7 milestones in order, and exit 1 for "left a
+    night-only map during its night: rw.village → rw.millroad" twice; CL-001's build gives the same (7/7, the same
+    two). The driver takes exits by calling the map change itself, so it passes the village's night hold that stops
+    a player; not this candidate's.
+  - RBN-QA-007 (Agnes's review question): before Genzō's vane scene, the ground-floor stair tile could be stood on,
+    and nothing happened. The stairs are a route, opened by `seen.sg.genzo_wind|sg_fog_cleared` as before; the exit is
+    now a locked one whose scene, `sg.lh_stairs_shut`, steps you back and says "Up there is Genzō's lamp room. Better
+    not go up until he asks you." Facing the stairs still gives their look line. Probed first on the old rules: facing
+    + Enter gave the look line in every state; walking on gave nothing before the vane scene and the top after it.
+    B `lighthouse_top` 106/0 (its check of this case now expects the step back and the line). U `voice_production`
+    27/0, `spoken_sites` 33/0, `travel_rules` 699/0, `quest_guide` 150/0. The line's recording: SL6 (one narrator line).
+  - RBN-QA-008: Shiori's Foundations tide exercise showed "Low tide: 3:00 p.m." as if it were the chart, while the
+    chalkboard in the same room and the other tiers say 3:15. Foundations keeps the hour (it teaches さんじ), now said as
+    Shiori rounding the table, and the explanation names the chalkboard's 3:15; the answers are unchanged. The tide
+    gate runs on a story flag (`sg_tide_low`), not a clock; the recorded 3:15 lines (`sg.tideboard`, `cs.tidepost`) are
+    untouched; the exercise is in no recording list. U `foundations` 92/0, `answer_sweep` 22/0, `fr1` 64/0.
   - U `stampbook_sb1` 39/0, `records` 272/0. Agnes retests with the next build.
 - **VL-2 and the candidate after CL-001, in a browser** (a scratch build of `a451a91`: VL-2, QA-001 to 003, VT-1,
   BT-1, the approved art; run one suite after another while the unit suite ran alongside, load 1–8):
