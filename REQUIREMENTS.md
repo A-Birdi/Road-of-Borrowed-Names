@@ -1225,7 +1225,10 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   taught same-sound kana (じ/ぢ, ず/づ, ジ/ヂ, ズ/ヅ) asked by base kana and dakuten, real words only, a same-sound note,
   accept lists unchanged; the kanji exam names the target's place among a word's kanji, distractors outside the word;
   U `kana_homophones` 1463/0 (the unfixed source fails 893), B `kana_homophones` 174/0 (CC-006 fails 77); voice none.
-  T01, T02 and RBN-QA-028 are in candidate CC-007 (`343f54b8…`, built from `026965b`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  T01, T02 and RBN-QA-028 are in candidate CC-007 (`343f54b8…`, built from `026965b`), READY_FOR_QA.
+  T02's counting is said in the question (Agnes 15:43Z/19:41Z): a word with 々 counts characters, each kanji and the
+  repeat mark as one, the mark not shown when it is the answer; kana are not counted; U `kana_homophones` 1466/0,
+  B 208/0 (CC-007 fails 4). In source, for the next candidate. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand

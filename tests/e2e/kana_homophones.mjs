@@ -4,7 +4,8 @@
 //       the other kana of the pair is wrong, with a note that both are read alike; the target is right. The だ and ダ
 //       rows' exams, over several sittings (bare and word questions), never ask "ji" or "zu" alone.
 //  T02: a kanji exam names the target's place among the kanji of a word with more than one; the word's other kanji
-//       is wrong and the target right; choice options never include another character of the word.
+//       is wrong and the target right; choice options never include another character of the word. The counting is
+//       said on screen: a word with 々 counts characters (each kanji and the repeat mark as one), kana are not counted.
 // Usage: node tools/build.mjs && node tests/e2e/kana_homophones.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -130,13 +131,16 @@ async function next(p, i) {
         if (!step) break;
         const v = step.item.slice(2);
         const pr = await prompt(p);
-        const m = /(?:Write|Which is) the (\w+) kanji of (\S+) \(“/.exec(pr);
-        const word = await p.evaluate(([v, r]) => (RB.kanjiInfo.get(v).words || []).filter((w) => w.r === r).map((w) => w.w), [v, m ? m[2] : '']);
+        const m = /(?:Write|Which is) the (\w+) (kanji|character) of (\S+) \(“/.exec(pr);
+        const word = await p.evaluate(([v, r]) => (RB.kanjiInfo.get(v).words || []).filter((w) => w.r === r).map((w) => w.w), [v, m ? m[3] : '']);
         if (m) {
           multi++;
           const ORD = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'];
           const fits = word.some((w) => Array.from(w).filter((c) => RB_isKanji(c))[ORD.indexOf(m[1])] === v);
           ok(fits, mode + ': "' + pr + '" names a place that holds ' + v + ' (' + word.join('/') + ')');
+          // the counting is said as the learner sees it (Agnes, 15:43Z): 々 words count characters, never kanji
+          const odo = word.some((w) => w.indexOf('々') >= 0), kana = word.some((w) => Array.from(w).some((c) => !RB_isKanji(c)));
+          ok((m[2] === 'character') === odo && (!odo || / Each kanji and the repeat mark( 々)? count as one/.test(pr)) && (!kana || / kana are not counted\.| Kana are not counted\./.test(pr)) && (v !== '々' || pr.indexOf('々') < 0), mode + ': the counting is said: "' + pr + '"');
           if (mode === 'choice') {
             const opts = await options(p);
             const inWord = opts.filter((o) => o !== v && word.some((w) => w.indexOf(o) >= 0));
@@ -159,7 +163,7 @@ async function next(p, i) {
         if (mode !== 'choice') {
           await type(p, v);
           await p.waitForSelector('.fbwrap[data-fb=ok]');
-          if (m) ok((await p.evaluate(() => document.querySelector('.fbwrap').textContent)).indexOf('The answer is its ' + m[1] + ' kanji.') >= 0, 'the explanation names the ' + m[1] + ' kanji');
+          if (m) ok((await p.evaluate(() => document.querySelector('.fbwrap').textContent)).indexOf('The answer is its ' + m[1] + ' ' + m[2]) >= 0, 'the explanation names the ' + m[1] + ' ' + m[2]);
           await p.click('.fbwrap [data-a=continue]');
         } else await answer(p, step, mode);
       }
@@ -167,6 +171,20 @@ async function next(p, i) {
     }
   }
   ok(multi >= 10 && otherTried >= 3, 'words with more than one kanji asked: ' + multi + '; the other kanji typed ' + otherTried + ' times');
+  // Agnes's 19:41Z case, as she met it: だいだい's second place is 々, now "the second character", the mark not shown
+  await p.evaluate(() => {
+    const ws = RB.kanjiInfo.get('々').words, i = ws.findIndex((w) => w.w === '代々');
+    window.__res = null;
+    RB.game.pushMode('challenge');
+    RB.challenge.runStep(RB.exams.question(RB.game.s, 'j:々', 'choice', i), { mode: 'choice' }).then((r) => { RB.game.popMode('challenge'); window.__res = r; });
+  });
+  await p.waitForSelector('.mc .btn');
+  const dpr = await prompt(p);
+  ok(dpr === 'Which is the second character of だいだい (“from generation to generation”)? Each kanji and the repeat mark count as one.', 'だいだい on screen: "' + dpr + '"');
+  const dopts = await options(p);
+  await p.locator('.mc .btn').nth(dopts.indexOf('々')).click();
+  await p.waitForSelector('.fbwrap[data-fb=ok]');
+  ok(dopts.indexOf('々') >= 0 && !dopts.some((o) => o === '代'), 'the mark is chosen and right; 代 is not offered (' + dopts.join(' ') + ')');
   ok(!errors.length, 'T02 exams: no page errors ' + errors.join('; '));
   await ctx.close();
 }

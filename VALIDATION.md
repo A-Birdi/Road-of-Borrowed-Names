@@ -5471,6 +5471,19 @@ Yasu's story, when listening, has not begun being spoken."
       line changes (prompts, notes and explanations are not voiced).
     - Existing suites on the same scratch build: B `learning_ui` 15/0, `fr1_partial_word` all passed, `fr1_targets` all
       passed, `practice_a_lamps` 51/51. U whole suite on the source: 57,659 passed, 0 failed. `validate.mjs`: no errors.
+  - **T02's counting said in the question** (Agnes 15:43Z source review, reproduced live 19:41Z: "Which is the second
+    kanji of だいだい", answer 々; within the approved T02 repair). `learn/60_exams.js`, wording only: a word with the
+    repeat mark 々 counts "characters" ("Write the third character of だんだんばたけ (“terraced fields”). Each kanji
+    and the repeat mark 々 count as one."); when 々 is the answer the mark is not shown ("…the second character of
+    ときどき (“sometimes”). Each kanji and the repeat mark count as one."); a word with kana adds "Kana are not
+    counted."; words without either keep "kanji" and their wording; the explanation after answering says the same
+    ("…its second character: 々, the repeat mark, which repeats the kanji before it."). Targets, coverage, grading,
+    distractors and ruby unchanged. U `kana_homophones` 1466/0: every example word's learner-visible wording checked
+    (unit, counting note, no 々 in its own question, no "kanji" for a 々 word), the explicit sentences, Agnes's だいだい;
+    the previous `60_exams.js` fails 11. B `kana_homophones` 208/0 on a scratch build (adds the counting check on every
+    multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
+    U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
+    (にひょう's 俵, だいひょう's 代表して), outside the approval.
   - **Candidate CC-007:** `index.html` sha256 `343f54b86303630beb3efee932c7f2fceca0a7cfd90e51019671b1c051d29f97`, built
     from `026965b` (T01, T02 and RBN-QA-028 on top of CC-006's source); byte-identical to the scratch build the suites
     above ran on. On this exact file (B): `kana_homophones` 174/0, `shino_thanks` 28/0, `story_ch3 E nao` 38 checks

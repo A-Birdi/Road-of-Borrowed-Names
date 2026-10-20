@@ -3,8 +3,10 @@
 // names the base kana and the dakuten mark, or completes a real word with that hint. The target is never in the
 // question, and only the target is accepted (no folding). Every other kana's bare prompt is unchanged.
 // T02: "Write the kanji in <word>" for a word with more than one kanji names the target's place among the word's
-// kanji (kana not counted, 々 counted, a repeated target at one named place); no word is skipped, no reading is
-// given per character, and the choice options never include another character of the word.
+// kanji (a repeated target at one named place); no word is skipped, no reading is given per character, and the choice
+// options never include another character of the word. The question says how it counts (Agnes, 15:43Z): kana are not
+// counted; a word with the repeat mark 々 counts "characters", each kanji and the mark as one (the mark not shown when
+// it is the answer); the wording the learner sees is what is tested.
 import { load } from '../lib/load.mjs';
 
 export default async (t) => {
@@ -106,11 +108,19 @@ export default async (t) => {
         if (w.w.indexOf('々') >= 0) odo++;
         if (kj.length < Array.from(w.w).length) mixed++;
         if (kj.filter((c) => c === e.ch).length > 1) repeated++;
-        const m = /^Write the (\w+) kanji of (.+) \(“/.exec(wq.prompt.en);
-        const mc = /^Which is the (\w+) kanji of (.+) \(“/.exec(cq.prompt.en);
-        if (!m || kj[ORD.indexOf(m[1])] !== e.ch || m[2] !== w.r) bad.push(w.w + ' ' + e.ch + ': write prompt ' + wq.prompt.en);
-        if (!mc || kj[ORD.indexOf(mc[1])] !== e.ch) bad.push(w.w + ' ' + e.ch + ': choice prompt ' + cq.prompt.en);
-        if (wq.explain.en.indexOf('its ' + (m ? m[1] : '?') + ' kanji') < 0) bad.push(w.w + ': explanation');
+        // the learner-visible wording (Agnes, 15:43Z): a word with 々 counts "characters" and says each kanji and the
+        // repeat mark count as one (the mark itself not shown when it is the answer); a word without it counts
+        // "kanji"; a word with kana says kana are not counted; a word without kana never says so
+        const hasOdo = w.w.indexOf('々') >= 0, hasKana = kj.length < Array.from(w.w).length;
+        const unit = hasOdo ? 'character' : 'kanji';
+        const note = (hasOdo ? ' Each kanji and the repeat mark' + (e.ch === '々' ? '' : ' 々') + ' count as one' + (hasKana ? '; kana are not counted.' : '.') : hasKana ? ' Kana are not counted.' : '');
+        const m = new RegExp('^Write the (\\w+) ' + unit + ' of (.+) \\(“[^”]*”\\)\\.(.*)$').exec(wq.prompt.en);
+        const mc = new RegExp('^Which is the (\\w+) ' + unit + ' of (.+) \\(“[^”]*”\\)\\?(.*)$').exec(cq.prompt.en);
+        if (!m || kj[ORD.indexOf(m[1])] !== e.ch || m[2] !== w.r || m[3] !== note) bad.push(w.w + ' ' + e.ch + ': write prompt ' + wq.prompt.en);
+        if (!mc || kj[ORD.indexOf(mc[1])] !== e.ch || mc[3] !== note) bad.push(w.w + ' ' + e.ch + ': choice prompt ' + cq.prompt.en);
+        if (/ kanji of /.test(wq.prompt.en + cq.prompt.en) && hasOdo) bad.push(w.w + ': a word with 々 counted as kanji');
+        if (e.ch === '々' && (wq.prompt.en + cq.prompt.en).indexOf('々') >= 0) bad.push(w.w + ': 々 shown in its own question');
+        if (wq.explain.en.indexOf('its ' + (m ? m[1] : '?') + ' ' + unit) < 0) bad.push(w.w + ': explanation');
       } else if (wq.prompt.en !== 'Write the kanji in ' + w.r + ' (“' + w.m + '”).' || cq.prompt.en !== 'Which kanji is in ' + w.r + ' (“' + w.m + '”)?') bad.push(w.w + ': one-kanji wording changed');
       const ok = cq.options.filter((o) => o.ok);
       if (ok.length !== 1 || ok[0].jp.indexOf('{' + e.ch + '|') !== 0) bad.push(w.w + ': answer option');
@@ -132,13 +142,16 @@ export default async (t) => {
   const P = (ch, word) => { const q = ask(ch, word, 'hand'); return q ? q.prompt.en : 'no ' + word + ' for ' + ch; };
   t.eq(P('学', '学校'), 'Write the first kanji of がっこう (“school”).', '学 in 学校: first');
   t.eq(P('校', '学校'), 'Write the second kanji of がっこう (“school”).', '校 in 学校: second');
-  t.eq(P('物', '食べ物'), 'Write the second kanji of たべもの (“food”).', 'mixed kana and kanji: べ is not counted (物 is the second kanji of 食べ物)');
-  t.eq(P('食', '食べ物'), 'Write the first kanji of たべもの (“food”).', '食 in 食べ物: first');
-  t.eq(P('時', '時々'), 'Write the first kanji of ときどき (“sometimes”).', '時 in 時々: first');
-  t.eq(P('々', '時々'), 'Write the second kanji of ときどき (“sometimes”).', '々 counts as a kanji: second in 時々');
-  t.eq(P('畑', '段々畑'), 'Write the third kanji of だんだんばたけ (“terraced fields”).', '々 counted: 畑 is the third kanji of 段々畑');
-  t.eq(P('代', '先々代'), 'Write the third kanji of せんせんだい (“the head of the house two generations back”).', '々 counted: 代 is the third kanji of 先々代');
-  t.ok(/^Write the fourth kanji of さんさんくど/.test(P('度', '三々九度')), '々 counted: 度 is the fourth kanji of 三々九度');
+  t.eq(P('物', '食べ物'), 'Write the second kanji of たべもの (“food”). Kana are not counted.', 'mixed kana and kanji: べ is not counted, and the question says so');
+  t.eq(P('食', '食べ物'), 'Write the first kanji of たべもの (“food”). Kana are not counted.', '食 in 食べ物: first');
+  t.eq(P('時', '時々'), 'Write the first character of ときどき (“sometimes”). Each kanji and the repeat mark 々 count as one.', '時 in 時々: the first character, the counting said');
+  t.eq(P('々', '時々'), 'Write the second character of ときどき (“sometimes”). Each kanji and the repeat mark count as one.', '々 in 時々: the second character, never called a kanji, the mark not shown');
+  t.eq(P('畑', '段々畑'), 'Write the third character of だんだんばたけ (“terraced fields”). Each kanji and the repeat mark 々 count as one.', '畑 is the third character of 段々畑, 々 counted once');
+  t.eq(P('代', '先々代'), 'Write the third character of せんせんだい (“the head of the house two generations back”). Each kanji and the repeat mark 々 count as one.', '代 is the third character of 先々代');
+  t.ok(/^Write the fourth character of さんさんくど .*\. Each kanji and the repeat mark 々 count as one\.$/.test(P('度', '三々九度')), '度 is the fourth character of 三々九度');
+  const dq = ask('々', '代々', 'choice');
+  t.eq(dq && dq.prompt.en, 'Which is the second character of だいだい (“from generation to generation”)? Each kanji and the repeat mark count as one.', 'Agnes\'s 19:41Z case, だいだい: the second character, not "the second kanji"');
+  t.eq(ask('々', '時々', 'hand').explain.en, '時々（ときどき） — sometimes. The answer is its second character: 々, the repeat mark, which repeats the kanji before it.', 'after answering, the explanation names 々 as the repeat mark');
   // a repeated target: each place is named exactly, and either way the answer is the target
   const one = [0, 1].map((k) => ask('一', '一字一句', 'hand', k)).filter(Boolean);
   t.eq(one.map((q) => q.prompt.en.split(' ')[2]).sort(), ['first', 'third'], '一 in 一字一句: asked at the first and at the third place');
@@ -156,4 +169,5 @@ export default async (t) => {
   const gq = ask('学', '学校', 'hand');
   t.ok(!A.check('校', gq).ok && A.check('学', gq).ok, '学校, first kanji: 校 is wrong, 学 is right');
   t.ok(/The answer is its first kanji\.$/.test(gq.explain.en), 'the explanation names the place');
+  t.ok(/The answer is its third character\. Each kanji and the repeat mark 々 count as one\.$/.test(ask('畑', '段々畑', 'hand').explain.en), 'and how it was counted');
 };
