@@ -495,7 +495,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.scatter('.', 20, 344, [2, 0, 36, 26], 'a');
     }),
     structs: [
-      { type: 'house', x: 16, y: 1, w: 9, h: 5, roof: 'ash', wall: 'stone', door: 4, windows: [] },
+      // the Great Kiln: its doorway (20,5) is the way in, shut by the glass seal (co_seal, a prop on that tile) until
+      // co_seal_broken (RBN-QA-025: a separate exit on the doorway could never be walked onto, the house kept it solid)
+      { type: 'house', x: 16, y: 1, w: 9, h: 5, roof: 'ash', wall: 'stone', door: 4, windows: [], to: 'co.kiln', spawn: [14, 22], locked: 'co.kiln_seal', unlock: 'co_seal_broken' },
       { type: 'house', x: 34, y: 17, w: 5, h: 3, roof: 'slate', wall: 'stone', door: 2, windows: [], to: 'co.icehouse', spawn: [5, 8] },
     ],
     props: [
@@ -517,7 +519,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
     exits: [
       { x: 30, y: 25, w: 2, h: 1, to: 'co.upper', tx: 30, ty: 1, dir: 'down' },
       { x: 2, y: 25, w: 2, h: 1, to: 'co.terraces', tx: 4, ty: 1, dir: 'down', if: 'co_shortcut' },
-      { x: 20, y: 5, w: 1, h: 1, to: 'co.kiln', tx: 14, ty: 22, dir: 'up', if: 'co_seal_broken' },
     ],
     onEnter: [{ scene: 'co.oldworks_enter', if: '!co_oldworks_seen' }],
     spawn: { default: [30, 23, 'up'] },

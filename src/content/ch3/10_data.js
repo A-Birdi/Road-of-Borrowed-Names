@@ -72,7 +72,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: '{里|さと} の {人|ひと} が {半分|はんぶん} {覚|おぼ}えて いる こと を {聞|き}こう 。 ウメ 、 ゴロウ 、 イサオ 。', en: 'Gather what people half-remember: Grandma Ume on the terraces, Old Gorō at the lookout, and Master Isao at the glass workshop.' },
       { jp: '{集|あつ}めた {記録|きろく} を {記録堂|きろくどう} へ {持|も}って いこう 。', en: 'Take the planting book and the kiln ledger to the Chronicle Hall and set them beside the chronicle.' },
       { jp: '{上|うえ} の {段|だん} へ の {道|みち} は 、 {水番|みずばん} の タモツ が {開|あ}けられる 。', en: 'Tokiwa wants the kiln\'s own record. Tamotsu, who keeps the channel, can open the way up past the terraces.' },
-      { jp: '{上|うえ} の {段|だん} を {越|こ}えて 、 {古|ふる}い {工房|こうぼう} {通|どお}り と {封|ふう}じられた {窯|かま} へ 。', en: 'Climb through the upper terraces to the old workshop row and the sealed kiln.' },
+      { jp: '{上|うえ} の {段|だん} を {越|こ}えて 、 {古|ふる}い {工房|こうぼう} {通|どお}り と {封|ふう}じられた {窯|かま} へ 。', en: 'Climb through the upper terraces to the old workshop row and the sealed kiln.',
+        // where it leads, named (RBN-QA-025: derived, the kiln's steps lie deeper than the guide resolves, and it fell back on
+        // the festival's lookout, a later stage's step): the glass seal until it is broken (its own scene sends you to the
+        // cold hut for the ice word), then the Great Kiln's doorway; inside the kiln, nothing marked
+        atIf: [{ if: '!co_seal_broken', at: { map: 'co.oldworks', prop: 'co_seal', x: 20, y: 5 } }, { if: '!co_kiln_seen', at: { map: 'co.kiln' } }, { if: 'co_kiln_seen', at: 'open' }] },
       { jp: '{窯|かま} で {見|み}つけた もの を 、 {里|さと} へ {持|も}ち{帰|かえ}ろう 。', en: 'Bring what you found in the kiln back down to Tokiwa at the Chronicle Hall.' },
       { jp: '{夕方|ゆうがた} 、 {里|さと} の {人|ひと} たち が {広場|ひろば} に {集|あつ}まる 。', en: 'At dusk the whole village gathers in the square. Tokiwa is waiting for you there.' },
       { jp: '{祭|まつ}り の {夜|よる} だ 。', en: 'It\'s the night of the festival. Walk among the lanterns; when you\'re ready, climb the lookout.' },
