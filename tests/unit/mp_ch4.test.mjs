@@ -26,6 +26,17 @@ export default async (t) => {
   const cmds = (id) => (C.scenes[id] ? C.scenes[id].cmds : []);
   const ops = (id) => cmds(id).map((c) => c.op + ':' + (c.args || []).join(' '));
 
+  // ---- Manbē on Playhouse Row: which scene his talk plays at each step (RBN-QA-018) ------------------------------
+  {
+    const manbe = C.maps['mp.playhouse'].npcs.find((n) => n.id === 'mp_manbe');
+    const talkAt = (stage, flags) => { const s = camp({ flags }); s.quests.mp_main = { stage, done: false, t: 1 }; return (manbe.talk.find((o) => !o.if || test(s, o.if)) || {}).scene; };
+    t.eq(talkAt(1), 'mp.manbe_first', 'before Sōbē sends you: his first scene (busy, nothing moves on)');
+    t.eq(talkAt(2), 'mp.manbe_first', 'with Sōbē\'s referral (step 2): he meets you, says who he is, then the rehearsal');
+    t.eq(talkAt(3), 'mp.manbe_rehearse', 'a rehearsal begun and not finished (step 3): it takes up again');
+    const first = ops('mp.manbe_first');
+    t.ok(first.indexOf('quest:mp_main 3') >= 0 && first.indexOf('call:mp.rehearsal') > first.indexOf('quest:mp_main 3'), 'his first scene moves the quest to step 3, then calls the rehearsal');
+  }
+
   // ---- the edition --------------------------------------------------------------------------------------------------
   const mpMaps = Object.keys(C.maps).filter((id) => /^mp\./.test(id));
   t.ok(mpMaps.length >= 13 && mpMaps.every((id) => C.maps[id].edition === 2), 'Chapter 4\'s ' + mpMaps.length + ' maps are all the twelve-chapter edition\'s');

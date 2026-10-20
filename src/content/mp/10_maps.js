@@ -115,7 +115,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'mb_barge', x: 44, y: 26, if: 'mb2_done', scene: 'mp.river_up' },
     ],
     npcs: [
-      { id: 'mp_manbe', x: 22, y: 12, dir: 'down', if: '!mp_rehearsal_done', talk: [{ if: 'quest.mp_main>=2', scene: 'mp.manbe_rehearse' }, { scene: 'mp.manbe_first' }] },
+      // with Sōbē's referral (step 2) Manbē meets you (mp.manbe_first: who he is, then the rehearsal, step 3); a rehearsal
+      // begun and not finished takes up again from step 3 (RBN-QA-018: step 2 went straight to the rehearsal)
+      { id: 'mp_manbe', x: 22, y: 12, dir: 'down', if: '!mp_rehearsal_done', talk: [{ if: 'quest.mp_main>=3', scene: 'mp.manbe_rehearse' }, { scene: 'mp.manbe_first' }] },
       { id: 'mp_genta', x: 28, y: 14, dir: 'left', talk: [{ if: 'mb2_done', scene: 'mp.genta_after' }, { if: 'mp_theatre_seen&comp!=suzu', scene: 'mp.genta_act' }, { scene: 'mp.genta' }] },
       { id: 'mp_hayashi', x: 12, y: 20, dir: 'down', talk: 'mp.hayashi' },
       { id: 'mp_tomi', x: 40, y: 8, dir: 'down', if: 'quest.mp_main<4', talk: 'mp.tomi_first' },
