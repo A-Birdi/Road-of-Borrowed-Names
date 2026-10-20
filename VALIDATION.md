@@ -5156,7 +5156,7 @@ Yasu's story, when listening, has not begun being spoken."
     saves unchanged; footsteps there become stone steps. On matched scratch builds (before from `0505c0c`, after from
     `ac2014b`): frames at 1180x757 flooded, after each gate opened through its own scene, standing on the stretch, and
     after save and load; a walk across each stretch recorded on both; collision tables identical; U `mb_ch3` 78/0,
-    B `manybridge` 3/0; voice probe 0 new recordings. Frames and clips to Robin privately.
+    B `manybridge` 3/0, `living_world` 9/0 (on the candidate, with the Undercroft crank case); voice probe 0 new recordings. Frames and clips to Robin privately.
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
   - RBN-QA-004 RETESTED_BY_AGNES on CC-005's build: the nudges read "Go to Lantern Hall." and "… Head north-west
