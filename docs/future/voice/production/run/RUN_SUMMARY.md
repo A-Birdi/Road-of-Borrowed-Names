@@ -262,3 +262,27 @@ The technical checks pass on all 23,823 files. No audio is pushed.
     public: `ja-JP/` at the root, `.nojekyll`, and a README with the voices' credits. Pages is on from `main`, at
     https://a-birdi.github.io/Road-of-Borrowed-Names-voices/, so `HOSTED_BASE` is `../Road-of-Borrowed-Names-voices/ja-JP/`.
 - **Checks:** the technical checks pass on all 23,823 recorded files.
+
+## Stage 1 of the supplements: SC10–SC14, SL1, SL3 (2026-10-20)
+
+- **Recorded:**
+  - SC10–SC14 (葦 sent as あし; Nao ×3, Mitsue, Mame) as redos in `results.json`.
+  - SL1: 574 of 574 (`results_SL1.json`).
+  - SL3: 1,292 of 1,292 (`results_SL3.json`), the "Have you seen…?" exchange.
+  - None pending or failed.
+- **Gates:** the same as the review rounds: the text/5 trim, the recognizer, a natural ending, and a seed search (up to 8 Qwen3-TTS seeds; up to 6 AivisSpeech takes).
+  - A seed the recognizer hears wrong is now rejected even when it fits and ends on its own. My speed edit had briefly placed that step in the wrong branch; no run used it.
+  - A take kept although no seed was heard right is flagged "reading check" for listening.
+- **The gate's limit, found 2026-10-20 (issue #1, CL-027):** the recognizer compares a take with AivisSpeech's own reading of the sent text, not with the furigana.
+  - So a dictionary misreading (札 as さつ) passes.
+  - An opt-in switch to compare with the furigana exists (`va_gate.json`). It is off, pending the owner.
+- **Technical checks** (`POST_CHECK_stage1.json`): all 25,689 recorded files pass.
+  - SL1 and SL3 have no missing or mismatched files and no length outliers.
+  - One SL3 take sits slightly quiet (−21.8 LUFS, peak-limited), like the 122 accepted GO takes.
+- **The voice site:** voice build `2026-10-20.1`, published to A-Birdi/Road-of-Borrowed-Names-voices `main` `f5a0dead`.
+  - `voice_site.mjs --update`, against the manifest rebuilt at `026965b` (script content 8495fd8f3ced).
+  - 25,686 files: 16,590 lines and 9,096 references, 607,293,542 bytes for this build. New files only.
+  - Missing: 2,654 lines, all of SL4, SL5 and SL6–SL9, still to record (stage 2).
+  - The tool's folder guard counted the clone's `.git` (about 544 MB of packed history); the published site itself is under the ceiling.
+  - Pages served the new `index.json` at 14:25:48Z, and three new recordings were fetched byte-identical.
+- **Next (stage 2):** SL4, SL5 and SL6–SL9 are queued in order on the same terms, then one more `--update` build.

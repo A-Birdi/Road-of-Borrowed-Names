@@ -1,0 +1,814 @@
+{
+ "checked": 25689,
+ "problems": [
+  {
+   "id": "r1-a5a73168e62174c9",
+   "problem": "level: lufs -22.24, peak -1.0"
+  },
+  {
+   "id": "r1-db1354c6a98dba40",
+   "problem": "level: lufs -21.56, peak -1.0"
+  },
+  {
+   "id": "r1-f90732011d1ea11e",
+   "problem": "level: lufs -22.36, peak -1.0"
+  },
+  {
+   "id": "r1-fd4c1702696e7bd2",
+   "problem": "level: lufs -22.51, peak -1.0"
+  },
+  {
+   "id": "r1-3bffafa517fa6c62",
+   "problem": "level: lufs -21.62, peak -1.0"
+  },
+  {
+   "id": "r1-4a003395756bef35",
+   "problem": "level: lufs -21.8, peak -1.0"
+  },
+  {
+   "id": "r1-6e3dff58f6bcc91f",
+   "problem": "level: lufs -22.13, peak -1.0"
+  },
+  {
+   "id": "r1-98a53872b676fec0",
+   "problem": "level: lufs -22.29, peak -1.0"
+  },
+  {
+   "id": "r1-9d1b2045ca247451",
+   "problem": "level: lufs -21.83, peak -1.0"
+  },
+  {
+   "id": "r1-9d500e2c2da677c3",
+   "problem": "level: lufs -21.67, peak -1.0"
+  },
+  {
+   "id": "r1-af11bff65bdedcdc",
+   "problem": "level: lufs -22.79, peak -1.0"
+  },
+  {
+   "id": "r1-c8fc8a89290bdbb2",
+   "problem": "level: lufs -21.88, peak -1.0"
+  },
+  {
+   "id": "r1-dfb4b7f2b42e21ca",
+   "problem": "level: lufs -22.66, peak -1.0"
+  },
+  {
+   "id": "r1-e7b4cdad26fc76f8",
+   "problem": "level: lufs -22.05, peak -1.0"
+  },
+  {
+   "id": "r1-1dae33fdf579053f",
+   "problem": "level: lufs -22.08, peak -1.0"
+  },
+  {
+   "id": "r1-01c10e3a8a6b827c",
+   "problem": "level: lufs -24.27, peak -1.0"
+  },
+  {
+   "id": "r1-361199497336db46",
+   "problem": "level: lufs -22.19, peak -1.0"
+  },
+  {
+   "id": "r1-4ec5aafaaff49bb3",
+   "problem": "level: lufs -21.7, peak -1.0"
+  },
+  {
+   "id": "r1-a27f54982d86bb6e",
+   "problem": "level: lufs -22.11, peak -1.0"
+  },
+  {
+   "id": "r1-b13ef094db8ed7ae",
+   "problem": "level: lufs -21.54, peak -1.0"
+  },
+  {
+   "id": "r1-faf1aee031d2ba74",
+   "problem": "level: lufs -22.23, peak -1.0"
+  },
+  {
+   "id": "r1-1075f761eed53d88",
+   "problem": "level: lufs -21.56, peak -1.0"
+  },
+  {
+   "id": "r1-3643d484657bd441",
+   "problem": "level: lufs -22.41, peak -1.0"
+  },
+  {
+   "id": "r1-5e6b636b13d3edc5",
+   "problem": "level: lufs -23.52, peak -1.0"
+  },
+  {
+   "id": "r1-1bb1358f2efe5b89",
+   "problem": "level: lufs -21.63, peak -1.0"
+  },
+  {
+   "id": "r1-5998d914354b7c07",
+   "problem": "level: lufs -22.61, peak -1.0"
+  },
+  {
+   "id": "r1-5a4e5fa43a1efc4e",
+   "problem": "level: lufs -22.13, peak -1.0"
+  },
+  {
+   "id": "r1-68621238717862c7",
+   "problem": "level: lufs -21.94, peak -1.0"
+  },
+  {
+   "id": "r1-6c814989da5777ae",
+   "problem": "level: lufs -22.05, peak -1.0"
+  },
+  {
+   "id": "r1-89fc9a64bdd58ecd",
+   "problem": "level: lufs -22.37, peak -1.0"
+  },
+  {
+   "id": "r1-c1d815879565e2c3",
+   "problem": "level: lufs -23.06, peak -1.0"
+  },
+  {
+   "id": "r1-e0321e189171f3eb",
+   "problem": "level: lufs -22.83, peak -1.0"
+  },
+  {
+   "id": "r1-31668ef61f35893c",
+   "problem": "level: lufs -22.11, peak -1.0"
+  },
+  {
+   "id": "r1-b75ef7d0924958ae",
+   "problem": "level: lufs -21.51, peak -1.0"
+  },
+  {
+   "id": "r1-05c122063d68b4b2",
+   "problem": "level: lufs -22.12, peak -1.0"
+  },
+  {
+   "id": "r1-1d6fb6bd006ffeba",
+   "problem": "level: lufs -22.65, peak -1.0"
+  },
+  {
+   "id": "r1-53aee8edbe8a51b6",
+   "problem": "level: lufs -21.86, peak -1.0"
+  },
+  {
+   "id": "r1-56f1a8cfee4af3bc",
+   "problem": "level: lufs -21.73, peak -1.0"
+  },
+  {
+   "id": "r1-b75858c89e20df88",
+   "problem": "level: lufs -21.73, peak -1.0"
+  },
+  {
+   "id": "r1-dfb2f3ffd0c72e97",
+   "problem": "level: lufs -22.59, peak -1.0"
+  },
+  {
+   "id": "r1-7709f9ea99d7dacd",
+   "problem": "level: lufs -22.81, peak -1.0"
+  },
+  {
+   "id": "r1-aab9b41bb683edff",
+   "problem": "level: lufs -21.87, peak -1.0"
+  },
+  {
+   "id": "r1-335a955009d1fc3a",
+   "problem": "level: lufs -21.86, peak -1.0"
+  },
+  {
+   "id": "r1-be4d5a2682791710",
+   "problem": "level: lufs -21.71, peak -1.0"
+  },
+  {
+   "id": "r1-1b6568fc3a816647",
+   "problem": "level: lufs -21.59, peak -1.0"
+  },
+  {
+   "id": "r1-97e4125cd08e2b11",
+   "problem": "level: lufs -22.95, peak -1.0"
+  },
+  {
+   "id": "r1-ad887b5c98e45853",
+   "problem": "level: lufs -23.67, peak -1.0"
+  },
+  {
+   "id": "r1-adfcfa1858a7308b",
+   "problem": "level: lufs -22.2, peak -1.0"
+  },
+  {
+   "id": "r1-0d8e57eadc554212",
+   "problem": "level: lufs -21.71, peak -1.0"
+  },
+  {
+   "id": "r1-6ff089906ca5db7f",
+   "problem": "level: lufs -22.41, peak -1.0"
+  },
+  {
+   "id": "r1-a126ae5f7ea2811d",
+   "problem": "level: lufs -21.86, peak -1.0"
+  },
+  {
+   "id": "r1-c25a0148a91a7ba9",
+   "problem": "level: lufs -21.85, peak -1.0"
+  },
+  {
+   "id": "r1-f7d77a04698baa3f",
+   "problem": "level: lufs -21.73, peak -1.0"
+  },
+  {
+   "id": "r1-ff6620a1c7cb6a83",
+   "problem": "level: lufs -22.24, peak -1.0"
+  },
+  {
+   "id": "r1-4142b50b447246e7",
+   "problem": "level: lufs -22.37, peak -1.0"
+  },
+  {
+   "id": "r1-9d16dc25757ff87e",
+   "problem": "level: lufs -22.96, peak -1.0"
+  },
+  {
+   "id": "r1-0ed027aab9525dc2",
+   "problem": "level: lufs -21.63, peak -1.0"
+  },
+  {
+   "id": "r1-1d0f7f47ef59dbcb",
+   "problem": "level: lufs -21.97, peak -1.0"
+  },
+  {
+   "id": "r1-2f6821fbf36abd2f",
+   "problem": "level: lufs -21.76, peak -1.0"
+  },
+  {
+   "id": "r1-34c65175d44f3412",
+   "problem": "level: lufs -22.34, peak -1.0"
+  },
+  {
+   "id": "r1-41dc5d9b4b351a1c",
+   "problem": "level: lufs -23.55, peak -1.0"
+  },
+  {
+   "id": "r1-435e88afb4d2862c",
+   "problem": "level: lufs -22.28, peak -1.0"
+  },
+  {
+   "id": "r1-46db90b0f87b9896",
+   "problem": "level: lufs -21.53, peak -1.0"
+  },
+  {
+   "id": "r1-475b119f4ead1efc",
+   "problem": "level: lufs -22.85, peak -1.0"
+  },
+  {
+   "id": "r1-503ec0b12d01090d",
+   "problem": "level: lufs -21.68, peak -1.0"
+  },
+  {
+   "id": "r1-536b3376245f0785",
+   "problem": "level: lufs -21.63, peak -1.0"
+  },
+  {
+   "id": "r1-5605603531f9b37a",
+   "problem": "level: lufs -21.99, peak -1.0"
+  },
+  {
+   "id": "r1-58e239a004c0befa",
+   "problem": "level: lufs -21.75, peak -1.0"
+  },
+  {
+   "id": "r1-5e49c490a058e1a8",
+   "problem": "level: lufs -21.79, peak -1.0"
+  },
+  {
+   "id": "r1-69689be71b3f70cd",
+   "problem": "level: lufs -23.44, peak -1.0"
+  },
+  {
+   "id": "r1-6df45a4187c6819f",
+   "problem": "level: lufs -22.8, peak -1.0"
+  },
+  {
+   "id": "r1-8624d9cad65f96a7",
+   "problem": "level: lufs -24.54, peak -1.0"
+  },
+  {
+   "id": "r1-915656606c0fa978",
+   "problem": "level: lufs -22.84, peak -1.0"
+  },
+  {
+   "id": "r1-a19751d604d0f84a",
+   "problem": "level: lufs -21.82, peak -1.0"
+  },
+  {
+   "id": "r1-a7a9f1f7bd28cc0d",
+   "problem": "level: lufs -22.03, peak -1.0"
+  },
+  {
+   "id": "r1-b6cffb40667ec3b4",
+   "problem": "level: lufs -22.85, peak -1.0"
+  },
+  {
+   "id": "r1-b7b8aba0aeec82d8",
+   "problem": "level: lufs -23.85, peak -1.0"
+  },
+  {
+   "id": "r1-c0b8b109d76cb870",
+   "problem": "level: lufs -22.56, peak -1.0"
+  },
+  {
+   "id": "r1-e4b54e6857afb3c4",
+   "problem": "level: lufs -21.7, peak -1.0"
+  },
+  {
+   "id": "r1-e685f7f0f22940dd",
+   "problem": "level: lufs -21.84, peak -1.0"
+  },
+  {
+   "id": "r1-e76ee1f632e1e098",
+   "problem": "level: lufs -22.1, peak -1.0"
+  },
+  {
+   "id": "r1-ee0d03e4df63fb7a",
+   "problem": "level: lufs -22.81, peak -1.0"
+  },
+  {
+   "id": "r1-f42b8b383fb8ef51",
+   "problem": "level: lufs -22.25, peak -1.0"
+  },
+  {
+   "id": "r1-f976f4873a05b538",
+   "problem": "level: lufs -21.92, peak -1.0"
+  },
+  {
+   "id": "r1-d0d2b7d5c0abac1e",
+   "problem": "level: lufs -21.66, peak -1.0"
+  },
+  {
+   "id": "r1-6dd4ba982cc03597",
+   "problem": "level: lufs -22.2, peak -1.0"
+  },
+  {
+   "id": "r1-ca13a753e2068f11",
+   "problem": "level: lufs -21.81, peak -1.0"
+  },
+  {
+   "id": "r1-fd1d991ae846471d",
+   "problem": "level: lufs -23.65, peak -1.0"
+  },
+  {
+   "id": "r1-412c705a47581342",
+   "problem": "level: lufs -22.07, peak -1.0"
+  },
+  {
+   "id": "r1-5910b1730da8ba3d",
+   "problem": "level: lufs -23.11, peak -1.0"
+  },
+  {
+   "id": "r1-bcfe5479a211992a",
+   "problem": "level: lufs -21.77, peak -1.0"
+  },
+  {
+   "id": "r1-d91069002fdf6607",
+   "problem": "level: lufs -22.1, peak -1.0"
+  },
+  {
+   "id": "r1-b1b8babe8c41b201",
+   "problem": "level: lufs -22.63, peak -1.0"
+  },
+  {
+   "id": "r1-9ee6b5fd39e24e3a",
+   "problem": "level: lufs -21.83, peak -1.0"
+  },
+  {
+   "id": "r1-12f13203efaf821a",
+   "problem": "level: lufs -21.54, peak -1.0"
+  },
+  {
+   "id": "r1-bbbd292ff668a54c",
+   "problem": "level: lufs -21.54, peak -1.0"
+  },
+  {
+   "id": "r1-413f45c38a8bd993",
+   "problem": "level: lufs -22.27, peak -1.0"
+  },
+  {
+   "id": "r1-90718d7497de10d9",
+   "problem": "level: lufs -21.63, peak -1.0"
+  },
+  {
+   "id": "r1-a17744187a8dfadf",
+   "problem": "level: lufs -22.31, peak -1.0"
+  },
+  {
+   "id": "r1-2ffe9a31a6b56cc5",
+   "problem": "level: lufs -21.64, peak -1.0"
+  },
+  {
+   "id": "r1-623e32cbbfcfa683",
+   "problem": "level: lufs -21.79, peak -1.0"
+  },
+  {
+   "id": "r1-6859f1ed44bc120c",
+   "problem": "level: lufs -21.56, peak -1.0"
+  },
+  {
+   "id": "r1-6a7887da06f8f27d",
+   "problem": "level: lufs -23.35, peak -1.0"
+  },
+  {
+   "id": "r1-6cac3ced3f206a53",
+   "problem": "level: lufs -21.96, peak -1.0"
+  },
+  {
+   "id": "r1-8f9a4225b9999598",
+   "problem": "level: lufs -23.27, peak -1.0"
+  },
+  {
+   "id": "r1-93716252e1733ad6",
+   "problem": "level: lufs -23.3, peak -1.0"
+  },
+  {
+   "id": "r1-a814eaa97ef582e7",
+   "problem": "level: lufs -23.42, peak -1.0"
+  },
+  {
+   "id": "r1-ddeadcf736facb89",
+   "problem": "level: lufs -22.09, peak -1.0"
+  },
+  {
+   "id": "r1-f36f5cc4adbf9b7f",
+   "problem": "level: lufs -22.78, peak -1.0"
+  },
+  {
+   "id": "r1-13e141f990bb8846",
+   "problem": "level: lufs -22.42, peak -1.0"
+  },
+  {
+   "id": "r1-6d1920e8ab9133b4",
+   "problem": "level: lufs -21.76, peak -1.0"
+  },
+  {
+   "id": "r1-d04dc2efa3277b46",
+   "problem": "level: lufs -21.77, peak -1.0"
+  },
+  {
+   "id": "r1-2cd9b74958443807",
+   "problem": "level: lufs -21.53, peak -1.0"
+  },
+  {
+   "id": "r1-6b87546a75dacf07",
+   "problem": "level: lufs -21.75, peak -1.0"
+  },
+  {
+   "id": "r1-6d828912ae52bf04",
+   "problem": "level: lufs -23.49, peak -1.0"
+  },
+  {
+   "id": "r1-d0b5e3d5d418d47e",
+   "problem": "level: lufs -22.94, peak -1.0"
+  },
+  {
+   "id": "r1-d79c051dda9d3d27",
+   "problem": "level: lufs -21.8, peak -1.0"
+  },
+  {
+   "id": "r1-1ed36508661037af",
+   "problem": "level: lufs -23.07, peak -1.0"
+  },
+  {
+   "id": "r1-838f0d2ba013edc2",
+   "problem": "level: lufs -22.17, peak -1.0"
+  },
+  {
+   "id": "r1-f115a1361360833d",
+   "problem": "level: lufs -22.15, peak -1.0"
+  },
+  {
+   "id": "r1-ffc9ff2cefed2545",
+   "problem": "level: lufs -21.66, peak -1.0"
+  },
+  {
+   "id": "r1-ref-80a003f50d9cfe9a",
+   "problem": "level: lufs -21.72, peak -1.0"
+  },
+  {
+   "id": "r1-8664392dacefcaf2",
+   "problem": "level: lufs -21.77, peak -1.0"
+  }
+ ],
+ "all": {
+  "files": 25689,
+  "bytes": 600885777,
+  "hours": 22.47
+ },
+ "main": {
+  "files": 23816,
+  "bytes": 553801303,
+  "hours": 20.7
+ },
+ "MW1": {
+  "files": 7,
+  "bytes": 208594,
+  "hours": 0.01
+ },
+ "SL1": {
+  "files": 574,
+  "bytes": 19520907,
+  "hours": 0.74
+ },
+ "SL3": {
+  "files": 1292,
+  "bytes": 27354973,
+  "hours": 1.02
+ },
+ "byRole": {
+  "mio": {
+   "files": 1079,
+   "bytes": 35831635,
+   "hours": 1.35
+  },
+  "nao": {
+   "files": 1182,
+   "bytes": 38075947,
+   "hours": 1.43
+  },
+  "narrator": {
+   "files": 5312,
+   "bytes": 161229104,
+   "hours": 6.12
+  },
+  "npc": {
+   "files": 4365,
+   "bytes": 164309482,
+   "hours": 6.23
+  },
+  "pc": {
+   "files": 1284,
+   "bytes": 23108257,
+   "hours": 0.85
+  },
+  "reference readings": {
+   "files": 9096,
+   "bytes": 61230924,
+   "hours": 2.06
+  },
+  "ren": {
+   "files": 1121,
+   "bytes": 44151073,
+   "hours": 1.67
+  },
+  "suzu": {
+   "files": 2250,
+   "bytes": 72949355,
+   "hours": 2.75
+  }
+ },
+ "byEngine": {
+  "aivis": {
+   "files": 14658,
+   "bytes": 231233198,
+   "hours": 8.52
+  },
+  "nemo": {
+   "files": 237,
+   "bytes": 8345956,
+   "hours": 0.32
+  },
+  "qwen3-tts": {
+   "files": 10793,
+   "bytes": 361298474,
+   "hours": 13.64
+  },
+  "sound": {
+   "files": 1,
+   "bytes": 8149,
+   "hours": 0.0
+  }
+ },
+ "masters": {
+  "files": 23126,
+  "bytes": 2059968209,
+  "format": "FLAC 24 kHz 16-bit mono, lossless, kept locally"
+ },
+ "flaggedEdges": 631,
+ "retried": 1140,
+ "lengthOutliers": {
+  "rule": "longer than max(2.2x, +6 s) or shorter than 0.4x the voice's own median pace for that text length",
+  "long": [],
+  "short": [
+   {
+    "src": "main",
+    "id": "r1-7cbb844d0c01048d",
+    "speaker": "kr_hisae",
+    "kind": "line",
+    "casting": "kr_hisae",
+    "text": "……そうかい。",
+    "chars": 7,
+    "seconds": 0.505,
+    "bytes": 4730,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.69
+   },
+   {
+    "src": "main",
+    "id": "r1-b01a35bdf1ddb2fe",
+    "speaker": "omi",
+    "kind": "line",
+    "casting": "omi",
+    "text": "どうだった。",
+    "chars": 6,
+    "seconds": 0.48,
+    "bytes": 4448,
+    "tries": 3,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.5
+   },
+   {
+    "src": "main",
+    "id": "r1-6325fa8cf66fe5da",
+    "speaker": "koji",
+    "kind": "line",
+    "casting": "koji",
+    "text": "……分かった。",
+    "chars": 7,
+    "seconds": 0.535,
+    "bytes": 4876,
+    "tries": 2,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.61
+   },
+   {
+    "src": "main",
+    "id": "r1-6c5164cdf92760fb",
+    "speaker": "hoshino",
+    "kind": "line",
+    "casting": "hoshino",
+    "text": "……ありがとう。",
+    "chars": 8,
+    "seconds": 0.65,
+    "bytes": 5674,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.86
+   },
+   {
+    "src": "main",
+    "id": "r1-970323edc8581837",
+    "speaker": "el_genroku",
+    "kind": "line",
+    "casting": "el_genroku",
+    "text": "……待っていろ。",
+    "chars": 8,
+    "seconds": 0.775,
+    "bytes": 6551,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 2.2
+   },
+   {
+    "src": "main",
+    "id": "r1-dc6ca597f91a46a6",
+    "speaker": "lq_kayo",
+    "kind": "line",
+    "casting": "lq_kayo",
+    "text": "……こはるの。",
+    "chars": 7,
+    "seconds": 0.585,
+    "bytes": 5301,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.63
+   },
+   {
+    "src": "main",
+    "id": "r1-3775b739bbf7b75b",
+    "speaker": "nao",
+    "kind": "line",
+    "casting": "nao",
+    "text": "……ウミさん。",
+    "chars": 7,
+    "seconds": 0.57,
+    "bytes": 5104,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.56
+   },
+   {
+    "src": "main",
+    "id": "r1-d861a3483ac90da0",
+    "speaker": "nao",
+    "kind": "line",
+    "casting": "nao",
+    "text": "……わかってる。",
+    "chars": 8,
+    "seconds": 0.64,
+    "bytes": 5608,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.7
+   },
+   {
+    "src": "main",
+    "id": "r1-854c3ae6f6bbbe3f",
+    "speaker": "genzo",
+    "kind": "line",
+    "casting": "genzo",
+    "text": "……おかえり。",
+    "chars": 7,
+    "seconds": 0.605,
+    "bytes": 5411,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.6
+   },
+   {
+    "src": "main",
+    "id": "r1-7ddb2bec2a061283",
+    "speaker": "nao",
+    "kind": "line",
+    "casting": "nao",
+    "text": "……どうする？",
+    "chars": 7,
+    "seconds": 0.6,
+    "bytes": 5327,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.56
+   },
+   {
+    "src": "main",
+    "id": "r1-2c4558c946ab0e97",
+    "speaker": "suzu",
+    "kind": "line",
+    "casting": "suzu",
+    "text": "……トモエ。",
+    "chars": 6,
+    "seconds": 0.536,
+    "bytes": 4844,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.37
+   },
+   {
+    "src": "main",
+    "id": "r1-1ed6b356a92133c5",
+    "speaker": "lf_tokuji",
+    "kind": "line",
+    "casting": "lf_tokuji",
+    "text": "……鳴ったな。",
+    "chars": 7,
+    "seconds": 0.635,
+    "bytes": 5613,
+    "tries": 2,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.62
+   },
+   {
+    "src": "main",
+    "id": "r1-65729abcc17701ed",
+    "speaker": "nao",
+    "kind": "line",
+    "casting": "nao",
+    "text": "……助かる。",
+    "chars": 6,
+    "seconds": 0.56,
+    "bytes": 5016,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.41
+   },
+   {
+    "src": "main",
+    "id": "r1-3cfd1fafae24ee53",
+    "speaker": "genzo",
+    "kind": "line",
+    "casting": "genzo",
+    "text": "……回った。",
+    "chars": 6,
+    "seconds": 0.58,
+    "bytes": 5155,
+    "tries": 1,
+    "flags": [],
+    "engine": "qwen3-tts",
+    "expected": 1.45
+   }
+  ]
+ },
+ "retiredByMW1": {
+  "r1-1c0a04f1cc6b7847": true,
+  "r1-262032c0c6d9432b": true,
+  "r1-436958030e2f29b6": true
+ }
+}
