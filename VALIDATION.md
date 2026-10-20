@@ -5355,6 +5355,17 @@ Yasu's story, when listening, has not begun being spoken."
     geometry changes only (QA-007's lighthouse stair exit, already red on CC-005's source; QA-025's kiln door), 3/0;
     `review_ledger` (five new lines self-reviewed) 2/0; `scene_manifest` (regenerated; QA-007's scene) 1023/0;
     `validate.mjs` no errors. Posted as CC-018; CC-019 carries the owner's items.
+  - RBN-QA-025 RETESTED_BY_AGNES PASS on CC-006 (Local's relay, 12:07Z): her original post-seal save enters the kiln;
+    before entry the guide says "Go to The Great Kiln". Her observation (being scoped): inside, nothing is marked and
+    the nudge says "You can't take this further just yet. Carry on with your journey." Cause (Claude, from QA-025's
+    `atIf`): inside the kiln the step is `'open'`, and the guide's nudge for a step with nothing to mark is its generic
+    `WAIT` line (src/engine/56_questguide.js). Nothing changed yet; a bounded fix (the kiln step only) is proposed in CC-020.
+  - The language audit's 25 furigana candidates, posted in context (CC-020): each line read by Claude with its syntax
+    (何 + の/と/とも/でも/です/だった → なん; 後 after a span → ご); 何で, 何が/を/も/か/に and 入れる left as written
+    (no headword-wide replacement). Identifier wording corrected (Local's CL-035, checked in
+    tools/voice/production_manifest.mjs and src/audio/52_voicebank.js): a ruby-only fix keeps the recording id
+    (`r1-…`, from the plain spoken text) and its textHash; the lookup key `scene#sha256(markup)[:10]` changes and a
+    rebuild remaps it. Nothing changed.
   - RBN-QA-027 (Agnes 11:18Z, CC-005, Suzu's "A Seat Kept Until Spring"): after Hiro's story `co.suzu_ask` walked you
     and Suzu to 6,8/5,8 inside the workshop, then the narrator said "Outside the workshop, Suzu looks back just once."
     and her private lines played there, by Hiro and Isao; free control resumed inside. Candidate (local branch

@@ -681,6 +681,9 @@
       light's window glow and the night's window light skip it): grey thatch, weathered timber, dusty dark panes, no
       lamp, no flower boxes; only Koharuno's four houses set it. Local branch `qa026-koharuno` (`bb8b5b3`). Robin's
       call: whether the tree-keeper's hut stays aged after Kayo goes home.
+    - **The kiln's inside nudge** (Agnes's observation on CC-006, being scoped): inside the Great Kiln the step is
+      `'open'`, so the nudge is the generic "You can't take this further just yet"; proposal in CC-020 (the kiln step
+      only: name its next place, or an `'open'` nudge of its own).
     - **The guide's far fallback** (RBN-QA-025, a separate review): with a step's needs too deep to resolve it names a
       later step on an unreachable map; the kiln step now names its own places (`atIf`).
     - **Owner-approved language audit (report only):** Claude's game-wide written-Japanese/grammar/furigana review; Local
