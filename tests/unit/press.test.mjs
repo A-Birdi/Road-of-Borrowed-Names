@@ -56,6 +56,49 @@ export default async (t) => {
   t.ok(rec4.version === 2 && rec4.kind === 'notice' && s.flags.press_notice, 'a revision: version 2, a notice');
   t.ok(rec4.rx.mb_kansuke === 1, 'the boatman reads a festival notice as one');
   t.ok(ids.filter((id) => !(id in rec4.rx)).every((id) => !s.flags['press_rx_' + id]), 'the old version\'s waiting reactions are taken off');
+  // RBN-QA-021: a notice is never called a story. Every notice that can be composed (every block of every slot, every
+  // place it can go), with every reader met: what each chosen reader would say for it names no story or tale; the
+  // readers chosen are exactly those chosen without the notice wordings; a story keeps each rule's own words
+  const allMet = camp({ mp_theatre_seen: true, mp_fest_heard: true, ch3_done: true, ch4_done: true, mb_kansuke_met: true });
+  const combos = (kindId) => { let out = [{}]; for (const slot of P.kind(kindId).slots) out = out.flatMap((c) => P.offered(allMet, slot).map((b) => Object.assign({}, c, { [slot]: b.id }))); return out; };
+  const storyish = (l) => /\bstor(y|ies)\b|\btales?\b/i.test(l.en) || /\{話\|はなし\}/.test(l.jp);
+  const pick = (kindId, blocks, w, v) => P.reactions(allMet, P.tagsOf({ kind: kindId, blocks }).concat(['where:' + w]), v);
+  const notices = combos('notice'), wheres = ['board', 'inn', 'stall'];
+  const bareRules = () => C.press.readers.map((r) => r.rules.map((ru) => ru.byKind));
+  const reached = new Set(), wrong = [], chosen = [];
+  for (const blocks of notices) for (const w of wheres) {
+    const rx = pick('notice', blocks, w, 7);
+    chosen.push(JSON.stringify(rx));
+    for (const x of rx) {
+      const ru = C.press.readers.find((r) => r.id === x.reader).rules[x.rule], l = P.said(ru, 'notice');
+      reached.add(x.reader + '#' + x.rule);
+      if (storyish(l)) wrong.push(x.reader + '#' + x.rule + ': ' + l.en);
+    }
+  }
+  t.ok(notices.length >= 100, 'every notice that can be composed (' + notices.length + ' pages × 3 places)');
+  t.eq([...new Set(wrong)], [], 'no reader calls a notice a story (' + reached.size + ' reactions a notice can draw)');
+  t.ok(['mb_kansuke#3', 'mb_masa#1', 'hana#2'].every((k) => reached.has(k)), 'the three reactions worded for a notice are ones a notice can draw');
+  const saved = bareRules();
+  for (const r of C.press.readers) for (const ru of r.rules) delete ru.byKind;
+  const chosenBare = [];
+  for (const blocks of notices) for (const w of wheres) chosenBare.push(JSON.stringify(pick('notice', blocks, w, 7)));
+  C.press.readers.forEach((r, i) => r.rules.forEach((ru, j) => { if (saved[i][j]) ru.byKind = saved[i][j]; }));
+  t.eq(chosenBare, chosen, 'the notice wordings change no reader chosen, for any notice');
+  t.ok(C.press.readers.every((r) => r.rules.every((ru) => P.said(ru, 'story') === ru)), 'a story keeps every rule\'s own words');
+  const hana = C.press.readers.find((r) => r.id === 'hana').rules[2];
+  t.eq(hana.jp, '{旅|たび} の {途中|とちゅう} で 、 {話|はなし} を {書|か}いた の ね 。 {読|よ}んだ わ よ 。', 'Hana\'s story line is kept word for word (SL4, r1-ec158dedda174160)');
+  // heard in the world: a printed notice (Agnes's case: a reaction already waiting on Hana) says the notice wording
+  const sN = camp();
+  sN.practice = sN.practice || {};
+  sN.practice.press = { v: 1, version: 1, kind: 'notice', blocks: { what: 'n_festival', when: 'n_evening', place: 'n_bank', ask: 'n_welcome' }, tags: [], where: 'board', rx: { hana: 2 }, heard: {}, printed: { story: 0, notice: 1 } };
+  sN.flags.press_rx_hana = true;
+  const wN = P.hear(sN, 'hana');
+  t.ok(wN && wN.line.en === 'You printed a notice on your travels. I read it.' && wN.rule === hana, 'a notice heard from Hana: the notice wording, from the same rule');
+  sN.practice.press.kind = 'story'; sN.practice.press.version = 2; sN.practice.press.rx = { hana: 2 }; sN.flags.press_rx_hana = true;
+  t.eq(P.hear(sN, 'hana').line.jp, hana.jp, 'a story heard from Hana: her recorded line');
+  // every wording is listed for recording, under the scene it is said in
+  const src = RB.content.spokenSources.flatMap((f) => f()).filter((x) => x.scene === 'mp.press_react');
+  t.ok(['mb_kansuke#3', 'mb_masa#1', 'hana#2'].every((k) => { const [id, i] = k.split('#'); const ru = C.press.readers.find((r) => r.id === id).rules[+i]; return src.some((x) => x.jp === ru.jp) && src.some((x) => x.jp === ru.byKind.notice.jp); }), 'both wordings of each are in the recording lists (mp.press_react)');
   // a reaction never comments on language: the rules are about content (no rule waits on a language tag)
   t.ok(C.press.readers.every((r) => r.rules.every((ru) => ru.when.every((x) => !/lang|grammar|mistake/.test(x)))), 'no reader reacts to the language');
   // each reader's talk waits on their flag, first; every reader is someone who exists

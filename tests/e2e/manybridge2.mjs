@@ -75,6 +75,9 @@ await test('the press: compose a notice, proof, ink / press / peel, post it; the
   const rec = await p.evaluate(() => ({ press: JSON.parse(JSON.stringify(RB.game.s.practice.press || null)), waiting: RB.press.waitingAll(RB.game.s).map((r) => r.id), flags: ['press_printed', 'press_notice'].filter((f) => RB.game.s.flags[f]) }));
   assert(rec.press && rec.waiting.length >= 3 && rec.waiting.length <= 5, 'printed, with 3–5 readers waiting: ' + JSON.stringify(rec.waiting));
   assert(rec.flags.length === 2, 'the press flags are set: ' + rec.flags.join(','));
+  // RBN-QA-021: the page is a notice, and the press says so
+  const note = await p.$eval('.pr-sheet', (e) => e.textContent);
+  assert(/about the notice itself/.test(note) && !/the story itself/.test(note), 'the result speaks of the notice: ' + note.slice(0, 300));
   await click(p, '.pr-sheet [data-a=close]');
   await p.waitForFunction(() => window.__done);
   // meet a reader: their reaction is said (the hook the reader's talk injection runs)
@@ -82,6 +85,9 @@ await test('the press: compose a notice, proof, ink / press / peel, post it; the
   await p.evaluate(async (who) => { window.__said = []; const say = RB.ui.dialogue.say; RB.ui.dialogue.say = async (l) => { window.__said.push(l); }; try { await RB.hooks.press_react([who]); } finally { RB.ui.dialogue.say = say; } }, who);
   const said = await p.evaluate(() => window.__said.map((l) => l.en || l.jp));
   assert(said.length >= 1, 'the reader says what they made of it: ' + JSON.stringify(said));
+  // RBN-QA-021: every reader waiting on this notice speaks of a notice, never a story (said here without hearing it)
+  const lines = await p.evaluate(() => RB.press.waitingAll(RB.game.s).map((r) => RB.press.waiting(RB.game.s, r.id).line));
+  assert(lines.concat(said.map((en) => ({ en, jp: '' }))).every((l) => !/\bstor(y|ies)\b|\btales?\b/i.test(l.en) && !/\{話\|はなし\}/.test(l.jp)), 'no reader calls the notice a story: ' + JSON.stringify(lines.map((l) => l.en).concat(said)));
   const after = await p.evaluate((who) => RB.press.waitingAll(RB.game.s).map((r) => r.id).includes(who), who);
   assert(!after, 'a reader who has spoken is no longer waiting');
   assert(errors.length === 0, 'page errors: ' + errors.join(' | '));
