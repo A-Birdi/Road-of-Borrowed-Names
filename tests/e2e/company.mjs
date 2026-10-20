@@ -424,14 +424,16 @@ for (const vp of [{ width: 320, height: 640, scale: 2 }, { width: 390, height: 8
   if (await p.evaluate(() => !!(RB.cases && RB.cases.open))) {
     await p.evaluate(() => { RB.cases.open(RB.game.s, 'parcel'); RB.ui.menu.open('companion'); });
     await p.waitForTimeout(80);
-    await p.click('[data-co-act=case]');
+    // tapped, as on a phone: a mouse click leaves the pointer where the button was (scrolled into view), and the new
+    // page drawn under it opens a hover card for the word that lands there, over Back (a phone has no hover)
+    await p.tap('[data-co-act=case]');
     await p.waitForTimeout(80);
     const cl = await p.evaluate(() => {
       const over = Array.from(document.querySelectorAll('#folio-page .leaf, .co-page, .co-page *')).filter((e) => e.scrollWidth > e.clientWidth + 2 && getComputedStyle(e).overflowX !== 'visible').map((e) => e.className).slice(0, 5);
       return { list: document.querySelectorAll('.co-cases .entry').length, back: !!document.querySelector('[data-co-back]'), acts: !!document.querySelector('.co-acts'), over, hscroll: document.documentElement.scrollWidth > innerWidth + 1 };
     });
     assert(cl.list === 1 && cl.back && !cl.acts && !cl.over.length && !cl.hscroll, tag + ': Discuss a discovered case is its own page with Back, no sideways scroll (' + JSON.stringify(cl) + ')');
-    await p.click('[data-co-back]');
+    await p.tap('[data-co-back]');
     await p.waitForTimeout(60);
   }
   await p.click('[data-co-act=quest]').catch(() => {});
