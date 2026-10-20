@@ -1,0 +1,109 @@
+{
+ "schema": "rbn.voice.supplement/1",
+ "id": "SL8",
+ "what": "RBN-QA-011: in a twelve-chapter journey after Chapter 2, Omi's line naming Tetsu's ferry east (sg.omi_final) and the narrator's line at the washed-out north road telling the ferry apart from the east road (mb.north_washed), and any other line the script gained since SL7",
+ "authorization": "Robin, 2026-10-20: 'Create the relevant missing voice lines and ensure they're pushed live … Coordinate with the local agent entirely.'",
+ "after": {
+  "goSourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "goManifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "goScriptContentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e",
+  "earlierSupplements": [
+   "MW1",
+   "SL1",
+   "SL3",
+   "SL4",
+   "SL5",
+   "SL6",
+   "SL7"
+  ]
+ },
+ "builtFrom": {
+  "branch": "claude/stoic-sagan-n3jvgk",
+  "commit": "e40bccd52445e4902d69658b9323124b14e44805",
+  "scriptContentHash": "901ab73306b9ca2c92f5886a5e042cf34fcae7f8f92632f4bf2ce479871e4062",
+  "command": "node tools/voice/supplement.mjs --id SL8 (tools/voice/production_manifest.mjs into a scratch directory, compared by id with the GO manifest and the earlier supplements)"
+ },
+ "counts": {
+  "entries": 2,
+  "references": 0,
+  "retired": 0,
+  "chars": 80,
+  "morae": 89,
+  "bySpeaker": {
+   "narrator": 1,
+   "omi": 1
+  }
+ },
+ "entries": [
+  {
+   "id": "r1-e1cf8db614b794c4",
+   "speaker": "narrator",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{東|ひがし} の {八百橋|やおばし} へ は 、 {歩|ある}いて は {行|い}けない 。 {港|みなと} から 、 テツ の {渡|わた}し{船|ぶね} で {行|い}く の だ 。",
+   "spoken": "東の八百橋へは、歩いては行けない。港から、テツの渡し船で行くのだ。",
+   "spokenNamesKana": "東のやおばしへは、歩いては行けない。港から、テツの渡し船で行くのだ。",
+   "send": "東のやおばしへは、歩いては行けない。港から、テツの渡し船で行くのだ。",
+   "kana": "ひがしのやおばしへは、あるいてはいけない。みなとから、テツのわたしぶねでいくのだ。",
+   "names": [
+    {
+     "surface": "八百橋",
+     "reading": "やおばし"
+    }
+   ],
+   "seams": [],
+   "chars": 33,
+   "morae": 37,
+   "pauses": 4,
+   "textHash": "b833dc4c272d1c48",
+   "lines": [
+    {
+     "key": "mb.north_washed#d6627b8c03",
+     "scene": "mb.north_washed",
+     "file": "mb/20_scenes_arrive.js",
+     "line": 65
+    }
+   ]
+  },
+  {
+   "id": "r1-5c2e33879f12fd04",
+   "speaker": "omi",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "テツ の {船|ふね} が 、 {東|ひがし} の {八百橋|やおばし} へ {出|で}る そう だ 。 {乗|の}る なら 、 {今夜|こんや} は かもめ{亭|てい} に {泊|と}まって いきな 。 {宿代|やどだい} は {港|みなと} が {持|も}つ 。",
+   "spoken": "テツの船が、東の八百橋へ出るそうだ。乗るなら、今夜はかもめ亭に泊まっていきな。宿代は港が持つ。",
+   "spokenNamesKana": "テツの船が、東のやおばしへ出るそうだ。乗るなら、今夜はかもめ亭に泊まっていきな。宿代は港が持つ。",
+   "send": "テツの船が、東のやおばしへ出るそうだ。乗るなら、今夜はかもめ亭に泊まっていきな。宿代は港が持つ。",
+   "kana": "テツのふねが、ひがしのやおばしへでるそうだ。のるなら、こんやはかもめていにとまっていきな。やどだいはみなとがもつ。",
+   "names": [
+    {
+     "surface": "八百橋",
+     "reading": "やおばし"
+    }
+   ],
+   "seams": [],
+   "chars": 47,
+   "morae": 52,
+   "pauses": 5,
+   "textHash": "918be34664ff7189",
+   "lines": [
+    {
+     "key": "sg.omi_final#29d4fc289b",
+     "scene": "sg.omi_final",
+     "file": "ch2/24_scenes_hub",
+     "line": 23
+    }
+   ]
+  }
+ ],
+ "references": [],
+ "retired": {
+  "note": "GO ids the current script no longer uses. Their recordings (if made) are kept for one site build and then drop out of its indexes (§8.4); nothing is deleted.",
+  "ids": []
+ },
+ "unchanged": "Every other id is as in the GO manifest and the earlier supplements (MW1, SL1, SL3, SL4, SL5, SL6, SL7)."
+}

@@ -434,3 +434,14 @@ nothing retired. Built from `4e144ec`, after MW1, SL1 and SL3.
   - The line is Tetsu's opening when you are back from the drowned archive (`sg.tetsu_history`, Agnes's RBN-QA-009):
     沈んだ書庫から戻ったのか。 Before the archive he keeps his recorded line, 沈んだ書庫へ行くのか。
   - **Recording:** Tetsu's cast and engine (Qwen3-TTS clone) and the same gates as before.
+- **SL8 (`supplements/SL8_SUPPLEMENT.json`)**: two new recordings, one narrator and one Omi (89 morae together), with no
+  new references and nothing retired. It was built from `e40bccd` (RBN-QA-011), after SL7.
+  - Omi, at the end of Chapter 2 in a twelve-chapter journey (`sg.omi_final`), naming the way on:
+    テツの船が、東の八百橋へ出るそうだ。乗るなら、今夜はかもめ亭に泊まっていきな。宿代は港が持つ。 His recorded
+    north-road line (`r1-58502f03dd750d28`) is kept: six-chapter journeys, and twelve-chapter ones once Manybridge is
+    done, still say it.
+  - The narrator, at the washed-out north road (`mb.north_washed`), telling the ferry apart from the fork's east road:
+    東の八百橋へは、歩いては行けない。港から、テツの渡し船で行くのだ。 Suzu's recorded line there
+    (`r1-b6278c13586a0674`) is unchanged.
+  - **Recording:** the narrator as in SL6 (AivisSpeech); Omi with his cast and engine (Qwen3-TTS clone) and the same
+    gates as before.
