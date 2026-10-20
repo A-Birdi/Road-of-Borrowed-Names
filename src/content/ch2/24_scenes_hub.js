@@ -651,6 +651,9 @@ narr: {灯台|とうだい} の レンズ 。 {何枚|なんまい} も の ガ�
 @scene sg.lh_stairs
 narr: {灯室|とうしつ} へ {続|つづ}く {螺旋|らせん} {階段|かいだん} 。 {手摺|てす}り に 、 {膝|ひざ} の {高|たか}さ で {擦|す}れた {跡|あと} が ある 。 || The spiral stair up to the lamp room. The handrail is worn smooth at knee height.
 
+@scene sg.lh_stairs_shut
+narr: {上|うえ} は ゲンゾウ の {灯室|とうしつ} だ 。 {呼|よ}ばれる まで 、 {上|あ}がらない で おこう 。 || Up there is Genzō's lamp room. Better not go up until he asks you.
+
 @scene sg.lh_oil
 narr: {灯油|とうゆ} の {樽|たる} 。 {叩|たた}く と 、 {軽|かる}い {音|おと} が した 。 || A barrel of lamp oil. Tap it, and it sounds hollow.
 ?(sg_wataru_resolved) narr: {隣|となり} に {新|あたら}しい {樽|たる} 。 {札|ふだ} に 、 {丁寧|ていねい} な {字|じ} で 「{灯台|とうだい} {行|ゆ}き ・ {遅|おく}れて すみません 」 。 || Beside it, a new barrel. The tag, in careful handwriting: "For the lighthouse — sorry for the delay."

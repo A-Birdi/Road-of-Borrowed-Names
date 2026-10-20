@@ -401,13 +401,16 @@ for (const V of VIEWS) {
     await p.close();
   }
 
-  // ---- 6. before the vane scene the stairs are only looked at ----------------------------------------------
+  // ---- 6. before the vane scene the stairs do not take you up, and say why (RBN-QA-007) ----------------------
   {
     const { p, errors } = await page(b, url, V.opts);
     await start(p, { x: 1, y: 3, dir: 'up' });
-    await walk(p, 1, 3, 'up', 'sg.lighthouse', [1, 2]);
+    await p.evaluate(install);
+    const n0 = await nLines(p);
+    await walk(p, 1, 3, 'up', 'sg.lighthouse', [1, 3]);
     const w = await where(p);
-    ok(w.map === 'sg.lighthouse' && w.x === 1 && w.y === 2, tag + 'before Genzō has shown you the top, the stairs do not take you up (' + [w.map, w.x, w.y].join(' ') + ')');
+    const said = (await linesSince(p, n0)).map((l) => l.en).join(' / ');
+    ok(w.map === 'sg.lighthouse' && w.x === 1 && w.y === 3 && /until he asks you/.test(said), tag + 'before Genzō has shown you the top, stepping onto the stairs steps you back and says why (' + [w.map, w.x, w.y].join(' ') + ': ' + said + ')');
     ok(!errors.length, tag + 'no page errors (stairs)');
     await p.close();
   }

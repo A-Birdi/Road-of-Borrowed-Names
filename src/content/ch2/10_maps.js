@@ -310,10 +310,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'smalltable', x: 1, y: 6, scene: 'sg.lh_letter', o: { on: 'paper' } },
       { p: 'bed', x: 7, y: 5 }, { p: 'barrel', x: 7, y: 2, scene: 'sg.lh_oil' },
     ],
-    // the stairs go up to the top once Genzō has shown you the vane (before that they are only looked at)
+    // the stairs go up to the top once Genzō has shown you the vane; before that, stepping onto them steps you back
+    // with a word on why (Agnes, RBN-QA-007: you could stand on them and nothing happened)
     exits: [
       { x: 4, y: 9, to: 'sg.harbor', tx: 2, ty: 32, dir: 'down' },
-      { x: 1, y: 2, to: 'sg.lighthouse_top', tx: 1, ty: 2, dir: 'down', if: 'seen.sg.genzo_wind|sg_fog_cleared' },
+      { x: 1, y: 2, to: 'sg.lighthouse_top', tx: 1, ty: 2, dir: 'down', locked: 'sg.lh_stairs_shut', unlock: 'seen.sg.genzo_wind|sg_fog_cleared' },
     ],
     npcs: [
       // here unless he has climbed to the top with you (sg_genzo_up: see sg.lighthouse_top below)
