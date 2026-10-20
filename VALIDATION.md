@@ -5389,6 +5389,13 @@ Yasu's story, when listening, has not begun being spoken."
     matched entries, AivisSpeech/Nemo recorded 17 (16 predicted to say the proposed reading, F08 not), AivisSpeech not
     yet recorded 5 (the four 凍える telegraphs in SL5, one SL4 narrator 何 line), Qwen 31 unknown (30 recorded, 1 not:
     Ren's 教わった道でも, SL4). CC-022's "the recording already says" wording withdrawn. Nothing changed.
+  - The language audit, phase 2b-1 (report only; read-only sub-agent; CC-024): the base story's scene lines and choices
+    read in full, 9,078 of 9,078 (rw 484, sg 957, co 1,394, sb 852, lf 1,036, sa 889, hall 3,466; the last 1,221 Hall
+    lines as 932 distinct texts, the rest byte-identical copies). No grammar errors, no new furigana errors; 16 findings
+    (7 unnatural, 3 register, 4 meaning mismatch, 2 questions), tiered. Claude re-checked the medium ones in source: the
+    Hall wing 10 Intermediate sayings that contradict their shared English (左に折れた vs "turn right"), Ren's 初めて見ました
+    translated "never seen", 記録からまで, Suzu's standard voice shifting register in sb/sa (a rough count by chapter
+    agrees), 郵便受け for a posting box, 四語 for a two-or-three-word note. Nothing changed.
   - RBN-QA-027 (Agnes 11:18Z, CC-005, Suzu's "A Seat Kept Until Spring"): after Hiro's story `co.suzu_ask` walked you
     and Suzu to 6,8/5,8 inside the workshop, then the narrator said "Outside the workshop, Suzu looks back just once."
     and her private lines played there, by Hiro and Isao; free control resumed inside. Candidate (local branch
