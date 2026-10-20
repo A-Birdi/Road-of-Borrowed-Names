@@ -1228,7 +1228,12 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   T01, T02 and RBN-QA-028 are in candidate CC-007 (`343f54b8…`, built from `026965b`), READY_FOR_QA.
   T02's counting is said in the question (Agnes 15:43Z/19:41Z): a word with 々 counts characters, each kanji and the
   repeat mark as one, the mark not shown when it is the answer; kana are not counted; U `kana_homophones` 1466/0,
-  B 208/0 (CC-007 fails 4). In candidate CC-008 (`203e2bd3…`, built from `45fb382`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  B 208/0 (CC-007 fails 4). In candidate CC-008 (`203e2bd3…`, built from `45fb382`), READY_FOR_QA.
+  RBN-QA-033 (Robin approved 2026-10-20): between Cinder Orchard and Snowbell the Journey's "Now" names the way on
+  ("The road on": west to the Orchard Road, then north, until `sb_arrived`; then the climb to the hamlet, until
+  `sb_hamlet_seen`); a main quest's `next`, checked by `validate.mjs`; no marker, gate, line or voice key changed
+  (`54339ee`); B `road_on` 11/0 (CC-008 fails 4), `route_after_ch2` 29/0, `quest_guide` all passed; U whole suite
+  57,664/0. In source, for the next build. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand

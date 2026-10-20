@@ -691,13 +691,13 @@
       look) at 7,4 while `!co_warden_down`, steps to 7,5 after "…slowly rises to its feet.", and a `!refresh` after the
       fight clears it (globe and page left). Not talkable; the fight is still the heart's scene on entry. Local branch
       `qa030-warden` (`7f24d63`); frames sent to Robin. On approval, cherry-pick, build, run `story_ch3`.
-    - **RBN-QA-033 candidate, with Robin (not pushed):** between Cinder Orchard and Snowbell no main quest is open, so the
+    - **RBN-QA-033 IN SOURCE (Robin approved 2026-10-20, `54339ee`, for the next build):** between Cinder Orchard and Snowbell no main quest is open, so the
       Journey said "Nothing pressing" while the narration pointed north (the way is west to the Orchard Road, then
       north). A main quest may now carry `next: { jp, en, until }`, shown in "Now" as "The road on" once it is done
       until `until` holds (src/ui/50_menu.js; a list: the first not yet past); `co_main`'s names west and the Orchard
       Road until `sb_arrived`, then the climb north to the hamlet until `sb_hamlet_seen` (Agnes's 20:53Z endpoint). No
-      marker (between chapters nothing is followed, as RBN-QA-011). `validate.mjs` checks `next`. Local branch
-      `qa033-roadon` (`7f948bf`); B `road_on` (new). Alternative offered: the journal text only.
+      marker (between chapters nothing is followed, as RBN-QA-011). `validate.mjs` checks `next`. Cherry-picked from
+      `qa033-roadon` (`7f948bf`); B `road_on` (new, in the default suite).
     - **RBN-QA-036 candidate, with Robin (not pushed):** a tap on Yae (Yukimiya's counter) did nothing: `tapTile` walks
       to a free place beside the person, and Yae has none (counter, pot, bottles). Now, only when none can be reached,
       the tap walks to the free far side of a counter (or `across` prop) beside them, faces it and acts as the action
@@ -707,16 +707,19 @@
       (`!seen.sb.hoshino`) Hoshino stands at the north window beside the telescope (8,2, facing out) and the opening
       looks out of it, not at the telescope; two small tables with papers spread (2,5, 6,3) join the wall chart. Then
       the usual place (4,4). Local branch `qa037-hoshino` (`762f86c`); frames sent.
-    - **RBN-QA-035 (options, Robin's choice):** `sb.hamlet_first` plays at the hamlet's south edge (22,33); the bell
-      post (22,15) and Kanta (19,19) are out of frame. (A) blocking only: walk up into the square, Kanta comes over;
-      (B) with RBN-QA-013's proposed `!view x y` / `!view -` for the observatory line. Not built.
+    - **RBN-QA-035 candidate, with Robin (not pushed):** `sb.hamlet_first` plays at the hamlet's south edge (22,33); the
+      bell post (22,15) and Kanta (19,19) were out of frame. Robin (2026-10-20): walking the player is fine as long as
+      the whole path is shown. So, no fades: you walk up into the square with your companion following (the camera
+      follows the whole walk), stop below the bell post, and Kanta comes over from the goats as Kanta calls. Local
+      branch `qa035-snowbell` (`a1f014d`); frames sent. On sight approval: cherry-pick, build, run `story_ch4`.
     - **RBN-QA-034 candidate, with Robin (not pushed):** the Snowbell Road's avalanche slope (`sb.lw_road_slope`): read
       right, Gohei crosses first, then you, then your companion (18,3 / 18,4 / 19,4), before the narration; Gohei
       turns for "Phew…" and goes on up after the companion's word. Local branch `qa034-slope` (`ed767e2`); frames sent.
-    - **RBN-QA-032 (options, Robin's choice):** the festival lookout's vista (`co.reflection` on `co.lookout`, whose
-      surround draws the village at 0.4 scale; no scene camera op). (A, recommended) an `!interlude` vista picture over
-      the vista lines (the village and firebreaks, Hiro's seat with its one globe, the northern peaks); (B) an opt-in
-      scene camera pan for surround maps (the seat stays tiny). Not built.
+    - **RBN-QA-032 (Robin chose A, 2026-10-20; candidate being built):** the festival lookout's vista (`co.reflection`
+      on `co.lookout`, whose surround draws the village at 0.4 scale; no scene camera op). An `!interlude co_lookout`
+      picture over the vista lines only (src/ui/42c_interlude_lookout.js, new art under AC-1): `village` (the lit
+      village and the firebreaks), `seat` (the stage, Suzu dancing unless she is with you, Hiro's seat with its one
+      globe), `north` (the road and the peaks with snow). Local branch `qa032-vista`; frames to Robin before any push.
     - **RBN-QA-012's third sign (Agnes 20:44Z):** the Snowbell Road junction (`sb.road` 16,11) narrates three arms with
       snow on the Lanternfall arm; it joins the opt-in sign variants, with its own snow state, not a global change.
     - **RBN-QA-027 addendum candidate, with Robin (not pushed):** `co.suzu_truth` opened "Before we go in…" inside,

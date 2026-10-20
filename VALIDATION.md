@@ -5525,6 +5525,9 @@ Yasu's story, when listening, has not begun being spoken."
     - RBN-QA-032: CC-008 frames at the vista lines (Suzu) confirm the report; the camera stays on the platform. Code
       review: no scene camera op in src/engine/70_script.js; the surround is drawn at 0.4. Options only.
     - Voice: none of these changes a spoken line or voice key (the owner's voice pause holds).
+  - **RBN-QA-033 in source (Robin approved 2026-10-20; `54339ee`, cherry-picked from `qa033-roadon` `7f948bf`):** on a
+    scratch build of `54339ee`: B `road_on` 11/0, `route_after_ch2` 29/0, `quest_guide` all passed; U whole suite
+    57,664/0; `validate.mjs` no errors. Not yet in a deployed candidate.
   - **Candidate CC-007:** `index.html` sha256 `343f54b86303630beb3efee932c7f2fceca0a7cfd90e51019671b1c051d29f97`, built
     from `026965b` (T01, T02 and RBN-QA-028 on top of CC-006's source); byte-identical to the scratch build the suites
     above ran on. On this exact file (B): `kana_homophones` 174/0, `shino_thanks` 28/0, `story_ch3 E nao` 38 checks
