@@ -482,7 +482,11 @@ RB.ui.menu = (function () {
           const ch = l.who === 'pc' ? { name: { en: s.player.name } } : RB.content.chars[l.who];
           // Suzu's lines as she speaks them now (the history itself keeps the standard line)
           const v = RB.dialect && !l.choice ? RB.dialect.line(l.who, l) : l;
-          return '<li class="entry"><span class="mark">' + I(l.choice ? 'next' : 'history') + '</span><div><div class="who">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + j(v.jp) + en(v.en) + '</div>' +
+          // a line kept with the scene it was said in is a spoken line: Voice says it from its recording (or the
+          // device's voice), the spoken word marked (src/ui/22c_spoken_panel.js); a line from an older save, a reply
+          // you chose, has none
+          const said = l.sceneId && l.jp && !l.choice && RB.ui.spoken ? RB.ui.spoken.html({ who: l.who === 'comp' ? l.comp || 'comp' : l.who, jp: l.jp, en: l.en, sceneId: l.sceneId }, { cls: 'h-said', jpCls: 'jp', enCls: 'en' }) : '';
+          return '<li class="entry"><span class="mark">' + I(l.choice ? 'next' : 'history') + '</span><div><div class="who">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + (said || j(v.jp) + en(v.en)) + '</div>' +
             (RB.ui.keep ? RB.ui.keep.historyButton(s, l) : '') + '</li>'; // Keep this sentence (src/ui/66_words_pages.js)
         }).join('') + '</ol>' : '<p class="muted">Nothing said yet.</p>');
       B.innerHTML = '<p class="muted">The history keeps the last 120 lines, in both languages. Replay a line’s voice from the dialogue box while it is on screen.</p>';

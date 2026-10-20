@@ -15,6 +15,17 @@ RB.ui.hanafuda = (function () {
   const LEVEL = [[1, 'Gentle'], [2, 'Steady'], [3, 'Thoughtful']];
   const LENGTHS = [[1, 'One month'], [3, 'Three months'], [6, 'Half a year'], [12, 'A whole year']];
   let V = null;
+  // The calls (Robin, 2026-10-20: every line spoken): koi-koi and stopping are said aloud by whoever makes them, your
+  // partner (the companion across the cloth) or you, as spoken lines under this scene id (src/ui/22c_spoken_panel.js:
+  // a Voice button, the spoken word marked, said as they are made when lines are spoken automatically), each listed for
+  // recording in the companions' voices and the player's (RB.content.spokenSources, read by tools/voice/lines.mjs).
+  const SCENE = 'code.hanafuda';
+  const CALL = { koi: { jp: 'こいこい ！', en: 'Koi-koi!' }, stop: { jp: '{勝負|しょうぶ} ！', en: 'Shōbu: I stop and score!' } };
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => [].concat(...Object.keys(CALL).map((k) => [
+    { scene: SCENE, who: 'comp', comps: ['nao', 'mio', 'ren', 'suzu'], jp: CALL[k].jp, en: CALL[k].en, file: 'ui/88b_hanafuda (the partner\'s call)' },
+    { scene: SCENE, who: 'pc', jp: CALL[k].jp, en: CALL[k].en, file: 'ui/88b_hanafuda (your call)' },
+  ])));
   const partner = () => { const w = V && V.with; return w && RB.content.chars[w] ? RB.content.chars[w].name.en : 'your partner'; };
   const Partner = () => { const p = partner(); return p.charAt(0).toUpperCase() + p.slice(1); };
 
@@ -44,7 +55,7 @@ RB.ui.hanafuda = (function () {
       render();
     });
   }
-  function close() { if (!V) return; clearTimeout(V.timer); RB.ui.popLayer(V.layer); const r = V.resolve; V = null; r({ ok: true }); }
+  function close() { if (!V) return; clearTimeout(V.timer); if (RB.ui.spoken) RB.ui.spoken.stop(); RB.ui.popLayer(V.layer); const r = V.resolve; V = null; r({ ok: true }); }
   function leave() { if (!V) return; if (V.view === 'menu') close(); else { clearTimeout(V.timer); V.view = 'menu'; V.m = null; render(); } }
   const rec = () => RB.pastimes.rec(S(), 'hanafuda');
 
@@ -146,7 +157,8 @@ RB.ui.hanafuda = (function () {
       '<div class="hf-pilebox"><span class="hf-card back pile">' + CARDS().back() + '</span><span class="small muted">' + g.pile.length + '</span>' + (drawn ? cardHtml(drawn, { cls: 'turned' }) : '') + '</div></div>';
     h += '<p class="sg-status" role="status">' + statusLine() + '</p>';
     if (g.phase === 'decide' && g.turn === 0) h += '<div class="sg-ask hf-decide" role="group" aria-label="Stop or koi-koi"><button type="button" class="pbtn primary" data-a="stop">' + RB.ui.jhtml('{勝負|しょうぶ}') + ' <span class="en">Stop: ' + HF().score(g, 0) + ' points</span></button><button type="button" class="pbtn" data-a="koi">' + RB.ui.jhtml('こいこい') + ' <span class="en">Koi-koi: play on</span></button></div>';
-    if (V.said) h += '<p class="sg-why">' + (V.said.jp ? RB.ui.jhtml(V.said.jp) : '') + '<span class="en">' + esc(V.said.en) + '</span></p>';
+    if (V.said) h += V.said.call && V.said.who && RB.ui.spoken ? RB.ui.spoken.html({ who: V.said.who, jp: V.said.jp, en: V.said.en, sceneId: SCENE }, { tag: 'p', cls: 'sg-why hf-call', jpCls: 'jp', enCls: 'en' })
+      : '<p class="sg-why">' + (V.said.jp ? RB.ui.jhtml(V.said.jp) : '') + '<span class="en">' + esc(V.said.en) + '</span></p>';
     if (g.phase === 'over') h += overHtml();
     h += '<div class="hf-side you">' + caughtHtml(g.caught[0], 'You') + '</div>';
     h += '<div class="hf-hand" role="group" aria-label="Your hand">' + g.hands[0].map((id) => cardHtml(id, { button: true, attrs: ' data-h="' + id + '"' + (g.turn === 0 && g.phase === 'play' && !V.thinking ? '' : ' disabled'), cls: (V.sel === id ? 'sel' : '') + (V.help && g.field.some((f) => HF().card(f).m === HF().card(id).m) ? ' pairs' : '') })).join('') + '</div>';
@@ -220,7 +232,7 @@ RB.ui.hanafuda = (function () {
     if (g.phase === 'decide') {
       const d = HF().chooseDecide(g, V.level);
       const y = HF().yaku(g.caught[1]).list;
-      V.said = d === 'koi' ? { jp: 'こいこい ！', en: Partner() + ' made ' + y.map((x) => x.name.en.toLowerCase()).join(' and ') + ', and calls koi-koi: playing on.' } : { jp: '{勝負|しょうぶ} ！', en: Partner() + ' made ' + y.map((x) => x.name.en.toLowerCase()).join(' and ') + ', and stops.' };
+      V.said = d === 'koi' ? { jp: CALL.koi.jp, en: Partner() + ' made ' + y.map((x) => x.name.en.toLowerCase()).join(' and ') + ', and calls koi-koi: playing on.', who: V.with, call: true } : { jp: CALL.stop.jp, en: Partner() + ' made ' + y.map((x) => x.name.en.toLowerCase()).join(' and ') + ', and stops.', who: V.with, call: true };
       g = HF().decide(g, d);
     }
     V.g = g; V.thinking = false;
@@ -236,6 +248,9 @@ RB.ui.hanafuda = (function () {
   function render() {
     if (!V) return;
     V.leaf.innerHTML = V.view === 'menu' ? menuHtml() : V.view === 'months' ? monthsHtml() : V.view === 'sets' ? setsHtml() : tableHtml();
+    // a call is said as it is made (once, however often the table is drawn again while it shows)
+    const call = V.view === 'table' && V.said && V.said.call ? V.leaf.querySelector('.hf-call') : null;
+    if (call && V.saidOut !== V.said) { V.saidOut = V.said; if (RB.ui.spoken) RB.ui.spoken.autoIn(call); }
   }
   function onChange(e) {
     if (!V) return;
@@ -275,7 +290,8 @@ RB.ui.hanafuda = (function () {
     if (a === 'sets') { V.back = V.view; V.view = 'sets'; render(); V.leaf.scrollTop = 0; return; }
     if (a === 'unsets') { V.view = V.back || 'menu'; render(); return; }
     if (a === 'lay' && V.sel) return humanPlay(V.sel, null);
-    if (a === 'stop' || a === 'koi') { V.g = HF().decide(g, a); V.said = null; step(); return; }
+    // your call, said in your voice (shown as your partner's is)
+    if (a === 'stop' || a === 'koi') { V.g = HF().decide(g, a); V.said = { jp: CALL[a].jp, en: a === 'koi' ? 'You call koi-koi: playing on.' : 'You stop.', who: 'pc', call: true }; step(); return; }
     if (a === 'next') { V.m.round++; newRound(); return; }
   }
   return { run, close, state: () => (V ? { view: V.view, g: V.g, m: V.m, sel: V.sel, ask: V.ask, thinking: !!V.thinking, level: V.level } : null) };

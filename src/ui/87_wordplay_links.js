@@ -54,8 +54,10 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     const bl = (s.backlog || []).slice(-12);
     const chose = bl.slice().reverse().find((l) => l.choice && l.who === 'pc');
     const reply = bl.slice().reverse().find((l) => !l.choice && l.who && l.who !== 'pc' && l.who !== 'narr' && (l.jp || l.en));
-    const lines = bl.filter((l) => l.jp || l.en).slice(-8).map((l) => ({ who: l.who, jp: l.jp, en: RB.script.enVars(l.en), choice: !!l.choice }));
-    WP().reflect(s, a[0], { said: chose ? { jp: chose.jp, en: chose.en } : null, reply: reply ? { jp: reply.jp, en: RB.script.enVars(reply.en) } : null, lines });
+    // (the reply and the lines keep the scene they were said in: the Company page says them from their recordings)
+    const sc = (l) => Object.assign(l.sceneId ? { sceneId: l.sceneId } : {}, l.comp ? { comp: l.comp } : {});
+    const lines = bl.filter((l) => l.jp || l.en).slice(-8).map((l) => Object.assign({ who: l.who, jp: l.jp, en: RB.script.enVars(l.en), choice: !!l.choice }, sc(l)));
+    WP().reflect(s, a[0], { said: chose ? { jp: chose.jp, en: chose.en } : null, reply: reply ? Object.assign({ jp: reply.jp, en: RB.script.enVars(reply.en) }, reply.sceneId ? { sceneId: reply.sceneId } : {}) : null, lines });
     RB.bus.emit('company:changed', { id: 'wordplay:reflection' });
   };
   RB.hooks.wp_reflect_defer = async () => { WP().deferReflection(RB.game.s); RB.bus.emit('company:changed', { id: 'wordplay:reflection' }); };

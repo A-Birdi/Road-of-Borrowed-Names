@@ -290,7 +290,7 @@ RB.ui.companyPages = (function () {
       '<div class="kind">' + esc(k.en) + (m.place ? ' · ' + esc(m.place.en || '') : '') + (m.retro ? ' · from the journey\'s record' : '') + '</div>' +
       '<div class="t">' + (m.title && m.title.jp ? j(m.title.jp) + ' ' : '') + '<span class="en">' + esc(m.title ? m.title.en : m.id) + '</span>' + (m.petName ? ' <span class="co-petname">“' + esc(m.petName) + '”</span>' : '') + '</div>' +
       (m.text ? '<div class="small">' + enOf(m, m.text.en) + '</div>' : '') +
-      (m.reply ? '<blockquote class="co-reply"><span class="who">' + esc(memName(m)) + '</span>' + said(memReply(m), null, m.comp) + '</blockquote>' : '') +
+      (m.reply ? '<blockquote class="co-reply"><span class="who">' + esc(memName(m)) + '</span>' + replyHtml(m) + '</blockquote>' : '') +
       '<div class="row-acts"><button class="pbtn" data-co-recall="' + esc(m.id) + '" aria-pressed="' + !!sel + '">' + I('history') + L('{思|おも}い{出|だ}す', 'Recollect') + '</button>' +
       refButton(m) + '</div></div></li>';
   }
@@ -311,21 +311,43 @@ RB.ui.companyPages = (function () {
     const r = m.react && RB.company.reactions ? RB.company.reactions.find((x) => x.id === m.react) : null;
     return r && r.lines && RB.dialect ? RB.dialect.joined(m.comp, m.reply, r.lines) : m.reply;
   }
+  // The reply kept with a memory is a spoken line (Robin, 2026-10-20: every line spoken): the companion's recording,
+  // under the scene it was a line of when it was one (word play's reply), else the companions' scene, where each reply
+  // a memory can keep is listed (src/engine/58_companion.js spoken); Suzu's Kansai as she speaks it now (a discovery's
+  // remark, its lines joined, is shown line by line in Kansai and said from the standard words' recording key)
+  function replyHtml(m) {
+    const r = m.reply;
+    if (!r || !r.jp || !m.comp || !RB.ui.spoken) return said(memReply(m), null, m.comp);
+    const shown = memReply(m);
+    const joined = !!(shown && shown.dia && !shown.std);
+    const line = joined ? Object.assign({}, shown, { std: { jp: r.jp, en: r.en } }) : r;
+    return RB.ui.spoken.html(Object.assign({}, line, { who: m.comp, sceneId: r.sceneId || K.SCENE }), { cls: 'co-said', jpCls: 'jp', enCls: 'en', asIs: joined });
+  }
   // the recollection: only a transcript of what was kept; reading it runs nothing and changes nothing
   function recollection(s, m) {
     if (!m) return '<p class="muted">Choose a memory to recollect it.</p>';
     const who = memName(m);
     const lines = m.lines && m.lines.length ? m.lines : [
       m.text ? { who: 'narr', jp: m.text.jp, en: m.text.en } : null,
-      m.reply ? Object.assign({ who: m.comp }, memReply(m)) : null,
+      m.reply ? Object.assign({ who: m.comp }, memReply(m), { said: true }) : null,
     ].filter(Boolean).map((l) => (RB.dialect && !l.choice ? RB.dialect.line(l.who, l) : l));
+    // a line kept with its scene (since 2026-10-20) is a spoken line, its speaker's recording (the companion as they
+    // were then); so is the reply; anything else (an older memory's lines, your reply, the memory's own words) as before
+    const sayable = (l) => l.jp && !l.choice && RB.ui.spoken && (l.sceneId || (l.said && m.comp));
+    const spokenLi = (l) => {
+      const name = nm(l.who);
+      if (l.said) return '<li class="npc">' + (name ? '<span class="who">' + esc(name) + '</span>' : '') + replyHtml(m) + '</li>';
+      // (the line as kept, its standard words the recording's key; shown as its speaker speaks now)
+      const who = l.who === 'comp' ? l.comp || m.comp || 'comp' : l.who;
+      return RB.ui.spoken.html(Object.assign({}, l, { who }), { tag: 'li', cls: l.who === 'narr' ? 'narr' : l.who === 'pc' ? 'pc' : 'npc', jpCls: 'jp', enCls: 'en', whoHtml: name ? esc(name) : '' });
+    };
     const nm = (w) => (w === 'pc' ? s.player.name : w === 'narr' || !w ? '' : chr(w) ? chr(w).name.en : '');
     return '<section class="co-recall" aria-label="Recollection"><h4>' + I('history') + L('{思|おも}い{出|だ}す', 'Recollection') + '</h4>' +
       '<p class="kind">A record of what was kept. Reading it changes nothing.</p>' +
       '<p class="co-rtitle">' + (m.title && m.title.jp ? j(m.title.jp) + ' ' : '') + '<span class="en">' + esc(m.title ? m.title.en : '') + '</span></p>' +
       '<p class="muted small">' + esc(m.place ? m.place.en : '') + (m.petName ? ' · with ' + esc(m.petName) : '') + '</p>' +
       (m.retro ? '<p class="muted small">This was reconstructed from what your journey records, when it was loaded. The words are how ' + esc(who) + ' speaks of it now.</p>' : '') +
-      '<ol class="co-transcript">' + lines.map((l) => '<li class="' + (l.who === 'narr' ? 'narr' : l.who === 'pc' ? 'pc' : 'npc') + '">' +
+      '<ol class="co-transcript">' + lines.map((l) => sayable(l) ? spokenLi(l) : '<li class="' + (l.who === 'narr' ? 'narr' : l.who === 'pc' ? 'pc' : 'npc') + '">' +
         (nm(l.who) ? '<span class="who">' + esc(nm(l.who)) + (l.choice ? ' (your reply)' : '') + '</span>' : '') +
         (l.jp ? '<div class="jp">' + j(l.jp) + '</div>' : '') + '<div class="en">' + enOf(m, l.en) + '</div></li>').join('') + '</ol></section>';
   }

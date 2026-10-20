@@ -540,7 +540,8 @@ RB.content.company = RB.content.company || {
     if (!def || !s.comp) return;
     const t = T(s);
     const rec = t[a[2] || a[1]] || {};
-    const lines = (s.backlog || []).slice(-12).filter((l) => l.jp || l.en).slice(-8).map((l) => ({ who: l.who, jp: l.jp, en: RB.script.enVars(l.en), choice: !!l.choice }));
+    // (each line keeps the scene it was said in, so the recollection says it from its recording: src/ui/53_company_pages.js)
+    const lines = (s.backlog || []).slice(-12).filter((l) => l.jp || l.en).slice(-8).map((l) => Object.assign({ who: l.who, jp: l.jp, en: RB.script.enVars(l.en), choice: !!l.choice }, l.sceneId ? { sceneId: l.sceneId } : {}, l.comp ? { comp: l.comp } : {}));
     const m = t['reflect:keep'] && t['reflect:keep'].moment;
     K.memory(s, {
       id: 'story:' + a[1], kind: a[0] || 'reflections', title: def.title, text: byComp(s, def.texts) || resolve(s, def.text),
@@ -753,6 +754,20 @@ RB.content.company = RB.content.company || {
         }
       }
     }
+    // Company › Shared memories: the reply kept with a memory, said in the companion's recording (src/ui/53_company_pages.js):
+    // a story memory's reply (every variant, each companion's or everyone's), a discovery's remark (the reaction's lines
+    // joined, as onResolved keeps them), an animal's meeting (the pets' own vignettes; the words for a meeting without
+    // one, and those older journeys kept), and the fishing outing's. (Word play's reply is a line of its reflection
+    // scene: it keeps that scene's id, src/ui/87_wordplay_links.js.)
+    for (const k in CC.mem) {
+      const r = CC.mem[k].reply;
+      if (r) for (const comp of COMPS) for (const v of variants(r[comp] || r['*'])) add(comp, v, null, 'memory reply story:' + k);
+    }
+    for (const r of K.reactions) if (r.lines && r.lines[0]) add(r.comp, { jp: r.lines.map((l) => l.jp).join(' '), en: r.lines.map((l) => l.en).join(' ') }, null, 'memory reply (reaction ' + r.id + ')');
+    for (const comp of COMPS) for (const sp in (CC.pets || {})[comp] || {}) add(comp, CC.pets[comp][sp], null, 'memory reply pet:' + sp);
+    for (const sp in (RB.pets && RB.pets.meeting) || {}) for (const comp of COMPS) add(comp, (RB.pets.meeting[sp].reply || {})[comp], null, 'memory reply pet:met:' + sp);
+    const fm = RB.fishing && RB.fishing.content ? (RB.fishing.content().remarks || {}).__memories || {} : {};
+    for (const kind in fm) for (const comp of COMPS) add(comp, (fm[kind].reply || {})[comp], null, 'memory reply fish:' + kind);
     return out;
   }
   RB.content.spokenSources = RB.content.spokenSources || [];

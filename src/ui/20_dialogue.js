@@ -120,6 +120,15 @@ RB.ui.dialogue = (function () {
     return RB.content.chars[who] || { name: { en: who, jp: '' } };
   }
 
+  // A dialogue-history entry (Journey › Dialogue history, a kept memory's transcript): the line as written, with the
+  // scene it was said in (sceneId) and, for the companion ('comp'), who that was then, so the Log can say it again from
+  // its recording (src/ui/50_menu.js). An entry from an older save has neither: it simply has no Voice.
+  function entryOf(line, s) {
+    const e = { who: line.who, jp: line.jp, en: line.en };
+    if (line.sceneId) e.sceneId = line.sceneId;
+    if (line.who === 'comp' && s && (s.comp || s.provisional)) e.comp = s.comp || s.provisional;
+    return e;
+  }
   function say(line) {
     ensure();
     const s = RB.game.s;
@@ -131,7 +140,7 @@ RB.ui.dialogue = (function () {
     if (RB.ui.speechMark) RB.ui.speechMark.stop();
     showSub = RB.game.settings.secondary === 'always';
     const ch = charInfo(line.who);
-    s.backlog.push({ who: line.who, jp: line.jp, en: line.en });
+    s.backlog.push(entryOf(line, s));
     if (s.backlog.length > 220) s.backlog.splice(0, s.backlog.length - 200);
     if (RB.ui.keep) RB.ui.keep.line(line, s.backlog[s.backlog.length - 1]); // event-time context for keeping it
     const fresh = box.classList.contains('hidden');
@@ -204,6 +213,22 @@ RB.ui.dialogue = (function () {
     { jp: 'もう {少|すこ}し ゆっくり {話|はな}して ください 。', en: 'A little slower, please.', how: 'slower' },
     { jp: 'もっと {簡単|かんたん} に {言|い}って もらえます か 。', en: 'Could you say it more simply?', how: 'simpler' },
   ];
+  // The question you ask is your line (Robin, 2026-10-20: every line spoken): said in your voice before the answer
+  // (when lines are spoken automatically), under its own scene id, listed for recording in the player's voices.
+  const ASK_SCENE = 'code.ask';
+  RB.content.spokenSources.push(() => ASKS.map((a) => ({ scene: ASK_SCENE, who: 'pc', jp: a.jp, en: a.en, file: 'ui/20_dialogue (asking back)' })));
+  // say the question, then go on (when it has been said, or at once when nothing says it; never when something newer
+  // took the voice over)
+  function askSaid(a, then) {
+    const auto = RB.voice && RB.voice.autoOn && RB.voice.autoOn() && !RB.game.fastForward();
+    if (!auto || !RB.voice.sayLine) { then(); return; }
+    const line = { who: 'pc', jp: a.jp, en: a.en, sceneId: ASK_SCENE };
+    let done = false;
+    const go = () => { if (!done) { done = true; then(); } };
+    const vars = RB.game.s && RB.script && RB.script.jpVars ? RB.script.jpVars() : undefined;
+    Promise.resolve(RB.voice.sayLine(line, line, { text: RB.jp && RB.jp.reading ? RB.jp.reading(a.jp, vars) : a.jp, onend: go }))
+      .then((r) => { if (r === 'cancelled') done = true; else if (r === 'none' || r === 'silent') go(); }, go);
+  }
   function askBack() {
     if (!current || !current.src || !current.src.simple) return;
     const src = current.src;
@@ -219,17 +244,21 @@ RB.ui.dialogue = (function () {
       const a = ASKS[+b.dataset.ask];
       sheet.remove();
       const s = RB.game.s;
-      if (s) s.backlog.push({ who: 'pc', jp: a.jp, en: a.en });
+      if (s) s.backlog.push({ who: 'pc', jp: a.jp, en: a.en, sceneId: ASK_SCENE });
       // again and slower repeat the line (slower with the device's voice, if any); simpler gives the simpler version
       if (a.how === 'simpler') current = Object.assign({}, src, { jp: src.simple.jp, en: src.simple.en || src.en, src, said: { who: src.who, jp: src.simple.jp, en: src.simple.en || src.en, sceneId: src.sceneId || null, expr: src.expr || null } });
-      if (s) s.backlog.push({ who: src.who, jp: current.jp, en: current.en });
+      if (s) s.backlog.push(entryOf({ who: src.who, jp: current.jp, en: current.en, sceneId: src.sceneId }, s));
       renderMain(); renderSub();
       requestAnimationFrame(syncMore);
-      if (a.how === 'slower' && RB.voice && RB.voice.sayLine) { try { RB.voice.sayLine(current, current.said || current.src, { rate: 0.75 }); } catch (err) { /* optional */ } }
-      if (a.how === 'simpler') {
-        box.querySelector('.b-voice').classList.toggle('hidden', !(current.jp && RB.voice && RB.voice.canSayLine && RB.voice.canSayLine(current, current.said)));
-        if (current.jp && RB.voice && RB.voice.autoOn && RB.voice.autoOn() && !RB.game.fastForward()) speak(false);
-      }
+      if (a.how === 'simpler') box.querySelector('.b-voice').classList.toggle('hidden', !(current.jp && RB.voice && RB.voice.canSayLine && RB.voice.canSayLine(current, current.said)));
+      // your question first, in your voice; then the answer, as before
+      const shown = current;
+      askSaid(a, () => {
+        if (current !== shown) return; // (the scene went on meanwhile)
+        if (a.how === 'slower' && RB.voice && RB.voice.sayLine) { try { RB.voice.sayLine(current, current.said || current.src, { rate: 0.75 }); } catch (err) { /* optional */ } }
+        // (once more, as the line is said when lines are spoken automatically; more simply, the simpler version)
+        if (a.how !== 'slower' && current.jp && RB.voice && RB.voice.autoOn && RB.voice.autoOn() && !RB.game.fastForward()) speak(false);
+      });
       try { RB.learn.record('c:ask_back', { ok: true, mode: 'choice', assisted: false, ctx: 'story', ev: 'context', kind: 'ask' }); } catch (err) { /* recording never blocks the scene */ }
       box.querySelector('.b-ask').classList.add('hidden');
     };

@@ -337,7 +337,8 @@ RB.ui.fishing = (function () {
       // the memory keeps the standard lines; Suzu's are shown in Kansai when chosen (src/lang/85_dialect.js)
       const askStd = RB.dialect ? RB.dialect.std(ask) : ask;
       const shown = RB.dialect ? RB.dialect.line(comp, reply) : reply;
-      F.reflect(s, { comp, choice: i, site: C.sid, lines: [{ who: 'narr', jp: spread.jp, en: spread.en }, { who: comp, jp: askStd.jp, en: askStd.en }, { who: 'pc', jp: choices[i].jp, en: choices[i].en, choice: true }, { who: comp, jp: reply.jp, en: reply.en }] });
+      // (the companion's lines keep their scene: the kept memory's recollection says them from their recordings)
+      F.reflect(s, { comp, choice: i, site: C.sid, lines: [{ who: 'narr', jp: spread.jp, en: spread.en }, { who: comp, jp: askStd.jp, en: askStd.en, sceneId: SCENE }, { who: 'pc', jp: choices[i].jp, en: choices[i].en, choice: true }, { who: comp, jp: reply.jp, en: reply.en, sceneId: SCENE }] });
       C.ui.stage.say(reply, comp, SCENE);
       C.ui.stage.event('remark');
       await C.ui.ask(SAID(shown, comp) + '<p class="muted small">Kept in Company › Shared memories.</p><div class="fp-acts"><button class="pbtn primary" data-k="ok">' + I('done') + 'Close the notebook</button></div>', ['ok']);
