@@ -5366,6 +5366,15 @@ Yasu's story, when listening, has not begun being spoken."
     tools/voice/production_manifest.mjs and src/audio/52_voicebank.js): a ruby-only fix keeps the recording id
     (`r1-…`, from the plain spoken text) and its textHash; the lookup key `scene#sha256(markup)[:10]` changes and a
     rebuild remaps it. Nothing changed.
+  - The language audit, phase 2a (report only; read-only sub-agent; posted as CC-021): every furigana group in src/
+    (150,834 on 27,003 lines in 451 files; 4,502 written forms) enumerated by script; the 332 forms with more than one
+    reading (753 pairs, 53,970 occurrences) classified by meaning, 1,452 occurrences read in full; 283 of 283
+    numeral + counter combinations checked. Findings: 18 furigana errors on 36 lines (e.g. 教わった おし→おそ, 遅れる おそ→おく,
+    凍える こお→こご, 入っている い→はい ×6, 開ける ひら→あ ×6, 三分の一 さんぶ→さんぶん ×3, counter sound changes), 10 pedagogy
+    inconsistencies (十 + counter じっ ×23 vs じゅっ ×92), and a gap in the furigana rule's enforcement (1,225 English
+    feedback/explanation literals quote kanji without ruby; ui/89v_sail.js shows 丸 bare). Claude re-checked 14 of the
+    18 error locations in source. Not covered: the 4,170 single-reading forms (a consistency check cannot see them).
+    Nothing changed. Phase 2b (grammar and register in context: base scenes, expansion scenes, learning text) started.
   - RBN-QA-027 (Agnes 11:18Z, CC-005, Suzu's "A Seat Kept Until Spring"): after Hiro's story `co.suzu_ask` walked you
     and Suzu to 6,8/5,8 inside the workshop, then the narrator said "Outside the workshop, Suzu looks back just once."
     and her private lines played there, by Hiro and Isao; free control resumed inside. Candidate (local branch

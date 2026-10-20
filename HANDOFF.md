@@ -689,8 +689,11 @@
     - **Owner-approved language audit (report only):** Claude's game-wide written-Japanese/grammar/furigana review; Local
       shares its reader-comparison findings (CL-027, CL-034). Phase 1 done (scratchpad report, summarised in CC-019:
       23-family inventory; Local's 114 priority headwords judged, 821 contexts read of 17,711; 25 furigana errors
-      proposed: 何 なに→なん ×23, 後 あと→ご ×2; send-correction candidates). Phase 2 (the full contextual review,
-      family by family, "examined N of M") is under way: 2a furigana consistency first. No fixes from findings alone;
+      proposed: 何 なに→なん ×23, 後 あと→ご ×2; send-correction candidates). Phase 2a (game-wide furigana consistency, CC-021) done: 18 furigana
+      errors on 36 lines, 10 pedagogy inconsistencies, the furigana rule's enforcement gap in English feedback fields.
+      CC-020 gave the 25 phase-1 candidates in context and corrected the identifier wording (a ruby-only fix keeps the
+      recording id; the lookup key changes). Phase 2b (grammar and register in context: base scenes, expansion scenes,
+      learning text; "examined N of M") is running as three read-only reviewers. No fixes from findings alone;
       send corrections, if Robin approves, as SC10-SC14.
     - **RBN-QA-012's second sign (Agnes 09:39Z):** the terraces' crossroads (`co.terraces` 18,17) narrates four arms;
       the prop is the shared rectangular `sign`. Both signs become opt-in variants (three arms in Reedwake, four on the
