@@ -142,7 +142,7 @@ export default async (t) => {
   // (the Atlas's unmoored names: the run takes the name's own tier, AT.objectiveSteps; each tier is also a drill)
   const TASK = { 'challenges:tiers': 'challenge', 'enemies:answer': 'tier', 'enemies:truth': 'tier', 'activities:question': 'tier', 'encounters:task': 'tier', 'relay:say': 'relay', 'atlas:steps': 'own' };
   const ELSEWHERE = { 'practiceB:tiers': 'practice_b.test.mjs (the letters and the Proofreader\'s Tray, every tier, typed, built and handwritten)', 'practiceB:q': 'practice_b.test.mjs (the comparisons, every tier)' };
-  const TEXT = /^(enemies:text|intentText:\w+|activities:(desc|text|clue|fragments|line|hint)|tellings:text|hallW\d+(Cards|Plaques):\d+|shells:text|atlas:doorClues)$/;
+  const TEXT = /^(enemies:text|intentText:\w+|intentTextSolo:\w+|activities:(desc|text|clue|fragments|line|hint)|tellings:text|hallW\d+(Cards|Plaques):\d+|shells:text|atlas:doorClues)$/;
   const classOf = (f) => { const k = f.reg + ':' + f.key; return TASK[k] ? 'task' : ELSEWHERE[k] ? 'elsewhere' : TEXT.test(k) ? 'text' : null; };
   const unclassed = found.filter((f) => !classOf(f)).map((f) => f.path);
   t.eq(unclassed, [], 'every profile-keyed object in the content is a task judged here, a task swept elsewhere, or profile text');
