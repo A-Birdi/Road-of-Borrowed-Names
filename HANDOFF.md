@@ -636,8 +636,9 @@
       is washed out until Manybridge; now the journal and a new Omi line point to Tetsu's ferry east, and at the fork a
       new narrator line tells the ferry apart from the east road and corrects the journal once for older saves; SL8;
       B `route_after_ch2`), 012's copy (the keepsake slip's page name), 014 (Suzu's mediation joke no longer names the
-      east storehouse before the evidence does). 001–005, 007, 008 are live in CC-005;
-      009–012 are in source for the next candidate. REQUIREMENTS.md XP147; VALIDATION.md "QA (Agnes …)".
+      east storehouse before the evidence does), 018's flow (Manbē's introduction at Sōbē's referral, `2ee6378`), 019
+      (Tomi's lantern task also reads the place first, through each family's `also`; `8ad05f1`). 001–005, 007, 008 are
+      live in CC-005; 009–012, 014, 018's flow and 019 are in source for the next candidate. REQUIREMENTS.md XP147; VALIDATION.md "QA (Agnes …)".
       Agnes's review boundaries (2026-10-20): gameplay fixes carry a cross-game impact assessment; art goes to Robin as
       a before/after candidate first; a material change to intended behaviour needs Robin's approval; keep source,
       built and retested states distinct.
@@ -664,7 +665,10 @@
       Proposal in CC-014: the scene camera target or a walk to the yard, Sanpei meeting you, and an opt-in "printed
       sheets" variant of the drying-line prop (new art: Robin's approval).
     - **RBN-QA-018 candidate, with Robin (not pushed):** the rehearsal on the stage (local branch `qa018-rehearsal`,
-      `b82a0ab`). Its flow defect (Manbē's introduction skipped at step 2) is fixed in source (`2ee6378`).
+      `b82a0ab`), and the dress rehearsal with actors on the stage (`0fcd5db`, Agnes 08:38Z: at step 5 Genta on the
+      stage at 13,3 until the trap opens, flinching at the jolt, and Saku too when Saku's quest is done). Its flow
+      defect (Manbē's introduction skipped at step 2) is fixed in source (`2ee6378`). On approval, cherry-pick both
+      commits, build, and run U `mp_ch4`, B `manybridge2`.
     - **AG-2, complete and gated (not pushed):** every line the prologue and Reedwake show (441 lines, 473 displays)
       reviewed and audited; the report is docs/review/align/AG2_REVIEW.md on the local branch `ag2-work`. Robin has the
       before/after evidence and decides on publication. To publish: rebase `ag2-work` onto the branch, build, run U

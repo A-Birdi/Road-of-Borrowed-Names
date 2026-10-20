@@ -5213,6 +5213,20 @@ Yasu's story, when listening, has not begun being spoken."
     22/0, `evidence` 24/0. In the browser's Pieces (Foundations), on a build of the previous source and on a build with
     the fix: place-first "outside" then accepted; object-first accepted on both; the river place-first now its why; verb
     first outside on both. Voice: none (neither order is in a recording list).
+  - RBN-QA-018, the dress rehearsal (Agnes 08:38Z, on CC-005's build; reviewed as a distinct staging beat): during
+    "The dress rehearsal. The curtain rises; the actors begin their lines" and "the actors fall silent", the stage is
+    empty. Cause: at step 5 the theatre places Manbē (10,7), who starts `mp.manbe_under` where you talk to him, and
+    no actor, except Saku on the stage (6,4) once Saku's own quest (`mp_actor`) is done; the scene cues no actor.
+    Candidate (local, `qa018-rehearsal` `0fcd5db`, on top of `b82a0ab`, not pushed): Genta on the stage (13,3) from
+    step 5 until the trap opens (`quest.mp_main=5&!mp_under_open`), and a flinch at the jolt (`!gesture`) for Genta and,
+    when present, Saku; no line, flag, gate, puzzle or voice change. On matched scratch builds at 1180x757 (before: a
+    build of `0505c0c`, whose src/content/mp and src/engine are identical to CC-005's `a756901`; after: the candidate),
+    who is placed during the first line: before `mp_manbe@10,7` (with Saku's quest done, `mp_saku@6,4` as well),
+    after `mp_genta_d@13,3 mp_manbe@10,7` (with Saku's quest done, `mp_saku@6,4` as well); `mp_under_open` set in all
+    four runs; afterwards the trap is the open ladder and Genta walks off the stage; no page errors. Agnes's positive checks are untouched: the trap still changes
+    from raised wood to the open ladder; the early visit before Sōbē still cannot start it (step 5 only); the festival
+    stalls are not touched. On the candidate: validator clean, U `mp_ch4` 120/0 (the branch predates `2ee6378`), B
+    `manybridge2` 4/0. Frames to Robin privately.
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
   - RBN-QA-004 RETESTED_BY_AGNES on CC-005's build: the nudges read "Go to Lantern Hall." and "… Head north-west
