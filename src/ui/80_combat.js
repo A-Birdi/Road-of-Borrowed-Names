@@ -1962,5 +1962,6 @@ RB.combat = (function () {
   return {
     start, state: () => st, refresh: () => { if (st && ui) renderUi(); }, context: () => enemy && st ? { id: enemy.id, where: enemy.where, setting: enemy.setting, bg: enemy.bgKey, intro: enemy.intro, settle: enemy.settle, group: members.map((m) => m.id) } : null,
     phase: () => phase, shown: () => (st ? snapshot(V()) : null), debug, marks, target: (i) => selectTarget(i, false), members: () => members.map((m) => m.id),
+    saidAs, SCENE: BATTLE_SCENE,
   };
 })();

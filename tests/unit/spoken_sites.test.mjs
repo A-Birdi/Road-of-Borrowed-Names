@@ -12,7 +12,13 @@
 //     spots, a layered site's marks, the companion's thoughts, place talk and What We Keep, the New Game+ farewell, the
 //     view from each of the case's viewpoints), and a kept memory's replay keeps its scene id;
 //  4. the families wired on 2026-10-20 are listed (scene by scene), an action's rules are listed from a state space
-//     that was not cut short, and the Atlas's narration stays in its table (no narrator line written at a call).
+//     that was not cut short, and the Atlas's narration stays in its table (no narrator line written at a call);
+//  5. the second pass (VL-2): every telegraph a battle can show (each creature, each encounter's variation, each move,
+//     each learner level, with and without a companion, aimed at you or at them) is listed when it can be recorded
+//     (a companion's name put in) and only a line naming the player is not; the encounter screen's log, run through
+//     the encounter rules over every conversation and machine, shows only listed lines; the reply each memory source
+//     keeps is listed; asking back's three questions and hanafuda's calls are listed for their callers; and the
+//     dialogue history keeps the scene id (the Log's Voice).
 import fs from 'node:fs';
 import path from 'node:path';
 import { root } from '../lib/load.mjs';
@@ -205,5 +211,136 @@ export default async (t) => {
     t.ok(sizes.every((n) => n <= 10), 'every stamp stand\'s sets of waiting stamps are listed (at most ' + Math.max(...sizes) + ' stamps at a stand)');
     const atlas = fs.readFileSync(path.join(SRC, 'atlas/50_run.js'), 'utf8');
     t.ok(!/say\('narr', \{ jp: '/.test(atlas) && /const NARR = \{/.test(atlas), 'the Atlas\'s narrator lines are in its table (NARR), so the recording list is the table');
+  }
+
+  // ---- 5. the second pass (VL-2) ----------------------------------------------------------------------------------------
+  {
+    const VL2 = ['code.enc', 'code.ask', 'code.hanafuda'];
+    t.ok(VL2.every((f) => (by[f] || []).length > 0), 'each family wired in the second pass lists its lines: ' + VL2.map((f) => f + ' ' + (by[f] || []).length).join(', '));
+    // a shown line is listed: for a companion's own id, listed for that companion or as the companion ('comp') naming them
+    const listedFor = (scene, who, jp) => isListed(scene, who, jp) || (COMPS.includes(who) && listed.some((l) => l.scene === scene && l.who === 'comp' && l.jp === jp && (!l.comps || l.comps.includes(who))));
+    const keepS = RB.game.s;
+    try {
+      // the telegraphs: every creature (and each variation an encounter makes of one), every move it can make, every
+      // learner level, with each companion and alone, aimed each way the rules can aim it (intentLine's own choices)
+      const C = RB.combat, T = RB.content.intentText, LV = ['F', 'E', 'I', 'A'];
+      const defs = [];
+      for (const id in RB.content.enemies) defs.push(Object.assign({ id }, RB.content.enemies[id]));
+      for (const id in RB.content.encounters) {
+        const d = RB.content.encounters[id], g = d.group;
+        for (const sp of [d.lead].concat(Array.isArray(g) ? g : g ? [].concat(g.normal || [], g.hard || []) : [], (d.arrivals || []).map((a) => a.enemy), (d.extras || []).map((a) => a.enemy))) {
+          if (!sp || typeof sp !== 'object') continue;
+          const base = RB.content.enemies[sp.enemy] || {};
+          defs.push(Object.assign({ id: sp.enemy }, base, sp, sp.intents ? { intents: Object.assign({}, base.intents || {}, sp.intents) } : {}));
+        }
+      }
+      let shownN = 0, named = 0, voicedNames = 0;
+      const off = [];
+      for (const def of defs) {
+        const keys = new Set([].concat(def.pattern || [], ...(def.phases || []).map((ph) => ph.pattern || []), Object.keys(def.intents || {})));
+        for (const k of keys) {
+          const it = RB.combatLogic.intentDef(def, k);
+          for (const prof of LV) for (const comp of [null].concat(COMPS)) {
+            const s = RB.state.newCampaign({}); s.learn.profile = prof; s.comp = comp; RB.game.s = s;
+            const pool = it.text ? [].concat(RB.activities.tier(it.text) || []) : T[it.kind] ? [].concat(T[it.kind][prof] || T[it.kind].F || []) : [];
+            if (!pool.length) continue;
+            const aims = it.target === 'rand' ? (comp ? ['pc', 'comp'] : ['pc']) : it.target === 'comp' && comp ? ['comp'] : [it.target === 'both' ? 'both' : 'pc'];
+            for (const aim of aims) {
+              let cands = !comp || aim === 'both' ? pool.filter((x) => !x.neg) : pool;
+              if (!cands.length) cands = pool;
+              const tgt = aim === 'comp' ? 'comp' : 'pc', other = tgt === 'pc' ? 'comp' : 'pc';
+              for (const x of cands) {
+                shownN++;
+                const said = C.saidAs(x.jp, tgt, other, comp);
+                const hasName = /\$\w/.test(x.jp);
+                if (hasName) named++;
+                if (!said) { if (!(/\$tgt\b/.test(x.jp) && tgt === 'pc') && !(/\$other\b/.test(x.jp) && other === 'pc')) off.push('unvoiced without naming you: ' + def.id + ' ' + k + ' ' + x.jp); continue; }
+                if (hasName) voicedNames++;
+                if (!isListed(C.SCENE, 'narr', said)) off.push(def.id + ' ' + k + ' ' + prof + ' ' + (comp || 'alone') + ' ' + aim + ': ' + said);
+              }
+            }
+          }
+        }
+      }
+      t.ok(shownN > 1000 && voicedNames > 0 && !off.length, 'every telegraph a battle can show (' + shownN + ' cases, ' + named + ' with a name in them, ' + voicedNames + ' of those with a companion\'s name, voiced) is listed under code.battle; only a line naming you is not: ' + [...new Set(off)].slice(0, 4).join(' | '));
+      t.ok(listed.filter((l) => l.scene === C.SCENE && /ナオ|ミオ|レン|スズ/.test(l.jp)).length >= 4 * 12, 'a telegraph naming the companion is listed once for each companion\'s name');
+
+      // the encounter screen: each conversation and machine (no creature leads it), run through the encounter rules with
+      // every card the rules offer in turn (several walks each), its log as src/ui/80s_encounter.js builds it
+      const E = RB.encounter, words = Object.keys(RB.content.words).slice(0, 12).map((id) => RB.content.words[id]);
+      const speakerOf = (w) => (w === 'pc' || w === 'comp' ? w : w && RB.content.chars[w] ? w : 'narr');
+      let encN = 0, logN = 0, jpN = 0;
+      const encOff = [];
+      for (const id in RB.content.encounters) {
+        const def = RB.content.encounters[id];
+        if (def.lead) continue;
+        encN++;
+        for (let walk = 0; walk < 6; walk++) {
+          const comp = COMPS[walk % 4];
+          const s = RB.state.newCampaign({}); s.comp = comp; s.words = words.map((w) => w.id); RB.game.s = s;
+          let st;
+          try { st = E.begin(def, s); } catch (e) { encOff.push(id + ': ' + e.message); break; }
+          const log = [];
+          const say = (f, who) => { if (f && (f.en || f.jp)) log.push({ who: who || '', jp: f.jp || '', en: f.en || '' }); };
+          for (let n = 0; n < 14 && !st.over; n++) {
+            const cards = E.cards(st, s, words).filter((c) => !c.disabled);
+            if (!cards.length) break;
+            const card = cards[(n * 7 + walk * 3) % cards.length];
+            const opts = E.companionOptions(st, s);
+            const cact = opts.length && (n + walk) % 2 ? { act: opts[(n + walk) % opts.length].def.id } : null;
+            const ev = E.exchange(st, { card, res: { ok: true, firstTry: true, mistakes: 0 }, comp: cact }, {});
+            say({ en: 'You: ' + card.en, jp: card.kind === 'social' ? card.jp : '' }, 'pc');
+            for (const f of ev.fx) say(f, f.who || '');
+            for (const f of ev.cfx || []) say(f, 'comp');
+            for (const f of ev.gfx || []) say(f, f.who || '');
+          }
+          const end = E.conclusionText(st.enc.conclusion, RB.game.settings);
+          if (end && end.jp) log.push({ who: 'narr', jp: end.jp, en: end.en });
+          for (const l of log) {
+            logN++;
+            if (!l.jp) continue;
+            jpN++;
+            const w = speakerOf(l.who);
+            if (!listedFor('code.enc', w === 'comp' ? comp : w, l.jp) && !isListed('code.enc', w, l.jp)) encOff.push(id + ' ' + w + ': ' + l.jp);
+          }
+        }
+      }
+      t.ok(encN > 20 && jpN > 50 && !encOff.length, 'the encounter screen\'s log, run through the rules over ' + encN + ' conversations and machines (' + logN + ' entries, ' + jpN + ' with Japanese), shows only lines listed under code.enc: ' + [...new Set(encOff)].slice(0, 4).join(' | '));
+
+      // the reply each memory source keeps, listed for the companion who says it (code.comp)
+      const K = RB.company, CC = RB.content.company, repOff = [];
+      let repN = 0;
+      const rep = (comp, r, what) => { if (!r || !r.jp || /\$\w/.test(r.jp)) return; repN++; if (!isListed(K.SCENE, comp, r.jp)) repOff.push(what + ' ' + comp + ': ' + r.jp); };
+      for (const comp of COMPS) {
+        for (const k in CC.mem) { const r = CC.mem[k].reply; if (r) for (const v of [].concat(r[comp] || r['*'] || [])) rep(comp, v, 'story:' + k); }
+        for (const sp in (RB.pets && RB.pets.meeting) || {}) rep(comp, (RB.pets.meeting[sp].reply || {})[comp], 'pet:met:' + sp);
+        for (const sp in (CC.pets || {})[comp] || {}) rep(comp, CC.pets[comp][sp], 'pet:' + sp);
+        const fm = (RB.fishing.content().remarks || {}).__memories || {};
+        for (const kind in fm) rep(comp, (fm[kind].reply || {})[comp], 'fish:' + kind);
+      }
+      // a discovery's remark: the companion's reaction, its lines joined, as onResolved keeps it
+      for (const r of K.reactions) {
+        if (!(r.lines && r.lines[0])) continue;
+        const s = RB.state.newCampaign({}); s.comp = r.comp; RB.game.s = s;
+        const [kind, ...rest] = String(r.event).split(':');
+        K.onResolved(s, { kind, id: rest.join(':') || 'x', id2: 'test:' + r.id });
+        const m = s.company.memories.find((x) => x.id.startsWith('disc:'));
+        if (m && m.reply && m.react === r.id) rep(r.comp, m.reply, 'reaction ' + r.id);
+      }
+      t.ok(repN > 60 && !repOff.length, 'the reply each memory keeps (' + repN + ': story memories, animals met, fishing, discoveries\' remarks) is listed in the companion\'s voice under code.comp: ' + repOff.slice(0, 4).join(' | '));
+    } finally { RB.game.s = keepS; }
+
+    // asking back's questions and hanafuda's calls, for their callers
+    const asks = listed.filter((l) => l.scene === 'code.ask');
+    t.ok(asks.length === 3 && asks.every((l) => l.who === 'pc'), 'asking back: the three questions are listed in the player\'s voice (' + asks.length + ')');
+    const calls = listed.filter((l) => l.scene === 'code.hanafuda');
+    t.ok(calls.some((l) => l.who === 'pc' && /こいこい/.test(l.jp)) && calls.some((l) => l.who === 'comp' && l.comps && l.comps.length === 4 && /勝負/.test(l.jp)), 'hanafuda: koi-koi and shōbu are listed for you and for each companion (' + calls.length + ')');
+    // the dialogue history keeps the scene id (and who the companion was), so the Log can say a line again
+    const dsrc = fs.readFileSync(path.join(SRC, 'ui/20_dialogue.js'), 'utf8');
+    t.ok(/s\.backlog\.push\(entryOf\(line, s\)\)/.test(dsrc) && /if \(line\.sceneId\) e\.sceneId = line\.sceneId;/.test(dsrc), 'every line the dialogue strip shows is kept in the history with its scene id');
+    const pushes = [];
+    for (const f of walk(SRC)) { const src = fs.readFileSync(f, 'utf8'); for (const m of src.matchAll(/backlog\.push\(/g)) pushes.push(path.relative(SRC, f) + ': ' + argAt(src, m.index + m[0].length)); }
+    const bare = pushes.filter((x) => !/sceneId|entryOf|choice: true/.test(x));
+    t.ok(pushes.length >= 6 && !bare.length, 'every history entry is either a line with its scene id or a reply you chose (' + pushes.length + '): ' + bare.join(' | '));
   }
 };
