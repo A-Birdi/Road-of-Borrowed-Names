@@ -408,7 +408,18 @@ nothing retired. Built from `4e144ec`, after MW1, SL1 and SL3.
   convention as SL1/SL3, into `run/results_SL4.json`. The voice site is rebuilt from every results file (GO, MW1, SL1,
   SL3, SL4 and the send corrections SC10–SC14) with a new `voiceBuild`, then pushed to the voices repository. A
   `[Claude Cloud]`/`[Claude Local]` note on the QA issue gives the new build's identity.
-- **Still to come (SL5):** the lines someone says that SL4 does not cover are being wired now: battle lines beyond the
-  intro, phases and settled lines; encounters; Shared memories' replies; the Log; hanafuda calls; the player's
-  ask-back questions. SL5 follows on the same terms and is announced on the issue. The written surfaces and the
-  decisions left to Robin are in SPOKEN_SURFACES.md §2.
+- **SL5 (`supplements/SL5_SUPPLEMENT.json`)** lists the rest of the lines someone says (VL-2). It has 868 new
+  recordings and 18,798 morae, with no new references and nothing retired. Built from `54728da`, after MW1, SL1, SL3
+  and SL4.
+  - **By speaker:** the player 412 (103 lines × the four variants), narrator 378, Suzu 33 (15 of them Kansai), Mio 17,
+    Nao 15, Ren 13.
+  - **By scene:**
+    - `code.enc` 392: an encounter's people, your social lines, its conclusions;
+    - `code.battle` 378: every telegraph at every tier with the names the code can put in, and the solo wordings
+      for a move at both (Agnes's RBN-QA-003);
+    - `code.comp` 70: a Shared memory's reply;
+    - `code.hanafuda` 16: the calls;
+    - `code.ask` 12: your ask-back questions.
+  - **Recording:** the same terms as SL4.
+  - **Left out, with the reasons in SPOKEN_SURFACES.md §2:** lines with your own name; English-only battle and
+    encounter text; reading tasks; written records; the decisions left to Robin.
