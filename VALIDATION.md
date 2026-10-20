@@ -5018,6 +5018,51 @@ Yasu's story, when listening, has not begun being spoken."
 - **Not done:** the other code-shown lines, Company memory replays, the panels (fishing, shiritori, verbs). Not tested:
   real recordings, Firefox, Safari, a device voice.
 
+## Every line spoken, second batch (VL-1), SL4, send corrections SC11–SC14, QA fixes (2026-10-20)
+
+- **The lines the game's own code shows (VL-1).** Robin: "Create the relevant missing voice lines … If something
+  isn't set up to be spoken yet, explain why and find a proper way to resolve it completely." An agent wired them and
+  made one commit before a container restart stopped it. The lead kept its finished commit (`84e9bdd`) and took over
+  its unfinished work (`05032a5`), checking the brief's rules: no Japanese or English text changed, nothing retired in
+  the recording list.
+  - **New scene ids and their enumerators:** `code.comp`, `code.ngplus`, `code.weave`, `code.town`, `code.verbs`,
+    `code.stamp`, `code.pages`, `code.atlas`, `code.fish`, `code.play` and `code.letters`. Also listed: `mp.press_react`,
+    `cs.view_*` and the simpler version when you ask back.
+  - Company memory replays keep their scene ids.
+  - **Panel lines** (`src/ui/22c_spoken_panel.js`, `.say-line`) give fishing, word play, the verbs sheet, the Weave's
+    look slip, the Company page and a letter's acknowledgement a Voice button, the marked word and pointing pairs.
+  - The inventory, `docs/future/voice/SPOKEN_SURFACES.md`, gives every surface with Japanese sentences, its counts,
+    and why each one not spoken is not.
+  - Code-shown lines listed: 2,968 (1,381 before).
+  - **Tests:** `node tools/validate.mjs` no errors; U `spoken_sites` 24/0 (every call that shows a line from code
+    passes a scene id; every listed line can be recorded; the code paths' lines are listed), `voice_production` 27/0,
+    `voicebank_plan_content` 7/0, `audio_voice` 46/0; U whole suite **56,144/0** (17 min 53 s, on `05032a5`); B
+    `spoken_lines` **24/0** against a test voice site (a tone per line, one case per family through the game's own
+    code), on a scratch build of `05032a5`.
+- **SL4** (`supplements/SL4_SUPPLEMENT.json`, built from `4e144ec`): 1,779 new recordings, 52,303 morae, nothing
+  retired, no new references (READINESS.md §6). Recordings are Local's.
+- **SC11–SC14** (`SEND_CORRECTIONS.json`): the local worker's recognizer check of the fifteen bare-葦 recordings found
+  four likely misread. Each now sends 葦 as あし; ids and keys are unchanged. U `voice_review_page` 124/0,
+  `voice_production` 27/0.
+- **QA (Agnes, via A-Birdi/Road-of-Borrowed-Names#1):**
+  - RBN-QA-001: the Voice button's title and Settings › Following along describe the recorded voices, with the
+    device's voice as the fallback (copy only).
+  - RBN-QA-002: an empty stamp stand shows "What each stamp here asks for: Ledger › Journey › Stamp book."
+  - U `stampbook_sb1` 39/0, `records` 272/0. Agnes retests with the next build.
+- **Voice loading (VT-1), in a browser, the 2 s slow-cache bound.** These are paired runs of the pre-VT-1 and VT-1
+  builds, each pair back to back on the same machine while other suites ran (load average 10–13):
+
+  | Run | Build | `voice_runtime_vrc1` | Line start, cache answering after 3 s | Line start, cache write never finishing |
+  | --- | --- | --- | --- | --- |
+  | 1 | pre-VT-1 | 6/1 | 3,371 ms | — |
+  | 1 | VT-1 | 6/1 | 2,544 ms | — |
+  | 2 | pre-VT-1 | 6/1 | — | 2,019 ms |
+  | 2 | VT-1 | 6/1 | 2,460 ms | — |
+
+  The other checks (lookahead, kept copies after an update) passed in all four. The one failure is the 2 s bound
+  under load. On a lightly loaded machine (load 3–7) the VT-1 build started the line in 2,002 ms (6/1). A clean 7/7
+  on an idle machine is still to be recorded.
+
 ## Battle timing (BT-1; Robin, 2026-10-20: "Voice Loading and Battle Timing: I would explore what options you have to fix these adequately")
 
 - **What was wrong.** `battle_presentation`'s "one cadence" check had failed on loaded machines for weeks (1.16, 1.154,

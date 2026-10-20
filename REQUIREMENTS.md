@@ -1107,8 +1107,17 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - **Also from the playtest:** the writing pad keeps one size while a character is written in a desktop window (B
     probe; a phone still changes, recorded in VALIDATION.md); Voice A / Voice B labelled more feminine / more masculine
     (R); Pat brings the pet's picture into view and shows its line (B probe).
-  - **Not done:** about 2,000 more lines the game's code shows (the inventory in VALIDATION.md), Company memory
-    replays, and the panels.
+  - **Second batch, 2026-10-20 (VL-1; done in code and tests):** the lines the game's own code shows are shown under
+    scene ids and listed. That covers the companion's remarks, thoughts, place talk and What We Keep, The Pages We
+    Keep, the exploration actions' rules, expeditions, stamp stands, sealed spots, the New Game+ farewell, a press
+    reader's reaction, the case's viewpoints, letters' acknowledgements and a speaker's simpler version. Company memory
+    replays keep their scene ids. Fishing, word play, the verbs sheet and the Weave's look slip are spoken panel lines
+    (Voice, the marked word, pointing pairs). Code-shown lines listed: 2,968 (1,381 before). U whole suite 56,144/0,
+    `spoken_sites` 24/0; B `spoken_lines` 24/0. Recordings: SL4 (1,779) is Local's. The inventory of every surface,
+    and why the rest is not spoken, is in docs/future/voice/SPOKEN_SURFACES.md.
+  - **Not done:** SL5 (in progress): battle lines beyond intros, phases and settled lines; encounters; Shared
+    memories' replies; the Log; hanafuda calls; the ask-back questions. Robin to decide: reading tasks (customers'
+    orders, letters' text) and the player's reply choices.
 - [x] XP137 The Stamp Book after Robin's Chapter 1 playtest (2026-10-19): the field-guide stamp's words say it counts a
   region's roaming kinds and not its bosses; a "Stamp pressed" award slip in the Item Get family; "The cellars drained"
   veiled until Chapter 2 (a different place from the Mill's basement); a "Field guide" section; Chapters, People helped
@@ -1145,6 +1154,10 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   land under the hut and the bridge's far end; Kōji's cup on his own arm; hands along the forearm
   (`RB.portraitBody.elbow`); Kōji over the shoulder in the close shot. U `sequence` 499/0, `portrait_speakers` 6/0; B
   `sequence_chapters` 121/0 (VALIDATION.md "Approved art: the bridge cutscene and the battle icons").
+- [x] XP147 QA (Agnes, independent tester, via the QA issue, A-Birdi/Road-of-Borrowed-Names#1): RBN-QA-001: the
+  Voice button and Settings › Following along describe the recorded voices, with the device's voice as the fallback;
+  RBN-QA-002 (a suggestion): an empty stamp stand points to the Stamp book's criteria. In source (`7797ba7`,
+  `4e144ec`); U `stampbook_sb1` 39/0, `records` 272/0, `spoken_sites` 24/0. Agnes's retest comes with the next build.
 
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).
