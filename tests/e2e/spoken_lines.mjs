@@ -11,7 +11,11 @@
 //    completely") each family wired then, through the game's own code path: a stamp stand, a sealed spot, a layered
 //    site's mark, the companion's thought, the New Game+ farewell, the pinned page, the Atlas, a press reader, the
 //    case's viewpoint, a kept memory's replay; and the panels: the Weave sheet's look at an animal's place, an action's
-//    sheet, fishing, the shiritori table, a letter's acknowledgement (a Voice button, the spoken word marked).
+//    sheet, fishing, the shiritori table, a letter's acknowledgement (a Voice button, the spoken word marked);
+//  - (VL-2, the second pass) a battle's telegraph (Voice in the telegraph panel), the encounter screen's log (your
+//    choice's words, in your voice, as they appear), the Log (a line from the dialogue history said again; an older
+//    entry has no Voice), a memory's reply and a recollection's line (Company › Shared memories), asking back (your
+//    question in your voice, then the answer), hanafuda (your call).
 // Usage: node tools/build.mjs && node tests/e2e/spoken_lines.mjs
 import fs from 'node:fs';
 import os from 'node:os';
@@ -36,7 +40,8 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-spoken-'));
 const MEMORY = 'ch2.notice', memoryScene = RBN.sequence.get(MEMORY).scene;
 const fx = makeVoiceSite(tmp, {
   scenes: ['prologue', replayScene, 'code.door', 'code.fw', 'code.history', 'code.battle', 'code.wb', 'code.stamp', 'code.town', 'code.verbs', 'code.comp',
-    'code.ngplus', 'code.pages', 'code.atlas', 'mp.press_react', 'cs.view_seat', memoryScene, 'code.weave', 'code.fish', 'code.play', 'code.letters', 'ws.ask'],
+    'code.ngplus', 'code.pages', 'code.atlas', 'mp.press_react', 'cs.view_seat', memoryScene, 'code.weave', 'code.fish', 'code.play', 'code.letters', 'ws.ask',
+    'code.enc', 'code.ask', 'code.hanafuda'],
   refs: [], tones: 24,
 });
 const TYPES = { '.html': 'text/html; charset=utf-8', '.opus': 'audio/ogg', '.json': 'application/json' };
@@ -420,6 +425,167 @@ await test('Company: what is on the companion\'s mind has a Voice button, the co
   await p.click('.co-thought .say-line [data-say-voice]');
   await heard(p, 'mio', 'code.comp', 'Mio\'s thought on the page');
   await p.waitForSelector('.co-thought .say-line .jt.spk', { timeout: 4000 });
+  await done(pg);
+});
+
+// ---- VL-2: the second pass, each through the game's own code -------------------------------------------------------
+// a new recording of this speaker under this scene, after n0 plays (something said before it does not count)
+const heardNew = async (p, speaker, scene, n0, what) => {
+  try {
+    await p.waitForFunction(([sp, sc, n0]) => { const S = RB.voicebank._.S, pl = S.log.filter((x) => x.k === 'play'); return pl.length > n0 && pl[pl.length - 1].f.startsWith('rec/' + sp + '/') && S.lastScene === sc; }, [speaker, scene, n0], { timeout: 10000, polling: 50 });
+  } catch (e) {
+    const st = await p.evaluate(() => ({ plays: window.__vb().plays, last: RB.voicebank._.S.lastScene }));
+    throw new Error(what + ': no new recording of ' + speaker + ' for ' + scene + ' — ' + JSON.stringify(st));
+  }
+};
+const playsNow = (p) => p.evaluate(() => window.__vb().plays.length);
+// your own lines are heard in your voice (Voice A, high)
+const myVoice = (p) => p.evaluate(() => { const v = RB.game.settings.voice; v.player = 'A'; v.pitch = 'high'; });
+
+await test('a battle\'s telegraph has a Voice button: the narrator\'s recording, the spoken word marked (code.battle)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.road', 14, 9, { comp: 'mio', flags: { departed: true } });
+  await p.evaluate(() => { const s = RB.game.s; s.learn.profile = 'E'; s.learn.difficulty = 'relaxed'; RB.game.settings.intentDisplay = 'expanded'; RB.game.settings.battleAnim = 'instant'; RB.game.applySettings(); RB.game.startBattle('rw.dustmoth', {}); });
+  // the intro is said; then the decision: the telegraph, in full (Expanded)
+  for (let i = 0; i < 200 && !(await p.evaluate(() => !!document.querySelector('.combat-ui .intent .say-line [data-say-voice]'))); i++) {
+    await p.evaluate(() => { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); });
+    await p.waitForTimeout(80);
+  }
+  await p.waitForSelector('.combat-ui .intent .say-line [data-say-voice]', { timeout: 5000 });
+  await p.evaluate(() => RB.voice.cancel());
+  const n0 = await playsNow(p);
+  await p.click('.combat-ui .intent .say-line [data-say-voice]');
+  await heardNew(p, 'narrator', 'code.battle', n0, 'the telegraph');
+  await p.waitForSelector('.combat-ui .intent .say-line .jt.spk', { timeout: 4000 });
+  await done(pg);
+});
+
+await test('the encounter screen: your choice\'s words are said in your voice as they appear in the log, and Voice says them again (code.enc)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.millroad', 10, 22, { comp: 'ren' });
+  await myVoice(p);
+  await p.evaluate(() => { const s = RB.game.s; s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; RB.game.settings.input = 'choice'; RB.game.applySettings(); RB.game.startEncounter('fx.dispute', {}); });
+  await p.waitForSelector('.enc-card');
+  const i = await p.evaluate(() => { const c = [...document.querySelectorAll('.enc-card')].find((x) => /where they picked them up/i.test(x.textContent)); return c ? c.getAttribute('data-i') : null; });
+  assert(i != null, 'the choice "where they picked them up"');
+  await p.click('.enc-card[data-i="' + i + '"]');
+  // its language step: the right option (choice mode)
+  await p.waitForSelector('.chal .mc .btn');
+  const n = await p.evaluate(() => document.querySelectorAll('.chal .mc .btn').length);
+  for (let k = 0; k < n; k++) {
+    await p.evaluate((k) => { const b = [...document.querySelectorAll('.chal .mc .btn')][k]; if (b && !b.disabled) b.click(); }, k);
+    await p.waitForTimeout(80);
+    if (await p.evaluate(() => !!document.querySelector('.fbwrap[data-fb=ok] .fb-go'))) break;
+  }
+  await p.click('.fbwrap[data-fb=ok] .fb-go');
+  // whatever is asked after (what you meant; your companion's own move): go on without adding anything
+  for (let k = 0; k < 60 && !(await p.evaluate(() => !!document.querySelector('.enc-log .say-line.you'))); k++) {
+    await p.evaluate(() => { const b = [...document.querySelectorAll('.csheet .pbtn')].find((x) => /Nothing this time|Yes, do it/i.test(x.textContent)); if (b) b.click(); });
+    await p.waitForTimeout(100);
+  }
+  await p.waitForSelector('.enc-log .say-line.you [data-say-voice]', { timeout: 5000 });
+  await heard(p, 'pc', 'code.enc', 'your words, as they appear');
+  await p.evaluate(() => RB.voice.cancel());
+  const n0 = await playsNow(p);
+  await p.click('.enc-log .say-line.you [data-say-voice]');
+  await heardNew(p, 'pc', 'code.enc', n0, 'your words again');
+  await done(pg);
+});
+
+await test('the Log: a line from the dialogue history says itself again from its recording; an older entry has no Voice', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20, { comp: 'mio', flags: { departed: true } });
+  await p.evaluate(() => { RB.script.run('co.mind'); });
+  await heard(p, 'mio', 'code.comp', 'Mio\'s thought');
+  const e = await p.evaluate(() => { const b = RB.game.s.backlog, l = b[b.length - 1]; b.splice(b.length - 1, 0, { who: 'narr', jp: '{古|ふる}い {記録|きろく} 。', en: 'An old entry.' }); return { who: l.who, sceneId: l.sceneId }; });
+  assert(e.who === 'mio' && e.sceneId === 'code.comp', 'the history keeps the line with its scene: ' + JSON.stringify(e));
+  await p.evaluate(() => { RB.voice.cancel(); RB.ui.menu.open('log'); });
+  await p.waitForSelector('.entries.history .say-line [data-say-voice]', { timeout: 5000 });
+  const r = await p.evaluate(() => { const li = [...document.querySelectorAll('.entries.history > li')]; const old = li.find((x) => /An old entry/.test(x.textContent)); return { n: li.length, old: old ? !!old.querySelector('[data-say-voice]') : null }; });
+  assert(r.old === false, 'an entry with no scene (an older save\'s) has no Voice: ' + JSON.stringify(r));
+  const n0 = await playsNow(p);
+  await p.evaluate(() => { const b = [...document.querySelectorAll('.entries.history .say-line [data-say-voice]')]; b[b.length - 1].click(); });
+  await heardNew(p, 'mio', 'code.comp', n0, 'the Log\'s line');
+  await p.waitForSelector('.entries.history .say-line .jt.spk', { timeout: 4000 });
+  await done(pg);
+});
+
+await test('Company › Shared memories: the reply kept with a memory and a recollection\'s line are their speakers\' recordings', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20, { comp: 'mio', flags: { departed: true } });
+  const who = await p.evaluate((scene) => {
+    const s = RB.game.s, d = RB.content.company.mem.recruit;
+    const c = RB.content.scenes[scene].cmds.find((x) => x.op === 'say' && x.who && x.who !== 'comp' && x.who !== 'pc' && x.who !== 'narr');
+    s.company.memories.push({ id: 'story:recruit', kind: 'together', title: d.title, text: null, reply: d.reply.mio, comp: 'mio', t: 1,
+      lines: [{ who: c.who, jp: c.jp, en: c.en, sceneId: scene }] });
+    RB.ui.menu.open('memories');
+    return c.who;
+  }, memoryScene);
+  await p.waitForSelector('.co-reply .say-line [data-say-voice]', { timeout: 5000 });
+  let n0 = await playsNow(p);
+  await p.click('.co-reply .say-line [data-say-voice]');
+  await heardNew(p, 'mio', 'code.comp', n0, 'Mio\'s reply');
+  await p.click('.co-mem [data-co-recall]');
+  await p.waitForSelector('.co-recall .say-line [data-say-voice]', { timeout: 5000 });
+  await p.evaluate(() => RB.voice.cancel());
+  n0 = await playsNow(p);
+  await p.click('.co-recall .say-line [data-say-voice]');
+  await heardNew(p, who, memoryScene, n0, 'the recollection\'s line');
+  await done(pg);
+});
+
+await test('asking back: your question is said in your voice, then the answer (code.ask)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20);
+  await myVoice(p);
+  await p.evaluate(() => { RB.script.run('ws.ask'); });
+  await p.waitForFunction(() => { const l = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); if (l && l.who === 'narr') RB.ui.dialogue.advance(true); return !!(l && l.who === 'koji'); }, null, { timeout: 10000, polling: 200 });
+  await heard(p, 'koji', 'ws.ask', 'Kōji\'s line');
+  await p.evaluate(() => { RB.voice.cancel(); document.querySelector('.dlg .b-ask').click(); });
+  await p.waitForSelector('.dlg-ask [data-ask="0"]');
+  const n0 = await playsNow(p);
+  await p.click('.dlg-ask [data-ask="0"]');
+  await heardNew(p, 'pc', 'code.ask', n0, 'your question');
+  // then Kōji says it once more
+  await heardNew(p, 'koji', 'ws.ask', n0 + 1, 'the answer after it');
+  const b = await p.evaluate(() => RB.game.s.backlog.slice(-2).map((l) => l.who + '|' + (l.sceneId || '')));
+  assert(b[0] === 'pc|code.ask' && b[1] === 'koji|ws.ask', 'the history keeps both with their scenes: ' + b.join(', '));
+  await done(pg);
+});
+
+await test('hanafuda: your call is said in your voice as you make it (code.hanafuda)', async () => {
+  const pg = await open(), p = pg.p;
+  await myVoice(p);
+  await p.evaluate(() => {
+    const s = RB.game.debugStart('rw.village', 22, 30, { comp: 'suzu', flags: { departed: true, pt_hanafuda: true } });
+    s.edition = 2; RB.game.settings.textSpeed = 'instant';
+    RB.activity.launch('hanafuda', { source: 'distractions' });
+  });
+  await p.waitForSelector('.hf-menu');
+  await p.click('input[name="hf-len"][value="1"]');
+  await p.click('[data-a="start"]');
+  await p.waitForFunction(() => { const v = RB.ui.hanafuda.state(); return v && v.g && !v.thinking && v.g.turn === 0 && v.g.phase === 'play'; }, null, { timeout: 30000 });
+  // three brights in hand's reach (as tests/e2e/hanafuda.mjs arranges it): the moon makes the set
+  await p.evaluate(() => {
+    const g = RB.ui.hanafuda.state().g, H = RB.hanafuda;
+    const id = (tag) => H.DECK.find((c) => c.tag === tag).id;
+    const pampas = H.DECK.filter((c) => c.m === 8 && c.kind === 'kasu').map((c) => c.id);
+    const keep = (x) => H.card(x).m !== 8 && x !== id('crane') && x !== id('curtain');
+    g.turn = 0; g.phase = 'play'; g.shown = [0, 0]; g.koi = [0, 0];
+    g.caught = [[id('crane'), id('curtain')], g.caught[1].filter((x) => x !== id('moon') && keep(x))];
+    g.field = g.field.filter(keep).concat([pampas[0]]);
+    g.hands[0] = [id('moon')].concat(g.hands[0].filter(keep)).slice(0, 3);
+    g.hands[1] = g.hands[1].filter(keep);
+    g.pile = g.pile.filter(keep);
+  });
+  await p.click('[data-a="help"]'); await p.click('[data-a="help"]');
+  const moon = await p.evaluate(() => RB.hanafuda.DECK.find((c) => c.tag === 'moon').id);
+  await p.click('[data-h="' + moon + '"]');
+  await p.waitForSelector('.hf-decide', { timeout: 8000 });
+  const n0 = await playsNow(p);
+  await p.click('[data-a="stop"]');
+  await p.waitForSelector('.hf-call [data-say-voice]', { timeout: 5000 });
+  await heardNew(p, 'pc', 'code.hanafuda', n0, 'your call');
   await done(pg);
 });
 
