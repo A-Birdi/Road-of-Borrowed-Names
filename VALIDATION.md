@@ -5528,6 +5528,19 @@ Yasu's story, when listening, has not begun being spoken."
   - **RBN-QA-033 in source (Robin approved 2026-10-20; `54339ee`, cherry-picked from `qa033-roadon` `7f948bf`):** on a
     scratch build of `54339ee`: B `road_on` 11/0, `route_after_ch2` 29/0, `quest_guide` all passed; U whole suite
     57,664/0; `validate.mjs` no errors. Not yet in a deployed candidate.
+  - **RBN-QA-032 candidate (`qa032-vista`, `523f9ba`; Robin chose the painted vista; not pushed):** on the candidate's
+    build: B `lookout_vista` (new) 22/0 (Suzu and Nao at 1180×757, Ren at 390×844 with reduced motion: each vista
+    line over its picture and every other line on the platform, nothing left after the scene, Suzu dancing only when
+    she is not the companion, the seat's globe, the stage, the village and the peaks above the sheet, still under
+    reduced motion, no console errors or requests); the same test on CC-008's `index.html` 12/7 (the picture checks
+    fail). B `story_ch3` E Nao 38 checks and A Suzu 36 checks passed; B `interludes` 76/0. U `scene_manifest` 1023/0,
+    `perform` 665/0, `actors` 180/0, `script_prompts` 10/0, `voicebank_plan_content` 7/0; `validate.mjs` no errors.
+    Voice: no line changed; voice ids hash the speaker, voice, dialect, delivery and spoken text only
+    (tools/voice/production_manifest.mjs), so the added ops move none. Frames (CC-008 against the candidate, Suzu;
+    Nao's dancing Suzu; 2000×1090; a phone) sent to Robin.
+  - **RBN-QA-035 candidate (`qa035-snowbell`, `a1f014d`; Robin: walking is fine if the whole path is shown; not
+    pushed):** scripted frames along the walk against CC-008, sent to Robin. No suite run yet (`story_ch4` on
+    approval).
   - **Candidate CC-007:** `index.html` sha256 `343f54b86303630beb3efee932c7f2fceca0a7cfd90e51019671b1c051d29f97`, built
     from `026965b` (T01, T02 and RBN-QA-028 on top of CC-006's source); byte-identical to the scratch build the suites
     above ran on. On this exact file (B): `kana_homophones` 174/0, `shino_thanks` 28/0, `story_ch3 E nao` 38 checks
