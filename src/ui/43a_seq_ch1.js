@@ -1,6 +1,7 @@
 /* Chapter 1's illustrated sequence: the bridge reaches the far bank (`rw.bridge_scene`,
  * src/content/ch1/31_scenes_mill.js; docs/expressive/SHOTS.md §1). Late in the afternoon after the storm,
- * the river still high and brown; the low sun from the left. Five compositions:
+ * the river still high, blue under the evening sky (AR-3; Robin, 2026-10-19: "The water should be blue across this scene
+ * and the following"); the low sun from the left. Five compositions:
  *   reach  from the near bank at the bridge's foot: the bridge in three-quarter view, its last span settling
  *          onto the far bank (the break the prologue showed closes, motes gathering into it); then the far
  *          hut's door slides open and a man in a hat steps out with a teacup (only on the line that says so)
@@ -52,8 +53,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let x = 0; x < w; x++) { const v = Math.sin(x / (w * f1) + ph) * 0.6 + Math.sin(x / (w * f1 * 0.37) + ph * 1.7) * 0.4; const t1 = Math.round(yH - amp * (0.55 + v * 0.45)); R(g, x, t1, 1, yH - t1, col); }
     }
   }
-  // the river after the storm: brown, streaming, with lighter current lines and the odd branch
-  const RIVER = ['#b49c7a', '#a08664', '#8e7454', '#7e6446', '#70583c', '#644e36', '#5a4630'];
+  // the river after the storm: high and streaming, blue under the evening sky (AR-3: it was brown), with lighter
+  // current lines and the odd branch
+  const RIVER = ['#8eaac0', '#7c9cb6', '#6a8caa', '#5c7e9e', '#4e7090', '#446482', '#3a5874'];
   function river(c, x0, y0, w, h, t, still, seed, dir) {
     const rnd = P().rnd(seed || 913), H = Math.max(1, h);
     for (let n = 0; n < (w * h) / 420; n++) {
@@ -61,7 +63,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const len = 2 + Math.round(d * 16), sp = (0.012 + d * 0.034) * (dir || 1), xr = rnd() * (w + 60);
       const x = Math.round(x0 + ((((xr - (still ? 0 : t * sp)) % (w + 60)) + w + 60) % (w + 60)) - 30);
       const a = still ? 0.28 : 0.16 + 0.22 * ((Math.sin(t / 900 + n) + 1) / 2);
-      c.fillStyle = (d < 0.3 ? 'rgba(236,216,180,' : n % 3 ? 'rgba(200,170,128,' : 'rgba(80,58,38,') + a.toFixed(2) + ')';
+      c.fillStyle = (d < 0.3 ? 'rgba(226,238,246,' : n % 3 ? 'rgba(174,202,222,' : 'rgba(32,54,78,') + a.toFixed(2) + ')';
       c.fillRect(x, y, len, 1);
       if (n % 47 === 0) { c.fillStyle = 'rgba(70,50,32,0.8)'; c.fillRect(x, y - 1, Math.max(2, len >> 1), 1); } // a branch carried down
     }
@@ -127,19 +129,35 @@ var RB = (globalThis.RB = globalThis.RB || {});
     L.path(zs.map((z) => { const [x, y] = cl(z); return [x, y - ph(z)]; }), Math.max(1, sz(0.5, s(2.4))), wood, 0.95);
     L.path(zs.map((z) => { const [x, y] = cl(z); return [x, y - ph(z) * 0.5]; }), Math.max(1, sz(0.5, s(1.6))), wood, 0.6);
   }
+  // Two layers, the river's moving lines drawn between them (AR-3: they ran over the bridge, the hut and both banks):
+  // base, the sky and the water with its reflections; front, the banks, the landing, the hut, the bridge and the reeds.
   function reachStatic(G) {
     return cached('ch1.reach|' + G.w + 'x' + G.h + '|' + G.vb, () => {
-      const { w, h, yH, N, hut, s, cl, wl, big } = G;
-      const cv = mk(w, h), g = cv.getContext('2d');
-      g.imageSmoothingEnabled = false;
-      const p = P(), rnd = p.rnd(4417);
-      sky(g, w, yH, s, rnd);
-      Q.bandsIn(g, 0, yH, w, h - yH, RIVER, 0.45);
+      const { w, h, yH, N, F, hut, s, cl, wl, big } = G;
+      const base = mk(w, h), gb = base.getContext('2d'), front = mk(w, h), g = front.getContext('2d');
+      gb.imageSmoothingEnabled = false; g.imageSmoothingEnabled = false;
+      const p = P(), rnd = p.rnd(4417), rb = p.rnd(4419);
+      sky(gb, w, yH, s, rnd);
+      Q.bandsIn(gb, 0, yH, w, h - yH, RIVER, 0.45);
+      // the landing where the bridge comes ashore, the hut on it (AR-3: the hut stood in the river, the bridge's end
+      // short of the bank): the far bank comes forward under them, grass to a lip of mud at the water
+      // (a rounded spit of land: its front edge a flattened arc, full depth under the bridge's end and the hut)
+      const lx0 = Math.round(F[0] - s(16) * big), lx1 = Math.round(hut.x + hut.w + s(14) * big), lyB = Math.round(hut.y + s(5) * big);
+      const lmx = (lx0 + lx1) / 2, lhw = (lx1 - lx0) / 2 + s(14) * big;
+      const lip = (x) => { const u = Math.abs(x - lmx) / lhw; return u >= 1 ? yH : yH + (lyB - yH) * Math.pow(1 - Math.pow(u, 4), 0.25); };
+      const onLanding = (x, y) => y >= yH && y <= lip(x);
+      // the far bank's reflection, broken, and the landing's under it
+      for (let x = 0; x < w; x += 2) { if ((x >> 3) % 3 === 0) continue; R(gb, x, yH + s(6) + ((x * 7) % 3), 1, s(3) + ((x * 5) % 3), 'rgba(52,80,56,0.35)'); }
+      for (let x = Math.round(lmx - lhw); x < lmx + lhw; x += 2) { if ((x >> 3) % 3 === 1 || lip(x) < yH + s(6)) continue; R(gb, x, Math.round(lip(x)) + s(3) + ((x * 5) % 3), 1, s(3) + ((x * 3) % 3), 'rgba(52,80,56,0.3)'); }
+      // darker bands in the current
+      for (let y = yH + s(8); y < h; y += s(5) + Math.floor(rb() * s(6))) { const x0 = Math.floor(rb() * w), len = s(30) + Math.floor(rb() * w * 0.4); R(gb, x0, y, len, 1, 'rgba(30,48,70,0.25)'); }
       // the far bank: a lip of mud, grass and reeds, trees behind, the hut by the bridge's end
       const FB = p.layer(w, h);
       const grass = p.mat('#5e7a44', { n: 6, at: 3, step: 0.075 }), mud = p.mat('#7a6448', { n: 4, at: 2 }), tree = p.mat('#3e5a40', { n: 5, at: 2, step: 0.08 });
       FB.rect(0, yH - s(4), w, s(8), grass, (x, y) => (y < yH - s(2) ? 0.85 : 0.5));
       FB.rect(0, yH + s(4), w, Math.max(1, s(2)), mud, (x) => ((x >> 2) % 3 ? 0.6 : 0.35));
+      FB.fill(lmx - lhw, yH, lmx + lhw, lyB + 1, onLanding, grass, (x, y) => clamp(0.74 - (y - yH) / Math.max(1, lyB - yH) * 0.22 + ((x * 3 + y * 5) % 11 === 0 ? 0.12 : 0), 0, 0.999));
+      FB.fill(lmx - lhw, yH, lmx + lhw, lyB + s(4), (x, y) => y > lip(x) && y <= lip(x) + Math.max(2, s(2.5)) && lip(x) > yH + s(4), mud, (x, y) => (y < lip(x) + 1.5 ? 0.62 : (x >> 2) % 3 ? 0.42 : 0.28));
       for (let x = -s(6); x < w + s(6); x += s(8) + Math.floor(rnd() * s(10))) {
         if (x > hut.x - s(8) && x < hut.x + hut.w + s(8)) continue;
         const r = s(5) + Math.floor(rnd() * s(6)), cy = yH - s(3) - r;
@@ -148,6 +166,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       FB.outline();
       g.drawImage(FB.canvas(), 0, 0);
       for (let x = 0; x < w; x += 2 + Math.floor(rnd() * 3)) { const rh = s(3) + Math.floor(rnd() * s(5)); R(g, x, yH + s(4) - rh, 1, rh, rnd() < 0.5 ? '#4a6236' : '#6e8a4a'); }
+      // tufts along the landing's lip, clear of the bridge's end and the hut's step
+      for (let x = Math.round(lmx - lhw); x < lmx + lhw; x += 3 + Math.floor(rb() * 4)) {
+        if ((x > F[0] - s(6) * big && x < hut.x + s(18) * big) || lip(x) < yH + s(5)) continue;
+        const rh = s(2) + Math.floor(rb() * s(4)); R(g, x, Math.round(lip(x)) - rh + 1, 1, rh, rb() < 0.5 ? '#4a6236' : '#6e8a4a');
+      }
       // the hut: board walls in the sun, a thatched roof, a small window, a step; its door is live
       const H = p.layer(w, h);
       const board = p.mat('#8a6a48', { n: 6, at: 3, step: 0.08 }), thatch = p.mat('#9a8452', { n: 5, at: 3, step: 0.08 });
@@ -171,9 +194,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       NB.stone([[nx - s(4), ny - s(4)], [nx + s(34) * big, ny - s(8) * big], [nx + s(42) * big, ny + s(30) * big], [nx - s(8), ny + s(38) * big]], p.mat('#8a8680', { n: 5, at: 2, step: 0.1 }), { face: 2, bevel: 2 });
       NB.outline();
       g.drawImage(NB.canvas(), 0, 0);
-      // darker bands in the current and the far bank's reflection, broken
-      for (let y = yH + s(8); y < h; y += s(5) + Math.floor(rnd() * s(6))) { const x0 = Math.floor(rnd() * w), len = s(30) + Math.floor(rnd() * w * 0.4); R(g, x0, y, len, 1, 'rgba(70,50,30,0.28)'); }
-      for (let x = 0; x < w; x += 2) { if ((x >> 3) % 3 === 0) continue; R(g, x, yH + s(6) + ((x * 7) % 3), 1, s(3) + ((x * 5) % 3), 'rgba(60,84,48,0.35)'); }
       // the bridge up to where the prologue's broke off (its last span comes with the shot's action)
       const B = p.layer(w, h);
       bridgePart(B, G, 0, G.BRK);
@@ -182,11 +202,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // its reflection, dim and broken by the current
       const rc = mk(w, h), rg = rc.getContext('2d'), wy = wl(0.3);
       rg.save(); rg.translate(0, wy * 2 - s(6)); rg.scale(1, -1); rg.drawImage(bc, 0, 0); rg.restore();
-      rg.globalCompositeOperation = 'source-atop'; rg.fillStyle = 'rgba(60,40,24,0.62)'; rg.fillRect(0, 0, w, h);
+      rg.globalCompositeOperation = 'source-atop'; rg.fillStyle = 'rgba(40,40,46,0.62)'; rg.fillRect(0, 0, w, h);
       rg.globalCompositeOperation = 'destination-out';
       for (let y = 0; y < h; y += 3) rg.fillRect(0, y, w, 1);
       rg.fillRect(0, 0, w, wy - s(2));
-      g.globalAlpha = 0.4; g.drawImage(rc, 0, 0); g.globalAlpha = 1;
+      gb.globalAlpha = 0.4; gb.drawImage(rc, 0, 0); gb.globalAlpha = 1; // (on the water)
       g.drawImage(bc, 0, 0);
       // reeds along our bank's edge, tall in front
       for (let y = ny - s(30); y < h; y += 2 + Math.floor(rnd() * 3)) {
@@ -195,7 +215,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const rh = s(8) + Math.floor(rnd() * s(16) * big);
         R(g, x, y - rh, 1, rh, '#3e5a32'); R(g, x - 1, y - Math.round(rh * 0.5), 1, Math.round(rh * 0.5), '#2e4a2a'); R(g, x, y - rh, 1, 2, '#a07a4a');
       }
-      return cv;
+      return { base, front };
     });
   }
   function reachSpan(G) {
@@ -232,8 +252,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'bridge and hut in the top 60 %', narrow: 'the bridge runs diagonally up the frame, the hut top right', land: 'the bridge end and the hut' },
     draw(c, w, h, t, st) {
       const G = geomReach(w, h, st.vb), { s, hut, cl, big } = G, still = st.still;
-      c.drawImage(reachStatic(G), 0, 0);
+      const S0 = reachStatic(G);
+      c.drawImage(S0.base, 0, 0);
       river(c, 0, G.yH + s(6), w, h - G.yH - s(6), t, still, 913, 1);
+      c.drawImage(S0.front, 0, 0);
       const k = st.at('reach');
       if (k > 0) { c.globalAlpha = step4(ease(k)); c.drawImage(reachSpan(G), 0, -Math.round((1 - ease(k)) * s(6) * big)); c.globalAlpha = 1; }
       const pts = [], rnd = P().rnd(77);
@@ -343,11 +365,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function cupStatic(G) {
     return cached('ch1.cup|' + G.w + 'x' + G.h + '|' + G.vb, () => {
       const { w, h, yH, vx, yN, dx, s, th } = G;
-      const cv = mk(w, h), g = cv.getContext('2d');
-      g.imageSmoothingEnabled = false;
+      // (two layers, the river's lines between them, as in the first shot; AR-3: the deck drawn over the water again
+      // covered the lines, and the water stood still)
+      const base = mk(w, h), gb = base.getContext('2d'), cv = mk(w, h), g = cv.getContext('2d');
+      gb.imageSmoothingEnabled = false; g.imageSmoothingEnabled = false;
       const p = P(), rnd = p.rnd(2207);
-      sky(g, w, yH, s, rnd);
-      Q.bandsIn(g, 0, yH, w, h - yH, RIVER, 0.45);
+      sky(gb, w, yH, s, rnd);
+      Q.bandsIn(gb, 0, yH, w, h - yH, RIVER, 0.45);
       // the far bank and the hut where the bridge lands
       R(g, 0, yH - s(3), w, s(5), '#5e7a44'); R(g, 0, yH + s(2), w, Math.max(1, s(1)), '#7a6448');
       const tree = p.mat('#3e5a40', { n: 5, at: 2 }), T0 = p.layer(w, h);
@@ -389,7 +413,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       g.drawImage(T.canvas(), 0, 0);
       // the path to the square beyond it, packed earth
       Q.bandsIn(g, 0, th.yG, th.x1 + s(6), h - th.yG, ['#8e7a5c', '#827054', '#76654c'], 0.4);
-      return { cv, roofY, wallTop: o.wallTop, dX, dW };
+      return { base, cv, roofY, wallTop: o.wallTop, dX, dW };
     });
   }
   const cupShot = {
@@ -398,12 +422,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     draw(c, w, h, t, st) {
       const G = geomCup(w, h, st.vb), { s, yH, vx, th } = G, still = st.still;
       const S0 = cupStatic(G);
-      c.drawImage(S0.cv, 0, 0);
-      // the water either side of the deck, streaming
-      c.save(); c.beginPath(); c.rect(0, yH + s(3), w, h); c.clip();
+      c.drawImage(S0.base, 0, 0);
+      // the water either side of the deck, streaming, under the deck, the banks and the teahouse
       river(c, 0, yH + s(4), w, h - yH, t, still, 515, 1);
-      c.restore();
-      c.drawImage(S0.cv, 0, 0, w, h, 0, 0, w, h); // (the deck and posts over the water again)
+      c.drawImage(S0.cv, 0, 0);
       const k = st.at('walk'), kd = ease(clamp((k - 0.6) / 0.4, 0, 1));
       const dy0 = S0.wallTop + s(20), dyh = th.yG - s(8) - dy0;
       // the doorway: dark until the panel slides, then the warm room behind
@@ -543,17 +565,40 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function cupInHand(c, x, y, Z, skin, sleeve, angle, arm) {
     const kit = RB.prologueArt.kit;
     const cup = kit.scaled(kit.cupSprite(), clamp(Z, 0.5, 1));
-    const a = angle == null ? -0.2 : angle, S = Math.round(11 * Z), wx = Math.round(x - cup.w * 0.4), wy = Math.round(y - cup.h * 0.22);
+    const a = angle == null ? -0.2 : angle, S = Math.round(11 * Z), [wx, wy] = cupWrist(cup, x, y);
     if (arm) Q.forearm(c, wx, wy, Object.assign({ angle: a, side: 'R', size: S, sleeve }, arm));
     c.drawImage(cup.cv, Math.round(x - cup.ax), Math.round(y - cup.ay));
     const hd = Q.hand({ size: S, pose: 'grip', side: 'R', angle: a, skin, sleeve });
     if (hd) c.drawImage(hd.cv, wx - hd.ax, wy - hd.ay);
     return cup;
   }
+  // where the hand holding a cup drawn at (x, y) has its wrist
+  const cupWrist = (cup, x, y) => [Math.round(x - cup.w * 0.4), Math.round(y - cup.h * 0.22)];
   // Kōji from behind, close to us (RB.seqBack, AR-1): his straw hat, his hair at the nape, his shoulders and back; the
-  // arm on our right bent forward (the hand with the cup is in front of him, drawn by the shot)
+  // arm on our right held out (only its shoulder: the shot draws the arm to the hand with the cup)
   function kojiBack(Z) {
-    return Q.small('kojiback|' + Z, () => RB.seqBack.draw(look('koji'), Math.round(150 * Z), { light: 'l', forward: 'r' }));
+    return Q.small('kojiback|r|' + Z, () => RB.seqBack.draw(look('koji'), Math.round(150 * Z), { light: 'l', raise: 'r' }));
+  }
+  // Kōji, from behind at (kx, ky), holding his cup out at (cx, cy) on our right of him: his arm from the shoulder to the
+  // hand (AR-3; Robin, 2026-10-19: "Koji's hand holding the teacup is disembodied": the hand and cup floated beside his
+  // hat), then him, then the cup in his hand
+  function kojiWithCup(c, kb, kx, ky, cx, cy) {
+    const kit = RB.prologueArt.kit, cup = kit.scaled(kit.cupSprite(), 1), lk = look('koji');
+    const [wx, wy] = cupWrist(cup, cx, cy);
+    const shx = kx - kb.ax + kb.shoulders.r[0], shy = ky - kb.ay + kb.shoulders.r[1], dx = wx - shx, dy = wy - shy;
+    const arm = Q.small('ch1.kojiarm|' + kb.w + '|' + dx + ',' + dy, () => RB.seqBack.arm(lk, kb.w, dx, dy));
+    if (arm) c.drawImage(arm.cv, shx - arm.ox, shy - arm.oy);
+    c.drawImage(kb.cv, kx - kb.ax, ky - kb.ay);
+    // (the hand turned toward the forearm's line, as far as a wrist bends holding a cup level)
+    cupInHand(c, cx, cy, 1, Q.skinOf(lk), Q.clothOf(lk)[0], clamp(Math.atan2(dy, dx), -0.7, 0.5));
+  }
+  // The angle that turns a hand drawn at the wrist (wx, wy) along its forearm, for a bust anchored at (bx, by) standing
+  // ext rows below its frame (Q.bust's ext), on the arm on our left (armSide -1) or right; hand: Q.hand's side (AR-3:
+  // "Hana's wrist is oddly placed": a hand at a fixed angle met its forearm from the side)
+  function alongArm(bx, by, armSide, wx, wy, hand, ext) {
+    const q2 = (v) => 2 * Math.round(v / 2), tx = 48 + q2(wx - bx), ty = Math.max(2, 96 + q2(wy - by));
+    const E = RB.portraitBody.elbow(ext || 200, armSide, tx, ty), dx = tx - E[0], dy = ty - E[1];
+    return hand === 'L' ? Math.atan2(-dy, dx) : Math.atan2(dy, dx);
   }
   const hanaShot = {
     phases: [['stop', 700], ['lift', 600]],
@@ -576,7 +621,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const hb = hanaBust(expr, ks > 0.15 && kl < 0.2 ? { head: [0, -1] } : null, kh > 0 ? Q.holdArms(hx, hy, [fx, fy], null) : null);
       if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
       const skin = Q.skinOf(look('hana'));
-      const hd = kh > 0 ? Q.hand({ size: 10, pose: 'rest', side: 'L', angle: lerp(Math.PI * 0.5, -0.5, kh), skin, sleeve: '#a86a5a' }) : null;
+      const hd = kh > 0 ? Q.hand({ size: 10, pose: 'rest', side: 'L', angle: Math.round(alongArm(hx, hy, -1, fx, fy, 'L') * 10) / 10, skin, sleeve: '#a86a5a' }) : null;
       if (hd) c.drawImage(hd.cv, fx - hd.ax, fy - hd.ay);
       // Kōji in front of us, from behind, over the doorway's left edge; his cup held level in front of
       // him, Hana looking at it; it lifts a little on the rule
@@ -584,9 +629,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const kx = Math.round(lay === 'narrow' ? w * 0.26 : dX - s(6));
       const lift = Math.round(ease(kl) * s(5));
       const cx = Math.round(kx + kb.w * 0.6), cy = Math.round(G.vb + s(2) - lift);
-      cupInHand(c, cx, cy, 1, Q.skinOf(look('koji')), '#5a6a7a', -0.15);
+      kojiWithCup(c, kb, kx, Math.round(G.vb + s(70)), cx, cy);
       if (!still) Q.steam(c, cx - 1, cy - s(18), t, 2, 2, 0.7, s);
-      c.drawImage(kb.cv, kx - kb.ax, Math.round(G.vb + s(70) - kb.ay));
     },
     focus(w, h, vb) { const G = geomDoor(w, h, vb, false); return { x: G.hx - 30, y: G.hy - 88, w: 60, h: 56 }; }, // her face
   };
@@ -602,8 +646,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the tray, the pot and the two cups on the counter behind her (poured this morning)
       const kit = RB.prologueArt.kit;
       const tray = kit.traySprite(), cup = kit.cupSprite(), pot = kit.potSprite();
-      // (within her reach: the tray sits by her shoulder, the near cup where her hand can take it; AR-1)
-      const cx0 = Math.round(hx + 80), cups = [[cx0 - 14, counterY + s(1)], [cx0 + 14, counterY + s(2)]];
+      // (within her reach: the tray sits by her shoulder, the near cup where her hand can take it; AR-1. Far enough that
+      // her arm reaches out to it rather than folding back on itself, the elbow past her hand; AR-3)
+      const cx0 = Math.round(hx + clamp(dX + dW - hx - s(52), 80, 108)), cups = [[cx0 - 14, counterY + s(1)], [cx0 + 14, counterY + s(2)]];
       const put = (sp, x, y) => { c.fillStyle = 'rgba(30,14,10,0.4)'; P().disc(c, x + Math.round(sp.w * 0.12), y, Math.round(sp.w * 0.36), Math.max(1, s(2))); c.drawImage(sp.cv, x - sp.ax, y - sp.ay); };
       put(tray, cx0, counterY + s(4));
       put(pot, Math.round(hx - Math.max(s(84), dW * 0.22)), counterY + s(4));
@@ -616,18 +661,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const fr = down ? { head: [0, down], look: [0, 1] } : ksm > 0.3 ? null : klo > 0 ? { look: [0, 1] } : null;
       // her hand reaches toward the cups as she smiles (her arm raised to it)
       const reach = ease(ksm);
-      const rx = Math.round(lerp(hx + 34, cups[0][0] - 10, reach)), ry = Math.round(lerp(hy - 10, counterY + s(2), reach));
+      const rx = Math.round(lerp(hx + 34, cups[0][0] - 7, reach)), ry = Math.round(lerp(hy - 10, counterY + s(2), reach));
       const hb = hanaBust(expr, fr, reach > 0 ? Q.holdArms(hx, hy, null, [rx, ry]) : null);
       if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
       if (reach > 0) {
-        const hd = Q.hand({ size: 11, pose: 'offer', side: 'R', angle: -0.2, skin: Q.skinOf(look('hana')), sleeve: '#a86a5a' });
+        // (the hand along her forearm: it met the arm from the side, the cuff beyond the hand; AR-3)
+        const hd = Q.hand({ size: 11, pose: reach > 0.85 ? 'grip' : 'offer', side: 'R', angle: Math.round(alongArm(hx, hy, 1, rx, ry, 'R') * 10) / 10, skin: Q.skinOf(look('hana')), sleeve: '#a86a5a' });
         if (hd) c.drawImage(hd.cv, rx - hd.ax, ry - hd.ay);
       }
-      // Kōji's hand and cup at the frame's edge, close to us (his arm from the frame's lower edge: the hand floated; AR-2)
-      const kx0 = Math.round(dX + dW - s(30)), ky0 = Math.round(G.vb + s(2));
-      cupInHand(c, kx0, ky0, 1, Q.skinOf(look('koji')), '#5a6a7a', -0.4, { to: [kx0 + s(16), h + s(30)], grow: 3.2 });
+      // Kōji beside us at the doorway's left, from behind as in the shot before, his cup held out toward her (AR-3; Robin,
+      // 2026-10-19: "Koji's arm is quite long still holding the teacup on the right, in front of the door. I'm not sure what
+      // this perspective is meant to convey": an arm alone, from the frame's lower edge across the shōji)
+      const kb = kojiBack(1);
+      const kx = Math.round(dX - s(12)), kcx = Math.round(kx + kb.w * 0.62), kcy = Math.round(G.vb - s(2));
+      kojiWithCup(c, kb, kx, Math.round(G.vb + s(66)), kcx, kcy);
+      if (!still) Q.steam(c, kcx - 1, kcy - s(18), t, 3, 2, 0.6, s);
     },
-    focus(w, h, vb) { const G = geomDoor(w, h, vb, true); const x1 = G.hx + 80 + 24; return { x: G.hx - 30, y: G.hy - 88, w: Math.round(x1 - (G.hx - 30)), h: 56 }; }, // her face and the cups
+    focus(w, h, vb) { const G = geomDoor(w, h, vb, true); const x1 = G.hx + clamp(G.dX + G.dW - G.hx - G.s(52), 80, 108) + 24; return { x: G.hx - 30, y: G.hy - 88, w: Math.round(x1 - (G.hx - 30)), h: 56 }; }, // her face and the cups
   };
 
   // ---- shot 5: before the door closes, from the square ---------------------------------------------------

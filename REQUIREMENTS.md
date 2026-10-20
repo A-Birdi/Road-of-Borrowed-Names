@@ -1124,7 +1124,8 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [~] XP139 Road events stand on the road (Robin, 2026-10-19: "These random events on the paths should have actual NPCs
   where the event is meant to take place, along with any relevant props. It should not force you into the interaction as
   soon as you enter"): all 66 events placed, nothing run on arrival, met by going to their people or things; a named
-  person never stands twice. U `road_events` 1,007/0, `overworld_geometry` 3/0, B `living_world` 9/0 (VALIDATION.md
+  person never stands twice. Robin, 2026-10-20: live for Robin to judge in play; how often events come stays as it is,
+  since meeting them is now the player's choice. U `road_events` 1,007/0, `overworld_geometry` 3/0, B `living_world` 9/0 (VALIDATION.md
   "Playtest fixes, second round"). Robin's look still to come.
 - [x] XP140 The route chart's coastal places stand on land, Kotonoha on its island; ferries cross open sea. U
   `chart_coast` 16/0.
@@ -1136,8 +1137,14 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [~] XP144 "Have you seen…?" spoken: question and answers under `code.wb`, 806 lines listed for recording, once for
   each speaker. B `spoken_lines` 7/0 (Tomo's answer heard from its recording). SL3 supplement: 1,292 recordings to
   make (docs/future/voice/production/supplements/SL3_SUPPLEMENT.json); the recordings themselves to come.
-- [~] XP145 Battle icons drawn for moves and responses (IC-1): the registry and the screen's use are in; the drawings to
-  come.
+- [x] XP145 Battle icons drawn for moves and responses (IC-1; Robin, 2026-10-20: "The battle icons are perfect"): 31
+  drawn 16×16 icons (14 moves, 17 responses) on the response cards, the Intent card, the badge by a creature's name and
+  the "New move" note; ほのお shows the candle. B `combat_ui` 7/0, U `item_art` 6/0, `combat_rules` 248/0.
+- [x] XP146 The bridge cutscene after the Mill's boss (AR-3; Robin, 2026-10-20: "The cutscene has improved
+  substantially, push it"): blue water in both bridge shots; the river's moving lines only on the water; a spit of
+  land under the hut and the bridge's far end; Kōji's cup on his own arm; hands along the forearm
+  (`RB.portraitBody.elbow`); Kōji over the shoulder in the close shot. U `sequence` 499/0, `portrait_speakers` 6/0; B
+  `sequence_chapters` 121/0 (VALIDATION.md "Approved art: the bridge cutscene and the battle icons").
 
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

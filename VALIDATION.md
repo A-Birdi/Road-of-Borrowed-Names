@@ -5018,6 +5018,42 @@ Yasu's story, when listening, has not begun being spoken."
 - **Not done:** the other code-shown lines, Company memory replays, the panels (fishing, shiritori, verbs). Not tested:
   real recordings, Firefox, Safari, a device voice.
 
+## Approved art: the bridge cutscene and the battle icons (Robin, 2026-10-20)
+
+Robin, 2026-10-20: "The cutscene has improved substantially, push it. The battle icons are perfect, thank you." Both
+were drawn on 2026-10-19 and held back for this look (art follows docs/future/plan/AC1_ART.md).
+
+- **The bridge cutscene (AR-3; src/ui/43a_seq_ch1.js, src/engine/35b_portraitbody.js).** Robin's report: "The water
+  should be blue across this scene and the following"; "The hut appears to be submerged into the river, and the bridge
+  does not clearly reach the other landbank"; "Koji emerges from the hut into the water"; the moving lines "travel over
+  top of the bridge, hut, and every part of the landbank"; "In the following scene the water is still"; "Koji's hand
+  holding the teacup is disembodied, and Hana's wrist is oddly placed"; "Koji's arm is quite long still holding the
+  teacup on the right, in front of the door". What changed:
+  - the river's palette and its current lines are blue;
+  - each bridge shot draws its background in two layers, the river's lines between them (base: sky, water,
+    reflections; front: banks, landing, hut, bridge, teahouse, reeds), so the lines run only on the water; the cup
+    shot no longer drew the deck over the water a second time, which had hidden the lines (the still water);
+  - a rounded spit of land comes out from the far bank under the hut and the bridge's far end, a mud lip at the water;
+    Kōji steps out onto it;
+  - Kōji, from behind, holds his cup on his own arm from the shoulder (`RB.seqBack.arm`, as Chapter 4's giving shot);
+    in the close shot he stands at the doorway's left as in the shot before, his cup held out, in place of an arm alone
+    across the shōji;
+  - a hand is turned along its forearm: `RB.portraitBody.elbow(len, side, x, y)` exposes the arm solver the bodies
+    already used, and the shot draws each of Hana's hands along the elbow-to-wrist line (her cuff had met the forearm
+    from the far side); in the close shot the cups stand where her arm reaches out to them and her hand closes round
+    the near cup.
+  Captures (scratchpad, not committed): every shot and phase at 640×400 and at a phone's 360×640 and 640×360, before
+  and after, looked at; the before/after sheet sent to Robin. U `sequence` 499/0, `portrait_speakers` 6/0, `item_art`
+  6/0; B `sequence_chapters` 121/0.
+- **The battle icons (IC-1; src/content/battle_art/00_icons.js, src/ui/80_combat.js, src/ui/82c_battle_intents.js).** 31
+  drawn 16×16 icons, literal pixel tables registered with `RB.battleArt` (14 creature moves in cool inks, 17 responses
+  in warm paper colours; `RB.battleArt.problems` empty for each; a move to be read is a plain hanging scroll that says
+  nothing of its meaning). They show on the response cards and the Intent card at 32 px, and, new, on the badge by a
+  creature's name, its card, and the "New move" note at 16 px (they had kept the line drawings). ほのお (flame) is
+  tagged fire, warm and light; light came first and its card showed the sun; fire and warm now come before light, so
+  it shows the candle (no other word has more than one of these tags). B `combat_ui` 7/0 (a battle at 1280×800 and
+  390×844 looked at: all twelve response cards, the badge and the note drawn); U `item_art` 6/0, `combat_rules` 248/0.
+
 ## Playtest fixes, second round: road events placed, the chart's coast, music, Heat, stamps, "Have you seen…?" (Robin, 2026-10-19)
 
 - **Road events stand on the road (RE-1; "These random events on the paths should have actual NPCs where the event is

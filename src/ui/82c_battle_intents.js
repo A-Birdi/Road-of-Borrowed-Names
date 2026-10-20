@@ -105,7 +105,7 @@ RB.battleIntents = (function () {
     layer.classList.toggle('quiet', quiet);
     layer.inert = quiet;
     if (quiet) layer.setAttribute('aria-hidden', 'true'); else layer.removeAttribute('aria-hidden');
-    const k = JSON.stringify(items.map((x) => [x.i, x.mark, x.icon, x.label, x.short, x.answered, x.actor, x.reading, x.order, x.and, open && open.i === x.i ? open.how : '']));
+    const k = JSON.stringify(items.map((x) => [x.i, x.mark, x.icon, x.label, x.short, x.answered, x.actor, x.reading, x.order, x.and, !!x.art, open && open.i === x.i ? open.how : '']));
     if (k === key) return;
     key = k;
     const focused = document.activeElement && layer.contains(document.activeElement) ? idx(document.activeElement.closest('.cb-ib') || document.activeElement) : null;
@@ -115,8 +115,8 @@ RB.battleIntents = (function () {
       return '<button type="button" class="cb-ib' + (x.answered ? ' answered' : '') + (x.actor ? ' acting' : '') + (x.reading ? ' reading' : '') + (on ? ' open' : '') + '" data-ib="' + x.i + '"' +
         ' aria-expanded="' + (on ? 'true' : 'false') + '" aria-controls="cb-icard" aria-label="' + esc(lbl) + '">' +
         (x.order ? '<span class="ib-o" aria-hidden="true">' + x.order + '</span>' : '') +
-        '<span class="ib-ic" aria-hidden="true">' + I(x.answered ? 'done' : x.icon) + '</span>' +
-        (x.and && !x.answered ? '<span class="ib-and" aria-hidden="true">+' + I(x.and) + '</span>' : '') +
+        '<span class="ib-ic" aria-hidden="true">' + (x.answered ? I('done') : x.art || I(x.icon)) + '</span>' +
+        (x.and && !x.answered ? '<span class="ib-and" aria-hidden="true">+' + (x.andArt || I(x.and)) + '</span>' : '') +
         (x.short ? '<span class="ib-s" aria-hidden="true">' + esc(x.short) + '</span>' : '') +
         (x.mark ? '<span class="ib-m" aria-hidden="true">' + esc(x.mark) + '</span>' : '') + '</button>';
     }).join('');
@@ -212,7 +212,7 @@ RB.battleIntents = (function () {
     if (!x || !card) return;
     let body = '';
     try { body = env && env.cardHtml ? env.cardHtml(i) : ''; } catch (e) { console.error('intent card', e); body = ''; }
-    card.innerHTML = '<div class="ic-h"><span class="ic-ic" aria-hidden="true">' + I(x.icon) + '</span>' +
+    card.innerHTML = '<div class="ic-h"><span class="ic-ic" aria-hidden="true">' + (x.art || I(x.icon)) + '</span>' +
       '<b id="cb-icard-h">' + esc(x.name) + (x.mark ? ' <span class="ib-m">' + esc(x.mark) + '</span>' : '') + '</b>' +
       '<button type="button" class="pbtn quiet ic-x" data-ic-close aria-label="Close">' + I('close') + '</button></div>' +
       '<div class="ic-b">' + body + '</div>';

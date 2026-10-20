@@ -197,7 +197,8 @@ RB.combat = (function () {
   // ---- the overlay: foe slip(s), telegraph card, stage, party, response dock ----
   const I = (n, t) => RB.learnUi.icon(n, t);
   const INTENT_ICON = { strike: 'strike', sweep: 'sweep', heat: 'flame', shroud: 'cloud', charge: 'hourglass', gust: 'gust', mend: 'needle', lie: 'mask', plea: 'history', rest: 'rest', flood: 'waves', chill: 'snow', silence: 'mute', mirror: 'mirror' };
-  const TAG_ICON = [['ward', 'shield'], ['water', 'drop'], ['light', 'sun'], ['heal', 'leaf'], ['wind', 'wind'], ['bind', 'rope'], ['anchor', 'stone'], ['stone', 'stone'], ['fire', 'flame'], ['warm', 'flame'], ['bell', 'bell'], ['voice', 'sound']];
+  // (fire before light: ほのお, flame, also gives light, and is drawn as fire; IC-1)
+  const TAG_ICON = [['ward', 'shield'], ['water', 'drop'], ['fire', 'flame'], ['warm', 'flame'], ['light', 'sun'], ['heal', 'leaf'], ['wind', 'wind'], ['bind', 'rope'], ['anchor', 'stone'], ['stone', 'stone'], ['bell', 'bell'], ['voice', 'sound']];
   // plain attacks whose target the translated telegraph names outright
   const AIMED = { strike: 1, sweep: 1, gust: 1, flood: 1, chill: 1 };
   // Reading-critical moves (battle addendum §13.3), an authored rule by kind: reading what the
@@ -661,7 +662,7 @@ RB.combat = (function () {
       const b = L().withFoe(st, i, () => L().blowOf(st, it));
       const od = !badgeSnap ? ordOf(i) : null;
       const it2 = !badgeSnap && st.foes[i].intent2;
-      items.push({ i, mark: markOf(i), name: nameOf(i).en, icon: moveIcon(it), label: moveLabel(it) + (it2 ? ' and ' + moveLabel(it2) : ''), short: b && b.per ? String(b.per) : '', reading: !!READING[it.kind], answered: !!(shownAnswered && shownAnswered[i] && it.kind !== 'rest'), actor: actFoe === i,
+      items.push({ i, mark: markOf(i), name: nameOf(i).en, icon: moveIcon(it), art: moveArt(it), andArt: it2 ? moveArt(it2) : null, label: moveLabel(it) + (it2 ? ' and ' + moveLabel(it2) : ''), short: b && b.per ? String(b.per) : '', reading: !!READING[it.kind], answered: !!(shownAnswered && shownAnswered[i] && it.kind !== 'rest'), actor: actFoe === i,
         order: od ? od.n : null, and: it2 ? moveIcon(it2) : null });
     }
     RB.battleIntents.render(items, { quiet: acting || phase === 'challenge' || phase === 'intro' || phase === 'outro' });
@@ -806,7 +807,7 @@ RB.combat = (function () {
       if (x && !H.seen(s, 'intent:' + x.kind)) {
         H.mark(s, 'intent:' + x.kind);
         const inf = L().withFoe(st, i, () => H.intentInfo(st, x, words()));
-        return { icon: moveIcon(x), title: 'New move: ' + esc(moveLabel(x)), body: inf.what + (inf.answer ? ' ' + inf.answer : ''), more: kkey('intent', i) };
+        return { icon: moveIcon(x), art: moveArt(x), title: 'New move: ' + esc(moveLabel(x)), body: inf.what + (inf.answer ? ' ' + inf.answer : ''), more: kkey('intent', i) };
       }
     }
     void it;
@@ -825,7 +826,7 @@ RB.combat = (function () {
   function showCoach(c) {
     if (!c) { ui.coach.innerHTML = ''; return; }
     ui.coach.innerHTML = '<div class="cb-coach paper" role="note">' +
-      '<div class="cc-h">' + I(c.icon) + '<b>' + c.title + '</b></div><p>' + c.body + '</p>' +
+      '<div class="cc-h">' + (c.art || I(c.icon)) + '<b>' + c.title + '</b></div><p>' + c.body + '</p>' +
       '<div class="cc-f">' + (c.more ? kw(c.more, 'cc-more pbtn quiet', '<span>More</span>', ' about this') : '') +
       '<button type="button" class="pbtn cc-ok" data-coach-ok>' + I('done') + '<span>Got it</span></button></div></div>';
     ui.coach.querySelector('[data-coach-ok]').onclick = () => {
