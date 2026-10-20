@@ -195,17 +195,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
   CH('sg.c_tidetable', {
     title: { jp: '{潮|しお} の {表|ひょう}', en: 'The tide table' },
     tiers: {
+      // Foundations rounds the table's 3:15 to the hour, said as Shiori's own rounding (Agnes, RBN-QA-008: shown as
+      // the chart, 3:00 contradicted the chalkboard's 3:15 in the same room); the answers are unchanged
       F: [
-        { kind: 'write', item: 'v:三時', ctx: { jp: 'ひきしお ： ごご 3:00', en: 'Low tide: 3:00 p.m.' },
-          prompt: { en: 'Shiori: "When is low tide?" Write the hour in hiragana: three o\'clock is さんじ (sanji).' },
+        { kind: 'write', item: 'v:三時', ctx: { jp: 'シオリ ：「ひきしお は ごご 3:00 ごろ 。」', en: 'Shiori, rounding the table: "Low tide is around 3 p.m."' },
+          prompt: { en: 'Shiori: "When is low tide? Just the hour." Write the hour in hiragana: three o\'clock is さんじ (sanji).' },
           template: { before: 'ごご ', after: '' }, answer: 'さんじ', accept: ['さんじ', '3じ', '{三時|さんじ}'], mode: 'reading',
           explain: { jp: 'ごご {三時|さんじ}', en: 'ごご さんじ — 3 p.m. (ごご = afternoon, p.m.)' } },
-        { kind: 'choose', item: 'g:mae_ato', prompt: { en: 'The causeway is dry from an hour BEFORE low tide. When can you start walking?' },
+        { kind: 'choose', item: 'g:mae_ato', prompt: { en: 'The causeway is dry from about an hour BEFORE low tide. Around when can you start walking?' },
           options: [
             { jp: 'ごご 2:00', en: '2 p.m.', ok: true },
             { jp: 'ごご 4:00', en: '4 p.m.', ok: false, why: no('That is an hour AFTER low tide.') },
             { jp: 'ごぜん 2:00', en: '2 a.m.', ok: false, why: no('ごぜん is the morning (a.m.).') },
-          ], explain: { en: 'One hour before 3 p.m. is 2 p.m.' } },
+          ], explain: { en: 'One hour before 3 p.m. is 2 p.m. (The chalkboard says 3:15; Shiori rounded it to the hour.)' } },
       ],
       E: [
         { kind: 'choose', item: 'v:干潮', ctx: { jp: '{満潮|まんちょう} {午前|ごぜん} {九時|くじ} ／ {干潮|かんちょう} {午後|ごご} {三時|さんじ}{十五分|じゅうごふん}', en: '' },
