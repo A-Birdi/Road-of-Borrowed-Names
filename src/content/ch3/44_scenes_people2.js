@@ -69,7 +69,9 @@ narr: {壁|かべ} に {立|た}て{掛|か}けた {太|ふと}い {梁|はり} 
 !if co_clue_beam -> end
 !set co_clue_beam
 !var co_clues + 1
+!var _co_off = 1
 !call co.clue_check
+!var _co_off = 0
 
 @scene co.furnace
 narr: ガラス の {炉|ろ} 。 {覗|のぞ}き{窓|まど} の {奥|おく} で 、 {溶|と}けた ガラス が {蜂蜜|はちみつ} の よう に {光|ひか}って いる 。 || The glass furnace. Through its window, molten glass glows like honey.
@@ -524,14 +526,18 @@ co_ume: {焚|た}き{火|び} なんか した こと ない {梁|はり} なの
 !if co_clue_smoke -> end
 !set co_clue_smoke
 !var co_clues + 1
+!var _co_off = 1
 !call co.clue_check
+!var _co_off = 0
 
 @scene co.ume_beam
 narr: {天井|てんじょう} から {下|お}ろした {古|ふる}い {梁|はり} が 、 {壁|かべ} に {立|た}て{掛|か}けて ある 。 {顔|かお} を {近|ちか}づける と 、 かすか に けむり の におい が した 。 || An old beam taken down from the ceiling leans against the wall. Bring your face close and there's the faintest smell of smoke.
 !if co_clue_smoke -> end
 !set co_clue_smoke
 !var co_clues + 1
+!var _co_off = 1
 !call co.clue_check
+!var _co_off = 0
 
 @scene co.ume_after
 # Staged: Ume's nod, a look up to the young trees on the upper terraces; you step to her side and she presses

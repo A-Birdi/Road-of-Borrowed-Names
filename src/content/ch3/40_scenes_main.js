@@ -57,7 +57,9 @@ narr: {石|いし} の {向|む}こう に は 、 {道|みち} の よう に {
 !if co_clue_marker -> end
 !set co_clue_marker
 !var co_clues + 1
+!var _co_off = 1
 !call co.clue_check
+!var _co_off = 0
 
 @scene co.road_north
 # Staged: you look at the thorn scrub over the old road and shade your eyes to the snow peaks beyond; your
@@ -77,9 +79,13 @@ narr: {茂|しげ}み の {向|む}こう 、 {雪|ゆき} を かぶった {峰
 ?(comp=suzu) comp: {雪鈴|ゆきすず} へ は 、 {祭|まつ}り の {後|あと} で ね 。 …… {後|あと} で 。 || Snowbell after the festival. …After.
 
 @scene co.clue_check
+# The third clue starts the synthesis (co.suspect, "crossing the square") at once only in the square, or at the
+# chronicle's desk (staged there: var._co_desk). Found anywhere else (the road, the glass workshop, Ume's house:
+# var._co_off), it waits for the village: its onEnter and the square's triggers play it as you cross (RBN-QA-022).
 !if co_suspect -> end
 !if !co_met_sayo -> end
 !if var.co_clues<3 -> end
+!if var._co_off=1 -> end
 !call co.suspect
 `, 'ch3/road');
 
@@ -118,12 +124,16 @@ co_sayo: じゃ 、 {私|わたし} は {席|せき} の {準備|じゅんび} �
 # Staged: your feet stop in the square and you look from the empty seat to the ropeless bell; your companion
 # says it in their own way (Nao looks between the same two things, Mio's guarded hand and a shake of the head,
 # Ren's hand to the chin and the marks counted off, Suzu's head goes down and then she faces you); you point
-# the way to the Chronicle Hall.
+# the way to the Chronicle Hall. When the third clue was the chronicle itself (var._co_desk), it plays at the desk:
+# you look up from the page, nobody crosses the square or points to the hall you stand in, and the chronicle with
+# Tokiwa follows (co.chronicle) (RBN-QA-022).
 !if co_suspect -> end
 !set co_suspect
-!gesture pc lookbetween prop:co_seat and=prop:co_lookout
-narr: {広場|ひろば} を {抜|ぬ}ける {途中|とちゅう} で 、 {足|あし} が {止|と}まった 。 || Crossing the square, your feet stop on their own.
-?(comp=nao) !gesture comp lookbetween prop:co_seat and=prop:co_lookout
+?(!var._co_desk=1) !gesture pc lookbetween prop:co_seat and=prop:co_lookout
+?(var._co_desk=1) !gesture pc observe 5,3
+?(!var._co_desk=1) narr: {広場|ひろば} を {抜|ぬ}ける {途中|とちゅう} で 、 {足|あし} が {止|と}まった 。 || Crossing the square, your feet stop on their own.
+?(comp=nao&!var._co_desk=1) !gesture comp lookbetween prop:co_seat and=prop:co_lookout
+?(comp=nao&var._co_desk=1) !gesture comp lookbetween pc and=5,3
 ?(comp=nao) comp: なあ 、 {気|き}づいた ？ {空|あ}いた {席|せき} 、 {焦|こ}げた {梁|はり} 、 {誰|だれ} も {使|つか}わない {桶|おけ} 、 {綱|つな} の ない {鐘|かね} 。 || Hey. Notice it? An empty seat, a scorched beam, buckets nobody uses, a bell with no rope.
 ?(comp=nao) comp: {全部|ぜんぶ} 、 {同|おな}じ {穴|あな} の {周|まわ}り を よけて {歩|ある}いてる 。 {宛名|あてな} の {抜|ぬ}けた {手紙|てがみ} と {同|おな}じ {感|かん}じ だ 。 || Everything here walks around the same hole. Same feeling as a letter with the address missing.
 ?(comp=mio) !gesture comp guard
@@ -138,8 +148,8 @@ narr: {広場|ひろば} を {抜|ぬ}ける {途中|とちゅう} で 、 {足|
 ?(comp=suzu) comp[closed]: …… ねえ 、 $name 。 || …Hey, $name.
 ?(comp=suzu) !gesture comp avert pc hold
 ?(comp=suzu) comp: {私|わたし} 、 {嘘|うそ} の {上手|じょうず} な {人|ひと} を たくさん {知|し}ってる の 。 {自分|じぶん} も {含|ふく}めて ね 。 この {里|さと} は {嘘|うそ} を ついてる ん じゃ ない 。 {嘘|うそ} を {信|しん}じてる 。 || I know a lot of good liars. Myself included. This village isn't lying. It believes the lie.
-!gesture pc point 43,7
-pc: {記録堂|きろくどう} へ {行|い}こう 。 {年代記|ねんだいき} を {見|み}せて もらおう 。 || Let's go to the Chronicle Hall. I want to see that chronicle.
+?(!var._co_desk=1) !gesture pc point 43,7
+?(!var._co_desk=1) pc: {記録堂|きろくどう} へ {行|い}こう 。 {年代記|ねんだいき} を {見|み}せて もらおう 。 || Let's go to the Chronicle Hall. I want to see that chronicle.
 !quest co_main 2
 !journal {年代記|ねんだいき} は {火事|かじ} を {記録|きろく} して いない 。 でも {里|さと} の あちこち に 、 {火|ひ} の {跡|あと} が ある 。 || The chronicle records no fire. But the village is full of the marks of one.
 `, 'ch3/village-main');
@@ -205,6 +215,7 @@ co_tokiwa: {年代記|ねんだいき} は {机|つくえ} の {上|うえ} で�
 # Mio's nod, Ren and Suzu count the three names off).
 !if co_chronicle_read -> reread
 !if !co_suspect -> casual
+:main
 !gesture pc observe 5,3
 co_tokiwa: {年代記|ねんだいき} です 。 {開村|かいそん} から {今年|ことし} まで 、 {一年|いちねん} も {欠|か}けて いません 。 || The chronicle. From the founding to this year, not a single year missing.
 !look co_tokiwa pc
@@ -257,7 +268,11 @@ narr: {年代記|ねんだいき} 。 {毎年|まいとし} の {秋祭|あき�
 !set co_clue_chron
 narr: {二十年前|にじゅうねんまえ} の {頁|ページ} から 、 {毎年|まいとし} {同|おな}じ {一言|ひとこと} が {書|か}き{足|た}されて いる 。 「 {火事|かじ} なし 」 。 || From twenty years ago on, every year has the same words added: "No fire."
 !var co_clues + 1
+# the third clue here: the synthesis at the desk, and on to the chronicle with Tokiwa (RBN-QA-022)
+!var _co_desk = 1
 !call co.clue_check
+!var _co_desk = 0
+!if co_suspect -> main
 !end
 :reread
 !gesture pc observe 5,3
