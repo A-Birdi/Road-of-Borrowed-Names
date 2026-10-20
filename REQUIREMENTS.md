@@ -1202,7 +1202,13 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   the answer space's own `also` (task-local; no parser change, no new piece, the same family and result, the wrong
   river order now gets its why); the verb first stays outside; the I/A form is unchanged. U `mp_ch4` 138/0 (14 new; 8 of
   them fail without the fix), `settle` 79/0, `practice_b` 96/0, `answer_sweep` 22/0, `evidence` 24/0; in the browser's
-  Pieces, place-first is now accepted. In source, for the next build. RETESTED_BY_AGNES:
+  Pieces, place-first is now accepted. In source, for the next build. RBN-QA-021: a printed Notice was called a
+  story: three press readers' rules a notice can reach spoke of a story (Hana's, Masa's soba line, Kansuke's), and the
+  press's result note said "the story itself"; each of the three now carries `byKind.notice` (the same rule, worded for
+  a notice; who reads the page is unchanged, a story keeps its SL4 words), and the note names the kind (`8132972`); U
+  `press` 52/0 (every composable notice × 3 places: no reader calls it a story; the readers chosen equal those chosen
+  without the wordings; 3 fail without the fix), B `manybridge2` 4/0 (the press's note and its readers; fails on the
+  previous build); voice SL9 (3 recordings). In source, for the next build. RETESTED_BY_AGNES:
   RBN-QA-002 (the stand
   where every stamp is earned), RBN-QA-004 (the nudge "Go to Lantern Hall." and "… Head north-west first."; the
   false message is gone; Agnes does not claim the marker's drawing).

@@ -5227,6 +5227,53 @@ Yasu's story, when listening, has not begun being spoken."
     from raised wood to the open ladder; the early visit before Sōbē still cannot start it (step 5 only); the festival
     stalls are not touched. On the candidate: validator clean, U `mp_ch4` 120/0 (the branch predates `2ee6378`), B
     `manybridge2` 4/0. Frames to Robin privately.
+  - RBN-QA-018, back from the Understage (Agnes 09:03Z, on CC-005's build): `mp.boss_won` warps to the theatre for "On
+    the stage the actors are hugging their scripts", and the stage is empty (Manbē, you, your companion), for the same
+    cause: no actor is placed for that moment (Saku only once Saku's quest is done). Candidate (local, `qa018-rehearsal`
+    `d3bd8f4`, on `0fcd5db`, not pushed): Genta on the stage (13,4) from the boss's defeat to the festival's eve
+    (`mp_under_done&!mp_fest_night`, a moment `mp.fest_eve` ends at once), and he and Saku (when present) hold their
+    scripts through the line (`!gesture … read hold prop=book`); no line, flag, gate, quest step or audio changes; the
+    trap stays open. Matched scratch builds at 1180x757 (before: `0505c0c`, the same as CC-005 for src/content/mp and
+    src/engine): at that line, before `mp_manbe@10,7` (and `mp_saku@6,4` with Saku's quest done), after
+    `mp_genta_w@13,4 mp_manbe@10,7` (and Saku); the scene goes on to the committee room on both; no page errors. On the
+    candidate: validator clean, U `mp_ch4` 120/0, B `manybridge2` 4/0. Agnes's positive notes kept: the three
+    Understage machines, their routes, the moth and type-imp pair, the Lord of the Understage, the crates gone from the
+    counterweight route over its drawn bridge, the boss art. Frames to Robin privately.
+  - RBN-QA-021 (on CC-005's build; a Notice printed in Blockprint Row): Hana in Reedwake said "You wrote a story on
+    your travels", and the press's result note said "What they say is about the story itself". Cause: a reader's
+    reaction is the first of their rules whose tags hold (src/engine/72p_press.js); the fallbacks and one tagged rule
+    were written for a story. Audit of every notice that can be composed (every block of every slot, every reader met,
+    each of the three places): three reactions a notice can draw spoke of a story, Hana's fallback, Masa's `food` rule
+    (a soba-shop notice: "Any story with soba in it…") and Kansuke's fallback ("The shorter a tale…"); the other twelve
+    are neutral. Fix (`8132972`): those three rules carry `byKind.notice`, the same reaction worded for a notice
+    (Hana: 旅の途中で、知らせを刷ったのね。読んだわよ。; Kansuke: 読んだよ。知らせは、短いほどいい。; Masa:
+    蕎麦の知らせは、全部いい知らせよ！); the rule chosen, and so who reads the page, is unchanged; a story keeps each
+    rule's own words (SL4 `r1-ec158dedda174160`, `r1-f364b5f5098f5c9e`, `r1-397bf9eace122bea` unchanged); a reaction
+    already waiting from a notice printed before (Agnes's case) is said in the notice wording; the note names the kind
+    ("about the notice itself"). The reaction is said under `mp.press_react`, as before. No change to the work, its
+    blocks, the readers, the places, rewards, flags or learning. U `press` 52/0 (9 new checks; without the content fix 3 fail),
+    `voice_production` 27/0, `spoken_sites` 33/0, `align_registry` 9/0, `word_help` 45/0, `lexicon` 43/0, `mp_ch4` 138/0;
+    B `manybridge2` 4/0 on a build of this source (a notice composed, printed and posted: the note says "the notice
+    itself" and no waiting reader's words call it a story); the same suite on a build of `0505c0c` fails that check.
+    Voice: SL9 (3 recordings, 53 morae; Local pinned it). The exterior sheet in Reedwake (propagation) is unchanged.
+  - RBN-QA-020 (on CC-005's build, `index.html` `507c11a4…` in Claude's browser at 1180x757; Agnes's plan: lanterns over
+    the Curtain Bridge, stalls in the well square, the lantern boat first): reproduced. (1) "The bank is packed with
+    people": on the festival night Playhouse Row places Tomi (26,23), Genta (28,14), Hayashi (12,20), Saku (30,23) until
+    Saku's quest is done, Matsu if invited, Ryūsui during his quest; the three regulars' straw-mat spots are taken away
+    on the night itself (`!mp_fest_night`); the frame at the line is you among empty booths and paving. (2) The boat
+    lines: the scene plays where you step onto the bank (row 21, its trigger); the camera centres on you, so the canal
+    (rows 26-28) is under the dialogue box; the two boats are the cargo barge prop (`mb_barge`, a load under straw mats;
+    its one option is `empty`) at (4,26) and (30,26), and no drum or lantern boat is drawn. (3) The bridge lanterns:
+    one string (`mp_lanterns`, 3 wide, overhead) at (22,25), on the bank west of the bridge's north foot; the bridge is
+    x 24-25, rows 26-28. Nothing is missing from the build; the assets exist and are placed where they are. Proposal in
+    CC-017; no change made.
+  - RBN-QA-012, the terraces' sign (Agnes 09:39Z): `co.terraces` (18,17) is `signblank` until `co_signs_done`, then
+    `sign`, the one rectangular board; `co.signpost` narrates four arms pointing four ways. `signblank`/`sign` are shared
+    (Hall cards, verbs, other signs), so the four-arm sign and Reedwake's three-arm one are to be opt-in variants placed
+    only there, each with its own arms and directions; queued with RBN-QA-012's art candidate.
+  - Agnes's note (09:03-09:20Z, on CC-005): Chapter 4 completed; after Kakeru announces the repaired north road, the
+    north route from Saltglass leads to Orchard Road / Cinder Orchard with no flag edits, as the gated route intends
+    (RBN-QA-011).
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
   - RBN-QA-004 RETESTED_BY_AGNES on CC-005's build: the nudges read "Go to Lantern Hall." and "… Head north-west
