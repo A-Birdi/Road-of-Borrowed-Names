@@ -33,7 +33,7 @@ RB.ui.dialogue = (function () {
       '<div class="ctrl" role="group" aria-label="Dialogue controls"><div class="aux">' +
       '<button class="dbtn b-words" aria-pressed="false" title="Word help (H)">' + I('bulb') + '<span>Word help</span></button>' +
       '<button class="dbtn b-tr" aria-pressed="false" title="Show or hide the other language (T)">' + I('words') + '<span>Translation</span></button>' +
-      '<button class="dbtn b-voice" title="Replay the Japanese line with this device\'s voice">' + I('sound') + '<span>Voice</span></button>' +
+      '<button class="dbtn b-voice" title="Hear the Japanese line again: its recording, or this device\'s voice where it has none">' + I('sound') + '<span>Voice</span></button>' +
       '<button class="dbtn b-log" title="Dialogue history (L)">' + I('history') + '<span>History</span></button>' +
       '<button class="dbtn b-skip" title="Skip lines you have already seen">' + I('next') + '<span>Skip seen</span></button>' +
       '<button class="dbtn b-ask hidden" title="Ask them to say it again, slower or more simply">' + I('help') + '<span>Ask back</span></button>' +
