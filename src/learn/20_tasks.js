@@ -54,10 +54,24 @@ RB.tasks = (function () {
   }
 
   // ---- item → step --------------------------------------------------------------------
+  // Taught kana that share their rōmaji with another taught kana (RBN audit T01): じ and ぢ are both ji, ず and づ
+  // both zu, and the same in katakana. A prompt that gives only the rōmaji can't say which is meant, so each of
+  // these is asked by its base kana and the dakuten mark; the answer itself is never in the question. Only the
+  // target is accepted (the two are not folded together).
+  const HOMOPHONE_BASE = { じ: 'し', ぢ: 'ち', ず: 'す', づ: 'つ', ジ: 'シ', ヂ: 'チ', ズ: 'ス', ヅ: 'ツ' };
+  const HOMOPHONE_OF = { じ: 'ぢ', ぢ: 'じ', ず: 'づ', づ: 'ず', ジ: 'ヂ', ヂ: 'ジ', ズ: 'ヅ', ヅ: 'ズ' };
+  // the hint a kana blank gives: its rōmaji, or for a homophone its base kana and dakuten
+  const kanaHint = (ch) => (HOMOPHONE_BASE[ch] ? HOMOPHONE_BASE[ch] + ' with dakuten ゛, read ' + RB.kana.romaji(ch) : RB.kana.romaji(ch));
+  const homophoneNote = (ch) => {
+    const o = HOMOPHONE_OF[ch];
+    return ch + ' is ' + HOMOPHONE_BASE[ch] + ' with dakuten, read ' + RB.kana.romaji(ch) + '; ' + o + ' (' + HOMOPHONE_BASE[o] + ' with dakuten) is read the same.';
+  };
   function kanaStep(ch, opts) {
     opts = opts || {};
     const known = (c) => RB.learn.kanaKnown(c);
-    const ws = wordsWith(ch, known);
+    const hb = HOMOPHONE_BASE[ch];
+    // a homophone is completed only in a real word: the lexicon also holds deliberate non-words for spotting tasks
+    const ws = wordsWith(ch, known).filter((e) => !hb || !/^\(not a word\b/.test(e.m || ''));
     const rom = RB.kana.romaji(ch);
     const kata = RB.kana.isKata(ch);
     if (ws.length && !opts.bare) {
@@ -67,11 +81,18 @@ RB.tasks = (function () {
       const i = word.indexOf(ch);
       return {
         kind: 'write', item: 'k:' + ch, answer: ch, accept: [ch], mode: 'kana', script: kata ? 'kata' : 'hira',
-        prompt: { en: 'Complete the word “' + e.m + '”: write the missing ' + (kata ? 'katakana' : 'hiragana') + ' (' + rom + ').', jp: '' },
+        prompt: { en: 'Complete the word “' + e.m + '”: write the missing ' + (kata ? 'katakana' : 'hiragana') + ' (' + kanaHint(ch) + ').', jp: '' },
         template: { before: word.slice(0, i), after: word.slice(i + 1) },
         word: { w: e.w, r: word, m: e.m },
-        explain: { en: word + ' (' + RB.kana.romaji(word) + ') — ' + e.m + '.' },
+        explain: { en: word + ' (' + RB.kana.romaji(word) + ') — ' + e.m + '.' + (hb ? ' ' + homophoneNote(ch) : '') },
         single: true,
+      };
+    }
+    if (hb) {
+      return {
+        kind: 'write', item: 'k:' + ch, answer: ch, accept: [ch], mode: 'kana', script: kata ? 'kata' : 'hira',
+        prompt: { en: 'Write the ' + (kata ? 'katakana' : 'hiragana') + ' ' + hb + ' with dakuten (゛), read “' + rom + '”.' },
+        explain: { en: homophoneNote(ch) }, single: true,
       };
     }
     return {
@@ -220,7 +241,7 @@ RB.tasks = (function () {
           // as supported exposure (RB.learn.record's `exposure`), never credited as the word answered
           step.exposure = [].concat(step.exposure || [], step.item ? [].concat(step.item) : []);
           step.item = ['k:' + chars[i]];
-          step.prompt = { en: (step.prompt && step.prompt.en ? step.prompt.en + ' ' : '') + 'Write the missing kana (' + RB.kana.romaji(chars[i]) + ').' };
+          step.prompt = { en: (step.prompt && step.prompt.en ? step.prompt.en + ' ' : '') + 'Write the missing kana (' + kanaHint(chars[i]) + ').' };
           step.single = true;
           // authored whole-word choices no longer fit a one-kana blank:
           // let the choice mode build kana options (answer + confusables)

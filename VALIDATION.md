@@ -5419,6 +5419,39 @@ Yasu's story, when listening, has not begun being spoken."
     inability under obstacles; the key is supported), LX03 ambiguous not false, T04 narrowed; T01's "40%" withdrawn
     (conditional exposure; stars unlock nothing). Audit continues: phase 2c (the 4,170 single-reading forms, learner-facing
     and common first) and 2d (semantic review of the 635 template items) running. Nothing changed in the game.
+  - **T01 and T02 implemented** (Robin's approval relayed after Agnes's 13:33Z review; FIX_READY in source, not yet in a
+    built candidate). T01, `learn/20_tasks.js` `kanaStep`: all eight members of the taught pairs (じ/ぢ, ず/づ, ジ/ヂ,
+    ズ/ヅ) are asked by base kana and dakuten ("Write the hiragana ち with dakuten (゛), read “ji”."), never by rōmaji
+    alone and never with either kana of the pair in the question; a word completion gives the same hint and uses only
+    real words (the lexicon's deliberate "not a word" entries from spotting tasks are left out for these eight: ヅ's only
+    fitting entry was スヅ, and ズ could draw ヌズ); the Foundations one-kana blank (`prepare`) asks the same item with
+    the same hint; the explanation after answering names the answer and its base. Accept lists stay the target only.
+    `lang/50_answers.js`: writing the other kana of a pair gives a `same_sound` note naming both bases (still wrong).
+    ゐ/ゑ untouched (not taught, so not reachable). T02, `learn/60_exams.js`: a word with more than one kanji names the
+    target's place among the word's kanji ("Write the second kanji of がっこう (“school”)."; kana not counted, 々
+    counted; a target written twice asked at one named place, chosen by the draw); one-kanji words keep their wording;
+    no word is skipped; choice distractors exclude every character of the word; the answer option's ruby is the kanji's
+    own reading, and 々 (which has none) is shown as the mark rather than with the whole word's reading; the write
+    explanation names the place. No per-character reading is given anywhere.
+    - U `kana_homophones` (new) 1463/0: the eight kana bare and over 40 word draws, the exam rows in three modes over
+      ten draws, the Foundations blank, the same-sound note, every other taught kana's bare question unchanged (226
+      lesson entries); T02 over all 9,589 example words of 1,839 kanji in both modes (7,495 with more than one kanji: 1,581
+      mixed with kana, 40 with 々, 11 with a repeated target), and explicit 学校, 食べ物, 時々, 段々畑, 先々代,
+      三々九度, 一字一句. On the unfixed source (`bbff776`, a scratch worktree): 570 passed, 893 failed.
+    - B `kana_homophones` (new) 174/0 on a scratch build of the fixed source: the eight bare questions typed in the
+      challenge runner (the other kana wrong with the note, the target right); the だ and ダ rows' exams through the
+      Mastery runner (four typed sittings and one chosen, 20 pair-kana questions, bare and word); a kanji exam
+      (`kanji:time`, two typed and two chosen sittings: 32 multi-kanji questions, the word's other kanji typed 16 times
+      and wrong, no in-word option). On CC-006 (`79e0ef32…`): 51 passed, 77 failed.
+    - Voice probe (`tools/voice/supplement.mjs --what probe`): 0 new recordings, 0 new references, 0 retired. No spoken
+      line changes (prompts, notes and explanations are not voiced).
+    - Existing suites on the same scratch build: B `learning_ui` 15/0, `fr1_partial_word` all passed, `fr1_targets` all
+      passed, `practice_a_lamps` 51/51. U whole suite on the source: 57,659 passed, 0 failed. `validate.mjs`: no errors.
+    - Found on the way, NOT changed (outside the approval; for the owner): 25 F/E "not a word" lexicon entries are in
+      the kana word pool for every other kana's completions and for meaning distractors; the katakana extended lesson's
+      small ァィゥェォ share rōmaji with アイウエオ and ウォ with ヲ, so its practice pass can ask them by rōmaji alone;
+      315 example-word glosses quote their own kanji (二俵 "two bales (俵: …)"), which shows the answer in the exam's
+      question, before and after this change.
   - RBN-QA-027 (Agnes 11:18Z, CC-005, Suzu's "A Seat Kept Until Spring"): after Hiro's story `co.suzu_ask` walked you
     and Suzu to 6,8/5,8 inside the workshop, then the narrator said "Outside the workshop, Suzu looks back just once."
     and her private lines played there, by Hiro and Isao; free control resumed inside. Candidate (local branch

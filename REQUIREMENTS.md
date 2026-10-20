@@ -1217,7 +1217,11 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   then the kiln (`374196e`); B `kiln_door` 15/0 (CC-005 fails 7). RBN-QA-009 to 011, 012's copy, 014, 018's flow, 019,
   021, 022 and 025 are BUILT_AND_DEPLOYED in CC-006 (`13d8af2`, `79e0ef32…`; VALIDATION.md "Candidate CC-006").
   RBN-QA-028: Shino's tray thanks and Nao's hint wait for the invitations to be sorted (`53770cf`, `76352e5`); B
-  `shino_thanks` 28/0 (CC-005 fails 4). In source, for the next build. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  `shino_thanks` 28/0 (CC-005 fails 4). In source, for the next build. Language audit T01 and T02 (Robin's approval, revised per Agnes 13:33Z): the
+  taught same-sound kana (じ/ぢ, ず/づ, ジ/ヂ, ズ/ヅ) asked by base kana and dakuten, real words only, a same-sound note,
+  accept lists unchanged; the kanji exam names the target's place among a word's kanji, distractors outside the word;
+  U `kana_homophones` 1463/0 (the unfixed source fails 893), B `kana_homophones` 174/0 (CC-006 fails 77); voice none.
+  In source, for the next build. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand

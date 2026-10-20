@@ -88,6 +88,7 @@ RB.exams = (function () {
   const offered = (s, g) => metShare(s, g) >= OFFER;
 
   // ---- questions -------------------------------------------------------------------------------------------
+  const ORDINAL = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
   // a fresh question for an item in an input type, or null when the item has none in that type. `n` varies it.
   function question(s, id, mode, n) {
     const k = id.slice(0, 1), v = id.slice(2);
@@ -104,9 +105,19 @@ RB.exams = (function () {
       const info = RB.kanjiInfo && RB.kanjiInfo.get(v);
       const w = info && (info.words || [])[n % Math.max(1, (info.words || []).length)];
       if (!w) return null;
-      if (write) return { kind: 'write', item: id, answer: v, accept: [v], mode: 'exact', script: 'any', single: true, prompt: { en: 'Write the kanji in ' + w.r + ' (“' + w.m + '”).' }, explain: { en: (w.w !== w.r ? w.w + '（' + w.r + '）' : w.w) + ' — ' + w.m + '.' } };
-      const pool = RB.util.rng(RB.util.hashStr(id + n)).shuffle((RB.kanjiInfo.all ? RB.kanjiInfo.all() : []).filter((e) => e.ch !== v && (e.words || []).length)).slice(0, 3);
-      return { kind: 'choose', item: id, prompt: { en: 'Which kanji is in ' + w.r + ' (“' + w.m + '”)?' }, options: [{ jp: '{' + v + '|' + (info.readings[0] || w.r) + '}', ok: true }].concat(pool.map((e) => ({ jp: '{' + e.ch + '|' + (e.readings[0] || '') + '}', ok: false, why: { en: e.ch + ' is in ' + (e.words[0].r) + ' (“' + e.words[0].m + '”).' } }))) };
+      // A word with more than one kanji names the target's place among its kanji (RBN audit T02): the words carry
+      // only a whole-word reading, so "the kanji in がっこう" could be either. Kana in the word are not counted, 々
+      // is, and a target written twice is asked at one named place. No reading is given per character.
+      const kj = Array.from(w.w).filter((c) => RB.kana.isKanji(c));
+      const at = kj.map((c, i) => (c === v ? i : -1)).filter((i) => i >= 0);
+      const nth = kj.length > 1 && at.length ? ORDINAL[at[n % at.length]] || null : null;
+      const what = nth ? 'the ' + nth + ' kanji of ' + w.r + ' (“' + w.m + '”)' : null;
+      const explain = { en: (w.w !== w.r ? w.w + '（' + w.r + '）' : w.w) + ' — ' + w.m + '.' + (nth ? ' The answer is its ' + nth + ' kanji.' : '') };
+      if (write) return { kind: 'write', item: id, answer: v, accept: [v], mode: 'exact', script: 'any', single: true, prompt: { en: what ? 'Write ' + what + '.' : 'Write the kanji in ' + w.r + ' (“' + w.m + '”).' }, explain };
+      // distractors are never another character of the same word; the answer's ruby is the kanji's own reading, never
+      // the whole word's (々 has none of its own and is shown as the mark, as the chart shows it)
+      const pool = RB.util.rng(RB.util.hashStr(id + n)).shuffle((RB.kanjiInfo.all ? RB.kanjiInfo.all() : []).filter((e) => e.ch !== v && w.w.indexOf(e.ch) < 0 && (e.words || []).length)).slice(0, 3);
+      return { kind: 'choose', item: id, prompt: { en: what ? 'Which is ' + what + '?' : 'Which kanji is in ' + w.r + ' (“' + w.m + '”)?' }, options: [{ jp: '{' + v + '|' + (info.readings[0] || (w.w === v ? w.r : '')) + '}', ok: true }].concat(pool.map((e) => ({ jp: '{' + e.ch + '|' + (e.readings[0] || '') + '}', ok: false, why: { en: e.ch + ' is in ' + (e.words[0].r) + ' (“' + e.words[0].m + '”).' } }))) };
     }
     if (k === 'v') {
       const st = RB.tasks.vocabStep(v, { recall: write });

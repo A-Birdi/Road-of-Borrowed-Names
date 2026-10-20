@@ -699,10 +699,17 @@
       (16 findings, no grammar errors); expansion scenes and code-spoken lines 9,222 of 9,857 (32 findings: the
       machine-undo template's を after a verb, Nao's 私, Suzu's register); learning text in full (22 findings, 8 wrong
       answer keys: T01 ぢ/づ, T02 multi-kanji exam words, T03 shared glosses, C09 かねる). T01 and T02 confirmed by Agnes as genuine
-      defects; repair plans and tests posted (CC-026), implementation awaits authorization. C09 re-tiered to a
-      pedagogical-example question, LX03 to ambiguous, T04 narrowed. Phase 2c (4,170 single-reading forms) and 2d (the 635
-      template items, semantic) are running. No fixes from findings alone;
-      send corrections, if Robin approves, as SC10-SC14.
+      defects; repair plans and tests posted (CC-026). C09 re-tiered to a pedagogical-example question, LX03 to
+      ambiguous, T04 narrowed. **T01 and T02 implemented (Robin's approval, revised per Agnes 13:33Z), FIX_READY in
+      source for the next candidate:** `learn/20_tasks.js` (じ/ぢ, ず/づ, ジ/ヂ, ズ/ヅ asked by base kana + dakuten, real
+      words only for their completions, the same hint on the Foundations one-kana blank), `lang/50_answers.js` (the
+      `same_sound` note; still wrong), `learn/60_exams.js` (multi-kanji words name the target's place among the word's
+      kanji, 々 counted, kana not; distractors exclude the word's characters; 々's option without the word's reading).
+      U `kana_homophones` 1463/0, B `kana_homophones` 174/0 (CC-006 fails 77). Found on the way, not changed (owner's
+      call): non-words in the kana word pool (25 F/E), small ァィゥェォ and ウォ sharing rōmaji with ア…/ヲ, 315 glosses
+      quoting their own kanji in the exam prompt. Phase 2c (4,170 of 4,170 single-reading forms: 1 furigana error = F10,
+      5 questions) and 2d (the 635 template items: 17 findings, no grammar errors) are done, to post. No fixes from
+      findings alone; send corrections, if Robin approves, as SC10-SC14.
     - **RBN-QA-012's second sign (Agnes 09:39Z):** the terraces' crossroads (`co.terraces` 18,17) narrates four arms;
       the prop is the shared rectangular `sign`. Both signs become opt-in variants (three arms in Reedwake, four on the
       terraces), placed only there, with their own directions.

@@ -82,6 +82,8 @@ RB.answers = (function () {
     });
   });
   const confusablesOf = (ch) => (SHAPE_MAP.has(ch) ? Array.from(SHAPE_MAP.get(ch).keys()) : []);
+  // kana read alike: each → [the other, its own base kana]
+  const SAME_SOUND = { じ: ['ぢ', 'し'], ぢ: ['じ', 'ち'], ず: ['づ', 'す'], づ: ['ず', 'つ'], ジ: ['ヂ', 'シ'], ヂ: ['ジ', 'チ'], ズ: ['ヅ', 'ス'], ヅ: ['ズ', 'ツ'] };
 
   // ---- handwriting: one written shape, two characters ----------------------------
   // Characters written with the same shape (the recognizer's identical-shape
@@ -320,6 +322,11 @@ RB.answers = (function () {
       if (want === 'ー') return { code: 'long_vowel', en: 'In katakana a long vowel is written with ー; you ' + vb() + ' ' + got + '.' };
       if (got === 'ー') return { code: 'long_vowel', en: 'In hiragana a long vowel is written with a vowel kana (here ' + want + '), not ー.' };
       return { code: 'long_vowel', en: 'The long vowel here is spelled ' + ctx.prev + want + ', not ' + ctx.prev + got + '.' };
+    }
+    // じ/ぢ and ず/づ (and ジ/ヂ, ズ/ヅ) are read alike (RBN audit T01): say which base kana the answer is built on.
+    // Still wrong: the two are not folded together.
+    if (SAME_SOUND[want] && SAME_SOUND[want][0] === got) {
+      return { code: 'same_sound', en: want + ' and ' + got + ' are both read ' + roma(want) + '. The answer has ' + want + ' (' + SAME_SOUND[want][1] + ' with dakuten); you ' + vb() + ' ' + got + ' (' + SAME_SOUND[got][1] + ' with dakuten).' };
     }
     const note = SHAPE_MAP.has(got) && SHAPE_MAP.get(got).get(want);
     if (note) return { code: 'confusable', en: got + ' and ' + want + ' look alike. ' + note + ' The answer has ' + want + '.' };
