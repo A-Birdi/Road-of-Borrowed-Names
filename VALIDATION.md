@@ -5119,10 +5119,10 @@ Yasu's story, when listening, has not begun being spoken."
     the ferry apart from the east road (Suzu's line is kept), and the journal is corrected once (`mb_east_noted`, also
     set by `sg.ch2_end`), which puts right a save made before the fix; neither once you have reached Manybridge. No gate,
     exit, quest step or talk order changed. Two new recordings (narrator, Omi), in SL8; every GO key is still produced
-    but the three MW-1 retired. B `route_after_ch2` 28/0 on a scratch build of this source, each case through a save
+    but the three MW-1 retired. B `route_after_ch2` 29/0 on a scratch build of this source, each case through a save
     written and loaded again (`RB.save.writeSlot`, `RB.game.loadCampaign`): (1) twelve chapters: Omi's last scene to the
     morning at the Gull, Omi naming the ferry, nothing shown mentioning the north road, the journal on Tetsu before and
-    after loading, Tetsu's lead first, then "There's a new line on the board. East. Manybridge.", and the ferry to
+    after loading, no quest followed (so no marker or nudge points anywhere), Tetsu's lead first, then "There's a new line on the board. East. Manybridge.", and the ferry to
     `mb.pier`; (2) a twelve-chapter save from before the fix, loaded with its journal on the north road: at the fork the
     notice, the narrator's line, the journal corrected, you back at 16,2, a second try adding no note, the note kept
     after loading, and the east road still walking to Reedwake; (3) six chapters: Omi's recorded line, the journal on the

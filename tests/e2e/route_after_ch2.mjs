@@ -94,6 +94,9 @@ const north = (lines) => lines.filter((l) => /north road/i.test(l) && !/washed a
   ok(north(after).length === 0 && after.length >= 1, '1 Omi afterwards says nothing of the north road (' + after.join(' | ').slice(0, 80) + ')');
   st = await saveAndLoad(p);
   ok(st.ed === 2 && last(st) === EAST && st.flags.mb_east_noted, '1 saved and loaded: still twelve chapters, the journal still ends on Tetsu');
+  // between chapters no main quest is open, so the markers and nudges follow nothing: the journal is the guidance
+  const followed = await p.evaluate(() => RB.questGuide.followed(RB.game.s));
+  ok(followed === null, '1 between chapters no quest is followed: no marker or nudge points anywhere (' + followed + ')');
   await p.evaluate(async () => { await RB.game.transition('sg.harbor', 30, 28, 'right'); });
   await p.waitForFunction(() => RB.world.W.map && RB.world.W.map.id === 'sg.harbor' && !RB.script.isRunning(), null, { timeout: 20000 });
   await p.waitForTimeout(1200);

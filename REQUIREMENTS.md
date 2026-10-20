@@ -1183,7 +1183,7 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   names Tetsu's ferry and the night at the Gull (a new line; his recorded north-road line is kept for six-chapter
   journeys and after `mb2_done`); his later north-road line is not said; at the fork the narrator says Manybridge is
   the harbour ferry's, not a walk (a new line), and the journal is corrected once (`mb_east_noted`), which puts right a
-  save from before the fix. Two new recordings, in SL8. B `route_after_ch2` 28/0 (twelve chapters through Tetsu's
+  save from before the fix. Two new recordings, in SL8. B `route_after_ch2` 29/0 (twelve chapters through Tetsu's
   ferry; an old save at the fork; six chapters; after `mb2_done`; each through a save written and loaded again);
   B `staging_chapters --ch=2` 1678/0, then `--only=sg.omi_final` 25/0 and `--only=sg.ch2_end` 71/0 on the final source;
   U `mb_ch3` 76/0, `quest_guide` 150/0, `travel_rules` 699/0, `voice_production` 27/0, `spoken_sites` 33/0. In source,
