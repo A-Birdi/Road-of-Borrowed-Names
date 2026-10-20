@@ -80,6 +80,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: '{窯|かま} で {見|み}つけた もの を 、 {里|さと} へ {持|も}ち{帰|かえ}ろう 。', en: 'Bring what you found in the kiln back down to Tokiwa at the Chronicle Hall.' },
       { jp: '{夕方|ゆうがた} 、 {里|さと} の {人|ひと} たち が {広場|ひろば} に {集|あつ}まる 。', en: 'At dusk the whole village gathers in the square. Tokiwa is waiting for you there.' },
       { jp: '{祭|まつ}り の {夜|よる} だ 。', en: 'It\'s the night of the festival. Walk among the lanterns; when you\'re ready, climb the lookout.' },
+    ],
+    // once it is done, the way on until Snowbell's own story begins in the hamlet (the Journey's "Now",
+    // src/ui/50_menu.js): Snowbell is north, but not up through the square: west out of the village to the Orchard
+    // Road, then its north road, cleared now; once on the Snowbell Road, up it to the hamlet (Agnes, RBN-QA-033)
+    next: [
+      { jp: '{雪鈴|ゆきすず} へ 。 {里|さと} を {西|にし} へ {出|で}て {坂道|さかみち} に {戻|もど}り 、 その {北|きた} の {道|みち} を {登|のぼ}ろう 。',
+        en: 'On to Snowbell: leave the village by the west road to the Orchard Road, then take its north road up.', until: 'sb_arrived' },
+      { jp: '{雪鈴|ゆきすず} の {坂道|さかみち} を {北|きた} へ {登|のぼ}って 、 {里|さと} へ {行|い}こう 。',
+        en: 'Climb the Snowbell Road north to the hamlet.', until: 'sb_hamlet_seen' },
     ] };
   C.quests.co_suzu = { chapter: 3, title: { jp: '{春|はる} まで {空|あ}けて おく {席|せき}', en: 'A Seat Kept Until Spring' },
     stages: [

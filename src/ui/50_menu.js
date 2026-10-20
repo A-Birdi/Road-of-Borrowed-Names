@@ -522,7 +522,13 @@ RB.ui.menu = (function () {
       };
       let h = sub;
       h += '<h3>' + I('main') + ' Now <span class="count">' + (fid && !RB.content.quests[fid].main ? 'followed, then the main road' : 'the main road') + '</span></h3>';
-      h += mains.length ? '<ul class="entries">' + mains.map(row).join('') + '</ul>' : '<p class="muted">Nothing pressing. Walk around; people will tell you what they need.</p>';
+      // between chapters, no main quest open: the one just finished may name the way on (a main quest's `next`:
+      // { jp, en, until }, or a list of them, the first whose `until` does not hold yet; Agnes, RBN-QA-033); nothing is
+      // marked on the map
+      const lastMain = active.some((x) => x.d.main) ? null : done.find((x) => x.d.main);
+      const on = lastMain && lastMain.d.next ? [].concat(lastMain.d.next).find((n) => !RB.state.test(s, n.until)) || null : null;
+      if (on) h += '<ul class="entries"><li class="entry current road-on"><span class="mark">' + I('main') + '</span><div><span class="kind">The road on</span>' + j(on.jp) + en(on.en) + '</div></li></ul>';
+      h += mains.length ? '<ul class="entries">' + mains.map(row).join('') + '</ul>' : on ? '' : '<p class="muted">Nothing pressing. Walk around; people will tell you what they need.</p>';
       if (others.length) h += '<h3>' + I('side') + ' Also on the way <span class="count">' + others.length + ' optional</span></h3><ul class="entries">' + others.map(row).join('') + '</ul>';
       h += placesBlock(s);
       const notes = (s.journal || []).slice(-8).reverse();

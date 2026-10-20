@@ -306,7 +306,12 @@ for (const id in C.maps) {
 }
 
 // ---- quests, items, notes, places -----------------------------------------------------------
-for (const id in C.quests) { const q = C.quests[id]; jen(q.title, 'quest ' + id); (q.stages || []).forEach((s, i) => { jen(s, 'quest ' + id + ' stage ' + i); if (!s.en) E('quest ' + id + ' stage ' + i + ' missing English'); }); if (!q.stages || !q.stages.length) E('quest ' + id + ' has no stages'); }
+for (const id in C.quests) { const q = C.quests[id]; jen(q.title, 'quest ' + id); (q.stages || []).forEach((s, i) => { jen(s, 'quest ' + id + ' stage ' + i); if (!s.en) E('quest ' + id + ' stage ' + i + ' missing English'); }); if (!q.stages || !q.stages.length) E('quest ' + id + ' has no stages');
+  // the way on once a main quest is done (RBN-QA-033): Japanese with readings, English, and when it stops being shown
+  if (q.next) {
+    [].concat(q.next).forEach((n, i) => { jen(n, 'quest ' + id + ' next ' + i); if (!n.en || !n.until) E('quest ' + id + ' next ' + i + ' needs en and until'); });
+    if (!q.main) E('quest ' + id + ' next on a side quest');
+  } }
 // quest guidance (src/engine/56_questguide.js): a stage's authored `hint` is
 // bilingual, and its `at` names real places ({map, npc} | {map, prop, x, y} | {map, x, y} | {map}, a list, or 'open')
 for (const id in C.quests) (C.quests[id].stages || []).forEach((s, i) => {
