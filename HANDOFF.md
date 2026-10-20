@@ -628,7 +628,17 @@
     - **QA (Agnes, A-Birdi/Road-of-Borrowed-Names#1):** Local relays; the lead posts `[Claude Cloud]` handoffs (CC-00N)
       there. The protocol authorises no merges or deploys, and a gated candidate is never pushed for QA's convenience.
       Fixed: RBN-QA-001 (the Voice button's copy), 002 (an empty stamp stand points to the Stamp book), 003 (solo
-      telegraphs, `intentTextSolo`), 004 (the Lantern Hall step's marker). REQUIREMENTS.md XP147.
+      telegraphs, `intentTextSolo`), 004 (the Lantern Hall step's marker), 005 (the four walk into the Lantern Hall
+      after you, one after another: `!refresh arrive`, src/engine/50_world.js `arriveOnFoot`/`arrivals`), 007 (the
+      lighthouse stairs before the vane scene step you back and say why; SL6), 008 (the Foundations tide exercise's
+      3:00 is Shiori's rounding of the chalkboard's 3:15). REQUIREMENTS.md XP147; VALIDATION.md "QA (Agnes …)".
+      Agnes's review boundaries (2026-10-20): gameplay fixes carry a cross-game impact assessment; art goes to Robin as
+      a before/after candidate first; a material change to intended behaviour needs Robin's approval; keep source,
+      built and retested states distinct.
+    - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
+      open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
+      RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
+      proportions in the desk shot).
     - **AG-2, complete and gated (not pushed):** every line the prologue and Reedwake show (441 lines, 473 displays)
       reviewed and audited; the report is docs/review/align/AG2_REVIEW.md on the local branch `ag2-work`. Robin has the
       before/after evidence and decides on publication. To publish: rebase `ag2-work` onto the branch, build, run U
