@@ -47045,6 +47045,7 @@ RB.questGuide = (function () {
     boat: ['{船|ふね}', 'the boat'], sea_buoy: ['ブイ', 'the buoy'],
     cr_satchel: ['{状箱|じょうばこ}', 'the letter box'], cr_joyato: ['{常夜灯|じょうやとう}', 'the everlasting lamp'], cr_kago: ['{駕籠|かご}', 'the palanquin'],
     cr_horse: ['{馬|うま}', 'the pack horse'], cr_bigcedar: ['{大杉|おおすぎ}', 'the great cedar'],
+    co_seal: ['ガラス の {封|ふう}', 'the glass seal'],
   };
   const PROP_PREFIX = [
     [/icewall/, '{氷|こおり}', 'the ice'], [/dial/, '{仕掛|しか}け', 'the dial mechanism'], [/crank/, 'ハンドル', 'the crank'], [/lamp/, '{灯|あか}り', 'the lamp'],
@@ -58252,7 +58253,9 @@ RB.tellings = (function () {
  * The record (s.practice.press, made at the first printing; New Game+ carries it as practice, F-03):
  *   { v: 1, version, kind, blocks: { slot: blockId }, tags, where, rx: { reader: ruleIndex }, heard: { reader: version },
  *     printed: { story: n, notice: n } }
- * A reader's waiting reaction is the flag press_rx_<reader> (so a talk option can wait on it). */
+ * A reader's waiting reaction is the flag press_rx_<reader> (so a talk option can wait on it). A rule may carry
+ * `byKind: { notice: { jp, en } }`: what it says when the page is a notice (RBN-QA-021); which rule, and so who reads
+ * the page, is chosen exactly as before. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.press = (function () {
@@ -58325,12 +58328,14 @@ RB.press = (function () {
     if (comp.kind === 'notice') s.flags.press_notice = true;
     return rec;
   }
+  // the words of a rule for a page of this kind (its own, unless it has a wording for the kind)
+  const said = (rule, k) => (rule && rule.byKind && rule.byKind[k]) || rule;
   // a reader's waiting reaction (or null)
   function waiting(s, readerId) {
     const rec = of(s), r = C().readers.find((x) => x.id === readerId);
     if (!rec || !r || !rec.rx || rec.rx[readerId] == null || !s.flags['press_rx_' + readerId]) return null;
     const rule = r.rules[rec.rx[readerId]];
-    return rule ? { reader: r, rule, version: rec.version } : null;
+    return rule ? { reader: r, rule, line: said(rule, rec.kind), version: rec.version } : null;
   }
   // heard: the reaction is taken off the reader, once per version
   function hear(s, readerId) {
@@ -58355,10 +58360,11 @@ RB.press = (function () {
     for (const r of P.readers) {
       if (!(r.rules || []).length) errs.push('press: reader ' + r.id + ' has no rules');
       for (const ru of r.rules || []) for (const t of [].concat(ru.when || [])) { const tt = t[0] === '!' ? t.slice(1) : t; if (!known.has(tt)) errs.push('press: reader ' + r.id + ' waits for an unknown tag ' + tt); }
+      for (const ru of r.rules || []) for (const k in ru.byKind || {}) if (!P.kinds[k] || !ru.byKind[k].jp || !ru.byKind[k].en) errs.push('press: reader ' + r.id + ' has a wording for ' + k + ' that is not a kind, or has no jp/en');
     }
     return errs;
   }
-  return { kind, block, offered, complete, tagsOf, lines, holds, reactions, of, circulate, waiting, hear, waitingAll, check, MAX_RX, MIN_RX };
+  return { kind, block, offered, complete, tagsOf, lines, holds, reactions, of, circulate, said, waiting, hear, waitingAll, check, MAX_RX, MIN_RX };
 })();
 
 // a reader's reaction, heard in the world: `!hook press_react <reader>` (src/content/mp/ scenes add it to the readers'
@@ -58369,7 +58375,7 @@ RB.hooks = RB.hooks || {};
 RB.content.spokenSources = RB.content.spokenSources || [];
 RB.content.spokenSources.push(() => {
   const out = [], P = (RB.content && RB.content.press) || { readers: [] };
-  for (const r of P.readers || []) for (const ru of r.rules || []) if (ru.jp) out.push({ scene: 'mp.press_react', who: r.who || r.id, jp: ru.jp, en: ru.en || '', file: 'press ' + r.id });
+  for (const r of P.readers || []) for (const ru of r.rules || []) for (const x of [ru].concat(Object.values(ru.byKind || {}))) if (x.jp) out.push({ scene: 'mp.press_react', who: r.who || r.id, jp: x.jp, en: x.en || '', file: 'press ' + r.id });
   return out;
 });
 RB.hooks.press_react = async (a) => {
@@ -58377,7 +58383,7 @@ RB.hooks.press_react = async (a) => {
   const w = s && RB.press.hear(s, a && a[0]);
   if (!w) return;
   const who = w.reader.who || w.reader.id;
-  await RB.ui.dialogue.say({ who, jp: w.rule.jp, en: w.rule.en, sceneId: 'mp.press_react' });
+  await RB.ui.dialogue.say({ who, jp: w.line.jp, en: w.line.en, sceneId: 'mp.press_react' });
 };
 
 
@@ -69033,7 +69039,7 @@ RB.ui.award = (function () {
     const k = me.el.querySelector('.kind');
     if (k && !me.el.querySelector('.aw-badge')) k.insertAdjacentHTML('afterend', '<span class="aw-badge">Keepsake</span>');
     const body = me.el.querySelector('.aw-body');
-    if (body && !me.el.querySelector('.aw-ks')) body.insertAdjacentHTML('beforeend', '<span class="tnote aw-ks">' + esc('Also kept in Journey › Keepsakes') + '</span>');
+    if (body && !me.el.querySelector('.aw-ks')) body.insertAdjacentHTML('beforeend', '<span class="tnote aw-ks">' + esc('Also kept in ' + (RB.ui.keepsakes && RB.ui.keepsakes.place ? RB.ui.keepsakes.place() : 'Journey › Keepsakes')) + '</span>');
     // (it stays as long as a keepsake's slip would, from now)
     me.left = HOLD.keepsake;
     if (me.run) me.run();
@@ -90391,20 +90397,26 @@ RB.ui.keepsakes = (function () {
 
   // ---- first discovery: a brief notice that never blocks -----------------------------------------------------------
   const queue = [];
+  // where the page is, as the Journey shows it: twelve-chapter journeys put it under Mementos (src/ui/50_menu.js
+  // JOURNEY_GROUPS; Agnes, RBN-QA-012: the slip said Journey › Keepsakes where the button reads Mementos)
+  function place() {
+    const s = RB.game && RB.game.s;
+    return s && RB.recordsUI && RB.recordsUI.inCampaign(s) ? 'Journey › Mementos › Keepsakes' : 'Journey › Keepsakes';
+  }
   function notice(id) {
     const k = K()[id];
     if (!k || typeof document === 'undefined') return;
     // an item that is also a keepsake: its own slip says so (one slip, one sound; LI-3)
     if (k.item && RB.ui.award && RB.ui.award.markKeepsake && RB.ui.award.markKeepsake(k.item, k.name.en)) return;
     if (RB.ui.award) {
-      RB.ui.award({ kind: 'keepsake', id, jp: k.name.jp, en: k.name.en, note: 'See Journey › Keepsakes', art: artCanvas(id, 2), level: 3 });
+      RB.ui.award({ kind: 'keepsake', id, jp: k.name.jp, en: k.name.en, note: 'See ' + place(), art: artCanvas(id, 2), level: 3 });
       return;
     }
     const host = document.querySelector('#overlay .notices');
     if (!host) return;
     const n = RB.ui.el('div', 'toast ks-toast');
     n.setAttribute('role', 'status');
-    n.innerHTML = '<span class="kind">Keepsake found</span><span class="ks-slot"></span>' + j(k.name.jp) + '<span class="en">' + esc(k.name.en) + ' — see Journey › Keepsakes</span>';
+    n.innerHTML = '<span class="kind">Keepsake found</span><span class="ks-slot"></span>' + j(k.name.jp) + '<span class="en">' + esc(k.name.en + ' — see ' + place()) + '</span>';
     n.querySelector('.ks-slot').appendChild(artCanvas(id, 1));
     host.appendChild(n);
     RB.audio && RB.audio.sfx('discover', { vol: 0.4 });
@@ -90420,7 +90432,7 @@ RB.ui.keepsakes = (function () {
   }
   RB.bus.on('keepsake:found', (e) => { if (!e || !e.id) return; queue.push(e.id); if (queue.length === 1) setTimeout(() => pump(performance.now()), 400); });
 
-  return { render, counts, addRegion, regions: REGIONS, displayHtml, artCanvas, settings: api0, found };
+  return { render, counts, addRegion, regions: REGIONS, displayHtml, artCanvas, settings: api0, found, place };
 })();
 
 
@@ -130643,10 +130655,9 @@ RB.ui.press = (function () {
     const readers = P().waitingAll(s);
     ui.leaf.innerHTML = '<p class="pr-intro">It is out in the world. ' + (readers.length ? readers.length + ' people have it in their hands; when you meet them, they will tell you what they thought of it.' : 'Nobody you know has read it yet.') + '</p>' +
       '<ul class="pr-readers">' + readers.map((r) => '<li>' + esc(readerName(r)) + (r.where ? '<span class="muted small"> · ' + esc(r.where.en) + '</span>' : '') + '</li>').join('') + '</ul>' +
-      '<p class="muted small">What they say is about the story itself. If you want notes on the language, set the type yourself next time.</p>';
+      '<p class="muted small">What they say is about the ' + (rec && rec.kind === 'notice' ? 'notice' : 'story') + ' itself. If you want notes on the language, set the type yourself next time.</p>';
     ui.foot.innerHTML = btn('again', 'Print another', { icon: 'note' }) + '<span class="spacer"></span>' + btn('close', 'Leave the press', { go: true, icon: 'done' });
     ui.focus('[data-a=close]');
-    void rec;
     return choice(ui);
   }
 
@@ -141555,7 +141566,10 @@ narr: {灯台|とうだい} の {光|ひかり} が {港|みなと} を {一周|
 !music saltglass
 narr: {翌朝|よくあさ} 。 {港|みなと} は {朝|あさ} から うるさかった 。 {正|ただ}しい うるささ だった 。 || Next morning, the harbour is loud from dawn. The right kind of loud.
 !heal
-!journal {北|きた} の {道|みち} を {通|とお}って 、 {灰実|はいみ} の {里|さと} へ 。 || Take the north road out of the coast road fork to Cinder Orchard.
+# (a twelve-chapter journey goes on east by Tetsu's ferry: its north road is washed out until Manybridge is done)
+?(!ed>=2|mb2_done) !journal {北|きた} の {道|みち} を {通|とお}って 、 {灰実|はいみ} の {里|さと} へ 。 || Take the north road out of the coast road fork to Cinder Orchard.
+?(ed>=2&!mb2_done) !journal {渡|わた}し{船|ぶね} の {板|いた} に 、 {東|ひがし} へ の {新|あたら}しい {行|い}き{先|さき} 。 {港|みなと} の テツ に {聞|き}こう 。 || A new line on the ferry board: east. Ask Tetsu at the harbour.
+?(ed>=2&!mb2_done) !set mb_east_noted
 !autosave
 `, 'ch2/20_scenes_road');
 
@@ -142824,15 +142838,18 @@ omi: {港|みなと} は {動|うご}き{出|だ}した 。 {渡|わた}し{船|
 ?(!sg_wataru_self) !gesture omi shrug
 ?(sg_wataru_self) omi: ワタル は {朝|あさ} から {晩|ばん} まで ラベル を {書|か}いてる 。 {鼻歌|はなうた} {混|ま}じり で な 。 あいつ の {鼻歌|はなうた} なんか 、 {初|はじ}めて {聞|き}いた よ 。 || Wataru's writing labels from dawn to dusk. Humming, if you please. First time I've ever heard that man hum.
 ?(!sg_wataru_self) omi: ワタル は {朝|あさ} から {晩|ばん} まで ラベル を {書|か}いてる 。 {罰|ばつ} の つもり で やらせた ん だ が 、 {楽|たの}しそう で {困|こま}る 。 || Wataru's writing labels from dawn to dusk. I meant it as punishment, and the man looks happy. Annoying.
-!gesture omi point right
-omi: {北|きた} の {道|みち} も 、 {通|とお}れる よう に なった そう だ 。 {灰実|はいみ} の {里|さと} へ {行|い}く なら 、 {今夜|こんや} は かもめ{亭|てい} に {泊|と}まって いきな 。 {宿代|やどだい} は {港|みなと} が {持|も}つ 。 || They say the north road's open again. If you're heading for Cinder Orchard, stay the night at the Gull. The harbour's paying.
+# (in a twelve-chapter journey the north road stays washed out until Manybridge's chapters are done: the way on is
+# Tetsu's ferry east, so there Omi names the ferry instead, with the same night at the Gull; Agnes, RBN-QA-011)
+?(!ed>=2|mb2_done) !gesture omi point right
+?(!ed>=2|mb2_done) omi: {北|きた} の {道|みち} も 、 {通|とお}れる よう に なった そう だ 。 {灰実|はいみ} の {里|さと} へ {行|い}く なら 、 {今夜|こんや} は かもめ{亭|てい} に {泊|と}まって いきな 。 {宿代|やどだい} は {港|みなと} が {持|も}つ 。 || They say the north road's open again. If you're heading for Cinder Orchard, stay the night at the Gull. The harbour's paying.
+?(ed>=2&!mb2_done) omi: テツ の {船|ふね} が 、 {東|ひがし} の {八百橋|やおばし} へ {出|で}る そう だ 。 {乗|の}る なら 、 {今夜|こんや} は かもめ{亭|てい} に {泊|と}まって いきな 。 {宿代|やどだい} は {港|みなと} が {持|も}つ 。 || Tetsu's boat is going east to Manybridge, I hear. If you're taking it, stay the night at the Gull. The harbour's paying.
 !quest sg_main done
 !note sg_three_kinds
 !set sg_evening
 !call sg.ch2_end
 
 @scene sg.omi_after
-omi: {北|きた} の {道|みち} は {開|ひら}いてる よ 。 {灰実|はいみ} の {里|さと} は 、 {果物|くだもの} と ガラス の {町|まち} だ 。 {気|き}を つけて な 。 || The north road's open. Cinder Orchard's a town of fruit and glass. Take care.
+?(!ed>=2|mb2_done) omi: {北|きた} の {道|みち} は {開|ひら}いてる よ 。 {灰実|はいみ} の {里|さと} は 、 {果物|くだもの} と ガラス の {町|まち} だ 。 {気|き}を つけて な 。 || The north road's open. Cinder Orchard's a town of fruit and glass. Take care.
 omi: …… {時刻表|じこくひょう} が {正|ただ}しい って の は 、 {退屈|たいくつ} で いい もん だ ね 。 || …A ferry board that tells the truth. Wonderfully dull.
 
 @scene sg.omi_post
@@ -142914,8 +142931,14 @@ tetsu: …… {潮|しお} が {変|か}わる 。 || …Tide's turning.
 
 @scene sg.tetsu_history
 # Staged: Tetsu looks out towards the island as he remembers, then back at you; his head goes down at his
-# father taking off his hat.
+# father taking off his hat. Offered from the archive's call onwards: his opening knows whether you have been
+# there yet (Agnes, RBN-QA-009); the story he offers is the same either way.
+!if sg_boss_done -> back
 tetsu: {沈|しず}んだ {書庫|しょこ} へ {行|い}く の か 。 || Going to the drowned archive, are you.
+!goto offer
+:back
+tetsu: {沈|しず}んだ {書庫|しょこ} から {戻|もど}った の か 。 || Back from the drowned archive, are you.
+:offer
 !gesture tetsu lookroad left
 tetsu: …… {子|こ}ども の {頃|ころ} 、 {親父|おやじ} の {船|ふね} で {島|しま} の {近|ちか}く を {通|とお}った 。 {聞|き}きたい か 。 || …When I was a boy, I passed near the island on my father's boat. Want to hear it?
 !choice
@@ -143106,7 +143129,8 @@ tobi: {大|おお}きく なったら 、 {配達人|はいたつにん} に な
 @scene sg.fuku_idle
 # Staged: Fuku points to the bench where she played shōgi with Isamu and shakes her head over his letter;
 # with Nao, she peers at them (didn't you collect his letters?), and Nao looks away and shakes their head.
-fuku: いい お{天気|てんき} ね 。 {風|かぜ} が ない の が 、 ちょっと {寂|さび}しい けど 。 || Lovely weather. It's a little lonely without the wind, though.
+# One of her two weather lines, as the wind is now (Agnes, RBN-QA-010: once it was back, she said both).
+?(!sg_fog_cleared) fuku: いい お{天気|てんき} ね 。 {風|かぜ} が ない の が 、 ちょっと {寂|さび}しい けど 。 || Lovely weather. It's a little lonely without the wind, though.
 ?(sg_fog_cleared) fuku: {風|かぜ} が {戻|もど}った わ ね 。 {洗濯物|せんたくもの} が よく {乾|かわ}く 。 || The wind's back. The washing dries nicely.
 !gesture fuku point 40,8
 fuku: {西|にし} の {坂|さか} の イサム さん が いた {頃|ころ} は 、 この ベンチ で よく {将棋|しょうぎ} を {指|さ}した の 。 || When Isamu from up the west lane was still here, we'd play shōgi on this bench.
@@ -145886,7 +145910,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: '{里|さと} の {人|ひと} が {半分|はんぶん} {覚|おぼ}えて いる こと を {聞|き}こう 。 ウメ 、 ゴロウ 、 イサオ 。', en: 'Gather what people half-remember: Grandma Ume on the terraces, Old Gorō at the lookout, and Master Isao at the glass workshop.' },
       { jp: '{集|あつ}めた {記録|きろく} を {記録堂|きろくどう} へ {持|も}って いこう 。', en: 'Take the planting book and the kiln ledger to the Chronicle Hall and set them beside the chronicle.' },
       { jp: '{上|うえ} の {段|だん} へ の {道|みち} は 、 {水番|みずばん} の タモツ が {開|あ}けられる 。', en: 'Tokiwa wants the kiln\'s own record. Tamotsu, who keeps the channel, can open the way up past the terraces.' },
-      { jp: '{上|うえ} の {段|だん} を {越|こ}えて 、 {古|ふる}い {工房|こうぼう} {通|どお}り と {封|ふう}じられた {窯|かま} へ 。', en: 'Climb through the upper terraces to the old workshop row and the sealed kiln.' },
+      { jp: '{上|うえ} の {段|だん} を {越|こ}えて 、 {古|ふる}い {工房|こうぼう} {通|どお}り と {封|ふう}じられた {窯|かま} へ 。', en: 'Climb through the upper terraces to the old workshop row and the sealed kiln.',
+        // where it leads, named (RBN-QA-025: derived, the kiln's steps lie deeper than the guide resolves, and it fell back on
+        // the festival's lookout, a later stage's step): the glass seal until it is broken (its own scene sends you to the
+        // cold hut for the ice word), then the Great Kiln's doorway; inside the kiln, nothing marked
+        atIf: [{ if: '!co_seal_broken', at: { map: 'co.oldworks', prop: 'co_seal', x: 20, y: 5 } }, { if: '!co_kiln_seen', at: { map: 'co.kiln' } }, { if: 'co_kiln_seen', at: 'open' }] },
       { jp: '{窯|かま} で {見|み}つけた もの を 、 {里|さと} へ {持|も}ち{帰|かえ}ろう 。', en: 'Bring what you found in the kiln back down to Tokiwa at the Chronicle Hall.' },
       { jp: '{夕方|ゆうがた} 、 {里|さと} の {人|ひと} たち が {広場|ひろば} に {集|あつ}まる 。', en: 'At dusk the whole village gathers in the square. Tokiwa is waiting for you there.' },
       { jp: '{祭|まつ}り の {夜|よる} だ 。', en: 'It\'s the night of the festival. Walk among the lanterns; when you\'re ready, climb the lookout.' },
@@ -146459,7 +146487,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.scatter('.', 20, 344, [2, 0, 36, 26], 'a');
     }),
     structs: [
-      { type: 'house', x: 16, y: 1, w: 9, h: 5, roof: 'ash', wall: 'stone', door: 4, windows: [] },
+      // the Great Kiln: its doorway (20,5) is the way in, shut by the glass seal (co_seal, a prop on that tile) until
+      // co_seal_broken (RBN-QA-025: a separate exit on the doorway could never be walked onto, the house kept it solid)
+      { type: 'house', x: 16, y: 1, w: 9, h: 5, roof: 'ash', wall: 'stone', door: 4, windows: [], to: 'co.kiln', spawn: [14, 22], locked: 'co.kiln_seal', unlock: 'co_seal_broken' },
       { type: 'house', x: 34, y: 17, w: 5, h: 3, roof: 'slate', wall: 'stone', door: 2, windows: [], to: 'co.icehouse', spawn: [5, 8] },
     ],
     props: [
@@ -146481,7 +146511,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
     exits: [
       { x: 30, y: 25, w: 2, h: 1, to: 'co.upper', tx: 30, ty: 1, dir: 'down' },
       { x: 2, y: 25, w: 2, h: 1, to: 'co.terraces', tx: 4, ty: 1, dir: 'down', if: 'co_shortcut' },
-      { x: 20, y: 5, w: 1, h: 1, to: 'co.kiln', tx: 14, ty: 22, dir: 'up', if: 'co_seal_broken' },
     ],
     onEnter: [{ scene: 'co.oldworks_enter', if: '!co_oldworks_seen' }],
     spawn: { default: [30, 23, 'up'] },
@@ -147207,7 +147236,9 @@ narr: {石|いし} の {向|む}こう に は 、 {道|みち} の よう に {
 !if co_clue_marker -> end
 !set co_clue_marker
 !var co_clues + 1
+!var _co_off = 1
 !call co.clue_check
+!var _co_off = 0
 
 @scene co.road_north
 # Staged: you look at the thorn scrub over the old road and shade your eyes to the snow peaks beyond; your
@@ -147227,9 +147258,13 @@ narr: {茂|しげ}み の {向|む}こう 、 {雪|ゆき} を かぶった {峰
 ?(comp=suzu) comp: {雪鈴|ゆきすず} へ は 、 {祭|まつ}り の {後|あと} で ね 。 …… {後|あと} で 。 || Snowbell after the festival. …After.
 
 @scene co.clue_check
+# The third clue starts the synthesis (co.suspect, "crossing the square") at once only in the square, or at the
+# chronicle's desk (staged there: var._co_desk). Found anywhere else (the road, the glass workshop, Ume's house:
+# var._co_off), it waits for the village: its onEnter and the square's triggers play it as you cross (RBN-QA-022).
 !if co_suspect -> end
 !if !co_met_sayo -> end
 !if var.co_clues<3 -> end
+!if var._co_off=1 -> end
 !call co.suspect
 `, 'ch3/road');
 
@@ -147268,12 +147303,16 @@ co_sayo: じゃ 、 {私|わたし} は {席|せき} の {準備|じゅんび} �
 # Staged: your feet stop in the square and you look from the empty seat to the ropeless bell; your companion
 # says it in their own way (Nao looks between the same two things, Mio's guarded hand and a shake of the head,
 # Ren's hand to the chin and the marks counted off, Suzu's head goes down and then she faces you); you point
-# the way to the Chronicle Hall.
+# the way to the Chronicle Hall. When the third clue was the chronicle itself (var._co_desk), it plays at the desk:
+# you look up from the page, nobody crosses the square or points to the hall you stand in, and the chronicle with
+# Tokiwa follows (co.chronicle) (RBN-QA-022).
 !if co_suspect -> end
 !set co_suspect
-!gesture pc lookbetween prop:co_seat and=prop:co_lookout
-narr: {広場|ひろば} を {抜|ぬ}ける {途中|とちゅう} で 、 {足|あし} が {止|と}まった 。 || Crossing the square, your feet stop on their own.
-?(comp=nao) !gesture comp lookbetween prop:co_seat and=prop:co_lookout
+?(!var._co_desk=1) !gesture pc lookbetween prop:co_seat and=prop:co_lookout
+?(var._co_desk=1) !gesture pc observe 5,3
+?(!var._co_desk=1) narr: {広場|ひろば} を {抜|ぬ}ける {途中|とちゅう} で 、 {足|あし} が {止|と}まった 。 || Crossing the square, your feet stop on their own.
+?(comp=nao&!var._co_desk=1) !gesture comp lookbetween prop:co_seat and=prop:co_lookout
+?(comp=nao&var._co_desk=1) !gesture comp lookbetween pc and=5,3
 ?(comp=nao) comp: なあ 、 {気|き}づいた ？ {空|あ}いた {席|せき} 、 {焦|こ}げた {梁|はり} 、 {誰|だれ} も {使|つか}わない {桶|おけ} 、 {綱|つな} の ない {鐘|かね} 。 || Hey. Notice it? An empty seat, a scorched beam, buckets nobody uses, a bell with no rope.
 ?(comp=nao) comp: {全部|ぜんぶ} 、 {同|おな}じ {穴|あな} の {周|まわ}り を よけて {歩|ある}いてる 。 {宛名|あてな} の {抜|ぬ}けた {手紙|てがみ} と {同|おな}じ {感|かん}じ だ 。 || Everything here walks around the same hole. Same feeling as a letter with the address missing.
 ?(comp=mio) !gesture comp guard
@@ -147288,8 +147327,8 @@ narr: {広場|ひろば} を {抜|ぬ}ける {途中|とちゅう} で 、 {足|
 ?(comp=suzu) comp[closed]: …… ねえ 、 $name 。 || …Hey, $name.
 ?(comp=suzu) !gesture comp avert pc hold
 ?(comp=suzu) comp: {私|わたし} 、 {嘘|うそ} の {上手|じょうず} な {人|ひと} を たくさん {知|し}ってる の 。 {自分|じぶん} も {含|ふく}めて ね 。 この {里|さと} は {嘘|うそ} を ついてる ん じゃ ない 。 {嘘|うそ} を {信|しん}じてる 。 || I know a lot of good liars. Myself included. This village isn't lying. It believes the lie.
-!gesture pc point 43,7
-pc: {記録堂|きろくどう} へ {行|い}こう 。 {年代記|ねんだいき} を {見|み}せて もらおう 。 || Let's go to the Chronicle Hall. I want to see that chronicle.
+?(!var._co_desk=1) !gesture pc point 43,7
+?(!var._co_desk=1) pc: {記録堂|きろくどう} へ {行|い}こう 。 {年代記|ねんだいき} を {見|み}せて もらおう 。 || Let's go to the Chronicle Hall. I want to see that chronicle.
 !quest co_main 2
 !journal {年代記|ねんだいき} は {火事|かじ} を {記録|きろく} して いない 。 でも {里|さと} の あちこち に 、 {火|ひ} の {跡|あと} が ある 。 || The chronicle records no fire. But the village is full of the marks of one.
 `, 'ch3/village-main');
@@ -147355,6 +147394,7 @@ co_tokiwa: {年代記|ねんだいき} は {机|つくえ} の {上|うえ} で�
 # Mio's nod, Ren and Suzu count the three names off).
 !if co_chronicle_read -> reread
 !if !co_suspect -> casual
+:main
 !gesture pc observe 5,3
 co_tokiwa: {年代記|ねんだいき} です 。 {開村|かいそん} から {今年|ことし} まで 、 {一年|いちねん} も {欠|か}けて いません 。 || The chronicle. From the founding to this year, not a single year missing.
 !look co_tokiwa pc
@@ -147407,7 +147447,11 @@ narr: {年代記|ねんだいき} 。 {毎年|まいとし} の {秋祭|あき�
 !set co_clue_chron
 narr: {二十年前|にじゅうねんまえ} の {頁|ページ} から 、 {毎年|まいとし} {同|おな}じ {一言|ひとこと} が {書|か}き{足|た}されて いる 。 「 {火事|かじ} なし 」 。 || From twenty years ago on, every year has the same words added: "No fire."
 !var co_clues + 1
+# the third clue here: the synthesis at the desk, and on to the chronicle with Tokiwa (RBN-QA-022)
+!var _co_desk = 1
 !call co.clue_check
+!var _co_desk = 0
+!if co_suspect -> main
 !end
 :reread
 !gesture pc observe 5,3
@@ -148977,7 +149021,9 @@ narr: {壁|かべ} に {立|た}て{掛|か}けた {太|ふと}い {梁|はり} 
 !if co_clue_beam -> end
 !set co_clue_beam
 !var co_clues + 1
+!var _co_off = 1
 !call co.clue_check
+!var _co_off = 0
 
 @scene co.furnace
 narr: ガラス の {炉|ろ} 。 {覗|のぞ}き{窓|まど} の {奥|おく} で 、 {溶|と}けた ガラス が {蜂蜜|はちみつ} の よう に {光|ひか}って いる 。 || The glass furnace. Through its window, molten glass glows like honey.
@@ -149432,14 +149478,18 @@ co_ume: {焚|た}き{火|び} なんか した こと ない {梁|はり} なの
 !if co_clue_smoke -> end
 !set co_clue_smoke
 !var co_clues + 1
+!var _co_off = 1
 !call co.clue_check
+!var _co_off = 0
 
 @scene co.ume_beam
 narr: {天井|てんじょう} から {下|お}ろした {古|ふる}い {梁|はり} が 、 {壁|かべ} に {立|た}て{掛|か}けて ある 。 {顔|かお} を {近|ちか}づける と 、 かすか に けむり の におい が した 。 || An old beam taken down from the ceiling leans against the wall. Bring your face close and there's the faintest smell of smoke.
 !if co_clue_smoke -> end
 !set co_clue_smoke
 !var co_clues + 1
+!var _co_off = 1
 !call co.clue_check
+!var _co_off = 0
 
 @scene co.ume_after
 # Staged: Ume's nod, a look up to the young trees on the upper terraces; you step to her side and she presses
@@ -204031,6 +204081,12 @@ narr: 「{北|きた} の {道|みち} の {橋|はし} 、 {嵐|あらし} で 
 ?(comp=mio) comp: {橋|はし} が {直|なお}る まで 、 {待|ま}つ しか ない ね 。 || Nothing for it but to wait till the bridge is mended.
 ?(comp=ren) comp: {橋|はし} を {架|か}ける {大工|だいく} は 、 {八百橋|やおばし} に {多|おお}い と {聞|き}きます 。 || I hear Manybridge is where the bridge carpenters are.
 ?(comp=suzu) comp: {北|きた} が だめ なら 、 {東|ひがし} よ 。 {道|みち} は {一|ひと}つ じゃ ない わ 。 || If north's no good, then east. There's more than one road.
+# the way on, told apart from the fork's east road (that one walks back to Reedwake): Manybridge is the harbour
+# ferry's; and in the journal, once (a journey that ended Chapter 2 before this was written still read "north");
+# not once you have been to Manybridge (Agnes, RBN-QA-011)
+?(!mb_arrived) narr: {東|ひがし} の {八百橋|やおばし} へ は 、 {歩|ある}いて は {行|い}けない 。 {港|みなと} から 、 テツ の {渡|わた}し{船|ぶね} で {行|い}く の だ 。 || Manybridge lies east, but not on foot: Tetsu's ferry goes there from the harbour.
+?(!mb_arrived&!mb_east_noted) !journal {渡|わた}し{船|ぶね} の {板|いた} に 、 {東|ひがし} へ の {新|あたら}しい {行|い}き{先|さき} 。 {港|みなと} の テツ に {聞|き}こう 。 || A new line on the ferry board: east. Ask Tetsu at the harbour.
+?(!mb_arrived) !set mb_east_noted
 !warp sg.road 16 2 down
 
 @scene mb.arrive
@@ -205158,11 +205214,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       },
       // Wait (taught here): Gonta speaks only into a silence; first where the rice went, then what he has been hiding
       wait: { when: { stance: { 'n:gonta': 'closed' } }, effect: { reveal: 'c4', stance: { 'n:gonta': 'listening' } }, says: { en: 'In the quiet, Gonta speaks up at last: "The west storehouse was shut. So I took it to the east one."' } },
+      // (Suzu's joke can come before the tally or Gonta's word, so it names no storehouse: Agnes, RBN-QA-014)
       companion: {
         nao: [{ id: 'nao_route', name: say('{道|みち} を {確|たし}かめる', 'Walk the route through'), desc: 'Nao goes over the barge\'s route out loud.', when: { claims: 'c4' }, once: true, effect: { reveal: 'c5', understanding: 1, stance: { 'n:gonta': 'listening' } }, says: { en: 'Nao: "Three barges, three trips. But the second one came back an hour late, didn\'t it, Gonta?" Gonta\'s shoulders drop. "…I dropped the crate of floats. I took the long way so nobody would count."' } }],
         mio: [{ id: 'mio_calm', name: say('{落|お}ち{着|つ}かせる', 'Calm Fujiko'), desc: 'Mio speaks to Fujiko quietly.', when: { stance: { 'n:fujiko': 'heated' } }, effect: { stance: { 'n:fujiko': 'listening' }, understanding: 1 }, says: { en: 'Mio: "Nobody here thinks you\'re lying." Fujiko sits back.' } }],
         ren: [{ id: 'ren_plaque', name: say('{札|ふだ} の こと を {話|はな}す', 'Speak of the plaques'), desc: 'Ren explains how names fade.', when: { not: { claims: 'c6' } }, once: true, effect: { reveal: 'c6', understanding: 1 }, says: { en: 'Ren: "Names don\'t just fade on lanterns. The Storehouse Bridge\'s plaque is blank — a boatman could turn too early there."' } }],
-        suzu: [{ id: 'suzu_joke', name: say('{冗談|じょうだん} を {言|い}う', 'Break the tension'), desc: 'Suzu makes them laugh.', once: true, effect: { understanding: 1, stance: { 'n:gonta': 'listening' } }, says: { en: 'Suzu: "Rice that hides in the east storehouse? It\'s shyer than Gonta." Even Gonta almost smiles.' } }],
+        suzu: [{ id: 'suzu_joke', name: say('{冗談|じょうだん} を {言|い}う', 'Break the tension'), desc: 'Suzu makes them laugh.', once: true, effect: { understanding: 1, stance: { 'n:gonta': 'listening' } }, says: { en: 'Suzu: "Rice that slips off without a word? It\'s even quieter than Gonta." Even Gonta almost smiles.' } }],
       },
       drift: [
         { when: { all: [{ rounds: 2 }, { stance: { 'n:fujiko': 'heated' } }] }, effect: { stance: { 'n:heiji': 'heated' } }, says: { en: 'Fujiko raises her voice; Heiji raises his to match.' } },
@@ -206166,7 +206223,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'mb_barge', x: 44, y: 26, if: 'mb2_done', scene: 'mp.river_up' },
     ],
     npcs: [
-      { id: 'mp_manbe', x: 22, y: 12, dir: 'down', if: '!mp_rehearsal_done', talk: [{ if: 'quest.mp_main>=2', scene: 'mp.manbe_rehearse' }, { scene: 'mp.manbe_first' }] },
+      // with Sōbē's referral (step 2) Manbē meets you (mp.manbe_first: who he is, then the rehearsal, step 3); a rehearsal
+      // begun and not finished takes up again from step 3 (RBN-QA-018: step 2 went straight to the rehearsal)
+      { id: 'mp_manbe', x: 22, y: 12, dir: 'down', if: '!mp_rehearsal_done', talk: [{ if: 'quest.mp_main>=3', scene: 'mp.manbe_rehearse' }, { scene: 'mp.manbe_first' }] },
       { id: 'mp_genta', x: 28, y: 14, dir: 'left', talk: [{ if: 'mb2_done', scene: 'mp.genta_after' }, { if: 'mp_theatre_seen&comp!=suzu', scene: 'mp.genta_act' }, { scene: 'mp.genta' }] },
       { id: 'mp_hayashi', x: 12, y: 20, dir: 'down', talk: 'mp.hayashi' },
       { id: 'mp_tomi', x: 40, y: 8, dir: 'down', if: 'quest.mp_main<4', talk: 'mp.tomi_first' },
@@ -207830,14 +207889,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * the line comes apart when the type is set by hand (practice only). Readers: people around the world who react to
  * what a page contains (its tags), never to its language; the first rule whose tags hold, the more specific first;
  * a rule with no tags is a reader's fallback, used only to reach three readers. Each reader's waiting reaction is
- * heard by talking to them (a talk option added below, waiting on press_rx_<reader>). */
+ * heard by talking to them (a talk option added below, waiting on press_rx_<reader>). A rule a notice can reach that
+ * speaks of a story carries `byKind.notice`, the same reaction worded for a notice: the rule chosen, and so who
+ * reads it, never changes with it (RBN-QA-021). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
   'use strict';
   const T = (en, jp) => ({ en, jp });
   const B = (id, tags, jp, en, pieces, o) => Object.assign({ id, tags, jp, en, pieces }, o || {});
-  const R = (when, jp, en) => ({ when, jp, en });
+  const R = (when, jp, en, notice) => Object.assign({ when, jp, en }, notice ? { byKind: { notice } } : {});
+  const N = (jp, en) => ({ jp, en }); // a rule's wording for a notice
   C.press = {
     text: {
       title: T('The press', '{刷|す}り{場|ば}'),
@@ -207927,7 +207989,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         R(['boatman'], '{船頭|せんどう} が {主役|しゅやく} か ！ {儂|わし} の こと か と {思|おも}った わい 。', 'A boatman in the lead! I thought it was about me.'),
         R(['kind:notice', 'festival'], '{川開|かわびら}き の {知|し}らせ 、 {見|み}た ぞ 。 {儂|わし} の {舟|ふね} も 、 {花火|はなび} の {下|した} を {通|とお}る わい 。', 'Saw the notice for the Opening. My boat\'ll pass under the fireworks too.'),
         R(['storm'], '{嵐|あらし} で {橋|はし} が {流|なが}れる {話|はなし} は 、 {笑|わら}えん のう 。 …… でも 、 {最後|さいご} まで {読|よ}んで しもうた 。', 'A bridge washed away in a storm is no laughing matter. …But I read it to the end all the same.'),
-        R([], '{読|よ}んだ よ 。 {話|はなし} は 、 {短|みじか}い ほど いい 。', 'I read it. The shorter a tale, the better.'),
+        R([], '{読|よ}んだ よ 。 {話|はなし} は 、 {短|みじか}い ほど いい 。', 'I read it. The shorter a tale, the better.',
+          N('{読|よ}んだ よ 。 {知|し}らせ は 、 {短|みじか}い ほど いい 。', 'I read it. The shorter a notice, the better.')),
       ] },
       { id: 'mb_uno', npc: 'mb_uno', map: 'mb.inn', where: T('Kawaya, the inn, Manybridge'), if: 'mb_arrived', rules: [
         R(['where:inn'], '{置|お}いて いった {紙|かみ} 、 お{客|きゃく}さん が {回|まわ}し{読|よ}み して いる よ 。', 'The sheet you left here: the guests are passing it round.'),
@@ -207948,7 +208011,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ] },
       { id: 'mb_masa', npc: 'mb_masa', map: 'mb.exchange', where: T('Masaya\'s stall, Manybridge'), if: 'mb_arrived', rules: [
         R(['where:stall'], '{屋台|やたい} で {配|くば}った {紙|かみ} 、 {全部|ぜんぶ} なくなった よ ！ お{客|きゃく}さん が {持|も}って いった 。', 'The sheets you gave out at the stall are all gone! The customers took them.'),
-        R(['food'], '{蕎麦|そば} が {出|で}て くる {話|はなし} は 、 {全部|ぜんぶ} いい {話|はなし} よ ！', 'Any story with soba in it is a good story!'),
+        R(['food'], '{蕎麦|そば} が {出|で}て くる {話|はなし} は 、 {全部|ぜんぶ} いい {話|はなし} よ ！', 'Any story with soba in it is a good story!',
+          N('{蕎麦|そば} の {知|し}らせ は 、 {全部|ぜんぶ} いい {知|し}らせ よ ！', 'A notice about soba is always good news!')),
         R(['funny'], '{笑|わら}った 、 {笑|わら}った ！ {屋台|やたい} の {前|まえ} で {読|よ}み{上|あ}げちゃった 。', 'I laughed and laughed! I read it out in front of the stall.'),
         R([], '{読|よ}んだ よ 。 {字|じ} が {大|おお}きくて 、 {読|よ}みやすい ね 。', 'I read it. Nice big letters, easy to read.'),
       ] },
@@ -207965,7 +208029,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'hana', npc: 'hana', map: 'rw.tea', where: T('The teahouse, Reedwake'), rules: [
         R(['river', 'village'], '{葦|あし} の {揺|ゆ}れる {川|かわ}べり の {村|むら} …… ここ の こと かしら 。 うれしい わ 。', 'A village by a river where the reeds sway… is that here? How lovely.'),
         R(['friend', 'makeup'], '{仲直|なかなお}り の {話|はなし} は 、 {何度|なんど} {読|よ}んで も いい わ ね 。', 'Stories about making up are good however many times you read them.'),
-        R([], '{旅|たび} の {途中|とちゅう} で 、 {話|はなし} を {書|か}いた の ね 。 {読|よ}んだ わ よ 。', 'You wrote a story on your travels. I read it.'),
+        R([], '{旅|たび} の {途中|とちゅう} で 、 {話|はなし} を {書|か}いた の ね 。 {読|よ}んだ わ よ 。', 'You wrote a story on your travels. I read it.',
+          N('{旅|たび} の {途中|とちゅう} で 、 {知|し}らせ を {刷|す}った の ね 。 {読|よ}んだ わ よ 。', 'You printed a notice on your travels. I read it.')),
       ] },
     ],
   };
@@ -208064,6 +208129,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const ok = (parts, en, result) => ({ parts, ok: true, en, result });
   const no = (parts, en, why, result) => ({ parts, ok: false, en, why: { en: why }, result });
   const w = (en) => ({ en });
+  // the place before the object, as well as after: [object, place, verb] also reads as [place, object, verb]
+  const lo = (f) => Object.assign(f, { also: [[f.parts[1], f.parts[0], f.parts[2]]] });
   // the same task for two profiles each: kana sentences for F and E's first meeting, then the fuller form
   const tiers = (low, high) => ({ F: [low], E: [low], I: [high], A: [high] });
 
@@ -208071,10 +208138,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: tiers(
       F({ id: 'mp.fest_lanterns.low', item: 'g:v_te_kudasai', prompt: T('Tell the lantern men where to hang the lanterns: along the bank, in front of the playhouse, or over the bridge. It is your choice.'),
         families: [
-          ok(['ちょうちん を', 'きし に そって', 'つるして ください 。'], 'Please hang the lanterns along the bank.', 'bank'),
-          ok(['ちょうちん を', 'しばいごや の まえ に', 'つるして ください 。'], 'Please hang the lanterns in front of the playhouse.', 'theatre'),
-          ok(['ちょうちん を', 'はし の うえ に', 'つるして ください 。'], 'Please hang the lanterns over the bridge.', 'bridge'),
-          no(['ちょうちん を', 'かわ の なか に', 'つるして ください 。'], 'Please hang the lanterns in the river.', 'かわ の なか: in the river. They would go out.', 'river'),
+          // where first, then what, says the same placement (RBN-QA-019): each family also reads in that order
+          lo(ok(['ちょうちん を', 'きし に そって', 'つるして ください 。'], 'Please hang the lanterns along the bank.', 'bank')),
+          lo(ok(['ちょうちん を', 'しばいごや の まえ に', 'つるして ください 。'], 'Please hang the lanterns in front of the playhouse.', 'theatre')),
+          lo(ok(['ちょうちん を', 'はし の うえ に', 'つるして ください 。'], 'Please hang the lanterns over the bridge.', 'bridge')),
+          lo(no(['ちょうちん を', 'かわ の なか に', 'つるして ください 。'], 'Please hang the lanterns in the river.', 'かわ の なか: in the river. They would go out.', 'river')),
         ] }),
       F({ id: 'mp.fest_lanterns.high', item: 'g:cond_tara', prompt: T('Tell the lantern men where to hang them and when to light them: once it is dark. Where is your choice.'),
         families: [
