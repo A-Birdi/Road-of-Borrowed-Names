@@ -24,16 +24,52 @@ RB.combat = (function () {
   // Every line a battle says (a creature's intro and the line once it is settled, at each learner level, each map's
   // own; a guardian's phase lines) is shown under this scene id and listed for recording (RB.content.spokenSources,
   // read by tools/voice/lines.mjs; Robin, 2026-10-19: every line spoken). An authored conclusion with only English has
-  // nothing to say aloud.
+  // nothing to say aloud. Since 2026-10-20 also every telegraph (what a creature is about to do, in its own words at
+  // each learner level, else the default words for the move: content.intentText), shown with a Voice button in the
+  // badge's card, the telegraph panel and the task slip, and a creature of a group settling, in the exchange log;
+  // the creatures as an encounter brings them (its own variation of a creature: src/engine/97_encounter.js creature)
+  // and the conclusion of an encounter played on this screen (one with Japanese; none has any yet). The companion's
+  // offers after a defeat ("Explain its pattern", "Suggest an answer") and its turn are said in English only.
   const BATTLE_SCENE = 'code.battle';
+  const COMPS = ['nao', 'mio', 'ren', 'suzu'];
+  // A telegraph's words as said: $tgt is the one it aims at, $other the one it does not (intentLine). A companion's
+  // name is put in, so the line can be recorded (a recording for each companion's name); a line naming the player
+  // carries a name only the player chose, and is never recorded (null: shown as before, with no Voice).
+  const nameJpOf = (c) => (c && RB.content.chars[c] ? RB.jp.plain(RB.content.chars[c].name.jp) : '');
+  function saidAs(jp, tgt, other, comp) {
+    if (!jp) return null;
+    const names = { tgt, other };
+    let ok = true;
+    const out = jp.replace(/\$(tgt|other)\b/g, (m, k) => { if (names[k] !== 'comp' || !nameJpOf(comp)) ok = false; return nameJpOf(comp); });
+    return ok && !/\$\w/.test(out) ? out : null;
+  }
+  // the creature an encounter brings (its own definition with what the encounter changes: name, moves)
+  function creatureOf(spec) {
+    const E = RB.content.enemies || {};
+    if (typeof spec === 'string') return Object.assign({ id: spec }, E[spec] || {});
+    if (!spec || !spec.enemy) return null;
+    const base = E[spec.enemy] || {};
+    const o = Object.assign({ id: spec.enemy }, base, spec);
+    if (spec.intents) o.intents = Object.assign({}, base.intents || {}, spec.intents);
+    return o;
+  }
+  // every creature definition a battle can show: each creature, and each variation an encounter makes of one
+  function creatureDefs() {
+    const out = [];
+    for (const id in RB.content.enemies || {}) out.push({ def: Object.assign({ id }, RB.content.enemies[id]), file: 'enemy ' + id });
+    for (const id in RB.content.encounters || {}) {
+      const d = RB.content.encounters[id], g = d.group;
+      const specs = [d.lead].concat(Array.isArray(g) ? g : g ? [].concat(g.normal || [], g.hard || []) : [], (d.arrivals || []).map((a) => a.enemy), (d.extras || []).map((a) => a.enemy));
+      for (const sp of specs) if (sp && typeof sp === 'object') { const c = creatureOf(sp); if (c) out.push({ def: c, file: 'encounter ' + id }); }
+    }
+    return out;
+  }
   RB.content.spokenSources = RB.content.spokenSources || [];
   RB.content.spokenSources.push(() => {
-    const out = [];
-    const add = (line, who, file) => {
-      if (!line) return;
-      const tiers = line.jp != null || line.en != null ? [line] : ['F', 'E', 'I', 'A'].map((k) => line[k]).filter(Boolean);
-      for (const x of tiers) if (x && x.jp) out.push({ scene: BATTLE_SCENE, who: who || 'narr', jp: x.jp, en: x.en || '', file });
-    };
+    const out = [], seen = new Set();
+    const push = (who, jp, en, file) => { const k = who + '|' + jp; if (seen.has(k)) return; seen.add(k); out.push({ scene: BATTLE_SCENE, who: who || 'narr', jp, en: en || '', file }); };
+    const tiersOf = (line) => (!line ? [] : line.jp != null || line.en != null ? [line] : ['F', 'E', 'I', 'A'].reduce((a, k) => a.concat(line[k] || []), []));
+    const add = (line, who, file) => { for (const x of tiersOf(line)) if (x && x.jp) push(who || 'narr', x.jp, x.en, file); };
     for (const id in RB.content.enemies || {}) {
       const e = RB.content.enemies[id];
       add(e.intro, e.introWho, 'enemy ' + id); add(e.settle, e.settleWho, 'enemy ' + id);
@@ -42,6 +78,34 @@ RB.combat = (function () {
     for (const id in RB.content.maps || {}) for (const f of RB.content.maps[id].foes || []) {
       const e = (RB.content.enemies || {})[f.enemy] || {};
       add(f.intro, f.introWho != null ? f.introWho : e.introWho, 'map ' + id); add(f.settle, f.settleWho != null ? f.settleWho : e.settleWho, 'map ' + id);
+    }
+    // the telegraphs: each move a creature can make (its pattern, its phases' patterns, its own moves), in its own
+    // words when it has them, else the move's default words; each name the code can put in (intentLine)
+    const enAs = (en, tgt, c) => String(en || '').replace(/\$tgtEn/g, tgt === 'comp' ? RB.content.chars[c].name.en : 'you').replace(/\$otherEn/g, tgt === 'comp' ? 'you' : RB.content.chars[c].name.en);
+    const told = (x, targets, file) => {
+      if (!x || !x.jp) return;
+      if (!/\$\w/.test(x.jp)) { push('narr', x.jp, x.en, file); return; }
+      for (const tgt of targets) for (const c of COMPS) { const jp = saidAs(x.jp, tgt, tgt === 'comp' ? 'pc' : 'comp', c); if (jp) push('narr', jp, enAs(x.en, tgt, c), file + ' (' + c + ')'); }
+    };
+    const T = RB.content.intentText || {};
+    for (const { def, file } of creatureDefs()) {
+      add(def.intro, def.introWho, file); add(def.settle, def.settleWho, file);
+      for (const ph of def.phases || []) add(ph.line, ph.who, file);
+      const keys = new Set([].concat(def.pattern || [], ...(def.phases || []).map((ph) => ph.pattern || []), Object.keys(def.intents || {})));
+      for (const k of keys) {
+        if (typeof k !== 'string') continue;
+        const it = L().intentDef(def, k);
+        const targets = it.target === 'rand' ? ['pc', 'comp'] : it.target === 'comp' ? ['comp'] : ['pc'];
+        const pool = it.text ? tiersOf(it.text) : [].concat(...['F', 'E', 'I', 'A'].map((p) => (T[it.kind] && T[it.kind][p]) || []));
+        for (const x of pool) if (!(x.neg && it.target === 'both')) told(x, targets, file + ' ' + k);
+      }
+    }
+    // an encounter played on this screen (one led by a creature): how it ended, when it says so in Japanese
+    for (const id in RB.content.encounters || {}) {
+      const d = RB.content.encounters[id];
+      if (!d.lead) continue;
+      for (const c of d.conclusions || []) { add(c.text, 'narr', 'encounter ' + id); if (c.severe && c.summarised) add(c.summarised, 'narr', 'encounter ' + id); }
+      if (d.study && d.study.explain) add(d.study.explain, 'narr', 'encounter ' + id);
     }
     return out;
   });
@@ -197,7 +261,17 @@ RB.combat = (function () {
     return {
       jp: pick.jp, en: (pick.en || '').replace(/\$tgtEn/g, nmEn[tgt]).replace(/\$otherEn/g, nmEn[other]),
       vars: { tgt: nm[tgt], other: nm[other] }, neg: !!pick.neg,
+      // the words as said, for the recording (a companion's name put in; null when they name you)
+      said: saidAs(pick.jp, tgt, other, s.comp),
     };
+  }
+
+  // a telegraph's words on screen: a spoken line (a Voice button that says them from their recording under
+  // BATTLE_SCENE, the spoken word marked: src/ui/22c_spoken_panel.js) when they can be recorded; a line that names
+  // you is shown as before. Its English stays where the telegraph keeps it (behind Translate, which counts as help).
+  function toldHtml(line, cls) {
+    if (line.said && RB.ui.spoken) return RB.ui.spoken.html({ who: 'narr', jp: line.said, en: line.en, sceneId: BATTLE_SCENE }, { cls, noEn: true, asIs: true });
+    return '<div class="' + cls + '">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>';
   }
 
   // ---- the overlay: foe slip(s), telegraph card, stage, party, response dock ----
@@ -346,7 +420,7 @@ RB.combat = (function () {
     const states = compact ? statusList(i) : [];
     let h = '<div class="it-label">' + (compact ? '<span class="it-kind">' + face + '</span>' : kw(kkey('intent', i), 'it-kind', face + Q())) +
       states.map((x) => '<span class="st">' + esc(x.label) + '</span>').join('') + '</div>';
-    if (line.jp) h += '<div class="it-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>';
+    if (line.jp) h += toldHtml(line, 'it-jp');
     if (line.en) h += enShown() ? '<div class="it-en">' + esc(line.en) + '</div>' : (compact ? '' : '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>');
     const nx = st.foes[i].nextIntents || [];
     if (!compact && RB.game.s.comp === 'nao' && nx.length) h += '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(nx.map(moveLabel).join(', then ')) + '.”</span></div>';
@@ -684,7 +758,7 @@ RB.combat = (function () {
     if (READING[it.kind]) what = it.kind === 'plea' ? 'It is asking you something. Read what it asks.' : 'It is telling you something. Read what it says.';
     else what = L().withFoe(st, i, () => RB.combatHelp.intentInfo(st, it, words())).what;
     return '<div class="ic-k">' + moveArt(it, true) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</div>' +
-      (line.jp ? '<div class="ic-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>' : '') +
+      (line.jp ? toldHtml(line, 'ic-jp') : '') +
       (line.en && enShown() ? '<div class="ic-en">' + esc(line.en) + '</div>' : '') +
       (line.en && !enShown() ? '<button type="button" class="pbtn quiet tr ic-tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '') +
       (what ? '<p class="ic-what">' + what + '</p>' : '') +
@@ -1225,8 +1299,10 @@ RB.combat = (function () {
         const m = members[fi] || enemy;
         const line = m.settle ? (tierOf(m.settle) || m.settle) : null;
         sfx('reveal');
-        const jp = line && line.jp ? '<span class="cl-w">' + RB.ui.jhtml(line.jp) + '</span> ' : '';
+        // (its words are a spoken line, said as they appear when lines are spoken automatically)
+        const jp = line && line.jp ? (RB.ui.spoken ? RB.ui.spoken.html({ who: m.settleWho || 'narr', jp: line.jp, en: line.en, sceneId: BATTLE_SCENE }, { tag: 'span', cls: 'cl-w', noEn: true }) : '<span class="cl-w">' + RB.ui.jhtml(line.jp) + '</span>') + ' ' : '';
         logLine(jp + esc(nameOf(fi).en + ' settles' + (line && line.en ? ': ' + line.en : '.')));
+        if (jp && RB.ui.spoken && ui && ui.log.lastElementChild) RB.ui.spoken.autoIn(ui.log.lastElementChild);
         msg = '';
         break;
       }

@@ -11,7 +11,8 @@
  *   RB.ui.spoken.html(line, o) → markup for one line. line: the line as authored { who, jp, en, sceneId, expr? } (a
  *        shown Kansai line is taken back to its standard words, which are the recording's key; it is shown as the
  *        speaker speaks: Suzu's Kansai when chosen); o: { tag ('div'), cls, jpCls ('jp'), enCls ('en'), whoHtml (the
- *        speaker's name, already escaped), asIs (shown in the words given, never another dialect's) }
+ *        speaker's name, already escaped), asIs (shown in the words given, never another dialect's), noEn (the
+ *        Japanese alone: the place showing it keeps its own English, as a battle's telegraph does behind Translate) }
  *   RB.ui.spoken.speak(el)     say the line of a .say-line (or of the element inside one)
  *   RB.ui.spoken.autoIn(root)  say the first line in root, when lines are spoken automatically (a new line has appeared)
  *   RB.ui.spoken.stop()        quiet (the panel closed)
@@ -49,7 +50,7 @@ RB.ui.spoken = (function () {
       (o.whoHtml ? '<span class="who">' + o.whoHtml + '</span>' : '') +
       (can ? '<button type="button" class="say-voice" data-say-voice title="Say this line" aria-label="Voice: say this line">' + icon() + '</button>' : '') +
       '<span class="' + (o.jpCls || 'jp') + ' main">' + RB.ui.jhtml(display.jp) + '</span>' +
-      '<span class="' + (o.enCls || 'en') + ' sub"><span class="enline">' + esc(en) + '</span></span>' +
+      (o.noEn ? '' : '<span class="' + (o.enCls || 'en') + ' sub"><span class="enline">' + esc(en) + '</span></span>') +
       '</' + tag + '>';
   }
   const boxOf = (el) => (el && el.closest ? el.closest('.say-line[data-say]') : null);
