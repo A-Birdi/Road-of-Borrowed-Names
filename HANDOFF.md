@@ -703,6 +703,10 @@
       the tap walks to the free far side of a counter (or `across` prop) beside them, faces it and acts as the action
       key does there (talk across). Local branch `qa036-counter` (`7bf0030`); B `counter_tap` (new). 30 placements
       beside a counter across the game are within its reach (listed by the test).
+    - **RBN-QA-037 candidate, with Robin (not pushed):** Hoshino's first visit: until the first conversation
+      (`!seen.sb.hoshino`) Hoshino stands at the north window beside the telescope (8,2, facing out) and the opening
+      looks out of it, not at the telescope; two small tables with papers spread (2,5, 6,3) join the wall chart. Then
+      the usual place (4,4). Local branch `qa037-hoshino` (`762f86c`); frames sent.
     - **RBN-QA-035 (options, Robin's choice):** `sb.hamlet_first` plays at the hamlet's south edge (22,33); the bell
       post (22,15) and Kanta (19,19) are out of frame. (A) blocking only: walk up into the square, Kanta comes over;
       (B) with RBN-QA-013's proposed `!view x y` / `!view -` for the observatory line. Not built.
