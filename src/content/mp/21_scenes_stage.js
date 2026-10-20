@@ -70,6 +70,8 @@ mp_manbe: {台本|だいほん} の {名前|なまえ} 、 {毎朝|まいあさ}
 !faceplayer
 narr: {舞台稽古|ぶたいげいこ} 。 {幕|まく} が {上|あ}がり 、 {役者|やくしゃ} たち が {台詞|せりふ} を {言|い}い{始|はじ}める 。 || The dress rehearsal. The curtain rises; the actors begin their lines.
 !shake 2
+!gesture mp_genta flinch
+?(quest.mp_actor=done) !gesture mp_saku flinch
 narr: その {時|とき} 、 {舞台|ぶたい} の {床|ゆか} が {大|おお}きく {揺|ゆ}れて 、 {止|と}まった 。 {役者|やくしゃ} たち が 、 {台詞|せりふ} の {途中|とちゅう} で 、 {一人|ひとり} ずつ {黙|だま}って いく 。 || Then the stage floor jolts and stops. One by one, the actors fall silent in the middle of their lines.
 mp_manbe: {奈落|ならく} だ ！ {舞台|ぶたい} の {下|した} の からくり が {止|と}まった 。 …… {台本|だいほん} を {見|み}て ください 。 {鉛筆|えんぴつ} の {名前|なまえ} まで 、 {下|した} へ {吸|す}い{込|こ}まれる よう に {消|き}えて いく ！ || The Understage! The machinery under the stage has stopped. …Look at the script. Even the pencilled names are fading, as if they were being drawn down below!
 ?(comp=nao) comp: {下|した} だ な 。 {名前|なまえ} の {行|い}き{先|さき} が {分|わ}かった 。 {追|お}いかける ぞ 。 || Below, then. Now we know where the names are going. After them.
