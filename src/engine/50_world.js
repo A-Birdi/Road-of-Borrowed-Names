@@ -1185,9 +1185,36 @@ RB.world = (function () {
     const near = !on && beside(tiles, p.x, p.y);
     if (near) { faceTo(p, near[0], near[1]); interact(); return; }
     const path = on ? stepOff(tiles) : bfsGoal((x, y) => !tiles.some(([a, b]) => a === x && b === y) && !!beside(tiles, x, y));
+    if (!path && target.kind === 'actor') {
+      // someone behind a counter with no free place beside them (Yae at Yukimiya's counter): the place in front of the
+      // counter, facing it, where the action key talks across it (interact); Agnes, RBN-QA-036
+      const spots = acrossSpots(target.ref);
+      const here = spots.find((sp) => sp.at[0] === p.x && sp.at[1] === p.y);
+      if (here) { faceTo(p, here.counter[0], here.counter[1]); interact(); return; }
+      const way = spots.length ? bfsGoal((x, y) => spots.some((sp) => sp.at[0] === x && sp.at[1] === y)) : null;
+      if (!way || !way.length) return;
+      const end = way[way.length - 1], sp = spots.find((q) => q.at[0] === end[0] && q.at[1] === end[1]);
+      W.path = way;
+      W.pathTarget = { tile: sp.counter, path: way };
+      return;
+    }
     if (!path) return;
     W.path = path;
     W.pathTarget = { target, path };
+  }
+  // the places a person can be talked to across a counter: a counter (or an `across` prop) beside them, and its free
+  // far side
+  function acrossSpots(n) {
+    const out = [];
+    for (const d in DIRS) {
+      const [dx, dy] = DIRS[d];
+      const cx = n.x + dx, cy = n.y + dy, c = propAt(cx, cy, true);
+      if (!c || !(c.p === 'counter' || c.across)) continue;
+      const ax = cx + dx, ay = cy + dy;
+      if (ax < 0 || ay < 0 || ax >= W.map.w || ay >= W.map.h || blocked(ax, ay, { except: W.player, ignorePlayer: true })) continue;
+      out.push({ at: [ax, ay], counter: [cx, cy] });
+    }
+    return out;
   }
   // standing on a nonblocking interactive prop: the nearest free tile beside you that is not
   // part of it (the one behind you first, so you turn round to face it)
