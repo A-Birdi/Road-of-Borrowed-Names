@@ -16,7 +16,9 @@
  * The record (s.practice.press, made at the first printing; New Game+ carries it as practice, F-03):
  *   { v: 1, version, kind, blocks: { slot: blockId }, tags, where, rx: { reader: ruleIndex }, heard: { reader: version },
  *     printed: { story: n, notice: n } }
- * A reader's waiting reaction is the flag press_rx_<reader> (so a talk option can wait on it). */
+ * A reader's waiting reaction is the flag press_rx_<reader> (so a talk option can wait on it). A rule may carry
+ * `byKind: { notice: { jp, en } }`: what it says when the page is a notice (RBN-QA-021); which rule, and so who reads
+ * the page, is chosen exactly as before. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.press = (function () {
@@ -89,12 +91,14 @@ RB.press = (function () {
     if (comp.kind === 'notice') s.flags.press_notice = true;
     return rec;
   }
+  // the words of a rule for a page of this kind (its own, unless it has a wording for the kind)
+  const said = (rule, k) => (rule && rule.byKind && rule.byKind[k]) || rule;
   // a reader's waiting reaction (or null)
   function waiting(s, readerId) {
     const rec = of(s), r = C().readers.find((x) => x.id === readerId);
     if (!rec || !r || !rec.rx || rec.rx[readerId] == null || !s.flags['press_rx_' + readerId]) return null;
     const rule = r.rules[rec.rx[readerId]];
-    return rule ? { reader: r, rule, version: rec.version } : null;
+    return rule ? { reader: r, rule, line: said(rule, rec.kind), version: rec.version } : null;
   }
   // heard: the reaction is taken off the reader, once per version
   function hear(s, readerId) {
@@ -119,10 +123,11 @@ RB.press = (function () {
     for (const r of P.readers) {
       if (!(r.rules || []).length) errs.push('press: reader ' + r.id + ' has no rules');
       for (const ru of r.rules || []) for (const t of [].concat(ru.when || [])) { const tt = t[0] === '!' ? t.slice(1) : t; if (!known.has(tt)) errs.push('press: reader ' + r.id + ' waits for an unknown tag ' + tt); }
+      for (const ru of r.rules || []) for (const k in ru.byKind || {}) if (!P.kinds[k] || !ru.byKind[k].jp || !ru.byKind[k].en) errs.push('press: reader ' + r.id + ' has a wording for ' + k + ' that is not a kind, or has no jp/en');
     }
     return errs;
   }
-  return { kind, block, offered, complete, tagsOf, lines, holds, reactions, of, circulate, waiting, hear, waitingAll, check, MAX_RX, MIN_RX };
+  return { kind, block, offered, complete, tagsOf, lines, holds, reactions, of, circulate, said, waiting, hear, waitingAll, check, MAX_RX, MIN_RX };
 })();
 
 // a reader's reaction, heard in the world: `!hook press_react <reader>` (src/content/mp/ scenes add it to the readers'
@@ -133,7 +138,7 @@ RB.hooks = RB.hooks || {};
 RB.content.spokenSources = RB.content.spokenSources || [];
 RB.content.spokenSources.push(() => {
   const out = [], P = (RB.content && RB.content.press) || { readers: [] };
-  for (const r of P.readers || []) for (const ru of r.rules || []) if (ru.jp) out.push({ scene: 'mp.press_react', who: r.who || r.id, jp: ru.jp, en: ru.en || '', file: 'press ' + r.id });
+  for (const r of P.readers || []) for (const ru of r.rules || []) for (const x of [ru].concat(Object.values(ru.byKind || {}))) if (x.jp) out.push({ scene: 'mp.press_react', who: r.who || r.id, jp: x.jp, en: x.en || '', file: 'press ' + r.id });
   return out;
 });
 RB.hooks.press_react = async (a) => {
@@ -141,5 +146,5 @@ RB.hooks.press_react = async (a) => {
   const w = s && RB.press.hear(s, a && a[0]);
   if (!w) return;
   const who = w.reader.who || w.reader.id;
-  await RB.ui.dialogue.say({ who, jp: w.rule.jp, en: w.rule.en, sceneId: 'mp.press_react' });
+  await RB.ui.dialogue.say({ who, jp: w.line.jp, en: w.line.en, sceneId: 'mp.press_react' });
 };

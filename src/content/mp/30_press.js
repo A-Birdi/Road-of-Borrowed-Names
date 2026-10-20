@@ -3,14 +3,17 @@
  * the line comes apart when the type is set by hand (practice only). Readers: people around the world who react to
  * what a page contains (its tags), never to its language; the first rule whose tags hold, the more specific first;
  * a rule with no tags is a reader's fallback, used only to reach three readers. Each reader's waiting reaction is
- * heard by talking to them (a talk option added below, waiting on press_rx_<reader>). */
+ * heard by talking to them (a talk option added below, waiting on press_rx_<reader>). A rule a notice can reach that
+ * speaks of a story carries `byKind.notice`, the same reaction worded for a notice: the rule chosen, and so who
+ * reads it, never changes with it (RBN-QA-021). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
   'use strict';
   const T = (en, jp) => ({ en, jp });
   const B = (id, tags, jp, en, pieces, o) => Object.assign({ id, tags, jp, en, pieces }, o || {});
-  const R = (when, jp, en) => ({ when, jp, en });
+  const R = (when, jp, en, notice) => Object.assign({ when, jp, en }, notice ? { byKind: { notice } } : {});
+  const N = (jp, en) => ({ jp, en }); // a rule's wording for a notice
   C.press = {
     text: {
       title: T('The press', '{刷|す}り{場|ば}'),
@@ -100,7 +103,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         R(['boatman'], '{船頭|せんどう} が {主役|しゅやく} か ！ {儂|わし} の こと か と {思|おも}った わい 。', 'A boatman in the lead! I thought it was about me.'),
         R(['kind:notice', 'festival'], '{川開|かわびら}き の {知|し}らせ 、 {見|み}た ぞ 。 {儂|わし} の {舟|ふね} も 、 {花火|はなび} の {下|した} を {通|とお}る わい 。', 'Saw the notice for the Opening. My boat\'ll pass under the fireworks too.'),
         R(['storm'], '{嵐|あらし} で {橋|はし} が {流|なが}れる {話|はなし} は 、 {笑|わら}えん のう 。 …… でも 、 {最後|さいご} まで {読|よ}んで しもうた 。', 'A bridge washed away in a storm is no laughing matter. …But I read it to the end all the same.'),
-        R([], '{読|よ}んだ よ 。 {話|はなし} は 、 {短|みじか}い ほど いい 。', 'I read it. The shorter a tale, the better.'),
+        R([], '{読|よ}んだ よ 。 {話|はなし} は 、 {短|みじか}い ほど いい 。', 'I read it. The shorter a tale, the better.',
+          N('{読|よ}んだ よ 。 {知|し}らせ は 、 {短|みじか}い ほど いい 。', 'I read it. The shorter a notice, the better.')),
       ] },
       { id: 'mb_uno', npc: 'mb_uno', map: 'mb.inn', where: T('Kawaya, the inn, Manybridge'), if: 'mb_arrived', rules: [
         R(['where:inn'], '{置|お}いて いった {紙|かみ} 、 お{客|きゃく}さん が {回|まわ}し{読|よ}み して いる よ 。', 'The sheet you left here: the guests are passing it round.'),
@@ -121,7 +125,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ] },
       { id: 'mb_masa', npc: 'mb_masa', map: 'mb.exchange', where: T('Masaya\'s stall, Manybridge'), if: 'mb_arrived', rules: [
         R(['where:stall'], '{屋台|やたい} で {配|くば}った {紙|かみ} 、 {全部|ぜんぶ} なくなった よ ！ お{客|きゃく}さん が {持|も}って いった 。', 'The sheets you gave out at the stall are all gone! The customers took them.'),
-        R(['food'], '{蕎麦|そば} が {出|で}て くる {話|はなし} は 、 {全部|ぜんぶ} いい {話|はなし} よ ！', 'Any story with soba in it is a good story!'),
+        R(['food'], '{蕎麦|そば} が {出|で}て くる {話|はなし} は 、 {全部|ぜんぶ} いい {話|はなし} よ ！', 'Any story with soba in it is a good story!',
+          N('{蕎麦|そば} の {知|し}らせ は 、 {全部|ぜんぶ} いい {知|し}らせ よ ！', 'A notice about soba is always good news!')),
         R(['funny'], '{笑|わら}った 、 {笑|わら}った ！ {屋台|やたい} の {前|まえ} で {読|よ}み{上|あ}げちゃった 。', 'I laughed and laughed! I read it out in front of the stall.'),
         R([], '{読|よ}んだ よ 。 {字|じ} が {大|おお}きくて 、 {読|よ}みやすい ね 。', 'I read it. Nice big letters, easy to read.'),
       ] },
@@ -138,7 +143,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'hana', npc: 'hana', map: 'rw.tea', where: T('The teahouse, Reedwake'), rules: [
         R(['river', 'village'], '{葦|あし} の {揺|ゆ}れる {川|かわ}べり の {村|むら} …… ここ の こと かしら 。 うれしい わ 。', 'A village by a river where the reeds sway… is that here? How lovely.'),
         R(['friend', 'makeup'], '{仲直|なかなお}り の {話|はなし} は 、 {何度|なんど} {読|よ}んで も いい わ ね 。', 'Stories about making up are good however many times you read them.'),
-        R([], '{旅|たび} の {途中|とちゅう} で 、 {話|はなし} を {書|か}いた の ね 。 {読|よ}んだ わ よ 。', 'You wrote a story on your travels. I read it.'),
+        R([], '{旅|たび} の {途中|とちゅう} で 、 {話|はなし} を {書|か}いた の ね 。 {読|よ}んだ わ よ 。', 'You wrote a story on your travels. I read it.',
+          N('{旅|たび} の {途中|とちゅう} で 、 {知|し}らせ を {刷|す}った の ね 。 {読|よ}んだ わ よ 。', 'You printed a notice on your travels. I read it.')),
       ] },
     ],
   };
