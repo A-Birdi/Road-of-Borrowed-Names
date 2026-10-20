@@ -152,12 +152,20 @@ narr: {席|せき} に {立|た}て{掛|か}けた {札|ふだ} に 、 {丁寧|
 # down at the square, a hand to the chin, a nod, an open hand; Suzu points down to Hiro's seat, holds out her
 # account book and laughs, then her thanks); you think on the traveller in white, your companion answers
 # (Nao's flat hand, Mio's shake of the head, Ren looks to the northern mountains, Suzu's open hand), and you
-# look north to the snow.
+# look north to the snow. The view itself is shown as pictures over the lines that describe it
+# (src/ui/42c_interlude_lookout.js; RBN-QA-032): the village and its firebreaks, the stage and Hiro's seat,
+# the peaks to the north; between them, the two of you on the platform.
 !music quiet_road
 !walkto comp 8 6 down
 !look pc down
+!fade out
+!interlude co_lookout village
+!fade in 600
 narr: {櫓|やぐら} の {上|うえ} から は 、 {里|さと} {全体|ぜんたい} が {見|み}えた 。 {灯籠|とうろう} の {灯|ひ} が 、 {段々畑|だんだんばたけ} の {下|した} で {揺|ゆ}れて いる 。 || From the top of the lookout you can see the whole village. The lantern lights sway below the terraces.
 narr: {刈|か}った ばかり の {火除|ひよ}け{道|みち} が 、 {月|つき} の {光|ひかり} で {白|しろ}く {浮|う}かんで いる 。 || The freshly cut firebreaks lie pale in the moonlight.
+!fade out
+!interlude -
+!fade in
 ?(comp=nao) !gesture comp lookbetween left and=right
 ?(comp=nao) comp: …… いい {眺|なが}め だ 。 {出口|でぐち} も {全部|ぜんぶ} {見|み}える 。 {水路|すいろ} 、 {街道|かいどう} 、 {北|きた} の {道|みち} 。 || …Good view. You can see every exit. The channel, the road, the north path.
 ?(comp=nao) !look comp pc
@@ -184,7 +192,13 @@ narr: {刈|か}った ばかり の {火除|ひよ}け{道|みち} が 、 {月|
 ?(comp=ren) !gesture comp palm
 ?(comp=ren) comp[smirk]: ところで 、 {下|お}りる {時|とき} は {先|さき} に {行|い}って ください 。 {梯子|はしご} で も {迷|まよ}う {自信|じしん} が あります 。 || By the way, please go first on the way down. I'm confident I can get lost even on a ladder.
 ?(comp=suzu) !gesture comp point down
+?(comp=suzu) !fade out
+?(comp=suzu) !interlude co_lookout seat
+?(comp=suzu) !fade in 600
 ?(comp=suzu) comp: …… ここ から だと 、 ヒロ の {席|せき} が よく {見|み}える わ 。 {火屋|ほや} が {一|ひと}つ 、 {灯|とも}ってる 。 || …You can see Hiro's seat from here. One globe, lit.
+?(comp=suzu) !fade out
+?(comp=suzu) !interlude -
+?(comp=suzu) !fade in
 ?(comp=suzu) !look comp pc
 ?(comp=suzu) !prop comp accountbook
 ?(comp=suzu) !gesture comp present pc prop=accountbook hold
@@ -195,7 +209,13 @@ narr: {刈|か}った ばかり の {火除|ひよ}け{道|みち} が 、 {月|
 ?(comp=suzu) !gesture comp thanks
 ?(comp=suzu) comp[smile]: …… ありがとう 。 これ は {冗談|じょうだん} じゃ ない わ 。 || …Thank you. That one isn't a joke.
 ?(comp!=suzu) !gesture pc lookroad down
+?(comp!=suzu) !fade out
+?(comp!=suzu) !interlude co_lookout seat
+?(comp!=suzu) !fade in 600
 ?(comp!=suzu) narr: {下|した} の {舞台|ぶたい} で 、 スズ が {踊|おど}って いる 。 {二十年前|にじゅうねんまえ} に {踊|おど}る はず だった {演目|えんもく} だ と 、 {後|あと} で {聞|き}いた 。 || Down on the stage, Suzu is dancing. Later you'll hear it was the piece she was meant to dance twenty years ago.
+?(comp!=suzu) !fade out
+?(comp!=suzu) !interlude -
+?(comp!=suzu) !fade in
 !look pc comp
 !gesture pc chin
 pc: {白|しろ}い {服|ふく} の {旅人|たびびと} …… {静寂|しじま} の {書庫|しょこ} の {番人|ばんにん} かも しれない 。 || A traveller in white… it might be the keeper of the Still Archive.
@@ -208,12 +228,16 @@ pc: {白|しろ}い {服|ふく} の {旅人|たびびと} …… {静寂|しじ
 ?(comp=suzu) !gesture comp palm
 ?(comp=suzu) comp: {預|あず}かる って 、 {返|かえ}す {約束|やくそく} の {言葉|ことば} の はず な のに ね 。 {返|かえ}して もらい に {行|い}こう 。 {全部|ぜんぶ} 。 || "Keeping" something is supposed to mean you'll give it back. Let's go and get it all back.
 !gesture pc lookroad up
+!fade out
+!interlude co_lookout north
+!fade in 600
 narr: {北|きた} の {峰|みね} に は 、 もう {雪|ゆき} が {光|ひか}って いた 。 || Snow was already gleaming on the northern peaks.
 !set ch3_done
 !quest co_main done
 !travel cinder
 !autosave
 !fade out
+!interlude -
 !card {翌朝|よくあさ} || The next morning
 !warp co.village 24 20 down
 !music cinder
