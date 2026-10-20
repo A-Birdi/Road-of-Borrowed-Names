@@ -6185,6 +6185,12 @@
   "jp": "{読|よ}んだ よ 。 {話|はなし} は 、 {短|みじか}い ほど いい 。",
   "en": "I read it. The shorter a tale, the better."
  },
+ "press#13i90b6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed 2026-10-20 (RBN-QA-011 ferry-route lines, RBN-QA-021 notice replies): readings checked against the game lexicon (渡し船 わたしぶね, 行き先 いきさき, 知らせ しらせ, 刷る する, 蕎麦 そば), standard textbook grammar (のだ narration, ほど いい, の ね / わ よ registers as each speaker's other lines)",
+  "jp": "{読|よ}んだ よ 。 {知|し}らせ は 、 {短|みじか}い ほど いい 。",
+  "en": "I read it. The shorter a notice, the better."
+ },
  "press#z3hljq": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
@@ -6263,6 +6269,12 @@
   "jp": "{蕎麦|そば} が {出|で}て くる {話|はなし} は 、 {全部|ぜんぶ} いい {話|はなし} よ ！",
   "en": "Any story with soba in it is a good story!"
  },
+ "press#1i9mqjc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed 2026-10-20 (RBN-QA-011 ferry-route lines, RBN-QA-021 notice replies): readings checked against the game lexicon (渡し船 わたしぶね, 行き先 いきさき, 知らせ しらせ, 刷る する, 蕎麦 そば), standard textbook grammar (のだ narration, ほど いい, の ね / わ よ registers as each speaker's other lines)",
+  "jp": "{蕎麦|そば} の {知|し}らせ は 、 {全部|ぜんぶ} いい {知|し}らせ よ ！",
+  "en": "A notice about soba is always good news!"
+ },
  "press#1hyfcwn": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
@@ -6328,6 +6340,12 @@
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
   "jp": "{旅|たび} の {途中|とちゅう} で 、 {話|はなし} を {書|か}いた の ね 。 {読|よ}んだ わ よ 。",
   "en": "You wrote a story on your travels. I read it."
+ },
+ "press#1bkghxh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed 2026-10-20 (RBN-QA-011 ferry-route lines, RBN-QA-021 notice replies): readings checked against the game lexicon (渡し船 わたしぶね, 行き先 いきさき, 知らせ しらせ, 刷る する, 蕎麦 そば), standard textbook grammar (のだ narration, ほど いい, の ね / わ よ registers as each speaker's other lines)",
+  "jp": "{旅|たび} の {途中|とちゅう} で 、 {知|し}らせ を {刷|す}った の ね 。 {読|よ}んだ わ よ 。",
+  "en": "You printed a notice on your travels. I read it."
  },
  "encounter:mp.lifts#1rjp5sg": {
   "status": "self-reviewed",

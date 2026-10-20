@@ -149,6 +149,18 @@
   "jp": "{北|きた} が だめ なら 、 {東|ひがし} よ 。 {道|みち} は {一|ひと}つ じゃ ない わ 。",
   "en": "If north's no good, then east. There's more than one road."
  },
+ "scene:mb.north_washed#1uojw8z": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed 2026-10-20 (RBN-QA-011 ferry-route lines, RBN-QA-021 notice replies): readings checked against the game lexicon (渡し船 わたしぶね, 行き先 いきさき, 知らせ しらせ, 刷る する, 蕎麦 そば), standard textbook grammar (のだ narration, ほど いい, の ね / わ よ registers as each speaker's other lines)",
+  "jp": "{東|ひがし} の {八百橋|やおばし} へ は 、 {歩|ある}いて は {行|い}けない 。 {港|みなと} から 、 テツ の {渡|わた}し{船|ぶね} で {行|い}く の だ 。",
+  "en": "Manybridge lies east, but not on foot: Tetsu's ferry goes there from the harbour."
+ },
+ "scene:mb.north_washed#d2ei9m": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed 2026-10-20 (RBN-QA-011 ferry-route lines, RBN-QA-021 notice replies): readings checked against the game lexicon (渡し船 わたしぶね, 行き先 いきさき, 知らせ しらせ, 刷る する, 蕎麦 そば), standard textbook grammar (のだ narration, ほど いい, の ね / わ よ registers as each speaker's other lines)",
+  "jp": "{渡|わた}し{船|ぶね} の {板|いた} に 、 {東|ひがし} へ の {新|あたら}しい {行|い}き{先|さき} 。 {港|みなと} の テツ に {聞|き}こう 。",
+  "en": "A new line on the ferry board: east. Ask Tetsu at the harbour."
+ },
  "scene:mb.arrive#cpwbl": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
