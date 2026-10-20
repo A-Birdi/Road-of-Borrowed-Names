@@ -1187,7 +1187,11 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   ferry; an old save at the fork; six chapters; after `mb2_done`; each through a save written and loaded again);
   B `staging_chapters --ch=2` 1678/0, then `--only=sg.omi_final` 25/0 and `--only=sg.ch2_end` 71/0 on the final source;
   U `mb_ch3` 76/0, `quest_guide` 150/0, `travel_rules` 699/0, `voice_production` 27/0, `spoken_sites` 33/0. In source,
-  for the next build. RETESTED_BY_AGNES: RBN-QA-002 (the stand
+  for the next build. RBN-QA-014: in the Tally Exchange mediation, Suzu's "Break the tension" could come before the
+  tally (c3) or Gonta's word (c4) and named the east storehouse; her line now names no storehouse ("Rice that slips off
+  without a word? It's even quieter than Gonta."), its effect unchanged; English only, in no recording list; U `mb_ch3`
+  78/0 (a check that no companion line said before c3/c4 names the storehouse, and that the joke still opens Gonta),
+  `encounters` 184/0; B `manybridge` 3/0. In source, for the next build. RETESTED_BY_AGNES: RBN-QA-002 (the stand
   where every stamp is earned), RBN-QA-004 (the nudge "Go to Lantern Hall." and "… Head north-west first."; the
   false message is gone; Agnes does not claim the marker's drawing).
 

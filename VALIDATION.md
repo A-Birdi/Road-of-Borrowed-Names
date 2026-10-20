@@ -5133,6 +5133,17 @@ Yasu's story, when listening, has not begun being spoken."
     the control (tests/e2e/staging_runner.mjs gains the opt-in `edition`, `notSaid` and `journal`). U `mb_ch3` 76/0,
     `quest_guide` 150/0, `travel_rules` 699/0, `voice_production` 27/0, `spoken_sites` 33/0; B `manybridge` 3/0 (first
     version). In source, not yet in a deployed build.
+  - RBN-QA-014 (on CC-005's build; the first Tally Exchange mediation with Suzu, "take it one at a time" then
+    "Break the tension"): at the second exchange, with only Heiji's empty west storehouse and Fujiko's three sendings on
+    record, Suzu said "Rice that hides in the east storehouse? It's shyer than Gonta.", naming the answer that the tally
+    (c3, the conditional east fallback) and Gonta (c4) reveal later. Her action has no `when` on the evidence (it can be
+    the first thing she does) and companion actions say one line (src/engine/97_encounter.js `socialCompanion`), so the
+    line itself is now safe at any point: "Rice that slips off without a word? It's even quieter than Gonta." Its effect
+    (understanding +1, Gonta listening), the choices, scoring, discovery, conclusions and rewards are unchanged; it is
+    English only, in no recording list (supplement probe: 0 new recordings). U `mb_ch3` 78/0: no companion line
+    available before c3/c4 names the storehouse (the old line fails this check; Ren's Storehouse Bridge line is a
+    different fact and passes), and Suzu's joke played first says the new line and still opens Gonta; U `encounters`
+    184/0, `spoken_sites` 33/0; B `manybridge` 3/0 on a scratch build. In source, not yet in a deployed build.
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
   - RBN-QA-004 RETESTED_BY_AGNES on CC-005's build: the nudges read "Go to Lantern Hall." and "… Head north-west

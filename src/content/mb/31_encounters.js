@@ -80,11 +80,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       },
       // Wait (taught here): Gonta speaks only into a silence; first where the rice went, then what he has been hiding
       wait: { when: { stance: { 'n:gonta': 'closed' } }, effect: { reveal: 'c4', stance: { 'n:gonta': 'listening' } }, says: { en: 'In the quiet, Gonta speaks up at last: "The west storehouse was shut. So I took it to the east one."' } },
+      // (Suzu's joke can come before the tally or Gonta's word, so it names no storehouse: Agnes, RBN-QA-014)
       companion: {
         nao: [{ id: 'nao_route', name: say('{道|みち} を {確|たし}かめる', 'Walk the route through'), desc: 'Nao goes over the barge\'s route out loud.', when: { claims: 'c4' }, once: true, effect: { reveal: 'c5', understanding: 1, stance: { 'n:gonta': 'listening' } }, says: { en: 'Nao: "Three barges, three trips. But the second one came back an hour late, didn\'t it, Gonta?" Gonta\'s shoulders drop. "…I dropped the crate of floats. I took the long way so nobody would count."' } }],
         mio: [{ id: 'mio_calm', name: say('{落|お}ち{着|つ}かせる', 'Calm Fujiko'), desc: 'Mio speaks to Fujiko quietly.', when: { stance: { 'n:fujiko': 'heated' } }, effect: { stance: { 'n:fujiko': 'listening' }, understanding: 1 }, says: { en: 'Mio: "Nobody here thinks you\'re lying." Fujiko sits back.' } }],
         ren: [{ id: 'ren_plaque', name: say('{札|ふだ} の こと を {話|はな}す', 'Speak of the plaques'), desc: 'Ren explains how names fade.', when: { not: { claims: 'c6' } }, once: true, effect: { reveal: 'c6', understanding: 1 }, says: { en: 'Ren: "Names don\'t just fade on lanterns. The Storehouse Bridge\'s plaque is blank — a boatman could turn too early there."' } }],
-        suzu: [{ id: 'suzu_joke', name: say('{冗談|じょうだん} を {言|い}う', 'Break the tension'), desc: 'Suzu makes them laugh.', once: true, effect: { understanding: 1, stance: { 'n:gonta': 'listening' } }, says: { en: 'Suzu: "Rice that hides in the east storehouse? It\'s shyer than Gonta." Even Gonta almost smiles.' } }],
+        suzu: [{ id: 'suzu_joke', name: say('{冗談|じょうだん} を {言|い}う', 'Break the tension'), desc: 'Suzu makes them laugh.', once: true, effect: { understanding: 1, stance: { 'n:gonta': 'listening' } }, says: { en: 'Suzu: "Rice that slips off without a word? It\'s even quieter than Gonta." Even Gonta almost smiles.' } }],
       },
       drift: [
         { when: { all: [{ rounds: 2 }, { stance: { 'n:fujiko': 'heated' } }] }, effect: { stance: { 'n:heiji': 'heated' } }, says: { en: 'Fujiko raises her voice; Heiji raises his to match.' } },

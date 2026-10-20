@@ -126,6 +126,17 @@ export default async (t) => {
     const want = C.encounters['mb.dispute'].conclusions.map((c) => c.id);
     t.eq(want.filter((id) => !reached.has(id)), [], 'every conclusion is reachable: ' + [...reached].join(', '));
     for (const comp of ['nao', 'mio', 'ren', 'suzu']) t.ok((C.encounters['mb.dispute'].social.companion[comp] || []).length > 0 && (C.encounters['mb.passage'].social.companion[comp] || []).length > 0, comp + ' has something of their own in both conversations');
+    // a companion's line that can come before the tally (c3) or Gonta's word (c4) does not name where the rice went
+    // (Agnes, RBN-QA-014: Suzu's joke named the east storehouse at the second exchange)
+    const early = Object.values(C.encounters['mb.dispute'].social.companion).flat().filter((a) => !/c3|c4/.test(JSON.stringify(a.when || {})));
+    t.eq(early.filter((a) => /\beast\b|storehouse\?|in the (east|west) one/i.test((a.says && a.says.en) || '')).map((a) => a.id), [], 'no companion line said before the east storehouse is known names it (' + early.map((a) => a.id).join(', ') + ')');
+    {
+      const s3 = camp({ comp: 'suzu', words: ['hikari', 'mizu'] });
+      const x = E.begin('mb.dispute', s3);
+      const ev3 = play(x, s3, cardOf(x, s3, (c) => c.kind === 'wait'), { comp: { act: 'suzu_joke' } });
+      const said = ev3.fx.concat(ev3.cfx || []).find((f) => f.t === 'cact' && f.id === 'suzu_joke');
+      t.ok(said && /quieter than Gonta/.test(said.en) && x.enc.social.stance['n:gonta'] !== 'closed', 'Suzu\'s joke, first thing: no storehouse named, and Gonta still opens up (' + (said && said.en) + ')');
+    }
     // every conclusion moves the story on: the rice is found whatever happens (21_scenes_main.js)
     const after = C.scenes['mb.dispute_after'].cmds.map((c) => c.op + ':' + (c.args || []).join(' '));
     t.ok(after.some((o) => o === 'set:mb_rice_found') && after.some((o) => o === 'quest:mb_main 3'), 'after any conclusion: the rice found, the story on');

@@ -635,7 +635,8 @@
       weather line), 011 (HIGH: in a twelve-chapter journey the Chapter 2 journal and Omi pointed north, where the road
       is washed out until Manybridge; now the journal and a new Omi line point to Tetsu's ferry east, and at the fork a
       new narrator line tells the ferry apart from the east road and corrects the journal once for older saves; SL8;
-      B `route_after_ch2`), 012's copy (the keepsake slip's page name). 001–005, 007, 008 are live in CC-005;
+      B `route_after_ch2`), 012's copy (the keepsake slip's page name), 014 (Suzu's mediation joke no longer names the
+      east storehouse before the evidence does). 001–005, 007, 008 are live in CC-005;
       009–012 are in source for the next candidate. REQUIREMENTS.md XP147; VALIDATION.md "QA (Agnes …)".
       Agnes's review boundaries (2026-10-20): gameplay fixes carry a cross-game impact assessment; art goes to Robin as
       a before/after candidate first; a material change to intended behaviour needs Robin's approval; keep source,
