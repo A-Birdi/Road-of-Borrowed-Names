@@ -640,8 +640,10 @@
       (Tomi's lantern task also reads the place first, through each family's `also`; `8ad05f1`), 021 (a printed Notice
       is called a notice: three press readers' notice wordings, `byKind.notice`, and the press's note; `8132972`; SL9),
       022 (Cinder's synthesis where it fits whatever clue is last; `d357e96`), 025 (HIGH: the Great Kiln's doorway is
-      its way in once the seal is broken, and the kiln step's guide; `374196e`). 001–005, 007, 008 are live in CC-005;
-      009–012, 014, 018's flow, 019, 021, 022 and 025 are in source for the next candidate. REQUIREMENTS.md XP147; VALIDATION.md "QA (Agnes …)".
+      its way in once the seal is broken, and the kiln step's guide; `374196e`), 028 (Shino's tray thanks and Nao's hint
+      wait for the invitations to be sorted; `53770cf`, `76352e5`). 001–005, 007, 008 were live in CC-005; 009–012,
+      014, 018's flow, 019, 021, 022 and 025 are live in **CC-006** (commit `13d8af2`, `index.html` `79e0ef32…`, built
+      from `621aef1`, Pages deployment success 12:03Z; CC-018 on the issue); 028 is in source for the next candidate. REQUIREMENTS.md XP147; VALIDATION.md "QA (Agnes …)".
       Agnes's review boundaries (2026-10-20): gameplay fixes carry a cross-game impact assessment; art goes to Robin as
       a before/after candidate first; a material change to intended behaviour needs Robin's approval; keep source,
       built and retested states distinct.
@@ -666,6 +668,14 @@
       glass fills the doorway and runs over its frame; once broken, the doorway stands open, dark, the heat glowing
       inside, glass left on the frame and the step. Local branch `qa024-kiln` (`c6ddc17`). On approval, cherry-pick,
       build, and run B `kiln_door` (15/0 on the candidate) and `story_ch3`.
+    - **RBN-QA-027 candidate, with Robin (not pushed):** with Suzu, `co.suzu_ask` (Hiro's story) said "Outside the
+      workshop…" while you stood inside by Hiro and Isao; now you walk to the door, fade, and her lines are said just
+      outside the workshop's door in co.village (you 43,19, Suzu 42,19), where you are left. Local branch `qa027-suzu`
+      (`84f7be9`); B `suzu_ask_outside` 15/0. On approval, cherry-pick, build, and run it with `story_ch3` and
+      `staging_chapters --ch=3`.
+    - **Shino's idle line (found in RBN-QA-028's review, Robin's call):** before the letters task opens (met, chronicle
+      not read) her idle line already says "The invitations are all out"; a fix needs a new line or her introduction
+      again.
     - **RBN-QA-026 candidate, with Robin (not pushed):** Koharuno's empty houses (`lq.kh_arrive`: "their thatch gone
       grey") drawn as lived-in Reedwake houses. Opt-in `aged` house (src/engine/29_structart.js; the kit's boxes, the
       light's window glow and the night's window light skip it): grey thatch, weathered timber, dusty dark panes, no
@@ -674,7 +684,11 @@
     - **The guide's far fallback** (RBN-QA-025, a separate review): with a step's needs too deep to resolve it names a
       later step on an unreachable map; the kiln step now names its own places (`atIf`).
     - **Owner-approved language audit (report only):** Claude's game-wide written-Japanese/grammar/furigana review; Local
-      shares its reader-comparison findings. Send corrections, if approved, as SC10-SC14.
+      shares its reader-comparison findings (CL-027, CL-034). Phase 1 done (scratchpad report, summarised in CC-019:
+      23-family inventory; Local's 114 priority headwords judged, 821 contexts read of 17,711; 25 furigana errors
+      proposed: 何 なに→なん ×23, 後 あと→ご ×2; send-correction candidates). Phase 2 (the full contextual review,
+      family by family, "examined N of M") is under way: 2a furigana consistency first. No fixes from findings alone;
+      send corrections, if Robin approves, as SC10-SC14.
     - **RBN-QA-012's second sign (Agnes 09:39Z):** the terraces' crossroads (`co.terraces` 18,17) narrates four arms;
       the prop is the shared rectangular `sign`. Both signs become opt-in variants (three arms in Reedwake, four on the
       terraces), placed only there, with their own directions.

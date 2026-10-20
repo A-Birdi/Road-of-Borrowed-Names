@@ -5344,6 +5344,44 @@ Yasu's story, when listening, has not begun being spoken."
     candidate's build: B `kiln_door` 15/0; `validate.mjs` no errors; matched frames at 1180x757 (sealed, broken, broken
     after a save is loaded) against CC-005's build sent to Robin privately. Collision, the lock and exit, the seal's scene
     and task, the guide, lines and audio unchanged.
+  - **Candidate CC-006 (live):** commit `13d8af2`, `index.html` sha256 `79e0ef328d435df79784a0667b05a8a030df58c872c621c2e1a1ed48e945ec2f`
+    built from `621aef1` (a fresh build of HEAD's source gives the same bytes); Pages deployment 7199137591 success
+    12:03:14Z (the live bytes were not fetched: the host is not reachable from Claude's environment). On this exact file
+    (B): `kiln_door` 15/0, `cinder_clue_order` 40/0, `route_after_ch2` 29/0, `manybridge` 3/0, `manybridge2` 4/0,
+    `story_ch3` all profiles and companions passed, `side_ch3` passed, `quest_guide` all passed, `hall_entry` all ok,
+    `lighthouse_top` 106/0, `spoken_lines` 30/0, `staging_chapters --ch=2` 1678/0, `--ch=3` 2267/0, `living_world`
+    9/0, `sequence_world --only mb1.named,mb1.dusk,mb2.press,mb2.fireworks` 387/0. U whole suite on the source:
+    56,193 passed, 3 failed before three record fixes (`621aef1`): `overworld_geometry` re-recorded for two deliberate
+    geometry changes only (QA-007's lighthouse stair exit, already red on CC-005's source; QA-025's kiln door), 3/0;
+    `review_ledger` (five new lines self-reviewed) 2/0; `scene_manifest` (regenerated; QA-007's scene) 1023/0;
+    `validate.mjs` no errors. Posted as CC-018; CC-019 carries the owner's items.
+  - RBN-QA-027 (Agnes 11:18Z, CC-005, Suzu's "A Seat Kept Until Spring"): after Hiro's story `co.suzu_ask` walked you
+    and Suzu to 6,8/5,8 inside the workshop, then the narrator said "Outside the workshop, Suzu looks back just once."
+    and her private lines played there, by Hiro and Isao; free control resumed inside. Candidate (local branch
+    `qa027-suzu`, `84f7be9`, not pushed; with Robin): with Suzu, a walk to the door, a fade, `!warp co.village 43 19`
+    (Suzu placed at 42,19), her look back at the door (42,17), her lines there; left outside. A script warp runs no
+    arrival scenes. B `suzu_ask_outside` 15/0 on the candidate's build (lines' places, free outside, the door clear,
+    back in to Hiro and Isao once each and Hiro's idle line, saved and loaded, Nao unchanged); `validate.mjs` no errors;
+    frames (CC-005 against the candidate at the line, the ribbon line and after) sent to Robin. No line, flag or audio
+    changed (r1-ad1bf01337c4937b kept).
+  - RBN-QA-028 (Agnes 11:26Z and 11:30Z): the teahouse's fifth customer, Shino, thanked you for the invitations before
+    the post house's letters task had started; and Nao's cameo there still asked you to help with them after they were
+    sorted. Fix (`53770cf`, `76352e5`, in source for the next build): a customer's `thanks` may be a list of
+    `{ if, jp, en }` (src/ui/75_activities.js); Shino's thanks for the invitations waits for `co_letters_done`, before
+    that 「ありがとう。甘いものは、助かるわ。」 (new written text in the activity panel; activity thanks are in no
+    recording list); Nao's pointing, hint and "Not always…" line play only while `!co_letters_done` (kept recorded
+    lines). B `shino_thanks` 28/0 (new; on a build of the fix: every tier in both states by clicking the tray, Nao's
+    cameo in both states); on CC-005's build 4 fail. U `scene_manifest` 1023/0, `spoken_sites` 33/0,
+    `voice_production` 27/0, `review_ledger` 2/0; `validate.mjs` no errors; voice probe 0 new recordings. Found in the
+    same review, not changed (Robin's call): Shino's idle line says "The invitations are all out" before the task opens.
+  - The language audit, phase 1 (report only; Claude, with a read-only sub-agent; report in the session scratchpad,
+    summarised in CC-019): a 23-family inventory of written Japanese (14,182 scene lines in 3,224 scenes, 918 reply
+    options, 1,321 Kansai pairs, 405 challenge sets, 357 drills, a 6,964-entry lexicon, 31 kana groups, enumerable and
+    uncoverable families named); Local's 114 priority headwords judged by meaning (821 contexts read in full of 17,711
+    occurrences, plus searches over all occurrences for the risky senses): 89 send corrections, 10 names, 10 variants,
+    3 Kansai kept, 1 furigana error (何 なに→なん in 23 lines; with 後 あと→ご in 2), 1 ambiguous; Claude spot-checked
+    the 何/後 lines in source. Non-native judgement; 13 questions for a native specialist. Nothing changed. Local's CL-034
+    (Reedwake Qwen screen: 灯守, Nao's 桟橋, 灰実, 機, 杼, 水車小屋) noted as send-correction candidates.
   - RBN-QA-026 (Agnes 11:04Z, CC-005, Koharuno via Ume's persimmon → Old Yasu): `lq.kh_arrive` says the houses are ones
     "where nobody lives, their thatch gone grey", but the four were drawn as Reedwake's lived-in houses (bright thatch,
     flower boxes and a planter from the region kit, a lamp behind the panes by day). Candidate (local branch
