@@ -26,8 +26,8 @@ RB.combat = (function () {
   // read by tools/voice/lines.mjs; Robin, 2026-10-19: every line spoken). An authored conclusion with only English has
   // nothing to say aloud. Since 2026-10-20 also every telegraph (what a creature is about to do, in its own words at
   // each learner level, else the default words for the move: content.intentText), shown with a Voice button in the
-  // badge's card, the telegraph panel and the task slip, and a creature of a group settling, in the exchange log;
-  // the creatures as an encounter brings them (its own variation of a creature: src/engine/97_encounter.js creature)
+  // badge's card and the telegraph panel (the task slip keeps them as they were), and a creature of a group settling,
+  // in the exchange log; the creatures as an encounter brings them (its variation: src/engine/97_encounter.js creature)
   // and the conclusion of an encounter played on this screen (one with Japanese; none has any yet). The companion's
   // offers after a defeat ("Explain its pattern", "Suggest an answer") and its turn are said in English only.
   const BATTLE_SCENE = 'code.battle';
@@ -420,7 +420,8 @@ RB.combat = (function () {
     const states = compact ? statusList(i) : [];
     let h = '<div class="it-label">' + (compact ? '<span class="it-kind">' + face + '</span>' : kw(kkey('intent', i), 'it-kind', face + Q())) +
       states.map((x) => '<span class="st">' + esc(x.label) + '</span>').join('') + '</div>';
-    if (line.jp) h += toldHtml(line, 'it-jp');
+    // (on the task slip the words stay as they were: the slip opens the language step, whose first control takes focus)
+    if (line.jp) h += compact ? '<div class="it-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>' : toldHtml(line, 'it-jp');
     if (line.en) h += enShown() ? '<div class="it-en">' + esc(line.en) + '</div>' : (compact ? '' : '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>');
     const nx = st.foes[i].nextIntents || [];
     if (!compact && RB.game.s.comp === 'nao' && nx.length) h += '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(nx.map(moveLabel).join(', then ')) + '.”</span></div>';
