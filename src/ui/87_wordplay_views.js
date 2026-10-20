@@ -15,6 +15,8 @@ RB.ui.wordplay = RB.ui.wordplay || {};
   const SH = () => RB.shiritori;
   const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
   const J = (jp) => (jp ? RB.ui.jhtml(jp) : '');
+  // the companion's line: a spoken line under the table's scene id (src/ui/22c_spoken_panel.js; RB.wordplay.SCENE)
+  const SAY = (s, l, o) => RB.ui.spoken.html(Object.assign({}, l, { who: s.comp, sceneId: WP().SCENE }), Object.assign({ cls: 'wp-say', whoHtml: esc(who(s.comp)) }, o));
   const lab = (k, en) => U.lab(k, en);
   const KANA = (k) => U.KANA(k);
   const chr = (id) => ((RB.content && RB.content.chars) || {})[id] || null;
@@ -24,7 +26,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
   function rulesHtml(s) {
     const uniq = ((RB.content.wordplay && RB.content.wordplay.lines) || []).filter((l) => l.comp === s.comp && l.cat === 'rules');
     return '<section class="wp-rules"><h3 tabindex="-1">' + lab('rules') + ' <span class="en">The Roadside House Rules</span></h3>' +
-      uniq.map((l) => '<div class="wp-say"><span class="who">' + esc(who(s.comp)) + '</span><span class="jp">' + J(l.jp) + '</span><span class="en">' + esc(l.en) + '</span></div>').join('') +
+      uniq.map((l) => SAY(s, l, { asIs: true })).join('') +
       '<ol class="wp-rulelist">' +
       '<li>A game starts from a neutral <b>starter</b> word. The table says who responds first; then you take turns.</li>' +
       '<li>Each word must <b>begin with the last kana of the word before</b> — of its reading, never the last kanji or a romaji letter. The kana you need is always shown.</li>' +
@@ -113,10 +115,10 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     }
     const l = WP().line(s, 'rules', 'demo');
     await U.show(V, '<section class="wp-demo"><h3 tabindex="-1">' + lab('demo') + '</h3>' +
-      (l ? '<div class="wp-say"><span class="who">' + esc(who(s.comp)) + '</span><span class="jp">' + J(l.jp) + '</span><span class="en">' + esc(l.en) + '</span></div>' : '') +
+      (l ? SAY(s, l) : '') +
       (steps ? '<ol class="wp-rulelist">' + steps + '</ol>' : '<p class="muted">The word banks are not installed, so there is nothing to show yet.</p>') +
       '<div class="row-acts"><button class="pbtn primary" data-wp="go" data-autofocus>' + I('practice') + lab('start') + '</button></div></section>',
-    (el, done) => el.addEventListener('click', (e) => { if (e.target.closest('[data-wp=go]')) done({ act: 'go' }); }), { closeAct: 'go' });
+    (el, done) => { RB.ui.spoken.autoIn(el); el.addEventListener('click', (e) => { if (e.target.closest('[data-wp=go]')) done({ act: 'go' }); }); }, { closeAct: 'go' });
   };
 
   // ---- "Learn a few more words together" (§11.4): shown outside a match, then counted as met ---------------

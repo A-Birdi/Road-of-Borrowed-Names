@@ -371,11 +371,13 @@ RB.cases = (function () {
   RB.hooks.case_bookmark = async (args) => { bookmark(S(), args[0], true); };
   // !hook case_resolve <id> [method]: var._res = 1 the first time
   RB.hooks.case_resolve = async (args) => { const s = S(); s.vars._res = resolve(s, args[0], args[1] || null) ? 1 : 0; };
-  // !hook case_ack <id>: the acknowledgement names only what was actually observed
+  // !hook case_ack <id>: the acknowledgement names only what was actually observed. Shown under the cases' scene id
+  // (a scene id is a file name on the voice site: no ':'); no case defines an acknowledgement yet, so nothing is listed
+  // for recording under it: a case that adds one lists every line it can make (RB.content.spokenSources)
   RB.hooks.case_ack = async (args) => {
     const s = S(), cd = def(args[0]);
     if (!cd || !cd.acknowledge) return;
-    for (const l of cd.acknowledge(s, rec(s, args[0]), api) || []) await RB.ui.dialogue.say({ who: l.who === 'comp' ? (s.comp || s.provisional || 'narr') : l.who, expr: l.expr || null, jp: l.jp, en: l.en, sceneId: 'case:' + args[0] });
+    for (const l of cd.acknowledge(s, rec(s, args[0]), api) || []) await RB.ui.dialogue.say({ who: l.who === 'comp' ? (s.comp || s.provisional || 'narr') : l.who, expr: l.expr || null, jp: l.jp, en: l.en, sceneId: 'code.case' });
   };
   // !hook case_react <id>: the companion's reaction (the Company's say() when it exists)
   RB.hooks.case_react = async (args) => {
@@ -385,7 +387,8 @@ RB.cases = (function () {
     if (RB.company && RB.company.say) { await RB.company.say(s, ev); return; }
     const pick = reaction(s, id);
     if (!pick) return;
-    for (const l of pick.lines) await RB.ui.dialogue.say({ who: l.who || s.comp || s.provisional, expr: l.expr || null, jp: l.jp, en: l.en, sceneId: 'case:' + id });
+    // (the reaction's own recording: the companions' scene id, as RB.company.say shows it, src/engine/58_companion.js)
+    for (const l of pick.lines) await RB.ui.dialogue.say({ who: l.who || s.comp || s.provisional, expr: l.expr || null, jp: l.jp, en: l.en, sceneId: 'code.comp' });
   };
 
   const api = {

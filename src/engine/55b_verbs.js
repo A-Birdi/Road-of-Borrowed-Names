@@ -341,9 +341,10 @@ RB.verbs = (function () {
       for (const g in spec.gates) {
         const flip = (to) => (st) => { const n = Object.assign({}, st, { ['g_' + g]: to }); return Object.assign({ ['g_' + g]: to }, settle(spec, n)); };
         const gj = spec.gates[g];
-        rules.push({ act: 'open:' + g, obj: g, if: { ['g_' + g]: 'shut' }, set: flip('open'), say: (b, a) => [moved(spec, b, a, T('You open the ' + gj.en + '.', gj.jp + ' を {開|あ}けた 。'))] });
-        rules.push({ act: 'shut:' + g, obj: g, if: { ['g_' + g]: 'open' }, set: flip('shut'), say: (b, a) => [moved(spec, b, a, T('You close the ' + gj.en + '.', gj.jp + ' を {閉|し}めた 。'))] });
-        if (gj.weave) rules.push({ weave: gj.weave, obj: g, set: (st) => flip(st['g_' + g] === 'open' ? 'shut' : 'open')(st), say: (b, a) => [moved(spec, b, a, T('The ' + gj.en + ' moves.', gj.jp + ' が {動|うご}いた 。'))] });
+        // (s: the journey, whose map says which basins are far off; RB.fieldweave passes it to say)
+        rules.push({ act: 'open:' + g, obj: g, if: { ['g_' + g]: 'shut' }, set: flip('open'), say: (b, a, s) => [moved(spec, b, a, T('You open the ' + gj.en + '.', gj.jp + ' を {開|あ}けた 。'), s && s.map)] });
+        rules.push({ act: 'shut:' + g, obj: g, if: { ['g_' + g]: 'open' }, set: flip('shut'), say: (b, a, s) => [moved(spec, b, a, T('You close the ' + gj.en + '.', gj.jp + ' を {閉|し}めた 。'), s && s.map)] });
+        if (gj.weave) rules.push({ weave: gj.weave, obj: g, set: (st) => flip(st['g_' + g] === 'open' ? 'shut' : 'open')(st), say: (b, a, s) => [moved(spec, b, a, T('The ' + gj.en + ' moves.', gj.jp + ' が {動|うご}いた 。'), s && s.map)] });
       }
       const goal = {};
       for (const k in spec.goal || {}) goal['b_' + k] = spec.goal[k];
@@ -372,13 +373,14 @@ RB.verbs = (function () {
   MEDIUM.air = MEDIUM.steam;
   const mediumOf = (spec) => MEDIUM[spec && spec.medium] || MEDIUM.water;
   const levelWord = (spec, n) => mediumOf(spec).levels[n] || '';
-  // what moved, in words: each basin whose level changed, near or far (the effect is traced, W13)
-  function moved(spec, b, a, first) {
+  // what moved, in words: each basin whose level changed, near or far (the effect is traced, W13); here: the map the
+  // player is on (else the journey's)
+  function moved(spec, b, a, first, here) {
     const lines = [first], M = mediumOf(spec);
     for (const k in spec.basins) {
       const d = (+a['b_' + k] || 0) - (+b['b_' + k] || 0);
       if (!d) continue;
-      const n = spec.basins[k], far = n.map !== (RB.game && RB.game.s ? RB.game.s.map : n.map), w = d > 0 ? M.more : M.less;
+      const n = spec.basins[k], far = n.map !== (here != null ? here : RB.game && RB.game.s ? RB.game.s.map : n.map), w = d > 0 ? M.more : M.less;
       lines.push(T((far ? 'Somewhere off, the ' : 'The ') + n.en + ' ' + w.en + ' (' + M.levels[a['b_' + k]] + ').', (far ? '{遠|とお}く で 、 ' : '') + n.jp + ' の ' + w.jp + ' 。'));
     }
     return { en: lines.map((l) => l.en).join(' '), jp: lines.map((l) => l.jp).join(' ') };
@@ -634,17 +636,73 @@ RB.verbs = (function () {
     if (!id || !SPECS[id]) return;
     if (RB.verbSheets && RB.verbSheets.open) { RB.ui.dialogue.hide(); await RB.verbSheets.open(id, { part: pr && pr.o ? pr.o.part : null }); }
   };
+  // What an action says outside the field puzzles' own lines (those are RB.fieldweave.SCENE's) is the narrator's line
+  // like any other: shown under one scene id, so its recording is found, and every one listed for recording
+  // (RB.content.spokenSources, read by tools/voice/lines.mjs): what a marked place of a layered site shows when you
+  // reach it (here), and what an action's sheet says of itself (src/ui/57b_verbs.js). Fixtures (?dev=verbs) are never in a
+  // journey and are left out.
+  const SCENE = 'code.verbs';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    for (const spec of list('layers')) {
+      if (spec.fixture) continue;
+      for (const mk of (spec.plan && spec.plan.marks) || []) if (mk.obs && mk.obs.jp) out.push({ scene: SCENE, who: 'narr', jp: mk.obs.jp, en: mk.obs.en || '', file: 'verbs ' + spec.id });
+    }
+    return out;
+  });
+  // What an action's own rules say (RB.fieldweave runs them: the sheet shows it, and a woven gate or a creature's route
+  // shows it in the dialogue strip, src/ui/57_weave.js) is the field puzzles' line, under their scene id
+  // (RB.fieldweave.SCENE). RB.fieldweave lists its authored puzzles' lines; an action's lines are listed here, each rule's
+  // words run over every state its actions can reach (explore) at the place it is worked from (a gate's map: what is
+  // far off is said so), a notice's over every wording its pieces allow. ruleLines(spec) → [{ jp, en }]; capped: the
+  // state space was larger than explore's bound (the unit test asserts none is).
+  function ruleLines(spec) {
+    const def = FW().get(spec.id);
+    if (!def) return { lines: [], capped: false };
+    const ex = explore(def, def.rules.filter((r) => r.act).map((r) => r.act));
+    const states = [...ex.states.values()];
+    if (spec.kind === 'notice') {
+      let all = [{}];
+      for (const sl of spec.slots) all = all.flatMap((st) => sl.options.map((o) => Object.assign({}, st, { [sl.key]: o.id })).concat([Object.assign({}, st, { [sl.key]: null })]));
+      for (const st of all) for (const posted of [false, true]) states.push(Object.assign(clone(def.init), st, { posted: posted ? composed(spec, st) : '' }));
+    }
+    const lines = [];
+    const push = (x) => { for (const l of [].concat(x || [])) if (l && l.jp) lines.push(l); };
+    for (const r of def.rules) {
+      if (!r.say) continue;
+      if (typeof r.say !== 'function') { push(r.say); continue; }
+      const o = r.obj && def.objects[[].concat(r.obj)[0]];
+      const here = (o && o.map) || def.map;
+      for (const st of states) {
+        if (!FW().match(st, r.if)) continue;
+        const patch = typeof r.set === 'function' ? r.set(clone(st), null) : r.set;
+        const after = Object.assign(clone(st), clone(patch || {}));
+        try { push(r.say(clone(st), after, { map: here })); } catch (e) { /* a state the words were not written for */ }
+      }
+    }
+    push(def.solvedSay);
+    return { lines, capped: ex.capped };
+  }
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    for (const spec of list()) {
+      if (spec.fixture) continue;
+      for (const l of ruleLines(spec).lines) out.push({ scene: FW().SCENE, who: l.who || 'narr', jp: l.jp, en: l.en || '', file: 'verbs ' + spec.id });
+    }
+    return out;
+  });
   // a marked place of a layered site, reached: compare it with the old plan, there
   RB.hooks.vb_mark = async (a, ctx) => {
     const tr = ctx && ctx.trigger, s = RB.game && RB.game.s;
     if (!tr || !s) return;
     const r = compareAt(s, tr.vb, tr.mark);
-    if (r && r.fresh) await RB.script.runInline([{ who: 'narr', jp: r.mark.obs.jp, en: r.mark.obs.en }]);
+    if (r && r.fresh) await RB.script.runInline([{ who: 'narr', jp: r.mark.obs.jp, en: r.mark.obs.en, sceneId: SCENE }]);
   };
   // (the two scenes, vb.open and vb.mark, are added with the world's tables: src/content/world/00_system.js)
 
   return {
-    kind, define, get, list, KINDS, DEV,
+    kind, define, get, list, KINDS, DEV, SCENE, ruleLines,
     cutOff, explore, alwaysReachable,
     readingOf, noticeText, noticeSafety, composed,
     courierCheck,

@@ -33,6 +33,22 @@ RB.ui.fishing = (function () {
   const F = RB.fishing;
   const I = (n) => RB.ui.folio.icon(n);
   const J = (t) => (t ? RB.ui.jhtml(t) : '');
+  // What the companion says by the water (a remark over the stage, the line with a catch, the reflection's question and
+  // answer) is a spoken line: a Voice button, the spoken word marked, said as it appears when lines are spoken
+  // automatically (src/ui/22c_spoken_panel.js), under one scene id; every remark listed for recording in each
+  // companion's voice (RB.content.spokenSources, read by tools/voice/lines.mjs). The survey's notes and the spread are
+  // written, and stay so (docs/future/voice/SPOKEN_SURFACES.md).
+  const SCENE = 'code.fish';
+  const SAID = (line, comp) => RB.ui.spoken.html(Object.assign({}, line, { who: comp, sceneId: SCENE }), { tag: 'blockquote', cls: 'fp-say', whoHtml: esc(RB.content.chars[comp].name.en) });
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [], R = (F.content && F.content().remarks) || {};
+    for (const comp in R) {
+      if (!RB.content.chars[comp]) continue; // (__reflect, __memories: the shared texts, written)
+      for (const kind in R[comp]) for (const l of [].concat(R[comp][kind] || [])) if (l && l.jp) out.push({ scene: SCENE, who: comp, jp: l.jp, en: l.en || '', expr: l.expr || null, file: 'fishing ' + comp + '.' + kind });
+    }
+    return out;
+  });
   const T = (k) => F.text(k);
   const L = (k) => '<span class="jt-wrap">' + J(T(k).jp) + '</span> <span class="en">' + esc(T(k).en) + '</span>';
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -281,7 +297,7 @@ RB.ui.fishing = (function () {
     if (RB.challenge.active()) return null;
     const line = F.remark(C.s, C.att.comp, kind, seed | 0);
     if (!line) return null;
-    C.ui.stage.say(line, C.att.comp);
+    C.ui.stage.say(line, C.att.comp, SCENE);
     C.ui.stage.event('remark');
     C.remarks++;
     C.remarkLog = (C.remarkLog || []).concat([kind]);
@@ -311,9 +327,8 @@ RB.ui.fishing = (function () {
     const spread = F.content().remarks.__reflect.spread[0];
     if (comp && !R.shared) {
       const ask = F.remark(s, comp, 'reflectAsk', 0);
-      const nm = RB.content.chars[comp].name.en;
       const k = await C.ui.ask('<h3>' + L('reflect') + '</h3><p>' + J(spread.jp) + '<span class="en">' + esc(spread.en) + '</span></p>' +
-        '<blockquote class="fp-say"><span class="who">' + esc(nm) + '</span>' + J(ask.jp) + '<span class="en">' + esc(ask.en) + '</span></blockquote>' +
+        SAID(ask, comp) +
         '<div class="fp-acts col">' + choices.map((c, i) => '<button class="pbtn" data-k="c' + i + '">' + J(c.jp) + '<span class="en">' + esc(c.en) + '</span></button>').join('') +
         '<button class="pbtn quiet" data-k="later">Not now</button></div>', ['c0', 'c1', 'c2', 'later']);
       if (k === 'later' || !C.session.alive()) return;
@@ -323,9 +338,9 @@ RB.ui.fishing = (function () {
       const askStd = RB.dialect ? RB.dialect.std(ask) : ask;
       const shown = RB.dialect ? RB.dialect.line(comp, reply) : reply;
       F.reflect(s, { comp, choice: i, site: C.sid, lines: [{ who: 'narr', jp: spread.jp, en: spread.en }, { who: comp, jp: askStd.jp, en: askStd.en }, { who: 'pc', jp: choices[i].jp, en: choices[i].en, choice: true }, { who: comp, jp: reply.jp, en: reply.en }] });
-      C.ui.stage.say(reply, comp);
+      C.ui.stage.say(reply, comp, SCENE);
       C.ui.stage.event('remark');
-      await C.ui.ask('<blockquote class="fp-say"><span class="who">' + esc(nm) + '</span>' + J(shown.jp) + '<span class="en">' + esc(shown.en) + '</span></blockquote><p class="muted small">Kept in Company › Shared memories.</p><div class="fp-acts"><button class="pbtn primary" data-k="ok">' + I('done') + 'Close the notebook</button></div>', ['ok']);
+      await C.ui.ask(SAID(shown, comp) + '<p class="muted small">Kept in Company › Shared memories.</p><div class="fp-acts"><button class="pbtn primary" data-k="ok">' + I('done') + 'Close the notebook</button></div>', ['ok']);
       return;
     }
     if (!R.solo && !R.shared) {
@@ -488,7 +503,7 @@ RB.ui.fishing = (function () {
     if (ms.indexOf('spread') >= 0) h += '<p class="fp-ms">' + I('book') + 'All nine of the first three waters: the catalogue spread is complete. When you like, you can look back over it' + (C.att.comp ? ' together' : '') + '.</p>';
     if (ms.indexOf('coast') >= 0) h += '<p class="fp-ms">' + I('book') + 'All six of the coast: its own spread is complete in your Fishing notes.</p>';
     if (out.memory) h += '<p class="fp-ms muted small">A shared memory was kept (Company › Shared memories).</p>';
-    if (say && C.att.comp) h += '<blockquote class="fp-say"><span class="who">' + esc(RB.content.chars[C.att.comp].name.en) + '</span>' + J(say.jp) + '<span class="en">' + esc(say.en) + '</span></blockquote>';
+    if (say && C.att.comp) h += SAID(say, C.att.comp);
     const sv = C.saved === 'saved' ? 'Saved.' : C.saved === 'session' ? 'Kept for this browser session only (this browser is not keeping saves).' : 'Recorded in this journey; save from the folio to keep it.';
     h += '<p class="muted small fp-saved">' + esc(sv) + '</p>';
     h += '<div class="fp-acts"><button class="pbtn primary autofocus" data-k="release">' + I('wave') + L('release') + '</button></div>';
@@ -560,6 +575,7 @@ RB.ui.fishing = (function () {
     // a panel that waits for one of its buttons (or the timeout, for the cosmetic wait)
     function ask(html, keys, timeoutMs, onTick, onPaint) {
       panelEl.innerHTML = html;
+      if (RB.ui.spoken) RB.ui.spoken.autoIn(panelEl.querySelector('.say-line') || panelEl);
       if (onPaint) onPaint(panelEl);
       paintPlates(panelEl);
       const f = panelEl.querySelector('.autofocus') || panelEl.querySelector('button:not([disabled])');
@@ -605,7 +621,7 @@ RB.ui.fishing = (function () {
     };
     return {
       el: wrap, stage, ask, panel,
-      destroy() { clearTimeout(askTimer); if (resolver) { const r = resolver; resolver = null; r('leave'); } stage.destroy(); RB.ui.popLayer(layer); },
+      destroy() { clearTimeout(askTimer); if (resolver) { const r = resolver; resolver = null; r('leave'); } if (RB.ui.spoken) RB.ui.spoken.stop(); stage.destroy(); RB.ui.popLayer(layer); },
     };
   }
 

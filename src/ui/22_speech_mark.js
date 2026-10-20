@@ -18,8 +18,9 @@
  * at either side marks every relation it belongs to, all its words, in its colour (amber for a word's meaning, blue for
  * grammar). While a voice speaks, the spoken word's relations are marked the same way (.spk, .spk2): one set of
  * relations for both, decided once (the spoken mark keeps the line; pointing waits until it ends, as before).
- * Where: the dialogue strip (.dlg) and the caption slip of a sequence shown on its own (.seq-view: the prologue, a
- * Records replay; src/ui/43_sequence.js), which keeps its line on the element (el.__rbLine). */
+ * Where: the dialogue strip (.dlg), the caption slip of a sequence shown on its own (.seq-view: the prologue, a
+ * Records replay; src/ui/43_sequence.js), which keeps its line on the element (el.__rbLine), and a line said in a panel
+ * (.say-line: fishing, word play, an exploration action's sheet; src/ui/22c_spoken_panel.js keeps its line). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
 
@@ -155,14 +156,14 @@ RB.ui.speechMark = (function () {
   // the English words that render it, and an English word marks its Japanese word; nothing where there is no pair
   // (particles, endings, words the English does not name). The same pairs as the spoken mark; only classes change.
   let hov = null; // { src, box, al, byTok: { tokenIndex: [relation] }, byWord: { englishIndex: [relation] } }
-  const BOX = '.dlg, .seq-view'; // where a spoken line shows: the dialogue strip, a sequence's own caption slip
+  const BOX = '.dlg, .seq-view, .say-line'; // where a spoken line shows: the dialogue strip, a sequence's own caption slip, a panel's line
   function pairsFor(box) {
     const jl = box.querySelector(LINE_SEL);
     if (!jl || !S() || !RB.ui.help || !RB.ui.help.tokensOf) return null;
     const src = +jl.dataset.src;
     if (hov && hov.src === src && hov.box === box) return hov;
     const tokens = RB.ui.help.tokensOf(src);
-    const line = box.__rbLine || (RB.ui.dialogue && RB.ui.dialogue.shown ? RB.ui.dialogue.shown() : null);
+    const line = box.__rbLine || (box.matches('.say-line') ? (RB.ui.spoken ? RB.ui.spoken.lineOf(box) : null) : RB.ui.dialogue && RB.ui.dialogue.shown ? RB.ui.dialogue.shown() : null);
     if (!tokens || !line) return null;
     const al = alignFor(tokens, line, RB.ui.help.ctxOf ? RB.ui.help.ctxOf(src) : null);
     // every relation each word belongs to, on both sides (an English word may be in two: "I'm" for 私 and です)
@@ -229,10 +230,10 @@ RB.ui.speechMark = (function () {
   if (typeof document !== 'undefined') {
     document.addEventListener('pointerover', (e) => { if (e.target && e.target.closest && e.target.closest(BOX)) hovAt(e.target); });
     document.addEventListener('pointerout', (e) => { const box = e.target && e.target.closest && e.target.closest(BOX); if (box && !(e.relatedTarget && box.contains(e.relatedTarget) && (e.relatedTarget.closest('.jt[data-i], .ew[data-w]')))) hovClear(box); });
-    document.addEventListener('focusin', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg .jt[data-i], .seq-view .jt[data-i]')) hovAt(e.target); });
+    document.addEventListener('focusin', (e) => { if (e.target && e.target.closest && e.target.closest('.dlg .jt[data-i], .seq-view .jt[data-i], .say-line .jt[data-i]')) hovAt(e.target); });
     document.addEventListener('focusout', (e) => { const box = e.target && e.target.closest && e.target.closest(BOX); if (box) hovClear(box); });
     // the English words become pointable as soon as a line shows (wrapped in spans the same way the spoken mark does)
-    document.addEventListener('pointerenter', (e) => { const en = e.target && e.target.closest && e.target.closest('.dlg .main .enline, .dlg .sub .enline, .seq-view .main .enline, .seq-view .sub .enline'); if (en && on()) wrapEnglish(en); }, true);
+    document.addEventListener('pointerenter', (e) => { const en = e.target && e.target.closest && e.target.closest('.dlg .main .enline, .dlg .sub .enline, .seq-view .main .enline, .seq-view .sub .enline, .say-line .sub .enline'); if (en && on()) wrapEnglish(en); }, true);
   }
   return { begin, stop, active: () => !!cur, wrapEnglish, pairsFor, explain };
 })();

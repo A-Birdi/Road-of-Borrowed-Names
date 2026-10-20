@@ -29,6 +29,32 @@ RB.verbSheets = (function () {
   const reduced = () => !!(RB.game.reducedMotion && RB.game.reducedMotion());
   let cur = null;
 
+  // What the sheet says (what an action did, why a rehearsal or a conclusion does not fit) is a spoken line: Japanese
+  // and English as the dialogue strip shows them, a Voice button, the spoken word marked, said as it appears when lines
+  // are spoken automatically (src/ui/22c_spoken_panel.js). An action's own words are the field puzzles' lines
+  // (RB.fieldweave.SCENE, listed by src/engine/55b_verbs.js ruleLines); the sheet's own words, below, are RB.verbs.SCENE's,
+  // every one listed for recording here (RB.content.spokenSources, read by tools/voice/lines.mjs).
+  const STALE = { en: 'That is settled now; it stays as it is.', jp: 'もう {終|お}わって いる 。 このまま に して おこう 。' };
+  const CLASH = { en: 'Two things cannot stand in one place, and nobody stands in the scenery.', jp: '{一|ひと}つ の {場所|ばしょ} に {二|ふた}つ は {置|お}けない 。' };
+  const NOT_QUITE = { en: 'Not quite.', jp: 'もう {少|すこ}し 。' };
+  const STAGED = { en: 'Everyone is where the directions say. The rehearsal runs through.', jp: '{全員|ぜんいん} 、 {言|い}われた {場所|ばしょ} に いる 。 {稽古|けいこ} は うまく いった 。' };
+  const FITS = { en: 'That fits everything you saw.', jp: '{見|み}た こと と {全部|ぜんぶ} {合|あ}う 。' };
+  const TOO_SOON = { en: 'You have not seen enough yet to say. Compare more of the marks.', jp: 'まだ {見|み}た こと が {足|た}りない 。 {他|ほか} の {印|しるし} も {比|くら}べよう 。' };
+  const NO_FIT = { en: 'That does not fit what you saw.', jp: '{見|み}た こと と {合|あ}わない 。' };
+  const undirected = (d) => ({ en: 'Not as directed: "' + d.en + '"', jp: d.jp });
+  const own = (l) => Object.assign({ sceneId: V().SCENE }, l);
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [], add = (l, file) => { if (l && l.jp) out.push({ scene: V().SCENE, who: 'narr', jp: l.jp, en: l.en || '', file }); };
+    for (const l of [STALE, CLASH, NOT_QUITE, STAGED, FITS, TOO_SOON, NO_FIT]) add(l, 'ui/57b_verbs');
+    for (const spec of V().list()) {
+      if (spec.fixture) continue;
+      if (spec.kind === 'blocking') for (const d of spec.directions || []) add(undirected(d), 'verbs ' + spec.id);
+      if (spec.kind === 'layers') for (const h of ((RB.content.cases || {})[spec.id] || {}).hypotheses || []) add(h.mismatch, 'verbs ' + spec.id);
+    }
+    return out;
+  });
+
   function open(id, o) {
     const spec = V().get(id);
     if (!spec || !S()) return Promise.resolve(null);
@@ -52,6 +78,7 @@ RB.verbSheets = (function () {
     if (!cur || cur.closed) return;
     const c = cur;
     c.closed = true;
+    if (RB.ui.spoken) RB.ui.spoken.stop(); // (nothing it said goes on speaking)
     if (c.timer) clearTimeout(c.timer);
     RB.ui.popLayer(c.layer);
     cur = null;
@@ -70,8 +97,9 @@ RB.verbSheets = (function () {
   }
   function show(res) {
     if (!res) return;
-    cur.said = (res.say || []).slice();
-    if (res.stale) cur.said = [{ en: 'That is settled now; it stays as it is.', jp: 'もう {終|お}わって いる 。 このまま に して おこう 。' }];
+    cur.said = (res.say || []).map((l) => Object.assign({ sceneId: FW().SCENE }, l));
+    if (res.stale) cur.said = [own(STALE)];
+    cur.sayNew = true;
     if (res.effective && RB.save && RB.save.autosave) RB.save.autosave('progress');
     if (res.completed) cur.view.justDone = true;
     RB.audio && RB.audio.sfx(res.completed ? 'confirm' : res.effective ? 'page' : 'cancel', { vol: 0.5 });
@@ -89,7 +117,8 @@ RB.verbSheets = (function () {
     return '<p class="vb-done" role="status">' + I('done') + '<span>' + (cur.view.justDone ? 'Done.' : 'Done before; it stays as it is.') + '</span></p>';
   }
   function saidHtml() {
-    return '<div class="vb-said" aria-live="polite">' + (cur.said.length ? cur.said.map((l) => '<p>' + both(l) + '</p>').join('') : '') + '</div>';
+    const line = (l) => (l.jp && RB.ui.spoken ? RB.ui.spoken.html(Object.assign({ who: 'narr' }, l), { tag: 'p', jpCls: 'vb-jp', enCls: 'en' }) : '<p>' + both(l) + '</p>');
+    return '<div class="vb-said" aria-live="polite">' + (cur.said.length ? cur.said.map(line).join('') : '') + '</div>';
   }
   function render(focusSel) {
     if (!cur) return;
@@ -98,6 +127,8 @@ RB.verbSheets = (function () {
       '<button type="button" class="cbtn wv-cancel" data-a="close">' + I('back') + '<span>Close</span></button></div>' +
       '<div class="wv-body">' + doneLine() + body + saidHtml() + '</div></div>';
     if (focusSel) { const f = cur.el.querySelector(focusSel); if (f) f.focus({ preventScroll: true }); }
+    // a line just said: spoken as it appears when lines are spoken automatically (once; a redraw keeps it quiet)
+    if (cur.sayNew) { cur.sayNew = false; if (RB.ui.spoken) RB.ui.spoken.autoIn(cur.el.querySelector('.vb-said')); }
   }
   const radio = (group, value, on, inner, extra) => '<button type="button" class="wv-t" role="radio" data-g="' + esc(group) + '" data-v="' + esc(value) + '" aria-checked="' + !!on + '"' + (extra || '') + '>' + inner + '</button>';
   const btn = (a, label, icon, extra, cls) => '<button type="button" class="pbtn' + (cls ? ' ' + cls : '') + '" data-a="' + esc(a) + '"' + (extra || '') + '>' + (icon ? I(icon) : '') + '<span>' + label + '</span></button>';
@@ -277,9 +308,10 @@ RB.verbSheets = (function () {
     if (!cur) return;
     const r = act('rehearse');
     if (!r.completed) {
-      cur.said = res.directions.filter((d) => !d.ok).map((d) => ({ en: 'Not as directed: "' + d.d.en + '"', jp: d.d.jp })).concat(res.clash.length ? [{ en: 'Two things cannot stand in one place, and nobody stands in the scenery.', jp: '{一|ひと}つ の {場所|ばしょ} に {二|ふた}つ は {置|お}けない 。' }] : []);
-      if (!cur.said.length) cur.said = [{ en: 'Not quite.', jp: 'もう {少|すこ}し 。' }];
-    } else cur.said = [{ en: 'Everyone is where the directions say. The rehearsal runs through.', jp: '{全員|ぜんいん} 、 {言|い}われた {場所|ばしょ} に いる 。 {稽古|けいこ} は うまく いった 。' }];
+      cur.said = res.directions.filter((d) => !d.ok).map((d) => own(undirected(d.d))).concat(res.clash.length ? [own(CLASH)] : []);
+      if (!cur.said.length) cur.said = [own(NOT_QUITE)];
+    } else cur.said = [own(STAGED)];
+    cur.sayNew = true;
     render();
   }
 
@@ -319,9 +351,10 @@ RB.verbSheets = (function () {
     if (/^conclude:/.test(a)) {
       const r = V().conclude(s, spec.id, a.slice(9));
       const h = RB.content.cases[spec.id].hypotheses.find((x) => x.id === a.slice(9));
-      cur.said = r.ok ? [{ en: 'That fits everything you saw.', jp: '{見|み}た こと と {全部|ぜんぶ} {合|あ}う 。' }]
-        : r.why === 'evidence' ? [{ en: 'You have not seen enough yet to say. Compare more of the marks.', jp: 'まだ {見|み}た こと が {足|た}りない 。 {他|ほか} の {印|しるし} も {比|くら}べよう 。' }]
-        : [h.mismatch || { en: 'That does not fit what you saw.', jp: '{見|み}た こと と {合|あ}わない 。' }];
+      cur.said = r.ok ? [own(FITS)]
+        : r.why === 'evidence' ? [own(TOO_SOON)]
+        : [own(h.mismatch || NO_FIT)];
+      cur.sayNew = true;
       if (r.ok) { cur.view.justDone = true; if (RB.save && RB.save.autosave) RB.save.autosave('progress'); }
       keep();
       return;

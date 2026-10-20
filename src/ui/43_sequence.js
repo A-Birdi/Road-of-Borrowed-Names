@@ -731,7 +731,8 @@ RB.sequence = (function () {
     });
   }
   // The beats of a kept memory as lines again, from the scenes as they are now; a line whose text changed
-  // since is found by its hash, else the memory is shown up to it (nothing is invented).
+  // since is found by its hash, else the memory is shown up to it (nothing is invented). Each keeps its scene id (and
+  // its place in the scene), so the replay says it from the scene's own recording, as a Records replay does.
   function beatsOf(ref) {
     const out = [];
     for (const [shotId, pi, sceneId, lineNo, h] of ref.beats || []) {
@@ -743,7 +744,7 @@ RB.sequence = (function () {
       const def = DEFS[ref.seq], sd = def && def.shots[shotId];
       if (!sd) break;
       const who = c.who === 'comp' ? (ref.cast && ref.cast.comp ? ref.cast.comp.id : 'narr') : c.who;
-      out.push({ shot: shotId, phase: (sd.phases[pi] || sd.phases[0]).id, line: { who, expr: c.expr || null, jp: c.jp, en: c.en } });
+      out.push({ shot: shotId, phase: (sd.phases[pi] || sd.phases[0]).id, line: { who, expr: c.expr || null, jp: c.jp, en: c.en, sceneId, line: c.line } });
     }
     return out;
   }

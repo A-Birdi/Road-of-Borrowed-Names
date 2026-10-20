@@ -17,6 +17,9 @@ RB.atlas = (function () {
   'use strict';
   const C = RB.content, A = C.atlas, U = RB.util;
   const GEN_V = 1;
+  // a row of blank lanterns holds this many, fewest to most (the lines a lantern lit can say follow from it:
+  // src/atlas/50_run.js)
+  const LAMPS = [2, 3];
   const LV = ['F', 'E', 'I', 'A'];
   const FLAG = (k) => 'atlas_r_' + k;
 
@@ -113,7 +116,7 @@ RB.atlas = (function () {
       if (kind === 'wild') otype = null;
       if (otype) {
         const o = { id: 'o_' + key, type: otype, seed: (run.seed ^ U.hashStr(key)) >>> 0 };
-        if (otype === 'lanterns') o.lamps = 2 + r.int(2);
+        if (otype === 'lanterns') o.lamps = LAMPS[0] + r.int(LAMPS[1] - LAMPS[0] + 1);
         if (otype === 'doors') { o.correct = pick(['L', 'M', 'R']); o.clue = r.int(4); }
         if (otype === 'promise' && mods.has('promises')) o.promise = ++promiseNo;
         d.obj = o;
@@ -695,7 +698,7 @@ RB.atlas = (function () {
   }
 
   return {
-    GEN_V, newRun, plan, buildMaps, register, unregister, planOf, prepare, cleanFlags, toHall, hallSpot, mapId, spawnOf,
+    GEN_V, LAMPS, newRun, plan, buildMaps, register, unregister, planOf, prepare, cleanFlags, toHall, hallSpot, mapId, spawnOf,
     objectiveSteps, lampStep, chooseDrill, drillsAt, doorClue, validStep, itemExists, rowsOf, countAnchors, climaxPool, FLAG,
     _registered: registered,
   };

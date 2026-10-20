@@ -12,6 +12,7 @@
 .verb-sheet .ar-slots { display: flex; flex-wrap: wrap; gap: 6px; }
 .vb-said { margin-top: 8px; }
 .vb-said p { margin: 4px 0; padding: 6px 10px; background: #fbf6e8; border-left: 3px solid var(--ink-3); }
+.vb-said .say-line .en { font-size: 0.86em; color: var(--ink-2); }
 .vb-done { display: flex; align-items: center; gap: 0.4em; margin: 0 0 8px; padding: 4px 10px; border: 1px solid var(--ok-ink); border-radius: var(--r-1); font-weight: 600; color: var(--ok-ink); }
 .vb-done svg { width: 1.2em; height: 1.2em; }
 .vb-notice-preview { display: flex; flex-direction: column; gap: 2px; margin: 0 0 8px; padding: 10px 12px; background: #fbf6e8; border: 2px solid var(--ink-3); border-radius: 2px; font-size: 1.1em; }

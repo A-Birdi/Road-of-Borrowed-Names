@@ -19,14 +19,61 @@ RB.hooks = RB.hooks || {};
   const dbg = { autoSteps: false, log: [], chooseMod: null, choose: null, commission: null };
 
   // ---- small helpers ------------------------------------------------------------------------
+  // Everything an expedition says (the narrator's lines, the companion's) is shown under one scene id, so its recording
+  // is found, and every line it can say is listed for recording (spoken() below; RB.content.spokenSources, read by
+  // tools/voice/lines.mjs): the narrator's lines here (NARR) and in the tables further down, those made from the Atlas's
+  // own data (each name, relic, combination, branch, side), and each companion's lines from their tables.
+  const SCENE = 'code.atlas';
   const lineFor = (o) => (o && (o.jp != null || o.en != null) ? o : RB.activities.tier(o));
   async function say(who, line, expr) {
     const l = lineFor(line);
     if (!l) return;
     const s = S();
     if (who === 'comp') who = s.comp || 'narr';
-    await RB.ui.dialogue.say({ who, jp: l.jp, en: l.en, expr: expr || null });
+    await RB.ui.dialogue.say({ who, jp: l.jp, en: l.en, expr: expr || null, sceneId: SCENE });
   }
+  // the narrator's own lines (a line whose English is made when it is shown keeps it at the call: this is the gist)
+  const NARR = {
+    notYet: { jp: 'まだ 、 {地図|ちず} の {外|そと} へ {出|で}る {時|とき} で は ない 。', en: 'Not yet. There is still a story to finish on the roads that are written.' },
+    pairTwo: { jp: 'もう {一|ひと}つ 、 {重|かさ}ねる こと も できる 。', en: 'You have walked enough of these roads to pair two conditions, if you like.' },
+    boardBlank: { jp: '{掲示板|けいじばん} は 、 まだ {白紙|はくし} だ 。', en: 'The board is still blank. There is a story to finish first.' },
+    onRoad: { jp: '{今|いま} は 、 {別|べつ} の {道|みち} の {途中|とちゅう} だ 。', en: 'You are already out on a road.' },
+    surveyCompare: { jp: '{古|ふる}い {道|みち} の {書|か}き{付|つ}け と 、 この {部屋|へや} を {見比|みくら}べる 。', en: 'You compare the old route description with this room.' },
+    surveyMarked: { jp: '{目印|めじるし} を {確|たし}かめて 、 {調査|ちょうさ} の {帳面|ちょうめん} に {書|か}き{込|こ}んだ 。', en: 'You verify the landmark and mark it in the survey book. The corridors stay as they are drawn.' },
+    surveyedRoom: { jp: '{調査|ちょうさ} した {道|みち} だ 。 {先|さき} へ {行|い}く {道|みち} は 、 もう {分|わ}かって いる 。', en: 'You surveyed roads like this one: the way on is already open. Its task is still here, if you want it.' },
+    allLit: { jp: 'すべて の {灯|ひ} が ともる と 、 {白紙|はくし} の {幕|まく} が {上|あ}がった 。', en: 'With every lantern lit, the blank curtain lifts.' },
+    promiseFirst: { jp: 'どこか 、 {先|さき} の {方|ほう} で 、 {閉|し}まって いた {何|なに}か が {開|ひら}く {音|おと} が した 。', en: 'Somewhere further along, something that was shut opens with a click. (A side room at the camp.)' },
+    promiseSecond: { jp: '{道|みち} の {終|お}わり で {待|ま}つ {者|もの} の {結|むす}び{目|め} が 、 {一|ひと}つ ほどけた 。', en: 'At the end of the road, one of the guardian\'s knots has already come loose. (A side room there opens, too.)' },
+    unmoored: { jp: '{名前|なまえ} の {薄|うす}れた {紙|かみ} {切|き}れ が 、 {帰|かえ}る {場所|ばしょ} を {探|さが}して いる 。', en: 'A slip of paper whose writing has faded is looking for the way home. It wants to be understood before it can remember where it belongs.' },
+    cacheGift: { jp: '{紙|かみ} に {包|つつ}まれた {物|もの} が ある 。 {誰|だれ}か の {忘|わす}れ{物|もの} で は なく 、 {道|みち} そのもの から の {贈|おく}り{物|もの} の よう だ 。', en: 'Something wrapped in paper. Not a thing someone lost — more like a gift from the road itself.' },
+    cacheKeep: { jp: 'これ は {持|も}ち{帰|かえ}れる 。', en: 'This one you can keep. (Equip it as a keepsake in the Satchel.)' },
+    cacheEmpty: { jp: '{中|なか} は {空|から} だった 。 {紙|かみ} に は 「ありがとう 」 と だけ {書|か}いて ある 。', en: 'It is empty. The paper just says "thank you".' },
+    forkSign: { jp: '{道標|みちしるべ} の {腕|うで} が 、 {二|ふた}つ の {方向|ほうこう} を {指|さ}して いる 。', en: 'The signpost\'s two arms point two ways.' },
+    doorsTablet: { jp: '{石板|せきばん} に 、 {扉|とびら} の {選|えら}び{方|かた} が {刻|きざ}まれて いる 。', en: 'A tablet explains which door to take. The lamps by each door may matter.' },
+    doorOn: { jp: '{扉|とびら} の {向|む}こう に 、 {道|みち} が {続|つづ}いて いる 。', en: 'Beyond the door, the road goes on.' },
+    doorBlank: { jp: '{扉|とびら} の {向|む}こう は {白紙|はくし} だった 。 {足|あし} を {踏|ふ}み{出|だ}す {前|まえ} に 、 {道|みち} が {折|お}り{返|かえ}された 。', en: 'Beyond the door is blank paper. Before you can step through, the road folds you back.' },
+    lanternFlickers: { jp: '{小|ちい}さな {灯|あか}り が 、 {少|すこ}し {揺|ゆ}れた 。', en: 'The little lantern flickers.' },
+    readTablet: { jp: '{入|い}り{口|ぐち} の {石板|せきばん} を {読|よ}んで みよう 。', en: 'Perhaps read the tablet near the entrance.' },
+    legendFirst: { jp: '{戦|たたか}う {前|まえ} に 、 {相手|あいて} の {言葉|ことば} を {読|よ}み{解|と}いて みよう 。', en: 'Before anything else: read what it is really saying.' },
+    legendUnderstood: { jp: '{分|わ}かって もらえた こと で 、 {結|むす}び{目|め} が {一|ひと}つ {緩|ゆる}んだ 。', en: 'Understood, it loosens: one of its knots was never really tied. (The guardian starts with one knot fewer.)' },
+    legendNotYet: { jp: '{言葉|ことば} は 、 まだ {届|とど}いて いない 。', en: 'Your words have not quite reached it yet — but it is listening.' },
+    promisesWeigh: { jp: '{守|まも}られた {約束|やくそく} の {分|ぶん} 、 {結|むす}び{目|め} が {軽|かる}い 。', en: 'The promises you restored weigh on it too: another knot is already loose.' },
+    mapScrap: { jp: '{地図|ちず} の {切|き}れ{端|はし} が 、 {相手|あいて} の {弱|よわ}い {所|ところ} を {示|しめ}して いる 。', en: 'The scrap of map shows exactly where it is weakest: one more knot is loose.' },
+    homeLantern: { jp: '{灯|ひ} の {中|なか} に 、 {葦|あし}ノ{瀬|せ} の {名前|なまえ} が {見|み}える 。 {帰|かえ}り{道|みち} は 、 もう {書|か}かれて いる 。', en: 'Inside the lantern you can read Reedwake\'s name. The way home has already been written.' },
+    rewardOffer: { jp: '{道|みち} が 、 {一|ひと}つ {持|も}って {帰|かえ}る よう に {言|い}って いる 。', en: 'The road offers you something to take home. Choose one.' },
+    lanternHome: { jp: '{消|き}えた {灯|あか}り も 、 {一緒|いっしょ}に {帰|かえ}って きた 。', en: 'The lantern that went out comes home with you anyway. Someone will relight it.' },
+    campfireBack: { jp: '{焚|た}き{火|び} の {灯|あか}り を {頼|たよ}り に 、 {来|き}た {道|みち} を {引|ひ}き{返|かえ}す 。', en: 'By the light of the campfire you turn back along the way you came. What you found, you keep.' },
+    surveyBound: { jp: '{調査|ちょうさ} の {帳面|ちょうめん} は 、 {地図師|ちずし} の {地図帳|ちずちょう} に {綴|と}じられる 。', en: 'The survey book goes into the Cartographer\'s Atlas. From now on, the rooms of that area open their way on for you.' },
+    surveyUnfinished: { jp: '{確|たし}かめて いない {目印|めじるし} が ある 。 {調査|ちょうさ} は 、 また {今度|こんど} 。', en: 'Some landmarks went unverified: the survey will have to wait for another walk.' },
+    teaPoured: { jp: '{急須|きゅうす} から 、 {二人|ふたり} {分|ぶん} の お{茶|ちゃ} を {注|つ}いだ 。', en: 'You pour two cups from the teapot.' },
+  };
+  // lines made from the Atlas's data, the same words wherever they are said or listed
+  const lampsLeft = (n) => ({ jp: 'あと ' + n + ' つ 。', en: n + ' more to light.' });
+  const relicFound = (rd) => ({ jp: rd.name.jp + ' を {見|み}つけた 。', en: 'You find: ' + rd.name.en + '. ' + rd.desc + ' (Temporary: it goes home to its owner when you do.)' });
+  const comboLine = (cb) => ({ jp: cb.name.jp, en: 'Combination: ' + cb.name.en + ' — ' + cb.desc });
+  const forkArm = (side, bt) => ({ jp: side.jp + ' : ' + bt.name.jp + ' 。 ' + bt.hint.jp, en: 'To the ' + side.en + ': ' + bt.name.en + '. ' + bt.hint.en });
+  const branchLine = (bt) => ({ jp: bt.name.jp + ' 。 ' + bt.hint.jp, en: bt.name.en.charAt(0).toUpperCase() + bt.name.en.slice(1) + '. ' + bt.hint.en });
+  const compassDoor = (side) => ({ jp: '{方位|ほうい}{磁石|じしゃく} の {針|はり} が 、 ' + side.jp + ' の {扉|とびら} を {指|さ}した 。', en: 'The compass needle swings towards the ' + side.en + ' door.' });
   async function compSay(lines, expr) {
     const s = S();
     const l = lines && (lines[s.comp] || lines.any);
@@ -152,7 +199,7 @@ RB.hooks = RB.hooks || {};
     void ctx;
     return inDialogue(async () => {
       if (!(s.flags.postgame || s.flags.post || s.atlas.unlocked)) {
-        await say('narr', { jp: 'まだ 、 {地図|ちず} の {外|そと} へ {出|で}る {時|とき} で は ない 。', en: 'Not yet. There is still a story to finish on the roads that are written.' });
+        await say('narr', NARR.notYet);
         return;
       }
       s.atlas.unlocked = true;
@@ -168,7 +215,7 @@ RB.hooks = RB.hooks || {};
       const mods = idx < offered.length ? [offered[idx]] : [];
       if (mods.length && (s.atlas.completed || 0) >= 3) {
         const rest = offered.filter((m) => m !== mods[0]);
-        await say('narr', { jp: 'もう {一|ひと}つ 、 {重|かさ}ねる こと も できる 。', en: 'You have walked enough of these roads to pair two conditions, if you like.' });
+        await say('narr', NARR.pairTwo);
         const o2 = rest.map((m) => ({ jp: A.modifiers[m].name.jp, en: 'Also: ' + A.modifiers[m].name.en + ' — ' + A.modifiers[m].desc })).concat([{ jp: 'これ だけ で いい', en: 'Just the one' }]);
         const j = dbg.chooseMod2 != null ? dbg.chooseMod2 : await choose(o2);
         if (j < rest.length) mods.push(rest[j]);
@@ -207,10 +254,10 @@ RB.hooks = RB.hooks || {};
     if (!s) return;
     return inDialogue(async () => {
       if (!(s.flags.postgame || s.flags.post || s.atlas.unlocked)) {
-        await say('narr', { jp: '{掲示板|けいじばん} は 、 まだ {白紙|はくし} だ 。', en: 'The board is still blank. There is a story to finish first.' });
+        await say('narr', NARR.boardBlank);
         return;
       }
-      if (s.atlas.run) { await say('narr', { jp: '{今|いま} は 、 {別|べつ} の {道|みち} の {途中|とちゅう} だ 。', en: 'You are already out on a road.' }); return; }
+      if (s.atlas.run) { await say('narr', NARR.onRoad); return; }
       RB.ui.dialogue.hide();
       const pick = dbg.commission || (RB.ui.atlasBoard ? await RB.ui.atlasBoard.open(s) : null);
       if (!pick) { await scene('atlas.board.later'); return; }
@@ -226,13 +273,13 @@ RB.hooks = RB.hooks || {};
     const s = S(), run = r.run, key = pr.survey || r.key;
     if (s.flags[FLAG('survey_' + key)]) return;
     const step = RB.atlasCommissions.landmarkStep(run, key, r.room.pattern, s.learn.profile);
-    await say('narr', { jp: '{古|ふる}い {道|みち} の {書|か}き{付|つ}け と 、 この {部屋|へや} を {見比|みくら}べる 。', en: 'You compare the old route description with this room.' });
+    await say('narr', NARR.surveyCompare);
     const res = await runStep(step, 'Verify a landmark');
     if (res.cancelled) { await compSay(COMP_LATER); return; }
     s.flags[FLAG('survey_' + key)] = true;
     run.survey = run.survey || { marks: {} };
     run.survey.marks[key] = true;
-    await say('narr', { jp: '{目印|めじるし} を {確|たし}かめて 、 {調査|ちょうさ} の {帳面|ちょうめん} に {書|か}き{込|こ}んだ 。', en: 'You verify the landmark and mark it in the survey book. The corridors stay as they are drawn.' });
+    await say('narr', NARR.surveyMarked);
     RB.world.refreshActors();
     AT.hud.update();
   };
@@ -255,7 +302,7 @@ RB.hooks = RB.hooks || {};
     // a room of a surveyed area: its way on is open (safe passage, src/atlas/80_commissions.js)
     if (r.def.atlas && r.def.atlas.safe && !s.flags[FLAG('safe_' + r.key)]) {
       s.flags[FLAG('safe_' + r.key)] = true;
-      await say('narr', { jp: '{調査|ちょうさ} した {道|みち} だ 。 {先|さき} へ {行|い}く {道|みち} は 、 もう {分|わ}かって いる 。', en: 'You surveyed roads like this one: the way on is already open. Its task is still here, if you want it.' });
+      await say('narr', NARR.surveyedRoom);
     }
   };
 
@@ -324,9 +371,9 @@ RB.hooks = RB.hooks || {};
       s.flags[FLAG(o.id + '_' + (pr.lamp || 0))] = true;
       const lit = Array.from({ length: o.lamps }, (_, i) => !!s.flags[FLAG(o.id + '_' + i)]).filter(Boolean).length;
       await say('narr', OBJ_DONE.lanterns);
-      if (lit < o.lamps) { await say('narr', { jp: 'あと ' + (o.lamps - lit) + ' つ 。', en: (o.lamps - lit) + ' more to light.' }); return; }
+      if (lit < o.lamps) { await say('narr', lampsLeft(o.lamps - lit)); return; }
       s.flags[FLAG(o.id)] = true;
-      await say('narr', { jp: 'すべて の {灯|ひ} が ともる と 、 {白紙|はくし} の {幕|まく} が {上|あ}がった 。', en: 'With every lantern lit, the blank curtain lifts.' });
+      await say('narr', NARR.allLit);
     } else {
       s.flags[FLAG(o.id)] = true;
       await say('narr', OBJ_DONE[o.type] || OBJ_DONE.inscription);
@@ -334,8 +381,8 @@ RB.hooks = RB.hooks || {};
         run.promises = (run.promises || 0) + 1;
         s.flags[FLAG('pr' + run.promises)] = true;
         await say('narr', run.promises === 1
-          ? { jp: 'どこか 、 {先|さき} の {方|ほう} で 、 {閉|し}まって いた {何|なに}か が {開|ひら}く {音|おと} が した 。', en: 'Somewhere further along, something that was shut opens with a click. (A side room at the camp.)' }
-          : { jp: '{道|みち} の {終|お}わり で {待|ま}つ {者|もの} の {結|むす}び{目|め} が 、 {一|ひと}つ ほどけた 。', en: 'At the end of the road, one of the guardian\'s knots has already come loose. (A side room there opens, too.)' });
+          ? NARR.promiseFirst
+          : NARR.promiseSecond);
       }
     }
     run.done[o.id] = true;
@@ -361,7 +408,7 @@ RB.hooks = RB.hooks || {};
     run.objs[okey] = run.objs[okey] || {};
     const P = s.learn.profile;
     if (!run.objs[okey][P]) run.objs[okey][P] = AT.objectiveSteps({ type: 'name', seed: (run.seed ^ U.hashStr(okey)) >>> 0 }, run, P, { name: npc.name })[0];
-    await say('narr', { jp: '{名前|なまえ} の {薄|うす}れた {紙|かみ} {切|き}れ が 、 {帰|かえ}る {場所|ばしょ} を {探|さが}して いる 。', en: 'A slip of paper whose writing has faded is looking for the way home. It wants to be understood before it can remember where it belongs.' });
+    await say('narr', NARR.unmoored);
     const res = await runStep(run.objs[okey][P], 'Answer the unmoored name');
     if (res.cancelled) { await compSay(COMP_LATER); return; }
     s.flags[fk] = true;
@@ -406,15 +453,15 @@ RB.hooks = RB.hooks || {};
     RB.audio && RB.audio.sfx('chest');
     if (c.kind === 'keepsake') {
       const pool = A.rewardOrder.filter((id) => C.items[id].slot === 'cosmetic' && id !== 'atlas_cos_lamplet' && !(s.inv[id] > 0));
-      await say('narr', { jp: '{紙|かみ} に {包|つつ}まれた {物|もの} が ある 。 {誰|だれ}か の {忘|わす}れ{物|もの} で は なく 、 {道|みち} そのもの から の {贈|おく}り{物|もの} の よう だ 。', en: 'Something wrapped in paper. Not a thing someone lost — more like a gift from the road itself.' });
+      await say('narr', NARR.cacheGift);
       if (pool.length) {
         const id = pool[U.rng(run.seed ^ U.hashStr(c.id)).int(pool.length)];
         RB.state.give(s, id, 1);
         run.keepsakes.push(id);
         await toast('item', C.items[id].name.jp, C.items[id].name.en, id);
-        await say('narr', { jp: 'これ は {持|も}ち{帰|かえ}れる 。', en: 'This one you can keep: ' + C.items[id].name.en + '. (Equip it as a keepsake in the Satchel.)' });
+        await say('narr', { jp: NARR.cacheKeep.jp, en: 'This one you can keep: ' + C.items[id].name.en + '. (Equip it as a keepsake in the Satchel.)' });
       } else {
-        await say('narr', { jp: '{中|なか} は {空|から} だった 。 {紙|かみ} に は 「ありがとう 」 と だけ {書|か}いて ある 。', en: 'It is empty. The paper just says "thank you".' });
+        await say('narr', NARR.cacheEmpty);
       }
       return;
     }
@@ -423,14 +470,14 @@ RB.hooks = RB.hooks || {};
     if (!rd) return;
     if (run.relics.indexOf(id) < 0) run.relics.push(id);
     await toast('item', rd.name.jp, rd.name.en);
-    await say('narr', { jp: rd.name.jp + ' を {見|み}つけた 。', en: 'You find: ' + rd.name.en + '. ' + rd.desc + ' (Temporary: it goes home to its owner when you do.)' });
+    await say('narr', relicFound(rd));
     await compSay(RELIC_REACT[id] || RELIC_ANY, 'think');
     // Combinations
     const combos = AT.combat.combosOf(run.relics, s.comp).filter((k) => run.combos.indexOf(k) < 0);
     for (const k of combos) {
       run.combos.push(k);
       RB.audio && RB.audio.sfx('harmony_ready');
-      await say('narr', { jp: A.combos[k].name.jp, en: 'Combination: ' + A.combos[k].name.en + ' — ' + A.combos[k].desc });
+      await say('narr', comboLine(A.combos[k]));
       await note('atlas_combo_' + k);
     }
     await note('atlas_relics');
@@ -473,13 +520,14 @@ RB.hooks = RB.hooks || {};
     const s = S();
     const m = RB.world.W.map;
     const exits = m.exits.filter((e) => e.branch).slice().sort((a, b) => a.x - b.x);
-    await say('narr', { jp: '{道標|みちしるべ} の {腕|うで} が 、 {二|ふた}つ の {方向|ほうこう} を {指|さ}して いる 。', en: 'The signpost\'s two arms point two ways.' });
+    await say('narr', NARR.forkSign);
     const detail = run => run.relics.indexOf('compass') >= 0 || run.relics.indexOf('map') >= 0 || !!run.dvGuide; // (a delver's word, D8)
     for (const e of exits) {
       const bt = A.branchTypes[e.branch];
       const side = SIDE[sideOf(e, m)];
       const key = e.to.split('.')[2];
-      await say('narr', { jp: side.jp + ' : ' + bt.name.jp + ' 。 ' + bt.hint.jp, en: 'To the ' + side.en + ': ' + bt.name.en + '. ' + bt.hint.en + (detail(r.run) ? ' (Your compass and map say: ' + branchDetail(r, key) + '.)' : '') });
+      const arm = forkArm(side, bt);
+      await say('narr', { jp: arm.jp, en: arm.en + (detail(r.run) ? ' (Your compass and map say: ' + branchDetail(r, key) + '.)' : '') });
     }
     await compSay(FORK_REACT);
     void s;
@@ -497,7 +545,7 @@ RB.hooks = RB.hooks || {};
     const e = exitInFront();
     if (!e || !e.branch) return;
     const bt = A.branchTypes[e.branch];
-    await say('narr', { jp: bt.name.jp + ' 。 ' + bt.hint.jp, en: bt.name.en.charAt(0).toUpperCase() + bt.name.en.slice(1) + '. ' + bt.hint.en });
+    await say('narr', branchLine(bt));
     const i = await choose([{ jp: 'この {道|みち} を {行|い}く', en: 'Take this road' }, { jp: 'もう {少|すこ}し {考|かんが}える', en: 'Think a little longer' }]);
     if (i !== 0) return;
     s.flags[e.unlock] = true;
@@ -514,7 +562,7 @@ RB.hooks = RB.hooks || {};
     const clue = AT.doorClue(o, s.learn.profile);
     r.run.objs[o.id] = r.run.objs[o.id] || {};
     const os = r.run.objs[o.id];
-    await say('narr', { jp: '{石板|せきばん} に 、 {扉|とびら} の {選|えら}び{方|かた} が {刻|きざ}まれて いる 。', en: 'A tablet explains which door to take. The lamps by each door may matter.' });
+    await say('narr', NARR.doorsTablet);
     RB.ui.dialogue.hide();
     const res = dbg.autoSteps ? { assisted: false } : await RB.atlas.reading(clue.jp, clue.en, { title: 'The tablet by the doors' });
     os.read = true;
@@ -537,7 +585,7 @@ RB.hooks = RB.hooks || {};
       r.run.stats.objectives++;
       RB.bus.emit('atlas:event', { run: r.run.id, id: o.id, kind: 'doors', read: !!os.read, room: r.key, pattern: r.room.pattern, branch: r.room.branch || null }); // (The Pages We Keep)
       RB.audio && RB.audio.sfx('reveal');
-      await say('narr', { jp: '{扉|とびら} の {向|む}こう に 、 {道|みち} が {続|つづ}いて いる 。', en: os.read ? 'Beyond the door, the road goes on — just as the tablet said.' : 'Beyond the door, the road goes on. (A lucky guess — the tablet by the entrance would have told you.)' });
+      await say('narr', { jp: NARR.doorOn.jp, en: os.read ? 'Beyond the door, the road goes on — just as the tablet said.' : 'Beyond the door, the road goes on. (A lucky guess — the tablet by the entrance would have told you.)' });
       if (clean) { const c = compOk(); if (c) await say('comp', c, 'smile'); }
       r.run.stats.rooms++;
       await goTo(e);
@@ -546,17 +594,17 @@ RB.hooks = RB.hooks || {};
     if (!os.wrong) learnRecord('c:atlas_doors_' + s.learn.profile, false, false);
     os.wrong = (os.wrong || 0) + 1;
     RB.audio && RB.audio.sfx('answer_wrong');
-    await say('narr', { jp: '{扉|とびら} の {向|む}こう は {白紙|はくし} だった 。 {足|あし} を {踏|ふ}み{出|だ}す {前|まえ} に 、 {道|みち} が {折|お}り{返|かえ}された 。', en: 'Beyond the door is blank paper. Before you can step through, the road folds you back.' });
+    await say('narr', NARR.doorBlank);
     if (r.run.lantern && r.run.lantern.hp > 0) {
       r.run.lantern.hp--;
-      await say('narr', { jp: '{小|ちい}さな {灯|あか}り が 、 {少|すこ}し {揺|ゆ}れた 。', en: 'The little lantern flickers (' + r.run.lantern.hp + '/' + r.run.lantern.max + ').' });
+      await say('narr', { jp: NARR.lanternFlickers.jp, en: 'The little lantern flickers (' + r.run.lantern.hp + '/' + r.run.lantern.max + ').' });
       AT.hud.update();
     }
     if (r.run.relics.indexOf('compass') >= 0) {
       const ce = RB.world.W.map.exits.find((x) => x.correct);
-      if (ce) await say('narr', { jp: '{方位|ほうい}{磁石|じしゃく} の {針|はり} が 、 ' + SIDE[sideOf(ce, RB.world.W.map)].jp + ' の {扉|とびら} を {指|さ}した 。', en: 'The compass needle swings towards the ' + SIDE[sideOf(ce, RB.world.W.map)].en + ' door.' });
+      if (ce) await say('narr', compassDoor(SIDE[sideOf(ce, RB.world.W.map)]));
     } else if (!os.read) {
-      await say('narr', { jp: '{入|い}り{口|ぐち} の {石板|せきばん} を {読|よ}んで みよう 。', en: 'Perhaps read the tablet near the entrance.' });
+      await say('narr', NARR.readTablet);
     }
   };
 
@@ -597,16 +645,16 @@ RB.hooks = RB.hooks || {};
     run.objs.legend = run.objs.legend || {};
     const P = s.learn.profile;
     if (!run.objs.legend[P]) run.objs.legend[P] = AT.objectiveSteps({ type: 'legend', seed: (run.seed ^ 0xabc) >>> 0 }, run, P, { boss })[0];
-    await say('narr', { jp: '{戦|たたか}う {前|まえ} に 、 {相手|あいて} の {言葉|ことば} を {読|よ}み{解|と}いて みよう 。', en: 'Before anything else: read what it is really saying.' });
+    await say('narr', NARR.legendFirst);
     const res = await runStep(run.objs.legend[P], 'Read the guardian\'s legend');
     if (!res.cancelled && res.firstTry !== false) {
       run.bonusKnots += 1;
-      await say('narr', { jp: '{分|わ}かって もらえた こと で 、 {結|むす}び{目|め} が {一|ひと}つ {緩|ゆる}んだ 。', en: 'Understood, it loosens: one of its knots was never really tied. (The guardian starts with one knot fewer.)' });
+      await say('narr', NARR.legendUnderstood);
     } else {
-      await say('narr', { jp: '{言葉|ことば} は 、 まだ {届|とど}いて いない 。', en: 'Your words have not quite reached it yet — but it is listening.' });
+      await say('narr', NARR.legendNotYet);
     }
-    if ((run.promises || 0) >= 2) { run.bonusKnots += 1; await say('narr', { jp: '{守|まも}られた {約束|やくそく} の {分|ぶん} 、 {結|むす}び{目|め} が {軽|かる}い 。', en: 'The promises you restored weigh on it too: another knot is already loose.' }); }
-    if (run.relics.indexOf('map') >= 0) { run.bonusKnots += 1; await say('narr', { jp: '{地図|ちず} の {切|き}れ{端|はし} が 、 {相手|あいて} の {弱|よわ}い {所|ところ} を {示|しめ}して いる 。', en: 'The scrap of map shows exactly where it is weakest: one more knot is loose.' }); }
+    if ((run.promises || 0) >= 2) { run.bonusKnots += 1; await say('narr', NARR.promisesWeigh); }
+    if (run.relics.indexOf('map') >= 0) { run.bonusKnots += 1; await say('narr', NARR.mapScrap); }
     RB.ui.dialogue.hide();
     // its attendants come with it on Standard (one) and Demanding (two); Relaxed: the guardian alone
     const out = await RB.game.startBattle(cd.enemy, { inScript: true, noFlee: true, place: r.room.attendants ? { group: r.room.attendants } : null });
@@ -662,11 +710,11 @@ RB.hooks = RB.hooks || {};
     if (kind === 'complete') {
       s.atlas.completed = (s.atlas.completed || 0) + 1;
       const n = s.atlas.completed;
-      await say('narr', { jp: '{灯|ひ} の {中|なか} に 、 {葦|あし}ノ{瀬|せ} の {名前|なまえ} が {見|み}える 。 {帰|かえ}り{道|みち} は 、 もう {書|か}かれて いる 。', en: 'Inside the lantern you can read Reedwake\'s name. The way home has already been written.' });
+      await say('narr', NARR.homeLantern);
       // choose one permanent reward
       const offer = rewardOffer(s, run);
       if (offer.length) {
-        await say('narr', { jp: '{道|みち} が 、 {一|ひと}つ {持|も}って {帰|かえ}る よう に {言|い}って いる 。', en: 'The road offers you something to take home. Choose one.' });
+        await say('narr', NARR.rewardOffer);
         const i = await choose(offer.map((id) => ({ jp: C.items[id].name.jp, en: C.items[id].name.en + ' — ' + C.items[id].desc })));
         const id = offer[Math.max(0, Math.min(offer.length - 1, i))];
         RB.state.give(s, id, 1);
@@ -677,7 +725,7 @@ RB.hooks = RB.hooks || {};
         if (run.lantern.hp > 0) {
           await scene('atlas.escort.home');
           if (!owned(s, 'atlas_cos_lamplet')) { RB.state.give(s, 'atlas_cos_lamplet', 1); summary.rewards.push('atlas_cos_lamplet'); await toast('item', C.items.atlas_cos_lamplet.name.jp, C.items.atlas_cos_lamplet.name.en, 'atlas_cos_lamplet'); }
-        } else await say('narr', { jp: '{消|き}えた {灯|あか}り も 、 {一緒|いっしょ}に {帰|かえ}って きた 。', en: 'The lantern that went out comes home with you anyway. Someone will relight it.' });
+        } else await say('narr', NARR.lanternHome);
       }
       const k = Math.min(6, n);
       for (let i = 1; i <= k; i++) {
@@ -685,7 +733,7 @@ RB.hooks = RB.hooks || {};
       }
       summary.unlock = n === 1 ? 'bell' : n === 2 ? 'combos' : n === 3 ? 'pairs' : null;
     } else if (kind === 'early') {
-      await say('narr', { jp: '{焚|た}き{火|び} の {灯|あか}り を {頼|たよ}り に 、 {来|き}た {道|みち} を {引|ひ}き{返|かえ}す 。', en: 'By the light of the campfire you turn back along the way you came. What you found, you keep.' });
+      await say('narr', NARR.campfireBack);
     } else if (kind === 'defeat') {
       // Consolation: a name caught on the way down (or a keepsake), and the note about falling.
       const notes = new Set(s.notebook.map((x) => x.id));
@@ -701,8 +749,8 @@ RB.hooks = RB.hooks || {};
     const cmOut = RB.atlasCommissions ? RB.atlasCommissions.finished(s, run, kind) : null;
     if (cmOut) {
       summary.commission = cmOut;
-      if (cmOut.kind === 'survey' && cmOut.survey) await say('narr', { jp: '{調査|ちょうさ} の {帳面|ちょうめん} は 、 {地図師|ちずし} の {地図帳|ちずちょう} に {綴|と}じられる 。', en: 'The survey book goes into the Cartographer\'s Atlas. From now on, the rooms of ' + RB.atlasCommissions.AREAS[cmOut.survey].title.en.toLowerCase() + ' open their way on for you.' });
-      else if (cmOut.kind === 'survey' && !cmOut.surveyComplete) await say('narr', { jp: '{確|たし}かめて いない {目印|めじるし} が ある 。 {調査|ちょうさ} は 、 また {今度|こんど} 。', en: 'Some landmarks went unverified: the survey will have to wait for another walk.' });
+      if (cmOut.kind === 'survey' && cmOut.survey) await say('narr', { jp: NARR.surveyBound.jp, en: 'The survey book goes into the Cartographer\'s Atlas. From now on, the rooms of ' + RB.atlasCommissions.AREAS[cmOut.survey].title.en.toLowerCase() + ' open their way on for you.' });
+      else if (cmOut.kind === 'survey' && !cmOut.surveyComplete) await say('narr', NARR.surveyUnfinished);
       if (cmOut.compass) await toast('item', C.items.atlas_cos_compass.name.jp, C.items.atlas_cos_compass.name.en, 'atlas_cos_compass');
     }
     s.atlas.runs = (s.atlas.runs || 0) + 1;
@@ -747,7 +795,7 @@ RB.hooks = RB.hooks || {};
           if (run.relics.indexOf('teapot') >= 0) {
             await inDialogue(async () => {
               if (run.lantern && run.lantern.hp < run.lantern.max) { run.lantern.hp++; AT.hud.update(); }
-              await say('narr', { jp: '{急須|きゅうす} から 、 {二人|ふたり} {分|ぶん} の お{茶|ちゃ} を {注|つ}いだ 。', en: 'You pour two cups from the teapot.' + (run.lantern ? ' The little lantern brightens.' : '') });
+              await say('narr', { jp: NARR.teaPoured.jp, en: 'You pour two cups from the teapot.' + (run.lantern ? ' The little lantern brightens.' : '') });
               await compSay(TEA);
             });
           }
@@ -787,6 +835,40 @@ RB.hooks = RB.hooks || {};
 
   // the companions' lines above, read-only, for the dialect inventory (tools/suzu_inventory.mjs)
   AT.compLines = { COMP_OK, COMP_LATER, NAME_REACT, RELIC_ANY, RELIC_REACT, FORK_REACT, TEA };
+
+  // every line an expedition can say, for the recording list (say() above shows each under SCENE). A line given by
+  // learner level (lineFor: F/E/I/A) is listed at every level.
+  function spoken() {
+    const out = [];
+    const tiers = (o) => (!o ? [] : o.jp != null || o.en != null ? [o] : ['F', 'E', 'I', 'A'].map((k) => o[k]).filter(Boolean));
+    const add = (who, o, expr, file) => { for (const l of tiers(o)) if (l.jp) out.push({ scene: SCENE, who, jp: l.jp, en: l.en || '', expr: expr || l.expr || null, file: 'atlas ' + file }); };
+    for (const k in NARR) add('narr', NARR[k], null, 'narration');
+    for (const k in OBJ_INTRO) add('narr', OBJ_INTRO[k], null, 'objective');
+    for (const k in OBJ_DONE) add('narr', OBJ_DONE[k], null, 'objective');
+    for (let n = 1; n < AT.LAMPS[1]; n++) add('narr', lampsLeft(n), null, 'lanterns');
+    for (const id in A.names || {}) add('narr', A.names[id].moored, null, 'name ' + id);
+    for (const id in A.relics || {}) add('narr', relicFound(A.relics[id]), null, 'relic ' + id);
+    for (const k in A.combos || {}) add('narr', comboLine(A.combos[k]), null, 'combination ' + k);
+    for (const b in A.branchTypes || {}) {
+      add('narr', branchLine(A.branchTypes[b]), null, 'branch ' + b);
+      for (const sd in SIDE) add('narr', forkArm(SIDE[sd], A.branchTypes[b]), null, 'fork ' + b);
+    }
+    for (const sd in SIDE) add('narr', compassDoor(SIDE[sd]), null, 'doors');
+    // the companion's lines (compSay: theirs, else the table's any; compOk: theirs in turn)
+    const COMPS = ['nao', 'mio', 'ren', 'suzu'];
+    for (const c of COMPS) {
+      for (const l of COMP_OK[c] || []) add(c, l, 'smile', 'well done');
+      for (const [name, T, expr] of [['later', COMP_LATER], ['fork', FORK_REACT], ['tea', TEA]].concat(Object.keys(NAME_REACT).map((n) => ['name ' + n, NAME_REACT[n]]), Object.keys(RELIC_REACT).map((r) => ['relic ' + r, RELIC_REACT[r], 'think']), [['relic', RELIC_ANY, 'think']])) {
+        const l = T[c] || T.any; // (as compSay picks it; an expression given there wins over the line's own)
+        if (l) add(c, l, expr, name);
+      }
+    }
+    return out;
+  }
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(spoken);
+  AT.spoken = spoken;
+  AT.SCENE = SCENE;
 
   // ---- a reading panel (Japanese first; translation on request counts as assisted) --------------------
   AT.reading = function (jp, en, opts) {

@@ -128,6 +128,14 @@ RB.press = (function () {
 // a reader's reaction, heard in the world: `!hook press_react <reader>` (src/content/mp/ scenes add it to the readers'
 // talk, waiting on press_rx_<reader>)
 RB.hooks = RB.hooks || {};
+// (each reader's every reaction, listed for recording under the scene id it is shown with: RB.content.spokenSources,
+// read by tools/voice/lines.mjs)
+RB.content.spokenSources = RB.content.spokenSources || [];
+RB.content.spokenSources.push(() => {
+  const out = [], P = (RB.content && RB.content.press) || { readers: [] };
+  for (const r of P.readers || []) for (const ru of r.rules || []) if (ru.jp) out.push({ scene: 'mp.press_react', who: r.who || r.id, jp: ru.jp, en: ru.en || '', file: 'press ' + r.id });
+  return out;
+});
 RB.hooks.press_react = async (a) => {
   const s = RB.game && RB.game.s;
   const w = s && RB.press.hear(s, a && a[0]);

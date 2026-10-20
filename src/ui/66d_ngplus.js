@@ -13,6 +13,17 @@ RB.ui.ngplus = (function () {
   'use strict';
   const esc = RB.util.esc;
   const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  // The farewell is spoken lines like any other: shown under one scene id, so their recordings are found, and every
+  // line of it listed for recording (RB.content.spokenSources, read by tools/voice/lines.mjs): each companion's goodbye,
+  // the solo one, and the narration after it (src/content/records/10_ngplus.js)
+  const SCENE = 'code.ngplus';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const F = RB.content.ngFarewell || {}, out = [];
+    for (const k in F) for (const l of F[k] || []) out.push({ scene: SCENE, who: l.who || 'narr', jp: l.jp, en: l.en || '', expr: l.expr || null, file: 'records/10_ngplus' });
+    for (const l of [].concat(RB.content.ngFarewellEnd || [])) out.push({ scene: SCENE, who: l.who || 'narr', jp: l.jp, en: l.en || '', expr: l.expr || null, file: 'records/10_ngplus' });
+    return out;
+  });
   // The farewell: the companion of the journey that ended, then a line of narration. Spoken in that journey's
   // context (names and looks), read only.
   async function farewell(from) {
@@ -23,7 +34,7 @@ RB.ui.ngplus = (function () {
     const keep = RB.game.s;
     RB.game.s = from;
     RB.game.pushMode('dialogue');
-    try { for (const l of lines) await RB.ui.dialogue.say(Object.assign({}, l)); }
+    try { for (const l of lines) await RB.ui.dialogue.say(Object.assign({ sceneId: SCENE }, l)); }
     finally { RB.ui.dialogue.hide(); RB.game.popMode('dialogue'); RB.game.s = keep; }
   }
   // which slot: [{ slot, label, origin, empty }] → the chosen slot, or null
@@ -94,5 +105,5 @@ RB.ui.ngplus = (function () {
     // another journey's New Game+)
     if (s && s.flags && s.flags.postgame && !s.flags.ngp_offered && RB.recordsUI.inCampaign(s) && e && e.mode === 'world') setTimeout(() => { if (RB.game.mode() === 'world' && RB.game.s === s) offer(s); }, 400);
   });
-  return { farewell, chooseSlot, begin, offer, fromOld };
+  return { farewell, chooseSlot, begin, offer, fromOld, SCENE };
 })();

@@ -8,27 +8,27 @@
 .dlg-sheet rt, .choice rt, .help rt, .toast rt, .place rt, .card-slip rt, .banner rt, .csheet rt, .panel rt { color: var(--rt-ink); }
 body.bulb-on .dlg-sheet .jline .jt, body.bulb-on .choice .jline .jt, body.bulb-on .toast .jline .jt,
 body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on .panel .jline .jt { text-decoration-color: var(--jt-line); }
-.dlg-sheet .jline .jt:hover, :is(.dlg-sheet, .seq-view .txt) .jline .jt.active, .choice .jline .jt.active, .panel .jline .jt.active { background: rgba(193, 138, 42, 0.2); }
+.dlg-sheet .jline .jt:hover, :is(.dlg-sheet, .seq-view .txt, .say-line) .jline .jt.active, .choice .jline .jt.active, .panel .jline .jt.active { background: rgba(193, 138, 42, 0.2); }
 /* the word being spoken, in the Japanese and in its English (PT-1c, src/ui/22_speech_mark.js): a strong amber mark
    with an underline, so it reads at a glance; only colour changes (no motion) */
-:is(.dlg-sheet, .seq-view .txt) .jline .jt.spk, :is(.dlg-sheet, .seq-view .txt) .enline .ew.spk { background: rgba(232, 158, 36, 0.62); box-shadow: inset 0 -0.2em 0 #a2560f, 0 0 0 2px rgba(232, 158, 36, 0.35); border-radius: 3px; color: var(--ink); }
-:is(.dlg-sheet, .seq-view .txt) .enline .ew.spk { padding: 0 0.08em; margin: 0 -0.08em; }
-body.high-contrast :is(.dlg-sheet, .seq-view .txt) .jline .jt.spk, body.high-contrast :is(.dlg-sheet, .seq-view .txt) .enline .ew.spk { background: #ffe14d; color: #000; box-shadow: inset 0 -0.18em 0 #000; }
+:is(.dlg-sheet, .seq-view .txt, .say-line) .jline .jt.spk, :is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.spk { background: rgba(232, 158, 36, 0.62); box-shadow: inset 0 -0.2em 0 #a2560f, 0 0 0 2px rgba(232, 158, 36, 0.35); border-radius: 3px; color: var(--ink); }
+:is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.spk { padding: 0 0.08em; margin: 0 -0.08em; }
+body.high-contrast :is(.dlg-sheet, .seq-view .txt, .say-line) .jline .jt.spk, body.high-contrast :is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.spk { background: #ffe14d; color: #000; box-shadow: inset 0 -0.18em 0 #000; }
 /* the counterpart of the word under the pointer (LI-9): the same amber, lighter than the spoken mark */
-:is(.dlg-sheet, .seq-view .txt) .jline .jt.hov, :is(.dlg-sheet, .seq-view .txt) .enline .ew.hov { background: rgba(232, 158, 36, 0.34); box-shadow: inset 0 -0.14em 0 rgba(162, 86, 15, 0.8); border-radius: 3px; }
-:is(.dlg-sheet, .seq-view .txt) .enline .ew.hov { padding: 0 0.08em; margin: 0 -0.08em; }
-body.high-contrast :is(.dlg-sheet, .seq-view .txt) .jline .jt.hov, body.high-contrast :is(.dlg-sheet, .seq-view .txt) .enline .ew.hov { background: #fff3a0; color: #000; box-shadow: inset 0 -0.14em 0 #000; }
+:is(.dlg-sheet, .seq-view .txt, .say-line) .jline .jt.hov, :is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.hov { background: rgba(232, 158, 36, 0.34); box-shadow: inset 0 -0.14em 0 rgba(162, 86, 15, 0.8); border-radius: 3px; }
+:is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.hov { padding: 0 0.08em; margin: 0 -0.08em; }
+body.high-contrast :is(.dlg-sheet, .seq-view .txt, .say-line) .jline .jt.hov, body.high-contrast :is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.hov { background: #fff3a0; color: #000; box-shadow: inset 0 -0.14em 0 #000; }
 /* a grammar counterpart (a particle, the copula, what an ending adds: LI-12): blue, a dotted line under it, so it is told
  * apart from a word's counterpart by its line as well as its colour */
 /* (body first: it outranks the word-help underline's colour, body.bulb-on … .jt) */
-body :is(.dlg-sheet, .seq-view .txt) .jline .jt.hov2, body :is(.dlg-sheet, .seq-view .txt) .enline .ew.hov2 { background: rgba(60, 118, 170, 0.26); border-radius: 3px;
+body :is(.dlg-sheet, .seq-view .txt, .say-line) .jline .jt.hov2, body :is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.hov2 { background: rgba(60, 118, 170, 0.26); border-radius: 3px;
   text-decoration: underline dotted rgba(28, 74, 120, 0.95); text-decoration-thickness: 0.12em; text-underline-offset: 0.18em; }
-:is(.dlg-sheet, .seq-view .txt) .enline .ew.hov2 { padding: 0 0.08em; margin: 0 -0.08em; }
-body.high-contrast :is(.dlg-sheet, .seq-view .txt) .jline .jt.hov2, body.high-contrast :is(.dlg-sheet, .seq-view .txt) .enline .ew.hov2 { background: #c8e4ff; color: #000; text-decoration-color: #000; }
+:is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.hov2 { padding: 0 0.08em; margin: 0 -0.08em; }
+body.high-contrast :is(.dlg-sheet, .seq-view .txt, .say-line) .jline .jt.hov2, body.high-contrast :is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.hov2 { background: #c8e4ff; color: #000; text-decoration-color: #000; }
 /* while a voice speaks, what the spoken word's grammar says in the English (AG-1): blue and dotted like .hov2, stronger */
-:is(.dlg-sheet, .seq-view .txt) .enline .ew.spk2 { background: rgba(60, 118, 170, 0.34); border-radius: 3px; padding: 0 0.08em; margin: 0 -0.08em;
+:is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.spk2 { background: rgba(60, 118, 170, 0.34); border-radius: 3px; padding: 0 0.08em; margin: 0 -0.08em;
   text-decoration: underline dotted rgba(28, 74, 120, 0.95); text-decoration-thickness: 0.14em; text-underline-offset: 0.18em; }
-body.high-contrast :is(.dlg-sheet, .seq-view .txt) .enline .ew.spk2 { background: #a9d4ff; color: #000; text-decoration-color: #000; }
+body.high-contrast :is(.dlg-sheet, .seq-view .txt, .say-line) .enline .ew.spk2 { background: #a9d4ff; color: #000; text-decoration-color: #000; }
 
 /* ---- shared cloth button and generic panel (screens not yet rebuilt) ---- */
 .btn {

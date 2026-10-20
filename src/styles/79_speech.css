@@ -22,3 +22,20 @@
 .co-speech .speech-btn[aria-checked="true"] { background: var(--paper-2); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
 .co-speech .speech-btn .jp { color: var(--ink-2); font-size: 0.9em; }
 .help .note.dia { border-left: 3px solid var(--ribbon); padding-left: 6px; }
+
+/* A line said in a panel (src/ui/22c_spoken_panel.js): its Voice button sits at the line's top right; the Japanese and
+   its English keep the panel's own look (the spoken word is marked as in the dialogue strip, src/styles/50_play.css) */
+.say-line .say-voice {
+  float: right; display: inline-flex; align-items: center; justify-content: center; width: var(--tap); height: var(--tap);
+  margin: -4px -6px 2px 8px; padding: 0; color: var(--ink-2); background: transparent; border: 1px solid transparent;
+  border-radius: var(--r-1); cursor: pointer; touch-action: manipulation; pointer-events: auto;
+}
+.say-line .say-voice svg { width: 20px; height: 20px; }
+.say-line .say-voice:hover { background: rgba(0, 0, 0, 0.06); border-color: var(--ink-3); color: var(--ink); }
+.say-line .say-voice:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.say-line::after { content: ''; display: block; clear: both; }
+.say-line > .main, .say-line > .sub { display: block; }
+.say-line .sub .enline { line-height: inherit; }
+/* the fishing stage's remark fades away: its button only takes a press while it shows */
+.fs-say:not(.on) .say-voice { pointer-events: none; }
+body.high-contrast .say-line .say-voice { color: #000; border-color: #000; }

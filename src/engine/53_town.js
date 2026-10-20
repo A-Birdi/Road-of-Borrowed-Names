@@ -445,6 +445,16 @@ RB.town = (function () {
     if (o && !(n.def.slotScene && pastTalk(s, n.def.char || n.id, o))) await RB.script.run(o.scene, { npc: n.id });
   };
   RB.hooks.road_done = async (a) => { if (RB.game && RB.game.s) roadDone(RB.game.s, a[0], a[1]); };
+  // A sealed spot's hint, said when it is examined, is the narrator's line like any other: shown under its own scene id,
+  // so its recording is found, and every one listed for recording (RB.content.spokenSources, read by
+  // tools/voice/lines.mjs). A spot that wraps a scene of its own never says it (its scene does).
+  const SEALED_SCENE = 'code.town';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [], S = C().sealed || {};
+    for (const id in S) if (!S[id].existing && S[id].hint && S[id].hint.jp) out.push({ scene: SEALED_SCENE, who: 'narr', jp: S[id].hint.jp, en: S[id].hint.en || '', file: 'sealed ' + id });
+    return out;
+  });
   RB.hooks.sealed = async (a) => {
     const s = RB.game && RB.game.s;
     if (!s) return;
@@ -452,7 +462,7 @@ RB.town = (function () {
     // a spot that wraps a scene of its own (`existing`: the Shuttered Hall's door) has just said what is there: noticed
     // quietly, its hint kept for Known details
     const own = ((C().sealed || {})[a[0]] || {}).existing;
-    if (r && r.state === 'noticed' && r.hint && !own) await RB.script.runInline([{ who: 'narr', jp: r.hint.jp, en: r.hint.en }]);
+    if (r && r.state === 'noticed' && r.hint && !own) await RB.script.runInline([{ who: 'narr', jp: r.hint.jp, en: r.hint.en, sceneId: SEALED_SCENE }]);
     else if (r && r.state === 'opened' && r.scene) await RB.script.run(r.scene);
   };
 

@@ -681,17 +681,27 @@ RB.wordplay = (function () {
     out.reflection = true;
     return out;
   }
+  // the memories' titles (authored in src/content/wordplay/20_reflect.js; these words when absent). Listed for the
+  // recordings of the lines that name a kept moment by its title (src/engine/58_companion.js memoryTitles)
+  function memTitles() {
+    const T = RB.content.wordplay.texts || {};
+    return {
+      together: T.memTogether || { jp: 'しりとり', en: 'A game of shiritori' },
+      clear: T.memClear || { jp: '{初|はじ}めて の {勝|か}ち', en: 'A first shiritori win' },
+      sharp: T.memSharp || { jp: '{鋭|するど}い {相手|あいて} に {勝|か}った', en: 'A win against Sharp play' },
+      reflect: T.memReflect || { jp: 'どう {遊|あそ}んだ か', en: 'How we played' },
+    };
+  }
   // memory text facts (the words are authored in src/content/wordplay/; plain facts here)
   function memories(s, a, result, r, committed) {
     const got = [];
     if (!committed) return got;
-    const T = RB.content.wordplay.texts || {};
     const place = a.place || placeOf(s);
     const fact = describe(a, result);
     if (r.together && r.together.session === a.session && !r.firsts.together) {
       r.firsts.together = a.session;
       const lines = a.st.history.map((h) => { const w = wordOf(s, h); return { who: h.actor === 'pc' ? 'pc' : h.actor === 'cpu' ? a.comp : 'narr', jp: w.jp, en: h.reading + (w.en ? ' — ' + w.en : '') }; });
-      if (RB.company.memory(s, { id: 'wordplay:together', kind: 'together', title: T.memTogether || { jp: 'しりとり', en: 'A game of shiritori' }, text: fact, place, lines: lines.slice(0, 40), ref: { kind: 'wordplay', session: a.session } })) got.push('wordplay:together');
+      if (RB.company.memory(s, { id: 'wordplay:together', kind: 'together', title: memTitles().together, text: fact, place, lines: lines.slice(0, 40), ref: { kind: 'wordplay', session: a.session } })) got.push('wordplay:together');
     }
     if (result.stage && result.firstClear) {
       const sharp = a.level === 'sharp';
@@ -699,10 +709,10 @@ RB.wordplay = (function () {
         r.firsts.clear = a.session;
         if (sharp) r.firsts.sharp = a.session;
         const text = { jp: fact.jp, en: fact.en + (sharp ? ' It was also the first win against Sharp play.' : '') };
-        if (RB.company.memory(s, { id: 'wordplay:first-clear', kind: 'together', title: T.memClear || { jp: '{初|はじ}めて の {勝|か}ち', en: 'A first shiritori win' }, text, place, ref: { kind: 'wordplay', stage: result.stage, session: a.session } })) got.push('wordplay:first-clear');
+        if (RB.company.memory(s, { id: 'wordplay:first-clear', kind: 'together', title: memTitles().clear, text, place, ref: { kind: 'wordplay', stage: result.stage, session: a.session } })) got.push('wordplay:first-clear');
       } else if (sharp && !r.firsts.sharp) {
         r.firsts.sharp = a.session;
-        if (RB.company.memory(s, { id: 'wordplay:first-sharp', kind: 'together', title: T.memSharp || { jp: '{鋭|するど}い {相手|あいて} に {勝|か}った', en: 'A win against Sharp play' }, text: fact, place, ref: { kind: 'wordplay', stage: result.stage, session: a.session } })) got.push('wordplay:first-sharp');
+        if (RB.company.memory(s, { id: 'wordplay:first-sharp', kind: 'together', title: memTitles().sharp, text: fact, place, ref: { kind: 'wordplay', stage: result.stage, session: a.session } })) got.push('wordplay:first-sharp');
       }
     }
     return got;
@@ -750,7 +760,7 @@ RB.wordplay = (function () {
     const said = o.said && (o.said.jp || o.said.en) ? o.said : (T.replies && T.replies[choice]) || { jp: '', en: choice };
     rf.said = { jp: said.jp || '', en: said.en || '' };
     RB.company.memory(s, {
-      id: 'wordplay:reflection', kind: 'reflections', title: T.memReflect || { jp: 'どう {遊|あそ}んだ か', en: 'How we played' },
+      id: 'wordplay:reflection', kind: 'reflections', title: memTitles().reflect,
       text: { jp: said.jp, en: 'You said: "' + said.en + '"' }, reply: o.reply || null, choice, lines: o.lines || null, place: placeOf(s),
       ref: rf.source ? { kind: 'wordplay', session: rf.source } : null,
     });
@@ -761,6 +771,14 @@ RB.wordplay = (function () {
   // ---- the companion's lines (src/content/wordplay/10_lines.js) ---------------------------------------------------
   // categories: invite rules thinking move newword escape trap win loss coop stop resume firstclear reflect
   const INCIDENTAL = { move: 1, newword: 1, escape: 1 };
+  // The lines the table shows (src/ui/87_wordplay*.js) are spoken lines: shown under one scene id with a Voice button
+  // (src/ui/22c_spoken_panel.js), and each listed for recording in the companion's own voice (RB.content.spokenSources,
+  // read by tools/voice/lines.mjs). 'thinking' only sets the face and the gesture; it is never shown, so not listed.
+  const SCENE = 'code.play';
+  const SHOWN = { invite: 1, rules: 1, move: 1, newword: 1, escape: 1, resume: 1, trap: 1, win: 1, loss: 1, coop: 1, stop: 1, firstclear: 1 };
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => ((RB.content.wordplay && RB.content.wordplay.lines) || []).filter((l) => SHOWN[l.cat] && l.jp)
+    .map((l) => ({ scene: SCENE, who: l.comp, jp: l.jp, en: l.en || '', expr: l.expr || null, file: 'wordplay ' + l.id })));
   function line(s, cat, salt, facts) {
     const comp = s.comp;
     const all = (RB.content.wordplay.lines || []).filter((l) => l.comp === comp && l.cat === cat && (!l.when || RB.state.test(s, l.when)) &&
@@ -873,6 +891,6 @@ RB.wordplay = (function () {
     ns, rec, peek, blankComp, normComp, norm, eligible, installed, bankFor, journeyPool, journeyStarters, snapOf, fromSnap, strategyVersion,
     normSetup, start, live, draft, playWord, cpuChoose, cpuCommit, noteSuggestion, noteInputAssist, concede, stopChain, abandon, suspend, resumed,
     verify, finish, reflection, deferReflection, reflect, line, mayComment, cells, supportLabel, transcripts, findTranscript, pin, unpin,
-    primer, markEncountered, recentThought, describe, combined, isCoop, addTheme, themes, themePool, isTheme,
+    primer, markEncountered, recentThought, describe, combined, isCoop, addTheme, themes, themePool, isTheme, memTitles, SCENE, SHOWN,
   };
 })();

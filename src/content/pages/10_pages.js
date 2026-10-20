@@ -472,10 +472,14 @@ RB.pages = (function () {
 
   // ---- hooks ---------------------------------------------------------------------------------------
   const H = RB.hooks;
+  // What these hooks say (the narrator naming the recorded moment, the companion recalling a shared one; the pinned
+  // page in 30_project.js) is shown under one scene id, so its recording is found, and every line they can make listed
+  // for recording (spoken() below; RB.content.spokenSources, read by tools/voice/lines.mjs)
+  const SCENE = 'code.pages';
   async function say(who, line, expr) {
     const s = G();
     if (who === 'comp') who = comp(s) || 'narr';
-    await RB.ui.dialogue.say({ who, expr: expr || null, jp: line.jp, en: line.en });
+    await RB.ui.dialogue.say({ who, expr: expr || null, jp: line.jp, en: line.en, sceneId: SCENE });
   }
   async function choose(opts) {
     const s = G();
@@ -512,9 +516,22 @@ RB.pages = (function () {
     if (!p || !p.ev) return;
     const here = args[0] === 'home';
     const fromThis = !here && liveRun(s) && liveRun(s).id === p.ev.run;
-    const lead = fromThis ? J('{今日|きょう} 、 {二人|ふたり} は ', 'Today, the two of you ') : J('あの {道|みち} で 、 {二人|ふたり} は ', 'On that road, the two of you ');
-    await say('narr', J(lead.jp + p.ev.desc.jp + ' 。', lead.en + p.ev.desc.en + '.'));
+    await say('narr', eventLine(fromThis, p.ev.desc));
   };
+  const eventLine = (fromThis, desc) => {
+    const lead = fromThis ? J('{今日|きょう} 、 {二人|ふたり} は ', 'Today, the two of you ') : J('あの {道|みち} で 、 {二人|ふたり} は ', 'On that road, the two of you ');
+    return J(lead.jp + desc.jp + ' 。', lead.en + desc.en + '.');
+  };
+  // every moment an outing can record for the page (describe() over each objective a room of the Atlas holds, each name,
+  // the three doors read or guessed, a guardian settled, each guardian of the road's end)
+  function events() {
+    const A = C.atlas || {}, evs = [];
+    for (const id in A.patterns || {}) for (const o of A.patterns[id].objectives || []) if (o !== 'name' && o !== 'doors') evs.push({ kind: o, pattern: id });
+    for (const n in A.names || {}) evs.push({ kind: 'name', name: n });
+    evs.push({ kind: 'doors', read: true }, { kind: 'doors', read: false }, { kind: 'guardian' });
+    for (const b in A.climaxes || {}) evs.push({ kind: 'climax', boss: b });
+    return evs.map(describe);
+  }
   // !hook pages_recall — the companion recalls one recorded shared moment by its title.
   const RECALL = {
     nao: { lead: (t) => J('「 ' + t.jp + ' 」 。 …… {覚|おぼ}えてる か ？', '"' + t.en + '." …Remember?'),
@@ -545,6 +562,22 @@ RB.pages = (function () {
     await say(c, R.lead(m.title), 'think');
     await say(c, R[m.kind] || R.together, 'smile');
   };
+  // the lines above, for the recording list: each recorded moment named, from here or from that road; each companion
+  // recalling every title a shared memory can have (RB.company.memoryTitles, src/engine/58_companion.js) and what they
+  // say of each kind of memory
+  function spoken() {
+    const out = [], add = (who, l, expr, file) => { if (l && l.jp && !/\$\w/.test(l.jp)) out.push({ scene: SCENE, who, jp: l.jp, en: l.en || '', expr: expr || null, file: file || 'pages/10_pages' }); };
+    for (const [desc] of events()) for (const fromThis of [true, false]) add('narr', eventLine(fromThis, desc), null, 'pages_event');
+    const titles = RB.company && RB.company.memoryTitles ? RB.company.memoryTitles().filter((t) => RANK[t.kind]) : [];
+    for (const c of COMPS) {
+      const R = RECALL[c];
+      for (const t of titles) if (!t.comp || t.comp === c) add(c, R.lead(t.title), 'think', 'pages_recall ' + t.id);
+      for (const k of ['discoveries', 'together', 'reflections', 'pets']) add(c, R[k], 'smile', 'pages_recall');
+    }
+    return out;
+  }
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(spoken);
   // !hook pages_end_done [retro] — the passage is complete: +2 bond and a Reflections memory, once.
   H.pages_end_done = async (args) => { const s = G(); if (s) endingDone(s, args[0] === 'retro'); retroTalk = false; };
   H.pages_retro_begin = async () => { retroTalk = true; };
@@ -598,7 +631,7 @@ RB.pages = (function () {
     COMPS, PQ, PROJECT, REPLY, RET, MEMO_TITLE, TOPICS, RECALL,
     state, pending, capture, runEnded, accept, page2, page3, endingDone, unfinishedDone,
     needRetro, needUnfinished, offerOpen, returned, retOf, campOpen, home2Open, home3Open, roadCampOpen, roadHomeOpen,
-    recallable, describe, addTopics, topic, topicHeard, petVisible, pqDone,
+    recallable, describe, addTopics, topic, topicHeard, petVisible, pqDone, events, SCENE, spoken,
     _pick: pick,
   };
 })();

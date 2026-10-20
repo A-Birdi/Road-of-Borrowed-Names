@@ -439,14 +439,28 @@ suzu: {了解|りょうかい} 。 {題|だい} {未定|みてい} の まま �
       inside: (t) => J('{場面|ばめん} の {説明|せつめい} に は 、 「 ' + t.jp + ' 」 。', 'The scene is described as "' + t.en + '".'),
       say: J('{上演|じょうえん} は 、 {気|き} が {向|む}いた {時|とき} に ね 。', 'We stage it whenever we feel like it.') },
   };
+  // (spoken lines under the pages' scene id, RB.pages.SCENE: every caption each companion's page can carry, every moment
+  // it can name, and their words, listed for recording below)
   RB.hooks.pages_display = async () => {
     const s = RB.game.s, p = RB.pages.state(s);
     if (!p || p.stage < 3) return;
-    const c = s.comp, S = SHOW[c];
+    const c = s.comp, S = SHOW[c], SC = RB.pages.SCENE;
     const cap = RB.pages.PROJECT[c].captions[p.theme][p.caption];
-    await RB.ui.dialogue.say({ who: 'narr', jp: S.narr(cap).jp, en: S.narr(cap).en });
-    if (p.ev) await RB.ui.dialogue.say({ who: 'narr', jp: S.inside(p.ev.title).jp, en: S.inside(p.ev.title).en });
-    await RB.ui.dialogue.say({ who: c, expr: 'smile', jp: S.say.jp, en: S.say.en });
+    await RB.ui.dialogue.say({ who: 'narr', jp: S.narr(cap).jp, en: S.narr(cap).en, sceneId: SC });
+    if (p.ev) await RB.ui.dialogue.say({ who: 'narr', jp: S.inside(p.ev.title).jp, en: S.inside(p.ev.title).en, sceneId: SC });
+    await RB.ui.dialogue.say({ who: c, expr: 'smile', jp: S.say.jp, en: S.say.en, sceneId: SC });
   };
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [], SC = RB.pages.SCENE, titles = RB.pages.events().map((d) => d[1]);
+    const add = (who, l, expr) => { if (l && l.jp) out.push({ scene: SC, who, jp: l.jp, en: l.en || '', expr: expr || null, file: 'pages/30_project' }); };
+    for (const c in SHOW) {
+      const P = RB.pages.PROJECT[c];
+      for (const th in (P && P.captions) || {}) for (const cap of P.captions[th]) add('narr', SHOW[c].narr(cap));
+      for (const t of titles) add('narr', SHOW[c].inside(t));
+      add(c, SHOW[c].say, 'smile');
+    }
+    return out;
+  });
   RB.pages.SHOW = SHOW;
 })();

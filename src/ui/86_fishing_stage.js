@@ -671,14 +671,19 @@ RB.fishStage = (function () {
       if (L.fast || L.slow) { const y = Math.round(AH * 0.46) - 24; add(AW * 0.62, y, RB.ui.jhtml(L.slow || ''), 'sign'); add(AW * 0.86, y, RB.ui.jhtml(L.fast || ''), 'sign'); }
       if (L.a || L.b) { add(AW * 0.44, AH * 0.4 - 18, RB.ui.jhtml(L.a || ''), 'tag'); add(AW * 0.72, AH * 0.38 - 18, RB.ui.jhtml(L.b || ''), 'tag'); }
     }
-    // the companion's brief remark, over the stage (never over an open answer: the activity decides when)
+    // the companion's brief remark, over the stage (never over an open answer: the activity decides when); a spoken line
+    // (src/ui/22c_spoken_panel.js) under the scene id the activity gives (sceneId: its recording's), said as it appears
+    // when lines are spoken automatically
     let sayT = 0;
-    function say(line, who) {
+    function say(line, who, sceneId) {
       clearTimeout(sayT);
       if (!line) { sayEl.innerHTML = ''; sayEl.classList.remove('on'); return; }
       if (RB.dialect) line = RB.dialect.line(who, line); // Suzu's Kansai-ben when chosen
       const nm = who && RB.content.chars[who] ? RB.content.chars[who].name.en : '';
-      sayEl.innerHTML = '<span class="who">' + RB.util.esc(nm) + '</span>' + RB.ui.jhtml(line.jp) + '<span class="en">' + RB.util.esc(line.en) + '</span>';
+      if (RB.ui.spoken) {
+        sayEl.innerHTML = RB.ui.spoken.html(Object.assign({}, line, { who: who || 'narr', sceneId: sceneId || null }), { whoHtml: RB.util.esc(nm) });
+        RB.ui.spoken.autoIn(sayEl);
+      } else sayEl.innerHTML = '<span class="who">' + RB.util.esc(nm) + '</span>' + RB.ui.jhtml(line.jp) + '<span class="en">' + RB.util.esc(line.en) + '</span>';
       sayEl.classList.add('on');
       sayT = setTimeout(() => { sayEl.classList.remove('on'); }, 5200);
     }

@@ -50,6 +50,22 @@ RB.weave = (function () {
     }
     return out;
   }
+  // What weaving at an animal's meeting place says (the vignette's own words, src/content/pets/) is the narrator's line
+  // like any other: shown under its own scene id, so its recording is found, and every one listed for recording
+  // (RB.content.spokenSources, read by tools/voice/lines.mjs): each family's words where it settles the cause, the
+  // neutral words where it does not (also what the sheet shows of the place, petLook)
+  const PET_SCENE = 'code.weave';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    const add = (l, id) => { for (const x of [].concat(l || [])) if (x && x.jp) out.push({ scene: PET_SCENE, who: 'narr', jp: x.jp, en: x.en || '', file: 'pets ' + id }); };
+    const V = (RB.pets && RB.pets.vignettes) || {};
+    for (const id in V) {
+      for (const f in V[id].fieldSay || {}) add(V[id].fieldSay[f], id);
+      for (const f in V[id].fieldNeutral || {}) add(V[id].fieldNeutral[f], id);
+    }
+    return out;
+  });
   // what the player sees of an animal's meeting place (the vignette's own words for its state)
   function petLook(T) {
     const v = RB.pets.vignettes[T.pet];
@@ -173,9 +189,12 @@ RB.weave = (function () {
     render(true);
     RB.audio && RB.audio.sfx('cursor', { vol: 0.5 });
   }
-  function lookHtml(l) {
+  function lookHtml(l, sceneId) {
     if (!l) return '';
     const lines = l.lines || [l];
+    // the sheet's look at its target: the narrator's lines, said by Voice from their recordings (the same words and
+    // scene id as the target's look in the world, fw_look below; an animal's place: PET_SCENE)
+    if (sceneId && RB.ui.spoken) return lines.map((x) => (x.jp ? RB.ui.spoken.html({ who: x.who || 'narr', jp: x.jp, en: x.en || '', sceneId }, { cls: 'wv-l', jpCls: 'wv-lj', enCls: 'en', tag: 'div' }) : '<div class="wv-l"><div class="en">' + esc(RB.script.enVars(x.en || '')) + '</div></div>')).join('');
     return lines.map((x) => '<div class="wv-l">' + (x.jp ? RB.ui.jhtml(x.jp) : '') + '<div class="en">' + esc(RB.script.enVars(x.en || '')) + '</div></div>').join('');
   }
   function render(keepFocus) {
@@ -190,7 +209,7 @@ RB.weave = (function () {
     const l = T.pet ? petLook(T) : FW().lookOf(s, T.pz, T.key);
     if (!T.pet && l && l.obs) FW().observe(s, T.pz, l.obs);
     const nm = T.o.name || { en: T.key };
-    el.querySelector('.wv-look').innerHTML = '<div class="wv-name">' + (nm.jp ? RB.ui.jhtml(nm.jp) : '') + '<span class="en">' + esc(nm.en) + '</span></div>' + lookHtml(l);
+    el.querySelector('.wv-look').innerHTML = '<div class="wv-name">' + (nm.jp ? RB.ui.jhtml(nm.jp) : '') + '<span class="en">' + esc(nm.en) + '</span></div>' + lookHtml(l, T.pet ? PET_SCENE : FW().SCENE);
     const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : ['I', 'A'].indexOf(s.learn.profile) >= 0;
     el.querySelector('.wv-words').innerHTML = known(s).map((id) => {
       const w = RB.content.words[id];
@@ -311,7 +330,7 @@ RB.weave = (function () {
       const fam = RB.families && RB.families.ofResponse ? RB.families.ofResponse('w:' + word) : null;
       const r = RB.pets.fieldWeave(s, T.pet, fam) || { say: [] };
       try {
-        if (r.say.length && !auto()) await RB.script.runInline(r.say.map((l) => ({ who: 'narr', jp: l.jp, en: l.en })));
+        if (r.say.length && !auto()) await RB.script.runInline(r.say.map((l) => ({ who: 'narr', jp: l.jp, en: l.en, sceneId: PET_SCENE })));
       } finally { busy = false; RB.game.popMode('weave'); RB.input.clearHeld && RB.input.clearHeld(); }
       return;
     }
@@ -351,7 +370,8 @@ RB.weave = (function () {
     // the companion's first, brief reaction to what actually happened
     if (res.completed && res.first && s.comp && RB.company && RB.company.react) {
       const r = RB.company.react(s, { id: 'puzzle:' + res.pz + ':done', event: 'puzzle:' + res.pz, facts: { method: res.method } });
-      if (r && r.lines && r.lines[0]) { lines.push({ who: r.comp, expr: r.expr || 'smile', jp: r.lines[0].jp, en: r.lines[0].en }); res.reaction = r.id; }
+      // (the companions' scene id: the reaction's recording, src/engine/58_companion.js)
+      if (r && r.lines && r.lines[0]) { lines.push({ who: r.comp, expr: r.expr || 'smile', jp: r.lines[0].jp, en: r.lines[0].en, sceneId: RB.company.SCENE }); res.reaction = r.id; }
     }
     if (lines.length) {
       if (o.inScene) for (const l of lines) await RB.ui.dialogue.say(l);

@@ -2,6 +2,8 @@
 // recordings for the chosen scenes and reference keys made as short synthetic tones (ffmpeg, Ogg Opus 48 kHz mono;
 // each its own pitch and length), a results file in the worker's schema, and the site built by tools/voice/voice_site.mjs
 // exactly as the real one would be. No voice is generated: these are test tones standing in for recordings.
+// o.tones: make that many distinct tones and give each recording a copy of one (its own file, the same bytes as some
+// others): for a site with thousands of recordings, where encoding each would take minutes.
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
@@ -20,10 +22,18 @@ export function makeVoiceSite(dir, o) {
   const audio = path.join(dir, 'audio');
   fs.mkdirSync(audio, { recursive: true });
   const recordings = {};
-  chosen.forEach((e, i) => {
+  const tone = (i, out) => {
     const seconds = +(0.7 + (i % 5) * 0.15).toFixed(2);
+    execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'lavfi', '-i', 'sine=f=' + (330 + i * 23) + ':d=' + seconds, '-ac', '1', '-ar', '48000', '-c:a', 'libopus', '-b:a', '48k', out]);
+    return seconds;
+  };
+  const shared = [];
+  if (o.tones) for (let i = 0; i < o.tones; i++) { const f = path.join(dir, 'tone' + i + '.opus'); shared.push({ f, seconds: tone(i, f) }); }
+  chosen.forEach((e, i) => {
     const file = e.id + '.opus';
-    execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'lavfi', '-i', 'sine=f=' + (330 + i * 23) + ':d=' + seconds, '-ac', '1', '-ar', '48000', '-c:a', 'libopus', '-b:a', '48k', path.join(audio, file)]);
+    let seconds;
+    if (shared.length) { const sh = shared[i % shared.length]; fs.copyFileSync(sh.f, path.join(audio, file)); seconds = sh.seconds; }
+    else seconds = tone(i, path.join(audio, file));
     const b = fs.readFileSync(path.join(audio, file));
     recordings[e.id] = { file, bytes: b.length, sha256: crypto.createHash('sha256').update(b).digest('hex'), seconds };
   });

@@ -81,6 +81,28 @@ RB.stampBook = (function () {
     const key = (x, i) => [fam.indexOf(x.d.family), STORY[x.d.family] ? storyNo(x.d) : 0, i];
     return out.map((x, i) => key(x, i).concat([x])).sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]).map((k) => k[3]);
   }
+  // What a stand says is the narrator's line like any other: shown under its own scene id, so its recording is found,
+  // and every line a stand can say listed for recording (RB.content.spokenSources, read by tools/voice/lines.mjs): the
+  // stamps pressed at once there, named in the book's order (every set of a stand's stamps that can be waiting at once:
+  // each stand has at most five), and the line when nothing waits.
+  const STAND_SCENE = 'code.stamp';
+  const pressedLine = (names) => ({ jp: '{判|はん} を {押|お}した 。 ' + names.map((n) => '「' + n.jp + '」').join(' '), en: 'You press the stamp' + (names.length > 1 ? 's' : '') + ' into your book: ' + names.map((n) => n.en).join(', ') + '.' });
+  const standLine = (T) => ({ jp: (T ? T.jp + ' の ' : '') + '{判|はん} が {置|お}いて ある 。 {今|いま} は {押|お}す もの が ない 。', en: (T ? T.en + ': ' : '') + 'a stamp stand. Nothing to press here yet.' });
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    for (const stand in ST()) {
+      const ids = Object.keys(S()).filter((id) => S()[id].stand === stand);
+      if (ids.length > 10) continue; // (2^n sets; no stand comes near: the unit test spoken_sites checks every stand is listed)
+      for (let m = 1; m < 1 << ids.length; m++) {
+        const l = pressedLine(ids.filter((id, i) => m & (1 << i)).map((id) => S()[id].title));
+        out.push({ scene: STAND_SCENE, who: 'narr', jp: l.jp, en: l.en, file: 'stand ' + stand });
+      }
+      const n = standLine(ST()[stand].title);
+      out.push({ scene: STAND_SCENE, who: 'narr', jp: n.jp, en: n.en, file: 'stand ' + stand });
+    }
+    return out;
+  });
   // a stand in the world: content places a prop with scene 'rb.stand' and o.stand = <id>
   RB.hooks = RB.hooks || {};
   RB.hooks.rb_stand = async (a, ctx) => {
@@ -93,10 +115,10 @@ RB.stampBook = (function () {
       const names = got.map((id) => S()[id].title);
       // the slip, with the line (src/ui/15_award.js stamps)
       if (RB.ui && RB.ui.award && RB.ui.award.stamps) RB.ui.award.stamps(got, stand);
-      await RB.script.runInline([{ who: 'narr', jp: '{判|はん} を {押|お}した 。 ' + names.map((n) => '「' + n.jp + '」').join(' '), en: 'You press the stamp' + (got.length > 1 ? 's' : '') + ' into your book: ' + names.map((n) => n.en).join(', ') + '.' }]);
+      await RB.script.runInline([Object.assign({ who: 'narr', sceneId: STAND_SCENE }, pressedLine(names))]);
       if (RB.save && RB.save.autosave) RB.save.autosave('progress');
     } else {
-      await RB.script.runInline([{ who: 'narr', jp: (T ? T.jp + ' の ' : '') + '{判|はん} が {置|お}いて ある 。 {今|いま} は {押|お}す もの が ない 。', en: (T ? T.en + ': ' : '') + 'a stamp stand. Nothing to press here yet.' }]);
+      await RB.script.runInline([Object.assign({ who: 'narr', sceneId: STAND_SCENE }, standLine(T))]);
     }
   };
   // the stamps the story's settling presses have their slips too (src/ui/15_award.js stamps)
@@ -105,7 +127,7 @@ RB.stampBook = (function () {
     const got = s ? settle(s) : [];
     if (got.length && RB.ui && RB.ui.award && RB.ui.award.stamps) setTimeout(() => RB.ui.award.stamps(got), 400);
   });
-  return { earned, pressed, pressAt, settle, ready, book, press1, known };
+  return { earned, pressed, pressAt, settle, ready, book, press1, known, SCENE: STAND_SCENE };
 })();
 
 RB.volume = (function () {

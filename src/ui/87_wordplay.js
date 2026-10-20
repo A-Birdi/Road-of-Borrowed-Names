@@ -26,6 +26,9 @@ RB.ui.wordplay = RB.ui.wordplay || {};
   const lab = (k, en) => { const l = LB()[k]; return l ? RB.ui.label(l.jp, en || l.en) : esc(en || k); };
   const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
   const J = (jp) => (jp ? RB.ui.jhtml(jp) : '');
+  // the companion's line at the table: a spoken line (Voice, the spoken word marked: src/ui/22c_spoken_panel.js), under
+  // the table's scene id (RB.wordplay.SCENE), in the companion's voice
+  const SAY = (s, l, o) => RB.ui.spoken.html(Object.assign({}, l, { who: s.comp, sceneId: WP().SCENE }), o);
   const chr = (id) => ((RB.content && RB.content.chars) || {})[id] || null;
   const who = (s) => (chr(s.comp) ? chr(s.comp).name.en : 'your companion');
   const tnow = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
@@ -67,6 +70,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     const V = CUR;
     if (!V || V.session !== session) return;
     V.dead = true;
+    if (RB.ui.spoken) RB.ui.spoken.stop(); // (nothing said at the table goes on speaking)
     for (const t of V.timers) clearTimeout(t);
     if (V.pad) { try { V.pad.destroy(); } catch (e) { /* gone */ } V.pad = null; }
     if (V.layer) RB.ui.popLayer(V.layer);
@@ -188,6 +192,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     const r0 = WP().rec(s);
     const firstOpen = !r0.firsts.invited;
     r0.firsts.invited = r0.firsts.invited || 1;
+    let invited = false; // (the invitation is said once, not again when a setting redraws the sheet)
     for (;;) {
       if (!alive(V)) return { act: 'dead' };
       const st = RB.practice.settings(s);
@@ -201,7 +206,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       const g = (RB.content.wordplay.gestures || {})[s.comp] || {};
       let h = '<section class="wp-prep"><div class="wp-head"><canvas class="wp-face" width="96" height="96" role="img" aria-label="' + esc(who(s)) + '"></canvas><div>' +
         '<h3 tabindex="-1">' + lab('title') + ' <span class="en">' + esc('with ' + who(s)) + '</span></h3>' +
-        (line ? '<div class="wp-say"><span class="jp">' + J(line.jp) + '</span><span class="en">' + esc(line.en) + '</span></div>' : '<p class="muted">' + esc(g.seat || '') + '</p>') +
+        (line ? SAY(s, line, { cls: 'wp-say' }) : '<p class="muted">' + esc(g.seat || '') + '</p>') +
         '<p class="muted small">Optional, untimed, and never needed for the story. Choose any setup; nothing is locked and the computer never changes level by itself.</p></div></div>';
       if (active) {
         const n = SH().moves(active.st);
@@ -248,6 +253,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
         '<button class="pbtn quiet" data-wp="leave">' + I('back') + lab('leave') + '</button></div></section>';
       const r = await show(V, h, (el, done) => {
         face(el.querySelector('.wp-face'), s.comp, line ? line.expr || 'smile' : 'neutral');
+        if (line && !invited) { invited = true; RB.ui.spoken.autoIn(el); }
         el.addEventListener('change', (e) => {
           const t = e.target;
           if (!t || t.type !== 'radio') return;
@@ -355,7 +361,8 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       function setLine(l, cat) {
         const box = $('.wp-say');
         if (!l) { box.innerHTML = ''; return; }
-        box.innerHTML = '<span class="who">' + esc(who(s)) + '</span><span class="jp">' + J(l.jp) + '</span><span class="en">' + esc(l.en) + '</span>';
+        box.innerHTML = SAY(s, l, { whoHtml: esc(who(s)) });
+        RB.ui.spoken.autoIn(box); // said as it appears, when lines are spoken automatically
         face(faceCv, s.comp, l.expr || (cat === 'thinking' ? 'think' : 'neutral'));
         if (l.gesture) $('.wp-gesture').textContent = l.gesture;
       }
@@ -779,12 +786,12 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     const G = (RB.content.wordplay.gestures || {})[s.comp] || {};
     let h = '<section class="wp-result" data-cat="' + cat + '"><div class="wp-head"><canvas class="wp-face" width="96" height="96" role="img" aria-label="' + esc(who(s)) + '"></canvas><div>' +
       '<h3 tabindex="-1">' + esc(title) + '</h3><p class="wp-reason">' + reasonText + '</p>' +
-      (l ? '<div class="wp-say"><span class="jp">' + J(l.jp) + '</span><span class="en">' + esc(l.en) + '</span></div>' : '') +
+      (l ? SAY(s, l, { cls: 'wp-say' }) : '') +
       '<p class="muted small">' + esc(G.end || '') + '</p></div></div>';
     if (result.stage) {
       h += '<div class="wp-stamp" role="note">' + I('seal') + '<div><b>' + esc((result.firstClear ? 'Stage won for the first time: ' : 'Stage won again: ') + WP().BAND[result.band].en + ' · ' + WP().LEVEL[result.level].en) + '</b>' +
         '<div class="small">Kept in Company › ' + esc(who(s)) + ' › Wordplay. ' + (result.noSuggestClear ? 'Also marked: no in-game word suggestions used.' : '') + '</div>' +
-        (fc ? '<div class="wp-say"><span class="jp">' + J(fc.jp) + '</span><span class="en">' + esc(fc.en) + '</span></div>' : '') + '</div></div>';
+        (fc ? SAY(s, fc, { cls: 'wp-say' }) : '') + '</div></div>';
     } else if (!coop && result.winner === 'pc' && result.band === 'journey') {
       h += '<p class="muted small">From my journey is free play: kept as a custom-bank result, not a stage.</p>';
     } else if (!coop && result.winner === 'pc' && WP().isTheme && WP().isTheme(result.band)) {
@@ -804,6 +811,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     for (;;) {
       const r = await show(V, h, (el, done) => {
         face(el.querySelector('.wp-face'), s.comp, l ? l.expr || 'smile' : 'neutral');
+        RB.ui.spoken.autoIn(el);
         el.addEventListener('click', (e) => { const b = e.target.closest('[data-wp]'); if (b && !b.disabled) done({ act: b.dataset.wp }); });
       });
       if (r.act === 'look') {

@@ -12,6 +12,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function () {
   'use strict';
   RB.hooks = RB.hooks || {};
+  // (what you see from each viewpoint, said under that viewpoint's own scene, is listed for recording there:
+  // RB.content.spokenSources, read by tools/voice/lines.mjs)
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const V = RB.content.caseView, out = [];
+    if (!V || !V.points) return out;
+    for (const pid in V.points) {
+      const P = V.points[pid], w = V.words(V.order(pid));
+      for (const l of [P.look, w]) if (l && l.jp) out.push({ scene: 'cs.view_' + pid, who: 'narr', jp: l.jp, en: l.en || '', file: 'cases/30_view' });
+    }
+    return out;
+  });
   // !hook cs_look <viewpoint>: look out; the view (from the map) is kept as an observation
   RB.hooks.cs_look = async (args) => {
     const s = RB.game.s, V = RB.content.caseView, pid = args[0], P = V.points[pid];

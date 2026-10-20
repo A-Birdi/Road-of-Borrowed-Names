@@ -46,6 +46,10 @@ RB.content.company = RB.content.company || {
   const T = (s) => C(s).talk;
   const game = () => (RB.game && RB.game.s ? RB.game : null);
   const hasDom = () => typeof document !== 'undefined';
+  // What the companion says from here (a remark on a result, a thought, "Talk about this place", What We Keep) is shown
+  // under one scene id, so its recording is found (src/audio/52_voicebank.js), and every line it can be is listed for
+  // recording (spoken() below; RB.content.spokenSources, read by tools/voice/lines.mjs)
+  const SCENE = 'code.comp';
 
   // ---- where are we ------------------------------------------------------------------------------
   // a place key for thoughts and "Talk about this place": the region, with the interiors and the
@@ -232,7 +236,7 @@ RB.content.company = RB.content.company || {
     t['said:' + ev.id] = 1;
     if (t._remark && t._remark.id === ev.id) delete t._remark;
     const comp = s.comp || s.provisional;
-    const lines = (r.lines || []).map((l) => ({ who: l.who || comp, expr: l.expr || r.expr || null, jp: l.jp, en: l.en }));
+    const lines = (r.lines || []).map((l) => ({ who: l.who || comp, expr: l.expr || r.expr || null, jp: l.jp, en: l.en, sceneId: SCENE }));
     if (!lines.length) return r;
     if (RB.script.isRunning()) { for (const l of lines) await RB.ui.dialogue.say(l); }
     else await RB.script.runInline(lines);
@@ -261,6 +265,8 @@ RB.content.company = RB.content.company || {
     const jt = (o) => (o && o.jp != null && o.en != null ? { jp: o.jp, en: o.en } : null);
     return { title: jt(cd.title), text: jt(cd.result), ref: { kind: 'case', id: ev.id } };
   }
+  // a discovery's title when nothing names it (the words a memory keeps; listed for What We Keep's recordings below)
+  const DISC_TITLE = { case: { jp: '{解|と}けた {謎|なぞ}', en: 'A case worked out together' }, puzzle: { jp: '{解|と}けた {仕掛|しか}け', en: 'A puzzle solved together' } };
   // A substantial puzzle or case resolved (discovery:resolved, after the result is committed):
   // bond once per region (three in all), the reaction chosen once (the same stored choice the
   // owning system reads), a Discoveries memory, the longer thought filed for Company. This
@@ -285,7 +291,7 @@ RB.content.company = RB.content.company || {
     const words = r && r.lines && r.lines[0] ? { jp: r.lines.map((l) => l.jp).join(' '), en: r.lines.map((l) => l.en).join(' ') } : null;
     K.memory(s, {
       id: 'disc:' + evName, kind: 'discoveries',
-      title: d.title || ev.title || (ev.kind === 'case' ? { jp: '{解|と}けた {謎|なぞ}', en: 'A case worked out together' } : { jp: '{解|と}けた {仕掛|しか}け', en: 'A puzzle solved together' }),
+      title: d.title || ev.title || (ev.kind === 'case' ? DISC_TITLE.case : DISC_TITLE.puzzle),
       text: d.text || ev.text || null, reply: words, place: ev.place || placeName(s), method: ev.method || null,
       ref: d.ref || (ev.kind === 'case' ? { kind: 'case', id: ev.id } : ev.keepsake ? { kind: 'keepsake', id: ev.keepsake } : null),
       react: r ? r.id : null,
@@ -294,6 +300,7 @@ RB.content.company = RB.content.company || {
   }
   RB.bus.on('discovery:resolved', (ev) => { const g = game(); if (g) onResolved(g.s, ev); });
 
+  const PET_TITLE_JP = '{出会|であ}い';
   // an animal met on the road: a Pets memory with the companion's words then (the pet worker
   // records the meeting itself; the name kept here is the one it had that day)
   function onPetMet(s, ev) {
@@ -307,7 +314,7 @@ RB.content.company = RB.content.company || {
     const words = (CC.pets[comp] && (CC.pets[comp][ev.species] || CC.pets[comp]['*'])) || null;
     K.memory(s, {
       id: 'pet:' + ev.species, kind: 'pets', species: ev.species, petName: p.nameAtMeet || p.name || null,
-      title: { jp: '{出会|であ}い', en: 'Meeting ' + (sp && sp.label ? sp.label.en || ev.species : ev.species) },
+      title: { jp: PET_TITLE_JP, en: 'Meeting ' + (sp && sp.label ? sp.label.en || ev.species : ev.species) },
       text: sp && sp.label ? { jp: sp.label.jp || '', en: 'A ' + (sp.label.en || ev.species).toLowerCase() + ' found its way to you.' } : null,
       reply: words, place: placeName(s),
     });
@@ -364,7 +371,7 @@ RB.content.company = RB.content.company || {
     const comp = s.comp;
     if (!comp) return null;
     const e = choose(s, placeEntries(s, comp), comp + ':' + s.map + ':talk:' + (s.chapter || 0));
-    return e ? e.lines.map((l) => ({ who: l.who || comp, expr: l.expr || null, jp: l.jp, en: l.en })) : null;
+    return e ? e.lines.map((l) => ({ who: l.who || comp, expr: l.expr || null, jp: l.jp, en: l.en, sceneId: SCENE })) : null;
   }
 
   // ---- proactive topics (§7.4): one pending at a time ---------------------------------------------------
@@ -553,10 +560,16 @@ RB.content.company = RB.content.company || {
     }
     return null;
   }
+  // the companion's framing around a recorded title (title null: a meeting named by the animal's name, enName)
+  function framed(frame, title, enName) {
+    const jpT = title ? title.jp : '';
+    const enT = title ? title.en : (enName || '');
+    return { jp: frame.jp.replace('%T', jpT ? '「 ' + jpT + ' 」' : 'あの {日|ひ}'), en: frame.en.replace('%T', enT ? '"' + enT + '"' : 'that day') };
+  }
   function keepLines(s, m) {
     const comp = s.comp;
     const def = CC.keep || {};
-    const say = (o, expr) => o ? [{ who: comp, expr: expr || null, jp: o.jp, en: o.en }] : [];
+    const say = (o, expr) => o ? [{ who: comp, expr: expr || null, jp: o.jp, en: o.en, sceneId: SCENE }] : [];
     if (!m) return say(def.none && def.none[comp], 'think');
     const key = m.id.startsWith('story:') ? m.id.slice(6) : null;
     const own = key && CC.mem[key] && CC.mem[key].keep && byComp(s, CC.mem[key].keep);
@@ -565,9 +578,7 @@ RB.content.company = RB.content.company || {
     const frame = def.frame && def.frame[comp];
     if (!frame || !m.title) return say(def.none && def.none[comp], 'think');
     const title = m.kind === 'pets' && m.petName ? null : m.title;
-    const jpT = title ? title.jp : '';
-    const enT = title ? title.en : (m.petName || '');
-    return say({ jp: frame.jp.replace('%T', jpT ? '「 ' + jpT + ' 」' : 'あの {日|ひ}'), en: frame.en.replace('%T', enT ? '"' + enT + '"' : 'that day') }, 'smile');
+    return say(framed(frame, title, m.petName), 'smile');
   }
 
   // Company and world entry points into conversations (all run through the normal dialogue runner)
@@ -587,7 +598,7 @@ RB.content.company = RB.content.company || {
   };
   RB.hooks.co_thought = async () => {
     const s = S(), th = thought(s);
-    if (th) await RB.ui.dialogue.say({ who: s.comp, jp: th.text.jp, en: th.text.en });
+    if (th) await RB.ui.dialogue.say({ who: s.comp, jp: th.text.jp, en: th.text.en, sceneId: SCENE });
   };
   // the game's own banter for here (90_game.js companionTalk uses the same filter)
   let chatBypass = false;
@@ -676,7 +687,77 @@ RB.content.company = RB.content.company || {
   }
   const last = { t: -1e9 };
 
+  // ---- every memory a journey can keep, as { id (its family: story:<key>, seq:<id>, disc:…, pet:…), kind, title,
+  // comp? (only that companion's), named? (a meeting, named by the animal's name instead of a title) }. What We Keep
+  // (keepLines) and The Pages We Keep (src/content/pages/10_pages.js) name a kept moment by its title, so their lines
+  // are listed for recording over this, the same sources that make memories: the story's (CC.mem), the illustrated
+  // sequences', a discovery's (a case's title, or the plain titles above), an animal met, fishing and shiritori.
+  const COMPS = ['nao', 'mio', 'ren', 'suzu'];
+  function memoryTitles() {
+    const out = [];
+    const add = (id, kind, title, o) => { if (title && title.jp) out.push(Object.assign({ id, kind, title: { jp: title.jp, en: title.en || '' } }, o || {})); };
+    for (const k in CC.mem) add('story:' + k, CC.mem[k].kind || 'together', CC.mem[k].title, /^pq_/.test(k) ? { comp: k.slice(3) } : null);
+    if (RB.sequence && RB.sequence.ids) for (const id of RB.sequence.ids()) { const d = RB.sequence.get(id); if (d && d.memory) add('seq:' + id, 'together', d.title); }
+    add('disc:puzzle', 'discoveries', DISC_TITLE.puzzle);
+    add('disc:case', 'discoveries', DISC_TITLE.case);
+    for (const id in (RB.content.cases || {})) { const d = describeCase({ kind: 'case', id }); if (d && d.title) add('disc:case:' + id, 'discoveries', d.title); }
+    add('pet:', 'pets', { jp: PET_TITLE_JP, en: 'Meeting' });
+    for (const sp in ((RB.pets && RB.pets.meeting) || {})) add('pet:met:' + sp, 'pets', RB.pets.meeting[sp].title);
+    const fm = RB.fishing && RB.fishing.content ? (RB.fishing.content().remarks || {}).__memories || {} : {};
+    add('fish:outing', 'together', fm.outing && fm.outing.title);
+    add('fish:reflection', 'reflections', fm.reflection && fm.reflection.title);
+    if (RB.wordplay && RB.wordplay.memTitles && RB.content.wordplay) {
+      const W = RB.wordplay.memTitles();
+      add('wordplay:together', 'together', W.together); add('wordplay:first-clear', 'together', W.clear);
+      add('wordplay:first-sharp', 'together', W.sharp); add('wordplay:reflection', 'reflections', W.reflect);
+    }
+    return out;
+  }
+  // ---- every line this file shows, for the recording list (RB.content.spokenSources, read by tools/voice/lines.mjs):
+  // each authored reaction's lines (said whole by say(); its first line alone after a field puzzle, src/ui/57_weave.js),
+  // the thoughts (a reaction's longer thought, the authored thoughts, a place's first line), "Talk about this place",
+  // and What We Keep: the honest none, each kept story moment's own words (every variant), and each companion's framing
+  // around every title a moment could have (memoryTitles). A line with a run-time name ($name) can never be recorded and
+  // is left out.
+  function spoken() {
+    const out = [];
+    const add = (who, l, expr, file) => { if (l && l.jp && !/\$\w/.test(l.jp)) out.push({ scene: SCENE, who, jp: l.jp, en: l.en || '', expr: expr || null, file }); };
+    const variants = (v) => (Array.isArray(v) ? v : v ? [v] : []);
+    for (const r of K.reactions) {
+      (r.lines || []).forEach((l, i) => {
+        add(l.who || r.comp, l, l.expr || r.expr, 'reaction ' + r.id);
+        if (i === 0) add(r.comp, l, r.expr || 'smile', 'reaction ' + r.id);
+      });
+      add(r.comp, r.thought, null, 'reaction ' + r.id + ' (thought)');
+    }
+    for (const x of CC.thoughts) add(x.comp, x.text, null, 'company thought');
+    for (const e of CC.places) {
+      (e.lines || []).forEach((l, i) => { add(l.who || e.comp, l, l.expr, 'company place'); if (i === 0) add(e.comp, l, null, 'company place (thought)'); });
+    }
+    const def = CC.keep || {}, titles = memoryTitles();
+    const KEPT = (id) => KEEP_ORDER.some((p) => id.startsWith(p));
+    for (const comp of COMPS) {
+      add(comp, def.none && def.none[comp], 'think', 'What We Keep');
+      const frame = def.frame && def.frame[comp];
+      for (const t of titles) {
+        if (!KEPT(t.id) || (t.comp && t.comp !== comp)) continue;
+        const key = t.id.startsWith('story:') ? t.id.slice(6) : null;
+        const own = key && CC.mem[key] && CC.mem[key].keep ? variants(CC.mem[key].keep[comp] || CC.mem[key].keep['*']) : [];
+        for (const v of own) add(comp, v, 'smile', 'What We Keep ' + t.id);
+        // framed when there are no own words (or none whose condition holds)
+        if (frame && (!own.length || own.every((v) => v.when))) {
+          add(comp, framed(frame, t.title), 'smile', 'What We Keep ' + t.id);
+          if (t.kind === 'pets') add(comp, framed(frame, null, 'the animal\'s name'), 'smile', 'What We Keep ' + t.id + ' (named)');
+        }
+      }
+    }
+    return out;
+  }
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(spoken);
+
   Object.assign(K, {
+    SCENE, memoryTitles, spoken,
     react, say, sync, milestones, thought, placeTalk, placeKey, restHere, safeHere, refresh, pending, indicator,
     openPending, addRestOption, restOptions, topics, nextTopic, addDescriber, keepMoment, keepLines, drawIndicator,
     settle, onResolved, onPetMet, resolve, migrate, recordAt, PQ, REFLECT, REST, indicatorShown: () => typeof performance !== 'undefined' && performance.now() - last.t < 400,
