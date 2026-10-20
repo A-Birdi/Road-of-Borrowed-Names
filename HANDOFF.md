@@ -660,7 +660,17 @@
       On approval, cherry-pick, build, and run U `mp_ch4`, B `manybridge2`, `festival_games`, `sequence_world --only
       mb2.fireworks`.
     - **RBN-QA-023 (assessment, Robin's decision):** the dakuten row at the chronicle comparison; options in VALIDATION.md.
-    - **RBN-QA-024 (queued art, gated):** the Great Kiln's doorway drawn as glass-sealed, then open.
+    - **RBN-QA-024 candidate, with Robin (not pushed):** the Great Kiln's doorway. The seal's art existed but sorted
+      just behind the kiln house's wall (prop 6·TS−0.5, house 6·TS), so the plain door showed. A prop def may say
+      `onWall` (drawn after the building on its tile; only `co_seal` and the new look-only `co_kilnmouth` set it): the
+      glass fills the doorway and runs over its frame; once broken, the doorway stands open, dark, the heat glowing
+      inside, glass left on the frame and the step. Local branch `qa024-kiln` (`c6ddc17`). On approval, cherry-pick,
+      build, and run B `kiln_door` (15/0 on the candidate) and `story_ch3`.
+    - **RBN-QA-026 candidate, with Robin (not pushed):** Koharuno's empty houses (`lq.kh_arrive`: "their thatch gone
+      grey") drawn as lived-in Reedwake houses. Opt-in `aged` house (src/engine/29_structart.js; the kit's boxes, the
+      light's window glow and the night's window light skip it): grey thatch, weathered timber, dusty dark panes, no
+      lamp, no flower boxes; only Koharuno's four houses set it. Local branch `qa026-koharuno` (`bb8b5b3`). Robin's
+      call: whether the tree-keeper's hut stays aged after Kayo goes home.
     - **The guide's far fallback** (RBN-QA-025, a separate review): with a step's needs too deep to resolve it names a
       later step on an unreachable map; the kiln step now names its own places (`atIf`).
     - **Owner-approved language audit (report only):** Claude's game-wide written-Japanese/grammar/furigana review; Local

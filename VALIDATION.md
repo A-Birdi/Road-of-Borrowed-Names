@@ -5333,8 +5333,28 @@ Yasu's story, when listening, has not begun being spoken."
     close; the practice can be skipped. Options for Robin (pacing, cross-game): just-in-time here and the row at a calmer
     point; split dakuten into two sittings; a "Later" deferring the row without credit; keep.
   - RBN-QA-024 (Agnes 10:44Z): the Great Kiln's doorway is drawn as a plain wooden door although the narration says it is
-    sealed with melted glass; the gate works. Queued as a gated art variant (sealed and open doorway) with RBN-QA-025's
-    door; Agnes's earlier roof note is withdrawn (the intact roof was the Ice House).
+    sealed with melted glass; the gate works. Agnes's earlier roof note is withdrawn (the intact roof was the Ice House).
+    Cause, seen in Claude's browser on CC-005's build: the seal prop (`co_seal`, 20,5) has its own art, but props sort by
+    their foot (6·TS−0.5) and the kiln house by its own (6·TS), so the house's wall and plain door were drawn over it.
+    Candidate (local branch `qa024-kiln`, `c6ddc17`, not pushed; with Robin): a prop def may say `onWall` and is then drawn
+    after the building on its tile (src/engine/60_render.js; only `co_seal` and `co_kilnmouth` set it); the seal's art
+    fills the doorway and runs over its frame (crown on the lintel, runs down the posts, a foot on the step), the heat
+    glowing inside; once `co_seal_broken`, a look-only prop (`co_kilnmouth`: no scene, not blocking, no cast shadow)
+    shows the doorway open and dark, the heat glowing up from inside, glass on the frame and broken on the step. On the
+    candidate's build: B `kiln_door` 15/0; `validate.mjs` no errors; matched frames at 1180x757 (sealed, broken, broken
+    after a save is loaded) against CC-005's build sent to Robin privately. Collision, the lock and exit, the seal's scene
+    and task, the guide, lines and audio unchanged.
+  - RBN-QA-026 (Agnes 11:04Z, CC-005, Koharuno via Ume's persimmon → Old Yasu): `lq.kh_arrive` says the houses are ones
+    "where nobody lives, their thatch gone grey", but the four were drawn as Reedwake's lived-in houses (bright thatch,
+    flower boxes and a planter from the region kit, a lamp behind the panes by day). Candidate (local branch
+    `qa026-koharuno`, `bb8b5b3`, not pushed; with Robin): an opt-in `aged` house (src/engine/29_structart.js: its own grey
+    straw ramp, timber toward silver and plaster a little dulled, dusty dark panes, never lit; src/engine/66_worldkit.js no
+    box or planter; src/engine/65_worldlook.js and 60_render.js no window glow by day or light by night); only
+    Koharuno's four houses set it. Silhouettes, doors, footprints, the tree's height cuts, the lantern, Yasu's staging,
+    flags, lines and audio unchanged; other houses read only `o.aged` (code review). On the candidate's build:
+    `validate.mjs` no errors; U `worldkit` 10/0; matched frames (the arrival line, the arrival view, by the tree, the
+    south houses, the tree-keeper's hut) against CC-005's build sent to Robin. Open for Robin: whether the hut stays aged
+    after Kayo goes home. Voice none (`lq.kh_arrive` r1-1059e631801ea61b kept).
   - CL-027 (Local, pronunciation, read-only) and the owner-approved audit (Agnes 10:42Z): Local compares the engines'
     readings of `send` with the furigana (a Reedwake probe found about 22 disagreements) and screens Qwen audio; Claude's
     part is a game-wide contextual written-Japanese, grammar and furigana review, report only, no automatic fixes. Send
