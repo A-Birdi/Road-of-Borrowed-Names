@@ -23,7 +23,9 @@
 //   furniture at any frame and afterwards your companion is beside you (a scene's own !move pc and the world's
 //   walk-ins are not staging: they must hold without it; sa.kasane_meet, lf.water_returns);
 // - noForced: no walker of the world's goes on through anyone after waiting (the world's fallback, otherwise
-//   only recorded apart; sa.epi_lf).
+//   only recorded apart; sa.epi_lf);
+// - notSaid: [text, …] no shown line's English holds any of them; journal: text the journal's last entry holds
+//   (sg.omi_final and sg.ch2_end in a twelve-chapter journey; RBN-QA-011).
 // the in-page run of one branch of one case
 export async function runBranch(p, c, v, o) {
   return p.evaluate(async ([c, v, o]) => {
@@ -33,7 +35,7 @@ export async function runBranch(p, c, v, o) {
     const at = v.at || c.at;
     RB.game.settings.textSpeed = 'instant';
     RB.game.settings.reducedMotion = !!o.reduced; RB.game.applySettings();
-    RB.game.debugStart(v.map || c.map, at ? at[0] : null, at ? at[1] : null, { comp: comp || undefined, flags, dir: at ? at[2] : 'up' });
+    RB.game.debugStart(v.map || c.map, at ? at[0] : null, at ? at[1] : null, { comp: comp || undefined, flags, dir: at ? at[2] : 'up', edition: v.edition || c.edition || undefined });
     const s = RB.game.s;
     if (!comp) { s.comp = null; RB.world.placeCompanion(); }
     for (const [k, n] of Object.entries(Object.assign({}, c.items || {}, v.items || {}))) RB.state.give(s, k, n);
@@ -177,7 +179,8 @@ export async function runBranch(p, c, v, o) {
     const state = JSON.stringify({ map: W.map.id, flags: Object.keys(s.flags).filter((f) => !/^enter:|^named:|^trig:|^foe:/.test(f)).sort(), inv: s.inv, quests, vars: s.vars, notes: s.notebook.map((x) => x.id).sort(), seen: Object.keys(s.seen).sort(), comp: s.comp || null });
     const away = W.npcs.filter((a) => a.home && (a.x !== a.home[0] || a.y !== a.home[1]) && !(a.def && a.def.wander)).map((a) => a.id + '@' + a.x + ',' + a.y + '≠' + a.home.join(','));
     const compGap = W.comp ? Math.abs(W.comp.x - W.player.x) + Math.abs(W.comp.y - W.player.y) : 0;
-    return { done, err, lines, chose, log, lost, unfit, walks, state, clash: [...new Set(clash)], walkin: [...new Set(walkin)], furn: [...new Set(furn)], idle: [...new Set(idle)], away, stuck, compGap, map: W.map.id };
+    const journal = ((s.journal || []).slice(-1)[0] || {}).en || '';
+    return { done, err, lines, journal, chose, log, lost, unfit, walks, state, clash: [...new Set(clash)], walkin: [...new Set(walkin)], furn: [...new Set(furn)], idle: [...new Set(idle)], away, stuck, compGap, map: W.map.id };
   }, [c, v, o]);
 }
 
@@ -211,6 +214,11 @@ export async function runCases(cases, o) {
       ok(bad.length === 0, pre + 'every authored position is reached (' + r.walks.length + ' walks' + (bad.length ? '; not reached: ' + bad.map((w) => w.who + '→' + w.to).join(' ') : '') + ')');
       ok(r.clash.length === 0 && r.furn.length === 0, pre + 'nobody shares a tile or stands on furniture' + (r.clash.length + r.furn.length ? ' (' + r.clash.concat(r.furn).slice(0, 3).join(' ') + ')' : '') + (r.walkin.length ? ' [the world\'s fallback, no way round so it went on through after waiting: ' + r.walkin.slice(0, 2).join(' ') + ']' : ''));
       if (v.noForced || c.noForced) ok(r.walkin.length === 0, pre + 'no walker goes on through anyone after waiting (every walk-in finds its own place and a way round)' + (r.walkin.length ? ' (' + r.walkin.slice(0, 3).join(' ') + ')' : ''));
+      // what a branch must not say (any part of a line's English, as shown), and what the journal ends on
+      const notSaid = v.notSaid || c.notSaid;
+      if (notSaid) { const said = r.lines.filter((l) => notSaid.some((w) => l.includes(w))); ok(said.length === 0, pre + 'says nothing of ' + notSaid.join(', ') + (said.length ? ' (' + said.slice(0, 2).join(' | ') + ')' : '')); }
+      const journal = v.journal || c.journal;
+      if (journal) ok(r.journal.includes(journal), pre + 'the journal ends on "' + journal + '" (' + (r.journal || 'nothing') + ')');
       ok(r.idle.length === 0, pre + 'no idle life during the scene' + (r.idle.length ? ' (' + r.idle.join(' ') + ')' : ''));
       ok(r.away.length === 0 && r.stuck.length === 0 && r.compGap <= 2, pre + 'afterwards everyone is where the world expects them (' + (r.away.concat(r.stuck).join(' ') || 'at their places') + '; companion ' + r.compGap + ' tiles away)');
       const exp = Object.assign({}, c.expect || {}, v.expect || {});

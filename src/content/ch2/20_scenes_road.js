@@ -272,6 +272,9 @@ narr: {灯台|とうだい} の {光|ひかり} が {港|みなと} を {一周|
 !music saltglass
 narr: {翌朝|よくあさ} 。 {港|みなと} は {朝|あさ} から うるさかった 。 {正|ただ}しい うるささ だった 。 || Next morning, the harbour is loud from dawn. The right kind of loud.
 !heal
-!journal {北|きた} の {道|みち} を {通|とお}って 、 {灰実|はいみ} の {里|さと} へ 。 || Take the north road out of the coast road fork to Cinder Orchard.
+# (a twelve-chapter journey goes on east by Tetsu's ferry: its north road is washed out until Manybridge is done)
+?(!ed>=2|mb2_done) !journal {北|きた} の {道|みち} を {通|とお}って 、 {灰実|はいみ} の {里|さと} へ 。 || Take the north road out of the coast road fork to Cinder Orchard.
+?(ed>=2&!mb2_done) !journal {渡|わた}し{船|ぶね} の {板|いた} に 、 {東|ひがし} へ の {新|あたら}しい {行|い}き{先|さき} 。 {港|みなと} の テツ に {聞|き}こう 。 || A new line on the ferry board: east. Ask Tetsu at the harbour.
+?(ed>=2&!mb2_done) !set mb_east_noted
 !autosave
 `, 'ch2/20_scenes_road');

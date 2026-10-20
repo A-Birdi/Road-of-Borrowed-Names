@@ -5101,8 +5101,43 @@ Yasu's story, when listening, has not begun being spoken."
     Keepsakes" in a twelve-chapter journey, "Journey › Keepsakes" in a six-chapter one, both probed in the browser.
     English only, in no recording list. U `keepsake` 240/0; B `keepsakes` 33/33, `ledger_li` (all). The signpost's
     art (RBN-QA-012 itself) is a queued art candidate for Robin.
+  - RBN-QA-011 (HIGH, on CC-005's build; a twelve-chapter journey, アキ with Suzu, after Chapter 2): the fork's
+    north road showed the washed-out notice while the journal said to take it to Cinder Orchard. Agnes's reading
+    (06:27Z, 06:34Z), confirmed: not a broken gate but misleading guidance. In a twelve-chapter journey the north road
+    is washed out on purpose (`mb.north_washed`, `ed>=2&ch2_done&!mb2_done`) until Manybridge's two chapters are done;
+    the way on is Tetsu's ferry east (his first talk after the archive is, once, his lead into "The Name Nobody Calls";
+    then his own story if unheard; then `mb.ferry_tetsu`); Manybridge's main quest starts on arrival. Between chapters
+    no main quest is followed, so no marker or nudge points anywhere and the Journey says "Nothing pressing"; the
+    journal was the only guidance, and it, with Omi's two north-road lines (`r1-58502f03dd750d28` in `sg.omi_final`, and
+    `sg.omi_after`), was the six-chapter journey's. At the fork, Suzu's recorded "If north's no good, then east"
+    (`r1-b6278c13586a0674`) read like the fork's east road, which walks back to Reedwake. Since the twelve-chapter
+    edition shipped, every new journey is twelve-chapter. The fix, for a twelve-chapter journey until `mb2_done`:
+    `sg.ch2_end` journals "A new line on the ferry board: east. Ask Tetsu at the harbour." (journal text is not voiced);
+    Omi says a new line naming Tetsu's ferry east to Manybridge and the night at the Gull, in place of his recorded
+    north-road line (kept for six-chapter journeys and after `mb2_done`); `sg.omi_after` skips its north-road line; at the
+    fork a new narrator line, "Manybridge lies east, but not on foot: Tetsu's ferry goes there from the harbour.", tells
+    the ferry apart from the east road (Suzu's line is kept), and the journal is corrected once (`mb_east_noted`, also
+    set by `sg.ch2_end`), which puts right a save made before the fix; neither once you have reached Manybridge. No gate,
+    exit, quest step or talk order changed. Two new recordings (narrator, Omi), in SL8; every GO key is still produced
+    but the three MW-1 retired. B `route_after_ch2` 28/0 on a scratch build of this source, each case through a save
+    written and loaded again (`RB.save.writeSlot`, `RB.game.loadCampaign`): (1) twelve chapters: Omi's last scene to the
+    morning at the Gull, Omi naming the ferry, nothing shown mentioning the north road, the journal on Tetsu before and
+    after loading, Tetsu's lead first, then "There's a new line on the board. East. Manybridge.", and the ferry to
+    `mb.pier`; (2) a twelve-chapter save from before the fix, loaded with its journal on the north road: at the fork the
+    notice, the narrator's line, the journal corrected, you back at 16,2, a second try adding no note, the note kept
+    after loading, and the east road still walking to Reedwake; (3) six chapters: Omi's recorded line, the journal on the
+    north road, the north exit to `co.road` with no notice; (4) twelve chapters after `mb2_done`: no notice, the north
+    exit to `co.road`, Omi's north-road line again. B `staging_chapters --ch=2` 1678/0 (60 scenes) on the first version of
+    the fix, then `--only=sg.omi_final` 25/0 and `--only=sg.ch2_end` 71/0 on the final source: twelve-chapter variants
+    check that no shown line mentions the north road and that the journal ends on Tetsu, with the six-chapter journal as
+    the control (tests/e2e/staging_runner.mjs gains the opt-in `edition`, `notSaid` and `journal`). U `mb_ch3` 76/0,
+    `quest_guide` 150/0, `travel_rules` 699/0, `voice_production` 27/0, `spoken_sites` 33/0; B `manybridge` 3/0 (first
+    version). In source, not yet in a deployed build.
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
+  - RBN-QA-004 RETESTED_BY_AGNES on CC-005's build: the nudges read "Go to Lantern Hall." and "… Head north-west
+    first."; the false message is gone. Agnes does not claim the marker's drawing; RBN-QA-003 is not independently
+    retested.
   - U `stampbook_sb1` 39/0, `records` 272/0. Agnes retests with the next build.
 - **The candidate for QA after CL-001 (CC-005): `index.html` sha256 `507c11a4…`, built from `7595bdc`'s source** (a
   fresh build of that source gives the same bytes). On this exact build: B `practice_b` 6/0 (its "four profiles"

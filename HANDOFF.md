@@ -631,7 +631,12 @@
       telegraphs, `intentTextSolo`), 004 (the Lantern Hall step's marker), 005 (the four walk into the Lantern Hall
       after you, one after another: `!refresh arrive`, src/engine/50_world.js `arriveOnFoot`/`arrivals`), 007 (the
       lighthouse stairs before the vane scene step you back and say why; SL6), 008 (the Foundations tide exercise's
-      3:00 is Shiori's rounding of the chalkboard's 3:15). REQUIREMENTS.md XP147; VALIDATION.md "QA (Agnes …)".
+      3:00 is Shiori's rounding of the chalkboard's 3:15), 009 (Tetsu's story after the archive), 010 (Fuku's one
+      weather line), 011 (HIGH: in a twelve-chapter journey the Chapter 2 journal and Omi pointed north, where the road
+      is washed out until Manybridge; now the journal and a new Omi line point to Tetsu's ferry east, and at the fork a
+      new narrator line tells the ferry apart from the east road and corrects the journal once for older saves; SL8;
+      B `route_after_ch2`), 012's copy (the keepsake slip's page name). 001–005, 007, 008 are live in CC-005;
+      009–012 are in source for the next candidate. REQUIREMENTS.md XP147; VALIDATION.md "QA (Agnes …)".
       Agnes's review boundaries (2026-10-20): gameplay fixes carry a cross-game impact assessment; art goes to Robin as
       a before/after candidate first; a material change to intended behaviour needs Robin's approval; keep source,
       built and retested states distinct.

@@ -21,15 +21,18 @@ omi: {港|みなと} は {動|うご}き{出|だ}した 。 {渡|わた}し{船|
 ?(!sg_wataru_self) !gesture omi shrug
 ?(sg_wataru_self) omi: ワタル は {朝|あさ} から {晩|ばん} まで ラベル を {書|か}いてる 。 {鼻歌|はなうた} {混|ま}じり で な 。 あいつ の {鼻歌|はなうた} なんか 、 {初|はじ}めて {聞|き}いた よ 。 || Wataru's writing labels from dawn to dusk. Humming, if you please. First time I've ever heard that man hum.
 ?(!sg_wataru_self) omi: ワタル は {朝|あさ} から {晩|ばん} まで ラベル を {書|か}いてる 。 {罰|ばつ} の つもり で やらせた ん だ が 、 {楽|たの}しそう で {困|こま}る 。 || Wataru's writing labels from dawn to dusk. I meant it as punishment, and the man looks happy. Annoying.
-!gesture omi point right
-omi: {北|きた} の {道|みち} も 、 {通|とお}れる よう に なった そう だ 。 {灰実|はいみ} の {里|さと} へ {行|い}く なら 、 {今夜|こんや} は かもめ{亭|てい} に {泊|と}まって いきな 。 {宿代|やどだい} は {港|みなと} が {持|も}つ 。 || They say the north road's open again. If you're heading for Cinder Orchard, stay the night at the Gull. The harbour's paying.
+# (in a twelve-chapter journey the north road stays washed out until Manybridge's chapters are done: the way on is
+# Tetsu's ferry east, so there Omi names the ferry instead, with the same night at the Gull; Agnes, RBN-QA-011)
+?(!ed>=2|mb2_done) !gesture omi point right
+?(!ed>=2|mb2_done) omi: {北|きた} の {道|みち} も 、 {通|とお}れる よう に なった そう だ 。 {灰実|はいみ} の {里|さと} へ {行|い}く なら 、 {今夜|こんや} は かもめ{亭|てい} に {泊|と}まって いきな 。 {宿代|やどだい} は {港|みなと} が {持|も}つ 。 || They say the north road's open again. If you're heading for Cinder Orchard, stay the night at the Gull. The harbour's paying.
+?(ed>=2&!mb2_done) omi: テツ の {船|ふね} が 、 {東|ひがし} の {八百橋|やおばし} へ {出|で}る そう だ 。 {乗|の}る なら 、 {今夜|こんや} は かもめ{亭|てい} に {泊|と}まって いきな 。 {宿代|やどだい} は {港|みなと} が {持|も}つ 。 || Tetsu's boat is going east to Manybridge, I hear. If you're taking it, stay the night at the Gull. The harbour's paying.
 !quest sg_main done
 !note sg_three_kinds
 !set sg_evening
 !call sg.ch2_end
 
 @scene sg.omi_after
-omi: {北|きた} の {道|みち} は {開|ひら}いてる よ 。 {灰実|はいみ} の {里|さと} は 、 {果物|くだもの} と ガラス の {町|まち} だ 。 {気|き}を つけて な 。 || The north road's open. Cinder Orchard's a town of fruit and glass. Take care.
+?(!ed>=2|mb2_done) omi: {北|きた} の {道|みち} は {開|ひら}いてる よ 。 {灰実|はいみ} の {里|さと} は 、 {果物|くだもの} と ガラス の {町|まち} だ 。 {気|き}を つけて な 。 || The north road's open. Cinder Orchard's a town of fruit and glass. Take care.
 omi: …… {時刻表|じこくひょう} が {正|ただ}しい って の は 、 {退屈|たいくつ} で いい もん だ ね 。 || …A ferry board that tells the truth. Wonderfully dull.
 
 @scene sg.omi_post

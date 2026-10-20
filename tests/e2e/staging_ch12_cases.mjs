@@ -4,7 +4,7 @@
 // playing (choice picks in order, companions, flags, a challenge or activity that is not passed). Played by
 // tests/e2e/staging_runner.mjs.
 //   { ch, scene, map, at: [x, y, dir], comp, talk (the person you talk to: they turn to you), flags, quests,
-//     items, words, vars, player, prov, fail,
+//     items, words, vars, player, prov, fail, edition (2: a twelve-chapter journey),
 //     variants: [{ name, picks: [i, …], comp, comps: [...], flags, items, quests, at, fail, … }], comps: [...],
 //     expect: { who: [gestures cued] } }
 const ALL4 = ['nao', 'mio', 'ren', 'suzu'];
@@ -130,8 +130,11 @@ const CH2 = [
   { ch: 2, scene: 'sg.da_boss', map: 'sg.da_vault', at: [9, 9, 'up'], flags: F(SF, { sg_da_seen: true, sg_da_raft: true }), quests: { sg_main: 8 }, comps: ALL4, minLines: 12, expect: { pc: ['palm'], sg_clerk: ['stiff'] } },
   { ch: 2, scene: 'sg.da_boss_after', map: 'sg.da_vault', at: [9, 6, 'up'], flags: F(SF, { sg_da_seen: true, sg_da_raft: true }), quests: { sg_main: 8 }, comps: ALL4, expect: { pc: ['observe', 'palm', 'lookroad'] } },
   { ch: 2, scene: 'sg.omi_final', map: 'sg.office', at: [5, 5, 'up'], talk: 'omi', flags: F(SB, { sg_returned: true }), quests: { sg_main: 9 }, minLines: 10,
-    variants: [{ name: 'he came himself · Nao', comp: 'nao', flags: F(SB, { sg_returned: true, sg_wataru_self: true }), expect: { omi: ['lookroad', 'nod', 'palm', 'point'] } }, { name: 'we told her · Suzu', comp: 'suzu', expect: { omi: ['shrug'] } }] },
-  { ch: 2, scene: 'sg.ch2_end', map: 'sg.office', at: [5, 5, 'up'], flags: F(SB, { sg_returned: true, sg_evening: true }), quests: { sg_main: 'done' }, comps: ALL4, minLines: 6, expect: { comp: ['lowered'] } },
+    variants: [{ name: 'he came himself · Nao', comp: 'nao', flags: F(SB, { sg_returned: true, sg_wataru_self: true }), expect: { omi: ['lookroad', 'nod', 'palm', 'point'] } }, { name: 'we told her · Suzu', comp: 'suzu', expect: { omi: ['shrug'] } },
+      // a twelve-chapter journey: the north road is washed out until Manybridge, so Omi says nothing of it (RBN-QA-011)
+      { name: 'twelve chapters · Suzu', comp: 'suzu', edition: 2, minLines: 9, notSaid: ['north road'], expect: { omi: ['shrug'] } }] },
+  { ch: 2, scene: 'sg.ch2_end', map: 'sg.office', at: [5, 5, 'up'], flags: F(SB, { sg_returned: true, sg_evening: true }), quests: { sg_main: 'done' }, comps: ALL4, minLines: 6, expect: { comp: ['lowered'] },
+    variants: [{ name: 'six chapters', journal: 'north road' }, { name: 'twelve chapters', edition: 2, notSaid: ['north road'], journal: 'Ask Tetsu at the harbour' }] },
   { ch: 2, scene: 'sg.tamae_after', map: 'sg.inn', at: [9, 5, 'up'], talk: 'tamae', flags: SB, variants: [{ name: 'rest', comp: 'mio', picks: [0] }, { name: 'good luck', comp: 'ren', picks: [1] }], expect: { tamae: ['present', 'laugh'] } },
   { ch: 2, scene: 'sg.tamae_post', map: 'sg.inn', at: [9, 5, 'up'], talk: 'tamae', comp: 'nao', flags: F(SE, { postgame: true }), variants: [{ name: 'rest', picks: [0] }, { name: 'another time', picks: [1] }], expect: { tamae: ['laugh', 'present'] } },
   { ch: 2, scene: 'sg.nao_cameo', map: 'sg.inn', at: [3, 6, 'up'], talk: 'nao', flags: S0, quests: { sg_main: 1 }, comps: ['mio', 'ren', 'suzu'], expect: { nao: ['strap', 'point', 'lookroad'] } },

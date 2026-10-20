@@ -1175,7 +1175,21 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   source, for the next build. RBN-QA-012 (its copy note): a keepsake's slip names the page as the Journey shows it,
   "Journey › Mementos › Keepsakes" in twelve-chapter journeys ("Journey › Keepsakes" in six-chapter ones); B
   `keepsakes` 33/33, `ledger_li` (all); its prop art (the crossroads signpost's three arms) is a queued art
-  candidate. RETESTED_BY_AGNES: RBN-QA-002 (the stand where every stamp is earned).
+  candidate. RBN-QA-011 (HIGH, a twelve-chapter journey after Chapter 2; every new journey in the shipped game is
+  one): the way on is Tetsu's ferry east to Manybridge (the north road stays washed out until Manybridge's chapters are
+  done, `mb2_done`; gate and order unchanged), but the Chapter 2 journal and Omi said "north to Cinder Orchard", and
+  at the fork Suzu's "then east" read like the fork's east road (which walks back to Reedwake). Now, in a twelve-chapter
+  journey until `mb2_done`: the journal says "A new line on the ferry board: east. Ask Tetsu at the harbour."; Omi
+  names Tetsu's ferry and the night at the Gull (a new line; his recorded north-road line is kept for six-chapter
+  journeys and after `mb2_done`); his later north-road line is not said; at the fork the narrator says Manybridge is
+  the harbour ferry's, not a walk (a new line), and the journal is corrected once (`mb_east_noted`), which puts right a
+  save from before the fix. Two new recordings, in SL8. B `route_after_ch2` 28/0 (twelve chapters through Tetsu's
+  ferry; an old save at the fork; six chapters; after `mb2_done`; each through a save written and loaded again);
+  B `staging_chapters --ch=2` 1678/0, then `--only=sg.omi_final` 25/0 and `--only=sg.ch2_end` 71/0 on the final source;
+  U `mb_ch3` 76/0, `quest_guide` 150/0, `travel_rules` 699/0, `voice_production` 27/0, `spoken_sites` 33/0. In source,
+  for the next build. RETESTED_BY_AGNES: RBN-QA-002 (the stand
+  where every stamp is earned), RBN-QA-004 (the nudge "Go to Lantern Hall." and "… Head north-west first."; the
+  false message is gone; Agnes does not claim the marker's drawing).
 
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

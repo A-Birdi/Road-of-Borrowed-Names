@@ -79,6 +79,12 @@ narr: 「{北|きた} の {道|みち} の {橋|はし} 、 {嵐|あらし} で 
 ?(comp=mio) comp: {橋|はし} が {直|なお}る まで 、 {待|ま}つ しか ない ね 。 || Nothing for it but to wait till the bridge is mended.
 ?(comp=ren) comp: {橋|はし} を {架|か}ける {大工|だいく} は 、 {八百橋|やおばし} に {多|おお}い と {聞|き}きます 。 || I hear Manybridge is where the bridge carpenters are.
 ?(comp=suzu) comp: {北|きた} が だめ なら 、 {東|ひがし} よ 。 {道|みち} は {一|ひと}つ じゃ ない わ 。 || If north's no good, then east. There's more than one road.
+# the way on, told apart from the fork's east road (that one walks back to Reedwake): Manybridge is the harbour
+# ferry's; and in the journal, once (a journey that ended Chapter 2 before this was written still read "north");
+# not once you have been to Manybridge (Agnes, RBN-QA-011)
+?(!mb_arrived) narr: {東|ひがし} の {八百橋|やおばし} へ は 、 {歩|ある}いて は {行|い}けない 。 {港|みなと} から 、 テツ の {渡|わた}し{船|ぶね} で {行|い}く の だ 。 || Manybridge lies east, but not on foot: Tetsu's ferry goes there from the harbour.
+?(!mb_arrived&!mb_east_noted) !journal {渡|わた}し{船|ぶね} の {板|いた} に 、 {東|ひがし} へ の {新|あたら}しい {行|い}き{先|さき} 。 {港|みなと} の テツ に {聞|き}こう 。 || A new line on the ferry board: east. Ask Tetsu at the harbour.
+?(!mb_arrived) !set mb_east_noted
 !warp sg.road 16 2 down
 
 @scene mb.arrive
