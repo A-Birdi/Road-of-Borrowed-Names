@@ -1196,7 +1196,13 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   (mp.manbe_first, recorded) never played and step 3 was skipped; his talk now gives his first scene at step 2 and the
   rehearsal again from step 3; U `mp_ch4` 124/0 (the talk at each step; the old condition fails it), `quest_guide`
   150/0; B `manybridge2` 4/0; browser: step 2 plays the introduction, then the rehearsal, step 2 to 3 to 4, Skip the
-  same. In source, for the next build; the rehearsal's staging (on the stage) is a gated candidate. RETESTED_BY_AGNES:
+  same. In source, for the next build; the rehearsal's staging (on the stage) is a gated candidate. RBN-QA-019: Tomi's
+  lantern task (Foundations and Elementary) read only object-first (ちょうちん を → place → つるして ください); place-first,
+  the same placement, was "outside what this can read". Each of its four families now also reads place-first, through
+  the answer space's own `also` (task-local; no parser change, no new piece, the same family and result, the wrong
+  river order now gets its why); the verb first stays outside; the I/A form is unchanged. U `mp_ch4` 138/0 (14 new; 8 of
+  them fail without the fix), `settle` 79/0, `practice_b` 96/0, `answer_sweep` 22/0, `evidence` 24/0; in the browser's
+  Pieces, place-first is now accepted. In source, for the next build. RETESTED_BY_AGNES:
   RBN-QA-002 (the stand
   where every stamp is earned), RBN-QA-004 (the nudge "Go to Lantern Hall." and "… Head north-west first."; the
   false message is gone; Agnes does not claim the marker's drawing).

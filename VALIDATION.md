@@ -5200,6 +5200,19 @@ Yasu's story, when listening, has not begun being spoken."
     is not possible (Manbē is not inside before the rehearsal); a second talk replays nothing. Frames to Robin privately.
     Blockprint's drying lines (Agnes 08:17Z): the map's own comment names them the printed sheets ("the drying racks:
     printed sheets hung on lines"), so they are meant to be the narrative paper; the generic laundry art stands in.
+  - RBN-QA-019 (on CC-005's build; Tomi's lantern task, Foundations, Pieces): はし の うえ に → ちょうちん を → つるして
+    ください。 was "Outside what this can read" while ちょうちん を → はし の うえ に → つるして ください。 was accepted.
+    The two orders say the same placement (case-marked phrases before the verb may come in either order; place-first puts
+    a little weight on the place). The forge reads only its authored families (src/learn/50_forge.js, the answer space of
+    src/engine/79_bcore.js); a family's `also` adds an authored order of the same pieces, already read by the space, the
+    Pieces matcher, the offered pieces and the validator, and used by no content until now. Each of the low tier's four
+    families (bank, playhouse, bridge, and the wrong river) now also reads place-first: the same family, the same result
+    for the festival; no new piece; the verb first stays outside; the I/A form (くらく なったら…) is unchanged; no other
+    task touched. U `mp_ch4` 138/0 (both orders per family, typed place-first judged not "outside", verb-first outside,
+    the pieces unchanged, I/A unchanged; with `also` removed, 8 fail), `settle` 79/0, `practice_b` 96/0, `answer_sweep`
+    22/0, `evidence` 24/0. In the browser's Pieces (Foundations), on a build of the previous source and on a build with
+    the fix: place-first "outside" then accepted; object-first accepted on both; the river place-first now its why; verb
+    first outside on both. Voice: none (neither order is in a recording list).
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
   - RBN-QA-004 RETESTED_BY_AGNES on CC-005's build: the nudges read "Go to Lantern Hall." and "… Head north-west

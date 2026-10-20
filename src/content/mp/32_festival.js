@@ -13,6 +13,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const ok = (parts, en, result) => ({ parts, ok: true, en, result });
   const no = (parts, en, why, result) => ({ parts, ok: false, en, why: { en: why }, result });
   const w = (en) => ({ en });
+  // the place before the object, as well as after: [object, place, verb] also reads as [place, object, verb]
+  const lo = (f) => Object.assign(f, { also: [[f.parts[1], f.parts[0], f.parts[2]]] });
   // the same task for two profiles each: kana sentences for F and E's first meeting, then the fuller form
   const tiers = (low, high) => ({ F: [low], E: [low], I: [high], A: [high] });
 
@@ -20,10 +22,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: tiers(
       F({ id: 'mp.fest_lanterns.low', item: 'g:v_te_kudasai', prompt: T('Tell the lantern men where to hang the lanterns: along the bank, in front of the playhouse, or over the bridge. It is your choice.'),
         families: [
-          ok(['ちょうちん を', 'きし に そって', 'つるして ください 。'], 'Please hang the lanterns along the bank.', 'bank'),
-          ok(['ちょうちん を', 'しばいごや の まえ に', 'つるして ください 。'], 'Please hang the lanterns in front of the playhouse.', 'theatre'),
-          ok(['ちょうちん を', 'はし の うえ に', 'つるして ください 。'], 'Please hang the lanterns over the bridge.', 'bridge'),
-          no(['ちょうちん を', 'かわ の なか に', 'つるして ください 。'], 'Please hang the lanterns in the river.', 'かわ の なか: in the river. They would go out.', 'river'),
+          // where first, then what, says the same placement (RBN-QA-019): each family also reads in that order
+          lo(ok(['ちょうちん を', 'きし に そって', 'つるして ください 。'], 'Please hang the lanterns along the bank.', 'bank')),
+          lo(ok(['ちょうちん を', 'しばいごや の まえ に', 'つるして ください 。'], 'Please hang the lanterns in front of the playhouse.', 'theatre')),
+          lo(ok(['ちょうちん を', 'はし の うえ に', 'つるして ください 。'], 'Please hang the lanterns over the bridge.', 'bridge')),
+          lo(no(['ちょうちん を', 'かわ の なか に', 'つるして ください 。'], 'Please hang the lanterns in the river.', 'かわ の なか: in the river. They would go out.', 'river')),
         ] }),
       F({ id: 'mp.fest_lanterns.high', item: 'g:cond_tara', prompt: T('Tell the lantern men where to hang them and when to light them: once it is dark. Where is your choice.'),
         families: [

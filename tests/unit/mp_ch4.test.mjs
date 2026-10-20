@@ -166,6 +166,21 @@ export default async (t) => {
     for (const f of ['mp_lan_bank', 'mp_lan_theatre', 'mp_lan_bridge', 'mp_st_bank', 'mp_st_square']) t.ok(props.some((p) => p.if && p.if.split(/[&|]/).includes(f)), 'the night shows ' + f);
   }
 
+  // ---- the lanterns: where-first says the same placement (RBN-QA-019) ----------------------------------------------
+  {
+    const low = C.challenges['mp.fest_lanterns'].tiers.F[0];
+    const st = RB.forge.prepare(low);
+    for (const f of low.families) {
+      const [obj, place, verb] = f.parts;
+      const a = RB.forge.piecesMatch(st, [obj, place, verb]), b = RB.forge.piecesMatch(st, [place, obj, verb]);
+      t.ok(a && b && a.family === f && b.family === f && b.family.result === f.result, 'the lanterns, ' + f.result + ': object first and place first are the same family, the same result (' + (f.ok ? 'accepted' : 'its why') + ')');
+      t.ok(st.judge([place, obj, verb].join(' ')).ok === !!f.ok && !st.judge([place, obj, verb].join(' ')).limit, 'typed place first: ' + f.result + ' is judged, not outside what it can read');
+      t.ok(!RB.forge.piecesMatch(st, [verb, obj, place]), 'the verb first is still outside what it can read: ' + f.result);
+    }
+    t.eq(st.chunks.length, new Set(low.families.flatMap((f) => f.parts)).size, 'the pieces offered are the same as before (no new piece)');
+    t.ok(['I', 'A'].every((k) => C.challenges['mp.fest_lanterns'].tiers[k][0].families.every((f) => !f.also)), 'the fuller form (I, A) is unchanged');
+  }
+
   // ---- the fireworks: a bond event and a kept memory, whoever travels with you --------------------------------------
   {
     t.eq(C.company.bondEvents['fest:fireworks'], 1, 'the fireworks are a bond event (one point)');
