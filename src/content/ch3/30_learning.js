@@ -414,7 +414,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         hint: { en: 'One of each?' }, thanks: { jp: 'うむ 。 {温|あたた}まる 。', en: 'Mm. That warms the bones.' } },
       { who: 'co_shino', want: { kaki: 2, amazake: 2 }, items: ['g:counters'],
         line: { F: { jp: 'ほしがき ふたつ と 、 あまざけ ふたつ 。', en: 'Two dried persimmons and two amazake.' }, E: { jp: '{干|ほ}し{柿|がき} を {二|ふた}つ と 、 {甘酒|あまざけ} を {二杯|にはい} ください 。', en: 'Two dried persimmons and two amazake, please.' }, I: { jp: '{甘酒|あまざけ} を {二杯|にはい} 。 {一杯|いっぱい} は {配達|はいたつ} の {人|ひと} に 。 それ と {干|ほ}し{柿|がき} を {二|ふた}つ 。', en: 'Two amazake — one\'s for the courier. And two dried persimmons.' }, A: { jp: '{干|ほ}し{柿|がき} {二|ふた}つ に 、 {甘酒|あまざけ} も {二杯|にはい} 。 {手紙|てがみ} を {待|ま}つ {間|あいだ} くらい 、 {甘|あま}い もの が ほしい の 。', en: 'Two persimmons, and two amazake. While I wait on letters, I want something sweet.' } },
-        hint: { en: 'Count both items.' }, thanks: { jp: 'ありがとう 。 {招待状|しょうたいじょう} 、 {助|たす}かった わ 。', en: 'Thank you. And thanks for the invitations.' } },
+        // (her thanks for the invitations only once they are sorted, co_letters_done: the tray may come first; RBN-QA-028)
+        hint: { en: 'Count both items.' }, thanks: [{ if: 'co_letters_done', jp: 'ありがとう 。 {招待状|しょうたいじょう} 、 {助|たす}かった わ 。', en: 'Thank you. And thanks for the invitations.' },
+          { jp: 'ありがとう 。 {甘|あま}い もの は 、 {助|たす}かる わ 。', en: 'Thank you. Something sweet is a real help.' }] },
     ] };
 
   // ======================================================================================

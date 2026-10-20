@@ -12,6 +12,9 @@ RB.activities = (function () {
   const esc = RB.util.esc;
   const LV = ['F', 'E', 'I', 'A'];
 
+  // a customer's thanks may hang on the story: [{ if, jp, en }, …, { jp, en }], the first whose condition holds (Shino
+  // thanks you for the invitations only once you have sorted them: RBN-QA-028)
+  const thanksOf = (t) => (Array.isArray(t) ? t.find((x) => !x.if || RB.state.test(RB.game.s, x.if)) : t);
   function tier(o) {
     if (!o) return null;
     if (o.jp != null || o.en != null) return o;
@@ -103,7 +106,7 @@ RB.activities = (function () {
             RB.audio && RB.audio.sfx('answer_right');
             results.push({ ok: firstTry });
             if (c.items) RB.learn.record(c.items, supported(firstTry, assisted, showEn));
-            const thanks = tier(c.thanks) || { jp: 'ありがとう ！', en: 'Thank you!' };
+            const thanks = tier(thanksOf(c.thanks)) || { jp: 'ありがとう ！', en: 'Thank you!' };
             fbSet(fb, 'ok', 'Just right.', '<div class="fb-jp">' + RB.ui.jhtml(thanks.jp) + '</div><div class="muted">' + esc(thanks.en) + '</div>');
             P.body.querySelectorAll('[data-add], [data-rm]').forEach((x) => (x.disabled = true));
             P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < custs.length - 1 ? 'Next customer' : 'Finish');
