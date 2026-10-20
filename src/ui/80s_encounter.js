@@ -15,6 +15,57 @@ RB.encScreen = (function () {
   const esc = RB.util.esc;
   const I = (n) => RB.learnUi.icon(n);
   const E = () => RB.encounter;
+  // What is said in an encounter on this screen is spoken (Robin, 2026-10-20: every line spoken): each line of the log
+  // with Japanese is a spoken line under this scene id (src/ui/22c_spoken_panel.js: a Voice button, the spoken word
+  // marked, the newest said as it appears when lines are spoken automatically), and so is how it ended. Who says it:
+  // you (your choice's words, and what you say with it), your companion (their own move: 'comp'; the gesture the
+  // understanding opens, said by whichever companion is with you), a person the game knows by name, else the
+  // narrator (what happens, what the people do). Every such line is listed for recording (RB.content.spokenSources,
+  // read by tools/voice/lines.mjs) from the encounters' own definitions, the way src/engine/97_encounter.js says them.
+  // (An encounter led by a creature is played on the battle screen, which shows these results in English only.)
+  const SCENE = 'code.enc';
+  const COMPS = ['nao', 'mio', 'ren', 'suzu'];
+  const speakerOf = (who) => (who === 'pc' || who === 'comp' ? who : who && RB.content.chars[who] ? who : 'narr');
+  function spoken() {
+    const out = [], seen = new Set();
+    const add = (who, t, file, comps) => {
+      if (!t || !t.jp || /\$\w/.test(t.jp)) return;
+      const w = speakerOf(who), k = w + '|' + t.jp + '|' + (comps || []).join();
+      if (seen.has(k)) return;
+      seen.add(k);
+      out.push(Object.assign({ scene: SCENE, who: w, jp: t.jp, en: t.en || '', file }, w === 'comp' ? { comps: comps || COMPS.slice() } : {}));
+    };
+    const comp = (list, file) => { for (const c in list || {}) for (const a of list[c] || []) add('comp', a.says, file, [c]); };
+    for (const id in RB.content.encounters || {}) {
+      const d = RB.content.encounters[id], file = 'encounter ' + id;
+      if (d.lead) continue;
+      const S = d.social;
+      if (S) {
+        for (const a of S.actions || []) {
+          add('pc', a.label, file); // "You: …", your choice's own words
+          if (a.cases) { for (const c of a.cases) add('pc', c.says || a.says, file); add('narr', a.says, file); } // (no case holds: said as what happens)
+          else add('pc', a.says, file);
+        }
+        if (S.gesture) add('comp', S.gesture.says, file);
+        for (const k in S.responses || {}) add('narr', S.responses[k] && S.responses[k].says, file);
+        if (S.wait) add('narr', S.wait.says, file);
+        for (const dr of S.drift || []) add(dr.who, dr.says, file);
+        comp(S.companion, file);
+      }
+      const P = d.procedure;
+      if (P) for (const st of P.steps || []) {
+        for (const a of st.actions || []) add('narr', a.result, file);
+        for (const k in st.responses || {}) add('narr', st.responses[k] && st.responses[k].says, file);
+        add('narr', st.untangled, file);
+      }
+      comp(d.companion, file);
+      for (const c of d.conclusions || []) { add('narr', c.text, file); if (c.severe && c.summarised) add('narr', c.summarised, file); }
+      if (d.study && d.study.explain) add('narr', d.study.explain, file);
+    }
+    return out;
+  }
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(spoken);
   const STANCE = { listening: { en: 'Listening', icon: 'note' }, heated: { en: 'Heated', icon: 'flame' }, closed: { en: 'Closed off', icon: 'mute' }, leaving: { en: 'Leaving', icon: 'back' } };
   let cur = null;
 
@@ -146,6 +197,7 @@ RB.encScreen = (function () {
         cur && (cur.fin = fin);
         if (opts.encounterDone) opts.encounterDone(st.enc.outcome, fin);
       } catch (err) { console.error('encounter finish', err); }
+      if (RB.ui.spoken) RB.ui.spoken.stop();
       RB.ui.popLayer(lay);
       RB.game.popMode('encounter');
       cur = null;
@@ -154,8 +206,21 @@ RB.encScreen = (function () {
   }
   function logHtml(log) {
     if (!log.length) return '';
-    return '<section class="enc-log" aria-live="polite" aria-label="What has happened"><h3>' + I('history') + '<span>So far</span></h3><ol>' + log.slice(-8).map((l) =>
-      '<li class="' + (l.none ? 'none' : '') + (l.who === 'pc' ? ' you' : l.who === 'comp' ? ' comp' : '') + '">' + (l.jp ? '<span class="el-jp">' + RB.ui.jhtml(l.jp) + '</span> ' : '') + '<span class="el-en">' + esc(l.en) + '</span></li>').join('') + '</ol></section>';
+    return '<section class="enc-log" aria-live="polite" aria-label="What has happened"><h3>' + I('history') + '<span>So far</span></h3><ol>' + log.slice(-8).map((l) => {
+      const cls = (l.none ? 'none' : '') + (l.who === 'pc' ? ' you' : l.who === 'comp' ? ' comp' : '');
+      // a line with Japanese: a spoken line, its speaker's recording under SCENE
+      if (l.jp && RB.ui.spoken) return RB.ui.spoken.html({ who: speakerOf(l.who), jp: l.jp, en: l.en, sceneId: SCENE }, { tag: 'li', cls: cls.trim(), jpCls: 'el-jp', enCls: 'el-en' });
+      return '<li class="' + cls + '">' + (l.jp ? '<span class="el-jp">' + RB.ui.jhtml(l.jp) + '</span> ' : '') + '<span class="el-en">' + esc(l.en) + '</span></li>';
+    }).join('') + '</ol></section>';
+  }
+  // the newest line of the log with Japanese, said as it appears (when lines are spoken automatically); once
+  function sayNewest(root, log) {
+    const from = Math.max(0, log.length - 8);
+    let k = -1;
+    for (let i = log.length - 1; i >= Math.max(from, log.heard || 0); i--) if (log[i].jp) { k = i; break; }
+    log.heard = log.length;
+    const li = k >= 0 && RB.ui.spoken ? root.querySelectorAll('.enc-log ol > li')[k - from] : null;
+    if (li) RB.ui.spoken.autoIn(li);
   }
   // Where a card is shown. Procedures and conversations are written in the order that solves them (the right step
   // first; the move that ends a talk badly last), so their cards are dealt (RB.learnUi.deal): each gets a rank from
@@ -185,6 +250,7 @@ RB.encScreen = (function () {
       fr.setTitle(RB.ui.jhtml(st.enc.def.name.jp || '') + ' ' + esc(st.enc.def.name.en), kind === 'machine' ? '' : 'Exchange ' + (st.round + 1));
       fr.leaf.innerHTML = '<div class="enc-grid">' + '<div class="enc-col">' + peopleHtml(st) + machineHtml(st) + agreementHtml(st) + recordHtml(st) + '</div>' +
         '<div class="enc-col">' + logHtml(log) + '<section class="enc-choices" aria-label="What you can do"><h3>' + I('words') + '<span>What will you do?</span></h3><div class="rcards">' + shownOrder(st, cards).map((i) => cardHtml(cards[i], i)).join('') + '</div></section></div></div>';
+      sayNewest(fr.leaf, log);
       fr.foot.innerHTML = '<span class="muted small">' + esc(kind === 'machine' ? 'A wrong step sends the machine back; misreading the notice only means trying again.' : 'Nothing is timed. It will come to an end, one way or another.') + '</span>';
       let done = false;
       const fin = (v) => { if (done) return; done = true; fr.el.onclick = null; resolve(v); };
@@ -201,12 +267,16 @@ RB.encScreen = (function () {
     return new Promise((resolve) => {
       const c = { text: E().conclusionText(st.enc.conclusion, RB.game.settings) };
       fr.leaf.innerHTML = '<div class="enc-grid"><div class="enc-col">' + peopleHtml(st) + machineHtml(st) + recordHtml(st) + '</div><div class="enc-col">' + logHtml(log) +
-        '<section class="enc-end paper" aria-live="polite"><h3>' + I('done') + '<span>How it ended</span></h3>' + (c.text.jp ? '<p class="el-jp">' + RB.ui.jhtml(c.text.jp) + '</p>' : '') + '<p>' + esc(c.text.en) + '</p></section></div></div>';
+        '<section class="enc-end paper" aria-live="polite"><h3>' + I('done') + '<span>How it ended</span></h3>' +
+        (c.text.jp && RB.ui.spoken ? RB.ui.spoken.html({ who: 'narr', jp: c.text.jp, en: c.text.en, sceneId: SCENE }, { cls: 'enc-end-l', jpCls: 'el-jp', enCls: '' }) : (c.text.jp ? '<p class="el-jp">' + RB.ui.jhtml(c.text.jp) + '</p>' : '') + '<p>' + esc(c.text.en) + '</p>') + '</section></div></div>';
+      // how it ended is said as it appears (the log's newest line, if it has not been said, gives way to it)
+      const end = fr.leaf.querySelector('.enc-end .say-line');
+      if (end) { log.heard = log.length; RB.ui.spoken.autoIn(end); } else sayNewest(fr.leaf, log);
       fr.foot.innerHTML = '<span class="spacer"></span><button type="button" class="cbtn go" data-ok>' + I('next') + '<span>Continue</span></button>';
       const b = fr.foot.querySelector('[data-ok]');
       b.onclick = () => resolve();
       setTimeout(() => b.focus({ preventScroll: true }), 0);
     });
   }
-  return { start, current: () => cur, shownOrder };
+  return { start, current: () => cur, shownOrder, spoken, SCENE };
 })();
