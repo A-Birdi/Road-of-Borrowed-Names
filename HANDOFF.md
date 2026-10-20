@@ -708,7 +708,8 @@
       U `kana_homophones` 1463/0, B `kana_homophones` 174/0 (CC-006 fails 77). Found on the way, not changed (owner's
       call): non-words in the kana word pool (25 F/E), small ァィゥェォ and ウォ sharing rōmaji with ア…/ヲ, 315 glosses
       quoting their own kanji in the exam prompt. Phase 2c (4,170 of 4,170 single-reading forms: 1 furigana error = F10,
-      5 questions) and 2d (the 635 template items: 17 findings, no grammar errors) are done, to post. No fixes from
+      5 questions) and 2d (the 635 template items: 17 findings, no grammar errors) are done and posted (CC-028);
+      every inventory family has now been read. CC-007 posted as CC-027. No fixes from
       findings alone; send corrections, if Robin approves, as SC10-SC14.
     - **RBN-QA-012's second sign (Agnes 09:39Z):** the terraces' crossroads (`co.terraces` 18,17) narrates four arms;
       the prop is the shared rectangular `sign`. Both signs become opt-in variants (three arms in Reedwake, four on the

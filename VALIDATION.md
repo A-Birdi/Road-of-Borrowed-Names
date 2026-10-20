@@ -5450,7 +5450,18 @@ Yasu's story, when listening, has not begun being spoken."
   - **Candidate CC-007:** `index.html` sha256 `343f54b86303630beb3efee932c7f2fceca0a7cfd90e51019671b1c051d29f97`, built
     from `026965b` (T01, T02 and RBN-QA-028 on top of CC-006's source); byte-identical to the scratch build the suites
     above ran on. On this exact file (B): `kana_homophones` 174/0, `shino_thanks` 28/0, `story_ch3 E nao` 38 checks
-    passed, `side_ch3` all three profiles passed (13, 14, 14 checks), `spoken_lines` 30/0. Voice: none.
+    passed, `side_ch3` all three profiles passed (13, 14, 14 checks), `spoken_lines` 30/0. Voice: none. Pages deployment
+    7202192194 success 14:20:25Z (live bytes not fetched). Posted as CC-027.
+  - The language audit, phases 2c and 2d (report only; read-only sub-agents; CC-028). 2c, the single-reading forms:
+    4,170 of 4,170 judged (3,705 dictionary match, 378 judged from parts, 74 names, 3 code artefacts), 4,854 context lines
+    read, 84 two-sense forms filtered (51 hits read, all right); one furigana error, {お願|ねが}い (= phase 2a's F10);
+    five new questions (東岸 ひがしぎし, 水先船 みずさきぶね, 入船 いりふね, 北壁 きたかべ, 甲虫 かぶとむし for "beetle"). 2d, the
+    635 template items for meaning: every template, slot value and distinct output read (`code.fw` 125 targets and 147
+    sentences; `code.wb` 505 answers, 278 distinct texts and 38 edge cases; `code.pages` 42 + 42 Kansai); structural checks
+    pass; no grammar or register errors; 17 findings (DS01 "over by The Flooded Cellar" ×181, DL01 "fills" for 水が増えた,
+    DL05 a resident giving their own town, DL04 弁 damper/valve …). Claude re-checked the 2c findings and DS01, DL01 and
+    DL05 in source and samples. Reports in the session scratchpad (audit/phase2c_single, audit/phase2d_templates).
+    Nothing changed.
     - Found on the way, NOT changed (outside the approval; for the owner): 25 F/E "not a word" lexicon entries are in
       the kana word pool for every other kana's completions and for meaning distractors; the katakana extended lesson's
       small ァィゥェォ share rōmaji with アイウエオ and ウォ with ヲ, so its practice pass can ask them by rōmaji alone;
