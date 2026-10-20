@@ -5048,6 +5048,12 @@ Yasu's story, when listening, has not begun being spoken."
   - RBN-QA-001: the Voice button's title and Settings › Following along describe the recorded voices, with the
     device's voice as the fallback (copy only).
   - RBN-QA-002: an empty stamp stand shows "What each stamp here asks for: Ledger › Journey › Stamp book."
+  - RBN-QA-003: travelling alone, Sweep and Flood are told as aimed at you, not "both of you" (`intentTextSolo`, used
+    when there is no companion); U `telegraph_solo` 13/0, and `validate.mjs` checks the table's furigana.
+  - RBN-QA-004: Two Names' first step ("Go to the Lantern Hall") names its map, `rw.hall`. In Node,
+    `RB.questGuide.targets('rw_depart', s)` returns an authored enter target for the hall, markable, with the nudge
+    "Go to Lantern Hall.", both before and after the gathering; before, it had no target and gave the waiting nudge.
+    U `quest_guide` 150/0, `quest_guide_live` 56/0.
   - U `stampbook_sb1` 39/0, `records` 272/0. Agnes retests with the next build.
 - **Voice loading (VT-1), in a browser, the 2 s slow-cache bound.** These are paired runs of the pre-VT-1 and VT-1
   builds, each pair back to back on the same machine while other suites ran (load average 10–13):
