@@ -50,6 +50,20 @@ export default async function (t) {
     t.ok(!m.ok && m.files > 0 && m.ceiling === 10, 'site_size reports a folder over its ceiling');
     const cli = spawnSync(process.execPath, [path.join(root, 'tools/publish/site_size.mjs'), path.join(tmp, 'site'), '--max-bytes', '10'], { encoding: 'utf8' });
     t.ok(cli.status === 1, 'site_size exits 1 over the ceiling');
+    // a clone's .git is never published: left out of the measure and reported apart (a site within its ceiling stays
+    // within it however large its history), and a worktree's .git pointer file the same
+    const site = path.join(tmp, 'site');
+    const before = measure(site);
+    fs.mkdirSync(path.join(site, '.git', 'objects', 'pack'), { recursive: true });
+    fs.writeFileSync(path.join(site, '.git', 'objects', 'pack', 'pack-x.pack'), Buffer.alloc(200000));
+    fs.writeFileSync(path.join(site, '.git', 'HEAD'), 'ref: refs/heads/main\n');
+    const withGit = measure(site, { maxBytes: before.bytes + 1000 });
+    t.ok(withGit.ok && withGit.bytes === before.bytes && withGit.files === before.files && withGit.notPublished && withGit.notPublished.files === 2 && withGit.notPublished.bytes === 200000 + 21, '.git is left out of the measure and reported apart ' + JSON.stringify(withGit.notPublished));
+    fs.rmSync(path.join(site, '.git'), { recursive: true, force: true });
+    fs.writeFileSync(path.join(site, '.git'), 'gitdir: /elsewhere\n');
+    const wt = measure(site);
+    t.ok(wt.bytes === before.bytes && wt.notPublished && wt.notPublished.files === 1, 'a worktree\'s .git file is left out too');
+    fs.rmSync(path.join(site, '.git'), { force: true });
     // the game's runtime set: within the default ceiling; a tiny ceiling refuses it before anything is copied
     if (fs.existsSync(path.join(root, 'index.html'))) {
       const ok = JSON.parse(execFileSync(process.execPath, [path.join(root, 'tools/publish/prepare_runtime.mjs'), '--list-only'], { encoding: 'utf8' }));

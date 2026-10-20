@@ -3,7 +3,9 @@
 // GitHub Pages refuses a published site over 1 GB (docs.github.com, "GitHub Pages limits"); the guard's default ceiling
 // is 900,000,000 bytes, a 10 % margin under 10^9 bytes (the stricter reading of "1 GB"). The game's site and the voice
 // site are separate Pages sites, each with its own limit, so each is measured on its own.
-// Every file under the folder counts: what the current build names and anything kept from earlier builds. For a voice
+// Every file under the folder counts: what the current build names and anything kept from earlier builds. A `.git`
+// (a clone's own history, or a worktree's pointer file) is never published, so it is left out and reported apart as
+// `notPublished` (Local, 2026-10-20: the voices clone's ~544 MB of packed history made a 607 MB site read as over). For a voice
 // site (<dir>/<lang>/index.json, schema rbn.voice.site/1) the report also splits the bytes into what the current index
 // names and what it does not (kept for pages opened before an update, or no longer needed).
 // Usage: node tools/publish/site_size.mjs <folder> [--max-bytes <n>] [--json]   (exit 1 when over the ceiling)
@@ -14,16 +16,22 @@ import { pathToFileURL } from 'node:url';
 export const PAGES_LIMIT = 1000000000;
 export const DEFAULT_CEILING = 900000000;
 
+const NOT_PUBLISHED = new Set(['.git']);
 function walk(dir) {
   const out = [];
-  const go = (d) => {
+  out.skipped = { files: 0, bytes: 0 };
+  const go = (d, skip) => {
     for (const e of fs.readdirSync(d, { withFileTypes: true })) {
       const p = path.join(d, e.name);
-      if (e.isDirectory()) go(p);
-      else if (e.isFile()) out.push({ p, rel: path.relative(dir, p).split(path.sep).join('/'), bytes: fs.statSync(p).size });
+      const sk = skip || NOT_PUBLISHED.has(e.name);
+      if (e.isDirectory()) go(p, sk);
+      else if (e.isFile()) {
+        const bytes = fs.statSync(p).size;
+        if (sk) { out.skipped.files++; out.skipped.bytes += bytes; } else out.push({ p, rel: path.relative(dir, p).split(path.sep).join('/'), bytes });
+      }
     }
   };
-  go(dir);
+  go(dir, false);
   return out;
 }
 
@@ -48,6 +56,7 @@ export function measure(dir, o = {}) {
   const bytes = files.reduce((n, f) => n + f.bytes, 0);
   const ceiling = o.maxBytes > 0 ? o.maxBytes : DEFAULT_CEILING;
   const r = { dir, files: files.length, bytes, ceiling, pagesLimit: PAGES_LIMIT, headroom: ceiling - bytes, ok: bytes <= ceiling };
+  if (files.skipped.files) r.notPublished = { what: '.git', files: files.skipped.files, bytes: files.skipped.bytes };
   // a voice site: what the current build names, and what is only kept
   const voice = [];
   for (const lang of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
@@ -76,6 +85,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   if (a.includes('--json')) console.log(JSON.stringify(r, null, 1));
   else {
     console.log(`${r.dir}: ${r.files} files, ${r.bytes.toLocaleString('en')} bytes; ceiling ${r.ceiling.toLocaleString('en')} (Pages limit ${PAGES_LIMIT.toLocaleString('en')}); ${r.ok ? 'within it, ' + r.headroom.toLocaleString('en') + ' bytes to spare' : 'OVER by ' + (-r.headroom).toLocaleString('en') + ' bytes'}`);
+    if (r.notPublished) console.log(`  not published, left out: ${r.notPublished.what} (${r.notPublished.files} files, ${r.notPublished.bytes.toLocaleString('en')} bytes)`);
     for (const v of r.voice || []) console.log(`  ${v.lang} (voice build ${v.voiceBuild}): current build ${v.current.files} files, ${v.current.bytes.toLocaleString('en')} bytes; not named by it ${v.notInCurrentBuild.files} files, ${v.notInCurrentBuild.bytes.toLocaleString('en')} bytes`);
   }
   if (!r.ok) { console.error('site_size: over the ceiling; not to be deployed as it is'); process.exit(1); }

@@ -4929,6 +4929,30 @@ the limit, have it set up the new Repo". Figures and decisions: docs/hosting/RUN
   - B `runtime_publish` 3/3 (the runtime set from this build); U `audio_voice` 46/0, `voicebank_vrc1` 33/0,
     `voice_production` 27/0, `voice_review_page` 89/0.
   - **Not tested here:** the live URL in a browser (unreachable from this session); Firefox, Safari, phones.
+- **VB-1: the games pick up voice build 2026-10-20.1, stage 1** (the worker's CL-041; voices main `f5a0dea`, index
+  `voiceBuild` 2026-10-20.1, `scriptContentHash` 8495fd8f3ced). The published index (index.json, 3,082 scene indexes and
+  the references index, read from the repository at `f5a0dea`; github.io is not reachable from this session) against each
+  build's own manifest, rebuilt from its source with `tools/voice/production_manifest.mjs`: CC-007 (`026965b`, content
+  8495fd8f3ced, the site's) and CC-006 (`621aef1`, content 1deba8b27522; the same 19,244 recordings and keys).
+  - Static (`tools/voice/site_pickup.mjs`, new), the same for both builds: SL1 574 of 574, SL3 1,292 of 1,292 and
+    SC10–SC14 5 of 5 resolved (every key a line of the build, the same id, speaker, dialect, voice and pitch, and text
+    hash); the five redos served as their new takes (run/results.json.gz), none as the old; 18,119 of 20,773 line
+    variants on the site, 2,654 recordings missing, all stage 2 (SL4 1,779, SL5 868, SL6 1, SL7 1, SL8 2, SL9 3); no
+    stale text hash; no site variant either build never asks for; references 9,096 of 9,096 with the same id. Against
+    the previous build 2026-10-19.1 (`b2496a8`) the same tool finds SL1 0 of 574, SL3 0 of 1,292, the redos' new take
+    0 of 5, exit 1.
+  - Browser (B, scratch harness; CC-007's `index.html` `343f54b8…` and CC-006's `79e0ef32…`), each served with a copy
+    of the published index at the shipped address `../Road-of-Borrowed-Names-voices/ja-JP/`: index.json read once; the
+    game's own `RB.voicebank.lineFor` resolves all 1,871 stage-1 lines (574 SL1, 1,292 SL3, 5 SC) to their recording
+    and file; seven samples said through `RB.voice.sayLine` (narrator and an NPC from SL1; the player A High and B Low
+    and an NPC answer from SL3; Nao and an NPC from SC10–SC14) each returned 'recorded' and played its own file, fetched
+    from the copy; those seven recordings came from the repository and match the index's SHA-256. No page error.
+  - The size guard: `tools/publish/site_size.mjs` counted a clone's `.git`, so the worker's 607 MB site read as over
+    900 MB. It now leaves `.git` (a directory, or a worktree's pointer file) out and reports it as `notPublished`.
+    U `publish_guard` 12/0 (the previous file fails the two new checks); on a clone of the voices site: 6,509,759
+    bytes measured, `.git` (63 files, 8,536,317 bytes) reported apart.
+  - **Not tested here:** the live URL (unreachable); an already open session keeps the index it read until a reload or
+    a new session (the runtime reads index.json once a session); Firefox, Safari, phones.
 - **Two "speak automatically" switches (Robin, 2026-10-19).** Once the recordings played, Settings › Audio showed
   both "Play the voices automatically" (the recordings') and "Speak dialogue automatically" (the device voice's,
   which then decided nothing). Now one shows, the one in effect: the recordings' while they speak (it covers a line

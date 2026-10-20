@@ -816,6 +816,17 @@
     (`page(…, { voiceSite: true })`, tests/e2e/lib.mjs).
     About & credits now credits the voices. REQUIREMENTS.md XP135; docs/hosting/RUNTIME_PUBLISHING.md.
 
+    **Voice build 2026-10-20.1, stage 1 (the worker, CL-041; checked here as VB-1).** Voices main `f5a0dea`,
+    index `scriptContentHash` 8495fd8f3ced = CC-007's source (`026965b`): 25,686 recordings (16,590 lines + 9,096
+    references); new SL1 574, SL3 1,292 and the SC10–SC14 redos; 2,654 missing = stage 2 (SL4 1,779, SL5 868, SL6–SL9 7).
+    Checked here that CC-007 and CC-006 both pick them up: `tools/voice/site_pickup.mjs` (new; the site's index against
+    the manifest rebuilt from each build's source) resolves all 574 + 1,292 + 5 in both, the redos as their new takes,
+    nothing stale; in Chromium both pages resolve all 1,871 stage-1 lines with the game's own `lineFor` and play seven
+    samples from a copy of the published index and recordings (VALIDATION.md "VB-1"). For stage 2, rerun
+    `node tools/voice/site_pickup.mjs --site <voices>/ja-JP --sets SL4,SL5,…`. The size guard
+    (tools/publish/site_size.mjs) now leaves a clone's `.git` out and reports it apart (the worker: a 607 MB site read
+    as over because of ~544 MB of packed history).
+
     **SC5–SC9 (Robin's final listening round, 2026-10-19: "get these redos sorted, then push the voices live").** Five
     one-word send corrections (頁, 灯守, 台詞 ×2, 釉) in SEND_CORRECTIONS.json; the worker records them.
 

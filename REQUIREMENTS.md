@@ -1089,6 +1089,10 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     `voice_runtime` 10/10, `settings_review`, `speech_mark` pass.
   - **Not done / Robin's:** a play-through on the live URL (not reachable from this session; Robin's in-game test).
     No Pages setting needs changing; publishing only the runtime set stays Robin's choice.
+  - **Stage 1 of the remaining recordings (voice build 2026-10-20.1, the worker's CL-041):** CC-007 and CC-006 pick up
+    SL1 574, SL3 1,292 and the SC10–SC14 redos (U-style static check `tools/voice/site_pickup.mjs`, all resolved in both;
+    B scratch harness: all 1,871 lines resolved by the game's own lookup, seven samples played). 2,654 recordings are
+    stage 2 (SL4–SL9). VALIDATION.md "VB-1".
 
 - [~] XP136 Every line spoken, with properly highlightable text, Records too (Robin, 2026-10-19): "every line in-game
   should have spoken lines with properly highlightable text as well. This goes the same for the Records section,
