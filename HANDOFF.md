@@ -609,6 +609,33 @@
       battle now chooses Standard mistakes, since FR-1 made Assisted the default). 21 affected browser suites pass
       (VALIDATION.md "MW-1").
 
+    **Robin's message of 2026-10-20, and the QA issue.** Robin: "The cutscene has improved substantially, push it." "The
+    battle icons are perfect." "You can push the Road events live" (they stay as frequent as they are: the player
+    chooses to approach them). "Voice Loading and Battle Timing: … explore what options you have to fix these." "Create
+    the relevant missing voice lines and ensure they're pushed live … Coordinate with the local agent entirely." "Your
+    AG-2 work should be complete … in full." Robin plays on from choosing a companion once this is done.
+    - **Pushed:** the AR-3 bridge cutscene and the IC-1 battle icons (f039d1c); road events as placed NPCs and props
+      (RE-1, already live); BT-1, the battle scene's clock keeps real time on slow frames (7ed1dd1); VT-1, a slow
+      browser cache is not waited on step after step (e8c2d76; VALIDATION.md "Voice loading (VT-1)").
+    - **Every line spoken, second pass (VL-1, VL-2):** the remaining code-shown lines have scene ids (`code.comp`,
+      `code.pages`, `code.atlas`, `code.fish`, `code.play`, `code.stamp`, `code.letters`, `code.town`, `code.ngplus`,
+      `code.verbs`, `code.weave`, `code.enc`, `code.hanafuda`, `code.ask`; every telegraph under `code.battle`); the
+      panels speak through src/ui/22c_spoken_panel.js; the Log and kept memories keep each line's scene. What is still
+      written, and why, with a proposal each: docs/future/voice/SPOKEN_SURFACES.md §2 (Robin's decisions: reading tasks
+      and letters, choices, whether a reading-critical telegraph's Voice counts as help). Supplements for Local:
+      SL4 (1,779 recordings) and SL5 (868), after SL1 (574) and SL3 (1,292); SC11–SC14 send 葦 as あし on four
+      recordings the worker's recognizer check flagged. READINESS.md §1 and §6.
+    - **QA (Agnes, A-Birdi/Road-of-Borrowed-Names#1):** Local relays; the lead posts `[Claude Cloud]` handoffs (CC-00N)
+      there. The protocol authorises no merges or deploys, and a gated candidate is never pushed for QA's convenience.
+      Fixed: RBN-QA-001 (the Voice button's copy), 002 (an empty stamp stand points to the Stamp book), 003 (solo
+      telegraphs, `intentTextSolo`), 004 (the Lantern Hall step's marker). REQUIREMENTS.md XP147.
+    - **AG-2, complete and gated (not pushed):** every line the prologue and Reedwake show (441 lines, 473 displays)
+      reviewed and audited; the report is docs/review/align/AG2_REVIEW.md on the local branch `ag2-work`. Robin has the
+      before/after evidence and decides on publication. To publish: rebase `ag2-work` onto the branch, build, run U
+      `speech_align_ag2`, `align_registry`, `word_help*` and B `speech_ag2`, `speech_mark`, `speech_relations`.
+    - **Two container restarts** lost running agents; their work was saved as commits and cherry-picked (VL-1 05032a5,
+      VL-2 4c32170…a451a91).
+
     **Every line spoken, first batch: the prologue, Records replays, doors and objects, field puzzles, oral histories
     (Robin, 2026-10-19: "every line in-game should have spoken lines with properly highlightable text as well. This
     goes the same for the Records section"; "the closed door in Reedwake"; "The swinging board between Old Yasu and Ren
