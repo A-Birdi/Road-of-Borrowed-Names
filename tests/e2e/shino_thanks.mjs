@@ -5,7 +5,10 @@
 // the activity itself (every customer served by clicking the tray), at each tier:
 //  1. invitations not yet sorted: Shino's thanks is for the sweets, never the invitations; all five served;
 //  2. invitations sorted (co_letters_done): her thanks for the invitations, as before;
-//  3. the other four customers' thanks are their own, as before.
+//  3. the other four customers' thanks are their own, as before;
+//  4. Nao at the post house (Agnes 11:30Z, the same invitations' state): before the invitations are sorted, his hint
+//     ("Give her a hand. Read the contents…") and its "Not always" as before; once sorted, neither (no new line); his
+//     cameo plays and is marked seen either way.
 // Usage: node tools/build.mjs && node tests/e2e/shino_thanks.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -51,6 +54,27 @@ for (const tier of ['F', 'E', 'I', 'A']) {
   const shino2 = r.thanks.find((x) => x.who === 'co_shino');
   ok(shino2 && INVITE.test(shino2.text) && !SWEET.test(shino2.text), tier + ' 2 invitations sorted: her thanks for the invitations, as before');
   ok(r.res.ok && r.res.n === 5 && !r.errors.length, tier + ' 2 all five served; no page errors');
+}
+
+// ---- 4. Nao's hint at the post house ------------------------------------------------------------------------------
+const HINT = /Give her a hand/, NOTALWAYS = /Not always, though/, SMALL = /Small world/;
+for (const done of [false, true]) {
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await p.evaluate(async (done) => {
+    RB.test.enable({ battle: 'unravel', choose: () => 0 });
+    const s = RB.game.debugStart('co.post', 4, 6, { comp: 'suzu', flags: Object.assign({ co_arrived: true, co_chronicle_read: true }, done ? { co_letters_done: true } : {}), dir: 'up' });
+    RB.game.settings.textSpeed = 'instant'; RB.game.applySettings();
+    RB.world.refreshActors();
+    const W = RB.world.W, t0 = performance.now();
+    while (W.time - W.enteredAt < 1100 && performance.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 50));
+  }, done);
+  const lines = await p.evaluate(async () => { const n = RB.game.s.backlog.length; await RB.test.talk('nao'); await RB.test.idle(); return RB.game.s.backlog.slice(n).map((l) => l.en || ''); });
+  const seen = await p.evaluate(() => !!RB.game.s.flags.co_nao_cameo);
+  const has = (re) => lines.some((l) => re.test(l));
+  if (!done) ok(has(SMALL) && has(HINT) && has(NOTALWAYS) && seen, '4 invitations not sorted: Nao\'s cameo with his hint and "Not always", as before');
+  else ok(has(SMALL) && !has(HINT) && !has(NOTALWAYS) && seen, '4 invitations sorted: Nao\'s cameo without the hint (' + lines.join(' | ').slice(0, 160) + ')');
+  ok(!errors.length, '4 no page errors' + (errors.length ? ': ' + errors.slice(0, 2).join(' | ') : ''));
+  await p.context().close();
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);

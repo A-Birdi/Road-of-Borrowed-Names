@@ -325,8 +325,8 @@ narr: {招待状|しょうたいじょう} は {全部|ぜんぶ} {配|くば}�
 @scene co.nao_cameo
 # Staged: Nao (on the road with the post) nods hello and settles the satchel strap over the heavy letters;
 # your companion's own exchange with them (Mio leans in to their boots and Nao shrugs, Ren asks the way and
-# Nao points to the door, Suzu laughs and Nao glances away); Nao points to Shino for the letters and looks to
-# the door for the next delivery.
+# Nao points to the door, Suzu laughs and Nao glances away); Nao points to Shino for the letters (only while the
+# invitations are still unsorted: RBN-QA-028) and looks to the door for the next delivery.
 !gesture nao nod pc
 nao[smirk]: …… よう 。 {世|よ} の {中|なか} 、 {狭|せま}い な 。 || …Hey. Small world.
 !gesture nao strap
@@ -343,10 +343,10 @@ nao: {潮硝子|しおがらす} から の {荷|に} を {届|とど}け に {�
 ?(comp=suzu) comp[laugh]: ナオ ！ {相変|あいか}わらず {出口|でぐち} {側|がわ} に {立|た}ってる の ね 。 || Nao! Still standing by the exit, I see.
 ?(comp=suzu) !gesture nao aside
 ?(comp=suzu) nao: {癖|くせ} だ 。 …… お{前|まえ} も {相変|あいか}わらず 、 {笑|わら}って {誤魔化|ごまか}してる な 。 {顔|かお} に {書|か}いて ある 。 || Habit. …And you're still laughing things off. It's written on your face.
-!gesture nao point co_shino
-nao: {宛名|あてな} の {札|ふだ} が {外|はず}れた {手紙|てがみ} の {話|はなし} 、 シノ から {聞|き}いた 。 {手伝|てつだ}って やって くれ 。 {中身|なかみ} を {読|よ}めば {分|わ}かる 。 {大抵|たいてい} は な 。 || Shino told me about the letters that lost their address tags. Give her a hand. Read the contents and you'll know. Usually.
+?(!co_letters_done) !gesture nao point co_shino
+?(!co_letters_done) nao: {宛名|あてな} の {札|ふだ} が {外|はず}れた {手紙|てがみ} の {話|はなし} 、 シノ から {聞|き}いた 。 {手伝|てつだ}って やって くれ 。 {中身|なかみ} を {読|よ}めば {分|わ}かる 。 {大抵|たいてい} は な 。 || Shino told me about the letters that lost their address tags. Give her a hand. Read the contents and you'll know. Usually.
 !gesture nao lookroad 4,7
-nao: …… {大抵|たいてい} じゃ ない {手紙|てがみ} も ある けど な 。 じゃ 、 {次|つぎ} の {配達|はいたつ} だ 。 || …Not always, though. Right. Next delivery.
+?(!co_letters_done) nao: …… {大抵|たいてい} じゃ ない {手紙|てがみ} も ある けど な 。 じゃ 、 {次|つぎ} の {配達|はいたつ} だ 。 || …Not always, though. Right. Next delivery.
 !set co_nao_cameo
 `, 'ch3/people-workshops');
 
