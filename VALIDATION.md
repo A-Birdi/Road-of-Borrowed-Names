@@ -5267,6 +5267,78 @@ Yasu's story, when listening, has not begun being spoken."
     one string (`mp_lanterns`, 3 wide, overhead) at (22,25), on the bank west of the bridge's north foot; the bridge is
     x 24-25, rows 26-28. Nothing is missing from the build; the assets exist and are placed where they are. Proposal in
     CC-017; no change made.
+  - RBN-QA-020 candidate (local `qa020-festival` `ba23698`, on `87155c8`, not pushed), the festival night only
+    (`mp_fest_night&!mb2_done`), existing cast and props: (1) 19 townsfolk of Manybridge and Blockprint Row (the
+    regular readers of both, Take, Uno, Sen, Zenzō, Fujiko, Shinobu, Kakeru, Sanpei, Miyo, Tokube) and Haru with Ichi
+    by the stalls wherever they were put, background people without talk, on rows 19 and 22 and at the rail (row 25):
+    off the booths' fronts (row 20), the lane where you come onto the bank (rows 20-21), the bridge's approach and
+    Tomi's spot; (2) the two barges unladen (`o.empty`) either side of the Curtain Bridge (x 29 and 16) in the order
+    chosen, the lantern boat under a lantern string; the drum boat stays an unladen barge (no drum prop exists, and a
+    drummer aboard would stand on water, which the validator refuses: new art would be the owner's call); (3) the
+    bridge's lanterns: two strings across the span (23,27 and 23,29) instead of one at its north foot (22,25); (4)
+    `mp.fest_night` walks you to the rail by the bridge (24,25) before the boat lines, as the fireworks scene's own walk
+    does, so the boats and the bridge are above the lines. No line, choice, flag, quest step, audio, game, yukata or
+    fireworks change. Matched scratch builds at 1180x757 (before: CC-005's own `index.html`; after: the candidate), with
+    Agnes's plan: "The bank is packed with people" coming from the committee room (x 39) and from the west (x 10):
+    before you alone (Saku at the edge), after four to six people in view about you, none in your way; the boat line:
+    before the river under the lines, after the rail, both boats and the lit bridge above them; the bridge afterwards.
+    Reachability in all 12 choice combinations (stalls, boat order, lanterns): every booth, stall, Tomi, Matsu, Hayashi,
+    door and exit reachable from the bank, the fireworks' (24,24) and the rail's (24,25) spots free; 26 people placed at
+    once on the night (5 before). Frame times on the night (4 s, twice each): 16.7 ms median, p95 16.7-16.8 ms, before
+    and after. On the candidate: U `mp_ch4` 138/0, `settle` 79/0, `sequence_p16` 363/0; B `manybridge2` 4/0,
+    `festival_games` 5/0, `sequence_world --only mb2.fireworks` 198/0. Frames to Robin privately.
+  - RBN-QA-022 (Agnes 10:02Z, on CC-005's build; Chapter 5, Foundations, Suzu; the chronicle's desk last): the
+    synthesis (`co.suspect`) played at the desk: "Crossing the square, your feet stop on their own." … "Let's go to the
+    Chronicle Hall. I want to see that chronicle." Cause: every clue scene calls `co.clue_check`, which plays
+    `co.suspect` wherever the third clue is found; the scene is written for the square (the village's onEnter and three
+    square triggers exist for it). The clues: in the square the seat, buckets, channel stone and lookout; elsewhere the
+    road's marker (co.road), the chronicle (co.hall), the glass workshop's beam (co.glass), Ume's beam (co.ume). Fix
+    (`d357e96`): off the square (road, glass workshop, Ume's house: `var._co_off`) the check waits and the village's
+    onEnter or the square's triggers play it as you next come in; at the desk (`var._co_desk`) it plays there without
+    the square's narration, the look between the seat and the lookout (and Nao's), the point and the pointing line, and
+    goes straight on into the chronicle with Tokiwa (step 2, then 3). No line is new or changed (narrator
+    `r1-4900422823a26eb0` and the four player variants kept, said in every other order); voice probe 0 new recordings.
+    U `quest_guide` 150/0, `dialect_kansai` 9528/0, `voice_production` 27/0, `spoken_sites` 33/0. B `cinder_clue_order`
+    40/0 (new, twelve-chapter, Suzu: the desk last, saved and loaded; a save at the desk right after the synthesis,
+    loaded, then Tokiwa's chronicle; the square last; the glass workshop's, the road's and Ume's last, each saved and
+    loaded before coming into the village, then the synthesis with both lines; the desk early); on CC-005's build the
+    same test fails 14. On a build of this source: `staging_chapters --ch=3` 2267/0, `story_ch3` all profiles and
+    companions, `side_ch3` (E/nao, A/suzu, F/ren), `quest_guide` all passed.
+  - RBN-QA-025 (HIGH; Agnes 10:50Z, on CC-005's build, her protected Slot 1): the glass seal broken, the Great Kiln's
+    doorway would not let her in ("The door is shut. Nobody comes to it."), and the guide said "Next: the lookout, in
+    The Autumn Festival — no way there from here just now". Two causes, both confirmed in Claude's browser on CC-005's
+    own build: (1) co.oldworks' kiln house (x 16, w 9, door 4: the doorway 20,5) had no `to`, so the compiler kept its
+    doorway solid and listed it as a shut door; the separate `co.kiln` exit laid on the same tile could never be walked
+    onto (movement uses an exit on a solid tile only when it has a scene); the validator had warned ("exit to co.kiln at
+    20,5 is not reachable"); (2) `co_main` step 6 (climb to the sealed kiln) is advanced deep in the kiln (`co.core_page`,
+    co.kiln_core), beyond the two levels of needs the guide resolves, so it fell back on a direct step on an unreachable
+    map: the festival's lookout, a later step. Fix (`374196e`): the kiln house's own door is the way in (`to: co.kiln`,
+    spawn 14,22, `locked: co.kiln_seal`, `unlock: co_seal_broken`; the seal prop still stands on the doorway until
+    broken) and the duplicate exit is gone (the validator's warning with it); step 6 names where it leads (`atIf`: the
+    glass seal until broken, then the Great Kiln, inside the kiln nothing marked), and the guide's prop nouns gain "the
+    glass seal". No line, flag, gate, puzzle, save field or audio changed; the shared guide's resolution is unchanged
+    (its far fallback choosing a later step on an unreachable map is noted for a separate, scoped review). B `kiln_door`
+    15/0 (new): sealed, walking up is blocked and the seal's scene says why; with the ice word the task breaks it, then
+    the doorway takes you to the kiln (14,22); a save with the seal broken (Agnes's state), loaded, walks straight in, no
+    task again; out to the doorway (20,6) and in again; the guide: the glass seal, then the Great Kiln, inside open,
+    never the lookout; on CC-005's build 7 fail (the door, the way out, the guide). U `quest_guide` 150/0.
+  - RBN-QA-023 (Agnes 10:22Z; assessment only, nothing changed): the dakuten lesson (20 cards, が-ぼ, then three random
+    practice kana) at Tokiwa's "Let us look. Fairly." before "Records that disagree". `!lesson kana` there is one of 20
+    whole-row teaching points in the story (src/ui/70_lessons.js `run`): each shows the next untaught row of the 30-row
+    course (src/lang/60_kanalessons.js), whatever the task; after あ-わ that is dakuten, the largest row. The task's
+    Foundations answer needs only かま (its sentences show なえぎ, かじ); the just-in-time form (`!lesson kana for <task>`,
+    FR-1, used at the Old Mill) would show nothing here. Only the start-of-journey choice shortens it ("I know
+    hiragana" skips every hiragana row, "both" all; Elementary and above have none); neither changes mid-journey; the
+    Ledger's "Learn the next kana" moves which row a story point shows, not whether. Cards: Back, Say it, Next, no
+    close; the practice can be skipped. Options for Robin (pacing, cross-game): just-in-time here and the row at a calmer
+    point; split dakuten into two sittings; a "Later" deferring the row without credit; keep.
+  - RBN-QA-024 (Agnes 10:44Z): the Great Kiln's doorway is drawn as a plain wooden door although the narration says it is
+    sealed with melted glass; the gate works. Queued as a gated art variant (sealed and open doorway) with RBN-QA-025's
+    door; Agnes's earlier roof note is withdrawn (the intact roof was the Ice House).
+  - CL-027 (Local, pronunciation, read-only) and the owner-approved audit (Agnes 10:42Z): Local compares the engines'
+    readings of `send` with the furigana (a Reedwake probe found about 22 disagreements) and screens Qwen audio; Claude's
+    part is a game-wide contextual written-Japanese, grammar and furigana review, report only, no automatic fixes. Send
+    corrections, if Robin approves fixes, are appended by Claude (SC10-SC14).
   - RBN-QA-012, the terraces' sign (Agnes 09:39Z): `co.terraces` (18,17) is `signblank` until `co_signs_done`, then
     `sign`, the one rectangular board; `co.signpost` narrates four arms pointing four ways. `signblank`/`sign` are shared
     (Hall cards, verbs, other signs), so the four-arm sign and Reedwake's three-arm one are to be opt-in variants placed

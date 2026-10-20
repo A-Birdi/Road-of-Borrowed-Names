@@ -638,8 +638,10 @@
       B `route_after_ch2`), 012's copy (the keepsake slip's page name), 014 (Suzu's mediation joke no longer names the
       east storehouse before the evidence does), 018's flow (Manbē's introduction at Sōbē's referral, `2ee6378`), 019
       (Tomi's lantern task also reads the place first, through each family's `also`; `8ad05f1`), 021 (a printed Notice
-      is called a notice: three press readers' notice wordings, `byKind.notice`, and the press's note; `8132972`; SL9).
-      001–005, 007, 008 are live in CC-005; 009–012, 014, 018's flow, 019 and 021 are in source for the next candidate. REQUIREMENTS.md XP147; VALIDATION.md "QA (Agnes …)".
+      is called a notice: three press readers' notice wordings, `byKind.notice`, and the press's note; `8132972`; SL9),
+      022 (Cinder's synthesis where it fits whatever clue is last; `d357e96`), 025 (HIGH: the Great Kiln's doorway is
+      its way in once the seal is broken, and the kiln step's guide; `374196e`). 001–005, 007, 008 are live in CC-005;
+      009–012, 014, 018's flow, 019, 021, 022 and 025 are in source for the next candidate. REQUIREMENTS.md XP147; VALIDATION.md "QA (Agnes …)".
       Agnes's review boundaries (2026-10-20): gameplay fixes carry a cross-game impact assessment; art goes to Robin as
       a before/after candidate first; a material change to intended behaviour needs Robin's approval; keep source,
       built and retested states distinct.
@@ -652,10 +654,17 @@
       proposal in CC-010: walk to the quay as the scene's staging note says, an opt-in scene camera target in tile
       units, `!view x y` / `!view -`, the default rule unchanged, existing cast outside the Exchange, Gonta's point;
       before/after frames at 1180x757 and a playback for Robin first).
-    - **RBN-QA-020 (diagnosed, proposal in CC-017):** the festival night's arrival (`mp.fest_night`): no crowd placed
-      for "packed with people"; the boat lines play with the canal under the dialogue box, the boats being two cargo
-      barges (`mb_barge`); the Curtain Bridge's lanterns are one string on the bank at its north foot (22,25). A bounded
-      staging candidate (existing cast and props, festival night only) is to follow with matched evidence for Robin.
+    - **RBN-QA-020 candidate, with Robin (not pushed):** the festival night's arrival (`mp.fest_night`), local branch
+      `qa020-festival` (`ba23698`): townsfolk on the night, the two boats unladen by the bridge in the chosen order (the
+      lantern boat under lanterns), the bridge's lanterns across its span, a walk to the rail before the boat lines.
+      On approval, cherry-pick, build, and run U `mp_ch4`, B `manybridge2`, `festival_games`, `sequence_world --only
+      mb2.fireworks`.
+    - **RBN-QA-023 (assessment, Robin's decision):** the dakuten row at the chronicle comparison; options in VALIDATION.md.
+    - **RBN-QA-024 (queued art, gated):** the Great Kiln's doorway drawn as glass-sealed, then open.
+    - **The guide's far fallback** (RBN-QA-025, a separate review): with a step's needs too deep to resolve it names a
+      later step on an unreachable map; the kiln step now names its own places (`atIf`).
+    - **Owner-approved language audit (report only):** Claude's game-wide written-Japanese/grammar/furigana review; Local
+      shares its reader-comparison findings. Send corrections, if approved, as SC10-SC14.
     - **RBN-QA-012's second sign (Agnes 09:39Z):** the terraces' crossroads (`co.terraces` 18,17) narrates four arms;
       the prop is the shared rectangular `sign`. Both signs become opt-in variants (three arms in Reedwake, four on the
       terraces), placed only there, with their own directions.

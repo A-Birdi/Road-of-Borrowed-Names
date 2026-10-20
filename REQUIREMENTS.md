@@ -1208,7 +1208,13 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   a notice; who reads the page is unchanged, a story keeps its SL4 words), and the note names the kind (`8132972`); U
   `press` 52/0 (every composable notice × 3 places: no reader calls it a story; the readers chosen equal those chosen
   without the wordings; 3 fail without the fix), B `manybridge2` 4/0 (the press's note and its readers; fails on the
-  previous build); voice SL9 (3 recordings). In source, for the next build. RETESTED_BY_AGNES:
+  previous build); voice SL9 (3 recordings). In source, for the next build. RBN-QA-022: with the chronicle's desk the
+  last clue, the synthesis played in the hall with the square's lines; now in the square at once, off the square on the
+  next entry to the village, at the desk staged there and on into Tokiwa's chronicle; no line new (`d357e96`); B
+  `cinder_clue_order` 40/0 (CC-005 fails 14). RBN-QA-025 (HIGH): once the glass seal was broken the Great Kiln's doorway
+  stayed solid (the house had no way in; a separate exit on its tile could not be walked onto) and the guide named the
+  festival's lookout; the house's door is now the way in, shut by the seal until broken, and the step names the seal,
+  then the kiln (`374196e`); B `kiln_door` 15/0 (CC-005 fails 7). In source, for the next build. RETESTED_BY_AGNES:
   RBN-QA-002 (the stand
   where every stamp is earned), RBN-QA-004 (the nudge "Go to Lantern Hall." and "… Head north-west first."; the
   false message is gone; Agnes does not claim the marker's drawing).
