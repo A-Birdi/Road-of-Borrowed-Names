@@ -663,6 +663,8 @@
       props are the generic `laundry` (a shirt and cloths), not printed sheets; Sanpei (7,8) never comes to meet you.
       Proposal in CC-014: the scene camera target or a walk to the yard, Sanpei meeting you, and an opt-in "printed
       sheets" variant of the drying-line prop (new art: Robin's approval).
+    - **RBN-QA-018 candidate, with Robin (not pushed):** the rehearsal on the stage (local branch `qa018-rehearsal`,
+      `b82a0ab`). Its flow defect (Manbē's introduction skipped at step 2) is fixed in source (`2ee6378`).
     - **AG-2, complete and gated (not pushed):** every line the prologue and Reedwake show (441 lines, 473 displays)
       reviewed and audited; the report is docs/review/align/AG2_REVIEW.md on the local branch `ag2-work`. Robin has the
       before/after evidence and decides on publication. To publish: rebase `ag2-work` onto the branch, build, run U

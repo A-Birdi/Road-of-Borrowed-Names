@@ -1191,7 +1191,13 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   tally (c3) or Gonta's word (c4) and named the east storehouse; her line now names no storehouse ("Rice that slips off
   without a word? It's even quieter than Gonta."), its effect unchanged; English only, in no recording list; U `mb_ch3`
   78/0 (a check that no companion line said before c3/c4 names the storehouse, and that the joke still opens Gonta),
-  `encounters` 184/0; B `manybridge` 3/0. In source, for the next build. RETESTED_BY_AGNES: RBN-QA-002 (the stand
+  `encounters` 184/0; B `manybridge` 3/0. In source, for the next build. RBN-QA-018 (its flow defect, found while
+  staging it): with Sōbē's referral (step 2) Manbē's talk went straight to the rehearsal, so his introduction
+  (mp.manbe_first, recorded) never played and step 3 was skipped; his talk now gives his first scene at step 2 and the
+  rehearsal again from step 3; U `mp_ch4` 124/0 (the talk at each step; the old condition fails it), `quest_guide`
+  150/0; B `manybridge2` 4/0; browser: step 2 plays the introduction, then the rehearsal, step 2 to 3 to 4, Skip the
+  same. In source, for the next build; the rehearsal's staging (on the stage) is a gated candidate. RETESTED_BY_AGNES:
+  RBN-QA-002 (the stand
   where every stamp is earned), RBN-QA-004 (the nudge "Go to Lantern Hall." and "… Head north-west first."; the
   false message is gone; Agnes does not claim the marker's drawing).
 

@@ -5183,6 +5183,23 @@ Yasu's story, when listening, has not begun being spoken."
     props draw a shirt and cloths, not printed sheets; Sanpei stands at (7,8). Diagnosed and queued (CC-014), nothing
     changed. Agnes's notes recorded: no collision change requested for RBN-QA-015; RBN-QA-016's options and the generic
     Wait relabel stay proposals; RBN-QA-017 (a) changes the two reachable side tiles, (b) none.
+  - RBN-QA-018 (on CC-005's build; Chapter 4, Manbē after Sōbē's referral): the rehearsal ("On the stage the actors
+    stand about…") played on the street outside the Playhouse. Cause: before the rehearsal Manbē stands only on Playhouse
+    Row (22,12), and `mp.rehearsal` has no move to the stage, so it plays where you spoke to him; its staging note says
+    "the bare stage, Manbē with the prompt-book, the actors waiting in the wings". Agnes's early visit is not the cause.
+    Found on the way, a flow defect: his talk list put `quest.mp_main>=2 → mp.manbe_rehearse` before `mp.manbe_first`,
+    so at step 2 (Sōbē's referral) his introduction (recorded, 10 lines) never played and step 3 was skipped, in every
+    journey (both recorded campaigns: his busy line, then straight to the rehearsal). Fixed in source (`2ee6378`): `>=3`.
+    U `mp_ch4` 124/0 (which scene his talk gives at steps 1, 2 and 3; the old condition fails it); `quest_guide` 150/0;
+    B `manybridge2` 4/0; browser on a build of this source: at step 2 the introduction, then the rehearsal, step 2 to 3
+    to 4, with Skip the same; voice probe 0 new recordings. Staging candidate (local branch `qa018-rehearsal`, `b82a0ab`,
+    not pushed): the rehearsal begins by going into the theatre (`mp_rehearsing`): Manbē on the stage (12,4), Genta in
+    the wings (3,4), you before the stage; afterwards you are inside, where Manbē is from then on (10,7). On matched
+    scratch builds at 1180x757: the stage line and the blocking line, before (the street) and after (the stage); the end
+    state, after save and load, and with Skip, all in the theatre with the rehearsal done and step 4. Interior initiation
+    is not possible (Manbē is not inside before the rehearsal); a second talk replays nothing. Frames to Robin privately.
+    Blockprint's drying lines (Agnes 08:17Z): the map's own comment names them the printed sheets ("the drying racks:
+    printed sheets hung on lines"), so they are meant to be the narrative paper; the generic laundry art stands in.
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
   - RBN-QA-004 RETESTED_BY_AGNES on CC-005's build: the nudges read "Go to Lantern Hall." and "… Head north-west
