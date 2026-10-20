@@ -5095,6 +5095,12 @@ Yasu's story, when listening, has not begun being spoken."
     both are recorded lines, unchanged, so no recording is needed and no key moved (every GO key is still produced
     but the three MW-1 retired). Probed in the browser in both states (one weather line, then the same story). B
     `staging_chapters --ch=2 --only=sg.fuku_idle` 17/0. In source, not yet in a deployed build.
+  - RBN-QA-012, its copy note: a keepsake's slip said "see Journey › Keepsakes", but in twelve-chapter journeys the
+    Journey's button reads Mementos (src/ui/50_menu.js `JOURNEY_GROUPS`). The slip, the plain notice and an item's
+    "Also kept in" line now name the page as the Journey shows it (`RB.ui.keepsakes.place()`): "Journey › Mementos ›
+    Keepsakes" in a twelve-chapter journey, "Journey › Keepsakes" in a six-chapter one, both probed in the browser.
+    English only, in no recording list. U `keepsake` 240/0; B `keepsakes` 33/33, `ledger_li` (all). The signpost's
+    art (RBN-QA-012 itself) is a queued art candidate for Robin.
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
   - U `stampbook_sb1` 39/0, `records` 272/0. Agnes retests with the next build.

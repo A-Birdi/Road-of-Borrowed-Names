@@ -252,20 +252,26 @@ RB.ui.keepsakes = (function () {
 
   // ---- first discovery: a brief notice that never blocks -----------------------------------------------------------
   const queue = [];
+  // where the page is, as the Journey shows it: twelve-chapter journeys put it under Mementos (src/ui/50_menu.js
+  // JOURNEY_GROUPS; Agnes, RBN-QA-012: the slip said Journey › Keepsakes where the button reads Mementos)
+  function place() {
+    const s = RB.game && RB.game.s;
+    return s && RB.recordsUI && RB.recordsUI.inCampaign(s) ? 'Journey › Mementos › Keepsakes' : 'Journey › Keepsakes';
+  }
   function notice(id) {
     const k = K()[id];
     if (!k || typeof document === 'undefined') return;
     // an item that is also a keepsake: its own slip says so (one slip, one sound; LI-3)
     if (k.item && RB.ui.award && RB.ui.award.markKeepsake && RB.ui.award.markKeepsake(k.item, k.name.en)) return;
     if (RB.ui.award) {
-      RB.ui.award({ kind: 'keepsake', id, jp: k.name.jp, en: k.name.en, note: 'See Journey › Keepsakes', art: artCanvas(id, 2), level: 3 });
+      RB.ui.award({ kind: 'keepsake', id, jp: k.name.jp, en: k.name.en, note: 'See ' + place(), art: artCanvas(id, 2), level: 3 });
       return;
     }
     const host = document.querySelector('#overlay .notices');
     if (!host) return;
     const n = RB.ui.el('div', 'toast ks-toast');
     n.setAttribute('role', 'status');
-    n.innerHTML = '<span class="kind">Keepsake found</span><span class="ks-slot"></span>' + j(k.name.jp) + '<span class="en">' + esc(k.name.en) + ' — see Journey › Keepsakes</span>';
+    n.innerHTML = '<span class="kind">Keepsake found</span><span class="ks-slot"></span>' + j(k.name.jp) + '<span class="en">' + esc(k.name.en + ' — see ' + place()) + '</span>';
     n.querySelector('.ks-slot').appendChild(artCanvas(id, 1));
     host.appendChild(n);
     RB.audio && RB.audio.sfx('discover', { vol: 0.4 });
@@ -281,5 +287,5 @@ RB.ui.keepsakes = (function () {
   }
   RB.bus.on('keepsake:found', (e) => { if (!e || !e.id) return; queue.push(e.id); if (queue.length === 1) setTimeout(() => pump(performance.now()), 400); });
 
-  return { render, counts, addRegion, regions: REGIONS, displayHtml, artCanvas, settings: api0, found };
+  return { render, counts, addRegion, regions: REGIONS, displayHtml, artCanvas, settings: api0, found, place };
 })();

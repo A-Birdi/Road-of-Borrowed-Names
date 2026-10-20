@@ -162,7 +162,7 @@ RB.ui.award = (function () {
     const k = me.el.querySelector('.kind');
     if (k && !me.el.querySelector('.aw-badge')) k.insertAdjacentHTML('afterend', '<span class="aw-badge">Keepsake</span>');
     const body = me.el.querySelector('.aw-body');
-    if (body && !me.el.querySelector('.aw-ks')) body.insertAdjacentHTML('beforeend', '<span class="tnote aw-ks">' + esc('Also kept in Journey › Keepsakes') + '</span>');
+    if (body && !me.el.querySelector('.aw-ks')) body.insertAdjacentHTML('beforeend', '<span class="tnote aw-ks">' + esc('Also kept in ' + (RB.ui.keepsakes && RB.ui.keepsakes.place ? RB.ui.keepsakes.place() : 'Journey › Keepsakes')) + '</span>');
     // (it stays as long as a keepsake's slip would, from now)
     me.left = HOLD.keepsake;
     if (me.run) me.run();

@@ -1172,7 +1172,10 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   SL7); B `staging_chapters --ch=2 --only=sg.tetsu_history` 23/0. RBN-QA-010: Fuku says one of her two recorded
   weather lines, the one for the wind as it is (she said both once it was back); B `staging_chapters --ch=2
   --only=sg.fuku_idle` 17/0. RBN-QA-001 to 005, 007 and 008 are in CC-005's build (`507c11a4…`); 009 and 010 are in
-  source, for the next build. RETESTED_BY_AGNES: RBN-QA-002 (the stand where every stamp is earned).
+  source, for the next build. RBN-QA-012 (its copy note): a keepsake's slip names the page as the Journey shows it,
+  "Journey › Mementos › Keepsakes" in twelve-chapter journeys ("Journey › Keepsakes" in six-chapter ones); B
+  `keepsakes` 33/33, `ledger_li` (all); its prop art (the crossroads signpost's three arms) is a queued art
+  candidate. RETESTED_BY_AGNES: RBN-QA-002 (the stand where every stamp is earned).
 
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).
