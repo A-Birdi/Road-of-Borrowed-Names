@@ -1,0 +1,69 @@
+{
+ "schema": "rbn.voice.supplement/1",
+ "id": "SL6",
+ "what": "RBN-QA-007: the lighthouse stairs' word before Genzō takes you up (sg.lh_stairs_shut), and any other line the script gained since SL5",
+ "authorization": "Robin, 2026-10-20: 'Create the relevant missing voice lines and ensure they're pushed live … Coordinate with the local agent entirely.'",
+ "after": {
+  "goSourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "goManifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "goScriptContentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e",
+  "earlierSupplements": [
+   "MW1",
+   "SL1",
+   "SL3",
+   "SL4",
+   "SL5"
+  ]
+ },
+ "builtFrom": {
+  "branch": "claude/stoic-sagan-n3jvgk",
+  "commit": "f47bbe26dce30a1ee3726cda6bde5aebbd53510c",
+  "scriptContentHash": "40ac417e581d421d9b0bac38555bef072cabcc97df59c2537b9282a6f29044d9",
+  "command": "node tools/voice/supplement.mjs --id SL6 (tools/voice/production_manifest.mjs into a scratch directory, compared by id with the GO manifest and the earlier supplements)"
+ },
+ "counts": {
+  "entries": 1,
+  "references": 0,
+  "retired": 0,
+  "chars": 28,
+  "morae": 28,
+  "bySpeaker": {
+   "narrator": 1
+  }
+ },
+ "entries": [
+  {
+   "id": "r1-16cf3bb61be3bc35",
+   "speaker": "narrator",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{上|うえ} は ゲンゾウ の {灯室|とうしつ} だ 。 {呼|よ}ばれる まで 、 {上|あ}がらない で おこう 。",
+   "spoken": "上はゲンゾウの灯室だ。呼ばれるまで、上がらないでおこう。",
+   "spokenNamesKana": "上はゲンゾウの灯室だ。呼ばれるまで、上がらないでおこう。",
+   "send": "上はゲンゾウの灯室だ。呼ばれるまで、上がらないでおこう。",
+   "kana": "うえはゲンゾウのとうしつだ。よばれるまで、あがらないでおこう。",
+   "names": [],
+   "seams": [],
+   "chars": 28,
+   "morae": 28,
+   "pauses": 3,
+   "textHash": "67d5bbf434ff74ad",
+   "lines": [
+    {
+     "key": "sg.lh_stairs_shut#78814b69a2",
+     "scene": "sg.lh_stairs_shut",
+     "file": "ch2/24_scenes_hub",
+     "line": 650
+    }
+   ]
+  }
+ ],
+ "references": [],
+ "retired": {
+  "note": "GO ids the current script no longer uses. Their recordings (if made) are kept for one site build and then drop out of its indexes (§8.4); nothing is deleted.",
+  "ids": []
+ },
+ "unchanged": "Every other id is as in the GO manifest and the earlier supplements (MW1, SL1, SL3, SL4, SL5)."
+}

@@ -423,3 +423,9 @@ nothing retired. Built from `4e144ec`, after MW1, SL1 and SL3.
   - **Recording:** the same terms as SL4.
   - **Left out, with the reasons in SPOKEN_SURFACES.md §2:** lines with your own name; English-only battle and
     encounter text; reading tasks; written records; the decisions left to Robin.
+- **SL6 (`supplements/SL6_SUPPLEMENT.json`)**: one new narrator recording (28 morae), with no new references and nothing
+  retired. It was built from `f47bbe2`, after MW1, SL1, SL3, SL4 and SL5.
+  - The line is the lighthouse stairs' word for when you step onto them before Genzō takes you up (`sg.lh_stairs_shut`,
+    Agnes's RBN-QA-007): 上はゲンゾウの灯室だ。呼ばれるまで、上がらないでおこう。
+  - Nothing else the script gained since SL5 is spoken: RBN-QA-005 (the Lantern Hall) changed only who walks where.
+  - **Recording:** the same terms as SL4 (the narrator, AivisSpeech).
