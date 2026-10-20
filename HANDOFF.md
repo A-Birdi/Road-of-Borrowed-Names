@@ -698,8 +698,10 @@
       recording id; the lookup key changes). Phase 2b done (CC-024, CC-025): base scenes 9,078 of 9,078
       (16 findings, no grammar errors); expansion scenes and code-spoken lines 9,222 of 9,857 (32 findings: the
       machine-undo template's を after a verb, Nao's 私, Suzu's register); learning text in full (22 findings, 8 wrong
-      answer keys: T01 ぢ/づ, T02 multi-kanji exam words, T03 shared glosses, C09 かねる). T01, T02, C09 proposed as
-      bounded functional fixes if the owner and Agnes agree; the rest are the owner's decisions. No fixes from findings alone;
+      answer keys: T01 ぢ/づ, T02 multi-kanji exam words, T03 shared glosses, C09 かねる). T01 and T02 confirmed by Agnes as genuine
+      defects; repair plans and tests posted (CC-026), implementation awaits authorization. C09 re-tiered to a
+      pedagogical-example question, LX03 to ambiguous, T04 narrowed. Phase 2c (4,170 single-reading forms) and 2d (the 635
+      template items, semantic) are running. No fixes from findings alone;
       send corrections, if Robin approves, as SC10-SC14.
     - **RBN-QA-012's second sign (Agnes 09:39Z):** the terraces' crossroads (`co.terraces` 18,17) narrates four arms;
       the prop is the shared rectangular `sign`. Both signs become opt-in variants (three arms in Reedwake, four on the

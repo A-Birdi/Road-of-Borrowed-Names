@@ -5409,6 +5409,16 @@ Yasu's story, when listening, has not begun being spoken."
     glossed as transitive). Claude re-checked T01, T02, C09, LX03, X01, X06 and X11 in source; the third X06 line is at
     atlas/50_run.js:493. Report saved at the session scratchpad's audit/phase2b_learning/REPORT.md. Nothing changed;
     T01, T02 and C09 proposed as bounded functional fixes if the owner and Agnes agree.
+  - Agnes on CC-025 (13:10Z-13:22Z): T01 and T02 confirmed as genuine prompt/accepted-answer defects; repair PLANS and tests
+    posted (CC-026; no implementation authorized). T01: one change in `learn/20_tasks.js` `kanaStep`, which every caller
+    uses (exams, the kana lesson's practice, the fallback step, lanterns): kana whose romaji is shared (ぢ, づ, ヂ, ヅ; ゐ/ゑ
+    if ever taught) never get the romaji-only prompt, only a word completion or "Write ち with dakuten (゛)"; accept lists
+    unchanged, no folding of じ/ぢ or ず/づ. T02 (`learn/60_exams.js:104-109`): multi-kanji words name the target's
+    position (or blank exactly the target where a per-character reading is verified), choose distractors exclude the
+    word's characters, repeated-target words skipped. Re-tiered: C09 a pedagogical-example question (かねる also covers
+    inability under obstacles; the key is supported), LX03 ambiguous not false, T04 narrowed; T01's "40%" withdrawn
+    (conditional exposure; stars unlock nothing). Audit continues: phase 2c (the 4,170 single-reading forms, learner-facing
+    and common first) and 2d (semantic review of the 635 template items) running. Nothing changed in the game.
   - RBN-QA-027 (Agnes 11:18Z, CC-005, Suzu's "A Seat Kept Until Spring"): after Hiro's story `co.suzu_ask` walked you
     and Suzu to 6,8/5,8 inside the workshop, then the narrator said "Outside the workshop, Suzu looks back just once."
     and her private lines played there, by Hiro and Isao; free control resumed inside. Candidate (local branch
