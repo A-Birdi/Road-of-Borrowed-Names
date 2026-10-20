@@ -643,7 +643,12 @@
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
-      proportions in the desk shot).
+      proportions in the desk shot).; RBN-QA-012, the crossroads signpost's three arms; and RBN-QA-013, Manybridge's first
+      entry (`mb.exchange_first` narrates the Tally Exchange across the Long Canal while the camera, which always
+      centres on the player, src/engine/60_render.js `updateCamera`, sits on the south entry's paving at 22,41;
+      proposal in CC-010: walk to the quay as the scene's staging note says, an opt-in scene camera target in tile
+      units, `!view x y` / `!view -`, the default rule unchanged, existing cast outside the Exchange, Gonta's point;
+      before/after frames at 1180x757 and a playback for Robin first).
     - **AG-2, complete and gated (not pushed):** every line the prologue and Reedwake show (441 lines, 473 displays)
       reviewed and audited; the report is docs/review/align/AG2_REVIEW.md on the local branch `ag2-work`. Robin has the
       before/after evidence and decides on publication. To publish: rebase `ag2-work` onto the branch, build, run U
