@@ -5018,6 +5018,24 @@ Yasu's story, when listening, has not begun being spoken."
 - **Not done:** the other code-shown lines, Company memory replays, the panels (fishing, shiritori, verbs). Not tested:
   real recordings, Firefox, Safari, a device voice.
 
+## Battle timing (BT-1; Robin, 2026-10-20: "Voice Loading and Battle Timing: I would explore what options you have to fix these adequately")
+
+- **What was wrong.** `battle_presentation`'s "one cadence" check had failed on loaded machines for weeks (1.16, 1.154,
+  and below 0.85 on other runs; each time "run alone it passed"). A probe (headless Chromium, the cadence test's own
+  battle, rAF timestamps sampled every frame) found two separate causes:
+  - *the game:* the scene's ambient clock added at most 100 ms per frame (meant for a hidden tab), and on a busy
+    machine the opening lines' frames came 100–750 ms apart (the battle's first frames are its heaviest), so the scene
+    ran slow there alone: 0.75 and 0.90 of frame time in two runs of the old build;
+  - *the measurement:* the test read the clock against `performance.now()`, but the clock only moves on a frame, so
+    a reading taken 50–95 ms after the last frame was off by that much (the 1.15 readings).
+- **Fixed (src/ui/80_combat.js).** The clock keeps real time on a slow frame (up to 1 s at once); the time a hidden tab
+  was away is not added (on `visibilitychange` to hidden the clock forgets its last frame). `RB.combat.debug()` also
+  reports the frame time of the clock's last step (`ambientAt`); the test reads both at the same two frames (its
+  thresholds unchanged: > 0.85 in every phase, within 0.12 of the opening lines' rate).
+- **Checked.** The probe, the same machine load, same moment: old build 0.746 / 0.900 of frame time during the
+  opening lines; new build 1.000 / 1.000. B `battle_presentation` 13/0 on the new build while four other browser suites
+  ran (load average 8–16 on 4 cores): `{"intro":1,"choose":1,"support":1}`, you and Mio standing ready.
+
 ## Approved art: the bridge cutscene and the battle icons (Robin, 2026-10-20)
 
 Robin, 2026-10-20: "The cutscene has improved substantially, push it. The battle icons are perfect, thank you." Both
@@ -5044,7 +5062,8 @@ were drawn on 2026-10-19 and held back for this look (art follows docs/future/pl
     the near cup.
   Captures (scratchpad, not committed): every shot and phase at 640×400 and at a phone's 360×640 and 640×360, before
   and after, looked at; the before/after sheet sent to Robin. U `sequence` 499/0, `portrait_speakers` 6/0, `item_art`
-  6/0; B `sequence_chapters` 121/0.
+  6/0; B `sequence_chapters` 121/0, `sequence_art_integrity` 32/0, `records` 7/0, `sequence_world` 2524/0 (the art build, on a machine running
+  several suites at once).
 - **The battle icons (IC-1; src/content/battle_art/00_icons.js, src/ui/80_combat.js, src/ui/82c_battle_intents.js).** 31
   drawn 16×16 icons, literal pixel tables registered with `RB.battleArt` (14 creature moves in cool inks, 17 responses
   in warm paper colours; `RB.battleArt.problems` empty for each; a move to be read is a plain hanging scroll that says
@@ -5052,7 +5071,8 @@ were drawn on 2026-10-19 and held back for this look (art follows docs/future/pl
   creature's name, its card, and the "New move" note at 16 px (they had kept the line drawings). ほのお (flame) is
   tagged fire, warm and light; light came first and its card showed the sun; fire and warm now come before light, so
   it shows the candle (no other word has more than one of these tags). B `combat_ui` 7/0 (a battle at 1280×800 and
-  390×844 looked at: all twelve response cards, the badge and the note drawn); U `item_art` 6/0, `combat_rules` 248/0.
+  390×844 looked at: all twelve response cards, the badge and the note drawn), `battle_settings` 10/0; U `item_art`
+  6/0, `combat_rules` 248/0.
 
 ## Playtest fixes, second round: road events placed, the chart's coast, music, Heat, stamps, "Have you seen…?" (Robin, 2026-10-19)
 

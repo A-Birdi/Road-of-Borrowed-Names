@@ -31,7 +31,7 @@ const fx = makeVoiceSite(tmp, { scenes: ['prologue', replayScene, 'code.door', '
 const TYPES = { '.html': 'text/html; charset=utf-8', '.opus': 'audio/ogg', '.json': 'application/json' };
 const srv = http.createServer((req, res) => {
   const p = decodeURIComponent(req.url.split('?')[0]);
-  const f = p.startsWith('/voices-test/') ? path.join(fx.site, p.slice('/voices-test/'.length)) : path.join(root, p === '/' ? 'index.html' : p);
+  const f = p.startsWith('/voices-test/') ? path.join(fx.site, p.slice('/voices-test/'.length)) : path.join(root, p === '/' ? process.env.RB_PAGE || 'index.html' : p);
   if (!fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); res.end(); return; }
   res.writeHead(200, { 'content-type': TYPES[path.extname(f)] || 'application/octet-stream', 'cache-control': 'no-store' });
   fs.createReadStream(f).pipe(res);

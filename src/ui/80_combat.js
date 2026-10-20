@@ -95,10 +95,14 @@ RB.combat = (function () {
   // open (reading, writing) do the adventurers take their quieter calm stance.
   const calmNow = () => phase === 'challenge';
   const amb = { v: null, last: null };
+  // a continuous clock: the time a hidden tab was away does not jump the idle forward; a slow frame (a busy page,
+  // a slow machine) keeps real time, so the scene runs at one rate whatever each frame costs (BT-1: under load the
+  // opening lines' frames came 100–750 ms apart and a 100 ms cap slowed the clock there alone); 1 s at most
+  if (typeof document !== 'undefined') document.addEventListener('visibilitychange', () => { if (document.hidden) amb.last = null; });
   function ambient(t) {
     if (amb.v == null) { amb.v = t; amb.last = t; }
-    // a continuous clock: a long gap (a hidden tab) does not jump the idle forward
-    amb.v += Math.max(0, Math.min(100, t - amb.last));
+    if (amb.last == null) amb.last = t;
+    amb.v += Math.max(0, Math.min(1000, t - amb.last));
     amb.last = t;
     return amb.v;
   }
@@ -1828,7 +1832,7 @@ RB.combat = (function () {
   // debug(): sequencer and stage counters, the sequence trace and frame cost (tests, tuning)
   function debug() {
     return {
-      phase, seq: RB.battleSeq.stats(), stage: RB.battleStage.stats(), trace: RB.battleSeq.trace(), pressesIgnored: ui && ui.press ? ui.press.ignored || 0 : 0, ambient: amb.v,
+      phase, seq: RB.battleSeq.stats(), stage: RB.battleStage.stats(), trace: RB.battleSeq.trace(), pressesIgnored: ui && ui.press ? ui.press.ignored || 0 : 0, ambient: amb.v, ambientAt: amb.last,
       frames: { n: cost.n, avg: cost.n ? +(cost.sum / cost.n).toFixed(3) : 0, max: +cost.max.toFixed(3), seqN: cost.seqN, seqAvg: cost.seqN ? +(cost.seqSum / cost.seqN).toFixed(3) : 0, seqMax: +cost.seqMax.toFixed(3) },
     };
   }

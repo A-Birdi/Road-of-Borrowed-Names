@@ -572,11 +572,13 @@ await test('one cadence: the scene\'s clock runs at the same rate during the ope
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
   await battleOpen(p, { comp: 'mio' });
   await p.waitForFunction(() => RB.ui.dialogue.isOpen() && RB.game.mode() === 'combat', null, { timeout: 10000 });
-  // the scene's ambient clock against the page's clock, over a second
+  // the scene's ambient clock against the page's frame clock, over a second: both read at the same two frames (BT-1:
+  // read against performance.now, a busy page's 100–750 ms frames made the reading itself off by as much)
   const rate = () => p.evaluate(async () => {
-    const a0 = RB.combat.debug().ambient, t0 = performance.now();
+    const d0 = RB.combat.debug();
     await new Promise((r) => setTimeout(r, 1000));
-    return (RB.combat.debug().ambient - a0) / (performance.now() - t0);
+    const d1 = RB.combat.debug();
+    return d1.ambientAt - d0.ambientAt > 400 ? (d1.ambient - d0.ambient) / (d1.ambientAt - d0.ambientAt) : 0;
   });
   const intro = await rate();
   await toCards(p);

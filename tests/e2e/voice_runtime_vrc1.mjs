@@ -43,7 +43,7 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.opus': 'audio/ogg', '.jso
 const srv = http.createServer(async (req, res) => {
   const p = decodeURIComponent(req.url.split('?')[0]);
   const voice = p.startsWith('/voices-test/');
-  const f = voice ? path.join(SRV.site, p.slice('/voices-test/'.length)) : path.join(root, p === '/' ? 'index.html' : p);
+  const f = voice ? path.join(SRV.site, p.slice('/voices-test/'.length)) : path.join(root, p === '/' ? process.env.RB_PAGE || 'index.html' : p);
   if (voice && SRV.failIndex && p.endsWith('/index.json')) { res.writeHead(503); res.end(); return; }
   if (!fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); res.end(); return; }
   const rec = voice && /\/rec\//.test(p);
