@@ -119,6 +119,8 @@ RB.stampBook = (function () {
       if (RB.save && RB.save.autosave) RB.save.autosave('progress');
     } else {
       await RB.script.runInline([Object.assign({ who: 'narr', sceneId: STAND_SCENE }, standLine(T))]);
+      // where to see what this stand's stamps ask for (Agnes, RBN-QA-002: the empty stand said nothing more)
+      if (RB.ui && RB.ui.notice && typeof document !== 'undefined') RB.ui.notice('What each stamp here asks for: Ledger › Journey › Stamp book.');
     }
   };
   // the stamps the story's settling presses have their slips too (src/ui/15_award.js stamps)
