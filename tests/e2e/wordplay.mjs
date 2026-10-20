@@ -326,7 +326,8 @@ if (want('table')) {
   await p.waitForTimeout(350);
   await playWord(p);
   msg = await p.evaluate(() => document.querySelector('.wp-dmsg').textContent);
-  assert((await st(p)).active.n === nBefore && /Confirm or clear the character/.test(msg), 'a recognised character before Play word: no move, no record, no opponent turn');
+  // (the message names the pad's button, "Add character", since FR-1's F09)
+  assert((await st(p)).active.n === nBefore && /Add the character you are writing \(Add character\), or clear it/.test(msg), 'a recognised character before Play word: no move, no record, no opponent turn (' + msg + ')');
   // "That is not what I wrote" with a confident read: free, the turn kept, input assistance only
   await p.locator('[data-wp="notwrote"]').click();
   await p.waitForTimeout(80);
