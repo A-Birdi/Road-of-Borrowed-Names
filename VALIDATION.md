@@ -5540,7 +5540,8 @@ Yasu's story, when listening, has not begun being spoken."
     Nao's dancing Suzu; 2000×1090; a phone) sent to Robin.
   - **RBN-QA-032 in source (Robin approved 2026-10-20 from the frames, to review in play; `8cfedf2`, cherry-picked
     from `523f9ba`):** `git diff 523f9ba 8cfedf2 -- src tests tools data assets` is empty (the candidate's tests above
-    ran on the same code); on a scratch build of `8cfedf2`: B `lookout_vista` 22/0; `validate.mjs` no errors. Not yet in
+    ran on the same code); on a scratch build of `8cfedf2`: B `lookout_vista` 22/0, `story_ch3 E nao` 38 checks passed,
+    `interludes` 76/0; `validate.mjs` no errors. Not yet in
     a deployed candidate.
   - **RBN-QA-035 candidate (`qa035-snowbell`, `a1f014d`; Robin: walking is fine if the whole path is shown; not
     pushed):** scripted frames along the walk against CC-008, sent to Robin. No suite run yet (`story_ch4` on
