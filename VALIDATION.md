@@ -5503,6 +5503,14 @@ Yasu's story, when listening, has not begun being spoken."
       150/0, `content` 7/0; `validate.mjs` no errors. Frames (the Journey, CC-008 against the first revision) sent
       to Robin.
     - RBN-QA-035: code review only (positions in src/content/ch4/20_maps.js; `sb.hamlet_first`). Options only.
+    - RBN-QA-027 addendum (`qa027-suzu2`, `5e9b4a0`): scripted frames with Suzu (talking to Hiro) and with Nao
+      (talking to Suzu), CC-008 against the candidate: the lead-in outside (43,19 / 42,19), back inside (5,7 / 6,6),
+      `co_suzu_door` cleared, `co_suzu_done` set. The blowpipe: the staging frame key was `p:pipe2/pipeB` while
+      nothing was drawn; the key regex (src/engine/32g_spritepose.js) rejected the capital in `pipeB` (checked in
+      node: `pipe1/pipeB`, `blow/pipeA` unparsed before, parsed after; `pipehold/pipecool`, `read.R/book~d:1*`
+      unchanged); only pipeA/B/C of the 26 props have capitals or digits; the same empty-handed Hiro on CC-008 in
+      `co.hiro_first` (frame). U `perform` 665/0, `actors` 180/0, `conversation_continuity` 1775/0; B
+      `suzu_ask_outside` 15/0; `validate.mjs` no errors. Frames sent to Robin.
     - RBN-QA-034 (`qa034-slope`, `ed767e2`): scripted frames (Suzu) at "read it with me", the crossing line, "Phew"
       and after, CC-008 against the candidate; positions 18,3 / 18,4 / 19,4, Gohei gone on up. No suite run.
     - RBN-QA-032: CC-008 frames at the vista lines (Suzu) confirm the report; the camera stays on the platform. Code

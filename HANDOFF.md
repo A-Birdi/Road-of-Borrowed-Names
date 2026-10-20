@@ -710,10 +710,15 @@
       scene camera pan for surround maps (the seat stays tiny). Not built.
     - **RBN-QA-012's third sign (Agnes 20:44Z):** the Snowbell Road junction (`sb.road` 16,11) narrates three arms with
       snow on the Lanternfall arm; it joins the opt-in sign variants, with its own snow state, not a global change.
-    - **RBN-QA-027 addendum (Agnes 17:43Z):** `co.suzu_truth` opens "Before we go in…" while you already stand inside
-      before Hiro (talked to Hiro with Suzu, or to Suzu in the workshop); the narration's blowpipe, the ribbon laid on
-      the workbench and the book are not staged. Scoped (the lead-in and its challenge outside the door, back in to
-      Hiro; `glasswork`/`cool` holds; the ribbon), candidate to follow on `qa027-suzu`.
+    - **RBN-QA-027 addendum candidate, with Robin (not pushed):** `co.suzu_truth` opened "Before we go in…" inside,
+      before Hiro. Now the lead-in and its exercise are said outside the workshop's door (Suzu waits there when not
+      your companion: a co.village place shown only while `co_suzu_door`, set and cleared in the scene), then back in
+      to Hiro working the blowpipe, cooling the gather at "A fire.", Suzu's ribbon held out over the bench. Root cause
+      of "Hiro empty-handed": src/engine/32g_spritepose.js's key regex took lowercase prop names only, so
+      glasswork's `pipeA/B/C` failed to parse (a stiff, empty-handed figure in every glassworking scene). Local branch
+      `qa027-suzu2` (`5e9b4a0`, on `26bbc7f` = the earlier `84f7be9` replayed on CC-008's source). Not covered (art):
+      the worn ribbon stays drawn, no ribbon left on the bench. On approval, cherry-pick both, build, run U
+      perform/actors, B `suzu_ask_outside`, `story_ch3`.
     - **The kiln's inside nudge** (Agnes's observation on CC-006, being scoped): inside the Great Kiln the step is
       `'open'`, so the nudge is the generic "You can't take this further just yet"; proposal in CC-020 (the kiln step
       only: name its next place, or an `'open'` nudge of its own).
