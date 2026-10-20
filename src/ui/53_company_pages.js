@@ -41,6 +41,10 @@ RB.ui.companyPages = (function () {
   const chr = (id) => (id && RB.content.chars[id]) || null;
   // words of the companion `who` (Suzu's in Kansai when chosen: src/lang/85_dialect.js)
   const said = (t, cls, who) => { t = t && who && RB.dialect ? RB.dialect.line(who, t) : t; return said0(t, cls); };
+  // what the companion says now (what is on their mind, their first words before you set out) is a spoken line: a Voice
+  // button that says it from its recording, under the companions' scene id (the thought is the same line "What's on
+  // your mind?" says, src/engine/58_companion.js, which lists both), the spoken word marked (src/ui/22c_spoken_panel.js)
+  const saidNow = (t, cls, who) => (t && t.jp && who && RB.ui.spoken ? RB.ui.spoken.html(Object.assign({}, t, { who, sceneId: K.SCENE }), { cls: 'co-said' + (cls ? ' ' + cls : ''), jpCls: 'jp', enCls: 'en' }) : said(t, cls, who));
   const said0 = (t, cls) => (t ? '<div class="co-said' + (cls ? ' ' + cls : '') + '">' + (t.jp ? '<div class="jp">' + j(t.jp) + '</div>' : '') + (t.en ? '<div class="en">' + RB.ui.ehtml(t.en) + '</div>' : '') + '</div>' : '');
   const AIM = { foe: 'the creature you target', foes: 'every creature', allies: 'you both', aimed: 'whoever the target is aiming at', lower: 'whichever of you has less resolve', pc: 'you', none: 'no target' };
   const BOND_LINE = {
@@ -135,7 +139,7 @@ RB.ui.companyPages = (function () {
       '<p class="co-bond"><span class="k">' + L('{絆|きずな}', 'Bond') + '</span> <b>' + esc(st.label.en) + '</b> <span class="jp">' + j(st.label.jp) + '</span></p></div></div>' +
       '<p class="co-bondline">' + j(bl.jp) + ' <span class="en">' + esc(bl.en) + '</span></p>' +
       '<section class="co-thought" aria-label="' + esc('On ' + c.name.en + '\'s mind') + '"><h4>' + I('mind') + L('{今|いま} の {思|おも}い', 'On ' + c.name.en + '\'s mind') + '</h4>' +
-      (th ? said(th.text, null, comp) : '<p class="muted">Nothing in particular. The road is enough for now.</p>') + '</section>' +
+      (th ? saidNow(th.text, null, comp) : '<p class="muted">Nothing in particular. The road is enough for now.</p>') + '</section>' +
       (known.length ? '<h4>' + I('companion') + L('{知|し}って いる こと', 'What you know of ' + c.name.en) + '</h4><ul class="co-know">' + known.map((x) => '<li>' + esc(x.en) + '</li>').join('') + '</ul>' : '') +
       (qi ? '<h4>' + I(qi.done ? 'done' : 'side') + L('{自分|じぶん} の {道|みち}', c.name.en + '\'s own road') + '</h4><p class="co-q"><span class="t">' + j(qi.qd.title.jp) + ' <span class="en">' + esc(qi.qd.title.en) + '</span></span> <span class="kind">' + (qi.done ? 'resolved' : 'in progress') + '</span></p>' : '');
   }
@@ -202,7 +206,7 @@ RB.ui.companyPages = (function () {
     return '<div class="co-id"><canvas class="co-portrait" width="96" height="96" role="img" aria-label="' + esc('Portrait of ' + prov.name.en) + '"></canvas>' +
       '<div class="co-name"><h3>' + j(prov.name.jp) + ' <span class="en">' + esc(prov.name.en) + '</span></h3><p class="muted">' + L(prov.role ? prov.role.jp : '', prov.role ? prov.role.en : '') + '</p></div></div>' +
       '<p>' + esc(prov.name.en) + ' is travelling with you for now. Nothing is decided until you set out together — the lantern will carry two names, and you can still change your mind before the door.</p>' +
-      (b.first ? said(b.first, 'first', s.provisional) : '');
+      (b.first ? saidNow(b.first, 'first', s.provisional) : '');
   }
   function companionPage(A, B, two, api) {
     const s = api.s, V = api.view;

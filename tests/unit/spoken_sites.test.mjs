@@ -92,7 +92,7 @@ export default async (t) => {
   t.ok(listed.length > 2000 && !problems.length, 'every listed line has a scene id, recordable Japanese and a known speaker (' + listed.length + '): ' + [...new Set(problems)].slice(0, 6).join(' | '));
   const by = {};
   for (const l of listed) (by[l.scene] = by[l.scene] || []).push(l);
-  const FAMILIES = ['code.comp', 'code.ngplus', 'code.weave', 'code.town', 'code.verbs', 'code.stamp', 'code.pages', 'code.atlas', 'code.fish', 'code.play', 'mp.press_react', 'cs.view_seat', 'cs.view_west', 'cs.view_east'];
+  const FAMILIES = ['code.comp', 'code.ngplus', 'code.weave', 'code.town', 'code.verbs', 'code.stamp', 'code.pages', 'code.atlas', 'code.fish', 'code.play', 'code.letters', 'mp.press_react', 'cs.view_seat', 'cs.view_west', 'cs.view_east'];
   t.ok(FAMILIES.every((f) => (by[f] || []).length > 0), 'each family wired on 2026-10-20 lists its lines: ' + FAMILIES.map((f) => f + ' ' + (by[f] || []).length).join(', '));
   // the recording list (tools/voice/lines.mjs) carries them, once per speaker
   const L = allLines();

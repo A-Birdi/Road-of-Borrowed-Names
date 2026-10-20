@@ -357,6 +357,20 @@ RB.ui.letters = (function () {
   }
 
   // ---- the closing: the villager's short, truthful acknowledgement ---------------------------------
+  // It is the villager speaking: a spoken line under one scene id, said from their recording as it appears when lines
+  // are spoken automatically, with a Voice button and the spoken word marked (src/ui/22c_spoken_panel.js); every
+  // letter's acknowledgement, at every level, listed for recording (RB.content.spokenSources, read by
+  // tools/voice/lines.mjs). The letters themselves are written, and stay so (docs/future/voice/SPOKEN_SURFACES.md).
+  const ACK_SCENE = 'code.letters';
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    for (const d of RB.content.practiceB.letters || []) for (const lv in d.tiers || {}) {
+      const a = d.tiers[lv].ack;
+      if (a && a.jp && !/\$\w/.test(a.jp)) out.push({ scene: ACK_SCENE, who: d.from, jp: a.jp, en: a.en || '', file: 'letter ' + d.id + ' (' + lv + ')' });
+    }
+    return out;
+  });
   function closing(d, t, out, sent, recorded) {
     return new Promise((resolve) => {
       const nm = U.who(d.from);
@@ -366,7 +380,8 @@ RB.ui.letters = (function () {
       let h = '<section class="pb-sent"><div class="slip-lab">' + (sent ? 'Your reply' : 'Your practice reply (not sent)') + '</div><p class="jp big" lang="ja">' + (out.markup ? J(out.markup) : U.own(out.reply)) + '</p>' +
         '<p class="muted small">' + esc(f.en) + (tone ? ' — a ' + esc(tone) + ' reply. Any of this letter\'s accepted tones closes it in exactly the same way.' : '') + '</p></section>';
       if (sent) {
-        h += '<section class="act-say pb-ack">' + U.face(d.from) + '<div class="act-line"><div class="act-who">' + esc(nm.en) + ' ' + J(nm.jp) + '</div><div class="act-jp">' + J(t.ack.jp) + '</div><div class="act-en">' + esc(RB.script.enVars(t.ack.en)) + '</div></div></section>';
+        h += '<section class="act-say pb-ack">' + U.face(d.from) + '<div class="act-line"><div class="act-who">' + esc(nm.en) + ' ' + J(nm.jp) + '</div>' +
+          RB.ui.spoken.html({ who: d.from, jp: t.ack.jp, en: t.ack.en, sceneId: ACK_SCENE }, { jpCls: 'act-jp', enCls: 'act-en' }) + '</div></section>';
       } else {
         h += '<p class="note-slip" role="note">' + I('copy') + ' Nothing is sent: ' + esc(nm.en) + ' answered your first reply already, and gets no second copy.</p>';
       }
@@ -374,8 +389,9 @@ RB.ui.letters = (function () {
       h += '<p class="muted small">' + (recorded ? 'Recorded once in your learning progress.' : out.exposed ? 'You saw the answers, so this is kept as practice, not as recall.' : sent ? 'Kept as practice.' : 'A practice copy: kept as practice, not counted again.') + ' Letters give no rewards; the twelve answered letters are kept in Words › Letters folder.</p>';
       S.leaf.innerHTML = h;
       U.drawFaces(S.leaf);
+      if (sent) RB.ui.spoken.autoIn(S.leaf);
       S.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-pb-ok data-ok>' + I('next') + '<span>Back to the post box</span></button>';
-      const done = () => { U.pop(S.lay); resolve(); };
+      const done = () => { RB.ui.spoken.stop(); U.pop(S.lay); resolve(); };
       S.foot.querySelector('[data-pb-ok]').onclick = done;
       S.lay.onCancel = done;
       U.push(S.lay);

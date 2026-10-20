@@ -188,6 +188,17 @@ RB.ui.dialogue = (function () {
   }
   // L12, asking back: the player asks in Japanese (again, slower, more simply); the speaker answers with the
   // authored simpler version. Asking well is a success, never a failure: it is recorded as understanding in context.
+  // The simpler version is a line the speaker says (Robin, 2026-10-20: every line spoken): listed for recording under
+  // the scene it belongs to (RB.content.spokenSources, read by tools/voice/lines.mjs), said from its own recording
+  // (current.said: its words, the line's scene and speaker), as it appears when lines are spoken automatically.
+  RB.content.spokenSources = RB.content.spokenSources || [];
+  RB.content.spokenSources.push(() => {
+    const out = [];
+    for (const id in RB.content.scenes) for (const c of RB.content.scenes[id].cmds || []) {
+      if (c.op === 'say' && c.simple && c.simple.jp) out.push({ scene: id, who: c.who || 'narr', jp: c.simple.jp, en: c.simple.en || c.en || '', expr: c.expr || null, file: (c.file || RB.content.scenes[id].file || id) + ' (simpler)' });
+    }
+    return out;
+  });
   const ASKS = [
     { jp: 'もう {一度|いちど} 、 お{願|ねが}いします 。', en: 'Once more, please.', how: 'again' },
     { jp: 'もう {少|すこ}し ゆっくり {話|はな}して ください 。', en: 'A little slower, please.', how: 'slower' },
@@ -210,11 +221,15 @@ RB.ui.dialogue = (function () {
       const s = RB.game.s;
       if (s) s.backlog.push({ who: 'pc', jp: a.jp, en: a.en });
       // again and slower repeat the line (slower with the device's voice, if any); simpler gives the simpler version
-      if (a.how === 'simpler') current = Object.assign({}, src, { jp: src.simple.jp, en: src.simple.en || src.en, src });
+      if (a.how === 'simpler') current = Object.assign({}, src, { jp: src.simple.jp, en: src.simple.en || src.en, src, said: { who: src.who, jp: src.simple.jp, en: src.simple.en || src.en, sceneId: src.sceneId || null, expr: src.expr || null } });
       if (s) s.backlog.push({ who: src.who, jp: current.jp, en: current.en });
       renderMain(); renderSub();
       requestAnimationFrame(syncMore);
-      if (a.how === 'slower' && RB.voice && RB.voice.sayLine) { try { RB.voice.sayLine(current, current.src, { rate: 0.75 }); } catch (err) { /* optional */ } }
+      if (a.how === 'slower' && RB.voice && RB.voice.sayLine) { try { RB.voice.sayLine(current, current.said || current.src, { rate: 0.75 }); } catch (err) { /* optional */ } }
+      if (a.how === 'simpler') {
+        box.querySelector('.b-voice').classList.toggle('hidden', !(current.jp && RB.voice && RB.voice.canSayLine && RB.voice.canSayLine(current, current.said)));
+        if (current.jp && RB.voice && RB.voice.autoOn && RB.voice.autoOn() && !RB.game.fastForward()) speak(false);
+      }
       try { RB.learn.record('c:ask_back', { ok: true, mode: 'choice', assisted: false, ctx: 'story', ev: 'context', kind: 'ask' }); } catch (err) { /* recording never blocks the scene */ }
       box.querySelector('.b-ask').classList.add('hidden');
     };
@@ -317,7 +332,7 @@ RB.ui.dialogue = (function () {
     // the word being said, marked in the Japanese and its English (PT-1c; Settings › Sound can turn it off): the
     // device's voice reports where it is; a recording is followed by its own clock (an estimate, VOICE_RUNTIME.md)
     const mark = RB.ui.speechMark ? RB.ui.speechMark.begin(box, current, text) : null;
-    RB.voice.sayLine(current, current.src || current, {
+    RB.voice.sayLine(current, current.said || current.src || current, {
       text,
       pitch: ch && ch.voice ? ch.voice.pitch : 1,
       onstart: mark ? () => mark.start() : undefined,

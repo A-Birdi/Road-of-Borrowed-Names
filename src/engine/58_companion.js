@@ -717,8 +717,9 @@ RB.content.company = RB.content.company || {
   // each authored reaction's lines (said whole by say(); its first line alone after a field puzzle, src/ui/57_weave.js),
   // the thoughts (a reaction's longer thought, the authored thoughts, a place's first line), "Talk about this place",
   // and What We Keep: the honest none, each kept story moment's own words (every variant), and each companion's framing
-  // around every title a moment could have (memoryTitles). A line with a run-time name ($name) can never be recorded and
-  // is left out.
+  // around every title a moment could have (memoryTitles); and on the Company page (src/ui/53_company_pages.js) the
+  // thought again and each companion's first words before you set out (bios). A line with a run-time name ($name) can
+  // never be recorded and is left out.
   function spoken() {
     const out = [];
     const add = (who, l, expr, file) => { if (l && l.jp && !/\$\w/.test(l.jp)) out.push({ scene: SCENE, who, jp: l.jp, en: l.en || '', expr: expr || null, file }); };
@@ -731,6 +732,7 @@ RB.content.company = RB.content.company || {
       add(r.comp, r.thought, null, 'reaction ' + r.id + ' (thought)');
     }
     for (const x of CC.thoughts) add(x.comp, x.text, null, 'company thought');
+    for (const c in CC.bios) if (CC.bios[c] && CC.bios[c].first) add(c, CC.bios[c].first, null, 'company bio');
     for (const e of CC.places) {
       (e.lines || []).forEach((l, i) => { add(l.who || e.comp, l, l.expr, 'company place'); if (i === 0) add(e.comp, l, null, 'company place (thought)'); });
     }

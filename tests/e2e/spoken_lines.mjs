@@ -6,7 +6,12 @@
 //  - the prologue's captions are spoken as they appear, from their own recordings (scene 'prologue'); the spoken word
 //    is marked as it is said; Voice says a caption again; pointing at a word marks its counterpart; leaving stops it;
 //  - a Records replay speaks its lines from the scene's recordings;
-//  - a shut door's words are the narrator's recording (scene 'code.door'), through the world's own interact().
+//  - a shut door's words are the narrator's recording (scene 'code.door'), through the world's own interact();
+//  - (2026-10-20, "If something isn't set up to be spoken yet, explain why and find a proper way to resolve it
+//    completely") each family wired then, through the game's own code path: a stamp stand, a sealed spot, a layered
+//    site's mark, the companion's thought, the New Game+ farewell, the pinned page, the Atlas, a press reader, the
+//    case's viewpoint, a kept memory's replay; and the panels: the Weave sheet's look at an animal's place, an action's
+//    sheet, fishing, the shiritori table, a letter's acknowledgement (a Voice button, the spoken word marked).
 // Usage: node tools/build.mjs && node tests/e2e/spoken_lines.mjs
 import fs from 'node:fs';
 import os from 'node:os';
@@ -17,6 +22,7 @@ import { makeVoiceSite } from './voice_fixture.mjs';
 
 let pass = 0, fail = 0;
 async function test(name, fn) {
+  if (process.env.ONLY && !name.includes(process.env.ONLY)) return; // (ONLY=<part of a name>: run just those)
   const t0 = Date.now();
   try { await fn(); pass++; console.log('PASS', name, `(${((Date.now() - t0) / 1000).toFixed(0)} s)`); }
   catch (e) { fail++; console.log('FAIL', name + ':', e.message.split('\n')[0]); }
@@ -27,7 +33,12 @@ const { RB: RBN } = await import('../../tools/voice/lines.mjs');
 const REPLAY = 'ch1.bridge';
 const replayScene = RBN.sequence.get(REPLAY).scene;
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-spoken-'));
-const fx = makeVoiceSite(tmp, { scenes: ['prologue', replayScene, 'code.door', 'code.fw', 'code.history', 'code.battle', 'code.wb'], refs: [] });
+const MEMORY = 'ch2.notice', memoryScene = RBN.sequence.get(MEMORY).scene;
+const fx = makeVoiceSite(tmp, {
+  scenes: ['prologue', replayScene, 'code.door', 'code.fw', 'code.history', 'code.battle', 'code.wb', 'code.stamp', 'code.town', 'code.verbs', 'code.comp',
+    'code.ngplus', 'code.pages', 'code.atlas', 'mp.press_react', 'cs.view_seat', memoryScene, 'code.weave', 'code.fish', 'code.play', 'code.letters', 'ws.ask'],
+  refs: [], tones: 24,
+});
 const TYPES = { '.html': 'text/html; charset=utf-8', '.opus': 'audio/ogg', '.json': 'application/json' };
 const srv = http.createServer((req, res) => {
   const p = decodeURIComponent(req.url.split('?')[0]);
@@ -206,6 +217,210 @@ await test('"Have you seen…?": the question and Tomo\'s answer are spoken line
   await until('Tomo\'s recording', () => window.__vb().plays.some((f) => /^rec\/tomo\//.test(f)));
   assert(!pg.errors.length, pg.errors.join(' | '));
   await p.context().close();
+});
+
+// ---- 2026-10-20: the families wired then, each through the game's own code -------------------------------------------
+// a recording of this speaker was played, the last one for this scene (RB.voicebank's own record of what it played)
+const heard = async (p, speaker, scene, what) => {
+  try {
+    await p.waitForFunction(([sp, sc]) => { const S = RB.voicebank._.S; return S.log.some((x) => x.k === 'play' && x.f.startsWith('rec/' + sp + '/')) && S.lastScene === sc; }, [speaker, scene], { timeout: 10000, polling: 50 });
+  } catch (e) {
+    const st = await p.evaluate(() => ({ plays: window.__vb().plays, last: RB.voicebank._.S.lastScene, line: RB.ui.dialogue.isOpen() ? RB.ui.dialogue.shown() : null }));
+    throw new Error(what + ': no recording of ' + speaker + ' for ' + scene + ' — ' + JSON.stringify(st));
+  }
+};
+// a journey on a map, with its arrival scenes already seen (nothing else speaks first)
+async function at(p, map, x, y, o) {
+  await p.evaluate(([map, x, y, o]) => {
+    const seen = {};
+    for (const ev of (RB.content.maps[map].onEnter || [])) seen['enter:' + map + ':' + ev.scene] = true;
+    RB.game.debugStart(map, x, y, Object.assign({ edition: RB.edition.forNew() }, o, { flags: Object.assign(seen, o.flags || {}) }));
+    RB.game.settings.textSpeed = 'instant'; RB.game.applySettings();
+  }, [map, x, y, o || {}]);
+  await p.waitForTimeout(300);
+}
+const done = async (pg) => { assert(!pg.errors.length, pg.errors.join(' | ')); await pg.p.context().close(); };
+
+await test('a stamp stand with nothing to press says so in the narrator\'s recording (code.stamp)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20);
+  await p.evaluate(() => { RB.hooks.rb_stand(['reedwake'], {}); });
+  await heard(p, 'narrator', 'code.stamp', 'the stand');
+  assert(/判/.test(await p.evaluate(() => RB.ui.dialogue.shown().jp)), 'the stand\'s line is shown');
+  await done(pg);
+});
+await test('a sealed spot, examined, says its hint in the narrator\'s recording (code.town)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20);
+  await p.evaluate(() => { RB.hooks.sealed([Object.keys(RB.content.sealed)[0]]); });
+  await heard(p, 'narrator', 'code.town', 'the hint');
+  await done(pg);
+});
+await test('a layered site\'s mark, reached, is the narrator\'s recording (code.verbs)', async () => {
+  const pg = await open(), p = pg.p;
+  const spec = await p.evaluate(() => { const sp = RB.verbs.list('layers').find((x) => !x.fixture); return { id: sp.id, map: sp.map, mark: sp.plan.marks[0].id }; });
+  await at(p, spec.map, 5, 5);
+  await p.evaluate((spec) => { RB.hooks.vb_mark([], { trigger: { vb: spec.id, mark: spec.mark } }); }, spec);
+  await heard(p, 'narrator', 'code.verbs', 'the mark');
+  await done(pg);
+});
+await test('the companion\'s thought ("What\'s on your mind?") is the companion\'s recording (code.comp)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20, { comp: 'mio', flags: { departed: true } });
+  await p.evaluate(() => { RB.script.run('co.mind'); });
+  await heard(p, 'mio', 'code.comp', 'Mio\'s thought');
+  await done(pg);
+});
+await test('the New Game+ farewell is the ending journey\'s companion\'s recording (code.ngplus)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20, { comp: 'ren' });
+  await p.evaluate(() => { const from = JSON.parse(JSON.stringify(RB.game.s)); from.comp = 'ren'; RB.ui.ngplus.farewell(from); });
+  await heard(p, 'ren', 'code.ngplus', 'Ren\'s goodbye');
+  await done(pg);
+});
+await test('the finished page, looked at, is the narrator\'s recording (code.pages)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.hall', 10, 10, { comp: 'nao' });
+  await p.evaluate(() => {
+    const s = RB.game.s, [desc, title] = RB.pages.describe({ kind: 'lanterns' });
+    s.company.project = { v: 1, comp: 'nao', stage: 3, theme: 'next', caption: 0, ev: { run: 'r1', id: 'o_x', kind: 'lanterns', desc, title }, road: {} };
+    RB.hooks.pages_display();
+  });
+  await heard(p, 'narrator', 'code.pages', 'the pinned page');
+  await done(pg);
+});
+await test('the Atlas, before the story is finished, says so in the narrator\'s recording (code.atlas)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.hall', 10, 10);
+  await p.evaluate(() => { RB.hooks.atlas_start([], {}); });
+  await heard(p, 'narrator', 'code.atlas', 'the Atlas');
+  await done(pg);
+});
+await test('a press reader\'s reaction is the reader\'s own recording (mp.press_react)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20);
+  const who = await p.evaluate(() => {
+    const s = RB.game.s, r = RB.content.press.readers.find((x) => RB.content.chars[x.who || x.id]);
+    const pr = RB.practice.of(s);
+    pr.press = { v: 1, version: 1, printed: { story: 1, notice: 0 }, heard: {}, rx: { [r.id]: 0 } };
+    s.flags['press_rx_' + r.id] = true;
+    RB.hooks.press_react([r.id]);
+    return r.who || r.id;
+  });
+  await heard(p, who, 'mp.press_react', 'the reader');
+  await done(pg);
+});
+await test('the view from the case\'s viewpoint is the narrator\'s recording (cs.view_seat)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'sb.obs_path', 10, 37);
+  await p.evaluate(() => { RB.hooks.cs_look(['seat']); });
+  await heard(p, 'narrator', 'cs.view_seat', 'the view');
+  await done(pg);
+});
+await test('a kept memory (Company › Shared memories), replayed, speaks its lines from their scene\'s recordings', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20, { comp: 'mio' });
+  const st = await p.evaluate((seq) => {
+    const def = RB.sequence.get(seq), sc = RB.content.scenes[def.scene], shot = Object.keys(def.shots)[0];
+    const says = sc.cmds.filter((c) => c.op === 'say').slice(0, 2);
+    const ref = { kind: 'seq', seq, beats: says.map((c) => [shot, 0, def.scene, c.line, RB.sequence.lineHash(c)]), cast: { comp: { id: 'mio' } } };
+    const beats = RB.sequence.beatsOf(ref);
+    RB.sequence.replay(ref);
+    return { n: beats.length, scene: beats[0] && beats[0].line.sceneId, who: beats[0] && beats[0].line.who };
+  }, MEMORY);
+  assert(st.n === 2 && st.scene === memoryScene, 'the replayed beats name their scene: ' + JSON.stringify(st));
+  await heard(p, st.who === 'narr' ? 'narrator' : st.who, memoryScene, 'the memory\'s first line');
+  await p.waitForSelector('.seq-view .txt .main .jt.spk', { timeout: 4000 });
+  await done(pg);
+});
+await test('the Weave sheet\'s look at an animal\'s place has a Voice button: the narrator\'s recording (code.weave)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 14, 24, { flags: { rw_echo_done: true } });
+  const opened = await p.evaluate(() => { RB.game.s.words = Object.keys(RB.content.words).slice(0, 3); return RB.weave.open({ pz: null, key: 'pet:cat' }); });
+  assert(opened !== false, 'the Weave sheet opens by the loose reed screen');
+  await p.waitForSelector('.weave-sheet .wv-look .say-line [data-say-voice]', { timeout: 4000 });
+  await p.click('.weave-sheet .wv-look .say-line [data-say-voice]');
+  await heard(p, 'narrator', 'code.weave', 'the look');
+  await p.waitForSelector('.weave-sheet .wv-look .say-line .jt.spk', { timeout: 4000 });
+  await done(pg);
+});
+await test('an action\'s sheet says what was done (as it appears, and Voice): the field puzzles\' recording (code.fw)', async () => {
+  const pg = await open(), p = pg.p;
+  const sp = await p.evaluate(() => { const x = RB.verbs.get('kr_hall_lamp'); return { map: x.map, x: x.x, y: x.y }; });
+  await at(p, sp.map, sp.x, sp.y + 1, { flags: { postgame: true } });
+  await p.evaluate(() => { RB.verbSheets.open('kr_hall_lamp'); });
+  await p.waitForSelector('.verb-sheet [data-a=inspect]');
+  await p.click('.verb-sheet [data-a=inspect]');
+  await heard(p, 'narrator', 'code.fw', 'what you see of the lamp');
+  await p.waitForSelector('.verb-sheet .vb-said .say-line [data-say-voice]', { timeout: 4000 });
+  await p.waitForSelector('.verb-sheet .vb-said .say-line .jt.spk', { timeout: 4000 });
+  await done(pg);
+});
+await test('fishing: the companion\'s remark over the stage is the companion\'s recording (code.fish)', async () => {
+  const pg = await open(), p = pg.p;
+  const S = await p.evaluate(() => { const S = RB.fishing.site('fish.reedwake.current'); return { map: S.map, x: S.stand.x, y: S.stand.y, dir: S.stand.dir }; });
+  await at(p, S.map, S.x, S.y, { comp: 'mio', dir: S.dir, flags: { postgame: true, rw_echo_done: true, departed: true, rw_arrived: true, rw_mill_open: true, rw_road_lit: true, bridge_fixed: true } });
+  await p.evaluate(() => { RB.game.settings.activityChatter = 'normal'; RB.game.s.seen['rw.village_first'] = true; RB.activity.launch('fishing', { source: 'world-prop', site: 'fish.reedwake.current' }); });
+  await p.waitForSelector('.fish-wrap .fs-say .say-line', { timeout: 10000 });
+  await heard(p, 'mio', 'code.fish', 'Mio\'s first remark');
+  await done(pg);
+});
+await test('shiritori: the companion\'s invitation at the table is the companion\'s recording, the spoken word marked (code.play)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'co.inn', 6, 8, { comp: 'nao', flags: { departed: true, ch1_done: true } });
+  await p.evaluate(() => { const s = RB.game.s; s.chapter = 2; RB.practice.set(s, 'demoSeen', true); RB.company.sync(s, 'live'); RB.ui.wordplay.launch({ source: 'words' }); });
+  await p.waitForSelector('.wp-prep .wp-say.say-line', { timeout: 10000 });
+  await heard(p, 'nao', 'code.play', 'Nao\'s invitation');
+  await p.waitForSelector('.wp-prep .say-line .jt.spk', { timeout: 4000 });
+  await done(pg);
+});
+
+await test('a letter answered: the villager\'s acknowledgement is their recording, said as it appears (code.letters)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'co.post', 6, 5, { comp: 'nao', dir: 'right', flags: { postgame: true, ch2_done: true } });
+  // (Hana's letter comes once you have met her)
+  await p.evaluate(() => { const s = RB.game.s; s.seen['rw.hana_first'] = true; s.learn.profile = 'E'; s.learn.kanaKnown = 'both'; RB.game.settings.input = 'hand'; RB.activity.launch('letters', { source: 'words' }); });
+  await p.waitForSelector('[data-pb-letter="L01"]', { timeout: 8000 });
+  await p.evaluate(() => document.querySelector('[data-pb-letter="L01"]').click());
+  await p.waitForSelector('.pb-letter .pb-pieces', { timeout: 8000 });
+  const tile = await p.evaluate(() => {
+    const plain = (e) => { const c = e.cloneNode(true); c.querySelectorAll('rt, .sr, .en, .enline').forEach((x) => x.remove()); return c.textContent.replace(/\s+/g, ''); };
+    const t = [...document.querySelectorAll('.pb-pieces .tile')].find((e) => plain(e) === '届きました。');
+    if (t) t.click();
+    return !!t;
+  });
+  assert(tile, 'the reply piece "届きました。"');
+  await p.waitForSelector('[data-pb-send]:not([disabled])', { timeout: 8000 });
+  await p.evaluate(() => document.querySelector('[data-pb-send]').click());
+  await p.waitForSelector('.pb-close .pb-ack .say-line', { timeout: 8000 });
+  await heard(p, 'hana', 'code.letters', 'Hana\'s acknowledgement');
+  await done(pg);
+});
+
+await test('asking back "more simply": the speaker\'s simpler version is said from its own recording', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20);
+  await p.evaluate(() => { RB.script.run('ws.ask'); });
+  await p.waitForFunction(() => { const l = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); if (l && l.who === 'narr') RB.ui.dialogue.advance(true); return !!(l && l.who === 'koji'); }, null, { timeout: 10000, polling: 200 });
+  await heard(p, 'koji', 'ws.ask', 'Kōji\'s line');
+  const first = await p.evaluate(() => window.__vb().plays.slice(-1)[0]);
+  await p.evaluate(() => { RB.voice.cancel(); document.querySelector('.dlg .b-ask').click(); });
+  await p.waitForSelector('.dlg-ask [data-ask="2"]');
+  await p.click('.dlg-ask [data-ask="2"]');
+  await p.waitForFunction((f) => { const pl = window.__vb().plays; const last = pl[pl.length - 1]; return last && last !== f && last.startsWith('rec/koji/') && RB.voicebank._.S.lastScene === 'ws.ask'; }, first, { timeout: 8000, polling: 50 });
+  assert(/水/.test(await p.evaluate(() => RB.ui.dialogue.shown().jp)), 'the simpler version is shown');
+  await done(pg);
+});
+
+await test('Company: what is on the companion\'s mind has a Voice button, the companion\'s recording (code.comp)', async () => {
+  const pg = await open(), p = pg.p;
+  await at(p, 'rw.village', 20, 20, { comp: 'mio', flags: { departed: true } });
+  await p.evaluate(() => RB.ui.menu.open('company'));
+  await p.waitForSelector('.co-thought .say-line [data-say-voice]', { timeout: 8000 });
+  await p.click('.co-thought .say-line [data-say-voice]');
+  await heard(p, 'mio', 'code.comp', 'Mio\'s thought on the page');
+  await p.waitForSelector('.co-thought .say-line .jt.spk', { timeout: 4000 });
+  await done(pg);
 });
 
 await b.close();
