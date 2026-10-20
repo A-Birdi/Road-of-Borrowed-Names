@@ -502,6 +502,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     props: [
       { p: 'co_seal', x: 20, y: 5, if: '!co_seal_broken', scene: 'co.kiln_seal' },
+      // the doorway open once the seal has fallen (RBN-QA-024): a look only, on the house's own door
+      { p: 'co_kilnmouth', x: 20, y: 5, if: 'co_seal_broken' },
       { p: 'kiln', x: 11, y: 3, o: { ash: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
       { p: 'sign', x: 5, y: 13, scene: 'co.works_sign' },
       { p: 'signblank', x: 29, y: 13, scene: 'co.works_sign2' },

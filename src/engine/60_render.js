@@ -590,8 +590,10 @@ RB.render = (function () {
       if (lx < -64 || ly < -64 || lx > bw / ART + 64 || ly > bh / ART + 80) continue;
       const opts = Object.assign({ cx: p.x, cy: p.y, still }, p.o || {});
       const d2 = (KIT && KIT.propFor(m, p.p)) || pd.draw2;
+      // a thing on a building's face (pd.onWall: the glass fused over the Great Kiln's doorway) is drawn on that wall,
+      // after the building that stands on its tile, never hidden behind it (RBN-QA-024)
       list.push({
-        z: (p.y + ph) * TS - (pd.block === false ? 12 : 0) - 0.5,
+        z: pd.onWall ? (p.y + ph) * TS + 0.5 : (p.y + ph) * TS - (pd.block === false ? 12 : 0) - 0.5,
         draw: d2 ? () => d2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)),
       });
     }
