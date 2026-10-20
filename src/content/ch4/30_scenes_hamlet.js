@@ -69,18 +69,21 @@ hayate: {下|くだ}り は {滑|すべ}る 。 {足|あし} を {横|よこ} �
 
 RB.script.add(`
 @scene sb.hamlet_first
-# Staged: your companion steps up off the road beside you; you shade your eyes to the dark observatory on the
-# mountain and turn towards Kanta calling from the square (he is up by the snow goats, heard before he is
-# near); your companion's own answer (Nao glances away, Mio's guarded hand, Ren's hand to the chin, Suzu's
-# open hand).
+# Staged: you walk up the hamlet's road into the square with your companion behind you, the whole way shown
+# (RBN-QA-035, Robin: "as long as the entire path taken is shown"), and your companion steps up beside you, the
+# bell-post before you as the narrator names it; you shade your eyes to the dark observatory on the mountain and
+# turn towards Kanta calling from the snow goats, who comes over; your companion's own answer (Nao glances away,
+# Mio's guarded hand, Ren's hand to the chin, Suzu's open hand).
 !set sb_hamlet_seen
-!walkto comp 23 34 up
+!move pc up 16
+!walkto comp 23 17 up
 !gesture pc lookroad up
 narr: {雪|ゆき} に {半分|はんぶん} {埋|う}もれた {家|いえ} が 、 {十|とお} ほど {寄|よ}り{添|そ}って いる 。 {広場|ひろば} の {真|ま}ん{中|なか} に 、 {鐘|かね} を {吊|つ}るした {柱|はしら} が {立|た}って いる 。 || A dozen or so houses huddle together, half buried in snow. In the middle of the square stands a post with a bell hung from it.
 !gesture pc shadeeyes up
 narr: {北|きた} の {山|やま} の {上|うえ} に 、 {丸|まる}い {屋根|やね} の {建物|たてもの} が {見|み}える 。 その {窓|まど} は {暗|くら}い 。 || On the mountain to the north you can make out a building with a round roof. Its window is dark.
 !look pc kanta
 kanta[surprise]: あ ！ {旅|たび} の {人|ひと} だ ！ {冬|ふゆ} に {来|く}る {人|ひと} なんて 、 はじめて {見|み}た ！ || Oh! Travellers! I've never seen anyone come in winter!
+!walkto kanta 21 17 right
 kanta: あれ ？ あれ は {天文台|てんもんだい} の {灯|あか}り 。 {毎晩|まいばん} ついてた のに 、 {十日|とおか} ぐらい {前|まえ} から ずっと {消|き}えてる んだ 。 || That? That's the observatory lamp. It was lit every single night, but it's been out for about ten days now.
 kanta[worry]: ホシノ じいちゃん 、 {元気|げんき} ない んだ よ 。 {母|かあ}ちゃん が 、 {宿|やど} の ヤエ さん に {聞|き}け って 。 {大人|おとな} の {話|はなし} だ から って 。 || Grandpa Hoshino's been really down. Mum says to ask Yae at the inn. 'Cause it's grown-up business.
 ?(comp=nao) !gesture comp aside
