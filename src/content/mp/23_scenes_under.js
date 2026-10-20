@@ -171,6 +171,8 @@ narr: {遠|とお}く {上|うえ} の {舞台|ぶたい} から 、 {声|こえ
 ?(comp=ren) comp[smile]: {上|うえ} が {明|あか}るい 。 {名前|なまえ} の {灯|あか}り です 。 || It's bright up there. The light of names.
 ?(comp=suzu) comp[laugh]: カーテンコール よ ！ {一人|ひとり} {残|のこ}らず 、 {名前|なまえ} を {呼|よ}ばれて ！ || Curtain call! Every last one, called by name!
 !warp mp.theatre 10 9 up
+!gesture mp_genta read hold prop=book
+?(quest.mp_actor=done) !gesture mp_saku read hold prop=book
 narr: {舞台|ぶたい} の {上|うえ} で は 、 {役者|やくしゃ} たち が {台本|だいほん} を {抱|だ}きしめて いる 。 {白|しろ}かった {所|ところ} に 、 {名前|なまえ} が {戻|もど}って いた 。 || On the stage the actors are hugging their scripts. The names are back in the white gaps.
 mp_manbe: ありがとう …… ！ {明日|あした} の {川開|かわびら}き 、 {芝居|しばい} は {予定|よてい} どおり です 。 {皆|みな}さん も 、 {祭|まつ}り を {楽|たの}しんで ください ！ || Thank you…! Tomorrow's Opening, the play goes ahead as planned. And you, enjoy the festival!
 !journal {奈落|ならく} の {名前|なまえ} が 、 {舞台|ぶたい} に {戻|もど}った 。 {明日|あした} は {川開|かわびら}き 。 || The names from the Understage are back on the stage. Tomorrow is the Opening of the River.

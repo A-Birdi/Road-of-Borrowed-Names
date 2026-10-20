@@ -208,6 +208,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'mp_genta_r', char: 'mp_genta', x: 3, y: 4, dir: 'right', if: 'mp_rehearsing&!mp_rehearsal_done' },
       // the dress rehearsal (step 5, until the trap opens): the actors on the stage in their places (RBN-QA-018, Agnes 08:38Z)
       { id: 'mp_genta_d', char: 'mp_genta', x: 13, y: 3, dir: 'down', if: 'quest.mp_main=5&!mp_under_open' },
+      // back from the Understage (mp.boss_won, until the festival's eve): on the stage with the names back (Agnes 09:03Z)
+      { id: 'mp_genta_w', char: 'mp_genta', x: 13, y: 4, dir: 'down', if: 'mp_under_done&!mp_fest_night' },
       { id: 'mp_manbe', x: 10, y: 7, dir: 'down', if: 'mp_rehearsal_done&!mb2_done', talk: [{ if: 'quest.mp_main=5', scene: 'mp.manbe_under' }, { scene: 'mp.manbe_idle' }] },
       { id: 'mp_saku', x: 6, y: 4, dir: 'down', if: 'quest.mp_actor=done', talk: 'mp.saku_after' },
       { id: 'mp_manbe_a', char: 'mp_manbe', x: 10, y: 7, dir: 'down', if: 'mb2_done', talk: 'mp.manbe_after' },
