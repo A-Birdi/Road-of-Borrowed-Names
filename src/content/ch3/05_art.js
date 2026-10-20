@@ -156,14 +156,24 @@ var RB = (globalThis.RB = globalThis.RB || {});
     for (let i = 0; i < 5; i++) px(c, x + 19, y - 8 + i * 3, i === 2 && !o.fixed ? 3 : 9, 1, '#4a3a30');
   });
 
-  // Glass seal fused over a doorway (still faintly warm).
-  def('co_seal', {}, (c, x, y, p, t, o) => {
+  // Glass seal fused over a doorway (still faintly warm), drawn on the wall it seals (onWall: in front of the building).
+  def('co_seal', { onWall: true }, (c, x, y, p, t, o) => {
     const g = 0.5 + Math.sin(t / 700) * 0.15;
     c.fillStyle = `rgba(143,184,176,${0.75})`; c.fillRect(x + 2, y - 4, 12, 19);
     px(c, x + 2, y - 4, 12, 1, '#c8e8e0');
     c.fillStyle = `rgba(255,150,80,${g * 0.35})`; c.fillRect(x + 4, y + 4, 8, 8);
     px(c, x + 5, y - 1, 1, 6, '#f0fffa'); px(c, x + 6, y - 2, 3, 1, '#f0fffa');
     if (o.cracked) { c.strokeStyle = '#f8ffff'; c.lineWidth = 1; c.beginPath(); c.moveTo(x + 3, y); c.lineTo(x + 8, y + 5); c.lineTo(x + 6, y + 10); c.lineTo(x + 13, y + 14); c.stroke(); }
+  });
+
+  // The same doorway once the seal has fallen: open and dark, the kiln's heat glowing low inside, glass left on the
+  // frame and in pieces on the step (RBN-QA-024). Drawn on the wall; nothing to touch, nothing in the way.
+  def('co_kilnmouth', { block: false, onWall: true }, (c, x, y, p, t, o) => {
+    const g = 0.5 + Math.sin(t / 700) * 0.15;
+    px(c, x + 3, y - 1, 10, 16, '#1a0e0a');
+    c.fillStyle = `rgba(255,150,80,${g * 0.4})`; c.fillRect(x + 4, y + 8, 8, 7);
+    px(c, x + 3, y - 2, 10, 1, '#8fc2bc'); px(c, x + 3, y - 1, 1, 4, '#8fc2bc'); px(c, x + 12, y - 1, 1, 3, '#8fc2bc');
+    px(c, x + 4, y + 15, 2, 1, '#c4e6de'); px(c, x + 9, y + 15, 1, 1, '#c4e6de'); px(c, x + 12, y + 14, 2, 1, '#8fc2bc');
   });
 
   // A block of stored ice packed in straw.
@@ -454,20 +464,55 @@ var RB = (globalThis.RB = globalThis.RB || {});
       },
       shadow: () => [48, 30, 48, 3, 0.3],
     });
-    // Glass seal fused over a doorway, still faintly warm (o.cracked).
+    // Glass seal fused over a doorway, still faintly warm (o.cracked). Drawn on the wall (onWall), over the house's
+    // own door (RBN-QA-024): the glass fills the opening between the posts and has run over the frame, a lumpy crown
+    // on the lintel, runs down the posts, a foot spread on the step; the heat glows inside it.
     A('co_seal', {
       box: [0, -14, 32, 48],
       v: (o) => (o.cracked ? 1 : 0),
       f: (t, o) => K.frame(t, 350, 4, o.still),
       draw(g, M, v, f) {
         const gl = K.FIX.glass;
-        R(g, 3, -9, 26, 40, gl[1]); R(g, 4, -8, 24, 38, gl[2]); R(g, 4, -8, 24, 2, gl[4]); R(g, 26, -6, 2, 36, gl[1]);
-        R(g, 8, 4, 16, 16, mix(gl[2], '#ff9650', [0.2, 0.28, 0.34, 0.28][f]));
-        R(g, 11, 8, 10, 8, mix(gl[3], '#ffb070', [0.25, 0.35, 0.42, 0.35][f]));
-        line(g, 8, 26, 14, -4, gl[4], 1); R(g, 9, -4, 2, 10, 'rgba(255,255,255,0.8)');
-        if (v) { line(g, 6, 0, 16, 10, '#f8ffff', 1); line(g, 16, 10, 12, 20, '#f8ffff', 1); line(g, 16, 10, 26, 28, '#f8ffff', 1); line(g, 12, 20, 6, 26, '#f8ffff', 1); }
+        R(g, 6, -3, 20, 35, gl[1]); R(g, 7, -2, 18, 33, gl[2]);
+        for (const [x, w, h] of [[4, 10, 2], [11, 11, 3], [20, 9, 2]]) {
+          R(g, x, -1 - h, w, h + 1, gl[1]); R(g, x + 1, -h, w - 2, h, gl[2]); R(g, x + 1, -h, w - 2, 1, gl[4]);
+        }
+        for (const [x, len] of [[3, 20], [26, 12]]) { R(g, x, -2, 3, len, gl[1]); R(g, x + 1, -1, 1, len - 1, gl[2]); R(g, x + 1, len - 2, 1, 2, gl[3]); }
+        R(g, 4, 29, 24, 3, gl[1]); R(g, 5, 29, 22, 1, gl[3]); R(g, 3, 30, 1, 2, gl[1]); R(g, 28, 30, 1, 2, gl[1]);
+        R(g, 10, 6, 12, 14, mix(gl[2], '#ff9650', [0.2, 0.28, 0.34, 0.28][f]));
+        R(g, 12, 9, 8, 8, mix(gl[3], '#ffb070', [0.25, 0.35, 0.42, 0.35][f]));
+        line(g, 9, 26, 15, -2, gl[4], 1); R(g, 9, -1, 2, 10, 'rgba(255,255,255,0.8)'); R(g, 21, 18, 1, 6, gl[4]);
+        if (v) { line(g, 7, 0, 16, 10, '#f8ffff', 1); line(g, 16, 10, 12, 20, '#f8ffff', 1); line(g, 16, 10, 24, 28, '#f8ffff', 1); line(g, 12, 20, 7, 26, '#f8ffff', 1); }
       },
-      shadow: () => [16, 30, 13, 2, 0.28],
+      shadow: () => [16, 31, 13, 2, 0.28],
+    });
+    // The doorway once the seal has fallen (RBN-QA-024): the house's own frame and lintel stay; between its posts the
+    // leaves are gone and the kiln is open, dark, with its heat glowing low inside (o.still holds the glow). Glass
+    // still clings to the lintel and the posts in drips, and lies broken on the step.
+    A('co_kilnmouth', {
+      box: [0, -8, 32, 44],
+      f: (t, o) => K.frame(t, 350, 4, o.still),
+      draw(g, M, v, f) {
+        const gl = K.FIX.glass, dark = ['#140a08', '#1e110c'];
+        // the mouth between the posts: dark, deepest at the top, the heat glowing up from the floor inside
+        R(g, 7, -1, 18, 32, dark[0]);
+        const heat = [0.85, 1, 1.15, 1][f];
+        for (let y = 8; y < 31; y++) R(g, 7, y, 18, 1, mix(dark[1], '#ff8040', Math.min(0.62, Math.pow((y - 8) / 22, 2) * 0.55 * heat)));
+        R(g, 8, 29, 16, 1, mix('#ff8040', '#ffd090', 0.35 * heat)); R(g, 11, 30, 10, 1, mix('#ff9850', '#ffe0a0', 0.4 * heat));
+        R(g, 7, -1, 18, 2, '#0c0606'); R(g, 7, -1, 1, 32, '#0c0606'); R(g, 24, -1, 1, 32, '#0c0606');
+        // glass left on the frame: drips from the lintel, runs down the inside of each post
+        for (const [x, w, h] of [[6, 4, 5], [11, 3, 3], [15, 5, 6], [21, 3, 4], [24, 3, 7]]) {
+          R(g, x, -4, w, h, gl[2]); R(g, x, -4, w, 1, gl[4]); R(g, x + w - 1, -3, 1, h - 1, gl[1]);
+          R(g, x + (w >> 1), -4 + h, 1, 2, gl[3]);
+        }
+        R(g, 6, 2, 2, 14, gl[2]); R(g, 6, 2, 1, 14, gl[4]); R(g, 6, 16, 1, 3, gl[3]);
+        R(g, 24, 4, 2, 10, gl[2]); R(g, 25, 4, 1, 10, gl[1]); R(g, 25, 14, 1, 2, gl[3]);
+        // broken glass on the step stone, catching the light
+        for (const [x, y, w] of [[5, 30, 3], [10, 31, 2], [14, 30, 4], [20, 31, 3], [25, 30, 2], [17, 32, 2], [8, 32, 2]]) {
+          R(g, x, y, w, 2, gl[2]); R(g, x, y, w, 1, gl[4]);
+        }
+        R(g, 15, 30, 1, 1, '#ffffff'); R(g, 26, 30, 1, 1, '#ffffff');
+      },
     });
     // A block of stored ice packed in straw.
     A('co_iceblock', {
