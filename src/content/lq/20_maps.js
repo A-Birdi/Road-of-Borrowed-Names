@@ -52,15 +52,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.hline(14, 19, 20, 'f').hline(22, 25, 20, 'f');
     }),
     structs: [
+      // the hamlet's houses are empty (lq.kh_arrive: "houses where nobody lives, their thatch gone grey"): aged, the
+      // thatch grey, the timber weathered, no lamp, no flower boxes (RBN-QA-026); their shapes and doors as before
       // Yasu and Mitsu's house
-      { type: 'house', x: 15, y: 5, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4],
+      { type: 'house', x: 15, y: 5, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4], aged: true,
         shut: T('Two names are carved into the doorpost: "Yasu" and "Mitsu". The door has swollen shut.', '{戸口|とぐち} の {柱|はしら} に 、 {名前|なまえ} が {二|ふた}つ {彫|ほ}って ある 。 「 ヤス 」 「 ミツ 」 。 {戸|と} は {膨|ふく}らんで {開|あ}かない 。') },
-      { type: 'house', x: 24, y: 5, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4],
+      { type: 'house', x: 24, y: 5, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4], aged: true,
         shut: T('The door has swollen shut. Through a crack you can see only dust, and a single straw sandal.', '{戸|と} は {膨|ふく}らんで {開|あ}かない 。 {隙間|すきま} から 、 ほこり と {草履|ぞうり} が {片方|かたほう} だけ {見|み}える 。') },
-      { type: 'house', x: 15, y: 15, w: 5, h: 3, roof: 'thatch', door: 2, windows: [0, 4],
+      { type: 'house', x: 15, y: 15, w: 5, h: 3, roof: 'thatch', door: 2, windows: [0, 4], aged: true,
         shut: T('A fallen beam blocks the door.', '{倒|たお}れた {梁|はり} が 、 {戸|と} を {塞|ふさ}いで いる 。') },
       // the tree-keeper's hut
-      { type: 'house', x: 27, y: 14, w: 4, h: 3, roof: 'thatch', wall: 'wood', door: 1, windows: [3], to: 'lq.koharu_hut', spawn: [4, 6] },
+      { type: 'house', x: 27, y: 14, w: 4, h: 3, roof: 'thatch', wall: 'wood', door: 1, windows: [3], to: 'lq.koharu_hut', spawn: [4, 6], aged: true },
     ],
     props: [
       { p: 'lantern', x: 3, y: 10, o: { lit: true }, scene: 'lq.kh_lantern' },

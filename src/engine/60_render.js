@@ -695,7 +695,7 @@ RB.render = (function () {
       if (p.o && p.o.lit === false) continue;
       hole(p.x * TS + 8, p.y * TS + 2, (p.light || pd.light) + flick(p.x * 1.7 + p.y * 2.3));
     }
-    for (const st of m.structs) if (st.lit || ambientOf(m).night) (st.windows || []).forEach((wx) => hole((st.x + wx) * TS + 8, (st.y + st.h) * TS - 10, 18));
+    for (const st of m.structs) if (!st.aged && (st.lit || ambientOf(m).night)) (st.windows || []).forEach((wx) => hole((st.x + wx) * TS + 8, (st.y + st.h) * TS - 10, 18));
     // what else gives light with the light on (src/engine/65_worldlook.js): fires and lamps the darkness did not count,
     // and the daylight at a dark room's windows
     if (RB.worldLook && RB.worldLook.active(m)) for (const h of RB.worldLook.holes(m, { amb, night: !!ambientOf(m).night || dark >= 0.3, mapNight: !!ambientOf(m).night })) hole(h.x, h.y, h.r + flick(h.x * 0.11 + h.y * 0.07));

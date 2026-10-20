@@ -12,7 +12,9 @@
  * board dado (default, palette wall colours), 'wood' board-and-batten, or
  * 'stone' coursed blocks with quoins; all on a stone footing. Doors are
  * inked so the way in is always clear; windows glow at night (o.night) or
- * when o.lit. */
+ * when o.lit. o.aged: a house nobody has lived in for years (Koharuno's,
+ * RBN-QA-026): its thatch gone grey, its timber weathered silver, no lamp
+ * behind its panes by day or night; the same shape. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
@@ -28,7 +30,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
     indigo: ['#4c4a78', '#3a3860', '#2a2848', '#6e6ca0'],
     ash: ['#6e5a52', '#54443e', '#3c302c', '#8e7870'],
     glass: ['#8fb8b0', '#6f9890', '#4f7870', '#c8e8e0'],
+    thatchAged: ['#8e8b7f', '#75736a', '#5b5a53', '#a9a698'],
   };
+  // a house's palette weathered by empty years: timber toward silver-grey, plaster a little dulled
+  const agedMemo = new WeakMap();
+  function agedPal(pal) {
+    let a = agedMemo.get(pal);
+    if (!a) {
+      a = Object.assign({}, pal, { wood: pal.wood.map((c) => mix(c, '#8c877c', 0.4)), wall: pal.wall.map((c) => mix(c, '#a8a398', 0.25)) });
+      agedMemo.set(pal, a);
+    }
+    return a;
+  }
   // 4 anchors [base, dark, darker, light] → 5-step ramp dark → light
   const r5of = (c4) => [mix(c4[2], K.COOL, 0.35), c4[2], c4[1], c4[0], c4[3]];
 
@@ -274,12 +287,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
 
   // ---- openings ----------------------------------------------------------------------------------------------
-  function windowAt(g, x, y, lit, M, snowy) {
+  function windowAt(g, x, y, lit, M, snowy, aged) {
     const w5 = M.wood, fr = mix(w5[1], '#2a2024', 0.35);
     R(g, x - 1, y - 1, 22, 20, INK);
     R(g, x, y, 20, 18, fr);
     if (lit) {
       R(g, x + 2, y + 2, 16, 14, GL[2]); R(g, x + 3, y + 3, 14, 11, GL[3]); R(g, x + 5, y + 5, 10, 7, GL[4]);
+    } else if (aged) {
+      // dusty panes on a dark room: no sky in them, a dull film, a corner of old web
+      const s = ramp('#5c6062', 0.4, 0.35);
+      R(g, x + 2, y + 2, 16, 14, s[1]); R(g, x + 2, y + 2, 16, 3, s[2]); R(g, x + 2, y + 13, 16, 3, s[0]);
+      line(g, x + 5, y + 12, x + 9, y + 5, s[3], 1); R(g, x + 2, y + 2, 3, 1, s[4]); R(g, x + 2, y + 3, 1, 2, s[4]);
     } else {
       const s = ramp('#8fb0c4', 0.45, 0.4);
       R(g, x + 2, y + 2, 16, 14, s[2]); R(g, x + 2, y + 2, 16, 4, s[3]); R(g, x + 2, y + 12, 16, 4, s[1]);
@@ -324,24 +342,25 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- house ----------------------------------------------------------------------------------------------
   function houseKey(o, info) {
-    const lit = !!(o.night || o.lit);
+    const lit = !o.aged && !!(o.night || o.lit);
     return ['house', info.key, o.w, o.h, o.roof || 'tile', o.wall || '', o.door == null ? '-' : o.door, (o.windows || []).join('.'),
-      lit ? 1 : 0, o.sign ? 's' + (o.signX || 0) : '', o.doorCol || '', o.roofCols ? o.roofCols.join('.') : '', o.chimney ? 'c' : '', o.x | 0, o.y | 0].join('|');
+      lit ? 1 : 0, o.sign ? 's' + (o.signX || 0) : '', o.doorCol || '', o.roofCols ? o.roofCols.join('.') : '', o.chimney ? 'c' : '', o.aged ? 'aged' : '', o.x | 0, o.y | 0].join('|');
   }
-  function buildHouse(pal, o, info) {
+  function buildHouse(pal0, o, info) {
+    const pal = o.aged ? agedPal(pal0) : pal0;
     const W = o.w * 32, H = o.h * 32, eY = H - 36, M = K.mat(pal);
     const BX = -12, BY = -38, BW = W + 26, BH = H + 44;
     const seed = hh(o.x | 0, o.y | 0, 17) % 997;
-    const lit = !!(o.night || o.lit), roof = o.roof || 'tile';
+    const lit = !o.aged && !!(o.night || o.lit), roof = o.roof || 'tile';
     const snowy = roof === 'snow' || info.snow;
     return K.make(BW, BH, (g) => {
       g.translate(-BX, -BY);
       wall(g, o, W, H, eY, pal, seed);
-      (o.windows || []).forEach((wx) => windowAt(g, wx * 32 + 6, H - 31, lit, M, snowy));
+      (o.windows || []).forEach((wx) => windowAt(g, wx * 32 + 6, H - 31, lit, M, snowy, o.aged));
       if (o.door != null) doorAt(g, o.door * 32, H, o, M, lit);
       if (o.chimney) chimneyAt(g, W - 28, pal, snowy);
       const c4 = o.roofCols || ROOFS[roof] || pal.roof;
-      if (roof === 'thatch' && !o.roofCols) thatchRoof(g, W, eY, r5of(c4), seed);
+      if (roof === 'thatch' && !o.roofCols) thatchRoof(g, W, eY, r5of(o.aged ? ROOFS.thatchAged : c4), seed);
       else if (roof === 'slate') slateRoof(g, W, eY, r5of(c4), seed);
       else if (roof === 'snow') snowRoof(g, W, eY, pal, seed);
       else if (roof === 'glass') glassRoof(g, W, eY, r5of(c4), seed);

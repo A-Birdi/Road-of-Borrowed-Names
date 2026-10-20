@@ -381,7 +381,7 @@ RB.worldKit = (function () {
     const base = RB.props.STRUCT2.house;
     base(c, x, y, pal, t, Object.assign({}, o, { lit: o.lit !== false })); // lit within, unless the place is dark
     const m = RB.world && RB.world.W && RB.world.W.map, B = briefOf(m);
-    if (!B.growth) return;
+    if (!B.growth || o.aged) return; // nobody tends a box or a planter at a house nobody lives in (o.aged)
     const key = 'wk-hbox|' + (m ? m.region : '') + '|' + o.w + '|' + o.h + '|' + (o.windows || []).join('.') + '|' + (o.door == null ? '-' : o.door) + '|' + (o.x | 0) + '|' + (o.y | 0);
     const cv = K.cached(key, () => K.make(o.w * ATS + 16, 30, (g) => {
       g.translate(8, 0);

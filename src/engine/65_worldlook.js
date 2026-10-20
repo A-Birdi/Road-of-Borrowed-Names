@@ -769,6 +769,7 @@ RB.worldLook = (function () {
     c.globalCompositeOperation = 'screen';
     for (const stc of m.structs) {
       if (stc.if && !RB.state.test(s, stc.if)) continue;
+      if (stc.aged) continue; // no lamp in a house nobody lives in (RBN-QA-026)
       for (const wx of stc.windows || []) {
         const x = env.ax((stc.x + wx) * 16 + 8), y = env.ay((stc.y + stc.h) * 16 - 11);
         if (x < -40 || y < -40 || x > env.bw + 40 || y > env.bh + 40) continue;
