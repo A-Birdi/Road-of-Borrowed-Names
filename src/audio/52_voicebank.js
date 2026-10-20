@@ -56,6 +56,7 @@ RB.voicebank = (function () {
   const MEM = 16 * 1024 * 1024; // encoded recordings held in memory
   const STORE_MS = 1500; // one Cache Storage step (open, read, write, delete) before it counts as failed
   const HIT_MS = 600; // reading a kept copy for a line: past this the network is asked instead
+  const SLOW_MS = 60000; // once a kept copy is that slow to read, the network goes first for this long (VT-1)
   const OVERHEAD = 512; // what one kept entry costs beyond its bytes (its address and headers), in the limit
   const PUTS = 8; // copies being written at once; past this a recording is simply not kept
   const LOCK = 'rbn-voice-v1:ledger'; // the Web Lock the game's tabs share for the bookkeeping
@@ -63,7 +64,7 @@ RB.voicebank = (function () {
     base: HOSTED_BASE, embedded: null, limit: 150 * 1024 * 1024, look: 3, lookBytes: 1.5 * 1024 * 1024,
     idx: null, scenes: new Map(), refs: null, refsP: null, retry: new Map(),
     mem: new Map(), inflight: new Map(), fails: new Map(),
-    cache: null, cacheP: null, meta: { v: 1, e: {} }, delta: { put: new Map(), del: new Set() }, chain: Promise.resolve(), metaTimer: 0, puts: 0,
+    cache: null, cacheP: null, meta: { v: 1, e: {} }, delta: { put: new Map(), del: new Set() }, chain: Promise.resolve(), metaTimer: 0, puts: 0, slowUntil: 0,
     gen: 0, fg: 0, el: null, url: null, played: new Set(), log: [], requests: 0, plan: [],
   };
   // the one speculative queue: its lifetime (a newer plan or a stop ends the older), what is queued, what is running
@@ -370,11 +371,18 @@ RB.voicebank = (function () {
       const h = await digest(b);
       return o.sha ? h === o.sha : h.slice(0, 12) === m12[1];
     };
+    // A slow store is not waited on twice for one line (VT-1: with every read 3 s late, the index, the scene's index and
+    // the recording each waited their own timeout, 1.5–2.2 s in all, past the 2 s a clip has to start): a file asked
+    // for fresh (the site's index) goes to the network without waiting for the store to open, the store is only
+    // asked again after the network fails; and once a kept copy is too slow to read, the network goes first for a
+    // minute (copies are still kept, and read again after).
     // (a cache still opening is not waited for long: this file comes from the network, later ones from the cache)
-    const c = (await timeout(cache(), 400)) || null;
-    if (c && !o.revalidate) {
+    const c = o.revalidate ? S.cache : (await timeout(cache(), 400)) || null;
+    let late = !!(c && !o.revalidate && Date.now() < S.slowUntil); // the kept copy was not read (or not in time)
+    if (c && !o.revalidate && !late) {
       try {
-        const hit = await timeout(c.match(url), HIT_MS);
+        const hit = await timeout(c.match(url).then((r) => r || null), HIT_MS);
+        if (hit === undefined) { late = true; S.slowUntil = Date.now() + SLOW_MS; note('cache-slow', { url: url.slice(-40) }); }
         const b = hit ? await timeout(hit.arrayBuffer(), HIT_MS) : null;
         if (b && (await good(b))) { touch(url, b.byteLength); return b; }
         if (b) { note('kept-bad', { url: url.slice(-40) }); dropKept(c, url); }
@@ -384,12 +392,17 @@ RB.voicebank = (function () {
     try {
       b = await net(url, o);
     } catch (e) {
-      if (c && o.revalidate && !(o.signal && o.signal.aborted)) { try { const hit = await timeout(c.match(url), HIT_MS); if (hit) return await hit.arrayBuffer(); } catch (err) { /* nothing kept */ } }
+      // offline, or the site unreachable: a kept copy that was passed over (fresh asked, or the store slow) is better than nothing
+      const kept = o.revalidate ? (await timeout(cache(), 400)) || null : c;
+      if (kept && (o.revalidate || late) && !(o.signal && o.signal.aborted)) {
+        try { const hit = await timeout(kept.match(url), late ? STORE_MS : HIT_MS); const b2 = hit ? await timeout(hit.arrayBuffer(), STORE_MS) : null; if (b2 && (await good(b2))) return b2; } catch (err) { /* nothing kept */ }
+      }
       throw e;
     }
     if (o.bytes && b.byteLength !== o.bytes) throw new Error('size ' + b.byteLength + ' != ' + o.bytes);
     if (!(await good(b))) throw new Error('content hash differs');
-    if (c) persist(c, url, b, o.type || 'application/octet-stream');
+    const keep = c || (o.revalidate ? (await timeout(cache(), 400)) || null : null);
+    if (keep) persist(keep, url, b, o.type || 'application/octet-stream');
     return b;
   }
   const json = async (rel, o) => JSON.parse(new TextDecoder().decode(await get(rel, Object.assign({ type: 'application/json' }, o))));
