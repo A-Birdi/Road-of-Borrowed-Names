@@ -208,6 +208,8 @@ narr: {岸|きし} は 、 {人|ひと} で いっぱい だ 。 || The bank is 
 ?(mp_lan_bridge) narr: {幕橋|まくばし} の {上|うえ} に {提灯|ちょうちん} が {揺|ゆ}れて 、 {川|かわ} に {映|うつ}って いる 。 || Lanterns sway over the Curtain Bridge, mirrored in the river.
 ?(mp_st_bank) narr: {屋台|やたい} が {岸|きし} に {並|なら}び 、 {人|ひと} が {食|た}べながら {歩|ある}いて いる 。 || The stalls stand along the bank, and people walk along eating.
 ?(mp_st_square) narr: {井戸|いど} の {広場|ひろば} に {屋台|やたい} が {集|あつ}まり 、 {家族|かぞく} が {座|すわ}って {食|た}べて いる 。 || The stalls are gathered in the well square, where families sit and eat.
+# (RBN-QA-020) down to the rail by the Curtain Bridge, so the boats and the bridge are in view, not under the lines
+!walkto pc 24 25 down
 ?(mp_proc_drums) narr: まず 、 {太鼓|たいこ} の {舟|ふね} 。 どん 、 どん 、 と {音|おと} が {川|かわ} を {下|くだ}って いく 。 {後|あと} から 、 {提灯|ちょうちん} の {舟|ふね} が {静|しず}か に {続|つづ}く 。 || First the drum boat: dong, dong, the sound goes down the river. After it, quietly, the lantern boat.
 ?(mp_proc_lanterns) narr: まず 、 {提灯|ちょうちん} の {舟|ふね} が {静|しず}か に {来|く}る 。 {光|ひかり} が {通|とお}り{過|す}ぎる と 、 {後|あと} から {太鼓|たいこ} が どん 、 と {鳴|な}った 。 || First the lantern boat comes, quietly. As its light passes, the drums sound behind it: dong.
 ?(mp_safety) narr: {岸|きし} の {端|はし} に は {縄|なわ} が {張|は}られ 、 {注意書|ちゅういが}き が {下|さ}がって いる 。 {子供|こども} たち は 、 {大人|おとな} の {手|て} を {握|にぎ}って いる 。 || A rope runs along the edge of the bank with the notice hanging from it. The children hold the grown-ups' hands.
