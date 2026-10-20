@@ -590,6 +590,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'co_furnace', x: 1, y: 2 }, { p: 'co_furnace', x: 12, y: 2 },
       { p: 'co_tablet', x: 4, y: 6, if: 'co_warden_down&!co_logpage_taken', scene: 'co.core_page' },
     ],
+    // the Warden itself, in front of the furnace wall where its globe will be left, until it is beaten: seen from the
+    // door as the scene says it rises (not someone to talk to; the fight is still the heart's scene on entry; Agnes,
+    // RBN-QA-030)
+    npcs: [{ id: 'co_warden', x: 7, y: 4, dir: 'down', if: '!co_warden_down' }],
     exits: [{ x: 7, y: 11, to: 'co.kiln', tx: 20, ty: 5, dir: 'down' }],
     onEnter: [{ scene: 'co.warden_fight', if: '!co_warden_down', once: false }],
     spawn: { default: [7, 9, 'up'] },

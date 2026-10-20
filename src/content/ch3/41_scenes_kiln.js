@@ -404,13 +404,15 @@ narr: {焚口|たきぐち} は 、 {分厚|ぶあつ}い ガラス で {塞|ふ
 
 RB.script.add(`
 @scene co.warden_fight
-# Staged: you turn to the warden rising in the heart of the kiln; your companion's own answer before the fight
-# (Nao looks from it to you, Mio's guarded hand, Ren raises their lamp, Suzu points it out on its stage);
+# Staged: you turn to the warden rising in the heart of the kiln, and it steps out into the middle of the floor;
+# your companion's own answer before the fight (Nao looks from it to you, Mio's guarded hand, Ren raises their
+# lamp, Suzu points it out on its stage); it is gone once beaten (!refresh), the globe and the page left behind;
 # after, your breath out, and your companion's own (Nao's nod, Mio's head goes down, Ren's breath out, Suzu's
 # bow to the warden that kept its watch).
 !music -
 !gesture pc listen up
 narr: {窯|かま} の {奥|おく} は 、 {橙色|だいだいいろ} に {明|あか}るかった 。 {焼|や}けた {土|つち} と ガラス で できた {体|からだ} が 、 ゆっくり {立|た}ち{上|あ}がる 。 || The heart of the kiln glows orange. A body of fired clay and glass slowly rises to its feet.
+!walkto co_warden 7 5 down
 co_warden: …… {誰|だれ} も {入|い}れる な 。 {窯|かま} を {守|まも}れ 。 {火|ひ} を {外|そと} へ {出|だ}す な 。 || …Let no one in. Guard the kiln. Do not let the fire out.
 ?(comp=nao) !gesture comp lookbetween up and=pc
 ?(comp=nao) comp: {窯|かま} の {番人|ばんにん} か 。 {命令|めいれい} だけ {覚|おぼ}えて 、 {理由|りゆう} を {忘|わす}れた {顔|かお} だ 。 || The kiln's warden. Remembers the orders, forgot the reasons. You can see it.
@@ -422,6 +424,7 @@ co_warden: …… {誰|だれ} も {入|い}れる な 。 {窯|かま} を {守
 ?(comp=suzu) comp: {舞台|ぶたい} の {真|ま}ん{中|なか} に {出|で}て きた わ ね 。 …… さあ 、 {主役|しゅやく} の {登場|とうじょう} よ 。 {熱|あつ}く なったら 、 {冷|ひ}やして あげて 。 || Stepped right out to centre stage. …Here comes the lead. When it heats up, cool it down.
 !battle co.warden noflee
 !set co_warden_down
+!refresh
 !music kiln
 !gesture pc exhale
 narr: {番人|ばんにん} の {体|からだ} から {熱|ねつ} が {抜|ぬ}け 、 {土|つち} と ガラス が {静|しず}か に {崩|くず}れた 。 その {跡|あと} に 、 {割|わ}れて いない {火屋|ほや} が {一|ひと}つ と 、 {焦|こ}げた {紙|かみ} が {一枚|いちまい} {残|のこ}って いた 。 || The heat leaves the warden's body, and the clay and glass settle quietly apart. Where it stood lie one unbroken lantern globe and a single scorched sheet of paper.
