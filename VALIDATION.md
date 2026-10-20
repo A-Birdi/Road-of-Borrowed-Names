@@ -5060,8 +5060,10 @@ Yasu's story, when listening, has not begun being spoken."
   | 2 | VT-1 | 6/1 | 2,460 ms | — |
 
   The other checks (lookahead, kept copies after an update) passed in all four. The one failure is the 2 s bound
-  under load. On a lightly loaded machine (load 3–7) the VT-1 build started the line in 2,002 ms (6/1). A clean 7/7
-  on an idle machine is still to be recorded.
+  under load. On a lightly loaded machine (load 3–7) the VT-1 build started the line in 2,002 ms (6/1).
+  **On an idle machine (load average about 0.4–1.9), back to back:**
+  - pre-VT-1 build: 6/1, the slow-cache line at **2,226 ms**, the failure recorded since VR-C1;
+  - VT-1 build: B `voice_runtime_vrc1` **7/0** and B `voice_runtime` **10/0**.
 
 ## Battle timing (BT-1; Robin, 2026-10-20: "Voice Loading and Battle Timing: I would explore what options you have to fix these adequately")
 
