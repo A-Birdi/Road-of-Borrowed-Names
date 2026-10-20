@@ -203,6 +203,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bookpile', x: 4, y: 12, scene: 'mp.oldest_play' },
     ],
     npcs: [
+      // the rehearsal (mp.rehearsal): Manbē on the stage with the prompt-book, Genta waiting in the wings (RBN-QA-018)
+      { id: 'mp_manbe', x: 12, y: 4, dir: 'down', if: 'mp_rehearsing&!mp_rehearsal_done', talk: 'mp.manbe_rehearse' },
+      { id: 'mp_genta_r', char: 'mp_genta', x: 3, y: 4, dir: 'right', if: 'mp_rehearsing&!mp_rehearsal_done' },
       { id: 'mp_manbe', x: 10, y: 7, dir: 'down', if: 'mp_rehearsal_done&!mb2_done', talk: [{ if: 'quest.mp_main=5', scene: 'mp.manbe_under' }, { scene: 'mp.manbe_idle' }] },
       { id: 'mp_saku', x: 6, y: 4, dir: 'down', if: 'quest.mp_actor=done', talk: 'mp.saku_after' },
       { id: 'mp_manbe_a', char: 'mp_manbe', x: 10, y: 7, dir: 'down', if: 'mb2_done', talk: 'mp.manbe_after' },

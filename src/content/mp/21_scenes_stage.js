@@ -40,6 +40,10 @@ mp_manbe: けいこ を {手伝|てつだ}って くれません か 。 {外|�
 
 @scene mp.rehearsal
 # Staged: the bare stage, Manbē with the prompt-book, the actors waiting in the wings; three passes.
+# (it is on the stage: begun at Manbē's place on the street, he takes you in through the theatre door; Agnes,
+# RBN-QA-018)
+!set mp_rehearsing
+!warp mp.theatre 9 7 up
 narr: {舞台|ぶたい} の {上|うえ} 。 {役者|やくしゃ} たち が 、 {誰|だれ} が どこ に {立|た}つ の か {分|わ}からない まま 、 {立|た}って いる 。 || On the stage the actors stand about, not knowing who goes where.
 mp_manbe: まず は {立|た}ち{位置|いち} から 。 {台本|だいほん} の {指示|しじ} を {読|よ}んで 、 {並|なら}べて みて ください 。 || Blocking first. Read the directions in the script and set them out.
 !challenge mp.rehearse_block
@@ -52,6 +56,7 @@ mp_manbe: …… {動|うご}いた 。 {芝居|しばい} が 、 {動|うご}�
 ?(comp=suzu) comp[smile]: {鉛筆|えんぴつ} で {書|か}き{込|こ}んだ {名前|なまえ} は 、 {消|き}えて も また {書|か}ける わ 。 {役者|やくしゃ} は 、 そう やって {生|い}きて きた の よ 。 || A name pencilled in can be written again if it fades. That's how actors have always lived.
 mp_manbe: {舞台稽古|ぶたいげいこ} は 、 {祭|まつ}り の {前|まえ} の {晩|ばん} 。 それ まで に 、 {世話役|せわやく} の トミ さん を {手伝|てつだ}って くれません か 。 {祭|まつ}り の {準備|じゅんび} が 、 まるで {進|すす}んで いない らしい 。 || The dress rehearsal is the night before the festival. Until then, would you help Tomi of the committee? The preparations are nowhere, I hear.
 !set mp_rehearsal_done
+!unset mp_rehearsing
 !set mp_fest_heard
 !quest mp_main 4
 !journal けいこ は {進|すす}んだ 。 {祭|まつ}り の {世話役|せわやく} の トミ を {手伝|てつだ}う 。 || The rehearsal went well. Now help Tomi of the festival committee.
