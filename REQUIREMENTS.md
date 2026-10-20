@@ -1228,7 +1228,7 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   T01, T02 and RBN-QA-028 are in candidate CC-007 (`343f54b8…`, built from `026965b`), READY_FOR_QA.
   T02's counting is said in the question (Agnes 15:43Z/19:41Z): a word with 々 counts characters, each kanji and the
   repeat mark as one, the mark not shown when it is the answer; kana are not counted; U `kana_homophones` 1466/0,
-  B 208/0 (CC-007 fails 4). In source, for the next candidate. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  B 208/0 (CC-007 fails 4). In candidate CC-008 (`203e2bd3…`, built from `45fb382`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand

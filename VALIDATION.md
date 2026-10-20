@@ -5484,6 +5484,9 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-008:** `index.html` sha256 `203e2bd31f4c7926bf362d45f439a485fe13f84da3e32ca6271ef32c2dd152e4`, built
+    from `45fb382` (CC-007 plus T02's counting wording). On this exact file (B): `kana_homophones` 208/0, `learning_ui`
+    15/0. Voice: none.
   - **Candidate CC-007:** `index.html` sha256 `343f54b86303630beb3efee932c7f2fceca0a7cfd90e51019671b1c051d29f97`, built
     from `026965b` (T01, T02 and RBN-QA-028 on top of CC-006's source); byte-identical to the scratch build the suites
     above ran on. On this exact file (B): `kana_homophones` 174/0, `shino_thanks` 28/0, `story_ch3 E nao` 38 checks
