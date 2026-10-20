@@ -5086,6 +5086,11 @@ Yasu's story, when listening, has not begun being spoken."
     gate runs on a story flag (`sg_tide_low`), not a clock; the recorded 3:15 lines (`sg.tideboard`, `cs.tidepost`) are
     untouched; the exercise is in no recording list. U `foundations` 92/0, `answer_sweep` 22/0, `fr1` 64/0.
   - U `stampbook_sb1` 39/0, `records` 272/0. Agnes retests with the next build.
+- **The candidate for QA after CL-001 (CC-005): `index.html` sha256 `507c11a4…`, built from `7595bdc`'s source** (a
+  fresh build of that source gives the same bytes). On this exact build: B `practice_b` 6/0 (its "four profiles"
+  section had timed out once under load on the scratch build), `hall_entry` 16/0, `lighthouse_top` 106/0,
+  `quest_guide` (all), `spoken_lines` 30/0. The other suites above ran on scratch builds of the same source before
+  RBN-QA-007/008 (text and one exit); `validate.mjs` no errors.
 - **VL-2 and the candidate after CL-001, in a browser** (a scratch build of `a451a91`: VL-2, QA-001 to 003, VT-1,
   BT-1, the approved art; run one suite after another while the unit suite ran alongside, load 1–8):
   - Passed: `combat_ui` 7/0, `battle_presentation` 13/0, `battle_settings` 10/0, `encounters` 10/0, `hanafuda` 3/0,
