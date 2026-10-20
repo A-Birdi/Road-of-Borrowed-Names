@@ -468,8 +468,10 @@ RB.world = (function () {
     if (!route || !route.length) { a.alpha = 0; a.fadeIn = true; return false; }
     const path = route.slice(0, -1).reverse().concat([[a.x, a.y]]);
     const [sx, sy] = route[route.length - 1];
-    a.x = sx; a.y = sy; a.fx = sx; a.fy = sy; a.mv = null;
-    a.route = path; a.alpha = 0; a.fadeIn = true; a.routeT = 0; a.wait = (i || 0) * 450; a.arriving = true;
+    a.route = path; a.alpha = 0; a.fadeIn = true; a.routeT = 0; a.mv = null; a.arriving = true;
+    // the first steps into the way in now; the others wait, unseen at their own places (never two in the doorway),
+    // and step into it on their turn once it is clear (updateWalkers)
+    if (i) { a.wait = i * 450; a.start = [sx, sy]; } else { a.x = sx; a.y = sy; a.fx = sx; a.fy = sy; }
     return true;
   }
   // Resolves once everyone walking in here has arrived (at most o.ms). o.now, or skipping: they are at their places
@@ -481,7 +483,7 @@ RB.world = (function () {
       for (const a of walking()) {
         if (a.home) { a.x = a.home[0]; a.y = a.home[1]; }
         else if (a.mv) { a.x = a.mv.tx; a.y = a.mv.ty; }
-        a.fx = a.x; a.fy = a.y; a.mv = null; a.route = null; a.wait = 0; a.alpha = 1; a.fadeIn = false; a.arriving = false;
+        a.fx = a.x; a.fy = a.y; a.mv = null; a.route = null; a.wait = 0; a.start = null; a.alpha = 1; a.fadeIn = false; a.arriving = false;
         a.dir = (a.def && a.def.dir) || a.dir;
       }
     };
@@ -546,6 +548,10 @@ RB.world = (function () {
     }
     for (const n of W.npcs.concat(W.extras)) {
       if (n.wait > 0) { n.wait -= dt; continue; } // (arriving after the one before: not here yet)
+      if (n.start) {
+        if (personAt(n.start[0], n.start[1], n)) { n.wait = 60; continue; } // (the doorway is still taken)
+        n.x = n.start[0]; n.y = n.start[1]; n.fx = n.x; n.fy = n.y; n.start = null;
+      }
       if (n.fadeIn) { n.alpha = Math.min(1, (n.alpha || 0) + dt / 260); if (n.alpha >= 1) n.fadeIn = false; }
       if (n.extra) { stepActor(n, dt); n.blinkT -= dt; if (n.blinkT < -140) n.blinkT = 2500 + wrand() * 3000; }
       if (n.route && !n.mv) {
