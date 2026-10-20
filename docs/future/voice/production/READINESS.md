@@ -373,3 +373,42 @@ spoken script lines, speakers, readings and recording IDs are untouched. The two
 directions on lines that already existed (`!lesson kana` → `!lesson kana for <challenge>` in `rw.m1_gears` and
 `rw.m2_lantern`), in place, so no line number moved. The new UI wording (the summary, "Add character", the help
 lines, the single-kana feedback, the lesson sheet) is written text only.
+
+## 6 · Status note to Local: SL4, and the order of the remaining recordings (2026-10-20)
+
+Robin, 2026-10-20: "Create the relevant missing voice lines and ensure they're pushed live … Coordinate with the local
+agent entirely." Coordination runs through the QA issue (A-Birdi/Road-of-Borrowed-Names#1, `[Claude Cloud]` comments)
+and this file.
+
+**SL4 (`supplements/SL4_SUPPLEMENT.json`)** lists the lines the game's own code shows (XP136; the VL-1 pass,
+`docs/future/voice/SPOKEN_SURFACES.md` §1). It has 1,779 new recordings and 52,303 morae, with no new references and
+nothing retired. Built from `4e144ec`, after MW1, SL1 and SL3.
+- **By speaker:** narrator 687, Suzu 397 (196 of them her Kansai lines), Nao 208, Ren 206, Mio 203, Hana 7, and 2–4
+  each for 19 residents.
+- **By scene:**
+  - `code.comp` 449 (the companion's remarks, thoughts, place talk, What We Keep, the Company page);
+  - `code.pages` 385;
+  - `code.fw` 282 (every exploration action's own rules);
+  - `code.atlas` 185;
+  - `code.play` 145 (the shiritori table);
+  - `code.stamp` 86 (every set of stamps a stand can press, and the empty stand: Agnes's RBN-QA-002);
+  - `code.fish` 69;
+  - `code.letters` 48 (a villager's acknowledgement);
+  - `code.town` 38;
+  - `mp.press_react` 28;
+  - `code.ngplus` 24;
+  - `code.verbs` 20;
+  - `code.weave` 12;
+  - `cs.view_*` 6;
+  - `ws.ask` 2 (a simpler version when you ask back).
+
+  The game already passes these scene ids. B `spoken_lines` 24/0 plays a test recording for one line of each family
+  through the game's own code.
+- **Recording:** the same cast, engines, gates (the recognizer, a natural ending, the text/5 trim) and results
+  convention as SL1/SL3, into `run/results_SL4.json`. The voice site is rebuilt from every results file (GO, MW1, SL1,
+  SL3, SL4 and the send corrections SC10–SC14) with a new `voiceBuild`, then pushed to the voices repository. A
+  `[Claude Cloud]`/`[Claude Local]` note on the QA issue gives the new build's identity.
+- **Still to come (SL5):** the lines someone says that SL4 does not cover are being wired now: battle lines beyond the
+  intro, phases and settled lines; encounters; Shared memories' replies; the Log; hanafuda calls; the player's
+  ask-back questions. SL5 follows on the same terms and is announced on the issue. The written surfaces and the
+  decisions left to Robin are in SPOKEN_SURFACES.md §2.
