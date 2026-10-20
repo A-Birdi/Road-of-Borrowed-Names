@@ -5384,8 +5384,11 @@ Yasu's story, when listening, has not begun being spoken."
     CC-006 against the candidate) sent to Robin. Voice none.
   - The audit re-tiered (CC-022) after Agnes's qualifications (ひらける is also the potential of transitive 開く: each
     開ける finding now cites the English's intended meaning; 開け閉め certain; P02 kept; F08/F09/F18 and 三十の何 open;
-    後→ご lower severity; F10 is お outside the reading, the braces balanced) and Local's CL-036 (21 of 22 matched
-    AivisSpeech/Nemo recordings already say the proposed reading; F08's does not; 31 Qwen unknown). Nothing changed.
+    後→ご lower severity; F10 is お outside the reading, the braces balanced) and Local's audio facts, as corrected in
+    CL-037 (CC-023): these are the current reader's predictions (engine 1.2.0, the same send), not listening; of 53
+    matched entries, AivisSpeech/Nemo recorded 17 (16 predicted to say the proposed reading, F08 not), AivisSpeech not
+    yet recorded 5 (the four 凍える telegraphs in SL5, one SL4 narrator 何 line), Qwen 31 unknown (30 recorded, 1 not:
+    Ren's 教わった道でも, SL4). CC-022's "the recording already says" wording withdrawn. Nothing changed.
   - RBN-QA-027 (Agnes 11:18Z, CC-005, Suzu's "A Seat Kept Until Spring"): after Hiro's story `co.suzu_ask` walked you
     and Suzu to 6,8/5,8 inside the workshop, then the narrator said "Outside the workshop, Suzu looks back just once."
     and her private lines played there, by Hiro and Isao; free control resumed inside. Candidate (local branch
