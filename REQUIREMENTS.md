@@ -1169,8 +1169,10 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   `f47bbe2`); B `lighthouse_top` 106/0. RBN-QA-008: the Foundations tide exercise presents its 3:00 as Shiori's rounding
   of the table's 3:15, answers unchanged (`0942dd3`); U `foundations` 92/0, `answer_sweep` 22/0. RBN-QA-009: Tetsu's
   offer of his story opens "Back from the drowned archive, are you." once the archive is done (one Tetsu line in
-  SL7); B `staging_chapters --ch=2 --only=sg.tetsu_history` 23/0. RBN-QA-001 to 005, 007 and 008 are in CC-005's
-  build (`507c11a4…`); 009 is in source, for the next build. Agnes's retests come with those builds.
+  SL7); B `staging_chapters --ch=2 --only=sg.tetsu_history` 23/0. RBN-QA-010: Fuku says one of her two recorded
+  weather lines, the one for the wind as it is (she said both once it was back); B `staging_chapters --ch=2
+  --only=sg.fuku_idle` 17/0. RBN-QA-001 to 005, 007 and 008 are in CC-005's build (`507c11a4…`); 009 and 010 are in
+  source, for the next build. RETESTED_BY_AGNES: RBN-QA-002 (the stand where every stamp is earned).
 
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

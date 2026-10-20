@@ -5090,6 +5090,13 @@ Yasu's story, when listening, has not begun being spoken."
     after, "Back from the drowned archive, are you." Probed in the browser in both states (the opening, then the
     same offer and story). B `staging_chapters --ch=2 --only=sg.tetsu_history` 23/0, with a "back from the archive"
     variant; U `voice_production` 27/0, `spoken_sites` 33/0. In source, not yet in a deployed build.
+  - RBN-QA-010 (on CC-005's build): Fuku's idle talk began with her windless line unconditionally, then, once the
+    wind was back (`sg_fog_cleared`), her wind line too. The windless line is now said only while the wind is gone;
+    both are recorded lines, unchanged, so no recording is needed and no key moved (every GO key is still produced
+    but the three MW-1 retired). Probed in the browser in both states (one weather line, then the same story). B
+    `staging_chapters --ch=2 --only=sg.fuku_idle` 17/0. In source, not yet in a deployed build.
+  - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
+    book notice. Agnes's coverage is that branch, not a stand never pressed.
   - U `stampbook_sb1` 39/0, `records` 272/0. Agnes retests with the next build.
 - **The candidate for QA after CL-001 (CC-005): `index.html` sha256 `507c11a4…`, built from `7595bdc`'s source** (a
   fresh build of that source gives the same bytes). On this exact build: B `practice_b` 6/0 (its "four profiles"

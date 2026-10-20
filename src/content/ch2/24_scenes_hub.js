@@ -309,7 +309,8 @@ tobi: {大|おお}きく なったら 、 {配達人|はいたつにん} に な
 @scene sg.fuku_idle
 # Staged: Fuku points to the bench where she played shōgi with Isamu and shakes her head over his letter;
 # with Nao, she peers at them (didn't you collect his letters?), and Nao looks away and shakes their head.
-fuku: いい お{天気|てんき} ね 。 {風|かぜ} が ない の が 、 ちょっと {寂|さび}しい けど 。 || Lovely weather. It's a little lonely without the wind, though.
+# One of her two weather lines, as the wind is now (Agnes, RBN-QA-010: once it was back, she said both).
+?(!sg_fog_cleared) fuku: いい お{天気|てんき} ね 。 {風|かぜ} が ない の が 、 ちょっと {寂|さび}しい けど 。 || Lovely weather. It's a little lonely without the wind, though.
 ?(sg_fog_cleared) fuku: {風|かぜ} が {戻|もど}った わ ね 。 {洗濯物|せんたくもの} が よく {乾|かわ}く 。 || The wind's back. The washing dries nicely.
 !gesture fuku point 40,8
 fuku: {西|にし} の {坂|さか} の イサム さん が いた {頃|ころ} は 、 この ベンチ で よく {将棋|しょうぎ} を {指|さ}した の 。 || When Isamu from up the west lane was still here, we'd play shōgi on this bench.
