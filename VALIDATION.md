@@ -5177,6 +5177,12 @@ Yasu's story, when listening, has not begun being spoken."
     world before the encounter, after save and load, and after the naming (the same in all three); collision tables and
     steps onto the side tiles. On (a): U `mb_ch3` 78/0; B `manybridge` 3/0, `sequence_world --only mb1.named,mb1.dusk`
     208/0; voice probe 0 new recordings. Frames to Robin privately; Robin chooses (a), (b) or neither.
+  - Blockprint Row's arrival (Agnes 08:04Z, with RBN-QA-013's establishing-shot review): reproduced on this source at
+    1180x757 through the Cross Canal bank: all four lines of `mp.arrive` show the same tiles (x 13-31, rows 20-32), the
+    canal by the entry. The drying yard exists (five `laundry` props, x 3-13, rows 19-22) but is off screen, and those
+    props draw a shirt and cloths, not printed sheets; Sanpei stands at (7,8). Diagnosed and queued (CC-014), nothing
+    changed. Agnes's notes recorded: no collision change requested for RBN-QA-015; RBN-QA-016's options and the generic
+    Wait relabel stay proposals; RBN-QA-017 (a) changes the two reachable side tiles, (b) none.
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
   - RBN-QA-004 RETESTED_BY_AGNES on CC-005's build: the nudges read "Go to Lantern Hall." and "… Head north-west

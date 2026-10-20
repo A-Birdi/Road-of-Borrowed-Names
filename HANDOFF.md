@@ -658,6 +658,11 @@
       branch `qa017-bridge`, `0942e4f`; option (b), rows 5-10 only, was rendered as the no-collision-change alternative).
     - **RBN-QA-016 (assessment, Robin's decision):** the shared "Yes, do it" intention confirmation (E7/E17) and the two
       待つ Wait controls in five procedures; options in VALIDATION.md and CC-013, nothing changed.
+    - **Blockprint Row's arrival (QA-013's second establishing scene, queued with it):** `mp.arrive` narrates the
+      drying sheets while the camera sits on the entry (22,30); the yard (x 3-13, rows 19-22) is off screen, and its
+      props are the generic `laundry` (a shirt and cloths), not printed sheets; Sanpei (7,8) never comes to meet you.
+      Proposal in CC-014: the scene camera target or a walk to the yard, Sanpei meeting you, and an opt-in "printed
+      sheets" variant of the drying-line prop (new art: Robin's approval).
     - **AG-2, complete and gated (not pushed):** every line the prologue and Reedwake show (441 lines, 473 displays)
       reviewed and audited; the report is docs/review/align/AG2_REVIEW.md on the local branch `ag2-work`. Robin has the
       before/after evidence and decides on publication. To publish: rebase `ag2-work` onto the branch, build, run U
