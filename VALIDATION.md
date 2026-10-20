@@ -5054,7 +5054,37 @@ Yasu's story, when listening, has not begun being spoken."
     `RB.questGuide.targets('rw_depart', s)` returns an authored enter target for the hall, markable, with the nudge
     "Go to Lantern Hall.", both before and after the gathering; before, it had no target and gave the waiting nudge.
     U `quest_guide` 150/0, `quest_guide_live` 56/0.
+  - RBN-QA-005 (the owner's feedback, relayed by Agnes; not reproduced by Agnes): entering the Lantern Hall for the
+    companion choice, the four appeared in the room at once. The gathering scene runs as you enter, and people who
+    appear while a map is still appearing were taken as already there. Now `rw.hall_gather` walks you in to 5,6 and
+    turns you to the door; `!refresh arrive` brings the four in through it, the first at once and each other 450 ms
+    later, unseen at their own places until their turn (never two in the doorway); the scene goes on once they have
+    arrived, and Skip places them at once. Lines unchanged; Practice B's C04 quotes the scene at its new index (13).
+    B `hall_entry` 16/0 on the candidate's build, through the door: none of the four in the room as you come in;
+    each first shows at the way in, 432–452 ms apart; nobody drawn on anybody in 177 sampled frames; the narrator's
+    line only once all four are at their places, facing in; you at 5,6 facing Tsuru, the way to the door clear; Skip
+    and reduced motion give the same places; coming back in plays nothing and nobody walks in; asking Mio still makes
+    her the one chosen. B `staging_chapters --ch=1 --only=rw.hall` 173/0 (172/1 before the doorway fix: the waiting
+    arrivals shared the door tile, unseen). U `living_world` 110/0, `town` 87/0, `practice_b` 96/0.
   - U `stampbook_sb1` 39/0, `records` 272/0. Agnes retests with the next build.
+- **VL-2 and the candidate after CL-001, in a browser** (a scratch build of `a451a91`: VL-2, QA-001 to 003, VT-1,
+  BT-1, the approved art; run one suite after another while the unit suite ran alongside, load 1–8):
+  - Passed: `combat_ui` 7/0, `battle_presentation` 13/0, `battle_settings` 10/0, `encounters` 10/0, `hanafuda` 3/0,
+    `company_pets` (all), `fishing` 11/0, `wordplay_layout` 63/0, `learning_ui` 15/0, `ledger_li` (all),
+    `title_ledger` 18/0, `companion_turn` 4/0, `records` 7/0.
+  - `spoken_lines` 29/1: Old Yasu's story waits 8 s for its first recording and timed out under that load; run alone
+    it passes (1/0, 7 s) on this build and on CL-001's.
+  - `company`: timed out tapping Back on a phone (390×844) after "Discuss a case", on this build and on CL-001's
+    (`f20d158d…`) alike. The phone section clicked with the mouse: the pointer stayed where the button had been scrolled
+    into view, and the case page drawn under it opened a hover card for the word landing there (へ), over Back. The
+    phone section now taps, as a phone does (`c79fb87`): 61/0 on both builds. (By mouse, in a narrow window, a word
+    under a still pointer does open its card when a page is drawn under it; noted, not changed.)
+  - `wordplay` 81/1, and the same on CL-001's build: the check for Play word with an unadded character still looked
+    for the wording before FR-1's F09 ("Confirm or clear the character"); it now reads the message as it is
+    (`8778683`): 83/0.
+  - U, the whole suite: 56,167/0 (started at `d4806e6`; RBN-QA-004's own suites ran after it).
+  - Recordings: every line key the GO manifest records is still produced by the current script except the three
+    MW-1 retired on purpose (`rw.m1_ladder`, `rw.m1_stairs`, `rw.m1_gears`): VL-1 and VL-2 leave no recording unreachable.
 - **Voice loading (VT-1), in a browser, the 2 s slow-cache bound.** These are paired runs of the pre-VT-1 and VT-1
   builds, each pair back to back on the same machine while other suites ran (load average 10–13):
 

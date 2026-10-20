@@ -1160,8 +1160,11 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   `4e144ec`); U `stampbook_sb1` 39/0, `records` 272/0, `spoken_sites` 24/0. RBN-QA-003: travelling alone, a move
   aimed at both is told as aimed at you (`intentTextSolo`, `ec9746e`); U `telegraph_solo` 13/0. RBN-QA-004: Two Names'
   "Go to the Lantern Hall" step targets the hall (its stage names the map), so the guide marks it and says "Go to Lantern
-  Hall." instead of the waiting nudge; U `quest_guide` 150/0, `quest_guide_live` 56/0. Agnes's retest comes with the
-  next build.
+  Hall." instead of the waiting nudge; U `quest_guide` 150/0, `quest_guide_live` 56/0. RBN-QA-005 (the owner's feedback,
+  relayed): in the Lantern Hall the four companions walk in through the door after you, one after another, and settle
+  round you before the gathering's first line (they had appeared in the room at once); Skip and reduced motion end in
+  the same places, and coming back in plays nothing again (`!refresh arrive`, `e3444b9`, `8557bee`); B `hall_entry`
+  16/0, `staging_chapters --ch=1 --only=rw.hall` 173/0. Agnes's retest comes with the next build.
 
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).
