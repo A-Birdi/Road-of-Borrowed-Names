@@ -22,10 +22,9 @@ RB.ui.hanafuda = (function () {
   const SCENE = 'code.hanafuda';
   const CALL = { koi: { jp: 'こいこい ！', en: 'Koi-koi!' }, stop: { jp: '{勝負|しょうぶ} ！', en: 'Shōbu: I stop and score!' } };
   RB.content.spokenSources = RB.content.spokenSources || [];
-  RB.content.spokenSources.push(() => [].concat(...Object.keys(CALL).map((k) => [
-    { scene: SCENE, who: 'comp', comps: ['nao', 'mio', 'ren', 'suzu'], jp: CALL[k].jp, en: CALL[k].en, file: 'ui/88b_hanafuda (the partner\'s call)' },
-    { scene: SCENE, who: 'pc', jp: CALL[k].jp, en: CALL[k].en, file: 'ui/88b_hanafuda (your call)' },
-  ])));
+  // (your partner is shown by their own id: each companion's own recording)
+  RB.content.spokenSources.push(() => [].concat(...Object.keys(CALL).map((k) => ['nao', 'mio', 'ren', 'suzu', 'pc'].map((who) =>
+    ({ scene: SCENE, who, jp: CALL[k].jp, en: CALL[k].en, file: 'ui/88b_hanafuda (' + (who === 'pc' ? 'your' : 'the partner\'s') + ' call)' })))));
   const partner = () => { const w = V && V.with; return w && RB.content.chars[w] ? RB.content.chars[w].name.en : 'your partner'; };
   const Partner = () => { const p = partner(); return p.charAt(0).toUpperCase() + p.slice(1); };
 

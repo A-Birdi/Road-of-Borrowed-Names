@@ -100,6 +100,9 @@ RB.combat = (function () {
         for (const x of pool) if (!(x.neg && it.target === 'both')) told(x, targets, file + ' ' + k);
       }
     }
+    // a move's own words when you are alone (content.intentTextSolo, in place of the usual words with no companion)
+    const TS = RB.content.intentTextSolo || {};
+    for (const kind in TS) for (const p of ['F', 'E', 'I', 'A']) for (const x of [].concat(TS[kind][p] || [])) told(x, ['pc'], 'intentTextSolo ' + kind);
     // an encounter played on this screen (one led by a creature): how it ended, when it says so in Japanese
     for (const id in RB.content.encounters || {}) {
       const d = RB.content.encounters[id];

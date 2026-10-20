@@ -242,7 +242,9 @@ export default async (t) => {
           const it = RB.combatLogic.intentDef(def, k);
           for (const prof of LV) for (const comp of [null].concat(COMPS)) {
             const s = RB.state.newCampaign({}); s.learn.profile = prof; s.comp = comp; RB.game.s = s;
-            const pool = it.text ? [].concat(RB.activities.tier(it.text) || []) : T[it.kind] ? [].concat(T[it.kind][prof] || T[it.kind].F || []) : [];
+            // (alone, a move may have its own words: content.intentTextSolo, as linePool chooses them)
+            const one = !comp && RB.content.intentTextSolo && RB.content.intentTextSolo[it.kind];
+            const pool = it.text ? [].concat(RB.activities.tier(it.text) || []) : T[it.kind] ? [].concat((one && one[prof]) || T[it.kind][prof] || T[it.kind].F || []) : [];
             if (!pool.length) continue;
             const aims = it.target === 'rand' ? (comp ? ['pc', 'comp'] : ['pc']) : it.target === 'comp' && comp ? ['comp'] : [it.target === 'both' ? 'both' : 'pc'];
             for (const aim of aims) {
@@ -334,7 +336,7 @@ export default async (t) => {
     const asks = listed.filter((l) => l.scene === 'code.ask');
     t.ok(asks.length === 3 && asks.every((l) => l.who === 'pc'), 'asking back: the three questions are listed in the player\'s voice (' + asks.length + ')');
     const calls = listed.filter((l) => l.scene === 'code.hanafuda');
-    t.ok(calls.some((l) => l.who === 'pc' && /こいこい/.test(l.jp)) && calls.some((l) => l.who === 'comp' && l.comps && l.comps.length === 4 && /勝負/.test(l.jp)), 'hanafuda: koi-koi and shōbu are listed for you and for each companion (' + calls.length + ')');
+    t.ok(['pc'].concat(COMPS).every((w) => calls.some((l) => l.who === w && /こいこい/.test(l.jp)) && calls.some((l) => l.who === w && /勝負/.test(l.jp))), 'hanafuda: koi-koi and shōbu are listed for you and for each companion (' + calls.length + ')');
     // the dialogue history keeps the scene id (and who the companion was), so the Log can say a line again
     const dsrc = fs.readFileSync(path.join(SRC, 'ui/20_dialogue.js'), 'utf8');
     t.ok(/s\.backlog\.push\(entryOf\(line, s\)\)/.test(dsrc) && /if \(line\.sceneId\) e\.sceneId = line\.sceneId;/.test(dsrc), 'every line the dialogue strip shows is kept in the history with its scene id');

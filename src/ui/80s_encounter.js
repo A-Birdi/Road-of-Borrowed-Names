@@ -28,12 +28,16 @@ RB.encScreen = (function () {
   const speakerOf = (who) => (who === 'pc' || who === 'comp' ? who : who && RB.content.chars[who] ? who : 'narr');
   function spoken() {
     const out = [], seen = new Set();
+    // (a companion's line is listed for each companion who can say it, by their own id: their own recordings)
     const add = (who, t, file, comps) => {
       if (!t || !t.jp || /\$\w/.test(t.jp)) return;
-      const w = speakerOf(who), k = w + '|' + t.jp + '|' + (comps || []).join();
-      if (seen.has(k)) return;
-      seen.add(k);
-      out.push(Object.assign({ scene: SCENE, who: w, jp: t.jp, en: t.en || '', file }, w === 'comp' ? { comps: comps || COMPS.slice() } : {}));
+      const w = speakerOf(who);
+      for (const sp of w === 'comp' ? comps || COMPS : [w]) {
+        const k = sp + '|' + t.jp;
+        if (seen.has(k)) continue;
+        seen.add(k);
+        out.push({ scene: SCENE, who: sp, jp: t.jp, en: t.en || '', file });
+      }
     };
     const comp = (list, file) => { for (const c in list || {}) for (const a of list[c] || []) add('comp', a.says, file, [c]); };
     for (const id in RB.content.encounters || {}) {
