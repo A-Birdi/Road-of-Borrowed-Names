@@ -170,7 +170,9 @@ RB.combat = (function () {
     if (it.text) pool = [].concat(tierOf(it.text) || []);
     else {
       const T = RB.content.intentText[it.kind];
-      pool = T ? [].concat(T[prof] || T.F || []) : [];
+      // travelling alone, a move at "both" has its own wording where the usual one names the two of you (RBN-QA-003)
+      const one = !s.comp && RB.content.intentTextSolo && RB.content.intentTextSolo[it.kind];
+      pool = T ? [].concat((one && one[prof]) || T[prof] || T.F || []) : [];
     }
     return pool;
   }

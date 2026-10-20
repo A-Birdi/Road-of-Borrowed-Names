@@ -485,6 +485,7 @@ for (const id in C.shells || {}) {
 if (RB.fishing) for (const id in RB.fishing.SITU) for (const k in RB.fishing.SITU[id].tasks) checkStep(RB.fishing.SITU[id].tasks[k], 'fishing ' + id + '[' + k + ']');
 // intent texts
 for (const k in C.intentText) for (const lv in C.intentText[k]) for (const t of C.intentText[k][lv]) jcheck(t.jp, 'intentText ' + k + ' ' + lv);
+for (const k in C.intentTextSolo || {}) for (const lv in C.intentTextSolo[k]) for (const t of C.intentTextSolo[k][lv]) jcheck(t.jp, 'intentTextSolo ' + k + ' ' + lv);
 
 // ---- addendum registries: text kept outside scenes (keepsakes, cases and clues, puzzle
 // definitions, companion reactions and conversations, pets' meetings, the Pages We Keep, Known

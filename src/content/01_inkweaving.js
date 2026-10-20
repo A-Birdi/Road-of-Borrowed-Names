@@ -93,4 +93,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       A: [{ jp: '{静寂|せいじゃく} が {広|ひろ}がり 、 {言葉|ことば} そのもの が {意味|いみ} を {失|うしな}い かけて いる 。', en: 'Silence spreads; words themselves are starting to lose their meaning.' }],
     },
   };
+  // Travelling alone there is no "both of you" (Agnes, RBN-QA-003): a move at both has its own wording for one, by
+  // tier, where the usual line names the two of you (src/ui/80_combat.js linePool); the other tiers keep theirs.
+  C.intentTextSolo = {
+    sweep: {
+      F: [{ jp: 'こっち に むかって くる ！', en: 'It is coming at you!' }],
+      E: [{ jp: 'こっち を ねらって いる 。', en: 'It is aiming at you.' }],
+      I: [{ jp: '{横|よこ} から {払|はら}いのける {構|かま}え だ 。', en: 'It is poised to sweep you aside.' }],
+      A: [{ jp: '{目|め} の {前|まえ} の もの を {一度|いちど} に {払|はら}いのける {腹|はら}づもり の よう だ 。', en: 'It looks set on brushing aside whatever stands before it in one go.' }],
+    },
+    flood: {
+      E: [{ jp: '{水|みず} が あふれて くる 。 あぶない 。', en: 'Water is overflowing. You are in danger.' }],
+      I: [{ jp: '{水|みず} を {呼|よ}び{寄|よ}せて 、 {押|お}し{流|なが}す つもり だ 。', en: 'It means to call up the water and wash you away.' }],
+    },
+  };
 })(RB.content);
