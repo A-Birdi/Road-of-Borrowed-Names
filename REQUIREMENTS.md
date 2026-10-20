@@ -1167,8 +1167,10 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   16/0, `staging_chapters --ch=1 --only=rw.hall` 173/0. RBN-QA-007: before Genzō takes you up, the lighthouse stairs
   step you back and say why (a locked exit, the shut-door pattern; the gate is unchanged; one narrator line in SL6;
   `f47bbe2`); B `lighthouse_top` 106/0. RBN-QA-008: the Foundations tide exercise presents its 3:00 as Shiori's rounding
-  of the table's 3:15, answers unchanged (`0942dd3`); U `foundations` 92/0, `answer_sweep` 22/0. Agnes's retest comes
-  with the next build.
+  of the table's 3:15, answers unchanged (`0942dd3`); U `foundations` 92/0, `answer_sweep` 22/0. RBN-QA-009: Tetsu's
+  offer of his story opens "Back from the drowned archive, are you." once the archive is done (one Tetsu line in
+  SL7); B `staging_chapters --ch=2 --only=sg.tetsu_history` 23/0. RBN-QA-001 to 005, 007 and 008 are in CC-005's
+  build (`507c11a4…`); 009 is in source, for the next build. Agnes's retests come with those builds.
 
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

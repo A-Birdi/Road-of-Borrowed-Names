@@ -5085,6 +5085,11 @@ Yasu's story, when listening, has not begun being spoken."
     Shiori rounding the table, and the explanation names the chalkboard's 3:15; the answers are unchanged. The tide
     gate runs on a story flag (`sg_tide_low`), not a clock; the recorded 3:15 lines (`sg.tideboard`, `cs.tidepost`) are
     untouched; the exercise is in no recording list. U `foundations` 92/0, `answer_sweep` 22/0, `fr1` 64/0.
+  - RBN-QA-009 (on CC-005's build): after the archive was cleared and reported, Tetsu's offer of his story still began
+    "Going to the drowned archive, are you." The scene now branches on `sg_boss_done`: before, the recorded line;
+    after, "Back from the drowned archive, are you." Probed in the browser in both states (the opening, then the
+    same offer and story). B `staging_chapters --ch=2 --only=sg.tetsu_history` 23/0, with a "back from the archive"
+    variant; U `voice_production` 27/0, `spoken_sites` 33/0. In source, not yet in a deployed build.
   - U `stampbook_sb1` 39/0, `records` 272/0. Agnes retests with the next build.
 - **The candidate for QA after CL-001 (CC-005): `index.html` sha256 `507c11a4…`, built from `7595bdc`'s source** (a
   fresh build of that source gives the same bytes). On this exact build: B `practice_b` 6/0 (its "four profiles"

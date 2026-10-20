@@ -429,3 +429,8 @@ nothing retired. Built from `4e144ec`, after MW1, SL1 and SL3.
     Agnes's RBN-QA-007): 上はゲンゾウの灯室だ。呼ばれるまで、上がらないでおこう。
   - Nothing else the script gained since SL5 is spoken: RBN-QA-005 (the Lantern Hall) changed only who walks where.
   - **Recording:** the same terms as SL4 (the narrator, AivisSpeech).
+- **SL7 (`supplements/SL7_SUPPLEMENT.json`)**: one new Tetsu recording (14 morae), with no new references and nothing
+  retired. It was built from the RBN-QA-009 commit, after SL6.
+  - The line is Tetsu's opening when you are back from the drowned archive (`sg.tetsu_history`, Agnes's RBN-QA-009):
+    沈んだ書庫から戻ったのか。 Before the archive he keeps his recorded line, 沈んだ書庫へ行くのか。
+  - **Recording:** Tetsu's cast and engine (Qwen3-TTS clone) and the same gates as before.

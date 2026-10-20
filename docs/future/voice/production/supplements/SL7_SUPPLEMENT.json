@@ -1,0 +1,70 @@
+{
+ "schema": "rbn.voice.supplement/1",
+ "id": "SL7",
+ "what": "RBN-QA-009: Tetsu's opening once you are back from the drowned archive (sg.tetsu_history), and any other line the script gained since SL6",
+ "authorization": "Robin, 2026-10-20: 'Create the relevant missing voice lines and ensure they're pushed live … Coordinate with the local agent entirely.'",
+ "after": {
+  "goSourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+  "goManifestSha256": "513ec3fff9c8aa69f0874539757631a8c6feb56a8f789a23d3adcf0d6654ba66",
+  "goScriptContentHash": "65cd38053ad6d902e104a2f9dcba9666ff7bdf115d4ec8cd78ca0b0aa0f3624e",
+  "earlierSupplements": [
+   "MW1",
+   "SL1",
+   "SL3",
+   "SL4",
+   "SL5",
+   "SL6"
+  ]
+ },
+ "builtFrom": {
+  "branch": "claude/stoic-sagan-n3jvgk",
+  "commit": "dd45e53be9b0ef551b15336b04940eef9010a743",
+  "scriptContentHash": "1ec984bf00ba3e244bf60cbba81c1e85072a6c8889b3284a2a39f873430c15df",
+  "command": "node tools/voice/supplement.mjs --id SL7 (tools/voice/production_manifest.mjs into a scratch directory, compared by id with the GO manifest and the earlier supplements)"
+ },
+ "counts": {
+  "entries": 1,
+  "references": 0,
+  "retired": 0,
+  "chars": 13,
+  "morae": 14,
+  "bySpeaker": {
+   "tetsu": 1
+  }
+ },
+ "entries": [
+  {
+   "id": "r1-b299ea3fcdeb2a38",
+   "speaker": "tetsu",
+   "voice": null,
+   "pitch": null,
+   "dialect": "standard",
+   "delivery": "neutral",
+   "display": "{沈|しず}んだ {書庫|しょこ} から {戻|もど}った の か 。",
+   "spoken": "沈んだ書庫から戻ったのか。",
+   "spokenNamesKana": "沈んだ書庫から戻ったのか。",
+   "send": "沈んだ書庫から戻ったのか。",
+   "kana": "しずんだしょこからもどったのか。",
+   "names": [],
+   "seams": [],
+   "chars": 13,
+   "morae": 14,
+   "pauses": 1,
+   "textHash": "ba52cd5bb2f891f8",
+   "lines": [
+    {
+     "key": "sg.tetsu_history#0f76b8a257",
+     "scene": "sg.tetsu_history",
+     "file": "ch2/24_scenes_hub",
+     "line": 115
+    }
+   ]
+  }
+ ],
+ "references": [],
+ "retired": {
+  "note": "GO ids the current script no longer uses. Their recordings (if made) are kept for one site build and then drop out of its indexes (§8.4); nothing is deleted.",
+  "ids": []
+ },
+ "unchanged": "Every other id is as in the GO manifest and the earlier supplements (MW1, SL1, SL3, SL4, SL5, SL6)."
+}
