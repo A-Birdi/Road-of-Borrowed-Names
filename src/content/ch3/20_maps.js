@@ -156,6 +156,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'hiro', x: 25, y: 19, dir: 'up', if: 'ch3_done', talk: [{ if: 'post', scene: 'co.hiro_post' }, { scene: 'co.hiro_after' }] },
       { id: 'suzu', x: 27, y: 14, dir: 'down', wander: 1, if: 'comp!=suzu&co_chronicle_read&!co_kiln_done', talk: [{ scene: 'co.suzu_c_square' }] },
       { id: 'suzu', x: 21, y: 14, dir: 'down', wander: 2, if: 'comp!=suzu&ch3_done', talk: [{ if: 'post', scene: 'co.suzu_c_post' }, { scene: 'co.suzu_c_after' }] },
+      // outside the glass workshop's door for "Before we go in…" when she is not with you (co.suzu_truth; RBN-QA-027)
+      { id: 'suzu', x: 42, y: 19, dir: 'right', if: 'comp!=suzu&co_suzu_door' },
     ],
     exits: [
       { x: 0, y: 18, w: 1, h: 2, to: 'co.road', tx: 34, ty: 11, dir: 'left' },

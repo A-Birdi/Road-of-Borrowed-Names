@@ -224,7 +224,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- parsing frame keys -------------------------------------------------------------------------
   // 'p:<pose>[+<seat>]…': a gesture made sitting or kneeling takes the legs and the lowered body of
   // the seat pose (+sit, +kneel) and the arms, head and eyes of the gesture
-  const RE = /^p:([a-z_0-9]+)(?:\+([a-z_0-9]+))?(?:\.([RL]))?(?:\/([a-z_]+))?(?:~([lrudcb]))?(?::([01]))?(\*)?$/;
+  // (a prop's name may carry capitals and digits: the glassblower's pipeA/B/C, whose keys otherwise failed to parse
+  // and drew a stiff, empty-handed figure; RBN-QA-027)
+  const RE = /^p:([a-z_0-9]+)(?:\+([a-z_0-9]+))?(?:\.([RL]))?(?:\/([A-Za-z_0-9]+))?(?:~([lrudcb]))?(?::([01]))?(\*)?$/;
   const combos = new Map();
   function combine(name, seat) {
     const k = name + '+' + seat;

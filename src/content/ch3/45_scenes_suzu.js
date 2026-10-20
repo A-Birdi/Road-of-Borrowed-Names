@@ -207,32 +207,67 @@ suzu: {今|いま} {言|い}って も 、 {火事|かじ} ごと {頭|あたま
 !set co_suzu_c_reported
 
 @scene co.suzu_truth
+# Staged (RBN-QA-027, Agnes 17:43Z): Suzu's "Before we go in" is said outside the workshop's door, where she asks
+# for your help with her first line (her lines were said inside, before Hiro): you step out with her (a fade), the
+# lead-in and the first line there, then back in (a fade) to Hiro at his bench, the blowpipe turning through her
+# confession; she holds her faded ribbon out over the workbench as she lays it down; he holds the gather still at
+# "A fire." and breaks the globe off into the ash. (Suzu waits by the door for you if she is not with you.)
+!walkto pc 6 8 down
+!fade out
+!warp co.village 43 19 left
+?(comp!=suzu) !set co_suzu_door
+!refresh
+?(comp=suzu) !walkto comp 42 19 right now
+!fade in
+!look pc suzu
+!look suzu pc
 !if !co_suzu_told -> brief
 :start
 !music companion_suzu
+!gesture suzu lookroad 42,17
 suzu[closed]: …… {入|はい}る {前|まえ} に 、 {一|ひと}つ だけ {手伝|てつだ}って 。 {最初|さいしょ} の {一言|ひとこと} 。 {台詞|せりふ} は {得意|とくい} な の 。 {本当|ほんとう} の {台詞|せりふ} {以外|いがい} は 。 || …Before we go in, help me with one thing. The first line. I'm good with lines. Just not true ones.
 !challenge co.c_suzu
+!walkto pc 42 18 up
+!fade out
+?(comp!=suzu) !unset co_suzu_door
+!warp co.glass 5 7 up
+!refresh
+?(comp=suzu) !walkto comp 6 6 left now
+!look hiro left
+!gesture hiro glasswork hold
+!fade in
 narr: {工房|こうぼう} の {炉|ろ} が 、 {低|ひく}く {唸|うな}って いる 。 ヒロ は {吹|ふ}き{竿|ざお} の {先|さき} で 、 {橙色|だいだいいろ} の ガラス を {回|まわ}して いた 。 || The furnace hums low. Hiro is turning a gather of orange glass on the end of his blowpipe.
 hiro: {悪|わる}い 。 {今|いま} {手|て} が {離|はな}せない 。 {話|はなし} なら 、 そこ で 。 || Sorry. Can't put this down. If you want to talk, go ahead.
 suzu[smile]: {大丈夫|だいじょうぶ} 。 {手|て} は {止|と}めない で 。 その {方|ほう} が 、 {私|わたし} も {言|い}い やすい 。 || That's fine. Don't stop. It's easier for me that way too.
 suzu: ヒロ 。 {赤|あか}い リボン の {姉|ねえ}ちゃん を {覚|おぼ}えてる 、 って {言|い}った よ ね 。 || Hiro. You said you remember a girl with a red ribbon.
+!prop suzu ribbon
+!gesture suzu present 5,5 prop=ribbon
 narr: スズ は {色褪|いろあ}せた リボン を ほどいて 、 {作業台|さぎょうだい} の {上|うえ} に {置|お}いた 。 {昔|むかし} は {赤|あか}かった の だろう 。 || Suzu unties her faded ribbon and lays it on the workbench. It must have been red, once.
+!prop suzu -
+!look hiro suzu
 hiro[surprise]: …… || …
 suzu[laugh]: {色|いろ} は {落|お}ちた けど 、 {物持|ものも}ち は いい の 。 {借|か}り も ね 。 …… ごめん 。 {冗談|じょうだん} で {逃|に}げる の は 、 ここ まで に する 。 || The colour's gone, but I keep things. Debts too. …Sorry. That's the last joke I'll hide behind.
 suzu[closed]: あの {朝|あさ} 、 {私|わたし} は {嘘|うそ} を ついた 。 || That morning, I lied to you.
 suzu: {君|きみ} の お{母|かあ}さん は 、 {一座|いちざ} と {一緒|いっしょ} に {行|い}って ない 。 {前|まえ} の {晩|ばん} の {火事|かじ} で 、 {亡|な}くなった の 。 {上|うえ} の {水門|すいもん} を {開|あ}け に {行|い}って 、 {戻|もど}らなかった 。 || Your mother didn't go with the troupe. She died in the fire the night before. She went up to open the top water gate, and she didn't come back.
 suzu: {私|わたし} は それ を {知|し}って いて 、 {春|はる} に {帰|かえ}る って {言|い}った 。 {慰|なぐさ}め の つもり だった 。 でも それ は 、 {君|きみ} から {泣|な}く {時間|じかん} を {取|と}り{上|あ}げた 。 || I knew, and I told you she'd be back in spring. I meant it as comfort. But it took away your time to cry.
+!look hiro left
+!gesture hiro glasswork hold
 narr: ヒロ は {答|こた}えない 。 {竿|さお} を {回|まわ}し{続|つづ}け 、 ガラス を {炉|ろ} に {戻|もど}し 、 また {取|と}り{出|だ}す 。 {形|かたち} が ゆっくり {丸|まる}く なって いく 。 || Hiro doesn't answer. He keeps the pipe turning, returns the glass to the furnace, draws it out again. Slowly, it rounds into shape.
 narr: {長|なが}い {時間|じかん} が {経|た}った 。 || A long time passes.
+!gesture hiro cool suzu hold
 hiro: …… {火事|かじ} 。 || …A fire.
 hiro: {変|へん} だ な 。 {昨日|きのう} まで 、 その {言葉|ことば} を {聞|き}いて も {何|なに} も {浮|う}かばなかった 。 {今|いま} は …… {煙|けむり} の におい が する 。 || Strange. Until yesterday, that word called up nothing. Now… I can smell smoke.
 hiro: {母|はは} の {手|て} は 、 いつも {火傷|やけど} の {跡|あと} だらけ だった 。 {上|うえ} へ {行|い}く {前|まえ} 、 {俺|おれ} の {頭|あたま} に この {手拭|てぬぐ}い を {巻|ま}いた 。 「 {火|ひ} の {粉|こ} が {熱|あつ}い から ね 」 って 。 || My mother's hands were always covered in burn scars. Before she went up, she tied this cloth round my head. "The sparks are hot," she said.
+!gesture hiro forehead
 narr: ヒロ は {額|ひたい} の {手拭|てぬぐ}い に 、 {一瞬|いっしゅん} だけ {触|ふ}れた 。 || For a moment, Hiro touches the cloth tied round his forehead.
 hiro: 「 {振|ふ}り{返|かえ}らない で 」 。 {振|ふ}り{返|かえ}らなかった 。 {二十年|にじゅうねん} 。 || "Don't look back." I didn't. For twenty years.
 hiro[sad]: …… {怒|おこ}ってる か 、 と {聞|き}かれたら 、 {怒|おこ}ってる 。 {嘘|うそ} に じゃ ない 。 {七|なな}つ の {子|こ} に {本当|ほんとう} の こと を {言|い}える {十六|じゅうろく} なんて 、 いない 。 || …If you're asking whether I'm angry — I am. Not about the lie. No sixteen-year-old could have told a seven-year-old the truth.
 hiro: あんた が {行|い}っちまった こと に 、 だ 。 {母|はは} は {一座|いちざ} と {行|い}った 、 と {聞|き}いた 。 それ から {一座|いちざ} も 、 あんた も {行|い}った 。 {俺|おれ} は {二人|ふたり} {分|ぶん} 、 {待|ま}ってた ん だ 。 || It's that you left. I was told my mother went with the troupe. Then the troupe left, and you with it. I was waiting for two people.
 suzu[sad]: …… うん 。 || …Yes.
+!look hiro left
+!gesture hiro cool 5,5
 narr: ヒロ は ガラス を {竿|さお} から {外|はず}し 、 {灰|はい} の {中|なか} に そっと {置|お}いた 。 {丸|まる}い {火屋|ほや} が 、 {橙色|だいだいいろ} に {光|ひか}って いる 。 || Hiro breaks the glass from the pipe and lays it gently in the ash. A round lantern globe, glowing orange.
+!look hiro suzu
 hiro: {席|せき} は 、 {今年|ことし} も {空|あ}けて おく 。 でも {今年|ことし} は 、 {母|はは} の {名前|なまえ} を {書|か}く 。 {帰|かえ}って くる {人|ひと} の {席|せき} じゃ ない 。 {覚|おぼ}えられて いる {人|ひと} の {席|せき} だ 。 || I'll keep the seat free this year too. But this year I'll write her name on it. Not a seat for someone coming back. A seat for someone remembered.
 hiro: それ と …… あんた は 、 {隣|となり} に {座|すわ}れ 。 {祭|まつ}り {二十回|にじゅっかい} {分|ぶん} 、 {貸|か}して ある 。 {一回|いっかい} ずつ {返|かえ}して もらう 。 || And… you sit next to it. You owe me twenty festivals. You can pay them back one at a time.
 suzu[surprise]: …… {帳簿|ちょうぼ} に 、 {書|か}いて いい ？ || …Can I write that in my book?
