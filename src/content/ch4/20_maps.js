@@ -263,9 +263,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bookpile', x: 1, y: 6 }, { p: 'shelf', x: 3, y: 2 }, { p: 'shelf', x: 4, y: 2, scene: 'sb.hoshino_shelf' },
       { p: 'stove', x: 7, y: 2 }, { p: 'bed', x: 9, y: 5 },
       { p: 'smalltable', x: 6, y: 5, scene: 'sb.hoshino_letters_box', o: { on: 'letters' } }, { p: 'chair', x: 7, y: 5 },
+      // star charts spread about the room (the first visit's narration; Agnes, RBN-QA-037)
+      { p: 'smalltable', x: 2, y: 5, o: { on: 'papers' } }, { p: 'smalltable', x: 6, y: 3, o: { on: 'papers' } },
     ],
     npcs: [
-      { id: 'hoshino', x: 4, y: 4, dir: 'down', if: '!sb_storm|sb_obs_open&!sb_evening&!post', talk: [{ if: 'post', scene: 'sb.hoshino_home_post' }, { if: 'sb_lamp_lit', scene: 'sb.hoshino_after' }, { scene: 'sb.hoshino' }] },
+      // until the first conversation, Hoshino stands at the window by the telescope, looking out rather than through it,
+      // as the scene opens (RBN-QA-037); after it, at the usual place
+      { id: 'hoshino', x: 8, y: 2, dir: 'up', if: '!seen.sb.hoshino&!sb_storm', talk: [{ scene: 'sb.hoshino' }] },
+      { id: 'hoshino', x: 4, y: 4, dir: 'down', if: 'seen.sb.hoshino&!sb_storm|sb_obs_open&!sb_evening&!post', talk: [{ if: 'post', scene: 'sb.hoshino_home_post' }, { if: 'sb_lamp_lit', scene: 'sb.hoshino_after' }, { scene: 'sb.hoshino' }] },
     ],
   });
   interior('sb.goatshed', T('Tetsuji\'s Goat Shed', 'テツジ の ヤギ{小屋|ごや}'), 12, 9, 6, 'sb.hamlet', [6, 26], {

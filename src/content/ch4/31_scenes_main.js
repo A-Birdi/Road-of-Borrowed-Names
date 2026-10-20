@@ -19,7 +19,7 @@ RB.script.add(`
 !if sb_obs_open -> waiting_up
 !if quest.sb_lamp>=3 -> letters
 !if quest.sb_lamp>=2 -> waiting
-!look hoshino 9,2
+!look hoshino up
 narr: {部屋|へや} じゅう に {星図|せいず} が {広|ひろ}げて ある 。 {窓|まど} の そば の {老人|ろうじん} は 、 {望遠鏡|ぼうえんきょう} で は なく 、 {坂|さか} の {下|した} を {見|み}て いた 。 || Star charts are spread all over the room. The old man by the window isn't looking through his telescope — he's watching the road below the slope.
 !gesture hoshino listen pc
 hoshino[surprise]: …… おや 。 {郵便|ゆうびん} かね 。 いや 、 {冬|ふゆ} に {郵便|ゆうびん} は {来|こ}ない な 。 すまない 、 {癖|くせ} で ね 。 || …Oh. Is that the post? No — no post comes in winter. Forgive me. Habit.
