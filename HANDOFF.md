@@ -698,6 +698,11 @@
       Road until `sb_arrived`, then the climb north to the hamlet until `sb_hamlet_seen` (Agnes's 20:53Z endpoint). No
       marker (between chapters nothing is followed, as RBN-QA-011). `validate.mjs` checks `next`. Local branch
       `qa033-roadon` (`7f948bf`); B `road_on` (new). Alternative offered: the journal text only.
+    - **RBN-QA-036 candidate, with Robin (not pushed):** a tap on Yae (Yukimiya's counter) did nothing: `tapTile` walks
+      to a free place beside the person, and Yae has none (counter, pot, bottles). Now, only when none can be reached,
+      the tap walks to the free far side of a counter (or `across` prop) beside them, faces it and acts as the action
+      key does there (talk across). Local branch `qa036-counter` (`7bf0030`); B `counter_tap` (new). 30 placements
+      beside a counter across the game are within its reach (listed by the test).
     - **RBN-QA-035 (options, Robin's choice):** `sb.hamlet_first` plays at the hamlet's south edge (22,33); the bell
       post (22,15) and Kanta (19,19) are out of frame. (A) blocking only: walk up into the square, Kanta comes over;
       (B) with RBN-QA-013's proposed `!view x y` / `!view -` for the observatory line. Not built.

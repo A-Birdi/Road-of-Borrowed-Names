@@ -5503,6 +5503,12 @@ Yasu's story, when listening, has not begun being spoken."
       150/0, `content` 7/0; `validate.mjs` no errors. Frames (the Journey, CC-008 against the first revision) sent
       to Robin.
     - RBN-QA-035: code review only (positions in src/content/ch4/20_maps.js; `sb.hamlet_first`). Options only.
+    - RBN-QA-036 (`qa036-counter`, `7bf0030`): B `counter_tap` (new) 8/0 on the candidate's build (from the door a
+      tap on Yae walks to 13,4, faces up, Yae speaks; already at 13,4 facing down, a tap turns you and she speaks; the
+      counter tapped from below talks to her, from the door it is read at its left end 11,3; Natsume, with a free place
+      beside, is walked to beside and talks; 30 placements beside a counter listed). On CC-008's `index.html` the two
+      Yae taps fail (nothing happens), the counter and Natsume cases are the same. B `world_slice` 5/0,
+      `mw1_mill_flow` all passed; U `world` 123/0.
     - RBN-QA-027 addendum (`qa027-suzu2`, `5e9b4a0`): scripted frames with Suzu (talking to Hiro) and with Nao
       (talking to Suzu), CC-008 against the candidate: the lead-in outside (43,19 / 42,19), back inside (5,7 / 6,6),
       `co_suzu_door` cleared, `co_suzu_done` set. The blowpipe: the staging frame key was `p:pipe2/pipeB` while
