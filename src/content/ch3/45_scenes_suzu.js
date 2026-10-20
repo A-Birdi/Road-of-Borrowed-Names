@@ -82,8 +82,9 @@ comp[smirk]: …… その {前|まえ} に 、 ヒロ が {今|いま} {何|な
 @scene co.suzu_ask
 # Staged: Hiro keeps the blowpipe turning while he answers, shakes his head at his own strange story and works
 # on; with Suzu, her hand brushes the ribbon; when his head goes white the gather is held still; Suzu's
-# thanks, he turns to her ("have we met?"), her laugh; then the two of you step to the door, Suzu looks back
-# at him once, and faces you with her decision.
+# thanks, he turns to her ("have we met?"), her laugh; then the two of you go out of the workshop's door into the
+# village (RBN-QA-027: "Outside the workshop", and what she says next is for you alone), Suzu looks back at the
+# door once, and faces you with her decision; you are left outside, by the door.
 !gesture hiro glasswork hold
 pc: {広場|ひろば} の {空|あ}いた {席|せき} 、 {誰|だれ} の ため の {席|せき} です か 。 || The empty seat in the square — who is it for?
 hiro[think]: …… {母|はは} の だ 。 || …My mother's.
@@ -103,9 +104,12 @@ hiro: {他|ほか} に {何|なに} か {理由|りゆう} が ある {気|き} 
 ?(comp=suzu) hiro: …… あんた 、 どこ か で {会|あ}った か ？ || …Have we met?
 ?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: {旅芸人|たびげいにん} の {顔|かお} は 、 みんな どこ か で {見|み}た {顔|かお} よ 。 || Every travelling performer has a face you've seen somewhere.
-?(comp=suzu) !walkto pc 6 8 left
-?(comp=suzu) !walkto comp 5 8 up
-?(comp=suzu) !gesture comp lookroad hiro
+?(comp=suzu) !walkto pc 6 8 down
+?(comp=suzu) !fade out
+?(comp=suzu) !warp co.village 43 19 left
+?(comp=suzu) !walkto comp 42 19 up now
+?(comp=suzu) !fade in
+?(comp=suzu) !gesture comp lookroad 42,17
 ?(comp=suzu) narr: {工房|こうぼう} を {出|で}る と 、 スズ は {一度|いちど} だけ {振|ふ}り{返|かえ}った 。 || Outside the workshop, Suzu looks back just once.
 ?(comp=suzu) !look comp pc
 ?(comp=suzu) !look pc comp
