@@ -367,8 +367,9 @@ co_tamotsu: {上|うえ} の {段|だん} へ の {柵|さく} の {鍵|かぎ} 
 !autosave
 
 @scene co.tokiwa_page
-# Staged: you step to Tokiwa's side and hand him the page; he reads its last line, it slips from his fingers
-# and his head goes down; he faces you to ask you to laugh; your companion's own answer (Nao's hand to the
+# Staged: you step to Tokiwa's side and hand him the page; he reads its last line, turns to his desk, and it
+# slips from his fingers onto it and his head goes down (RBN-QA-031: he used to stand on the rug, away from the
+# desk the line names); he faces you to ask you to laugh; your companion's own answer (Nao's hand to the
 # satchel strap, Mio's shake of the head, Ren tends their lamp, Suzu's shake of the head); his nod when he
 # decides to call the village (and when he is ready).
 !if co_tokiwa_page -> wait
@@ -383,6 +384,8 @@ pc: トキワ さん 。 {窯|かま} の {奥|おく} に 、 これ が あり
 narr: トキワ は {頁|ページ} を {受|う}け{取|と}り 、 {最後|さいご} の {行|ぎょう} を {読|よ}んだ 。 || Tokiwa takes the page and reads the last line.
 co_tokiwa[surprise]: 「 {上|うえ} の {窓|まど} 、 {開|あ}く 。 {風|かぜ} {強|つよ}し 」 …… || "Upper vent open. Strong wind"…
 co_tokiwa: …… {開|あ}けた の は 、 {私|わたし} です 。 || …I'm the one who opened it.
+!walkto co_tokiwa 5 4 up
+!look pc co_tokiwa
 !prop co_tokiwa -
 !gesture co_tokiwa lowered hold
 narr: {彼|かれ} の {手|て} から 、 {頁|ページ} が {机|つくえ} に {落|お}ちた 。 || The page slips from his fingers onto the desk.
