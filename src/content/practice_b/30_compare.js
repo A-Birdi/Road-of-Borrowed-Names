@@ -106,7 +106,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C04', cat: 'permission-prohibition', catLabel: T('Allowed or forbidden', '{許|ゆる}し か 、 {禁止|きんし} か'), word: T('～て いい / ～ちゃ いけない', '～て いい ・ ～ちゃ いけない'),
       ref: { grammar: 'v_temo_ii' }, item: 'g:v_temo_ii',
-      a: { scene: 'rw.hall_gather', line: 12, who: 'tsuru', ctx: T('Keeper Tsuru, in the Lantern Hall, before you choose a companion', '{旅|たび} の {連|つ}れ を {選|えら}ぶ {前|まえ} 、 {灯|あか}り{堂|どう} の ツル'),
+      a: { scene: 'rw.hall_gather', line: 13, who: 'tsuru', ctx: T('Keeper Tsuru, in the Lantern Hall, before you choose a companion', '{旅|たび} の {連|つ}れ を {選|えら}ぶ {前|まえ} 、 {灯|あか}り{堂|どう} の ツル'),
         jp: 'ここ で は {好|す}きな だけ {時間|じかん} を かけて いい 。 {話|はな}して 、 {迷|まよ}って 、 {決|き}め{直|なお}して いい 。 でも 、 あの {灯|あか}り が {敷居|しきい} を {越|こ}えたら 、 {旅|たび} の {終|お}わり まで 、 その {二|ふた}つ の {名前|なまえ} を {運|はこ}ぶ 。 {三|みっ}つ{目|め} は {取|と}らない 。', en: 'Take as long as you like in here. Talk, waver, change your mind. But once that lantern crosses the threshold, it carries those two names to the end of the journey. It won\'t take a third.', reading: 'ここではすきなだけじかんをかけていい。はなして、まよって、きめなおしていい。でも、あのあかりがしきいをこえたら、たびのおわりまで、そのふたつのなまえをはこぶ。みっつめはとらない。', h: '3plw8i' },
       b: { scene: 'co.sayo_seats', line: 8, who: 'co_sayo', ctx: T('Sayo, laying out the festival seats', '{祭|まつ}り の {席|せき} を {並|なら}べる サヨ'),
         jp: 'さあ …… {聞|き}いた こと が ない わ 。 {聞|き}いちゃ いけない よう な {気|き} が して 。 {変|へん} よ ね 。', en: 'Hmm… I\'ve never asked. It always felt like something I shouldn\'t. Strange, isn\'t it.', reading: 'さあ……きいたことがないわ。きいちゃいけないようなきがして。へんよね。', h: '1n1ng2e' },

@@ -36,13 +36,15 @@ narr: {出発|しゅっぱつ} は {朝|あさ} だ 。 {誰|だれ} と {行|�
 !end
 
 @scene rw.hall_gather
-# Staged: you walk in to the middle of the four; Tsuru points west down the road, counts the two names on
-# her fingers and points to the threshold; Nao looks from Tsuru to you ("only one of us"), and Tsuru turns
-# to her for her answer, then back to you.
+# Staged: you walk in to Tsuru and turn to the door; the four come in after you, one after another, and take
+# their places round you (Agnes, RBN-QA-005: they had appeared in the room at once); you turn back to Tsuru.
+# Tsuru points west down the road, counts the two names on her fingers and points to the threshold; Nao looks
+# from Tsuru to you ("only one of us"), and Tsuru turns to Nao to answer them, then back to you.
 !music departure
+!walkto pc 5 6 down
 !set rw_hall_gather
-!refresh
-!walkto pc 5 6 up
+!refresh arrive
+!face pc up
 narr: {灯|あか}り{堂|どう} に 、 {四人|よにん} が {集|あつ}まって いた 。 {壁|かべ} の {棚|たな} に は {古|ふる}い {記録|きろく} 。 {奥|おく} に は 、 {旅|たび} の {灯|あか}り が {一|ひと}つ 。 || The four have gathered in the Lantern Hall. Old records line the shelves; at the back hangs a single travelling lantern.
 !gesture tsuru point left
 tsuru: {名前|なまえ} を {持|も}って いった {何|なに} か は 、 {灯|ひ} の {道|みち} を {西|にし} へ {下|くだ}った 。 {潮硝子|しおがらす} に は 、 {海|うみ} に {沈|しず}んだ {書庫|しょこ} が ある と いう {噂|うわさ} が ある 。 {追|お}う なら 、 そこ から だろう ね 。 || Whatever took the names went down the lantern road, west. In Saltglass there's a rumour of an archive sunk under the sea. If you're going after it, that's where to start.

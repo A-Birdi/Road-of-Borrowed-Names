@@ -393,7 +393,11 @@ RB.script = (function () {
         case 'journal': s.journal = s.journal || []; s.journal.push({ jp: c.jp, en: c.en, t: Date.now() }); break;
         case 'toast': await RB.ui.toast({ kind: 'info', jp: c.jp, en: c.en }); break;
         case 'travel': a.forEach((p) => (s.travel[p] = true)); break;
-        case 'refresh': RB.world.refreshActors(); break;
+        // `!refresh arrive`: the people this brings walk in from the way in, one after another, and the scene goes on
+        // once they have reached their places (at once when skipping, or behind an illustrated sequence)
+        case 'refresh':
+          if (a[0] === 'arrive') { RB.world.refreshActors({ arrive: true }); await RB.world.arrivals({ now: hidden() }); } else RB.world.refreshActors();
+          break;
         case 'recruit': await RB.game.recruit(a[0], a[1]); break;
         case 'depart': await RB.game.depart(); break;
         case 'heal': s.resolve.pc = s.resolve.max; s.resolve.comp = s.resolve.max; break;

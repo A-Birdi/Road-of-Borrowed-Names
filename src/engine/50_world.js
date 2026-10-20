@@ -135,7 +135,9 @@ RB.world = (function () {
     W.comp.id = cid;
     W.trail = [];
   }
-  function refreshActors() {
+  // o.arrive: a scene's !refresh arrive — the people this brings walk in from the way in even just after the map
+  // appeared (by default, people who appear while a map is still appearing were simply already there)
+  function refreshActors(o) {
     const st = s();
     const m = W.map;
     const keep = new Map(W.npcs.map((n) => [n.id, n]));
@@ -169,7 +171,7 @@ RB.world = (function () {
     // they show a !move or a !walkto there: people are at once where the story now puts them, so the world the
     // picture dissolves back into already matches it (nobody seen going in twice; docs/expressive/CONTRACT.md HX52).
     const behind = !!(RB.sequence && RB.sequence.hidesWorld && RB.sequence.hidesWorld());
-    if (W.time - W.enteredAt > 900) {
+    if (W.time - W.enteredAt > 900 || (o && o.arrive)) {
       const arriving = W.npcs.filter((a) => !before.has(a.id) && !keep.has(a.id));
       const atOnce = (a, arr) => noteDeparture(a, { goals: new Set(), to: arr ? m.id : null, reason: 'behind an illustrated sequence: at once' }, [], arr);
       let k = 0;
@@ -180,6 +182,7 @@ RB.world = (function () {
         else if (behind) atOnce(a, false);
         else leave(a, k++);
       }
+      let onFoot = 0; // (people walking in together come through the door one after another)
       for (const b of arriving) {
         if (b.shifted) continue;
         const here = W.extras.find((e) => personOf(e) === personOf(b)) || W.leavers.find((e) => personOf(e) === personOf(b));
@@ -188,7 +191,7 @@ RB.world = (function () {
           W.leavers = W.leavers.filter((e) => e !== here);
           if (behind) atOnce(b, true); else shiftTo(b, here);
         } else if (behind) atOnce(b, true);
-        else arriveOnFoot(b);
+        else if (arriveOnFoot(b, onFoot)) onFoot++;
       }
     }
     // LW-09: a person whose placement moved on this map. While the map is appearing (or behind an illustrated
@@ -449,22 +452,50 @@ RB.world = (function () {
     noteDeparture(a, there ? Object.assign({}, way, { reason: way.reason + ', at the way out' }) : route.length && way.goals ? way : Object.assign({}, way, { goals: null }), route, false);
     W.leavers.push(Object.assign({}, a, { mv: null, route, goals: way.goals, alpha: 1, fading: !route.length, wait: (i || 0) * 380 }));
   }
-  function arriveOnFoot(a) {
-    if (!onScreen(a)) return;
+  // i: the order of people arriving at once; each comes through the way in a moment after the last (they would
+  // otherwise all stand in the doorway together). True when they walk in.
+  function arriveOnFoot(a, i) {
+    if (!onScreen(a)) return false;
     if (a.def && a.def.arrive === 'here') {
       noteDeparture(a, { goals: new Set(), to: W.map.id, reason: 'authored: appears where they are' }, [], true);
       a.alpha = 0; a.fadeIn = true;
-      return;
+      return false;
     }
     const way = wayFor(a, true);
     // (planned from where they will stand back to the way in, round everyone here)
     const route = (way.goals && routeRound(a, 160, way.goals)) || routeRound(a, 18);
     noteDeparture(a, route && way.goals ? way : Object.assign({}, way, { goals: null }), route, true);
-    if (!route || !route.length) { a.alpha = 0; a.fadeIn = true; return; }
+    if (!route || !route.length) { a.alpha = 0; a.fadeIn = true; return false; }
     const path = route.slice(0, -1).reverse().concat([[a.x, a.y]]);
     const [sx, sy] = route[route.length - 1];
     a.x = sx; a.y = sy; a.fx = sx; a.fy = sy; a.mv = null;
-    a.route = path; a.alpha = 0; a.fadeIn = true; a.routeT = 0;
+    a.route = path; a.alpha = 0; a.fadeIn = true; a.routeT = 0; a.wait = (i || 0) * 450; a.arriving = true;
+    return true;
+  }
+  // Resolves once everyone walking in here has arrived (at most o.ms). o.now, or skipping: they are at their places
+  // at once, as if they had walked there.
+  function arrivals(o) {
+    o = o || {};
+    const walking = () => W.npcs.filter((a) => a.arriving && (a.route || a.mv || a.wait > 0 || a.fadeIn));
+    const settle = () => {
+      for (const a of walking()) {
+        if (a.home) { a.x = a.home[0]; a.y = a.home[1]; }
+        else if (a.mv) { a.x = a.mv.tx; a.y = a.mv.ty; }
+        a.fx = a.x; a.fy = a.y; a.mv = null; a.route = null; a.wait = 0; a.alpha = 1; a.fadeIn = false; a.arriving = false;
+        a.dir = (a.def && a.def.dir) || a.dir;
+      }
+    };
+    if (o.now || RB.game.fastForward()) { settle(); return Promise.resolve(); }
+    const map = W.map, t0 = performance.now();
+    return new Promise((res) => {
+      const tick = () => {
+        if (W.map !== map) return res();
+        if (RB.game.fastForward() || performance.now() - t0 > (o.ms || 8000)) { settle(); return res(); }
+        if (!walking().length) return res();
+        setTimeout(tick, 60);
+      };
+      tick();
+    });
   }
   // Follow a route one tile at a time; true when it is walked.
   function followRoute(a, dt, dur) {
@@ -514,10 +545,11 @@ RB.world = (function () {
       }
     }
     for (const n of W.npcs.concat(W.extras)) {
+      if (n.wait > 0) { n.wait -= dt; continue; } // (arriving after the one before: not here yet)
       if (n.fadeIn) { n.alpha = Math.min(1, (n.alpha || 0) + dt / 260); if (n.alpha >= 1) n.fadeIn = false; }
       if (n.extra) { stepActor(n, dt); n.blinkT -= dt; if (n.blinkT < -140) n.blinkT = 2500 + wrand() * 3000; }
       if (n.route && !n.mv) {
-        if (followRoute(n, dt, 240) && !n.mv) { n.route = null; if (n.extra) faceTo(n, W.player.x, W.player.y); else n.dir = (n.def && n.def.dir) || n.dir; }
+        if (followRoute(n, dt, 240) && !n.mv) { n.route = null; n.arriving = false; if (n.extra) faceTo(n, W.player.x, W.player.y); else n.dir = (n.def && n.def.dir) || n.dir; }
       }
     }
   }
@@ -1252,7 +1284,7 @@ RB.world = (function () {
   }
 
   return {
-    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, companionHere, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
+    W, DIRS, enter, update, interact, tapTile, refreshActors, arrivals, placeCompanion, companionHere, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
     frontTile, frontAction, checkFoeContact, hush, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
     musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
