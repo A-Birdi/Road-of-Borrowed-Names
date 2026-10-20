@@ -650,6 +650,10 @@
       proposal in CC-010: walk to the quay as the scene's staging note says, an opt-in scene camera target in tile
       units, `!view x y` / `!view -`, the default rule unchanged, existing cast outside the Exchange, Gonta's point;
       before/after frames at 1180x757 and a playback for Robin first).
+    - **RBN-QA-015 candidate, built and with Robin (not pushed):** the Undercroft's drained walkways (mb.under1 26-28,
+      2-4; mb.under2 31-32, 18-20) as walkway stone under the floodwater props instead of shallow water. Local branch
+      `qa015-walkway` (`ac2014b`, a worktree in the scratchpad); on approval, cherry-pick it onto the task branch, build,
+      and run U `mb_ch3`, B `manybridge` and `living_world`.
     - **AG-2, complete and gated (not pushed):** every line the prologue and Reedwake show (441 lines, 473 displays)
       reviewed and audited; the report is docs/review/align/AG2_REVIEW.md on the local branch `ag2-work`. Robin has the
       before/after evidence and decides on publication. To publish: rebase `ag2-work` onto the branch, build, run U

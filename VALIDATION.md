@@ -5144,6 +5144,19 @@ Yasu's story, when listening, has not begun being spoken."
     available before c3/c4 names the storehouse (the old line fails this check; Ren's Storehouse Bridge line is a
     different fact and passes), and Suzu's joke played first says the new line and still opens Gonta; U `encounters`
     184/0, `spoken_sites` 33/0; B `manybridge` 3/0 on a scratch build. In source, not yet in a deployed build.
+  - RBN-QA-015 (on CC-005's build; the Undercroft): after the west sluice (Upper Basin) and after the Middle Gate
+    (Channels), the stretch the narrator says has risen out of the water stayed drawn as water while walked on. Cause:
+    both drowned stretches, mb.under1 (26-28, 2-4) and mb.under2 (31-32, 18-20), were shallow-water terrain ('w',
+    walkable, animated) under `lf_flood` props (deep water, blocking) shown until `mb_u1_low` / `mb_u2_through`; the props
+    go as intended and the shallow water stays. Agnes's "bottom row still blocked" did not reproduce: on CC-005, once
+    drained, every cell of both stretches is walked (each row across and each column down and back, with and without a
+    companion: 12 crossings and 3 columns), and the collision table is blocked-while-flooded, passable-once-drained for
+    every cell. Candidate (local branch `qa015-walkway`, `ac2014b`, not pushed: art, Robin's approval first): the
+    stretches are walkway stone under the same floodwater props; collision, gates, answers, destinations, lines and
+    saves unchanged; footsteps there become stone steps. On matched scratch builds (before from `0505c0c`, after from
+    `ac2014b`): frames at 1180x757 flooded, after each gate opened through its own scene, standing on the stretch, and
+    after save and load; a walk across each stretch recorded on both; collision tables identical; U `mb_ch3` 78/0,
+    B `manybridge` 3/0; voice probe 0 new recordings. Frames and clips to Robin privately.
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
   - RBN-QA-004 RETESTED_BY_AGNES on CC-005's build: the nudges read "Go to Lantern Hall." and "… Head north-west
