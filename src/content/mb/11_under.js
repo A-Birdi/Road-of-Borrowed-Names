@@ -143,10 +143,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }),
     props: [
       { p: 'door', x: 13, y: 15, scene: 'mb.firstbridge_back' },
-      // the three spans, broken until the bridge has its name (they block the way)
-      { p: 'lf_flood', x: 12, y: 6, if: '!mb_bridge_named', o: { cx: 12, cy: 6 } }, { p: 'lf_flood', x: 13, y: 6, if: '!mb_bridge_named', o: { cx: 13, cy: 6 } }, { p: 'lf_flood', x: 14, y: 6, if: '!mb_bridge_named', o: { cx: 14, cy: 6 } },
-      { p: 'lf_flood', x: 12, y: 8, if: '!mb_bridge_named', o: { cx: 12, cy: 8 } }, { p: 'lf_flood', x: 13, y: 8, if: '!mb_bridge_named', o: { cx: 13, cy: 8 } }, { p: 'lf_flood', x: 14, y: 8, if: '!mb_bridge_named', o: { cx: 14, cy: 8 } },
-      { p: 'lf_flood', x: 12, y: 10, if: '!mb_bridge_named', o: { cx: 12, cy: 10 } }, { p: 'lf_flood', x: 13, y: 10, if: '!mb_bridge_named', o: { cx: 13, cy: 10 } }, { p: 'lf_flood', x: 14, y: 10, if: '!mb_bridge_named', o: { cx: 14, cy: 10 } },
+      // the three spans, broken until the bridge has its name: every plank torn up, so all of them water (the spirit
+      // stands in it, holding the planks, as the narrator says); they block the way, and the water under the spirit
+      // leaves its blocking to the spirit itself (Agnes, RBN-QA-017)
+      ...flood(rect(12, 5, 3, 7), '!mb_bridge_named').map((f) => (f.x === 13 && f.y === 11 ? Object.assign(f, { block: false }) : f)),
       { p: 'mb_plaque', x: 11, y: 12, scene: 'mb.firstbridge_plaque', o: { bridge: 'musubi' } },
       { p: 'lantern', x: 4, y: 12, o: { lit: true } }, { p: 'lantern', x: 23, y: 12, o: { lit: true } },
       { p: 'shrine', x: 13, y: 2, scene: 'mb.firstbridge_shrine' },
