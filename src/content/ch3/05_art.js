@@ -144,16 +144,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 9, y + 6, 1, 3, '#4a3028');
   });
 
-  // The kiln's control wall: two dampers (vents) and a carved panel.
+  // The kiln's control wall: the carved instruction panel, and beside it two dampers (vents), one above the other
+  // (co.kiln_wall: "two vents: upper and lower"); o.open opens the upper one only (RBN-QA-029).
   def('co_kilnwall', { w: 3 }, (c, x, y, p, t, o) => {
     px(c, x, y - 14, 48, 29, '#5a4038'); px(c, x, y - 14, 48, 2, '#7a5a4a');
     for (let i = 0; i < 2; i++) {
-      const vx = x + 5 + i * 30;
-      px(c, vx, y - 8, 10, 8, '#1a0e0a');
-      px(c, vx, y - 8 + (o.open ? 6 : 0), 10, 3, '#8a7a6a');
+      const vy = y - 11 + i * 13;
+      px(c, x + 30, vy, 11, 8, '#1a0e0a');
+      if (i === 0 && o.open) px(c, x + 30, vy + 6, 11, 2, '#8a7a6a'); else px(c, x + 30, vy, 11, 8, '#8a7a6a');
     }
-    px(c, x + 17, y - 10, 13, 16, '#c8b8a0');
-    for (let i = 0; i < 5; i++) px(c, x + 19, y - 8 + i * 3, i === 2 && !o.fixed ? 3 : 9, 1, '#4a3a30');
+    px(c, x + 7, y - 10, 13, 16, '#c8b8a0');
+    for (let i = 0; i < 5; i++) px(c, x + 9, y - 8 + i * 3, i === 2 && !o.fixed ? 3 : 9, 1, '#4a3a30');
   });
 
   // Glass seal fused over a doorway (still faintly warm).
@@ -437,20 +438,31 @@ var RB = (globalThis.RB = globalThis.RB || {});
       },
       shadow: () => [16, 27, 13, 2, 0.25],
     });
-    // Kiln control wall: two dampers (o.open slides their plates down) and a
-    // carved instruction panel (a line missing until o.fixed).
+    // Kiln control wall: a carved instruction panel (a line missing until o.fixed) and, beside it, two dampers one
+    // above the other, the upper vent and the lower (co.kiln_wall names them so); o.open slides the upper one's plate
+    // down, its throat glowing, while the lower stays shut (RBN-QA-029: they were drawn side by side, both opening).
     A('co_kilnwall', {
       box: [-2, -34, 100, 68],
       v: (o) => (o.open ? 1 : 0) + (o.fixed ? 2 : 0),
       draw(g, M, v) {
         bricks(g, 0, -28, 96, 58, BRICK, 9); R(g, 0, -30, 96, 3, BRICK[3]); R(g, 0, -30, 96, 1, BRICK[4]);
-        for (const vx of [8, 68]) {
-          R(g, vx - 1, -17, 22, 18, '#231a20'); R(g, vx, -16, 20, 16, '#1a0e0a');
-          const dy = v & 1 ? 12 : 0;
-          R(g, vx, -16 + dy, 20, 6, IR[2]); R(g, vx, -16 + dy, 20, 1, IR[4]); R(g, vx + 9, -15 + dy, 2, 3, IR[0]);
+        // the vents' column, a stone surround with a sill between them
+        R(g, 56, -27, 30, 56, '#3a2c28'); R(g, 57, -26, 28, 54, BRICK[1]); R(g, 56, 0, 30, 3, BRICK[3]); R(g, 56, 0, 30, 1, BRICK[4]);
+        for (const [vy, upper] of [[-23, true], [5, false]]) {
+          R(g, 60, vy - 1, 22, 20, '#231a20'); R(g, 61, vy, 20, 18, '#1a0e0a');
+          if (upper && v & 1) {
+            // open: the plate slid down to the sill, the throat dark with the fire's glow at its back
+            R(g, 61, vy, 20, 12, mix('#1a0e0a', '#ff9650', 0.18)); R(g, 63, vy + 2, 16, 4, mix('#1a0e0a', '#ffb070', 0.28));
+            R(g, 61, vy + 12, 20, 6, IR[2]); R(g, 61, vy + 12, 20, 1, IR[4]); R(g, 70, vy + 13, 2, 3, IR[0]);
+          } else {
+            // shut: the iron plate fills the opening, riveted, its handle at the top
+            R(g, 61, vy, 20, 18, IR[2]); R(g, 61, vy, 20, 1, IR[4]); R(g, 61, vy + 17, 20, 1, IR[0]);
+            for (const ry of [vy + 4, vy + 13]) { R(g, 63, ry, 1, 1, IR[4]); R(g, 78, ry, 1, 1, IR[4]); }
+            R(g, 70, vy + 1, 2, 3, IR[0]); R(g, 62, vy + 8, 18, 1, IR[1]);
+          }
         }
-        R(g, 33, -22, 28, 34, '#231a20'); R(g, 34, -21, 26, 32, '#c8b8a0'); R(g, 34, -21, 26, 1, '#e8dcc4');
-        for (let i = 0; i < 5; i++) R(g, 38, -16 + i * 6, i === 2 && !(v & 2) ? 6 : 18, 2, '#4a3a30');
+        R(g, 13, -22, 28, 34, '#231a20'); R(g, 14, -21, 26, 32, '#c8b8a0'); R(g, 14, -21, 26, 1, '#e8dcc4');
+        for (let i = 0; i < 5; i++) R(g, 18, -16 + i * 6, i === 2 && !(v & 2) ? 6 : 18, 2, '#4a3a30');
       },
       shadow: () => [48, 30, 48, 3, 0.3],
     });
