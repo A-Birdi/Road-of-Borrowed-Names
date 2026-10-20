@@ -654,6 +654,10 @@
       2-4; mb.under2 31-32, 18-20) as walkway stone under the floodwater props instead of shallow water. Local branch
       `qa015-walkway` (`ac2014b`, a worktree in the scratchpad); on approval, cherry-pick it onto the task branch, build,
       and run U `mb_ch3`, B `manybridge` and `living_world`.
+    - **RBN-QA-017 candidate, with Robin (not pushed):** the First Bridge's spans all water until its naming (local
+      branch `qa017-bridge`, `0942e4f`; option (b), rows 5-10 only, was rendered as the no-collision-change alternative).
+    - **RBN-QA-016 (assessment, Robin's decision):** the shared "Yes, do it" intention confirmation (E7/E17) and the two
+      待つ Wait controls in five procedures; options in VALIDATION.md and CC-013, nothing changed.
     - **AG-2, complete and gated (not pushed):** every line the prologue and Reedwake show (441 lines, 473 displays)
       reviewed and audited; the report is docs/review/align/AG2_REVIEW.md on the local branch `ag2-work`. Robin has the
       before/after evidence and decides on publication. To publish: rebase `ag2-work` onto the branch, build, run U

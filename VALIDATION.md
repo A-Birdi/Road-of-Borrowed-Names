@@ -5157,6 +5157,26 @@ Yasu's story, when listening, has not begun being spoken."
     `ac2014b`): frames at 1180x757 flooded, after each gate opened through its own scene, standing on the stretch, and
     after save and load; a walk across each stretch recorded on both; collision tables identical; U `mb_ch3` 78/0,
     B `manybridge` 3/0, `living_world` 9/0 (on the candidate, with the Undercroft crank case); voice probe 0 new recordings. Frames and clips to Robin privately.
+  - RBN-QA-016 (Middle Gate pacing; assessment only, nothing changed): a correct step is choose, answer, Continue, "Yes,
+    do it" (and a companion prompt when one fits). The confirmation is shared (src/ui/80s_encounter.js: any action
+    with a `means` that is `proc`, `resolve` or `lasting`): every step action of the 20 machine procedures, lasting
+    choices in conversations, and the generic Wait's own. Deliberate: E7 (03_ENCOUNTERS.md, the intention shown before
+    a restart-capable action, "wrong plan" vs "misread") and E17/C-10 (decided 2026-10-07); shown for right and wrong
+    actions alike, so it reveals nothing. Options for Robin (none made): merge the intention into the task's feedback
+    (opt-in per encounter; 16 clicks to 12 at the Middle Gate), skip it on "Resolve this step", or drop it for tapped
+    choices (a change to E7). Two 待つ Wait controls at step 2 (the step's action; the generic Wait, "You wait. Nothing
+    moves." in a machine), also in hall.w3, hall.w6, mp.lifts, yn.buns: proposal, a contextual label for the generic
+    one inside procedures; labels in no recording list.
+  - RBN-QA-017 (on CC-005's build; the First Bridge before its naming): the narrator says every plank is torn up and
+    the spirit stands in the water, but the spans (mb.firstbridge 12-14, 5-11, bridge terrain) showed plank rows 5, 7,
+    9 and 11 between `lf_flood` gaps on rows 6, 8, 10, and the spirit (13,11) on planks. Candidate (a) (local branch
+    `qa017-bridge`, `0942e4f`, not pushed): until `mb_bridge_named`, all 21 span cells are `lf_flood`, the one under the
+    spirit not blocking; the only reachable collision change is the two dead-end tiles beside the spirit (12,11 and
+    14,11). Option (b), rendered: rows 5-10 only, no reachable collision change, the spirit still on planks. On matched
+    scratch builds (now, a, b): frames at 1180x757 of both arrival lines (through the door from the Great Lock), the
+    world before the encounter, after save and load, and after the naming (the same in all three); collision tables and
+    steps onto the side tiles. On (a): U `mb_ch3` 78/0; B `manybridge` 3/0, `sequence_world --only mb1.named,mb1.dusk`
+    208/0; voice probe 0 new recordings. Frames to Robin privately; Robin chooses (a), (b) or neither.
   - RBN-QA-002 RETESTED_BY_AGNES on CC-005's build: the stand with nothing new to press shows its line and the Stamp
     book notice. Agnes's coverage is that branch, not a stand never pressed.
   - RBN-QA-004 RETESTED_BY_AGNES on CC-005's build: the nudges read "Go to Lantern Hall." and "… Head north-west
