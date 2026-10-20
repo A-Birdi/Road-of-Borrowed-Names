@@ -179,16 +179,24 @@ hoshino: {何|なに} が {書|か}いて あった か は 、 {内緒|ない�
 
 @scene sb.lw_road_slope
 # Road event (W5): the Snowbell Road's own, the first time you walk it. A charcoal carrier waits below a slope heavy
-# with snow; the sign on how to cross is half buried.
+# with snow; the sign on how to cross is half buried. Read right, the crossing is made, one at a time: Gohei first up
+# the slope road, then you, then your companion, each stopping only on the far side; then Gohei goes on up to Snowbell
+# (Agnes, RBN-QA-034).
 !look lw_gohei pc
 lw_gohei: あ 、 {待|ま}って くれ ！ その {先|さき} は 、 {雪崩|なだれ} が {怖|こわ}い ん だ 。 || Ah, wait! Past there, it's avalanches you have to fear.
 lw_gohei: {立|た}て{札|ふだ} に {渡|わた}り{方|かた} が {書|か}いて ある ん だ が 、 {雪|ゆき} で {半分|はんぶん} {隠|かく}れて いて な 。 {一緒|いっしょ} に {読|よ}んで くれない か 。 || The sign says how to cross, but it's half buried in snow. Will you read it with me?
 !challenge sb.lw_slope
 !if var._res=0 -> later
+!walkto lw_gohei 18 3 up
+!walkto pc 18 4 up
+!walkto comp 19 4 up
 narr: {一人|ひとり} ずつ 、 {斜面|しゃめん} を {見上|みあ}げ ながら 、 {止|と}まらず に {渡|わた}る 。 {斜面|しゃめん} の {雪|ゆき} は 、 {静|しず}か な まま だった 。 || One at a time, eyes on the slope, without stopping. The snow above stays where it is.
+!look lw_gohei pc
+!look pc lw_gohei
 lw_gohei[laugh]: ふう 。 …… {雪崩|なだれ} の {坂|さか} は 、 {一人|ひとり} ずつ 、 {止|と}まらず に 。 {山|やま} の {決|き}まり だ 。 {炭|すみ} を {運|はこ}んで {三十年|さんじゅうねん} 、 {一度|いちど} も {破|やぶ}った こと は ない 。 || Phew. …On an avalanche slope, one at a time and keep going. Mountain rules. Thirty years carrying charcoal and I've never broken them.
 ?(comp=mio) comp[smile]: {手|て} 、 {冷|つめ}たく なって いません か ？ {上|うえ} に {着|つ}いたら 、 {温|あたた}まりましょう 。 || Your hands aren't frozen? Let's warm up once we're at the top.
 ?(comp=ren) comp: {記録|きろく} の {決|き}まり より 、 {山|やま} の {決|き}まり の {方|ほう} が {短|みじか}くて {正確|せいかく} です 。 || Mountain rules are shorter than the records' rules, and more exact.
+!walkto lw_gohei 18 0 up
 !note lw_sb_avalanche
 !set lw_sb_slope_done
 !hook road_done sb_road slope
