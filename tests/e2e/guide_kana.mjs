@@ -34,16 +34,19 @@ async function open(viewport) {
   return { p, errors };
 }
 const pick = async (p, ch) => { await p.evaluate((ch) => { const c = [...document.querySelectorAll('.kcell')].find((x) => x.dataset.k === ch); c.scrollIntoView({ block: 'center' }); }, ch); await p.click('.kcell[data-k="' + ch + '"]'); await p.waitForTimeout(1200); };
-const shown = (p) => p.evaluate(() => {
+const shown = (p) => p.evaluate(async () => {
   // (an older page has no .kdemo-fig: its one canvas sits in .kdemo-box)
   const fig = document.querySelector('.kdemo-fig') || document.querySelector('.kdemo-box');
   const cvs = [...fig.querySelectorAll('canvas')];
   const fr = (cvs[0] && !document.querySelector('.kdemo-fig') ? cvs[0] : fig).getBoundingClientRect();
   const inked = (cv) => { const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] < 120 && d[i + 1] < 120) n++; return n; };
+  // the ink, at its most over a few moments: the demonstration loops, and between loops a box is blank for an instant
+  let ink = cvs.map(inked);
+  for (let k = 0; k < 6; k++) { await new Promise((r) => setTimeout(r, 250)); ink = cvs.map(inked).map((n, j) => Math.max(n, ink[j])); }
   return {
     n: cvs.length, single: cvs.length === 1 && cvs[0].classList.contains('kdemo'),
     attrs: cvs.map((c) => c.width), boxes: cvs.map((c) => { const r = c.getBoundingClientRect(); return [Math.round(r.left - fr.left), Math.round(r.width), Math.round(r.height)]; }),
-    figW: Math.round(fr.width), labels: cvs.map((c) => c.getAttribute('aria-label')), ink: cvs.map(inked),
+    figW: Math.round(fr.width), labels: cvs.map((c) => c.getAttribute('aria-label')), ink,
     info: [...document.querySelectorAll('.kinfo div')].map((x) => x.textContent.trim()),
     line: ((fig.querySelector('.lesson-nodemo') || {}).textContent || '').trim(),
   };
