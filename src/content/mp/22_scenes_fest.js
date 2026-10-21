@@ -209,8 +209,8 @@ narr: {岸|きし} は 、 {人|ひと} で いっぱい だ 。 || The bank is 
 ?(mp_st_square) narr: {井戸|いど} の {広場|ひろば} に {屋台|やたい} が {集|あつ}まり 、 {家族|かぞく} が {座|すわ}って {食|た}べて いる 。 || The stalls are gathered in the well square, where families sit and eat.
 # (RBN-QA-020) down to the rail by the Curtain Bridge, so the bridge and the boats are in view for their lines (the
 # playhouse and the stalls are said where you come onto the bank). From anywhere on the row: over the strip just
-# crossed (spent once mp_fest_walked is set) to get round the crowd, your companion with you, and time for the walk
-# from either end
+# crossed (its condition false once mp_fest_walked is set, at this scene's start) to get round the crowd, your
+# companion with you, and time for the walk from either end
 !walkto pc 24 25 down cross party max=9000
 ?(mp_lan_bridge) narr: {幕橋|まくばし} の {上|うえ} に {提灯|ちょうちん} が {揺|ゆ}れて 、 {川|かわ} に {映|うつ}って いる 。 || Lanterns sway over the Curtain Bridge, mirrored in the river.
 ?(mp_proc_drums) narr: まず 、 {太鼓|たいこ} の {舟|ふね} 。 どん 、 どん 、 と {音|おと} が {川|かわ} を {下|くだ}って いく 。 {後|あと} から 、 {提灯|ちょうちん} の {舟|ふね} が {静|しず}か に {続|つづ}く 。 || First the drum boat: dong, dong, the sound goes down the river. After it, quietly, the lantern boat.

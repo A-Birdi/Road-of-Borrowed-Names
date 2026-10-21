@@ -481,8 +481,9 @@ RB.staging = (function () {
     for (const n of w.npcs.concat(w.extras || [])) if (n !== self && ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y))) return true;
     return false;
   };
-  // (o.cross: a walk the scene marks `cross` may go over a trigger that can no longer fire, as its own once it has
-  // fired: RBN-QA-020, the bank's row-wide strip; any trigger that still could fire is kept off as always)
+  // (o.cross: a walk the scene marks `cross` may go over a trigger whose condition is false now, as the bank's row-wide
+  // strip once its scene has set mp_fest_walked (RBN-QA-020); a trigger with no condition, or whose condition holds,
+  // is kept off as always, and walkPath checks each tile again before stepping onto it)
   function free(x, y, self, o) {
     const w = W(), m = w.map;
     if (x < 0 || y < 0 || x >= m.w || y >= m.h) return false;
@@ -555,14 +556,24 @@ RB.staging = (function () {
     }
     return null;
   }
-  // (party: a walk of yours the scene marks `party`: your companion, if the scene is not directing them, follows a
-  // step behind over the tiles you leave, at your pace, and finishes following once you have arrived)
-  function walkPath(a, path, token, max, party) {
+  // A walk's opt-in options (`!walkto ... cross party`, 70_script.js; RBN-QA-020); without them a walk is as it was.
+  //  - wo.cross: the path may go over triggers whose condition is false now (free()); before each step the next tile
+  //    is checked again, and a trigger whose condition has come true since stops the walk where it is.
+  //  - wo.party (a walk of yours): your companion, if the scene is not directing them, follows a step behind over the
+  //    tiles you leave, at your pace. The following belongs to this scene, this map and this companion: a new scene, a
+  //    map change, a load or another companion stops it at once, and no further step of theirs is started. Once you
+  //    arrive they finish following (the steps they still have, then their last step settled) until `max` + 2 s after
+  //    the walk began at most, and only then does the walk resolve.
+  // `max` bounds your own steps (none starts after it); a step under way always finishes (50_world.js scriptMove).
+  function walkPath(a, path, token, max, wo) {
     const id = idOf(a), t0 = now();
-    const w = W(), c = party && a === w.player && w.comp && !w.comp.route && !owned(w.comp) ? w.comp : null, trail = [];
+    const w = W(), map = w.map, cross = !!(wo && wo.cross);
+    const c = wo && wo.party && a === w.player && w.comp && !w.comp.route && !owned(w.comp) ? w.comp : null, trail = [];
     let walking = !!c;
+    const sceneOn = () => !token || (st.scene && st.scene.token === token);
+    const alive = () => walking && sceneOn() && W().map === map && W().comp === c;
     const follow = () => {
-      if (!c || c.mv) return false;
+      if (!c || c.mv || !alive()) return false;
       for (let j = trail.length - 1; j >= 0; j--) {
         const [tx, ty] = trail[j];
         if (Math.abs(tx - c.x) + Math.abs(ty - c.y) !== 1) continue;
@@ -573,25 +584,37 @@ RB.staging = (function () {
       }
       return false;
     };
-    const tick = () => { if (!walking) return; follow(); setTimeout(tick, 16); };
+    const tick = () => { if (!alive()) { walking = false; return; } follow(); setTimeout(tick, 16); };
     if (c) tick();
-    // after you arrive: the steps they still have to take (bounded), then they stop
-    const catchUp = (k) => (c && k < 8 && trail.length && now() - t0 < max + 2000
-      ? new Promise((r) => setTimeout(r, 16)).then(() => (c.mv ? catchUp(k) : follow() ? catchUp(k + 1) : null)) : Promise.resolve(null));
-    const finish = (r) => (c ? catchUp(0).then(() => { walking = false; return r; }) : Promise.resolve(r));
+    // after you arrive (or stop): the steps they still have, each settled, within the bound; then they stop
+    const settle = () => new Promise((res) => {
+      const go = () => {
+        if (!alive() || now() - t0 > max + 2000) {
+          if (c.mv || trail.length) st.stats.followCut = (st.stats.followCut || 0) + 1;
+          walking = false; res(); return;
+        }
+        if (c.mv || follow()) { setTimeout(go, 16); return; }
+        walking = false; res();
+      };
+      go();
+    });
+    const finish = (r) => (c ? settle().then(() => r) : Promise.resolve(r));
+    const liveTrigger = (x, y) => W().map.triggers.some((t) => x >= t.x && x < t.x + t.w && y >= t.y && y < t.y + t.h && !(t.if && !RB.state.test(RB.game.s, t.if)));
     const step = (i) => {
       if (i >= path.length) return finish(true);
-      if (token && (!st.scene || st.scene.token !== token)) { walking = false; return Promise.resolve(false); } // another scene began
+      if (!sceneOn()) { walking = false; return Promise.resolve(false); } // another scene began: nothing more
       if (now() - t0 > max) return finish(false); // bounded: stop where they are
       const [nx, ny] = path[i];
       const dx = nx - a.x, dy = ny - a.y;
       if (Math.abs(dx) + Math.abs(dy) !== 1) return finish(false);
       if (occupied(nx, ny, a)) return finish(false); // someone stepped in: an authored stance where they are
+      if (cross && liveTrigger(nx, ny)) return finish(false); // a trigger that has come true since: not stepped on
       const dir = dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up';
       if (c) trail.push([a.x, a.y]);
       return RB.world.scriptMove(id, dir, 1, a === W().player ? 200 : 240).then(() => step(i + 1));
     };
-    return step(0);
+    const run = step(0);
+    return c ? run.finally(() => { walking = false; }) : run;
   }
   async function walkTo(ref, x, y, dir, o, ctx) {
     o = o || {};
@@ -609,17 +632,19 @@ RB.staging = (function () {
     let ok = false;
     if (a.x === x && a.y === y) ok = true;
     else if (o.now || RB.game.fastForward()) {
-      // in the dark of a fade (or skipping a seen scene): set them there, if the place is free
+      // in the dark of a fade (or skipping a seen scene): set them there, if the place is free (`cross` and `party`
+      // play no part here: the destination is checked as always, and your companion rejoins you at the scene's end)
       if (free(x, y, a)) { a.x = x; a.y = y; a.fx = x; a.fy = y; a.mv = null; if (a === W().player) syncPlayer(); ok = true; }
     } else {
       const bo = o.cross ? { cross: true } : undefined;
       let path = bfs(a, x, y, bo);
       if (!path) {
-        // (only your following companion in the way: they make way first)
+        // (only your following companion in the way: they make way first; the scene then directs them, so a `party`
+        // walk of yours that follows has no one to bring along)
         const way = makeWay(a, x, y);
         if (way) { own(W().comp); if (await walkPath(W().comp, way, sc ? sc.token : 0, 3000)) path = bfs(a, x, y, bo); }
       }
-      if (path) ok = await walkPath(a, path, sc ? sc.token : 0, o.max || 4000, !!o.party);
+      if (path) ok = await walkPath(a, path, sc ? sc.token : 0, o.max || 4000, o.cross || o.party ? { cross: !!o.cross, party: !!o.party } : undefined);
     }
     if (!ok) st.stats.walkFallbacks++;
     if (sc && sc.reserved.get(a) === x + ',' + y && !ok) sc.reserved.delete(a);
