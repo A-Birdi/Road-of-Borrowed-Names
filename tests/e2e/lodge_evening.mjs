@@ -6,8 +6,8 @@
 //  1. at the gathering line: you at (20,7) facing the lamp, your companion beside you, Mokichi, Sora and (when she has
 //     moved to the lodge) Kikyō round the lamp with Hisae; the lamp, Hisae and all of them in view, on a desktop
 //     (1280 × 800) and a phone (390 × 844); without Kikyō at the lodge, no Kikyō;
-//  2. each companion's branch (Ren, Nao, Mio, Suzu) runs as before and ends with them still gathered; 12 s later
-//     they are still there;
+//  2. each companion's branch (Ren, Nao, Mio, Suzu) runs as before, its choice answered (Ren goes up the ridge; the
+//     others, answered the quiet way, make up), and ends with them still gathered; 12 s later they are still there;
 //  3. talking to Mokichi where he stands runs his own scene (kr.mokichi); the way to Hisae is open;
 //  4. the visit's end: leaving and coming back, or the game opened afresh with a save made there (one made while they
 //     were gathered, and one made after coming back), finds them at their usual places (visit-only staging); a load
@@ -71,7 +71,10 @@ for (const comp of ['ren', 'nao', 'mio', 'suzu']) {
   await r.p.waitForTimeout(12000);
   const later = await where(r.p);
   const branch = await r.p.evaluate(() => ({ apart: !!RB.game.s.flags.kr_apart, quarrel: !!RB.game.s.flags.kr_quarrel, made: !!RB.game.s.flags.kr_makeup_done, seen: !!RB.game.s.flags.kr_evening_seen }));
-  ok(gathered(r.end, true) && later.mokichi.at.join() === '18,9' && later.sora.at.join() === '19,10' && later.kikyo.at.join() === '22,9' && branch.seen && !r.errors.length, comp + ': the branch runs as before ' + JSON.stringify(branch) + ', and 12 s later they are still round the lamp (' + JSON.stringify({ later }) + ')');
+  // the branch's own outcome, from its choice: Ren goes up the ridge (kr_apart); the others, answered the quiet way,
+  // make up there and then (kr_makeup_done, no quarrel)
+  const answered = comp === 'ren' ? branch.apart && !branch.quarrel : branch.made && !branch.quarrel && !branch.apart;
+  ok(gathered(r.end, true) && later.mokichi.at.join() === '18,9' && later.sora.at.join() === '19,10' && later.kikyo.at.join() === '22,9' && branch.seen && answered && !r.errors.length, comp + ': the branch runs as before, its choice answered ' + JSON.stringify(branch) + ', and 12 s later they are still round the lamp (' + JSON.stringify({ later }) + ')');
   // 3. Mokichi's own scene where he stands, and the way to Hisae open
   if (comp === 'suzu') {
     const talk = await r.p.evaluate(async () => {
