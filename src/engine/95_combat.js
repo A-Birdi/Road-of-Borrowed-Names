@@ -223,6 +223,13 @@ RB.combatLogic = (function () {
     const o = {};
     for (const k in x) if (FOE_KEYS.indexOf(k) < 0 && k !== 'foes' && k !== 'actors') o[k] = x[k];
     o.ward = Object.assign({}, x.ward);
+    // the lasting effects (src/engine/95b_modifiers.js) are the copy's own: a preview or a look ahead that raises,
+    // spends or breaks one leaves the battle's as it was (RBN-QA-058, RBN-QA-059)
+    if (x.mods) {
+      o.mods = Object.assign({}, x.mods);
+      if (x.mods.any) o.mods.any = Object.assign({}, x.mods.any);
+      if (x.mods.soaked) o.mods.soaked = Object.assign({}, x.mods.soaked);
+    }
     if (x.actors) {
       // the copy keeps the same participants in the same order, each its own record; the creatures' view is
       // rebuilt from the copies, so a copied creature is the same object in both lists
