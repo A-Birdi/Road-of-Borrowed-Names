@@ -6,9 +6,9 @@
  *   leaves  past noon, over the bow: the open western sea, the sea-glass teal of Kotonoha's water, and the first gold
  *           leaves riding the waves (the nearer ones the island's written leaves as its first sight draws them,
  *           42g_interlude_firstsight.js; the far ones the falling-leaf weather's own, 60_render.js)
- *   back    the run home, looking back over the stern: the island low on the sea and the great tree on its crown (as
- *           the Wind Stone's shot draws it, 43k_seq_ko.js) drawing away into the evening sun, the sun's path on the
- *           water and the wake leading back to it
+ *   back    the run home, looking back over the stern: the island low on the sea and the great tree on its crown (its
+ *           wide umbrella and low limbs as its first sight draws it, 42g_interlude_firstsight.js) drawing away into
+ *           the evening sun, the sun's path on the water and the wake leading back to it
  * The scene is already dark when its lines begin: the picture brings itself up from that dark, and passes from one
  * moment to the next, by itself (in stepped alpha, while the line is read), so nothing in the scene waits on it; the
  * scene goes dark again before its warp and ends it there, so the place you arrive at appears as it always has. The
@@ -350,11 +350,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const rise = Math.pow(Math.sin(Math.PI * u), 0.6) * s(6) + Math.exp(-Math.pow((x - crownX) / (iw * 0.34), 2)) * hillH;
         return Math.round(base - rise - s(1) * Math.sin(x * 0.21 / G.Z));
       };
-      const rw = Math.round(iw * 0.62), rh = Math.round(rw / 3.2);
+      // the great tree's crown, as wide as its first sight has it (half-width rw, half-height rh, its middle cy): an umbrella
+      // over the island, low and flat, its far ends hanging lower than its middle
+      const rw = Math.round(iw * 0.73), rh = Math.max(4, Math.round(rw / 4.6));
       const tx = crownX, ty = prof(tx) + Math.max(1, Math.round(s(3) * 0.4));
-      const cy = ty - Math.round(rh * 1.67), top = cy + Math.round(rh * 0.13);
-      // the sun, low, just behind the crown's left side
-      const sun = { x: Math.round(tx - rw * 0.78), y: Math.round(cy + rh * 0.55), r: Math.max(5, s(narrow ? 12 : 13)) };
+      const cy = ty - Math.round(rh * 1.05);
+      // the sun, low, just behind the crown's left side, among its long limbs
+      const sun = { x: Math.round(tx - rw * 0.62), y: Math.round(cy + rh * 0.35), r: Math.max(5, s(narrow ? 12 : 13)) };
       P.halo(g, sun.x, sun.y, sun.r * 5, '255,214,150', 0.42, 6);
       g.fillStyle = '#ffe2a8'; P.disc(g, sun.x, sun.y, sun.r); g.fillStyle = '#fff2d2'; P.disc(g, sun.x - 1, sun.y - 1, Math.max(1, sun.r - s(3)));
       // a few low banks of cloud, their tops in the dusk's shade and their undersides lit by the sun below them
@@ -381,13 +383,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const hx = Math.round(ix + iw * f), hy = prof(hx) + s(3), hwid = Math.max(3, s(5));
         L.poly([[hx - hwid, hy + 1], [hx - hwid + s(2), hy - s(3)], [hx + hwid - s(2), hy - s(3)], [hx + hwid, hy + 1]], thatch, (x, y) => (y < hy - s(2) ? 0.9 : x < hx ? 0.6 : 0.2));
       }
-      // the great tree, as the Wind Stone's shot draws it: its trunk scaled to the distance, its crown wide over the island
-      // (the Wind Stone's trunk and leaf, #6a5038 and #4a7a3a, here in the shade of the dusk with the low sun on their left)
+      // the great tree as the island's first sight draws it (RB.firstSightArt.paintTree, 42g_interlude_firstsight.js;
+      // RBN-QA-072 refine, Agnes 6322775156): its long limbs reaching out low under a wide umbrella of separate leaf masses,
+      // its trunk flaring into the crown of the hill, all at the distance (its own scale), so it is the same tree as when
+      // you landed (the Wind Stone's trunk and leaf, #6a5038 and #4a7a3a, here in the shade of the dusk with the low sun
+      // on their left)
       const trunk = P.mat(null, { cols: ['#1a161c', '#241e22', '#2e2626', '#3a302c', '#5a4434', '#8a6440', '#c08a50'], at: 3, lineCol: '#0e0c12' });
       const lf = (k) => hexOf(mix3('#4a7a3a', '#141c26', k));
       const leafM = P.mat(null, { cols: [lf(0.86), lf(0.8), lf(0.74), lf(0.68), lf(0.62), lf(0.55), lf(0.47), lf(0.38), hexOf(mix3('#5a6a34', '#d09050', 0.55)), '#f2c070'], at: 4, lineCol: '#0c1014' });
-      const ks = narrow ? 0.4 : 0.42, sk = (n) => Math.max(1, Math.round(n * ks));
-      RB.seqKo.greatTree(L, sk, tx, ty, top, cy, rw, rh, trunk, leafM);
+      const kt = rw / 217, Gt = { s: (n) => Math.max(1, Math.round(n * kt)), narrow: false, tx, crest: ty - Math.max(1, Math.round(3 * kt)), cr: { x: tx, y: cy, rx: rw, ry: rh } };
+      RB.firstSightArt.paintTree(L, Gt, trunk, leafM);
       backlit(L, leafM, 7, tx + Math.round(rw * 0.2) - lx0);
       L.outline();
       const lc = L.canvas();

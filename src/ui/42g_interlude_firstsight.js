@@ -188,10 +188,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       });
     }
   }
-  function tree(G) {
-    const { s, tx, crest, cr, w, h } = G, p = K(), SP = RB.seqPaint;
-    const L = SP.layer(w, h);
-    const trunk = p.mat(TRUNK, { n: 7, at: 3, step: 0.08 }), leafM = p.mat(CROWN, { n: 7, at: 3, step: 0.08 });
+  // The tree's shape painted into a layer L in the materials given: its limbs, its trunk flaring into the hill with its
+  // roots, its crown cluster by cluster (G: s, narrow, tx, crest, cr). Shared: the crossing's view of the island
+  // drawing away from Tetsu's boat paints the same tree at a distance in the evening's shade (RB.firstSightArt.paintTree,
+  // src/ui/42f_interlude_crossing.js; RBN-QA-072 refine, Agnes 6322775156).
+  function paintTree(L, G, trunk, leafM) {
+    const { s, tx, crest, cr } = G;
     const hw = s(G.narrow ? 9 : 10), base = crest + s(3), fork = Math.round(cr.y + cr.ry * 0.5);
     const bark = (x) => (((Math.round(x * 0.7) * 5) % 7) === 0 ? -0.12 : 0); // "stone"'s bark lines
     // the limbs, in the crown's shade: from the fork out through a bend, thinning
@@ -213,6 +215,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     // the crown, cluster by cluster: out from the far ends to the dome, the low ones over the fork last (nearest)
     for (const [lx, ly, rw, rh, n, seed] of CLUSTERS) cluster(L, G, tx + lx * cr.rx, cr.y + ly * cr.ry, rw * cr.rx, rh * cr.ry, leafM, n, seed);
+    return { hw, base, fork };
+  }
+  function tree(G) {
+    const { w, h, tx } = G, p = K(), SP = RB.seqPaint;
+    const L = SP.layer(w, h);
+    const trunk = p.mat(TRUNK, { n: 7, at: 3, step: 0.08 }), leafM = p.mat(CROWN, { n: 7, at: 3, step: 0.08 });
+    const { hw, base, fork } = paintTree(L, G, trunk, leafM);
     L.outline();
     // the crown's extent (its leaves), for the layout and the tests
     let x0 = w, y0 = h, x1 = -1, y1 = -1;
@@ -461,7 +470,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         gold: { n: G.narrow ? 4 : 5, now: drawn.map((d) => ({ box: d.box.slice(), len: d.len })), clear: keepClear(G, V) } };
     },
   };
-  // the written leaf, for the island's other pictures of its leaves (the leaves on the water in the crossing from
-  // Saltglass, src/ui/42f_interlude_crossing.js, RBN-QA-072)
-  RB.firstSightArt = { goldLeaf };
+  // the written leaf and the tree's shape, for the island's other pictures of them (the leaves on the water and the tree
+  // drawing away in the crossing from Saltglass, src/ui/42f_interlude_crossing.js, RBN-QA-072)
+  RB.firstSightArt = { goldLeaf, paintTree };
 })();
