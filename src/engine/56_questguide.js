@@ -844,7 +844,7 @@ RB.questGuide = (function () {
     boat: ['{船|ふね}', 'the boat'], sea_buoy: ['ブイ', 'the buoy'],
     cr_satchel: ['{状箱|じょうばこ}', 'the letter box'], cr_joyato: ['{常夜灯|じょうやとう}', 'the everlasting lamp'], cr_kago: ['{駕籠|かご}', 'the palanquin'],
     cr_horse: ['{馬|うま}', 'the pack horse'], cr_bigcedar: ['{大杉|おおすぎ}', 'the great cedar'],
-    co_seal: ['ガラス の {封|ふう}', 'the glass seal'],
+    co_seal: ['ガラス の {封|ふう}', 'the glass seal'], stairs: ['{階段|かいだん}', 'the stairs'],
   };
   const PROP_PREFIX = [
     [/icewall/, '{氷|こおり}', 'the ice'], [/dial/, '{仕掛|しか}け', 'the dial mechanism'], [/crank/, 'ハンドル', 'the crank'], [/lamp/, '{灯|あか}り', 'the lamp'],
