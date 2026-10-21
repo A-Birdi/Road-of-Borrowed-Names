@@ -1151,6 +1151,7 @@ RB.world = (function () {
     if (!stillThere(pt.target)) return;
     const t = beside(tilesOf(pt.target), p.x, p.y);
     if (!t) return; // it moved away while you walked
+    if (pt.only && actorAt(t[0], t[1]) !== pt.only) return; // (a retry from across a counter: that person, nobody else)
     faceTo(p, t[0], t[1]);
     interact();
   }
@@ -1199,7 +1200,7 @@ RB.world = (function () {
   function talkAcross(target, tries) {
     const p = W.player, n = target.ref, spots = acrossSpots(n);
     const here = spots.find((sp) => sp.at[0] === p.x && sp.at[1] === p.y);
-    if (here) { faceTo(p, here.counter[0], here.counter[1]); interact(); return; }
+    if (here) { if (actorAt(n.x, n.y) === n) { faceTo(p, here.counter[0], here.counter[1]); interact(); } return; }
     const way = spots.length ? bfsGoal((x, y) => spots.some((sp) => sp.at[0] === x && sp.at[1] === y)) : null;
     if (!way || !way.length) return;
     const end = way[way.length - 1], sp = spots.find((q) => q.at[0] === end[0] && q.at[1] === end[1]);
@@ -1212,14 +1213,16 @@ RB.world = (function () {
     const same = stillThere(a.target) && n.x === a.pos[0] && n.y === a.pos[1] && !n.mv && actorAt(a.pos[0], a.pos[1]) === n &&
       counter === a.prop && (counter.p === 'counter' || counter.across) && p.x === a.at[0] && p.y === a.at[1];
     if (same) { faceTo(p, a.counter[0], a.counter[1]); interact(); return; }
-    // changed while you walked: the same person, if still here, once more (from where they are now); otherwise nothing
-    if (stillThere(a.target) && a.tries < 1) {
-      const tiles = tilesOf(a.target), near = beside(tiles, p.x, p.y);
-      if (near) { faceTo(p, near[0], near[1]); interact(); return; }
-      const path = bfsGoal((x, y) => !tiles.some(([tx, ty]) => tx === x && ty === y) && !!beside(tiles, x, y));
-      if (path && path.length) { W.path = path; W.pathTarget = { target: a.target, path }; return; }
-      talkAcross(a.target, a.tries + 1);
-    }
+    // the one retry (Agnes and Local, REFINE of 9a7bc73): the same person, still here, who has moved while you walked,
+    // once more from where they are now. Anything else that changed (the counter replaced or taken away while they
+    // stood still, someone else in their place, a retry already spent): nothing happens.
+    const moved = stillThere(a.target) && (n.x !== a.pos[0] || n.y !== a.pos[1]);
+    if (!moved || a.tries >= 1) return;
+    const tiles = tilesOf(a.target), near = beside(tiles, p.x, p.y);
+    if (near) { if (actorAt(near[0], near[1]) === n) { faceTo(p, near[0], near[1]); interact(); } return; }
+    const path = bfsGoal((x, y) => !tiles.some(([tx, ty]) => tx === x && ty === y) && !!beside(tiles, x, y));
+    if (path && path.length) { W.path = path; W.pathTarget = { target: a.target, path, only: n }; return; }
+    talkAcross(a.target, a.tries + 1);
   }
   // the places a person can be talked to across a counter: a counter (or an `across` prop) beside them, and its free
   // far side
