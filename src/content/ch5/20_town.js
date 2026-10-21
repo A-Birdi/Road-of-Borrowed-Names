@@ -8,15 +8,24 @@ RB.script.add(`
 # the lake; your companion's first look at the town in their own way (Nao points it out and settles the satchel
 # strap over the undelivered letter, Mio leans in to the straight streets and checks her bottles, Ren presents the
 # view with an open hand and glances away at "probably", Suzu's showman's welcome and her glance away at the quiet);
-# you point the way down.
+# you point the way down. The view itself is shown as a picture over the two lines that describe it
+# (src/ui/42d_interlude_valley.js; RBN-QA-064): from the road's edge between the pines, the town on the valley
+# floor with its indigo roofs, narrow canals and rows of lamps, and out in the lake the tower's top; then back on
+# the road where you stand.
 !set lf_arrived
 !chapter 5
 !gesture pc lookroad right
 narr: {松|まつ} の {林|はやし} を {抜|ぬ}ける と 、{急|きゅう} に {谷|たに} が {開|ひら}けた 。|| The road comes out of the pines, and all at once the valley opens below you.
 !card {第五章|だいごしょう} 　{灯落|ひおち} || Chapter 5 — Lanternfall
+!fade out
+!interlude lf_valley
+!fade in 600
 narr: {藍色|あいいろ} の {屋根|やね} 、{細|ほそ}い {運河|うんが} 、{行儀|ぎょうぎ} よく {並|なら}んだ {灯|あか}り 。|| Indigo roofs, narrow canals, lanterns standing in well-mannered rows.
 !gesture pc shadeeyes right
 narr: {湖|みずうみ} の {中|なか} から 、{古|ふる}い {塔|とう} の {先|さき} だけ が {突|つ}き{出|で}て いる 。|| Out in the lake, only the top of an old tower breaks the water.
+!fade out
+!interlude -
+!fade in
 ?(comp=nao) !gesture comp point right
 ?(comp=nao) comp[smirk]: {着|つ}いた 。{灯落|ひおち} だ 。{書類|しょるい} の {町|まち} だよ 。|| Here we are. Lanternfall. Town of paperwork.
 ?(comp=nao) comp[think]: …… {変|へん} だな 。{静|しず}か すぎる 。{前|まえ} は {役所|やくしょ} の {前|まえ} で 、{誰|だれ} か が いつも {言|い}い{争|あらそ}って いた のに 。|| …Odd. Too quiet. Last time, somebody was always arguing outside the offices.
