@@ -8,7 +8,8 @@
 //     Hisae (20,10) are on screen, on a desktop and on a phone (before, they were off its edge);
 //  4. the scene ends as before (kr_lodge_seen, the quest's next step) and you walk on from there; reduced motion
 //     too; no page errors;
-//  5. (Agnes) entering again: no scene; at night after the cave: kr.evening as before, no walk-in; with your companion
+//  5. (Agnes) entering again: no scene; at night after the cave: kr.evening, not this walk-in (since RBN-QA-062 it walks
+//     you to Hisae's lamp itself); with your companion
 //     away (kr_apart): the walk-in alone, nobody brought; a load during the walk: the loaded journey, nothing walking.
 // Usage: node tools/build.mjs && node tests/e2e/lodge_arrival.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -94,8 +95,10 @@ async function enter(comp, flags, o = {}) {
 {
   const { p, errors, st } = await enter('ren', Object.assign({ kr_lodge_seen: true, kr_night: true }, FL));
   let r = null;
-  for (let i = 0; i < 40 && !(r && r.d); i++) { await p.waitForTimeout(150); r = await st(); }
-  ok(r && /Stars over the lodge/.test(r.d || '') && r.pc[0] <= 2 && r.pc[1] === 18, 'at night after the cave: kr.evening as before, said where you come in, no walk-in (' + JSON.stringify(r) + ')');
+  for (let i = 0; i < 120 && !(r && r.d); i++) { await p.waitForTimeout(150); r = await st(); }
+  // (RBN-QA-062: the evening now walks you to Hisae's lamp before its line, from wherever you come in; never this
+  // arrival's walk to 15,12)
+  ok(r && /Stars over the lodge/.test(r.d || '') && r.pc[0] === 20 && r.pc[1] === 7, 'at night after the cave: kr.evening, said at Hisae\'s lamp (QA-062), not this arrival\'s walk-in (' + JSON.stringify(r) + ')');
   ok(!errors.length, 'night: no page errors');
   await p.close();
 }

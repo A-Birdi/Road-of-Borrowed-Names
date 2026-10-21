@@ -24,7 +24,7 @@ RB.script.add(`
 !walkto kr_mokichi 18 9 right now stay
 !walkto kr_sora 19 10 up now stay
 ?(kr_kikyo_lodge) !walkto kr_kikyo 22 9 left now stay
-!walkto pc 20 7 down party max=6000
+!walkto pc 20 7 down party max=12000
 narr: {宿坊|しゅくぼう} の {上|うえ} に 、 {星|ほし} が {出|で}て いる 。 ヒサエ の {灯|ひ} の まわり に 、 モキチ の {家族|かぞく} と キキョウ が {集|あつ}まって いる 。 || Stars over the lodge. Mokichi's family and Kikyō have gathered round Hisae's lamp.
 ?(comp=ren) !call kr.ren_evening
 ?(comp=nao) !call kr.nao_evening
