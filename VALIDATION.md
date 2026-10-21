@@ -5484,6 +5484,15 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-009:** `index.html` sha256 `f9e4274265efcd330de45a34a11f6efdb6139047fbe043ee9b079b731fd960b0`, built
+    from `0f5c3be` (accepted-only: CC-008 plus RBN-QA-033, 032, 036, 020, 048, 049 with its refine, 050, 039/040/042,
+    047, and the fog event's tests); byte-identical to the scratch build the suites ran on. On this exact file (B):
+    `walkto_options` 23/0, `geese_event` 15/0, `counter_tap` 30/0, `fare_pay_staging` 36/0, `learning_qa039` 44/0,
+    `goatshed_fence` 10/0, `learning_ui` 15/0, `kana_homophones` 208/0, `lookout_vista` 22/0, `festival_games` 5/0,
+    `manybridge2` 4/0, `staging_variants --quick` 701/0; `fog_event` 25/1: the free-roam check read the road's own
+    once-only onEnter scene (`sg.road_open`, "the north road is open", which the test's flags left unseen) as the fog's
+    scene; test-only fix (`sg_road_open_seen` in the setup) on `candidate/qa-048-tests`, 26/0 four times on a
+    build of `b883f1f`, for review. U whole suite 57,696/0; `validate.mjs` no errors. Voice: none.
   - **Candidate CC-008:** `index.html` sha256 `203e2bd31f4c7926bf362d45f439a485fe13f84da3e32ca6271ef32c2dd152e4`, built
     from `45fb382` (CC-007 plus T02's counting wording). On this exact file (B): `kana_homophones` 208/0, `learning_ui`
     15/0. Voice: none.
@@ -5597,6 +5606,9 @@ Yasu's story, when listening, has not begun being spoken."
       dividers, 10-42 % pale pixels per cell; here 5.6-6.4 %, the rails' own); blocked cells and goats identical on
       both builds; B `story_ch4` all 8 profile/companion runs passed; U `world` 123/0, `worldkit` 10/0,
       `scene_manifest` 1023/0, `quest_guide` 150/0; `validate.mjs` no errors. Frames looked at (not committed).
+    - Integrated (CC-044): qa-047 `be8f90b` -> `748d593`, qa-049b `e93076d` -> `dcec221`, qa-048-tests `b883f1f` ->
+      `0f5c3be` (three AGREEs each: Cloud CC-043, Agnes 6308872303 / 6308920894, Local CL-070); patch-ids equal over
+      every file but run.mjs; Agnes 6309061501 and Local CL-072 verified the chain independently.
   - **RBN-QA-032 in source (Robin approved 2026-10-20 from the frames, to review in play; `8cfedf2`, cherry-picked
     from `523f9ba`):** `git diff 523f9ba 8cfedf2 -- src tests tools data assets` is empty (the candidate's tests above
     ran on the same code); on a scratch build of `8cfedf2`: B `lookout_vista` 22/0, `story_ch3 E nao` 38 checks passed,

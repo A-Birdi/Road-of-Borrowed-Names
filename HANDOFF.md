@@ -712,6 +712,15 @@
       it. Also posted: `candidate/qa-047` `be8f90b`; the fog test follow-up `candidate/qa-048-tests`; RBN-QA-053 filed
       by Cloud (after a load mid-scene from the Ledger, the old line's dialogue box stays on screen; History -> Ledger
       -> Save & Load reaches it in ordinary play); proposal verdicts on RBN-QA-051 and 052.
+      INTEGRATED (CC-044): qa-047 `be8f90b` -> `748d593`, qa-049b `e93076d` -> `dcec221`, qa-048-tests `b883f1f` ->
+      `0f5c3be` (three AGREEs each; patch-ids equal; Agnes 6309061501 and Local CL-072 verified the chain).
+      CANDIDATE CC-009 (`index.html` `f9e42742…`, built from `0f5c3be`): accepted-only, CC-008 plus RBN-QA-033, 032,
+      036, 020, 048, 049 (+ refine), 050, 039/040/042, 047 and the fog tests; U whole suite 57,696/0 and the batch's B
+      suites green on this file except `fog_event` 25/1 (the test read the road's own once-only "north road is open"
+      scene as the fog's; a test-only fix, `sg_road_open_seen` in its setup, is on `candidate/qa-048-tests` for
+      review). Not in CC-009, each its own candidate for review: QA-051 `4d3197c`, QA-052 `d54e5a2`, qa-024i
+      `e3981b8`, QA-053 and QA-054 (in progress); QA-045 (the guide naming a later, unreachable step: the observatory's
+      dial before the ice is melted, Keepers' Road's Deepest Shelves before the cave rite) investigated, proposal next.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

@@ -1233,28 +1233,33 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   ("The road on": west to the Orchard Road, then north, until `sb_arrived`; then the climb to the hamlet, until
   `sb_hamlet_seen`); a main quest's `next`, checked by `validate.mjs`; no marker, gate, line or voice key changed
   (`54339ee`); B `road_on` 11/0 (CC-008 fails 4), `route_after_ch2` 29/0, `quest_guide` all passed; U whole suite
-  57,664/0. In source, for the next build.
+  57,664/0. In candidate CC-009 (`f9e42742…`, built from `0f5c3be`), READY_FOR_QA.
   RBN-QA-032 (Robin approved 2026-10-20 from the frames, to review in play): the festival lookout's vista shown as
   pictures over the lines that describe it (src/ui/42c_interlude_lookout.js, new art, provisional under AC-1): the
   village and its firebreaks, the stage and Hiro's seat (Suzu dancing unless she is the companion), the road and the
   snowy peaks; every other line on the platform; no line, voice key, flag or gate changed (`8cfedf2`); B
-  `lookout_vista` (new; CC-008 fails 7). In source, for the next build.
+  `lookout_vista` (new; CC-008 fails 7). In candidate CC-009 (`f9e42742…`, built from `0f5c3be`), READY_FOR_QA.
   RBN-QA-036 (three-party AGREE at `bf4c0ef`: Cloud CC-039, Agnes 6306739023, Local CL-061): a tap on someone behind a
   counter with no free place beside them (Yae at Yukimiya, Sousuke at the post shelter's desk) walks to the counter's
   front and talks across it; the walk remembers whom it is for, and only a person who moved is tried again (a counter
   swapped or removed, someone else in their place: nothing happens); cherry-picked as `17591c4`, `1ddd834`, `3b63a2c`;
-  B `counter_tap` 30/0 on a build of the merged source (src/tests/tools identical to `bf4c0ef`). In source, for the
-  next build; Agnes's authored Yae/Sousuke UI retest still to come.
+  B `counter_tap` 30/0 on a build of the merged source (src/tests/tools identical to `bf4c0ef`). In candidate CC-009 (`f9e42742…`, built from `0f5c3be`), READY_FOR_QA; Agnes's authored Yae/Sousuke UI retest still to come.
   RBN-QA-020, 048, 049 (three-party AGREE: Cloud CC-040, Local CL-065, Agnes 6307800434 at source/contract level):
   the festival night's walk to the rail with your companion (`!walkto` `cross`/`party`/`max=`), the coast road's fog
   event shows fog (`fog` ambience, `drawHaze`), the geese on the Reedwake road; each candidate's commits cherry-picked
   onto the integrated source (`0e4c46e`, `3515144`, `86b9d02`, `cad556c`, `cf7c24a`; patch-identical); B
-  `walkto_options` 23/0, `fog_event` 14/0, `geese_event` 15/0 on a build of `cf7c24a`. In source, for the next build;
+  `walkto_options` 23/0, `fog_event` 14/0, `geese_event` 15/0 on a build of `cf7c24a`. In candidate CC-009 (`f9e42742…`, built from `0f5c3be`), READY_FOR_QA;
   Agnes's post-integration visual retest still to come.
   RBN-QA-050 and RBN-QA-039/040/042 (three-party AGREE: Cloud CC-042, Agnes 6308146009 / 6308182771, Local CL-067):
   the fare repaid seated then side by side (Kōji facing her with the book), combined kana boxes, the activities'
   next page from the top, っ/ッ/ー named in words; cherry-picked as `774511e`, `4731de8`, `cdf37db`; B
-  `fare_pay_staging` 36/0, `learning_qa039` 44/0 on a build of `cdf37db`. In source, for the next build. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  `fare_pay_staging` 36/0, `learning_qa039` 44/0 on a build of `cdf37db`. In candidate CC-009 (`f9e42742…`, built from `0f5c3be`), READY_FOR_QA.
+  RBN-QA-047 and the qa-049 refine (three-party AGREE: Cloud CC-043, Agnes 6308872303 / 6308920894, Local CL-070): the goat shed's
+  stall dividers stand on its boards (`sb.goatshed`'s own legend: wood under the fence), and the geese have no face
+  portrait (a creature drawn only by its own sprite brings none; `portrait_anim` green again); with the fog event's
+  Skip seen and real-load tests (test only); cherry-picked as `748d593`, `dcec221`, `0f5c3be` (patch-identical, verified
+  by Agnes 6309061501 and Local CL-072); B `goatshed_fence` 10/0, `geese_event` 15/0 and U whole suite 57,696/0 on
+  CC-009's own file. In candidate CC-009 (`f9e42742…`, built from `0f5c3be`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand
