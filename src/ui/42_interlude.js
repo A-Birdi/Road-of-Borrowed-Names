@@ -15,6 +15,7 @@
  *   RB.interlude.ART[id] = { stages: [...], draw(c, w, h, t, st) }
  *     st: { stage, since: ms in this stage, vb, still }
  *   RB.interlude.show(id, stage)   start one, or move it to a stage
+ *   RB.interlude.ahead(id, stages) have its still layers built ahead, in idle time (`!interlude <id> <stage>… ahead`)
  *   RB.interlude.clear()           back to the map (drops the cached layers)
  *   RB.interlude.state()           { id, stage, since } or null (tests)
  *   RB.interlude.sheetTop(rec, h)  the measurement above, shared with the illustrated sequences
@@ -78,11 +79,26 @@ RB.interlude = (function () {
     if (!RB.render.getOverride || RB.render.getOverride() === frame) RB.render.setOverride(null);
     if (RB.prologueArt) RB.prologueArt.release();
   }
+  // A scene that knows a picture is coming can have its still layers built ahead, while the screen is still up (the
+  // fade before it), in idle time so that nothing waits on it: `!interlude <id> <stage>… ahead`. Nothing is shown;
+  // showing it then costs no frame. The picture's own prepare(w, h, vb, stage) builds them, at the size the screen is
+  // now and for the sheet where it is now (as the picture will measure it when shown).
+  function ahead(id, stages) {
+    const A = ART[id];
+    if (!A || !A.prepare || typeof document === 'undefined' || !RB.render) return;
+    const run = () => {
+      const vs = RB.render.viewSize(), w = Math.round(vs.w * RB.render.ART), h = Math.round(vs.h * RB.render.ART);
+      if (!w || !h) return;
+      const vb = sheetTop({ top: null }, h);
+      try { for (const st of stages && stages.length ? stages : [A.stages[0]]) A.prepare(w, h, vb, st); } catch (err) { console.error('interlude ahead', id, err); }
+    };
+    if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 200 }); else setTimeout(run, 0);
+  }
   const state = () => (cur ? { id: cur.id, stage: cur.stage, since: Math.round(now() - cur.at) } : null);
   // A campaign that changes (a load, a new journey, the title) ends the scene that showed a picture before the
   // scene's own end could clear it (src/engine/70_script.js), and hands the screen back to the map: the picture goes
   // with it, so the same interlude shown again is drawn again (RBN-QA-064 refine, Agnes 6318475345).
   if (RB.bus) RB.bus.on('campaign:changing', clear);
 
-  return { ART, show, clear, state, active: () => !!cur, sheetTop };
+  return { ART, show, ahead, clear, state, active: () => !!cur, sheetTop };
 })();

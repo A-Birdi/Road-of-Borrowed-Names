@@ -74,9 +74,20 @@ tetsu: どこ へ {行|い}く 。 || Where to?
 :end
 
 @scene ko.ferry_out
+# The crossing is seen from Tetsu's boat over its two lines (src/ui/42f_interlude_crossing.js; RBN-QA-072): the point
+# and Saltglass's lighthouse falling behind the stern, then the open western sea with the first gold leaves on the
+# waves. Its layers are built while the screen fades ("ahead"); it is set in the dark this scene already had and brings
+# itself up from it while the line is read ("!fade in 1" only lifts the black), and the black comes back at once
+# before the warp: nothing waits on it.
+!interlude ko_crossing out leaves ahead
 !fade out
+!interlude ko_crossing out
+!fade in 1
 narr: {船|ふね} は {灯台|とうだい} の {先|さき} を {抜|ぬ}けて 、 {西|にし} の {沖|おき} へ {出|で}る 。 {陸|りく} が {少|すこ}し ずつ {小|ちい}さく なって いく 。 || The boat clears the lighthouse and heads west, out to sea. Little by little the land grows small.
+!interlude ko_crossing leaves
 narr: {昼|ひる} を {過|す}ぎる と 、 {波|なみ} の {間|あいだ} に 、 {金色|きんいろ} の {葉|は} が {浮|う}かび{始|はじ}めた 。 || Past noon, gold leaves begin to float between the waves.
+!fade out 1
+!interlude -
 !warp ko.shore 20 22 up
 !fade in
 ?(!ko_arrived) !call ko.first_sight
@@ -88,8 +99,14 @@ narr: テツ の {船|ふね} が 、 {桟橋|さんばし} に {繋|つな}い�
 * {潮硝子|しおがらす} へ {戻|もど}る 。 || Go back to Saltglass. -> go
 * まだ {乗|の}らない 。 || Not yet. -> end
 :go
+# (its line over the island drawing away behind the stern, as in ko.ferry_out: src/ui/42f_interlude_crossing.js)
+!interlude ko_crossing back ahead
 !fade out
+!interlude ko_crossing back
+!fade in 1
 narr: {船|ふね} は {東|ひがし} へ 。 {大|おお}きな {木|き} が 、 {夕日|ゆうひ} の {中|なか} で {遠|とお}ざかって いく 。 || The boat heads east. The great tree draws away into the evening sun.
+!fade out 1
+!interlude -
 !warp sg.harbor 33 28 up
 !fade in
 :end
