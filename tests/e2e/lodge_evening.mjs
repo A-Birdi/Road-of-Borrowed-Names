@@ -44,10 +44,12 @@ async function evening(o) {
   }, [FL, o]);
   let line = null;
   for (let i = 0; i < 500; i++) {
-    const st = await p.evaluate(() => ({ open: RB.ui.dialogue.isOpen(), text: (document.querySelector('.dlg, .dialogue') || {}).textContent || '', running: !!(RB.script.isRunning && RB.script.isRunning()), map: RB.game.s.map }));
+    const st = await p.evaluate(() => ({ open: RB.ui.dialogue.isOpen(), text: (document.querySelector('.dlg, .dialogue') || {}).textContent || '', running: !!(RB.script.isRunning && RB.script.isRunning()), map: RB.game.s.map, seen: !!RB.game.s.flags.kr_evening_seen }));
     if (st.map === 'kr.lodge' && /gathered/.test(st.text) && !line) line = await where(p);
     if (st.open) await p.evaluate((pick) => { const cs = [...document.querySelectorAll('.choices button, .dchoice button')]; if (cs.length) cs[Math.min(pick, cs.length - 1)].click(); else RB.ui.dialogue.advance(true); }, o.pick || 0);
-    if (st.map === 'kr.lodge' && !st.running && !st.open && i > 20) break;
+    // (the evening told and over: between the registers' end on the lodge and kr.evening's start there is a moment with
+    // nothing running and nothing open, Local CL-104)
+    if (st.map === 'kr.lodge' && st.seen && !st.running && !st.open && i > 20) break;
     await p.waitForTimeout(80);
   }
   return { p, errors, line, end: await where(p) };
