@@ -59,6 +59,15 @@ RB.maps = (function () {
         for (let yy = p.y; yy < p.y + ph; yy++) for (let xx = p.x; xx < p.x + pw; xx++) if (xx < w && yy < h) block[yy * w + xx] = 1;
       }
     }
+    // fences join their neighbours: each knows which sides carry on (north 1, east 2, south 4, west 8), so a run
+    // north–south, its corners and its joins are drawn as such (src/engine/28_propwork.js; RBN-QA-035)
+    const fenceAt = new Set();
+    for (const p of props) if (p.p === 'fence' && !p.if) fenceAt.add(p.x + ',' + p.y);
+    for (const p of props) {
+      if (p.p !== 'fence' || (p.o && p.o.join != null)) continue;
+      const j = (fenceAt.has(p.x + ',' + (p.y - 1)) ? 1 : 0) | (fenceAt.has(p.x + 1 + ',' + p.y) ? 2 : 0) | (fenceAt.has(p.x + ',' + (p.y + 1)) ? 4 : 0) | (fenceAt.has(p.x - 1 + ',' + p.y) ? 8 : 0);
+      if (j) p.o = Object.assign({}, p.o, { join: j });
+    }
     for (const e of def.exits || []) exits.push(Object.assign({ w: 1, h: 1 }, e));
     const m = {
       id, def, w, h, tiles, block, props, structs, exits, shut,

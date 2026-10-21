@@ -85,22 +85,51 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- fences, shelves, lamps ------------------------------------------------------------------
   // Rail fence: squared posts with chamfered caps and two nailed rails that
-  // run to the tile edges so neighbouring fence tiles join up.
+  // run to the tile edges so neighbouring fence tiles join up. o.join (set when
+  // the map is compiled, src/engine/40_maps.js) says which neighbours are fence
+  // too (north 1, east 2, south 4, west 8). A length running east–west (or one
+  // alone) is drawn as it always was. Where the line runs north–south, turns a
+  // corner or meets another, one post stands in the middle: the rails toward a
+  // north or south neighbour are seen from above along the line (the one going
+  // north behind the post, the one coming south in front of it), and the rails
+  // toward an east or west neighbour run out at their usual height (RBN-QA-035).
+  const ALONG = 1 | 4;
   art('fence', {
     box: [0, 0, 32, 34],
-    v: (o) => cxy(o) % 4,
+    v: (o) => (cxy(o) % 4) + 4 * ((o.join | 0) & 15),
     draw(g, M, v, f, info) {
-      const w5 = M.wood;
-      post(g, 4, 8, 5, 22, w5);
-      post(g, 23, 8, 5, 22, w5);
-      plank(g, 0, 12, 32, 4, w5, v + 1);
-      plank(g, 0, 21, 32, 4, w5, v + 7);
-      if (v === 1) R(g, 12, 13, 3, 2, w5[1]);
-      for (const px of [6, 25]) { nail(g, px, 13); nail(g, px, 22); }
-      if (info.snow) K.snowTops(g, 0, 0, 32, 30, M.snow, v, 2);
+      const w5 = M.wood, k = v & 3, j = v >> 2;
+      if (!(j & ALONG)) {
+        post(g, 4, 8, 5, 22, w5);
+        post(g, 23, 8, 5, 22, w5);
+        plank(g, 0, 12, 32, 4, w5, k + 1);
+        plank(g, 0, 21, 32, 4, w5, k + 7);
+        if (k === 1) R(g, 12, 13, 3, 2, w5[1]);
+        for (const px of [6, 25]) { nail(g, px, 13); nail(g, px, 22); }
+        if (info.snow) K.snowTops(g, 0, 0, 32, 30, M.snow, k, 2);
+        return;
+      }
+      const px = 12, pw = 7, rx = 14, rw = 3; // the post in the middle of the tile; the rails along the line
+      if (j & 8) { plank(g, 0, 12, px + 1, 4, w5, k + 1); plank(g, 0, 21, px + 1, 4, w5, k + 7); }
+      if (j & 2) { plank(g, px + pw - 1, 12, 33 - px - pw, 4, w5, k + 1); plank(g, px + pw - 1, 21, 33 - px - pw, 4, w5, k + 7); }
+      if (j & 1) { plank(g, rx, 0, rw, 10, w5, k + 3, true); R(g, rx + rw, 0, 1, 9, w5[0]); }
+      post(g, px, 8, pw, 21, w5);
+      if (j & 4) { plank(g, rx, 27, rw, 5, w5, k + 5, true); R(g, rx + rw, 28, 1, 4, w5[0]); }
+      for (const ny of [13, 22]) nail(g, px + 3, ny);
+      if (info.snow) {
+        K.snowTops(g, 0, 0, 32, 30, M.snow, k, 2);
+        // the cap of a post with the rail behind it holds snow too (the pass above sees the rail, not open sky)
+        if (j & 1) { R(g, px + 1, 6, pw - 2, 1, M.snow[3]); R(g, px, 7, pw, 2, M.snow[4]); R(g, px, 9, pw, 1, M.snow[2]); }
+      }
     },
-    ground(g) { R(g, 0, 29, 32, 2, 'rgba(22,16,40,0.12)'); },
-    shadow: () => [16, 30, 15, 2, 0.12],
+    ground(g, M, v) {
+      const j = v >> 2, sh = 'rgba(22,16,40,0.12)';
+      if (!(j & ALONG)) { R(g, 0, 29, 32, 2, sh); return; }
+      R(g, 12, 29, 8, 2, sh);
+      if (j & 8) R(g, 0, 29, 12, 2, sh);
+      if (j & 2) R(g, 20, 29, 12, 2, sh);
+    },
+    shadow: (v) => ((v >> 2) & ALONG ? [16, 30, 6, 2, 0.12] : [16, 30, 15, 2, 0.12]),
   });
 
   // Bookcase: framed carcass, three shelves of books in muted cloth colours
