@@ -12,8 +12,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
       T('{杉|すぎ} の {石段|いしだん} を {登|のぼ}って 、 {狐橋|きつねばし} の {里|さと} へ {行|い}こう 。', 'Climb the cedar steps to the hamlet at the Fox Bridge.'),
       T('{尾根|おね} を {越|こ}えて 、 {灯守|ひもり} の {宿坊|しゅくぼう} を {探|さが}そう 。', 'Cross the ridge and find the keepers\' lodge.'),
       T('ヒサエ に {頼|たの}まれた 。 {尾根|おね} の {灯籠|とうろう} に {灯|ひ} を {入|い}れて 、 {守|まも}ろう 。', 'Hisae has asked you to light the ridge\'s waystation lanterns, and keep them lit.'),
-      T('{洞|ほら} の {灯籠|とうろう} を 、 {正|ただ}しい {順番|じゅんばん} で {点|つ}けよう 。 {言|い}い{伝|つた}え を {比|くら}べて 。', 'Light the cave\'s lanterns in the right order: weigh the tellings to find it.'),
-      T('{書庫|しょこ} の {洞|ほら} の {奥|おく} で 、 {灯守|ひもり} の {記録|きろく} を {読|よ}もう 。', 'Read the keepers\' registers at the back of the scriptorium cave.'),
+      // where it leads, named (RBN-QA-045): the first telling the rite still lacks, in the order kr.rite asks for them (the
+      // stele, the children's song, Kikyō's scroll: Kikyō on the ridge until she moves to the lodge); then derived (the
+      // rite's desk in the cave)
+      Object.assign(T('{洞|ほら} の {灯籠|とうろう} を 、 {正|ただ}しい {順番|じゅんばん} で {点|つ}けよう 。 {言|い}い{伝|つた}え を {比|くら}べて 。', 'Light the cave\'s lanterns in the right order: weigh the tellings to find it.'), { atIf: [
+        { if: '!kr_stele_read', at: { map: 'kr.ridge', prop: 'kr_stele', x: 14, y: 8 } },
+        { if: '!kr_rhyme_heard', at: { map: 'kr.fox', npc: 'kr_hinata' } },
+        { if: '!kr_scroll_done&!kr_kikyo_lodge', at: { map: 'kr.ridge', npc: 'kr_kikyo' } },
+        { if: '!kr_scroll_done', at: { map: 'kr.lodge', npc: 'kr_kikyo' } },
+      ] }),
+      // (RBN-QA-045) the Teller's Shadow before the Copying Room's stairs until it lets you by (either of its endings opens
+      // them); then derived (the registers)
+      Object.assign(T('{書庫|しょこ} の {洞|ほら} の {奥|おく} で 、 {灯守|ひもり} の {記録|きろく} を {読|よ}もう 。', 'Read the keepers\' registers at the back of the scriptorium cave.'), { atIf: [
+        { if: '!kr_cave2_open', at: { map: 'kr.cave2', x: 22, y: 4 } },
+      ] }),
       T('{宿坊|しゅくぼう} で 、 {夜|よ}{通|どお}し の {灯|ひ} の {番|ばん} を しよう 。', 'Keep the vigil at the lodge, through the night.'),
       T('{夜|よ} が {明|あ}けた 。 {峠|とうげ} を {越|こ}えて 、 {灯落|ひおち} へ {下|くだ}ろう 。', 'Dawn. Cross the pass and go down to Lanternfall.'),
     ],
