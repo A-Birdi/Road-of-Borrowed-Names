@@ -35,9 +35,12 @@ async function lessonWith(p, ch, o = {}) {
     await p.waitForFunction((cur) => document.querySelector('.lsheet.lesson .kbig').textContent !== cur, cur);
   }
   await p.waitForTimeout(900);
-  return p.evaluate(() => {
+  return p.evaluate(async () => {
     const fig = document.querySelector('.lsheet.lesson .lesson-demo'), cvs = fig ? [...fig.querySelectorAll('canvas')] : [];
-    const inked = cvs.map((cv) => { const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] < 120 && d[i + 1] < 120) n++; return n; });
+    // the ink, at its most over a few moments: the demonstration loops, and between loops a box is blank for an instant
+    const ink = () => cvs.map((cv) => { const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] < 120 && d[i + 1] < 120) n++; return n; });
+    let inked = ink();
+    for (let k = 0; k < 6; k++) { await new Promise((r) => setTimeout(r, 250)); inked = ink().map((n, j) => Math.max(n, inked[j])); }
     const set = fig && fig.querySelector('.lesson-demo-set'), leaf = document.querySelector('.lsheet.lesson .leaf') || document.querySelector('.lsheet.lesson');
     return {
       ch: document.querySelector('.lsheet.lesson .kbig').textContent,
