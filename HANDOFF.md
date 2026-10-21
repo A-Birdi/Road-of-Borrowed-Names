@@ -664,6 +664,14 @@
       `validate.mjs` on the new base; each candidate's listed suites are to be re-run on its branch. Not yet built:
       006, 012's signs, 013 and Blockprint's arrival, the Sazanami exit, 016/023 options, 028's idle-line sibling, the
       audit's Tier A display fixes. AG-2 (`ag2-work`): asked whether it enters this review.
+      Revised and posted in CC-039 (2026-10-21, Cloud AGREE on each): qa-020 `5f492dd` (Local's narration order: the
+      bridge line after the walk to the rail; arrival from every column of row 21 through three opt-in `!walkto`
+      options used only by `mp.fest_night`: `cross` over a spent trigger, `party` so your companion follows, `max=`
+      for this walk's bound; default staging unchanged) and qa-036 `bf4c0ef` (Agnes and Local's converged point 1:
+      the walk across a counter retries only for a person who moved; plus the optional identity guard). Proposal
+      verdicts (all three AGREE): RBN-QA-048 fog (scene-scoped `fog` ambience with a distance haze), RBN-QA-049 geese
+      (one flock actor through the road event's `at`), RBN-QA-050 the fare repayment (seated start, side-by-side
+      exchange at the table, approach sides checked). Building next: 048 (`candidate/qa-048`), 049, 050, then 047.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

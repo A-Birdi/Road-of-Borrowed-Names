@@ -5538,6 +5538,21 @@ Yasu's story, when listening, has not begun being spoken."
     Voice: no line changed; voice ids hash the speaker, voice, dialect, delivery and spoken text only
     (tools/voice/production_manifest.mjs), so the added ops move none. Frames (CC-008 against the candidate, Suzu;
     Nao's dancing Suzu; 2000×1090; a phone) sent to Robin.
+  - **Three-party review candidates (2026-10-21, CC-039):**
+    - `candidate/qa-020` `5f492dd`: headless Chromium, real arrow-key step from row 20 onto the row-21 trigger, median
+      frame 16.7 ms, page visible. On `b652f92` (scratch copy logging which `walkPath` check stopped each walk, never
+      committed): the middle (24) arrived in 0.8 s; columns 8 and 13 (someone just below) found no path, because the
+      row-wide trigger is kept off by staged walks after it fired; both ends (1, 50) stopped on the 4 s bound after 20
+      of 27-30 steps; the token, displacement and occupancy checks never fired; the companion stayed where you came
+      in. On `5f492dd`: every column of row 21 but Hayashi's (12), bank stalls and square stalls, 102 runs: you reach
+      (24,25) facing down before the bridge and boat lines, the companion ends beside you, nobody shares a tile, no
+      page errors; longest walk 6.4 s. B `manybridge2` 4/0, `festival_games` 5/0, `staging_variants --quick` 701/0
+      (72 runs), `sequence_world --only mb2.fireworks` 198/0; U `actors` 180/0, `scene_manifest` 1023/0, `mp_ch4`
+      138/0, `perform` 665/0, `script_prompts` 10/0, `voicebank_plan_content` 7/0; `validate.mjs` no errors. Not
+      covered: a hidden or throttled pane (the walk stops at its bound there, by design).
+    - `candidate/qa-036` `bf4c0ef`: B `counter_tap` 30/0 on its build, with two new cases (the counter swapped for a
+      counter while Yae stands still; the counter removed with its tiles freed): both FAIL on `9a7bc73` (Yae speaks)
+      and pass here; U `world` 123/0, `living_world` 110/0; `validate.mjs` no errors.
   - **RBN-QA-032 in source (Robin approved 2026-10-20 from the frames, to review in play; `8cfedf2`, cherry-picked
     from `523f9ba`):** `git diff 523f9ba 8cfedf2 -- src tests tools data assets` is empty (the candidate's tests above
     ran on the same code); on a scratch build of `8cfedf2`: B `lookout_vista` 22/0, `story_ch3 E nao` 38 checks passed,
