@@ -8,6 +8,8 @@
 //   desktop size and a phone held upright;
 // - with reduced motion the picture holds still (two frames alike); with motion it does not (the lamps, the lake);
 // - a second visit (lf_arrived already set) runs no arrival and shows no picture;
+// - a load while the picture is up (one that works, one that fails) leaves nothing of it, and the arrival run again
+//   shows it drawn (Agnes 6318475345);
 // - no console errors, no network requests.
 // Usage: node tests/e2e/lf_arrival_view.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -102,6 +104,59 @@ for (const [comp, W, H, reduce] of [['nao', 1280, 800, false], ['mio', 390, 844,
   });
   ok(!r.pic && !r.run, `second visit: no arrival runs and no picture shows (${JSON.stringify(r)})`);
   ok(!errors.length, `second visit: no console errors${errors.length ? ' — ' + errors[0].slice(0, 120) : ''}`);
+  await p.close();
+}
+// a load while the picture is up (Agnes 6318475345): the load ends the scene, so nothing of the picture is left
+// (not shown, and not remembered as shown), and the same picture shown again is drawn. After a load that worked (a
+// save from before the arrival) the arrival runs again on the road and shows it; after one that failed (an empty
+// slot) the journey goes on from the road as it was, lf_arrived already set by the scene's first line (as before), so
+// the same interlude is shown again directly.
+for (const [how, slot, worked] of [['a load that worked', 1, true], ['a load that failed (an empty slot)', 3, false]]) {
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await start(p, 'nao', false, FL);
+  // (what the picture is as the renderer sees it: shown, and drawn in place of the map)
+  const pic = () => p.evaluate(() => ({ state: RB.interlude.state() && RB.interlude.state().id, drawn: !!RB.render.getOverride() && !RB.render.worldVisible() }));
+  const toView = async () => {
+    for (let i = 0; i < 12; i++) {
+      const l = await p.waitForFunction(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown() && RB.ui.dialogue.shown().en, null, { timeout: 15000 }).then((h) => h.jsonValue()).catch(() => null);
+      if (!l || VIEW[0].test(l)) return l;
+      await p.evaluate(() => RB.ui.dialogue.advance(true));
+      await p.waitForTimeout(300);
+    }
+    return null;
+  };
+  // (a journey of the shipped edition, as any new one is: an older one's save would ask about New Game+ on loading)
+  await p.evaluate(async () => { RB.game.s.edition = RB.edition.forNew(); await RB.save.manualSave(1); });
+  await p.evaluate(() => { RB.script.run('lf.arrive'); });
+  const l1 = await toView();
+  await p.waitForTimeout(700);
+  const up = await pic();
+  const res = await p.evaluate(async (slot) => { try { const r = await RB.game.loadCampaign(slot, 'manual'); return 'ok ' + r; } catch (e) { return 'failed: ' + (e && e.message); } }, slot);
+  await p.waitForTimeout(1200);
+  const after = await p.evaluate(() => ({ pic: RB.interlude.state(), world: RB.render.worldVisible(), run: RB.script.isRunning(), open: RB.ui.dialogue.isOpen(), mode: RB.game.mode(), map: RB.world.W.map && RB.world.W.map.id, arrived: RB.state.test(RB.game.s, 'lf_arrived') }));
+  ok(l1 && up.state === 'lf_valley' && up.drawn, `${how}: before it, the picture is up and drawn (${JSON.stringify(up)})`);
+  ok(!after.pic && after.world && !after.run && !after.open && after.mode === 'world' && after.map === 'lf.road' && after.arrived === !worked, `${how} with the picture up (${res}): nothing of the picture left, shown or remembered; the road, no scene, no dialogue; lf_arrived ${worked ? 'unset, as saved' : 'set, as the journey was'} (${JSON.stringify(after)})`);
+  if (worked) {
+    // the arrival again, as on coming down the road (its onEnter, lf_arrived unset in the save)
+    await p.evaluate(() => { RB.game.runEnterEvents(); });
+    const l2 = await toView();
+    await p.waitForTimeout(700);
+    const again = await pic();
+    ok(l2 && again.state === 'lf_valley' && again.drawn, `${how}: the arrival again shows the picture, drawn (${JSON.stringify(again)})`);
+    await p.evaluate(() => RB.ui.dialogue.advance(true));
+    for (let i = 0; i < 12 && await p.evaluate(() => RB.script.isRunning()); i++) { await p.evaluate(() => RB.ui.dialogue.advance(true)); await p.waitForTimeout(250); }
+    await p.waitForTimeout(500);
+    const done = await p.evaluate(() => ({ pic: RB.interlude.active(), world: RB.render.worldVisible(), arrived: RB.state.test(RB.game.s, 'lf_arrived') }));
+    ok(!done.pic && done.world && done.arrived, `${how}: the arrival then ends as usual, the road back and lf_arrived set (${JSON.stringify(done)})`);
+  } else {
+    await p.evaluate(() => RB.interlude.show('lf_valley'));
+    await p.waitForTimeout(500);
+    const again = await pic();
+    await p.evaluate(() => RB.interlude.clear());
+    const gone = await p.evaluate(() => ({ pic: RB.interlude.active(), world: RB.render.worldVisible() }));
+    ok(again.state === 'lf_valley' && again.drawn && !gone.pic && gone.world, `${how}: the same picture shown again is drawn, and clears to the road (${JSON.stringify({ again, gone })})`);
+  }
+  ok(!errors.length, `${how}: no console errors${errors.length ? ' — ' + errors[0].slice(0, 120) : ''}`);
   await p.close();
 }
 console.log(`\nlf_arrival_view: ${pass} passed, ${fail} failed`);
