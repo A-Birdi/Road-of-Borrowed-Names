@@ -416,7 +416,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const rh = V.trunk.w * 0.75 + G.s(34);
     return { crown: [V.crown.left, V.crown.top, V.crown.right, V.crown.bottom], trunk: [V.trunk.x - rh, V.trunk.top, V.trunk.x + rh, V.trunk.base + G.s(4)] };
   };
-  function goldLeaves(c, G, V, t, still) {
+  // (Their time is the picture's own, since it was shown: as it opens they are where the still picture has them, spread
+  // down the view and full-size, so they read from its first frame; then they come on down and round again. Local
+  // CL-129: on the page's clock a picture could open with most of them still coming into view.)
+  function goldLeaves(c, G, V, since, still) {
     const rnd = K().rnd(83), n = G.narrow ? 4 : 5, KC = keepClear(G, V), sway = G.s(12), out = [];
     for (let i = 0; i < n; i++) {
       const len = Math.round(G.s(17 + rnd() * 7) * (G.narrow ? 1.25 : 1)), period = 12000 + rnd() * 5000, ph = rnd(), spin = 0.5 + rnd() * 0.6, lane = rnd();
@@ -424,7 +427,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const x0 = ((i + 0.2 + lane * 0.6) / n) * G.w, reach = sway + len * 0.7;
       const inTrunk = x0 + reach > KC.trunk[0] && x0 - reach < KC.trunk[2];
       const top = (inTrunk ? KC.trunk[3] : KC.crown[3] + G.s(2)) + len * 0.7, bottom = G.vb + len;
-      const u = still ? 0.18 + 0.55 * ((i * 0.618 + ph * 0.3) % 1) : ((t / period) + ph) % 1;
+      const u0 = 0.18 + 0.55 * ((i * 0.618 + ph * 0.3) % 1), u = still ? u0 : (u0 + since / period) % 1;
       const grow = Math.min(1, u / 0.14), size = len * grow * grow * (3 - 2 * grow);
       if (size < 4) continue;
       const x = Math.round(x0 + Math.sin(u * 4.5 + i * 1.7) * sway), y = Math.round(lerp(top, bottom, u));
@@ -434,7 +437,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     drawn = out;
   }
-  function live(c, G, V, t, still) {
+  function live(c, G, V, t, still, since) {
     // the glints on the shallows
     for (const [x, y, len, ph, beat] of V.glints) {
       const k = still ? (ph > 3.9 ? 0.8 : 0) : Math.max(0, Math.sin(t / beat + ph));
@@ -447,7 +450,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     KO2.falling(c, G, t, still, G.narrow ? 60 : 80, 7, 'tree');
     KO2.falling(c, G, t * 0.85 + 4000, still, G.narrow ? 34 : 44, 19, 'tree');
     nearLeaves(c, G, t, still);
-    goldLeaves(c, G, V, t, still);
+    goldLeaves(c, G, V, since || 0, still);
   }
 
   let last = null; // the size last drawn at (tests)
@@ -458,7 +461,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomP(w, h, st.vb), V = view(G);
       last = { w, h, vb: st.vb };
       c.drawImage(V.cv, 0, 0);
-      live(c, G, V, st.still ? 0 : t, st.still);
+      live(c, G, V, st.still ? 0 : t, st.still, st.since);
     },
     // tests: where the things the lines name are, against the dialogue sheet's top (vb); by default at the size last
     // drawn. The leaves come down from above the picture to vb at the lowest (43k_seq_ko.js falling, and the nearer ones);
