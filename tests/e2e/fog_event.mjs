@@ -28,8 +28,10 @@ async function run(answer, o = {}) {
   await p.evaluate((o) => {
     // (the load case saves a journey of the twelve-chapter edition, as a real one is: an older edition's save offers New
     // Game+ instead of loading; there the fog comes after Manybridge's second chapter)
+    // (sg_road_open_seen: the road's own once-only onEnter scene, "the north road is open", already seen, so it does not
+    // start on the road around the fog event and get read as the fog's)
     const ed = o.loadAt ? { edition: RB.edition.forNew() } : {};
-    const s = RB.game.debugStart('sg.road', 18, 10, Object.assign(ed, { comp: 'suzu', dir: 'up', flags: Object.assign({ departed: true, ch1_done: true, ch2_done: true }, o.loadAt ? { mb2_done: true } : {}) }));
+    const s = RB.game.debugStart('sg.road', 18, 10, Object.assign(ed, { comp: 'suzu', dir: 'up', flags: Object.assign({ departed: true, ch1_done: true, ch2_done: true, sg_road_open_seen: true }, o.loadAt ? { mb2_done: true } : {}) }));
     s.learn.profile = 'E'; s.learn.kanaKnown = 'both';
     if (o.skip) { s.seen['sg.lw_road_fog'] = true; RB.game.settings.skipSeen = true; }
     RB.game.settings.textSpeed = 'instant'; RB.game.settings.input = 'choice'; RB.game.settings.lightbulb = false; RB.game.settings.reducedMotion = !!o.reduced; RB.game.applySettings();
