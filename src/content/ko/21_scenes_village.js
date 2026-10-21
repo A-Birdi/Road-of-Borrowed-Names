@@ -186,56 +186,72 @@ ko_otoha: この {島|しま} の {始|はじ}まり の {話|はなし} を 、
 !set ko_ret_rw
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} が {浮|う}き{上|あ}がって 、 {東|ひがし} へ 。 {葦|あし}ノ{瀬|せ} の {茶屋|ちゃや} の {看板|かんばん} へ 、 {帰|かえ}って いく 。 || The leaf lifts, and away east: home to the sign over Reedwake's teahouse.
+!beat leafhome.end
 !toast {葉|は} が {葦|あし}ノ{瀬|せ} へ {帰|かえ}った || A leaf has gone home to Reedwake
 @scene ko.sent_sg
 !take ko_leaf_sg
 !set ko_ret_sg
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {潮硝子|しおがらす} の {方|ほう} へ 。 アサヒ の {硝子|がらす} の {箱|はこ} に 、 {字|じ} が {戻|もど}る だろう 。 || The leaf goes Saltglass's way. Asahi's glass crates will have their warning back.
+!beat leafhome.end
 !toast {葉|は} が {潮硝子|しおがらす} へ {帰|かえ}った || A leaf has gone home to Saltglass
 @scene ko.sent_mb
 !take ko_leaf_mb
 !set ko_ret_mb
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {八百橋|やおばし} の {方|ほう} へ 。 {人足|にんそく} たち の {荷置|にお}き{場|ば} の {板|いた} に 、 {字|じ} が {戻|もど}る 。 || The leaf goes Manybridge's way, home to the board over the porters' yard.
+!beat leafhome.end
 !toast {葉|は} が {八百橋|やおばし} へ {帰|かえ}った || A leaf has gone home to Manybridge
 @scene ko.sent_mp
 !take ko_leaf_mp
 !set ko_ret_mp
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {芝居町|しばいまち} の {方|ほう} へ 。 {古|ふる}い {番付|ばんづけ} に 、 {賑|にぎ}やか な {字|じ} が {戻|もど}る 。 || The leaf goes the way of Playhouse Row: home to an old playbill, cheerful writing and all.
+!beat leafhome.end
 !toast {葉|は} が {芝居町|しばいまち} へ {帰|かえ}った || A leaf has gone home to Playhouse Row
 @scene ko.sent_co
 !take ko_leaf_co
 !set ko_ret_co
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {灰実|はいみ} の {里|さと} の {方|ほう} へ 。 ウメ さん の {干|ほ}し{場|ば} の {札|ふだ} へ {帰|かえ}る 。 || The leaf goes Cinder Orchard's way, home to the tag on Grandma Ume's drying rack.
+!beat leafhome.end
 !toast {葉|は} が {灰実|はいみ} の {里|さと} へ {帰|かえ}った || A leaf has gone home to Cinder Orchard
 @scene ko.sent_sb
 !take ko_leaf_sb
 !set ko_ret_sb
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.north
 narr: {葉|は} は {北|きた} の {山|やま} の {方|ほう} へ 。 {雪鈴|ゆきすず} の {郵便局|ゆうびんきょく} の 、 {誰|だれ} か の {手紙|てがみ} へ 。 || The leaf goes north, towards the mountains: home to someone's letter at Snowbell's post office.
+!beat leafhome.end
 !toast {葉|は} が {雪鈴|ゆきすず} へ {帰|かえ}った || A leaf has gone home to Snowbell
 @scene ko.sent_kr
 !take ko_leaf_kr
 !set ko_ret_kr
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {山|やま} の {尾根|おね} の {方|ほう} へ 。 {峠|とうげ} の {灯籠|とうろう} の {名札|なふだ} へ {帰|かえ}る 。 || The leaf goes towards the mountain ridge: home to the plate on the lantern at the pass.
+!beat leafhome.end
 !toast {葉|は} が {灯守|ひもり} の {道|みち} へ {帰|かえ}った || A leaf has gone home to the Keepers' Road
 @scene ko.sent_lf
 !take ko_leaf_lf
 !set ko_ret_lf
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {灯落|ひおち} の {方|ほう} へ 。 {議会|ぎかい} の {古|ふる}い {議事録|ぎじろく} の 、 {空|あ}いて いた {所|ところ} へ 。 || The leaf goes Lanternfall's way: home to a blank in the council's oldest minutes.
+!beat leafhome.end
 !toast {葉|は} が {灯落|ひおち} へ {帰|かえ}った || A leaf has gone home to Lanternfall
 
 @scene ko.leaf_rw

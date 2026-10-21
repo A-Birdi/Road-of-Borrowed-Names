@@ -618,6 +618,7 @@ RB.render = (function () {
     if (RB.worldActs) RB.worldActs.push(list, c, m, env || { ax, ay, bw, bh, still }, t); // the rod and float, the baskets, the parcels (67_worldacts.js; light on or off)
     list.sort((a, b) => a.z - b.z);
     for (const d of list) d.draw();
+    if (RB.leafHome) RB.leafHome.draw(c, { ax, ay, TS, ART }, t); // a written leaf carried off the Wind Stone (src/ui/59b_leafhome.js)
     if (L) L.illuminate(c, m, W, t, env);
     drawFade(c, m, pal);
     interactMarker(c, W, t);
