@@ -6,7 +6,8 @@
 //     the cask is the event's own thing (examining it runs the event); its tile is as solid as before;
 //  2. answered right: on "You tighten the plug as the card says, and the two of you stand the cask upright" the cask is
 //     upright; when the scene ends the event's things go (seen through), as before;
-//  3. "come back later" (a wrong answer, then leaving): the cask stays tipped, the event still stands;
+//  3. "come back later" (a known-wrong answer, seen marked wrong, then "Come back later"): the cask stays tipped,
+//     the event still stands;
 //  4. the drawing: the tipped cask differs from the upright one; with motion a drop runs down its head (two moments
 //     differ), with reduced motion the same picture at every moment (the pool and the wet run still there);
 //  5. no page errors (desktop and phone).
@@ -45,7 +46,7 @@ const casks = (p) => p.evaluate(() => {
 // talk to Rokusuke and read the scene through, answering right or leaving after a wrong answer; the casks at each line
 async function play(p, answer, shot) {
   const beats = [];
-  let n = 0;
+  let n = 0, wrong = null;
   await p.evaluate(() => RB.world.interact());
   for (let i = 0; i < 200; i++) {
     const st = await p.evaluate(() => { const d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); return { d: d ? String(d.en || '').slice(0, 200) : null, mode: RB.game.mode(), run: RB.script.isRunning(), chal: !!document.querySelector('.chal .mc .btn') }; });
@@ -67,16 +68,13 @@ async function play(p, answer, shot) {
         }
         await p.evaluate(() => { const g = document.querySelector('.fbwrap[data-fb=ok] .fb-go'); if (g) g.click(); });
       } else {
-        // a wrong answer, then leave it for later
-        await p.evaluate(() => { const bs = [...document.querySelectorAll('.chal .mc .btn')]; (bs.find((x) => !x.disabled) || bs[0]).click(); });
-        await p.waitForTimeout(200);
-        for (let j = 0; j < 4; j++) {
-          if (await p.evaluate(() => !!document.querySelector('.fbwrap[data-fb=ok] .fb-go'))) { await p.evaluate(() => { const bs = [...document.querySelectorAll('.chal .mc .btn')]; }); break; }
-          const left = await p.evaluate(() => { const bt = [...document.querySelectorAll('button')].find((x) => x.offsetParent && /Come back later|Leave it|Not now|Later/i.test(x.textContent)); if (bt) { bt.click(); return true; } return false; });
-          if (left) break;
-          await p.evaluate(() => { const bs = [...document.querySelectorAll('.chal .mc .btn')].filter((x) => !x.disabled); if (bs.length) bs[bs.length - 1].click(); });
-          await p.waitForTimeout(200);
-        }
+        // a known-wrong answer (the E card's 「栓を抜く」, "pull the plug out": the answers are shuffled, so by its
+        // words, not its place), seen marked wrong, then "Come back later" (Agnes 6315806927)
+        const picked = await p.evaluate(() => { const x = [...document.querySelectorAll('.chal .mc .btn')].find((b) => /抜/.test(b.textContent)); if (x) x.click(); return x ? x.textContent.replace(/\s+/g, '') : null; });
+        await p.waitForTimeout(300);
+        const mark = await p.evaluate(() => { const w = document.querySelector('.fbwrap[data-fb]'); return w ? w.getAttribute('data-fb') : null; });
+        const left = await p.evaluate(() => { const bt = [...document.querySelectorAll('[data-a=leave]')].find((x) => x.offsetParent && /Come back later/.test(x.textContent)); if (bt) { bt.click(); return true; } return false; });
+        wrong = { picked, mark, left };
       }
       await p.waitForTimeout(400);
       continue;
@@ -87,7 +85,7 @@ async function play(p, answer, shot) {
     await p.waitForTimeout(150);
   }
   await p.waitForTimeout(600);
-  return { beats, end: await casks(p) };
+  return { beats, wrong, end: await casks(p) };
 }
 // the barrel drawn on its own (the game's own art), tipped or not, at two moments
 const drawn = (p) => p.evaluate(() => {
@@ -134,6 +132,7 @@ for (const [name, vp] of [['desktop', { width: 1180, height: 757 }], ['phone', {
   const { p, errors } = await start();
   const r = await play(p, 'wrong', 'later');
   const later = r.beats.find((x) => /hold it shut myself/.test(x.d));
+  ok(r.wrong && /栓/.test(r.wrong.picked || '') && r.wrong.mark && r.wrong.mark !== 'ok' && r.wrong.left, 'later: a known-wrong answer ("pull the plug out") marked wrong, then "Come back later" (' + JSON.stringify(r.wrong) + ')');
   ok(later && later.cask.length === 1 && later.cask[0].tipped && r.end.standing && !r.end.done && !r.end.upright && r.end.cask.length === 1 && r.end.cask[0].tipped, 'later: the cask stays tipped and the event still stands (' + JSON.stringify({ later: later && later.cask, end: r.end }) + ')');
   ok(!errors.length, 'later: no page errors ' + errors.slice(0, 2).join(' | '));
   await p.close();
