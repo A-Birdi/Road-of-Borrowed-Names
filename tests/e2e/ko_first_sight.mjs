@@ -96,22 +96,25 @@ function judgeGold(G, still) {
   return { big, read, over, pass: G.n >= 3 && G.n <= 6 && G.leaves.length <= G.n && (still ? read.length === G.n : read.length >= 2) && read.length === big.length && !over.length };
 }
 // In motion a leaf can be caught just coming into view (still small, its ink not yet drawn) or turned edge-on (Local
-// CL-126: once only one full-size leaf was on screen), so the leaves are read at their best over a few moments (up to
-// five, 150 ms apart); every moment read must still keep them all off the tree and above the sheet. Held still, one look.
+// CL-126: once only one full-size leaf was on screen), so the leaves are read over a bounded window, up to five moments
+// 150 ms apart, stopping at the first one that passes. Each moment is one whole frame judged on its own by the same
+// count, size, gold and ink conditions (nothing is combined across moments; Agnes 6323115110), and every moment read
+// must still keep every leaf off the tree and above the sheet. The moments' times and the one reported are kept. Held
+// still (reduced motion), one look, as before.
 async function goldBest(p, still) {
-  let best = null, looks = 0;
-  const overAny = [];
+  let best = null;
+  const overAny = [], times = [], t0 = Date.now();
   for (let i = 0; i < (still ? 1 : 5); i++) {
     if (i) await p.waitForTimeout(150);
     const G = await goldLook(p);
     if (!G) continue;
-    looks++;
+    times.push(Date.now() - t0);
     const j = judgeGold(G, still);
     overAny.push(...j.over);
-    if (!best || j.pass || j.read.length > best.j.read.length) best = { G, j };
+    if (!best || j.pass || j.read.length > best.j.read.length) best = { G, j, at: times.length - 1 };
     if (j.pass) break;
   }
-  return best && Object.assign(best.G, { looks, overAny });
+  return best && Object.assign(best.G, { looks: times.length, times, at: best.at, overAny });
 }
 // every line until the scenes are over: what it says, who says it, and what the screen shows meanwhile
 async function lines(p, onView) {
@@ -183,7 +186,7 @@ for (const [how, comp, W, H, reduce, flags] of RUNS) {
     else {
       const { read } = judgeGold(G, reduce);
       ok(judgeGold(G, reduce).pass && !G.overAny.length,
-        `${tag}: view line ${k + 1}: ${G.leaves.length} of ${G.n} large gold leaves on screen, ${read.length} full-size, each gold with ink on it${G.looks > 1 ? ` (the best of ${G.looks} moments)` : ''}; none over the tree or below the sheet at any moment read (${G.leaves.map((l) => `${l.len}px gold ${l.gold} ink ${l.ink} at ${l.box.join(',')}`).join('; ')}; clear of crown ${G.clear.crown.join(',')}, trunk ${G.clear.trunk.map(Math.round).join(',')}${G.overAny.length ? '; over: ' + G.overAny.map((l) => l.box.join(',')).join(' | ') : ''})`);
+        `${tag}: view line ${k + 1}: ${G.leaves.length} of ${G.n} large gold leaves on screen, ${read.length} full-size, each gold with ink on it (moment ${G.at + 1} of ${G.looks} read, at ${G.times.join('/')} ms); none over the tree or below the sheet at any moment read (${G.leaves.map((l) => `${l.len}px gold ${l.gold} ink ${l.ink} at ${l.box.join(',')}`).join('; ')}; clear of crown ${G.clear.crown.join(',')}, trunk ${G.clear.trunk.map(Math.round).join(',')}${G.overAny.length ? '; over: ' + G.overAny.map((l) => l.box.join(',')).join(' | ') : ''})`);
     }
     ok(P.leaves.n >= 50 && P.leaves.bottom <= m.row + 1, `${tag}: view line ${k + 1}: ${P.leaves.n} leaves coming down, none lower than the sheet (to row ${P.leaves.bottom}, sheet ${m.row.toFixed(1)})`);
   }
