@@ -5484,6 +5484,19 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-012:** `index.html` sha256 `cecaeb33ed6532b62a1c080627622bb216d32eb23c594ae1b70b3c93273caa05`, built
+    from `acd685a` (CC-011 plus only RBN-QA-055, 059/058, 060, 061, the QA-039 Guide follow-up and 062, each with its
+    agreed test-only successor; patch-identical to the agreed commits, verified by Local CL-100/CL-102 and Agnes
+    6313970214); byte-identical to the build the suites ran on, which is also the build of `a42cf49` and `4ff01b7`
+    (the later commits change tests only). On these bytes (B): `look_purity` 9/0, `social_wait` 12/0, `guide_vigil`
+    9/0, `guide_kana` 11/0 (both the `203fa02` and the `600956a` version), `learning_qa039` 44/0, `lodge_evening` 15/0
+    (the `bd7d176` version) and 16/0 on four runs of the `c51a8fe` version (one further run, alongside another suite,
+    gave 15 passed and 1 failed; its output was not kept, and four reruns did not reproduce it), `lodge_arrival` 40/0,
+    `keepers` 4/0, `guide_next_step` 24/0, `ruin_lanterns` 31/0, `hall_entry` all ok (16), `load_mid_scene` 19/0,
+    `social_battle` 65/0, `social_preview` 14/0, `card_press` 13/0, `encounters` 10/0, `combat_ui` 7/0,
+    `companion_turn` 4/0, `battle_settings` 10/0, `learning_ui` 15/0, `quest_guide` all ok, `hall_door` 15/0,
+    `walkto_options` 23/0, `title_ledger` 18/0. U whole suite 57,743/0 on this source; `validate.mjs` no errors.
+    Voice: none.
   - **Candidate CC-011:** `index.html` sha256 `4b108ae2720d750426842509f55f7c271a5ab9991e7a5ecb8c9577bd0f1853ed`, built
     from `cffd4ad` (CC-010 plus only the queued batch: the fog test refine, qa-024i, RBN-QA-052, 051, 054, 053, 045 and
     the `hall_door` allowlist test; patch-identical to the agreed commits, verified by Local CL-087 and Agnes

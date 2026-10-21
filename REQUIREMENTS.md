@@ -1279,7 +1279,21 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   `c3b1ac2`, `304fd60`, `4e9670e`, `19b5cd3`, `58133c0` (patch-identical; QA-051's renderer hunk is qa-024's, applied
   once), with `hall_door`'s onWall check as an allowlist (`cffd4ad`); B `fog_event` 26/0, `lodge_arrival` 40/0,
   `hall_door` 15/0, `kiln_door` 15/0, `ruin_lanterns` 31/0, `load_mid_scene` 19/0, `guide_next_step` 24/0 on CC-011's
-  own bytes. In candidate CC-011 (`4b108ae2…`, built from `cffd4ad`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  own bytes. In candidate CC-011 (`4b108ae2…`, built from `cffd4ad`), READY_FOR_QA.
+  RBN-QA-055, 058, 059, 060, 061, 062 and the QA-039 Guide follow-up (three-party AGREE each, and on each test-only
+  successor; their integration verified by Local CL-100/CL-102 and Agnes 6313970214): in a conversation the cards carry
+  no battle "Here:" line; what the battle screen evaluates without acting (a card's preview, a companion plan's
+  look-ahead) works on its own copies, so the 全体 chip raises no ward, `kr.moss_steps` with a plan set no longer
+  throws and its step is applied once, and the rope and the bell turn back what was coming, each once; Wait in a
+  conversation reads "Say nothing this time, and let the others speak.", its confirmation keeps the cost in view, and
+  "They seem to have more to say." shows while the conversation's own Wait would bring something out; at night before
+  the vigil the guide names Hisae at her lamp, or Ren on the ridge once Hisae has told you; the Guide's kana chart
+  shows a combination in two boxes as the lesson does and names っ/ッ/ー in words; after the registers Mokichi, Sora
+  and (when she is there) Kikyō are placed round the lamp and you walk to it before the gathering line, for that
+  visit; cherry-picked as `6f8218c`, `574da26`, `5ce29ec`, `73de5cc`, `c85b992`, `c3c190f`, `99638e8`, `acd685a`,
+  `b12a0e1`, `a42cf49`, `4ff01b7` (patch-identical); B `look_purity` 9/0, `social_preview` 14/0, `social_wait` 12/0,
+  `guide_vigil` 9/0, `guide_kana` 11/0, `learning_qa039` 44/0, `lodge_evening` 16/0 on CC-012's own bytes. In
+  candidate CC-012 (`cecaeb33…`, built from `acd685a`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand

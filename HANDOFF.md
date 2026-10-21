@@ -739,6 +739,21 @@
       the live battle: `st.enc` through `combatSim.clone`, `st.mods` through `combatLogic.snapshot`; proposal agreed by
       all three, candidate in progress), RBN-QA-060 (Wait's wording in a conversation; proposal agreed by all three),
       the QA-039 Guide follow-up.
+      CANDIDATE CC-012 (`index.html` `cecaeb33…`, built from `acd685a`): CC-011 plus only what was agreed after it,
+      each by its exact commits (cherry-picked with `-x`, patch-identical; the chain verified by Local CL-100/CL-102 and
+      Agnes 6313970214): RBN-QA-055 (`f4b6a3e` → `6f8218c`: no battle "Here:" line in a conversation), RBN-QA-059 and
+      QA-058 (`f91a437`, `3d28e54` → `574da26`, `5ce29ec`: a card's preview and a plan's look-ahead work on their own
+      copies of the lasting effects and of the encounter record), RBN-QA-060 (`362c032` → `73de5cc`: Wait in a
+      conversation is the conversation's, with "They seem to have more to say." while it would bring something out),
+      RBN-QA-061 (`be7021f` → `c85b992`: the vigil's guide names Hisae at her lamp, or Ren on the ridge once she has
+      told you), the QA-039 Guide follow-up (`c6ca9cd`, `203fa02`, `600956a` → `c3c190f`, `99638e8`, `acd685a`: a
+      combination in the Guide's kana chart as the lesson shows it; っ/ッ/ー named in words), RBN-QA-062 (`0f7f3ce`,
+      `bd7d176`, `c51a8fe` → `b12a0e1`, `a42cf49`, `4ff01b7`: after the registers the household is placed round the lamp
+      and you walk to it before the gathering line, for that visit). Not in it: RBN-QA-063 (`candidate/qa-063`
+      `a148a16` + refine `295a0ed`: a companion who goes off in a quarrel is away at the lodge until the apology; in
+      review), the `look_purity` hardening (test only, Local CL-101), RBN-QA-064 and 065 (proposals agreed, queued),
+      RBN-QA-066 (Ren's walk-off and return, the same same-map follower mismatch), 067 (the Guide's preview out of view)
+      and 068 (Lanternfall's basement search guide names the Belfry Loft): proposals under review.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

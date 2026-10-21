@@ -731,6 +731,12 @@ button.entry .t, button.entry .kind { display: block; }
 .kcell:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
 .kdemo-box { display: flex; gap: 12px; align-items: center; margin: 0.4em 0 0.8em; }
 .kdemo-box canvas { width: 160px; height: 160px; border-radius: var(--r-1); background: #fffaf0; border: 1px solid var(--paper-edge); flex: none; }
+/* RBN-QA-039 follow-up: a combination's boxes (or the line saying there is no demonstration) in the same 160px */
+.kdemo-box .kdemo-fig { width: 160px; flex: none; }
+.kdemo-box .lesson-demo { margin: 0; max-width: none; }
+.kdemo-box .lesson-demo-set { gap: 4px; max-width: none; }
+.kdemo-box .lesson-demo-set canvas { flex: 1 1 0; width: 0; height: auto; aspect-ratio: 1; }
+.kdemo-box .lesson-nodemo { margin: 0; }
 
 /* Satchel */
 .item-row .kind svg, .entry .kind svg { width: 1em; height: 1em; vertical-align: -0.15em; }
@@ -3097,6 +3103,7 @@ body.high-contrast .kwcard { border-color: #000; }
 .rcard .rc-more .rc-ans { display: inline; margin-left: 0.3em; }
 .rcard .rc-here b { font-weight: 700; }
 .rcard .rc-here.none { opacity: 0.78; font-style: italic; }
+.rcard .rc-cue { display: block; margin-bottom: 0.15em; font-style: italic; color: var(--ink, inherit); }
 .combat-ui .rcard.tech { border-color: var(--ribbon-deep); box-shadow: inset 4px 0 0 var(--ribbon), 0 2px 0 var(--paper-3), 0 3px 0 var(--ribbon-deep); }
 .rcard.tech .rc-new { background: var(--river); }
 .combat-ui .rcard[disabled] { cursor: not-allowed; background: var(--paper-2); border-style: dashed; box-shadow: none; color: var(--ink-2); }
@@ -63698,6 +63705,13 @@ RB.combatLogic = (function () {
     const o = {};
     for (const k in x) if (FOE_KEYS.indexOf(k) < 0 && k !== 'foes' && k !== 'actors') o[k] = x[k];
     o.ward = Object.assign({}, x.ward);
+    // the lasting effects (src/engine/95b_modifiers.js) are the copy's own: a preview or a look ahead that raises,
+    // spends or breaks one leaves the battle's as it was (RBN-QA-058, RBN-QA-059)
+    if (x.mods) {
+      o.mods = Object.assign({}, x.mods);
+      if (x.mods.any) o.mods.any = Object.assign({}, x.mods.any);
+      if (x.mods.soaked) o.mods.soaked = Object.assign({}, x.mods.soaked);
+    }
     if (x.actors) {
       // the copy keeps the same participants in the same order, each its own record; the creatures' view is
       // rebuilt from the copies, so a copied creature is the same object in both lists
@@ -64943,6 +64957,15 @@ RB.combatSim = (function () {
     o.log = [];
     if (st._a) o._a = Object.assign({}, st._a);
     if (st.lastPlayer) o.lastPlayer = Object.assign({}, st.lastPlayer);
+    if (st.enc) o.enc = encOf(st.enc);
+    return o;
+  }
+  // The copy's own encounter record (RBN-QA-058): a look ahead that turns a procedure's machine or stops what was
+  // coming does it to the copy. The definition, and a procedure's authored steps, are read only and stay shared.
+  function encOf(E) {
+    const own = (v) => (v == null || typeof v !== 'object' ? v : RB.util.deepClone(v));
+    const o = {};
+    for (const k in E) o[k] = k === 'def' ? E.def : k === 'proc' && E.proc ? Object.assign(own(Object.assign({}, E.proc, { steps: null })), { steps: E.proc.steps }) : own(E[k]);
     return o;
   }
   const sum = (a, f) => a.reduce((n, x) => n + f(x), 0);
@@ -65367,6 +65390,15 @@ RB.encounter = (function () {
       for (const c of out) {
         if (c.kind === 'unravel' && st.shroud && !(known.has('light') || known.has('wind'))) c.disabled = null;
         if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'The hush swallows words: ring a bell or raise a voice first.';
+        // a conversation with a creature in it: its Wait is the conversation's, as on the encounter screen, and while
+        // the conversation's own Wait would bring something out now, a cue that says so and never what (RBN-QA-060;
+        // the test only reads)
+        if (c.kind === 'wait' && E && E.social) {
+          c.en = 'Wait';
+          c.desc = st.rules.waitDesc || 'Say nothing this time, and let the others speak.';
+          const w = E.def.social && E.def.social.wait;
+          if (w && test(st, w.when)) c.cue = 'They seem to have more to say.';
+        }
       }
     } else if (E) {
       out.push({ id: 'unravel', kind: 'unravel', icon: '🪢', jp: 'ほどく', en: 'Unravel', desc: 'Restore something tangled — where something really is.' });
@@ -86900,6 +86932,10 @@ RB.ui.menu = (function () {
     ]],
     kana: ['Kana reference', []],
   };
+  // a kana's name in the Guide's chart: the lesson's own label where its group has one (っ/ッ "doubles the next
+  // consonant", ー "long vowel", を "wo (o)"; romaji() writes っ as an apostrophe and ー as a dash, conventions for inside a
+  // word), in words without the brackets, as on a lesson sheet (RBN-QA-039 follow-up)
+  const kanaLabel = (ch, r) => { const t = r || RB.kana.romaji(ch); return /^\(.*\)$/.test(t) ? t.slice(1, -1) : t; };
   const WORD_SECTIONS = [['learning', 'My learning', '{自分|じぶん} の {学|まな}び'], ['reference', 'Reference', '{調|しら}べる'], ['practice', 'Practice', '{練習|れんしゅう}']];
   const WORD_GROUPS = { progress: 'learning', mastery: 'learning', cando: 'learning', noted: 'learning', bookmarks: 'learning', inscriptions: 'learning', practice: 'practice', letters: 'practice', compare: 'practice' };
   function wordSubs(s) {
@@ -87007,11 +87043,11 @@ RB.ui.menu = (function () {
       let h = '<div class="subnav" role="group" aria-label="Guide topics">' + Object.keys(GUIDE).map((k) => '<button class="subbtn" data-g="' + k + '" aria-pressed="' + (g === k) + '">' + esc(GUIDE[k][0]) + '</button>').join('') + '</div>';
       if (g === 'kana') {
         const groups = RB.lessons.groups();
-        h += '<p class="muted small">Choose a character to see its stroke order. Kana you have been taught are marked with a dot.</p><div class="kdemo-box"><canvas width="160" height="160" class="kdemo"></canvas><div class="kinfo muted">Stroke order appears here.</div></div>';
+        h += '<p class="muted small">Choose a character to see its stroke order. Kana you have been taught are marked with a dot.</p><div class="kdemo-box"><div class="kdemo-fig"><canvas width="160" height="160" class="kdemo"></canvas></div><div class="kinfo muted">Stroke order appears here.</div></div>';
         for (const gr of groups) {
           h += '<div class="kgroup"><span class="kgl">' + esc(gr.title || '') + '</span><span class="kcells">' + RB.lessons.groupChars(gr).map((c) => {
             const taught = !RB.learn.taughtKana() || (s.learn.taught && s.learn.taught[c.ch]) || (s.learn.kanaKnown === 'hira' && RB.kana.isHira(c.ch));
-            return '<button class="kcell' + (taught ? ' taught' : '') + '" lang="ja" data-k="' + esc(c.ch) + '" aria-label="' + esc(c.ch + ' ' + RB.kana.romaji(c.ch) + (taught ? ', taught' : '')) + '">' + esc(c.ch) + '</button>';
+            return '<button class="kcell' + (taught ? ' taught' : '') + '" lang="ja" data-k="' + esc(c.ch) + '"' + (c.r ? ' data-r="' + esc(c.r) + '"' : '') + ' aria-label="' + esc(c.ch + ' ' + kanaLabel(c.ch, c.r) + (taught ? ', taught' : '')) + '">' + esc(c.ch) + '</button>';
           }).join('') + '</span></div>';
         }
       } else {
@@ -87034,8 +87070,8 @@ RB.ui.menu = (function () {
       if (k) {
         stopDemo();
         const ch = k.dataset.k;
-        stopDemo = RB.lessons.demo(el.querySelector('.kdemo'), ch);
-        el.querySelector('.kinfo').innerHTML = '<div class="jp" lang="ja" style="font-size:2.4em;line-height:1.2">' + esc(ch) + '</div><div>' + esc(RB.kana.romaji(ch)) + '</div>';
+        stopDemo = RB.lessons.demoInto(el.querySelector('.kdemo-fig'), ch, 160, 'kdemo');
+        el.querySelector('.kinfo').innerHTML = '<div class="jp" lang="ja" style="font-size:2.4em;line-height:1.2">' + esc(ch) + '</div><div>' + esc(kanaLabel(ch, k.dataset.r)) + '</div>';
         return;
       }
       const say = e.target.closest('[data-say]');
@@ -96775,13 +96811,23 @@ RB.lessons = (function () {
   // numbered from 1, in the space one box takes (RBN-QA-039; a small kana's reference is already drawn small and low,
   // so it is not scaled again). Any part with no reference: no demonstration, and no claim of numbered strokes.
   const SMALL_KANA = 'ぁぃぅぇぉっゃゅょゎゕゖァィゥェォッャュョヮヵヶ';
-  function demoFigure(ch) {
+  // (`full`: the space the whole figure takes, 360 on a lesson sheet; `plain`: no caption, where the surface says it)
+  function demoFigure(ch, full, plain) {
     const parts = Array.from(ch);
     if (!parts.every((p) => RB.recog && RB.recog.reference(p))) return '<p class="muted small lesson-nodemo">No stroke demonstration for this one.</p>';
-    const one = parts.length === 1, size = one ? 360 : Math.floor(360 / parts.length);
+    const one = parts.length === 1, size = one ? full || 360 : Math.floor((full || 360) / parts.length);
     const canvases = parts.map((p) => '<canvas width="' + size + '" height="' + size + '" role="img" aria-label="Stroke order for ' + (SMALL_KANA.includes(p) ? 'small ' : '') + esc(p) + '"></canvas>').join('');
     return '<figure class="lesson-demo">' + (one ? canvases : '<div class="lesson-demo-set">' + canvases + '</div>') +
-      '<figcaption class="muted small">' + (one ? 'Numbered strokes' : 'Each kana with its own numbered strokes,') + ' from the reference data. The adventure accepts readable variants; order matters only in optional practice.</figcaption></figure>';
+      (plain ? '' : '<figcaption class="muted small">' + (one ? 'Numbered strokes' : 'Each kana with its own numbered strokes,') + ' from the reference data. The adventure accepts readable variants; order matters only in optional practice.</figcaption>') + '</figure>';
+  }
+  // The demonstration drawn into an element of another surface (the Guide's kana chart, RBN-QA-039 follow-up): a
+  // character with its own reference on one canvas, as it always was there; a combination in its boxes, and a
+  // character with no reference with the same honest line, as on a lesson sheet. One stop for every box.
+  function demoInto(el, ch, size, cls) {
+    const parts = Array.from(ch);
+    el.innerHTML = parts.length === 1 && RB.recog && RB.recog.reference(ch) ? '<canvas width="' + size + '" height="' + size + '"' + (cls ? ' class="' + cls + '"' : '') + '></canvas>' : demoFigure(ch, size, true);
+    const stops = [...el.querySelectorAll('canvas')].map((cv, j) => demo(cv, parts[j]));
+    return () => stops.forEach((f) => f());
   }
 
   // One new kana per page of a lesson sheet: the character and its romaji,
@@ -96895,7 +96941,7 @@ RB.lessons = (function () {
     RB.learn.rec('g:' + id);
     await RB.challenge.teachCard({ title: 'Grammar:', titleMixed: g.title, jpMixed: g.title, en: g.en, ex: (g.ex || []).slice(0, 3) });
   }
-  return { run, grammarCard, groups, groupChars, nextGroup, kanaFor, teachAll, demo };
+  return { run, grammarCard, groups, groupChars, nextGroup, kanaFor, teachAll, demo, demoInto };
 })();
 
 
@@ -112595,6 +112641,10 @@ RB.combat = (function () {
     if (c.disabled || !st) return null;
     // a decision, a procedure step or a conversation is judged by the player (C-60): no "Here:" line
     if (['wait', 'proc', 'resolve', 'social', 'gesture'].indexOf(c.kind) >= 0) return null;
+    // nor in a conversation with a creature in it: there a response does what the conversation makes of it
+    // (97_encounter.js socialAct), not what it does in a battle, so a battle's "Here:" would promise the wrong thing
+    // (RBN-QA-055). Nothing is tried on the conversation to say it.
+    if (st.enc && st.enc.social) return null;
     let p;
     try { p = L().previewAct(st, c); } catch (e) { return null; }
     const nm = (i) => (isGroup() ? 'the ' + shortEn(i) : 'it');
@@ -112660,6 +112710,7 @@ RB.combat = (function () {
       // on a card with a Here: line (the whole of it on keyboard focus, as the card's tooltip, and to a screen reader)
       '<span class="rc-d">' + (c.disabled ? I('warn') + esc(desc) : '') +
       (here ? '<span class="rc-here' + (here.none ? ' none' : '') + '"><b>Here:</b> ' + esc(here.en) + '</span>' : '') +
+      (c.cue && !c.disabled ? '<span class="rc-cue">' + esc(c.cue) + '</span>' : '') +
       (c.disabled ? '' : '<span class="rc-more' + (here ? ' folded' : '') + '"' + (here ? ' title="' + esc(desc + (ans.length ? ' Answers: ' + ans.join(', ') + '.' : '')) + '"' : '') + '>' + esc(desc) +
       (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') + '</span>') + '</span></button>';
   }
@@ -113523,7 +113574,10 @@ RB.combat = (function () {
         if (card.kind === 'askhelp') { await live(offerHelp(false)); continue; }
         // Wait answers nothing (E9): chosen on purpose, never by a slip of the finger
         if (card.kind === 'wait') {
-          const r = await live(RB.ui.confirm('Wait and watch: you answer nothing this exchange, and the creatures act. You will see their next moves.', ['Wait', 'Choose again']));
+          // (in a conversation, the conversation's Wait: you say nothing and let the others speak; the creatures
+          // still take their turn, RBN-QA-060)
+          const r = await live(RB.ui.confirm(st.enc && st.enc.social ? 'Wait: you say nothing this exchange and let the others speak. The creatures still act.'
+            : 'Wait and watch: you answer nothing this exchange, and the creatures act. You will see their next moves.', ['Wait', 'Choose again']));
           if (r !== 0) { tg.lock = null; continue; }
         }
         // a modifier with an option (E27): whom, which two, which to leave out
@@ -199360,7 +199414,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       Object.assign(T('{書庫|しょこ} の {洞|ほら} の {奥|おく} で 、 {灯守|ひもり} の {記録|きろく} を {読|よ}もう 。', 'Read the keepers\' registers at the back of the scriptorium cave.'), { atIf: [
         { if: '!kr_cave2_open', at: { map: 'kr.cave2', x: 22, y: 4 } },
       ] }),
-      T('{宿坊|しゅくぼう} で 、 {夜|よ}{通|どお}し の {灯|ひ} の {番|ばん} を しよう 。', 'Keep the vigil at the lodge, through the night.'),
+      // (RBN-QA-061) before the vigil begins, whoever brings it about: Ren at the ridge's lamp once Hisae has said where
+      // he went, otherwise Hisae at her lamp (her talk sends you on, or makes up the quarrel); then derived (the vigil,
+      // where her warp has taken you)
+      Object.assign(T('{宿坊|しゅくぼう} で 、 {夜|よ}{通|どお}し の {灯|ひ} の {番|ばん} を しよう 。', 'Keep the vigil at the lodge, through the night.'), { atIf: [
+        { if: 'kr_night&!kr_evening_done&comp=ren&kr_apart&kr_hisae_told_ren&!kr_ren_back', at: { map: 'kr.ridge', npc: 'kr_ren_n' } },
+        { if: 'kr_night&!kr_evening_done', at: { map: 'kr.lodge', npc: 'kr_hisae_n' } },
+      ] }),
       T('{夜|よ} が {明|あ}けた 。 {峠|とうげ} を {越|こ}えて 、 {灯落|ひおち} へ {下|くだ}ろう 。', 'Dawn. Cross the pass and go down to Lanternfall.'),
     ],
     reward: { flags: ['kr_main_done'] },
@@ -200887,6 +200947,12 @@ RB.script.add(`
 @scene kr.evening
 # The evening at the lodge after the cave (onEnter, at night).
 !set kr_evening_seen
+# (RBN-QA-062) the gathering is shown, not only told: whoever is at the lodge tonight is already round Hisae's lamp, and
+# stays there for the rest of the visit; you and your companion walk to it before the line
+!walkto kr_mokichi 18 9 right now stay
+!walkto kr_sora 19 10 up now stay
+?(kr_kikyo_lodge) !walkto kr_kikyo 22 9 left now stay
+!walkto pc 20 7 down party max=12000
 narr: {宿坊|しゅくぼう} の {上|うえ} に 、 {星|ほし} が {出|で}て いる 。 ヒサエ の {灯|ひ} の まわり に 、 モキチ の {家族|かぞく} と キキョウ が {集|あつ}まって いる 。 || Stars over the lodge. Mokichi's family and Kikyō have gathered round Hisae's lamp.
 ?(comp=ren) !call kr.ren_evening
 ?(comp=nao) !call kr.nao_evening
