@@ -403,6 +403,15 @@ RB.ui.dialogue = (function () {
     document.body.classList.toggle('dlg-top', on);
     if (choicesEl) choicesEl.classList.toggle('dlg-top', on);
   }
+  // Where the sheet rests. A conversation's first line slides it in (LI-4's `dlg-in`: a `translate` from below or
+  // above the screen), and the rectangle the browser reports moves with the slide; the docking is decided by where
+  // the sheet will settle, so while it slides its place is read from the layout instead (RBN-QA-070).
+  function restRect() {
+    const r = box.getBoundingClientRect(), par = box.offsetParent;
+    if (!box.classList.contains('dlg-in') || !par) return r;
+    const top = par.getBoundingClientRect().top + par.clientTop + box.offsetTop;
+    return { left: r.left, right: r.right, top, bottom: top + r.height, height: r.height };
+  }
   function dock(fresh) {
     if (!box || box.classList.contains('hidden')) return;
     if (fresh) setTop(false);
@@ -413,7 +422,7 @@ RB.ui.dialogue = (function () {
     if (sp && sp !== W.player) who.push(sp);
     // a character sprite is a tile wide and a tile and a half tall
     const boxes = who.map((a) => { const p0 = RB.render.tileToCss(a.fx, a.fy - 0.5), p1 = RB.render.tileToCss(a.fx + 1, a.fy + 1); return { l: p0.x, t: p0.y, r: p1.x, b: p1.y }; });
-    const r = box.getBoundingClientRect(), vh = window.innerHeight;
+    const r = restRect(), vh = window.innerHeight;
     const top = box.classList.contains('top');
     const edge = top ? r.top : vh - r.bottom;
     const there = top ? { t: vh - edge - r.height, b: vh - edge } : { t: edge, b: edge + r.height };
