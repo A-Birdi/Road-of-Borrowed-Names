@@ -8,10 +8,13 @@
 //     (1280 × 800) and a phone (390 × 844); without Kikyō at the lodge, no Kikyō;
 //  2. each companion's branch (Ren, Nao, Mio, Suzu) runs as before and ends with them still gathered; 12 s later
 //     they are still there;
-//  3. talking to Mokichi where he stands runs his own scene; the way to Hisae is open;
-//  4. the visit's end: leaving and coming back, or the game opened afresh with a save made there, finds them at their
-//     usual places (visit-only staging); a load without leaving the map in the same session finds them as they stood;
-//     the evening is never told again; no page errors.
+//  3. talking to Mokichi where he stands runs his own scene (kr.mokichi); the way to Hisae is open;
+//  4. the visit's end: leaving and coming back, or the game opened afresh with a save made there (one made while they
+//     were gathered, and one made after coming back), finds them at their usual places (visit-only staging); a load
+//     without leaving the map in the same session finds them as they stood; the evening is never told again; no page
+//     errors.
+// (Mokichi, Sora and Kikyō are placed round the lamp before the line, not seen walking there; you and your companion
+// walk.)
 // Usage: node tools/build.mjs && node tests/e2e/lodge_evening.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -71,6 +74,8 @@ for (const comp of ['ren', 'nao', 'mio', 'suzu']) {
   if (comp === 'suzu') {
     const talk = await r.p.evaluate(async () => {
       const W = RB.world.W, m = W.npcs.find((q) => q.id === 'kr_mokichi');
+      const ran = [], run = RB.script.run;
+      RB.script.run = function (id) { ran.push(id); return run.apply(this, arguments); };
       RB.world.W.player.x = 18; RB.world.W.player.y = 8; RB.world.W.player.dir = 'down';
       RB.world.interact();
       await new Promise((res) => setTimeout(res, 600));
@@ -78,9 +83,10 @@ for (const comp of ['ren', 'nao', 'mio', 'suzu']) {
       for (let i = 0; i < 40 && (RB.ui.dialogue.isOpen() || (RB.script.isRunning && RB.script.isRunning())); i++) { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); await new Promise((res) => setTimeout(res, 80)); }
       W.player.x = 20; W.player.y = 7;
       const free = [[19, 9], [21, 9], [20, 10]].some(([x, y]) => !RB.world.blocked(x, y));
-      return { said, at: [m.x, m.y], free };
+      RB.script.run = run;
+      return { said, ran, at: [m.x, m.y], free };
     });
-    ok(talk.said && talk.free, 'suzu: talking to Mokichi where he stands runs his scene; a tile beside Hisae is free (' + JSON.stringify(talk) + ')');
+    ok(talk.said && talk.ran[0] === 'kr.mokichi' && talk.free, 'suzu: talking to Mokichi where he stands runs his scene, kr.mokichi; a tile beside Hisae is free (' + JSON.stringify(talk) + ')');
   }
   await r.p.close();
 }
@@ -102,11 +108,14 @@ for (const comp of ['ren', 'nao', 'mio', 'suzu']) {
   const w1 = await where(r.p);
   ok(!back.open && !back.running && w1.mokichi.at.join() === '6,13' && w1.kikyo.at.join() === '24,13' && w1.hisae.at.join() === '20,9', 'leaving for the ridge and coming back: their usual places, Hisae at her lamp, the evening not told again (' + JSON.stringify({ back, mokichi: w1.mokichi.at, sora: w1.sora.at, kikyo: w1.kikyo.at }) + ')');
   await r.p.evaluate(async () => { await RB.save.manualSave(2); });
-  await r.p.reload();
-  await r.p.waitForFunction(() => window.RB && RB.game && RB.save, null, { timeout: 30000 });
-  const fresh = await r.p.evaluate(async () => { await RB.game.loadCampaign(2, 'manual'); await new Promise((res) => setTimeout(res, 1500)); return { map: RB.game.s.map, open: RB.ui.dialogue.isOpen() }; });
-  const w2 = await where(r.p);
-  ok(fresh.map === 'kr.lodge' && !fresh.open && w2.mokichi.at.join() === '6,13' && w2.kikyo.at.join() === '24,13', 'the game opened afresh with that save: their usual places, the evening not told again (' + JSON.stringify({ fresh, mokichi: w2.mokichi.at, kikyo: w2.kikyo.at }) + ')');
+  // the game opened afresh, with each save: slot 1 made while they were gathered, slot 2 after coming back
+  for (const [slot, when] of [[1, 'made while they were gathered'], [2, 'made after coming back']]) {
+    await r.p.reload();
+    await r.p.waitForFunction(() => window.RB && RB.game && RB.save, null, { timeout: 30000 });
+    const fresh = await r.p.evaluate(async (slot) => { await RB.game.loadCampaign(slot, 'manual'); await new Promise((res) => setTimeout(res, 1500)); return { map: RB.game.s.map, pc: [RB.world.W.player.x, RB.world.W.player.y], open: RB.ui.dialogue.isOpen(), running: !!(RB.script.isRunning && RB.script.isRunning()) }; }, slot);
+    const w2 = await where(r.p);
+    ok(fresh.map === 'kr.lodge' && !fresh.open && !fresh.running && w2.mokichi.at.join() === '6,13' && w2.kikyo.at.join() === '24,13' && w2.hisae.at.join() === '20,9', 'the game opened afresh with the save ' + when + ': their usual places, the evening not told again (' + JSON.stringify({ fresh, mokichi: w2.mokichi.at, sora: w2.sora.at, kikyo: w2.kikyo.at }) + ')');
+  }
   ok(!r.errors.length, 'the visit\'s end: no page errors ' + r.errors.slice(0, 2).join(' | '));
   await r.p.close();
 }
