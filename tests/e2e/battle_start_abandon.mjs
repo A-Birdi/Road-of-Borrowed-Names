@@ -17,8 +17,7 @@
 //  7. an encounter's preparation question (fx.prep, which offers one thing) as before: Begin now, the window's task
 //     then Not now, and Escape each open the battle with the mist still in the room; a load in that battle's opening fade (after the
 //     questions) leaves nothing of it.
-// Not covered here (a separate item): a load while a preparation question or its task is on screen; that layer is
-// not taken down by this change.
+// A load while a preparation question or its task is on screen is prep_abandon's (RBN-QA-078).
 // Usage: node tools/build.mjs && node tests/e2e/battle_start_abandon.mjs
 import { serve, launch, page } from './lib.mjs';
 
