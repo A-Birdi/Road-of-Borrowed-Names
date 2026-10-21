@@ -733,6 +733,7 @@ button.entry .t, button.entry .kind { display: block; }
 .kdemo-box canvas { width: 160px; height: 160px; border-radius: var(--r-1); background: #fffaf0; border: 1px solid var(--paper-edge); flex: none; }
 /* RBN-QA-039 follow-up: a combination's boxes (or the line saying there is no demonstration) in the same 160px */
 .kdemo-box .kdemo-fig { width: 160px; flex: none; }
+.kinfo .kback { display: block; margin-top: 0.5em; }
 .kdemo-box .lesson-demo { margin: 0; max-width: none; }
 .kdemo-box .lesson-demo-set { gap: 4px; max-width: none; }
 .kdemo-box .lesson-demo-set canvas { flex: 1 1 0; width: 0; height: auto; aspect-ratio: 1; }
@@ -30765,8 +30766,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Barrel: bulging staves on a lit cylinder, iron hoops, a lidded top.
   art('barrel', {
     box: [0, -2, 32, 36],
-    draw(g, M) {
+    // o.tipped (v 1): knocked onto its side, its head to the east, leaking from the bung (lf.lw_road_oil, RBN-QA-065).
+    // The oil pool and the wet run read as a leak when still; a drop runs down the head only when motion is allowed.
+    v: (o) => (o.tipped ? 1 : 0),
+    draw(g, M, v) {
       const w5 = M.wood;
+      if (v === 1) {
+        for (let y = 15; y < 29; y++) for (let x = 3; x < 27; x++) R(g, x, y, 1, 1, cylCol(y - 15, 14, w5));
+        for (const u of [-0.6, 0, 0.6]) R(g, 3, Math.round(22 + u * 6), 24, 1, w5[1]);
+        for (const x of [7, 21]) { for (let y = 15; y < 29; y++) R(g, x, y, 2, 1, cylCol(y - 15, 14, IR)); R(g, x, 16, 1, 12, IR[3]); }
+        ell(g, 27, 22, 2.6, 7, w5[1]);
+        ell(g, 27, 22, 1.8, 5.6, w5[3]);
+        R(g, 14, 15, 2, 1, '#1a120a');
+        R(g, 28, 24, 1, 6, '#2a1c0a');
+        return;
+      }
       for (let y = 7; y < 30; y++) {
         const b = y < 9 || y > 27 ? 1 : 0;
         for (let i = b; i < 20 - b; i++) R(g, 6 + i, y, 1, 1, cylCol(i - b, 20 - 2 * b, w5));
@@ -30778,7 +30792,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(g, 10, 5, 12, 1, w5[4]);
       R(g, 12, 7, 8, 1, w5[2]);
     },
-    shadow: () => [16, 29, 12, 3.5, 0.34],
+    // the oil on the road, under the tipped cask: a dark pool with a lit edge
+    ground(g, M, v) {
+      if (v !== 1) return;
+      ell(g, 24, 31.4, 8.5, 2.6, '#2a1c0a');
+      ell(g, 26, 31.6, 4.5, 1.3, '#45301a');
+      R(g, 24, 32, 4, 1, '#b89a52');
+      R(g, 18, 33, 3, 1, '#7a5f30');
+    },
+    shadow: (v) => (v === 1 ? [15, 29, 13, 3.2, 0.34] : [16, 29, 12, 3.5, 0.34]),
+    live(c, x, y, pal, t, o) {
+      if (!o.tipped || o.still || (RB.game && RB.game.reducedMotion && RB.game.reducedMotion())) return;
+      const k = (t % 1100) / 1100;
+      if (k < 0.75) { c.fillStyle = '#5a4018'; c.fillRect(x + 28, y + 24 + Math.floor(k * 7), 1, 2); }
+    },
   });
 
   // Crate: planked top and front, a framed face with a diagonal brace.
@@ -42017,18 +42044,31 @@ RB.world = (function () {
   function companionHere(st, def) {
     return !def || !def.noCompanion || (def.noCompanion !== true && RB.state.test(st, def.noCompanion));
   }
-  function placeCompanion() {
-    const cid = partyCompanion();
-    if (!cid || !companionHere(s(), W.map.def)) {
+  // A map's followerAway (a condition): while it holds, your companion does not walk with you there, though they are
+  // still with you in every other way (the party, battles, the Ledger, the pet's rule above): a quarrel at the
+  // Keepers' Lodge (RBN-QA-063, kr/24_scenes_comp.js). A scene's `!refresh comp` reads it again on the same map.
+  // Where they stand: behind you, else on your own tile (a map's entry). o.near (`!refresh comp`, someone coming back
+  // mid-scene): behind you, else beside you, else ahead, your own tile last, so they are not hidden under you while
+  // the scene goes on (Local CL-101). If they are the one just now walking off this map (a scene's !refresh took
+  // their placement here away, as on the Ridge Light) or standing here having walked in to speak, that figure is the
+  // one who comes with you, from where it stands: never a second of them (RBN-QA-066, Agnes 6315726597, Local CL-107).
+  function placeCompanion(o) {
+    const cid = partyCompanion(), d = W.map.def;
+    if (!cid || !companionHere(s(), d) || (d && d.followerAway && RB.state.test(s(), d.followerAway))) {
       W.comp = null;
       return;
     }
     const ch = RB.content.chars[cid];
     const p = W.player;
-    const back = DIRS[OPP[p.dir]];
-    let cx = p.x + back[0], cy = p.y + back[1];
-    if (blocked(cx, cy, { ignoreComp: true }) || RB.maps.exitAt(W.map, cx, cy)) { cx = p.x; cy = p.y; }
-    W.comp = makeActor(cx, cy, p.dir, RB.festDress && RB.festDress.on(s()) ? RB.festDress.look(ch.look, cid) : ch.look);
+    const back = DIRS[OPP[p.dir]], ahead = DIRS[p.dir];
+    const going = o && o.near && (W.leavers.find((n) => personOf(n) === cid) || W.extras.find((n) => personOf(n) === cid));
+    if (going) { W.leavers = W.leavers.filter((n) => n !== going); W.extras = W.extras.filter((n) => n !== going); }
+    const tries = going ? [going.mv ? [going.mv.tx, going.mv.ty] : [going.x, going.y]] : [];
+    tries.push([p.x + back[0], p.y + back[1]]);
+    if (o && o.near) tries.push([p.x - ahead[1], p.y + ahead[0]], [p.x + ahead[1], p.y - ahead[0]], [p.x + ahead[0], p.y + ahead[1]]);
+    const at = tries.find(([x, y]) => !blocked(x, y, { ignoreComp: true }) && !RB.maps.exitAt(W.map, x, y)) || [p.x, p.y];
+    const cx = at[0], cy = at[1];
+    W.comp = makeActor(cx, cy, going ? going.dir : p.dir, RB.festDress && RB.festDress.on(s()) ? RB.festDress.look(ch.look, cid) : ch.look);
     W.comp.id = cid;
     W.trail = [];
   }
@@ -47187,7 +47227,7 @@ RB.questGuide = (function () {
     boat: ['{船|ふね}', 'the boat'], sea_buoy: ['ブイ', 'the buoy'],
     cr_satchel: ['{状箱|じょうばこ}', 'the letter box'], cr_joyato: ['{常夜灯|じょうやとう}', 'the everlasting lamp'], cr_kago: ['{駕籠|かご}', 'the palanquin'],
     cr_horse: ['{馬|うま}', 'the pack horse'], cr_bigcedar: ['{大杉|おおすぎ}', 'the great cedar'],
-    co_seal: ['ガラス の {封|ふう}', 'the glass seal'],
+    co_seal: ['ガラス の {封|ふう}', 'the glass seal'], stairs: ['{階段|かいだん}', 'the stairs'],
   };
   const PROP_PREFIX = [
     [/icewall/, '{氷|こおり}', 'the ice'], [/dial/, '{仕掛|しか}け', 'the dial mechanism'], [/crank/, 'ハンドル', 'the crank'], [/lamp/, '{灯|あか}り', 'the lamp'],
@@ -56370,8 +56410,10 @@ RB.script = (function () {
         case 'travel': a.forEach((p) => (s.travel[p] = true)); break;
         // `!refresh arrive`: the people this brings walk in from the way in, one after another, and the scene goes on
         // once they have reached their places (at once when skipping, or behind an illustrated sequence)
+        // `!refresh comp`: your companion walks with you here, or not, as the map now says (its followerAway, 50_world.js),
+        // beside you if not behind (never hidden under you while there is room)
         case 'refresh':
-          if (a[0] === 'arrive') { RB.world.refreshActors({ arrive: true }); await RB.world.arrivals({ now: hidden() }); } else RB.world.refreshActors();
+          if (a[0] === 'arrive') { RB.world.refreshActors({ arrive: true }); await RB.world.arrivals({ now: hidden() }); } else if (a[0] === 'comp') RB.world.placeCompanion({ near: true }); else RB.world.refreshActors();
           break;
         case 'recruit': await RB.game.recruit(a[0], a[1]); break;
         case 'depart': await RB.game.depart(); break;
@@ -69767,6 +69809,15 @@ RB.ui.dialogue = (function () {
     document.body.classList.toggle('dlg-top', on);
     if (choicesEl) choicesEl.classList.toggle('dlg-top', on);
   }
+  // Where the sheet rests. A conversation's first line slides it in (LI-4's `dlg-in`: a `translate` from below or
+  // above the screen), and the rectangle the browser reports moves with the slide; the docking is decided by where
+  // the sheet will settle, so while it slides its place is read from the layout instead (RBN-QA-070).
+  function restRect() {
+    const r = box.getBoundingClientRect(), par = box.offsetParent;
+    if (!box.classList.contains('dlg-in') || !par) return r;
+    const top = par.getBoundingClientRect().top + par.clientTop + box.offsetTop;
+    return { left: r.left, right: r.right, top, bottom: top + r.height, height: r.height };
+  }
   function dock(fresh) {
     if (!box || box.classList.contains('hidden')) return;
     if (fresh) setTop(false);
@@ -69777,7 +69828,7 @@ RB.ui.dialogue = (function () {
     if (sp && sp !== W.player) who.push(sp);
     // a character sprite is a tile wide and a tile and a half tall
     const boxes = who.map((a) => { const p0 = RB.render.tileToCss(a.fx, a.fy - 0.5), p1 = RB.render.tileToCss(a.fx + 1, a.fy + 1); return { l: p0.x, t: p0.y, r: p1.x, b: p1.y }; });
-    const r = box.getBoundingClientRect(), vh = window.innerHeight;
+    const r = restRect(), vh = window.innerHeight;
     const top = box.classList.contains('top');
     const edge = top ? r.top : vh - r.bottom;
     const there = top ? { t: vh - edge - r.height, b: vh - edge } : { t: edge, b: edge + r.height };
@@ -87069,14 +87120,43 @@ RB.ui.menu = (function () {
       const k = e.target.closest('[data-k]');
       if (k) {
         stopDemo();
-        const ch = k.dataset.k;
+        const ch = k.dataset.k, at = leafY(k);
         stopDemo = RB.lessons.demoInto(el.querySelector('.kdemo-fig'), ch, 160, 'kdemo');
         el.querySelector('.kinfo').innerHTML = '<div class="jp" lang="ja" style="font-size:2.4em;line-height:1.2">' + esc(ch) + '</div><div>' + esc(kanaLabel(ch, k.dataset.r)) + '</div>';
+        revealDemo(el, ch, at);
         return;
       }
+      if (e.target.closest('[data-kback]')) { kanaBack(el); return; }
       const say = e.target.closest('[data-say]');
       if (say) { const n = s.notebook.filter((x) => x.kind === 'word')[+say.dataset.say]; if (n && RB.voice) RB.voice.sayRef(n.surface && n.reading && RB.voice.refKey ? RB.voice.refKey.word(n.surface, n.reading) : null, n.reading || n.surface); }
     };
+  }
+  // RBN-QA-067: the stroke-order box sits above the chart, so a kana chosen further down drew out of view. When the box
+  // is not wholly in view, the Guide's own page (its scrolling leaf: never the window or the facing page) moves once,
+  // at once, to show it, and "Back to ‹kana› in the chart" returns to where you were and to that kana. When the box is
+  // in view nothing moves. (Back puts the kana where it was on the page when you chose it, whatever the box's height.)
+  let kanaReturn = null;
+  const leafY = (n) => { const leaf = n.closest('.leaf'); return leaf ? n.getBoundingClientRect().top - leaf.getBoundingClientRect().top : 0; };
+  function revealDemo(el, ch, at) {
+    const box = el.querySelector('.kdemo-box'), leaf = box && box.closest('.leaf');
+    kanaReturn = null;
+    if (!box || !leaf) return;
+    const lr = leaf.getBoundingClientRect(), br = box.getBoundingClientRect();
+    if (br.top >= lr.top && br.bottom <= lr.bottom) return;
+    kanaReturn = { at, ch };
+    leaf.scrollTo({ top: Math.max(0, leaf.scrollTop + br.top - lr.top - 8), behavior: 'instant' });
+    const info = el.querySelector('.kinfo');
+    info.insertAdjacentHTML('beforeend', '<button class="pbtn kback" data-kback>Back to <span lang="ja">' + esc(ch) + '</span> in the chart</button>');
+    info.querySelector('[data-kback]').focus({ preventScroll: true });
+  }
+  function kanaBack(el) {
+    const r = kanaReturn, box = el.querySelector('.kdemo-box'), leaf = box && box.closest('.leaf'), btn = el.querySelector('[data-kback]');
+    kanaReturn = null;
+    if (btn) btn.remove();
+    const cell = r && leaf && [...el.querySelectorAll('.kcell')].find((x) => x.dataset.k === r.ch);
+    if (!cell) return;
+    leaf.scrollTo({ top: Math.max(0, leaf.scrollTop + leafY(cell) - r.at), behavior: 'instant' });
+    cell.focus({ preventScroll: true });
   }
   function kanaChart(s) {
     const K = RB.kana;
@@ -141580,7 +141660,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: '{潮見|しおみ}{小屋|ごや} の シオリ に 、 {岬|みさき} の {道|みち} が いつ {開|ひら}く か {聞|き}こう 。', en: 'Ask Shiori at the tide-watch hut on the point when the causeway opens.' },
       { jp: '{風|かぜ} の ない {霧|きり} が {道|みち} を {隠|かく}して いる 。 {灯台|とうだい} の ゲンゾウ に {相談|そうだん} しよう 。', en: 'A windless fog hides the causeway. Ask Genzō at the lighthouse about the wind.' },
       { jp: '{引|ひ}き{潮|しお} の {道|みち} を {渡|わた}って 、 {沈|しず}んだ {書庫|しょこ} へ {入|はい}ろう 。', en: 'Cross the causeway south of the point and enter the Drowned Archive.' },
-      { jp: '「{返送|へんそう}」 された {名前|なまえ} が どこ へ {行|い}く の か {突|つ}き{止|と}めよう 。', en: 'Find out where the "returned" names are taken — go deeper into the archive.' },
+      { jp: '「{返送|へんそう}」 された {名前|なまえ} が どこ へ {行|い}く の か {突|つ}き{止|と}めよう 。', en: 'Find out where the "returned" names are taken — go deeper into the archive.',
+        // while the inner door is shut, the way on is that door (its own line names the catalogue cabinet; RBN-QA-069:
+        // the derived step looked past it to the Returns Counter); once the catalogue is in order, derived as before
+        atIf: [{ if: '!sg_da_catalog', at: { map: 'sg.da_entry', x: 11, y: 1 } }] },
       { jp: '{潮硝子|しおがらす} に {戻|もど}って 、 オウミ に {伝|つた}えよう 。', en: 'Return to Saltglass and tell Ōmi what you found.' },
     ],
     reward: { flags: ['sg_main_done'] },
@@ -156947,7 +157030,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       S('{記録館|きろくかん} で 、{沈|しず}んだ {鐘楼|しょうろう} の こと を {聞|き}く 。', 'Ask at the Public Records Hall (north side of the main avenue) about the drowned bell tower.'),
       S('{窓口|まどぐち} で {閲覧|えつらん} の {申請書|しんせいしょ} を {出|だ}して 、{左|ひだり} の {机|つくえ} の {台帳|だいちょう} を {読|よ}む 。', 'File a records request at the Records Hall counter, then read the flood-year ledger on the desk to the left.'),
       S('{洪水|こうずい} の {年|とし} の {記録|きろく} は 「{特記|とっき}{事項|じこう} なし」 。{事務所|じむしょ} の アカリ に {聞|き}いて みる 。', 'The flood year\'s ledger says "nothing of note". Ask Akari in the clerks\' office (north-east).'),
-      S('{記録館|きろくかん} の {地下|ちか}{書庫|しょこ} を {調|しら}べる 。', 'Search the basement stacks under the Records Hall (stairs behind the counter).'),
+      // while the stairs are shut the way on is them, behind the counter (RBN-QA-068: the derived step looked past the
+      // locked stacks to the tower); once open, the derivation names the stacks as before
+      Object.assign(S('{記録館|きろくかん} の {地下|ちか}{書庫|しょこ} を {調|しら}べる 。', 'Search the basement stacks under the Records Hall (stairs behind the counter).'),
+        { atIf: [{ if: '!lf_stacks_open', at: { map: 'lf.records', prop: 'stairs', x: 14, y: 3 } }] }),
       S('{古|ふる}い {議事録|ぎじろく} を {議会|ぎかい} の タミ に {見|み}せる 。', 'Show the old minutes to Councillor Tami in the Council Chamber.'),
       S('{水門|すいもん} の トクジ に 、{洪水|こうずい} の {夜|よる} の こと を {聞|き}く 。', 'Ask old Tokuji, by the sluice gates south of town, about the night of the flood.'),
       S('トクジ の {舟|ふね} で {鐘楼|しょうろう} へ {渡|わた}る 。', 'Take Tokuji\'s boat from the sluice landing out to the bell tower.'),
@@ -199497,6 +199583,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // noCompanion: the companion is away while kr_apart holds (Ren's night apart, 24_scenes_comp.js)
   const ROAD = { region: 'keepers', place: 'keepers', travel: 'keepers', music: 'keepers', edition: 2, noCompanion: '!kr_apart' };
   const MIST = { weather: 'motes', tint: 'rgba(200,205,190,0.06)' };
+  // followerAway (50_world.js placeCompanion): after a quarrel at the lodge, until the companion comes back to make it
+  // up, they do not walk with you at the lodge, in Hisae's hut or the caretakers' room (RBN-QA-063). Only Nao, Mio and
+  // Suzu quarrel; a save already made up carries kr_makeup_done.
+  const QUARREL = 'kr_quarrel&!kr_makeup_done&!kr_quarrel_back';
   // a stone lantern: dark until `flag`, lit after (relit by name, or at dawn); `scene` while dark, `after` once lit
   const toro = (x, y, flag, scene, after) => [
     Object.assign({ p: 'kr_toro', x, y, if: '!' + flag }, scene ? { scene } : {}),
@@ -199673,6 +199763,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the Keepers' Lodge (灯守の宿坊) --------------------------------------------------------------------------------
   C.maps['kr.lodge'] = Object.assign({}, ROAD, {
     name: T('The Keepers\' Lodge', '{灯守|ひもり} の {宿坊|しゅくぼう}'),
+    followerAway: QUARREL,
     music: [{ if: 'kr_night&!kr_vigil_done', id: 'kr_vigil' }, { id: 'keepers' }],
     ambient: {
       weather: 'motes',
@@ -199821,6 +199912,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lantern', x: 9, y: 3, o: { lit: true } }, { p: 'bed', x: 7, y: 5 },
     ],
     npcs: [{ id: 'kr_fuyu', x: 3, y: 4, dir: 'down', talk: [{ if: 'kr_done', scene: 'kr.fuyu_after' }, { scene: 'kr.fuyu' }] }],
+    followerAway: QUARREL,
   });
   // Hisae's hut: one room, a hearth, the order's last registers on a shelf
   interior('kr.hisae', T('Hisae\'s Hut', 'ヒサエ の {小屋|こや}'), 9, 7, 4, 'kr.lodge', [33, 10], {
@@ -199829,6 +199921,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lantern', x: 8, y: 3, o: { lit: true } }, { p: 'bed', x: 6, y: 4 },
     ],
     npcs: [],
+    followerAway: QUARREL,
   });
 })(RB.content, RB.mapkit);
 
@@ -200973,7 +201066,8 @@ comp: {道|みち} に {迷|まよ}って 、 {着|つ}けなかった 。 …�
 !set kr_ren_lamp_known
 
 @scene kr.ren_evening
-# Ren's crossroads begins: Hisae's offer, made by her lamp; Ren goes up the ridge alone.
+# Ren's crossroads begins: Hisae's offer, made by her lamp; Ren goes up the ridge alone (and is gone from your side
+# there and then: RBN-QA-066).
 kr_hisae: レン 。 あんた に {話|はなし} が ある 。 || Ren. I've something to say to you.
 kr_hisae: この {道|みち} の {灯守|ひもり} を 、 {継|つ}がない かい 。 {宿坊|しゅくぼう} も 、 {記録|きろく} も 、 {灯|ひ} も 、 {全部|ぜんぶ} あんた の もの に なる 。 || Will you take on the keepership of this road? The lodge, the registers, the lamps: all of it would be yours.
 comp[surprise]: …… わたし が 、 ですか 。 || …Me?
@@ -200982,6 +201076,7 @@ comp[closed]: …… {少|すこ}し 、 {灯守|ひもり} の {用事|よう�
 comp: {先|さき} に {休|やす}んで いて ください 。 {心配|しんぱい} は いりません 。 || Go and rest. There's no need to worry.
 narr: レン は {灯|ひ} を {一|ひと}つ {持|も}って 、 {尾根|おね} の {方|ほう} へ {歩|ある}いて いった 。 || Ren takes a lamp and walks off towards the ridge.
 !set kr_apart
+!refresh comp
 !journal レン が 、 {一人|ひとり} で {尾根|おね} へ {行|い}った 。 「{灯守|ひもり} の {用事|ようじ}」 だ と いう 。 {宿坊|しゅくぼう} で {夜|よる} を {過|す}ごして から 、 {探|さが}し に {行|い}こう 。 || Ren has gone up to the ridge alone: "keeper's business", they said. Spend the evening at the lodge, then go and find them.
 
 @scene kr.nao_evening
@@ -200995,6 +201090,7 @@ narr: ナオ は {灯|ひ} の そば に {座|すわ}って 、 {鞄|かばん}
 comp[angry]: …… {関係|かんけい} ない だろ 。 {飛脚|ひきゃく} の {名前|なまえ} なんて 、 どこ に でも ある 。 || …That's none of your business. Couriers' names turn up everywhere.
 narr: ナオ は {立|た}ち{上|あ}がって 、 {灯|ひ} の {外|そと} の {暗|くら}がり へ {行|い}って しまった 。 || Nao gets up and walks off into the dark beyond the lamplight.
 !set kr_quarrel
+!refresh comp
 !goto end
 :quiet
 narr: {何|なに} も {聞|き}かず に 、 {隣|となり} に {座|すわ}って いた 。 しばらく して 、 ナオ が {小|ちい}さく {言|い}った 。 「…… {聞|き}かない の か 。」 || You sit beside Nao and ask nothing. After a while Nao says quietly, "…You're not going to ask?"
@@ -201012,6 +201108,7 @@ narr: ミオ は 、 ヒサエ の {咳|せき} を {聞|き}いて から 、 {
 comp[angry]: {休|やす}める わけ ない でしょう ！ {一人|ひとり} で {三十年|さんじゅうねん} 、 {誰|だれ} も {診|み}て くれなかった の よ ！ || How could I rest? Thirty years alone, and nobody ever looked after her!
 narr: ミオ は {鍋|なべ} を {抱|かか}えて 、 ヒサエ の {小屋|こや} の {方|ほう} へ {行|い}って しまった 。 || Mio picks up the pot and goes off towards Hisae's hut.
 !set kr_quarrel
+!refresh comp
 !goto end
 :together
 narr: {二人|ふたり} で {薬|くすり} を {持|も}って いく と 、 ヒサエ は {四度目|よんどめ} に やっと {受|う}け{取|と}った 。 「{二人|ふたり} がかり かい 。 {降参|こうさん} だ よ 。」 || You take the medicine over together, and on the fourth try Hisae finally accepts it. "Two of you at once? I give in."
@@ -201031,6 +201128,7 @@ narr: {笑|わら}って いる が 、 {目|め} は {笑|わら}って いな�
 comp[angry]: …… {人|ひと} の {懐|ふところ} を {覗|のぞ}く の は 、 {野暮|やぼ} よ 。 {客|きゃく} は {舞台|ぶたい} を {見|み}て いれば いい の 。 || …Peering into someone's robe is bad manners. The audience should keep its eyes on the stage.
 narr: スズ は {立|た}ち{上|あ}がって 、 {壊|こわ}れた {壁|かべ} の {向|む}こう へ {行|い}って しまった 。 || Suzu gets up and goes off beyond the broken wall.
 !set kr_quarrel
+!refresh comp
 !goto end
 :quiet
 narr: {黙|だま}って いる と 、 スズ が {小|ちい}さく {息|いき} を {吐|は}いた 。 「…… {聞|き}かないで くれて 、 ありがとう 。 その うち 、 ちゃんと {書|か}く わ 。」 || You say nothing, and Suzu lets out a small breath. "…Thank you for not asking. I'll write back properly, one of these days."
@@ -201053,8 +201151,11 @@ kr_hisae: {喧嘩|けんか} かい 。 {灯|ひ} の {前|まえ} で {喧嘩|�
 !call kr.hisae_vigil
 
 @scene kr.makeup
-# The making up: the companion comes back and apologises; the player answers in their own words (chosen).
+# The making up: the companion comes back and apologises; the player answers in their own words (chosen). Away from
+# you at the lodge since the quarrel (RBN-QA-063, the maps' followerAway), they are back at your side for it.
 !if kr_makeup_done -> end
+!set kr_quarrel_back
+!refresh comp
 ?(comp=nao) comp: …… さっき は 、 {言|い}い{過|す}ぎた 。 {悪|わる}かった 。 サキチ は 、 {昔|むかし} {道|みち} を {教|おし}えて くれた {飛脚|ひきゃく} だ 。 それ だけ だ 。 {今|いま} は 。 || …I said too much back there. Sorry. Sakichi's a courier who taught me the road, long ago. That's all. For now.
 ?(comp=mio) comp[sad]: …… さっき は 、 ごめんなさい 。 あなた に {怒|おこ}る こと じゃ なかった 。 ヒサエ さん が 、 {昔|むかし} の {誰|だれ} か に {似|に}て いて 。 || …I'm sorry about earlier. It wasn't you I should have been angry with. Hisae reminds me of someone, from before.
 ?(comp=suzu) comp: …… さっき は 、 {悪|わる}かった わ 。 {野暮|やぼ} なんて 、 {言|い}う つもり じゃ なかった の 。 {手紙|てがみ} は 、 まだ {怖|こわ}くて {開|ひら}けない だけ 。 || …Sorry about earlier. I didn't mean to call you rude. It's only that I'm still too scared to answer the letter.
@@ -201083,7 +201184,8 @@ kr_hisae: {喧嘩|けんか} かい 。 {灯|ひ} の {前|まえ} で {喧嘩|�
 
 @scene kr.ren_lantern
 # Ren's night apart, resolved at the Ridge Light (the unfinished matter); then the crossroads' answer. Its night
-# sounds: bell crickets in the grass, an owl, wind in the lantern's shutters.
+# sounds: bell crickets in the grass, an owl, wind in the lantern's shutters. Back together, Ren leaves the lantern
+# and walks with you from there (RBN-QA-066: the ridge's Ren goes, the follower comes, beside you).
 !if kr_ren_back -> end
 ?(!kr_hisae_told_ren) narr: レン は 、 {暗|くら}い {灯籠|とうろう} の {前|まえ} に {立|た}って いる 。 {声|こえ} を かけて いい か {迷|まよ}う 。 ヒサエ に {先|さき} に {話|はなし} を {聞|き}こう か 。 || Ren is standing before the dark lantern. You're not sure whether to call out. Perhaps talk to Hisae first.
 ?(!kr_hisae_told_ren) !end
@@ -201109,6 +201211,8 @@ ren[smile]: …… {点|つ}きました 。 {遅|おそ}く なって 、 ご�
 ren: ヒサエ さん に 、 この {道|みち} を {継|つ}がない か と {言|い}われました 。 {宿坊|しゅくぼう} も 、 {灯|ひ} も 、 {全部|ぜんぶ} 。 …… {正直|しょうじき} 、 {嬉|うれ}しかった 。 {灯守|ひもり} の {居場所|いばしょ} です から 。 || Hisae asked me to take on this road. The lodge, the lamps, all of it. …Honestly, I was glad. It's a place for a keeper.
 ren: でも 、 {灯|ひ} は {今|いま} 、 どこ でも {消|き}えて います 。 {灯守|ひもり} は 、 {暗|くら}い ところ へ {行|い}く もの です 。 …… あなた と 、 {最後|さいご} まで {歩|ある}きたい 。 この {道|みち} の {答|こた}え は 、 その {後|あと} で {出|だ}します 。 || But lamps are going out everywhere now. A keeper goes where it's dark. …I want to walk with you to the end. I'll give this road its answer after that.
 !unset kr_apart
+!refresh
+!refresh comp
 !set kr_ren_back
 !set kr_ren_crossroads
 !hook co_bond kr:night
@@ -230185,7 +230289,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // it; the blown notice lying on the road; an old traveller with a bundle resting at the bench; Nagi's card on a post
   // beside the road's own lantern by the way up
   L.road('lf_road', { maps: ['lf.road'],
-    unique: { id: 'oil', scene: 'lf.lw_road_oil', at: { props: [{ p: 'barrel', x: 21, y: 15, meet: true }] } },
+    // the leaking cask: on its side until the plug is tightened and it is stood upright (lw_lf_oil_upright, set at that
+    // line; read as it is drawn); the cart's own barrel at (19,15) is another thing and stays as it is (RBN-QA-065)
+    unique: { id: 'oil', scene: 'lf.lw_road_oil', at: { props: [{ p: 'barrel', x: 21, y: 15, meet: true, o: { get tipped() { const s = RB.game && RB.game.s; return !(s && s.flags.lw_lf_oil_upright); } } }] } },
     variants: [
       { id: 'notice', scene: 'lf.lw_road_notice', at: { props: [{ p: 'pet_papers', x: 13, y: 13, meet: true }] } },
       { id: 'bench', scene: 'lf.lw_road_bench', at: { who: [{ char: 'lw_rd_elder', x: 16, y: 15, dir: 'down' }] } },
@@ -230287,6 +230393,7 @@ lw_lf_carter: おーい 、 そこ の {人|ひと} ！ {手|て} を {貸|か}�
 lw_lf_carter: {灯落|ひおち} の {灯|あか}り の {油|あぶら} だ 。 {樽|たる} に {札|ふだ} が {付|つ}いて いる が 、 {慌|あわ}てて {字|じ} が {頭|あたま} に {入|はい}らない 。 {読|よ}んで くれ ！ || It's oil for Lanternfall's lamps. There's a card on the cask, but I'm in such a state the words won't go in. Read it to me!
 !challenge lf.lw_oil
 !if var._res=0 -> later
+!set lw_lf_oil_upright
 narr: {札|ふだ} の {通|とお}り に {栓|せん} を {締|し}め 、 {二人|ふたり} で {樽|たる} を {立|た}てた 。 {油|あぶら} は もう {一滴|いってき} も {漏|も}れない 。 || You tighten the plug as the card says, and the two of you stand the cask upright. Not another drop leaks out.
 lw_lf_carter[laugh]: {助|たす}かった ！ {礼|れい} を {言|い}う よ 。 || That's saved me! Thank you.
 ?(!lf_bell_rung) lw_lf_carter: …… {灯落|ひおち} は {毎月|まいつき} {油|あぶら} を {倍|ばい} {頼|たの}む 。 「もう {要|い}らない」 と は {一度|いちど} も {言|い}わない 。 {変|へん} な {町|まち} だ よ 。 || …Lanternfall orders twice the oil every month, and never once says "that's enough". Strange town.

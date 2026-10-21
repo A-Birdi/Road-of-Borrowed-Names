@@ -5484,6 +5484,27 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-013:** `index.html` sha256 `9506f218f21117546c00ea8f9623a932af55610e02a906a536590d2f584d3a99`, built
+    from `f133f36` (CC-012 plus only RBN-QA-063, the `look_purity` hardening, 068, the `lodge_evening` guards, 069,
+    066, 065, 067 and 070, each with its agreed successors; patch-identical to the agreed commits over every file but
+    `run.mjs`, which only gains `lodge_quarrel`, `guide_stacks`, `road_oil`, `guide_archive`, `ren_apart` and
+    `guide_reveal`). On these bytes (B): `lodge_evening` 16/0, `lodge_quarrel` 31/0, `ren_apart` 7/0, `lodge_arrival` 40/0,
+    `guide_vigil` 9/0, `world_view` all ok (20), `play_ui` all ok (44), `ui` 14/0, `prologue` 100/0, `interludes` 76/0,
+    `load_mid_scene` 19/0, `ruin_lanterns` 31/0, `keepers` 4/0, `hall_entry` all ok (16), `hall_door` 15/0,
+    `walkto_options` 23/0, `title_ledger` 18/0, `guide_stacks` 8/0, `guide_archive` 14/0, `guide_next_step` 24/0,
+    `quest_guide` all ok, `road_oil` 14/0, `geese_event` 15/0, `fog_event` 26/0, `props_balance` 48/0, `guide_reveal`
+    37/0, `guide_kana` 11/0, `learning_qa039` 44/0, `learning_ui` 15/0, `folio` all ok, `ledger_li` all ok,
+    `look_purity` 9/0, `social_wait` 12/0, `social_battle` 65/0, `social_preview` 14/0, `card_press` 13/0,
+    `encounters` 10/0, `combat_ui` 7/0, `companion_turn` 4/0, `battle_settings` 10/0 (two runners side by side, each
+    suite in turn). U whole suite 57,787/0 on this source (Local CL-110: 57,722/6 on `f133f36`, the known
+    six of Local's machine); `validate.mjs` no
+    errors. Also recorded as they happened, not made green afterwards: the full unit run on `bb2445a` alone, 57,783
+    passed and 2 failed (`next_line_once`, fixed by `714b01d`); `world_view` on CC-011 and CC-012, 16 ok and 4 failed
+    (bisected to LI-4's `40d79ae`; its parent passes); `lodge_evening` 14/2 on `cdbeb8d` without the guards. The
+    `guide_reveal` 640 × 400 at 2× case is a constrained viewport at high pixel density, not the browser's own 200%
+    zoom (Agnes 6316714558). Local CL-109: `play_ui`'s "tap outside the sheet" fails on Local's machine identically on
+    CC-012 and `7af0b05` (the help sheet covers the test's tap point with that machine's fonts); not in this batch.
+    Voice: none.
   - **Candidate CC-012:** `index.html` sha256 `cecaeb33ed6532b62a1c080627622bb216d32eb23c594ae1b70b3c93273caa05`, built
     from `acd685a` (CC-011 plus only RBN-QA-055, 059/058, 060, 061, the QA-039 Guide follow-up and 062, each with its
     agreed test-only successor; patch-identical to the agreed commits, verified by Local CL-100/CL-102 and Agnes

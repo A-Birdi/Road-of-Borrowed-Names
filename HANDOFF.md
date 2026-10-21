@@ -754,6 +754,23 @@
       review), the `look_purity` hardening (test only, Local CL-101), RBN-QA-064 and 065 (proposals agreed, queued),
       RBN-QA-066 (Ren's walk-off and return, the same same-map follower mismatch), 067 (the Guide's preview out of view)
       and 068 (Lanternfall's basement search guide names the Belfry Loft): proposals under review.
+      CANDIDATE CC-013 (`index.html` `9506f218…`, built from `f133f36`): CC-012 plus only what was agreed after it,
+      each by its exact commits (cherry-picked with `-x`, patch-identical over every file but `run.mjs`; three AGREEs
+      each, Agnes and Local CL-104 to CL-109): RBN-QA-063 (`a148a16`, `295a0ed`, `f802642` → `33e3188`, `418d61b`,
+      `895e049`: a companion who goes off in the quarrel is away at the lodge until the apology, and comes back beside
+      you, never on your tile), the `look_purity` hardening (`831b873` → `cdbeb8d`, test only), RBN-QA-068 (`296a48a`
+      → `7221ed7`: with the stacks' stairs shut the guide names the stairs in the Public Records Hall), the
+      `lodge_evening` guards (`10f1c23`, `bc3e66c` → `e05f9aa`, `b5b2ca4`, test only), RBN-QA-069 (`bb2445a`,
+      `714b01d` → `8f66b79`, `2bbe49f`: before the catalogue the archive's guide names the Receiving Hall before the
+      inner door; `next_line_once`'s archive case moved to after the catalogue), RBN-QA-066 (`7bd571a`, `55358a1`,
+      `9ecdc69` → `cbc3e34`, `fb79a92`, `3fb1c72`: Ren's walk-off and return shown on the spot; at the Ridge Light the
+      ridge's Ren is the one who comes with you, never a second Ren), RBN-QA-065 (`2defa40`, `ff88404` → `adbfd15`,
+      `337b38a`: Rokusuke's leaking cask lies tipped until it is stood upright), RBN-QA-067 (`47b0bcf` → `0f23389`:
+      choosing a kana far down the Guide's chart reveals its stroke order, with "Back to ‹kana› in the chart"),
+      RBN-QA-070 (`7af0b05` → `f133f36`: a conversation's first line docks by where the sheet will rest, not where
+      LI-4's slide starts; `world_view` green again). Not in it: RBN-QA-064 (the Lanternfall arrival view, AC-1;
+      `candidate/qa-064` in progress), RBN-QA-071 (the Bell Chamber's guardian reveal; proposal agreed, queued after
+      064), Local's optional `!look comp pc` after the quarrel's return, and the cask pool's sheen (optional polish).
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

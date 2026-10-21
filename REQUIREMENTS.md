@@ -1293,7 +1293,18 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   visit; cherry-picked as `6f8218c`, `574da26`, `5ce29ec`, `73de5cc`, `c85b992`, `c3c190f`, `99638e8`, `acd685a`,
   `b12a0e1`, `a42cf49`, `4ff01b7` (patch-identical); B `look_purity` 9/0, `social_preview` 14/0, `social_wait` 12/0,
   `guide_vigil` 9/0, `guide_kana` 11/0, `learning_qa039` 44/0, `lodge_evening` 16/0 on CC-012's own bytes. In
-  candidate CC-012 (`cecaeb33…`, built from `acd685a`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  candidate CC-012 (`cecaeb33…`, built from `acd685a`), READY_FOR_QA.
+  RBN-QA-063, 065, 066, 067, 068, 069, 070, the `look_purity` hardening and the `lodge_evening` guards (three-party
+  AGREE each, on the exact commits listed in HANDOFF's CC-013 entry): a companion who goes off in the quarrel is away
+  at the lodge until the apology and comes back beside you; Ren's walk-off shows at once, and at the Ridge Light the
+  ridge's Ren becomes the follower where they stood, one Ren at every frame; with the stacks' stairs shut the guide
+  names the stairs in the Public Records Hall, and before the archive's catalogue the Receiving Hall before the inner
+  door; Rokusuke's leaking cask lies tipped until it is stood upright; choosing a kana far down the Guide's chart
+  reveals its stroke order once, at once, in the Guide's own page, with "Back to ‹kana› in the chart"; a
+  conversation's first line docks at the top when it would cover the player or the speaker, with motion on as with
+  Reduce motion (`world_view`, red since LI-4's `40d79ae`, green again); B `ren_apart` 7/0, `lodge_quarrel` 31/0, `lodge_evening` 16/0, `guide_stacks` 8/0,
+  `guide_archive` 14/0, `road_oil` 14/0, `guide_reveal` 37/0, `world_view` all ok (20) on CC-013's own bytes. In
+  candidate CC-013 (`9506f218…`, built from `f133f36`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand
