@@ -34,6 +34,15 @@ RB.combatSim = (function () {
     o.log = [];
     if (st._a) o._a = Object.assign({}, st._a);
     if (st.lastPlayer) o.lastPlayer = Object.assign({}, st.lastPlayer);
+    if (st.enc) o.enc = encOf(st.enc);
+    return o;
+  }
+  // The copy's own encounter record (RBN-QA-058): a look ahead that turns a procedure's machine or stops what was
+  // coming does it to the copy. The definition, and a procedure's authored steps, are read only and stay shared.
+  function encOf(E) {
+    const own = (v) => (v == null || typeof v !== 'object' ? v : RB.util.deepClone(v));
+    const o = {};
+    for (const k in E) o[k] = k === 'def' ? E.def : k === 'proc' && E.proc ? Object.assign(own(Object.assign({}, E.proc, { steps: null })), { steps: E.proc.steps }) : own(E[k]);
     return o;
   }
   const sum = (a, f) => a.reduce((n, x) => n + f(x), 0);
