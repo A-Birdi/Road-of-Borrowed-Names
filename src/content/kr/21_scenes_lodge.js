@@ -62,7 +62,7 @@ kr_kikyo[smile]: ありがとう 。 {宿坊|しゅくぼう} で {待|ま}っ�
 narr: {紅葉|もみじ} の {林|はやし} を {抜|ぬ}ける と 、 {屋根|やね} の ない {石|いし} の {建物|たてもの} が あった 。 {灯守|ひもり} の {宿坊|しゅくぼう} だ 。 || Out of the maples stands a long stone building with no roof: the keepers' lodge.
 # (RBN-QA-052) you walk in under the broken walls, your companion with you, so the lamp and the woman trimming it are in
 # view for the line that tells of them (they stand far from where the road comes in, off the edge of the screen there)
-!walkto pc 17 12 right party max=9000
+!walkto pc 15 12 up party max=8000
 narr: {壊|こわ}れた {壁|かべ} の {真|ま}ん{中|なか} に 、 {灯|ひ} が {一|ひと}つ だけ {点|つ}いて いる 。 {小|ちい}さな おばあさん が 、 その {芯|しん} を {整|ととの}えて いた 。 || In the middle of the broken walls a single lamp is lit. A small old woman is trimming its wick.
 ?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp[surprise]: …… {灯|ひ} が 、 {点|つ}いて います 。 この {道|みち} で 、 {初|はじ}めて {誰|だれ} か が {点|つ}けた {灯|ひ} を {見|み}ました 。 || …There's a light. The first one on this road that someone else has lit.
