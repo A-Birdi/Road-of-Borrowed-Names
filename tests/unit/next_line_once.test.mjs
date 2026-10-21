@@ -10,9 +10,17 @@ export default async (t) => {
   const C = RB.content, G = RB.questGuide;
 
   // ---- Robin's case: "go deeper into the archive" ----
+  // (RBN-QA-069: until the catalogue is done the inner door is locked, and the step names the floor in front of it, one
+  // target; the Tide Clerk and the strip before them are its targets once the door is open, so that is this case)
+  const s0 = RB.state.newCampaign({ profile: 'E' });
+  s0.chapter = 2;
+  Object.assign(s0.flags, { departed: true, ch1_done: true, rw_echo_done: true, sg_arrived: true });
+  s0.quests.sg_main = { stage: 8, done: false, t: 1 };
+  const N0 = G.nudges('sg_main', s0);
+  t.ok(N0.result.targets.length === 1 && N0.result.targets[0].map === 'sg.da_entry', 'before the catalogue: one target, in the Receiving Hall before the inner door: ' + JSON.stringify(N0.result.targets.map((x) => x.map + '@' + x.x + ',' + x.y)));
   const s = RB.state.newCampaign({ profile: 'E' });
   s.chapter = 2;
-  Object.assign(s.flags, { departed: true, ch1_done: true, rw_echo_done: true, sg_arrived: true });
+  Object.assign(s.flags, { departed: true, ch1_done: true, rw_echo_done: true, sg_arrived: true, sg_da_catalog: true });
   s.quests.sg_main = { stage: 8, done: false, t: 1 };
   const N = G.nudges('sg_main', s);
   t.eq(N.result.targets.length, 2, 'the step has two guidance targets (the Tide Clerk and the strip before them)');
