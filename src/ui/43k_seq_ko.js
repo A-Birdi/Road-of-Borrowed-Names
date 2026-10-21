@@ -174,7 +174,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         SP.water(L, 0, Math.round(vb * 0.5), Math.round(w * 0.42), Math.round(vb * 0.58), sea, { band: Math.max(2, s(3)), deep: 0.2, seed: 21 });
         // the hill rising to the crown at the right, terraced
         const hill = (x) => vb * 0.52 - clamp((x - w * 0.28) / (w * 0.5), 0, 1) * vb * 0.16 + Math.sin(x / (w * 0.09)) * s(2);
-        L.fill(0, 0, w, h, (x, y) => y > hill(x), hillM, (x, y) => clamp(0.5 - (y - hill(x)) / h * 0.3 + (((Math.round(y - hill(x)) % Math.max(4, s(7))) === 0) ? -0.12 : 0) + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+        const hillShade = (x, y) => clamp(0.5 - (y - hill(x)) / h * 0.3 + (((Math.round(y - hill(x)) % Math.max(4, s(7))) === 0) ? -0.12 : 0) + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999);
+        L.fill(0, 0, w, h, (x, y) => y > hill(x), hillM, hillShade);
         // the great tree on the crown, the same tree as the island's first sight and the crossing draw it
         // (RB.firstSightArt.paintTree; RBN-QA-079, Agnes 6326875198, Local CL-143): its long limbs reaching out low under
         // a wide umbrella of separate leaf masses, its trunk flaring into the crest with its roots. Its crown keeps one
@@ -188,6 +189,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (crTop(crh) + crh > F.y && tx - crh * 4.6 * 1.12 < F.x + F.w + s(2)) crh = Math.max(4, Math.floor((tx - F.x - F.w - s(2)) / (4.6 * 1.12)));
         const crw = Math.round(crh * 4.6), cry = crTop(crh);
         RB.firstSightArt.paintTree(L, { s, narrow: G.narrow, tx, crest, cr: { x: tx, y: cry, rx: crw, ry: crh } }, trunk, leafM);
+        // seated on this hill: paintTree's flare and roots end level with the crest, and where the slope falls away
+        // under them (on a phone the hill levels only right of the trunk) the ground rises to meet them, a low mound of
+        // the hill under the roots that slopes off past their tips, so nothing hangs over the sky (Local CL-145, Agnes
+        // 6327999945)
+        const base = crest + s(3), reach = Math.round(s(G.narrow ? 9 : 10) * 1.5 + s(30)) + 2, tops = [];
+        for (let x = Math.max(0, tx - reach); x <= Math.min(w - 1, tx + reach); x++) {
+          for (let y = Math.min(h - 1, base + s(4)); y >= base - s(10); y--) if (L.mt[y * w + x] === trunk.id) { tops[x] = y + 1; break; }
+        }
+        let tip = -1;
+        for (let x = Math.max(0, tx - reach); x <= tx && tip < 0; x++) if (tops[x] != null) tip = x;
+        for (let x = tip - 1, k = 1; tip > 0 && x >= 0 && tops[tip] + k * 0.75 < hill(x); x--, k++) tops[x] = Math.round(tops[tip] + k * 0.75);
+        const mound = (x, y) => { const c = hillM.c[clamp(Math.floor(hillShade(x, y) * hillM.n), 0, hillM.n - 1)]; L.px[y * w + x] = c; L.mt[y * w + x] = hillM.id; };
+        tops.forEach((top, x) => { for (let y = top; y <= Math.min(h - 1, Math.ceil(hill(x))); y++) if (L.mt[y * w + x] !== trunk.id) mound(x, y); });
         // the village's houses across the green: thatched roofs (hipped, the left slope in the light) over dark walls
         const house = (x0, x1, y, ht) => {
           L.fill(x0, y, x1, y + ht, (xx, yy) => yy >= y && xx >= x0 + (y + ht - yy) * 0.7 && xx <= x1 - (y + ht - yy) * 0.7, thatch, (xx, yy) => clamp((xx < x0 + (x1 - x0) * 0.35 ? 0.66 : 0.46) - (yy - y) / ht * 0.1 + (((Math.round(xx) * 3 + Math.round(yy)) % 5) === 0 ? -0.1 : 0), 0.02, 0.999));
