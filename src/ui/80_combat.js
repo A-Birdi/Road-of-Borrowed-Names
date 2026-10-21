@@ -869,6 +869,7 @@ RB.combat = (function () {
       // on a card with a Here: line (the whole of it on keyboard focus, as the card's tooltip, and to a screen reader)
       '<span class="rc-d">' + (c.disabled ? I('warn') + esc(desc) : '') +
       (here ? '<span class="rc-here' + (here.none ? ' none' : '') + '"><b>Here:</b> ' + esc(here.en) + '</span>' : '') +
+      (c.cue && !c.disabled ? '<span class="rc-cue">' + esc(c.cue) + '</span>' : '') +
       (c.disabled ? '' : '<span class="rc-more' + (here ? ' folded' : '') + '"' + (here ? ' title="' + esc(desc + (ans.length ? ' Answers: ' + ans.join(', ') + '.' : '')) + '"' : '') + '>' + esc(desc) +
       (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') + '</span>') + '</span></button>';
   }
@@ -1732,7 +1733,10 @@ RB.combat = (function () {
         if (card.kind === 'askhelp') { await live(offerHelp(false)); continue; }
         // Wait answers nothing (E9): chosen on purpose, never by a slip of the finger
         if (card.kind === 'wait') {
-          const r = await live(RB.ui.confirm('Wait and watch: you answer nothing this exchange, and the creatures act. You will see their next moves.', ['Wait', 'Choose again']));
+          // (in a conversation, the conversation's Wait: you say nothing and let the others speak; the creatures
+          // still take their turn, RBN-QA-060)
+          const r = await live(RB.ui.confirm(st.enc && st.enc.social ? 'Wait: you say nothing this exchange and let the others speak. The creatures still act.'
+            : 'Wait and watch: you answer nothing this exchange, and the creatures act. You will see their next moves.', ['Wait', 'Choose again']));
           if (r !== 0) { tg.lock = null; continue; }
         }
         // a modifier with an option (E27): whom, which two, which to leave out
