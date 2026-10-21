@@ -237,7 +237,10 @@ RB.script = (function () {
           if (!ctx.offscreenAll && !(ctx.offscreen && ctx.offscreen.has(who))) {
             RB.world.ensureSpeaker(who, sc.id);
             // someone still walking to their place speaks once they are there
+            const g0 = gen;
             await RB.world.whenArrived(who, 3000);
+            // (the campaign changed while they walked: this scene is over, its line is not said; RBN-QA-053)
+            if (g0 !== gen) return;
           }
           await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line, simple: c.simple || null, offscreen: !!(ctx.offscreenAll || (ctx.offscreen && ctx.offscreen.has(who))) });
           // the reader moved on: every gesture cued for this line settles at its hold or its end

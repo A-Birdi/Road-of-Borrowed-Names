@@ -8,6 +8,7 @@ RB.ui.dialogue = (function () {
   const esc = RB.util.esc;
   let box = null, choicesEl = null;
   let pending = null;       // resolve fn for current line
+  let choiceLayer = null;   // the replies' input layer while they are shown
   let revealing = null;     // {timer, finish}
   let shownAt = 0, lastDown = -1; // event-clock times: when the line appeared, the last pointer press
   let current = null;       // current line data
@@ -190,9 +191,10 @@ RB.ui.dialogue = (function () {
     RB.audio && RB.audio.sfx('text_blip', { vol: 0.35 });
     return new Promise((res) => {
       pending = res;
-      if (RB.game.fastForward() && seenScene) setTimeout(() => advance(true), 40);
+      // (each auto-advance moves on only the line it was set for: after a change of campaign a newer line may be up)
+      if (RB.game.fastForward() && seenScene) setTimeout(() => { if (pending === res) advance(true); }, 40);
       else if (RB.sequence && RB.sequence.skipping()) setTimeout(() => { if (pending === res) advance(true); }, 30);
-      else if (RB.test && RB.test.auto) setTimeout(() => advance(true), 5);
+      else if (RB.test && RB.test.auto) setTimeout(() => { if (pending === res) advance(true); }, 5);
     });
   }
   // L12, asking back: the player asks in Japanese (again, slower, more simply); the speaker answers with the
@@ -428,6 +430,7 @@ RB.ui.dialogue = (function () {
       choicesEl.innerHTML = '';
       choicesEl.classList.remove('hidden');
       const layer = { el: choicesEl, name: 'choices', parent: RB.ui.root, noAutofocus: false };
+      choiceLayer = layer;
       choicesEl.classList.toggle('with-dlg', isOpen());
       choicesEl.classList.toggle('dlg-top', isOpen() && box.classList.contains('top'));
       const at = performance.now();
@@ -441,6 +444,7 @@ RB.ui.dialogue = (function () {
           if (e && e.detail !== 0 && lastDown < at) return; // a press from before the replies appeared
           if (RB.ui.keep) RB.ui.keep.chose(op); // the reply's event-time context, for keeping it later
           RB.ui.popLayer(layer);
+          choiceLayer = null;
           choicesEl.classList.add('hidden');
           choicesEl.innerHTML = '';
           RB.audio && RB.audio.sfx('confirm');
@@ -501,6 +505,18 @@ RB.ui.dialogue = (function () {
     RB.game.setFastForward(false);
     current = null;
   }
+  // A change of campaign (a load, a new journey, the title) takes the old scene's line and replies with it, at once
+  // (RBN-QA-053): the reveal stops, the replies' layer comes down, and the old line's resolver is dropped, not called.
+  // The old script's generation is already over (70_script.js): calling it could let it act on the new campaign, and
+  // nothing is chosen for it.
+  function abandon() {
+    if (revealing) revealing.finish();
+    pending = null;
+    if (choiceLayer) { RB.ui.popLayer(choiceLayer); choiceLayer = null; }
+    if (choicesEl) { choicesEl.classList.add('hidden'); choicesEl.innerHTML = ''; }
+    hide();
+  }
+  if (RB.bus) RB.bus.on('campaign:changing', abandon);
   function onAction(a) {
     if (!box || box.classList.contains('hidden') || !pending) return false;
     // an illustrated sequence's keys: Escape opens its skip control, ← / P look back, R replays the shot, I hides the text
