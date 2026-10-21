@@ -7,7 +7,10 @@
 // lodge_evening does):
 //  1. Nao, Mio and Suzu, asking: the follower is there as the departure line is told, gone after it, and stays gone
 //     while you walk about the lodge; the party is unchanged; the animal (Suzu's run has one) is shown as before;
-//     talking to Hisae, the companion is back at your side for the apology, made up, and walks with you after;
+//     walking to Hisae as a tap on her does (to a free tile beside her, not the lamp) and talking, the companion is
+//     back at your side for the apology, made up, and walks with you after;
+//     from each side of Hisae you can reach, with the household gathered round the lamp (QA-062's staging), they come
+//     back beside you, in view, on nobody's tile (yours included);
 //  2. mid-quarrel: a load in the same session, and the game opened afresh with that save: still away at the lodge;
 //     leaving for the ridge (with you there), coming back (away), Hisae's hut and the caretakers' room (away), quick
 //     travel from the lodge (with you where you arrive);
@@ -60,10 +63,15 @@ async function evening(comp, pick, o = {}) {
   return { p, errors, lines, end: await now(p) };
 }
 const walk = async (p, key, ms) => { await p.keyboard.down(key); await p.waitForTimeout(ms); await p.keyboard.up(key); await p.waitForTimeout(250); };
-// talk to Hisae at her lamp from the tile in front of her, and read it through, choosing `pick`
+// go to Hisae at her lamp as a tap on her does (the path to a free tile beside her, then the talk; the lamp's own tile
+// (20,8) is not stood on), and read it through, choosing `pick`; where you stood to talk is recorded
 async function hisae(p, pick) {
-  await p.evaluate(() => { const W = RB.world.W; W.player.x = 20; W.player.y = 8; W.player.dir = 'down'; RB.world.interact(); });
-  return drive(p, pick, 300);
+  await p.evaluate(() => RB.world.tapTile(20, 9));
+  await p.waitForFunction(() => RB.ui.dialogue.isOpen(), null, { timeout: 20000 });
+  const from = await p.evaluate(() => [RB.world.W.player.x, RB.world.W.player.y]);
+  const lines = await drive(p, pick, 300);
+  lines.from = from;
+  return lines;
 }
 const where = async (p, map, x, y, dir) => { await p.evaluate(async ([map, x, y, dir]) => { await RB.game.transition(map, x, y, dir); }, [map, x, y, dir]); await p.waitForTimeout(900); return now(p); };
 
@@ -82,12 +90,42 @@ for (const comp of ['nao', 'mio', 'suzu']) {
   const sorry = said.find((l) => SORRY.test(l.text));
   const after = await now(r.p);
   const near = sorry && sorry.fpos && Math.abs(sorry.fpos[0] - sorry.pc[0]) + Math.abs(sorry.fpos[1] - sorry.pc[1]) <= 1;
-  ok(sorry && sorry.follower && near && after.follower && after.made && after.back && after.comp === comp, comp + ': talking to Hisae, they are back at your side for the apology, and it is made up (' + JSON.stringify({ sorry: sorry && { follower: sorry.follower, fpos: sorry.fpos, pc: sorry.pc }, after }) + ')');
+  const beside = Math.abs(said.from[0] - 20) + Math.abs(said.from[1] - 9) === 1 && said.from.join() !== '20,8';
+  ok(beside && sorry && sorry.follower && near && after.follower && after.made && after.back && after.comp === comp, comp + ': walking to Hisae (a tap on her) and talking, they are back at your side for the apology, and it is made up (' + JSON.stringify({ from: said.from, sorry: sorry && { follower: sorry.follower, fpos: sorry.fpos, pc: sorry.pc }, after }) + ')');
   await walk(r.p, 'ArrowUp', 600); await walk(r.p, 'ArrowLeft', 600);
   await r.p.waitForTimeout(1500);
   const later = await now(r.p);
   ok(later.follower && !r.errors.length, comp + ': after making up, they walk with you; no page errors (' + JSON.stringify({ later, errors: r.errors.slice(0, 2) }) + ')');
   await r.p.close();
+}
+// 1b. the apology from each side of Hisae you can reach, with the household gathered round the lamp as the evening
+// leaves them (RBN-QA-062's staging, run here as kr.evening runs it: Mokichi (18,9), Sora (19,10), Kikyō (22,9)): you
+// walk there (a tap on the tile), face her and talk; they come back beside you, in view, on nobody's tile, yours
+// included (Local CL-101)
+for (const [sx, sy, dir] of [[19, 9, 'right'], [21, 9, 'left'], [20, 10, 'up']]) {
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await p.evaluate((FL) => {
+    RB.game.debugStart('kr.lodge', 20, 13, { dir: 'up', edition: RB.edition.forNew(), comp: 'suzu', flags: Object.assign({}, FL, { kr_night: true, kr_evening_seen: true, kr_quarrel: true }) });
+    RB.game.settings.textSpeed = 'instant';
+    RB.script.add('@scene t.gather\n!walkto kr_mokichi 18 9 right now stay\n!walkto kr_sora 19 10 up now stay\n!walkto kr_kikyo 22 9 left now stay');
+    RB.script.run('t.gather');
+  }, FL);
+  await p.waitForTimeout(1200);
+  const before = await now(p);
+  await p.evaluate(([x, y]) => RB.world.tapTile(x, y), [sx, sy]);
+  await p.waitForFunction(([x, y]) => RB.world.W.player.x === x && RB.world.W.player.y === y && !RB.world.W.player.mv, [sx, sy], { timeout: 15000 }).catch(() => {});
+  await p.evaluate((dir) => { RB.world.W.player.dir = dir; RB.world.interact(); }, dir);
+  const lines = await drive(p, 0, 300);
+  const sorry = lines.find((l) => SORRY.test(l.text));
+  const at = await p.evaluate(() => {
+    const W = RB.world.W, cam = RB.render.cam, v = RB.render.viewSize(), c = W.comp;
+    const others = W.npcs.filter((n) => c && n.x === c.x && n.y === c.y).map((n) => n.id);
+    return { others, seen: !!c && c.x * 16 + 8 >= cam.x && c.x * 16 + 8 <= cam.x + v.w && c.y * 16 + 8 >= cam.y && c.y * 16 + 8 <= cam.y + v.h, household: ['kr_mokichi', 'kr_sora', 'kr_kikyo'].map((id) => { const n = W.npcs.find((q) => q.id === id); return n ? [n.x, n.y].join() : null; }) };
+  });
+  const w = await now(p);
+  const ok1 = sorry && sorry.follower && sorry.pc.join() === sx + ',' + sy && sorry.fpos.join() !== sorry.pc.join() && Math.abs(sorry.fpos[0] - sx) + Math.abs(sorry.fpos[1] - sy) === 1;
+  ok(!before.follower && ok1 && !at.others.length && at.seen && at.household.join(' ') === '18,9 19,10 22,9' && w.made && !errors.length, 'from (' + sx + ',' + sy + '), with the household gathered: back beside you for the apology, in view, on nobody\'s tile (' + JSON.stringify({ sorry: sorry && { fpos: sorry.fpos, pc: sorry.pc }, at, made: w.made, errors: errors.slice(0, 1) }) + ')');
+  await p.close();
 }
 // 2. mid-quarrel: loads, leaving and coming back, the interiors, quick travel
 {
