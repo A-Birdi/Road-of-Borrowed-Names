@@ -800,6 +800,10 @@ RB.combat = (function () {
     if (c.disabled || !st) return null;
     // a decision, a procedure step or a conversation is judged by the player (C-60): no "Here:" line
     if (['wait', 'proc', 'resolve', 'social', 'gesture'].indexOf(c.kind) >= 0) return null;
+    // nor in a conversation with a creature in it: there a response does what the conversation makes of it
+    // (97_encounter.js socialAct), not what it does in a battle, so a battle's "Here:" would promise the wrong thing
+    // (RBN-QA-055). Nothing is tried on the conversation to say it.
+    if (st.enc && st.enc.social) return null;
     let p;
     try { p = L().previewAct(st, c); } catch (e) { return null; }
     const nm = (i) => (isGroup() ? 'the ' + shortEn(i) : 'it');
