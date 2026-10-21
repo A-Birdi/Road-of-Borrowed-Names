@@ -201,9 +201,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
           const tone = (((k * 7 + r * 13) % 5) - 2) * 0.03; // each stone a little lighter or darker than its neighbours
           return clamp((j === 0 || y === y0 ? 0.36 : y === y0 + 1 ? 0.6 : 0.52 + tone) - (y - py) / h * 0.1, 0.02, 0.999);
         });
-        // the Wind Stone on its paving at the left
+        // the Wind Stone on its paving at the left: broad and low, as it stands in the village (ko_windstone, RBN-QA-075):
+        // its front in shade under a flat top worn even for laying a leaf on, lit from the upper left, its front lip
+        // catching the light; a crack and some moss low on the front, and a few written leaves pinned against its
+        // western end by the wind that always blows over it
         const sx = Math.round(w * 0.16), sy = Math.round(vb * 0.85);
-        L.stone([[sx - s(14), sy], [sx - s(10), sy - s(44)], [sx + s(2), sy - s(52)], [sx + s(12), sy - s(38)], [sx + s(15), sy]], stoneM, { face: 4, bevel: Math.max(2, s(3)), seam: true });
+        L.stone([[sx - s(29), sy], [sx - s(32), sy - s(3)], [sx - s(33), sy - s(10)], [sx - s(30), sy - s(16)], [sx - s(25), sy - s(22)], [sx + s(24), sy - s(23)], [sx + s(30), sy - s(17)], [sx + s(33), sy - s(9)], [sx + s(32), sy - s(3)], [sx + s(28), sy]], stoneM, { face: 3, bevel: Math.max(2, s(3)), seam: true });
+        L.poly([[sx - s(30), sy - s(16)], [sx - s(25), sy - s(22)], [sx + s(24), sy - s(23)], [sx + s(30), sy - s(17)]], stoneM, (xx) => (xx < sx - s(8) ? 0.79 : 0.72));
+        L.seg(sx - s(29), sy - s(16), sx + s(29), sy - s(17), Math.max(1, s(1.5)), stoneM, 0.93);
+        L.path([[sx + s(6), sy - s(14)], [sx + s(9), sy - s(10)], [sx + s(12), sy - s(8)]], Math.max(1, s(1)), stoneM, 0.07);
+        const moss = p.mat('#5e7a3e', { n: 5, at: 2, step: 0.08 });
+        for (const [a, b, l] of [[-24, 2, 9], [-14, 2, 5], [16, 2, 6]]) L.rect(sx + s(a), sy - s(b), s(l), Math.max(1, s(2)), moss, (xx) => (((Math.round(xx) * 5) % 3) === 0 ? 0.3 : 0.55));
+        const gold = p.mat('#d0a844', { n: 5, at: 2, step: 0.09 }), ink = p.mat('#2a2434', { n: 3, at: 1 });
+        for (const [a, b, ang] of [[-34, 15, -0.5], [-35, 6, 0.5]]) {
+          const lx = sx + s(a), ly = sy - s(b), dx = Math.cos(ang) * s(3), dy = Math.sin(ang) * s(3);
+          L.seg(lx - dx, ly - dy, lx + dx, ly + dy, Math.max(2, s(3)), gold, 0.7);
+          L.rect(Math.round(lx), Math.round(ly), 1, 1, ink, 0.5);
+        }
       }
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
