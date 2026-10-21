@@ -1250,7 +1250,11 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   event shows fog (`fog` ambience, `drawHaze`), the geese on the Reedwake road; each candidate's commits cherry-picked
   onto the integrated source (`0e4c46e`, `3515144`, `86b9d02`, `cad556c`, `cf7c24a`; patch-identical); B
   `walkto_options` 23/0, `fog_event` 14/0, `geese_event` 15/0 on a build of `cf7c24a`. In source, for the next build;
-  Agnes's post-integration visual retest still to come. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  Agnes's post-integration visual retest still to come.
+  RBN-QA-050 and RBN-QA-039/040/042 (three-party AGREE: Cloud CC-042, Agnes 6308146009 / 6308182771, Local CL-067):
+  the fare repaid seated then side by side (Kōji facing her with the book), combined kana boxes, the activities'
+  next page from the top, っ/ッ/ー named in words; cherry-picked as `774511e`, `4731de8`, `cdf37db`; B
+  `fare_pay_staging` 36/0, `learning_qa039` 44/0 on a build of `cdf37db`. In source, for the next build. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand

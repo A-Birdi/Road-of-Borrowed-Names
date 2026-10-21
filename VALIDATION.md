@@ -5587,6 +5587,16 @@ Yasu's story, when listening, has not begun being spoken."
       unit run 57688/0; B `learning_ui` 15/0, `letters_order` 4/0, `shino_thanks` 28/0, `playtest_repairs` 7/0,
       `fr1_opening` ran through (34 questions, 0 errors); B `audit_fixes` 3/1, the same failure on CC-008 (a copy
       step's feedback wording; pre-existing); `validate.mjs` no errors.
+    - Integrated (CC-043): qa-050 (`774511e`, `4731de8`) and the learning candidate (`cdf37db`) onto `ae545a5`;
+      patch-identical to `2b19482`, `b189471`, `6ac5a5d` over every file but run.mjs. On a scratch build of `cdf37db`
+      (B): `fare_pay_staging` 36/0, `learning_qa039` 44/0, `learning_ui` 15/0, `letters_order` 4/0, `shino_thanks`
+      28/0, `playtest_repairs` 7/0, `walkto_options` 23/0, `fog_event` 14/0, `geese_event` 15/0, `counter_tap` 30/0;
+      `validate.mjs` no errors. Full unit run 57637 passed, 1 error: `portrait_anim` throws on qa-049's geese
+      character (a portrait without skin/hair/cloth; not painted in play). Fix: `candidate/qa-049b`.
+    - `candidate/qa-047` `be8f90b`: B `goatshed_fence` (new) 10/0 (on CC-008's `index.html` 2 fail: grass under the
+      dividers, 10-42 % pale pixels per cell; here 5.6-6.4 %, the rails' own); blocked cells and goats identical on
+      both builds; B `story_ch4` all 8 profile/companion runs passed; U `world` 123/0, `worldkit` 10/0,
+      `scene_manifest` 1023/0, `quest_guide` 150/0; `validate.mjs` no errors. Frames looked at (not committed).
   - **RBN-QA-032 in source (Robin approved 2026-10-20 from the frames, to review in play; `8cfedf2`, cherry-picked
     from `523f9ba`):** `git diff 523f9ba 8cfedf2 -- src tests tools data assets` is empty (the candidate's tests above
     ran on the same code); on a scratch build of `8cfedf2`: B `lookout_vista` 22/0, `story_ch3 E nao` 38 checks passed,

@@ -702,6 +702,16 @@
       `candidate/qa-039` `6ac5a5d` (RBN-QA-039 combined-kana boxes, 040 Next letter + the reproduced Next customer
       sibling, 042 っ/ッ/ー cues). The batched CC build waits for those two (accepted exact versions only; Agnes and
       Local prefer one batch); then QA-047.
+      INTEGRATED (CC-043): qa-050 (three AGREEs at `b189471`: Cloud CC-042, Agnes 6308146009, Local CL-067) and the
+      learning candidate (three AGREEs at `6ac5a5d`: Cloud CC-042, Agnes 6308182771, Local CL-067), cherry-picked onto
+      `ae545a5` as `774511e` (`2b19482`), `4731de8` (`b189471`), `cdf37db` (`6ac5a5d`); patch-ids equal over every
+      file but run.mjs (both suites kept). The full unit run on `cdf37db` found one error, `portrait_anim`: qa-049's
+      `C.chars.lw_rd_geese` has a portrait with no skin/hair/cloth, so painting it throws in `palette()`. No player path
+      paints it (the geese never speak); no one had run the full unit suite on qa-049. Fix proposed as
+      `candidate/qa-049b` (a creature drawn only by its own sprite has no face portrait). The batched build waits for
+      it. Also posted: `candidate/qa-047` `be8f90b`; the fog test follow-up `candidate/qa-048-tests`; RBN-QA-053 filed
+      by Cloud (after a load mid-scene from the Ledger, the old line's dialogue box stays on screen; History -> Ledger
+      -> Save & Load reaches it in ordinary play); proposal verdicts on RBN-QA-051 and 052.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
