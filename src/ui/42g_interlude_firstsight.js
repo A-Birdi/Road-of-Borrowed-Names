@@ -364,6 +364,67 @@ var RB = (globalThis.RB = globalThis.RB || {});
       nearLeaf(c, x, y, len, 0.6 + Math.sin(u * 7 * spin + i) * 0.9, Math.abs(Math.cos(u * 11 * spin + i)), tint, i * 7 + 3);
     }
   }
+  // The nearest leaves (RBN-QA-073 refine; Agnes 6321061529, Local CL-121): a few large ones coming down past you, so
+  // the island's written leaves read as leaves at play size. A camphor leaf's shape in the drifts' gold (GOLD), lit on
+  // one half, with a darker rim, midrib and stalk, and across each half short strokes of ink in rows, as writing looks
+  // from a step away (never a character). They come down in front of the hill, the beach and the water: below the
+  // crown and clear of the trunk and its roots, so the tree is never covered; each one grows as it comes nearer and
+  // passes behind the dialogue sheet (nothing is drawn below vb). Reduced motion holds them where they are, flat
+  // enough to read; on a phone, whose picture is drawn nearer 1:1, they are a quarter larger. drawn: each one's box this
+  // frame (for the tests).
+  let drawn = [];
+  function goldLeaf(c, x, y, len, ang, open, seed, floor) {
+    const ca = Math.cos(ang), sa = Math.sin(ang), hl = len / 2, hw = Math.max(0.5, len * 0.3 * open), bx = Math.ceil(hl) + 3;
+    const hh = (k, side) => K().hh(seed, k, side + 5) % 5;
+    let box = null;
+    for (let j = -bx; j <= bx; j++) for (let i = -bx; i <= bx; i++) {
+      const px = x + i, py = y + j;
+      if (py >= floor) continue;
+      const u = i * ca + j * sa, v = -i * sa + j * ca;
+      let k = null;
+      if (u < -hl && u >= -hl - Math.max(1.5, len * 0.12) && Math.abs(v) <= 0.6) k = GOLD[0]; // the stalk
+      else if (Math.abs(u) <= hl) {
+        const half = hw * Math.pow(1 - (u / hl) ** 2, 0.7);
+        if (Math.abs(v) > half + 0.3) continue;
+        k = v < 0 ? GOLD[2] : GOLD[1];
+        if (Math.abs(v) > half - 0.7 || Math.abs(v) <= 0.5) k = GOLD[0]; // the rim and the midrib
+        else if (half >= 2.2) {
+          // the writing: across each half, at a few stations along the leaf, a short stroke (some left out)
+          const st = Math.round((u + hl) / Math.max(2.5, len * 0.14)), at = (u + hl) - st * Math.max(2.5, len * 0.14), side = v < 0 ? 0 : 1;
+          if (Math.abs(at) < 0.55 && st >= 1 && (u + hl) < len * 0.86 && Math.abs(v) > half * 0.28 && Math.abs(v) < half * 0.78 && hh(st, side) !== 0) k = INK;
+        }
+      }
+      if (!k) continue;
+      c.fillStyle = k;
+      c.fillRect(px, py, 1, 1);
+      if (!box) box = [px, py, px, py];
+      else { if (px < box[0]) box[0] = px; if (py < box[1]) box[1] = py; if (px > box[2]) box[2] = px; if (py > box[3]) box[3] = py; }
+    }
+    return box;
+  }
+  // what the leaves keep clear of: the crown's extent, and the trunk with its flare and roots down to the hill
+  const keepClear = (G, V) => {
+    const rh = V.trunk.w * 0.75 + G.s(34);
+    return { crown: [V.crown.left, V.crown.top, V.crown.right, V.crown.bottom], trunk: [V.trunk.x - rh, V.trunk.top, V.trunk.x + rh, V.trunk.base + G.s(4)] };
+  };
+  function goldLeaves(c, G, V, t, still) {
+    const rnd = K().rnd(83), n = G.narrow ? 4 : 5, KC = keepClear(G, V), sway = G.s(12), out = [];
+    for (let i = 0; i < n; i++) {
+      const len = Math.round(G.s(17 + rnd() * 7) * (G.narrow ? 1.25 : 1)), period = 12000 + rnd() * 5000, ph = rnd(), spin = 0.5 + rnd() * 0.6, lane = rnd();
+      // its lane across the picture (spread, one to each part of it); in the trunk's column it starts below the roots
+      const x0 = ((i + 0.2 + lane * 0.6) / n) * G.w, reach = sway + len * 0.7;
+      const inTrunk = x0 + reach > KC.trunk[0] && x0 - reach < KC.trunk[2];
+      const top = (inTrunk ? KC.trunk[3] : KC.crown[3] + G.s(2)) + len * 0.7, bottom = G.vb + len;
+      const u = still ? 0.18 + 0.55 * ((i * 0.618 + ph * 0.3) % 1) : ((t / period) + ph) % 1;
+      const grow = Math.min(1, u / 0.14), size = len * grow * grow * (3 - 2 * grow);
+      if (size < 4) continue;
+      const x = Math.round(x0 + Math.sin(u * 4.5 + i * 1.7) * sway), y = Math.round(lerp(top, bottom, u));
+      const open = still ? 0.92 : 0.5 + 0.5 * Math.abs(Math.cos(u * 9 * spin + i));
+      const box = goldLeaf(c, x, y, size, 0.5 + Math.sin(u * 5 * spin + i * 2.3) * 0.7, open, i * 13 + 5, G.vb);
+      if (box) out.push({ box, len: size });
+    }
+    drawn = out;
+  }
   function live(c, G, V, t, still) {
     // the glints on the shallows
     for (const [x, y, len, ph, beat] of V.glints) {
@@ -377,6 +438,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     KO2.falling(c, G, t, still, G.narrow ? 60 : 80, 7, 'tree');
     KO2.falling(c, G, t * 0.85 + 4000, still, G.narrow ? 34 : 44, 19, 'tree');
     nearLeaves(c, G, t, still);
+    goldLeaves(c, G, V, t, still);
   }
 
   let last = null; // the size last drawn at (tests)
@@ -390,11 +452,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       live(c, G, V, st.still ? 0 : t, st.still);
     },
     // tests: where the things the lines name are, against the dialogue sheet's top (vb); by default at the size last
-    // drawn. The leaves come down from above the picture to vb at the lowest (43k_seq_ko.js falling, and the nearer ones).
+    // drawn. The leaves come down from above the picture to vb at the lowest (43k_seq_ko.js falling, and the nearer ones);
+    // gold: the large gold ones in the last frame drawn (their boxes) and what they keep clear of.
     probe(w, h, vb) {
       if (w == null) { if (!last) return null; ({ w, h, vb } = last); }
       const G = geomP(w, h, vb), V = view(G);
-      return { w, h, vb: G.vb, crown: V.crown, trunk: V.trunk, sand: V.sand, jetty: V.jetty, leaves: { n: (G.narrow ? 60 + 34 + 6 : 80 + 44 + 8), bottom: G.vb + 1 } };
+      return { w, h, vb: G.vb, crown: V.crown, trunk: V.trunk, sand: V.sand, jetty: V.jetty, leaves: { n: (G.narrow ? 60 + 34 + 6 : 80 + 44 + 8), bottom: G.vb + 1 },
+        gold: { n: G.narrow ? 4 : 5, now: drawn.map((d) => ({ box: d.box.slice(), len: d.len })), clear: keepClear(G, V) } };
     },
   };
 })();
