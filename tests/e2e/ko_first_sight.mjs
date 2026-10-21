@@ -6,8 +6,11 @@
 //   you landed; the scene still sets ko_arrived and the island's travel; once Lanternfall is over, Nami's welcome
 //   (ko.begin) follows in the world as before and Chapter 9 begins; on the early visit (your own boat, before
 //   Lanternfall is over) it does not;
-// - the tree's crown and trunk, the beach and the jetty are above the dialogue sheet, and the leaves come down no
-//   lower than it, measured in the page, at a desktop size and a phone held upright;
+// - the tree's crown (whole at the desktop size; on the phone its outer ends are cut by the picture's sides) and trunk,
+//   the beach and the jetty are above the dialogue sheet, and the leaves come down no lower than it, measured in the
+//   page, at a desktop size and a phone held upright;
+// - a few large gold leaves come down in front of the hill, the beach and the water, each with ink on it, never over
+//   the tree's crown or its trunk and roots, none below the sheet; with reduced motion all of them hold, full-size;
 // - with reduced motion the picture holds still (two frames alike); with motion it does not (the leaves, the water);
 // - a second landing (ko_arrived already set), by either boat, runs no first sight and shows no picture;
 // - all four companions' lines run; no console errors, no network requests.
@@ -61,6 +64,27 @@ const sheet = (p) => p.evaluate(() => {
   const a = cv.getBoundingClientRect(), r = box.getBoundingClientRect();
   return { row: ((r.top - a.top) / a.height) * (pr ? pr.h : RB.render.viewSize().h * RB.render.ART), pr };
 });
+// the large gold leaves in the frame on screen (RBN-QA-073 refine): each one's box, and in it the pixels of the
+// leaves' gold and of their ink, read from the canvas; and what they keep clear of (the crown, the trunk and roots)
+const goldLook = (p) => p.evaluate(() => {
+  const P = RB.interlude.ART.ko_first_sight && RB.interlude.ART.ko_first_sight.probe();
+  if (!P || !P.gold) return null;
+  const cv = document.getElementById('world'), g = cv.getContext('2d'), kx = cv.width / P.w, ky = cv.height / P.h;
+  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const GOLD = ['#a8822e', '#d0a844', '#e8c868'].map(rgb), INK = rgb('#2a2434');
+  const near = (d, i, c) => Math.abs(d[i] - c[0]) <= 14 && Math.abs(d[i + 1] - c[1]) <= 14 && Math.abs(d[i + 2] - c[2]) <= 14;
+  const leaves = P.gold.now.map(({ box, len }) => {
+    const X0 = Math.floor(box[0] * kx), Y0 = Math.floor(box[1] * ky), W = Math.max(1, Math.ceil((box[2] + 1) * kx) - X0), H = Math.max(1, Math.ceil((box[3] + 1) * ky) - Y0);
+    const d = g.getImageData(X0, Y0, W, H).data;
+    let gold = 0, ink = 0;
+    for (let y = box[1]; y <= box[3]; y++) for (let x = box[0]; x <= box[2]; x++) {
+      const i = ((Math.floor((y + 0.5) * ky) - Y0) * W + (Math.floor((x + 0.5) * kx) - X0)) * 4;
+      if (GOLD.some((c) => near(d, i, c))) gold++; else if (near(d, i, INK)) ink++;
+    }
+    return { box, len: Math.round(len), gold, ink };
+  });
+  return { n: P.gold.n, vb: P.vb, clear: P.gold.clear, leaves };
+});
 // every line until the scenes are over: what it says, who says it, and what the screen shows meanwhile
 async function lines(p, onView) {
   let last = '';
@@ -99,6 +123,7 @@ for (const [how, comp, W, H, reduce, flags] of RUNS) {
   await land(p, how);
   const ls = await lines(p, async (p, k) => {
     const m = await sheet(p);
+    m.gold = await goldLook(p);
     if (k === 0) m.still = await p.evaluate(async () => { const a = document.getElementById('world').toDataURL(); await new Promise((r) => setTimeout(r, 900)); return a === document.getElementById('world').toDataURL(); });
     return m;
   });
@@ -118,9 +143,21 @@ for (const [how, comp, W, H, reduce, flags] of RUNS) {
     if (!P || m.row == null) { ok(false, `${tag}: view line ${k + 1}: the picture's layout could be read against the sheet`); continue; }
     const top = Math.min(m.row, P.vb);
     ok(P.vb <= m.row + 1, `${tag}: view line ${k + 1}: the picture lays out above the sheet it measured (vb ${P.vb}, sheet at row ${m.row.toFixed(1)} of ${P.h})`);
-    ok(P.crown.top >= 0 && P.crown.bottom < top && P.crown.right - P.crown.left > P.w * 0.6, `${tag}: view line ${k + 1}: the tree's crown whole above the sheet, spread over the island (rows ${P.crown.top}–${P.crown.bottom}, columns ${P.crown.left}–${P.crown.right} of ${P.w}; sheet ${top.toFixed(0)})`);
+    // (whole at the desktop size; on the phone held upright its outer ends are cut by the picture's sides: Agnes 6321061529)
+    const whole = P.crown.left > 0 && P.crown.right < P.w - 1;
+    ok(P.crown.top > 0 && P.crown.bottom < top && P.crown.right - P.crown.left > P.w * 0.6 && (whole || H > W), `${tag}: view line ${k + 1}: the tree's crown above the sheet, spread over the island, ${whole ? 'whole' : 'its outer ends cut by the picture\'s sides'} (rows ${P.crown.top}–${P.crown.bottom}, columns ${P.crown.left}–${P.crown.right} of ${P.w}; sheet ${top.toFixed(0)})`);
     ok(P.trunk.base < top && P.trunk.top < P.trunk.base, `${tag}: view line ${k + 1}: its trunk down to the hill above the sheet (rows ${P.trunk.top}–${P.trunk.base})`);
     ok(P.sand.top < P.sand.water && P.sand.water < top && P.jetty.top < top, `${tag}: view line ${k + 1}: the beach and the jetty's far end in view above the sheet (sand ${P.sand.top}–${P.sand.water}, jetty from ${P.jetty.top})`);
+    // the large gold leaves (RBN-QA-073 refine; Agnes 6321061529, Local CL-121): a few, each a gold leaf with ink on it,
+    // none over the crown or the trunk and its roots, none below the sheet; with reduced motion all of them, whole
+    const G = m.gold, hit = (a, b) => a[0] <= b[2] && a[2] >= b[0] && a[1] <= b[3] && a[3] >= b[1];
+    if (!G) ok(false, `${tag}: view line ${k + 1}: the gold leaves could be read`);
+    else {
+      const big = G.leaves.filter((l) => l.len >= 14), read = big.filter((l) => l.gold >= 20 && l.ink >= 2);
+      const over = G.leaves.filter((l) => hit(l.box, G.clear.crown) || hit(l.box, G.clear.trunk) || l.box[3] >= G.vb);
+      ok(G.n >= 3 && G.n <= 6 && G.leaves.length <= G.n && (reduce ? read.length === G.n : read.length >= 2) && read.length === big.length && !over.length,
+        `${tag}: view line ${k + 1}: ${G.leaves.length} of ${G.n} large gold leaves on screen, ${read.length} full-size, each gold with ink on it; none over the tree or below the sheet (${G.leaves.map((l) => `${l.len}px gold ${l.gold} ink ${l.ink} at ${l.box.join(',')}`).join('; ')}; clear of crown ${G.clear.crown.join(',')}, trunk ${G.clear.trunk.map(Math.round).join(',')})`);
+    }
     ok(P.leaves.n >= 50 && P.leaves.bottom <= m.row + 1, `${tag}: view line ${k + 1}: ${P.leaves.n} leaves coming down, none lower than the sheet (to row ${P.leaves.bottom}, sheet ${m.row.toFixed(1)})`);
   }
   const still = v.length ? ls[v[0]].view && ls[v[0]].view.still : null;
