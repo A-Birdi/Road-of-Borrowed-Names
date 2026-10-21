@@ -933,4 +933,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     title: { en: 'Across the still lake', jp: '{静|しず}か な {湖|みずうみ} を {渡|わた}る' }, chapter: 5, scene: 'lf.boat_to_tower', memory: false,
     shots: { cross: crossShot },
   });
+
+  // The Bell Chamber's pieces, for the keeper's pictures before and after its battle (src/ui/42e_interlude_keeper.js,
+  // RBN-QA-071): the same walls, beam, conduits, water and bell, so the chamber is one place in every picture of it.
+  RB.seqCh5 = { bellArt, bellHw, litCopy, blocks, pipeUp, stillWater, rings, lampGlow, vignette, BEAM, HALL };
 })();
