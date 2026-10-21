@@ -26,6 +26,9 @@ RB.portraits = (function () {
   function paramsFor(id) {
     const ch = RB.content.chars[id];
     if (!ch) return null;
+    // a creature drawn only by its own sprite (the geese on the Reedwake road, 30_sprites.js custom.geese) has no face
+    // to paint: no portrait, as for someone unknown, unless it brings its own colours (the Nameless Bridge does)
+    if (ch.look && ch.look.custom && !(ch.portrait && ch.portrait.skin)) return null;
     const p = ch.portrait ? Object.assign({}, fromLook(ch.look || {}), ch.portrait) : fromLook(ch.look || RB.sprites.randomLook(RB.util.hashStr(id)));
     // the companion's festival dress on the night of the Opening of the River (src/engine/58f_festdress.js)
     const s = RB.game && RB.game.s;
