@@ -27,7 +27,7 @@ async function start(p, x, y, dir, still) {
     RB.test.enable({ battle: 'unravel' });
     const s = RB.game.debugStart('ko.village', x, y, { comp: 'suzu', flags: FLAGS, dir, edition: RB.edition.forNew() });
     s.chapter = 9;
-    RB.game.settings.textSpeed = 'instant'; RB.game.settings.reduceMotion = !!still; RB.game.settings.questGuide = 'off';
+    RB.game.settings.textSpeed = 'instant'; RB.game.settings.reducedMotion = !!still; RB.game.settings.questGuide = 'off';
     RB.game.applySettings();
     const W = RB.world.W, t0 = performance.now();
     while (W.time - W.enteredAt < 1100 && performance.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 50));
@@ -67,7 +67,12 @@ async function drain(p) {
     const hex = (h) => [1, 3, 5].map((k) => parseInt(h.slice(k, k + 2), 16));
     let roofPx = 0;
     for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 200 && roof.some((h) => { const c = hex(h); return Math.abs(d[i] - c[0]) < 6 && Math.abs(d[i + 1] - c[1]) < 6 && Math.abs(d[i + 2] - c[2]) < 6; })) roofPx++;
-    const m1 = draw(0, false), m2 = draw(400, false), m3 = draw(400, true);
+    // (the motion frames with Reduce motion off for them, as the art reads the game's setting too)
+    const rm = RB.game.settings.reducedMotion;
+    RB.game.settings.reducedMotion = false;
+    const m1 = draw(0, false), m2 = draw(400, false);
+    RB.game.settings.reducedMotion = rm;
+    const m3 = draw(400, true);
     const same = (u, v) => u.every((x, i) => x === v[i]);
     return {
       here: here.map((q) => [q.p, q.scene || null, q.light || null]), shrine: { w: P.shrine.w, light: P.shrine.light, block: P.shrine.block }, wind: { id: pd.id, w: pd.w, h: pd.h, block: pd.block, light: pd.light || null }, others: others.length,
@@ -123,10 +128,10 @@ for (const [lay, opts] of [['desktop 1280×800', { viewport: { width: 1280, heig
     pd.light = 30; await frame(); await frame(); const lit = grab(); delete pd.light;
     await frame(); await frame(); const back = grab();
     const on = c.x >= 0 && c.y >= 0 && c.x + 32 * k <= cr.width && c.y + 16 * k <= cr.height;
-    return { on, noise: d(a, a2), lit: d(a, lit), back: d(a, back), px: W * H };
+    return { reduced: RB.game.reducedMotion(), on, noise: d(a, a2), lit: d(a, lit), back: d(a, back), px: W * H };
   });
   ok(r.on, `${lay}: the Wind Stone on screen below the player's view`);
-  ok(r.lit.warm > 4 * Math.max(r.noise.n, r.back.n, 50), `${lay}: no lamp's glow round it: a light of 30 set on it for two frames warms ${r.lit.warm} px there (${r.lit.n} change), where frames without it differ by ${r.noise.n} and ${r.back.n} px (the leaves drifting)`);
+  ok(r.reduced && r.lit.warm > 4 * Math.max(r.noise.n, r.back.n, 50), `${lay}: no lamp's glow round it, held still (Reduce motion read by the game: ${r.reduced}): a light of 30 set on it for two frames warms ${r.lit.warm} px there (${r.lit.n} change), where frames without it differ by ${r.noise.n} and ${r.back.n} px`);
   ok(!errors.length, `${lay}: no page errors ${errors.slice(0, 2).join(' | ')}`);
   await p.close();
 }
