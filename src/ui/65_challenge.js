@@ -142,7 +142,8 @@ RB.challenge = (function () {
       let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : step.kind === 'order' ? 'order' : step.kind === 'forge' ? (opts.mode || RB.forge.startRung(st, RB.game.s && RB.game.s.learn.profile)) : 'choice';
       if (step.kind === 'write' && !MODES.some((m) => m.id === mode)) mode = 'hand';
       const res = { ok: false, firstTry: null, mistakes: 0, assisted: false, mode: null, recogMisses: 0 };
-      active = { step, helpUsed: false, help: null, why: [] };
+      const mine = (active = { step, helpUsed: false, help: null, why: [] });
+      let over = false; // finished, or dropped by its owner (below)
       // help given before the task began (a companion pointing at the response in a story battle, E19): it counts as
       // what it supplied, from the first answer
       if (opts.preHelp) { active.helpUsed = true; helpCat(opts.preHelp); helpWhy('companion'); }
@@ -634,6 +635,8 @@ RB.challenge = (function () {
       if (vv) { vv.addEventListener('resize', syncVV); vv.addEventListener('scroll', syncVV); }
 
       function finish(cancelled) {
+        if (over) return;
+        over = true;
         if (PH) PH.finish(cancelled, res);
         if (vv) { vv.removeEventListener('resize', syncVV); vv.removeEventListener('scroll', syncVV); }
         if (tabsApi) { tabsApi.destroy(); tabsApi = null; }
@@ -685,6 +688,22 @@ RB.challenge = (function () {
       showMode(mode, 'init');
       RB.ui.pushLayer(layer);
       syncVV();
+      // opts.own(drop): whoever set the task can take it down unanswered (a battle still starting, left for another
+      // journey: RBN-QA-078). drop() removes this task alone (its sheet, pad, tabs and viewport listeners) and never
+      // finishes it: nothing is recorded or introduced, and nothing waiting on it goes on. (Not for a paced task.)
+      if (opts.own && !PH) {
+        opts.own(() => {
+          if (over) return;
+          over = true;
+          // and nothing on it answers any more (a stray click on one of its detached buttons does nothing)
+          for (const t of ['click', 'pointerdown', 'keydown', 'input', 'change']) wrap.addEventListener(t, (e) => { e.stopImmediatePropagation(); e.preventDefault(); }, true);
+          if (vv) { vv.removeEventListener('resize', syncVV); vv.removeEventListener('scroll', syncVV); }
+          if (tabsApi) { tabsApi.destroy(); tabsApi = null; }
+          if (pad) { pad.destroy(); pad = null; }
+          RB.ui.popLayer(layer, { keepHelp: true });
+          if (active === mine) active = null;
+        });
+      }
       if (PH) PH.mount({ wrap, frame: $('.chal-frame'), body, sheet, answer: $('.chal-answer'), layer, step, mode: () => mode, pad: () => pad, ime: () => ime, finish, setHint: () => { if (wrap.querySelector('.fbwrap.hint')) setHint(); } });
     });
   }

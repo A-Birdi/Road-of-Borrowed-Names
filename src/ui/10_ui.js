@@ -65,8 +65,9 @@ RB.ui = (function () {
     }, 0);
     return layer;
   }
-  function popLayer(layer) {
-    if (RB.ui.help) RB.ui.help.hide(true);
+  // o.keepHelp: a layer dropped by its owner (RBN-QA-078) leaves a word-help card that is not its own alone
+  function popLayer(layer, o) {
+    if (RB.ui.help) { if (o && o.keepHelp) { if (RB.ui.help.hideIn) RB.ui.help.hideIn(layer.el); } else RB.ui.help.hide(true); }
     const i = layers.indexOf(layer);
     if (i >= 0) layers.splice(i, 1);
     if (layer.el.parentNode) layer.el.parentNode.removeChild(layer.el);
@@ -276,15 +277,19 @@ RB.ui = (function () {
       panel.innerHTML = '<p class="q" id="' + tid + '">' + (opts.html ? text : esc(text)) + '</p><div class="foot"></div>';
       const foot = panel.querySelector('.foot');
       const layer = { el: scrim, name: 'confirm' };
+      let dropped = false;
       buttons.forEach((b, i) => {
         const btn = el('button', 'pbtn' + (i === 0 && opts.danger ? ' danger' : i === 0 && buttons.length > 1 ? ' primary' : ''), esc(b));
         if (i === buttons.length - 1 && buttons.length > 1) btn.classList.add('autofocus'); // the safe choice has focus first
-        btn.onclick = () => { popLayer(layer); res(i); };
+        btn.onclick = () => { if (dropped) return; popLayer(layer); res(i); };
         foot.appendChild(btn);
       });
       layer.onCancel = () => { popLayer(layer); res(buttons.length - 1); };
       scrim.appendChild(panel);
       pushLayer(layer);
+      // opts.own(drop): whoever asked can take the sheet down unanswered (a battle still starting, left for another
+      // journey: RBN-QA-078); drop() removes this sheet alone and never resolves it, so nothing waiting on it goes on
+      if (opts.own) opts.own(() => { if (dropped) return; dropped = true; popLayer(layer, { keepHelp: true }); });
     });
   }
   function shake() {
@@ -520,10 +525,12 @@ RB.ui.help = (function () {
     if (panel && !pinned) { panel.remove(); panel = null; }
   }
   function isOpen() { return !!panel; }
+  // the card, if it was opened from a word inside `box` (a layer being dropped: RBN-QA-078)
+  function hideIn(box) { if (cur && box && box.contains(cur)) hide(true); }
   // a registered line's tokens and context (src/ui/22_speech_mark.js marks the spoken word by token)
   const tokensOf = (id) => (reg.get(id) || {}).tokens || null;
   const ctxOf = (id) => (reg.get(id) || {}).ctx || null;
-  return { init, toggle, register, showFor, hide, enabled, isOpen, tokensOf, ctxOf };
+  return { init, toggle, register, showFor, hide, hideIn, enabled, isOpen, tokensOf, ctxOf };
 })();
 
 /* ---- HUD ---------------------------------------------------------------------------

@@ -1618,7 +1618,9 @@ RB.combat = (function () {
   // A battle still starting (RBN-QA-077): from start()'s first wait (an encounter's preparation questions, or the
   // opening fade) until its state exists, when there is no `st` or `ui` yet for abandon() to find. It owns that start
   // by its token, so a start that ends (or throws) clears only its own mark, never a newer start's.
-  let starting = null; // { tok, song: the song it began (or null), prev: the song before it }
+  // While it asks its preparation questions it also holds the sheet or task on screen (drop: that surface's own
+  // take-down, RBN-QA-078), so leaving it takes that down too, unanswered and unrecorded.
+  let starting = null; // { tok, song: the song it began (or null), prev: the song before it, drop }
   let startTok = 0;
   async function start(enemyId, opts) {
     const tok = ++startTok;
@@ -1643,14 +1645,17 @@ RB.combat = (function () {
       const d0 = typeof encDef === 'string' ? RB.content.encounters[encDef] : encDef;
       if (d0 && d0.prep && d0.prep.length && !opts.prepared) {
         own();
+        // the surface on screen now, held by this start (and let go once it is answered)
+        const hold = (drop) => { if (starting && starting.tok === tok) starting.drop = drop; };
+        const held = (v) => { if (starting && starting.tok === tok) starting.drop = null; return v; };
         const chosen = [];
         for (let k = 0; k < Math.min(2, d0.prep.length); k++) {
           const left = d0.prep.filter((p) => chosen.indexOf(p.id) < 0);
-          const r = await live(RB.ui.confirm(k ? 'Anything else before you begin?' : 'Look around first?', left.map((p) => p.label.en).concat(['Begin now'])));
+          const r = held(await live(RB.ui.confirm(k ? 'Anything else before you begin?' : 'Look around first?', left.map((p) => p.label.en).concat(['Begin now']), { own: hold })));
           if (r < 0 || r >= left.length) break;
           const p = left[r];
           const t = p.task ? RB.util.deepClone(tierOf(p.task)) : null;
-          const res = t ? await live(RB.challenge.runStep(RB.tasks.prepare(Object.assign(t, { title: p.label.en })), { allowCancel: true, cancelLabel: 'Not now', ctxTag: 'prepare:' + d0.id })) : { ok: true };
+          const res = t ? held(await live(RB.challenge.runStep(RB.tasks.prepare(Object.assign(t, { title: p.label.en })), { allowCancel: true, cancelLabel: 'Not now', ctxTag: 'prepare:' + d0.id, own: hold }))) : { ok: true };
           if (res && !res.cancelled) chosen.push(p.id);
         }
         if (chosen.length) opts.prepared = ENC().prepared(d0, chosen);
@@ -1979,6 +1984,8 @@ RB.combat = (function () {
       const was = starting;
       starting = null;
       runN++;
+      // a preparation question or task on screen: taken down unanswered (nothing recorded, nothing resolved)
+      if (was.drop) { const d = was.drop; was.drop = null; d(); }
       members = []; enemy = null;
       if (was.song && RB.audio) { if (was.prev) RB.audio.playSong(was.prev); else RB.audio.stopSong({ fade: 300 }); }
       RB.ui.fade(false, 120);
