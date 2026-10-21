@@ -12,7 +12,8 @@
 // - a few large gold leaves come down in front of the hill, the beach and the water, each with ink on it, never over
 //   the tree's crown or its trunk and roots, none below the sheet; with reduced motion all of them hold, full-size;
 // - with reduced motion the picture holds still (two frames alike); with motion it does not (the leaves, the water);
-// - a second landing (ko_arrived already set), by either boat, runs no first sight and shows no picture;
+// - a second landing (ko_arrived already set), by either boat, runs no first sight and shows none of its picture (the
+//   crossing's own picture on Tetsu's boat, RBN-QA-072, is not it);
 // - all four companions' lines run; no console errors, no network requests.
 // Usage: node tests/e2e/ko_first_sight.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -38,7 +39,8 @@ async function start(p, how, comp, reduce, flags) {
     const W = RB.world.W, t0 = performance.now();
     while (W.time - W.enteredAt < 800 && performance.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 50));
     window.__pics = 0;
-    const tick = () => { if (RB.interlude.active()) window.__pics++; requestAnimationFrame(tick); };
+    // (frames with the first sight's picture: the crossing's own picture on Tetsu's boat, RBN-QA-072, is not it)
+    const tick = () => { const st = RB.interlude.state(); if (st && st.id === 'ko_first_sight') window.__pics++; requestAnimationFrame(tick); };
     requestAnimationFrame(tick);
     return { key: s.chapterKey || null };
   }, [how, comp, reduce, flags]);
@@ -176,7 +178,7 @@ for (const how of ['ferry', 'sea']) {
   const ls = await lines(p);
   await p.waitForTimeout(400);
   const end = await p.evaluate(() => ({ pics: window.__pics, pic: RB.interlude.active(), map: RB.world.W.map.id }));
-  ok(!ls.some((l) => VIEW.some((re) => re.test(l.en))) && !end.pics && !end.pic && end.map === 'ko.shore', `second landing by ${how === 'ferry' ? 'the ferry' : 'your own boat'}: no first sight and no picture (${ls.length} lines; frames with a picture: ${end.pics}; on ${end.map})`);
+  ok(!ls.some((l) => VIEW.some((re) => re.test(l.en))) && !end.pics && !end.pic && end.map === 'ko.shore', `second landing by ${how === 'ferry' ? 'the ferry' : 'your own boat'}: no first sight and none of its picture (${ls.length} lines; frames with its picture: ${end.pics}; on ${end.map})`);
   ok(!errors.length, `second landing by ${how}: no console errors${errors.length ? ' — ' + errors[0].slice(0, 160) : ''}`);
   await p.close();
 }

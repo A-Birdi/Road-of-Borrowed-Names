@@ -4,7 +4,8 @@
  *           (drawn as the tide-watcher's window shows them, 42b_interlude_tide.js, for a farther view), the coast low
  *           behind it, the wake running back past the tip; the morning sea in the tide's own rows of blue
  *   leaves  past noon, over the bow: the open western sea, the sea-glass teal of Kotonoha's water, and the first gold
- *           leaves riding the waves (each drawn as the island's falling-leaf weather draws one, 60_render.js)
+ *           leaves riding the waves (the nearer ones the island's written leaves as its first sight draws them,
+ *           42g_interlude_firstsight.js; the far ones the falling-leaf weather's own, 60_render.js)
  *   back    the run home, looking back over the stern: the island low on the sea and the great tree on its crown (as
  *           the Wind Stone's shot draws it, 43k_seq_ko.js) drawing away into the evening sun, the sun's path on the
  *           water and the wake leading back to it
@@ -283,21 +284,33 @@ var RB = (globalThis.RB = globalThis.RB || {});
       return out;
     });
   }
+  // (len: a nearer leaf's length, as the island's written leaf is drawn: larger the nearer it rides, a fifth larger on
+  // a phone, whose picture is drawn nearer 1:1)
   function leafAt(G, L, t, still) {
     const { w, yH, yT, s } = G, y = Math.round(yH + 2 + (yT - yH - 4) * Math.pow(L.v, 1.35)), k = L.v > (G.narrow ? 0.3 : 0.45) ? 2 : 1; // (art px are smaller on a phone)
     const drift = still ? 0 : (t / 1000) * L.sp * (0.4 + L.v * 2.2) * G.Z;
     const x = Math.round((((L.u * w + drift) % (w + s(8))) + w + s(8)) % (w + s(8))) - s(4);
     const bob = still ? 0 : Math.round(Math.sin(t / 700 + L.ph) * k * 0.9);
-    return { x, y: y + bob, k };
+    return { x, y: y + bob, k, len: k > 1 ? Math.round(s(10 + 10 * L.v) * (G.narrow ? 1.2 : 1)) : 3 };
   }
+  // The nearer leaves are the island's written leaves as its first sight draws them (RB.firstSightArt.goldLeaf,
+  // src/ui/42g_interlude_firstsight.js: gold, rimmed, rows of short ink strokes, never a character), lying on the water
+  // so seen flattened, rocking a little on the swell; the far ones are the weather's own leaf. near: the nearer ones'
+  // boxes in the frame last drawn (tests).
+  let near = [];
   function leaves(c, G, list, t, still) {
-    const mark = RB.render.leafMark;
-    for (const L of list) {
+    const mark = RB.render.leafMark, gold = RB.firstSightArt && RB.firstSightArt.goldLeaf, out = [];
+    list.forEach((L, i) => {
       const p = leafAt(G, L, t, still);
-      // a wet glint on the swell beside it, then the leaf (the weather's own, at its size or twice it)
+      // a wet glint on the swell beside it, then the leaf
       c.fillStyle = 'rgba(240,250,246,0.35)'; c.fillRect(p.x - p.k, p.y + 2 * p.k, 5 * p.k, 1);
-      c.save(); c.translate(p.x, p.y); c.scale(p.k, p.k); mark(c, 0, 0, L.warm); c.restore();
-    }
+      if (p.k > 1 && gold) {
+        const rock = still ? 0 : Math.sin(t / 900 + L.ph), open = still ? 0.64 : 0.62 + 0.06 * Math.sin(t / 700 + L.ph);
+        const box = gold(c, p.x + Math.round(p.len * 0.2), p.y + p.k, p.len, (L.warm ? 0.12 : -0.18) + rock * 0.12, open, i * 13 + 7, G.vb);
+        if (box) out.push({ box, len: p.len });
+      } else { c.save(); c.translate(p.x, p.y); c.scale(p.k, p.k); mark(c, 0, 0, L.warm); c.restore(); }
+    });
+    near = out;
   }
 
   // ---- back: the island drawing away into the evening sun -------------------------------------------------------
@@ -531,7 +544,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         w, h, vb, yH: G.yH, stage: last && last.stage, settling: !!live.prev || (at - live.shown) < REVEAL,
         point: { top: O.point.y0, bottom: O.point.y1, left: O.point.x0, right: O.point.x1, tip: O.point.tip, lighthouseX: O.point.lighthouse.x },
         stern: { top: S.top, rail: S.rail }, bow: { top: Bw.top, rail: Bw.rail },
-        leaves: { n: lv.length, top: Math.min(...lv.map((p) => p.y)), bottom: Math.max(...lv.map((p) => p.y + 3 * p.k)), inView: lv.filter((p) => p.x >= 0 && p.x + 3 * p.k <= w).length },
+        leaves: { n: lv.length, top: Math.min(...lv.map((p) => p.y - (p.k > 1 ? Math.ceil(p.len * 0.3) : 0))), bottom: Math.max(...lv.map((p) => p.y + (p.k > 1 ? Math.ceil(p.len * 0.3) + p.k : 3 * p.k))), inView: lv.filter((p) => p.x >= 0 && p.x + (p.k > 1 ? p.len : 3 * p.k) <= w).length,
+          near: near.map((d) => ({ box: d.box.slice(), len: d.len })) },
         tree: B.tree, sun: B.sun, island: B.island,
       };
     },
