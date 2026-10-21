@@ -40,14 +40,18 @@ export default async (t) => {
     const o = ops(id), i = o.indexOf('set:kr_quarrel');
     t.ok(i > 0 && o[i - 1].startsWith('say:') && o[i + 1] === 'refresh:comp' && o.filter((x) => x === 'refresh:comp').length === 1, id + ': the departure line, !set kr_quarrel, then !refresh comp (once)');
   }
-  const ren = ops('kr.ren_evening');
-  t.ok(ren.includes('set:kr_apart') && !ren.includes('refresh:comp') && !ren.includes('set:kr_quarrel'), 'kr.ren_evening: unchanged (kr_apart; no quarrel, no refresh)');
+  // Ren's night apart (RBN-QA-066): gone from your side after the walk-off line, at your side again at the Ridge Light
+  // (the ridge's Ren goes first); no quarrel flags
+  const ren = ops('kr.ren_evening'), rl = ops('kr.ren_lantern');
+  t.ok(ren[ren.indexOf('set:kr_apart') + 1] === 'refresh:comp' && ren.filter((x) => x === 'refresh:comp').length === 1 && !ren.includes('set:kr_quarrel'), 'kr.ren_evening: kr_apart, then !refresh comp (once); no quarrel');
+  const u = rl.indexOf('unset:kr_apart');
+  t.ok(u > 0 && rl[u + 1] === 'refresh:' && rl[u + 2] === 'refresh:comp' && rl.filter((x) => x === 'refresh:comp').length === 1 && !rl.some((x) => /kr_quarrel/.test(x)), 'kr.ren_lantern: kr_apart unset, then !refresh and !refresh comp (once); no quarrel flags');
   const mk = ops('kr.makeup'), firstSay = mk.findIndex((x) => x.startsWith('say:'));
   t.ok(mk[0] === 'if:kr_makeup_done -> end' && mk[1] === 'set:kr_quarrel_back' && mk[2] === 'refresh:comp' && firstSay > 2, 'kr.makeup: after its guard, kr_quarrel_back and !refresh comp, before the apology');
   t.ok(mk.includes('set:kr_makeup_done'), 'kr.makeup: still ends made up');
   // nothing else uses the new flag or the opt-in refresh
   const uses = Object.keys(C.scenes).filter((id) => ops(id).some((x) => x === 'refresh:comp' || x === 'set:kr_quarrel_back')).sort();
-  t.eq(uses, ['kr.makeup', 'kr.mio_evening', 'kr.nao_evening', 'kr.suzu_evening'], 'the opt-in refresh and kr_quarrel_back appear in these four scenes only');
+  t.eq(uses, ['kr.makeup', 'kr.mio_evening', 'kr.nao_evening', 'kr.ren_evening', 'kr.ren_lantern', 'kr.suzu_evening'], 'the opt-in refresh and kr_quarrel_back appear in these six scenes only');
 
   // the engine: placeCompanion reads the rule; companionHere does not; `!refresh comp` places the follower again
   const world = fs.readFileSync(new URL('../../src/engine/50_world.js', import.meta.url), 'utf8');

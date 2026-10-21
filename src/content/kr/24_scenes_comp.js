@@ -45,7 +45,8 @@ comp: {道|みち} に {迷|まよ}って 、 {着|つ}けなかった 。 …�
 !set kr_ren_lamp_known
 
 @scene kr.ren_evening
-# Ren's crossroads begins: Hisae's offer, made by her lamp; Ren goes up the ridge alone.
+# Ren's crossroads begins: Hisae's offer, made by her lamp; Ren goes up the ridge alone (and is gone from your side
+# there and then: RBN-QA-066).
 kr_hisae: レン 。 あんた に {話|はなし} が ある 。 || Ren. I've something to say to you.
 kr_hisae: この {道|みち} の {灯守|ひもり} を 、 {継|つ}がない かい 。 {宿坊|しゅくぼう} も 、 {記録|きろく} も 、 {灯|ひ} も 、 {全部|ぜんぶ} あんた の もの に なる 。 || Will you take on the keepership of this road? The lodge, the registers, the lamps: all of it would be yours.
 comp[surprise]: …… わたし が 、 ですか 。 || …Me?
@@ -54,6 +55,7 @@ comp[closed]: …… {少|すこ}し 、 {灯守|ひもり} の {用事|よう�
 comp: {先|さき} に {休|やす}んで いて ください 。 {心配|しんぱい} は いりません 。 || Go and rest. There's no need to worry.
 narr: レン は {灯|ひ} を {一|ひと}つ {持|も}って 、 {尾根|おね} の {方|ほう} へ {歩|ある}いて いった 。 || Ren takes a lamp and walks off towards the ridge.
 !set kr_apart
+!refresh comp
 !journal レン が 、 {一人|ひとり} で {尾根|おね} へ {行|い}った 。 「{灯守|ひもり} の {用事|ようじ}」 だ と いう 。 {宿坊|しゅくぼう} で {夜|よる} を {過|す}ごして から 、 {探|さが}し に {行|い}こう 。 || Ren has gone up to the ridge alone: "keeper's business", they said. Spend the evening at the lodge, then go and find them.
 
 @scene kr.nao_evening
@@ -161,7 +163,8 @@ kr_hisae: {喧嘩|けんか} かい 。 {灯|ひ} の {前|まえ} で {喧嘩|�
 
 @scene kr.ren_lantern
 # Ren's night apart, resolved at the Ridge Light (the unfinished matter); then the crossroads' answer. Its night
-# sounds: bell crickets in the grass, an owl, wind in the lantern's shutters.
+# sounds: bell crickets in the grass, an owl, wind in the lantern's shutters. Back together, Ren leaves the lantern
+# and walks with you from there (RBN-QA-066: the ridge's Ren goes, the follower comes, beside you).
 !if kr_ren_back -> end
 ?(!kr_hisae_told_ren) narr: レン は 、 {暗|くら}い {灯籠|とうろう} の {前|まえ} に {立|た}って いる 。 {声|こえ} を かけて いい か {迷|まよ}う 。 ヒサエ に {先|さき} に {話|はなし} を {聞|き}こう か 。 || Ren is standing before the dark lantern. You're not sure whether to call out. Perhaps talk to Hisae first.
 ?(!kr_hisae_told_ren) !end
@@ -187,6 +190,8 @@ ren[smile]: …… {点|つ}きました 。 {遅|おそ}く なって 、 ご�
 ren: ヒサエ さん に 、 この {道|みち} を {継|つ}がない か と {言|い}われました 。 {宿坊|しゅくぼう} も 、 {灯|ひ} も 、 {全部|ぜんぶ} 。 …… {正直|しょうじき} 、 {嬉|うれ}しかった 。 {灯守|ひもり} の {居場所|いばしょ} です から 。 || Hisae asked me to take on this road. The lodge, the lamps, all of it. …Honestly, I was glad. It's a place for a keeper.
 ren: でも 、 {灯|ひ} は {今|いま} 、 どこ でも {消|き}えて います 。 {灯守|ひもり} は 、 {暗|くら}い ところ へ {行|い}く もの です 。 …… あなた と 、 {最後|さいご} まで {歩|ある}きたい 。 この {道|みち} の {答|こた}え は 、 その {後|あと} で {出|だ}します 。 || But lamps are going out everywhere now. A keeper goes where it's dark. …I want to walk with you to the end. I'll give this road its answer after that.
 !unset kr_apart
+!refresh
+!refresh comp
 !set kr_ren_back
 !set kr_ren_crossroads
 !hook co_bond kr:night
