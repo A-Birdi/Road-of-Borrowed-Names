@@ -120,7 +120,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: '{潮見|しおみ}{小屋|ごや} の シオリ に 、 {岬|みさき} の {道|みち} が いつ {開|ひら}く か {聞|き}こう 。', en: 'Ask Shiori at the tide-watch hut on the point when the causeway opens.' },
       { jp: '{風|かぜ} の ない {霧|きり} が {道|みち} を {隠|かく}して いる 。 {灯台|とうだい} の ゲンゾウ に {相談|そうだん} しよう 。', en: 'A windless fog hides the causeway. Ask Genzō at the lighthouse about the wind.' },
       { jp: '{引|ひ}き{潮|しお} の {道|みち} を {渡|わた}って 、 {沈|しず}んだ {書庫|しょこ} へ {入|はい}ろう 。', en: 'Cross the causeway south of the point and enter the Drowned Archive.' },
-      { jp: '「{返送|へんそう}」 された {名前|なまえ} が どこ へ {行|い}く の か {突|つ}き{止|と}めよう 。', en: 'Find out where the "returned" names are taken — go deeper into the archive.' },
+      { jp: '「{返送|へんそう}」 された {名前|なまえ} が どこ へ {行|い}く の か {突|つ}き{止|と}めよう 。', en: 'Find out where the "returned" names are taken — go deeper into the archive.',
+        // while the inner door is shut, the way on is that door (its own line names the catalogue cabinet; RBN-QA-069:
+        // the derived step looked past it to the Returns Counter); once the catalogue is in order, derived as before
+        atIf: [{ if: '!sg_da_catalog', at: { map: 'sg.da_entry', x: 11, y: 1 } }] },
       { jp: '{潮硝子|しおがらす} に {戻|もど}って 、 オウミ に {伝|つた}えよう 。', en: 'Return to Saltglass and tell Ōmi what you found.' },
     ],
     reward: { flags: ['sg_main_done'] },
