@@ -118,5 +118,38 @@ await p.evaluate(async () => { await RB.game.loadCampaign(1, 'manual'); });
 await p.waitForTimeout(1500);
 const fresh = await now(p);
 ok(same.follower && lodge.follower && again.follower && again.ridgeRen === 0 && fresh.map === 'kr.ridge' && fresh.follower && fresh.ridgeRen === 0 && ![same, lodge, again, fresh].some((x) => x.quarrel) && !errors.length, 'a load in the same session, the lodge and back, and the game opened afresh: Ren with you, one Ren; no quarrel flags; no page errors (' + JSON.stringify({ same: same.follower, lodge: lodge.follower, again: again.follower, fresh, errors: errors.slice(0, 2) }) + ')');
+// 4. (synthetic, Local CL-107) the companion standing here having walked in to speak (an extra) when `!refresh comp`
+//    brings them back: that figure becomes the follower, never a second one. No authored scene reaches this today
+//    (the six `!refresh comp`s), so a two-line scene of the test's own stands in.
+{
+  const { p: q, errors: e2 } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await q.evaluate((FL) => {
+    RB.game.debugStart('kr.lodge', 20, 13, { dir: 'up', edition: RB.edition.forNew(), comp: 'ren', flags: Object.assign({}, FL, { kr_night: true, kr_evening_seen: true, kr_apart: true }) });
+    RB.game.settings.textSpeed = 'instant'; RB.game.settings.input = 'choice';
+    RB.script.add('@scene t.extra\nren: うん 。 || Yes.\n!unset kr_apart\n!refresh comp\nren: いこう 。 || Let\'s go.');
+  }, FL);
+  await q.waitForTimeout(1500);
+  await q.evaluate(() => {
+    const W = RB.world.W, who = (n) => (n.def && (n.def.char || n.def.id)) || n.id, R = (window.__ren = { max: 0, frames: 0, dup: null, first: null });
+    const tick = () => {
+      const drawn = [['npcs', W.npcs], ['leavers', W.leavers], ['extras', W.extras], ['foes', W.foes]].flatMap(([k, l]) => (l || []).filter((n) => who(n) === 'ren' && (n.alpha == null || n.alpha > 0)).map((n) => k + '@' + n.x + ',' + n.y));
+      if (W.comp && W.comp.id === 'ren') { drawn.push('comp@' + W.comp.x + ',' + W.comp.y); if (!R.first) R.first = [W.comp.x, W.comp.y]; }
+      R.frames++; R.max = Math.max(R.max, drawn.length);
+      if (drawn.length > 1 && !R.dup) R.dup = drawn;
+      if (!R.stop) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    RB.script.run('t.extra');
+  });
+  await q.waitForFunction(() => RB.ui.dialogue.isOpen(), null, { timeout: 10000 }).catch(() => {});
+  await q.waitForTimeout(2500);
+  const ex = await q.evaluate(() => { const W = RB.world.W, e = W.extras.find((n) => ((n.def && (n.def.char || n.def.id)) || n.id) === 'ren'); return e ? (e.mv ? [e.mv.tx, e.mv.ty] : [e.x, e.y]) : null; });
+  await q.evaluate(() => RB.ui.dialogue.advance(true));
+  await q.waitForTimeout(1500);
+  const ren = await q.evaluate(() => { window.__ren.stop = true; const W = RB.world.W; return Object.assign({}, window.__ren, { follower: W.comp ? [W.comp.x, W.comp.y] : null, extras: W.extras.length }); });
+  // (where the extra stands, or the tile it is stepping onto)
+  ok(ex && ren.max === 1 && !ren.dup && ren.first && ren.first.join() === ex[0] + ',' + ex[1] && ren.follower && !e2.length, '(synthetic) Ren walked in to speak, then `!refresh comp`: that Ren becomes the follower where they stand (or are stepping to), one Ren at every frame (' + JSON.stringify({ extraAt: ex, max: ren.max, firstDuplicate: ren.dup, followerFirstAt: ren.first, frames: ren.frames, errors: e2.slice(0, 2) }) + ')');
+  await q.close();
+}
 console.log(`\nren_apart: ${pass} passed, ${fail} failed`);
 await b.close(); srv.close(); process.exit(fail ? 1 : 0);
