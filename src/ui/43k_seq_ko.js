@@ -259,4 +259,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     title: { en: 'Leaves from the north', jp: '{北|きた} から {来|き}た {葉|は}' }, chapter: 'ko', scene: 'ko.end',
     shots: { stone, north },
   });
+
+  // The leaves coming down, for the island's first sight on landing (src/ui/42g_interlude_firstsight.js, RBN-QA-073),
+  // so the tree's leaves fall the same way in every picture of it.
+  RB.seqKo = { falling };
 })();

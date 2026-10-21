@@ -96,11 +96,23 @@ narr: {船|ふね} は {東|ひがし} へ 。 {大|おお}きな {木|き} が 
 
 @scene ko.first_sight
 # The first landing, by any boat: the great camphor above the village, leaves drifting down over everything.
+# The view itself is shown as a picture over the two lines that describe it (src/ui/42g_interlude_firstsight.js;
+# RBN-QA-073): you land and look up the beach a moment (by either boat the shore has only just come up out of the
+# dark, and would flash and go without it); then, from the end of the jetty, the sand and the island rising beyond it,
+# the great tree on its crown with its limbs spread wide, leaves drifting down; then back on the jetty for your
+# companion's word.
 !set ko_arrived
 !travel kotonoha
 !gesture pc lookroad up
+!wait 700
+!fade out
+!interlude ko_first_sight
+!fade in 600
 narr: {砂浜|すなはま} の {向|む}こう に 、 {見|み}た こと も ない {大|おお}きな {木|き} が {立|た}って いる 。 {島|しま} {全体|ぜんたい} を {抱|かか}える よう に 、 {枝|えだ} を {広|ひろ}げて 。 || Beyond the sand stands a tree bigger than any you have seen, its branches spread as if to hold the whole island.
 narr: {葉|は} が 、 {雪|ゆき} の よう に {降|ふ}って いる 。 {一枚|いちまい} {一枚|いちまい} に 、 {薄|うす}く {字|じ} が {見|み}える 。 || Leaves are falling like snow. On each one, faintly, there is writing.
+!fade out
+!interlude -
+!fade in
 ?(comp=nao) comp: …… {全部|ぜんぶ} 、 {誰|だれ} か が {書|か}いた か {言|い}った か した {言葉|ことば} か 。 {届|とど}け{先|さき} は 、 どこ だった ん だろう な 。 || …All of these, words someone wrote or said. Where were they meant to go, I wonder.
 ?(comp=mio) comp[surprise]: きれい …… 。 でも 、 こんな に たくさん 。 {全部|ぜんぶ} 、 なくなった {言葉|ことば} な の ？ || Beautiful… But so many. Are these all lost words?
 ?(comp=ren) comp[think]: {灯|ひ} の {道|みち} より も {古|ふる}い {木|き} かも しれません 。 {葉|は} の {字|じ} は 、 {墨|すみ} の {色|いろ} が みんな {違|ちが}います 。 || It may be older than the lantern roads. The ink on the leaves is a different colour on every one.
