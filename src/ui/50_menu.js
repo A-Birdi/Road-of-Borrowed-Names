@@ -733,14 +733,43 @@ RB.ui.menu = (function () {
       const k = e.target.closest('[data-k]');
       if (k) {
         stopDemo();
-        const ch = k.dataset.k;
+        const ch = k.dataset.k, at = leafY(k);
         stopDemo = RB.lessons.demoInto(el.querySelector('.kdemo-fig'), ch, 160, 'kdemo');
         el.querySelector('.kinfo').innerHTML = '<div class="jp" lang="ja" style="font-size:2.4em;line-height:1.2">' + esc(ch) + '</div><div>' + esc(kanaLabel(ch, k.dataset.r)) + '</div>';
+        revealDemo(el, ch, at);
         return;
       }
+      if (e.target.closest('[data-kback]')) { kanaBack(el); return; }
       const say = e.target.closest('[data-say]');
       if (say) { const n = s.notebook.filter((x) => x.kind === 'word')[+say.dataset.say]; if (n && RB.voice) RB.voice.sayRef(n.surface && n.reading && RB.voice.refKey ? RB.voice.refKey.word(n.surface, n.reading) : null, n.reading || n.surface); }
     };
+  }
+  // RBN-QA-067: the stroke-order box sits above the chart, so a kana chosen further down drew out of view. When the box
+  // is not wholly in view, the Guide's own page (its scrolling leaf: never the window or the facing page) moves once,
+  // at once, to show it, and "Back to ‹kana› in the chart" returns to where you were and to that kana. When the box is
+  // in view nothing moves. (Back puts the kana where it was on the page when you chose it, whatever the box's height.)
+  let kanaReturn = null;
+  const leafY = (n) => { const leaf = n.closest('.leaf'); return leaf ? n.getBoundingClientRect().top - leaf.getBoundingClientRect().top : 0; };
+  function revealDemo(el, ch, at) {
+    const box = el.querySelector('.kdemo-box'), leaf = box && box.closest('.leaf');
+    kanaReturn = null;
+    if (!box || !leaf) return;
+    const lr = leaf.getBoundingClientRect(), br = box.getBoundingClientRect();
+    if (br.top >= lr.top && br.bottom <= lr.bottom) return;
+    kanaReturn = { at, ch };
+    leaf.scrollTo({ top: Math.max(0, leaf.scrollTop + br.top - lr.top - 8), behavior: 'instant' });
+    const info = el.querySelector('.kinfo');
+    info.insertAdjacentHTML('beforeend', '<button class="pbtn kback" data-kback>Back to <span lang="ja">' + esc(ch) + '</span> in the chart</button>');
+    info.querySelector('[data-kback]').focus({ preventScroll: true });
+  }
+  function kanaBack(el) {
+    const r = kanaReturn, box = el.querySelector('.kdemo-box'), leaf = box && box.closest('.leaf'), btn = el.querySelector('[data-kback]');
+    kanaReturn = null;
+    if (btn) btn.remove();
+    const cell = r && leaf && [...el.querySelectorAll('.kcell')].find((x) => x.dataset.k === r.ch);
+    if (!cell) return;
+    leaf.scrollTo({ top: Math.max(0, leaf.scrollTop + leafY(cell) - r.at), behavior: 'instant' });
+    cell.focus({ preventScroll: true });
   }
   function kanaChart(s) {
     const K = RB.kana;

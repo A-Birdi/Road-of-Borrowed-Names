@@ -95,6 +95,7 @@ button.entry .t, button.entry .kind { display: block; }
 .kdemo-box canvas { width: 160px; height: 160px; border-radius: var(--r-1); background: #fffaf0; border: 1px solid var(--paper-edge); flex: none; }
 /* RBN-QA-039 follow-up: a combination's boxes (or the line saying there is no demonstration) in the same 160px */
 .kdemo-box .kdemo-fig { width: 160px; flex: none; }
+.kinfo .kback { display: block; margin-top: 0.5em; }
 .kdemo-box .lesson-demo { margin: 0; max-width: none; }
 .kdemo-box .lesson-demo-set { gap: 4px; max-width: none; }
 .kdemo-box .lesson-demo-set canvas { flex: 1 1 0; width: 0; height: auto; aspect-ratio: 1; }
