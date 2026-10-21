@@ -784,6 +784,19 @@
       RBN-QA-072 (Tetsu's crossing as pictures from the boat; candidate in preparation), RBN-QA-074 to 076 (proposals
       agreed, queued), RBN-QA-078 (a preparation question or task left after a load; a latent engine defect with no
       authored ordinary-play path, proposal agreed, queued after 072 and 074 to 076).
+      Verified live by Local (CL-126) and Agnes (6322726687).
+      CANDIDATE CC-015 (`index.html` `dcf8eb7c…`, built from `16f8882`): CC-014 plus only what was agreed after it,
+      each by its exact commits (cherry-picked with `-x`; three AGREEs each, Agnes 6324060630, 6324073402, 6324717270,
+      6325021725 and Local CL-130 to CL-133; integration identities verified by Agnes 6325141876 and Local CL-134 and
+      CL-135): RBN-QA-072 (`15f34dd`, `3977fd0`, `b728178`, `5021bdd`, `39f39b2` → `1059f88`, `7fed06e`, `a0bd4dc`,
+      `cabd0d2`, `b97bef3`: Tetsu's crossing told over pictures from the boat, out and back, the departing tree the
+      first sight's own; a picture's work built ahead belongs to the showing it was asked for), and the RBN-QA-073
+      follow-up (`1307194`, `e869c04`, `c73aeab`, `db0f396`, `b7b5377` → `c157c66`, `cbbe649`, `80c736f`, `9f685fa`,
+      `16f8882`: the first sight's gold leaves on the picture's own time, readable from its first frame; the leaf test
+      judging whole frames, and the opening frames at two page clocks). `db0f396` and `b7b5377` differ from their
+      integrated commits only in context lines (QA-072's header comment in the same file); their zero-context
+      patch-ids are equal. Not in it: RBN-QA-074 (`candidate/qa-074` @ `d699567`, the leaf drift's marker; under
+      review), RBN-QA-075 and 076 (in preparation), RBN-QA-078 (queued after them).
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

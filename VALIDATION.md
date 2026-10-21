@@ -5484,6 +5484,29 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-015:** `index.html` sha256 `dcf8eb7cc1b2c47be733e02fe67e1760441fe746552c8634d1d43b09d8b381a7`, built
+    from `16f8882` (CC-014 plus only RBN-QA-072 and the RBN-QA-073 follow-up, each with its agreed successors;
+    patch-identical to the agreed commits over every file, `run.mjs` included, except that `db0f396` and `b7b5377` match
+    only with zero context, QA-072 having changed a neighbouring comment in the same test file; `run.mjs` gains
+    `ko_crossing` and `interlude_ahead`; identities verified by Agnes 6325141876 and Local CL-134, CL-135);
+    byte-identical to the build the suites ran on (tests are not part of the build, so the scratch tree with
+    `db0f396`'s test, whose build is the same bytes, counts). On these bytes (B): `ko_first_sight` 87/0 twice with the
+    integrated test (and 84/0 twice before the test pair joined), `ko_crossing` 94/0, `interlude_ahead` 30/0,
+    `interlude_lifecycle` 14/0, `interludes` 76/0, `lf_arrival_view` 79/0, `lookout_vista` 22/0, `keeper_reveal` 69/0,
+    `kotonoha` 7/0, `licence` 2/0, `sequence_world --only ko.garden,ko.end` 220/0, `battle_start_abandon` 28/0,
+    `encounters` 10/0, `load_mid_scene` 19/0, `combat_ui` 7/0, `social_battle` 65/0, `card_press` 13/0,
+    `battle_settings` 10/0, `battle_presentation` 13/0, `fog_event` 26/0, `prologue` 100/0, `title_ledger` 18/0,
+    `play_ui` all ok (44), `world_view` all ok (20), `ui` 14/0, `hall_entry` all ok (16), `hall_door` 15/0,
+    `walkto_options` 23/0, `quest_guide` all ok, `guide_next_step` 24/0, `ruin_lanterns` 31/0, `lodge_evening` 16/0,
+    `lodge_quarrel` 31/0, `ren_apart` 7/0, `guide_reveal` 37/0, `guide_kana` 11/0, `learning_ui` 15/0, `social_wait`
+    12/0, `look_purity` 9/0, `props_balance` 48/0, `road_oil` 14/0, `geese_event` 15/0, `keepers` 4/0,
+    `lodge_arrival` 40/0, `guide_stacks` 8/0, `guide_archive` 14/0, `companion_turn` 4/0, `road_on` 11/0 (two runners
+    side by side, each suite in turn, with the unit run alongside). U whole suite 57,787/0 on `80c736f` (the test pair
+    after it changes no unit's input); U `scene_manifest` 1023/0, `sequence` 499/0, `ko_*` 290/0 on `80c736f`;
+    `validate.mjs` no errors. Recorded as they happened, not made green afterwards: `ko_first_sight` 83/1 on CC-014's
+    bytes and on QA-072's separate tree before the follow-up (a gold leaf still growing into view at the picture's
+    opening); on CC-014's art the opening-frame checks fail 85/2 (the leaves on the page's clock). Not shown by any of
+    these runs: the crossing on real devices. Voice: none.
   - **Candidate CC-014:** `index.html` sha256 `5dc39d093824ffb7e0844195daecf44f649bc96ef55fe61e1d57e2c0161291a5`, built
     from `5fbdc0b` (CC-013 plus only RBN-QA-064, 071, the `keeper_reveal` plate check, 077 and 073, each with its
     agreed successors; patch-identical to the agreed commits over every file but `run.mjs`, which only gains

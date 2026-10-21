@@ -1317,7 +1317,17 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   covered; ordinary reachability of the race unproven); on the first landing at Kotonoha the great tree is shown over
   the two lines that describe it, a few large written gold leaves coming down clear of the tree; B `lf_arrival_view`
   79/0, `interlude_lifecycle` 12/0, `keeper_reveal` 69/0, `battle_start_abandon` 28/0, `ko_first_sight` 84/0 on
-  CC-014's own bytes. In candidate CC-014 (`5dc39d09…`, built from `5fbdc0b`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  CC-014's own bytes. In candidate CC-014 (`5dc39d09…`, built from `5fbdc0b`), READY_FOR_QA; verified live by Local
+  (CL-126) and Agnes (6322726687).
+  RBN-QA-072 and the RBN-QA-073 follow-up (three-party AGREE each, on the exact commits listed in HANDOFF's CC-015
+  entry): taking Tetsu's boat to Kotonoha, the crossing's lines play over pictures from the boat (the coast falling
+  behind over the stern; the open sea with gold leaves on the swell; coming back, the island and its great tree, the
+  first sight's own shape, drawing away against the low sun); a picture's layers built ahead do nothing once their
+  showing has passed (a clear, a load that works or fails, a newer showing, a different picture shown or asked for
+  first), and layers built only ahead are released once; on the first landing the gold leaves are where the still
+  picture has them from the picture's first frame; B `ko_crossing` 94/0, `interlude_ahead` 30/0, `ko_first_sight`
+  87/0 twice, `interlude_lifecycle` 14/0, `sequence_world` `ko.garden` and `ko.end` 220/0 on CC-015's own bytes. In
+  candidate CC-015 (`dcf8eb7c…`, built from `16f8882`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand
