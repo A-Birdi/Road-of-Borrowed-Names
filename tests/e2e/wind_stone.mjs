@@ -11,7 +11,7 @@
 //     set and cleared between frames);
 //  5. drawn by its own art, at the village's palette: low and broad (as wide as its two tiles, at most about one tile
 //     high), its top lighter than its front, no roof, no lamp's glow; in motion its wind streaks move, held still
-//     (Reduce motion) two frames are alike;
+//     (Reduce motion) two frames are alike; its 16-px fallback sets only real colours, its top lighter than its front;
 //  6. at 1280×800 and at 390×844 on a phone it is on screen, under the player's view, with no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/wind_stone.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -74,11 +74,20 @@ async function drain(p) {
     RB.game.settings.reducedMotion = rm;
     const m3 = draw(400, true);
     const same = (u, v) => u.every((x, i) => x === v[i]);
+    // the 16-px fallback (drawn when the art is not): every colour it sets is a real one, and its top is lighter than
+    // its front (Agnes 6326169868: it had indexed tones the island's stone does not have)
+    const F = document.createElement('canvas');
+    F.width = 48; F.height = 32;
+    const fg = F.getContext('2d'), set = [];
+    const rec = new Proxy(fg, { set(t, k, v) { if (k === 'fillStyle') set.push(v); t[k] = v; return true; }, get(t, k) { const v = t[k]; return typeof v === 'function' ? v.bind(t) : v; } });
+    pd.draw(rec, 8, 8, pal, 0, { cx: 25, cy: 14 });
+    const fd = fg.getImageData(0, 0, 48, 32).data, fl = (y) => { let s = 0, n = 0; for (let x = 14; x < 34; x++) { const i = (y * 48 + x) * 4; if (fd[i + 3]) { s += fd[i] * 0.3 + fd[i + 1] * 0.59 + fd[i + 2] * 0.11; n++; } } return n ? s / n : null; };
+    const fallback = { colours: set, valid: set.length > 0 && set.every((v) => typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v)), top: fl(8 + 3), front: fl(8 + 8) };
     return {
       here: here.map((q) => [q.p, q.scene || null, q.light || null]), shrine: { w: P.shrine.w, light: P.shrine.light, block: P.shrine.block }, wind: { id: pd.id, w: pd.w, h: pd.h, block: pd.block, light: pd.light || null }, others: others.length,
       blocked: [blk(25, 14), blk(26, 14)], open: [blk(24, 14), blk(27, 14)],
       box: [x0 - 24, y0 - 40, x1 - 24, y1 - 40], top: lum(40 + 0, 40 + 6), front: lum(40 + 14, 40 + 24), roofPx,
-      moves: !same(m1, m2), still: same(d, m3),
+      moves: !same(m1, m2), still: same(d, m3), fallback,
     };
   });
   ok(r.here.length === 1 && r.here[0][0] === 'ko_windstone' && r.here[0][1] === 'ko.windstone' && !r.here[0][2], `ko.village 25,14 is the Wind Stone with its scene, nothing else there (${JSON.stringify(r.here)})`);
@@ -88,6 +97,7 @@ async function drain(p) {
   ok(r.box[2] - r.box[0] >= 60 && r.box[3] - r.box[1] <= 40 && r.box[1] >= -6, `its own art: low and broad, ${r.box[2] - r.box[0] + 1} art px wide and ${r.box[3] - r.box[1] + 1} high, from ${r.box[1]} above its tile's top (${r.box})`);
   ok(r.top != null && r.front != null && r.top > r.front + 12 && r.roofPx === 0, `its top lighter than its front (${r.top && r.top.toFixed(1)} against ${r.front && r.front.toFixed(1)}), no roof (${r.roofPx} roof-coloured px)`);
   ok(r.moves && r.still, `in motion its wind streaks move (${r.moves}); held still two frames are alike (${r.still})`);
+  ok(r.fallback.valid && r.fallback.top > r.fallback.front, `its 16-px fallback: every colour a real one (${JSON.stringify(r.fallback.colours)}), its top lighter than its front (${r.fallback.top && r.fallback.top.toFixed(1)} against ${r.fallback.front && r.fallback.front.toFixed(1)})`);
   ok(!errors.length, `no page errors ${errors.slice(0, 2).join(' | ')}`);
   await p.close();
 }
