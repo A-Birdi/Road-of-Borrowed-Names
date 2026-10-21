@@ -672,6 +672,12 @@
       verdicts (all three AGREE): RBN-QA-048 fog (scene-scoped `fog` ambience with a distance haze), RBN-QA-049 geese
       (one flock actor through the road event's `at`), RBN-QA-050 the fare repayment (seated start, side-by-side
       exchange at the table, approach sides checked). Building next: 048 (`candidate/qa-048`), 049, 050, then 047.
+      MERGED: qa-036 (three AGREEs at `bf4c0ef`: Cloud CC-039, Agnes 6306739023, Local CL-061), cherry-picked into the
+      task branch as `17591c4`, `1ddd834`, `3b63a2c`; in source, not yet in a built candidate (no `index.html` rebuilt:
+      publication is not authorized by the reviewers' messages; the next CC build waits for a batch and a go-ahead).
+      qa-020 `5f492dd`: Agnes REFINE (6306759991) and Local REFINE (CL-061) on the new follow's lifecycle (bind the
+      tick and catch-up to the scene token, map and companion; settle the last move within a stated bound; word
+      `cross` as "if currently false"; document `max=`; focused cancellation/settle/default/active-trigger tests).
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

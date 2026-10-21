@@ -5553,6 +5553,8 @@ Yasu's story, when listening, has not begun being spoken."
     - `candidate/qa-036` `bf4c0ef`: B `counter_tap` 30/0 on its build, with two new cases (the counter swapped for a
       counter while Yae stands still; the counter removed with its tiles freed): both FAIL on `9a7bc73` (Yae speaks)
       and pass here; U `world` 123/0, `living_world` 110/0; `validate.mjs` no errors.
+    - qa-036 merged (`3b63a2c`; src, tests and tools identical to `bf4c0ef`): B `counter_tap` 30/0 on a scratch build of
+      the task branch; `validate.mjs` no errors.
   - **RBN-QA-032 in source (Robin approved 2026-10-20 from the frames, to review in play; `8cfedf2`, cherry-picked
     from `523f9ba`):** `git diff 523f9ba 8cfedf2 -- src tests tools data assets` is empty (the candidate's tests above
     ran on the same code); on a scratch build of `8cfedf2`: B `lookout_vista` 22/0, `story_ch3 E nao` 38 checks passed,

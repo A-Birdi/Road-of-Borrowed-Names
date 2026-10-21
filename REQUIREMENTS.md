@@ -1238,7 +1238,13 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   pictures over the lines that describe it (src/ui/42c_interlude_lookout.js, new art, provisional under AC-1): the
   village and its firebreaks, the stage and Hiro's seat (Suzu dancing unless she is the companion), the road and the
   snowy peaks; every other line on the platform; no line, voice key, flag or gate changed (`8cfedf2`); B
-  `lookout_vista` (new; CC-008 fails 7). In source, for the next build. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  `lookout_vista` (new; CC-008 fails 7). In source, for the next build.
+  RBN-QA-036 (three-party AGREE at `bf4c0ef`: Cloud CC-039, Agnes 6306739023, Local CL-061): a tap on someone behind a
+  counter with no free place beside them (Yae at Yukimiya, Sousuke at the post shelter's desk) walks to the counter's
+  front and talks across it; the walk remembers whom it is for, and only a person who moved is tried again (a counter
+  swapped or removed, someone else in their place: nothing happens); cherry-picked as `17591c4`, `1ddd834`, `3b63a2c`;
+  B `counter_tap` 30/0 on a build of the merged source (src/tests/tools identical to `bf4c0ef`). In source, for the
+  next build; Agnes's authored Yae/Sousuke UI retest still to come. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand
