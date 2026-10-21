@@ -94,7 +94,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 30, y: 19, w: 6, h: 4, roof: 'thatch', wall: 'wood', door: null, windows: [1, 4] },
     ],
     props: [
-      { p: 'shrine', x: 25, y: 14, scene: 'ko.windstone' },
+      { p: 'ko_windstone', x: 25, y: 14, scene: 'ko.windstone' },
       { p: 'noticeboard', x: 13, y: 12, scene: 'ko.census_board' },
       { p: 'ko_netrack', x: 8, y: 24 }, { p: 'ko_netrack', x: 12, y: 26 },
       { p: 'ko_basket', x: 17, y: 17 }, { p: 'ko_basket', x: 27, y: 23 },
