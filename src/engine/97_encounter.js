@@ -793,7 +793,9 @@ RB.encounter = (function () {
   // How useful each companion action is with this response queued: each tried on a copy for one exchange.
   function ranked(st, s, card, words, T) {
     const opts = L().compOptions(st, s, card).filter((o) => !o.locked).concat(companionOptions(st, s));
-    if (!RB.combatSim || !st.foes.length) return opts.map((o) => ({ o, v: 0 }));
+    // (nor in a conversation with a creature in it: the look-ahead's copy shares the encounter, and a social action
+    // would be applied to the live conversation; RBN-QA-056, Local CL-082)
+    if (!RB.combatSim || !st.foes.length || (st.enc && st.enc.social)) return opts.map((o) => ({ o, v: 0 }));
     const known = new Set(words.flatMap((w) => w.tags || []));
     return opts.map((o) => {
       if (o.used || o.def.own || o.def.id === 'join') return { o, v: o.def.own ? 1e6 : -1e6 };

@@ -12,6 +12,8 @@
 //     one; the battle stays up until an authored ending; no page errors;
 //  4. the companion's gesture (cr.courier, yn.kettle), offered once the understanding is full (set so as the test's
 //     setup): no writing asked, played, no page errors.
+//  5. with a standing plan for the companion's turn (Protect, Reveal, Press), on the Shadow with each companion and a
+//     spot check of the other eight: each social action applied once, the understanding one step at a time.
 // Each card is pressed on its English label: pressing the Japanese label's words is RBN-QA-057 (card_press.mjs).
 // Usage: node tools/build.mjs && node tests/e2e/social_battle.mjs
 import { serve, launch, page, companionTurn } from './lib.mjs';
@@ -34,7 +36,7 @@ async function setup(p, o) {
     s.learn.kanaKnown = 'both'; s.learn.profile = 'E';
     s.words = WORDS.slice();
     RB.game.settings.input = 'choice'; RB.game.settings.battleAnim = 'instant'; RB.game.settings.textSpeed = 'instant';
-    RB.game.settings.compPlan = 'ask'; RB.game.applySettings();
+    RB.game.settings.compPlan = o.plan || 'ask'; RB.game.applySettings();
     // the encounter's own result, wherever it was started
     const se = RB.game.startEncounter;
     RB.game.startEncounter = function () { const r = se.apply(this, arguments); Promise.resolve(r).then((v) => { window.__res = v || { result: null }; }, (e) => { window.__res = { error: String(e) }; }); return r; };
@@ -73,10 +75,12 @@ async function drive(p, id, o = {}) {
   const def = await p.evaluate((id) => { const d = RB.content.encounters[id]; return { actions: (d.social.actions || []).map((a) => ({ id: a.id, en: a.label.en, task: !!a.task })), gesture: d.social.gesture ? d.social.gesture.name.en : null, conclusions: (d.conclusions || []).map((c) => c.id) }; }, id);
   const chosen = [], tasks = [];
   let gestured = false, downEarly = false, wrongSeen = false, lastUsed = [];
+  const us = [];
   const t0 = Date.now();
   for (let i = 0; i < 400 && Date.now() - t0 < 150000; i++) {
     const v = await view(p);
-    if (v.used.length) lastUsed = v.used;
+    if (v.used.length) { lastUsed = v.used; await p.evaluate(() => { const st = RB.combat.state(); if (st && st.enc && st.enc.social) window.__usedCounts = Object.assign({}, st.enc.social.used); }); }
+    if (v.phase === 'choose' && v.u != null && us[us.length - 1] !== v.u) us.push(v.u);
     if (v.res) break;
     if (!v.combat && i > 20) { downEarly = true; break; }
     if (v.dlg) { await p.evaluate(() => RB.ui.dialogue.advance(true)); await p.waitForTimeout(60); continue; }
@@ -123,7 +127,8 @@ async function drive(p, id, o = {}) {
   const steps = await p.evaluate(() => window.__steps);
   const used = lastUsed;
   if (process.env.TRACE) console.log('  (' + id + ': ' + Math.round((Date.now() - t0) / 1000) + ' s)');
-  return { def, chosen, tasks, gestured, downEarly, wrongSeen, steps, used, res: end.res, end };
+  const counts = await p.evaluate(() => window.__usedCounts || null);
+  return { def, chosen, tasks, gestured, downEarly, wrongSeen, steps, used, us, counts, res: end.res, end };
 }
 
 // 1. the Teller's Shadow from the Copying Room's own trigger
@@ -183,6 +188,28 @@ for (const [id, comp] of [['cr.courier', 'nao'], ['yn.kettle', 'suzu']]) {
   const steps = await p.evaluate((n) => window.__steps.slice(n), before);
   ok(offered && pt && !steps.length && after && (after.res || after.u === 0), id + ': the companion\'s gesture is offered, pressed, asks for no writing, and is played (understanding spent: ' + JSON.stringify({ offered, steps, u: after && after.u, res: after && after.res }) + ')');
   ok(!errors.length, id + ' gesture: no page errors ' + errors.slice(0, 3).join(' | '));
+  await p.close();
+}
+// 5. with a standing plan for the companion's turn (Protect, Reveal, Press): each correction is applied once, its
+// understanding +1 (the plan's look-ahead never acts on the live conversation; Local CL-082)
+for (const [plan, comp] of [['protect', 'nao'], ['reveal', 'ren'], ['press', 'mio'], ['protect', 'suzu'], ['press', 'nao'], ['reveal', 'suzu']]) {
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await setup(p, { map: 'rw.millroad', x: 10, y: 22, comp, enc: 'kr.shadow_gate', flags: FL, plan });
+  const r = await drive(p, 'kr.shadow_gate');
+  const once = r.counts && Object.values(r.counts).every((n) => n === 1);
+  const steps = r.us.every((u, i) => i === 0 || u - r.us[i - 1] <= 1);
+  ok(once && steps && r.res && r.res.outcome === 'right' && r.used.length === 3, 'plan ' + plan + ' (' + comp + '): each correction applied once, the understanding one at a time, ended right (' + JSON.stringify({ counts: r.counts, us: r.us, res: r.res }) + ')');
+  ok(!errors.length, 'plan ' + plan + ' (' + comp + '): no page errors ' + errors.slice(0, 2).join(' | '));
+  await p.close();
+}
+// and a spot check of the other eight with a plan
+for (const [id, comp, plan] of [['kr.ghost_lectern', 'suzu', 'protect'], ['kr.hyakuwa', 'ren', 'reveal'], ['cr.courier', 'nao', 'press'], ['ko.gardener', 'mio', 'protect'], ['yn.kettle', 'suzu', 'reveal'], ['gd.sg', 'suzu', 'press'], ['gd.lf', 'ren', 'protect'], ['gd.mb', 'nao', 'reveal']]) {
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await setup(p, { map: 'rw.millroad', x: 10, y: 22, comp, enc: id, flags: FL, plan });
+  const r = await drive(p, id);
+  const once = r.counts && Object.values(r.counts).every((n) => n === 1);
+  ok(once && r.res && r.res.result && !r.downEarly, id + ' with plan ' + plan + ': each social action applied once, an authored ending (' + JSON.stringify({ counts: r.counts, us: r.us, res: r.res }) + ')');
+  ok(!errors.length, id + ' with plan ' + plan + ': no page errors ' + errors.slice(0, 2).join(' | '));
   await p.close();
 }
 console.log(`\nsocial_battle: ${pass} passed, ${fail} failed`);
