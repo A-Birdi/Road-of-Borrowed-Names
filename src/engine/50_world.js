@@ -125,7 +125,9 @@ RB.world = (function () {
   // Keepers' Lodge (RBN-QA-063, kr/24_scenes_comp.js). A scene's `!refresh comp` reads it again on the same map.
   // Where they stand: behind you, else on your own tile (a map's entry). o.near (`!refresh comp`, someone coming back
   // mid-scene): behind you, else beside you, else ahead, your own tile last, so they are not hidden under you while
-  // the scene goes on (Local CL-101).
+  // the scene goes on (Local CL-101). If they are the one just now walking off this map (a scene's !refresh took
+  // their placement here away, as on the Ridge Light), that figure is the one who comes with you, from where it stands:
+  // never a second of them (RBN-QA-066, Agnes 6315726597).
   function placeCompanion(o) {
     const cid = partyCompanion(), d = W.map.def;
     if (!cid || !companionHere(s(), d) || (d && d.followerAway && RB.state.test(s(), d.followerAway))) {
@@ -135,11 +137,14 @@ RB.world = (function () {
     const ch = RB.content.chars[cid];
     const p = W.player;
     const back = DIRS[OPP[p.dir]], ahead = DIRS[p.dir];
-    const tries = [[p.x + back[0], p.y + back[1]]];
+    const going = o && o.near && W.leavers.find((n) => personOf(n) === cid);
+    if (going) W.leavers = W.leavers.filter((n) => n !== going);
+    const tries = going ? [going.mv ? [going.mv.tx, going.mv.ty] : [going.x, going.y]] : [];
+    tries.push([p.x + back[0], p.y + back[1]]);
     if (o && o.near) tries.push([p.x - ahead[1], p.y + ahead[0]], [p.x + ahead[1], p.y - ahead[0]], [p.x + ahead[0], p.y + ahead[1]]);
     const at = tries.find(([x, y]) => !blocked(x, y, { ignoreComp: true }) && !RB.maps.exitAt(W.map, x, y)) || [p.x, p.y];
     const cx = at[0], cy = at[1];
-    W.comp = makeActor(cx, cy, p.dir, RB.festDress && RB.festDress.on(s()) ? RB.festDress.look(ch.look, cid) : ch.look);
+    W.comp = makeActor(cx, cy, going ? going.dir : p.dir, RB.festDress && RB.festDress.on(s()) ? RB.festDress.look(ch.look, cid) : ch.look);
     W.comp.id = cid;
     W.trail = [];
   }
