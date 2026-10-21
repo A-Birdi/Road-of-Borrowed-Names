@@ -261,13 +261,15 @@ lq_chigusa[smile]: …… {手紙|てがみ} は 、 もう {出|だ}した よ 
 narr: {屋台|やたい} に {札|ふだ} が {下|さ}がって いる 。 「 {葦|あし}ノ{瀬|せ} へ {行|い}って きます 。 {借|か}り を {返|かえ}したら {戻|もど}ります 。 チグサ 」 || A card hangs on the stall: "Gone to Reedwake. Back once I've paid what I owe. — Chigusa"
 
 @scene lq.fare_pay
-# Staged: Kōji takes a sip of the tea Chigusa will not touch, and Hana laughs at the face she made; Chigusa
-# comes round the small table to Kōji and holds out the coins in both hands, bows over her apology, and the
-# coins pass to him when he takes them; he holds the fare book open for her and she writes her name; he
-# hands her the seal (the pledge), she laughs at the pun, and looks west towards the sea she will take it
-# to; Hana nods her off. Your companion (on the step by the door, off your tile) answers in their own way
-# (Nao's nod, Mio leans to look at the book, Ren's glasses, Suzu's small celebration).
-?(comp) !walkto comp 4 7 right
+# Staged: Chigusa sits at the small table as she has since morning (her teahouse stance, mannerisms
+# 10_cast.js); Kōji takes a sip of the tea she will not touch, and Hana laughs at the face she made;
+# Chigusa stands, comes round the table and faces Kōji across the floor (side by side, so the coins, the
+# book and the seal show between them: RBN-QA-050), holds out the coins in both hands, bows over her
+# apology, and the coins pass to him when he takes them; he holds the fare book open for her and she writes
+# her name; he hands her the seal (the pledge), she laughs at the pun, and looks west towards the sea she
+# will take it to; Hana nods her off. Your companion (by the door, off your tile and off hers) answers in
+# their own way (Nao's nod, Mio leans to look at the book, Ren's glasses, Suzu's small celebration).
+?(comp) !walkto comp 3 7 right
 !faceplayer lq_chigusa
 lq_chigusa: …… {来|き}た ね 。 {手紙|てがみ} は {先|さき} に {着|つ}いてた 。 {朝|あさ} から ずっと 、 ここ に {座|すわ}ってる 。 || …You came. My letter got here first. I've been sitting here since morning.
 !gesture koji sip
@@ -275,7 +277,8 @@ koji: {座|すわ}ってる だけ で 、 {茶|ちゃ} も {飲|の}まない �
 !gesture hana laugh
 hana[smile]: {薄|うす}い って {顔|かお} を された の 。 {失礼|しつれい} しちゃう わ 。 || She made a face as if it were weak. How rude.
 lq_chigusa[think]: …… {始|はじ}める よ 。 || …Let's begin.
-!walkto lq_chigusa 5 5 down
+!pose lq_chigusa stiff
+!walkto lq_chigusa 4 6 right
 !prop lq_chigusa coins
 !gesture lq_chigusa present koji hold
 narr: チグサ は {立|た}ち{上|あ}がって 、 コウジ の {前|まえ} に {小銭|こぜに} を {並|なら}べた 。 {三十年|さんじゅうねん} {前|まえ} の {渡|わた}し{賃|ちん} と 、 {同|おな}じ {額|がく} だ 。 || Chigusa stands and lays coins in front of Kōji — the same sum as a fare thirty years ago.
