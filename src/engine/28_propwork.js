@@ -204,8 +204,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Barrel: bulging staves on a lit cylinder, iron hoops, a lidded top.
   art('barrel', {
     box: [0, -2, 32, 36],
-    draw(g, M) {
+    // o.tipped (v 1): knocked onto its side, its head to the east, leaking from the bung (lf.lw_road_oil, RBN-QA-065).
+    // The oil pool and the wet run read as a leak when still; a drop runs down the head only when motion is allowed.
+    v: (o) => (o.tipped ? 1 : 0),
+    draw(g, M, v) {
       const w5 = M.wood;
+      if (v === 1) {
+        for (let y = 15; y < 29; y++) for (let x = 3; x < 27; x++) R(g, x, y, 1, 1, cylCol(y - 15, 14, w5));
+        for (const u of [-0.6, 0, 0.6]) R(g, 3, Math.round(22 + u * 6), 24, 1, w5[1]);
+        for (const x of [7, 21]) { for (let y = 15; y < 29; y++) R(g, x, y, 2, 1, cylCol(y - 15, 14, IR)); R(g, x, 16, 1, 12, IR[3]); }
+        ell(g, 27, 22, 2.6, 7, w5[1]);
+        ell(g, 27, 22, 1.8, 5.6, w5[3]);
+        R(g, 14, 15, 2, 1, '#1a120a');
+        R(g, 28, 24, 1, 6, '#2a1c0a');
+        return;
+      }
       for (let y = 7; y < 30; y++) {
         const b = y < 9 || y > 27 ? 1 : 0;
         for (let i = b; i < 20 - b; i++) R(g, 6 + i, y, 1, 1, cylCol(i - b, 20 - 2 * b, w5));
@@ -217,7 +230,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(g, 10, 5, 12, 1, w5[4]);
       R(g, 12, 7, 8, 1, w5[2]);
     },
-    shadow: () => [16, 29, 12, 3.5, 0.34],
+    // the oil on the road, under the tipped cask: a dark pool with a lit edge
+    ground(g, M, v) {
+      if (v !== 1) return;
+      ell(g, 24, 31.4, 8.5, 2.6, '#2a1c0a');
+      ell(g, 26, 31.6, 4.5, 1.3, '#45301a');
+      R(g, 24, 32, 4, 1, '#b89a52');
+      R(g, 18, 33, 3, 1, '#7a5f30');
+    },
+    shadow: (v) => (v === 1 ? [15, 29, 13, 3.2, 0.34] : [16, 29, 12, 3.5, 0.34]),
+    live(c, x, y, pal, t, o) {
+      if (!o.tipped || o.still || (RB.game && RB.game.reducedMotion && RB.game.reducedMotion())) return;
+      const k = (t % 1100) / 1100;
+      if (k < 0.75) { c.fillStyle = '#5a4018'; c.fillRect(x + 28, y + 24 + Math.floor(k * 7), 1, 2); }
+    },
   });
 
   // Crate: planked top and front, a framed face with a diagonal brace.

@@ -104,7 +104,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // it; the blown notice lying on the road; an old traveller with a bundle resting at the bench; Nagi's card on a post
   // beside the road's own lantern by the way up
   L.road('lf_road', { maps: ['lf.road'],
-    unique: { id: 'oil', scene: 'lf.lw_road_oil', at: { props: [{ p: 'barrel', x: 21, y: 15, meet: true }] } },
+    // the leaking cask: on its side until the plug is tightened and it is stood upright (lw_lf_oil_upright, set at that
+    // line; read as it is drawn); the cart's own barrel at (19,15) is another thing and stays as it is (RBN-QA-065)
+    unique: { id: 'oil', scene: 'lf.lw_road_oil', at: { props: [{ p: 'barrel', x: 21, y: 15, meet: true, o: { get tipped() { const s = RB.game && RB.game.s; return !(s && s.flags.lw_lf_oil_upright); } } }] } },
     variants: [
       { id: 'notice', scene: 'lf.lw_road_notice', at: { props: [{ p: 'pet_papers', x: 13, y: 13, meet: true }] } },
       { id: 'bench', scene: 'lf.lw_road_bench', at: { who: [{ char: 'lw_rd_elder', x: 16, y: 15, dir: 'down' }] } },
@@ -206,6 +208,7 @@ lw_lf_carter: おーい 、 そこ の {人|ひと} ！ {手|て} を {貸|か}�
 lw_lf_carter: {灯落|ひおち} の {灯|あか}り の {油|あぶら} だ 。 {樽|たる} に {札|ふだ} が {付|つ}いて いる が 、 {慌|あわ}てて {字|じ} が {頭|あたま} に {入|はい}らない 。 {読|よ}んで くれ ！ || It's oil for Lanternfall's lamps. There's a card on the cask, but I'm in such a state the words won't go in. Read it to me!
 !challenge lf.lw_oil
 !if var._res=0 -> later
+!set lw_lf_oil_upright
 narr: {札|ふだ} の {通|とお}り に {栓|せん} を {締|し}め 、 {二人|ふたり} で {樽|たる} を {立|た}てた 。 {油|あぶら} は もう {一滴|いってき} も {漏|も}れない 。 || You tighten the plug as the card says, and the two of you stand the cask upright. Not another drop leaks out.
 lw_lf_carter[laugh]: {助|たす}かった ！ {礼|れい} を {言|い}う よ 。 || That's saved me! Thank you.
 ?(!lf_bell_rung) lw_lf_carter: …… {灯落|ひおち} は {毎月|まいつき} {油|あぶら} を {倍|ばい} {頼|たの}む 。 「もう {要|い}らない」 と は {一度|いちど} も {言|い}わない 。 {変|へん} な {町|まち} だ よ 。 || …Lanternfall orders twice the oil every month, and never once says "that's enough". Strange town.
