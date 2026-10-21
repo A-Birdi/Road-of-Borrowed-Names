@@ -840,7 +840,7 @@ RB.questGuide = (function () {
     kr_toro: ['{灯籠|とうろう}', 'the stone lantern'], kr_stele: ['{石|いし}', 'the carved stone'], kr_halldoor: ['{館|やかた} の {戸|と}', 'the hall\'s door'],
     ko_leaves: ['{葉|は}', 'the leaves'], ko_basket: ['{籠|かご}', 'the basket'], ko_sandtoro: ['{灯籠|とうろう}', 'the stone lantern'], ko_conch: ['{法螺貝|ほらがい}', 'the conch'],
     ko_panel: ['{板|いた}', 'the panel'], ko_tidestone: ['{石|いし}', 'the standing stone'], ko_rootarch: ['{根|ね}', 'the roots'], ko_current: ['{風|かぜ}', 'the drifting leaves'],
-    ko_camphor: ['{大楠|おおくす}', 'the great camphor'],
+    ko_camphor: ['{大楠|おおくす}', 'the great camphor'], ko_windstone: ['{風石|かぜいし}', 'the Wind Stone'],
     boat: ['{船|ふね}', 'the boat'], sea_buoy: ['ブイ', 'the buoy'],
     cr_satchel: ['{状箱|じょうばこ}', 'the letter box'], cr_joyato: ['{常夜灯|じょうやとう}', 'the everlasting lamp'], cr_kago: ['{駕籠|かご}', 'the palanquin'],
     cr_horse: ['{馬|うま}', 'the pack horse'], cr_bigcedar: ['{大杉|おおすぎ}', 'the great cedar'],

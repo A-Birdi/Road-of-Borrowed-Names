@@ -32,6 +32,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   def('ko_conch', {}, (c, x, y, p) => {
     px(c, x + 1, y + 10, 14, 5, p.stone[2]); px(c, x + 3, y + 3, 10, 7, '#e8d4c0'); px(c, x + 5, y + 4, 6, 4, '#d89a8a'); px(c, x + 11, y + 2, 3, 3, '#e8d4c0');
   });
+  def('ko_windstone', { w: 2 }, (c, x, y, p) => {
+    px(c, x + 2, y + 5, 28, 8, p.stone[1]); px(c, x + 3, y + 1, 26, 5, p.stone[3]); px(c, x + 4, y + 1, 10, 2, p.stone[4]);
+  });
   def('ko_camphor', { w: 4 }, (c, x, y, p) => {
     px(c, x + 14, y - 40, 36, 54, p.trunk[0]); px(c, x + 14, y - 40, 8, 54, p.trunk[1]);
     px(c, x, y + 8, 64, 6, p.trunk[1]); px(c, x + 4, y - 56, 56, 18, p.leaf[0]);
@@ -154,6 +157,45 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the mouth, pink inside
       ell(g, 10, 12, 5, 5, SHELL[4]); ell(g, 11, 12, 3, 3, '#e4a49a'); ell(g, 12, 13, 1, 2, '#c87c78');
       R(g, 15, 0, 6, 1, SHELL[3]);
+    },
+  });
+
+  // The Wind Stone (2×1, ko.windstone: "a flat stone, with a wind always blowing over it the same way"): a broad, low
+  // stone on the village green's paving, its top worn flat for laying a leaf on. The wind comes always from the west:
+  // the grass at both its ends is pressed flat eastward, a couple of leaves lie pinned against its western end, and in
+  // motion a few pale streaks run east over its top (held still with reduced motion). RBN-QA-075: it had been the
+  // generic roofed lantern-shrine, which the scene's own words contradict.
+  art('ko_windstone', {
+    box: [-6, -12, 80, 48],
+    f: (t, o) => (o.still || still() ? 0 : Math.floor(t / 160) % 8),
+    ink: true,
+    shadow: () => [33, 27, 31, 4, 0.3],
+    draw(g, M) {
+      const S = M.stone;
+      // the front, in shade (darker toward the ground), and the east end, darkest
+      poly(g, [[3, 11], [61, 9], [62, 22], [58, 27], [7, 28], [2, 22]], S[1]);
+      poly(g, [[2, 22], [62, 22], [58, 27], [7, 28]], S[0]);
+      poly(g, [[61, 9], [65, 7], [66, 19], [62, 22]], S[0]);
+      // the top, worn flat: one even plane, lit from the upper left, its front lip catching the light
+      poly(g, [[7, 0], [59, -2], [65, 7], [61, 9], [3, 11], [1, 5]], S[2]);
+      poly(g, [[8, 1], [36, 0], [30, 5], [6, 7]], S[3]);
+      line(g, 3, 11, 61, 9, S[4], 1);
+      line(g, 61, 9, 65, 7, S[3], 1);
+      // a seam along the front and a few flecks of grain
+      line(g, 10, 17, 30, 18, S[0], 1); line(g, 36, 16, 54, 15, S[0], 1);
+      for (const [x, y] of [[18, 24], [44, 25], [50, 13], [24, 3], [48, 2]]) R(g, x, y, 2, 1, S[0]);
+      // moss low on its front, and leaves the wind has pinned against its western end
+      R(g, 6, 26, 9, 2, MOSS[2]); R(g, 44, 26, 7, 1, MOSS[1]);
+      leaf(g, -4, 12, 0, 3); leaf(g, -3, 18, 1, 2); leaf(g, 0, 24, 0, 4);
+    },
+    over(g, M, v, f) {
+      // grass at both ends, pressed flat to the east
+      for (const [x, y, n] of [[-6, 29, 4], [64, 25, 5], [67, 29, 4], [26, 30, 3]]) for (let i = 0; i < n; i++) line(g, x + i * 2, y, x + i * 2 + 5, y - 1 - (i % 2), MOSS[2 + (i % 2)], 1);
+      // the wind over the top: short pale streaks running east (drifting in motion, at rest when held still)
+      for (const [x0, y, len] of [[4, 1, 10], [22, 5, 13], [40, 0, 9], [14, 8, 8]]) {
+        const x = 2 + ((x0 + f * 7) % 54);
+        R(g, x, y, Math.min(len, 62 - x), 1, 'rgba(242,248,242,0.75)');
+      }
     },
   });
 
