@@ -1615,7 +1615,21 @@ RB.combat = (function () {
   let runN = 0;
   const never = () => new Promise(() => {});
   function live(p) { const n = runN; return Promise.resolve(p).then((v) => (n === runN ? v : never()), (e) => (n === runN ? Promise.reject(e) : never())); }
+  // A battle still starting (RBN-QA-077): from start()'s first wait (an encounter's preparation questions, or the
+  // opening fade) until its state exists, when there is no `st` or `ui` yet for abandon() to find. It owns that start
+  // by its token, so a start that ends (or throws) clears only its own mark, never a newer start's.
+  let starting = null; // { tok, song: the song it began (or null), prev: the song before it }
+  let startTok = 0;
   async function start(enemyId, opts) {
+    const tok = ++startTok;
+    try {
+      return await begin(enemyId, opts, tok);
+    } finally {
+      if (starting && starting.tok === tok) starting = null;
+    }
+  }
+  async function begin(enemyId, opts, tok) {
+    const own = () => { if (!starting || starting.tok !== tok) starting = { tok, song: null, prev: null }; };
     opts = opts || {};
     const s = RB.game.s;
     // an authored encounter (expansion P04): the script's `!encounter`, a map placement's `encounter`, a study;
@@ -1628,6 +1642,7 @@ RB.combat = (function () {
       // penalised
       const d0 = typeof encDef === 'string' ? RB.content.encounters[encDef] : encDef;
       if (d0 && d0.prep && d0.prep.length && !opts.prepared) {
+        own();
         const chosen = [];
         for (let k = 0; k < Math.min(2, d0.prep.length); k++) {
           const left = d0.prep.filter((p) => chosen.indexOf(p.id) < 0);
@@ -1650,16 +1665,20 @@ RB.combat = (function () {
     if (!RB.content.enemies[enemyId]) console.warn('missing enemy', enemyId);
     placeEnemy(enemy, opts);
     members = st0 ? st0.foes.map((f) => f.def) : [enemy].concat(ids.slice(1).map((id) => Object.assign({ id }, RB.content.enemies[id])));
+    own();
     RB.game.pushMode('combat');
     const prevSong = RB.audio && RB.audio.currentSong();
     // the zone's battle or boss theme (src/audio/39_zones.js); enemy.music still overrides
     const here = RB.world.W.map;
-    RB.audio && RB.audio.playSong(RB.audio.battleSong ? RB.audio.battleSong(enemy, here && here.def, s.map) : (enemy.music || (enemy.boss ? 'boss' : 'battle')));
+    const theme = RB.audio && RB.audio.battleSong ? RB.audio.battleSong(enemy, here && here.def, s.map) : (enemy.music || (enemy.boss ? 'boss' : 'battle'));
+    RB.audio && RB.audio.playSong(theme);
+    if (starting && starting.tok === tok) { starting.song = theme; starting.prev = prevSong; }
     await live(RB.ui.fade(true, 200));
     if (RB.battlers && RB.battlers.prewarm) { RB.battlers.prewarm(RB.equip.look(s), 'pc'); if (s.comp) RB.battlers.prewarm(RB.content.chars[s.comp].look, 'comp'); }
     RB.render.setOverride(draw);
     // an ordinary battle of the six-chapter game uses none of the platform's new rules (ordinaryRules: {})
     st = st0 || L().init(enemy, s, Object.assign({}, opts, { group: members.slice(1), rules: ENC().ordinaryRules(s) }));
+    if (starting && starting.tok === tok) starting = null; // (open now: abandon() takes it down whole)
     // a boss can't be stepped back from, except an optional one whose encounter says so (P15e: the old guardians)
     st.noFlee = !!opts.noFlee || (!!enemy.boss && !(st.enc && st.enc.def.canFlee)) || !!st.noFlee;
     // an expedition with persistent condition sorts what each loss of resolve came from (D2)
@@ -1952,7 +1971,19 @@ RB.combat = (function () {
   const VEIL = (c, w, h) => { c.fillStyle = '#0d1220'; c.fillRect(0, 0, w, h); };
   VEIL.art = true;
   function abandon() {
-    if (!st && !ui) return false;
+    if (!st && !ui) {
+      if (!starting) return false;
+      // a battle still starting (its preparation questions, its opening fade): its waits never return, as an open
+      // battle's do not, so nothing of it carries on into the journey that comes next; the screen comes back from
+      // its fade and the song it began gives way to the one before (a load that works then plays its own map's)
+      const was = starting;
+      starting = null;
+      runN++;
+      members = []; enemy = null;
+      if (was.song && RB.audio) { if (was.prev) RB.audio.playSong(was.prev); else RB.audio.stopSong({ fade: 300 }); }
+      RB.ui.fade(false, 120);
+      return true;
+    }
     runN++;
     RB.battleSeq.drop();
     present('scene', { phase: 'exit', outcome: 'abandoned' });
