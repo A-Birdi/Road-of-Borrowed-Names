@@ -405,9 +405,10 @@ RB.script = (function () {
         case 'travel': a.forEach((p) => (s.travel[p] = true)); break;
         // `!refresh arrive`: the people this brings walk in from the way in, one after another, and the scene goes on
         // once they have reached their places (at once when skipping, or behind an illustrated sequence)
-        // `!refresh comp`: your companion walks with you here, or not, as the map now says (its followerAway, 50_world.js)
+        // `!refresh comp`: your companion walks with you here, or not, as the map now says (its followerAway, 50_world.js),
+        // beside you if not behind (never hidden under you while there is room)
         case 'refresh':
-          if (a[0] === 'arrive') { RB.world.refreshActors({ arrive: true }); await RB.world.arrivals({ now: hidden() }); } else if (a[0] === 'comp') RB.world.placeCompanion(); else RB.world.refreshActors();
+          if (a[0] === 'arrive') { RB.world.refreshActors({ arrive: true }); await RB.world.arrivals({ now: hidden() }); } else if (a[0] === 'comp') RB.world.placeCompanion({ near: true }); else RB.world.refreshActors();
           break;
         case 'recruit': await RB.game.recruit(a[0], a[1]); break;
         case 'depart': await RB.game.depart(); break;

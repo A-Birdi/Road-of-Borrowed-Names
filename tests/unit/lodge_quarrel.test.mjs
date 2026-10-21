@@ -55,5 +55,7 @@ export default async (t) => {
   const here = world.slice(world.indexOf('function companionHere'), world.indexOf('function placeCompanion'));
   const place = world.slice(world.indexOf('function placeCompanion'), world.indexOf('function refreshActors'));
   t.ok(!/followerAway/.test(here.replace(/\/\/.*$/gm, '')) && /d\.followerAway && RB\.state\.test\(s\(\), d\.followerAway\)/.test(place), 'placeCompanion reads followerAway; companionHere does not');
-  t.ok(/else if \(a\[0\] === 'comp'\) RB\.world\.placeCompanion\(\); else RB\.world\.refreshActors\(\);/.test(script), '`!refresh comp` places the follower again; a plain `!refresh` is unchanged');
+  t.ok(/else if \(a\[0\] === 'comp'\) RB\.world\.placeCompanion\(\{ near: true \}\); else RB\.world\.refreshActors\(\);/.test(script), '`!refresh comp` places the follower again, beside you if not behind; a plain `!refresh` is unchanged');
+  // a map's entry keeps behind-or-your-tile; only o.near (`!refresh comp`) looks beside and ahead
+  t.ok(/if \(o && o\.near\) tries\.push\(/.test(place) && (world.match(/placeCompanion\(\{ near: true \}\)/g) || []).length === 0, 'the nearer places are `!refresh comp`\'s only; every placeCompanion() in the world itself is a map\'s entry as before');
 };

@@ -123,7 +123,10 @@ RB.world = (function () {
   // A map's followerAway (a condition): while it holds, your companion does not walk with you there, though they are
   // still with you in every other way (the party, battles, the Ledger, the pet's rule above): a quarrel at the
   // Keepers' Lodge (RBN-QA-063, kr/24_scenes_comp.js). A scene's `!refresh comp` reads it again on the same map.
-  function placeCompanion() {
+  // Where they stand: behind you, else on your own tile (a map's entry). o.near (`!refresh comp`, someone coming back
+  // mid-scene): behind you, else beside you, else ahead, your own tile last, so they are not hidden under you while
+  // the scene goes on (Local CL-101).
+  function placeCompanion(o) {
     const cid = partyCompanion(), d = W.map.def;
     if (!cid || !companionHere(s(), d) || (d && d.followerAway && RB.state.test(s(), d.followerAway))) {
       W.comp = null;
@@ -131,9 +134,11 @@ RB.world = (function () {
     }
     const ch = RB.content.chars[cid];
     const p = W.player;
-    const back = DIRS[OPP[p.dir]];
-    let cx = p.x + back[0], cy = p.y + back[1];
-    if (blocked(cx, cy, { ignoreComp: true }) || RB.maps.exitAt(W.map, cx, cy)) { cx = p.x; cy = p.y; }
+    const back = DIRS[OPP[p.dir]], ahead = DIRS[p.dir];
+    const tries = [[p.x + back[0], p.y + back[1]]];
+    if (o && o.near) tries.push([p.x - ahead[1], p.y + ahead[0]], [p.x + ahead[1], p.y - ahead[0]], [p.x + ahead[0], p.y + ahead[1]]);
+    const at = tries.find(([x, y]) => !blocked(x, y, { ignoreComp: true }) && !RB.maps.exitAt(W.map, x, y)) || [p.x, p.y];
+    const cx = at[0], cy = at[1];
     W.comp = makeActor(cx, cy, p.dir, RB.festDress && RB.festDress.on(s()) ? RB.festDress.look(ch.look, cid) : ch.look);
     W.comp.id = cid;
     W.trail = [];
