@@ -47223,7 +47223,7 @@ RB.questGuide = (function () {
     kr_toro: ['{灯籠|とうろう}', 'the stone lantern'], kr_stele: ['{石|いし}', 'the carved stone'], kr_halldoor: ['{館|やかた} の {戸|と}', 'the hall\'s door'],
     ko_leaves: ['{葉|は}', 'the leaves'], ko_basket: ['{籠|かご}', 'the basket'], ko_sandtoro: ['{灯籠|とうろう}', 'the stone lantern'], ko_conch: ['{法螺貝|ほらがい}', 'the conch'],
     ko_panel: ['{板|いた}', 'the panel'], ko_tidestone: ['{石|いし}', 'the standing stone'], ko_rootarch: ['{根|ね}', 'the roots'], ko_current: ['{風|かぜ}', 'the drifting leaves'],
-    ko_camphor: ['{大楠|おおくす}', 'the great camphor'],
+    ko_camphor: ['{大楠|おおくす}', 'the great camphor'], ko_windstone: ['{風石|かぜいし}', 'the Wind Stone'],
     boat: ['{船|ふね}', 'the boat'], sea_buoy: ['ブイ', 'the buoy'],
     cr_satchel: ['{状箱|じょうばこ}', 'the letter box'], cr_joyato: ['{常夜灯|じょうやとう}', 'the everlasting lamp'], cr_kago: ['{駕籠|かご}', 'the palanquin'],
     cr_horse: ['{馬|うま}', 'the pack horse'], cr_bigcedar: ['{大杉|おおすぎ}', 'the great cedar'],
@@ -50155,6 +50155,7 @@ RB.render = (function () {
     if (RB.worldActs) RB.worldActs.push(list, c, m, env || { ax, ay, bw, bh, still }, t); // the rod and float, the baskets, the parcels (67_worldacts.js; light on or off)
     list.sort((a, b) => a.z - b.z);
     for (const d of list) d.draw();
+    if (RB.leafHome) RB.leafHome.draw(c, { ax, ay, TS, ART }, t); // a written leaf carried off the Wind Stone (src/ui/59b_leafhome.js)
     if (L) L.illuminate(c, m, W, t, env);
     drawFade(c, m, pal);
     interactMarker(c, W, t);
@@ -51068,11 +51069,18 @@ RB.questMarks = (function () {
       for (const tg of I.way.here) {
         const sp = RB.questGuide.spotOf(tg);
         if (!sp) continue; // arriving on this map is the step: nothing to point at
-        const x = h.ax(sp.x * TS) + ATS / 2;
+        let x = h.ax(sp.x * TS) + ATS / 2;
         const faced = front && front[0] === Math.round(sp.x) && front[1] === Math.round(sp.y);
+        const pd = tg.kind === 'prop' && RB.props.P[tg.p];
         let y;
+        // a thing lying low that says so (markTop: where what is drawn of it starts, in art px below its tile's top):
+        // just above it, over the middle of all its tiles, faced or not (RBN-QA-074, Agnes 6318281495)
+        if (pd && pd.markTop != null) {
+          x = h.ax((sp.x + ((tg.def && tg.def.w) || pd.w) / 2) * TS);
+          y = h.ay(sp.y * TS) + pd.markTop - 3;
+        }
         // people and things: just above a standing person's head (the ▾'s height), like the ▾ itself
-        if (tg.kind === 'npc' || tg.kind === 'foe' || tg.kind === 'prop') y = h.ay(sp.y * TS) - h.HEAD - (faced ? 17 : 9);
+        else if (tg.kind === 'npc' || tg.kind === 'foe' || tg.kind === 'prop') y = h.ay(sp.y * TS) - h.HEAD - (faced ? 17 : 9);
         else y = h.ay(sp.y * TS) + ATS / 2 - 2; // a spot on the ground
         place({ x, y, info: { kind: 'target', target: tg.kind, id: tg.id || tg.p || null, map: tg.map, tx: Math.round(sp.x), ty: Math.round(sp.y) } });
       }
@@ -87026,9 +87034,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
           const tone = (((k * 7 + r * 13) % 5) - 2) * 0.03; // each stone a little lighter or darker than its neighbours
           return clamp((j === 0 || y === y0 ? 0.36 : y === y0 + 1 ? 0.6 : 0.52 + tone) - (y - py) / h * 0.1, 0.02, 0.999);
         });
-        // the Wind Stone on its paving at the left
+        // the Wind Stone on its paving at the left: broad and low, as it stands in the village (ko_windstone, RBN-QA-075):
+        // its front in shade under a flat top worn even for laying a leaf on, lit from the upper left, its front lip
+        // catching the light; a crack and some moss low on the front, and a few written leaves pinned against its
+        // western end by the wind that always blows over it
         const sx = Math.round(w * 0.16), sy = Math.round(vb * 0.85);
-        L.stone([[sx - s(14), sy], [sx - s(10), sy - s(44)], [sx + s(2), sy - s(52)], [sx + s(12), sy - s(38)], [sx + s(15), sy]], stoneM, { face: 4, bevel: Math.max(2, s(3)), seam: true });
+        L.stone([[sx - s(29), sy], [sx - s(32), sy - s(3)], [sx - s(33), sy - s(10)], [sx - s(30), sy - s(16)], [sx - s(25), sy - s(22)], [sx + s(24), sy - s(23)], [sx + s(30), sy - s(17)], [sx + s(33), sy - s(9)], [sx + s(32), sy - s(3)], [sx + s(28), sy]], stoneM, { face: 3, bevel: Math.max(2, s(3)), seam: true });
+        L.poly([[sx - s(30), sy - s(16)], [sx - s(25), sy - s(22)], [sx + s(24), sy - s(23)], [sx + s(30), sy - s(17)]], stoneM, (xx) => (xx < sx - s(8) ? 0.79 : 0.72));
+        L.seg(sx - s(29), sy - s(16), sx + s(29), sy - s(17), Math.max(1, s(1.5)), stoneM, 0.93);
+        L.path([[sx + s(6), sy - s(14)], [sx + s(9), sy - s(10)], [sx + s(12), sy - s(8)]], Math.max(1, s(1)), stoneM, 0.07);
+        const moss = p.mat('#5e7a3e', { n: 5, at: 2, step: 0.08 });
+        for (const [a, b, l] of [[-24, 2, 9], [-14, 2, 5], [16, 2, 6]]) L.rect(sx + s(a), sy - s(b), s(l), Math.max(1, s(2)), moss, (xx) => (((Math.round(xx) * 5) % 3) === 0 ? 0.3 : 0.55));
+        const gold = p.mat('#d0a844', { n: 5, at: 2, step: 0.09 }), ink = p.mat('#2a2434', { n: 3, at: 1 });
+        for (const [a, b, ang] of [[-34, 15, -0.5], [-35, 6, 0.5]]) {
+          const lx = sx + s(a), ly = sy - s(b), dx = Math.cos(ang) * s(3), dy = Math.sin(ang) * s(3);
+          L.seg(lx - dx, ly - dy, lx + dx, ly + dy, Math.max(2, s(3)), gold, 0.7);
+          L.rect(Math.round(lx), Math.round(ly), 1, 1, ink, 0.5);
+        }
       }
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
@@ -94122,6 +94144,98 @@ RB.ui.casebook = (function () {
   RB.ui.menu.addPage('journey', { id: 'cases', en: 'Cases', icon: 'book', available, render });
   if (RB.save && RB.save.addMigration) RB.save.addMigration((st) => RB.cases.migrate(st));
   return { select, render, V, sheetOf };
+})();
+
+
+/* ==== src/ui/59b_leafhome.js ==== */
+/* A written leaf carried off the Wind Stone (RBN-QA-076; Agnes 6318288260, Local CL-114). When a leaf is sent home
+ * from the stone (each of Kotonoha's ko.sent_* scenes: `!beat leafhome.east`, or `leafhome.north`, as the line that
+ * sends it is read), one leaf, drawn as the island's written leaves are (gold, a stroke of ink), rises off the stone's
+ * top turning over and is carried away on the wind the way its line names, fading as it goes, in about 1.8 s; east is
+ * the way the stone's wind blows. `!beat leafhome.end` after that line: with Reduce motion the leaf has lain still on
+ * the stone while the line was read, and is gone (a still cue; the toast says where it went). Nothing is drawn while
+ * Skip seen runs, nor after the map or the campaign changes. Presentation only (52_staging.js's beats): the leaf's
+ * item, the flags, the count, the sound, the toast and the scene's flow are the scenes' own and unchanged.
+ * Drawn from 60_render.js after the world's things, so it is lit and graded with them. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.leafHome = (function () {
+  'use strict';
+  const DUR = 1800;
+  const GOLD = ['#a8822e', '#d0a844', '#e8c868'], INK = '#2a2434';
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  let cur = null, drawn = null;
+
+  // the Wind Stone on this map: the thing whose scene is the stone's, its top over the middle of its tiles
+  function stone() {
+    const W = RB.world && RB.world.W, m = W && W.map;
+    if (!m) return null;
+    const p = (m.props || []).find((q) => q.scene === 'ko.windstone');
+    if (!p) return null;
+    const pd = (RB.props && RB.props.P[p.p]) || {};
+    return { map: m.id, x: p.x + (p.w || pd.w || 1) / 2, y: p.y };
+  }
+  function start(dir) {
+    cur = null; drawn = null;
+    if (RB.game.fastForward && RB.game.fastForward()) return;
+    const st = stone();
+    if (!st) return;
+    cur = { map: st.map, x: st.x, y: st.y, dir: dir === 'north' ? 'north' : 'east', at: now(), still: !!RB.game.reducedMotion() };
+  }
+  // the line has been read: the still leaf is gone; one in flight finishes by itself
+  function end() { if (cur && cur.still) cur = null; }
+  function onBeat(e) {
+    const id = (e && e.id) || '';
+    if (id === 'leafhome.end') end();
+    else if (id.indexOf('leafhome.') === 0) start(id.slice(9));
+  }
+
+  // one written leaf, about 18×7 art px, so it reads at play size: flat (an almond of gold in an ink rim, lit above and
+  // shaded below, its midrib, and short strokes of ink across it: writing, never a character) or turned edge-on (a
+  // sliver)
+  const ROWS = [[6, 6], [3, 12], [1, 16], [0, 18], [1, 16], [3, 12], [6, 6]]; // [x, width] per row
+  function leaf(c, x, y, flat) {
+    const P = (a, b, w, h, col) => { c.fillStyle = col; c.fillRect(Math.round(x + a), Math.round(y + b), w, h); };
+    if (!flat) { P(7, -1, 4, 9, INK); P(8, 0, 2, 7, GOLD[1]); return; }
+    P(6, -1, 6, 1, INK); P(6, 7, 6, 1, INK);
+    ROWS.forEach(([a, w], i) => P(a - 1, i, w + 2, 1, INK));
+    ROWS.forEach(([a, w], i) => P(a, i, w, 1, i < 3 ? GOLD[2] : i < 5 ? GOLD[1] : GOLD[0]));
+    P(2, 3, 14, 1, GOLD[0]);
+    for (const [a, b, w] of [[4, 2, 3], [9, 2, 2], [12, 2, 2], [5, 4, 3], [10, 4, 3]]) P(a, b, w, 1, INK);
+  }
+  function draw(c, env) {
+    if (!cur) return;
+    const W = RB.world && RB.world.W;
+    if (!W || !W.map || W.map.id !== cur.map || (RB.game.fastForward && RB.game.fastForward())) { cur = null; return; }
+    const x0 = env.ax(cur.x * env.TS) - 9, y0 = env.ay(cur.y * env.TS) + 1; // on the stone's top, in its middle
+    if (cur.still) { leaf(c, x0, y0, true); drawn = { x: x0, y: y0, flat: true, alpha: 1, at: now() }; return; }
+    const u = (now() - cur.at) / DUR;
+    if (u >= 1) { cur = null; return; }
+    // lifted off quickly, then carried: up and away east on the stone's wind, or up and away north (a shorter climb:
+    // the stone stands near the top of the village's view, and the leaf should fade before it leaves it), swaying as
+    // it goes and turning over every few frames
+    const lift = 1 - (1 - Math.min(1, u * 1.6)) * (1 - Math.min(1, u * 1.6));
+    const sway = Math.sin(u * 9) * 4;
+    const x = cur.dir === 'east' ? x0 + Math.pow(u, 1.5) * 150 + sway : x0 + sway * 1.5;
+    const y = y0 - lift * 26 - u * (cur.dir === 'north' ? 44 : 56);
+    const alpha = u < 0.72 ? 1 : Math.max(0, (1 - u) / 0.28);
+    c.save();
+    c.globalAlpha = alpha;
+    const flat = Math.floor(u * 16) % 4 < 3;
+    leaf(c, x, y, flat);
+    c.restore();
+    drawn = { x: Math.round(x), y: Math.round(y), flat, alpha, u, at: now() };
+  }
+  // for the browser tests: what is shown now (in flight, the fraction of its way), and where the leaf was last drawn
+  // (its top-left in the buffer's art px, flat or edge-on; at = when)
+  const state = () => (cur ? { map: cur.map, x: cur.x, y: cur.y, dir: cur.dir, still: cur.still, u: cur.still ? null : Math.min(1, (now() - cur.at) / DUR) } : null);
+  const last = () => drawn;
+
+  if (RB.bus) {
+    RB.bus.on('stage:beat', onBeat);
+    RB.bus.on('campaign:changing', () => { cur = null; });
+  }
+  return { draw, state, last };
 })();
 
 
@@ -198135,7 +198249,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const INKS = ['#2a2434', '#3a3048', '#4a4060'];
 
   // ---- flat fallbacks (16 px a tile) -------------------------------------------------------------------------------
-  def('ko_leaves', { w: 2, block: false }, (c, x, y) => {
+  // (markTop: the guide's diamond sits just above the drift, whose highest leaf is drawn 9 art px below its tiles' top)
+  def('ko_leaves', { w: 2, block: false, markTop: 9 }, (c, x, y) => {
     for (const [lx, ly] of [[2, 10], [7, 12], [12, 9], [17, 11], [22, 13], [27, 10]]) { px(c, x + lx, y + ly, 4, 2, GOLD[2]); px(c, x + lx + 1, y + ly, 1, 1, INKS[0]); }
   });
   def('ko_basket', {}, (c, x, y, p) => {
@@ -198148,6 +198263,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   def('ko_conch', {}, (c, x, y, p) => {
     px(c, x + 1, y + 10, 14, 5, p.stone[2]); px(c, x + 3, y + 3, 10, 7, '#e8d4c0'); px(c, x + 5, y + 4, 6, 4, '#d89a8a'); px(c, x + 11, y + 2, 3, 3, '#e8d4c0');
+  });
+  // (the island's stone has three tones, p.stone: mid, light, dark; Agnes 6326169868)
+  def('ko_windstone', { w: 2 }, (c, x, y, p) => {
+    px(c, x + 2, y + 5, 28, 8, p.stone[0]); px(c, x + 2, y + 10, 28, 3, p.stone[2]); px(c, x + 3, y + 1, 26, 5, p.stone[1]);
   });
   def('ko_camphor', { w: 4 }, (c, x, y, p) => {
     px(c, x + 14, y - 40, 36, 54, p.trunk[0]); px(c, x + 14, y - 40, 8, 54, p.trunk[1]);
@@ -198271,6 +198390,45 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the mouth, pink inside
       ell(g, 10, 12, 5, 5, SHELL[4]); ell(g, 11, 12, 3, 3, '#e4a49a'); ell(g, 12, 13, 1, 2, '#c87c78');
       R(g, 15, 0, 6, 1, SHELL[3]);
+    },
+  });
+
+  // The Wind Stone (2×1, ko.windstone: "a flat stone, with a wind always blowing over it the same way"): a broad, low
+  // stone on the village green's paving, its top worn flat for laying a leaf on. The wind comes always from the west:
+  // the grass at both its ends is pressed flat eastward, a couple of leaves lie pinned against its western end, and in
+  // motion a few pale streaks run east over its top (held still with reduced motion). RBN-QA-075: it had been the
+  // generic roofed lantern-shrine, which the scene's own words contradict.
+  art('ko_windstone', {
+    box: [-6, -12, 80, 48],
+    f: (t, o) => (o.still || still() ? 0 : Math.floor(t / 160) % 8),
+    ink: true,
+    shadow: () => [33, 27, 31, 4, 0.3],
+    draw(g, M) {
+      const S = M.stone;
+      // the front, in shade (darker toward the ground), and the east end, darkest
+      poly(g, [[3, 11], [61, 9], [62, 22], [58, 27], [7, 28], [2, 22]], S[1]);
+      poly(g, [[2, 22], [62, 22], [58, 27], [7, 28]], S[0]);
+      poly(g, [[61, 9], [65, 7], [66, 19], [62, 22]], S[0]);
+      // the top, worn flat: one even plane, lit from the upper left, its front lip catching the light
+      poly(g, [[7, 0], [59, -2], [65, 7], [61, 9], [3, 11], [1, 5]], S[2]);
+      poly(g, [[8, 1], [36, 0], [30, 5], [6, 7]], S[3]);
+      line(g, 3, 11, 61, 9, S[4], 1);
+      line(g, 61, 9, 65, 7, S[3], 1);
+      // a seam along the front and a few flecks of grain
+      line(g, 10, 17, 30, 18, S[0], 1); line(g, 36, 16, 54, 15, S[0], 1);
+      for (const [x, y] of [[18, 24], [44, 25], [50, 13], [24, 3], [48, 2]]) R(g, x, y, 2, 1, S[0]);
+      // moss low on its front, and leaves the wind has pinned against its western end
+      R(g, 6, 26, 9, 2, MOSS[2]); R(g, 44, 26, 7, 1, MOSS[1]);
+      leaf(g, -4, 12, 0, 3); leaf(g, -3, 18, 1, 2); leaf(g, 0, 24, 0, 4);
+    },
+    over(g, M, v, f) {
+      // grass at both ends, pressed flat to the east
+      for (const [x, y, n] of [[-6, 29, 4], [64, 25, 5], [67, 29, 4], [26, 30, 3]]) for (let i = 0; i < n; i++) line(g, x + i * 2, y, x + i * 2 + 5, y - 1 - (i % 2), MOSS[2 + (i % 2)], 1);
+      // the wind over the top: short pale streaks running east (drifting in motion, at rest when held still)
+      for (const [x0, y, len] of [[4, 1, 10], [22, 5, 13], [40, 0, 9], [14, 8, 8]]) {
+        const x = 2 + ((x0 + f * 7) % 54);
+        R(g, x, y, Math.min(len, 62 - x), 1, 'rgba(242,248,242,0.75)');
+      }
     },
   });
 
@@ -198624,7 +198782,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 30, y: 19, w: 6, h: 4, roof: 'thatch', wall: 'wood', door: null, windows: [1, 4] },
     ],
     props: [
-      { p: 'shrine', x: 25, y: 14, scene: 'ko.windstone' },
+      { p: 'ko_windstone', x: 25, y: 14, scene: 'ko.windstone' },
       { p: 'noticeboard', x: 13, y: 12, scene: 'ko.census_board' },
       { p: 'ko_netrack', x: 8, y: 24 }, { p: 'ko_netrack', x: 12, y: 26 },
       { p: 'ko_basket', x: 17, y: 17 }, { p: 'ko_basket', x: 27, y: 23 },
@@ -199523,56 +199681,72 @@ ko_otoha: この {島|しま} の {始|はじ}まり の {話|はなし} を 、
 !set ko_ret_rw
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} が {浮|う}き{上|あ}がって 、 {東|ひがし} へ 。 {葦|あし}ノ{瀬|せ} の {茶屋|ちゃや} の {看板|かんばん} へ 、 {帰|かえ}って いく 。 || The leaf lifts, and away east: home to the sign over Reedwake's teahouse.
+!beat leafhome.end
 !toast {葉|は} が {葦|あし}ノ{瀬|せ} へ {帰|かえ}った || A leaf has gone home to Reedwake
 @scene ko.sent_sg
 !take ko_leaf_sg
 !set ko_ret_sg
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {潮硝子|しおがらす} の {方|ほう} へ 。 アサヒ の {硝子|がらす} の {箱|はこ} に 、 {字|じ} が {戻|もど}る だろう 。 || The leaf goes Saltglass's way. Asahi's glass crates will have their warning back.
+!beat leafhome.end
 !toast {葉|は} が {潮硝子|しおがらす} へ {帰|かえ}った || A leaf has gone home to Saltglass
 @scene ko.sent_mb
 !take ko_leaf_mb
 !set ko_ret_mb
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {八百橋|やおばし} の {方|ほう} へ 。 {人足|にんそく} たち の {荷置|にお}き{場|ば} の {板|いた} に 、 {字|じ} が {戻|もど}る 。 || The leaf goes Manybridge's way, home to the board over the porters' yard.
+!beat leafhome.end
 !toast {葉|は} が {八百橋|やおばし} へ {帰|かえ}った || A leaf has gone home to Manybridge
 @scene ko.sent_mp
 !take ko_leaf_mp
 !set ko_ret_mp
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {芝居町|しばいまち} の {方|ほう} へ 。 {古|ふる}い {番付|ばんづけ} に 、 {賑|にぎ}やか な {字|じ} が {戻|もど}る 。 || The leaf goes the way of Playhouse Row: home to an old playbill, cheerful writing and all.
+!beat leafhome.end
 !toast {葉|は} が {芝居町|しばいまち} へ {帰|かえ}った || A leaf has gone home to Playhouse Row
 @scene ko.sent_co
 !take ko_leaf_co
 !set ko_ret_co
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {灰実|はいみ} の {里|さと} の {方|ほう} へ 。 ウメ さん の {干|ほ}し{場|ば} の {札|ふだ} へ {帰|かえ}る 。 || The leaf goes Cinder Orchard's way, home to the tag on Grandma Ume's drying rack.
+!beat leafhome.end
 !toast {葉|は} が {灰実|はいみ} の {里|さと} へ {帰|かえ}った || A leaf has gone home to Cinder Orchard
 @scene ko.sent_sb
 !take ko_leaf_sb
 !set ko_ret_sb
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.north
 narr: {葉|は} は {北|きた} の {山|やま} の {方|ほう} へ 。 {雪鈴|ゆきすず} の {郵便局|ゆうびんきょく} の 、 {誰|だれ} か の {手紙|てがみ} へ 。 || The leaf goes north, towards the mountains: home to someone's letter at Snowbell's post office.
+!beat leafhome.end
 !toast {葉|は} が {雪鈴|ゆきすず} へ {帰|かえ}った || A leaf has gone home to Snowbell
 @scene ko.sent_kr
 !take ko_leaf_kr
 !set ko_ret_kr
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {山|やま} の {尾根|おね} の {方|ほう} へ 。 {峠|とうげ} の {灯籠|とうろう} の {名札|なふだ} へ {帰|かえ}る 。 || The leaf goes towards the mountain ridge: home to the plate on the lantern at the pass.
+!beat leafhome.end
 !toast {葉|は} が {灯守|ひもり} の {道|みち} へ {帰|かえ}った || A leaf has gone home to the Keepers' Road
 @scene ko.sent_lf
 !take ko_leaf_lf
 !set ko_ret_lf
 !var ko_ret + 1
 !sfx wind
+!beat leafhome.east
 narr: {葉|は} は {灯落|ひおち} の {方|ほう} へ 。 {議会|ぎかい} の {古|ふる}い {議事録|ぎじろく} の 、 {空|あ}いて いた {所|ところ} へ 。 || The leaf goes Lanternfall's way: home to a blank in the council's oldest minutes.
+!beat leafhome.end
 !toast {葉|は} が {灯落|ひおち} へ {帰|かえ}った || A leaf has gone home to Lanternfall
 
 @scene ko.leaf_rw

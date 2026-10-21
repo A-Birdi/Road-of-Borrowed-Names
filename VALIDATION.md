@@ -5484,6 +5484,38 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-016:** `index.html` sha256 `fc7a7a5666beac9acb86809990e8ded981bcb0b39bc12adf52b4bde439e5d60c`, built
+    from `e70e9c3` (CC-015 plus only RBN-QA-074, the `leaf_marker` Reduce-motion fix, RBN-QA-075 with its ending stone,
+    and RBN-QA-076 with its two test successors, each by its agreed commits; patch-identical to them over every file but
+    `run.mjs`, and over it too except for `40867a2` and `ecc051c`, whose one-line suite list also carries the
+    neighbouring entries: each adds only its own suite, `wind_stone` and `leaf_home`; identities verified by Agnes
+    6326850214, 6327182752, 6327707377 and Local CL-137, CL-142, CL-143, CL-144); byte-identical to the build the
+    suites ran on. On these bytes (B): `ko_first_sight` 87/0, `ko_crossing` 94/0, `interlude_ahead` 30/0,
+    `interlude_lifecycle` 14/0, `interludes` 76/0, `lf_arrival_view` 79/0, `lookout_vista` 22/0, `keeper_reveal` 69/0,
+    `kotonoha` 7/0, `licence` 2/0, `battle_start_abandon` 28/0, `encounters` 10/0, `load_mid_scene` 19/0, `combat_ui`
+    7/0, `social_battle` 65/0, `card_press` 13/0, `battle_settings` 10/0, `battle_presentation` 13/0, `fog_event` 26/0,
+    `prologue` 100/0, `title_ledger` 18/0, `play_ui` all ok (44), `world_view` all ok (20), `ui` 14/0, `wind_stone`
+    19/0, `leaf_home` 42/0, `hall_entry` all ok (16), `hall_door` 15/0, `walkto_options` 23/0, `quest_guide` all ok,
+    `guide_next_step` 24/0, `ruin_lanterns` 31/0, `lodge_evening` 16/0, `lodge_quarrel` 31/0, `ren_apart` 7/0,
+    `guide_reveal` 37/0, `guide_kana` 11/0, `learning_ui` 15/0, `social_wait` 12/0, `look_purity` 9/0, `props_balance`
+    48/0, `road_oil` 14/0, `geese_event` 15/0, `keepers` 4/0, `lodge_arrival` 40/0, `guide_stacks` 8/0, `guide_archive`
+    14/0, `companion_turn` 4/0, `road_on` 11/0, `leaf_marker` 18/0, `guide_vigil` 9/0 (two runners side by side, each
+    suite in turn, with other test work alongside), and `sequence_world --only ko.end` 156/0: 52 suites. U whole suite
+    57,787/0 on `e70e9c3`; `validate.mjs` no errors. Also on `e70e9c3`'s build before the cut: `leaf_home` 42/0 twice,
+    U `ko_*` 290/0, `quest` 150/0, `scene_manifest` 1023/0. Recorded as they happened, not made green afterwards:
+    `pad_kanji` 7/1 here (the 郁 case, a `page.tap` timeout; the same on CC-015's `index.html` and on `ea214c6`'s
+    build, and recorded before this work), not in this set; on Local's Windows machine, `encounters` 9/1 (a
+    Windows-only capture path) and the unmodified `sequence_world` 26/33 (`URL.pathname` gives `\C:\…`, so its p16
+    specs never load there; 156/0 with the path adjusted in scratch only). **Reduce motion, corrected provenance
+    (Agnes 6326136749, Local CL-138):** until `a904614` (`leaf_marker`) and `f6873a1` (`wind_stone`) both tests set
+    `reduceMotion`, which the game does not read; every result reported before those fixes as "held still" or "with
+    Reduce motion" came from a motion-setting run: `leaf_marker` 18/0 on `d699567` and `54b66ec`, `wind_stone` 18/0 on
+    `5bc6e38`, the light measurement "with Reduce motion … 250–650 px of change between frames" (CC-074 §2), and
+    Local's CL-135 frames. They keep their motion results only. Reduced-motion coverage is credited to `a904614` /
+    `ff8b328` and `f6873a1` / `27258ea` (each asserting `RB.game.reducedMotion()` reads back true), the corrected light
+    measurement held still (the light warms 6,436 / 6,312 px against 0–56 px of noise), and Local's QA-075 captures
+    (`reducedMotion` read back true). Not shown by any of these runs: the leaf's flight and the stone on real devices.
+    Voice: none.
   - **Candidate CC-015:** `index.html` sha256 `dcf8eb7cc1b2c47be733e02fe67e1760441fe746552c8634d1d43b09d8b381a7`, built
     from `16f8882` (CC-014 plus only RBN-QA-072 and the RBN-QA-073 follow-up, each with its agreed successors;
     patch-identical to the agreed commits over every file, `run.mjs` included, except that `db0f396` and `b7b5377` match

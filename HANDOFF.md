@@ -797,6 +797,24 @@
       integrated commits only in context lines (QA-072's header comment in the same file); their zero-context
       patch-ids are equal. Not in it: RBN-QA-074 (`candidate/qa-074` @ `d699567`, the leaf drift's marker; under
       review), RBN-QA-075 and 076 (in preparation), RBN-QA-078 (queued after them).
+      Verified live by Local (CL-136) and Agnes (6325781957).
+      CANDIDATE CC-016 (`index.html` `fc7a7a56…`, built from `e70e9c3`): CC-015 plus only what was agreed after it,
+      each by its exact commits (cherry-picked with `-x`; three AGREEs each, Agnes 6325775115, 6326136749, 6326169868,
+      6326495570, 6326516748, 6326531441, 6326845166, 6326862010 and Local CL-135 to CL-143; integration identities
+      verified by Agnes 6326850214, 6327182752, 6327707377 and Local CL-137, CL-142, CL-143, CL-144): RBN-QA-074
+      (`d699567` → `54b66ec`: the guide's diamond over a drift of written leaves sits on the drift), the `leaf_marker`
+      fix (`a904614` → `ff8b328`, test only: Reduce motion set by the setting the game reads), RBN-QA-075 (`5bc6e38`,
+      `f6873a1`, `6baa152`, `7dedf9c` → `40867a2`, `27258ea`, `4d3aa73`, `ea214c6`: Kotonoha's Wind Stone a broad, low,
+      flat stone with the wind over it, on the village's map and in the ending's picture; its test sets Reduce motion
+      as the game reads it; its 16-px fallback in the island's three stone tones), RBN-QA-076 (`7820dfa`, `8017916`,
+      `7a31a7b` → `ecc051c`, `e06c0af`, `e70e9c3`: a leaf sent home is seen to rise off the stone and go on the wind, a
+      still cue with Reduce motion; its test from where the stone is used, in view, clear of the dialogue box, and once
+      the ordinary way). Patch-identical to the agreed commits over every file but `run.mjs`, and over it too except
+      for `40867a2` and `ecc051c`, whose one-line suite list also carries its neighbours' entries (each adds only its
+      own suite, `wind_stone` and `leaf_home`). Not in it, by agreement (Agnes 6327696635, Local CL-144): RBN-QA-078
+      (`77b982f`, a preparation question or task taken down unanswered when the campaign changes; latent, fixture-only;
+      three AGREEs, Agnes 6327714403 and Local CL-144; integrated after this cut), RBN-QA-079 (`candidate/qa-079` @
+      `6392c63`, `e3c824d`, the ending's great tree as the first sight draws it, seated on its hill; under review).
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

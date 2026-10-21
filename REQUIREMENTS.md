@@ -1327,7 +1327,21 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   first), and layers built only ahead are released once; on the first landing the gold leaves are where the still
   picture has them from the picture's first frame; B `ko_crossing` 94/0, `interlude_ahead` 30/0, `ko_first_sight`
   87/0 twice, `interlude_lifecycle` 14/0, `sequence_world` `ko.garden` and `ko.end` 220/0 on CC-015's own bytes. In
-  candidate CC-015 (`dcf8eb7c…`, built from `16f8882`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  candidate CC-015 (`dcf8eb7c…`, built from `16f8882`), READY_FOR_QA; verified live by Local (CL-136) and Agnes
+  (6325781957).
+  RBN-QA-074, RBN-QA-075 (with the ending's stone) and RBN-QA-076 (three-party AGREE each, on the exact commits listed
+  in HANDOFF's CC-016 entry): on Kotonoha's shore the guide's diamond over a drift of written leaves sits on the drift,
+  over the middle of its tiles, faced or not; the Wind Stone in the Keepers' Village is a broad, low, flat stone with
+  the wind always blowing over it from the west (grass pressed east, leaves pinned at its western end, pale streaks
+  over its top in motion, still with Reduce motion), no lamp or roof, its two tiles and its scene unchanged, and the
+  chapter's ending picture draws the same low stone; when a leaf is sent home from it, one written leaf rises off the
+  stone's top and is carried away on the wind the way its line names (east; north for Snowbell), fading, in about
+  1.8 s, and with Reduce motion lies still on the stone while the line is read; the return itself (the leaf taken, its
+  flag, the count, the wind, the toast) unchanged. B `leaf_marker` 18/0, `wind_stone` 19/0, `leaf_home` 42/0,
+  `sequence_world --only ko.end` 156/0 on CC-016's own bytes. Their tests' Reduce motion is the setting the game reads
+  (`reducedMotion`, read back): runs before `a904614` and `f6873a1` set an unread `reduceMotion` and are motion runs
+  only (VALIDATION, CC-016). In candidate CC-016 (`fc7a7a56…`, built from `e70e9c3`), READY_FOR_QA.
+  RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand
