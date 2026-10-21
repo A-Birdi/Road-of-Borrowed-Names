@@ -74,6 +74,10 @@ RB.interlude = (function () {
     if (RB.prologueArt) RB.prologueArt.release();
   }
   const state = () => (cur ? { id: cur.id, stage: cur.stage, since: Math.round(now() - cur.at) } : null);
+  // A campaign that changes (a load, a new journey, the title) ends the scene that showed a picture before the
+  // scene's own end could clear it (src/engine/70_script.js), and hands the screen back to the map: the picture goes
+  // with it, so the same interlude shown again is drawn again (RBN-QA-064 refine, Agnes 6318475345).
+  if (RB.bus) RB.bus.on('campaign:changing', clear);
 
   return { ART, show, clear, state, active: () => !!cur, sheetTop };
 })();
