@@ -5484,6 +5484,29 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-014:** `index.html` sha256 `5dc39d093824ffb7e0844195daecf44f649bc96ef55fe61e1d57e2c0161291a5`, built
+    from `5fbdc0b` (CC-013 plus only RBN-QA-064, 071, the `keeper_reveal` plate check, 077 and 073, each with its
+    agreed successors; patch-identical to the agreed commits over every file but `run.mjs`, which only gains
+    `lf_arrival_view`, `interlude_lifecycle`, `keeper_reveal`, `battle_start_abandon` and `ko_first_sight`; identities
+    verified by Agnes 6320681943 and 6322091198, and Local CL-119 and CL-124); byte-identical to the build the suites
+    ran on. On these bytes (B): `battle_start_abandon` 28/0, `ko_first_sight` 84/0, `keeper_reveal` 69/0,
+    `interlude_lifecycle` 12/0, `interludes` 76/0, `lf_arrival_view` 79/0, `lookout_vista` 22/0, `kotonoha` 7/0,
+    `encounters` 10/0, `load_mid_scene` 19/0, `combat_ui` 7/0, `social_battle` 65/0, `card_press` 13/0,
+    `battle_settings` 10/0, `battle_presentation` 13/0, `fog_event` 26/0, `prologue` 100/0, `title_ledger` 18/0,
+    `play_ui` all ok (44), `world_view` all ok (20), `ui` 14/0, `hall_entry` all ok (16), `hall_door` 15/0,
+    `walkto_options` 23/0, `quest_guide` all ok, `guide_next_step` 24/0, `ruin_lanterns` 31/0, `lodge_evening` 16/0,
+    `lodge_quarrel` 31/0, `ren_apart` 7/0, `guide_reveal` 37/0, `guide_kana` 11/0, `learning_ui` 15/0,
+    `social_wait` 12/0, `look_purity` 9/0, `props_balance` 48/0, `road_oil` 14/0, `geese_event` 15/0, `keepers` 4/0,
+    `lodge_arrival` 40/0, `guide_stacks` 8/0, `guide_archive` 14/0 (two runners side by side, each suite in turn), and
+    `companion_turn` 4/0 twice, run alone. Recorded as it happened, not made green afterwards: `companion_turn` 3
+    passed and 1 failed once on these bytes, with four test processes running at once (in "what each companion can do
+    follows the story", a response card's click did not open its step within the wait while the battle sat in
+    `choose`); the two runs alone after it passed every case. U whole suite 57,787/0 on this source; `validate.mjs` no
+    errors. Also recorded as they happened: `keeper_reveal` 68 passed and 1 failed three times before the plate check
+    (once on `ffd7254`'s build, twice on the QA-077 build one line before `ac38b0d`: the probe point fell on the
+    sluice plate's shaded rim on one of the keeper's idle frames, 85,55,32); with `42cf95f` 69/0 three times on
+    `ffd7254`'s build and once on these bytes. Not shown by any of these runs: that ordinary play reaches QA-077's race.
+    Voice: none.
   - **Candidate CC-013:** `index.html` sha256 `9506f218f21117546c00ea8f9623a932af55610e02a906a536590d2f584d3a99`, built
     from `f133f36` (CC-012 plus only RBN-QA-063, the `look_purity` hardening, 068, the `lodge_evening` guards, 069,
     066, 065, 067 and 070, each with its agreed successors; patch-identical to the agreed commits over every file but

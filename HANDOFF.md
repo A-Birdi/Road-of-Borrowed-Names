@@ -771,6 +771,19 @@
       LI-4's slide starts; `world_view` green again). Not in it: RBN-QA-064 (the Lanternfall arrival view, AC-1;
       `candidate/qa-064` in progress), RBN-QA-071 (the Bell Chamber's guardian reveal; proposal agreed, queued after
       064), Local's optional `!look comp pc` after the quarrel's return, and the cask pool's sheen (optional polish).
+      CANDIDATE CC-014 (`index.html` `5dc39d09…`, built from `5fbdc0b`): CC-013 plus only what was agreed after it,
+      each by its exact commits (cherry-picked with `-x`, patch-identical over every file but `run.mjs`; three AGREEs
+      each, Agnes and Local CL-113 to CL-124): RBN-QA-064 (`77e9aee`, `911db3e`, `c06e823` → `724f9d1`, `50f1890`,
+      `f529f6f`: arriving at Lanternfall, the valley below the town as a picture over the arrival's lines; a picture up
+      when the campaign changes is cleared with it; every interlude tested across a load), RBN-QA-071 (`1814be9` →
+      `ffd7254`: the Drowned Bell's Keeper rises out of the water and comes apart, in pictures over the Bell Chamber's
+      lines; the battle unchanged), the `keeper_reveal` plate check (`b4d4ae8` → `42cf95f`, test only), RBN-QA-077
+      (`ac38b0d` → `6e44dcd`: a load while a battle is still starting leaves nothing of it; the opening-fade race only),
+      RBN-QA-073 (`ca97c11`, `58ace7f` → `c69868f`, `5fbdc0b`: on the first landing, Kotonoha's great tree as a picture
+      over the two lines that describe it, a few large written gold leaves coming down clear of the tree). Not in it:
+      RBN-QA-072 (Tetsu's crossing as pictures from the boat; candidate in preparation), RBN-QA-074 to 076 (proposals
+      agreed, queued), RBN-QA-078 (a preparation question or task left after a load; a latent engine defect with no
+      authored ordinary-play path, proposal agreed, queued after 072 and 074 to 076).
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

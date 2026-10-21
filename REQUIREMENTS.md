@@ -1304,7 +1304,20 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   conversation's first line docks at the top when it would cover the player or the speaker, with motion on as with
   Reduce motion (`world_view`, red since LI-4's `40d79ae`, green again); B `ren_apart` 7/0, `lodge_quarrel` 31/0, `lodge_evening` 16/0, `guide_stacks` 8/0,
   `guide_archive` 14/0, `road_oil` 14/0, `guide_reveal` 37/0, `world_view` all ok (20) on CC-013's own bytes. In
-  candidate CC-013 (`9506f218…`, built from `f133f36`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  candidate CC-013 (`9506f218…`, built from `f133f36`), READY_FOR_QA. RETESTED_BY_AGNES on CC-013 (`9506f218…`,
+  6318120853): RBN-QA-067 PASS on one sampled route (the lower-row きゃ in the Guide's chart reveals its preview in the
+  pane, both component animations visible; Back to きゃ returns to the same chart position; not every combination,
+  keyboard or phone).
+  RBN-QA-064, 071, 077, 073 and the `keeper_reveal` plate check (three-party AGREE each, on the exact commits listed in
+  HANDOFF's CC-014 entry): arriving at Lanternfall, the valley below the town is shown over the arrival's lines; a
+  picture up when the campaign changes (a load that works or fails, a new journey, the title) is cleared with it and
+  drawn again when shown again; the Drowned Bell's Keeper rises out of the water and comes apart in pictures over the
+  Bell Chamber's lines, the battle unchanged; a load in a battle's opening fade leaves no battle state, screen, music or
+  darkening behind and the old start never resolves (a preparation question or task left on screen is RBN-QA-078, not
+  covered; ordinary reachability of the race unproven); on the first landing at Kotonoha the great tree is shown over
+  the two lines that describe it, a few large written gold leaves coming down clear of the tree; B `lf_arrival_view`
+  79/0, `interlude_lifecycle` 12/0, `keeper_reveal` 69/0, `battle_start_abandon` 28/0, `ko_first_sight` 84/0 on
+  CC-014's own bytes. In candidate CC-014 (`5dc39d09…`, built from `5fbdc0b`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand
