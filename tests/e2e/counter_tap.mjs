@@ -13,7 +13,8 @@
 //  7. the walk remembers whom it is for (Agnes's REFINE of fa14eda): if, while you walk, Yae is taken away, moves,
 //     or someone else takes her place, or the counter is replaced by something else, nobody else is talked to and
 //     nothing else is read; a new tap during the walk cancels it; and with no counter between you (an unrelated
-//     prop in its place) a tap on Yae does nothing.
+//     prop in its place) a tap on Yae does nothing. Only a Yae who moved is tried again (Agnes and Local, REFINE of
+//     9a7bc73): with her standing still, a counter swapped for another counter, or taken away, means nothing happens.
 // Usage: node tools/build.mjs && node tests/e2e/counter_tap.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -136,6 +137,9 @@ async function tapThen(p, x, y, change) {
     if (change === 'move') { const to = [[6, 6], [6, 7], [6, 5]].find(([a, b]) => !RB.world.blocked(a, b)) || [6, 6]; yae.x = to[0]; yae.y = to[1]; yae.fx = to[0]; yae.fy = to[1]; }
     if (change === 'replace') { W.npcs.splice(W.npcs.indexOf(yae), 1); nat.x = 13; nat.y = 2; nat.fx = 13; nat.fy = 2; }
     if (change === 'counter') swapCounter();
+    if (change === 'samecounter') { const i = counterIx(); W.map.props[i] = Object.assign({}, W.map.props[i]); }
+    // (its tiles freed too, as a counter shown only while a flag holds would leave them)
+    if (change === 'nocounter') { const [pr] = W.map.props.splice(counterIx(), 1), w = pr.w || (RB.props.P[pr.p] || {}).w || 1; for (let i = 0; i < w; i++) W.map.block[pr.y * W.map.w + pr.x + i] = 0; }
     if (change === 'retap') RB.world.tapTile(10, 8);
     const t0 = performance.now();
     while (performance.now() - t0 < 12000) {
@@ -152,6 +156,8 @@ for (const [change, what, check] of [
   ['move', 'Yae moves (off your way) while you walk: you go on to her where she is now and she speaks; the counter is not read', (r) => (r.who === 'yae' || r.said.some((w) => w.startsWith('yae:'))) && r.said.every((w) => w.startsWith('yae:'))],
   ['replace', 'someone else takes Yae\'s place while you walk: they are not talked to, nothing is read', (r) => !r.said.length && !r.who && !r.running],
   ['counter', 'the counter is replaced by something else while you walk: it is not read, nobody is talked to', (r) => !r.said.length && !r.who && !r.running],
+  ['samecounter', 'with Yae still, the counter is swapped for another counter while you walk: nothing happens', (r) => !r.said.length && !r.who && !r.running],
+  ['nocounter', 'with Yae still, the counter is taken away while you walk (a place beside her opens): nothing happens', (r) => !r.said.length && !r.who && !r.running],
   ['retap', 'a new tap during the walk cancels it: nobody is talked to, and the walk to the counter is not finished', (r) => !r.said.length && !r.who && !(r.at[0] === 13 && r.at[1] === 4)],
   ['barrier', 'no counter between you (something else in its place): a tap on Yae does nothing', (r) => !r.walked && !r.said.length && !r.who],
 ]) {
