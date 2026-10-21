@@ -8,7 +8,12 @@
 //     left end);
 //  4. someone with a free place beside them (Natsume by the hearth): walked to beside, as before;
 //  5. the cross-game reach of the change: every person placed beside a counter (or an `across` prop) on any map,
-//     listed (the fallback acts only when no place beside them can be reached).
+//     listed (the fallback acts only when no place beside them can be reached);
+//  6. Sousuke behind the post shelter's desk (an `across` prop; RBN-QA-038): from the entrance and from either side;
+//  7. the walk remembers whom it is for (Agnes's REFINE of fa14eda): if, while you walk, Yae is taken away, moves,
+//     or someone else takes her place, or the counter is replaced by something else, nobody else is talked to and
+//     nothing else is read; a new tap during the walk cancels it; and with no counter between you (an unrelated
+//     prop in its place) a tap on Yae does nothing.
 // Usage: node tools/build.mjs && node tests/e2e/counter_tap.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -18,15 +23,15 @@ let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) { pass++; console.log('ok   ' + m); } else { fail++; console.log('FAIL ' + m); } };
 const FL = { departed: true, ch1_done: true, ch2_done: true, mb_arrived: true, mb1_done: true, mb2_done: true, ch3_done: true, sb_arrived: true, sb_hamlet_seen: true };
 
-async function start(p, x, y, dir) {
-  await p.evaluate(async ([x, y, dir, FL]) => {
-    const s = RB.game.debugStart('sb.inn', x, y, { comp: 'suzu', flags: FL, dir, edition: 2 });
+async function start(p, x, y, dir, map) {
+  await p.evaluate(async ([x, y, dir, FL, map]) => {
+    const s = RB.game.debugStart(map || 'sb.inn', x, y, { comp: 'suzu', flags: FL, dir, edition: 2 });
     s.chapter = 4; s.quests.sb_lamp = { stage: 0, done: false, t: 1 };
     RB.game.settings.textSpeed = 'instant'; RB.game.applySettings();
     RB.world.refreshActors();
     const W = RB.world.W, t0 = performance.now();
     while (W.time - W.enteredAt < 1100 && performance.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 50));
-  }, [x, y, dir, FL]);
+  }, [x, y, dir, FL, map]);
 }
 // tap a tile; wait for a scene (or for the walk to end without one); who spoke first, and where you stand
 async function tap(p, x, y) {
@@ -104,6 +109,57 @@ async function tap(p, x, y) {
   });
   console.log('     people beside a counter: ' + list.length + '\n       ' + list.join('\n       '));
   ok(list.some((x) => /^sb\.inn:yae@13,2$/.test(x)), 'the reach is listed (' + list.length + ' placements beside a counter, Yae among them)');
+  await p.context().close();
+}
+// 6. Sousuke at the post shelter's desk, from the entrance and from either side
+for (const [sx, sy, from] of [[5, 6, 'the entrance'], [2, 4, 'the left of the room'], [8, 4, 'the right of the room']]) {
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await start(p, sx, sy, 'up', 'sb.post');
+  const r = await tap(p, 7, 2);
+  ok(r.at[0] === 7 && r.at[1] === 4 && r.dir === 'up' && (r.who === 'sousuke' || r.said.includes('sousuke')), 'Sousuke from ' + from + ': across the desk, facing it, and he speaks (' + r.at + ' ' + r.dir + ', ' + r.who + ')');
+  ok(!errors.length, 'no page errors ' + errors.slice(0, 2).join(' | '));
+  await p.context().close();
+}
+// 7. things that change while you walk to the counter's front
+async function tapThen(p, x, y, change) {
+  return p.evaluate(async ([x, y, change]) => {
+    const s = RB.game.s, n = s.backlog.length, W = RB.world.W;
+    const yae = RB.world.actorById('yae'), nat = RB.world.actorById('natsume');
+    const counterIx = () => W.map.props.findIndex((pr) => { const pd = RB.props.P[pr.p] || {}; const w = pr.w || pd.w || 1; return (pr.p === 'counter' || pr.across) && pr.y === 3 && 13 >= pr.x && 13 < pr.x + w; });
+    const swapCounter = () => { const i = counterIx(), pr = W.map.props[i], pd = RB.props.P[pr.p] || {}; W.map.props[i] = { p: 'crate', x: pr.x, y: pr.y, w: pr.w || pd.w || 1, text: { jp: 'はこ が ある 。', en: 'A crate stands here.' } }; };
+    if (change === 'barrier') swapCounter();
+    RB.world.tapTile(x, y);
+    const len0 = W.path ? W.path.length : 0, t1 = performance.now();
+    const walked = len0 > 0;
+    while (W.path && W.path.length > Math.max(1, len0 - 2) && performance.now() - t1 < 6000) await new Promise((r) => setTimeout(r, 20));
+    if (change === 'remove') W.npcs.splice(W.npcs.indexOf(yae), 1);
+    if (change === 'move') { const to = [[6, 6], [6, 7], [6, 5]].find(([a, b]) => !RB.world.blocked(a, b)) || [6, 6]; yae.x = to[0]; yae.y = to[1]; yae.fx = to[0]; yae.fy = to[1]; }
+    if (change === 'replace') { W.npcs.splice(W.npcs.indexOf(yae), 1); nat.x = 13; nat.y = 2; nat.fx = 13; nat.fy = 2; }
+    if (change === 'counter') swapCounter();
+    if (change === 'retap') RB.world.tapTile(10, 8);
+    const t0 = performance.now();
+    while (performance.now() - t0 < 12000) {
+      if (RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown()) break;
+      if (!W.path && !W.player.mv && performance.now() - t0 > 1500) break;
+      await new Promise((r) => setTimeout(r, 50));
+    }
+    const l = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown();
+    return { walked, who: l ? l.who || null : null, en: l ? l.en : null, at: [W.player.x, W.player.y], said: s.backlog.slice(n).map((e) => (e.who || '') + ':' + (e.en || '').slice(0, 40)), running: RB.script.isRunning() };
+  }, [x, y, change]);
+}
+for (const [change, what, check] of [
+  ['remove', 'Yae is taken away while you walk: nobody is talked to, nothing is read', (r) => !r.said.length && !r.who && !r.running],
+  ['move', 'Yae moves (off your way) while you walk: you go on to her where she is now and she speaks; the counter is not read', (r) => (r.who === 'yae' || r.said.some((w) => w.startsWith('yae:'))) && r.said.every((w) => w.startsWith('yae:'))],
+  ['replace', 'someone else takes Yae\'s place while you walk: they are not talked to, nothing is read', (r) => !r.said.length && !r.who && !r.running],
+  ['counter', 'the counter is replaced by something else while you walk: it is not read, nobody is talked to', (r) => !r.said.length && !r.who && !r.running],
+  ['retap', 'a new tap during the walk cancels it: nobody is talked to, and the walk to the counter is not finished', (r) => !r.said.length && !r.who && !(r.at[0] === 13 && r.at[1] === 4)],
+  ['barrier', 'no counter between you (something else in its place): a tap on Yae does nothing', (r) => !r.walked && !r.said.length && !r.who],
+]) {
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await start(p, 8, 9, 'up');
+  const r = await tapThen(p, 13, 2, change);
+  ok(check(r), what + ' (said ' + JSON.stringify(r.said) + ', at ' + r.at + ')');
+  ok(!errors.length, change + ': no page errors ' + errors.slice(0, 2).join(' | '));
   await p.context().close();
 }
 console.log(`\ncounter_tap: ${pass} passed, ${fail} failed`);
