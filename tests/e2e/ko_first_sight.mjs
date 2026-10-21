@@ -12,9 +12,10 @@
 // - a few large gold leaves come down in front of the hill, the beach and the water, each with ink on it, never over
 //   the tree's crown or its trunk and roots, none below the sheet; with reduced motion all of them hold, full-size;
 // - from the picture's first frame (Local CL-129, Agnes 6323680849): drawn directly at the desktop and phone layouts at
-//   fixed times since it opened (0 to 3 s), every frame on its own has at least two readable gold leaves (full-size,
-//   gold, with ink) and none over the tree or below the sheet; the leaves keep to the picture's own time (the page's
-//   clock moves nothing);
+//   fixed times since it opened (0 to 3 s), each with the page's clock at two values, every frame on its own (both
+//   clocks) has at least two readable gold leaves (full-size, gold, with ink) and none over the tree or below the
+//   sheet; and the gold leaves' boxes, as sampled, are the same at both clocks (sampled box-position independence, not
+//   pixel or shape equality; the weather behind them runs on the page's clock and is not compared; Agnes 6324713028);
 // - with reduced motion the picture holds still (two frames alike); with motion it does not (the leaves, the water);
 // - a second landing (ko_arrived already set), by either boat, runs no first sight and shows no picture;
 // - all four companions' lines run; no console errors, no network requests.
@@ -224,18 +225,19 @@ for (const [how, comp, W, H, reduce, flags] of RUNS) {
         return { n: P.gold.n, vb: P.vb, clear: P.gold.clear, leaves };
       };
       for (const since of AT) {
-        // (the page's clock, t, at two very different values: the leaves must not move with it)
+        // (the page's clock, t, at two very different values: each frame is judged on its own, and the gold leaves'
+        // boxes must be where they were)
         A.draw(c, w, h, 1000, { stage: 'view', since, vb, still: false });
-        const g1 = read(), k1 = JSON.stringify(g1.leaves.map((l) => l.box));
+        const g1 = read();
         A.draw(c, w, h, 987654, { stage: 'view', since, vb, still: false });
-        const g2 = read();
-        out.push(Object.assign(g2, { since, sameAcrossClock: k1 === JSON.stringify(g2.leaves.map((l) => l.box)) }));
+        const g2 = read(), boxes = (g) => JSON.stringify(g.leaves.map((l) => l.box));
+        out.push({ since, g1, g2, sameBoxes: boxes(g1) === boxes(g2) });
       }
       return out;
     }, [w, h, vb, AT]);
-    const judged = frames.map((G) => ({ G, j: judgeGold(G, false) }));
-    const bad = judged.filter(({ G, j }) => !j.pass || !G.sameAcrossClock);
-    ok(!bad.length, `the gold leaves from the first frame, ${lay} (${w}×${h}, sheet at ${vb}): every frame at ${AT.join('/')} ms since the picture opened has at least two readable gold leaves (full-size, gold, with ink), none over the tree or below the sheet, and they keep to the picture's own time (${judged.map(({ G, j }) => `${G.since}ms ${j.read.length}/${G.leaves.length}${G.sameAcrossClock ? '' : ' moved with the clock'}`).join(', ')})`);
+    const judged = frames.map((F) => ({ F, j1: judgeGold(F.g1, false), j2: judgeGold(F.g2, false) }));
+    const bad = judged.filter(({ F, j1, j2 }) => !j1.pass || !j2.pass || !F.sameBoxes);
+    ok(!bad.length, `the gold leaves from the first frame, ${lay} (${w}×${h}, sheet at ${vb}): every frame at ${AT.join('/')} ms since the picture opened, at both page clocks (1000 / 987654), has at least two readable gold leaves (full-size, gold, with ink) and none over the tree or below the sheet, and the gold leaves' sampled boxes are the same at both clocks (${judged.map(({ F, j1, j2 }) => `${F.since}ms ${j1.read.length}/${F.g1.leaves.length} · ${j2.read.length}/${F.g2.leaves.length}${j1.over.length || j2.over.length ? ' over the tree or sheet' : ''}${F.sameBoxes ? '' : ' boxes moved with the clock'}`).join(', ')})`);
   }
   ok(!errors.length, `the gold leaves from the first frame: no page errors ${errors.slice(0, 2).join(' | ')}`);
   await p.close();
