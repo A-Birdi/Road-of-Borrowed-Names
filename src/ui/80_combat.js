@@ -1164,6 +1164,17 @@ RB.combat = (function () {
       if (t) { t.title = card.kind === 'answer' ? 'Answer what it is really asking' : 'See through the false promise'; return RB.tasks.prepare(t); }
       return RB.tasks.next(pool);
     }
+    // a conversation's own move, here when the encounter has a creature in it (RBN-QA-056): as on the encounter
+    // screen (src/ui/80s_encounter.js stepFor), your companion's gesture has no writing, and a social action is said
+    // through its own task, if it has one
+    if (card.kind === 'gesture') return null;
+    if (card.kind === 'social') {
+      const t = card.action && card.action.task ? tierOf(card.action.task) : null;
+      if (!t) return null;
+      const c = RB.util.deepClone(t);
+      c.title = c.title || 'Say it';
+      return RB.tasks.prepare(c);
+    }
     const w = card.word;
     // name the script it accepts; "or in kanji" whenever the writing pad will read kanji for this player (RBN-02)
     const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : s.learn.profile === 'I' || s.learn.profile === 'A';
