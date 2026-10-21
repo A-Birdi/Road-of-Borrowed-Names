@@ -1146,6 +1146,7 @@ RB.world = (function () {
   const beside = (tiles, x, y) => tiles.find(([a, b]) => Math.abs(a - x) + Math.abs(b - y) === 1);
   function arriveAt(pt) {
     const p = W.player;
+    if (pt.across) { arriveAcross(pt.across); return; }
     if (pt.tile) { faceTo(p, pt.tile[0], pt.tile[1]); interact(); return; }
     if (!stillThere(pt.target)) return;
     const t = beside(tilesOf(pt.target), p.x, p.y);
@@ -1185,22 +1186,40 @@ RB.world = (function () {
     const near = !on && beside(tiles, p.x, p.y);
     if (near) { faceTo(p, near[0], near[1]); interact(); return; }
     const path = on ? stepOff(tiles) : bfsGoal((x, y) => !tiles.some(([a, b]) => a === x && b === y) && !!beside(tiles, x, y));
-    if (!path && target.kind === 'actor') {
-      // someone behind a counter with no free place beside them (Yae at Yukimiya's counter): the place in front of the
-      // counter, facing it, where the action key talks across it (interact); Agnes, RBN-QA-036
-      const spots = acrossSpots(target.ref);
-      const here = spots.find((sp) => sp.at[0] === p.x && sp.at[1] === p.y);
-      if (here) { faceTo(p, here.counter[0], here.counter[1]); interact(); return; }
-      const way = spots.length ? bfsGoal((x, y) => spots.some((sp) => sp.at[0] === x && sp.at[1] === y)) : null;
-      if (!way || !way.length) return;
-      const end = way[way.length - 1], sp = spots.find((q) => q.at[0] === end[0] && q.at[1] === end[1]);
-      W.path = way;
-      W.pathTarget = { tile: sp.counter, path: way };
-      return;
-    }
+    if (!path && target.kind === 'actor') { talkAcross(target, 0); return; }
     if (!path) return;
     W.path = path;
     W.pathTarget = { target, path };
+  }
+  // Someone behind a counter with no free place beside them (Yae at Yukimiya's counter): go to the place in front of
+  // the counter, face it, and talk across it as the action key does (interact); Agnes, RBN-QA-036. The walk remembers
+  // whom it is for, where they stood, the counter and the place to stand; on arrival all of that is checked again
+  // (arriveAcross), so a person who has gone, moved or been replaced, or a counter that has changed, is never mistaken
+  // for the one tapped.
+  function talkAcross(target, tries) {
+    const p = W.player, n = target.ref, spots = acrossSpots(n);
+    const here = spots.find((sp) => sp.at[0] === p.x && sp.at[1] === p.y);
+    if (here) { faceTo(p, here.counter[0], here.counter[1]); interact(); return; }
+    const way = spots.length ? bfsGoal((x, y) => spots.some((sp) => sp.at[0] === x && sp.at[1] === y)) : null;
+    if (!way || !way.length) return;
+    const end = way[way.length - 1], sp = spots.find((q) => q.at[0] === end[0] && q.at[1] === end[1]);
+    W.path = way;
+    W.pathTarget = { across: { target, pos: [n.x, n.y], counter: sp.counter, prop: sp.prop, at: sp.at, tries }, path: way };
+  }
+  function arriveAcross(a) {
+    const p = W.player, n = a.target.ref;
+    const counter = propAt(a.counter[0], a.counter[1], true);
+    const same = stillThere(a.target) && n.x === a.pos[0] && n.y === a.pos[1] && !n.mv && actorAt(a.pos[0], a.pos[1]) === n &&
+      counter === a.prop && (counter.p === 'counter' || counter.across) && p.x === a.at[0] && p.y === a.at[1];
+    if (same) { faceTo(p, a.counter[0], a.counter[1]); interact(); return; }
+    // changed while you walked: the same person, if still here, once more (from where they are now); otherwise nothing
+    if (stillThere(a.target) && a.tries < 1) {
+      const tiles = tilesOf(a.target), near = beside(tiles, p.x, p.y);
+      if (near) { faceTo(p, near[0], near[1]); interact(); return; }
+      const path = bfsGoal((x, y) => !tiles.some(([tx, ty]) => tx === x && ty === y) && !!beside(tiles, x, y));
+      if (path && path.length) { W.path = path; W.pathTarget = { target: a.target, path }; return; }
+      talkAcross(a.target, a.tries + 1);
+    }
   }
   // the places a person can be talked to across a counter: a counter (or an `across` prop) beside them, and its free
   // far side
@@ -1212,7 +1231,7 @@ RB.world = (function () {
       if (!c || !(c.p === 'counter' || c.across)) continue;
       const ax = cx + dx, ay = cy + dy;
       if (ax < 0 || ay < 0 || ax >= W.map.w || ay >= W.map.h || blocked(ax, ay, { except: W.player, ignorePlayer: true })) continue;
-      out.push({ at: [ax, ay], counter: [cx, cy] });
+      out.push({ at: [ax, ay], counter: [cx, cy], prop: c });
     }
     return out;
   }
