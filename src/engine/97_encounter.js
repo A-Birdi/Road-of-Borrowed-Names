@@ -229,6 +229,15 @@ RB.encounter = (function () {
       for (const c of out) {
         if (c.kind === 'unravel' && st.shroud && !(known.has('light') || known.has('wind'))) c.disabled = null;
         if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'The hush swallows words: ring a bell or raise a voice first.';
+        // a conversation with a creature in it: its Wait is the conversation's, as on the encounter screen, and while
+        // the conversation's own Wait would bring something out now, a cue that says so and never what (RBN-QA-060;
+        // the test only reads)
+        if (c.kind === 'wait' && E && E.social) {
+          c.en = 'Wait';
+          c.desc = st.rules.waitDesc || 'Say nothing this time, and let the others speak.';
+          const w = E.def.social && E.def.social.wait;
+          if (w && test(st, w.when)) c.cue = 'They seem to have more to say.';
+        }
       }
     } else if (E) {
       out.push({ id: 'unravel', kind: 'unravel', icon: '🪢', jp: 'ほどく', en: 'Unravel', desc: 'Restore something tangled — where something really is.' });

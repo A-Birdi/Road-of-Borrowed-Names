@@ -739,6 +739,7 @@ body.high-contrast .kwcard { border-color: #000; }
 .rcard .rc-more .rc-ans { display: inline; margin-left: 0.3em; }
 .rcard .rc-here b { font-weight: 700; }
 .rcard .rc-here.none { opacity: 0.78; font-style: italic; }
+.rcard .rc-cue { display: block; margin-bottom: 0.15em; font-style: italic; color: var(--ink, inherit); }
 .combat-ui .rcard.tech { border-color: var(--ribbon-deep); box-shadow: inset 4px 0 0 var(--ribbon), 0 2px 0 var(--paper-3), 0 3px 0 var(--ribbon-deep); }
 .rcard.tech .rc-new { background: var(--river); }
 .combat-ui .rcard[disabled] { cursor: not-allowed; background: var(--paper-2); border-style: dashed; box-shadow: none; color: var(--ink-2); }
