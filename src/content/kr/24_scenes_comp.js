@@ -19,6 +19,12 @@ RB.script.add(`
 @scene kr.evening
 # The evening at the lodge after the cave (onEnter, at night).
 !set kr_evening_seen
+# (RBN-QA-062) the gathering is shown, not only told: whoever is at the lodge tonight is already round Hisae's lamp, and
+# stays there for the rest of the visit; you and your companion walk to it before the line
+!walkto kr_mokichi 18 9 right now stay
+!walkto kr_sora 19 10 up now stay
+?(kr_kikyo_lodge) !walkto kr_kikyo 22 9 left now stay
+!walkto pc 20 7 down party max=6000
 narr: {宿坊|しゅくぼう} の {上|うえ} に 、 {星|ほし} が {出|で}て いる 。 ヒサエ の {灯|ひ} の まわり に 、 モキチ の {家族|かぞく} と キキョウ が {集|あつ}まって いる 。 || Stars over the lodge. Mokichi's family and Kikyō have gathered round Hisae's lamp.
 ?(comp=ren) !call kr.ren_evening
 ?(comp=nao) !call kr.nao_evening
