@@ -461,4 +461,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         gold: { n: G.narrow ? 4 : 5, now: drawn.map((d) => ({ box: d.box.slice(), len: d.len })), clear: keepClear(G, V) } };
     },
   };
+  // the written leaf, for the island's other pictures of its leaves (the leaves on the water in the crossing from
+  // Saltglass, src/ui/42f_interlude_crossing.js, RBN-QA-072)
+  RB.firstSightArt = { goldLeaf };
 })();

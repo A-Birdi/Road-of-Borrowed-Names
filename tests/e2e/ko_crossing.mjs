@@ -7,8 +7,9 @@
 //  2. back (ko.ferry_back, the boat at the island's jetty): its prompt and choice as before, with no picture; on "go"
 //     the evening moment on its line, then Saltglass harbour at 33,28 with nothing of the picture left; on "Not yet"
 //     no picture at all and nothing changed (the place, the flags, the variables);
-//  3. what each line names (the point and its lighthouse; the leaves on the water; the tree on the island and the
-//     sun) is above the dialogue sheet, measured in the page, at 1280×800 and 390×844;
+//  3. what each line names (the point and its lighthouse; the leaves on the water, the nearer ones the island's written
+//     gold leaves with ink on them; the tree on the island and the sun) is above the dialogue sheet, measured in the
+//     page, at 1280×800 and 390×844;
 //  4. with reduced motion each moment holds still (two frames alike); with motion it lives (two frames differ);
 //  5. the timing, with instant text and lines that move on by themselves, each scene reached as it always is (from
 //     Tetsu's question, from the jetty's prompt): its lead-in (the choice → its line), lead-out (its last line → the
@@ -28,6 +29,8 @@ const FL = { departed: true, ch1_done: true, ch2_done: true, mb1_done: true, mb2
 const LATER = Object.assign({ ko_arrived: true, ko_ch9: true }, FL);
 const OUT = [/^The boat clears the lighthouse/, /^Past noon, gold leaves/], BACK = /^The boat heads east/;
 const SIGHT = /^Beyond the sand stands a tree/, NAMI = /^You came\. I'm Nami/;
+// the first sight's two view lines, over its own picture of the island (ko_first_sight, RBN-QA-073), not the crossing's
+const SIGHT_VIEW = [SIGHT, /^Leaves are falling like snow/];
 
 async function start(p, o) {
   await p.evaluate(async (o) => {
@@ -40,7 +43,8 @@ async function start(p, o) {
     window.__enters = []; window.__over = []; window.__from = W.map.id;
     const enter0 = RB.world.enter;
     RB.world.enter = function (id, x, y, dir) { window.__enters.push({ map: id, at: [x, y], dir, pic: RB.interlude.active(), dark: !!document.querySelector('#overlay > .fade.on') }); return enter0.apply(this, arguments); };
-    (function tick() { if (RB.interlude.active() && W.map && W.map.id !== window.__from && window.__over.length < 5) window.__over.push(W.map.id); requestAnimationFrame(tick); })();
+    // (the crossing's picture over a place it isn't: the first sight's own picture on the shore is not it, RBN-QA-073)
+    (function tick() { const st = RB.interlude.state(); if (st && st.id === 'ko_crossing' && W.map && W.map.id !== window.__from && window.__over.length < 5) window.__over.push(W.map.id); requestAnimationFrame(tick); })();
   }, o);
 }
 // the dialogue sheet's top, measured in the page, as a row of the art buffer; and the picture's own idea of things
@@ -48,7 +52,23 @@ const sheet = (p) => p.evaluate(() => {
   const cv = document.getElementById('world'), box = document.querySelector('#ui > .dlg:not(.hidden)'), A = RB.interlude.ART.ko_crossing, pr = A && A.probe();
   if (!cv || !box || !pr) return { pr };
   const a = cv.getBoundingClientRect(), r = box.getBoundingClientRect();
-  return { row: ((r.top - a.top) / a.height) * pr.h, pr };
+  // the nearer leaves on the water, read from the canvas: in each one's box the pixels of the written leaf's gold and
+  // of its ink (src/ui/42g_interlude_firstsight.js goldLeaf)
+  const g = cv.getContext('2d'), kx = cv.width / pr.w, ky = cv.height / pr.h;
+  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const GOLD = ['#a8822e', '#d0a844', '#e8c868'].map(rgb), INK = rgb('#2a2434');
+  const near = (d, i, c) => Math.abs(d[i] - c[0]) <= 14 && Math.abs(d[i + 1] - c[1]) <= 14 && Math.abs(d[i + 2] - c[2]) <= 14;
+  const read = (pr.leaves && pr.leaves.near || []).map(({ box, len }) => {
+    const X0 = Math.floor(box[0] * kx), Y0 = Math.floor(box[1] * ky), W = Math.max(1, Math.ceil((box[2] + 1) * kx) - X0), H = Math.max(1, Math.ceil((box[3] + 1) * ky) - Y0);
+    const d = g.getImageData(X0, Y0, W, H).data;
+    let gold = 0, ink = 0;
+    for (let y = box[1]; y <= box[3]; y++) for (let x = box[0]; x <= box[2]; x++) {
+      const i = ((Math.floor((y + 0.5) * ky) - Y0) * W + (Math.floor((x + 0.5) * kx) - X0)) * 4;
+      if (GOLD.some((c) => near(d, i, c))) gold++; else if (near(d, i, INK)) ink++;
+    }
+    return { len, gold, ink, box };
+  });
+  return { row: ((r.top - a.top) / a.height) * pr.h, pr, nearRead: read };
 });
 const frame = (p) => p.evaluate(() => document.getElementById('world').toDataURL());
 // Reads a scene through: each line (what was showing once it had settled), each choice (answered by plan.choose)
@@ -95,6 +115,10 @@ function checkAbove(tag, stg, pr) {
     ok(P.leaves.n === 14 && P.leaves.top > P.yH && P.leaves.bottom < top && P.leaves.inView >= 10,
       `${tag}: leaves: the leaves on the water between the horizon and the sheet (${P.leaves.inView} of ${P.leaves.n} in view, rows ${P.leaves.top}–${P.leaves.bottom}, horizon ${P.yH}, sheet ${top.toFixed(0)})`);
     ok(P.bow.top < top, `${tag}: leaves: the bow's stem above the sheet (row ${P.bow.top})`);
+    // the nearer ones are the island's written leaves: gold, with ink on them (as its first sight draws them)
+    const nr = pr.nearRead || [], written = nr.filter((l) => l.gold >= 12 && l.ink >= 2);
+    ok(nr.length >= 3 && written.length >= Math.ceil(nr.length * 0.75) && nr.every((l) => l.box[3] < top),
+      `${tag}: leaves: the nearer leaves are written gold leaves (${written.length} of ${nr.length} gold with ink: ${nr.map((l) => `${l.len}px gold ${l.gold} ink ${l.ink}`).join('; ')})`);
   } else {
     ok(P.tree.top > 0 && P.tree.base < top && P.tree.left >= 0 && P.tree.right <= w,
       `${tag}: back: the great tree on the island whole, above the sheet (rows ${P.tree.top}–${P.tree.base}, x ${P.tree.left}–${P.tree.right} of ${w}; sheet ${top.toFixed(0)})`);
@@ -110,6 +134,7 @@ for (const [comp, W, H, reduce] of [['nao', 1280, 800, false], ['mio', 390, 844,
   await start(p, { map: 'sg.harbor', at: [34, 28], comp, reduce, flags: FL });
   const frames = {};
   const onPicture = async (rec) => {
+    if (rec.pic.id !== 'ko_crossing') return; // (the first sight's own picture: tests/e2e/ko_first_sight.mjs)
     const stg = rec.pic.stage;
     checkAbove(tag, stg, await sheet(p));
     const a = await frame(p); await p.waitForTimeout(900); frames[stg] = a === await frame(p);
@@ -119,18 +144,18 @@ for (const [comp, W, H, reduce] of [['nao', 1280, 800, false], ['mio', 390, 844,
   const out = await drive(p, { choose: pick(/go to Kotonoha/), onPicture });
   const lines = out.filter((r) => r.en), wrong = [];
   for (const r of lines) {
-    const want = OUT[0].test(r.en) ? 'out' : OUT[1].test(r.en) ? 'leaves' : null;
+    const want = OUT[0].test(r.en) ? 'out' : OUT[1].test(r.en) ? 'leaves' : SIGHT_VIEW.some((re) => re.test(r.en)) ? 'ko_first_sight' : null;
     const got = r.pic && r.pic.id === 'ko_crossing' ? r.pic.stage : r.pic ? r.pic.id : null;
     if (got !== want || (want && r.dark)) wrong.push(`"${r.en.slice(0, 34)}": ${got || 'none'}${r.dark ? ' (dark)' : ''} (want ${want || 'none'})`);
   }
   const ch = out.find((r) => r.choice);
   ok(ch && !ch.pic && /go to Kotonoha/.test(ch.choice[ch.picked]), `${tag}: out: Tetsu's choice as before, no picture over it (${ch ? ch.choice.join(' / ') : '-'})`);
-  ok(!wrong.length && lines.filter((r) => OUT.some((re) => re.test(r.en))).length === 2, `${tag}: out: its two lines over the picture at their moments (the point, then the leaves), every other line without it${wrong.length ? ' — ' + wrong.join('; ') : ''}`);
+  ok(!wrong.length && lines.filter((r) => OUT.some((re) => re.test(r.en))).length === 2, `${tag}: out: its two lines over the picture at their moments (the point, then the leaves), every other line without it (but the first sight's own two, over its own picture)${wrong.length ? ' — ' + wrong.join('; ') : ''}`);
   const after = lines.filter((r) => !OUT.some((re) => re.test(r.en)) && r.map === 'ko.shore');
   const enters = await p.evaluate(() => window.__enters), over = await p.evaluate(() => window.__over);
   const shore = enters.find((e) => e.map === 'ko.shore');
   ok(shore && !shore.pic && shore.dark && shore.at.join() === '20,22' && shore.dir === 'up' && !over.length, `${tag}: out: the picture gone and the screen dark when the shore is entered (at ${shore && shore.at}, ${shore && shore.dir}); never up over the shore (${JSON.stringify(shore)}, ${over.join(',') || 'none'})`);
-  ok(after.length && SIGHT.test(after[0].en) && after.every((r) => !r.pic) && after.some((r) => NAMI.test(r.en)), `${tag}: out: first visit: ko.first_sight follows on the shore ("${after[0] ? after[0].en.slice(0, 32) : '-'}"), then ko.begin, no picture (${after.length} lines)`);
+  ok(after.length && SIGHT.test(after[0].en) && after.every((r) => !r.pic || (r.pic.id === 'ko_first_sight' && SIGHT_VIEW.some((re) => re.test(r.en)))) && after.some((r) => NAMI.test(r.en)), `${tag}: out: first visit: ko.first_sight follows on the shore ("${after[0] ? after[0].en.slice(0, 32) : '-'}"), its view lines over its own picture, then ko.begin; nothing of the crossing's picture (${after.length} lines)`);
   const end1 = await p.evaluate(() => ({ pic: RB.interlude.active(), map: RB.world.W.map.id, arrived: RB.state.test(RB.game.s, 'ko_arrived'), ch9: RB.state.test(RB.game.s, 'ko_ch9') }));
   ok(!end1.pic && end1.map === 'ko.shore' && end1.arrived && end1.ch9, `${tag}: out: after it, on the shore, ko_arrived and ko_ch9 set, nothing of the picture left (${JSON.stringify(end1)})`);
   // back, from the jetty: the prompt, "Go back", the evening moment, Saltglass
