@@ -6,7 +6,8 @@
 //     load it is still open;
 //  3. the same place, 2×1 footprint, blocking and scene in every state: the door's line at the door as before, shut;
 //     the hall's other collision and props unchanged; you, standing in front, are drawn over the door;
-//  4. the village doors and other props keep their old drawing order (only kr_halldoor sets onWall here); no page
+//  4. the village doors and other props keep their old drawing order (onWall only on kr_halldoor and the Great Kiln's
+//     seal and doorway, RBN-QA-024; the village `door` markers not among them); no page
 //     errors.
 // Usage: node tools/build.mjs && node tests/e2e/hall_door.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -90,7 +91,8 @@ const look = (p) => p.evaluate(() => {
     return { same: a.block === z.block && a.props === z.props, onWall };
   });
   ok(geo.same, 'the hall\'s collision and placements are the same shut and open');
-  ok(geo.onWall.length === 1 && geo.onWall[0] === 'kr_halldoor', 'only kr_halldoor draws on the wall (the village doors and every other prop as before) (' + JSON.stringify(geo.onWall) + ')');
+  // (an allowlist: kr_halldoor here, the Great Kiln's seal and doorway from RBN-QA-024; Local CL-075)
+  ok(geo.onWall.slice().sort().join() === 'co_kilnmouth,co_seal,kr_halldoor' && geo.onWall.indexOf('door') < 0, 'only kr_halldoor and the Great Kiln\'s seal and doorway draw on the wall (the village doors and every other prop as before) (' + JSON.stringify(geo.onWall) + ')');
   await p.evaluate(() => { const P = RB.world.W.player; P.x = 14; P.y = 11; P.fx = 14; P.fy = 11; P.dir = 'up'; });
   await p.waitForTimeout(500);
   // your head overlaps the door's lower edge: drawn over it, the door's colours do not cover you
