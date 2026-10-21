@@ -175,10 +175,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
         // the hill rising to the crown at the right, terraced
         const hill = (x) => vb * 0.52 - clamp((x - w * 0.28) / (w * 0.5), 0, 1) * vb * 0.16 + Math.sin(x / (w * 0.09)) * s(2);
         L.fill(0, 0, w, h, (x, y) => y > hill(x), hillM, (x, y) => clamp(0.5 - (y - hill(x)) / h * 0.3 + (((Math.round(y - hill(x)) % Math.max(4, s(7))) === 0) ? -0.12 : 0) + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
-        // the great tree on the crown: its trunk flaring into the hill, its crown wide against the sky
-        const tx = Math.round(w * (G.narrow ? 0.7 : 0.74)), ty = Math.round(hill(tx) + s(3));
-        L.fill(tx - s(30), Math.round(vb * 0.14), tx + s(30), ty, (x, y) => Math.abs(x - tx) < s(9) + Math.max(0, y - ty + s(16)) ** 2 / s(12), trunk, (x, y) => clamp(0.62 - (x - tx + s(9)) / s(22) * 0.5 + (((Math.round(x * 0.7) * 5) % 7) === 0 ? -0.12 : 0), 0.02, 0.999));
-        SP.crown(L, tx, Math.round(vb * 0.12), Math.round(w * 0.24), Math.round(vb * 0.15), leafM, { n: 30, seed: 11 });
+        // the great tree on the crown, the same tree as the island's first sight and the crossing draw it
+        // (RB.firstSightArt.paintTree; RBN-QA-079, Agnes 6326875198, Local CL-143): its long limbs reaching out low under
+        // a wide umbrella of separate leaf masses, its trunk flaring into the crest with its roots. Its crown keeps one
+        // shape at every screen shape: 4.6 times as wide as it is tall (the crossing's, seen from across the water, as
+        // it is seen here from the village below), a quarter of the picture's width either side of the trunk, smaller
+        // only where the sky over the crest is too low for it (the crown and its trunk stand about 2.6 crown-heights),
+        // or where its low far end would reach into Otoha's face beside it (the shot's focus; the smallest picture)
+        const tx = Math.round(w * (G.narrow ? 0.7 : 0.74)), crest = Math.round(hill(tx));
+        const F = stone.focus(w, h, vb), crTop = (k) => Math.round(crest + s(3) - k * 1.1); // the crown's middle: the fork (half a crown-height under it) a little above the crest
+        let crh = Math.max(4, Math.round(Math.min((w * 0.24) / 4.6, (crest - s(4)) / 2.6)));
+        if (crTop(crh) + crh > F.y && tx - crh * 4.6 * 1.12 < F.x + F.w + s(2)) crh = Math.max(4, Math.floor((tx - F.x - F.w - s(2)) / (4.6 * 1.12)));
+        const crw = Math.round(crh * 4.6), cry = crTop(crh);
+        RB.firstSightArt.paintTree(L, { s, narrow: G.narrow, tx, crest, cr: { x: tx, y: cry, rx: crw, ry: crh } }, trunk, leafM);
         // the village's houses across the green: thatched roofs (hipped, the left slope in the light) over dark walls
         const house = (x0, x1, y, ht) => {
           L.fill(x0, y, x1, y + ht, (xx, yy) => yy >= y && xx >= x0 + (y + ht - yy) * 0.7 && xx <= x1 - (y + ht - yy) * 0.7, thatch, (xx, yy) => clamp((xx < x0 + (x1 - x0) * 0.35 ? 0.66 : 0.46) - (yy - y) / ht * 0.1 + (((Math.round(xx) * 3 + Math.round(yy)) % 5) === 0 ? -0.1 : 0), 0.02, 0.999));
