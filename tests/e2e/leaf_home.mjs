@@ -7,11 +7,12 @@
 //     (the Wind Stone's own scene, its wrong answer and "Not now" included);
 //  2. what a return does is unchanged, run by the scene itself: the leaf taken from you, its flag set, the count up by
 //     one, the wind sound once, the toast, the scene back on the map;
-//  3. in motion (Reduce motion off), at 1280×800 and at 390×844 on a phone: the leaf drawn on screen (gold where it was
-//     drawn), starting at the stone's top, then higher and farther east (or, for Snowbell, higher with no more than its
-//     sway sideways), fading at the end, and gone within 2 s, with nothing left drawn;
-//  4. with Reduce motion: the leaf lies on the stone's top, the same place in every frame, while the line is read, and
-//     is gone after it;
+//  3. in motion (Reduce motion off), at 1280×800 and at 390×844 on a phone, standing where the stone is used (below it,
+//     and on the phone also at its east end): the leaf drawn on screen (gold where it was drawn), starting at the
+//     stone's top, then higher and farther east (or, for Snowbell, higher with no more than its sway sideways), fading at
+//     the end inside the view, never under the dialogue box on the page, and gone within 2 s, with nothing left drawn;
+//  4. with Reduce motion: the leaf lies on the stone's top, the same place in every frame, clear of the dialogue box,
+//     while the line is read, and is gone after it;
 //  5. while Skip seen runs (the game's fast-forward), nothing is drawn; a load that changes the campaign during a
 //     flight takes the leaf away;
 //  6. no page errors.
@@ -24,9 +25,10 @@ let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) { pass++; console.log('ok   ' + m); } else { fail++; console.log('FAIL ' + m); } };
 
 const FLAGS = { departed: true, ko_arrived: true, ko_ch9: true, ch5_done: true, ko_otoha_met: true, ch4_done: true };
-async function start(p, still, item) {
-  await p.evaluate(async ({ still, item, FLAGS }) => {
-    const s = RB.game.debugStart('ko.village', 25, 18, { comp: 'suzu', flags: FLAGS, dir: 'up', edition: RB.edition.forNew() });
+// where you stand to use the stone: below its first tile facing up, or at its east end facing it (Local CL-141)
+async function start(p, still, item, at = [25, 15, 'up']) {
+  await p.evaluate(async ({ still, item, FLAGS, at }) => {
+    const s = RB.game.debugStart('ko.village', at[0], at[1], { comp: 'suzu', flags: FLAGS, dir: at[2], edition: RB.edition.forNew() });
     s.chapter = 9; s.quests.ko_main = { stage: 2, done: false, t: 1 };
     if (item) RB.state.give(s, item, 1);
     RB.game.settings.reducedMotion = !!still; RB.game.settings.textSpeed = 'instant'; RB.game.settings.questGuide = 'off';
@@ -35,24 +37,39 @@ async function start(p, still, item) {
     while (W.time - W.enteredAt < 1100 && performance.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 50));
     let last = '', same = 0;
     while (same < 3 && performance.now() - t0 < 30000) { await new Promise((r) => setTimeout(r, 100)); const k = RB.render.cam.x + ',' + RB.render.cam.y; same = k === last ? same + 1 : 0; last = k; }
-  }, { still, item, FLAGS });
+  }, { still, item, FLAGS, at });
 }
-// where the leaf was last drawn, and how much of it is gold on screen there (the canvas is the buffer at a whole scale)
+// where the leaf was last drawn, and how much of it is gold on screen there (the canvas is the buffer at a whole scale);
+// the buffer's size, and the leaf's box on the page (its ink rim included: 20×9 art px from one left of and one above
+// where it is drawn)
 const look = (p) => p.evaluate(() => {
   const LH = RB.leafHome || { last: () => null, state: () => null }; // (absent before RBN-QA-076)
   const d = LH.last(), st = LH.state(), R = RB.render, cam = R.cam;
   const top = { x: Math.round((st ? st.x : 26) * R.TS * R.ART - cam.x * R.ART) - 9, y: Math.round((st ? st.y : 14) * R.TS * R.ART - cam.y * R.ART) + 1 };
-  let gold = null;
+  const bw = Math.round(R.viewSize().w * R.ART), bh = Math.round(R.viewSize().h * R.ART);
+  let gold = null, css = null;
   if (d) {
-    const cv = document.getElementById('world'), g = cv.getContext('2d'), s = cv.width / Math.round(R.viewSize().w * R.ART);
+    const cv = document.getElementById('world'), g = cv.getContext('2d'), s = cv.width / bw;
+    const r = cv.getBoundingClientRect(), k = r.width / bw;
+    css = { l: r.left + (d.x - 1) * k, t: r.top + (d.y - 1) * k, r: r.left + (d.x + 19) * k, b: r.top + (d.y + 8) * k };
     gold = 0;
     for (let y = d.y - 1; y <= d.y + 8; y++) for (let x = d.x - 1; x <= d.x + 19; x++) {
       const px = g.getImageData(Math.floor(x * s + s / 2), Math.floor(y * s + s / 2), 1, 1).data;
       if (px[0] - px[2] > 60 && px[0] > 140 && px[1] > 100) gold++;
     }
   }
-  return { st, d, gold, top, dlg: RB.ui.dialogue.isOpen() };
+  return { st, d, gold, top, bw, bh, css, dlg: RB.ui.dialogue.isOpen() };
 });
+// the dialogue box on the page while a line is open (its sheet and the speaker's tab above it), once it has settled
+const dlgBoxes = (p) => p.evaluate(() => {
+  const box = document.querySelector('.dlg:not(.hidden)');
+  if (!box) return [];
+  return [box, ...box.querySelectorAll('.dlg-tab')].map((e) => e.getBoundingClientRect()).filter((q) => q.width > 0 && q.height > 0).map((q) => ({ l: q.left, t: q.top, r: q.right, b: q.bottom }));
+});
+// the leaf drawn inside the buffer (so on screen), and clear of every box of the dialogue
+const inView = (s) => s.d.x - 1 >= 0 && s.d.y - 1 >= 0 && s.d.x + 19 <= s.bw && s.d.y + 8 <= s.bh;
+const clear = (s, boxes) => boxes.every((q) => s.css.r <= q.l || s.css.l >= q.r || s.css.b <= q.t || s.css.t >= q.b);
+const R0 = (q) => q && [q.l, q.t, q.r, q.b].map(Math.round).join(',');
 async function runScene(p, id) {
   await p.evaluate((id) => {
     window.__done = false; window.__sfx = []; window.__toasts = [];
@@ -88,16 +105,19 @@ async function finish(p) {
   await p.close();
 }
 
-// 2, 3: in motion, at both sizes (Reedwake's leaf east; at the desktop size also Snowbell's north)
+// 2, 3: in motion, at both sizes, from where you use the stone (Reedwake's leaf east from below it; at the desktop size
+// also Snowbell's north; on the phone also Manybridge's east from the stone's east end)
 for (const [lay, opts] of [['desktop 1280×800', { viewport: { width: 1280, height: 800 } }], ['phone 390×844', { viewport: { width: 390, height: 844 }, touch: true, mobile: true, dpr: 2 }]]) {
   const { p, errors } = await page(b, url, opts);
   if (opts.touch) await p.evaluate(() => { RB.game.settings.touch = 'on'; RB.game.applySettings(); });
-  for (const [k, way] of lay.startsWith('desktop') ? [['rw', 'east'], ['sb', 'north']] : [['rw', 'east']]) {
-    await start(p, false, 'ko_leaf_' + k);
+  for (const [k, way, at] of lay.startsWith('desktop') ? [['rw', 'east', [25, 15, 'up']], ['sb', 'north', [25, 15, 'up']]] : [['rw', 'east', [25, 15, 'up']], ['mb', 'east', [27, 14, 'left']]]) {
+    await start(p, false, 'ko_leaf_' + k, at);
     const before = await p.evaluate(() => ({ inv: RB.game.s.inv['ko_leaf_' + 'rw'] || 0, ret: (RB.game.s.vars || {}).ko_ret || 0 }));
     await runScene(p, 'ko.sent_' + k);
+    // sampled until the flight is over (about 1.8 s), then the dialogue box as it has settled, the line still open
     const seen = [];
-    for (let i = 0; i < 9; i++) { await p.waitForTimeout(i ? 180 : 60); seen.push(await look(p)); }
+    for (let i = 0; i < 16; i++) { await p.waitForTimeout(i ? 150 : 60); const s = await look(p); seen.push(s); if (i && !s.st) break; }
+    const boxes = await dlgBoxes(p);
     const done = await finish(p);
     await p.waitForTimeout(700);
     const after = await look(p);
@@ -109,7 +129,9 @@ for (const [lay, opts] of [['desktop 1280×800', { viewport: { width: 1280, heig
     ok(fl.length >= 3 && fl.every((s) => s.gold >= 12), `${lay} (${k}): the leaf on screen while it flies, gold where it is drawn (${fl.map((s) => s.gold).join(', ')} gold px at ${fl.map((s) => s.d.u.toFixed(2)).join(', ')})`);
     if (way === 'east') ok(mid && mid.d.y < first.d.y - 25 && mid.d.x > first.d.x + 20, `${lay} (${k}): higher and farther east as it goes (from ${first && [first.d.x, first.d.y]} to ${mid && [mid.d.x, mid.d.y]} at u ${mid && mid.d.u.toFixed(2)})`);
     else ok(mid && mid.d.y < first.d.y - 25 && mid.d.y >= 0 && Math.abs(mid.d.x - first.d.x) <= 8, `${lay} (${k}): higher, no farther sideways than its sway (from ${first && [first.d.x, first.d.y]} to ${mid && [mid.d.x, mid.d.y]})`);
-    ok(seen.some((s) => s.d && s.d.alpha < 1) || seen[seen.length - 1].st === null, `${lay} (${k}): it fades at the end (alphas ${seen.map((s) => (s.d ? s.d.alpha.toFixed(2) : '-')).join(' ')})`);
+    const flying = seen.filter((s) => s.st && s.d && !s.st.still), fades = flying.filter((s) => s.d.alpha < 1);
+    ok(fades.length >= 1 && flying.every(inView), `${lay} (${k}, from ${at}): it fades at the end inside the view, every frame of its flight within the ${seen[0].bw}×${seen[0].bh} buffer (alphas ${seen.map((s) => (s.d && s.st ? s.d.alpha.toFixed(2) : '-')).join(' ')}; fading at ${fades.map((s) => [s.d.x, s.d.y]).join(' | ')})`);
+    ok(boxes.length >= 1 && flying.length >= 3 && flying.every((s) => clear(s, boxes)), `${lay} (${k}): never under the dialogue box on the page (the box ${boxes.map(R0).join(' / ')}; the leaf lowest at ${R0(flying.reduce((a, s) => (!a || s.css.b > a.b ? s.css : a), null))})`);
     ok(after.st === null, `${lay} (${k}): gone within 2 s, nothing left drawn (${JSON.stringify(after.st)})`);
   }
   ok(!errors.length, `${lay}: no page errors ${errors.slice(0, 2).join(' | ')}`);
@@ -123,11 +145,13 @@ for (const [lay, opts] of [['desktop 1280×800', { viewport: { width: 1280, heig
   await runScene(p, 'ko.sent_rw');
   const frames = [];
   for (let i = 0; i < 4; i++) { await p.waitForTimeout(i ? 250 : 120); frames.push(await look(p)); }
+  const sboxes = await dlgBoxes(p);
   const done = await finish(p);
   await p.waitForTimeout(400);
   const after = await look(p);
   const on = frames.filter((f) => f.st && f.st.still && f.dlg && f.d);
   ok(on.length === 4 && on.every((f) => f.d.x === on[0].d.x && f.d.y === on[0].d.y && f.gold >= 12) && Math.abs(on[0].d.x - on[0].top.x) <= 1 && Math.abs(on[0].d.y - on[0].top.y) <= 1, `with Reduce motion: the leaf lies on the stone's top, in the same place in every frame, while the line is read (${on.map((f) => [f.d.x, f.d.y, f.gold]).join(' | ')}; the top ${on[0] && [on[0].top.x, on[0].top.y]})`);
+  ok(on.length === 4 && sboxes.length >= 1 && on.every((f) => inView(f) && clear(f, sboxes)), `with Reduce motion: the still leaf on screen and not under the dialogue box (the box ${sboxes.map(R0).join(' / ')}; the leaf ${on[0] && R0(on[0].css)})`);
   ok(done && after.st === null, `with Reduce motion: gone after the line (${JSON.stringify(after.st)})`);
   // Skip seen: the game's fast-forward on, the scene run, nothing drawn
   await start(p, false, 'ko_leaf_sg');
