@@ -5484,6 +5484,14 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-011:** `index.html` sha256 `4b108ae2720d750426842509f55f7c271a5ab9991e7a5ecb8c9577bd0f1853ed`, built
+    from `cffd4ad` (CC-010 plus only the queued batch: the fog test refine, qa-024i, RBN-QA-052, 051, 054, 053, 045 and
+    the `hall_door` allowlist test; patch-identical to the agreed commits, verified by Local CL-087 and Agnes
+    6311710604); byte-identical to the build the suites ran on. On these bytes (B): `fog_event` 26/0, `lodge_arrival`
+    40/0, `hall_door` 15/0, `kiln_door` 15/0, `ruin_lanterns` 31/0, `load_mid_scene` 19/0, `guide_next_step` 24/0,
+    `social_battle` 65/0, `card_press` 13/0, `props_balance` 48/0, `road_on` 11/0, `keepers` 4/0, `hall_entry` all ok,
+    `title_ledger` 18/0, `counter_tap` 30/0, `walkto_options` 23/0. U whole suite 57,696/0 on `cffd4ad`'s source;
+    `validate.mjs` no errors. Voice: none.
   - **Candidate CC-010:** `index.html` sha256 `61c5c819f3cefdb22cbaf607c2afe9ac5c493d1338ea1b02c7282e9c39952501`, built
     from `5879c31` (CC-009 plus only RBN-QA-056, its refine and RBN-QA-057: `1d73c51`, `1dc8923`, `5879c31`,
     patch-identical to `2e598b6`, `4479bdd`, `2c73f5a`; the tree equals `2c73f5a`'s); byte-identical to the build the

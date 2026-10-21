@@ -1266,7 +1266,20 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   never acts on the live conversation; a press on a response card's Japanese words chooses that card (word-help tokens
   carry their own index), and the keyboard focus comes back to its card over a new deal; cherry-picked as `1d73c51`,
   `1dc8923`, `5879c31` (patch-identical to `2e598b6`, `4479bdd`, `2c73f5a`); B `social_battle` 65/0, `card_press`
-  13/0 on CC-010's own bytes. In candidate CC-010 (`61c5c819…`, built from `5879c31`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  13/0 on CC-010's own bytes. In candidate CC-010 (`61c5c819…`, built from `5879c31`), READY_FOR_QA.
+  RBN-QA-053, 054, 045, 051, 052, qa-024i and the fog test refine (three-party AGREE each; their integration verified by
+  Local CL-087 and Agnes 6311710604): a load or a return to the title in the middle of a line takes the old line down
+  (`campaign:changing`; a failed or cancelled load also ends a scene that had ended); the ruin's lanterns start the
+  lighting once Hisae is met (`!if kr_hisae_met`, then `kr.moths`); the guide names the step in front of you (Snowbell's
+  ice before the dial; on the Maple Ridge the stone, Hinata and Kikyō before the desk; `kr_main` 5's `kr.cave2` (22,4)
+  until it is open; `sb_lamp` 7's star chart until the log is solved; authored `atIf`, data only); the Shuttered Hall's
+  door shows its boards, rope and plaque
+  (and opens with `lw_kr_hall_open`); the walk into the Keepers' Lodge to (15,12) frames the lamp and Hisae; the Great
+  Kiln's doorway glass seal; the fog event's test setup; cherry-picked as `89f116d`, `8e9f2db`, `ca6cc86`, `feb146c`,
+  `c3b1ac2`, `304fd60`, `4e9670e`, `19b5cd3`, `58133c0` (patch-identical; QA-051's renderer hunk is qa-024's, applied
+  once), with `hall_door`'s onWall check as an allowlist (`cffd4ad`); B `fog_event` 26/0, `lodge_arrival` 40/0,
+  `hall_door` 15/0, `kiln_door` 15/0, `ruin_lanterns` 31/0, `load_mid_scene` 19/0, `guide_next_step` 24/0 on CC-011's
+  own bytes. In candidate CC-011 (`4b108ae2…`, built from `cffd4ad`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand

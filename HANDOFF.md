@@ -730,6 +730,15 @@
       qa-024i needs `hall_door`'s onWall check as an allowlist, Local CL-075). Filed: RBN-QA-058 (a procedure
       encounter's plan look-ahead mutates the live procedure, `kr.moss_steps`, Agnes 6311442246), QA-055 (preview-only),
       the QA-039 Guide follow-up.
+      CANDIDATE CC-011 (`index.html` `4b108ae2…`, built from `cffd4ad`): CC-010 plus only the queued batch agreed
+      before it, each by its exact commits (cherry-picked with `-x`, patch-identical; verified by Local CL-087 and Agnes
+      6311710604): the fog test refine (`89f116d`), qa-024i (`8e9f2db`, `ca6cc86`), RBN-QA-052 (`feb146c`, `c3b1ac2`),
+      RBN-QA-051 (`304fd60`; its renderer hunk is qa-024's, applied once), RBN-QA-054 (`4e9670e`), RBN-QA-053 (`19b5cd3`),
+      RBN-QA-045 (`58133c0`), and the `hall_door` allowlist test (`cffd4ad`). Not in it: QA-055 (`f4b6a3e`, three AGREEs
+      after CC-011 was fixed; to integrate next), QA-058 + RBN-QA-059 (the look-ahead and the "Here:" previews write to
+      the live battle: `st.enc` through `combatSim.clone`, `st.mods` through `combatLogic.snapshot`; proposal agreed by
+      all three, candidate in progress), RBN-QA-060 (Wait's wording in a conversation; proposal agreed by all three),
+      the QA-039 Guide follow-up.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

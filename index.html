@@ -50080,8 +50080,10 @@ RB.render = (function () {
       if (lx < -64 || ly < -64 || lx > bw / ART + 64 || ly > bh / ART + 80) continue;
       const opts = Object.assign({ cx: p.x, cy: p.y, still }, p.o || {});
       const d2 = (KIT && KIT.propFor(m, p.p)) || pd.draw2;
+      // a thing on a building's face (pd.onWall: the glass fused over the Great Kiln's doorway) is drawn on that wall,
+      // after the building that stands on its tile, never hidden behind it (RBN-QA-024)
       list.push({
-        z: (p.y + ph) * TS - (pd.block === false ? 12 : 0) - 0.5,
+        z: pd.onWall ? (p.y + ph) * TS + 0.5 : (p.y + ph) * TS - (pd.block === false ? 12 : 0) - 0.5,
         draw: d2 ? () => d2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)),
       });
     }
@@ -56193,7 +56195,10 @@ RB.script = (function () {
           if (!ctx.offscreenAll && !(ctx.offscreen && ctx.offscreen.has(who))) {
             RB.world.ensureSpeaker(who, sc.id);
             // someone still walking to their place speaks once they are there
+            const g0 = gen;
             await RB.world.whenArrived(who, 3000);
+            // (the campaign changed while they walked: this scene is over, its line is not said; RBN-QA-053)
+            if (g0 !== gen) return;
           }
           await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line, simple: c.simple || null, offscreen: !!(ctx.offscreenAll || (ctx.offscreen && ctx.offscreen.has(who))) });
           // the reader moved on: every gesture cued for this line settles at its hold or its end
@@ -63213,8 +63218,12 @@ RB.game = (function () {
   // keeps 'combat' on the mode stack and the screen dark) and the scene that asked for it has
   // ended (src/engine/70_script.js), so the journey goes on from the map, where the creature
   // still is. Nothing else was changed.
+  // A scene that was showing when the change began has ended with it too (its line and replies were taken down,
+  // src/ui/20_dialogue.js; RBN-QA-053): its dialogue mode, with no scene left running, goes the same way.
   function keepJourney() {
-    if (!G.playing || G.modes.indexOf('combat') < 0 || (RB.combat && RB.combat.state())) return;
+    if (!G.playing || (RB.combat && RB.combat.state())) return;
+    const sceneLeft = G.modes.indexOf('dialogue') >= 0 && !(RB.script && RB.script.isRunning());
+    if (G.modes.indexOf('combat') < 0 && !sceneLeft) return;
     setBase('world');
     RB.input.clearHeld();
     RB.ui.dialogue.hide();
@@ -69331,6 +69340,7 @@ RB.ui.dialogue = (function () {
   const esc = RB.util.esc;
   let box = null, choicesEl = null;
   let pending = null;       // resolve fn for current line
+  let choiceLayer = null;   // the replies' input layer while they are shown
   let revealing = null;     // {timer, finish}
   let shownAt = 0, lastDown = -1; // event-clock times: when the line appeared, the last pointer press
   let current = null;       // current line data
@@ -69513,9 +69523,10 @@ RB.ui.dialogue = (function () {
     RB.audio && RB.audio.sfx('text_blip', { vol: 0.35 });
     return new Promise((res) => {
       pending = res;
-      if (RB.game.fastForward() && seenScene) setTimeout(() => advance(true), 40);
+      // (each auto-advance moves on only the line it was set for: after a change of campaign a newer line may be up)
+      if (RB.game.fastForward() && seenScene) setTimeout(() => { if (pending === res) advance(true); }, 40);
       else if (RB.sequence && RB.sequence.skipping()) setTimeout(() => { if (pending === res) advance(true); }, 30);
-      else if (RB.test && RB.test.auto) setTimeout(() => advance(true), 5);
+      else if (RB.test && RB.test.auto) setTimeout(() => { if (pending === res) advance(true); }, 5);
     });
   }
   // L12, asking back: the player asks in Japanese (again, slower, more simply); the speaker answers with the
@@ -69751,6 +69762,7 @@ RB.ui.dialogue = (function () {
       choicesEl.innerHTML = '';
       choicesEl.classList.remove('hidden');
       const layer = { el: choicesEl, name: 'choices', parent: RB.ui.root, noAutofocus: false };
+      choiceLayer = layer;
       choicesEl.classList.toggle('with-dlg', isOpen());
       choicesEl.classList.toggle('dlg-top', isOpen() && box.classList.contains('top'));
       const at = performance.now();
@@ -69764,6 +69776,7 @@ RB.ui.dialogue = (function () {
           if (e && e.detail !== 0 && lastDown < at) return; // a press from before the replies appeared
           if (RB.ui.keep) RB.ui.keep.chose(op); // the reply's event-time context, for keeping it later
           RB.ui.popLayer(layer);
+          choiceLayer = null;
           choicesEl.classList.add('hidden');
           choicesEl.innerHTML = '';
           RB.audio && RB.audio.sfx('confirm');
@@ -69824,6 +69837,18 @@ RB.ui.dialogue = (function () {
     RB.game.setFastForward(false);
     current = null;
   }
+  // A change of campaign (a load, a new journey, the title) takes the old scene's line and replies with it, at once
+  // (RBN-QA-053): the reveal stops, the replies' layer comes down, and the old line's resolver is dropped, not called.
+  // The old script's generation is already over (70_script.js): calling it could let it act on the new campaign, and
+  // nothing is chosen for it.
+  function abandon() {
+    if (revealing) revealing.finish();
+    pending = null;
+    if (choiceLayer) { RB.ui.popLayer(choiceLayer); choiceLayer = null; }
+    if (choicesEl) { choicesEl.classList.add('hidden'); choicesEl.innerHTML = ''; }
+    hide();
+  }
+  if (RB.bus) RB.bus.on('campaign:changing', abandon);
   function onAction(a) {
     if (!box || box.classList.contains('hidden') || !pending) return false;
     // an illustrated sequence's keys: Escape opens its skip control, ← / P look back, R replays the shot, I hides the text
@@ -146299,14 +146324,24 @@ var RB = (globalThis.RB = globalThis.RB || {});
     for (let i = 0; i < 5; i++) px(c, x + 19, y - 8 + i * 3, i === 2 && !o.fixed ? 3 : 9, 1, '#4a3a30');
   });
 
-  // Glass seal fused over a doorway (still faintly warm).
-  def('co_seal', {}, (c, x, y, p, t, o) => {
+  // Glass seal fused over a doorway (still faintly warm), drawn on the wall it seals (onWall: in front of the building).
+  def('co_seal', { onWall: true }, (c, x, y, p, t, o) => {
     const g = 0.5 + Math.sin(t / 700) * 0.15;
     c.fillStyle = `rgba(143,184,176,${0.75})`; c.fillRect(x + 2, y - 4, 12, 19);
     px(c, x + 2, y - 4, 12, 1, '#c8e8e0');
     c.fillStyle = `rgba(255,150,80,${g * 0.35})`; c.fillRect(x + 4, y + 4, 8, 8);
     px(c, x + 5, y - 1, 1, 6, '#f0fffa'); px(c, x + 6, y - 2, 3, 1, '#f0fffa');
     if (o.cracked) { c.strokeStyle = '#f8ffff'; c.lineWidth = 1; c.beginPath(); c.moveTo(x + 3, y); c.lineTo(x + 8, y + 5); c.lineTo(x + 6, y + 10); c.lineTo(x + 13, y + 14); c.stroke(); }
+  });
+
+  // The same doorway once the seal has fallen: open and dark, the kiln's heat glowing low inside, glass left on the
+  // frame and in pieces on the step (RBN-QA-024). Drawn on the wall; nothing to touch, nothing in the way.
+  def('co_kilnmouth', { block: false, onWall: true }, (c, x, y, p, t, o) => {
+    const g = 0.5 + Math.sin(t / 700) * 0.15;
+    px(c, x + 3, y - 1, 10, 16, '#1a0e0a');
+    c.fillStyle = `rgba(255,150,80,${g * 0.4})`; c.fillRect(x + 4, y + 8, 8, 7);
+    px(c, x + 3, y - 2, 10, 1, '#8fc2bc'); px(c, x + 3, y - 1, 1, 4, '#8fc2bc'); px(c, x + 12, y - 1, 1, 3, '#8fc2bc');
+    px(c, x + 4, y + 15, 2, 1, '#c4e6de'); px(c, x + 9, y + 15, 1, 1, '#c4e6de'); px(c, x + 12, y + 14, 2, 1, '#8fc2bc');
   });
 
   // A block of stored ice packed in straw.
@@ -146597,20 +146632,55 @@ var RB = (globalThis.RB = globalThis.RB || {});
       },
       shadow: () => [48, 30, 48, 3, 0.3],
     });
-    // Glass seal fused over a doorway, still faintly warm (o.cracked).
+    // Glass seal fused over a doorway, still faintly warm (o.cracked). Drawn on the wall (onWall), over the house's
+    // own door (RBN-QA-024): the glass fills the opening between the posts and has run over the frame, a lumpy crown
+    // on the lintel, runs down the posts, a foot spread on the step; the heat glows inside it.
     A('co_seal', {
       box: [0, -14, 32, 48],
       v: (o) => (o.cracked ? 1 : 0),
       f: (t, o) => K.frame(t, 350, 4, o.still),
       draw(g, M, v, f) {
         const gl = K.FIX.glass;
-        R(g, 3, -9, 26, 40, gl[1]); R(g, 4, -8, 24, 38, gl[2]); R(g, 4, -8, 24, 2, gl[4]); R(g, 26, -6, 2, 36, gl[1]);
-        R(g, 8, 4, 16, 16, mix(gl[2], '#ff9650', [0.2, 0.28, 0.34, 0.28][f]));
-        R(g, 11, 8, 10, 8, mix(gl[3], '#ffb070', [0.25, 0.35, 0.42, 0.35][f]));
-        line(g, 8, 26, 14, -4, gl[4], 1); R(g, 9, -4, 2, 10, 'rgba(255,255,255,0.8)');
-        if (v) { line(g, 6, 0, 16, 10, '#f8ffff', 1); line(g, 16, 10, 12, 20, '#f8ffff', 1); line(g, 16, 10, 26, 28, '#f8ffff', 1); line(g, 12, 20, 6, 26, '#f8ffff', 1); }
+        R(g, 6, -3, 20, 35, gl[1]); R(g, 7, -2, 18, 33, gl[2]);
+        for (const [x, w, h] of [[4, 10, 2], [11, 11, 3], [20, 9, 2]]) {
+          R(g, x, -1 - h, w, h + 1, gl[1]); R(g, x + 1, -h, w - 2, h, gl[2]); R(g, x + 1, -h, w - 2, 1, gl[4]);
+        }
+        for (const [x, len] of [[3, 20], [26, 12]]) { R(g, x, -2, 3, len, gl[1]); R(g, x + 1, -1, 1, len - 1, gl[2]); R(g, x + 1, len - 2, 1, 2, gl[3]); }
+        R(g, 4, 29, 24, 3, gl[1]); R(g, 5, 29, 22, 1, gl[3]); R(g, 3, 30, 1, 2, gl[1]); R(g, 28, 30, 1, 2, gl[1]);
+        R(g, 10, 6, 12, 14, mix(gl[2], '#ff9650', [0.2, 0.28, 0.34, 0.28][f]));
+        R(g, 12, 9, 8, 8, mix(gl[3], '#ffb070', [0.25, 0.35, 0.42, 0.35][f]));
+        line(g, 9, 26, 15, -2, gl[4], 1); R(g, 9, -1, 2, 10, 'rgba(255,255,255,0.8)'); R(g, 21, 18, 1, 6, gl[4]);
+        if (v) { line(g, 7, 0, 16, 10, '#f8ffff', 1); line(g, 16, 10, 12, 20, '#f8ffff', 1); line(g, 16, 10, 24, 28, '#f8ffff', 1); line(g, 12, 20, 7, 26, '#f8ffff', 1); }
       },
-      shadow: () => [16, 30, 13, 2, 0.28],
+      shadow: () => [16, 31, 13, 2, 0.28],
+    });
+    // The doorway once the seal has fallen (RBN-QA-024): the house's own frame and lintel stay; between its posts the
+    // leaves are gone and the kiln is open, dark, with its heat glowing low inside (o.still holds the glow). Glass
+    // still clings to the lintel and the posts in drips, and lies broken on the step.
+    A('co_kilnmouth', {
+      box: [0, -8, 32, 44],
+      f: (t, o) => K.frame(t, 350, 4, o.still),
+      draw(g, M, v, f) {
+        const gl = K.FIX.glass, dark = ['#140a08', '#1e110c'];
+        // the mouth between the posts: dark, deepest at the top, the heat glowing up from the floor inside
+        R(g, 7, -1, 18, 32, dark[0]);
+        const heat = [0.85, 1, 1.15, 1][f];
+        for (let y = 8; y < 31; y++) R(g, 7, y, 18, 1, mix(dark[1], '#ff8040', Math.min(0.62, Math.pow((y - 8) / 22, 2) * 0.55 * heat)));
+        R(g, 8, 29, 16, 1, mix('#ff8040', '#ffd090', 0.35 * heat)); R(g, 11, 30, 10, 1, mix('#ff9850', '#ffe0a0', 0.4 * heat));
+        R(g, 7, -1, 18, 2, '#0c0606'); R(g, 7, -1, 1, 32, '#0c0606'); R(g, 24, -1, 1, 32, '#0c0606');
+        // glass left on the frame: drips from the lintel, runs down the inside of each post
+        for (const [x, w, h] of [[6, 4, 5], [11, 3, 3], [15, 5, 6], [21, 3, 4], [24, 3, 7]]) {
+          R(g, x, -4, w, h, gl[2]); R(g, x, -4, w, 1, gl[4]); R(g, x + w - 1, -3, 1, h - 1, gl[1]);
+          R(g, x + (w >> 1), -4 + h, 1, 2, gl[3]);
+        }
+        R(g, 6, 2, 2, 14, gl[2]); R(g, 6, 2, 1, 14, gl[4]); R(g, 6, 16, 1, 3, gl[3]);
+        R(g, 24, 4, 2, 10, gl[2]); R(g, 25, 4, 1, 10, gl[1]); R(g, 25, 14, 1, 2, gl[3]);
+        // broken glass on the step stone, catching the light
+        for (const [x, y, w] of [[5, 30, 3], [10, 31, 2], [14, 30, 4], [20, 31, 3], [25, 30, 2], [17, 32, 2], [8, 32, 2]]) {
+          R(g, x, y, w, 2, gl[2]); R(g, x, y, w, 1, gl[4]);
+        }
+        R(g, 15, 30, 1, 1, '#ffffff'); R(g, 26, 30, 1, 1, '#ffffff');
+      },
     });
     // A block of stored ice packed in straw.
     A('co_iceblock', {
@@ -147412,6 +147482,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     props: [
       { p: 'co_seal', x: 20, y: 5, if: '!co_seal_broken', scene: 'co.kiln_seal' },
+      // the doorway open once the seal has fallen (RBN-QA-024): a look only, on the house's own door
+      { p: 'co_kilnmouth', x: 20, y: 5, if: 'co_seal_broken' },
       { p: 'kiln', x: 11, y: 3, o: { ash: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
       { p: 'sign', x: 5, y: 13, scene: 'co.works_sign' },
       { p: 'signblank', x: 29, y: 13, scene: 'co.works_sign2' },
@@ -152408,8 +152480,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: 'アカリ の {手紙|てがみ} を ホシノ に {届|とど}けよう 。', en: 'You have Akari\'s letters, in order. Bring them to Hoshino.' },
       { jp: '{吹雪|ふぶき} が {来|く}る 。 {宿|やど} へ {急|いそ}ごう 。', en: 'A snowstorm is coming. Get to the inn.' },
       { jp: '{雪見屋|ゆきみや} で {吹雪|ふぶき} が {過|す}ぎる の を {待|ま}とう 。 {部屋|へや} は {二階|にかい} だ 。', en: 'Wait out the storm at Yukimiya. When you are ready to rest, your room is upstairs.' },
-      { jp: '{吹雪|ふぶき} が やんだ 。 {星|ほし} の {石段|いしだん} を {上|のぼ}って 、 {天文台|てんもんだい} へ {行|い}こう 。', en: 'The storm has passed. Climb the Star Stair, past Hoshino\'s house, to the observatory.' },
-      { jp: '{凍|こお}った {天文台|てんもんだい} の {中|なか} を 、 {上|うえ} へ {進|すす}もう 。', en: 'Find a way up through the frozen observatory to the lamp room at the top.' },
+      { jp: '{吹雪|ふぶき} が やんだ 。 {星|ほし} の {石段|いしだん} を {上|のぼ}って 、 {天文台|てんもんだい} へ {行|い}こう 。', en: 'The storm has passed. Climb the Star Stair, past Hoshino\'s house, to the observatory.',
+        // where it leads, named (RBN-QA-045): the ice on the Star Stair until it is melted (its scene only sets this stage
+        // again, so the derivation could not count it as the step and fell back on the dial behind it); then derived
+        atIf: [{ if: '!sb_stair_open', at: { map: 'sb.hamlet', prop: 'sb_icewall', x: 30, y: 1 } }] },
+      { jp: '{凍|こお}った {天文台|てんもんだい} の {中|なか} を 、 {上|うえ} へ {進|すす}もう 。', en: 'Find a way up through the frozen observatory to the lamp room at the top.',
+        // (RBN-QA-045) the observing log in the chart room until it is read (it opens the stair up); then derived (the
+        // gallery's crank)
+        atIf: [{ if: '!sb_log_solved', at: { map: 'sb.obs_charts', prop: 'sb_starchart', x: 4, y: 5 } }] },
       { jp: '{丸屋根|まるやね} の {部屋|へや} で 、 {灯|あか}り を ともそう 。', en: 'Relight the lamp under the dome.' },
     ] };
   C.quests.sb_goats = { chapter: 4, title: { jp: '{多|おお}すぎる ヤギ', en: 'Too Many Goats' },
@@ -198998,9 +199076,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   def('kr_jar', {}, (c, x, y, p) => {
     px(c, x + 4, y + 4, 8, 10, '#7e402b'); px(c, x + 5, y + 2, 6, 2, '#55291f'); px(c, x + 5, y + 5, 2, 6, '#a45c39');
   });
-  def('kr_halldoor', { w: 2 }, (c, x, y, p) => {
-    px(c, x + 2, y - 14, 28, 28, p.wood[1]); px(c, x + 15, y - 14, 2, 28, p.wood[2]);
-    px(c, x, y - 6, 32, 2, '#c8b07a'); for (let i = 0; i < 4; i++) px(c, x + 4 + i * 7, y - 4, 2, 5, '#f0e8d0');
+  // (onWall: drawn on the hall's front wall, after the building it stands in; RBN-QA-051)
+  def('kr_halldoor', { w: 2, onWall: true }, (c, x, y, p, t, o) => {
+    const open = !!(o && o.open);
+    px(c, x + 2, y - 14, 28, 28, p.wood[1]);
+    if (open) { px(c, x + 11, y - 13, 10, 27, '#140d08'); px(c, x + 10, y - 14, 1, 28, p.wood[2]); px(c, x + 21, y - 14, 1, 28, p.wood[2]); px(c, x + 2, y - 6, 2, 9, '#c8b07a'); }
+    else { px(c, x + 15, y - 14, 2, 28, p.wood[2]); px(c, x, y - 6, 32, 2, '#c8b07a'); for (let i = 0; i < 4; i++) px(c, x + 4 + i * 7, y - 4, 2, 5, '#f0e8d0'); }
+    // the plaque over the doors: weathered wood, its writing worn to marks
+    px(c, x + 11, y - 13, 10, 6, '#3a2a1a'); px(c, x + 12, y - 12, 8, 4, '#d6c296');
+    px(c, x + 14, y - 11, 1, 2, '#4a3624'); px(c, x + 16, y - 11, 1, 2, '#4a3624'); px(c, x + 18, y - 11, 1, 2, '#4a3624');
   });
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
@@ -199114,16 +199198,32 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
   });
 
-  // The shuttered hall's door (2×1): heavy boards behind a straw rope with paper streamers; shut.
+  // The shuttered hall's door (2×1): heavy boards behind a straw rope with paper streamers, and over them a weathered
+  // plaque, its writing worn to marks (the line read at the door says what it was). Shut; once opened
+  // (lw_kr_hall_open, the map's second placement), the leaves stand parted on the dark inside, the rope untied. Drawn
+  // on the hall's front wall (onWall), not behind it (RBN-QA-051).
   art('kr_halldoor', {
     box: [-4, -44, 72, 76],
+    v: (o) => (o.open ? 1 : 0),
     ink: true,
-    draw(g, M) {
+    draw(g, M, v) {
       const w5 = M.wood;
-      R(g, 2, -40, 60, 64, w5[1]); R(g, 2, -40, 60, 3, w5[3]); R(g, 31, -40, 2, 64, w5[0]);
-      for (let y = -32; y < 22; y += 8) { R(g, 4, y, 26, 1, w5[0]); R(g, 34, y, 26, 1, w5[0]); }
-      line(g, 0, -18, 64, -18, ST[2], 3); line(g, 0, -17, 64, -17, ST[3], 1);
-      for (let i = 0; i < 5; i++) { const x = 6 + i * 13; poly(g, [[x, -16], [x + 4, -16], [x + 2, -10], [x + 5, -10], [x + 2, -4], [x, -4]], PP[4]); }
+      if (v) {
+        // the leaves pushed back, the dark of the hall between them, the rope hanging from one post
+        R(g, 2, -40, 60, 64, w5[1]); R(g, 2, -40, 60, 3, w5[3]);
+        R(g, 20, -37, 24, 61, '#140d08'); R(g, 22, -30, 20, 54, '#21160d');
+        R(g, 18, -40, 2, 64, w5[0]); R(g, 44, -40, 2, 64, w5[0]);
+        for (let y = -32; y < 22; y += 8) { R(g, 4, y, 14, 1, w5[0]); R(g, 46, y, 14, 1, w5[0]); }
+        line(g, 1, -18, 4, 14, ST[2], 3); line(g, 2, -17, 5, 14, ST[3], 1);
+      } else {
+        R(g, 2, -40, 60, 64, w5[1]); R(g, 2, -40, 60, 3, w5[3]); R(g, 31, -40, 2, 64, w5[0]);
+        for (let y = -32; y < 22; y += 8) { R(g, 4, y, 26, 1, w5[0]); R(g, 34, y, 26, 1, w5[0]); }
+        line(g, 0, -18, 64, -18, ST[2], 3); line(g, 0, -17, 64, -17, ST[3], 1);
+        for (let i = 0; i < 5; i++) { const x = 6 + i * 13; poly(g, [[x, -16], [x + 4, -16], [x + 2, -10], [x + 5, -10], [x + 2, -4], [x, -4]], PP[4]); }
+      }
+      // the plaque over the doors, across the seam
+      R(g, 21, -38, 22, 14, '#3a2a1a'); R(g, 22, -37, 20, 12, '#cdb88c'); R(g, 22, -37, 20, 2, '#e2d0a6');
+      for (const [mx, my, mh] of [[26, -34, 6], [31, -35, 7], [36, -33, 5]]) R(g, mx, my, 2, mh, '#5a4430');
     },
   });
 })();
@@ -199246,8 +199346,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
       T('{杉|すぎ} の {石段|いしだん} を {登|のぼ}って 、 {狐橋|きつねばし} の {里|さと} へ {行|い}こう 。', 'Climb the cedar steps to the hamlet at the Fox Bridge.'),
       T('{尾根|おね} を {越|こ}えて 、 {灯守|ひもり} の {宿坊|しゅくぼう} を {探|さが}そう 。', 'Cross the ridge and find the keepers\' lodge.'),
       T('ヒサエ に {頼|たの}まれた 。 {尾根|おね} の {灯籠|とうろう} に {灯|ひ} を {入|い}れて 、 {守|まも}ろう 。', 'Hisae has asked you to light the ridge\'s waystation lanterns, and keep them lit.'),
-      T('{洞|ほら} の {灯籠|とうろう} を 、 {正|ただ}しい {順番|じゅんばん} で {点|つ}けよう 。 {言|い}い{伝|つた}え を {比|くら}べて 。', 'Light the cave\'s lanterns in the right order: weigh the tellings to find it.'),
-      T('{書庫|しょこ} の {洞|ほら} の {奥|おく} で 、 {灯守|ひもり} の {記録|きろく} を {読|よ}もう 。', 'Read the keepers\' registers at the back of the scriptorium cave.'),
+      // where it leads, named (RBN-QA-045): the first telling the rite still lacks, in the order kr.rite asks for them (the
+      // stele, the children's song, Kikyō's scroll: Kikyō on the ridge until she moves to the lodge); then derived (the
+      // rite's desk in the cave)
+      Object.assign(T('{洞|ほら} の {灯籠|とうろう} を 、 {正|ただ}しい {順番|じゅんばん} で {点|つ}けよう 。 {言|い}い{伝|つた}え を {比|くら}べて 。', 'Light the cave\'s lanterns in the right order: weigh the tellings to find it.'), { atIf: [
+        { if: '!kr_stele_read', at: { map: 'kr.ridge', prop: 'kr_stele', x: 14, y: 8 } },
+        { if: '!kr_rhyme_heard', at: { map: 'kr.fox', npc: 'kr_hinata' } },
+        { if: '!kr_scroll_done&!kr_kikyo_lodge', at: { map: 'kr.ridge', npc: 'kr_kikyo' } },
+        { if: '!kr_scroll_done', at: { map: 'kr.lodge', npc: 'kr_kikyo' } },
+      ] }),
+      // (RBN-QA-045) the Teller's Shadow before the Copying Room's stairs until it lets you by (either of its endings opens
+      // them); then derived (the registers)
+      Object.assign(T('{書庫|しょこ} の {洞|ほら} の {奥|おく} で 、 {灯守|ひもり} の {記録|きろく} を {読|よ}もう 。', 'Read the keepers\' registers at the back of the scriptorium cave.'), { atIf: [
+        { if: '!kr_cave2_open', at: { map: 'kr.cave2', x: 22, y: 4 } },
+      ] }),
       T('{宿坊|しゅくぼう} で 、 {夜|よ}{通|どお}し の {灯|ひ} の {番|ばん} を しよう 。', 'Keep the vigil at the lodge, through the night.'),
       T('{夜|よ} が {明|あ}けた 。 {峠|とうげ} を {越|こ}えて 、 {灯落|ひおち} へ {下|くだ}ろう 。', 'Dawn. Cross the pass and go down to Lanternfall.'),
     ],
@@ -199575,7 +199687,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 7, y: 3, w: 16, h: 8, roof: 'tile', wall: 'wood', door: null, windows: [] },
     ],
     props: [
-      { p: 'kr_halldoor', x: 14, y: 10, scene: 'kr.hall_door' },
+      // shut, then (once actually opened with the keepers' ledger, lw_kr_hall_open) standing open: the same place,
+      // footprint and scene (RBN-QA-051)
+      { p: 'kr_halldoor', x: 14, y: 10, scene: 'kr.hall_door', if: '!lw_kr_hall_open' },
+      { p: 'kr_halldoor', x: 14, y: 10, o: { open: true }, scene: 'kr.hall_door', if: 'lw_kr_hall_open' },
       { p: 'kr_toro', x: 8, y: 12, scene: 'kr.hall_lantern' }, { p: 'kr_toro', x: 21, y: 12, scene: 'kr.hall_lantern' },
       { p: 'kr_toro', x: 6, y: 16 }, { p: 'kr_toro', x: 23, y: 16 },
       { p: 'stone_marker', x: 11, y: 17, scene: 'kr.hall_marker' },
@@ -200161,6 +200276,9 @@ kr_kikyo[smile]: ありがとう 。 {宿坊|しゅくぼう} で {待|ま}っ�
 # a cliff with a door in it.
 !set kr_lodge_seen
 narr: {紅葉|もみじ} の {林|はやし} を {抜|ぬ}ける と 、 {屋根|やね} の ない {石|いし} の {建物|たてもの} が あった 。 {灯守|ひもり} の {宿坊|しゅくぼう} だ 。 || Out of the maples stands a long stone building with no roof: the keepers' lodge.
+# (RBN-QA-052) you walk in under the broken walls, your companion with you, so the lamp and the woman trimming it are in
+# view for the line that tells of them (they stand far from where the road comes in, off the edge of the screen there)
+!walkto pc 15 12 up party max=8000
 narr: {壊|こわ}れた {壁|かべ} の {真|ま}ん{中|なか} に 、 {灯|ひ} が {一|ひと}つ だけ {点|つ}いて いる 。 {小|ちい}さな おばあさん が 、 その {芯|しん} を {整|ととの}えて いた 。 || In the middle of the broken walls a single lamp is lit. A small old woman is trimming its wick.
 ?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp[surprise]: …… {灯|ひ} が 、 {点|つ}いて います 。 この {道|みち} で 、 {初|はじ}めて {誰|だれ} か が {点|つ}けた {灯|ひ} を {見|み}ました 。 || …There's a light. The first one on this road that someone else has lit.
@@ -200225,8 +200343,14 @@ narr: 「{名|な} は {灯|ひ} に 、 {灯|ひ} は {人|ひと} に 、 {人
 narr: {古|ふる}い {灯守|ひもり} の {言葉|ことば} らしい 。 || An old keepers' saying, it seems.
 
 @scene kr.ruin_lanterns
+# With Hisae's oil, the lanterns themselves start the lighting (RBN-QA-054): the same scene as the strip north of them,
+# which guards its own once-only end. Nothing follows the call: a lost or fled defence ends there.
 narr: {崩|くず}れた {三|さん} の {宿|やど} の {灯籠|とうろう} が {二|ふた}つ 。 {暗|くら}い まま だ 。 || Two lanterns at the ruined third waystation, still dark.
+!if kr_hisae_met -> light
 ?(!kr_hisae_met) narr: {宿坊|しゅくぼう} の {人|ひと} なら 、 この {灯籠|とうろう} の こと を {知|し}って いる かも しれない 。 || Someone at the lodge may know about these lanterns.
+!end
+:light
+!call kr.moths
 
 @scene kr.moths
 # The Wick Moths (E6): the lanterns lit, kept lit while the moths come for the flame. Either ending leads on.
