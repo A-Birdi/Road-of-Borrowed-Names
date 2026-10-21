@@ -32,7 +32,7 @@ async function start(p, map, x, y, dir, o) {
     for (const it of o.items || []) RB.state.give(s, it, 1);
     RB.questGuide.follow('ko_main');
     RB.game.settings.textSpeed = 'instant';
-    RB.game.settings.reduceMotion = !!o.still;
+    RB.game.settings.reducedMotion = !!o.still;
     RB.game.applySettings();
     RB.world.refreshActors();
     RB.questMarks.refresh();
@@ -82,7 +82,7 @@ const read = (p, tx, ty, w) => p.evaluate(({ tx, ty, w }) => {
   const bb = (a) => (a.length ? [Math.min(...a.map((l) => l[0])), Math.min(...a.map((l) => l[1])), Math.max(...a.map((l) => l[0])), Math.max(...a.map((l) => l[1]))] : null);
   const mk = M.marks.find((m) => m.kind === 'target' && m.tx === tx && m.ty === ty) || null;
   const W = RB.world.W;
-  return { at: [W.player.x, W.player.y], front: RB.world.frontTile(), mk, marks: M.marks.map((m) => ({ kind: m.kind, target: m.target, id: m.id, tx: m.tx, ty: m.ty, x: m.x, y: m.y, edge: m.edge })), leaves, box, chev: bb(chev), amber: bb(amber), tile: [X0, Y0, X1, Y1], HEAD: 20, ATS: TS * ART,
+  return { reduced: RB.game.reducedMotion(), at: [W.player.x, W.player.y], front: RB.world.frontTile(), mk, marks: M.marks.map((m) => ({ kind: m.kind, target: m.target, id: m.id, tx: m.tx, ty: m.ty, x: m.x, y: m.y, edge: m.edge })), leaves, box, chev: bb(chev), amber: bb(amber), tile: [X0, Y0, X1, Y1], HEAD: 20, ATS: TS * ART,
     targets: RB.questGuide.targets('ko_main').targets.map((t) => [t.kind, t.map, t.p || t.id, t.x, t.y]), held: !!RB.game.s.inv.ko_leaf_rw };
 }, { tx, ty, w });
 
@@ -99,8 +99,8 @@ for (const [lay, opts] of [['desktop 1280×800', { viewport: { width: 1280, heig
   if (L.mk && L.box) {
     const cx = (L.box[0] + L.box[2]) / 2, gap = L.box[1] - L.mk.y;
     const under = L.leaves.filter(([x, y]) => x >= L.mk.x - 7 && x <= L.mk.x + 7 && y >= L.mk.y - 17 && y <= L.mk.y);
-    ok(Math.abs(L.mk.x - cx) <= 2 && gap >= 1 && gap <= 6 && !under.length,
-      `${tag} not faced, held still: the diamond over the middle of the drift (tip at ${L.mk.x},${L.mk.y}; the drift's leaves ${L.box.join(',')}, middle ${cx}), its tip ${gap} art px above the highest leaf, no leaf under it (${under.length})`);
+    ok(L.reduced && Math.abs(L.mk.x - cx) <= 2 && gap >= 1 && gap <= 6 && !under.length,
+      `${tag} not faced, held still (Reduce motion read by the game: ${L.reduced}): the diamond over the middle of the drift (tip at ${L.mk.x},${L.mk.y}; the drift's leaves ${L.box.join(',')}, middle ${cx}), its tip ${gap} art px above the highest leaf, no leaf under it (${under.length})`);
   } else ok(false, `${tag} not faced: the diamond and the drift measured (${JSON.stringify({ mk: L.mk, box: L.box })})`);
   const still = L;
 
@@ -116,15 +116,16 @@ for (const [lay, opts] of [['desktop 1280×800', { viewport: { width: 1280, heig
   // 3. in motion: six frames (the diamond's amber on screen)
   await start(p, 'ko.shore', 9, 17, 'down', { still: false });
   const lows = [];
-  for (let i = 0; i < 6; i++) { const M = await read(p, 9, 14, 2); lows.push(M.amber && M.box ? [M.amber[3], M.box[1]] : null); await p.waitForTimeout(130); }
-  ok(lows.every((l) => l && l[0] < l[1]), `${tag} in motion: the diamond's lowest pixel above the drift's highest leaf in every frame (${JSON.stringify(lows)})`);
+  let moving = null;
+  for (let i = 0; i < 6; i++) { const M = await read(p, 9, 14, 2); if (moving == null) moving = !M.reduced; lows.push(M.amber && M.box ? [M.amber[3], M.box[1]] : null); await p.waitForTimeout(130); }
+  ok(moving && lows.every((l) => l && l[0] < l[1]), `${tag} in motion (Reduce motion off: ${moving}): the diamond's lowest pixel above the drift's highest leaf in every frame (${JSON.stringify(lows)})`);
 
   // 4. not this item: a person and a prop without markTop, at a standing person's head as before
   // a prop without markTop: Reedwake's dead lanterns, while the labels are half done (as quest_guide marks them)
   await p.evaluate(async () => {
     const s = RB.game.debugStart('rw.village', 21, 16, { dir: 'up', flags: { rw_arrived: true, rw_road_lit: true, rw_met_tsuru: true, rw_met_ren: true, rw_letters_done: true, rw_bottles_done: true } });
     for (const ev of RB.content.maps['rw.village'].onEnter || []) s.flags['enter:rw.village:' + ev.scene] = true;
-    RB.game.settings.textSpeed = 'instant'; RB.game.settings.reduceMotion = true; RB.game.applySettings();
+    RB.game.settings.textSpeed = 'instant'; RB.game.settings.reducedMotion = true; RB.game.applySettings();
     let t = Date.now() - 100000;
     for (const [q, v] of [['rw_tools', 0], ['rw_labels', 1]]) { RB.state.setQuest(s, q, v); s.quests[q].t = (t += 1000); }
     RB.questGuide.follow('rw_labels'); RB.questMarks.refresh();
