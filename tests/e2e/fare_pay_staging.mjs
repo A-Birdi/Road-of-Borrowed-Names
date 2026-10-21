@@ -4,8 +4,9 @@
 //     sitting here since morning";
 //  2. at "Let's begin." she stands and walks round to Kōji's side (4,6), facing him (5,6, facing her): the walk is made
 //     (no fallback) from every side;
-//  3. side by side for the repayment: the coins in her hands, the fare book in his, the seal from him to her, each at
-//     its line; your companion by the door (3,7), off her tile and out of the way;
+//  3. side by side for the repayment: the coins in her hands, the fare book in his (and he still faces her, the open book
+//     between them, not turned to you: Local CL-066), the seal from him to her, each at its line; your companion by the
+//     door (3,7), off her tile and out of the way;
 //  4. the scene ends as before (the quest step, Chigusa on her way); no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/fare_pay_staging.mjs   (EVIDENCE=<dir> also saves frames)
 import path from 'node:path';
@@ -32,7 +33,8 @@ async function run(side, comp) {
   const look = () => p.evaluate(() => {
     const st = RB.staging.state(), f = (id) => st.actors.find((a) => a.id === id) || null;
     const c = f('lq_chigusa'), k = f('koji'), m = f('comp');
-    return { chigusa: c && { at: [c.x, c.y], dir: c.dir, pose: c.pose, rest: c.rest, held: c.held }, koji: k && { at: [k.x, k.y], dir: k.dir, held: k.held }, comp: m && [m.x, m.y], fallbacks: RB.staging.stats().walkFallbacks };
+    // (dir: the way each is drawn facing, a scene's !look or turn over the walking direction)
+    return { chigusa: c && { at: [c.x, c.y], dir: c.look || c.dir, pose: c.pose, rest: c.rest, held: c.held }, koji: k && { at: [k.x, k.y], dir: k.look || k.dir, held: k.held }, comp: m && [m.x, m.y], fallbacks: RB.staging.stats().walkFallbacks };
   });
   const before = await look();
   await p.evaluate(() => RB.world.interact());
@@ -67,7 +69,7 @@ for (const side of SIDES) for (const comp of side.name === 'west' ? ['suzu', 'na
   ok(since && since.chigusa.at.join() === '6,4' && since.chigusa.rest === 'sit' && !since.chigusa.pose, tag + ': still seated for "sitting here since morning" (' + JSON.stringify(since && since.chigusa) + ')');
   ok(coins && coins.chigusa.at.join() === '4,6' && coins.chigusa.dir === 'right' && coins.chigusa.pose === 'stiff' && coins.koji.at.join() === '5,6' && coins.koji.dir === 'left' && coins.fallbacks === r.before.fallbacks, tag + ': at the coins she stands beside Kōji, facing him, the walk made (' + JSON.stringify(coins && { c: coins.chigusa, k: coins.koji, fb: coins.fallbacks - r.before.fallbacks }) + ')');
   ok(coins && coins.chigusa.held === 'coins', tag + ': the coins in her hands');
-  ok(book && book.koji.held === 'book' && book.chigusa.at.join() === '4,6', tag + ': the fare book in his hands, held out to her (' + JSON.stringify(book && { k: book.koji, c: book.chigusa.at }) + ')');
+  ok(book && book.koji.held === 'book' && book.koji.dir === 'left' && book.koji.at.join() === '5,6' && book.chigusa.at.join() === '4,6', tag + ': the fare book in his hands, held out to her, facing her (' + JSON.stringify(book && { k: book.koji, c: book.chigusa.at }) + ')');
   ok(seal && (seal.chigusa.held === 'stamp' || seal.koji.held === 'stamp'), tag + ': the seal passes between them (' + JSON.stringify(seal && { c: seal.chigusa.held, k: seal.koji.held }) + ')');
   ok(coins && JSON.stringify(coins.comp) === '[3,7]', tag + ': your companion by the door, off her tile (' + JSON.stringify(coins && coins.comp) + ')');
   ok(r.after.paid && r.after.mode === 'world', tag + ': the scene ends as before (' + JSON.stringify(r.after) + ')');

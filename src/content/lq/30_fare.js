@@ -291,7 +291,7 @@ lq_chigusa: {分|わ}かってる 。 でも 、 {払|はら}わせて おくれ
 koji: …… {分|わ}かった 。 || …All right.
 !gesture lq_chigusa handover koji
 narr: コウジ は {小銭|こぜに} を {受|う}け{取|と}り 、 {渡|わた}し{帳|ちょう} を {開|ひら}いた 。 {白|しろ}い {所|ところ} の {横|よこ} に 、 {筆|ふで} を {置|お}く 。 || Kōji takes the coins and opens the fare book, and sets a brush beside the blank space.
-!look koji pc
+!look koji lq_chigusa
 !prop koji book
 !gesture koji present lq_chigusa hold
 koji: {名前|なまえ} を {書|か}いて くれ 。 {帳面|ちょうめん} に 、 {覚|おぼ}えて おいて もらおう 。 || Write your name. Let the book remember it.
