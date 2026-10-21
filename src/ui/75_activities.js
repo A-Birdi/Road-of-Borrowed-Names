@@ -74,7 +74,7 @@ RB.activities = (function () {
         P.fr.setTitle(RB.ui.jhtml(a.title.jp) + ' ' + esc(a.title.en), 'Customer ' + (i + 1) + ' of ' + custs.length);
         const n = Object.keys(tray).reduce((t, k) => t + tray[k], 0);
         P.body.innerHTML =
-          '<section class="act-say">' + (who ? '<canvas width="48" height="48" class="act-face" aria-hidden="true"></canvas>' : '') +
+          '<section class="act-say" aria-label="The customer" tabindex="-1">' + (who ? '<canvas width="48" height="48" class="act-face" aria-hidden="true"></canvas>' : '') +
             '<div class="act-line"><div class="act-who">' + esc(who ? who.name.en : c.name || 'Customer') + '</div>' +
             '<div class="act-jp">' + RB.ui.jhtml(l.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(l.en)) + '</div>' : trButton()) + '</div></section>' +
           '<h3>' + RB.learnUi.icon('tray') + '<span>The tray</span><span class="count">' + (n ? n + ' item' + (n > 1 ? 's' : '') : 'empty') + '</span></h3>' +
@@ -110,9 +110,10 @@ RB.activities = (function () {
             fbSet(fb, 'ok', 'Just right.', '<div class="fb-jp">' + RB.ui.jhtml(thanks.jp) + '</div><div class="muted">' + esc(thanks.en) + '</div>');
             P.body.querySelectorAll('[data-add], [data-rm]').forEach((x) => (x.disabled = true));
             P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < custs.length - 1 ? 'Next customer' : 'Finish');
+            // (the next customer from the top, as the next letter below: the feedback had scrolled the page down to itself)
             P.foot.querySelector('[data-next]').onclick = () => {
               i++; tray = {}; firstTry = true; assisted = false; showEn = showEnDefault();
-              if (i >= custs.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes, results }); } else render();
+              if (i >= custs.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes, results }); } else { render(); P.body.scrollTop = 0; const say = P.body.querySelector('.act-say'); if (say) say.focus({ preventScroll: true }); }
             };
             P.foot.querySelector('[data-next]').focus({ preventScroll: true });
           } else {
@@ -151,7 +152,7 @@ RB.activities = (function () {
         // scene before it may question why the addresses are gone (battle addendum RBN-05)
         const lead = a.lead ? tier(a.lead) : null;
         P.body.innerHTML = '<p class="muted small act-lead">' + (lead ? (lead.jp ? RB.ui.jhtml(lead.jp) + ' ' : '') + esc(lead.en) : 'The address is missing. Read the letter: who is it for?') + '</p>' +
-          '<article class="letter" aria-label="The letter">' + RB.learnUi.icon('letter') + '<div class="letter-jp">' + RB.ui.jhtml(t.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(t.en)) + '</div>' : '') + '</article>' +
+          '<article class="letter" aria-label="The letter" tabindex="-1">' + RB.learnUi.icon('letter') + '<div class="letter-jp">' + RB.ui.jhtml(t.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(t.en)) + '</div>' : '') + '</article>' +
           (showEn ? '' : '<div class="act-tr">' + trButton() + '</div>') +
           '<h3>' + RB.learnUi.icon('companion') + '<span>Deliver to…</span></h3><ul class="entries recips">' + recips.map((r) => '<li><button class="entry recip" data-to="' + r.id + '"><span class="mark">' + RB.learnUi.icon('here') + '</span><span class="body"><span class="t">' + esc(r.name.en) + ' ' + RB.ui.jhtml(r.name.jp) + '</span><span class="d">' + RB.ui.jhtml(tier(r.desc).jp) + (showEn ? '<span class="en">' + esc(tier(r.desc).en) + '</span>' : '') + '</span></span></button></li>').join('') + '</ul>' +
           '<div class="fbwrap" aria-live="polite"></div>';
@@ -172,7 +173,8 @@ RB.activities = (function () {
           b.classList.add('on');
           fbSet(fb, 'ok', 'Delivered.', (why ? (why.jp ? '<div class="fb-jp">' + RB.ui.jhtml(why.jp) + '</div>' : '') + '<div>' + esc(why.en) + '</div>' : '') + met);
           P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < list.length - 1 ? 'Next letter' : 'Done');
-          P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; assisted = false; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else { deal(); render(); } };
+          // (the next letter from its top: the feedback had scrolled the page down to itself; RBN-QA-040)
+          P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; assisted = false; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else { deal(); render(); P.body.scrollTop = 0; const lt = P.body.querySelector('.letter'); if (lt) lt.focus({ preventScroll: true }); } };
           P.body.querySelectorAll('[data-to]').forEach((x) => (x.disabled = true));
           P.foot.querySelector('[data-next]').focus({ preventScroll: true });
         } else {

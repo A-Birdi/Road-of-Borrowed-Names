@@ -60,8 +60,12 @@ RB.tasks = (function () {
   // target is accepted (the two are not folded together).
   const HOMOPHONE_BASE = { じ: 'し', ぢ: 'ち', ず: 'す', づ: 'つ', ジ: 'シ', ヂ: 'チ', ズ: 'ス', ヅ: 'ツ' };
   const HOMOPHONE_OF = { じ: 'ぢ', ぢ: 'じ', ず: 'づ', づ: 'ず', ジ: 'ヂ', ヂ: 'ジ', ズ: 'ヅ', ヅ: 'ズ' };
-  // the hint a kana blank gives: its rōmaji, or for a homophone its base kana and dakuten
-  const kanaHint = (ch) => (HOMOPHONE_BASE[ch] ? HOMOPHONE_BASE[ch] + ' with dakuten ゛, read ' + RB.kana.romaji(ch) : RB.kana.romaji(ch));
+  // the marks with no reading of their own, named in words (RBN-QA-042): rōmaji() writes っ as an apostrophe and ー as a
+  // dash, conventions for inside a word, not something to read
+  const KANA_CUE = { っ: 'small tsu (sokuon)', ッ: 'small tsu (sokuon)', ー: 'long-vowel mark' };
+  const KANA_DOES = { っ: 'it doubles the consonant after it, as in きっぷ (kippu) and ざっし (zasshi)', ッ: 'it doubles the consonant after it, as in ベッド (beddo) and サッカー (sakkā)', ー: 'it lengthens the vowel before it, as in コーヒー (kōhī) and ケーキ (kēki)' };
+  // the hint a kana blank gives: its rōmaji, for a homophone its base kana and dakuten, for a mark its name
+  const kanaHint = (ch) => KANA_CUE[ch] || (HOMOPHONE_BASE[ch] ? HOMOPHONE_BASE[ch] + ' with dakuten ゛, read ' + RB.kana.romaji(ch) : RB.kana.romaji(ch));
   const homophoneNote = (ch) => {
     const o = HOMOPHONE_OF[ch];
     return ch + ' is ' + HOMOPHONE_BASE[ch] + ' with dakuten, read ' + RB.kana.romaji(ch) + '; ' + o + ' (' + HOMOPHONE_BASE[o] + ' with dakuten) is read the same.';
@@ -93,6 +97,13 @@ RB.tasks = (function () {
         kind: 'write', item: 'k:' + ch, answer: ch, accept: [ch], mode: 'kana', script: kata ? 'kata' : 'hira',
         prompt: { en: 'Write the ' + (kata ? 'katakana' : 'hiragana') + ' ' + hb + ' with dakuten (゛), read “' + rom + '”.' },
         explain: { en: homophoneNote(ch) }, single: true,
+      };
+    }
+    if (KANA_CUE[ch]) {
+      return {
+        kind: 'write', item: 'k:' + ch, answer: ch, accept: [ch], mode: 'kana', script: kata ? 'kata' : 'hira',
+        prompt: { en: ch === 'ー' ? 'Write the long-vowel mark.' : 'Write the small tsu (sokuon) in ' + (kata ? 'katakana' : 'hiragana') + '.' },
+        explain: { en: ch + ' is the ' + KANA_CUE[ch] + ': ' + KANA_DOES[ch] + '.' }, single: true,
       };
     }
     return {

@@ -79,6 +79,7 @@ export default async (t) => {
   for (const g of RB.kanaLessons.groups) for (const x of g.kana) {
     const ch = x.k || x.ch;
     if (PAIRS[ch]) continue;
+    if (ch === 'っ' || ch === 'ッ' || ch === 'ー') continue; // named in words, not by a rōmaji mark (RBN-QA-042; tests/unit/kana_cues.test.mjs)
     others++;
     const q = T.kanaStep(ch, { bare: true });
     const rom = K.romaji(ch);
