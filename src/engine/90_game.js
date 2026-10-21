@@ -317,8 +317,12 @@ RB.game = (function () {
   // keeps 'combat' on the mode stack and the screen dark) and the scene that asked for it has
   // ended (src/engine/70_script.js), so the journey goes on from the map, where the creature
   // still is. Nothing else was changed.
+  // A scene that was showing when the change began has ended with it too (its line and replies were taken down,
+  // src/ui/20_dialogue.js; RBN-QA-053): its dialogue mode, with no scene left running, goes the same way.
   function keepJourney() {
-    if (!G.playing || G.modes.indexOf('combat') < 0 || (RB.combat && RB.combat.state())) return;
+    if (!G.playing || (RB.combat && RB.combat.state())) return;
+    const sceneLeft = G.modes.indexOf('dialogue') >= 0 && !(RB.script && RB.script.isRunning());
+    if (G.modes.indexOf('combat') < 0 && !sceneLeft) return;
     setBase('world');
     RB.input.clearHeld();
     RB.ui.dialogue.hide();
