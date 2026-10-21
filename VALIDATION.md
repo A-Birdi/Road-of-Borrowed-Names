@@ -5501,7 +5501,8 @@ Yasu's story, when listening, has not begun being spoken."
     `lodge_quarrel` 31/0, `ren_apart` 7/0, `guide_reveal` 37/0, `guide_kana` 11/0, `learning_ui` 15/0, `social_wait`
     12/0, `look_purity` 9/0, `props_balance` 48/0, `road_oil` 14/0, `geese_event` 15/0, `keepers` 4/0,
     `lodge_arrival` 40/0, `guide_stacks` 8/0, `guide_archive` 14/0, `companion_turn` 4/0, `road_on` 11/0 (two runners
-    side by side, each suite in turn, with the unit run alongside). U whole suite 57,787/0 on `80c736f` (the test pair
+    side by side, each suite in turn, with the unit run alongside): 48 suites. (The cut's commit message, `aca1706`,
+    says 52; the count is 48, as listed here.) U whole suite 57,787/0 on `80c736f` (the test pair
     after it changes no unit's input); U `scene_manifest` 1023/0, `sequence` 499/0, `ko_*` 290/0 on `80c736f`;
     `validate.mjs` no errors. Recorded as they happened, not made green afterwards: `ko_first_sight` 83/1 on CC-014's
     bytes and on QA-072's separate tree before the follow-up (a gold leaf still growing into view at the picture's
