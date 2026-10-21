@@ -396,7 +396,7 @@ yields to any scene, battle, puzzle or menu.
 | `!gesture <actor> <primitive> [target] [hold] [@revealed\|@advance]` | one primitive on the next line's presentation (or when its text is revealed / on its advance) | no (a `wait` arg blocks to the peak, bounded) |
 | `!look <actor> <target\|->` | gaze and torso orientation | no |
 | `!pose <actor> <pose\|->` | a held posture | no |
-| `!walkto <actor> <x> <y> [dir]` | authored position, path-found, reserved | yes, bounded |
+| `!walkto <actor> <x> <y> [dir] [cross] [party] [max=<ms>]` | authored position, path-found, reserved; `cross`: may cross a trigger that can no longer fire; `party` (pc only): your companion follows a step behind; `max=`: this walk's bound (default 4 s) | yes, bounded |
 | `!prop <prop> hold\|place\|hide [actor] [hand]` | the visible object in a handover | no |
 | `!beat <id>` | a semantic beat id (for review, tests and the manifest) | no |
 
