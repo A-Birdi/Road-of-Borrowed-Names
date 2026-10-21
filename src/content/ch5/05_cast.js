@@ -152,7 +152,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       S('{記録館|きろくかん} で 、{沈|しず}んだ {鐘楼|しょうろう} の こと を {聞|き}く 。', 'Ask at the Public Records Hall (north side of the main avenue) about the drowned bell tower.'),
       S('{窓口|まどぐち} で {閲覧|えつらん} の {申請書|しんせいしょ} を {出|だ}して 、{左|ひだり} の {机|つくえ} の {台帳|だいちょう} を {読|よ}む 。', 'File a records request at the Records Hall counter, then read the flood-year ledger on the desk to the left.'),
       S('{洪水|こうずい} の {年|とし} の {記録|きろく} は 「{特記|とっき}{事項|じこう} なし」 。{事務所|じむしょ} の アカリ に {聞|き}いて みる 。', 'The flood year\'s ledger says "nothing of note". Ask Akari in the clerks\' office (north-east).'),
-      S('{記録館|きろくかん} の {地下|ちか}{書庫|しょこ} を {調|しら}べる 。', 'Search the basement stacks under the Records Hall (stairs behind the counter).'),
+      // while the stairs are shut the way on is them, behind the counter (RBN-QA-068: the derived step looked past the
+      // locked stacks to the tower); once open, the derivation names the stacks as before
+      Object.assign(S('{記録館|きろくかん} の {地下|ちか}{書庫|しょこ} を {調|しら}べる 。', 'Search the basement stacks under the Records Hall (stairs behind the counter).'),
+        { atIf: [{ if: '!lf_stacks_open', at: { map: 'lf.records', prop: 'stairs', x: 14, y: 3 } }] }),
       S('{古|ふる}い {議事録|ぎじろく} を {議会|ぎかい} の タミ に {見|み}せる 。', 'Show the old minutes to Councillor Tami in the Council Chamber.'),
       S('{水門|すいもん} の トクジ に 、{洪水|こうずい} の {夜|よる} の こと を {聞|き}く 。', 'Ask old Tokuji, by the sluice gates south of town, about the night of the flood.'),
       S('トクジ の {舟|ふね} で {鐘楼|しょうろう} へ {渡|わた}る 。', 'Take Tokuji\'s boat from the sluice landing out to the bell tower.'),
