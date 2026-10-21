@@ -771,9 +771,7 @@ RB.render = (function () {
         if (kind === 'fireflies' && a > 0.7) { c.fillStyle = `rgba(220,255,140,${(a - 0.7) * 0.8})`; c.fillRect(p.x - 1, p.y - 1, 4, 4); }
       } else if (kind === 'leaves') {
         p.y += 0.8 * p.v; p.x += Math.sin(t / 600 + p.p) * 1;
-        c.fillStyle = p.p > 3 ? '#e09a48' : '#cc7036';
-        c.fillRect(p.x, p.y, 3, 2);
-        c.fillStyle = 'rgba(0,0,0,0.15)'; c.fillRect(p.x + 1, p.y + 2, 2, 1);
+        leafMark(c, p.x, p.y, p.p > 3);
       } else if (kind === 'pages') {
         p.y += 0.5 * p.v; p.x += Math.sin(t / 800 + p.p) * 0.8;
         c.fillStyle = 'rgba(240,236,220,0.75)';
@@ -795,6 +793,14 @@ RB.render = (function () {
       if (p.x < -8) p.x = bw + 4;
       if (p.x > bw + 12) p.x = -4;
     }
+  }
+
+  // One leaf of the falling-leaf weather (Kotonoha's maps): 3 × 2 art px in one of two golds, and the shade under it
+  // (shared: the leaves on the sea in the crossing's picture, src/ui/42f_interlude_crossing.js)
+  function leafMark(c, x, y, warm) {
+    c.fillStyle = warm ? '#e09a48' : '#cc7036';
+    c.fillRect(x, y, 3, 2);
+    c.fillStyle = 'rgba(0,0,0,0.15)'; c.fillRect(x + 1, y + 2, 2, 1);
   }
 
   const BLOOM = ['255,196,120', '255,150,150', '170,210,255', '200,255,190', '255,236,160'];
@@ -887,5 +893,5 @@ RB.render = (function () {
   // read-only views for the browser tests: the ambience the current map shows now, and the fireworks drawn alone
   const ambientNow = () => (RB.world && RB.world.W && RB.world.W.map ? ambientOf(RB.world.W.map) : null);
   const fireworksOn = (c, t, reduced) => drawFireworks(c, t, reduced);
-  return { init, frame, prewarm, invalidate, setOverride, getOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, setView, cam, enclosed, ambientNow, fireworksOn, ART, TS };
+  return { init, frame, prewarm, invalidate, setOverride, getOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, setView, cam, enclosed, ambientNow, fireworksOn, leafMark, ART, TS };
 })();

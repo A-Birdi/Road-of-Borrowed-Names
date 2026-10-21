@@ -390,8 +390,9 @@ RB.script = (function () {
         case 'wait': await wait(+a[0] || 400); break;
         // inside an illustrated sequence the shots carry the transitions: no fade to black over the picture
         case 'fade': if (!hidden()) await RB.ui.fade(a[0] === 'out', a[1] ? +a[1] : 400); break;
-        // a picture in place of the map while the lines go on (src/ui/42_interlude.js)
-        case 'interlude': if (RB.interlude) { if (a[0] === '-') RB.interlude.clear(); else RB.interlude.show(a[0], a[1] || null); } break;
+        // a picture in place of the map while the lines go on (src/ui/42_interlude.js); `… ahead`: its layers built
+        // ahead of it, nothing shown
+        case 'interlude': if (RB.interlude) { if (a[0] === '-') RB.interlude.clear(); else if (a.length > 1 && a[a.length - 1] === 'ahead') { if (RB.interlude.ahead) RB.interlude.ahead(a[0], a.slice(1, -1)); } else RB.interlude.show(a[0], a[1] || null); } break;
         // an illustrated sequence (src/ui/43_sequence.js): `!sequence <id> begin|end`, `!shot <shot> [phase]`
         case 'sequence': if (RB.sequence) await RB.sequence.cmd(a[0], a[1] || 'begin', sc); break;
         case 'shot': if (RB.sequence) RB.sequence.toShot(a[0], a[1] || null); break;

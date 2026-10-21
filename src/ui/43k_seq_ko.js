@@ -177,8 +177,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         L.fill(0, 0, w, h, (x, y) => y > hill(x), hillM, (x, y) => clamp(0.5 - (y - hill(x)) / h * 0.3 + (((Math.round(y - hill(x)) % Math.max(4, s(7))) === 0) ? -0.12 : 0) + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
         // the great tree on the crown: its trunk flaring into the hill, its crown wide against the sky
         const tx = Math.round(w * (G.narrow ? 0.7 : 0.74)), ty = Math.round(hill(tx) + s(3));
-        L.fill(tx - s(30), Math.round(vb * 0.14), tx + s(30), ty, (x, y) => Math.abs(x - tx) < s(9) + Math.max(0, y - ty + s(16)) ** 2 / s(12), trunk, (x, y) => clamp(0.62 - (x - tx + s(9)) / s(22) * 0.5 + (((Math.round(x * 0.7) * 5) % 7) === 0 ? -0.12 : 0), 0.02, 0.999));
-        SP.crown(L, tx, Math.round(vb * 0.12), Math.round(w * 0.24), Math.round(vb * 0.15), leafM, { n: 30, seed: 11 });
+        greatTree(L, s, tx, ty, Math.round(vb * 0.14), Math.round(vb * 0.12), Math.round(w * 0.24), Math.round(vb * 0.15), trunk, leafM);
         // the village's houses across the green: thatched roofs (hipped, the left slope in the light) over dark walls
         const house = (x0, x1, y, ht) => {
           L.fill(x0, y, x1, y + ht, (xx, yy) => yy >= y && xx >= x0 + (y + ht - yy) * 0.7 && xx <= x1 - (y + ht - yy) * 0.7, thatch, (xx, yy) => clamp((xx < x0 + (x1 - x0) * 0.35 ? 0.66 : 0.46) - (yy - y) / ht * 0.1 + (((Math.round(xx) * 3 + Math.round(yy)) % 5) === 0 ? -0.1 : 0), 0.02, 0.999));
@@ -209,6 +208,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       g.drawImage(L.canvas(), 0, 0);
       return { cv };
     });
+  }
+  // The great tree: its trunk from `top` down to the ground at (tx, ty), flaring into it, and its crown wide against the
+  // sky round (tx, cy), rw × rh; s scales the trunk (shared: the crossing's view of the island drawing away from Tetsu's
+  // boat, src/ui/42f_interlude_crossing.js)
+  function greatTree(L, s, tx, ty, top, cy, rw, rh, trunk, leafM) {
+    L.fill(tx - s(30), top, tx + s(30), ty, (x, y) => Math.abs(x - tx) < s(9) + Math.max(0, y - ty + s(16)) ** 2 / s(12), trunk, (x, y) => clamp(0.62 - (x - tx + s(9)) / s(22) * 0.5 + (((Math.round(x * 0.7) * 5) % 7) === 0 ? -0.12 : 0), 0.02, 0.999));
+    SP.crown(L, tx, cy, rw, rh, leafM, { n: 30, seed: 11 });
   }
   // leaves falling (or drifting from the north): a few small pale ovals turning as they come
   function falling(c, G, t, still, n, seed, from) {
@@ -259,8 +265,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     title: { en: 'Leaves from the north', jp: '{北|きた} から {来|き}た {葉|は}' }, chapter: 'ko', scene: 'ko.end',
     shots: { stone, north },
   });
-
-  // The leaves coming down, for the island's first sight on landing (src/ui/42g_interlude_firstsight.js, RBN-QA-073),
-  // so the tree's leaves fall the same way in every picture of it.
-  RB.seqKo = { falling };
+  // What other pictures of the island reuse, so its tree and its leaves are drawn the same way in each: the leaves
+  // coming down, for its first sight on landing (src/ui/42g_interlude_firstsight.js, RBN-QA-073); the great tree, for
+  // the crossing's view of it drawing away from Tetsu's boat (src/ui/42f_interlude_crossing.js, RBN-QA-072).
+  RB.seqKo = { falling, greatTree };
 })();

@@ -162,31 +162,102 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
 
   // ---- the sky, the point and the island (still) ---------------------------------------------
+  // The afternoon sky over the view: bands, the sun high on the left, flat clouds, the haze on the horizon (shared:
+  // the crossing from Saltglass draws it over its own view, src/ui/42f_interlude_crossing.js).
+  function sky(g, G) {
+    const { w, h, x0, x1, ow, vy0, yH, s } = G, P = K();
+    // afternoon sky, the sun high on the left behind stepped rings
+    bandsIn(g, x0, G.y0, ow, yH - G.y0, ['#78a0c8', '#86aace', '#94b4d2', '#a4bfd6', '#b6cad8', '#c8d4da', '#dadcd4', '#eae2cc'], 0.45);
+    const sx = G.ox(0.13), sy = vy0 + s(14), sr = Math.max(3, s(6));
+    P.halo(g, sx, sy, sr * 6, '255,244,214', 0.3, 5);
+    g.fillStyle = '#fff6e0'; P.disc(g, sx, sy, sr); g.fillStyle = '#fffcf4'; P.disc(g, sx - 1, sy - 1, Math.max(1, sr - 2));
+    // flat clouds that do not move (there is no wind)
+    const CL = P.layer(w, h), cloud = P.mat('#d8dee8', { n: 5, at: 2, step: 0.07 });
+    for (const [fx, fy, cw] of [[0.46, 0.3, 0.2], [0.78, 0.55, 0.16], [0.28, 0.72, 0.1]]) {
+      const ccx = G.ox(fx), ccy = Math.round(vy0 + (yH - vy0) * fy), W2 = Math.round(ow * cw / 2);
+      for (let i = 0; i < 6; i++) {
+        const ex = ccx - W2 + Math.round((W2 * 2 * (i + 0.5)) / 6), er = Math.max(3, Math.round(W2 * (0.24 + 0.12 * Math.sin(i * 2.3 + fx * 9)))), ery = Math.max(2, Math.round(er * 0.42));
+        CL.ell(ex, ccy - Math.round(ery * 0.4), er, ery, cloud, (x, y) => (y < ccy - ery * 0.6 ? 0.95 : y < ccy ? 0.62 : 0.3));
+      }
+      CL.rect(ccx - W2, ccy, W2 * 2, Math.max(1, s(2)), cloud, 0.3);
+    }
+    g.drawImage(CL.canvas(), 0, 0);
+    // haze on the horizon
+    for (let y = yH - s(5); y < yH; y++) for (let x = x0 + (y & 1) * 2; x < x1; x += 4) R(g, x, y, 2, 1, 'rgba(240,236,222,0.4)');
+    R(g, x0, yH, ow, 1, '#c8d6dc');
+  }
+  // The point and its lighthouse, as one outlined layer (shared: the crossing from Saltglass draws them, falling
+  // behind, for a geometry of its own, src/ui/42f_interlude_crossing.js).
+  function point(G) {
+    const { w, h, x0, ow, tip, s } = G, P = K();
+    // the point: a grassy headland running out from our left, rocks where it meets the sea, a path
+    // along its back to the lighthouse at the tip
+    const L = P.layer(w, h);
+    const grass = P.mat('#6a9046', { n: 6, at: 3, step: 0.075 }), stone = P.mat('#8e8678', { n: 5, at: 2, step: 0.09 }), dirt = P.mat('#c8b48a', { n: 4, at: 2 });
+    const bush = P.mat('#46683e', { n: 5, at: 2, step: 0.08 });
+    const pts = [[x0 - 2, G.ridgeAt(x0)]];
+    for (let x = x0; x <= tip.x - s(6); x += Math.max(2, s(5))) pts.push([x, G.ridgeAt(x) + Math.round(Math.sin(x * 0.13) * s(1.5))]);
+    pts.push([tip.x - s(3), tip.y - s(9)], [tip.x + s(5), tip.y - s(3)], [tip.x + s(5), tip.y + 1]);
+    for (let y = tip.y + 2; y <= G.yF + s(4); y += Math.max(2, s(3))) pts.push([G.shoreAt(y) + Math.round(Math.sin(y * 0.37) * s(1.4)), y]);
+    pts.push([x0 - 2, G.yF + s(4)]);
+    const near = (x, y) => clamp((y - G.ridgeAt(x)) / Math.max(4, G.yF - G.ridgeAt(x)), 0, 1);
+    L.poly(pts, grass, (x, y) => clamp(0.9 - near(x, y) * 0.5 - (N2(x * 0.45, y * 0.9) > 0.55 ? 0.13 : 0) - (N2(x * 1.7 + 3, y * 2.3) > 0.8 ? 0.1 : 0), 0, 0.999));
+    // rock along the waterline, a little wider at the tip
+    L.recolor((x, y) => y > tip.y - s(4) && x > G.shoreAt(Math.max(y, tip.y)) - s(4) - (y < tip.y + s(8) ? s(4) : 0), grass, stone, (x, y) => (Math.round(y + x * 0.5) % 4 === 0 ? 0.25 : y < tip.y ? 0.85 : 0.55));
+    // the path, worn pale, from the near hill out to the lighthouse door
+    for (let x = x0; x < tip.x - s(10); x++) {
+      const y = G.ridgeAt(x) + s(5) + Math.round((x - x0) * 0.04), wd = Math.max(1, Math.round(s(3) * (1 - (x - x0) / Math.max(1, tip.x - x0)) + 1));
+      L.rect(x, y, 1, wd, dirt, (xx, yy) => (yy < y + 1 ? 0.9 : 0.5));
+    }
+    // bushes and two wind-bent pines
+    const rr = P.rnd(77);
+    for (let i = 0; i < 7; i++) {
+      const bx = x0 + s(8) + rr() * (tip.x - x0 - s(26)), by = G.ridgeAt(bx) + s(9) + rr() * s(14), br = s(3) + rr() * s(3);
+      if (by > G.shoreAt(by) - s(8) && by > tip.y) continue;
+      L.ell(bx, by, br, br * 0.7, bush, P.sphere(bx - br * 0.3, by - br * 0.3, br, br * 0.7, { amb: 0.2 }));
+    }
+    for (const u of [0.18, 0.34]) {
+      const px2 = Math.round(x0 + (tip.x - x0) * u), base = G.ridgeAt(px2) + s(2), ph = s(18) - u * s(10);
+      L.rect(px2 - 1, base - ph * 0.45, Math.max(1, s(1.5)), ph * 0.45, P.mat('#5a4030', { n: 4, at: 2 }), 1);
+      L.ell(px2 + s(3), base - ph * 0.62, s(7), s(3), bush, (x, y) => (y < base - ph * 0.65 ? 0.85 : 0.35));
+      L.ell(px2 + s(1), base - ph * 0.85, s(5), s(2.5), bush, (x, y) => (y < base - ph * 0.88 ? 0.9 : 0.45));
+    }
+    // tufts, larger toward us
+    for (let i = 0; i < 60; i++) {
+      const tx = x0 + rr() * (tip.x - x0), ty = G.ridgeAt(tx) + s(4) + Math.pow(rr(), 0.8) * (G.yF - G.ridgeAt(tx));
+      if (tx > G.shoreAt(Math.max(ty, tip.y)) - s(7)) continue;
+      const hgt = 1 + Math.round(near(tx, ty) * s(3));
+      L.rect(tx, ty - hgt, 1, hgt, grass, 0.98); L.rect(tx + 1, ty - hgt + 1, 1, hgt - 1 || 1, grass, 0.2);
+    }
+    L.outline();
+    // the lighthouse: a white tower tapering a little, an iron gallery and lantern room, a dark cap,
+    // and the keeper's house at its foot
+    const lx = tip.x - s(10), lb = tip.y - s(6), th = Math.max(s(20), Math.round(Math.min((lb - G.vy0) * 0.62, ow * 0.2, lb - G.vy0 - s(16)))), rw = Math.max(4, s(7)), rt = Math.max(3, s(5));
+    const white = P.mat('#e8e2d6', { n: 6, at: 3, step: 0.08 }), iron = P.mat('#3a3a44', { n: 4, at: 2 }), glass = P.mat('#f4dc96', { n: 4, at: 2 });
+    const roofM = P.mat('#5a4a4a', { n: 4, at: 2 });
+    L.rect(lx - rw - s(14), lb - s(8), s(13), s(8), white, (x) => (x < lx - rw - s(8) ? 0.75 : 0.5));
+    L.poly([[lx - rw - s(16), lb - s(8)], [lx - rw - s(8), lb - s(13)], [lx - rw, lb - s(8)]], roofM, (x) => (x < lx - rw - s(8) ? 0.8 : 0.4));
+    L.rect(lx - rw - s(10), lb - s(5), s(3), s(5), iron, 1);
+    L.fill(lx - rw - 1, lb - th, lx + rw + 1, lb, (x, y) => Math.abs(x - lx) <= rt + (rw - rt) * clamp((y - (lb - th)) / th, 0, 1), white, (x, y) => clamp(0.88 - (x - lx + rw * 0.4) / (rw * 2) * 0.72, 0, 0.999));
+    L.rect(lx - rt - 2, lb - th - 1, rt * 2 + 5, Math.max(2, s(2)), iron, (x) => (x < lx ? 2 : 1));
+    L.rect(lx - rt + 1, lb - th - s(7), rt * 2 - 1, s(6), glass, (x) => (x < lx ? 0.95 : 0.55));
+    for (let x = lx - rt + 1 + s(3); x < lx + rt; x += s(3)) L.rect(x, lb - th - s(7), 1, s(6), iron, 1);
+    L.ell(lx, lb - th - s(7), rt + 1, Math.max(2, s(3)), iron, (x, y) => (y > lb - th - s(7) ? -1 : x < lx ? 0.9 : 0.4));
+    L.rect(lx, lb - th - s(12), 1, s(3), iron, 0);
+    for (const k of [0.32, 0.6]) L.rect(lx - 1, Math.round(lb - th * k), Math.max(2, s(2.5)), s(4), iron, 1); // stair windows
+    L.rect(lx - s(2), lb - s(6), s(4), s(6), iron, 0); // the door
+    L.outline();
+    return L.canvas();
+  }
+
+  // the whole view: the sky, the island, the point
   function view(G) {
     return cached('tideview|' + G.w + 'x' + G.h + '|' + G.vb, () => {
-      const { w, h, x0, x1, ow, vy0, yH, yS, tip, isl, iw, ih, end, s } = G;
+      const { w, h, isl, iw, ih, end, s } = G;
       const P = K(), rnd = P.rnd(9127);
       const cv = mk(w, h), g = cv.getContext('2d');
       g.imageSmoothingEnabled = false;
-      // afternoon sky, the sun high on the left behind stepped rings
-      bandsIn(g, x0, G.y0, ow, yH - G.y0, ['#78a0c8', '#86aace', '#94b4d2', '#a4bfd6', '#b6cad8', '#c8d4da', '#dadcd4', '#eae2cc'], 0.45);
-      const sx = G.ox(0.13), sy = vy0 + s(14), sr = Math.max(3, s(6));
-      P.halo(g, sx, sy, sr * 6, '255,244,214', 0.3, 5);
-      g.fillStyle = '#fff6e0'; P.disc(g, sx, sy, sr); g.fillStyle = '#fffcf4'; P.disc(g, sx - 1, sy - 1, Math.max(1, sr - 2));
-      // flat clouds that do not move (there is no wind)
-      const CL = P.layer(w, h), cloud = P.mat('#d8dee8', { n: 5, at: 2, step: 0.07 });
-      for (const [fx, fy, cw] of [[0.46, 0.3, 0.2], [0.78, 0.55, 0.16], [0.28, 0.72, 0.1]]) {
-        const ccx = G.ox(fx), ccy = Math.round(vy0 + (yH - vy0) * fy), W2 = Math.round(ow * cw / 2);
-        for (let i = 0; i < 6; i++) {
-          const ex = ccx - W2 + Math.round((W2 * 2 * (i + 0.5)) / 6), er = Math.max(3, Math.round(W2 * (0.24 + 0.12 * Math.sin(i * 2.3 + fx * 9)))), ery = Math.max(2, Math.round(er * 0.42));
-          CL.ell(ex, ccy - Math.round(ery * 0.4), er, ery, cloud, (x, y) => (y < ccy - ery * 0.6 ? 0.95 : y < ccy ? 0.62 : 0.3));
-        }
-        CL.rect(ccx - W2, ccy, W2 * 2, Math.max(1, s(2)), cloud, 0.3);
-      }
-      g.drawImage(CL.canvas(), 0, 0);
-      // haze on the horizon
-      for (let y = yH - s(5); y < yH; y++) for (let x = x0 + (y & 1) * 2; x < x1; x += 4) R(g, x, y, 2, 1, 'rgba(240,236,222,0.4)');
-      R(g, x0, yH, ow, 1, '#c8d6dc');
+      sky(g, G);
 
       // the island: a rock with cliffs toward us, pines along its top, a stone gateway at its foot
       const I = P.layer(w, h);
@@ -205,64 +276,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       I.outline();
       g.drawImage(I.canvas(), 0, 0);
 
-      // the point: a grassy headland running out from our left, rocks where it meets the sea, a path
-      // along its back to the lighthouse at the tip
-      const L = P.layer(w, h);
-      const grass = P.mat('#6a9046', { n: 6, at: 3, step: 0.075 }), stone = P.mat('#8e8678', { n: 5, at: 2, step: 0.09 }), dirt = P.mat('#c8b48a', { n: 4, at: 2 });
-      const bush = P.mat('#46683e', { n: 5, at: 2, step: 0.08 });
-      const pts = [[x0 - 2, G.ridgeAt(x0)]];
-      for (let x = x0; x <= tip.x - s(6); x += Math.max(2, s(5))) pts.push([x, G.ridgeAt(x) + Math.round(Math.sin(x * 0.13) * s(1.5))]);
-      pts.push([tip.x - s(3), tip.y - s(9)], [tip.x + s(5), tip.y - s(3)], [tip.x + s(5), tip.y + 1]);
-      for (let y = tip.y + 2; y <= G.yF + s(4); y += Math.max(2, s(3))) pts.push([G.shoreAt(y) + Math.round(Math.sin(y * 0.37) * s(1.4)), y]);
-      pts.push([x0 - 2, G.yF + s(4)]);
-      const near = (x, y) => clamp((y - G.ridgeAt(x)) / Math.max(4, G.yF - G.ridgeAt(x)), 0, 1);
-      L.poly(pts, grass, (x, y) => clamp(0.9 - near(x, y) * 0.5 - (N2(x * 0.45, y * 0.9) > 0.55 ? 0.13 : 0) - (N2(x * 1.7 + 3, y * 2.3) > 0.8 ? 0.1 : 0), 0, 0.999));
-      // rock along the waterline, a little wider at the tip
-      L.recolor((x, y) => y > tip.y - s(4) && x > G.shoreAt(Math.max(y, tip.y)) - s(4) - (y < tip.y + s(8) ? s(4) : 0), grass, stone, (x, y) => (Math.round(y + x * 0.5) % 4 === 0 ? 0.25 : y < tip.y ? 0.85 : 0.55));
-      // the path, worn pale, from the near hill out to the lighthouse door
-      for (let x = x0; x < tip.x - s(10); x++) {
-        const y = G.ridgeAt(x) + s(5) + Math.round((x - x0) * 0.04), wd = Math.max(1, Math.round(s(3) * (1 - (x - x0) / Math.max(1, tip.x - x0)) + 1));
-        L.rect(x, y, 1, wd, dirt, (xx, yy) => (yy < y + 1 ? 0.9 : 0.5));
-      }
-      // bushes and two wind-bent pines
-      const rr = P.rnd(77);
-      for (let i = 0; i < 7; i++) {
-        const bx = x0 + s(8) + rr() * (tip.x - x0 - s(26)), by = G.ridgeAt(bx) + s(9) + rr() * s(14), br = s(3) + rr() * s(3);
-        if (by > G.shoreAt(by) - s(8) && by > tip.y) continue;
-        L.ell(bx, by, br, br * 0.7, bush, P.sphere(bx - br * 0.3, by - br * 0.3, br, br * 0.7, { amb: 0.2 }));
-      }
-      for (const u of [0.18, 0.34]) {
-        const px2 = Math.round(x0 + (tip.x - x0) * u), base = G.ridgeAt(px2) + s(2), ph = s(18) - u * s(10);
-        L.rect(px2 - 1, base - ph * 0.45, Math.max(1, s(1.5)), ph * 0.45, P.mat('#5a4030', { n: 4, at: 2 }), 1);
-        L.ell(px2 + s(3), base - ph * 0.62, s(7), s(3), bush, (x, y) => (y < base - ph * 0.65 ? 0.85 : 0.35));
-        L.ell(px2 + s(1), base - ph * 0.85, s(5), s(2.5), bush, (x, y) => (y < base - ph * 0.88 ? 0.9 : 0.45));
-      }
-      // tufts, larger toward us
-      for (let i = 0; i < 60; i++) {
-        const tx = x0 + rr() * (tip.x - x0), ty = G.ridgeAt(tx) + s(4) + Math.pow(rr(), 0.8) * (G.yF - G.ridgeAt(tx));
-        if (tx > G.shoreAt(Math.max(ty, tip.y)) - s(7)) continue;
-        const hgt = 1 + Math.round(near(tx, ty) * s(3));
-        L.rect(tx, ty - hgt, 1, hgt, grass, 0.98); L.rect(tx + 1, ty - hgt + 1, 1, hgt - 1 || 1, grass, 0.2);
-      }
-      L.outline();
-      // the lighthouse: a white tower tapering a little, an iron gallery and lantern room, a dark cap,
-      // and the keeper's house at its foot
-      const lx = tip.x - s(10), lb = tip.y - s(6), th = Math.max(s(20), Math.round(Math.min((lb - G.vy0) * 0.62, ow * 0.2, lb - G.vy0 - s(16)))), rw = Math.max(4, s(7)), rt = Math.max(3, s(5));
-      const white = P.mat('#e8e2d6', { n: 6, at: 3, step: 0.08 }), iron = P.mat('#3a3a44', { n: 4, at: 2 }), glass = P.mat('#f4dc96', { n: 4, at: 2 });
-      const roofM = P.mat('#5a4a4a', { n: 4, at: 2 });
-      L.rect(lx - rw - s(14), lb - s(8), s(13), s(8), white, (x) => (x < lx - rw - s(8) ? 0.75 : 0.5));
-      L.poly([[lx - rw - s(16), lb - s(8)], [lx - rw - s(8), lb - s(13)], [lx - rw, lb - s(8)]], roofM, (x) => (x < lx - rw - s(8) ? 0.8 : 0.4));
-      L.rect(lx - rw - s(10), lb - s(5), s(3), s(5), iron, 1);
-      L.fill(lx - rw - 1, lb - th, lx + rw + 1, lb, (x, y) => Math.abs(x - lx) <= rt + (rw - rt) * clamp((y - (lb - th)) / th, 0, 1), white, (x, y) => clamp(0.88 - (x - lx + rw * 0.4) / (rw * 2) * 0.72, 0, 0.999));
-      L.rect(lx - rt - 2, lb - th - 1, rt * 2 + 5, Math.max(2, s(2)), iron, (x) => (x < lx ? 2 : 1));
-      L.rect(lx - rt + 1, lb - th - s(7), rt * 2 - 1, s(6), glass, (x) => (x < lx ? 0.95 : 0.55));
-      for (let x = lx - rt + 1 + s(3); x < lx + rt; x += s(3)) L.rect(x, lb - th - s(7), 1, s(6), iron, 1);
-      L.ell(lx, lb - th - s(7), rt + 1, Math.max(2, s(3)), iron, (x, y) => (y > lb - th - s(7) ? -1 : x < lx ? 0.9 : 0.4));
-      L.rect(lx, lb - th - s(12), 1, s(3), iron, 0);
-      for (const k of [0.32, 0.6]) L.rect(lx - 1, Math.round(lb - th * k), Math.max(2, s(2.5)), s(4), iron, 1); // stair windows
-      L.rect(lx - s(2), lb - s(6), s(4), s(6), iron, 0); // the door
-      L.outline();
-      g.drawImage(L.canvas(), 0, 0);
+      g.drawImage(point(G), 0, 0);
       return cv;
     });
   }
@@ -423,4 +437,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       return { L: live.L, q: live.q, roadDry: road ? dry / road : 0, tip: G.tip, end: G.end, yH: G.yH, yS: G.yS, x0: G.x0, glassX: G.glassX };
     },
   };
+  // what the crossing from Saltglass reuses (src/ui/42f_interlude_crossing.js): the sky and the point with its
+  // lighthouse, each for a geometry of its own (the fields read are the ones geom gives them), the gulls, the sea's rows
+  // and its shallow water (as hex)
+  RB.tideArt = { sky, point, gulls, SEA: ROWS, SHALLOW: SHALLOW.map((c) => '#' + c.map((v) => v.toString(16).padStart(2, '0')).join('')) };
 })();
