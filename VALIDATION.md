@@ -5555,6 +5555,23 @@ Yasu's story, when listening, has not begun being spoken."
       and pass here; U `world` 123/0, `living_world` 110/0; `validate.mjs` no errors.
     - qa-036 merged (`3b63a2c`; src, tests and tools identical to `bf4c0ef`): B `counter_tap` 30/0 on a scratch build of
       the task branch; `validate.mjs` no errors.
+    - `candidate/qa-020` `eb841cf`: B `walkto_options` (new) 23/0 (on `5f492dd`'s build 4 fail: the three settle checks,
+      the companion still mid-step one tile behind at the next line, and a trigger that came true being stepped onto;
+      the cancellation cases pass on both builds); arrival subset (columns 1, 8, 13, 24, 39, 50, both stall layouts)
+      at the rail for the bridge and boat lines with the companion beside you; a second Next during the walk (80 and
+      300 ms) does not skip the bridge line; B `staging_variants --quick` 701/0, `manybridge2` 4/0, `festival_games`
+      5/0; U `actors` 180/0; `validate.mjs` no errors.
+    - `candidate/qa-048` `2610df3`: B `fog_event` (new) 14/0 (the real road event and challenge; world-canvas samples: the
+      road ahead 128/74 -> 197/18 luminance/saturation, next to you within 1, the sign 129/51 -> 148/33, the lamp
+      brighter; through the challenge; still on the "lifts" line, gone after it; the miss branch until the scene's
+      end; free roam as before; reduced motion still; a phone 390x844); on CC-008's `index.html` 7 fail; U
+      `living_world` 110/0, `world` 123/0, `scene_manifest` 1023/0, `perform` 665/0, `voicebank_plan_content` 7/0;
+      `validate.mjs` no errors. Frames looked at (not committed).
+    - `candidate/qa-049` `0c0b8c4`: B `geese_event` (new) 15/0 (placement 14,10 beside the child 15,11; the road walkable
+      end to end by a path search; the flock drawn, 132 pixels; right answer, also with reduced motion: flock 16,7 and
+      child 15,8 on the crossing line, both gone when seen through; the miss branch unchanged; a tap on the flock
+      plays the event scene); on CC-008 the flock is absent; U `living_world` 110/0, `world` 123/0, `actors` 180/0,
+      `scene_manifest` 1023/0; `validate.mjs` no errors. Frames looked at (not committed).
   - **RBN-QA-032 in source (Robin approved 2026-10-20 from the frames, to review in play; `8cfedf2`, cherry-picked
     from `523f9ba`):** `git diff 523f9ba 8cfedf2 -- src tests tools data assets` is empty (the candidate's tests above
     ran on the same code); on a scratch build of `8cfedf2`: B `lookout_vista` 22/0, `story_ch3 E nao` 38 checks passed,

@@ -678,6 +678,13 @@
       qa-020 `5f492dd`: Agnes REFINE (6306759991) and Local REFINE (CL-061) on the new follow's lifecycle (bind the
       tick and catch-up to the scene token, map and companion; settle the last move within a stated bound; word
       `cross` as "if currently false"; document `max=`; focused cancellation/settle/default/active-trigger tests).
+      Posted in CC-040 (Cloud AGREE on each): qa-020 `eb841cf` (that lifecycle: follower bound to scene token, map
+      and companion; last step settled within max+2 s; `cross` rechecked per step; new B `walkto_options`);
+      qa-048 `2610df3` (the fog event's `fog` ambience, a still distance haze via 60_render.js `drawHaze`; new B
+      `fog_event`); qa-049 `0c0b8c4` (the geese: one flock actor `lw_rd_geese` through the road event's `at`, a
+      pixel-table sprite, crossing to the pond's verge on success; new B `geese_event`). Proposal verdicts given
+      (AGREE with refinements) on RBN-QA-039 (combined-kana stroke boxes), 040 (Next letter scroll reset; the order
+      activity's "Next customer" sibling) and 042 (small tsu / long-vowel cues). Next: 050, then 039/040/042, then 047.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
