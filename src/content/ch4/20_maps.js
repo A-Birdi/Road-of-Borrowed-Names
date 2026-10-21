@@ -270,6 +270,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   interior('sb.goatshed', T('Tetsuji\'s Goat Shed', 'テツジ の ヤギ{小屋|ごや}'), 12, 9, 6, 'sb.hamlet', [6, 26], {
     ambient: { dark: 0.2, playerLight: 40 },
+    // the stall dividers stand on the shed's boards, not on the global fence's outdoor grass (Snowbell's grass is
+    // snow): only this map's legend changes (RBN-QA-047; the eight cells x 4 and 8, rows 2-5)
+    legend: { f: { tile: 'wood', prop: 'fence' } },
     terrain: K.build(12, 9, '#', (k) => { k.rect(1, 2, 10, 6, '_'); k.set(6, 8, '_'); k.vline(4, 2, 5, 'f'); k.vline(8, 2, 5, 'f'); }),
     props: [
       { p: 'exitmat', x: 6, y: 7 },
