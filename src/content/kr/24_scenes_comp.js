@@ -67,6 +67,7 @@ narr: ナオ は {灯|ひ} の そば に {座|すわ}って 、 {鞄|かばん}
 comp[angry]: …… {関係|かんけい} ない だろ 。 {飛脚|ひきゃく} の {名前|なまえ} なんて 、 どこ に でも ある 。 || …That's none of your business. Couriers' names turn up everywhere.
 narr: ナオ は {立|た}ち{上|あ}がって 、 {灯|ひ} の {外|そと} の {暗|くら}がり へ {行|い}って しまった 。 || Nao gets up and walks off into the dark beyond the lamplight.
 !set kr_quarrel
+!refresh comp
 !goto end
 :quiet
 narr: {何|なに} も {聞|き}かず に 、 {隣|となり} に {座|すわ}って いた 。 しばらく して 、 ナオ が {小|ちい}さく {言|い}った 。 「…… {聞|き}かない の か 。」 || You sit beside Nao and ask nothing. After a while Nao says quietly, "…You're not going to ask?"
@@ -84,6 +85,7 @@ narr: ミオ は 、 ヒサエ の {咳|せき} を {聞|き}いて から 、 {
 comp[angry]: {休|やす}める わけ ない でしょう ！ {一人|ひとり} で {三十年|さんじゅうねん} 、 {誰|だれ} も {診|み}て くれなかった の よ ！ || How could I rest? Thirty years alone, and nobody ever looked after her!
 narr: ミオ は {鍋|なべ} を {抱|かか}えて 、 ヒサエ の {小屋|こや} の {方|ほう} へ {行|い}って しまった 。 || Mio picks up the pot and goes off towards Hisae's hut.
 !set kr_quarrel
+!refresh comp
 !goto end
 :together
 narr: {二人|ふたり} で {薬|くすり} を {持|も}って いく と 、 ヒサエ は {四度目|よんどめ} に やっと {受|う}け{取|と}った 。 「{二人|ふたり} がかり かい 。 {降参|こうさん} だ よ 。」 || You take the medicine over together, and on the fourth try Hisae finally accepts it. "Two of you at once? I give in."
@@ -103,6 +105,7 @@ narr: {笑|わら}って いる が 、 {目|め} は {笑|わら}って いな�
 comp[angry]: …… {人|ひと} の {懐|ふところ} を {覗|のぞ}く の は 、 {野暮|やぼ} よ 。 {客|きゃく} は {舞台|ぶたい} を {見|み}て いれば いい の 。 || …Peering into someone's robe is bad manners. The audience should keep its eyes on the stage.
 narr: スズ は {立|た}ち{上|あ}がって 、 {壊|こわ}れた {壁|かべ} の {向|む}こう へ {行|い}って しまった 。 || Suzu gets up and goes off beyond the broken wall.
 !set kr_quarrel
+!refresh comp
 !goto end
 :quiet
 narr: {黙|だま}って いる と 、 スズ が {小|ちい}さく {息|いき} を {吐|は}いた 。 「…… {聞|き}かないで くれて 、 ありがとう 。 その うち 、 ちゃんと {書|か}く わ 。」 || You say nothing, and Suzu lets out a small breath. "…Thank you for not asking. I'll write back properly, one of these days."
@@ -125,8 +128,11 @@ kr_hisae: {喧嘩|けんか} かい 。 {灯|ひ} の {前|まえ} で {喧嘩|�
 !call kr.hisae_vigil
 
 @scene kr.makeup
-# The making up: the companion comes back and apologises; the player answers in their own words (chosen).
+# The making up: the companion comes back and apologises; the player answers in their own words (chosen). Away from
+# you at the lodge since the quarrel (RBN-QA-063, the maps' followerAway), they are back at your side for it.
 !if kr_makeup_done -> end
+!set kr_quarrel_back
+!refresh comp
 ?(comp=nao) comp: …… さっき は 、 {言|い}い{過|す}ぎた 。 {悪|わる}かった 。 サキチ は 、 {昔|むかし} {道|みち} を {教|おし}えて くれた {飛脚|ひきゃく} だ 。 それ だけ だ 。 {今|いま} は 。 || …I said too much back there. Sorry. Sakichi's a courier who taught me the road, long ago. That's all. For now.
 ?(comp=mio) comp[sad]: …… さっき は 、 ごめんなさい 。 あなた に {怒|おこ}る こと じゃ なかった 。 ヒサエ さん が 、 {昔|むかし} の {誰|だれ} か に {似|に}て いて 。 || …I'm sorry about earlier. It wasn't you I should have been angry with. Hisae reminds me of someone, from before.
 ?(comp=suzu) comp: …… さっき は 、 {悪|わる}かった わ 。 {野暮|やぼ} なんて 、 {言|い}う つもり じゃ なかった の 。 {手紙|てがみ} は 、 まだ {怖|こわ}くて {開|ひら}けない だけ 。 || …Sorry about earlier. I didn't mean to call you rude. It's only that I'm still too scared to answer the letter.

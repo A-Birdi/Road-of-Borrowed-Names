@@ -15,6 +15,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // noCompanion: the companion is away while kr_apart holds (Ren's night apart, 24_scenes_comp.js)
   const ROAD = { region: 'keepers', place: 'keepers', travel: 'keepers', music: 'keepers', edition: 2, noCompanion: '!kr_apart' };
   const MIST = { weather: 'motes', tint: 'rgba(200,205,190,0.06)' };
+  // followerAway (50_world.js placeCompanion): after a quarrel at the lodge, until the companion comes back to make it
+  // up, they do not walk with you at the lodge, in Hisae's hut or the caretakers' room (RBN-QA-063). Only Nao, Mio and
+  // Suzu quarrel; a save already made up carries kr_makeup_done.
+  const QUARREL = 'kr_quarrel&!kr_makeup_done&!kr_quarrel_back';
   // a stone lantern: dark until `flag`, lit after (relit by name, or at dawn); `scene` while dark, `after` once lit
   const toro = (x, y, flag, scene, after) => [
     Object.assign({ p: 'kr_toro', x, y, if: '!' + flag }, scene ? { scene } : {}),
@@ -191,6 +195,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the Keepers' Lodge (灯守の宿坊) --------------------------------------------------------------------------------
   C.maps['kr.lodge'] = Object.assign({}, ROAD, {
     name: T('The Keepers\' Lodge', '{灯守|ひもり} の {宿坊|しゅくぼう}'),
+    followerAway: QUARREL,
     music: [{ if: 'kr_night&!kr_vigil_done', id: 'kr_vigil' }, { id: 'keepers' }],
     ambient: {
       weather: 'motes',
@@ -339,6 +344,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lantern', x: 9, y: 3, o: { lit: true } }, { p: 'bed', x: 7, y: 5 },
     ],
     npcs: [{ id: 'kr_fuyu', x: 3, y: 4, dir: 'down', talk: [{ if: 'kr_done', scene: 'kr.fuyu_after' }, { scene: 'kr.fuyu' }] }],
+    followerAway: QUARREL,
   });
   // Hisae's hut: one room, a hearth, the order's last registers on a shelf
   interior('kr.hisae', T('Hisae\'s Hut', 'ヒサエ の {小屋|こや}'), 9, 7, 4, 'kr.lodge', [33, 10], {
@@ -347,5 +353,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lantern', x: 8, y: 3, o: { lit: true } }, { p: 'bed', x: 6, y: 4 },
     ],
     npcs: [],
+    followerAway: QUARREL,
   });
 })(RB.content, RB.mapkit);
