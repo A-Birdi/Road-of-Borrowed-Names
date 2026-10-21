@@ -265,7 +265,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 7, y: 3, w: 16, h: 8, roof: 'tile', wall: 'wood', door: null, windows: [] },
     ],
     props: [
-      { p: 'kr_halldoor', x: 14, y: 10, scene: 'kr.hall_door' },
+      // shut, then (once actually opened with the keepers' ledger, lw_kr_hall_open) standing open: the same place,
+      // footprint and scene (RBN-QA-051)
+      { p: 'kr_halldoor', x: 14, y: 10, scene: 'kr.hall_door', if: '!lw_kr_hall_open' },
+      { p: 'kr_halldoor', x: 14, y: 10, o: { open: true }, scene: 'kr.hall_door', if: 'lw_kr_hall_open' },
       { p: 'kr_toro', x: 8, y: 12, scene: 'kr.hall_lantern' }, { p: 'kr_toro', x: 21, y: 12, scene: 'kr.hall_lantern' },
       { p: 'kr_toro', x: 6, y: 16 }, { p: 'kr_toro', x: 23, y: 16 },
       { p: 'stone_marker', x: 11, y: 17, scene: 'kr.hall_marker' },

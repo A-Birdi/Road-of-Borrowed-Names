@@ -42,9 +42,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   def('kr_jar', {}, (c, x, y, p) => {
     px(c, x + 4, y + 4, 8, 10, '#7e402b'); px(c, x + 5, y + 2, 6, 2, '#55291f'); px(c, x + 5, y + 5, 2, 6, '#a45c39');
   });
-  def('kr_halldoor', { w: 2 }, (c, x, y, p) => {
-    px(c, x + 2, y - 14, 28, 28, p.wood[1]); px(c, x + 15, y - 14, 2, 28, p.wood[2]);
-    px(c, x, y - 6, 32, 2, '#c8b07a'); for (let i = 0; i < 4; i++) px(c, x + 4 + i * 7, y - 4, 2, 5, '#f0e8d0');
+  // (onWall: drawn on the hall's front wall, after the building it stands in; RBN-QA-051)
+  def('kr_halldoor', { w: 2, onWall: true }, (c, x, y, p, t, o) => {
+    const open = !!(o && o.open);
+    px(c, x + 2, y - 14, 28, 28, p.wood[1]);
+    if (open) { px(c, x + 11, y - 13, 10, 27, '#140d08'); px(c, x + 10, y - 14, 1, 28, p.wood[2]); px(c, x + 21, y - 14, 1, 28, p.wood[2]); px(c, x + 2, y - 6, 2, 9, '#c8b07a'); }
+    else { px(c, x + 15, y - 14, 2, 28, p.wood[2]); px(c, x, y - 6, 32, 2, '#c8b07a'); for (let i = 0; i < 4; i++) px(c, x + 4 + i * 7, y - 4, 2, 5, '#f0e8d0'); }
+    // the plaque over the doors: weathered wood, its writing worn to marks
+    px(c, x + 11, y - 13, 10, 6, '#3a2a1a'); px(c, x + 12, y - 12, 8, 4, '#d6c296');
+    px(c, x + 14, y - 11, 1, 2, '#4a3624'); px(c, x + 16, y - 11, 1, 2, '#4a3624'); px(c, x + 18, y - 11, 1, 2, '#4a3624');
   });
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
@@ -158,16 +164,32 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
   });
 
-  // The shuttered hall's door (2×1): heavy boards behind a straw rope with paper streamers; shut.
+  // The shuttered hall's door (2×1): heavy boards behind a straw rope with paper streamers, and over them a weathered
+  // plaque, its writing worn to marks (the line read at the door says what it was). Shut; once opened
+  // (lw_kr_hall_open, the map's second placement), the leaves stand parted on the dark inside, the rope untied. Drawn
+  // on the hall's front wall (onWall), not behind it (RBN-QA-051).
   art('kr_halldoor', {
     box: [-4, -44, 72, 76],
+    v: (o) => (o.open ? 1 : 0),
     ink: true,
-    draw(g, M) {
+    draw(g, M, v) {
       const w5 = M.wood;
-      R(g, 2, -40, 60, 64, w5[1]); R(g, 2, -40, 60, 3, w5[3]); R(g, 31, -40, 2, 64, w5[0]);
-      for (let y = -32; y < 22; y += 8) { R(g, 4, y, 26, 1, w5[0]); R(g, 34, y, 26, 1, w5[0]); }
-      line(g, 0, -18, 64, -18, ST[2], 3); line(g, 0, -17, 64, -17, ST[3], 1);
-      for (let i = 0; i < 5; i++) { const x = 6 + i * 13; poly(g, [[x, -16], [x + 4, -16], [x + 2, -10], [x + 5, -10], [x + 2, -4], [x, -4]], PP[4]); }
+      if (v) {
+        // the leaves pushed back, the dark of the hall between them, the rope hanging from one post
+        R(g, 2, -40, 60, 64, w5[1]); R(g, 2, -40, 60, 3, w5[3]);
+        R(g, 20, -37, 24, 61, '#140d08'); R(g, 22, -30, 20, 54, '#21160d');
+        R(g, 18, -40, 2, 64, w5[0]); R(g, 44, -40, 2, 64, w5[0]);
+        for (let y = -32; y < 22; y += 8) { R(g, 4, y, 14, 1, w5[0]); R(g, 46, y, 14, 1, w5[0]); }
+        line(g, 1, -18, 4, 14, ST[2], 3); line(g, 2, -17, 5, 14, ST[3], 1);
+      } else {
+        R(g, 2, -40, 60, 64, w5[1]); R(g, 2, -40, 60, 3, w5[3]); R(g, 31, -40, 2, 64, w5[0]);
+        for (let y = -32; y < 22; y += 8) { R(g, 4, y, 26, 1, w5[0]); R(g, 34, y, 26, 1, w5[0]); }
+        line(g, 0, -18, 64, -18, ST[2], 3); line(g, 0, -17, 64, -17, ST[3], 1);
+        for (let i = 0; i < 5; i++) { const x = 6 + i * 13; poly(g, [[x, -16], [x + 4, -16], [x + 2, -10], [x + 5, -10], [x + 2, -4], [x, -4]], PP[4]); }
+      }
+      // the plaque over the doors, across the seam
+      R(g, 21, -38, 22, 14, '#3a2a1a'); R(g, 22, -37, 20, 12, '#cdb88c'); R(g, 22, -37, 20, 2, '#e2d0a6');
+      for (const [mx, my, mh] of [[26, -34, 6], [31, -35, 7], [36, -33, 5]]) R(g, mx, my, 2, mh, '#5a4430');
     },
   });
 })();
