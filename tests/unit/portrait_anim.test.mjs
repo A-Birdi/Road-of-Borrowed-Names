@@ -24,6 +24,9 @@ export default async (t) => {
   const ids = Object.keys(RB.content.chars).filter((id) => id !== 'narr' && PT.subject(id));
   const human = ids.filter((id) => !PT.subject(id).p.kind && !PT.subject(id).p.extra2);
   t.ok(ids.length >= 88, 'speaking portraits: ' + ids.length);
+  // every portrait has the colours a face is painted with; a creature drawn only by its own sprite has none (RBN-QA-049)
+  t.eq(ids.filter((id) => !(PT.subject(id).p.skin && PT.subject(id).p.hair && PT.subject(id).p.cloth)), [], 'every portrait has skin, hair and clothes to paint');
+  t.eq(PT.subject('lw_rd_geese'), null, 'the geese (a sprite only) have no face portrait');
   const diff = (a, b) => { let n = 0; for (let i = 0; i < a.length; i += 4) if (a[i] !== b[i] || a[i + 1] !== b[i + 1] || a[i + 2] !== b[i + 2] || a[i + 3] !== b[i + 3]) n++; return n; };
   const box = (a, b) => { let x0 = 99, y0 = 99, x1 = -1, y1 = -1; for (let i = 0; i < a.length; i += 4) if (a[i] !== b[i] || a[i + 1] !== b[i + 1] || a[i + 2] !== b[i + 2]) { const x = (i / 4) % 96, y = Math.floor(i / 384); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } return x1 < 0 ? null : [x0, y0, x1, y1]; };
   const lum = (d, i) => (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255;
