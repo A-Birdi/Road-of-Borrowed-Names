@@ -323,11 +323,15 @@ narr: 「あれ 、 {違|ちが}う みたい 。 {急|いそ}がない から �
 
 @scene sg.lw_road_fog
 # Road event (W5), a variant: sea fog comes up the cliffs; a traveller who cannot see the fork asks the way inland.
+# (RBN-QA-048) The fog is seen: it comes up with the first line and lifts after the line that says so; if the way is
+# not found it stays until the scene ends (you wait with them). The map's own light returns at the scene's end.
+!ambience fog
 narr: {海|うみ} から {霧|きり} が {上|あ}がって きた 。 {道|みち} の {先|さき} が {見|み}えない 。 || Fog comes up off the sea. You can't see the road ahead.
 narr: {霧|きり} の {中|なか} から 、 {旅|たび} の {人|ひと} の {声|こえ} が する 。 || From inside the fog comes a traveller's voice.
 !challenge sg.lw_fog
 !if var._res=0 -> miss
 narr: 「ありがとう ございます ！」 {足音|あしおと} が 、 {北|きた} の {道|みち} へ {遠|とお}ざかって いく 。 しばらく する と 、 {霧|きり} も {晴|は}れて きた 。 || "Thank you!" The footsteps fade away up the north road. After a while, the fog lifts too.
+!ambience -
 !note sg_lw_seafog
 !hook road_done sg_road fog
 !end
