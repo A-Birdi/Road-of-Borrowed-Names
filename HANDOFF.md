@@ -647,6 +647,23 @@
       Agnes's review boundaries (2026-10-20): gameplay fixes carry a cross-game impact assessment; art goes to Robin as
       a before/after candidate first; a material change to intended behaviour needs Robin's approval; keep source,
       built and retested states distinct.
+    - **THREE-PARTY REVIEW (owner direction, CL-046, 2026-10-21; accepted with amendments in CC-037):** fixes no
+      longer wait for Robin's individual approval. A change passes only when Agnes, Claude Local and Claude Cloud each
+      review it (function, look where visual, reading/text) and all three AGREE; a REFINE iterates; deadlock or
+      critical issues go to Robin; proactive fixes are pre-approved on that basis, but no removal sweeps; voice stays
+      paused until the full QA ends (a candidate needing a recording is VOICE-HOLD). Procedure: Cloud pushes each
+      candidate to `candidate/qa-0NN` (task-branch head + the candidate's commits; Pages publishes only the task
+      branch, so these never deploy; build with `node tools/build.mjs` there; refinements are new commits, never a
+      force-push); verdicts name the commit; Cloud's candidate post is Cloud's AGREE; on three AGREEs Cloud
+      cherry-picks exactly the agreed commits, builds the next CC candidate, and Agnes retests. No media in Git or the
+      issue. Pushed 2026-10-21 on base `61b5db7`: qa-015 `3deb6e3`, qa-017a `d41eb3c`, qa-017b `0f230b7` (new: rows
+      5-10 only), qa-018 `9fa47fa`, qa-020 `b652f92`, qa-024 `13d578f`, qa-026 `4ace926`, qa-027 `0be2366`, qa-029
+      `6be8500`, qa-030 `e365c88`, qa-031 `70f53b2`, qa-034 `1f86084`, qa-035 `c8eeb33` (with the owner's fence
+      refinement: north-south fence pieces, corners and joins, src/engine/40_maps.js `o.join` and
+      src/engine/28_propwork.js; sb.hamlet, sb.goatshed, cr.barrier), qa-036 `fa14eda`, qa-037 `954db85`. Each passes
+      `validate.mjs` on the new base; each candidate's listed suites are to be re-run on its branch. Not yet built:
+      006, 012's signs, 013 and Blockprint's arrival, the Sazanami exit, 016/023 options, 028's idle-line sibling, the
+      audit's Tier A display fixes. AG-2 (`ag2-work`): asked whether it enters this review.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
