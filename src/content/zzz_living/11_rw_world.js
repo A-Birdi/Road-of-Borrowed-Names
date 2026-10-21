@@ -46,7 +46,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     variants: [
       { id: 'marker', scene: 'sg.lw_road_rw_marker', at: { props: [{ p: 'signblank', x: 21, y: 11, meet: true }] } },
       { id: 'letter', scene: 'sg.lw_road_rw_letter', at: { who: [{ char: 'lw_rd_courier', x: 12, y: 10, dir: 'left' }], props: [{ p: 'pet_papers', x: 10, y: 10, meet: true }] } },
-      { id: 'geese', scene: 'sg.lw_road_rw_geese', at: { who: [{ char: 'lw_rd_child2', x: 15, y: 11, dir: 'up' }] } },
+      // (RBN-QA-049) the flock on the road's south lane, ahead of the child and to one side (so the child never stands
+      // in front of it), the north lane left open
+      { id: 'geese', scene: 'sg.lw_road_rw_geese', at: { who: [{ char: 'lw_rd_geese', x: 14, y: 10, dir: 'right' }, { char: 'lw_rd_child2', x: 15, y: 11, dir: 'up' }] } },
     ],
     stamp: { title: ['{葦|あし}ノ{瀬|せ} の {道|みち}', 'the Reedwake road'], ink: '#7a5a2a' } });
   C.notes.lw_carters_cards = { title: T('Carters\' cards', '{荷車|にぐるま} の {札|ふだ}'), fiction: true,
@@ -156,6 +158,10 @@ narr: {飛脚|ひきゃく} は {手紙|てがみ} を {拾|ひろ}って 、 {�
 narr: ガチョウ の {群|む}れ が 、 {道|みち} を {横切|よこぎ}って いる 。 {小|ちい}さな {子|こ} が {棒|ぼう} を {持|も}って {追|お}って いる 。 || A flock of geese is crossing the road, a small child behind them with a stick.
 !challenge rw.lw_geese
 !if var._res=0 -> later
+# (RBN-QA-049) you wait: the flock crosses to the pond's verge, the child after them, and waves
+!walkto lw_rd_geese 16 7 right
+!walkto lw_rd_child2 15 8 up
+!gesture lw_rd_child2 wave pc
 narr: {立|た}ち{止|ど}まって {待|ま}つ と 、 ガチョウ は {一羽|いちわ} {残|のこ}らず {道|みち} を {渡|わた}った 。 {子|こ} が {手|て} を {振|ふ}った 。 || You stand and wait, and every last goose crosses. The child waves.
 !hook road_done rw_road geese
 !end

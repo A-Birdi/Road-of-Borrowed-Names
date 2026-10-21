@@ -10,6 +10,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   F('lw_rd_child', T('A child', '{子|こ}ども'), 1.32,
     { skin: 2, hair: 'bob', hairColor: 1, cloth: ['#c8603a', '#a44c2c', '#f2e6cc'], shape: 'tunic', acc: [] },
     { eyes: 'round', style: 'bob', blush: true, bg: '#3a2418' }, { size: 'child' });
+  // the geese the child herds along the Reedwake road (RBN-QA-049): one actor, a small flock (30_sprites.js custom.geese)
+  C.chars.lw_rd_geese = { name: T('Geese', 'ガチョウ'), voice: { pitch: 1.2 }, look: { custom: 'geese' }, portrait: { eyes: 'round', style: 'short', bg: '#2a3a24' } };
   F('lw_rd_child2', T('A child', '{子|こ}ども'), 1.3,
     { skin: 3, hair: 'spiky', hairColor: 0, cloth: ['#4a7a9a', '#3a6280', '#efe6d0'], shape: 'tunic', acc: [] },
     { eyes: 'round', style: 'spiky', blush: true, bg: '#1e2c38' }, { size: 'child' });

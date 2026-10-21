@@ -456,6 +456,24 @@ RB.sprites = (function () {
     R(c, 6, 11, 5, 6, '#dfe6ea'); R(c, 9, 5, 2, 7, '#dfe6ea'); R(c, 10, 4, 3, 2, '#dfe6ea'); R(c, 13, 5, 2, 1, '#d8a040');
     R(c, 7, 17, 1, 6, '#6a6a6a'); R(c, 9, 17, 1, 6, '#6a6a6a');
   };
+  // a small flock of geese (RBN-QA-049: the Reedwake road's geese crossing towards the pond), one actor: three birds
+  // from an authored pixel table (AC-1: a small table over a generated shape), drawn from the side whichever way they
+  // face; on a walking frame the feet change
+  const GOOSE = ['.....WWk', '.....WWBB', '.....W', '.....W', 'WWWWWW', 'gWWWWWs', '.ssss', '.B..B'];
+  const GOOSE_STEP = '..BB.';
+  const GOOSE_COL = { W: '#f4f1ea', g: '#c8c2b4', s: '#d6d0c2', B: '#e2902e', k: '#2a2320' };
+  function goose(c, ox, oy, step) {
+    GOOSE.forEach((row, y) => {
+      const r = step && y === GOOSE.length - 1 ? GOOSE_STEP : row;
+      for (let x = 0; x < r.length; x++) if (GOOSE_COL[r[x]]) R(c, ox + x, oy + y, 1, 1, GOOSE_COL[r[x]]);
+    });
+  }
+  custom.geese = (c, look, d, f) => {
+    R(c, 1, 22, 14, 1, 'rgba(0,0,0,0.16)');
+    goose(c, 7, 12, f === 2);
+    goose(c, 0, 14, f === 1);
+    goose(c, 4, 16, f === 2);
+  };
   custom.spirit = (c, look, d, f) => {
     const col = look.col || '#e8e4ff';
     c.fillStyle = col + 'a0'; c.beginPath(); c.moveTo(3, 22); c.quadraticCurveTo(2, 6, 8, 4); c.quadraticCurveTo(14, 6, 13, 22); c.lineTo(10, 20); c.lineTo(8, 22); c.lineTo(6, 20); c.fill();
