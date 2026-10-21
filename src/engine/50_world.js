@@ -120,9 +120,12 @@ RB.world = (function () {
   function companionHere(st, def) {
     return !def || !def.noCompanion || (def.noCompanion !== true && RB.state.test(st, def.noCompanion));
   }
+  // A map's followerAway (a condition): while it holds, your companion does not walk with you there, though they are
+  // still with you in every other way (the party, battles, the Ledger, the pet's rule above): a quarrel at the
+  // Keepers' Lodge (RBN-QA-063, kr/24_scenes_comp.js). A scene's `!refresh comp` reads it again on the same map.
   function placeCompanion() {
-    const cid = partyCompanion();
-    if (!cid || !companionHere(s(), W.map.def)) {
+    const cid = partyCompanion(), d = W.map.def;
+    if (!cid || !companionHere(s(), d) || (d && d.followerAway && RB.state.test(s(), d.followerAway))) {
       W.comp = null;
       return;
     }
