@@ -26,7 +26,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       Object.assign(T('{書庫|しょこ} の {洞|ほら} の {奥|おく} で 、 {灯守|ひもり} の {記録|きろく} を {読|よ}もう 。', 'Read the keepers\' registers at the back of the scriptorium cave.'), { atIf: [
         { if: '!kr_cave2_open', at: { map: 'kr.cave2', x: 22, y: 4 } },
       ] }),
-      T('{宿坊|しゅくぼう} で 、 {夜|よ}{通|どお}し の {灯|ひ} の {番|ばん} を しよう 。', 'Keep the vigil at the lodge, through the night.'),
+      // (RBN-QA-061) before the vigil begins, whoever brings it about: Ren at the ridge's lamp once Hisae has said where
+      // he went, otherwise Hisae at her lamp (her talk sends you on, or makes up the quarrel); then derived (the vigil,
+      // where her warp has taken you)
+      Object.assign(T('{宿坊|しゅくぼう} で 、 {夜|よ}{通|どお}し の {灯|ひ} の {番|ばん} を しよう 。', 'Keep the vigil at the lodge, through the night.'), { atIf: [
+        { if: 'kr_night&!kr_evening_done&comp=ren&kr_apart&kr_hisae_told_ren&!kr_ren_back', at: { map: 'kr.ridge', npc: 'kr_ren_n' } },
+        { if: 'kr_night&!kr_evening_done', at: { map: 'kr.lodge', npc: 'kr_hisae_n' } },
+      ] }),
       T('{夜|よ} が {明|あ}けた 。 {峠|とうげ} を {越|こ}えて 、 {灯落|ひおち} へ {下|くだ}ろう 。', 'Dawn. Cross the pass and go down to Lanternfall.'),
     ],
     reward: { flags: ['kr_main_done'] },
