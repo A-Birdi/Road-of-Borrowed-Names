@@ -61,8 +61,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: 'アカリ の {手紙|てがみ} を ホシノ に {届|とど}けよう 。', en: 'You have Akari\'s letters, in order. Bring them to Hoshino.' },
       { jp: '{吹雪|ふぶき} が {来|く}る 。 {宿|やど} へ {急|いそ}ごう 。', en: 'A snowstorm is coming. Get to the inn.' },
       { jp: '{雪見屋|ゆきみや} で {吹雪|ふぶき} が {過|す}ぎる の を {待|ま}とう 。 {部屋|へや} は {二階|にかい} だ 。', en: 'Wait out the storm at Yukimiya. When you are ready to rest, your room is upstairs.' },
-      { jp: '{吹雪|ふぶき} が やんだ 。 {星|ほし} の {石段|いしだん} を {上|のぼ}って 、 {天文台|てんもんだい} へ {行|い}こう 。', en: 'The storm has passed. Climb the Star Stair, past Hoshino\'s house, to the observatory.' },
-      { jp: '{凍|こお}った {天文台|てんもんだい} の {中|なか} を 、 {上|うえ} へ {進|すす}もう 。', en: 'Find a way up through the frozen observatory to the lamp room at the top.' },
+      { jp: '{吹雪|ふぶき} が やんだ 。 {星|ほし} の {石段|いしだん} を {上|のぼ}って 、 {天文台|てんもんだい} へ {行|い}こう 。', en: 'The storm has passed. Climb the Star Stair, past Hoshino\'s house, to the observatory.',
+        // where it leads, named (RBN-QA-045): the ice on the Star Stair until it is melted (its scene only sets this stage
+        // again, so the derivation could not count it as the step and fell back on the dial behind it); then derived
+        atIf: [{ if: '!sb_stair_open', at: { map: 'sb.hamlet', prop: 'sb_icewall', x: 30, y: 1 } }] },
+      { jp: '{凍|こお}った {天文台|てんもんだい} の {中|なか} を 、 {上|うえ} へ {進|すす}もう 。', en: 'Find a way up through the frozen observatory to the lamp room at the top.',
+        // (RBN-QA-045) the observing log in the chart room until it is read (it opens the stair up); then derived (the
+        // gallery's crank)
+        atIf: [{ if: '!sb_log_solved', at: { map: 'sb.obs_charts', prop: 'sb_starchart', x: 4, y: 5 } }] },
       { jp: '{丸屋根|まるやね} の {部屋|へや} で 、 {灯|あか}り を ともそう 。', en: 'Relight the lamp under the dome.' },
     ] };
   C.quests.sb_goats = { chapter: 4, title: { jp: '{多|おお}すぎる ヤギ', en: 'Too Many Goats' },
