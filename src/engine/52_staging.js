@@ -465,6 +465,9 @@ RB.staging = (function () {
     dusk: { ambient: { dark: 0.25, darkCol: '40,24,40', tint: 'rgba(120,60,40,0.10)', playerLight: 48 }, night: false },
     // first light (expansion P13: Mio's dawn at the terrace footbath)
     dawn: { ambient: { dark: 0.16, darkCol: '52,48,80', tint: 'rgba(210,170,180,0.10)', playerLight: 34 }, night: false },
+    // sea fog up the cliffs (RBN-QA-048: the coast road's fog event): a haze that thickens away from you, colour a little
+    // muted; no darkness (60_render.js drawHaze)
+    fog: { ambient: { haze: 0.66, hazeCol: '224,229,233', drain: 0.18 }, night: false },
   };
   function ambience(preset) {
     const sc = st.scene;

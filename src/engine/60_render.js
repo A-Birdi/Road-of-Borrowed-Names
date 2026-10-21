@@ -620,6 +620,7 @@ RB.render = (function () {
     drawFade(c, m, pal);
     interactMarker(c, W, t);
     drawLighting(c, m, W, t);
+    drawHaze(c, m, W);
     if (fromHeight(m)) RB.below.drawLights(c, m, belowEnv(m, t)); // the lights far below, through the night
     drawWeather(c, m, t);
     if (L) L.atmosphere(c, m, W, t, env);
@@ -703,6 +704,34 @@ RB.render = (function () {
     c.drawImage(light, 0, 0);
   }
 
+  // A scene's sea fog (52_staging.js AMBIENCE.fog; Agnes, RBN-QA-048): a pale haze, clear around you and thickening
+  // with distance, so the road ahead is lost while you and whoever you are talking to stay plain; a lit lamp still
+  // shows through it. The world canvas only, and still (nothing drifts), so reduced motion needs nothing more.
+  function drawHaze(c, m, W) {
+    const amb = ambientOf(m).ambient || {};
+    const a = +amb.haze || 0;
+    if (a <= 0) return;
+    const col = amb.hazeCol || '226,230,234';
+    const x = ax(W.player.fx * TS + 8), y = ay(W.player.fy * TS + 4);
+    const g = c.createRadialGradient(x, y, (amb.hazeClear || 24) * ART, x, y, (amb.hazeFar || 112) * ART);
+    g.addColorStop(0, `rgba(${col},0)`);
+    g.addColorStop(1, `rgba(${col},${a})`);
+    c.fillStyle = g;
+    c.fillRect(0, 0, bw, bh);
+    const s = RB.game.s;
+    for (const p of m.props) {
+      const pd = RB.props.P[p.p];
+      if (!pd || !(pd.light || p.light)) continue;
+      if (p.if && !RB.state.test(s, p.if)) continue;
+      if (p.o && p.o.lit === false) continue;
+      const lx = ax(p.x * TS + 8), ly = ay(p.y * TS + 2), R = 16 * ART;
+      const gl = c.createRadialGradient(lx, ly, 0, lx, ly, R);
+      gl.addColorStop(0, 'rgba(255,226,160,0.6)');
+      gl.addColorStop(1, 'rgba(255,226,160,0)');
+      c.fillStyle = gl;
+      c.fillRect(lx - R, ly - R, R * 2, R * 2);
+    }
+  }
   // Weather particles draw from their own stream (xorshift), never Math.random: the language tasks pick
   // from Math.random, and rain or snow must not change which task comes next.
   let pseed = 0x6c8e9cf5;
