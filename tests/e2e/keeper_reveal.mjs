@@ -69,15 +69,18 @@ async function begin(p, comp, reduce, o) {
 }
 const nextLine = (p, last) => p.waitForFunction((last) => { const l = RB.ui.dialogue.shown && RB.ui.dialogue.shown(); if (l && RB.ui.dialogue.isOpen() && (l.en || '') !== last) return l.en; return window.__done ? '__done' : false; }, last, { timeout: 60000, polling: 50 }).then((h) => h.jsonValue(), () => '__timeout');
 // the picture's probe against the dialogue sheet as the page lays it out (CSS px), and the colour on screen at the
-// keeper's sluice plate, over the swell and on the open water beside it (to its right, away from your lamp)
+// keeper's sluice plate, over the swell and on the open water beside it (to its right, away from your lamp); at the
+// plate also the brightest brass within 2 px of it (plateNear): the keeper's idle frames move it by a pixel or two, and
+// on one of them the point itself is on the plate's shaded rim (85,55,32: still the plate, just too dark for brass)
 const measure = (p) => p.evaluate(() => {
   const A = RB.interlude.ART && RB.interlude.ART.lf_keeper, pr = A && A.probe ? A.probe() : null;
   const cv = document.getElementById('world'), cr = cv.getBoundingClientRect(), dlg = document.querySelector('#ui > .dlg:not(.hidden)');
   if (!pr || !dlg) return { pr: null, sheet: dlg ? dlg.getBoundingClientRect().top : null };
   const k = cr.height / pr.h, kx = cv.width / pr.w, ky = cv.height / pr.h, g = cv.getContext('2d');
   const at = (x, y) => { const d = g.getImageData(Math.round(x * kx) - 1, Math.round(y * ky) - 1, 3, 3).data; let r = 0, gg = 0, bb = 0; for (let i = 0; i < d.length; i += 4) { r += d[i]; gg += d[i + 1]; bb += d[i + 2]; } return [r / 9, gg / 9, bb / 9].map(Math.round); };
+  const near = (x, y, R) => { let m = null; for (let dy = -R; dy <= R; dy++) for (let dx = -R; dx <= R; dx++) { const d = g.getImageData(Math.round((x + dx) * kx), Math.round((y + dy) * ky), 1, 1).data; if (d[0] - d[2] > 40 && (!m || d[0] > m[0])) m = [d[0], d[1], d[2]]; } return m; };
   return { pr, sheet: dlg.getBoundingClientRect().top, css: { keeperTop: cr.top + pr.keeper.y * k, water: cr.top + pr.water * k, swellTop: cr.top + pr.swell.y * k, bellTop: cr.top + pr.bell.y * k, canvasTop: cr.top },
-    plate: at(pr.plate[0], pr.plate[1]), swell: at(pr.swell.x + pr.swell.w / 2, pr.water - Math.round(pr.swell.h * 0.45)), open: at(Math.min(pr.w - 6, pr.swell.x + pr.swell.w + 14), pr.water - Math.round(pr.swell.h * 0.45)) };
+    plate: at(pr.plate[0], pr.plate[1]), plateNear: near(pr.plate[0], pr.plate[1], 2), swell: at(pr.swell.x + pr.swell.w / 2, pr.water - Math.round(pr.swell.h * 0.45)), open: at(Math.min(pr.w - 6, pr.swell.x + pr.swell.w + 14), pr.water - Math.round(pr.swell.h * 0.45)) };
 });
 const brass = (c) => !!c && c[0] > 90 && c[0] - c[2] > 40;
 const lum = (c) => (c ? c[0] * 0.3 + c[1] * 0.59 + c[2] * 0.11 : 0);
@@ -138,9 +141,9 @@ for (const [comp, W, H, reduce] of RUNS) {
   ok(compBefore.length === 1 && compBefore[0].stage === 'face', `${tag}: your companion's answer to it is said over the keeper (${compBefore.map((e) => e.stage || 'map').join(',') || 'no line'})`);
   const P = r.probes;
   const sw = P.heave, kp = P.rise, kf = P.face;
-  ok(!!(sw && sw.pr) && sw.css.swellTop < sw.sheet && sw.css.water <= sw.sheet + 0.5 && lum(sw.swell) > lum(sw.open) + 6 && !brass(sw.plate), `${tag}: on "heaves" the water swells in front of the bell, above the sheet, no keeper yet${sw && sw.pr ? ` (water ${Math.round(sw.css.water)} / sheet ${Math.round(sw.sheet)}; swell ${sw.swell} vs open water ${sw.open})` : ' (no picture)'}`);
+  ok(!!(sw && sw.pr) && sw.css.swellTop < sw.sheet && sw.css.water <= sw.sheet + 0.5 && lum(sw.swell) > lum(sw.open) + 6 && !brass(sw.plate) && !brass(sw.plateNear), `${tag}: on "heaves" the water swells in front of the bell, above the sheet, no keeper yet${sw && sw.pr ? ` (water ${Math.round(sw.css.water)} / sheet ${Math.round(sw.sheet)}; swell ${sw.swell} vs open water ${sw.open})` : ' (no picture)'}`);
   for (const [nm, m] of [['"Pipes twist together"', kp], ['your companion\'s answer', kf]]) {
-    ok(!!(m && m.pr) && brass(m.plate) && m.css.keeperTop >= m.css.canvasTop - 0.5 && m.css.water <= m.sheet + 0.5, `${tag}: on ${nm} the keeper stands in the water, its sluice plate on screen, crown to water above the dialogue sheet${m && m.pr ? ` (keeper ${Math.round(m.css.keeperTop)}–${Math.round(m.css.water)}, sheet ${Math.round(m.sheet)}, plate ${m.plate})` : ' (no picture)'}`);
+    ok(!!(m && m.pr) && brass(m.plateNear) && m.css.keeperTop >= m.css.canvasTop - 0.5 && m.css.water <= m.sheet + 0.5, `${tag}: on ${nm} the keeper stands in the water, its sluice plate on screen, crown to water above the dialogue sheet${m && m.pr ? ` (keeper ${Math.round(m.css.keeperTop)}–${Math.round(m.css.water)}, sheet ${Math.round(m.sheet)}, plate ${m.plate}, brightest within 2 px ${m.plateNear})` : ' (no picture)'}`);
   }
   // 2. the battle as before; the aftermath; the chamber again
   const bt = L[iBattle];
