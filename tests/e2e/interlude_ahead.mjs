@@ -17,7 +17,12 @@
 //  6. the crossing's own look ahead (out → leaves): asked, then cleared before its turn: it never builds, and nothing
 //     of the crossing's layers is held after; asked, then cleared and shown again at the same moment: it never builds
 //     for the old showing, only for the newer one;
-//  7. no page errors.
+//  7. before any picture is shown (Agnes 6324054239): ahead for one picture, then a different one shown before its turn:
+//     it builds nothing for the one asked for; ahead, built, then a different one shown: those layers are given up
+//     once, as it is shown (and not again until its own clear); ahead, then the same picture shown before or after its
+//     turn: the generation is kept, its work builds for it, and nothing is given up as it is shown; ahead for one
+//     picture, then for a different one: only the later one builds, and layers built for the first are given up once;
+//  8. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/interlude_ahead.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -35,8 +40,8 @@ for (const mode of ['idle', 'setTimeout']) {
     await RB.save.manualSave(1);
     window.__prep = []; window.__rel = 0;
     RB.prologueArt.kit.onRelease(() => { window.__rel++; });
-    // a picture that only records what it is asked to build, and when (the generation then)
-    RB.interlude.ART.zz_ahead = { stages: ['a', 'b'], prepare(w, h, vb, st) { window.__prep.push({ st, gen: RB.interlude.generation() }); }, draw(c, w, h) { c.fillStyle = '#123'; c.fillRect(0, 0, w, h); } };
+    // two pictures that only record what they are asked to build, and when (the generation then)
+    for (const id of ['zz_ahead', 'zz_other']) RB.interlude.ART[id] = { stages: ['a', 'b'], prepare(w, h, vb, st) { window.__prep.push({ id, st, gen: RB.interlude.generation() }); }, draw(c, w, h) { c.fillStyle = '#123'; c.fillRect(0, 0, w, h); } };
   }, mode);
   const wait = (ms) => p.waitForTimeout(ms);
   const look = () => p.evaluate(() => ({ prep: window.__prep.slice(), rel: window.__rel, gen: RB.interlude.generation(), pic: RB.interlude.state() && RB.interlude.state().id }));
@@ -119,6 +124,53 @@ for (const mode of ['idle', 'setTimeout']) {
     if (!again) ok(!P.ran.includes(r.g0) && !P.pic && P.cached === 0, `${tag} the crossing's look ahead asked, then cleared before its turn: it never builds for that showing, and none of the crossing's layers is held after (built for ${JSON.stringify(P.ran)}, the old showing ${r.g0}; layers held ${P.cached})`);
     else ok(!P.ran.includes(r.g0) && P.ran.includes(P.gen) && P.pic && P.pic.id === 'ko_crossing', `${tag} the crossing's look ahead asked, then cleared and the same moment shown again: it builds only for the newer showing (built for ${JSON.stringify(P.ran)}; old ${r.g0}, newer ${P.gen})`);
   }
+  // 7. before any picture is shown: the picture asked for owns the work; a different one shown (or asked for) does not
+  await reset();
+  const g7 = await p.evaluate(() => { const g = RB.interlude.generation(); RB.interlude.ahead('zz_ahead', ['b']); RB.interlude.show('zz_other', 'a'); return { g, now: RB.interlude.generation() }; });
+  await wait(500);
+  L = await look();
+  ok(!L.prep.length && L.pic === 'zz_other' && g7.now > g7.g && L.rel === 0, `${tag} ahead for one picture, then a different one shown before its turn: nothing built for the one asked for (${JSON.stringify(L.prep)}; generation ${g7.g} → ${g7.now}; showing ${L.pic}; releases ${L.rel})`);
+  await reset();
+  await p.evaluate(() => RB.interlude.ahead('zz_ahead', ['b']));
+  await wait(500);
+  const b7 = await look();
+  await p.evaluate(() => RB.interlude.show('zz_other', 'a'));
+  const s7 = await look();
+  await p.evaluate(() => RB.interlude.show('zz_other', 'b'));
+  await wait(500);
+  const t7 = await look();
+  await p.evaluate(() => RB.interlude.clear());
+  const c7 = await look();
+  ok(b7.prep.length === 1 && b7.prep[0].id === 'zz_ahead' && s7.rel === b7.rel + 1 && s7.gen > b7.gen && s7.pic === 'zz_other' && t7.rel === s7.rel && t7.prep.length === 1 && c7.rel === t7.rel + 1,
+    `${tag} ahead, built, then a different picture shown: what was built for the one asked for is given up once, as it is shown, and not again until its own clear (built ${JSON.stringify(b7.prep)}; releases ${b7.rel} → ${s7.rel} as shown → ${t7.rel} while it shows → ${c7.rel} at its clear; generation ${b7.gen} → ${s7.gen})`);
+  for (const when of ['before', 'after']) {
+    await reset();
+    await p.evaluate(() => RB.interlude.ahead('zz_ahead', ['b']));
+    if (when === 'after') await wait(500);
+    const a = await look();
+    await p.evaluate(() => RB.interlude.show('zz_ahead', 'a'));
+    const s = await look();
+    await wait(500);
+    L = await look();
+    ok(s.gen === a.gen && s.rel === a.rel && L.rel === a.rel && L.prep.length === 1 && L.prep[0].id === 'zz_ahead' && L.prep[0].gen === a.gen && L.pic === 'zz_ahead',
+      `${tag} ahead, then the same picture shown ${when} its turn: the generation is kept (${a.gen} → ${s.gen}), its work builds for it (${JSON.stringify(L.prep)}), nothing given up as it is shown (releases ${a.rel} → ${s.rel} → ${L.rel})`);
+  }
+  await reset();
+  await p.evaluate(() => { RB.interlude.ahead('zz_ahead', ['b']); RB.interlude.ahead('zz_other', ['b']); });
+  await wait(500);
+  const q7 = await look();
+  await reset();
+  await p.evaluate(() => RB.interlude.ahead('zz_ahead', ['b']));
+  await wait(500);
+  const d7 = await look();
+  await p.evaluate(() => RB.interlude.ahead('zz_other', ['b']));
+  const e7 = await look();
+  await wait(500);
+  const f7 = await look();
+  ok(q7.prep.length === 1 && q7.prep[0].id === 'zz_other' && d7.prep.length === 1 && e7.rel === d7.rel + 1 && f7.rel === e7.rel && f7.prep.length === 2 && f7.prep[1].id === 'zz_other',
+    `${tag} ahead for one picture, then for a different one, nothing shown: only the later one builds (${JSON.stringify(q7.prep)}); layers built for the first are given up once (releases ${d7.rel} → ${e7.rel} → ${f7.rel}; ${JSON.stringify(f7.prep)})`);
+  await reset();
+
   await p.evaluate(() => RB.interlude.clear());
   ok(!errors.length, `${tag} no page errors ${errors.slice(0, 2).join(' | ')}`);
   await p.close();

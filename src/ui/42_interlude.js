@@ -65,8 +65,15 @@ RB.interlude = (function () {
   // moment) belongs to the showing it was asked for: a generation. Every clear starts a new one (the scene's end, and so
   // every campaign change), as does a different picture taking the screen; work of an older generation does nothing
   // when its turn comes (RBN-QA-072 refine, Agnes 6322740894). warm: layers built ahead for a picture not shown (yet),
-  // given up by the clear that ends their generation even when nothing was shown.
-  let gen = 0, warm = false;
+  // given up by the clear that ends their generation even when nothing was shown. want: before any picture is shown,
+  // the one that work was asked for; a different one shown (or asked for) instead starts a new generation and gives up
+  // what was built for it, once, while the one asked for keeps both (RBN-QA-072 refine, Agnes 6324054239).
+  let gen = 0, warm = false, want = null;
+  function supersede(id) {
+    if (!want || want === id) return;
+    gen++;
+    if (warm) { warm = false; if (RB.prologueArt) RB.prologueArt.release(); }
+  }
   function show(id, stage) {
     const A = ART[id];
     if (!A) { console.warn('missing interlude', id); return; }
@@ -76,12 +83,15 @@ RB.interlude = (function () {
       return;
     }
     if (cur) gen++; // (another picture takes the screen: what the one before queued is not this one's)
+    else supersede(id); // (nothing shown yet: what was asked for another picture is not this one's)
+    want = null;
     cur = { id, stage, at: now(), top: null };
     warm = false; // (what was built ahead is the shown picture's now: its clear gives it up)
     RB.render.setOverride(frame);
   }
   function clear() {
     gen++;
+    want = null;
     if (!cur) {
       if (warm) { warm = false; if (RB.prologueArt) RB.prologueArt.release(); }
       return;
@@ -100,6 +110,7 @@ RB.interlude = (function () {
   function ahead(id, stages) {
     const A = ART[id];
     if (!A || !A.prepare || typeof document === 'undefined' || !RB.render) return;
+    if (!cur) { supersede(id); want = id; }
     const g = gen;
     const run = () => {
       if (g !== gen) return; // (cleared, or another picture took the screen, since it was asked for)
