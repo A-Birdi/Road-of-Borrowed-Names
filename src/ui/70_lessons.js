@@ -109,13 +109,23 @@ RB.lessons = (function () {
   // numbered from 1, in the space one box takes (RBN-QA-039; a small kana's reference is already drawn small and low,
   // so it is not scaled again). Any part with no reference: no demonstration, and no claim of numbered strokes.
   const SMALL_KANA = 'ぁぃぅぇぉっゃゅょゎゕゖァィゥェォッャュョヮヵヶ';
-  function demoFigure(ch) {
+  // (`full`: the space the whole figure takes, 360 on a lesson sheet; `plain`: no caption, where the surface says it)
+  function demoFigure(ch, full, plain) {
     const parts = Array.from(ch);
     if (!parts.every((p) => RB.recog && RB.recog.reference(p))) return '<p class="muted small lesson-nodemo">No stroke demonstration for this one.</p>';
-    const one = parts.length === 1, size = one ? 360 : Math.floor(360 / parts.length);
+    const one = parts.length === 1, size = one ? full || 360 : Math.floor((full || 360) / parts.length);
     const canvases = parts.map((p) => '<canvas width="' + size + '" height="' + size + '" role="img" aria-label="Stroke order for ' + (SMALL_KANA.includes(p) ? 'small ' : '') + esc(p) + '"></canvas>').join('');
     return '<figure class="lesson-demo">' + (one ? canvases : '<div class="lesson-demo-set">' + canvases + '</div>') +
-      '<figcaption class="muted small">' + (one ? 'Numbered strokes' : 'Each kana with its own numbered strokes,') + ' from the reference data. The adventure accepts readable variants; order matters only in optional practice.</figcaption></figure>';
+      (plain ? '' : '<figcaption class="muted small">' + (one ? 'Numbered strokes' : 'Each kana with its own numbered strokes,') + ' from the reference data. The adventure accepts readable variants; order matters only in optional practice.</figcaption>') + '</figure>';
+  }
+  // The demonstration drawn into an element of another surface (the Guide's kana chart, RBN-QA-039 follow-up): a
+  // character with its own reference on one canvas, as it always was there; a combination in its boxes, and a
+  // character with no reference with the same honest line, as on a lesson sheet. One stop for every box.
+  function demoInto(el, ch, size, cls) {
+    const parts = Array.from(ch);
+    el.innerHTML = parts.length === 1 && RB.recog && RB.recog.reference(ch) ? '<canvas width="' + size + '" height="' + size + '"' + (cls ? ' class="' + cls + '"' : '') + '></canvas>' : demoFigure(ch, size, true);
+    const stops = [...el.querySelectorAll('canvas')].map((cv, j) => demo(cv, parts[j]));
+    return () => stops.forEach((f) => f());
   }
 
   // One new kana per page of a lesson sheet: the character and its romaji,
@@ -229,5 +239,5 @@ RB.lessons = (function () {
     RB.learn.rec('g:' + id);
     await RB.challenge.teachCard({ title: 'Grammar:', titleMixed: g.title, jpMixed: g.title, en: g.en, ex: (g.ex || []).slice(0, 3) });
   }
-  return { run, grammarCard, groups, groupChars, nextGroup, kanaFor, teachAll, demo };
+  return { run, grammarCard, groups, groupChars, nextGroup, kanaFor, teachAll, demo, demoInto };
 })();

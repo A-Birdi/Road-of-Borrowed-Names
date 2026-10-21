@@ -93,6 +93,12 @@ button.entry .t, button.entry .kind { display: block; }
 .kcell:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
 .kdemo-box { display: flex; gap: 12px; align-items: center; margin: 0.4em 0 0.8em; }
 .kdemo-box canvas { width: 160px; height: 160px; border-radius: var(--r-1); background: #fffaf0; border: 1px solid var(--paper-edge); flex: none; }
+/* RBN-QA-039 follow-up: a combination's boxes (or the line saying there is no demonstration) in the same 160px */
+.kdemo-box .kdemo-fig { width: 160px; flex: none; }
+.kdemo-box .lesson-demo { margin: 0; max-width: none; }
+.kdemo-box .lesson-demo-set { gap: 4px; max-width: none; }
+.kdemo-box .lesson-demo-set canvas { flex: 1 1 0; width: 0; height: auto; aspect-ratio: 1; }
+.kdemo-box .lesson-nodemo { margin: 0; }
 
 /* Satchel */
 .item-row .kind svg, .entry .kind svg { width: 1em; height: 1em; vertical-align: -0.15em; }
