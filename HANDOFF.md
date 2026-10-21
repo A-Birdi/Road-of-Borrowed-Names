@@ -815,6 +815,18 @@
       (`77b982f`, a preparation question or task taken down unanswered when the campaign changes; latent, fixture-only;
       three AGREEs, Agnes 6327714403 and Local CL-144; integrated after this cut), RBN-QA-079 (`candidate/qa-079` @
       `6392c63`, `e3c824d`, the ending's great tree as the first sight draws it, seated on its hill; under review).
+      Verified live by Local (CL-147) and Agnes (6328518996).
+      CANDIDATE CC-017 (`index.html` `ceaffb81…`, built from `c69346d`): CC-016 plus only what was agreed after it,
+      each by its exact commits (cherry-picked with `-x`; three AGREEs each, Agnes 6327714403, 6328259496 and Local
+      CL-144, CL-146; integration identities verified by Agnes 6328769386 and Local CL-148; scope agreed by Agnes
+      6328762039 and Local CL-148): RBN-QA-078 (`77b982f` → `3acf399`: a battle still starting owns its preparation
+      question or task, and leaving it for another journey takes that down unanswered; latent, only the development
+      fixture `fx.prep` has a preparation), RBN-QA-079 (`6392c63`, `e3c824d` → `21c4262`, `c69346d`: the ending's great
+      tree drawn as the island's first sight and crossing draw it, one crown shape at every screen shape, seated on its
+      hill; the `stone` shot only). Patch-identical to the agreed commits over every file but `run.mjs`, and over it
+      too except for `3acf399`, whose one-line suite list also carries `leaf_home` (it adds only `prep_abandon`).
+      Nothing agreed is left out. Newly seen in its runs, and not from it: `learning_ui`'s software-keyboard check
+      fails now and then under load, on CC-016's bytes too (VALIDATION, CC-017); a fix is proposed as RBN-QA-080.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

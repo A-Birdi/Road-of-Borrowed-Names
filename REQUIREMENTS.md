@@ -1340,7 +1340,18 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   flag, the count, the wind, the toast) unchanged. B `leaf_marker` 18/0, `wind_stone` 19/0, `leaf_home` 42/0,
   `sequence_world --only ko.end` 156/0 on CC-016's own bytes. Their tests' Reduce motion is the setting the game reads
   (`reducedMotion`, read back): runs before `a904614` and `f6873a1` set an unread `reduceMotion` and are motion runs
-  only (VALIDATION, CC-016). In candidate CC-016 (`fc7a7a56…`, built from `e70e9c3`), READY_FOR_QA.
+  only (VALIDATION, CC-016). In candidate CC-016 (`fc7a7a56…`, built from `e70e9c3`), READY_FOR_QA; verified live by
+  Local (CL-147) and Agnes (6328518996).
+  RBN-QA-078 and RBN-QA-079 (three-party AGREE each, on the exact commits listed in HANDOFF's CC-017 entry): a
+  preparation question or task asked while a battle is still starting belongs to that start; when the journey changes
+  under it (a load that works, fails or is cancelled), it is taken down unanswered, with any word help opened from
+  it, and a late click, Enter or Escape on it records, introduces and opens nothing, while an ordinary preparation is
+  answered and recorded as before (latent: only the development fixture `fx.prep` has one; Agnes's AGREE is
+  exact-source, not a DOM, IME or browser run); the chapter's ending picture draws Kotonoha's great tree as the first
+  sight and the crossing draw it, one crown shape at every screen shape, clear of Otoha, its roots on a rise of the
+  hill. B `prep_abandon` 52/0, `battle_start_abandon` 28/0, `sequence_world --only ko.end` 156/0,
+  `sequence_art_integrity` 32/0 on CC-017's own bytes. In candidate CC-017 (`ceaffb81…`, built from `c69346d`),
+  READY_FOR_QA.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:

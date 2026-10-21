@@ -5484,6 +5484,45 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-017:** `index.html` sha256 `ceaffb81e1ae925edce89346ef849851e1bf2bb12300e3373afe33eac4c9e1cc`, built
+    from `c69346d` (CC-016 plus only RBN-QA-078 and RBN-QA-079, each by its agreed commits; patch-identical to them
+    over every file but `run.mjs`, and over it too except for `3acf399`, whose one-line suite list also carries
+    `leaf_home`: it adds only `prep_abandon`; identities verified by Agnes 6328769386 and Local CL-148);
+    byte-identical to the build the suites ran on. On these bytes (B): `ko_first_sight` 87/0, `ko_crossing` 94/0,
+    `interlude_ahead` 30/0, `interlude_lifecycle` 14/0, `interludes` 76/0, `lf_arrival_view` 79/0, `lookout_vista`
+    22/0, `keeper_reveal` 69/0, `kotonoha` 7/0, `licence` 2/0, `battle_start_abandon` 28/0, `prep_abandon` 52/0,
+    `encounters` 10/0, `load_mid_scene` 19/0, `combat_ui` 7/0, `social_battle` 65/0, `card_press` 13/0,
+    `battle_settings` 10/0, `battle_presentation` 13/0, `fog_event` 26/0, `prologue` 100/0, `title_ledger` 18/0,
+    `play_ui` all ok (44), `world_view` all ok (20), `ui` 14/0, `wind_stone` 19/0, `leaf_home` 42/0, `hall_entry` all
+    ok (16), `hall_door` 15/0, `walkto_options` 23/0, `quest_guide` all ok (55), `guide_next_step` 24/0,
+    `ruin_lanterns` 31/0, `lodge_evening` 16/0, `lodge_quarrel` 31/0, `ren_apart` 7/0, `guide_reveal` 37/0,
+    `guide_kana` 11/0, `social_wait` 12/0, `look_purity` 9/0, `props_balance` 48/0, `road_oil` 14/0, `geese_event`
+    15/0, `keepers` 4/0, `lodge_arrival` 40/0, `guide_stacks` 8/0, `guide_archive` 14/0, `companion_turn` 4/0,
+    `road_on` 11/0, `leaf_marker` 18/0, `guide_vigil` 9/0 (two runners side by side, each suite in turn, with the whole
+    unit suite running alongside), `sequence_world --only ko.end` 156/0 and `sequence_art_integrity` 32/0: 53 suites
+    passing. U whole suite 57,787/0 on `c69346d`; `validate.mjs` no errors. Drawn directly at the game's buffer for
+    320 × 200, 640 × 400 and 390 × 844, the ending's `stone` and `north` shots are pixel-identical to `e3c824d`'s.
+    Recorded as they happened, not made green afterwards:
+    - `learning_ui` 14/1 in that run: "the typing field stays above the software keyboard…" (Submit's bottom 554 against
+      514 visible; the field itself in view). Run again alone on the same bytes: 14/1 (which check failed was not
+      captured), then 15/0. Not from CC-017: the book's typefaces (`RB.bookType`, installed once the page is first idle
+      after start-up) can arrive after the test raises its simulated keyboard on a freshly loaded page; their metrics
+      then wrap the task's action row ("(assisted)", "I don't know") onto a second line, Submit moves down 61 px, and
+      the overlay's keep-in-view, which runs on viewport changes only, does not run again. A scratch probe of the test's
+      own steps (not committed), run while the machine was busy and some runs with CPU throttling or extra CPU load:
+      CC-017's bytes failed 6 times in 136 runs and CC-016's (`fc7a7a56…`) twice in 56. The five failures whose
+      positions were logged (all on CC-017's bytes) left Submit unscrolled, as in the suite's run. The failures whose
+      action row was logged (4 of CC-017's and 1 of CC-016's) showed it wrapping after the keyboard rose. In the two
+      failures where the typefaces were logged (one on each build), none were installed when the keyboard rose and 7
+      were by the measure. With the typefaces installed before the keyboard, 24 of 24 passed. A fix is proposed as
+      RBN-QA-080, not in CC-017.
+    - `pad_kanji` 7/1 here (the 郁 case, a `page.tap` timeout), as recorded since CC-015, not in the 53.
+    - On Local's Windows machine, `encounters` 9/1 (a Windows-only capture path) and the unmodified `sequence_world`
+      26/33 (CC-016).
+    - The Reduce-motion provenance correction recorded under CC-016 stands unchanged: runs before `a904614` and
+      `f6873a1` are motion runs only.
+    Not shown by any of these runs: QA-078's surfaces with a real IME or on a device; the tree on real devices.
+    Voice: none.
   - **Candidate CC-016:** `index.html` sha256 `fc7a7a5666beac9acb86809990e8ded981bcb0b39bc12adf52b4bde439e5d60c`, built
     from `e70e9c3` (CC-015 plus only RBN-QA-074, the `leaf_marker` Reduce-motion fix, RBN-QA-075 with its ending stone,
     and RBN-QA-076 with its two test successors, each by its agreed commits; patch-identical to them over every file but
