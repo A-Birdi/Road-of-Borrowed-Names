@@ -78,17 +78,33 @@ const told = await now(p);
 ok(!mid.follower && mid.pc.join() !== off.pc.join() && !told.follower && told.told && !errors.length, 'walking about the lodge and after Hisae has told you: Ren still away (' + JSON.stringify({ mid: { follower: mid.follower, pc: mid.pc }, told }) + ')');
 // 2. the reunion on the ridge
 const ridge = await where(p, 'kr.ridge', 40, 10, 'left');
+// every frame from here: each Ren drawn (the people, the ones walking off, those walked in, foes, the follower), so a
+// second Ren for even a frame is seen (Agnes 6315726597: the ridge's Ren walking off while the follower stands)
+await p.evaluate(() => {
+  const W = RB.world.W, who = (n) => (n.def && (n.def.char || n.def.id)) || n.id, R = (window.__ren = { max: 0, frames: 0, dup: null, first: null });
+  const tick = () => {
+    const drawn = [['npcs', W.npcs], ['leavers', W.leavers], ['extras', W.extras], ['foes', W.foes]].flatMap(([k, l]) => (l || []).filter((n) => who(n) === 'ren' && (n.alpha == null || n.alpha > 0)).map((n) => k + '@' + n.x + ',' + n.y + ' a' + (n.alpha == null ? 1 : +n.alpha.toFixed(2))));
+    if (W.comp && W.comp.id === 'ren') { drawn.push('comp@' + W.comp.x + ',' + W.comp.y); if (!R.first) R.first = [W.comp.x, W.comp.y]; }
+    R.frames++; R.max = Math.max(R.max, drawn.length);
+    if (drawn.length > 1 && !R.dup) R.dup = drawn;
+    if (!R.stop) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+});
 await p.evaluate(() => RB.world.tapTile(37, 10));
 await p.waitForFunction(() => RB.ui.dialogue.isOpen(), null, { timeout: 20000 }).catch(() => {});
 const j0 = (await now(p)).journal;
 const said = await drive(p, 1, 800);
 await p.waitForTimeout(800);
 const back = await now(p);
+await p.waitForTimeout(2500);
+const ren = await p.evaluate(() => { window.__ren.stop = true; return window.__ren; });
 const beside = back.fpos && Math.abs(back.fpos[0] - back.pc[0]) + Math.abs(back.fpos[1] - back.pc[1]) === 1;
 ok(ridge.ridgeRen === 1 && !ridge.follower && said.some((l) => /It's lit/.test(l.text)) && back.follower && beside && back.ridgeRen === 0 && back.pet === true && back.back && back.crossroads && !back.apart && back.journal === j0 + 1 && !back.quarrel, 'the reunion: Ren walks with you on the spot, beside you and not on your tile, the ridge\'s Ren gone, the animal back; the arc as before (' + JSON.stringify({ ridge: { ridgeRen: ridge.ridgeRen, follower: ridge.follower }, back }) + ')');
 await walk(p, 'ArrowRight', 600); await walk(p, 'ArrowDown', 400);
 await p.waitForTimeout(800);
 const follows = await now(p);
+ok(ren.frames > 60 && ren.max === 1 && !ren.dup && ren.first && ren.first.join() === '37,10', 'one Ren drawn at every frame from the tap through the reunion and after (' + ren.frames + ' frames): the ridge\'s Ren is the one who comes with you, from where they stood (' + JSON.stringify({ max: ren.max, firstDuplicate: ren.dup, followerFirstAt: ren.first }) + ')');
 ok(follows.follower && follows.pc.join() !== back.pc.join() && Math.abs(follows.fpos[0] - follows.pc[0]) + Math.abs(follows.fpos[1] - follows.pc[1]) <= 1, 'Ren follows as you walk (' + JSON.stringify(follows) + ')');
 // 3. loads and re-entry
 await p.evaluate(async () => { await RB.save.manualSave(1); await RB.game.loadCampaign(1, 'manual'); });
