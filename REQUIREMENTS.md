@@ -1259,7 +1259,14 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   portrait (a creature drawn only by its own sprite brings none; `portrait_anim` green again); with the fog event's
   Skip seen and real-load tests (test only); cherry-picked as `748d593`, `dcec221`, `0f5c3be` (patch-identical, verified
   by Agnes 6309061501 and Local CL-072); B `goatshed_fence` 10/0, `geese_event` 15/0 and U whole suite 57,696/0 on
-  CC-009's own file. In candidate CC-009 (`f9e42742…`, built from `0f5c3be`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  CC-009's own file. In candidate CC-009 (`f9e42742…`, built from `0f5c3be`), READY_FOR_QA.
+  RBN-QA-056 and RBN-QA-057 (three-party AGREE: Cloud CC-046/047, Local CL-084, Agnes 6311456994): a conversation with a
+  creature in it (the Teller's Shadow and eight more) takes its social actions and the companion's gesture on the
+  battle screen (no more TypeError on `card.word.lex` and re-triggered introduction), and a companion plan's look-ahead
+  never acts on the live conversation; a press on a response card's Japanese words chooses that card (word-help tokens
+  carry their own index), and the keyboard focus comes back to its card over a new deal; cherry-picked as `1d73c51`,
+  `1dc8923`, `5879c31` (patch-identical to `2e598b6`, `4479bdd`, `2c73f5a`); B `social_battle` 65/0, `card_press`
+  13/0 on CC-010's own bytes. In candidate CC-010 (`61c5c819…`, built from `5879c31`), READY_FOR_QA. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand

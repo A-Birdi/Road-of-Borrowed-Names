@@ -721,6 +721,15 @@
       review). Not in CC-009, each its own candidate for review: QA-051 `4d3197c`, QA-052 `d54e5a2`, qa-024i
       `e3981b8`, QA-053 and QA-054 (in progress); QA-045 (the guide naming a later, unreachable step: the observatory's
       dial before the ice is melted, Keepers' Road's Deepest Shelves before the cave rite) investigated, proposal next.
+      CANDIDATE CC-010 (`index.html` `61c5c819…`, built from `5879c31`): CC-009 plus only RBN-QA-056 (a social action on
+      the battle screen threw on `card.word.lex`; Agnes's playthrough stopped at the Teller's Shadow), its refine (a
+      companion plan's look-ahead applied social actions to the live conversation, Local CL-082) and RBN-QA-057 (a
+      press on a card's Japanese words chose the card at the word's index; focus restored likewise), three AGREEs each.
+      Not in it, agreed and to integrate next, each by its exact commits: QA-053 `bdb1439`, QA-054 `6ebf2ae`, QA-045
+      `d4e42bc`, QA-051 `4d3197c`, QA-052 `d54e5a2`, qa-024i `e3981b8`, the fog test refine `2fc477d` (QA-051 with
+      qa-024i needs `hall_door`'s onWall check as an allowlist, Local CL-075). Filed: RBN-QA-058 (a procedure
+      encounter's plan look-ahead mutates the live procedure, `kr.moss_steps`, Agnes 6311442246), QA-055 (preview-only),
+      the QA-039 Guide follow-up.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

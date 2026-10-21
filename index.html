@@ -65922,7 +65922,9 @@ RB.encounter = (function () {
   // How useful each companion action is with this response queued: each tried on a copy for one exchange.
   function ranked(st, s, card, words, T) {
     const opts = L().compOptions(st, s, card).filter((o) => !o.locked).concat(companionOptions(st, s));
-    if (!RB.combatSim || !st.foes.length) return opts.map((o) => ({ o, v: 0 }));
+    // (nor in a conversation with a creature in it: the look-ahead's copy shares the encounter, and a social action
+    // would be applied to the live conversation; RBN-QA-056, Local CL-082)
+    if (!RB.combatSim || !st.foes.length || (st.enc && st.enc.social)) return opts.map((o) => ({ o, v: 0 }));
     const known = new Set(words.flatMap((w) => w.tags || []));
     return opts.map((o) => {
       if (o.used || o.def.own || o.def.id === 'join') return { o, v: o.def.own ? 1e6 : -1e6 };
@@ -112691,7 +112693,8 @@ RB.combat = (function () {
   }
   // card previews: hover (mouse) and keyboard focus show whom it reaches; leaving clears
   function wirePreview(container, reachFor) {
-    const at = (e) => e.target && e.target.closest && e.target.closest('[data-i], [data-a]');
+    // (a card is found by the card itself: the words of its Japanese label carry their own data-i; RBN-QA-057)
+    const at = (e) => e.target && e.target.closest && e.target.closest('.rcard[data-i], [data-a]');
     container.onpointerover = (e) => { if (e.pointerType !== 'mouse') return; const b = at(e); if (b && !b.disabled) setHover(reachFor(b)); };
     container.onpointerout = (e) => { if (e.pointerType !== 'mouse') return; const b = at(e); if (b && !(e.relatedTarget && b.contains(e.relatedTarget))) { const f = document.activeElement && container.contains(document.activeElement) ? at({ target: document.activeElement }) : null; setHover(f && f === kbEl && f.matches(':focus-visible') ? reachFor(f) : null); } };
     // (focusin/focusout have no on… properties: listeners, removed again by unwirePreview)
@@ -112740,14 +112743,15 @@ RB.combat = (function () {
         // the responses your companion points out (E19), when you accepted that help
         if (st.enc && st.enc.point) { const pts = ENC().pointCards(st, s, words()); for (const c of cards) if (pts.indexOf(c.id) >= 0) c.pointed = true; }
         for (const c of cards) if (c.kind === 'word') shownWords.add(c.word.id);
-        const focusedI = document.activeElement && ui.resp.contains(document.activeElement) ? document.activeElement.getAttribute('data-i') : null;
+        const fc = document.activeElement && ui.resp.contains(document.activeElement) && document.activeElement.closest('.rcard[data-i]');
+        const focusedI = fc ? fc.getAttribute('data-i') : null;
         const modRow = mods.length ? '<div class="cb-mods" role="group" aria-label="Reach: modifiers">' + '<span class="mods-h">' + I('words') + '<span>Reach</span></span>' + mods.map((m) => '<button type="button" class="mod-chip' + (tg.mod === m.id ? ' on' : '') + '" data-mod="' + m.id + '" aria-pressed="' + (tg.mod === m.id) + '"' + (m.hushed ? ' disabled title="' + esc(m.hushed) + '"' : ' title="' + esc(m.family.role + ': ' + m.family.does) + '"') + '>' + RB.ui.jhtml(m.family.jp) + '</button>').join('') + '</div>' : '';
         const canAsk = st.enc && st.compId && (st.enc.def.story || ENC().helpOffer(s, st.enc.def) > 0);
         // an encounter's procedure and conversation cards are shown dealt, each keeping its index (RB.encScreen.shownOrder)
         ui.resp.innerHTML = modRow + '<div class="rcards">' + RB.encScreen.shownOrder(st, cards).map((i) => cardHtml(cards[i], i, hi)).join('') + '</div>' +
           (canAsk ? '<button class="cbtn" data-askhelp>' + I('companion') + '<span>Ask ' + esc(compName()) + ' for help</span></button>' : '') +
           (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
-        if (focusedI != null) { const b = ui.resp.querySelector('[data-i="' + focusedI + '"]'); if (b) b.focus({ preventScroll: true }); }
+        if (focusedI != null) { const b = ui.resp.querySelector('.rcard[data-i="' + focusedI + '"]'); if (b) b.focus({ preventScroll: true }); }
         // a card still under the pointer or focus previews for the new target
         const f = ui.resp.querySelector('.rcard:focus-visible, .rcard:hover');
         tg.hover = f ? reachFor(f) : null;
@@ -112782,7 +112786,8 @@ RB.combat = (function () {
         if (stalePress(e, openAt)) return;
         const mb = e.target.closest('[data-mod]');
         if (mb && !mb.disabled) { const id = mb.getAttribute('data-mod'); tg.mod = tg.mod === id ? null : id; deal(); return; }
-        const b = e.target.closest('[data-i]');
+        // (the card pressed, not a word of its Japanese label: those carry their own data-i; RBN-QA-057)
+        const b = e.target.closest('.rcard[data-i]');
         if (b && !b.disabled) { const c = cards[+b.getAttribute('data-i')]; lastCardId = c.id != null ? String(c.id) : null; tg.lock = reachOf(c); tg.hover = null; done(c); return; }
         if (e.target.closest('[data-askhelp]')) { done({ kind: 'askhelp' }); return; }
         if (e.target.closest('[data-flee]')) done({ kind: 'flee' });
@@ -112931,6 +112936,17 @@ RB.combat = (function () {
       const t = src ? RB.util.deepClone(tierOf(src) || src) : null;
       if (t) { t.title = card.kind === 'answer' ? 'Answer what it is really asking' : 'See through the false promise'; return RB.tasks.prepare(t); }
       return RB.tasks.next(pool);
+    }
+    // a conversation's own move, here when the encounter has a creature in it (RBN-QA-056): as on the encounter
+    // screen (src/ui/80s_encounter.js stepFor), your companion's gesture has no writing, and a social action is said
+    // through its own task, if it has one
+    if (card.kind === 'gesture') return null;
+    if (card.kind === 'social') {
+      const t = card.action && card.action.task ? tierOf(card.action.task) : null;
+      if (!t) return null;
+      const c = RB.util.deepClone(t);
+      c.title = c.title || 'Say it';
+      return RB.tasks.prepare(c);
     }
     const w = card.word;
     // name the script it accepts; "or in kanji" whenever the writing pad will read kanji for this player (RBN-02)
@@ -114002,7 +114018,8 @@ RB.encScreen = (function () {
       const fin = (v) => { if (done) return; done = true; fr.el.onclick = null; resolve(v); };
       fr.el.onclick = (e) => {
         if (e.target.closest('[data-away]')) { fin('away'); return; }
-        const b = e.target.closest('[data-i]');
+        // (the card pressed, not a word of its Japanese label: those carry their own data-i; RBN-QA-057)
+        const b = e.target.closest('.rcard[data-i]');
         if (b && !b.disabled) fin(cards[+b.getAttribute('data-i')]);
       };
       const first = fr.leaf.querySelector('.rcard:not([disabled])');

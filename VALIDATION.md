@@ -5484,6 +5484,16 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-010:** `index.html` sha256 `61c5c819f3cefdb22cbaf607c2afe9ac5c493d1338ea1b02c7282e9c39952501`, built
+    from `5879c31` (CC-009 plus only RBN-QA-056, its refine and RBN-QA-057: `1d73c51`, `1dc8923`, `5879c31`,
+    patch-identical to `2e598b6`, `4479bdd`, `2c73f5a`; the tree equals `2c73f5a`'s); byte-identical to the build the
+    suites ran on. On these bytes (B): `social_battle` 65/0 (CC-009 fails 16 on its first 37 checks; without the refine
+    14 of its plan checks fail), `card_press` 13/0 (CC-009 fails 6). On the QA-057 source without the refine (B):
+    `encounters` 10/0, `combat_ui` 7/0, `combat_small` ok, `battle_settings` 10/0, `companion_turn` 4/0,
+    `battle_presentation` 13/0, `battle_group` 6/0, `battle_party` 14/0, `playtest_repairs` 7/0, `fieldweave` 89/89.
+    U whole suite 57,696/0 on `2c73f5a`'s source; `validate.mjs` no errors. The gesture was pressed with the real button
+    in a test-set state (understanding full before the first deal), not reached in play; the hover preview's lookup is
+    read in source only. Voice: none.
   - **Candidate CC-009:** `index.html` sha256 `f9e4274265efcd330de45a34a11f6efdb6139047fbe043ee9b079b731fd960b0`, built
     from `0f5c3be` (accepted-only: CC-008 plus RBN-QA-033, 032, 036, 020, 048, 049 with its refine, 050, 039/040/042,
     047, and the fog event's tests); byte-identical to the scratch build the suites ran on. On this exact file (B):
