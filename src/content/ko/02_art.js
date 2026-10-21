@@ -32,8 +32,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   def('ko_conch', {}, (c, x, y, p) => {
     px(c, x + 1, y + 10, 14, 5, p.stone[2]); px(c, x + 3, y + 3, 10, 7, '#e8d4c0'); px(c, x + 5, y + 4, 6, 4, '#d89a8a'); px(c, x + 11, y + 2, 3, 3, '#e8d4c0');
   });
+  // (the island's stone has three tones, p.stone: mid, light, dark; Agnes 6326169868)
   def('ko_windstone', { w: 2 }, (c, x, y, p) => {
-    px(c, x + 2, y + 5, 28, 8, p.stone[1]); px(c, x + 3, y + 1, 26, 5, p.stone[3]); px(c, x + 4, y + 1, 10, 2, p.stone[4]);
+    px(c, x + 2, y + 5, 28, 8, p.stone[0]); px(c, x + 2, y + 10, 28, 3, p.stone[2]); px(c, x + 3, y + 1, 26, 5, p.stone[1]);
   });
   def('ko_camphor', { w: 4 }, (c, x, y, p) => {
     px(c, x + 14, y - 40, 36, 54, p.trunk[0]); px(c, x + 14, y - 40, 8, 54, p.trunk[1]);
