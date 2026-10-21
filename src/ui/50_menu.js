@@ -596,6 +596,10 @@ RB.ui.menu = (function () {
     ]],
     kana: ['Kana reference', []],
   };
+  // a kana's name in the Guide's chart: the lesson's own label where its group has one (っ/ッ "doubles the next
+  // consonant", ー "long vowel", を "wo (o)"; romaji() writes っ as an apostrophe and ー as a dash, conventions for inside a
+  // word), in words without the brackets, as on a lesson sheet (RBN-QA-039 follow-up)
+  const kanaLabel = (ch, r) => { const t = r || RB.kana.romaji(ch); return /^\(.*\)$/.test(t) ? t.slice(1, -1) : t; };
   const WORD_SECTIONS = [['learning', 'My learning', '{自分|じぶん} の {学|まな}び'], ['reference', 'Reference', '{調|しら}べる'], ['practice', 'Practice', '{練習|れんしゅう}']];
   const WORD_GROUPS = { progress: 'learning', mastery: 'learning', cando: 'learning', noted: 'learning', bookmarks: 'learning', inscriptions: 'learning', practice: 'practice', letters: 'practice', compare: 'practice' };
   function wordSubs(s) {
@@ -703,11 +707,11 @@ RB.ui.menu = (function () {
       let h = '<div class="subnav" role="group" aria-label="Guide topics">' + Object.keys(GUIDE).map((k) => '<button class="subbtn" data-g="' + k + '" aria-pressed="' + (g === k) + '">' + esc(GUIDE[k][0]) + '</button>').join('') + '</div>';
       if (g === 'kana') {
         const groups = RB.lessons.groups();
-        h += '<p class="muted small">Choose a character to see its stroke order. Kana you have been taught are marked with a dot.</p><div class="kdemo-box"><canvas width="160" height="160" class="kdemo"></canvas><div class="kinfo muted">Stroke order appears here.</div></div>';
+        h += '<p class="muted small">Choose a character to see its stroke order. Kana you have been taught are marked with a dot.</p><div class="kdemo-box"><div class="kdemo-fig"><canvas width="160" height="160" class="kdemo"></canvas></div><div class="kinfo muted">Stroke order appears here.</div></div>';
         for (const gr of groups) {
           h += '<div class="kgroup"><span class="kgl">' + esc(gr.title || '') + '</span><span class="kcells">' + RB.lessons.groupChars(gr).map((c) => {
             const taught = !RB.learn.taughtKana() || (s.learn.taught && s.learn.taught[c.ch]) || (s.learn.kanaKnown === 'hira' && RB.kana.isHira(c.ch));
-            return '<button class="kcell' + (taught ? ' taught' : '') + '" lang="ja" data-k="' + esc(c.ch) + '" aria-label="' + esc(c.ch + ' ' + RB.kana.romaji(c.ch) + (taught ? ', taught' : '')) + '">' + esc(c.ch) + '</button>';
+            return '<button class="kcell' + (taught ? ' taught' : '') + '" lang="ja" data-k="' + esc(c.ch) + '"' + (c.r ? ' data-r="' + esc(c.r) + '"' : '') + ' aria-label="' + esc(c.ch + ' ' + kanaLabel(c.ch, c.r) + (taught ? ', taught' : '')) + '">' + esc(c.ch) + '</button>';
           }).join('') + '</span></div>';
         }
       } else {
@@ -730,8 +734,8 @@ RB.ui.menu = (function () {
       if (k) {
         stopDemo();
         const ch = k.dataset.k;
-        stopDemo = RB.lessons.demo(el.querySelector('.kdemo'), ch);
-        el.querySelector('.kinfo').innerHTML = '<div class="jp" lang="ja" style="font-size:2.4em;line-height:1.2">' + esc(ch) + '</div><div>' + esc(RB.kana.romaji(ch)) + '</div>';
+        stopDemo = RB.lessons.demoInto(el.querySelector('.kdemo-fig'), ch, 160, 'kdemo');
+        el.querySelector('.kinfo').innerHTML = '<div class="jp" lang="ja" style="font-size:2.4em;line-height:1.2">' + esc(ch) + '</div><div>' + esc(kanaLabel(ch, k.dataset.r)) + '</div>';
         return;
       }
       const say = e.target.closest('[data-say]');
