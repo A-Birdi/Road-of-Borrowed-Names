@@ -124,8 +124,14 @@ narr: 「{名|な} は {灯|ひ} に 、 {灯|ひ} は {人|ひと} に 、 {人
 narr: {古|ふる}い {灯守|ひもり} の {言葉|ことば} らしい 。 || An old keepers' saying, it seems.
 
 @scene kr.ruin_lanterns
+# With Hisae's oil, the lanterns themselves start the lighting (RBN-QA-054): the same scene as the strip north of them,
+# which guards its own once-only end. Nothing follows the call: a lost or fled defence ends there.
 narr: {崩|くず}れた {三|さん} の {宿|やど} の {灯籠|とうろう} が {二|ふた}つ 。 {暗|くら}い まま だ 。 || Two lanterns at the ruined third waystation, still dark.
+!if kr_hisae_met -> light
 ?(!kr_hisae_met) narr: {宿坊|しゅくぼう} の {人|ひと} なら 、 この {灯籠|とうろう} の こと を {知|し}って いる かも しれない 。 || Someone at the lodge may know about these lanterns.
+!end
+:light
+!call kr.moths
 
 @scene kr.moths
 # The Wick Moths (E6): the lanterns lit, kept lit while the moths come for the flame. Either ending leads on.
