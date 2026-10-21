@@ -101,15 +101,15 @@ for (const comp of ['nao', 'mio', 'suzu']) {
 // 1b. the apology from each side of Hisae you can reach, with the household gathered round the lamp as the evening
 // leaves them (RBN-QA-062's staging, run here as kr.evening runs it: Mokichi (18,9), Sora (19,10), Kikyō (22,9)): you
 // walk there (a tap on the tile), face her and talk; they come back beside you, in view, on nobody's tile, yours
-// included (Local CL-101)
-for (const [sx, sy, dir] of [[19, 9, 'right'], [21, 9, 'left'], [20, 10, 'up']]) {
+// included (Local CL-101); with Kikyō at the lodge and without her (Agnes 6314257042)
+for (const kikyo of [true, false]) for (const [sx, sy, dir] of [[19, 9, 'right'], [21, 9, 'left'], [20, 10, 'up']]) {
   const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
-  await p.evaluate((FL) => {
-    RB.game.debugStart('kr.lodge', 20, 13, { dir: 'up', edition: RB.edition.forNew(), comp: 'suzu', flags: Object.assign({}, FL, { kr_night: true, kr_evening_seen: true, kr_quarrel: true }) });
+  await p.evaluate(([FL, kikyo]) => {
+    RB.game.debugStart('kr.lodge', 20, 13, { dir: 'up', edition: RB.edition.forNew(), comp: 'suzu', flags: Object.assign({}, FL, { kr_night: true, kr_evening_seen: true, kr_quarrel: true, kr_kikyo_lodge: kikyo }) });
     RB.game.settings.textSpeed = 'instant';
-    RB.script.add('@scene t.gather\n!walkto kr_mokichi 18 9 right now stay\n!walkto kr_sora 19 10 up now stay\n!walkto kr_kikyo 22 9 left now stay');
+    RB.script.add('@scene t.gather\n!walkto kr_mokichi 18 9 right now stay\n!walkto kr_sora 19 10 up now stay\n?(kr_kikyo_lodge) !walkto kr_kikyo 22 9 left now stay');
     RB.script.run('t.gather');
-  }, FL);
+  }, [FL, kikyo]);
   await p.waitForTimeout(1200);
   const before = await now(p);
   await p.evaluate(([x, y]) => RB.world.tapTile(x, y), [sx, sy]);
@@ -124,7 +124,7 @@ for (const [sx, sy, dir] of [[19, 9, 'right'], [21, 9, 'left'], [20, 10, 'up']])
   });
   const w = await now(p);
   const ok1 = sorry && sorry.follower && sorry.pc.join() === sx + ',' + sy && sorry.fpos.join() !== sorry.pc.join() && Math.abs(sorry.fpos[0] - sx) + Math.abs(sorry.fpos[1] - sy) === 1;
-  ok(!before.follower && ok1 && !at.others.length && at.seen && at.household.join(' ') === '18,9 19,10 22,9' && w.made && !errors.length, 'from (' + sx + ',' + sy + '), with the household gathered: back beside you for the apology, in view, on nobody\'s tile (' + JSON.stringify({ sorry: sorry && { fpos: sorry.fpos, pc: sorry.pc }, at, made: w.made, errors: errors.slice(0, 1) }) + ')');
+  ok(!before.follower && ok1 && !at.others.length && at.seen && at.household.join(' ') === (kikyo ? '18,9 19,10 22,9' : '18,9 19,10 ') && w.made && !errors.length, 'from (' + sx + ',' + sy + '), with the household gathered' + (kikyo ? '' : ', Kikyō not at the lodge') + ': back beside you for the apology, in view, on nobody\'s tile (' + JSON.stringify({ sorry: sorry && { fpos: sorry.fpos, pc: sorry.pc }, at, made: w.made, errors: errors.slice(0, 1) }) + ')');
   await p.close();
 }
 // 2. mid-quarrel: loads, leaving and coming back, the interiors, quick travel
