@@ -1244,7 +1244,13 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   front and talks across it; the walk remembers whom it is for, and only a person who moved is tried again (a counter
   swapped or removed, someone else in their place: nothing happens); cherry-picked as `17591c4`, `1ddd834`, `3b63a2c`;
   B `counter_tap` 30/0 on a build of the merged source (src/tests/tools identical to `bf4c0ef`). In source, for the
-  next build; Agnes's authored Yae/Sousuke UI retest still to come. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
+  next build; Agnes's authored Yae/Sousuke UI retest still to come.
+  RBN-QA-020, 048, 049 (three-party AGREE: Cloud CC-040, Local CL-065, Agnes 6307800434 at source/contract level):
+  the festival night's walk to the rail with your companion (`!walkto` `cross`/`party`/`max=`), the coast road's fog
+  event shows fog (`fog` ambience, `drawHaze`), the geese on the Reedwake road; each candidate's commits cherry-picked
+  onto the integrated source (`0e4c46e`, `3515144`, `86b9d02`, `cad556c`, `cf7c24a`; patch-identical); B
+  `walkto_options` 23/0, `fog_event` 14/0, `geese_event` 15/0 on a build of `cf7c24a`. In source, for the next build;
+  Agnes's post-integration visual retest still to come. RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
   RBN-QA-002 (the stand

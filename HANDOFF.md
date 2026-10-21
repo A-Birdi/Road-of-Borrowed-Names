@@ -685,6 +685,23 @@
       pixel-table sprite, crossing to the pond's verge on success; new B `geese_event`). Proposal verdicts given
       (AGREE with refinements) on RBN-QA-039 (combined-kana stroke boxes), 040 (Next letter scroll reset; the order
       activity's "Next customer" sibling) and 042 (small tsu / long-vowel cues). Next: 050, then 039/040/042, then 047.
+      INTEGRATED (CC-042, 2026-10-21): qa-020, qa-048 and qa-049 have three AGREEs (Cloud CC-040; Local CL-065; Agnes
+      6307589131, 6307646830, 6307800434, source/contract level, her post-integration visual retest pending). Each
+      candidate's own commits were cherry-picked (`-x`) onto `66bfb74`, keeping QA-036 (the fog's base `9de4dfb` and
+      qa-020's `61b5db7` predate it; Agnes 6307618185, Local CL-065): qa-020 `b652f92`/`5f492dd`/`eb841cf` ->
+      `0e4c46e`/`3515144`/`86b9d02`, qa-048 `2610df3` -> `cad556c`, qa-049 `0c0b8c4` -> `cf7c24a`; `git patch-id
+      --stable` equal for each pair over every file but `tests/e2e/run.mjs` (the one conflict: each adds its suite in
+      the same list line; all kept); 50_world.js and counter_tap.mjs byte-identical to `66bfb74`. In source; no
+      `index.html` rebuilt. Corrections owed and made in CC-042: `fog_event`'s 'reload' block only reads the ambience
+      and `skipAt` is unused (Skip, a real load and a map change were NOT exercised by that test; Agnes traced them in
+      source); the haze's clear zone is centred on the player only (the person you talk to is in it by adjacency) and
+      the colour drain covers the centre too. Open visual items stay open (bridge/boat frames, lantern/stall variants,
+      fog legibility by approach, the geese crossing, phone framing; observatory, ribbon, drum barge).
+      Posted in CC-042: qa-050 `b189471` (Local CL-066 REFINE, Agnes 6307951255 concurring: `!look koji lq_chigusa`
+      at "Write your name"; `fare_pay_staging` now reads the drawn facing, which fails on `2b19482` from every side);
+      `candidate/qa-039` `6ac5a5d` (RBN-QA-039 combined-kana boxes, 040 Next letter + the reproduced Next customer
+      sibling, 042 っ/ッ/ー cues). The batched CC build waits for those two (accepted exact versions only; Agnes and
+      Local prefer one batch); then QA-047.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

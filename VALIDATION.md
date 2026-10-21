@@ -5572,6 +5572,21 @@ Yasu's story, when listening, has not begun being spoken."
       child 15,8 on the crossing line, both gone when seen through; the miss branch unchanged; a tap on the flock
       plays the event scene); on CC-008 the flock is absent; U `living_world` 110/0, `world` 123/0, `actors` 180/0,
       `scene_manifest` 1023/0; `validate.mjs` no errors. Frames looked at (not committed).
+    - Correction (Agnes 6307646830): `fog_event`'s 'reload' block only reads the ambience and `skipAt` is never called,
+      so that test exercises neither Skip nor a real load nor a map change (Agnes traced those paths in source).
+    - Integrated (CC-042): qa-020, qa-048, qa-049 cherry-picked onto `66bfb74` as `0e4c46e`, `3515144`, `86b9d02`,
+      `cad556c`, `cf7c24a`; `git patch-id --stable` equal to the agreed commits over every file but
+      `tests/e2e/run.mjs`; 50_world.js and counter_tap.mjs identical to `66bfb74`. On a scratch build of `cf7c24a` (B):
+      B `walkto_options` 23/0, `fog_event` 14/0, `geese_event` 15/0, `counter_tap` 30/0, `staging_variants --quick` 701/0, `manybridge2` 4/0, `festival_games` 5/0; U `actors` 180/0, `world` 123/0, `living_world` 110/0, `scene_manifest` 1023/0, `perform` 665/0, `voicebank_plan_content` 7/0; `validate.mjs` no errors.
+    - `candidate/qa-050` `b189471`: B `fare_pay_staging` 36/0 (now reads the drawn facing, look over dir; on `2b19482`
+      Kōji faces up or right at "Write your name" in all 4 runs: 4 fail); `validate.mjs` no errors.
+    - `candidate/qa-039` `6ac5a5d`: B `learning_qa039` (new) 44/0 (きゃ, ぴょ, キャ, ファ, ティ two labelled inked boxes within
+      242 px; a phone 390x844 with reduced motion, no overflow; あ as before; っ and ー in words; Back/Next/last page
+      stop every box; Next letter and the reproduced Next customer (202 -> 26 before) start at the top, focused;
+      Translate and a tray tile keep the scroll); on CC-008's `index.html` 29 fail. U `kana_cues` (new) 24/0, full
+      unit run 57688/0; B `learning_ui` 15/0, `letters_order` 4/0, `shino_thanks` 28/0, `playtest_repairs` 7/0,
+      `fr1_opening` ran through (34 questions, 0 errors); B `audit_fixes` 3/1, the same failure on CC-008 (a copy
+      step's feedback wording; pre-existing); `validate.mjs` no errors.
   - **RBN-QA-032 in source (Robin approved 2026-10-20 from the frames, to review in play; `8cfedf2`, cherry-picked
     from `523f9ba`):** `git diff 523f9ba 8cfedf2 -- src tests tools data assets` is empty (the candidate's tests above
     ran on the same code); on a scratch build of `8cfedf2`: B `lookout_vista` 22/0, `story_ch3 E nao` 38 checks passed,
