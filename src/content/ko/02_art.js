@@ -18,7 +18,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const INKS = ['#2a2434', '#3a3048', '#4a4060'];
 
   // ---- flat fallbacks (16 px a tile) -------------------------------------------------------------------------------
-  def('ko_leaves', { w: 2, block: false }, (c, x, y) => {
+  // (markTop: the guide's diamond sits just above the drift, whose highest leaf is drawn 9 art px below its tiles' top)
+  def('ko_leaves', { w: 2, block: false, markTop: 9 }, (c, x, y) => {
     for (const [lx, ly] of [[2, 10], [7, 12], [12, 9], [17, 11], [22, 13], [27, 10]]) { px(c, x + lx, y + ly, 4, 2, GOLD[2]); px(c, x + lx + 1, y + ly, 1, 1, INKS[0]); }
   });
   def('ko_basket', {}, (c, x, y, p) => {

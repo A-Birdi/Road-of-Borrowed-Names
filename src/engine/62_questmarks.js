@@ -147,11 +147,18 @@ RB.questMarks = (function () {
       for (const tg of I.way.here) {
         const sp = RB.questGuide.spotOf(tg);
         if (!sp) continue; // arriving on this map is the step: nothing to point at
-        const x = h.ax(sp.x * TS) + ATS / 2;
+        let x = h.ax(sp.x * TS) + ATS / 2;
         const faced = front && front[0] === Math.round(sp.x) && front[1] === Math.round(sp.y);
+        const pd = tg.kind === 'prop' && RB.props.P[tg.p];
         let y;
+        // a thing lying low that says so (markTop: where what is drawn of it starts, in art px below its tile's top):
+        // just above it, over the middle of all its tiles, faced or not (RBN-QA-074, Agnes 6318281495)
+        if (pd && pd.markTop != null) {
+          x = h.ax((sp.x + ((tg.def && tg.def.w) || pd.w) / 2) * TS);
+          y = h.ay(sp.y * TS) + pd.markTop - 3;
+        }
         // people and things: just above a standing person's head (the ▾'s height), like the ▾ itself
-        if (tg.kind === 'npc' || tg.kind === 'foe' || tg.kind === 'prop') y = h.ay(sp.y * TS) - h.HEAD - (faced ? 17 : 9);
+        else if (tg.kind === 'npc' || tg.kind === 'foe' || tg.kind === 'prop') y = h.ay(sp.y * TS) - h.HEAD - (faced ? 17 : 9);
         else y = h.ay(sp.y * TS) + ATS / 2 - 2; // a spot on the ground
         place({ x, y, info: { kind: 'target', target: tg.kind, id: tg.id || tg.p || null, map: tg.map, tx: Math.round(sp.x), ty: Math.round(sp.y) } });
       }
