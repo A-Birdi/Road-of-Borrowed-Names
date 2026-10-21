@@ -456,6 +456,9 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .lesson-demo { margin: 0; flex: 1 1 200px; max-width: 280px; }
 .lesson-demo canvas { display: block; width: 100%; max-width: min(240px, 46 * var(--vh)); aspect-ratio: 1; border-radius: var(--r-1); box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 0 var(--paper-3); }
 .lesson-demo figcaption { margin-top: 0.4em; }
+/* a combination's kana, one box each, in the space one box takes (RBN-QA-039) */
+.lesson-demo-set { display: flex; gap: 0.35em; max-width: min(240px, 46 * var(--vh)); }
+.lesson-demo-set canvas { flex: 1 1 0; width: 0; min-width: 0; max-width: none; }
 .lesson-note { font-size: 1.02em; border-left: 3px solid var(--rule); padding-left: 0.7em; }
 .lesson-lede { margin: 0 0 0.6em; color: var(--ink-2); font-family: var(--ui-font); }
 .lesson-ex, .lsheet .fb-list { list-style: none; margin: 0; padding: 0; }

@@ -105,6 +105,19 @@ RB.lessons = (function () {
     return () => cancelAnimationFrame(raf);
   }
 
+  // A combination (きゃ, ファ, ティ) has no stroke reference of its own: each of its kana is shown in its own box,
+  // numbered from 1, in the space one box takes (RBN-QA-039; a small kana's reference is already drawn small and low,
+  // so it is not scaled again). Any part with no reference: no demonstration, and no claim of numbered strokes.
+  const SMALL_KANA = 'ぁぃぅぇぉっゃゅょゎゕゖァィゥェォッャュョヮヵヶ';
+  function demoFigure(ch) {
+    const parts = Array.from(ch);
+    if (!parts.every((p) => RB.recog && RB.recog.reference(p))) return '<p class="muted small lesson-nodemo">No stroke demonstration for this one.</p>';
+    const one = parts.length === 1, size = one ? 360 : Math.floor(360 / parts.length);
+    const canvases = parts.map((p) => '<canvas width="' + size + '" height="' + size + '" role="img" aria-label="Stroke order for ' + (SMALL_KANA.includes(p) ? 'small ' : '') + esc(p) + '"></canvas>').join('');
+    return '<figure class="lesson-demo">' + (one ? canvases : '<div class="lesson-demo-set">' + canvases + '</div>') +
+      '<figcaption class="muted small">' + (one ? 'Numbered strokes' : 'Each kana with its own numbered strokes,') + ' from the reference data. The adventure accepts readable variants; order matters only in optional practice.</figcaption></figure>';
+  }
+
   // One new kana per page of a lesson sheet: the character and its romaji,
   // the numbered stroke demonstration, the note, and words that use it.
   function showGroup(g) {
@@ -119,15 +132,16 @@ RB.lessons = (function () {
       function render() {
         stop();
         const c = cs[idx];
-        const rom = RB.kana.romaji(c.ch);
+        // the group's own label where it has one (っ "doubles the next consonant", ー "long vowel", を "wo (o)"; RBN-QA-042):
+        // rōmaji() writes っ as an apostrophe and ー as a dash, conventions for inside a word
+        const rom = c.r || RB.kana.romaji(c.ch), noted = /^\(.*\)$/.test(rom);
         const ex = (g.examples || g.words || []).filter((e) => (e.w || e.r || '').indexOf(c.ch) >= 0).slice(0, 3);
         fr.setTitle((g.jp ? RB.ui.jhtml(g.jp) + ' ' : '') + esc(g.title || g.name || 'Kana'), cs.length > 1 ? 'Kana ' + (idx + 1) + ' of ' + cs.length : '');
         fr.leaf.innerHTML =
           '<ol class="lesson-row" aria-label="Kana in this lesson">' + cs.map((x, i) => '<li lang="ja"' + (i === idx ? ' aria-current="true"' : '') + '>' + esc(x.ch) + '</li>').join('') + '</ol>' +
           '<div class="lesson-main">' +
-            '<figure class="lesson-char"><div class="kbig" lang="ja">' + esc(c.ch) + '</div><figcaption><span class="muted small">read</span> <b class="rom">' + esc(rom) + '</b></figcaption></figure>' +
-            '<figure class="lesson-demo"><canvas width="360" height="360" role="img" aria-label="Stroke order for ' + esc(c.ch) + '"></canvas>' +
-              '<figcaption class="muted small">Numbered strokes from the reference data. The adventure accepts readable variants; order matters only in optional practice.</figcaption></figure>' +
+            '<figure class="lesson-char"><div class="kbig" lang="ja">' + esc(c.ch) + '</div><figcaption>' + (noted ? '<b class="rom">' + esc(rom.slice(1, -1)) + '</b>' : '<span class="muted small">read</span> <b class="rom">' + esc(rom) + '</b>') + '</figcaption></figure>' +
+            demoFigure(c.ch) +
           '</div>' +
           '<div class="lesson-side">' +
           (g.lede && idx === 0 ? '<p class="lesson-lede">' + esc(g.lede) + '</p>' : '') +
@@ -137,7 +151,9 @@ RB.lessons = (function () {
         fr.foot.innerHTML = (idx > 0 ? '<button class="cbtn" data-a="prev">' + I('back') + '<span>Back</span></button>' : '') +
           '<button class="cbtn" data-a="say">' + I('sound') + '<span>Say it</span></button>' +
           '<button class="cbtn go" data-a="next" data-ok>' + '<span>' + (idx < cs.length - 1 ? 'Next' : g.doneLabel || 'Practice these') + '</span>' + I('next') + '</button>';
-        stop = demo(fr.leaf.querySelector('canvas'), c.ch);
+        // (every box's animation is stopped together: Back, Next, the last page)
+        const parts = Array.from(c.ch), stops = [...fr.leaf.querySelectorAll('.lesson-demo canvas')].map((cv, j) => demo(cv, parts[j]));
+        stop = () => stops.forEach((f) => f());
         const say = fr.foot.querySelector('[data-a=say]');
         if (!(RB.voice && RB.voice.canSayRef && RB.voice.canSayRef(RB.voice.refKey.kana(c.ch)))) say.classList.add('hidden');
         fr.leaf.scrollTop = 0;
