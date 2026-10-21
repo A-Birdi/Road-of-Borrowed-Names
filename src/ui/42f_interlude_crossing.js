@@ -493,13 +493,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
     else if (stg === 'back') { backView(G); stern(G, true); leavesOf(G, 4, 9133, [0.25, 0.8]); }
     else { outView(G); stern(G, false); }
   }
+  // (only for the showing it was asked in, RB.interlude.generation(): after a clear, a load or another showing of the
+  // same moment it does nothing; aheadAsked, aheadRan: how often it was asked, and the generations it built for, for the
+  // tests)
   const NEXT = { out: 'leaves' };
-  let aheadKey = null;
+  let aheadKey = null, aheadAsked = 0;
+  const aheadRan = [];
+  const genNow = () => (RB.interlude.generation ? RB.interlude.generation() : 0);
   function ahead(G, stg) {
     const k = key('ahead|' + stg, G);
     if (!NEXT[stg] || aheadKey === k) return;
     aheadKey = k;
-    const run = () => { if (live.stage === stg) prepare(G, NEXT[stg]); };
+    aheadAsked++;
+    const g = genNow();
+    const run = () => { if (g !== genNow() || live.stage !== stg) return; aheadRan.push(g); if (aheadRan.length > 8) aheadRan.shift(); prepare(G, NEXT[stg]); };
     if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 1500 }); else setTimeout(run, 300);
   }
   // the moment before, kept to dissolve from (one canvas per size)
@@ -537,6 +544,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // still coming up or changing; by default at the size last drawn
     probe(w, h, vb) {
       if (w == null) { if (!last) return null; ({ w, h, vb } = last); }
+      const held = mine.size; // (before the probe's own measuring builds any)
       const G = geom(w, h, vb), O = outView(G), B = backView(G), S = stern(G, false), Bw = bow(G);
       const lv = leavesOf(G, 14, 9091, [0.06, 0.92]).map((L) => leafAt(G, L, 0, true));
       const at = now();
@@ -547,6 +555,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         leaves: { n: lv.length, top: Math.min(...lv.map((p) => p.y - (p.k > 1 ? Math.ceil(p.len * 0.3) : 0))), bottom: Math.max(...lv.map((p) => p.y + (p.k > 1 ? Math.ceil(p.len * 0.3) + p.k : 3 * p.k))), inView: lv.filter((p) => p.x >= 0 && p.x + (p.k > 1 ? p.len : 3 * p.k) <= w).length,
           near: near.map((d) => ({ box: d.box.slice(), len: d.len })) },
         tree: B.tree, sun: B.sun, island: B.island,
+        // its own layers held when asked (before this probe built any), and its look ahead: the generation now, how often
+        // it was asked, and the generations it built for
+        cached: held, ahead: { gen: genNow(), asked: aheadAsked, ran: aheadRan.slice() },
       };
     },
   };

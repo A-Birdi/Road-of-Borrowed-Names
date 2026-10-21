@@ -16,6 +16,7 @@
  *     st: { stage, since: ms in this stage, vb, still }
  *   RB.interlude.show(id, stage)   start one, or move it to a stage
  *   RB.interlude.ahead(id, stages) have its still layers built ahead, in idle time (`!interlude <id> <stage>… ahead`)
+ *   RB.interlude.generation()      the showing queued work belongs to (a clear, or another picture, starts a new one)
  *   RB.interlude.clear()           back to the map (drops the cached layers)
  *   RB.interlude.state()           { id, stage, since } or null (tests)
  *   RB.interlude.sheetTop(rec, h)  the measurement above, shared with the illustrated sequences
@@ -60,6 +61,12 @@ RB.interlude = (function () {
   }
   frame.art = true;
 
+  // Work a picture has queued for later (its layers built ahead, ahead() below; a picture's own look ahead to its next
+  // moment) belongs to the showing it was asked for: a generation. Every clear starts a new one (the scene's end, and so
+  // every campaign change), as does a different picture taking the screen; work of an older generation does nothing
+  // when its turn comes (RBN-QA-072 refine, Agnes 6322740894). warm: layers built ahead for a picture not shown (yet),
+  // given up by the clear that ends their generation even when nothing was shown.
+  let gen = 0, warm = false;
   function show(id, stage) {
     const A = ART[id];
     if (!A) { console.warn('missing interlude', id); return; }
@@ -68,12 +75,19 @@ RB.interlude = (function () {
       if (cur.stage !== stage) { cur.stage = stage; cur.at = now(); }
       return;
     }
+    if (cur) gen++; // (another picture takes the screen: what the one before queued is not this one's)
     cur = { id, stage, at: now(), top: null };
+    warm = false; // (what was built ahead is the shown picture's now: its clear gives it up)
     RB.render.setOverride(frame);
   }
   function clear() {
-    if (!cur) return;
+    gen++;
+    if (!cur) {
+      if (warm) { warm = false; if (RB.prologueArt) RB.prologueArt.release(); }
+      return;
+    }
     cur = null;
+    warm = false;
     // back to the map, unless something else has the screen now (a battle that took it from the picture gives
     // the map back itself)
     if (!RB.render.getOverride || RB.render.getOverride() === frame) RB.render.setOverride(null);
@@ -86,9 +100,12 @@ RB.interlude = (function () {
   function ahead(id, stages) {
     const A = ART[id];
     if (!A || !A.prepare || typeof document === 'undefined' || !RB.render) return;
+    const g = gen;
     const run = () => {
+      if (g !== gen) return; // (cleared, or another picture took the screen, since it was asked for)
       const vs = RB.render.viewSize(), w = Math.round(vs.w * RB.render.ART), h = Math.round(vs.h * RB.render.ART);
       if (!w || !h) return;
+      if (!cur || cur.id !== id) warm = true;
       const vb = sheetTop({ top: null }, h);
       try { for (const st of stages && stages.length ? stages : [A.stages[0]]) A.prepare(w, h, vb, st); } catch (err) { console.error('interlude ahead', id, err); }
     };
@@ -100,5 +117,5 @@ RB.interlude = (function () {
   // with it, so the same interlude shown again is drawn again (RBN-QA-064 refine, Agnes 6318475345).
   if (RB.bus) RB.bus.on('campaign:changing', clear);
 
-  return { ART, show, ahead, clear, state, active: () => !!cur, sheetTop };
+  return { ART, show, ahead, clear, state, active: () => !!cur, sheetTop, generation: () => gen };
 })();
