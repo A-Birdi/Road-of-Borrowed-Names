@@ -80,7 +80,7 @@ async function choose(p, re) {
   return true;
 }
 const mods = (p) => p.evaluate(() => { const st = RB.combat.state(); return st && st.mods !== undefined ? JSON.stringify(st.mods) : 'none'; });
-const chip = async (p, id) => { await p.click('.cb-mods .mod-chip[data-mod="' + id + '"]'); await p.waitForTimeout(400); };
+const chip = async (p, id) => { await p.click('.cb-mods .mod-chip[data-mod="' + id + '"]'); await p.mouse.move(2, 2); await p.waitForTimeout(400); };
 
 // 1. the 全体 chip
 {
