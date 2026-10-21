@@ -923,7 +923,8 @@ RB.combat = (function () {
   }
   // card previews: hover (mouse) and keyboard focus show whom it reaches; leaving clears
   function wirePreview(container, reachFor) {
-    const at = (e) => e.target && e.target.closest && e.target.closest('[data-i], [data-a]');
+    // (a card is found by the card itself: the words of its Japanese label carry their own data-i; RBN-QA-057)
+    const at = (e) => e.target && e.target.closest && e.target.closest('.rcard[data-i], [data-a]');
     container.onpointerover = (e) => { if (e.pointerType !== 'mouse') return; const b = at(e); if (b && !b.disabled) setHover(reachFor(b)); };
     container.onpointerout = (e) => { if (e.pointerType !== 'mouse') return; const b = at(e); if (b && !(e.relatedTarget && b.contains(e.relatedTarget))) { const f = document.activeElement && container.contains(document.activeElement) ? at({ target: document.activeElement }) : null; setHover(f && f === kbEl && f.matches(':focus-visible') ? reachFor(f) : null); } };
     // (focusin/focusout have no on… properties: listeners, removed again by unwirePreview)
@@ -972,14 +973,15 @@ RB.combat = (function () {
         // the responses your companion points out (E19), when you accepted that help
         if (st.enc && st.enc.point) { const pts = ENC().pointCards(st, s, words()); for (const c of cards) if (pts.indexOf(c.id) >= 0) c.pointed = true; }
         for (const c of cards) if (c.kind === 'word') shownWords.add(c.word.id);
-        const focusedI = document.activeElement && ui.resp.contains(document.activeElement) ? document.activeElement.getAttribute('data-i') : null;
+        const fc = document.activeElement && ui.resp.contains(document.activeElement) && document.activeElement.closest('.rcard[data-i]');
+        const focusedI = fc ? fc.getAttribute('data-i') : null;
         const modRow = mods.length ? '<div class="cb-mods" role="group" aria-label="Reach: modifiers">' + '<span class="mods-h">' + I('words') + '<span>Reach</span></span>' + mods.map((m) => '<button type="button" class="mod-chip' + (tg.mod === m.id ? ' on' : '') + '" data-mod="' + m.id + '" aria-pressed="' + (tg.mod === m.id) + '"' + (m.hushed ? ' disabled title="' + esc(m.hushed) + '"' : ' title="' + esc(m.family.role + ': ' + m.family.does) + '"') + '>' + RB.ui.jhtml(m.family.jp) + '</button>').join('') + '</div>' : '';
         const canAsk = st.enc && st.compId && (st.enc.def.story || ENC().helpOffer(s, st.enc.def) > 0);
         // an encounter's procedure and conversation cards are shown dealt, each keeping its index (RB.encScreen.shownOrder)
         ui.resp.innerHTML = modRow + '<div class="rcards">' + RB.encScreen.shownOrder(st, cards).map((i) => cardHtml(cards[i], i, hi)).join('') + '</div>' +
           (canAsk ? '<button class="cbtn" data-askhelp>' + I('companion') + '<span>Ask ' + esc(compName()) + ' for help</span></button>' : '') +
           (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
-        if (focusedI != null) { const b = ui.resp.querySelector('[data-i="' + focusedI + '"]'); if (b) b.focus({ preventScroll: true }); }
+        if (focusedI != null) { const b = ui.resp.querySelector('.rcard[data-i="' + focusedI + '"]'); if (b) b.focus({ preventScroll: true }); }
         // a card still under the pointer or focus previews for the new target
         const f = ui.resp.querySelector('.rcard:focus-visible, .rcard:hover');
         tg.hover = f ? reachFor(f) : null;
@@ -1014,7 +1016,8 @@ RB.combat = (function () {
         if (stalePress(e, openAt)) return;
         const mb = e.target.closest('[data-mod]');
         if (mb && !mb.disabled) { const id = mb.getAttribute('data-mod'); tg.mod = tg.mod === id ? null : id; deal(); return; }
-        const b = e.target.closest('[data-i]');
+        // (the card pressed, not a word of its Japanese label: those carry their own data-i; RBN-QA-057)
+        const b = e.target.closest('.rcard[data-i]');
         if (b && !b.disabled) { const c = cards[+b.getAttribute('data-i')]; lastCardId = c.id != null ? String(c.id) : null; tg.lock = reachOf(c); tg.hover = null; done(c); return; }
         if (e.target.closest('[data-askhelp]')) { done({ kind: 'askhelp' }); return; }
         if (e.target.closest('[data-flee]')) done({ kind: 'flee' });

@@ -260,7 +260,8 @@ RB.encScreen = (function () {
       const fin = (v) => { if (done) return; done = true; fr.el.onclick = null; resolve(v); };
       fr.el.onclick = (e) => {
         if (e.target.closest('[data-away]')) { fin('away'); return; }
-        const b = e.target.closest('[data-i]');
+        // (the card pressed, not a word of its Japanese label: those carry their own data-i; RBN-QA-057)
+        const b = e.target.closest('.rcard[data-i]');
         if (b && !b.disabled) fin(cards[+b.getAttribute('data-i')]);
       };
       const first = fr.leaf.querySelector('.rcard:not([disabled])');
