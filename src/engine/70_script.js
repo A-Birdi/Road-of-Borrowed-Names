@@ -257,8 +257,9 @@ RB.script = (function () {
         case 'pose': if (RB.staging) RB.staging.pose(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', ctx); break;
         case 'prop': if (RB.staging) RB.staging.prop(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', { hand: a[2] || null }, ctx); break;
         // (behind an illustrated sequence's picture the walk finishes at once: the shots show the movement)
-        // (opt-in, for one walk: `cross` may cross a trigger that can no longer fire; `max=<ms>` a longer bound;
-        // `party` on a walk of yours: your companion follows a step behind)
+        // (opt-in, for one walk; 52_staging.js walkPath: `cross` may cross a trigger whose condition is false now;
+        // `party` on a walk of yours: your companion follows a step behind; `max=<ms>` the bound on the walk's own
+        // steps, the companion's catching up allowed 2 s more)
         case 'walkto': {
           const mx = a.find((t) => /^max=\d+$/.test(t));
           if (RB.staging) await RB.staging.walkTo(a[0] === 'npc' ? ctx.npc : a[0], +a[1], +a[2], DIRW[a[3]] ? a[3] : null, { now: a.includes('now') || hidden(), stay: a.includes('stay'), cross: a.includes('cross'), party: a.includes('party'), max: mx ? +mx.slice(4) : 0 }, ctx);
