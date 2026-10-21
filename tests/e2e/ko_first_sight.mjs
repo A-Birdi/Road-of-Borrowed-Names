@@ -11,6 +11,10 @@
 //   page, at a desktop size and a phone held upright;
 // - a few large gold leaves come down in front of the hill, the beach and the water, each with ink on it, never over
 //   the tree's crown or its trunk and roots, none below the sheet; with reduced motion all of them hold, full-size;
+// - from the picture's first frame (Local CL-129, Agnes 6323680849): drawn directly at the desktop and phone layouts at
+//   fixed times since it opened (0 to 3 s), every frame on its own has at least two readable gold leaves (full-size,
+//   gold, with ink) and none over the tree or below the sheet; the leaves keep to the picture's own time (the page's
+//   clock moves nothing);
 // - with reduced motion the picture holds still (two frames alike); with motion it does not (the leaves, the water);
 // - a second landing (ko_arrived already set), by either boat, runs no first sight and shows none of its picture (the
 //   crossing's own picture on Tetsu's boat, RBN-QA-072, is not it);
@@ -186,7 +190,7 @@ for (const [how, comp, W, H, reduce, flags] of RUNS) {
     else {
       const { read } = judgeGold(G, reduce);
       ok(judgeGold(G, reduce).pass && !G.overAny.length,
-        `${tag}: view line ${k + 1}: ${G.leaves.length} of ${G.n} large gold leaves on screen, ${read.length} full-size, each gold with ink on it (moment ${G.at + 1} of ${G.looks} read, at ${G.times.join('/')} ms); none over the tree or below the sheet at any moment read (${G.leaves.map((l) => `${l.len}px gold ${l.gold} ink ${l.ink} at ${l.box.join(',')}`).join('; ')}; clear of crown ${G.clear.crown.join(',')}, trunk ${G.clear.trunk.map(Math.round).join(',')}${G.overAny.length ? '; over: ' + G.overAny.map((l) => l.box.join(',')).join(' | ') : ''})`);
+        `${tag}: view line ${k + 1}: ${G.leaves.length} of ${G.n} large gold leaves on screen, ${read.length} readable (full-size, gold, with ink) (moment ${G.at + 1} of ${G.looks} read, at ${G.times.join('/')} ms); none over the tree or below the sheet at any moment read (${G.leaves.map((l) => `${l.len}px gold ${l.gold} ink ${l.ink} at ${l.box.join(',')}`).join('; ')}; clear of crown ${G.clear.crown.join(',')}, trunk ${G.clear.trunk.map(Math.round).join(',')}${G.overAny.length ? '; over: ' + G.overAny.map((l) => l.box.join(',')).join(' | ') : ''})`);
     }
     ok(P.leaves.n >= 50 && P.leaves.bottom <= m.row + 1, `${tag}: view line ${k + 1}: ${P.leaves.n} leaves coming down, none lower than the sheet (to row ${P.leaves.bottom}, sheet ${m.row.toFixed(1)})`);
   }
@@ -195,6 +199,47 @@ for (const [how, comp, W, H, reduce, flags] of RUNS) {
   else ok(still === false, `${tag}: with motion the picture lives (two frames differ: the leaves, the water)`);
   ok(!errors.length, `${tag}: no console errors${errors.length ? ' — ' + errors[0].slice(0, 160) : ''}`);
   ok(!requests.length, `${tag}: no network requests`);
+  await p.close();
+}
+
+// the gold leaves from the picture's first frame (Local CL-129, Agnes 6323680849): the picture drawn directly into a
+// canvas of the art buffer's size at each layout (the desktop and the phone held upright, with the sheet where those
+// runs measured it), at fixed times since it opened; each frame judged on its own as in motion (the same conditions)
+{
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const AT = [0, 250, 500, 1000, 1500, 2000, 2500, 3000];
+  for (const [lay, w, h, vb] of [['desktop', 640, 400, 272], ['phone held upright', 390, 844, 506]]) {
+    const frames = await p.evaluate(([w, h, vb, AT]) => {
+      const A = RB.interlude.ART.ko_first_sight, cv = document.createElement('canvas');
+      cv.width = w; cv.height = h;
+      const c = cv.getContext('2d'), out = [];
+      const rgb = (x) => [1, 3, 5].map((i) => parseInt(x.slice(i, i + 2), 16));
+      const GOLD = ['#a8822e', '#d0a844', '#e8c868'].map(rgb), INK = rgb('#2a2434');
+      const near = (d, i, k) => Math.abs(d[i] - k[0]) <= 14 && Math.abs(d[i + 1] - k[1]) <= 14 && Math.abs(d[i + 2] - k[2]) <= 14;
+      const read = () => {
+        const P = A.probe(), d = c.getImageData(0, 0, w, h).data;
+        const leaves = P.gold.now.map(({ box, len }) => {
+          let gold = 0, ink = 0;
+          for (let y = box[1]; y <= box[3]; y++) for (let x = box[0]; x <= box[2]; x++) { const i = (y * w + x) * 4; if (GOLD.some((k) => near(d, i, k))) gold++; else if (near(d, i, INK)) ink++; }
+          return { box, len: Math.round(len), gold, ink };
+        });
+        return { n: P.gold.n, vb: P.vb, clear: P.gold.clear, leaves };
+      };
+      for (const since of AT) {
+        // (the page's clock, t, at two very different values: the leaves must not move with it)
+        A.draw(c, w, h, 1000, { stage: 'view', since, vb, still: false });
+        const g1 = read(), k1 = JSON.stringify(g1.leaves.map((l) => l.box));
+        A.draw(c, w, h, 987654, { stage: 'view', since, vb, still: false });
+        const g2 = read();
+        out.push(Object.assign(g2, { since, sameAcrossClock: k1 === JSON.stringify(g2.leaves.map((l) => l.box)) }));
+      }
+      return out;
+    }, [w, h, vb, AT]);
+    const judged = frames.map((G) => ({ G, j: judgeGold(G, false) }));
+    const bad = judged.filter(({ G, j }) => !j.pass || !G.sameAcrossClock);
+    ok(!bad.length, `the gold leaves from the first frame, ${lay} (${w}×${h}, sheet at ${vb}): every frame at ${AT.join('/')} ms since the picture opened has at least two readable gold leaves (full-size, gold, with ink), none over the tree or below the sheet, and they keep to the picture's own time (${judged.map(({ G, j }) => `${G.since}ms ${j.read.length}/${G.leaves.length}${G.sameAcrossClock ? '' : ' moved with the clock'}`).join(', ')})`);
+  }
+  ok(!errors.length, `the gold leaves from the first frame: no page errors ${errors.slice(0, 2).join(' | ')}`);
   await p.close();
 }
 
