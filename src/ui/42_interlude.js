@@ -2,12 +2,15 @@
  * its lines go on in the dialogue (the wait at the tide-watcher's window, …).
  * A scene shows one with `!interlude <id> [stage]`, moves it on with another
  * stage, and ends it with `!interlude -` (usually between `!fade out` and
- * `!fade in`); one still showing when the scene ends is cleared then. The
- * pictures are drawn at art resolution with RB.pxkit, in the prologue's
- * manner (src/ui/41_prologue_art.js; its kit and caches are shared), and keep
- * what matters above the dialogue sheet: `vb` is the highest the sheet has
- * reached during this interlude (in steps, so the picture is laid out once
- * or twice, not per line). Reduced motion holds each stage still.
+ * `!fade in`); one still showing when the scene ends is cleared then. A
+ * battle begun while one shows fades from it and takes the screen (the
+ * scene clears the picture afterwards: `!interlude -`); a campaign changing
+ * leaves none behind. The pictures are drawn at art resolution with
+ * RB.pxkit, in the prologue's manner (src/ui/41_prologue_art.js; its kit and
+ * caches are shared), and keep what matters above the dialogue sheet: `vb`
+ * is the highest the sheet has reached during this interlude (in steps, so
+ * the picture is laid out once or twice, not per line). Reduced motion holds
+ * each stage still.
  *
  *   RB.interlude.ART[id] = { stages: [...], draw(c, w, h, t, st) }
  *     st: { stage, since: ms in this stage, vb, still }
@@ -70,7 +73,9 @@ RB.interlude = (function () {
   function clear() {
     if (!cur) return;
     cur = null;
-    RB.render.setOverride(null);
+    // back to the map, unless something else has the screen now (a battle that took it from the picture gives
+    // the map back itself)
+    if (!RB.render.getOverride || RB.render.getOverride() === frame) RB.render.setOverride(null);
     if (RB.prologueArt) RB.prologueArt.release();
   }
   const state = () => (cur ? { id: cur.id, stage: cur.stage, since: Math.round(now() - cur.at) } : null);

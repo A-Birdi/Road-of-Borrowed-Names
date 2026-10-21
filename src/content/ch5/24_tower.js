@@ -433,11 +433,19 @@ narr: その {線|せん} の {横|よこ} に 、{小|ちい}さな {刻|きざ
 # points to it, one move at a time; Mio's guarded hand; Ren holds the lamp forward; Suzu points it out). After the
 # battle: you lean in to the bell as the pipes fall away; your companion's own answer (Nao's nod, Mio looks you
 # over, Ren leans in to the writing on the bell, Suzu's open hand to it).
+# Shown (src/ui/42e_interlude_keeper.js; RBN-QA-071): the map never shows the keeper, so the lines that tell it are
+# pictures of the chamber with the battle's own drawing of it: the water heaving in front of the bell, the keeper
+# rising on its twisting pipes and the pipes winding round the bell, held through its words and your companion's
+# answer; the battle's own fade takes the screen from it. After the battle it sinks and its pipe legs go under one
+# by one, the pipes round the bell fall away, and the chamber is as the map shows it.
 !if lf_boss_done -> end
 !gesture pc flinch 8,7
+!interlude lf_keeper heave
 narr: {鐘|かね} の {前|まえ} の {水|みず} が 、{盛|も}り{上|あ}がった 。|| The water in front of the bell heaves upwards.
+!interlude lf_keeper rise
 narr: {管|くだ} が {絡|から}み{合|あ}い 、{鐘|かね} の {形|かたち} を した {何|なに} か が {立|た}ち{上|あ}がる 。{顔|かお} の {代|か}わり に 、{水門|すいもん} の {札|ふだ} が {付|つ}いて いる 。|| Pipes twist together and something shaped like a bell rises up. In place of a face, it wears a sluice-gate plate.
 narr: 「{鳴|な}らして は いけません 。…… いえ 、どうぞ 。{鳴|な}らして も かまいません よ 。」|| "You must not ring it. …No — please. Go ahead and ring it, if you like."
+!interlude lf_keeper face
 ?(comp=nao) !gesture comp point 8,7
 ?(comp=nao) comp[angry]: {言|い}ってる こと と やってる こと が 、{全然|ぜんぜん} {違|ちが}う 。…… {読|よ}んで いこう 、{一手|いって} ずつ 。|| What it says and what it does are completely different. …Let's read it one move at a time.
 ?(comp=mio) !gesture comp guard
@@ -447,10 +455,16 @@ narr: 「{鳴|な}らして は いけません 。…… いえ 、どうぞ �
 ?(comp=suzu) !gesture comp point 8,7
 ?(comp=suzu) comp: 「はい」 で 「いいえ」 を {隠|かく}す {役者|やくしゃ} 。…… {化|ば}けの{皮|かわ} 、はがして あげましょう 。|| An actor who hides a "no" inside a "yes". …Let's peel off that disguise.
 !battle lf.keeper noflee
+!interlude -
 !set lf_boss_done
 !gesture pc observe 8,7
+!interlude lf_keeper apart
 narr: {番人|ばんにん} が ほどけ 、{管|くだ} が {一本|いっぽん} ずつ {水|みず} に {沈|しず}んで いく 。|| The keeper comes apart, and its pipes sink into the water one by one.
+!interlude lf_keeper loosen
 narr: {鐘|かね} に {巻|ま}きついて いた {管|くだ} も 、{緩|ゆる}んで {落|お}ちた 。|| The pipes that were wound round the bell loosen and fall away too.
+!fade out
+!interlude -
+!fade in
 ?(comp=nao) !gesture comp nod
 ?(comp=nao) comp: …… {鐘|かね} 、{自由|じゆう} に なった 。|| …The bell's free.
 ?(comp=mio) !gesture comp observe pc
