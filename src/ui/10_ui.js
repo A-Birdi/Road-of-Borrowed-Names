@@ -15,6 +15,10 @@ RB.ui = (function () {
     overlay.appendChild(notices);
     fadeEl = el('div', 'fade');
     overlay.appendChild(fadeEl);
+    // a change of campaign (a load, a new journey, the title) ends the scene that had the screen faded out, and with it
+    // that scene's own fade back in: the black is lifted here, as every other layer clears itself then, and a fade
+    // still under way belongs to the campaign it began in, so its end changes nothing (RBN-QA-102)
+    if (RB.bus) RB.bus.on('campaign:changing', () => { fadeTok++; fadeEl.classList.remove('on'); document.body.classList.remove('veiled'); });
     RB.input.buildTouchPad(root);
     RB.ui.help.init();
     // Software keyboard: the part of the layout viewport the visual viewport
@@ -204,13 +208,16 @@ RB.ui = (function () {
   // is said over it stays in view above the black: the dialogue, its replies
   // and the history (body.veiled, from the moment it darkens until it has
   // fully cleared; see 50_play.css).
+  // Only the latest fade lifts the veil when it ends: a later fade, or a change of campaign, takes the screen over.
+  let fadeTok = 0;
   function fade(out, ms) {
+    const tok = ++fadeTok;
     return new Promise((res) => {
       fadeEl.style.transitionDuration = (ms || 220) + 'ms';
       fadeEl.classList.toggle('on', !!out);
       if (out) document.body.classList.add('veiled');
       setTimeout(() => {
-        if (!fadeEl.classList.contains('on')) document.body.classList.remove('veiled');
+        if (tok === fadeTok && !fadeEl.classList.contains('on')) document.body.classList.remove('veiled');
         res();
       }, ms || 220);
     });
