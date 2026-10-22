@@ -73,6 +73,13 @@ export default async (t) => {
   t.eq(RB.tiles.PAL.cloudtop.waterR, ownWater, 'the cloud top\'s water ramp is made from its own water colours');
   t.ok(JSON.stringify(RB.tiles.PAL.cloudtop.waterR) !== JSON.stringify(RB.tiles.PAL.cloudroad.waterR), 'and it is not the Cloudroad\'s river ramp');
   t.eq(RB.tiles.PAL.cloudroad.waterR, RB.tiles.addRamps({ water: RB.tiles.PAL.cloudroad.water }).waterR, 'the Cloudroad\'s rivers keep their own ramp');
+  // and it is drawn as cloud, not water (Agnes 6341772138): only the cloud top's palette takes the cloud style; every
+  // other palette keeps the water style it had (the river by default)
+  const WS = RB.tileArt.waterStyleOf, P = RB.tiles.PAL;
+  t.eq(WS(P.cloudtop), 'cloud', 'the cloud top\'s sea is drawn as cloud');
+  const before = { reedwake: 'river', saltglass: 'sea', cinder: 'river', snowbell: 'cold', lanternfall: 'canal', manybridge: 'canal', keepers: 'cold', archive: 'drowned', atlas: 'still', sa_mount: 'cold', sa_still: 'still' };
+  const others = Object.keys(P).filter((k) => k !== 'cloudtop' && k !== 'interior' && P[k] && P[k].water);
+  t.eq(others.filter((k) => WS(P[k]) !== (before[k] || 'river')), [], 'every other palette keeps its water (' + others.length + ' palettes, the Cloudroad\'s rivers among them)');
   t.eq((C.scriptErrors || []).filter((e) => /cr\/|cr\./.test(e)), [], 'the Cloudroad\'s scenes parse');
   t.ok(ops('cr.end').includes('set:cr_done') && ops('cr.end').includes('quest:cr_main done'), 'the chapter ends with cr_done');
 
