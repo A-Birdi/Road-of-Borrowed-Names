@@ -53,8 +53,10 @@ RB.questGuide = (function () {
   const STEPS = 3000;      // commands walked per path
   const HYPO = 2;          // ways not taken per path (live analysis)
   const NEEDS = 6;         // missing conditions per path
-  const UNK = '\u0000?';   // an outcome not known yet (var._res after a challenge; var._res and var._enc after an encounter)
+  const UNK = '\u0000?';   // an outcome not known yet (var._res after a challenge; var._res and var._enc after an encounter);
+  //                         with '|x|y' after it: not known, but not x and not y (a path that went on as if the test failed)
   const OUTCOME = new Set(['var:_res', 'var:_enc']); // the outcomes a scene can branch on
+  const isUnk = (v) => typeof v === 'string' && v.startsWith(UNK);
   const OPS = { '>=': '<', '<=': '>', '!=': '=', '==': '!=', '=': '!=', '>': '<=', '<': '>=' };
 
   // ---- content index ---------------------------------------------------------------
@@ -185,20 +187,33 @@ RB.questGuide = (function () {
     return acc;
   }
   // A path that goes on as if a single outcome test held (`var._enc=walked`, `var._res=0`) while the outcome was
-  // unknown now knows it: the outcome is pinned in that path, so it never takes two different conclusions of one
-  // encounter (RBN-QA-087). Anything else (a compound condition) is left as it was.
-  function pin(st, cond) {
+  // unknown now knows it (RBN-QA-087): held, the outcome is that value in this path; failed, it is not that value
+  // (for _res, which is only ever 1 or 0, the other one). So one path never takes two different conclusions of one
+  // encounter, nor takes later the conclusion it went on without (Agnes 6333669762). A compound condition is left
+  // as it was.
+  function pin(st, cond, held) {
     const d = dnf(cond);
     if (d.length !== 1 || d[0].length !== 1) return;
     const p = parseTerm(d[0][0]);
-    if (!OUTCOME.has(p.fx) || p.neg || (p.op !== '=' && p.op !== '==')) return;
-    const name = p.fx.slice(4);
-    if (st.vars[name] === UNK) st.vars[name] = isNaN(+p.val) ? p.val : +p.val;
+    if (!OUTCOME.has(p.fx) || (p.op !== '=' && p.op !== '==' && p.op !== '!=')) return;
+    const name = p.fx.slice(4), v = st.vars[name];
+    if (!isUnk(v)) return;
+    const eq = (held !== (p.op === '!=')) !== p.neg; // in this path, the outcome is that value (or is not)
+    if (eq) st.vars[name] = isNaN(+p.val) ? p.val : +p.val;
+    else if (name === '_res') { if (p.val === '0' || p.val === '1') st.vars[name] = 1 - +p.val; }
+    else if (!v.split('|').includes(p.val)) st.vars[name] = v + '|' + p.val;
+  }
+  // An outcome test while the outcome is not known: 0 when this path already went on without that value, else -1
+  function outcomeTerm(st, p) {
+    const v = st.vars[p.fx.slice(4)];
+    if (p.op !== '=' && p.op !== '==' && p.op !== '!=') return -1;
+    if (!v.split('|').slice(1).includes(p.val)) return -1;
+    return (p.op === '!=') !== p.neg ? 1 : 0;
   }
   // 1 true, 0 false, -1 unknown
   function tterm(ctx, st, raw) {
     const p = parseTerm(raw);
-    if (OUTCOME.has(p.fx) && st.vars[p.fx.slice(4)] === UNK) return -1;
+    if (OUTCOME.has(p.fx) && isUnk(st.vars[p.fx.slice(4)])) return outcomeTerm(st, p);
     if (ctx.static && p.fx !== 'const' && (p.fx !== 'quest:' + ctx.Q || ctx.passing) && !st.touched.has(p.fx)) return -1;
     return RB.state.test(st, raw) ? 1 : 0;
   }
@@ -342,7 +357,7 @@ RB.questGuide = (function () {
         if (c.if && !p.forceNext) {
           const v = tv(ctx, st, c.if);
           const control = op === 'end' || op === 'goto';
-          if (v === -1) { const q = forkPath(p); push(q); pin(st, c.if); } // this one runs the command; the copy skips it
+          if (v === -1) { const q = forkPath(p); pin(q.st, c.if, false); push(q); pin(st, c.if, true); } // this one runs the command; the copy skips it
           else if (v === 0) {
             // not run now; running it may be the way forward (the copy runs it)
             if (!control && op !== 'if') hypo(p, needsOf(ctx, st, dnf(c.if)), (q) => { q.frames[q.frames.length - 1].pc--; q.forceNext = true; });
@@ -355,7 +370,7 @@ RB.questGuide = (function () {
           case 'unset': a.forEach((x) => { st.flags[x] = false; touch(st, 'flag:' + x); }); break;
           case 'var': {
             const [name, o, val] = a, v = +val;
-            if (st.vars[name] === UNK) st.vars[name] = 0;
+            if (isUnk(st.vars[name])) st.vars[name] = 0;
             if (o === '=') st.vars[name] = isNaN(v) ? val : v;
             else if (o === '+') st.vars[name] = (st.vars[name] || 0) + v;
             else if (o === '-') st.vars[name] = (st.vars[name] || 0) - v;
@@ -383,7 +398,7 @@ RB.questGuide = (function () {
             const arrow = a.indexOf('->');
             const cond = a.slice(0, arrow).join(' '), label = a[arrow + 1];
             const v = tv(ctx, st, cond);
-            if (v === -1) { const q = forkPath(p); jump(q, label); pin(q.st, cond); push(q); }
+            if (v === -1) { const q = forkPath(p); jump(q, label); pin(q.st, cond, true); push(q); pin(st, cond, false); }
             else if (v === 1) { hypo(p, needsOf(ctx, st, negDnf(cond)), () => {}); jump(p, label); }
             else hypo(p, needsOf(ctx, st, dnf(cond)), (q) => jump(q, label));
             break;
