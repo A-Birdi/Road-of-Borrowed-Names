@@ -41,8 +41,12 @@ export default async (t) => {
   t.ok(JSON.stringify(props) === JSON.stringify(['yn_doma@5,7', 'exitmat@6,8', 'counter@2,3', 'noticeboard@6,2', 'yn_noren@13,2', 'sb_irori@10,6', 'lantern@1,6', 'bench@3,7', 'noticeboard@9,2']), 'the room\'s props as they were, with the entrance added: ' + props.join(' '));
   const pd = RB.props.P.yn_doma, doma = def.props[0];
   t.ok(pd && pd.block === false && pd.w === 3 && pd.h === 2 && !doma.if && !doma.scene, 'the entrance: three tiles by two, never in the way, always there (so baked into the ground), nothing to look at');
+  // (everyone placed here on the task head, where they were; a later change may add someone, never on the earth)
   const people = def.npcs.map((n) => n.id + '@' + n.x + ',' + n.y);
-  t.ok(people.slice(0, 4).join(' ') === 'yn_tahei@3,2 yn_kane@5,5 yn_zenroku@11,4 yn_senta_r3@3,4' && people.length === 22, 'Tahei, Kane, Zenroku and the rest where they were (' + people.length + ')');
+  const BATH = ['12,3', '11,3', '12,4', '12,3', '11,3', '12,4', '12,3', '11,3', '12,4', '12,3', '11,3', '12,4', '2,4', '2,5', '2,6', '9,6', '12,6', '10,8'];
+  const WERE = ['yn_tahei@3,2', 'yn_kane@5,5', 'yn_zenroku@11,4', 'yn_senta_r3@3,4'].concat(BATH.map((at, i) => 'vbp_yn_vb_bath_' + i + '@' + at));
+  const gone = WERE.filter((p) => !people.includes(p));
+  t.ok(!gone.length, 'Tahei, Kane, Zenroku and the rest where they were (' + WERE.length + ')' + (gone.length ? ': not as they were ' + gone.join(' ') : ''));
   t.ok(!def.npcs.some((n) => EARTH.has(n.x + ',' + n.y)), 'nobody is placed on the earth');
   t.ok(def.exits.length === 1 && def.exits[0].x === 6 && def.exits[0].y === 9 && def.exits[0].to === 'yn.lower', 'the way out, as it was');
   const others = Object.keys(C.maps).filter((id) => id !== 'yn.shimo' && (C.maps[id].props || []).some((p) => p.p === 'yn_doma'));
