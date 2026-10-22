@@ -184,7 +184,9 @@ RB.world = (function () {
     // they show a !move or a !walkto there: people are at once where the story now puts them, so the world the
     // picture dissolves back into already matches it (nobody seen going in twice; docs/expressive/CONTRACT.md HX52).
     const behind = !!(RB.sequence && RB.sequence.hidesWorld && RB.sequence.hidesWorld());
-    if (W.time - W.enteredAt > 900 || (o && o.arrive)) {
+    // (a going the scene asks for and waits on, `!refresh gone`, is watched: it is walked however soon after the map
+    // appeared, as a talk to someone just there can come before 900 ms are up; RBN-QA-120, Agnes 6347484032)
+    if (W.time - W.enteredAt > 900 || (o && (o.arrive || o.watched))) {
       const arriving = W.npcs.filter((a) => !before.has(a.id) && !keep.has(a.id));
       const atOnce = (a, arr) => noteDeparture(a, { goals: new Set(), to: arr ? m.id : null, reason: 'behind an illustrated sequence: at once' }, [], arr);
       let k = 0;

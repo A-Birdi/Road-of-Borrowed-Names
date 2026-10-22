@@ -21,7 +21,11 @@
 //     way to the Lower House's door he fades where he stands (no step towards any other exit); with the walk cut at
 //     its bound (here made 1.5 s) he fades where he is; either way the narration shows no figure of his; in every
 //     ordinary run above, no fallback is recorded;
-//  9. no page errors.
+//  9. talked to at once on coming onto the street (within the map's first 900 ms, when people the story moves are
+//     simply where it puts them: Agnes 6347484032 kept the first run's 20/11 from this as real): he still walks to the
+//     door and fades there, no fallback, and nobody shows under the narration (the going a scene waits on is walked
+//     however soon: 50_world.js);
+// 10. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/tsuneji_egg.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -58,7 +62,7 @@ async function start(p, o) {
     }
     window.__atLine = []; window.__trail = [];
   }, [YN, o]);
-  await settled(p);
+  if (!o.early) await settled(p);
 }
 // the map has been shown a while (people come and go on foot only after its first 900 ms of world time, as a player
 // who walked up to him would have seen it)
@@ -123,6 +127,19 @@ for (const [comp, x, dir] of [[null, 21, 'right'], ['nao', 23, 'left'], ['mio', 
     const back = await state(p);
     ok(back.map === 'yn.lower' && !back.here.length, who + ': back on the street, the riverbank is empty');
   }
+  allErrors.push(...errors); await p.close();
+}
+
+// ---- 9. talked to at once on coming onto the street ------------------------------------------------------------------
+for (const [comp, x, dir] of [[null, 21, 'right'], ['suzu', 23, 'left']]) {
+  const who = (comp || 'no companion') + ', at once';
+  const { p, errors } = await page(b, url);
+  await start(p, { map: 'yn.lower', x, y: 18, dir, comp, eggs: 3, early: true });
+  const at = await p.evaluate(() => Math.round(RB.world.W.time - RB.world.W.enteredAt));
+  const r = await play(p);
+  const s = await state(p);
+  const his = r.lines.find((l) => HIS.test(l.d)), went = s.atLine.filter((l) => /Tsuneji carries the egg/.test(l.en));
+  ok(at < 900 && his && went.length === 1 && went[0].any === 0 && nearDoor(s.trail) && s.dep && s.dep.exit === '9,10' && !s.dep.fallback && s.flag && s.eggs === 2 && !s.here.length && !s.going, who + ': talked to ' + at + ' ms after the street appeared, he walks to the Lower House\'s door and fades there, no fallback; nobody under the narration; the egg given (' + JSON.stringify({ went, trail: s.trail, dep: s.dep && { exit: s.dep.exit, fallback: s.dep.fallback }, eggs: s.eggs }) + ')');
   allErrors.push(...errors); await p.close();
 }
 
