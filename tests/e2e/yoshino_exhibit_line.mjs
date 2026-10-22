@@ -6,8 +6,9 @@
 //  2. after it, for several sets of panel choices (the panels themselves showing each choice): the new line, in Japanese
 //     and English, once; never the arguing children, the serpent or the boat;
 //  3. the same with Ao's side story not taken, at the hall reading (Ao there) and done;
-//  4. after the chapter and in the postgame her other talks, unchanged; the line's furigana and its own voice key;
-//     no page errors.
+//  4. after the chapter and in the postgame her other talks (played to their end, her lines from those scenes), not
+//     this line; the line's furigana and its own voice key; no page errors;
+//  5. the harness: a scene that throws is kept as an error and fails, never credited as played to its end.
 // Usage: node tools/build.mjs && node tests/e2e/yoshino_exhibit_line.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -24,8 +25,11 @@ const OLD = /arguing|serpent|The boat|喧嘩|海蛇/;
 const KO = { ch2_done: true, mb2_done: true, ch3_done: true, ch4_done: true, kr_done: true, ch5_done: true, ko_ch9: true, ko_arrived: true, ko_otoha_met: true };
 const SRC = ['otoha', 'nami', 'hamaji', 'shell'];
 
-// talk to Yoshino as the world resolves it, and play that scene to its end
+// talk to Yoshino as the world resolves it, and play that scene to its end. The runner catches an error inside a scene
+// itself (70_script.js run: console.error 'scene error', and the scene is not marked seen), so a scene played to its
+// end here is one that finished, was marked seen, and logged no error while it ran; a rejection is kept as well.
 async function talk(flags, o = {}) {
+  const e0 = errors.length;
   await p.evaluate(([flags, o]) => {
     const s = RB.game.debugStart('ko.hall', 8, 8, { dir: 'up', edition: RB.edition.forNew(), comp: 'suzu', flags });
     for (const m in RB.content.maps) for (const ev of RB.content.maps[m].onEnter || []) s.flags['enter:' + m + ':' + ev.scene] = true;
@@ -35,29 +39,39 @@ async function talk(flags, o = {}) {
     RB.world.enter('ko.hall', 8, 8, 'up', { fresh: true });
     if (!window.__sayWrapped) {
       const say = RB.ui.dialogue.say;
-      RB.ui.dialogue.say = function (l) { window.__said.push({ who: l.who, jp: l.jp, en: l.en }); return say.apply(this, arguments); };
+      RB.ui.dialogue.say = function (l) {
+        if (window.__boom) { window.__boom = false; throw new Error('a deliberate failure in the first line (the harness check)'); }
+        window.__said.push({ who: l.who, jp: l.jp, en: l.en }); return say.apply(this, arguments);
+      };
       window.__sayWrapped = true;
     }
     const n = RB.content.maps['ko.hall'].npcs.find((x) => x.id === 'ko_yoshino');
     const t = n.talk.find((x) => !x.if || RB.state.test(RB.game.s, x.if));
-    window.__scene = t.scene; window.__said = []; window.__done = false;
-    RB.script.run(t.scene).then(() => { window.__done = true; }, () => { window.__done = true; });
+    window.__scene = t.scene; window.__said = []; window.__done = false; window.__err = null; window.__boom = !!o.boom;
+    // (a scene that throws is not a scene played to its end: the error is kept and fails the check)
+    RB.script.run(t.scene).then(() => { window.__done = true; }, (e) => { window.__err = String((e && e.stack) || e); });
   }, [flags, o]);
   for (let i = 0; i < 200; i++) {
-    const st = await p.evaluate(() => ({ done: window.__done, dlg: RB.ui.dialogue.isOpen() }));
-    if (st.done) break;
+    const st = await p.evaluate(() => ({ done: window.__done, err: window.__err, dlg: RB.ui.dialogue.isOpen() }));
+    if (st.done || st.err) break;
     if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance());
     await wait(60);
   }
-  return p.evaluate(() => {
+  const r = await p.evaluate(() => {
     const s = RB.game.s, hall = RB.content.maps['ko.hall'];
     // the panels standing now (each shows the version chosen for it, or blank)
     const panels = [4, 8, 12].map((x) => (hall.props || []).filter((q) => q.p === 'ko_panel' && q.x === x && (!q.if || RB.state.test(s, q.if))).map((q) => q.o && q.o.v));
     const ao = (hall.npcs || []).some((n) => n.id === 'ko_ao_hall' && (!n.if || RB.state.test(s, n.if)));
-    return { done: window.__done, scene: window.__scene, said: window.__said.filter((x) => x.who === 'ko_yoshino'), panels, ao };
+    // (her lines as the scene holds them, for the talks this change leaves alone)
+    const own = RB.content.scenes[window.__scene].cmds.filter((c) => c.op === 'say' && c.who === 'ko_yoshino').map((c) => c.en);
+    return { done: window.__done && !window.__err && !!RB.game.s.seen[window.__scene], err: window.__err, scene: window.__scene, said: window.__said.filter((x) => x.who === 'ko_yoshino'), own, panels, ao };
   });
+  await wait(150); // (a console error reaches the page's log a moment later)
+  const logged = errors.slice(e0);
+  if (logged.length) { r.done = false; r.err = [r.err].concat(logged).filter(Boolean).join(' | '); }
+  return r;
 }
-const brief = (r) => JSON.stringify({ scene: r.scene, panels: r.panels, ao: r.ao, said: r.said.map((x) => x.en) });
+const brief = (r) => JSON.stringify({ scene: r.scene, panels: r.panels, ao: r.ao, said: r.said.map((x) => x.en), err: r.err });
 const saysNew = (r) => r.said.filter((x) => x.jp === NEW.jp && x.en === NEW.en).length;
 const saysOld = (r) => r.said.some((x) => OLD.test(x.en || '') || OLD.test(x.jp || ''));
 
@@ -81,9 +95,10 @@ for (const [ao, label] of [[null, 'not taken'], [1, 'at the hall reading'], ['do
 // 4. after the chapter and in the postgame: her other talks, unchanged; the line itself
 {
   const r1 = await talk(Object.assign({ 'tell_ko.t_hall_ok': true, ko_done: true }, KO));
-  ok(r1.scene === 'ko.yoshino_after' && saysNew(r1) === 0, 'after the chapter: her own talk (ko.yoshino_after), not this line (' + brief(r1) + ')');
+  const fromOwn = (r) => r.said.length > 0 && r.said.every((x) => r.own.includes(x.en));
+  ok(r1.done && r1.scene === 'ko.yoshino_after' && saysNew(r1) === 0 && fromOwn(r1), 'after the chapter: her own talk (ko.yoshino_after) played to its end, every line of hers from that scene, not this line (' + brief(r1) + ')');
   const r2 = await talk(Object.assign({ 'tell_ko.t_hall_ok': true, ko_done: true, postgame: true }, KO));
-  ok(r2.scene === 'ko.yoshino_post' && saysNew(r2) === 0, 'in the postgame: ko.yoshino_post, not this line (' + brief(r2) + ')');
+  ok(r2.done && r2.scene === 'ko.yoshino_post' && saysNew(r2) === 0 && fromOwn(r2), 'in the postgame: ko.yoshino_post played to its end, every line of hers from that scene, not this line (' + brief(r2) + ')');
   const r = await p.evaluate((NEW) => {
     const c = RB.content.scenes['ko.yoshino_ch9'].cmds.filter((x) => x.jp === NEW.jp);
     const bare = NEW.jp.replace(/\{[^}]*\}/g, '').match(/[一-鿿]/g) || [];
@@ -93,7 +108,13 @@ for (const [ao, label] of [[null, 'not taken'], [1, 'at the hall reading'], ['do
   ok(r.key === 'ko.yoshino_ch9#21962b0a35' && r.key !== 'ko.yoshino_ch9#c80ba6fab1', 'the new text has its own voice key, not the old recording\'s (' + r.key + ')');
 }
 
-ok(!errors.length, 'no page errors ' + errors.slice(0, 3).join(' | '));
+// 5. the harness itself: a scene that throws is reported as an error, never as a scene played to its end
+{
+  const r = await talk(Object.assign({ 'tell_ko.t_hall_ok': true }, KO), { boom: true });
+  ok(!r.done && /deliberate failure/.test(r.err || '') && saysNew(r) === 0, 'the harness: a scene that throws is kept as an error and is not credited as done (' + JSON.stringify({ done: r.done, err: (r.err || '').split('\n')[0] }) + ')');
+}
+
+ok(!errors.filter((e) => !/deliberate failure/.test(e)).length, 'no page errors ' + errors.filter((e) => !/deliberate failure/.test(e)).slice(0, 3).join(' | '));
 await b.close();
 srv.close();
 console.log(`\n${pass} passed, ${fail} failed`);
