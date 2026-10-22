@@ -30,6 +30,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     water: ['#c8d2da', '#dae2e8', '#eaf0f4', '#ffffff'], leaf: ['#3e5446', '#4a624e', '#5e7660', '#2e4034'],
     sky: '#eef2f4', dark: '#1a1e22',
   });
+  // its water ramp is made from its own pale water, not the Cloudroad's river ramp copied over with the rest
+  // (addRamps keeps a ramp already there: RBN-QA-104). Its other inherited ramps are left as they are, for review.
+  delete TL.PAL.cloudtop.waterR;
   TL.addRamps(TL.PAL.cloudtop);
 
   C.places.cloudroad = {
