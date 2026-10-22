@@ -15,8 +15,13 @@
 //     journey (saved before the egg) has him at the riverbank with the egg still to give, and giving it again ends as
 //     in 1;
 //  7. saves: one with the egg given and the valley's story not done has the riverbank empty and him in the Lower
-//     House; one with the story done has him in neither;
-//  8. no page errors.
+//     House; one with the story done has him in neither; a journey loaded while he walks that was saved after the egg
+//     (the flag set) has exactly one of him, in the Lower House;
+//  8. the fallbacks (Agnes 6346676788, Local CL-209), each recorded as a fallback and never a walk completed: with no
+//     way to the Lower House's door he fades where he stands (no step towards any other exit); with the walk cut at
+//     its bound (here made 1.5 s) he fades where he is; either way the narration shows no figure of his; in every
+//     ordinary run above, no fallback is recorded;
+//  9. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/tsuneji_egg.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -99,7 +104,7 @@ for (const [comp, x, dir] of [[null, 21, 'right'], ['nao', 23, 'left'], ['mio', 
   const s = await state(p);
   const his = r.lines.find((l) => HIS.test(l.d)), went = s.atLine.filter((l) => /Tsuneji carries the egg/.test(l.en));
   ok(his && his.him && his.him.join() === '22,18' && went.length === 1 && went[0].figs.length === 0 && went[0].any === 0, who + ': he is there for his line; when the narration says he went, no figure of his is on the street (' + JSON.stringify({ his: his && his.him, went }) + ')');
-  ok(nearDoor(s.trail) && s.dep && s.dep.to === 'yn.shimo' && s.dep.exit === '9,10', who + ': he walked to the Lower House\'s door and faded there (last seen going at ' + JSON.stringify(s.trail) + '; recorded ' + JSON.stringify(s.dep && { to: s.dep.to, exit: s.dep.exit, reason: s.dep.reason }) + ')');
+  ok(nearDoor(s.trail) && s.dep && s.dep.to === 'yn.shimo' && s.dep.exit === '9,10' && !s.dep.fallback, who + ': he walked to the Lower House\'s door and faded there, no fallback (last seen going at ' + JSON.stringify(s.trail) + '; recorded ' + JSON.stringify(s.dep && { to: s.dep.to, exit: s.dep.exit, reason: s.dep.reason, fallback: s.dep.fallback }) + ')');
   ok(s.you.join() === x + ',18' && s.flag && s.eggs === 2 && s.q && s.q.stage === 0 && !s.q.done && !s.here.length && !s.going, who + ': you where you stood; one egg fewer, the flag set, the quest still open; the riverbank empty (' + JSON.stringify({ you: s.you, eggs: s.eggs, q: s.q, here: s.here }) + ')');
   if (!comp || comp === 'mio') {
     await p.evaluate(() => RB.world.enter('yn.shimo', 9, 8, 'up', {}));
@@ -192,6 +197,53 @@ for (const [comp, x, dir] of [[null, 21, 'right'], ['nao', 23, 'left'], ['mio', 
     const c = await state(p);
     ok(a.map === 'yn.lower' && a.here.join() === lower && c.here.join() === shimo, 'a save with ' + name + ': the riverbank ' + (lower || 'empty') + ', the Lower House ' + (shimo ? 'has him at ' + shimo : 'without him') + ' (' + JSON.stringify({ lower: a.here, shimo: c.here }) + ')');
   }
+  allErrors.push(...errors); await p.close();
+}
+
+// ---- 7b. a journey saved after the egg, loaded while he walks ---------------------------------------------------------
+{
+  const { p, errors } = await page(b, url);
+  await start(p, { map: 'yn.lower', x: 21, y: 18, dir: 'right', comp: 'ren', eggs: 2, flags: { yn_egg_tsuneji: true } });
+  await p.evaluate(async () => { await RB.save.writeSlot(5, RB.game.s, { force: true }); });
+  await start(p, { map: 'yn.lower', x: 21, y: 18, dir: 'right', comp: 'ren', eggs: 3 });
+  let mid = null;
+  await play(p, async (l) => {
+    if (!HIS.test(l.d)) return false;
+    await p.evaluate(() => RB.ui.dialogue.advance());
+    await p.waitForTimeout(1500);
+    mid = await p.evaluate(() => RB.world.W.leavers.filter((a) => a.id === 'yn_tsuneji').length);
+    await p.evaluate(async () => { await RB.game.loadCampaign(5); });
+    await p.waitForTimeout(1500);
+    return true;
+  });
+  const count = () => p.evaluate(() => { const W = RB.world.W; return W.npcs.concat(W.extras, W.leavers).filter((a) => a.id === 'yn_tsuneji' || (a.def && a.def.char === 'yn_tsuneji')).map((a) => W.map.id + '@' + a.x + ',' + a.y); });
+  const out = await count();
+  await p.evaluate(() => RB.world.enter('yn.shimo', 9, 8, 'up', {}));
+  await p.waitForTimeout(700);
+  const inn = await count();
+  const st = await state(p);
+  ok(mid === 1 && !out.length && inn.join() === 'yn.shimo@9,7' && st.flag && st.eggs === 2, 'a journey saved after the egg, loaded while he walks: none of him on the street, exactly one in the Lower House (' + JSON.stringify({ mid, out, inn, eggs: st.eggs }) + ')');
+  allErrors.push(...errors); await p.close();
+}
+
+// ---- 8. the fallbacks ---------------------------------------------------------------------------------------------------
+for (const [name, prep] of [
+  ['no way to the Lower House\'s door', () => { const d = RB.content.maps['yn.lower'].structs.find((b) => b.to === 'yn.shimo'); window.__door = d.to; d.to = null; }],
+  ['the walk cut at its bound (1.5 s)', () => { RB.content.scenes['yn.egg_tsuneji'].cmds.find((c) => c.op === 'refresh').args[1] = '1500'; }],
+]) {
+  const { p, errors } = await page(b, url);
+  await start(p, { map: 'yn.lower', x: 21, y: 18, dir: 'right', comp: 'mio', eggs: 3 });
+  await p.evaluate(prep);
+  await play(p);
+  const s = await state(p);
+  const trail = await p.evaluate(() => window.__trail.map((t) => t.slice(0, 3)));
+  const went = s.atLine.filter((l) => /Tsuneji carries the egg/.test(l.en));
+  const spots = [...new Set(trail.map((t) => t[0] + ',' + t[1]))];
+  const exits = [[19, 0], [39, 15], [39, 16], [37, 26]];
+  const toExit = trail.some((t) => exits.some(([x, y]) => Math.abs(t[0] - x) + Math.abs(t[1] - y) <= 2));
+  const faded = trail.some((t) => t[2] < 1);
+  if (/no way/.test(name)) ok(s.dep && /no way to yn\.shimo/.test(s.dep.fallback || '') && spots.join() === '22,18' && faded && !toExit && went.length === 1 && went[0].any === 0 && s.flag && !s.here.length, name + ': he fades where he stood, recorded as a fallback, no step towards any exit (' + JSON.stringify({ fallback: s.dep && s.dep.fallback, spots, faded }) + ')');
+  else ok(s.dep && /cut at 1500 ms/.test(s.dep.fallback || '') && !nearDoor(s.trail) && faded && !toExit && went.length === 1 && went[0].any === 0 && s.flag && !s.here.length, name + ': he fades where he is, recorded as a fallback, not at the door (' + JSON.stringify({ fallback: s.dep && s.dep.fallback, last: s.trail, faded }) + ')');
   allErrors.push(...errors); await p.close();
 }
 

@@ -323,7 +323,10 @@ RB.world = (function () {
   // way out, and test runs list those (RB.test.departures) for review.
   // Someone who neither walks off nor walks in — picked up and carried, set
   // down beside someone — says so with npc.leave: 'here' / npc.arrive: 'here':
-  // they fade out (or in) where they are.
+  // they fade out (or in) where they are. npc.leave: 'way' goes only by its own
+  // way out (to leaveTo, or where the story now puts them): if that cannot be
+  // walked, they fade where they stand, never through some other exit, and the
+  // record says so (RBN-QA-120).
   const personOf = (n) => (n.def && (n.def.char || n.def.id)) || n.id;
   // the maps where `person` appears now (any: where the story ever puts them)
   function mapsWith(person, except, any) {
@@ -401,6 +404,7 @@ RB.world = (function () {
     W.departures.push(rec);
     if (W.departures.length > 40) W.departures.shift();
     if (RB.test && RB.test.auto) (RB.test.departures = RB.test.departures || []).push(rec);
+    return rec;
   }
   // The same person takes up a new place on this map: the figure `b` starts
   // where `from` stands and walks to b's own spot (no fade, no second figure).
@@ -464,9 +468,12 @@ RB.world = (function () {
     const way = wayFor(a, false);
     // already standing in the doorway they need: they just go
     const there = way.goals && way.goals.has(a.x + ',' + a.y);
-    const route = there ? [] : (way.goals && routeRound(a, 160, way.goals)) || routeRound(a, 18) || [];
-    noteDeparture(a, there ? Object.assign({}, way, { reason: way.reason + ', at the way out' }) : route.length && way.goals ? way : Object.assign({}, way, { goals: null }), route, false);
-    W.leavers.push(Object.assign({}, a, { mv: null, route, goals: way.goals, alpha: 1, fading: !route.length, wait: (i || 0) * 380 }));
+    // (leave: 'way': their own way out or none; no route to it, and they fade where they stand)
+    const own = a.def && a.def.leave === 'way';
+    const route = there ? [] : (way.goals && routeRound(a, 160, way.goals)) || (own ? null : routeRound(a, 18)) || [];
+    const rec = noteDeparture(a, there ? Object.assign({}, way, { reason: way.reason + ', at the way out' }) : route.length && way.goals ? way : Object.assign({}, way, { goals: null }), route, false);
+    if (own && !there && !route.length) rec.fallback = 'faded where they stood: no way to ' + (way.to || 'their place');
+    W.leavers.push(Object.assign({}, a, { mv: null, route, goals: way.goals, alpha: 1, fading: !route.length, wait: (i || 0) * 380, rec }));
   }
   // i: the order of people arriving at once; each comes through the way in a moment after the last (they would
   // otherwise all stand in the doorway together). True when they walk in.
@@ -519,18 +526,27 @@ RB.world = (function () {
   // where they stood or walked off and faded. The fade runs on the world's frames, which a slow device delivers late,
   // so this waits for the departure itself, not for a time; bounded (o.ms) and at once when skipping, or behind an
   // illustrated sequence (o.now): then whoever is still going is gone at once (`!refresh gone`; RBN-QA-093)
+  // At the bound, whoever is still walking stops and fades where they are (their record says so: a fallback, not a walk
+  // completed); the scene goes on once they have (at most 400 ms more; RBN-QA-120).
   function departures(gone, o) {
     o = o || {};
     const going = () => gone.filter((a) => W.leavers.includes(a));
     const settle = () => { const g = going(); if (g.length) W.leavers = W.leavers.filter((a) => !g.includes(a)); };
     if (!gone.length) return Promise.resolve();
     if (o.now || RB.game.fastForward()) { settle(); return Promise.resolve(); }
-    const map = W.map, t0 = performance.now();
+    const map = W.map, t0 = performance.now(), bound = o.ms || 4000;
+    let cut = 0;
     return new Promise((res) => {
       const tick = () => {
         if (W.map !== map) return res();
-        if (RB.game.fastForward() || performance.now() - t0 > (o.ms || 4000)) { settle(); return res(); }
+        if (RB.game.fastForward()) { settle(); return res(); }
         if (!going().length) return res();
+        const t = performance.now() - t0;
+        if (!cut && t > bound) {
+          cut = t;
+          for (const a of going()) if (!a.fading) { a.route = null; a.fading = true; if (a.rec) a.rec.fallback = 'faded where they were at ' + a.x + ',' + a.y + ': the walk was cut at ' + bound + ' ms'; }
+        }
+        if (cut && t - cut > 400) { settle(); return res(); }
         setTimeout(tick, 40);
       };
       tick();

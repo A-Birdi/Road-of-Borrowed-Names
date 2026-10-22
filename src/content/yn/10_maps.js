@@ -128,8 +128,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [
       { id: 'mp_tokube', x: 11, y: 18, dir: 'up', if: '!yn_tokube_gone', talk: [{ if: 'yn_done', scene: 'yn.tokube_after' }, { if: 'yn_tokube_done', scene: 'yn.tokube_idle' }, { scene: 'yn.tokube' }] },
       { id: 'yn_onatsu', x: 17, y: 11, dir: 'down', talk: [{ if: 'yn_done', scene: 'yn.onatsu_after' }, { scene: 'yn.onatsu' }] },
-      // (once he has taken his egg home he is in the Lower House instead, by its hearth; RBN-QA-120)
-      { id: 'yn_tsuneji', x: 22, y: 18, dir: 'left', if: '!yn_done&!yn_egg_tsuneji', talk: 'yn.tsuneji' },
+      // (once he has taken his egg home he is in the Lower House instead, by its hearth; he goes by its door or, if
+      // that way cannot be walked, fades where he stands: never by another exit; RBN-QA-120)
+      { id: 'yn_tsuneji', x: 22, y: 18, dir: 'left', if: '!yn_done&!yn_egg_tsuneji', leaveTo: 'yn.shimo', leave: 'way', talk: 'yn.tsuneji' },
       { id: 'yn_aki', x: 33, y: 22, dir: 'down', if: '!yn_vents_open', talk: [{ if: 'quest.yn_main>=5', scene: 'yn.aki_ready' }, { scene: 'yn.aki' }] },
     ],
     exits: [
