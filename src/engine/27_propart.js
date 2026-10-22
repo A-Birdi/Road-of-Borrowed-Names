@@ -362,11 +362,36 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   // Boulder: two or three faceted lumps; moss on its top in green regions,
-  // snow in snowy ones, a crack or two.
+  // snow in snowy ones, a crack or two. A placement with o.moss (a boulder long
+  // fallen and left: the Cloudroad's stone steps, RBN-QA-094) is mossed in any
+  // region that has no snow on it: a thicker cap, moss in its crack and in
+  // patches down its shaded flank, from a moss ramp of its own (yellower and
+  // deeper than the region's grass, leaning a little toward it) so it reads as
+  // moss on the stone, not as the grass it stands in.
+  const MOSS = ['#38441f', '#4c5c28', '#647830', '#7e923c', '#9aad50'];
+  function mossOn(g, M, lumps, v) {
+    const m5 = MOSS.map((c, i) => mix(c, M.grass[i], 0.15));
+    K.snowTops(g, -4, -6, 40, 32, m5, v + 3, 4);
+    // only on the stone already drawn (source-atop): never past its edge
+    g.globalCompositeOperation = 'source-atop';
+    const [x, y, rx, ry] = lumps[0];
+    // the shaded flank (the light is from the upper left): a patch, a smaller one under it, a lit fleck
+    ell(g, x + rx * 0.58, y + ry * 0.12, 3, 2, m5[2]);
+    R(g, x + Math.round(rx * 0.58) - 1, y + Math.round(ry * 0.12) - 1, 2, 1, m5[3]);
+    ell(g, x + rx * 0.72, y + ry * 0.4, 2, 1.5, m5[1]);
+    // in the crack
+    R(g, x + 5, y, 1, 2, m5[1]);
+    R(g, x + 4, y + 4, 1, 1, m5[2]);
+    // the second lump, on its upper face
+    const [x2, y2, rx2, ry2] = lumps[1];
+    ell(g, x2 + rx2 * 0.1, y2 - ry2 * 0.45, 3, 1.5, m5[3]);
+    g.globalCompositeOperation = 'source-over';
+  }
   art('rock', {
     box: [-4, -6, 40, 40],
-    v: (o) => cxy(o) % 6,
-    draw(g, M, v, f, info, pal) {
+    v: (o) => cxy(o) % 6 + (o.moss ? 6 : 0),
+    draw(g, M, v0, f, info, pal) {
+      const v = v0 % 6, mossy = v0 >= 6;
       const r5 = M.stone, main = [16 + ((v % 3) - 1), 22, 12 + (v % 2), 10 + ((v >> 1) % 2)];
       const lumps = [main, v % 3 === 0 ? [8, 26, 7, 6] : [25, 25, 7, 7]];
       if (v >= 4) lumps.push([9, 27, 6, 5]);
@@ -390,6 +415,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       line(g, x + 4, y + 3, x + 3, y + 5, r5[0], 1);
       R(g, x + 3, y - 2, 1, 1, r5[4]);
       if (info.snow) K.snowTops(g, -4, -6, 40, 32, M.snow, v, 3);
+      else if (mossy) mossOn(g, M, lumps, v);
       else if (info.green && v % 2 === 0) K.snowTops(g, -4, -6, 40, 32, M.grass, v + 3, 2);
     },
     shadow: (v) => [17, 29, 15, 4, 0.34],

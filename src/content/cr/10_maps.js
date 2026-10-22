@@ -151,13 +151,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   // ==== leg 2 · the stone switchbacks (石畳) ===========================================================================
-  // the rumour of a landslide on the stone road: an old slide's rocks lie beside it, long cleared
+  // the rumour of a landslide on the stone road: an old slide's rocks lie beside it, long cleared. The one beside the
+  // steps at (9,13) is the boulder its scene describes, come down from above decades ago: a natural rock like the
+  // others, mossed (RBN-QA-094; it was drawn as a dressed, inscribed marker stone)
   leg('cr.leg2', 2, T('The Stone Steps', '{石畳|いしだたみ}'), {
     from: 'cr.suginoki', to: 'cr.sakashita',
     terrain: (k) => { k.scatter('r', 8, 991, [13, 5, 10, 6], '^'); k.set(15, 10, 'r'); k.set(19, 13, 'r'); },
     props: [
       { p: 'rock', x: 12, y: 10 }, { p: 'rock', x: 23, y: 13 },
-      { p: 'stone_marker', x: 9, y: 13, scene: 'cr.leg2_stone' },
+      { p: 'rock', x: 9, y: 13, scene: 'cr.leg2_stone', o: { moss: true } },
     ],
     foes: [{ id: 'e1', enemy: 'cr.echo', x: 27, y: 11, patrol: 2 }, { id: 'e2', enemy: 'cr.packlantern', x: 8, y: 3, patrol: 2 }],
   });

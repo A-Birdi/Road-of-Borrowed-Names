@@ -74,11 +74,17 @@ RB.props = (function () {
       px(c, bx + sway, y - 2 + (i % 2), 1, 3, p.reed[1]);
     }
   });
-  def('rock', {}, (c, x, y, p) => {
+  def('rock', {}, (c, x, y, p, t, o) => {
     shadow(c, x, y, 14);
     px(c, x + 3, y + 7, 10, 7, p.stone[2]);
     px(c, x + 4, y + 6, 8, 7, p.stone[0]);
     px(c, x + 5, y + 7, 3, 2, p.stone[1]);
+    // a boulder long fallen and left (o.moss, RBN-QA-094): moss over its top and down its shaded side
+    if (o && o.moss) {
+      px(c, x + 4, y + 6, 8, 1, '#7e923c');
+      px(c, x + 5, y + 7, 5, 1, '#647830');
+      px(c, x + 11, y + 8, 1, 3, '#4c5c28');
+    }
   });
   def('fence', {}, (c, x, y, p, t, o) => {
     px(c, x, y + 6, 16, 2, p.wood[1]);
