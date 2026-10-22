@@ -121,7 +121,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         },
         E: {
           purpose: T('A note packed with Mio\'s medicine order.', 'ミオ の {薬|くすり} の {荷|に} に {入|い}れる {書|か}き{付|つ}け 。'),
-          evidence: [{ k: 'count', title: T('Packed in the box', '{箱|はこ} に {入|い}って いる もの'), icon: 'bottle', n: 5, label: T('five bottles of medicine', '{薬|くすり} の {瓶|びん} {五本|ごほん}'), alt: 'Five bottles of medicine are packed in the box.' }],
+          evidence: [{ k: 'count', title: T('Packed in the box', '{箱|はこ} に {入|はい}って いる もの'), icon: 'bottle', n: 5, label: T('five bottles of medicine', '{薬|くすり} の {瓶|びん} {五本|ごほん}'), alt: 'Five bottles of medicine are packed in the box.' }],
           notice: { en: 'We are sending six bottles of medicine.', title: T('The note', '{書|か}き{付|つ}け'), segs: [
             { jp: '{薬|くすり} の {瓶|びん} を' },
             { jp: '{六本|ろっぽん}', bad: true, options: [o('{五本|ごほん}', 'five (long things)', true), o('{五|いつ}つ', 'five', true, 'Also right, with the general counter.'), o('{六本|ろっぽん}', 'six', false, 'Only five are packed.'), o('{四本|よんほん}', 'four', false, 'Count again: five.')] },

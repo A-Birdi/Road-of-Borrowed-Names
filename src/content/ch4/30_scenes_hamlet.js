@@ -425,7 +425,7 @@ fuki[smile]: ありがたい 。 {帳面|ちょうめん} は そこ の {本|�
 !end
 :no
 !gesture fuki nod pc
-fuki: いい よ 、 いい よ 。 {昼|ひる} ごはん が {遅|おそ}れる だけ さ 。 …… {村|むら} じゅう の ね 。 || Fine, fine. Lunch will just be late. …For the whole hamlet.
+fuki: いい よ 、 いい よ 。 {昼|ひる} ごはん が {遅|おく}れる だけ さ 。 …… {村|むら} じゅう の ね 。 || Fine, fine. Lunch will just be late. …For the whole hamlet.
 !end
 :go
 !gesture fuki lookbetween 5,4 and=pc

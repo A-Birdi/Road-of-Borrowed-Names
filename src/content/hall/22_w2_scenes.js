@@ -194,7 +194,7 @@ ${resetAll}
 !refresh
 !end
 :all
-narr: {行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あか}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。 || The procession stands complete. The lanterns' light begins to move quietly through the rain.
+narr: {行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あ}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。 || The procession stands complete. The lanterns' light begins to move quietly through the rain.
 ${K.mark(W, 1, 't4')}
 !end
 :placed

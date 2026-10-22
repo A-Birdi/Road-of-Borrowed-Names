@@ -40,7 +40,7 @@ narr: {西|にし} の {水門|すいもん} は 、 {南|みなみ} の {通路
 @scene mb.gate1
 ?(mb_u1_low) narr: {水門|すいもん} は {開|あ}いて いる 。 {池|いけ} の {水|みず} は {下|した} へ {流|なが}れた 。 || The sluice is open; the basin has drained below.
 ?(mb_u1_low) !end
-?(!mb_tab1) narr: {大|おお}きな {車輪|しゃりん} が ある 。 {何|なに} の {車輪|しゃりん} か {分|わ}からない まま {回|まわ}す の は 、 やめて おこう 。 || A great wheel. Better not turn it without knowing what it does.
+?(!mb_tab1) narr: {大|おお}きな {車輪|しゃりん} が ある 。 {何|なん} の {車輪|しゃりん} か {分|わ}からない まま {回|まわ}す の は 、 やめて おこう 。 || A great wheel. Better not turn it without knowing what it does.
 ?(!mb_tab1) !end
 narr: {西|にし} の {水門|すいもん} の {車輪|しゃりん} 。 {石板|せきばん} の {通|とお}り なら 、 これ を {開|あ}ける と 、 {池|いけ} の {水|みず} が {下|した} へ {流|なが}れる 。 || The west sluice wheel. If the tablet is right, opening this sends the basin's water down below.
 !choice

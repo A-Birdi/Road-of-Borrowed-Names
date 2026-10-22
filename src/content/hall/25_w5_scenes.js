@@ -264,7 +264,7 @@ narr: {記録|きろく} は 、 {机|つくえ} の {上|うえ} に {戻|も�
 narr: {記録|きろく} は 、 {西|にし} の {井戸|いど} の {頁|ページ} で {開|ひら}いた まま だ 。 || The record lies open at the page on the west well.
 `;
   const FIX6 = { willow: ['{柳|やなぎ} の {木|き}', 'the willow', '{井戸|いど} の {方|ほう} へ {伸|の}びた {根|ね} を 、 {鋸|のこぎり} で {切|き}った 。', 'You saw through the roots growing toward the well.', 0],
-    draw: ['{西|にし} の {井戸|いど}', 'the west well', '{桶|おけ} で {何|なん}{十|じゅう} {杯|ぱい} も {汲|く}み{出|だ}す と 、 {水|みず} が {澄|す}んで きた 。', 'You draw bucket after bucket, dozens, until the water starts to run clear.', 1],
+    draw: ['{西|にし} の {井戸|いど}', 'the west well', '{桶|おけ} で {何十杯|なんじゅっぱい} も {汲|く}み{出|だ}す と 、 {水|みず} が {澄|す}んで きた 。', 'You draw bucket after bucket, dozens, until the water starts to run clear.', 1],
     lid: ['{井戸|いど} の {蓋|ふた}', 'a lid for the well', null, null, -1] };
   for (const f of Object.keys(FIX6)) {
     out += `

@@ -15,7 +15,7 @@ ko_nami: {葉|は} を {届|とど}けに {陸|りく} へ {漕|こ}いで い�
 !faceplayer
 ?(quest.ko_main<=2) ko_nami: {葉|は} を {返|かえ}す とき は 、 {風石|かぜいし} に {任|まか}せて いい 。 {遠|とお}い {所|ところ} の {葉|は} は 、 わたし が {舟|ふね} で {運|はこ}ぶ 。 || When you send a leaf home, leave it to the Wind Stone. Leaves for far places, I take by boat.
 ?(quest.ko_main>=4) ko_nami[worry]: {根|ね} の {洞|ほら} に {下|お}りる の ？ {潮|しお} が {入|はい}る から 、 {気|き} を つけて 。 {潮|しお} は {待|ま}って くれない 。 でも 、 {必|かなら}ず {引|ひ}く 。 || You're going down into the Root Hollows? The tide comes in down there, so take care. The tide won't wait for you. But it always goes out again.
-?(quest.ko_main=3) ko_nami: {館|やかた} の {板|いた} 、 {楽|たの}しみ に してる 。 {舟|ふね} の {話|はなし} も 、 {一枚|いちまい} ぐらい {入|はい}れて くれる と うれしい な 。 || I'm looking forward to the hall's panels. I'd like it if the boat story got on one, at least.
+?(quest.ko_main=3) ko_nami: {館|やかた} の {板|いた} 、 {楽|たの}しみ に してる 。 {舟|ふね} の {話|はなし} も 、 {一枚|いちまい} ぐらい {入|い}れて くれる と うれしい な 。 || I'm looking forward to the hall's panels. I'd like it if the boat story got on one, at least.
 @scene ko.nami_after
 !faceplayer
 ko_nami[smile]: {葉|は} の {数|かず} が 、 {漕|こ}げる {数|かず} に {戻|もど}った 。 {腕|うで} が {喜|よろこ}んでる よ 。 || The leaves are back to as many as I can row. My arms are delighted.

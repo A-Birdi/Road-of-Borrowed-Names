@@ -47,10 +47,10 @@
   "jp": "{師匠|ししょう} の {師匠|ししょう} の {方|かた} が …… 。 {灯守|ひもり} の {館|やかた} に 、 {入|はい}れる {日|ひ} が {来|く}る と は 。",
   "en": "Your teacher's teacher… I never thought the day would come when I could enter the keepers' hall."
  },
- "scene:hall.tsuru_ledger#1gjhvum": {
+ "scene:hall.tsuru_ledger#q8818y": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
-  "jp": "{百物語|ひゃくものがたり} ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百|ひゃく} {本|ほん} の {芝居|しばい} を {見|み}た って 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{百物語|ひゃくものがたり} ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百本|ひゃっぽん} の {芝居|しばい} を {見|み}た って 。",
   "en": "A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays."
  },
  "scene:hall.door_open#1a4qvya": {
@@ -2603,10 +2603,10 @@
   "jp": "{札|ふだ} を もう {一度|いちど} {読|よ}みましょう 。 {誰|だれ} の {後|うし}ろ に {誰|だれ} 、 か 。",
   "en": "Let's read the card again. Who walks behind whom."
  },
- "scene:hall.w2.l4_bearer#pu5gw6": {
+ "scene:hall.w2.l4_bearer#1x71erx": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
-  "jp": "{行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あか}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あ}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。",
   "en": "The procession stands complete. The lanterns' light begins to move quietly through the rain."
  },
  "scene:hall.w2.l4_bearer#hknt0g": {
@@ -2645,10 +2645,10 @@
   "jp": "{札|ふだ} を もう {一度|いちど} {読|よ}みましょう 。 {誰|だれ} の {後|うし}ろ に {誰|だれ} 、 か 。",
   "en": "Let's read the card again. Who walks behind whom."
  },
- "scene:hall.w2.l4_toku#pu5gw6": {
+ "scene:hall.w2.l4_toku#1x71erx": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
-  "jp": "{行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あか}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あ}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。",
   "en": "The procession stands complete. The lanterns' light begins to move quietly through the rain."
  },
  "scene:hall.w2.l4_toku#hknt0g": {
@@ -2687,10 +2687,10 @@
   "jp": "{札|ふだ} を もう {一度|いちど} {読|よ}みましょう 。 {誰|だれ} の {後|うし}ろ に {誰|だれ} 、 か 。",
   "en": "Let's read the card again. Who walks behind whom."
  },
- "scene:hall.w2.l4_kozue#pu5gw6": {
+ "scene:hall.w2.l4_kozue#1x71erx": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
-  "jp": "{行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あか}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あ}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。",
   "en": "The procession stands complete. The lanterns' light begins to move quietly through the rain."
  },
  "scene:hall.w2.l4_kozue#hknt0g": {
@@ -2729,10 +2729,10 @@
   "jp": "{札|ふだ} を もう {一度|いちど} {読|よ}みましょう 。 {誰|だれ} の {後|うし}ろ に {誰|だれ} 、 か 。",
   "en": "Let's read the card again. Who walks behind whom."
  },
- "scene:hall.w2.l4_gin#pu5gw6": {
+ "scene:hall.w2.l4_gin#1x71erx": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
-  "jp": "{行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あか}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あ}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。",
   "en": "The procession stands complete. The lanterns' light begins to move quietly through the rain."
  },
  "scene:hall.w2.l4_gin#hknt0g": {
@@ -2771,10 +2771,10 @@
   "jp": "{札|ふだ} を もう {一度|いちど} {読|よ}みましょう 。 {誰|だれ} の {後|うし}ろ に {誰|だれ} 、 か 。",
   "en": "Let's read the card again. Who walks behind whom."
  },
- "scene:hall.w2.l4_porter#pu5gw6": {
+ "scene:hall.w2.l4_porter#1x71erx": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
-  "jp": "{行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あか}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あ}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。",
   "en": "The procession stands complete. The lanterns' light begins to move quietly through the rain."
  },
  "scene:hall.w2.l4_porter#hknt0g": {
@@ -8447,10 +8447,10 @@
   "jp": "{記録|きろく} を 、 もう {一度|いちど} {読|よ}みましょう か 。",
   "en": "Shall I read the record again?"
  },
- "scene:hall.w5.m_draw#13ni91": {
+ "scene:hall.w5.m_draw#1fn2q00": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 5 (The Two Wells): self-reviewed against the lexicon, grammar notes (から/ので for reasons, けど/のに for contrasts, おかげで/せいで by whether the result is welcome, からこそ, ものの, にもかかわらず), the counterexample stones checked one wrong saying per level and pattern, each helper's reason checked against the one job it leaves them, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mosuke's refusal and reply in the children's voice (無理だよ、言ったでしょ → 無理じゃ、言ったばかりじゃろう; 任せて → 任せておけ); a companion line naming the pulley when pattern 1's cause is the beam (→ 桶は上がらない); 困ったことが見えている場所だ in a line any companion speaks (→ 見えているだけ); 立ってできない (→ 立って働けない); 不器用なのに at A level where the sense is compensation (→ 不器用な分); 三日日向に (→ 三日も日向に); Ren's 足元の底 (→ 足元の井戸の底); the wing's theme 理由と逆 (→ 「から」と「のに」); the granddaughter renamed Hatsu (ヨネ was already a person in another chapter). Self-review, not native review.",
-  "jp": "{桶|おけ} で {何|なん}{十|じゅう} {杯|ぱい} も {汲|く}み{出|だ}す と 、 {水|みず} が {澄|す}んで きた 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{桶|おけ} で {何十杯|なんじゅっぱい} も {汲|く}み{出|だ}す と 、 {水|みず} が {澄|す}んで きた 。",
   "en": "You draw bucket after bucket, dozens, until the water starts to run clear."
  },
  "scene:hall.w5.m_draw#qxbb0k": {
@@ -11069,16 +11069,16 @@
   "jp": "いらっしゃい 。 この {家|いえ} の {椀|わん} だ よ 。 {昔|むかし} の {人|ひと} が {置|お}いて いった {物|もの} が 、 {片付|かたづ}かない の 。 {札|ふだ} の {下|した} に 、 {掛|か}けて あげて 。",
   "en": "Welcome. (I'm) this house's bowl. The things people left behind long ago never got put away. Hang each one under its note."
  },
- "scene:hall.w7.owan#i1zhud": {
+ "scene:hall.w7.owan#1jq1qel": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
-  "jp": "{札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{札|ふだ} に は 、 {何|なん} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。",
   "en": "The notes don't say what they mean. I suppose you can tell by reading them."
  },
- "scene:hall.w7.owan#frj6b8": {
+ "scene:hall.w7.owan#c7kt3g": {
   "status": "self-reviewed",
-  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
-  "jp": "{札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて いません ね 。 {読|よ}めば {分|わ}かる の でしょう か 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{札|ふだ} に は 、 {何|なん} の こと か 、 {書|か}いて いません ね 。 {読|よ}めば {分|わ}かる の でしょう か 。",
   "en": "The notes don't say what they mean. I suppose you can tell by reading them."
  },
  "scene:hall.w7.owan#1og1u40": {
@@ -11291,16 +11291,16 @@
   "jp": "{忘|わす}れ{物|もの} が 、 {全部|ぜんぶ} {元|もと} の {鉤|かぎ} に {戻|もど}った 。",
   "en": "Everything left behind is back on its hook."
  },
- "scene:hall.w7.h1#wk1q9j": {
+ "scene:hall.w7.h1#1c1kpov": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
-  "jp": "{何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{何|なん} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。",
   "en": "None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know."
  },
- "scene:hall.w7.h1#chrfq3": {
+ "scene:hall.w7.h1#vb6zb7": {
   "status": "self-reviewed",
-  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
-  "jp": "{何|なに} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{何|なん} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。",
   "en": "None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know."
  },
  "scene:hall.w7.h1#by4kta": {
@@ -11381,16 +11381,16 @@
   "jp": "{忘|わす}れ{物|もの} が 、 {全部|ぜんぶ} {元|もと} の {鉤|かぎ} に {戻|もど}った 。",
   "en": "Everything left behind is back on its hook."
  },
- "scene:hall.w7.h2#wk1q9j": {
+ "scene:hall.w7.h2#1c1kpov": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
-  "jp": "{何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{何|なん} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。",
   "en": "None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know."
  },
- "scene:hall.w7.h2#chrfq3": {
+ "scene:hall.w7.h2#vb6zb7": {
   "status": "self-reviewed",
-  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
-  "jp": "{何|なに} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{何|なん} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。",
   "en": "None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know."
  },
  "scene:hall.w7.h2#1pwmnb0": {
@@ -11471,16 +11471,16 @@
   "jp": "{忘|わす}れ{物|もの} が 、 {全部|ぜんぶ} {元|もと} の {鉤|かぎ} に {戻|もど}った 。",
   "en": "Everything left behind is back on its hook."
  },
- "scene:hall.w7.h3#wk1q9j": {
+ "scene:hall.w7.h3#1c1kpov": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
-  "jp": "{何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{何|なん} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。",
   "en": "None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know."
  },
- "scene:hall.w7.h3#chrfq3": {
+ "scene:hall.w7.h3#vb6zb7": {
   "status": "self-reviewed",
-  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
-  "jp": "{何|なに} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{何|なん} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。",
   "en": "None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know."
  },
  "scene:hall.w7.h3#11t7rwn": {
@@ -11561,16 +11561,16 @@
   "jp": "{忘|わす}れ{物|もの} が 、 {全部|ぜんぶ} {元|もと} の {鉤|かぎ} に {戻|もど}った 。",
   "en": "Everything left behind is back on its hook."
  },
- "scene:hall.w7.h4#wk1q9j": {
+ "scene:hall.w7.h4#1c1kpov": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
-  "jp": "{何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{何|なん} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。",
   "en": "None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know."
  },
- "scene:hall.w7.h4#chrfq3": {
+ "scene:hall.w7.h4#vb6zb7": {
   "status": "self-reviewed",
-  "ref": "C-95 corrections, self-reviewed in their full exchanges against the RV-1 register review (docs/review/register/DISPOSITIONS.md), 2026-10-16",
-  "jp": "{何|なに} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{何|なん} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。",
   "en": "None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know."
  },
  "scene:hall.w7.h4#78vkn4": {
@@ -20309,10 +20309,10 @@
   "jp": "{泉|いずみ} は 、 {地図|ちず} の どこ に あります か 。",
   "en": ""
  },
- "challenges:hall.w1.ask#1irj1fa": {
+ "challenges:hall.w1.ask#1ul8gem": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
-  "jp": "{泉|いずみ} は 、 {地図|ちず} の {何|なに} です か 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{泉|いずみ} は 、 {地図|ちず} の {何|なん} です か 。",
   "en": ""
  },
  "challenges:hall.w1.ask#jyylme": {

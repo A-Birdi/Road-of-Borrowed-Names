@@ -132,7 +132,7 @@ mio: {言葉|ことば} を {選|えら}んだ の は あなた 。 {絵|え} �
 
 @scene road.mio.r3
 mio: あの {日|ひ} 、 {店|みせ} で {瓶|びん} を {渡|わた}した でしょ 。 {中身|なかみ} の ない {瓶|びん} 。 || That day at the shop, I gave you a bottle. An empty one.
-mio: {今|いま} {思|おも}う と 、 {中身|なかみ} が ない から 、 {何|なに} でも {入|い}れられる の よ ね 。 || Thinking about it now — because there's nothing in it, you can put anything in.
+mio: {今|いま} {思|おも}う と 、 {中身|なかみ} が ない から 、 {何|なん} でも {入|い}れられる の よ ね 。 || Thinking about it now — because there's nothing in it, you can put anything in.
 ?(memory.ending_retro:mio) mio: {灯|あか}り{堂|どう} で {話|はな}した {日|ひ} から 、 {少|すこ}し {肩|かた} の {力|ちから} が {抜|ぬ}けた の 。 {言|い}いそびれて いた こと って 、 {重|おも}い の ね 。 || And since the day we talked in the Lantern Hall, my shoulders have loosened a little. Things you never got round to saying are heavy.
 
 @scene road.mio.r4

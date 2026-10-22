@@ -25,7 +25,7 @@ tsuru: {百|ひゃく} の {灯|ひ} を 、 {一|ひと}つ ずつ {戻|もど}
 ?(comp=nao) comp: {百|ひゃく} の {話|はなし} か 。 {一|ひと}つ ずつ なら 、 {届|とど}けられる 。 || A hundred tales. One at a time, we can deliver those.
 ?(comp=mio) comp[happy]: {一|ひと}つ ずつ 、 ね 。 {急|いそ}がない の なら 、 {私|わたし} も {付|つ}いて {行|い}ける 。 || One at a time. If there's no hurry, I can keep up.
 ?(comp=ren) comp[think]: {師匠|ししょう} の {師匠|ししょう} の {方|かた} が …… 。 {灯守|ひもり} の {館|やかた} に 、 {入|はい}れる {日|ひ} が {来|く}る と は 。 || Your teacher's teacher… I never thought the day would come when I could enter the keepers' hall.
-?(comp=suzu) comp[happy]: {百物語|ひゃくものがたり} ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百|ひゃく} {本|ほん} の {芝居|しばい} を {見|み}た って 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
+?(comp=suzu) comp[happy]: {百物語|ひゃくものがたり} ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百本|ひゃっぽん} の {芝居|しばい} を {見|み}た って 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
 
 @scene hall.door_open
 # The Shuttered Hall's door, with the ledger: the rope gives way.

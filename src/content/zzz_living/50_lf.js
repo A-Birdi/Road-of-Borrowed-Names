@@ -186,7 +186,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 narr: {祠|ほこら} の {横|よこ} の {灯籠|とうろう} 。 {湖|みずうみ} の {方|ほう} を {向|む}いて {灯|とも}って いる 。 || A lamp beside the shrine, lit and turned towards the lake.
 
 @scene ko.lw_lf_minutes
-narr: {額|がく} に {入|い}った {古|ふる}い {議事録|ぎじろく} 。 {一行|いちぎょう} だけ 、 {字|じ} が {新|あたら}しく {見|み}える 。 「はんたい」 。 || Old minutes in a frame. Only one line looks newly written: はんたい, "against".
+narr: {額|がく} に {入|はい}った {古|ふる}い {議事録|ぎじろく} 。 {一行|いちぎょう} だけ 、 {字|じ} が {新|あたら}しく {見|み}える 。 「はんたい」 。 || Old minutes in a frame. Only one line looks newly written: はんたい, "against".
 narr: {下|した} に 、 タミ の {字|じ} 。 「{昔|むかし} の {誰|だれ} か へ 。 {聞|き}こえました 。」 || Beneath, in Tami's hand: "To whoever it was, long ago: we heard you."
 
 @scene yn.lw_lf_guest

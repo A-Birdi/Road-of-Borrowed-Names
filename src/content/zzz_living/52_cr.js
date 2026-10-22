@@ -334,7 +334,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     I: [ch({ item: 'g:rashii', ctx: { jp: '{猟師|りょうし} ： 「{雲|くも} の {牛|うし} は {人|ひと} を {食|く}う らしい 。 だから {鉄砲|てっぽう} を {持|も}って きた 。」 あなた は {霧|きり} の {坂|さか} で 、 その {牛|うし} に {会|あ}った 。 {大|おお}きかった が 、 {霧|きり} で できて いた 。', en: '' }, prompt: { en: 'What do you tell them?' },
       options: [o('それ は {噂|うわさ} です 。 わたし が {会|あ}った {牛|うし} は 、 {霧|きり} で できて いました 。', 1), o('{本当|ほんとう} です 。 {気|き} を つけて ください 。', 0, 'You met it: it was mist, not a man-eater.'), o('{牛|うし} は いません 。', 0, 'You did meet it.')] })],
     A: [ch({ item: 'g:adv_ni_suginai', ctx: { jp: '{馬子|まご} の ゲンジ ： 「{雲|くも} の {牛|うし} は 、 {霧|きり} が {牛|うし} の {形|かたち} を して いる に すぎん 。 {人|ひと} を {食|く}う など 、 {噂|うわさ} だ 。」', en: '' }, prompt: { en: 'What does Genji hold the Cloud Ox to be?' },
-      options: [o('{牛|うし} の {形|かたち} を した {霧|きり} に すぎない', 1), o('{人|ひと} を {食|く}う {本物|ほんもの} の {牛|うし}', 0, '噂だ: just talk.'), o('{霧|きり} を {食|く}べる {牛|うし}', 0, 'It is the mist that takes an ox\'s shape.')] })],
+      options: [o('{牛|うし} の {形|かたち} を した {霧|きり} に すぎない', 1), o('{人|ひと} を {食|く}う {本物|ほんもの} の {牛|うし}', 0, '噂だ: just talk.'), o('{霧|きり} を {食|た}べる {牛|うし}', 0, 'It is the mist that takes an ox\'s shape.')] })],
   } };
   C.challenges['cr.lw_papers'] = { title: J('{落|お}ちた {手形|てがた}', 'Dropped papers'), tiers: {
     F: [ch({ item: 'v:名前', ctx: { jp: 'てがた ： 「なまえ ： トヨ 。 いきさき ： くもい 。」 ひとり は 「くもい へ いく」 と いう 。 もう ひとり は 「うまがえし へ かえる」 と いう 。', en: '' }, prompt: { en: 'Whose papers are these?' },

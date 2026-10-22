@@ -54,7 +54,7 @@ cr_jinpachi: {峠|とうげ} まで は 、 {駕籠|かご} も あります か
 narr: {岩|いわ} の {割|わ}れ{目|め} から 、 {湯気|ゆげ} が {上|あ}がって いる 。 {卵|たまご} の よう な 、 {硫黄|いおう} の {匂|にお}い が する 。 || Steam rises from cracks in the rock. There's a smell like eggs: sulphur.
 narr: {下|した} の {谷|たに} から 、 {人|ひと} の {声|こえ} 、 {下駄|げた} の {音|おと} 、 {三味線|しゃみせん} が {聞|き}こえて くる 。 || From the valley below come voices, the clack of wooden sandals, a shamisen.
 !gesture pc lookroad up
-narr: {振|ふ}り{返|かえ}る と 、 {峠|とうげ} の {上|うえ} の {尾根|おね} は 、 {何|なに} の {音|おと} も しない 。 {鳥|とり} も 、 {風|かぜ} も 。 || When you look back, the ridge above the pass makes no sound at all. No birds. No wind.
+narr: {振|ふ}り{返|かえ}る と 、 {峠|とうげ} の {上|うえ} の {尾根|おね} は 、 {何|なん} の {音|おと} も しない 。 {鳥|とり} も 、 {風|かぜ} も 。 || When you look back, the ridge above the pass makes no sound at all. No birds. No wind.
 ?(comp=nao) comp[closed]: …… {上|うえ} は 、 {静|しず}か すぎる な 。 {下|した} へ {行|い}こう 。 || …Too quiet up there. Let's go down.
 ?(comp=mio) comp[worry]: {尾根|おね} の {方|ほう} 、 {何|なん} だか 、 {耳|みみ} が {詰|つ}まった みたい です 。 {高|たか}い {所|ところ} の せい だけ で は ない よう な 。 || Up towards the ridge, it's as if my ears are blocked. And not only from the height, I think.
 ?(comp=ren) comp[worry]: {灯|ひ} の ない {尾根|おね} です ね 。 …… {音|おと} まで 、 {消|き}えて いる 。 || A ridge without a single lamp. …Even the sound has gone out.
@@ -139,7 +139,7 @@ yn_rokubei: {部屋|へや} は {見|み}つかった か 。 {上|かみ}の{�
 yn_rokubei: {湯守|ゆもり} は 、 {湯|ゆ} を {分|わ}ける の が {仕事|しごと} だ 。 {人|ひと} の {気持|きも}ち まで は 、 {分|わ}けられん 。 || A bath-keeper's job is dividing the water. People's feelings, we can't divide.
 
 @scene yn.north_closed
-narr: {北|きた} へ {登|のぼ}る {道|みち} 。 {上|うえ} の {村|むら} の {方|ほう} は 、 {何|なに} の {音|おと} も しない 。 || The road north climbs towards the villages above. No sound comes from that way at all.
+narr: {北|きた} へ {登|のぼ}る {道|みち} 。 {上|うえ} の {村|むら} の {方|ほう} は 、 {何|なん} の {音|おと} も しない 。 || The road north climbs towards the villages above. No sound comes from that way at all.
 ?(!yn_done) narr: {今|いま} は 、 {谷|たに} で する こと が ある 。 || For now, there's work to do in the valley.
 !move pc down 1
 

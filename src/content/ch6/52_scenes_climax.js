@@ -49,7 +49,7 @@ kasane: {待|ま}って いる {間|あいだ} に 、 また {誰|だれ}か �
 !goto hush
 :toya
 !gesture kasane aside
-kasane[closed]: …… {高瀬|たかせ} の {言葉|ことば} を 、 {写|うつ}した だけ の {紙|かみ} です 。 {何|なに} と でも {取|と}れる {四語|よんご} 。 || …A slip on which he copied Takase's words, that's all. Four words that could mean anything.
+kasane[closed]: …… {高瀬|たかせ} の {言葉|ことば} を 、 {写|うつ}した だけ の {紙|かみ} です 。 {何|なん} と でも {取|と}れる {四語|よんご} 。 || …A slip on which he copied Takase's words, that's all. Four words that could mean anything.
 !gesture kasane lowered
 kasane: {最後|さいご} に あの {子|こ} が わたし に {残|のこ}した の は 、 {人|ひと} を {殺|ころ}した {言葉|ことば} の {写|うつ}し でした 。 {三十年|さんじゅうねん} 、 {読|よ}んで も {読|よ}んで も 、 {答|こた}え は {出|で}ません でした 。 || The last thing he left me was a copy of the words that killed people. Thirty years of reading it, and no answer came.
 :hush
@@ -311,7 +311,7 @@ kasane: {閉|と}じる なら 、 {扉|とびら} に {封|ふう} を して �
 ?(comp=mio) !gesture comp guard
 ?(comp=mio) mio: {洪水|こうずい} や {火事|かじ} の {後|あと} に は 、 {記録|きろく} が {要|い}る 。 {本当|ほんとう} に 。 …… でも 、 ここ で {傷|きず}ついた {人|ひと} も いる 。 || After floods and fires, you really do need records. …But people were hurt here, too.
 ?(comp=ren) !gesture comp tendlamp
-?(comp=ren) ren: {灯守|ひもり} と して は 、 {名前|なまえ} の {写|うつ}し が ある の は {心強|こころづよ}い 。 でも 、 {灯|ひ} に は {消|け}える {権利|けんり} も ある 。 || As a lantern keeper, I'd feel safer knowing copies of the names exist. But a lamp has the right to go out, too.
+?(comp=ren) ren: {灯守|ひもり} と して は 、 {名前|なまえ} の {写|うつ}し が ある の は {心強|こころづよ}い 。 でも 、 {灯|ひ} に は {消|き}える {権利|けんり} も ある 。 || As a lantern keeper, I'd feel safer knowing copies of the names exist. But a lamp has the right to go out, too.
 ?(comp=suzu) !gesture comp palm
 ?(comp=suzu) suzu: {劇場|げきじょう} は 、 {客|きゃく} が {来|く}る から {劇場|げきじょう} な んだ よ 。 {誰|だれ} も {来|こ}ない なら 、 ただ の {倉庫|そうこ} 。 || A theatre is a theatre because people come. If no one does, it's just a warehouse.
 !choice

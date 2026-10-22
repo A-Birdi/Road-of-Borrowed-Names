@@ -351,7 +351,7 @@ co_tokiwa: {里|さと} の {皆|みな} は 、 {今|いま} 、 {笑|わら}�
 co_tokiwa: それ を {記録係|きろくがかり} の {私|わたし} が 、 {確|たし}か でも ない {証拠|しょうこ} で {決|き}めて いい の です か 。 || Should I — the recorder — decide that, on evidence that isn't even certain?
 !gesture pc listen 6,9
 narr: {扉|とびら} が {開|あ}いた 。 {水番|みずばん} の タモツ が 、 {泥|どろ} の ついた {長靴|ながぐつ} の まま {入|はい}って きた 。 || The door opens. Tamotsu, the channel keeper, walks in without taking off his muddy boots.
-co_tamotsu: トキワ 。 {水路|すいろ} が {三分|さんぶ} の {一|いち} を {切|き}った 。 {雨|あめ} は {四十日|よんじゅうにち} {降|ふ}って ない 。 || Tokiwa. The channel's below a third. It hasn't rained in forty days.
+co_tamotsu: トキワ 。 {水路|すいろ} が {三分|さんぶん} の {一|いち} を {切|き}った 。 {雨|あめ} は {四十日|よんじゅうにち} {降|ふ}って ない 。 || Tokiwa. The channel's below a third. It hasn't rained in forty days.
 !gesture co_tamotsu folded hold
 co_tamotsu: {話|はなし} は {外|そと} で {聞|き}こえた 。 {火事|かじ} が あった か なかった か 、 {俺|おれ} に は {分|わ}からん 。 だが {今|いま} {上|うえ} で {火|ひ} が {出|で}たら 、 {止|と}める もの は {何|なに} も ない 。 {火除|ひよ}け{道|みち} は {草|くさ} だらけ だ 。 || I heard you from outside. Whether there was a fire or not, I couldn't say. But if fire broke out up there now, nothing would stop it. The firebreaks are all weeds.
 !gesture co_tokiwa glasses

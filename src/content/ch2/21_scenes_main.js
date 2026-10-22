@@ -155,7 +155,7 @@ narr: {二|ふた}つ の ラベル を {比|くら}べて みる 。 {片方|�
 wataru[worry]: …… {何|なに} か 、 {分|わ}かりました か 。 || …Did you find anything?
 !choice
 * この ラベル 、 {新|あたら}しい です ね 。 || This label is new, isn't it? -> ask
-* まだ {何|なに} とも 。 || Nothing definite yet. -> quiet
+* まだ {何|なん} とも 。 || Nothing definite yet. -> quiet
 :ask
 !gesture wataru flinch pc
 wataru[surprise]: え 、 ええ 。 {嵐|あらし} の {後|あと} に {貼|は}り{直|なお}した もの です 。 {壊|こわ}れた {荷|に} は {分|わ}けて おかない と …… 。 {港長|こうちょう} も ご{存|ぞん}じ です よ 。 || Y-yes. I put those on after the storm. Damaged goods have to be kept separate… The harbourmaster knows all about it.

@@ -95,10 +95,10 @@
   "jp": "{下|した} の {谷|たに} から 、 {人|ひと} の {声|こえ} 、 {下駄|げた} の {音|おと} 、 {三味線|しゃみせん} が {聞|き}こえて くる 。",
   "en": "From the valley below come voices, the clack of wooden sandals, a shamisen."
  },
- "scene:yn.descent_first#t54dip": {
+ "scene:yn.descent_first#6r8f1l": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{振|ふ}り{返|かえ}る と 、 {峠|とうげ} の {上|うえ} の {尾根|おね} は 、 {何|なに} の {音|おと} も しない 。 {鳥|とり} も 、 {風|かぜ} も 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{振|ふ}り{返|かえ}る と 、 {峠|とうげ} の {上|うえ} の {尾根|おね} は 、 {何|なん} の {音|おと} も しない 。 {鳥|とり} も 、 {風|かぜ} も 。",
   "en": "When you look back, the ridge above the pass makes no sound at all. No birds. No wind."
  },
  "scene:yn.descent_first#ahxpni": {
@@ -347,10 +347,10 @@
   "jp": "{湯守|ゆもり} は 、 {湯|ゆ} を {分|わ}ける の が {仕事|しごと} だ 。 {人|ひと} の {気持|きも}ち まで は 、 {分|わ}けられん 。",
   "en": "A bath-keeper's job is dividing the water. People's feelings, we can't divide."
  },
- "scene:yn.north_closed#1q7zo31": {
+ "scene:yn.north_closed#1yny9hh": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{北|きた} へ {登|のぼ}る {道|みち} 。 {上|うえ} の {村|むら} の {方|ほう} は 、 {何|なに} の {音|おと} も しない 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{北|きた} へ {登|のぼ}る {道|みち} 。 {上|うえ} の {村|むら} の {方|ほう} は 、 {何|なん} の {音|おと} も しない 。",
   "en": "The road north climbs towards the villages above. No sound comes from that way at all."
  },
  "scene:yn.north_closed#1ee5fj1": {
@@ -1265,10 +1265,10 @@
   "jp": "…… {座|すわ}る と 、 {立|た}てなく なる な 。 これ は 。",
   "en": "…Sit down here and you'll never get up again."
  },
- "scene:yn.steambox#11bsvgj": {
+ "scene:yn.steambox#dki98g": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{石|いし} の {蒸|む}し{場|ば} 。 {竹|たけ} の {籠|かご} に {入|い}った {卵|たまご} が 、 {湯気|ゆげ} の {中|なか} で {揺|ゆ}れて いる 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{石|いし} の {蒸|む}し{場|ば} 。 {竹|たけ} の {籠|かご} に {入|はい}った {卵|たまご} が 、 {湯気|ゆげ} の {中|なか} で {揺|ゆ}れて いる 。",
   "en": "The stone steam box. Eggs in bamboo baskets sway in the steam."
  },
  "scene:yn.steambox#1i7yvon": {
@@ -1619,10 +1619,10 @@
   "jp": "{寄合所|よりあいじょ} の {長|なが}い {机|つくえ} 。 {端|はし} から {端|はし} まで 、 {古|ふる}い {傷|きず} が {並|なら}んで いる 。 {何代|なんだい} も の {言|い}い{争|あらそ}い の {跡|あと} だ 。",
   "en": "The guild hall's long table, scarred from end to end: the marks of generations of arguments."
  },
- "scene:yn.guild_ledger#imnyj9": {
+ "scene:yn.guild_ledger#1gpd7yb": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{湯守|ゆもり} の {帳面|ちょうめん} 。 {毎日|まいにち} の {湯|ゆ} の {量|りょう} と 、 {切|き}り{替|か}え の {時刻|じこく} 。 {最近|さいきん} の {頁|ページ} は 、 {切|き}り{替|か}え の {時刻|じこく} が {毎日|まいにち} {少|すこ}し ずつ {遅|おそ}れて いる 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{湯守|ゆもり} の {帳面|ちょうめん} 。 {毎日|まいにち} の {湯|ゆ} の {量|りょう} と 、 {切|き}り{替|か}え の {時刻|じこく} 。 {最近|さいきん} の {頁|ページ} は 、 {切|き}り{替|か}え の {時刻|じこく} が {毎日|まいにち} {少|すこ}し ずつ {遅|おく}れて いる 。",
   "en": "The guild's ledger: each day's flow and the hour of each switch. On the recent pages the switch comes a little later every day."
  },
  "scene:yn.guild_ledger#x54seo": {
@@ -2069,10 +2069,10 @@
   "jp": "{煮|に}え{立|た}つ {湯|ゆ} の {真|ま}ん{中|なか} に 、 {大|おお}きな {黒|くろ}い {釜|かま} の よう な もの が {沈|しず}んで いる 。 {釜|かま} は 、 {震|ふる}えて いた 。",
   "en": "In the middle of the boiling water sits a great black shape like a kettle. It is shaking."
  },
- "scene:yn.kettle#bjq9tu": {
+ "scene:yn.kettle#f4due2": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って くる 。 {尾根|おね} の {方|ほう} から は 、 {何|なに} の {音|おと} も {来|こ}ない 。 その {間|あいだ} で 、 {釜|かま} が {鳴|な}って いる 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って くる 。 {尾根|おね} の {方|ほう} から は 、 {何|なん} の {音|おと} も {来|こ}ない 。 その {間|あいだ} で 、 {釜|かま} が {鳴|な}って いる 。",
   "en": "From above, shouting rains down. From the ridge, no sound comes at all. Between the two, the Kettle rattles."
  },
  "scene:yn.kettle#1g4gfgo": {
@@ -6059,10 +6059,10 @@
   "jp": "{湯樋|ゆどい} に {座|すわ}り{込|こ}み 、 {後|うし}ろ{足|あし} で {泥|どろ} を {掻|か}き{回|まわ}す 、 {太|ふと}った {黄色|きいろ} い {蛙|かえる} 。 {下|しも} の {湯|ゆ} が {濁|にご}って いる 。",
   "en": "A fat yellow toad squatting in the channel, stirring up the silt with its back feet. The water downstream runs cloudy."
  },
- "enemies:yn.toad#1ioi7ir": {
+ "enemies:yn.toad#1n6y0cq": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{蛙|かえる} は {湯樋|ゆどい} から {温|あたた}かい {石|いし} へ {跳|は}び{出|だ}して 、 {眠|ねむ}って しまった 。 {湯|ゆ} が {澄|す}んで いく 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{蛙|かえる} は {湯樋|ゆどい} から {温|あたた}かい {石|いし} へ {跳|と}び{出|だ}して 、 {眠|ねむ}って しまった 。 {湯|ゆ} が {澄|す}んで いく 。",
   "en": "The toad hops out of the channel onto a warm stone and goes to sleep. The water clears."
  },
  "enemies:yn.lostguest#1bp1m5t": {
@@ -7667,10 +7667,10 @@
   "jp": "{上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って くる 。 {降|ふ}って くる 。 {降|ふ}って くる 。",
   "en": "Shouting pours down from above. Pours down. Pours down."
  },
- "encounter:yn.kettle#19e9bax": {
+ "encounter:yn.kettle#dff6r5": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{尾根|おね} から は 、 {何|なに} の {音|おと} も {来|こ}ない 。 {冷|つめ}たい 。 {冷|つめ}たい の が 、 {近|ちか}づいて くる 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{尾根|おね} から は 、 {何|なん} の {音|おと} も {来|こ}ない 。 {冷|つめ}たい 。 {冷|つめ}たい の が 、 {近|ちか}づいて くる 。",
   "en": "From the ridge, no sound at all. Cold. The cold is coming closer."
  },
  "encounter:yn.kettle#eehtbs": {

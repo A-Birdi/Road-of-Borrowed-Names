@@ -230,7 +230,7 @@ co_fusa: {御礼|おれい} に 、 {干|ほ}し{柿|がき} を ひと{束|た�
 !end
 :eve
 !gesture co_fusa guard
-co_fusa[worry]: トキワ さん が 、 {夕方|ゆうがた} {広場|ひろば} に {集|あつ}まれ って 。 {何|なに} の {話|はなし} かしら 。 {胸|むね} が ざわざわ する の 。 || Tokiwa wants everyone in the square at dusk. I wonder what it's about. My chest feels all fluttery.
+co_fusa[worry]: トキワ さん が 、 {夕方|ゆうがた} {広場|ひろば} に {集|あつ}まれ って 。 {何|なん} の {話|はなし} かしら 。 {胸|むね} が ざわざわ する の 。 || Tokiwa wants everyone in the square at dusk. I wonder what it's about. My chest feels all fluttery.
 
 @scene co.fusa_first
 # Staged: Fusa's open-handed welcome, her laugh at your luck, and a look from the aired futons to you; with
@@ -252,7 +252,7 @@ co_fusa[smile]: {今年|ことし} から 、 {旗|はた} の {一枚|いちま
 # Staged: Fusa looks from the bucket and salve at the front desk to you; with Mio, she leans in to the labels;
 # Fusa's head goes down over what she left on the mountain.
 !gesture co_fusa lookbetween 3,4 and=pc
-co_fusa: {宿|やど} の {帳場|ちょうば} に 、 {新|あたら}しい {桶|おけ} と {火傷|やけど} の {薬|くすり} を {置|お}いた の 。 {旅|たび} の {薬師|くすし} さん に {教|おし}わった {作|つく}り{方|かた} で ね 。 || I keep a new bucket and burn salve at the front desk now. Made the way a travelling apothecary taught me.
+co_fusa: {宿|やど} の {帳場|ちょうば} に 、 {新|あたら}しい {桶|おけ} と {火傷|やけど} の {薬|くすり} を {置|お}いた の 。 {旅|たび} の {薬師|くすし} さん に {教|おそ}わった {作|つく}り{方|かた} で ね 。 || I keep a new bucket and burn salve at the front desk now. Made the way a travelling apothecary taught me.
 ?(comp=mio) !gesture comp observe 3,4
 ?(comp=mio) comp[smile]: …… ちゃんと {作|つく}って くれて いる んです ね 。 ラベル まで 。 || …You've been making it properly. Labels and all.
 ?(end_mem_choose) !gesture co_fusa lowered

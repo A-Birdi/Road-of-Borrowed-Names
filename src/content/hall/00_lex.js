@@ -173,6 +173,7 @@ RB.lex.add(RB.lex.parseTable(`
 聞かん|きかん|exp|I|(older) doesn't listen, won't obey (= 聞かない); 言うことを聞かん: won't do as it's told
 汲まねば|くまねば|exp|A|(old, literary) if one does not draw (water) (= 汲まなければ)
 見がち|みがち|exp|A|apt to look (見る + 〜がち: tending to)
+何十杯|なんじゅっぱい|n|I|dozens of cupfuls or bucketfuls
 # ---- wing 6: conditions and exceptions -------------------------------------------------------------------------------
 第六幕|だいろくまく|n|I|the sixth act
 名場面|めいばめん|n|I|a famous scene (in a play or film)

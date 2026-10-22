@@ -87,7 +87,7 @@ comp: {私|わたし} も 。 {頭|あたま} の {中|なか} の {棚|たな} 
 !goto close
 :together
 !gesture mio fidget
-comp[shy]: …… うん 。 {何|なに} の {役|やく} に も {立|た}たない のに 、 {楽|たの}しかった 。 そう {言|い}って も いい ん だ ね 。 || …Yes. It wasn't useful for anything, and it was fun. I'm allowed to say that, aren't I.
+comp[shy]: …… うん 。 {何|なん} の {役|やく} に も {立|た}たない のに 、 {楽|たの}しかった 。 そう {言|い}って も いい ん だ ね 。 || …Yes. It wasn't useful for anything, and it was fun. I'm allowed to say that, aren't I.
 !hook wp_reflect together
 :close
 ?(wordplay.won) !gesture mio laugh

@@ -54,8 +54,8 @@ narr: {中庭|なかにわ} の {井戸|いど} 。 {水|みず} が 、 {雪|�
 !faceplayer hall_owan
 !if hall.w7.t2 -> done
 hall_owan: いらっしゃい 。 この {家|いえ} の {椀|わん} だ よ 。 {昔|むかし} の {人|ひと} が {置|お}いて いった {物|もの} が 、 {片付|かたづ}かない の 。 {札|ふだ} の {下|した} に 、 {掛|か}けて あげて 。 || Welcome. (I'm) this house's bowl. The things people left behind long ago never got put away. Hang each one under its note.
-?(comp&comp!=ren) comp: {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
-?(comp=ren) comp: {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて いません ね 。 {読|よ}めば {分|わ}かる の でしょう か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+?(comp&comp!=ren) comp: {札|ふだ} に は 、 {何|なん} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+?(comp=ren) comp: {札|ふだ} に は 、 {何|なん} の こと か 、 {書|か}いて いません ね 。 {読|よ}めば {分|わ}かる の でしょう か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
 !end
 :done
 hall_owan: {全部|ぜんぶ} 、 {元|もと} の {所|ところ} 。 {家|いえ} が 、 {少|すこ}し {思|おも}い{出|だ}した みたい 。 || All back where they belong. The house seems to remember a little.
@@ -131,8 +131,8 @@ narr: 「 ${ITEM[HOOKN[p][h]][0]} 」 を {鉤|かぎ} に {掛|か}けた 。 |
 !end
 :all
 narr: {忘|わす}れ{物|もの} が 、 {全部|ぜんぶ} {元|もと} の {鉤|かぎ} に {戻|もど}った 。 || Everything left behind is back on its hook.
-?(comp&comp!=ren) comp: {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
-?(comp=ren) comp: {何|なに} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+?(comp&comp!=ren) comp: {何|なん} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+?(comp=ren) comp: {何|なん} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
 ${K.mark(W, 0, 't2')}
 !end
 :done

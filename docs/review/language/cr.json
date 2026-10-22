@@ -8711,10 +8711,10 @@
   "jp": "{人|ひと} を {食|く}う {本物|ほんもの} の {牛|うし}",
   "en": ""
  },
- "challenges:cr.lw_tracks#hl9azb": {
+ "challenges:cr.lw_tracks#qj979j": {
   "status": "self-reviewed",
-  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
-  "jp": "{霧|きり} を {食|く}べる {牛|うし}",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{霧|きり} を {食|た}べる {牛|うし}",
   "en": ""
  },
  "challenges:cr.lw_papers#1pzk2sw": {

@@ -20,7 +20,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   add('case:parcel', 'mio', 'helped', [L('{分|わ}からない とき に {聞|き}く の は 、 {大事|だいじ} な こと です 。 {小包|こづつみ} も 、 ちゃんと {届|とど}きました 。', 'Asking when you don\'t know is important. And the parcel got where it was going.', 'smile')]);
   add('case:parcel', 'ren', 'reasoned', [L('{宛名|あてな} 、 {記録|きろく} 、 {今|いま} の {道具|どうぐ} 。 {三|みっ}つ が {一|ひと}つ の {場所|ばしょ} を {指|さ}した 。 {灯|ひ} の {名|な} を {読|よ}む の と {同|おな}じ {手順|てじゅん} です 。', 'The address, the record, the tools as they are now: all three pointed to one place. The same way one reads a lantern\'s name.')]);
   add('case:parcel', 'ren', 'early', [L('{印|しるし} を {覚|おぼ}えて いた の です ね 。 {私|わたし} は {道|みち} は {覚|おぼ}えられません が 、 {印|しるし} なら …… {少|すこ}し は 。', 'You remembered the mark. I can\'t remember roads, but marks… a little.')]);
-  add('case:parcel', 'ren', 'helped', [L('{教|おし}わった {道|みち} で も 、 {歩|ある}いた の は あなた です 。', 'Even on a road someone pointed out, you were the one who walked it.')]);
+  add('case:parcel', 'ren', 'helped', [L('{教|おそ}わった {道|みち} で も 、 {歩|ある}いた の は あなた です 。', 'Even on a road someone pointed out, you were the one who walked it.')]);
   add('case:parcel', 'suzu', 'reasoned', [L('{伏線|ふくせん} を ぜんぶ {回収|かいしゅう} ！ {帳簿|ちょうぼ} も {合|あ}った し 、 {気持|きも}ち いい わ 。', 'Every thread tied up! And the books balance. Lovely.', 'laugh')]);
   add('case:parcel', 'suzu', 'early', [L('{最後|さいご} の {幕|まく} まで {待|ま}たず に {犯人|はんにん} を {当|あ}てる {観客|かんきゃく} 、 いる の よ ね 。 あなた みたい な 。', 'There\'s always someone in the audience who guesses before the last act. Someone like you.', 'smirk')]);
   add('case:parcel', 'suzu', 'helped', [L('{台本|だいほん} を {覗|のぞ}いて も 、 {舞台|ぶたい} は {舞台|ぶたい} 。 {届|とど}けた の は {本物|ほんもの} よ 。', 'Peek at the script if you like; the performance is still real. That was a real delivery.', 'smile')]);
