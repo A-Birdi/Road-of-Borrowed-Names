@@ -80,7 +80,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   mitsu.talk.unshift(
     { if: 'ko_kihei_mitsu&!seen.ko.mitsu_letter', scene: 'ko.mitsu_letter' },
     { if: 'quest.ko_kihei=1', scene: 'ko.mitsu_hatsu' });
-  M('ko.lodge').props.push({ p: 'ko_frame', x: 3, y: 2, if: 'ko_kihei_mitsu', scene: 'ko.lodge_letter' });
+  // Kihei's leaf, framed by the door as Mitsu says (ko.mitsu_letter, ko.mitsu_after), once she has it: the handing-over
+  // played through, not the choice alone (RBN-QA-093)
+  M('ko.lodge').props.push({ p: 'ko_frame', x: 3, y: 7, if: 'ko_kihei_mitsu&seen.ko.mitsu_letter', scene: 'ko.lodge_letter' });
 
   // Tokio: the leaf with your name, and the census
   const tokio = npc('ko.village', 'ko_tokio');

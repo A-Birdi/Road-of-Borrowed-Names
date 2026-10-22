@@ -206,11 +206,15 @@ await test('the sailor\'s letter in its scene: each end shown first, "think agai
   for (let i = 0; i < 40 && !(await p.evaluate(() => window.__sc)); i++) { await p.evaluate(() => { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); }); await p.waitForTimeout(80); }
   const st = await p.evaluate(() => { RB.world.refreshActors(); return { done: RB.game.s.quests.ko_kihei && RB.game.s.quests.ko_kihei.done, mitsu: !!RB.game.s.flags.ko_kihei_mitsu, letter: RB.game.s.inv.ko_kihei_letter || 0, kihei: !!(RB.world.W.npcs || []).find((a) => a.id === 'ko_kihei') }; });
   assert(st.done && st.mitsu && !st.letter && !st.kihei, 'given to Mitsu; Kihei gone from the pools: ' + JSON.stringify(st));
-  // the lodging house: the frame by the door is drawn
+  // the lodging house: nothing hangs there until Mitsu has the leaf; once she has it, the frame by the door is drawn
+  // (RBN-QA-093; tests/e2e/mitsu_frame.mjs has the rest)
   await p.evaluate(() => RB.game.transition('ko.lodge', 4, 6, 'up', {}));
   await p.waitForTimeout(400);
-  const frame = await p.evaluate(() => RB.world.W.map.id === 'ko.lodge' && !!RB.content.maps['ko.lodge'].props.find((q) => q.p === 'ko_frame' && RB.state.test(RB.game.s, q.if)));
-  assert(frame, 'the frame stands by Mitsu\'s door');
+  const frameNow = () => p.evaluate(() => RB.world.W.map.id === 'ko.lodge' && !!RB.content.maps['ko.lodge'].props.find((q) => q.p === 'ko_frame' && RB.state.test(RB.game.s, q.if)));
+  assert(!(await frameNow()), 'nothing hangs by Mitsu\'s door before she has the leaf');
+  await p.evaluate(() => { window.__sc = false; RB.script.run('ko.mitsu_letter').then(() => { window.__sc = true; }); });
+  for (let i = 0; i < 40 && !(await p.evaluate(() => window.__sc)); i++) { await p.evaluate(() => { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); }); await p.waitForTimeout(80); }
+  assert(await frameNow(), 'once she has it, the frame stands by Mitsu\'s door');
   assert(!errors.length, 'no page errors: ' + errors.join(' | '));
   await p.close();
 });

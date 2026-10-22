@@ -98,26 +98,35 @@ export default async (t) => {
     await run('ko.mitsu_hatsu');
     t.ok(qs(s, 'ko_kihei') === 2 && has(/grandmother/) && has(/never once shut/), 'Hatsu was her grandmother, who kept the door open');
     const base = JSON.stringify(s);
+    // the note to self the Mitsu ending leaves (RBN-QA-093): what you decided, true before and after she has the leaf
+    const note = (x) => (x.journal || []).filter((n) => n.en === 'Decided to take Kihei\'s leaf to Mitsu at the lodging house.').length;
     const ends = { mitsu: ['Give it to Mitsu', 'Give it to her', 'ko_kihei_mitsu'], wind: ['Send it on the wind', 'Send it.', 'ko_kihei_wind'], kept: ['Give it back to Kihei', 'Give it back.', 'ko_kihei_kept'] };
     for (const [k, [first, confirm, flag]] of Object.entries(ends)) {
       const st = RB.save.migrate(JSON.parse(base)); RB.game.G.s = st;
       // the end is shown, and can be taken back, before it is chosen
       await run('ko.kihei_choose', { pick: seq(pickEn(first), pickEn('Think again'), pickEn('Not now')) });
-      t.ok(qs(st, 'ko_kihei') === 2 && st.inv.ko_kihei_letter && Object.values(ends).every((e) => !st.flags[e[2]]), k + ': shown, then "think again": nothing changes');
+      t.ok(qs(st, 'ko_kihei') === 2 && st.inv.ko_kihei_letter && Object.values(ends).every((e) => !st.flags[e[2]]) && !note(st), k + ': shown, then "think again": nothing changes (no note either)');
       t.ok(lines.some((l) => /^\(/.test(l.en)), k + ': the lasting end is described before it is chosen');
       await run('ko.kihei_choose', { pick: seq(pickEn(first), pickEn(confirm)) });
       t.ok(qs(st, 'ko_kihei') === 'done' && st.flags[flag] && !st.inv.ko_kihei_letter && Object.values(ends).filter((e) => st.flags[e[2]]).length === 1, k + ': chosen, it lasts, and it is the only end');
       t.eq(shown(st, 'ko.tidepools', 'ko_kihei'), k === 'kept', k + ': Kihei ' + (k === 'kept' ? 'stays by the pools' : 'is gone'));
+      // the frame hangs once Mitsu has the leaf, not at the choice (RBN-QA-093)
       const frame = C.maps['ko.lodge'].props.find((p) => p.p === 'ko_frame');
-      t.eq(test(st, frame.if), k === 'mitsu', k + ': the letter ' + (k === 'mitsu' ? 'hangs by Mitsu\'s door' : 'is not at the lodge'));
-      if (k === 'mitsu') { t.eq(talkTo(st, 'ko.lodge', 'ko_mitsu'), 'ko.mitsu_letter', 'Mitsu reads it'); await run('ko.mitsu_letter'); t.ok(talkTo(st, 'ko.lodge', 'ko_mitsu') !== 'ko.mitsu_letter', 'once'); }
+      t.eq(test(st, frame.if), false, k + ': nothing hangs at the lodge yet (Mitsu has not had the leaf)');
+      t.eq(note(st), k === 'mitsu' ? 1 : 0, k + ': ' + (k === 'mitsu' ? 'a note to self, once: you decided to take the leaf to Mitsu' : 'no note about Mitsu'));
+      if (k === 'mitsu') {
+        t.eq(talkTo(st, 'ko.lodge', 'ko_mitsu'), 'ko.mitsu_letter', 'Mitsu reads it'); await run('ko.mitsu_letter'); t.ok(talkTo(st, 'ko.lodge', 'ko_mitsu') !== 'ko.mitsu_letter', 'once');
+        t.eq(test(st, frame.if), true, 'and once she has it, it hangs by her door');
+        t.eq(frame.x + ',' + frame.y, '3,7', 'by the door, as she says: beside the mat, inside it');
+        t.eq(note(st), 1, 'the note stays as written (notes are a log)');
+      }
       st.flags.ko_done = true;
       await run('ko.mitsu_after');
       t.eq(has(/dreamt my grandmother/), k === 'wind', k + ': Mitsu ' + (k === 'wind' ? 'dreams of her grandmother laughing' : 'has no dream to tell'));
     }
     RB.game.G.s = s;
     await run('ko.kihei_choose', { pick: pickEn('Not now') });
-    t.ok(qs(s, 'ko_kihei') === 2 && s.inv.ko_kihei_letter, 'not now: the letter stays with you');
+    t.ok(qs(s, 'ko_kihei') === 2 && s.inv.ko_kihei_letter && !(s.journal || []).some((n) => /Mitsu/.test(n.en)), 'not now: the letter stays with you, and no note');
   }
 
   // ---- The Leaf That Is Your Name ------------------------------------------------------------------------------------
