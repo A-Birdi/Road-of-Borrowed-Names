@@ -53,7 +53,9 @@ async function start(p, o) {
   }, [o, BASE]);
   await p.waitForTimeout(400);
 }
-const comeOut = (p) => p.evaluate(() => { window.__st0 = Object.assign({}, RB.sequence.stats()); RB.world.enter('yn.upper', 10, 12, 'down', {}); });
+// (through the game's own transition: a map's enter events run there, never in RB.world.enter; not awaited, as the
+// transition leaves the walk running when it returns)
+const comeOut = (p) => p.evaluate(() => { window.__st0 = Object.assign({}, RB.sequence.stats()); RB.game.transition('yn.upper', 10, 12, 'down'); });
 const S = (p) => p.evaluate(() => {
   const d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown();
   return { seq: RB.sequence.state(), n: RB.game.s.backlog.length, en: d ? String(d.en || '') : null, who: d ? d.who || '' : null,
