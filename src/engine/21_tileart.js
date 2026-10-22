@@ -59,6 +59,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     archive: { grass: 'moss', path: 'silt', road: 'wet', sand: 'river', water: 'drowned', wall: 'stone', floor: 'wet', field: 'grey', tall: 'reed', carpet: '#2c3a6a', trim: '#c8b880', heri: '#181a2e' },
     atlas: { grass: 'paper', path: 'earth', road: 'ink', sand: 'river', water: 'still', wall: 'timber', floor: 'ink', field: 'stubble', tall: 'marram', carpet: '#8a4a3a', trim: '#e0c890', heri: '#3a3024', ink: '#5e4c3a' },
     sa_mount: { grass: 'alpine', path: 'scree', road: 'rough', sand: 'river', water: 'cold', wall: 'timber', floor: 'flags', field: 'grey', tall: 'frost', carpet: '#5a4050', trim: '#d0c090', heri: '#2a2a36' },
+    // the cloud top (the Cloudroad above the Barrier): its 'water' is the cloud sea below the road (RBN-QA-104)
+    cloudtop: { water: 'cloud' },
     sa_still: { grass: 'ashmoss', path: 'dust', road: 'ashlar', sand: 'river', water: 'still', wall: 'stone', floor: 'ashlar', field: 'grey', tall: 'reed', carpet: '#3a4462', trim: '#d8d0b0', heri: '#22243a' },
   };
   const BASE_STYLE = STYLE.reedwake;
@@ -1012,6 +1014,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   // a thin dark wet line on land along a bank (the water tile draws the rest)
   function waterLips() {
+    if (K.st.water === 'cloud') return; // the cloud sea wets nothing: its edge is a drop (cloudEdge)
     for (let s = 0; s < 4; s++) {
       if (!WET[K8[s * 2]] || K8[s * 2] === 'bridge') continue;
       for (let a = 0; a < A; a++) {
@@ -1073,8 +1076,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // land pixels take the neighbour's own material
       const sideKind = (sd) => (sd < 4 ? K8[sd * 2] : K8[(sd - 4) * 2 + 1]);
       for (let i = 0; i < N; i++) if (D[i] < 0) S[i] = slotOf(sideKind(SD[i]));
-      // water surface: long soft streaks in half steps, a few bright crests
       const ws = K.st.water, WS = soft(W);
+      if (ws === 'cloud') { cloud(W, built); return out(c, x, y); }
+      // water surface: long soft streaks in half steps, a few bright crests
       const sx = ws === 'sea' ? 19 : ws === 'river' ? 26 : ws === 'still' ? 34 : 21, sy = ws === 'sea' ? 5 : ws === 'river' ? 3 : 4;
       noise(F, A, A, 0, 0, sx, sy, 161, 0.72, false);
       noise(F, A, A, 0, 0, 7, 3, 162, 0.28, true);
@@ -1141,6 +1145,50 @@ var RB = (globalThis.RB = globalThis.RB || {});
       out(c, x, y);
     };
   }
+  // The cloud sea (RBN-QA-104): soft banks of cloud lit from above, in clusters of the ramp's own steps. There are no
+  // streaks, no crests and no foam. Where land meets it, the land ends in a drop: a rock lip on the land side, and
+  // under a ledge the cloud lies in the ledge's shadow. Called with the land pixels already set (S, D, SD as in water).
+  function cloud(W, built) {
+    noise(F, A, A, 0, 0, 16, 10, 161, 0.7, false);
+    noise(F, A, A, 0, 0, 7, 5, 162, 0.3, true);
+    // the same field three pixels lower: where it falls away below, a bank's lit top; where it rises, its underside
+    noise(G, A, A, 0, 3, 16, 10, 161, 0.7, false);
+    noise(G, A, A, 0, 3, 7, 5, 162, 0.3, true);
+    for (let i = 0; i < N; i++) {
+      if (S[i] !== 0) continue;
+      const v = F[i], rel = v - G[i];
+      let k = v > 0.6 ? 3 : v > 0.44 ? 2 : 1;
+      if (rel > 0.045) k++;
+      else if (rel < -0.045) k--;
+      let c = W[Math.max(0, Math.min(4, k))];
+      const d = D[i], sd = SD[i];
+      if (d < 99 && !(sd < 4 && built[sd])) {
+        if (sd === 0) c = mixU(c, K.shade, d < 1 ? 0.42 : d < 3 ? 0.26 : d < 5 ? 0.12 : 0); // under the ledge
+        else if (d < 2.5) c = mixU(c, W[3], 0.3 * (1 - d / 2.5)); // the cloud lifts softly against the rock
+      }
+      B[i] = c;
+    }
+    for (let s = 1; s < NS; s++) fillKind(SK[s], s);
+    cloudEdge(built);
+  }
+  // the land's edge along the cloud sea: a rock face seen from the south, a rim seen from the north and the sides;
+  // built edges (walls, piers) keep their kerbs (bankEdges, with no foam)
+  function cloudEdge(built) {
+    const Rs = K.s;
+    if (built.some((x) => x)) bankEdges(built, null, null); // kerbs first; the rock lip below replaces its banks
+    for (let i = 0; i < N; i++) {
+      const d = D[i];
+      if (d >= 0 || d < -4) continue;
+      const sd = SD[i];
+      if (sd < 4 && built[sd]) continue;
+      const wx = OX + (i & 31);
+      if (sd === 0 || sd === 4 || sd === 7) {
+        if (d >= -1) B[i] = mixU(Rs[0], K.shade, 0.35);
+        else if (d >= -3) B[i] = ((wx + (hh(wx >> 2, 7, 171) & 3)) % 5) < 2 ? Rs[1] : Rs[2];
+        else B[i] = Rs[3];
+      } else if (d >= -1) B[i] = sd === 2 || sd === 5 || sd === 6 ? Rs[3] : Rs[1];
+    }
+  }
   function distOK(wx, wy) {
     const x = wx - OX, y = wy - OY;
     if (x < 0 || y < 0 || x >= A || y >= A) return false;
@@ -1181,8 +1229,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         else if (d >= -2) B[i] = R[3];
       } else if (d >= -1) B[i] = R[4];
     }
-    // foam is broken into short dashes on the water side
-    for (let i = 0; i < N; i++) if (S[i] === 0 && D[i] >= 0 && D[i] < 1 && !(SD[i] < 4 && built[SD[i]])) {
+    // foam is broken into short dashes on the water side (none along the cloud sea)
+    if (foam) for (let i = 0; i < N; i++) if (S[i] === 0 && D[i] >= 0 && D[i] < 1 && !(SD[i] < 4 && built[SD[i]])) {
       const x = i & 31, y = i >> 5, w = OX + x + OY + y;
       B[i] = (hh(w >> 2, SD[i], 169) % 3) === 0 ? foam : mixU(foam, W[3], 0.45);
     }
@@ -1211,6 +1259,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const Kk = kit(pal), hx = Kk.hex;
       const o = openRect(tx, ty), x0 = o >>> 24, y0 = (o >>> 16) & 255, x1 = (o >>> 8) & 255, y1 = o & 255;
       const w = Math.max(1, x1 - x0 - 6), h = Math.max(1, y1 - y0);
+      if (Kk.st.water === 'cloud') {
+        // the cloud sea drifts: one faint wisp per tile crossing it slowly, fading in and out; no glints, no ripple line
+        const r = hh(tx, ty, 48), per = 9000 + (r % 5000), ph = ((t + ((r >>> 8) % per)) % per) / per;
+        const gx = x0 + Math.floor(ph * Math.max(1, x1 - x0 - 8)), gy = y0 + 1 + ((r >>> 14) % Math.max(1, h - 2));
+        c.save();
+        c.globalAlpha = 0.24 * Math.sin(ph * Math.PI);
+        c.fillStyle = hx.w[4];
+        c.fillRect(sx + gx, sy + gy, 8, 2);
+        c.fillRect(sx + gx + 2, sy + gy - 1, 4, 1);
+        c.restore();
+        return;
+      }
       const R = mode === 'dark' ? hx.dw : hx.w;
       for (let g = 0; g < (mode === 'shallow' ? 1 : 2); g++) {
         const r = hh(tx, ty, 40 + g), per = 2400 + (r % 1600), ph = ((t + ((r >>> 8) % per)) % per) / per;
@@ -1685,5 +1745,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const pal = TL.PAL[m.region] || TL.PAL.reedwake;
     return tim + sto === 0 ? Object.assign({}, BASE_STYLE, STYLE[nameOf(pal)] || {}).wall : sto > tim ? 'stone' : 'timber';
   }
-  RB.tileArt = { kit, STYLE, flush, wallStyleOf };
+  // the water style a palette draws ('cloud' for the cloud top's cloud sea)
+  const waterStyleOf = (pal) => (pal ? kit(pal).st.water : null);
+  RB.tileArt = { kit, STYLE, flush, wallStyleOf, waterStyleOf };
 })();

@@ -116,11 +116,12 @@ RB.worldKit = (function () {
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (GRASS[tileAt(tx + dx, ty + dy).id]) n++;
       return n >= 2;
     };
-    // first the ground's own colour: grass in patches, deeper water, warmed paving
+    // first the ground's own colour: grass in patches, deeper water, warmed paving (not the cloud sea: RBN-QA-104)
+    const cloudSea = !!(RB.tileArt && RB.tileArt.waterStyleOf(RB.tiles.PAL[m.region]) === 'cloud');
     for (let ty = -g.y; ty < m.h + g.y; ty++)
       for (let tx = -g.x; tx < m.w + g.x; tx++) {
         const t = tileAt(tx, ty), X0 = (tx + g.x) * ATS, Y0 = (ty + g.y) * ATS;
-        const grass = !!GRASS[t.id], water = !!(t.water && t.id !== 'darkwater'), bridge = t.id === 'bridgeH' || t.id === 'bridgeV';
+        const grass = !!GRASS[t.id], water = !!(t.water && t.id !== 'darkwater') && !cloudSea, bridge = t.id === 'bridgeH' || t.id === 'bridgeV';
         const pave = !!(PAVE && (t.id === 'road' || t.id === 'stonefloor'));
         if (!grass && !water && !bridge && !pave) continue;
         for (let ly = 0; ly < ATS; ly++) {

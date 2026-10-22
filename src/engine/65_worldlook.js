@@ -807,6 +807,8 @@ RB.worldLook = (function () {
   }
   function glints(c, m, t, env) {
     if (env.still || env.night) return;
+    // the cloud sea catches no glints (RBN-QA-104)
+    if (RB.tileArt && RB.tileArt.waterStyleOf(RB.tiles.PAL[m.region]) === 'cloud') return;
     const x0 = Math.max(0, Math.floor(env.cam.x / 16)), y0 = Math.max(0, Math.floor(env.cam.y / 16));
     const x1 = Math.min(m.w, Math.ceil((env.cam.x + env.bw / 2) / 16) + 1), y1 = Math.min(m.h, Math.ceil((env.cam.y + env.bh / 2) / 16) + 1);
     c.save();
