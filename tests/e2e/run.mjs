@@ -71,7 +71,7 @@ let suites = [
   ['world.mjs'], ['world_light.mjs'], ['world_slice.mjs'], ['world_living.mjs'], ['living_world.mjs'], ['return_hints.mjs'], ['verbs.mjs'], ['verbs_journey.mjs'], ['perform.mjs'], ['workshop.mjs'], ['records.mjs'], ['letters_order.mjs'], ['answer_order.mjs'], ['old_saves.mjs'],
   ['distractions.mjs'], ['hanafuda.mjs'], ['karuta.mjs'], ['shogi.mjs'], ['festival.mjs'], ['festival_games.mjs'], ['expedition.mjs'], ['atlas_board.mjs'],
   ['manybridge.mjs'], ['manybridge2.mjs'], ['keepers.mjs'], ['licence.mjs'], ['sailing.mjs'], ['ports.mjs'], ['kotonoha.mjs'],
-  ['cloudroad.mjs'], ['nakayama_inns.mjs'], ['cloud_sea.mjs'], ['ledge_horse.mjs'], ['courier_shelf.mjs'], ['leg2_boulder.mjs'], ['steamhollow.mjs'], ['tsuneji_egg.mjs'], ['egg_recovery.mjs'], ['suzu_books_route.mjs'], ['zenroku_inquiry.mjs'], ['valve_line.mjs'], ['yn_guide.mjs'], ['archive12.mjs'],
+  ['cloudroad.mjs'], ['nakayama_inns.mjs'], ['cloud_sea.mjs'], ['ledge_horse.mjs'], ['courier_shelf.mjs'], ['jinpachi_letter.mjs'], ['leg2_boulder.mjs'], ['steamhollow.mjs'], ['tsuneji_egg.mjs'], ['egg_recovery.mjs'], ['suzu_books_route.mjs'], ['zenroku_inquiry.mjs'], ['valve_line.mjs'], ['yn_guide.mjs'], ['archive12.mjs'],
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 // --extra: the long functional checks kept out of the default run for their length (the battle addendum's creatures,

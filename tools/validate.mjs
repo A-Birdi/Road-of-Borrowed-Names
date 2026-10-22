@@ -114,9 +114,13 @@ for (const id in C.scenes) {
     if (c.op === 'pose' && a[1] !== '-' && !(RB.sprites._pose && RB.sprites._pose.has(a[1]))) E(where(c) + ' !pose: unknown pose ' + a[1]);
     if (c.op === 'prop' && a[1] !== '-' && !(RB.sprites._pose && RB.sprites._pose.hasProp(a[1]))) E(where(c) + ' !prop: unknown prop ' + a[1]);
     if (c.op === 'prop' && a[2] && !/^[RL]$/.test(a[2])) E(where(c) + ' !prop: hand must be R or L');
-    if (c.op === 'walkto' && !(/^\d+$/.test(a[1] || '') && /^\d+$/.test(a[2] || ''))) E(where(c) + ' !walkto: needs whole tile coordinates');
-    if (c.op === 'walkto' && a[3] && !/^(up|down|left|right|now|stay|cross|party|max=\d+)$/.test(a[3])) E(where(c) + ' !walkto: unknown facing ' + a[3]);
-    if (c.op === 'walkto') for (const t of a.slice(4)) if (!/^(now|stay|cross|party|max=\d+)$/.test(t)) E(where(c) + ' !walkto: unknown option ' + t);
+    // (`!walkto <who> pc [dir] [now|stay|run|max=N]`: someone walks up to you, RBN-QA-108; not you, and not cross or party)
+    const nearPc = c.op === 'walkto' && a[1] === 'pc';
+    if (nearPc && (a[0] === 'pc' || a[0] === 'player')) E(where(c) + ' !walkto pc: someone else walks up to you');
+    if (nearPc) for (const t of a.slice(2)) if (!/^(up|down|left|right|now|stay|run|max=\d+)$/.test(t)) E(where(c) + ' !walkto pc: unknown option ' + t);
+    if (c.op === 'walkto' && !nearPc && !(/^\d+$/.test(a[1] || '') && /^\d+$/.test(a[2] || ''))) E(where(c) + ' !walkto: needs whole tile coordinates');
+    if (c.op === 'walkto' && !nearPc && a[3] && !/^(up|down|left|right|now|stay|cross|party|max=\d+)$/.test(a[3])) E(where(c) + ' !walkto: unknown facing ' + a[3]);
+    if (c.op === 'walkto' && !nearPc) for (const t of a.slice(4)) if (!/^(now|stay|cross|party|max=\d+)$/.test(t)) E(where(c) + ' !walkto: unknown option ' + t);
     if (c.op === 'walkto' && a.includes('party') && a[0] !== 'pc') E(where(c) + ' !walkto: party is for a walk of yours (pc)');
     if (c.op === 'walkto' && a.some((t) => /^max=\d+$/.test(t) && !(+t.slice(4) >= 4000 && +t.slice(4) <= 12000))) E(where(c) + ' !walkto: max= is a bound in ms, 4000-12000');
     if (c.op === 'beat' && !/^[a-z0-9_.-]+$/.test(a[0] || '')) E(where(c) + ' !beat: needs an id');

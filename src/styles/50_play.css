@@ -82,6 +82,7 @@ body.veiled #ui > .dlg, body.veiled #ui > .choices, body.veiled #ui > .folio-scr
 .dlg .who .nm { font-family: var(--serif); font-weight: 600; font-size: 1.05em; color: var(--ink); }
 .dlg .who .jp { font-size: 0.9em; color: var(--ink-2); }
 .dlg .who .jp .jline { line-height: 1.7; }
+.dlg .who .offscr { margin-left: 0.6em; font-size: 0.8em; font-style: italic; color: var(--ink-2); white-space: nowrap; } /* RBN-QA-108: a speaker who did not arrive, off screen */
 .dlg.narration .dlg-tab { display: none; }
 .dlg-sheet {
   grid-area: sheet; display: flex; flex-direction: column; min-height: 0; max-height: calc(56 * var(--vh));

@@ -304,6 +304,13 @@ RB.script = (function () {
         }
         case 'walkto': {
           const mx = a.find((t) => /^max=\d+$/.test(t));
+          // `!walkto <who> pc [dir] [run]`: they walk (or run) up to you (RBN-QA-108); var._walked says whether they arrived (1) or
+          // not (0: no free place within 2 of you, or the walk ran out), for a scene that tells the two apart
+          if (a[1] === 'pc') {
+            const r = RB.staging ? await RB.staging.walkNear(a[0] === 'npc' ? ctx.npc : a[0], DIRW[a[2]] ? a[2] : null, { now: a.includes('now') || hidden(), stay: a.includes('stay'), run: a.includes('run'), max: mx ? +mx.slice(4) : 0 }, ctx) : { ok: false };
+            if (RB.game.s === s) s.vars._walked = r && r.ok ? 1 : 0;
+            break;
+          }
           if (RB.staging) await RB.staging.walkTo(a[0] === 'npc' ? ctx.npc : a[0], +a[1], +a[2], DIRW[a[3]] ? a[3] : null, { now: a.includes('now') || hidden(), stay: a.includes('stay'), cross: a.includes('cross'), party: a.includes('party'), max: mx ? +mx.slice(4) : 0 }, ctx);
           break;
         }
