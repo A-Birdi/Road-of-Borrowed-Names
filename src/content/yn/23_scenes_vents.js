@@ -97,7 +97,8 @@ narr: {古|ふる}い {湯樋|ゆどい} 。 {石|いし} で {組|く}んだ {�
 @scene yn.shutter
 # The shutter in the middle chamber: the steam into the upper corridor or the lower. Turn it from here, whichever way.
 !if yn_shutter -> back
-narr: {大|おお}きな {弁|べん} を {回|まわ}す 。 {下|した} の {通|とお}り{道|みち} に {湯気|ゆげ} が {流|なが}れ{込|こ}み 、 {上|うえ} の {通|とお}り{道|みち} が {晴|は}れた 。 || You turn the big valve. Steam floods the lower passage, and the upper one clears.
+# ("the valve", not "the big valve": this line also follows the small wheel at either end of the Channel; RBN-QA-121)
+narr: {弁|べん} を {回|まわ}す 。 {下|した} の {通|とお}り{道|みち} に {湯気|ゆげ} が {流|なが}れ{込|こ}み 、 {上|うえ} の {通|とお}り{道|みち} が {晴|は}れた 。 || You turn the valve. Steam floods the lower passage, and the upper one clears.
 !set yn_shutter
 !sfx wind
 !refresh

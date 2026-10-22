@@ -1973,11 +1973,11 @@
   "jp": "{古|ふる}い {湯樋|ゆどい} 。 {石|いし} で {組|く}んだ {水路|すいろ} を 、 {湯|ゆ} が {流|なが}れて いる 。 {真|ま}ん{中|なか} の {部屋|へや} に 、 {大|おお}きな {弁|べん} が {一|ひと}つ 。",
   "en": "The old channel: spring water running along a stone-built course. In the chamber in the middle, one big valve."
  },
- "scene:yn.shutter#8y4xek": {
+ "scene:yn.shutter#15wnn4w": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{大|おお}きな {弁|べん} を {回|まわ}す 。 {下|した} の {通|とお}り{道|みち} に {湯気|ゆげ} が {流|なが}れ{込|こ}み 、 {上|うえ} の {通|とお}り{道|みち} が {晴|は}れた 。",
-  "en": "You turn the big valve. Steam floods the lower passage, and the upper one clears."
+  "ref": "RBN-QA-121 self-review, 2026-10-22: the Old Channel's forward valve line read where it plays, after the middle chamber's big valve and after the small wheel at either end (yn.shutter_end calls it); 大きな dropped so it is true at both, as the reverse line's plain 弁 already is; the rest of the line unchanged, checked against the lexicon",
+  "jp": "{弁|べん} を {回|まわ}す 。 {下|した} の {通|とお}り{道|みち} に {湯気|ゆげ} が {流|なが}れ{込|こ}み 、 {上|うえ} の {通|とお}り{道|みち} が {晴|は}れた 。",
+  "en": "You turn the valve. Steam floods the lower passage, and the upper one clears."
  },
  "scene:yn.shutter#1xdsoj1": {
   "status": "self-reviewed",
