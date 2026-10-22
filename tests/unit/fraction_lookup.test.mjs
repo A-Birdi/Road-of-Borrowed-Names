@@ -2,7 +2,8 @@
 // read as a fraction (三分の一 = 1/3), not "3 × minute(s)" (src/lang/70_lookup_ext.js). In node:
 //  1. Tamotsu's three lines (三分の一, read さんぶん since the Tier A fixes) and a line of its own each way (1/3, 1/4);
 //  2. its neighbours are not fractions: 十分 (じゅうぶん, "enough", also before の), the minutes (さんぷん, じゅっぷん,
-//     じゅうごふん, also before の), an ordinary counter, and portions (〜人分).
+//     じゅうごふん, also before の), an ordinary counter, portions (〜人分), and 三分 read ぶん with の but no number after
+//     it (only the whole N分のM is a fraction).
 import { load } from '../lib/load.mjs';
 
 export default async (t) => {
@@ -30,7 +31,9 @@ export default async (t) => {
   // that is reported on its own, so here it is only required not to become a fraction)
   const keep = [['{十分|じゅうぶん} だ 。', '十分', /enough/], ['{十分|じゅうぶん} の {量|りょう} 。', '十分', /enough/], ['{三分|さんぷん} で {終|お}わる 。', '三分', /^3 × minute/],
     ['{三分|さんぷん} の {休|やす}み 。', '三分', /^3 × minute/], ['{十分|じゅっぷん} の {休|やす}み 。', '十分', /./], ['{十五分|じゅうごふん} {待|ま}つ 。', '十五分', /fifteen minutes/],
-    ['{三回|さんかい} の {鐘|かね} 。', '三回', /^3 × times/]];
+    ['{三回|さんかい} の {鐘|かね} 。', '三回', /^3 × times/],
+    // read ぶん and followed by の, but not N分のM: no number after の (Agnes 6353888589: the full context)
+    ['{三分|さんぶん} の {休|やす}み 。', '三分', /./], ['{三分|さんぶん} の {何|なに} か 。', '三分', /./], ['{三分|さんぶん} の 。', '三分', /./]];
   for (const [jp, w, re] of keep) {
     const r = at(jp, w);
     t.ok(!!r && !!r.entry && re.test(r.entry.m) && (r.forms || []).join() !== 'fraction (〜分の〜)' && !/1\//.test(r.entry.m), `${jp}: ${w} is not read as a fraction (${r && r.entry && r.entry.m})`);

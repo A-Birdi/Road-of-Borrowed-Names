@@ -251,6 +251,7 @@ RB.jp = (function () {
       if (out[i].punct) continue;
       out[i].prev = i > 0 ? out[i - 1].surface : '';
       out[i].next = i + 1 < out.length ? out[i + 1].surface : '';
+      out[i].next2 = i + 2 < out.length ? out[i + 2].surface : ''; // (the word after next: a fraction's N分の + M)
     }
     return out;
   }
@@ -822,6 +823,7 @@ RB.jp = (function () {
         after: t.after || null,
         prev: t.prev != null ? t.prev : null,
         next: t.next != null ? t.next : null,
+        next2: t.next2 != null ? t.next2 : null,
       };
     }
     const toks = parse(String(t == null ? '' : t));
