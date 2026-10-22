@@ -66,7 +66,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
   // the Lower House's earthen entrance (土間, RBN-QA-114): packed earth inside the door, the raised floor's edge
-  // (上がり框) along its top. It lies at floor level; with the art below it is baked into the ground, under everyone.
+  // (the agari-gamachi) along its top. It lies at floor level; with the art below it is baked into the ground, under everyone.
   def('yn_doma', { w: 3, h: 2, block: false }, (c, x, y, p) => {
     px(c, x, y, 48, 32, '#7c7166'); px(c, x + 16, y + 32, 16, 16, '#7c7166');
     px(c, x, y, 48, 3, p.floor[1]); px(c, x, y + 3, 48, 2, 'rgba(30,20,12,0.3)'); px(c, x, y + 3, 2, 29, 'rgba(30,20,12,0.22)');
@@ -241,7 +241,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   // The Lower House's earthen entrance (土間, RBN-QA-114): packed earth (三和土) from the door to the raised floor, greyer
   // and harder than the street outside, worn a little lighter where feet go from the door to the step; along its top
-  // the raised floor's edge (上がり框), a timber face with a lit arris, its shadow on the earth, and the floor's edge
+  // the raised floor's edge (the agari-gamachi), a timber face with a lit arris, its shadow on the earth, and the floor's edge
   // down each side. All of it lies at floor level, so it is baked into the ground under everyone (spec.bake); the
   // shared wood and earth tiles are untouched. The footprint is the strip (5..7, 7..8) and the doorway below it.
   art('yn_doma', {
