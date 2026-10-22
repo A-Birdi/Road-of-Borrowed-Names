@@ -19,6 +19,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     s.vars._away = s.comp;
     s.vars._away_why = (a && a[0]) || '';
     s.comp = null;
+    // the one following you stays where they stand: never still following you while their waiting place appears (RBN-QA-103)
+    try { if (RB.world && RB.world.companionStays && RB.world.W && RB.world.W.map) RB.world.companionStays(); } catch (e) { /* never blocks the story */ }
     refresh();
   };
   RB.hooks.comp_back = () => {
@@ -27,6 +29,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     s.comp = s.vars._away;
     delete s.vars._away;
     delete s.vars._away_why;
+    // their figure here, if any, is the one who follows you again, from where it stands (RBN-QA-103)
+    try { if (RB.world && RB.world.companionBack && RB.world.W && RB.world.W.map) { if (RB.world.companionBack()) RB.world.placeCompanion({ near: true }); return; } } catch (e) { /* never blocks the story */ }
     refresh();
   };
   if (RB.state && RB.state.addTerm) RB.state.addTerm('away', (s, rest, op, val, num, cmp) => (op ? cmp((s.vars && s.vars._away) || 'none', op, val) : !!(s.vars && s.vars._away)));

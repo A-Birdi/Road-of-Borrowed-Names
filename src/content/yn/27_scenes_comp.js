@@ -86,6 +86,9 @@ mio[closed]: {大丈夫|だいじょうぶ} です 。 {本当|ほんとう} に
 !set yn_apart
 !hook co_bond yn:crossroads
 !hook comp_away night
+# you leave by the dispensary's own door (to where it opens, yn.lower 8,25), and the door closes behind you; Mio stays
+# inside with Oshige, unseen (RBN-QA-103, Agnes 6340911110)
+!warp yn.lower 8 25 down
 narr: {薬処|くすりどころ} の {戸|と} が 、 {静|しず}か に {閉|し}まった 。 || The dispensary door closes quietly behind you.
 !journal ミオ は {薬処|くすりどころ} に {残|のこ}った 。 キクエ さん に 、 {店|みせ} を {継|つ}がない か と {言|い}われた の だ 。 {今夜|こんや} は {町|まち} で {過|す}ごし 、 {階段|かいだん} の {下|した} の {部屋|へや} で {休|やす}もう 。 || Mio stayed at the dispensary: Kikue asked her to take it on. Spend the evening in town, then rest in the room under the stairs.
 
@@ -130,6 +133,7 @@ narr: {筧|かけい} から 、 また {湯|ゆ} が ポタン と {落|お}ち
 !set yn_eve_done
 !hook co_bond yn:night
 !hook co_remember together yn_footbath
+!refresh comp
 :end
 
 @scene yn.suzu_evening
@@ -178,6 +182,7 @@ suzu: {明日|あした} の {朝|あさ} 、 {一座|いちざ} に {会|あ}�
 !set yn_eve_done
 !hook co_bond yn:night
 !hook co_remember together yn_garden
+!refresh comp
 
 @scene yn.suzu_books
 # Suzu's unfinished matter (S14): for years she covered the troupe's losses from her own share and told everyone the
@@ -239,6 +244,7 @@ nao[smile]: {明日|あした} 、 {座|すわ}って {聞|き}け 。 {俺|お�
 !set yn_eve_done
 !hook co_bond yn:makeup
 !hook co_remember together yn_footbath
+!refresh comp
 
 @scene yn.ren_evening
 # Ren's quarrel over the mediation: the oldest agreement, exactly as it was ("When lost, go back to the oldest name").
@@ -274,6 +280,7 @@ ren[laugh]: {明日|あした} の {取|と}り{決|き}め に 、 {古|ふる}
 !set yn_eve_done
 !hook co_bond yn:makeup
 !hook co_remember together yn_lanterns
+!refresh comp
 
 @scene yn.walk
 # The evening after the mediation: the town out in yukata; a walk with the companion; a quiet confession; the one
