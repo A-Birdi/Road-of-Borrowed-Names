@@ -27,7 +27,8 @@ comp[smirk]: {戻|もど}る {時|とき} は {走|はし}る ぞ 。 {文句|�
 comp: {上|うえ} で {何|なに} か が {熱|ねつ} を {溜|た}めてる 。 {水|みず} か {氷|こおり} 。 {札|ふだ} を {二枚|にまい} {持|も}ってる の は 、 {心強|こころづよ}い な 。 || Something up there is building heat. Water or ice. Good to have two cards to play.
 
 @scene co.b_nao4
-comp: {鐘|かね} の {話|はなし} 、 {聞|き}いた か 。 {皆|みな} 、 {鐘|かね} が {鳴|な}ったら {水路|すいろ} へ {走|はし}った って 。 {頭|あたま} が {忘|わす}れて も 、 {足|あし} が {道|みち} を {覚|おぼ}えてた 。 || Heard about the bell? Everyone ran to the channel when it rang. Their heads forgot; their feet remembered the way.
+?(co_bell_rung) comp: {鐘|かね} が {鳴|な}った {時|とき} 、 {皆|みな} 、 {水路|すいろ} へ {走|はし}った な 。 {頭|あたま} が {忘|わす}れて も 、 {足|あし} が {道|みち} を {覚|おぼ}えてた 。 || Everyone ran to the channel when the bell rang. Their heads forgot; their feet remembered the way.
+?(!co_bell_rung) comp: {頭|あたま} で {思|おも}い{出|だ}せなくて も 、 {足|あし} が {道|みち} を {覚|おぼ}えてる こと は ある ん だ よ な 。 || Sometimes your feet remember the way even when you can't call it to mind.
 comp: {配達|はいたつ} も そう だ 。 {宛名|あてな} が {消|き}えて も 、 {足|あし} が {家|いえ} を {覚|おぼ}えてる こと が ある 。 || Deliveries are like that. Even when the address fades, your feet sometimes remember the house.
 comp: …… {今夜|こんや} の {集|あつ}まり 、 {重|おも}い {荷物|にもつ} に なる な 。 {一緒|いっしょ} に {運|はこ}ぼう 。 || …Tonight's gathering is going to be a heavy parcel. Let's carry it together.
 
