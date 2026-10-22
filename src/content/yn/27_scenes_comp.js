@@ -25,11 +25,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const m = C.maps[id];
     if (m) m.onEnter = (m.onEnter || []).concat([{ scene: 'yn.evening', if: 'yn_evening&!yn_eve_started' }]);
   }
-  // Suzu's books, the morning after her night apart: the troupe is leaving
+  // Suzu's books, the morning after her night apart: the troupe is leaving. On coming out into either town, and in the
+  // upper town before anything else that waits there (the walk after the mediation among it): the Upper House and the
+  // Bath-Keepers' Hall both open onto it, so your first step outside after the garden plays them, whichever way you go
+  // (RBN-QA-128; once, by its own flag; the scene takes you to the playhouse itself)
+  const BOOKS = { scene: 'yn.suzu_books', if: 'comp=suzu&yn_suzu_back&!yn_suzu_books' };
   const lo = C.maps['yn.lower'];
-  if (lo) lo.onEnter = lo.onEnter.concat([{ scene: 'yn.suzu_books', if: 'comp=suzu&yn_suzu_back&!yn_suzu_books' }]);
-  // Ren among the lanterns, with Toki, the evening of the quarrel
+  if (lo) lo.onEnter = lo.onEnter.concat([BOOKS]);
   const up = C.maps['yn.upper'];
+  if (up) up.onEnter = [Object.assign({}, BOOKS)].concat(up.onEnter || []);
+  // Ren among the lanterns, with Toki, the evening of the quarrel
   const toki = up && up.npcs.find((n) => n.id === 'yn_toki');
   if (toki) toki.talk.unshift({ if: 'yn_ren_quarrel&!yn_ren_madeup', scene: 'yn.ren_lanterns' });
 })(RB.content);
