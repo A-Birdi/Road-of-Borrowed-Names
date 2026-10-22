@@ -19,6 +19,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const STEAM = { weather: 'motes', tint: 'rgba(240,236,226,0.10)' };
   const DUSK = { if: 'yn_evening&!yn_done', ambient: { weather: 'motes', tint: 'rgba(232,130,70,0.16)', dark: 0.18 } };
   const steam = (x, y) => ({ p: 'yn_steam', x, y });
+  // the river's own steam goes when the quarrel runs it cold (yn_river_cold, set at the line that says so; an older save
+  // past the quarrel's end, stage 4, without that flag counts as cold too) and comes back when the Kettle settles
+  // (RBN-QA-119; Agnes 6345974122). Land vents are not the river's.
+  const RIVER_STEAM = '!yn_river_cold&!yn_quarrel|!yn_river_cold&quest.yn_main<4|yn_kettle_settled';
+  const riverSteam = (x, y) => Object.assign(steam(x, y), { if: RIVER_STEAM });
 
   // ==== the way down (湯けむりの坂): from the Pass through steaming rock ================================================
   C.maps['yn.descent'] = Object.assign({}, TOWN, {
@@ -120,7 +125,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sg_stall', x: 16, y: 12, scene: 'yn.onatsu_stall' },
       { p: 'yn_divider', x: 32, y: 24, scene: 'yn.divider' },
       { p: 'lamppost', x: 24, y: 17 }, { p: 'lamppost', x: 32, y: 14 }, { p: 'lamppost', x: 18, y: 17 }, { p: 'lamppost', x: 2, y: 12 },
-      steam(29, 6), steam(28, 22), steam(14, 24), steam(37, 24), steam(22, 4),
+      riverSteam(29, 6), riverSteam(28, 22), steam(14, 24), steam(37, 24), steam(22, 4),
       // the stone steps down behind the spring house: the grille's notice until Aki opens it, then a way down
       { p: 'stairs', x: 37, y: 26, if: '!yn_vents_open', scene: 'yn.vents_door' },
       { p: 'stairs', x: 37, y: 26, if: 'yn_vents_open' },
