@@ -246,6 +246,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
         leave: say('…… {俺|おれ} は 、 {手紙|てがみ} を {探|さが}して いる ん だ 。 {出|だ}せなかった {手紙|てがみ} を な 。', '"…I\'m looking for a letter. One I never managed to send." The sailor fades into the spray, and is gone.'),
       },
     }],
-    conclusions: [{ id: 'won', when: { settled: 'all' }, result: 'win', text: { en: 'The jelly drifts off. Where the sailor stood, only footprints, filling with water.' }, flags: { ko_kihei_met: true } }],
+    conclusions: [{ id: 'won', when: { settled: 'all' }, result: 'win', text: { en: 'The jelly drifts off. The sailor\'s footprints are filling with water; he has moved a little way off, and waits at the water\'s edge.' }, flags: { ko_kihei_met: true } }],
   };
 })(RB.content);
