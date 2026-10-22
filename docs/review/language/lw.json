@@ -5159,6 +5159,12 @@
   "jp": "アオ なら 、 {籠|かご} を {持|も}って {村|むら} の {中|なか} を {走|はし}り{回|まわ}って いる わ 。",
   "en": "Ao runs round the village with his basket."
  },
+ "relations:ko_ao#1a2jmhh": {
+  "status": "self-reviewed",
+  "ref": "RBN-QA-083 self-review, 2026-10-22: Ao's hall-reading whereabouts variant read where it is said (the 'Have you seen…?' answer of those who know Ao well, Mitsu and Yoshino) against the usual line it stands beside, Mitsu's established speech (〜わ), the lexicon and standard textbook grammar (〜って 、 … へ 行った, reporting his intention); Japanese by Cloud (CC-087), English by Agnes (6332916876), agreed by Local (CL-161)",
+  "jp": "アオ なら 、 ヨシノ さん と {字|じ} を {読|よ}む って 、 {館|やかた} へ {行|い}った わ 。",
+  "en": "Ao went off to the hall. He said he was going to read with Yoshino."
+ },
  "relations:ko_koyomi#sk7hj4": {
   "status": "self-reviewed",
   "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",

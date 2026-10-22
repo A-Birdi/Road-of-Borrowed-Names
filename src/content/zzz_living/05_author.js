@@ -15,9 +15,11 @@
  *     `pin`: while it holds, the routine leaves them where they are (a quest step that needs them).
  *   L.away(town, person, { map, x, y, p, line: [jp, en] })
  *     A clue at someone's usual place while their routine has them elsewhere (a note on the door, a closed stall).
- *   L.knows(asker, { person: 'routine' | 'loose' }), L.cold(asker, [jp, en]), L.usual(person, [jp, en]),
+ *   L.knows(asker, { person: 'routine' | 'loose' }), L.cold(asker, [jp, en]), L.usual(person, [jp, en], when?),
  *   L.asks(person, maps?) — who knows whom (W3), an unfriendly asker, how someone's usual place is described by
  *     those who know them, and the people who can be asked after others (every placement of them, on maps given).
+ *     `when` ([{ if, line: [jp, en] }], in order): while a story step has the person somewhere else, what those who
+ *     know them say instead (the first that holds; RBN-QA-083); the usual line itself stays as it is.
  *   L.beat(town, { id, when, en, jp }) — a change beat (W1); its content is conditioned on `beat.<town>.<id>` or on
  *     its own `when`.
  *   L.road(id, { maps, unique, variants, rate, stamp, when }) — road events (W5; none until `when` holds). Each event
@@ -106,7 +108,10 @@ RB.living = (function (C) {
   const rel = (p) => C.relations[p] || (C.relations[p] = { knows: {} });
   function knows(asker, map) { Object.assign(rel(asker).knows, map); }
   function cold(asker, line) { rel(asker).friendly = false; if (line) rel(asker).refusal = T(line[1], line[0]); }
-  function usual(person, line) { rel(person).usual = T(line[1], line[0]); }
+  function usual(person, line, when) {
+    rel(person).usual = T(line[1], line[0]);
+    if (when) rel(person).usualIf = when.map((w) => Object.assign({ if: w.if }, T(w.line[1], w.line[0])));
+  }
   function asks(person, maps) {
     let k = 0;
     for (const id in C.maps) {

@@ -58,7 +58,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.cold('ko_tokio', ['…… {今|いま} 、 {数|かぞ}えて いる ところ です 。 {話|はな}し{掛|か}けられる と 、 {数|かず} を {忘|わす}れます 。', '…I\'m in the middle of a count. If you talk to me, I\'ll lose my number.']);
   L.usual('ko_otoha', ['オトハ {婆|ばあ}さま なら 、 {風石|かぜいし} の そば に いらっしゃいます よ 。', 'Grandmother Otoha? By the Wind Stone.']);
   L.usual('ko_nami', ['ナミ さん は 、 {館|やかた} の {前|まえ} か 、 {舟|ふね} の ところ 。', 'Nami? In front of the hall, or down by her boat.']);
-  L.usual('ko_ao', ['アオ なら 、 {籠|かご} を {持|も}って {村|むら} の {中|なか} を {走|はし}り{回|まわ}って いる わ 。', 'Ao runs round the village with his basket.']);
+  // while Ao waits in the hall to read (quest.ko_ao=1, ko/15_side.js), those who know him say so (RBN-QA-083)
+  L.usual('ko_ao', ['アオ なら 、 {籠|かご} を {持|も}って {村|むら} の {中|なか} を {走|はし}り{回|まわ}って いる わ 。', 'Ao runs round the village with his basket.'], [
+    { if: 'quest.ko_ao=1', line: ['アオ なら 、 ヨシノ さん と {字|じ} を {読|よ}む って 、 {館|やかた} へ {行|い}った わ 。', 'Ao went off to the hall. He said he was going to read with Yoshino.'] },
+  ]);
   L.usual('ko_yoshino', ['ヨシノ さん は 、 {館|やかた} で {子|こ}ども たち に {字|じ} を {教|おし}えて います 。', 'Yoshino teaches the children their letters in the hall.']);
   L.usual('ko_mitsu', ['ミツ さん は {宿|やど} です よ 。 いつも {鍋|なべ} の {前|まえ} 。', 'Mitsu\'s at the lodging house. Always by the pot.']);
   L.usual('ko_koyomi', ['コヨミ さん は 、 {西|にし} の {潮|しお}だまり 。 {暦|こよみ} の {石|いし} の そば です 。', 'Koyomi\'s at the western tide pools, by the calendar stone.']);
