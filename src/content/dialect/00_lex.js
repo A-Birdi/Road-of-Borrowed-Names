@@ -77,6 +77,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     K('いっぺん', '', 'adv', 'I', 'once; one time', '一度'),
     K('気ぃ', 'きぃ', 'n', 'E', 'feeling; attention (気, drawn out)', '気', '気ぃ つけて "take care". A one-kana word is often lengthened in Kansai speech: 気 → 気ぃ, 目 → 目ぇ.'),
     K('おる', '', 'v5r', 'E', 'to be; to be there (people, animals)', 'いる', 'In Kansai おる is everyday "be"; in standard Japanese it is humble.'),
+    // RV0115: Suzu's 値切られても断られへんから (lf.b_suzu2) is "can't refuse"; read through 〜へん alone it came out as the
+    // passive negative 断られない "isn't refused". Only this word: other 〜られへん keep their own analysis
+    K('断られへん', 'ことわられへん', 'v5r', 'I', 'can\'t refuse; can\'t say no', '断れない', 'Here the Kansai potential: 〜られへん also means "can\'t …" in Kansai ({行|い}かれへん "can\'t go"). In standard Japanese, {断|ことわ}れない.'),
     K('やて', '', 'exp', 'I', 'they say; it says (quoting: = だって)', 'だって'),
     K('えらい', '', 'adj-i', 'I', 'terrible; awful; (before a word) very', '大変', 'In Kansai えらい often means "awful" or "very" (えらい こと = a disaster), not only "great".'),
     K('なんぼ', '', 'adv', 'I', 'how much; however much', 'いくら'),
