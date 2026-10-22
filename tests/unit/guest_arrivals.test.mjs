@@ -53,4 +53,11 @@ export default async (t) => {
     t.ok(JSON.stringify(a.map((x) => x.en)) === JSON.stringify(['Ichi first.', 'Ni second.']), 'two guests in order; the one who left, the quiet one and the neutral give nothing (' + JSON.stringify(a) + ')');
     t.ok(E.guestArrivals({ actors: [] }).length === 0 && E.guestArrivals({}).length === 0, 'no actors: nothing');
   }
+
+  // Kihei's victory: he has moved a little way off and waits by the water (no claim that he vanished); his flag as before
+  {
+    const c = C.encounters['ko.wander_kihei'].conclusions;
+    t.ok(c.length === 1 && c[0].id === 'won' && c[0].text.en === 'The jelly drifts off. The sailor\'s footprints are filling with water; he has moved a little way off, and waits at the water\'s edge.' && !c[0].text.jp && JSON.stringify(c[0].flags) === '{"ko_kihei_met":true}',
+      'Kihei\'s victory wording, English only, with ko_kihei_met as before (' + JSON.stringify(c[0]) + ')');
+  }
 };

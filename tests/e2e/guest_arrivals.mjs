@@ -7,7 +7,7 @@
 //  1. Kihei, from the real wanderer on the tide pools (facing it and stepping up to it): the creature's intro is said
 //     first, with the log empty; at the first decision his arrival is in the log once, and is no line of dialogue; his
 //     resolve, aim and the round are as the encounter began them; after the first exchange it is gone and never comes
-//     back; won, he is there on the map;
+//     back; won, the victory says he has moved a little way off and waits by the water, and he is there on the map;
 //  2. Ao (the other guest of the island), started as a story starts one: his arrival once at the first decision;
 //  3. a battle with no guest: nothing new in the log at the first decision;
 //  4. two guests and one with no words of arrival (a definition made here, at run time): the two arrivals in the
@@ -171,7 +171,11 @@ const errorsAll = [], requestsAll = [];
   const logsAll = await p.evaluate(() => window.__logs.slice());
   const again = logsAll.filter((l) => l.t > (arrivedAt ? arrivedAt.t : 0)).some((l, i, a) => l.lines.some((x) => x.includes(KIHEI)) && i > 0 && !a[i - 1].lines.some((x) => x.includes(KIHEI)));
   ok(!again, 'Kihei: the arrival never comes back in a later exchange');
+  const said2 = await p.evaluate(() => window.__said.slice());
+  const won = said2.find((l) => /jelly drifts off/i.test(l.en));
   const map = await p.evaluate(() => ({ met: !!RB.game.s.flags.ko_kihei_met, kihei: RB.world.W.npcs.filter((n) => n.id === 'ko_kihei').map((n) => [n.x, n.y]), wanderer: RB.world.W.foes.some((f) => f.def.id === 'w_kihei') }));
+  ok(won && /moved a little way off/.test(won.en) && /waits at the water's edge/.test(won.en) && !/only footprints/.test(won.en),
+    'Kihei: won, the victory says he has moved a little way off and waits by the water (' + JSON.stringify(won && won.en) + ')');
   ok(map.met && map.kihei.length === 1 && map.kihei[0].join() === '9,19' && !map.wanderer, 'Kihei: back on the map he is there, one of him, at his place; the wanderer gone (' + JSON.stringify(map) + ')');
   errorsAll.push(...errors); requestsAll.push(...requests);
   await p.close();
