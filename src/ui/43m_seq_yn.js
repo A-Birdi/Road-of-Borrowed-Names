@@ -233,10 +233,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   // the bath's steam beyond the wall: soft columns thinning as they climb (the Upper House's own baths)
   function bathSteam(c, x0, x1, y, t, still, s) {
-    for (let i = 0; i < 4; i++) {
-      const bx = lerp(x0, x1, (i + 0.5) / 4), u0 = still ? 0.35 : ((t / 7000 + i * 0.23) % 1);
-      for (let j = 0; j < 5; j++) { const u = (u0 + j / 5) % 1, yy = y - u * s(46), xx = bx + Math.sin(u * 4 + i) * s(6); SP.glow(c, xx, yy, Math.round(s(5) + u * s(8)), '206,212,226', (1 - u) * 0.2); }
+    for (let i = 0; i < 3; i++) {
+      const bx = lerp(x0, x1, (i + 0.5) / 3), u0 = still ? 0.35 : ((t / 9000 + i * 0.31) % 1);
+      for (let j = 0; j < 9; j++) { const u = (u0 + j / 9) % 1, yy = y - u * s(50), xx = bx + Math.sin(u * 3 + i) * s(7); SP.glow(c, xx, yy, Math.round(s(9) + u * s(10)), '206,212,226', (1 - u) * 0.09); }
     }
+  }
+  // a stone lantern (yukimi-dōrō) standing at (x, y) in units of u: its window holds a candle (lit by the shot's glow)
+  function stoneLantern(L, p, x, y, u) {
+    const lM = p.mat('#6e7076', { n: 7, at: 3, step: 0.08 });
+    L.seg(x - u * 0.6, y - u * 2, x - u * 2.2, y, Math.max(1, Math.round(u * 0.7)), lM, 0.38);
+    L.seg(x + u * 0.6, y - u * 2, x + u * 2.2, y, Math.max(1, Math.round(u * 0.7)), lM, 0.52);
+    L.ell(x, y - u * 2.2, u * 2, u * 0.7, lM, 0.48);
+    L.rect(x - u * 1.3, y - u * 4.4, u * 2.6, u * 2.2, lM, 0.5);
+    L.rect(x - u * 0.6, y - u * 4, u * 1.2, u * 1.4, p.mat('#ffcc80', { n: 4, at: 2 }), 0.6);
+    L.ell(x, y - u * 5, u * 4.2, u * 1.2, lM, p.sphere(x + u * 1.2, y - u * 5.6, u * 4.2, u * 1.2, { amb: 0.35 }));
+    L.ell(x, y - u * 6.2, u * 0.7, u * 0.7, lM, 0.62);
   }
   // the pond's water into L where inside(x, y) holds (a layer of its own, copied in by its outline)
   function pondInto(L, w, h, x0, y0, x1, y1, inside, mx, s, seed) {
@@ -253,12 +264,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const S = stage(w, h, vb), narrow = S.lay === 'narrow', { s } = S;
     const wallY = Math.round(vb * (narrow ? 0.3 : 0.26)), footY = wallY + s(18);
     const px = Math.round(w * (narrow ? 0.56 : 0.6)), prx = Math.round(w * (narrow ? 0.4 : 0.3));
-    const py = Math.round(footY + (vb - footY) * 0.46), pry = Math.max(s(14), Math.round((vb - footY) * 0.24));
+    const py = Math.round(footY + (vb - footY) * 0.5), pry = Math.max(s(14), Math.round((vb - footY) * 0.27));
     const veranda = Math.round(vb - s(narrow ? 8 : 10));
     // Suzu's stone at the near bank, to the left; the frogs' stones across the pond from it, smaller as they go
     const rock = { x: Math.round(px - prx * 0.72), y: Math.round(py + pry * 0.86), rx: s(17), ry: s(7) };
     const stones = [0.2, 0.42, 0.63, 0.84].map((u, i) => [Math.round(lerp(px - prx * 0.45, px + prx * 0.6, u)), Math.round(lerp(py + pry * 0.55, py - pry * 0.55, u)), Math.max(3, s(10 - i * 1.6)), Math.max(2, s(4 - i * 0.6))]);
-    const lantern = { x: Math.round(px + prx * 0.9), y: Math.round(py - pry * 0.25) };
+    const lantern = { x: Math.min(w - s(16), Math.round(px + prx * 1.1)), y: Math.round(py - pry * 0.15) };
     return Object.assign(S, { narrow, wallY, footY, px, py, prx, pry, veranda, rock, stones, lantern, mx: Math.round(w * (narrow ? 0.76 : 0.8)), my: Math.round(wallY * 0.42), mr: Math.max(4, s(8)) });
   }
   const inPond = (G, x, y) => { const a = (x - G.px) / G.prx, b = (y - G.py) / G.pry, th = Math.atan2(b, a); return a * a + b * b <= 1 + 0.07 * Math.sin(th * 3 + 0.6) + 0.04 * Math.sin(th * 5); };
@@ -272,14 +283,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
       SP.stars(g, 0, 0, w, wallY, 34, 71, 0);
       moonDisc(g, G.mx, G.my, G.mr);
       const L = SP.layer(w, h);
-      // beyond the wall: another wing of the inn (the underside of its eave) at the left, a pine at the right
+      // beyond the wall: the inn's own upper floor at the left (dark boards, two paper windows dimly lit, its eave), a
+      // garden pine at the right, pruned into pads of needles on a bent trunk
       const tile = p.mat('#2a2c38', { n: 6, at: 3, step: 0.08 }), bark = p.mat('#2a2220', { n: 5, at: 2, step: 0.08 }), pine = p.mat('#1e2c26', { n: 6, at: 3, step: 0.08 });
-      SP.roof(L, Math.round(w * (narrow ? 0.04 : 0.12)), Math.round(w * (narrow ? 0.46 : 0.42)), wallY - s(14), s(10), tile, { course: Math.max(2, s(3)) });
-      const tx = Math.round(w * (narrow ? 0.66 : 0.7));
-      L.seg(tx, wallY + s(2), tx - s(6), wallY - s(28), Math.max(2, s(4)), bark, 0.5);
-      L.seg(tx - s(5), wallY - s(26), tx + s(14), wallY - s(40), Math.max(2, s(3)), bark, 0.55);
-      SP.crown(L, tx - s(10), wallY - s(32), s(26), s(9), pine, { seed: 83, n: 7 });
-      SP.crown(L, tx + s(16), wallY - s(44), s(20), s(7), pine, { seed: 89, n: 6 });
+      const wing0 = Math.round(w * (narrow ? 0.02 : 0.1)), wing1 = Math.round(w * (narrow ? 0.46 : 0.4)), wingTop = wallY - s(28);
+      const woodD = p.mat('#2e2420', { n: 6, at: 3, step: 0.08 }), paperD = p.mat('#c89a5a', { n: 5, at: 3, step: 0.08 });
+      L.rect(wing0, wingTop, wing1 - wing0, wallY - wingTop, woodD, (x) => clamp(0.32 + ((Math.round(x) % s(12)) === 0 ? -0.12 : 0), 0.02, 0.999));
+      for (const k of [0.2, 0.62]) { const wx = Math.round(lerp(wing0, wing1, k)), ww = s(16), wy = wingTop + s(7); L.rect(wx, wy, ww, s(12), paperD, (xx, yy) => clamp(0.42 + ((Math.round(xx - wx) % Math.max(2, s(4))) === 0 || (Math.round(yy - wy) % Math.max(2, s(4))) === 0 ? -0.2 : 0), 0.02, 0.999)); }
+      SP.roof(L, wing0 - s(6), wing1 + s(6), wingTop - s(8), s(9), tile, { course: Math.max(2, s(3)) });
+      const tx = Math.round(w * (narrow ? 0.66 : 0.7)), tb = wallY + s(2);
+      L.seg(tx, tb, tx - s(8), tb - s(20), Math.max(2, s(4)), bark, 0.5);
+      L.seg(tx - s(8), tb - s(20), tx + s(4), tb - s(38), Math.max(2, s(3)), bark, 0.55);
+      L.seg(tx - s(6), tb - s(24), tx - s(26), tb - s(30), Math.max(1, s(2)), bark, 0.5);
+      L.seg(tx + s(2), tb - s(34), tx + s(24), tb - s(40), Math.max(1, s(2)), bark, 0.55);
+      for (const [cx, cy, rw, rh, sd] of [[tx - s(28), tb - s(33), s(16), s(5), 83], [tx + s(26), tb - s(43), s(18), s(5), 89], [tx + s(2), tb - s(48), s(14), s(5), 91]]) SP.crown(L, cx, cy, rw, rh, pine, { seed: sd, n: 6 });
       // the garden wall: plaster under a small tiled cap, a footing of stones
       const plaster = p.mat('#6a6878', { n: 6, at: 3, step: 0.07 }), stoneM = p.mat('#4a4c56', { n: 7, at: 3, step: 0.08 });
       L.rect(0, wallY, w, footY - wallY, plaster, (x, y) => clamp(0.45 + (x / w) * 0.12 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
@@ -288,15 +305,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the ground: moss and swept earth, darker toward us; quiet
       const moss = p.mat('#2c3a32', { n: 6, at: 3, step: 0.08 });
       L.fill(0, footY, w, h, () => true, moss, (x, y) => clamp(0.44 - (y - footY) / Math.max(1, h - footY) * 0.14 + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999));
+      const shrub = p.mat('#24342a', { n: 6, at: 3, step: 0.08 });
+      for (const [k, rw] of [[0.04, 22], [0.17, 15], [0.5, 12], [0.86, 20], [0.97, 14]]) { const sx = Math.round(w * k), sy = footY + s(3), r = s(rw); L.ell(sx, sy, r, s(9), shrub, p.sphere(sx + r * 0.4, sy - s(5), r, s(9), { amb: 0.3 })); }
       // the pond, the moon's long reflection on it
       pondInto(L, w, h, px - prx * 1.1, py - pry * 1.15, px + prx * 1.1, py + pry * 1.15, (x, y) => inPond(G, x, y), G.mx, s, 37);
       // its bank: stones set round the edge, more of them on the near side, none where Suzu's stone sits
       const bankM = p.mat('#585a62', { n: 7, at: 3, step: 0.08 });
-      for (let i = 0; i < 22; i++) {
-        const th = (i / 22) * Math.PI * 2 + 0.13, near = Math.sin(th) > 0;
-        const bx = px + Math.cos(th) * prx * 1.02, by = py + Math.sin(th) * pry * 1.06;
-        if (Math.hypot(bx - rock.x, (by - rock.y) * 2) < rock.rx * 1.4) continue;
-        const r = Math.max(2, s(near ? 4.5 : 3) + (i % 3)), ry = Math.max(1, Math.round(r * 0.55));
+      const rb = p.rnd(29);
+      for (let th = 0.2; th < Math.PI * 2 + 0.2;) {
+        const near = Math.sin(th) > 0, big = rb() < 0.25;
+        const bx = px + Math.cos(th) * prx * (1 + rb() * 0.05), by = py + Math.sin(th) * pry * (1.04 + rb() * 0.06);
+        th += (near ? 0.17 : 0.24) + rb() * 0.24;
+        if (Math.hypot(bx - rock.x, (by - rock.y) * 2) < rock.rx * 1.4 || rb() < 0.18) continue;
+        const r = Math.max(2, s((near ? 3.5 : 2.5) + (big ? 2.5 : rb() * 1.5))), ry = Math.max(1, Math.round(r * 0.55));
         L.ell(bx, by, r, ry, bankM, p.sphere(bx + r * 0.4, by - ry * 0.5, r, ry, { amb: 0.3 }));
       }
       // the frogs' stones across the water, each with its dark wet rim
@@ -304,14 +325,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
         L.ell(sx, sy + 1, rx, ry, p.mat('#1a2230', { n: 4, at: 2 }), 0.3);
         L.ell(sx, sy, rx, ry, bankM, p.sphere(sx + rx * 0.35, sy - ry * 0.6, rx, ry, { amb: 0.35 }));
       }
-      // a stone lantern (yukimi-dōrō) on the far bank: wide cap on short legs, its light box dark tonight
-      const lM = p.mat('#6a6c72', { n: 7, at: 3, step: 0.08 }), lx = lantern.x, ly = lantern.y, u = Math.max(2, s(3));
-      L.rect(lx - u * 2, ly - u, u, u * 2, lM, 0.4); L.rect(lx + u, ly - u, u, u * 2, lM, 0.55);
-      L.rect(lx - u * 2, ly - u * 4, u * 4, u * 3, lM, 0.5); L.rect(lx - u, ly - u * 3, u * 2, u, p.mat('#1a1c24', { n: 3, at: 1 }), 0.5);
-      L.ell(lx, ly - u * 4.5, u * 4, u * 1.4, lM, p.sphere(lx + u, ly - u * 5, u * 4, u * 1.4, { amb: 0.35 }));
-      L.ell(lx, ly - u * 6, u * 0.8, u * 0.8, lM, 0.6);
-      // Suzu's stone at the near bank: broad and flat-topped
+      // a stone lantern (yukimi-dōrō) on the far bank: splayed legs, a platform, the fire box with a candle in its
+      // window, the wide umbrella cap and its finial
+      stoneLantern(L, p, lantern.x, lantern.y, Math.max(2, s(3)));
+      // Suzu's stone at the near bank: broad and flat-topped; a path of flat stones to it from the veranda's step
       L.ell(rock.x, rock.y, rock.rx, rock.ry, stoneM, p.sphere(rock.x + rock.rx * 0.4, rock.y - rock.ry * 0.6, rock.rx, rock.ry, { amb: 0.32 }));
+      for (let i = 0; i < 4; i++) { const u = (i + 1) / 5, sx = Math.round(lerp(s(36), rock.x - rock.rx * 0.5, u)), sy = Math.round(lerp(veranda - s(3), rock.y + rock.ry * 1.8, u)), rx = Math.max(3, Math.round(s(9) * (1.2 - u * 0.5))), ry = Math.max(2, Math.round(rx * 0.42)); L.ell(sx, sy, rx, ry, bankM, p.sphere(sx + rx * 0.3, sy - ry * 0.5, rx, ry, { amb: 0.35 })); }
       // the veranda you step out onto: its eave across the top left, a post, the boards' edge at the bottom
       const wood = p.mat('#3a2c26', { n: 7, at: 3, step: 0.08 });
       SP.roof(L, -s(10), Math.round(w * (narrow ? 0.46 : 0.36)), -s(2), s(12), tile, { course: Math.max(2, s(3)) });
@@ -333,6 +352,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the moon's light coming up on the water as the picture settles
       SP.glints(c, G.mx - s(10), py - pry * 0.7, s(20), pry * 1.4, t, Math.round(4 + 8 * ease(st.at('moon'))), 53, '214,226,255', still);
       bathSteam(c, w * 0.8, w * 0.98, G.wallY, t, still, s);
+      const lu = Math.max(2, s(3));
+      SP.glow(c, G.lantern.x, G.lantern.y - lu * 3.3, s(16), '255,186,110', 0.14);
       // a frog on the far stone: now and then the rings it leaves on the water
       if (!still) { const f = stones[3], u = ((t + 900) % 3800) / 3800; if (u < 0.55) SP.rings(c, f[0] + f[2], f[1] + s(2), s(9), u / 0.55, '186,204,240', 2); }
       // Suzu on her stone, hugging her knees, turned to the pond
@@ -368,7 +389,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       pondInto(L, w, h, -2, bank, w + 2, h + 2, () => true, mx, s, 41);
       // the far bank's stones and a frog's stone out on the water
       const bankM = p.mat('#585a62', { n: 7, at: 3, step: 0.08 });
-      for (let i = 0; i < 9; i++) { const bx = (i + 0.3) * w / 9, r = Math.max(2, s(4) + (i % 3)); L.ell(bx, bank, r, Math.max(1, Math.round(r * 0.5)), bankM, p.sphere(bx + r * 0.4, bank - r * 0.3, r, r * 0.5, { amb: 0.3 })); }
+      const rb = p.rnd(31);
+      for (let bx = rb() * s(20); bx < w;) { const r = Math.max(2, s(2.5 + rb() * 3)); if (rb() > 0.2) L.ell(bx, bank + rb() * s(2), r, Math.max(1, Math.round(r * 0.5)), bankM, p.sphere(bx + r * 0.4, bank - r * 0.3, r, r * 0.5, { amb: 0.3 })); bx += s(10) + rb() * s(30); }
+      // the stone lantern from the first picture, small on the far bank, its candle lit
+      stoneLantern(L, p, Math.round(w * 0.84), bank + s(1), Math.max(1, s(2)));
       const fx = Math.round(w * 0.24), fy = Math.round(lerp(bank, G.seat, 0.45)), fr = Math.max(4, s(10));
       L.ell(fx, fy, fr, Math.max(2, Math.round(fr * 0.4)), bankM, p.sphere(fx + fr * 0.35, fy - fr * 0.2, fr, fr * 0.4, { amb: 0.35 }));
       L.outline();
@@ -379,10 +403,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the stone the two of you sit on, in front of you: its top at the seat, rounded, lit from the right
   function seatStone(c, G) {
     const B = Q.small('yn.gseat|' + G.w + 'x' + G.h + '|' + G.vb, () => {
-      const { w, h, s, seat, lx, rx, W } = G, p = P(), x0 = Math.round(lx - W * 1.05), x1 = Math.round(rx + W * 1.05);
-      const cv = mk(w, h), L = SP.layer(w, h), M = p.mat('#4e505a', { n: 7, at: 3, step: 0.08 });
-      const top = (x) => seat + Math.round(Math.pow(Math.abs((x - (x0 + x1) / 2) / ((x1 - x0) / 2)), 3) * s(14) + Math.sin(x / s(9)) * 1.2);
-      L.fill(x0, seat - s(2), x1, h, (x, y) => y >= top(x), M, (x, y) => clamp(0.5 + (x - (x0 + x1) / 2) / (x1 - x0) * 0.3 - (y - seat) / Math.max(1, h - seat) * 0.25 + (p.bayer(x, y) - 0.5) * 0.08 + (y - top(x) < 2 ? 0.12 : 0), 0.02, 0.999));
+      const { w, h, s, seat, lx, rx, W } = G, p = P(), x0 = Math.round(lx - W * 0.8), x1 = Math.round(rx + W * 0.8);
+      const cv = mk(w, h), L = SP.layer(w, h), M = p.mat('#4e505a', { n: 7, at: 3, step: 0.08 }), mossM = p.mat('#2e3e30', { n: 5, at: 2, step: 0.08 });
+      // a rounded boulder, domed across its top and falling away at both ends, its near face in shade
+      const top = (x) => { const u = (x - (x0 + x1) / 2) / ((x1 - x0) / 2); return seat + Math.round(u * u * s(22) + Math.sin(x / s(9)) * 1.2); };
+      const edge = (y) => s(10) * Math.min(1, (y - seat) / Math.max(1, s(30)));
+      L.fill(x0, seat - s(2), x1, h, (x, y) => y >= top(x) && x > x0 + s(14) - edge(y) && x < x1 - s(14) + edge(y), M, (x, y) => clamp(0.52 + (x - (x0 + x1) / 2) / (x1 - x0) * 0.32 - (y - seat) / Math.max(1, h - seat) * 0.34 + (p.bayer(x, y) - 0.5) * 0.08 + (y - top(x) < 2 ? 0.12 : 0), 0.02, 0.999));
+      // moss in the hollows of its top, darker under the curve
+      const rm = p.rnd(43);
+      for (let i = 0; i < 9; i++) { const mx = lerp(x0 + s(20), x1 - s(20), rm()), my = top(mx) + s(2) + rm() * s(4); L.ell(mx, my, s(3 + rm() * 4), s(1.5), mossM, 0.4); }
       L.outline();
       cv.getContext('2d').drawImage(L.canvas(), 0, 0);
       return { cv };
@@ -397,14 +426,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const B = stoneStatic(G);
       c.drawImage(B.cv, 0, 0);
       SP.glints(c, mx - s(8), bank + s(4), s(16), seat - bank, t, Math.round(8 + 8 * ease(st.at('settle'))), 59, '214,226,255', still);
+      SP.glow(c, Math.round(w * 0.84), bank - Math.max(1, s(2)) * 3, s(10), '255,186,110', 0.14);
       if (!still) { const u = ((t + 400) % 4200) / 4200; if (u < 0.5) SP.rings(c, B.fx + B.fr, B.fy + s(2), s(10), u / 0.5, '186,204,240', 2); }
       // you at the left and Suzu at your right, from behind, seated: each one's hips (0.4 of the shoulders' width below
-      // the drawing's anchor, src/ui/43_sequence_back.js) on the stone's top; what is below them is the stone's
+      // the drawing's anchor, src/ui/43_sequence_back.js) a little below the stone's top line, settled into its dome;
+      // what is below them is the stone's
       const Ws = Math.round(W * 0.94);
       const pb = Q.back(st.cast.pc || {}, W, { light: 'r', ext: 0.5 });
-      if (pb) c.drawImage(pb.cv, lx - pb.ax, seat - Math.round(W * 0.4) - pb.ay);
+      if (pb) c.drawImage(pb.cv, lx - pb.ax, seat - Math.round(W * 0.3) - pb.ay);
       const cb = Q.back(suzuLook(st), Ws, { light: 'r', ext: 0.5 });
-      if (cb) c.drawImage(cb.cv, rx - cb.ax, seat - Math.round(Ws * 0.4) - cb.ay);
+      if (cb) c.drawImage(cb.cv, rx - cb.ax, seat - Math.round(Ws * 0.3) - cb.ay);
       seatStone(c, G);
     },
     focus(w, h, vb) { const G = geomStone(w, h, vb), y = Math.max(0, G.seat - Math.round(G.W * 1.35)); return { x: G.lx - Math.round(G.W * 0.6), y, w: G.rx - G.lx + Math.round(G.W * 1.2), h: Math.max(8, Math.min(vb - 2, G.seat) - y) }; },
