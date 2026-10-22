@@ -112,7 +112,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     name: T('The Kettle Below', '{釜|かま}の{主|ぬし}'), art: 'golem', artOpts: { col: '#3e3c42' }, look: { custom: 'golem', col: '#3e3c42' }, knots: 6, pool: POOL, boss: true, music: 'yn_kettle',
     pattern: ['charge', 'chill', 'rest'],
     intro: T('A great black shape like an iron kettle the size of a house, sunk in the boiling pool and shaking. It rattles its lid at you, the way a frightened animal shows its teeth.', '{家|いえ} ほど も ある {鉄|てつ} の {釜|かま} の よう な {黒|くろ}い {影|かげ} が 、 {煮|に}え{立|た}つ {湯|ゆ} に {沈|しず}んで {震|ふる}えて いる 。 {怯|おび}えた {獣|けもの} が {牙|きば} を {見|み}せる よう に 、 {蓋|ふた} を {鳴|な}らす 。'),
-    settle: T('The Kettle sinks to the bottom of its pool and breathes out warm steam, just right.', '{釜|かま}の{主|ぬし} は {湯|ゆ} の {底|そこ} に {沈|しず}み 、 ちょうど いい {温|あたた}かい {湯気|ゆげ} を {吐|は}いた 。') }));
+    // (its outro says only what the win's own ending and the story's narration don't: RBN-QA-122)
+    settle: T('The Kettle\'s lid stops rattling.', '{釜|かま}の{主|ぬし} の {蓋|ふた} が 、 {鳴|な}り{止|や}んだ 。') }));
 
   Object.assign(C.reviewEnemies = C.reviewEnemies || {}, { 'yn.steamwisp': 'yn', 'yn.pebbles': 'yn', 'yn.toad': 'yn', 'yn.lostguest': 'yn', 'yn.towelthief': 'yn', 'yn.chochin': 'yn', 'yn.kettle': 'yn' });
   if (RB.creaturesA && RB.creaturesA.auditEnemy) {
@@ -186,8 +187,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       drift: [{ when: { all: [{ rounds: 2 }, { stance: { 'n:kettle': 'heated' } }] }, once: true, effect: {}, says: { en: 'Far above, through the rock, shouting. The Kettle flinches and the pool boils over the edge.' } }],
     },
     conclusions: [
-      { id: 'settled', when: { all: [{ flag: 'promised' }, { understanding: 3 }] }, result: 'win', text: { en: 'The Kettle Below settles to the bottom of its pool, breathing warm steam, just right.' }, flags: { yn_kettle_promised: true } },
-      { id: 'heard', when: { understanding: 4 }, result: 'win', text: { en: 'The Kettle has been heard, and that is most of what it needed. It sinks, and the water stills.' } },
+      { id: 'settled', when: { all: [{ flag: 'promised' }, { understanding: 3 }] }, result: 'win', text: { en: 'The Kettle has your promise: tomorrow the town will talk, without shouting.' }, flags: { yn_kettle_promised: true } },
+      { id: 'heard', when: { understanding: 4 }, result: 'win', text: { en: 'The Kettle has been heard, and that is most of what it needed.' } },
       { id: 'dozes', when: { rounds: 9 }, result: 'win', text: { en: 'Worn out with shaking, the Kettle sinks and dozes, uneasy but quiet. It will listen for the town tomorrow.' } },
     ],
   };
