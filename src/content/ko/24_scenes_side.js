@@ -41,7 +41,7 @@ ko_ao: 「きつて」 。 …… {切手|きって} の こと かな 。 で�
 !var ko_ao_l + 1
 !if var.ko_ao_l>=3 -> done
 ?(var.ko_ao_l=1) ko_ao[happy]: 「ねこ」 ！ ね の {最後|さいご} は 、 くるっと {丸|まる} 。 れ に は {丸|まる} が ない 。 …… {覚|おぼ}えた 。 || ねこ, cat! ね ends in a little loop; れ doesn't. …Got it.
-?(var.ko_ao_l=2) ko_ao[happy]: {言葉|ことば} の {後|あと} の 「は」 は 、 「わ」 。 …… ずるい けど 、 {覚|おぼ}えた 。 || After a word, は is said わ. …That's cheating, but I've got it.
+?(var.ko_ao_l=2) ko_ao[happy]: {助詞|じょし} の 「は」 は 、 「わ」 って {読|よ}む んだ 。 …… ずるい けど 、 {覚|おぼ}えた 。 || The particle は is read わ. …That's cheating, but I've got it.
 ko_ao: {次|つぎ} の {葉|は} も 、 {取|と}って おく 。 || I'll keep the next leaf for you.
 !end
 :done
