@@ -65,9 +65,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
+  // the Lower House's earthen entrance (土間, RBN-QA-114): packed earth inside the door, the raised floor's edge
+  // (上がり框) along its top. It lies at floor level; with the art below it is baked into the ground, under everyone.
+  def('yn_doma', { w: 3, h: 2, block: false }, (c, x, y, p) => {
+    px(c, x, y, 48, 32, '#7c7166'); px(c, x + 16, y + 32, 16, 16, '#7c7166');
+    px(c, x, y, 48, 3, p.floor[1]); px(c, x, y + 3, 48, 2, 'rgba(30,20,12,0.3)'); px(c, x, y + 3, 2, 29, 'rgba(30,20,12,0.22)');
+  });
+
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
-  const { R, ell, line } = K;
+  const { R, ell, line, mix } = K;
   const poly = (g, pts, c) => K.poly(g, Array.isArray(pts[0]) ? pts.flat() : pts, c);
   const I = K.FIX.iron, BR = K.FIX.brass, PP = K.FIX.paper, ST = K.FIX.straw;
   const puff = (g, cx, cy, r, a) => { ell(g, cx, cy, r, r * 0.8, 'rgba(246,246,242,' + a + ')'); ell(g, cx - r * 0.3, cy - r * 0.3, r * 0.55, r * 0.45, 'rgba(255,255,252,' + Math.min(1, a + 0.1) + ')'); };
@@ -231,5 +238,37 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(g, 15, -6, 3, 28, BR[1]); ell(g, 16, 20, 7, 5, BR[2]); ell(g, 14, 18, 4, 2, BR[3]);
       ell(g, 16, 27, 12, 3, D[2]);
     },
+  });
+  // The Lower House's earthen entrance (土間, RBN-QA-114): packed earth (三和土) from the door to the raised floor, greyer
+  // and harder than the street outside, worn a little lighter where feet go from the door to the step; along its top
+  // the raised floor's edge (上がり框), a timber face with a lit arris, its shadow on the earth, and the floor's edge
+  // down each side. All of it lies at floor level, so it is baked into the ground under everyone (spec.bake); the
+  // shared wood and earth tiles are untouched. The footprint is the strip (5..7, 7..8) and the doorway below it.
+  art('yn_doma', {
+    box: [0, 0, 96, 64],
+    bake: {
+      box: [-2, -2, 100, 100],
+      when: () => true,
+      draw(g, M, v, info, pal) {
+        const E = ['#62594f', '#7c7166', '#877b6e', '#988c7e'], F = pal.floor;
+        // the earth: the strip and the doorway below its middle, a quiet mass
+        R(g, 0, 0, 96, 64, E[1]); R(g, 32, 64, 32, 32, E[1]);
+        // the trodden line, door to step
+        ell(g, 48, 58, 13, 34, E[2]); ell(g, 48, 60, 8, 28, 'rgba(160,148,132,0.35)');
+        // sparse grit, larger in the corners where nobody walks
+        for (let i = 0; i < 26; i++) {
+          const r = K.hh(5, 7, 600 + i), gx = r % 96, gy = (r >>> 8) % 64;
+          const edge = gx < 20 || gx > 76;
+          R(g, gx, gy, edge && (r >>> 16) % 3 === 0 ? 2 : 1, 1, (r >>> 18) % 2 ? E[0] : E[3]);
+        }
+        // the raised floor's edge: down each side, then the timber face along the top
+        R(g, 0, 0, 3, 64, 'rgba(30,20,12,0.24)'); R(g, -2, 0, 2, 64, F[2]);
+        R(g, 95, 0, 1, 64, 'rgba(30,20,12,0.16)'); R(g, 96, 0, 2, 64, F[2]);
+        R(g, -2, 7, 100, 4, 'rgba(30,20,12,0.30)'); R(g, -2, 11, 100, 2, 'rgba(30,20,12,0.12)');
+        R(g, -2, -2, 100, 9, F[1]); R(g, -2, -2, 100, 1, mix(F[0], '#fff4dc', 0.35)); R(g, -2, 6, 100, 1, F[2]);
+        for (const [gx, gl] of [[8, 18], [40, 12], [70, 20]]) R(g, gx, 2, gl, 1, mix(F[1], F[2], 0.6));
+      },
+    },
+    draw() {},
   });
 })();

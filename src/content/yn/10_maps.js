@@ -243,8 +243,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the Lower House's lobby (下の湯): loud, warm; the house rules on one short board; the way out back to the open-air
   // bath; Zenroku's corner
   interior('yn.shimo', T('The Lower House', '{下|しも}の{湯|ゆ}'), 15, 10, 6, 'yn.lower', [9, 11], {
-    terrain: K.build(15, 10, '#', (k) => { k.rect(1, 2, 13, 7, '_'); k.rect(9, 3, 4, 3, 'm'); k.set(6, 9, '_'); k.set(13, 2, '_'); }),
+    // (the earthen entrance, 土間, inside the door: packed earth, with the raised floor's edge along it; RBN-QA-114)
+    terrain: K.build(15, 10, '#', (k) => { k.rect(1, 2, 13, 7, '_'); k.rect(9, 3, 4, 3, 'm'); k.rect(5, 7, 3, 2, ':'); k.set(6, 9, ':'); k.set(13, 2, '_'); }),
     props: [
+      { p: 'yn_doma', x: 5, y: 7 },
       { p: 'exitmat', x: 6, y: 8 }, { p: 'counter', x: 2, y: 3, w: 3, across: true, scene: 'yn.shimo_desk' },
       { p: 'noticeboard', x: 6, y: 2, scene: 'yn.shimo_rules' },
       { p: 'yn_noren', x: 13, y: 2, o: { side: 'men' }, scene: 'yn.bath_shimo' },
