@@ -173,7 +173,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 15, y: 7, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1, 4], lit: true },
       { type: 'house', x: 24, y: 7, w: 5, h: 4, roof: 'thatch', wall: 'wood', door: null, windows: [1, 3] },
     ],
-    props: [{ p: 'bench', x: 15, y: 15 }, { p: 'well', x: 27, y: 15 }],
+    // (the inn's new noren once Sono has named it for her grandfather: RBN-QA-111)
+    props: [{ p: 'bench', x: 15, y: 15 }, { p: 'well', x: 27, y: 15 }, { p: 'cr_noren', x: 7, y: 10, if: 'cr_family_inn' }],
     npcs: [
       // (from the letter's delivery until the coins are decided he is at Sono's inn: src/content/cr/25_side.js)
       { id: 'cr_heisuke', x: 18, y: 11, dir: 'down', if: '!cr_delivered|quest.cr_family=done', talk: [{ if: 'cr_done', scene: 'cr.heisuke_after' }, { scene: 'cr.heisuke' }] },
