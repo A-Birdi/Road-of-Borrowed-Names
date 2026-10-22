@@ -343,14 +343,22 @@ RB.game = (function () {
 
   // ---- transitions ------------------------------------------------------------------------
   let transitioning = false;
+  // A transition belongs to the campaign it began in (RBN-QA-102, Agnes 6340882225): once the campaign begins to change
+  // (a load, even one cancelled; a new journey; the title) it goes no further after its fade: it enters no map, names
+  // none, sets no checkpoint, saves nothing and starts no arrival; and it leaves the new campaign's modes alone.
+  let transTok = 0;
+  if (RB.bus) RB.bus.on('campaign:changing', () => { transTok++; transitioning = false; });
   async function transition(mapId, x, y, dir, opts) {
     if (transitioning) return;
     transitioning = true;
+    const tok = ++transTok, s0 = G.s;
+    const mine = () => tok === transTok && G.s === s0;
     opts = opts || {};
     pushMode('transition');
     try {
       RB.audio && RB.audio.sfx('door', { vol: 0.5 });
       await RB.ui.fade(true, reducedMotion() ? 80 : 220);
+      if (!mine()) return;
       const def = RB.content.maps[mapId];
       if (!def) throw new Error('unknown map ' + mapId);
       // test runs: walking out of a map while its story-state night is on, into
@@ -366,14 +374,18 @@ RB.game = (function () {
       if (RB.town) RB.town.visited(G.s, mapId);
       RB.render.prewarm(); // build the new map's art while the screen is still dark
       await RB.ui.fade(false, reducedMotion() ? 80 : 220);
+      if (!mine()) return;
       if (def.name && !opts.inScript && !G.s.flags['named:' + mapId]) {
         G.s.flags['named:' + mapId] = true;
         RB.ui.placeName(def.name);
       }
     } finally {
-      popMode('transition');
-      transitioning = false;
+      // its own mode goes while its journey is still the one here (unchanged, or kept when a load was cancelled); a
+      // journey loaded or begun meanwhile set its modes afresh, and its own next transition is never cleared from here
+      if (G.s === s0) popMode('transition');
+      if (tok === transTok) transitioning = false;
     }
+    if (!mine()) return;
     if (!opts.inScript) {
       G.s.checkpoint = G.s.checkpoint && RB.content.maps[mapId].noCheckpoint ? G.s.checkpoint : { map: mapId, x: G.s.x, y: G.s.y, dir: G.s.dir };
       RB.save.autosave('auto');
