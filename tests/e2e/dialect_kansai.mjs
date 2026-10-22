@@ -23,8 +23,23 @@ const b = await launch();
 let fail = 0;
 const assert = (c, m) => { if (!c) { fail++; console.log('FAIL ' + m); } else console.log('ok   ' + m); };
 const wait = (p, ms) => p.waitForTimeout(ms);
+// the book's opening (bk-open, 320 ms, src/styles/90_book.css) scales the page by up to 0.965 while it runs, so a size
+// measured inside it is the animation's, not the page's: wait until no bk-open animation is running and the book has no
+// transform of its own, at most 2 s; if that bound runs out the page is measured anyway (a check that then fails, fails)
+async function bookOpen(p) {
+  const t0 = Date.now();
+  const done = await p.waitForFunction(() => {
+    const running = document.getAnimations().some((a) => a.animationName === 'bk-open' && a.playState === 'running');
+    const bk = document.querySelector('.folio.book');
+    return !running && (!bk || getComputedStyle(bk).transform === 'none');
+  }, null, { timeout: 2000, polling: 16 }).then(() => true, () => false);
+  return { settled: done, ms: Date.now() - t0 };
+}
 
+// RB_ANIM_RATE=<r>: a control for reviewing the wait above, never the game: the page's animations run at r times their
+// speed (0.25: the 320 ms opening takes 1.28 s, so a page measured 200 ms after it appears is measured mid-way)
 async function helpers(p) {
+  if (process.env.RB_ANIM_RATE) { const cdp = await p.context().newCDPSession(p); await cdp.send('Animation.enable'); await cdp.send('Animation.setPlaybackRate', { playbackRate: +process.env.RB_ANIM_RATE }); }
   await p.evaluate(() => {
     // visible text of an element without its furigana (rt), whitespace removed
     window.__txt = (el) => {
@@ -209,6 +224,7 @@ const sceneLines = (p, id, who) => p.evaluate(([id, who]) => RB.content.scenes[i
   await p.evaluate(() => RB.ui.menu.open('company'));
   await p.waitForSelector('.co-page');
   await wait(p, 200);
+  const openB = await bookOpen(p);
   const th = await p.evaluate(() => { const t = RB.company.thought(RB.game.s); return t && t.text; });
   const thK = await p.evaluate((t) => window.__kansai(t.jp, t.en), th);
   const ctl = await p.evaluate(() => {
@@ -221,7 +237,7 @@ const sceneLines = (p, id, who) => p.evaluate(([id, who]) => RB.content.scenes[i
   });
   assert(ctl && ctl.inTalk && ctl.row, 'Company › Suzu: the control sits in "Talk with Suzu", with the in-world row');
   assert(ctl && /How Suzu speaks/.test(ctl.label) && ctl.group === 'co-speech-h', 'labelled: ' + (ctl && ctl.label));
-  assert(ctl && ctl.btns.length === 2 && ctl.btns.every((x) => x.role === 'radio' && x.h >= 44 && x.w >= 44), 'two radio buttons, each at least 44 px (' + (ctl && ctl.btns.map((x) => x.v + ' ' + x.w + '×' + x.h).join(', ')) + ')');
+  assert(ctl && ctl.btns.length === 2 && ctl.btns.every((x) => x.role === 'radio' && x.h >= 44 && x.w >= 44), 'two radio buttons, each at least 44 px (' + (ctl && ctl.btns.map((x) => x.v + ' ' + x.w + '×' + x.h).join(', ')) + '; measured once the book had opened: ' + JSON.stringify(openB) + ')');
   assert(ctl && ctl.btns[0].checked === 'true' && ctl.btns[1].checked === 'false', 'the current choice is shown (Standard)');
   assert(ctl && /regional dialect/.test(ctl.text) && /switch back any time/.test(ctl.text), 'one plain sentence for learners');
   assert(ctl && !ctl.bare.length, 'its Japanese labels carry furigana');
@@ -350,11 +366,12 @@ const sceneLines = (p, id, who) => p.evaluate(([id, who]) => RB.content.scenes[i
   await p.waitForSelector('.co-speech');
   await p.evaluate(() => document.querySelector('.co-speech').scrollIntoView());
   await wait(p, 250);
+  const openC = await bookOpen(p);
   const ph = await p.evaluate(() => ({
     btns: [...document.querySelectorAll('[data-suzu-speech-set]')].map((x) => { const r = x.getBoundingClientRect(); return { h: Math.round(r.height), l: Math.round(r.left), r: Math.round(r.right) }; }),
     over: document.documentElement.scrollWidth > innerWidth + 1,
   }));
-  assert(ph.btns.length === 2 && ph.btns.every((x) => x.h >= 44 && x.l >= 0 && x.r <= 390), 'phone: the Company control fits the width, each button at least 44 px (' + JSON.stringify(ph.btns) + ')');
+  assert(ph.btns.length === 2 && ph.btns.every((x) => x.h >= 44 && x.l >= 0 && x.r <= 390), 'phone: the Company control fits the width, each button at least 44 px (' + JSON.stringify(ph.btns) + '; measured once the book had opened: ' + JSON.stringify(openC) + ')');
   assert(!ph.over, 'phone: no horizontal scrolling');
   await p.locator('[data-suzu-speech-set="kansai"]').tap();
   await wait(p, 250);
