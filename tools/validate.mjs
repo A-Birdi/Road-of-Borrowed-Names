@@ -57,7 +57,7 @@ const ref = (id, where) => { if (id && !sceneRefs.has(id)) sceneRefs.set(id, whe
 const speakers = new Set(['narr', 'pc', 'comp', 'npc']);
 const OPS = new Set(['say', 'set', 'unset', 'var', 'give', 'take', 'word', 'technique', 'note', 'quest', 'if', 'goto', 'choice', 'call', 'end', 'challenge', 'activity', 'battle', 'encounter', 'lesson', 'teach', 'warp', 'music', 'sfx', 'emote', 'move', 'face', 'faceplayer', 'wait', 'fade', 'interlude', 'shake', 'autosave', 'checkpoint', 'chapter', 'card', 'journal', 'toast', 'travel', 'refresh', 'recruit', 'depart', 'heal', 'inn', 'shop', 'menu', 'postgame', 'credits', 'speakerless', 'hook',
   // scene direction (src/engine/52_staging.js; docs/expressive/CONTRACT.md §3.4): presentation only
-  'gesture', 'look', 'pose', 'walkto', 'prop', 'beat', 'ambience',
+  'gesture', 'look', 'pose', 'walkto', 'enter', 'prop', 'beat', 'ambience',
   // illustrated sequences (src/ui/43_sequence.js; docs/expressive/SHOTS.md §0): presentation only
   'sequence', 'shot']);
 // staging ops: the actor a cue names must be someone a scene can stage
@@ -96,6 +96,8 @@ for (const id in C.scenes) {
     if (c.op === 'hook' && !(RB.hooks && RB.hooks[a[0]])) E(where(c) + ' unknown hook ' + a[0]);
     // scene direction: known actors, gestures, poses, props, targets; a walk to whole tiles
     if (['gesture', 'look', 'pose', 'walkto', 'prop'].includes(c.op) && !STAGE_ACTOR(a[0])) E(where(c) + ' !' + c.op + ': unknown actor ' + a[0]);
+    // !enter brings in a person by name (a character, never pc, comp or npc), to whole tile coordinates and a facing
+    if (c.op === 'enter' && (!C.chars[a[0]] || !/^\d+$/.test(a[1] || '') || !/^\d+$/.test(a[2] || '') || (a[3] && !/^(up|down|left|right)$/.test(a[3])) || a.length > 4)) E(where(c) + ' !enter: needs a character, whole tile coordinates and an optional facing');
     if (c.op === 'gesture') {
       const g = RB.gestures && RB.gestures.get(a[1]);
       if (!g && a[1] !== '-') E(where(c) + ' !gesture: unknown gesture ' + a[1]);

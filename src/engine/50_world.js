@@ -575,12 +575,13 @@ RB.world = (function () {
   // A scene gives a line to someone who is not here: they walk in from the
   // nearest door or way in and stand near you while it lasts. Characters who
   // are only ever a voice (chars[id].bodiless) and lines a scene marks as
-  // off-screen (!speakerless) are left alone.
-  function ensureSpeaker(who, sceneId) {
-    if (!who || who === 'narr' || who === 'pc' || !W.map || !RB.render.worldVisible()) return;
-    if (W.comp && (who === 'comp' || W.comp.id === who)) return;
+  // off-screen (!speakerless) are left alone. Returns the figure who is (or is coming) here, if any.
+  function ensureSpeaker(who, sceneId, o) {
+    if (!who || who === 'narr' || who === 'pc' || !W.map || !RB.render.worldVisible()) return null;
+    if (W.comp && (who === 'comp' || W.comp.id === who)) return W.comp;
     // already here under any of their placements (tsuru_out is Tsuru)
-    if (W.npcs.some((n) => n.id === who || personOf(n) === who) || W.extras.some((n) => n.id === who || personOf(n) === who)) return;
+    const here = W.npcs.concat(W.extras).find((n) => n.id === who || personOf(n) === who);
+    if (here) return here;
     // walking away just now: they stop, turn back and speak (no second figure)
     const going = W.leavers.find((n) => personOf(n) === who || n.id === who);
     if (going) {
@@ -589,31 +590,39 @@ RB.world = (function () {
       if (going.mv) { going.x = going.mv.tx; going.y = going.mv.ty; }
       W.extras.push(going);
       if (!going.mv) faceTo(going, W.player.x, W.player.y);
-      return;
+      return going;
     }
     // someone about to be known by this name is already standing here
-    if ((W.map.def.npcs || []).some((n) => n.was && n.id === who && W.npcs.some((q) => q.id === n.was))) return;
+    const was = (W.map.def.npcs || []).find((n) => n.was && n.id === who && W.npcs.some((q) => q.id === n.was));
+    if (was) return W.npcs.find((q) => q.id === was.was);
     const ch = RB.content.chars[who];
-    if (!ch || !ch.look || ch.bodiless) return;
-    const spot = spotNear(W.player.x, W.player.y);
-    if (!spot) return;
+    if (!ch || !ch.look || ch.bodiless) return null;
+    const spot = spotNear(W.player.x, W.player.y, o && o.at);
+    if (!spot) return null;
     const a = makeActor(spot[0], spot[1], 'down', ch.look);
     a.id = who; a.def = { id: who }; a.home = spot; a.extra = true; a.map = W.map.id;
     W.extras.push(a);
-    if (RB.test && RB.test.auto) (RB.test.extras = RB.test.extras || []).push(who + ' @ ' + W.map.id + ' (' + (sceneId || '?') + ')');
+    // (an entrance the scene stages on purpose, !enter, is not a speaker who was missing)
+    if (RB.test && RB.test.auto && !(o && o.staged)) (RB.test.extras = RB.test.extras || []).push(who + ' @ ' + W.map.id + ' (' + (sceneId || '?') + ')');
     arriveOnFoot(a);
     if (!a.route) faceTo(a, W.player.x, W.player.y);
+    return a;
   }
   // A free tile near x,y to stand on: facing the player first, then the nearest. Not a tile someone still
   // walking here is going to stand on (an earlier speaker on their way in, someone the story moves): two
   // speakers given the same place met there, and the later one went through the first (sa.epi_lf).
-  function spotNear(x, y) {
+  // at: a place the scene names for them (!enter), taken when it is free; they walk in straight to it.
+  function spotNear(x, y, at) {
     const p = W.player, [fx, fy] = frontTile(), st = s();
     const bound = new Set();
     for (const n of W.npcs.concat(W.extras)) if (n.route && n.route.length) bound.add(n.route[n.route.length - 1].join(','));
-    const ok = (tx, ty) => tx >= 0 && ty >= 0 && tx < W.map.w && ty < W.map.h && !RB.maps.blockedStatic(W.map, tx, ty) && !actorAt(tx, ty) &&
-      !(tx === p.x && ty === p.y) && !(W.comp && W.comp.x === tx && W.comp.y === ty) && !RB.maps.exitAt(W.map, tx, ty) && !triggerAt(tx, ty) &&
-      !bound.has(tx + ',' + ty) && st;
+    const free = (tx, ty) => tx >= 0 && ty >= 0 && tx < W.map.w && ty < W.map.h && !RB.maps.blockedStatic(W.map, tx, ty) && !actorAt(tx, ty) &&
+      !(tx === p.x && ty === p.y) && !RB.maps.exitAt(W.map, tx, ty) && !triggerAt(tx, ty) && !bound.has(tx + ',' + ty) && st;
+    const ok = (tx, ty) => free(tx, ty) && !(W.comp && W.comp.x === tx && W.comp.y === ty);
+    // (the named place: your companion counts as where they are stepping to, so one just stepping off it after you
+    // leaves it free; the scene may begin while they are still following you in)
+    const c = W.comp, cAt = c && (c.mv ? [c.mv.tx, c.mv.ty] : [c.x, c.y]);
+    if (at && free(at[0], at[1]) && !(cAt && cAt[0] === at[0] && cAt[1] === at[1])) return [at[0], at[1]];
     if (ok(fx, fy)) return [fx, fy];
     for (let r = 1; r <= 4; r++) {
       const ring = [];
