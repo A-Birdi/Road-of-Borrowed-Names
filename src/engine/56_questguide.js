@@ -53,7 +53,8 @@ RB.questGuide = (function () {
   const STEPS = 3000;      // commands walked per path
   const HYPO = 2;          // ways not taken per path (live analysis)
   const NEEDS = 6;         // missing conditions per path
-  const UNK = '\u0000?';   // an outcome not known yet (var._res after a challenge)
+  const UNK = '\u0000?';   // an outcome not known yet (var._res after a challenge; var._res and var._enc after an encounter)
+  const OUTCOME = new Set(['var:_res', 'var:_enc']); // the outcomes a scene can branch on
   const OPS = { '>=': '<', '<=': '>', '!=': '=', '==': '!=', '=': '!=', '>': '<=', '<': '>=' };
 
   // ---- content index ---------------------------------------------------------------
@@ -183,10 +184,21 @@ RB.questGuide = (function () {
     }
     return acc;
   }
+  // A path that goes on as if a single outcome test held (`var._enc=walked`, `var._res=0`) while the outcome was
+  // unknown now knows it: the outcome is pinned in that path, so it never takes two different conclusions of one
+  // encounter (RBN-QA-087). Anything else (a compound condition) is left as it was.
+  function pin(st, cond) {
+    const d = dnf(cond);
+    if (d.length !== 1 || d[0].length !== 1) return;
+    const p = parseTerm(d[0][0]);
+    if (!OUTCOME.has(p.fx) || p.neg || (p.op !== '=' && p.op !== '==')) return;
+    const name = p.fx.slice(4);
+    if (st.vars[name] === UNK) st.vars[name] = isNaN(+p.val) ? p.val : +p.val;
+  }
   // 1 true, 0 false, -1 unknown
   function tterm(ctx, st, raw) {
     const p = parseTerm(raw);
-    if (p.fx === 'var:_res' && st.vars._res === UNK) return -1;
+    if (OUTCOME.has(p.fx) && st.vars[p.fx.slice(4)] === UNK) return -1;
     if (ctx.static && p.fx !== 'const' && (p.fx !== 'quest:' + ctx.Q || ctx.passing) && !st.touched.has(p.fx)) return -1;
     return RB.state.test(st, raw) ? 1 : 0;
   }
@@ -210,7 +222,7 @@ RB.questGuide = (function () {
   function actionable(ctx, st, p) {
     if (p.neg || p.fx === 'quest:' + ctx.Q) return false;
     if (/^(flag|item|word|seen):/.test(p.fx)) return !p.op || ['>=', '>', '=', '=='].includes(p.op);
-    if (/^var:/.test(p.fx)) return p.fx !== 'var:_res' && (!p.op || ['>=', '>', '=', '=='].includes(p.op));
+    if (/^var:/.test(p.fx)) return !OUTCOME.has(p.fx) && (!p.op || ['>=', '>', '=', '=='].includes(p.op));
     if (/^quest:/.test(p.fx)) {
       if (!p.op) return true;
       if (p.val === 'done' || p.val === 'active') return p.op === '=' || p.op === '==';
@@ -330,7 +342,7 @@ RB.questGuide = (function () {
         if (c.if && !p.forceNext) {
           const v = tv(ctx, st, c.if);
           const control = op === 'end' || op === 'goto';
-          if (v === -1) { const q = forkPath(p); push(q); } // this one runs the command; the copy skips it
+          if (v === -1) { const q = forkPath(p); push(q); pin(st, c.if); } // this one runs the command; the copy skips it
           else if (v === 0) {
             // not run now; running it may be the way forward (the copy runs it)
             if (!control && op !== 'if') hypo(p, needsOf(ctx, st, dnf(c.if)), (q) => { q.frames[q.frames.length - 1].pc--; q.forceNext = true; });
@@ -371,7 +383,7 @@ RB.questGuide = (function () {
             const arrow = a.indexOf('->');
             const cond = a.slice(0, arrow).join(' '), label = a[arrow + 1];
             const v = tv(ctx, st, cond);
-            if (v === -1) { const q = forkPath(p); jump(q, label); push(q); }
+            if (v === -1) { const q = forkPath(p); jump(q, label); pin(q.st, cond); push(q); }
             else if (v === 1) { hypo(p, needsOf(ctx, st, negDnf(cond)), () => {}); jump(p, label); }
             else hypo(p, needsOf(ctx, st, dnf(cond)), (q) => jump(q, label));
             break;
@@ -399,6 +411,14 @@ RB.questGuide = (function () {
             break;
           }
           case 'challenge': case 'activity': st.vars._res = UNK; break;
+          case 'encounter': {
+            // as the runner has it (src/engine/70_script.js, RBN-QA-087): a loss or stepping back ends the scene; a win
+            // (_res 1) or a conclusion reached another way (end, _res 0) goes on, with the conclusion in _enc. Either
+            // way, then, and never what an earlier challenge or encounter left behind
+            if (ctx.passing) { const q = forkPath(p); q.frames[q.frames.length - 1].pc = q.frames[q.frames.length - 1].sc.cmds.length; push(q); }
+            st.vars._res = UNK; st.vars._enc = UNK;
+            break;
+          }
           case 'battle': {
             // a loss ends this scene (you wake at the last safe place); only a win goes on
             if (ctx.passing) { const q = forkPath(p); q.frames[q.frames.length - 1].pc = q.frames[q.frames.length - 1].sc.cmds.length; push(q); }
