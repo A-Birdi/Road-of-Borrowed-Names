@@ -1,6 +1,7 @@
 // HX52 specs (tests/e2e/sequence_world.mjs) for the twelve-chapter edition's Cloudroad and Steamhollow sequences
 // (Chapters 10 and 11, the travel volume's pages played in the world, P16): cr.summit, cr.letter, cr.relay, yn.kettle,
-// yn.end. Same format and fields as the SEQ table they are merged into.
+// yn.end; and Suzu's night apart in the Upper House's back garden, yn.suzu_garden (a cutaway, not a page; RBN-QA-125).
+// Same format and fields as the SEQ table they are merged into.
 //
 // The moments are synthetic fixtures of a twelve-chapter campaign (edition TWELVE, src/engine/05a_edition.js): the
 // flags, quests and items the callers of each carrying scene leave at that moment, no more than the story guarantees.
@@ -41,6 +42,10 @@ const YNV = F(CRD, on('yn_called', 'yn_descent_seen', 'yn_arrived', 'yn_rokubei_
 const YNM = F(YNV, on('yn_kettle_settled', 'yn_kettle_seen_after', 'yn_evening', 'yn_eve_started', 'yn_eve_done', 'yn_mediated', 'yn_med_together', 'mod_zentai'));
 const CR_ITEMS = ['cr_ledger', 'cr_papers']; // Kanbe's, at Oiwake (cr.kanbe_first); nothing on the road takes them
 const YN_ITEMS = CR_ITEMS.concat(['yn_letter', 'yn_towel', 'yn_yukata']); // Rokubei's letter (yn.call); the inn's towel and yukata (yn.rooms_start)
+// Suzu's night apart: the Kettle settled and the evening begun; at the little theatre Koume's troupe asked her back and
+// she went out for air (yn.suzu_evening: yn_suzu_crossroads, yn_suzu_night, yn_apart, and comp_away night); the
+// theatre seen that evening (yn_playhouse_seen)
+const YNS = F(YNV, on('yn_kettle_settled', 'yn_kettle_seen_after', 'yn_evening', 'yn_eve_started', 'yn_playhouse_seen', 'yn_suzu_crossroads', 'yn_suzu_night', 'yn_apart'));
 
 export const SPECS = {
   'cr.summit': {
@@ -126,6 +131,22 @@ export const SPECS = {
       { name: 'Mio · side by side, after her night apart', comp: 'mio', flags: { yn_side: true, yn_mio_night: true, yn_mio_crossroads: true, yn_mio_back: true }, shots: ['valley', 'ridge'], phases: { ridge: ['comp'] } },
       { name: 'Suzu · hand in hand, after her night apart · the dog met, hidden by the setting', comp: 'suzu', pet: 'dog', petHidden: true, flags: { yn_hand: true, yn_suzu_night: true, yn_suzu_crossroads: true, yn_suzu_back: true }, shots: ['valley', 'ridge'], phases: { ridge: ['comp'] } },
       { name: 'Nao · side by side · the cat with you', comp: 'nao', pet: 'cat', flags: { yn_side: true, yn_nao_quarrel: true, yn_nao_madeup: true }, shots: ['valley', 'ridge'], phases: { ridge: ['comp'] } },
+    ],
+  },
+  'yn.suzu_garden': {
+    edition: TWELVE, scene: 'yn.kami_room', at: ['yn.kami', 5, 3, 'up'], flags: YNS, give: YN_ITEMS, quests: { yn_main: 6 }, away: 'night', settle: 6000,
+    // back at the Upper House after the show, Suzu away (out for air: comp_away night): the stairs up to the rooms (5,2)
+    // run the room scene, which calls her night apart. There is no garden map: the pictures are the inn's back garden
+    // (Suzu small on her stone at the pond), then the two of you on her stone for the choice. She comes back to you
+    // behind the first picture (comp_back) and is beside you, in the lobby, when the pictures dissolve
+    stay: [], drawsComp: true, reach: [{ to: 'yn.upper', why: 'out of the Upper House onto the street (the troupe in the morning)' }],
+    facts: [
+      { shot: 'garden', cond: 'yn_suzu_night', why: 'she is out in the garden on the night she asked for (yn.suzu_evening)' },
+      { shot: 'stone', cond: '!yn_apart&!away', why: 'the two of you together on her stone: she has come back to you before the choice (comp_back, yn_apart unset)' },
+    ],
+    runs: [
+      { name: 'Suzu · "You\'re saying no?"', comp: 'suzu', shots: ['garden', 'stone'], choose: [/saying no/], flagsAfter: { yn_suzu_back: true, yn_eve_done: true, yn_apart: false }, quick: true },
+      { name: 'Suzu · "If you want to go back…" · the bird with you', comp: 'suzu', pet: 'bird', shots: ['garden', 'stone'], choose: [/go back/], flagsAfter: { yn_suzu_back: true, yn_eve_done: true } },
     ],
   },
 };

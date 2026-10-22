@@ -318,6 +318,9 @@ async function start(p, S, R, o) {
     for (const m in RB.content.maps) for (const ev of RB.content.maps[m].onEnter || []) s.flags['enter:' + m + ':' + ev.scene] = true;
     RB.world.refreshActors();
     if (R.comp) RB.world.placeCompanion();
+    // a companion away (`!hook comp_away`, src/engine/58s_surety.js: who it is kept, nobody following), for a scene that
+    // brings them back inside its pictures (S.away: why; Suzu's night apart, RBN-QA-125)
+    if (S.away && s.comp) { s.vars._away = s.comp; s.vars._away_why = S.away; s.comp = null; RB.world.placeCompanion(); RB.world.refreshActors(); }
     RB.game.settings.textSpeed = 'instant';
     RB.game.settings.reducedMotion = !!o.reduce; RB.game.applySettings();
     // stand-ins (not under test here): the challenges pass, lessons and cards are read, saves are not written
@@ -419,7 +422,10 @@ function check(id, D, R, r) {
     for (const k of r.drawn) { const [sid, shot, ph, who] = k.split('|'); if (sid !== sq) continue; if (!drawn.has(who)) drawn.set(who, new Set()); drawn.get(who).add(shot); }
     const onMap = new Set(E.npcs.map((n) => n.char).concat(E.npcs.map((n) => n.id)));
     const speakers = new Set(r.lines.filter((l) => l.seq === sq).map((l) => l.who).filter(Boolean));
-    const comp = E.comp ? E.comp.id : null;
+    // (a companion away at entry who comes back inside the pictures, DS.away, is the companion of the pictures: away
+    // when they begin, with you on return)
+    if (DS.away) ok(!E.comp && !!(X.comp && X.comp.id === R.comp), pre + sq + ': your companion is away when the pictures begin and with you on return (' + (E.comp ? E.comp.id : 'away') + ' → ' + (X.comp ? X.comp.id : 'none') + ')');
+    const comp = E.comp ? E.comp.id : DS.away && X.comp ? X.comp.id : null;
     const bad = [];
     for (const [who, shots] of drawn) {
       if (who === '?' || who === 'pc') continue;

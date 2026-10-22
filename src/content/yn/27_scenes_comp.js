@@ -156,8 +156,14 @@ suzu[closed]: $name 。 {先|さき} に {寝|ね}て て 。 {私|わたし} �
 
 @scene yn.suzu_garden
 # Suzu's night apart (14_COMPANIONS §5): the inn's back garden in the dark, bell crickets and frogs; her apology, and why.
+# RBN-QA-125: there is no garden map, so the garden is illustrated (src/ui/43m_seq_yn.js): its first picture is up
+# before the first line and stays through her coming back to you; the two of you on her stone for the choice. It ends
+# last, after the evening's flags, the bond and her place beside you again, so the picture dissolves back to the room's
+# own map with her already there (behind a picture, people are at once where the story puts them).
 !ambience night
 !sfx crickets
+!sequence yn.suzu_garden begin
+!shot garden
 narr: {眠|ねむ}れず に 、 {宿|やど} の {裏庭|うらにわ} へ {出|で}た 。 {鈴虫|すずむし} が {鳴|な}き 、 {池|いけ} で {蛙|かえる} が {答|こた}えて いる 。 || Unable to sleep, you step out into the inn's back garden. Bell crickets sing, and frogs answer from the pond.
 !hook comp_back
 !unset yn_apart
@@ -166,6 +172,7 @@ suzu[laugh]: …… {見|み}つかっちゃった 。 {寝|ね}て て って {
 suzu[sad]: ごめんね 。 {心配|しんぱい} させて 。 {笑|わら}って {誤魔化|ごまか}す の 、 {今夜|こんや} は {上手|うま}く できなかった 。 || I'm sorry I worried you. Tonight I couldn't laugh it off the way I usually do.
 suzu[closed]: あの {一座|いちざ} は 、 {私|わたし} の {家|いえ} だった 。 {十六|じゅうろく} で {初|はじ}めて {台詞|せりふ} を もらって 、 コウメ と {二人|ふたり} で {漫才|まんざい} を して 。 {笑|わら}い {声|ごえ} が 、 {毎晩|まいばん} {帰|かえ}る {場所|ばしょ} だった 。 || That troupe was my home. At sixteen I got my first lines, and Koume and I did our double act. The laughter was where I came home to, every night.
 suzu[closed]: {戻|もど}れば 、 {全部|ぜんぶ} {戻|もど}って くる 。 …… それ を 、 {一晩|ひとばん} だけ {想像|そうぞう} したかった の 。 {断|ことわ}る {前|まえ} に 、 ちゃんと 。 || If I went back, I'd have all of it again. …I wanted one night just to imagine it. Properly, before I say no.
+!shot stone
 !choice
 * {断|ことわ}る の ？ || You're saying no? -> no
 * {戻|もど}りたい なら 、 {止|と}めない よ 。 || If you want to go back, I won't stop you. -> free
@@ -183,6 +190,7 @@ suzu: {明日|あした} の {朝|あさ} 、 {一座|いちざ} に {会|あ}�
 !hook co_bond yn:night
 !hook co_remember together yn_garden
 !refresh comp
+!sequence yn.suzu_garden end
 
 @scene yn.suzu_books
 # Suzu's unfinished matter (S14): for years she covered the troupe's losses from her own share and told everyone the

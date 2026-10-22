@@ -8,6 +8,13 @@
  *   valley  every lantern in the valley lit: the two inns either side of the river, the red bridge between them with
  *           guests of both inns crossing in yukata, steam from the baths and the river
  *   ridge   above it all the north ridge, black under the stars and silent; your companion's resolve
+ * yn.suzu_garden — Suzu's night apart (`yn.suzu_garden`, called from the Upper House's room; RBN-QA-125). There is no
+ *          garden map: the inn's back garden is the picture's, from before the first line until the scene ends, and it
+ *          dissolves back to the room's own map. A cutaway for one companion's night, not a page of the travel volume.
+ *   garden  the back garden under the moon, seen from the veranda you step out onto: the garden wall and a pine over
+ *           it, the bath's steam rising beyond; the pond with its frogs' stones and a stone lantern; Suzu small on a
+ *           garden stone at the near bank, hugging her knees
+ *   stone   the two of you from behind on her stone, the pond and the moon's long reflection in front of you
  * No letters, kana or kanji are drawn: noren and lanterns carry colour, never characters. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -205,5 +212,205 @@ var RB = (globalThis.RB = globalThis.RB || {});
   RB.sequence.define('yn.end', {
     title: { en: 'Every lantern in the valley', jp: '{谷|たに} の {提灯|ちょうちん}' }, chapter: 'yn', scene: 'yn.end',
     shots: { valley, ridge },
+  });
+
+  // ==== yn.suzu_garden · the inn's back garden at night (RBN-QA-125) ===============================================
+  // moonlight: cool, from the upper right; Suzu as she is (the yukata are for the mediation's evening, not tonight)
+  const MOON = { mul: [0.66, 0.7, 0.86], add: [4, 6, 20], rim: { side: 'r', col: '#cfdcff', k: [0.4, 0.18], below: 0.85 } };
+  const suzuLook = (st) => (st.cast.comp && st.cast.comp.id === 'suzu' ? st.cast.comp.look : look('suzu'));
+  // the moon: a pale disc, its shaded edge away from the light and a few darker seas, in a faint halo
+  function moonDisc(g, x, y, r) {
+    SP.glow(g, x, y, Math.round(r * 3.2), '200,214,255', 0.16);
+    for (let j = -r; j <= r; j++) {
+      const hw = Math.round(Math.sqrt(Math.max(0, r * r - j * j)));
+      R(g, x - hw, y + j, hw * 2, 1, '#e8ecf4');
+      R(g, x - hw, y + j, Math.max(1, Math.round(hw * 0.28)), 1, '#c4ccdc');
+    }
+    for (const [dx, dy, rr] of [[0.25, -0.2, 0.22], [-0.1, 0.25, 0.18], [0.35, 0.35, 0.12]]) {
+      const cx = Math.round(x + dx * r), cy = Math.round(y + dy * r), q = Math.max(1, Math.round(rr * r));
+      R(g, cx - q, cy - Math.max(1, Math.round(q * 0.7)), q * 2, Math.max(1, Math.round(q * 1.4)), '#d0d6e4');
+    }
+  }
+  // the bath's steam beyond the wall: soft columns thinning as they climb (the Upper House's own baths)
+  function bathSteam(c, x0, x1, y, t, still, s) {
+    for (let i = 0; i < 4; i++) {
+      const bx = lerp(x0, x1, (i + 0.5) / 4), u0 = still ? 0.35 : ((t / 7000 + i * 0.23) % 1);
+      for (let j = 0; j < 5; j++) { const u = (u0 + j / 5) % 1, yy = y - u * s(46), xx = bx + Math.sin(u * 4 + i) * s(6); SP.glow(c, xx, yy, Math.round(s(5) + u * s(8)), '206,212,226', (1 - u) * 0.2); }
+    }
+  }
+  // the pond's water into L where inside(x, y) holds (a layer of its own, copied in by its outline)
+  function pondInto(L, w, h, x0, y0, x1, y1, inside, mx, s, seed) {
+    const p = P(), Lw = SP.layer(w, h), water = p.mat('#1c2a3c', { n: 7, at: 3, step: 0.08 });
+    SP.water(Lw, x0, y0, x1, y1, water, { band: Math.max(3, s(4)), deep: 0.22, seed, lit: (x) => clamp(1 - Math.abs(x - mx) / s(12), 0, 1) * 0.34 });
+    for (let y = Math.max(0, Math.floor(y0)); y < Math.min(h, Math.ceil(y1)); y++) for (let x = Math.max(0, Math.floor(x0)); x < Math.min(w, Math.ceil(x1)); x++) {
+      if (!inside(x + 0.5, y + 0.5)) continue;
+      const i = y * w + x;
+      if (Lw.px[i] >>> 24) { L.px[i] = Lw.px[i]; L.mt[i] = Lw.mt[i]; }
+    }
+  }
+
+  function geomGarden(w, h, vb) {
+    const S = stage(w, h, vb), narrow = S.lay === 'narrow', { s } = S;
+    const wallY = Math.round(vb * (narrow ? 0.3 : 0.26)), footY = wallY + s(18);
+    const px = Math.round(w * (narrow ? 0.56 : 0.6)), prx = Math.round(w * (narrow ? 0.4 : 0.3));
+    const py = Math.round(footY + (vb - footY) * 0.46), pry = Math.max(s(14), Math.round((vb - footY) * 0.24));
+    const veranda = Math.round(vb - s(narrow ? 8 : 10));
+    // Suzu's stone at the near bank, to the left; the frogs' stones across the pond from it, smaller as they go
+    const rock = { x: Math.round(px - prx * 0.72), y: Math.round(py + pry * 0.86), rx: s(17), ry: s(7) };
+    const stones = [0.2, 0.42, 0.63, 0.84].map((u, i) => [Math.round(lerp(px - prx * 0.45, px + prx * 0.6, u)), Math.round(lerp(py + pry * 0.55, py - pry * 0.55, u)), Math.max(3, s(10 - i * 1.6)), Math.max(2, s(4 - i * 0.6))]);
+    const lantern = { x: Math.round(px + prx * 0.9), y: Math.round(py - pry * 0.25) };
+    return Object.assign(S, { narrow, wallY, footY, px, py, prx, pry, veranda, rock, stones, lantern, mx: Math.round(w * (narrow ? 0.76 : 0.8)), my: Math.round(wallY * 0.42), mr: Math.max(4, s(8)) });
+  }
+  const inPond = (G, x, y) => { const a = (x - G.px) / G.prx, b = (y - G.py) / G.pry, th = Math.atan2(b, a); return a * a + b * b <= 1 + 0.07 * Math.sin(th * 3 + 0.6) + 0.04 * Math.sin(th * 5); };
+  function gardenStatic(G) {
+    return cached('yn.garden|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+      const { w, h, s, wallY, footY, px, py, prx, pry, veranda, rock, stones, lantern, narrow } = G, p = P();
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      // the sky: deep night blue, a few stars, the moon high on the right
+      Q.bandsIn(g, 0, 0, w, wallY + s(6), ['#060918', '#0a0e22', '#0e142c', '#141a34', '#1a203c'], 0.45);
+      SP.stars(g, 0, 0, w, wallY, 34, 71, 0);
+      moonDisc(g, G.mx, G.my, G.mr);
+      const L = SP.layer(w, h);
+      // beyond the wall: another wing of the inn (the underside of its eave) at the left, a pine at the right
+      const tile = p.mat('#2a2c38', { n: 6, at: 3, step: 0.08 }), bark = p.mat('#2a2220', { n: 5, at: 2, step: 0.08 }), pine = p.mat('#1e2c26', { n: 6, at: 3, step: 0.08 });
+      SP.roof(L, Math.round(w * (narrow ? 0.04 : 0.12)), Math.round(w * (narrow ? 0.46 : 0.42)), wallY - s(14), s(10), tile, { course: Math.max(2, s(3)) });
+      const tx = Math.round(w * (narrow ? 0.66 : 0.7));
+      L.seg(tx, wallY + s(2), tx - s(6), wallY - s(28), Math.max(2, s(4)), bark, 0.5);
+      L.seg(tx - s(5), wallY - s(26), tx + s(14), wallY - s(40), Math.max(2, s(3)), bark, 0.55);
+      SP.crown(L, tx - s(10), wallY - s(32), s(26), s(9), pine, { seed: 83, n: 7 });
+      SP.crown(L, tx + s(16), wallY - s(44), s(20), s(7), pine, { seed: 89, n: 6 });
+      // the garden wall: plaster under a small tiled cap, a footing of stones
+      const plaster = p.mat('#6a6878', { n: 6, at: 3, step: 0.07 }), stoneM = p.mat('#4a4c56', { n: 7, at: 3, step: 0.08 });
+      L.rect(0, wallY, w, footY - wallY, plaster, (x, y) => clamp(0.45 + (x / w) * 0.12 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+      SP.roof(L, -s(4), w + s(4), wallY - s(5), s(6), tile, { course: Math.max(2, s(2)) });
+      L.rect(0, footY - s(4), w, s(4), stoneM, (x) => clamp(0.32 + (Math.round(x / s(7)) % 2 ? 0.08 : -0.04), 0.02, 0.999));
+      // the ground: moss and swept earth, darker toward us; quiet
+      const moss = p.mat('#2c3a32', { n: 6, at: 3, step: 0.08 });
+      L.fill(0, footY, w, h, () => true, moss, (x, y) => clamp(0.44 - (y - footY) / Math.max(1, h - footY) * 0.14 + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999));
+      // the pond, the moon's long reflection on it
+      pondInto(L, w, h, px - prx * 1.1, py - pry * 1.15, px + prx * 1.1, py + pry * 1.15, (x, y) => inPond(G, x, y), G.mx, s, 37);
+      // its bank: stones set round the edge, more of them on the near side, none where Suzu's stone sits
+      const bankM = p.mat('#585a62', { n: 7, at: 3, step: 0.08 });
+      for (let i = 0; i < 22; i++) {
+        const th = (i / 22) * Math.PI * 2 + 0.13, near = Math.sin(th) > 0;
+        const bx = px + Math.cos(th) * prx * 1.02, by = py + Math.sin(th) * pry * 1.06;
+        if (Math.hypot(bx - rock.x, (by - rock.y) * 2) < rock.rx * 1.4) continue;
+        const r = Math.max(2, s(near ? 4.5 : 3) + (i % 3)), ry = Math.max(1, Math.round(r * 0.55));
+        L.ell(bx, by, r, ry, bankM, p.sphere(bx + r * 0.4, by - ry * 0.5, r, ry, { amb: 0.3 }));
+      }
+      // the frogs' stones across the water, each with its dark wet rim
+      for (const [sx, sy, rx, ry] of stones) {
+        L.ell(sx, sy + 1, rx, ry, p.mat('#1a2230', { n: 4, at: 2 }), 0.3);
+        L.ell(sx, sy, rx, ry, bankM, p.sphere(sx + rx * 0.35, sy - ry * 0.6, rx, ry, { amb: 0.35 }));
+      }
+      // a stone lantern (yukimi-dōrō) on the far bank: wide cap on short legs, its light box dark tonight
+      const lM = p.mat('#6a6c72', { n: 7, at: 3, step: 0.08 }), lx = lantern.x, ly = lantern.y, u = Math.max(2, s(3));
+      L.rect(lx - u * 2, ly - u, u, u * 2, lM, 0.4); L.rect(lx + u, ly - u, u, u * 2, lM, 0.55);
+      L.rect(lx - u * 2, ly - u * 4, u * 4, u * 3, lM, 0.5); L.rect(lx - u, ly - u * 3, u * 2, u, p.mat('#1a1c24', { n: 3, at: 1 }), 0.5);
+      L.ell(lx, ly - u * 4.5, u * 4, u * 1.4, lM, p.sphere(lx + u, ly - u * 5, u * 4, u * 1.4, { amb: 0.35 }));
+      L.ell(lx, ly - u * 6, u * 0.8, u * 0.8, lM, 0.6);
+      // Suzu's stone at the near bank: broad and flat-topped
+      L.ell(rock.x, rock.y, rock.rx, rock.ry, stoneM, p.sphere(rock.x + rock.rx * 0.4, rock.y - rock.ry * 0.6, rock.rx, rock.ry, { amb: 0.32 }));
+      // the veranda you step out onto: its eave across the top left, a post, the boards' edge at the bottom
+      const wood = p.mat('#3a2c26', { n: 7, at: 3, step: 0.08 });
+      SP.roof(L, -s(10), Math.round(w * (narrow ? 0.46 : 0.36)), -s(2), s(12), tile, { course: Math.max(2, s(3)) });
+      L.rect(s(8), 0, Math.max(3, s(5)), veranda, wood, (x, y) => clamp(0.3 + ((Math.round(x) % 3) === 0 ? 0.08 : 0), 0.02, 0.999));
+      SP.planks(L, 0, veranda, Math.round(w * (narrow ? 0.6 : 0.45)), h - veranda, wood, { board: Math.max(3, s(6)), seed: 19 });
+      L.outline();
+      g.drawImage(L.canvas(), 0, 0);
+      // the room's lamp behind you, warm on the boards; the night everywhere else
+      SP.glow(g, s(10), veranda + s(4), s(46), '255,186,116', 0.16);
+      return { cv };
+    });
+  }
+  const garden = {
+    phases: [['moon', 1400]],
+    safe: { wide: 'Suzu on her stone and the pond above the sheet', narrow: 'Suzu and the pond in the upper half', land: 'Suzu on her stone' },
+    draw(c, w, h, t, st) {
+      const G = geomGarden(w, h, st.vb), { s, py, pry, rock, stones } = G, still = st.still;
+      c.drawImage(gardenStatic(G).cv, 0, 0);
+      // the moon's light coming up on the water as the picture settles
+      SP.glints(c, G.mx - s(10), py - pry * 0.7, s(20), pry * 1.4, t, Math.round(4 + 8 * ease(st.at('moon'))), 53, '214,226,255', still);
+      bathSteam(c, w * 0.8, w * 0.98, G.wallY, t, still, s);
+      // a frog on the far stone: now and then the rings it leaves on the water
+      if (!still) { const f = stones[3], u = ((t + 900) % 3800) / 3800; if (u < 0.55) SP.rings(c, f[0] + f[2], f[1] + s(2), s(9), u / 0.55, '186,204,240', 2); }
+      // Suzu on her stone, hugging her knees, turned to the pond
+      const f = Q.figure(suzuLook(st), 'right', 'p:sitlow', clamp(G.Z * 0.8, 0.45, 1), MOON);
+      if (f) c.drawImage(f.cv, Math.round(rock.x - f.ax), Math.round(rock.y - rock.ry * 0.4 - f.ay));
+    },
+    focus(w, h, vb) { const G = geomGarden(w, h, vb), y = Math.max(0, G.rock.y - G.s(56)); return { x: G.rock.x - G.s(30), y, w: G.s(60), h: Math.max(8, Math.min(vb - 2, G.rock.y + G.s(8)) - y) }; },
+  };
+
+  function geomStone(w, h, vb) {
+    const S = stage(w, h, vb), narrow = S.lay === 'narrow', { s } = S;
+    const wallY = Math.round(vb * (narrow ? 0.16 : 0.12)), bank = wallY + s(16);
+    const seat = Math.round(vb - s(narrow ? 16 : 20));
+    const W = Math.round(clamp(s(82), 56, 118));
+    const lx = Math.round(w * (narrow ? 0.34 : 0.4)), rx = lx + Math.round(W * 0.98);
+    return Object.assign(S, { narrow, wallY, bank, seat, W, lx, rx, mx: Math.round(w * (narrow ? 0.6 : 0.62)) });
+  }
+  function stoneStatic(G) {
+    return cached('yn.gstone|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+      const { w, h, s, wallY, bank, mx } = G, p = P();
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      Q.bandsIn(g, 0, 0, w, wallY + s(4), ['#0a0e22', '#0e142c', '#141a34'], 0.45);
+      SP.stars(g, 0, 0, w, wallY, 10, 73, 0);
+      const L = SP.layer(w, h);
+      const plaster = p.mat('#6a6878', { n: 6, at: 3, step: 0.07 }), tile = p.mat('#2a2c38', { n: 6, at: 3, step: 0.08 }), moss = p.mat('#2c3a32', { n: 6, at: 3, step: 0.08 });
+      const pine = p.mat('#1e2c26', { n: 6, at: 3, step: 0.08 });
+      SP.crown(L, Math.round(w * 0.78), wallY - s(6), s(34), s(8), pine, { seed: 97, n: 8 });
+      L.rect(0, wallY, w, s(10), plaster, (x, y) => clamp(0.45 + (x / w) * 0.1 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+      SP.roof(L, -s(4), w + s(4), wallY - s(4), s(5), tile, { course: 2 });
+      L.fill(0, wallY + s(10), w, bank, () => true, moss, (x, y) => clamp(0.4 + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999));
+      // the pond from its near edge to the far bank, the moon's reflection a long broken column on it
+      pondInto(L, w, h, -2, bank, w + 2, h + 2, () => true, mx, s, 41);
+      // the far bank's stones and a frog's stone out on the water
+      const bankM = p.mat('#585a62', { n: 7, at: 3, step: 0.08 });
+      for (let i = 0; i < 9; i++) { const bx = (i + 0.3) * w / 9, r = Math.max(2, s(4) + (i % 3)); L.ell(bx, bank, r, Math.max(1, Math.round(r * 0.5)), bankM, p.sphere(bx + r * 0.4, bank - r * 0.3, r, r * 0.5, { amb: 0.3 })); }
+      const fx = Math.round(w * 0.24), fy = Math.round(lerp(bank, G.seat, 0.45)), fr = Math.max(4, s(10));
+      L.ell(fx, fy, fr, Math.max(2, Math.round(fr * 0.4)), bankM, p.sphere(fx + fr * 0.35, fy - fr * 0.2, fr, fr * 0.4, { amb: 0.35 }));
+      L.outline();
+      g.drawImage(L.canvas(), 0, 0);
+      return { cv, fx, fy, fr };
+    });
+  }
+  // the stone the two of you sit on, in front of you: its top at the seat, rounded, lit from the right
+  function seatStone(c, G) {
+    const B = Q.small('yn.gseat|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+      const { w, h, s, seat, lx, rx, W } = G, p = P(), x0 = Math.round(lx - W * 1.05), x1 = Math.round(rx + W * 1.05);
+      const cv = mk(w, h), L = SP.layer(w, h), M = p.mat('#4e505a', { n: 7, at: 3, step: 0.08 });
+      const top = (x) => seat + Math.round(Math.pow(Math.abs((x - (x0 + x1) / 2) / ((x1 - x0) / 2)), 3) * s(14) + Math.sin(x / s(9)) * 1.2);
+      L.fill(x0, seat - s(2), x1, h, (x, y) => y >= top(x), M, (x, y) => clamp(0.5 + (x - (x0 + x1) / 2) / (x1 - x0) * 0.3 - (y - seat) / Math.max(1, h - seat) * 0.25 + (p.bayer(x, y) - 0.5) * 0.08 + (y - top(x) < 2 ? 0.12 : 0), 0.02, 0.999));
+      L.outline();
+      cv.getContext('2d').drawImage(L.canvas(), 0, 0);
+      return { cv };
+    });
+    c.drawImage(B.cv, 0, 0);
+  }
+  const stone = {
+    phases: [['settle', 1000]],
+    safe: { wide: 'the two of you and the moon on the water above the sheet', narrow: 'your heads and the pond in the upper half', land: 'the two of you' },
+    draw(c, w, h, t, st) {
+      const G = geomStone(w, h, st.vb), { s, seat, W, lx, rx, mx, bank } = G, still = st.still;
+      const B = stoneStatic(G);
+      c.drawImage(B.cv, 0, 0);
+      SP.glints(c, mx - s(8), bank + s(4), s(16), seat - bank, t, Math.round(8 + 8 * ease(st.at('settle'))), 59, '214,226,255', still);
+      if (!still) { const u = ((t + 400) % 4200) / 4200; if (u < 0.5) SP.rings(c, B.fx + B.fr, B.fy + s(2), s(10), u / 0.5, '186,204,240', 2); }
+      // you at the left and Suzu at your right, from behind, seated: each one's hips (0.4 of the shoulders' width below
+      // the drawing's anchor, src/ui/43_sequence_back.js) on the stone's top; what is below them is the stone's
+      const Ws = Math.round(W * 0.94);
+      const pb = Q.back(st.cast.pc || {}, W, { light: 'r', ext: 0.5 });
+      if (pb) c.drawImage(pb.cv, lx - pb.ax, seat - Math.round(W * 0.4) - pb.ay);
+      const cb = Q.back(suzuLook(st), Ws, { light: 'r', ext: 0.5 });
+      if (cb) c.drawImage(cb.cv, rx - cb.ax, seat - Math.round(Ws * 0.4) - cb.ay);
+      seatStone(c, G);
+    },
+    focus(w, h, vb) { const G = geomStone(w, h, vb), y = Math.max(0, G.seat - Math.round(G.W * 1.35)); return { x: G.lx - Math.round(G.W * 0.6), y, w: G.rx - G.lx + Math.round(G.W * 1.2), h: Math.max(8, Math.min(vb - 2, G.seat) - y) }; },
+  };
+  RB.sequence.define('yn.suzu_garden', {
+    page: false, title: { en: 'Suzu in the back garden', jp: '{裏庭|うらにわ} の スズ' }, chapter: 'yn', scene: 'yn.suzu_garden',
+    shots: { garden, stone },
   });
 })();
