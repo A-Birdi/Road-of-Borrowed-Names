@@ -55,6 +55,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
+  // the Courier's Inn's new noren, hung in its doorway at Sakashita once Sono has named the inn for her grandfather
+  // (cr_family_inn; RBN-QA-111): two indigo panels with pale brush strokes, as the signs write. You walk through it; it
+  // hangs on the inn's front wall, so it is drawn on that wall, after the building (onWall).
+  def('cr_noren', { block: false, onWall: true }, (c, x, y) => {
+    px(c, x + 1, y - 3, 14, 2, '#5a4226'); px(c, x + 2, y - 1, 5, 9, '#2c3e6a'); px(c, x + 9, y - 1, 5, 9, '#2c3e6a');
+    px(c, x + 4, y + 1, 2, 1, '#e8e0cc'); px(c, x + 4, y + 4, 2, 1, '#e8e0cc'); px(c, x + 10, y + 1, 2, 1, '#e8e0cc'); px(c, x + 10, y + 4, 2, 1, '#e8e0cc');
+  });
+
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
   const { R, ell, line } = K;
@@ -232,6 +240,24 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(g, 6, 12, 20, 13, LQ[0]); R(g, 6, 12, 20, 3, LQ[1]); R(g, 25, 12, 1, 13, '#1a0a0c');
       line(g, 6, 18, 26, 18, LQ[3], 1); line(g, 16, 12, 16, 25, LQ[3], 1);
       R(g, 2, 24, 28, 3, SN[3]);
+    },
+  });
+  // The Courier's Inn's noren (RBN-QA-111), modelled on the baths' curtain (yn_noren): a pole under the lintel and two
+  // indigo panels split down the middle, a little shorter than the doorway so the way in still reads; on them pale
+  // brush strokes in two short columns, written as the game's signs are (no legible word: the inn's name is Sono's
+  // line, Hikyaku-yado Genta). Light from the upper left: the left edges lit, a darker fold on each panel's right.
+  const NV = ['#16203a', '#1e2a4a', '#2c3e6a', '#4a5e8e'];
+  // (Its place: the doorway on the house's front face spans about x 4..28 and y -4..25 of the door's tile; the noren hangs
+  // from a pole across its top and covers its upper half.)
+  art('cr_noren', {
+    box: [-2, -12, 36, 36],
+    ink: false,
+    draw(g, M) {
+      R(g, 2, -7, 28, 3, M.wood[1]); R(g, 2, -7, 28, 1, M.wood[3]); R(g, 2, -5, 28, 1, M.wood[0]);
+      for (const px0 of [4, 17]) {
+        R(g, px0, -4, 11, 18, NV[2]); R(g, px0, -4, 1, 18, NV[3]); R(g, px0 + 10, -4, 1, 18, NV[1]); R(g, px0, 13, 11, 1, NV[0]);
+        for (let i = 0; i < 3; i++) RB.propArt.kit.glyph(g, px0 + 3, -2 + i * 5, K.hh(px0, i, 41), '#e8e0cc');
+      }
     },
   });
 })();
