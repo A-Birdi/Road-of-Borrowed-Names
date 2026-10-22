@@ -7,7 +7,11 @@
 //  2. a wrong choice first, then the right one: the sheet asks again, and the lesson still counts once (the line, 1 → 2);
 //  3. "Come back later" from the sheet: Ao's "That'll do for today", no line, the count unchanged;
 //  4. the line's furigana (助詞, 読む, 覚える) and its voice key: the new text has its own key, not the old recording's;
-//     no page errors.
+//     no page errors;
+//  5. the harness: a scene that throws is kept as an error and fails, never credited as played to its end. (The runner
+//     catches an error inside a scene itself: 70_script.js run logs 'scene error' and does not mark the scene seen; a
+//     lesson counts as played to its end only when its run resolved, the scene was marked seen and no error was logged
+//     while it ran. Agnes 6333523142, Local CL-169, CL-172: the rule given to yoshino_exhibit_line.)
 // Usage: node tools/build.mjs && node tests/e2e/ao_lesson_line.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -22,9 +26,11 @@ const NEW = { jp: '{助詞|じょし} の 「は」 は 、 「わ」 って {�
 const OLD_EN = 'After a word, は is said わ. …That\'s cheating, but I\'ve got it.';
 const KO = { ch2_done: true, mb2_done: true, ch3_done: true, ch4_done: true, kr_done: true, ch5_done: true, ko_ch9: true, ko_arrived: true, ko_otoha_met: true, ko_ao_helped: true };
 
-// one lesson through the real interface; mode: 'first' (right at once), 'miss' (wrong, then right), 'later' (step away)
+// one lesson through the real interface; mode: 'first' (right at once), 'miss' (wrong, then right), 'later' (step away),
+// 'boom' (the harness check: the first line throws)
 async function lesson(profile, mode) {
-  await p.evaluate(([profile, flags]) => {
+  const e0 = errors.length;
+  await p.evaluate(([profile, flags, boom]) => {
     const s = RB.game.debugStart('ko.village', 20, 14, { dir: 'down', edition: RB.edition.forNew(), comp: 'suzu', profile, flags });
     for (const m in RB.content.maps) for (const ev of RB.content.maps[m].onEnter || []) s.flags['enter:' + m + ':' + ev.scene] = true;
     RB.game.settings.textSpeed = 'instant';
@@ -33,12 +39,15 @@ async function lesson(profile, mode) {
     // spies, not game changes: the lines said and the questions asked
     if (!window.__sayWrapped) {
       const say = RB.ui.dialogue.say;
-      RB.ui.dialogue.say = function (l) { window.__said.push({ who: l.who, jp: l.jp, en: l.en }); return say.apply(this, arguments); };
+      RB.ui.dialogue.say = function (l) {
+        if (window.__boom) { window.__boom = false; throw new Error('a deliberate failure in the first line (the harness check)'); }
+        window.__said.push({ who: l.who, jp: l.jp, en: l.en }); return say.apply(this, arguments);
+      };
       window.__sayWrapped = true;
     }
-    window.__said = []; window.__asked = []; window.__done = false; window.__err = null;
-    RB.script.run('ko.ao_lesson').then(() => { window.__done = true; }, (e) => { window.__err = String(e); window.__done = true; });
-  }, [profile, KO]);
+    window.__said = []; window.__asked = []; window.__done = false; window.__err = null; window.__boom = !!boom;
+    RB.script.run('ko.ao_lesson').then(() => { window.__done = true; }, (e) => { window.__err = String((e && e.stack) || e); });
+  }, [profile, KO, mode === 'boom']);
   let missed = false, wrongClicks = 0, rightClicks = 0, leaves = 0;
   for (let i = 0; i < 400; i++) {
     const st = await p.evaluate(() => {
@@ -48,7 +57,7 @@ async function lesson(profile, mode) {
       const go = Array.from(document.querySelectorAll('.chal .fbwrap .fb-go, .chal [data-a=retry]')).find(vis);
       const btns = Array.from(document.querySelectorAll('.chal .mc .btn')).filter((x) => vis(x) && !x.disabled);
       const tab = document.querySelector('.chal .ptab[data-id="choice"]:not(.on)');
-      return { done: window.__done, coach: vis(coach), teach: !!teach, go: !!go, btns: btns.length, tab: vis(tab), chal: RB.challenge.active(), dlg: RB.ui.dialogue.isOpen() };
+      return { done: window.__done || !!window.__err, coach: vis(coach), teach: !!teach, go: !!go, btns: btns.length, tab: vis(tab), chal: RB.challenge.active(), dlg: RB.ui.dialogue.isOpen() };
     });
     if (st.done) break;
     if (st.coach) { await p.click('[data-coach-ok]').catch(() => {}); await wait(100); continue; }
@@ -81,10 +90,14 @@ async function lesson(profile, mode) {
     if (st.dlg) { await p.evaluate(() => RB.ui.dialogue.advance()); await wait(60); continue; }
     await wait(100);
   }
-  return p.evaluate(([wrongClicks, rightClicks, leaves]) => {
+  await wait(150); // (a console error reaches the page's log a moment later)
+  const logged = errors.slice(e0);
+  const r = await p.evaluate(([wrongClicks, rightClicks, leaves]) => {
     const s = RB.game.s;
-    return { done: window.__done, err: window.__err, l: s.vars.ko_ao_l, stage: s.quests.ko_ao && s.quests.ko_ao.stage, said: window.__said.filter((x) => x.who === 'ko_ao'), asked: window.__asked.slice(), wrongClicks, rightClicks, leaves, profile: s.learn.profile };
+    return { done: window.__done && !window.__err && !!s.seen['ko.ao_lesson'], err: window.__err, l: s.vars.ko_ao_l, stage: s.quests.ko_ao && s.quests.ko_ao.stage, said: window.__said.filter((x) => x.who === 'ko_ao'), asked: window.__asked.slice(), wrongClicks, rightClicks, leaves, profile: s.learn.profile };
   }, [wrongClicks, rightClicks, leaves]);
+  if (logged.length) { r.done = false; r.err = [r.err].concat(logged).filter(Boolean).join(' | '); }
+  return r;
 }
 const saysNew = (r) => r.said.filter((x) => x.jp === NEW.jp && x.en === NEW.en).length;
 const saysOld = (r) => r.said.some((x) => x.en === OLD_EN || /{言葉\|ことば} の {後\|あと} の 「は」/.test(x.jp || ''));
@@ -124,7 +137,14 @@ ok(new Set(Object.values(prompts)).size === 4, 'each profile was asked its own q
   ok(r.key === 'ko.ao_lesson#b20d57a6f7' && r.key !== 'ko.ao_lesson#e8ee49be3b', 'the new text has its own voice key, not the old recording\'s (' + r.key + ')');
 }
 
-ok(!errors.length, 'no page errors ' + errors.slice(0, 3).join(' | '));
+// 5. the harness itself
+{
+  const r = await lesson('F', 'boom');
+  ok(!r.done && /deliberate failure/.test(r.err || '') && saysNew(r) === 0, 'the harness: a scene that throws is kept as an error and is not credited as done (' + JSON.stringify({ done: r.done, err: (r.err || '').split('\n')[0] }) + ')');
+}
+
+const real = errors.filter((e) => !/deliberate failure/.test(e));
+ok(!real.length, 'no page errors ' + real.slice(0, 3).join(' | '));
 await b.close();
 srv.close();
 console.log(`\n${pass} passed, ${fail} failed`);
