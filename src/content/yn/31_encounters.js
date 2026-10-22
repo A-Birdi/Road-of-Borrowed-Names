@@ -210,9 +210,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { id: 'ask_why', kind: 'ask', label: say('{何|なに} か 、 {言|い}いにくい こと が あります か 。', 'Ask if there\'s something hard to say'), once: true, when: { stance: { 'n:zenroku': 'listening' } },
           task: task('v:話す', 'Which gently asks whether there is something he finds hard to say?', '{何|なに} か 、 {言|い}いにくい こと が あります か 。', '{何|なに} か 、 {言|い}いたい こと が あったら 、 はっきり {言|い}って ください 。', 'Demanding it plainly is exactly what he can\'t do.', '{何|なに} も ない なら 、 {帰|かえ}ります 。', 'That walks away from him.'),
           effect: { reveal: 'weep' }, says: { en: 'Zenroku looks at the wall. "…The people in the next room weep at night. They\'re from the ridge. How can I complain about that?"' } },
-        { id: 'move', kind: 'propose', label: say('{上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} が 、 {明日|あした} から {空|あ}きます 。', 'Offer him the Upper House\'s Plum room from tomorrow'), when: { claims: ['weep'] },
-          task: task('g:prt_kara_made', 'Which offers him the Upper House\'s Plum room from tomorrow?', '{上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} が 、 {明日|あした} から {空|あ}きます 。', '{上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} は 、 {明日|あした} まで {空|あ}きません 。', 'That says it won\'t be free until tomorrow, and offers nothing.', '{下|しも}の{湯|ゆ} の {土間|どま} が 、 {今夜|こんや} {空|あ}きます 。', 'The floor is no place for him, and not what you mean.'),
-          effect: { flag: 'moved' }, says: { en: 'Zenroku brightens, then hesitates. "And the people next door?" Kane says she\'ll sit with them tonight.' } },
+        // (a genuine inquiry, not a booking: Kane takes it over in her reply, and no room or date is promised; RBN-QA-115,
+        // Agnes 6346428273, Local CL-209)
+        { id: 'move', kind: 'propose', label: say('{上|かみ}の{湯|ゆ} に 、 いつ から {部屋|へや} が {空|あ}く か 、 {聞|き}いて みます 。', 'Offer to ask the Upper House when a room will come free'), when: { claims: ['weep'] },
+          task: task('g:prt_kara_made', 'Which offers to ask the Upper House when a room will come free?', '{上|かみ}の{湯|ゆ} に 、 いつ から {部屋|へや} が {空|あ}く か 、 {聞|き}いて みます 。', '{上|かみ}の{湯|ゆ} に 、 いつ まで {部屋|へや} が {空|あ}いて いる か 、 {聞|き}いて みます 。', 'いつまで…空いているか asks until when a room stays free: when that ends, not when one comes free.', '{下|しも}の{湯|ゆ} の {土間|どま} が 、 {今夜|こんや} {空|あ}きます 。', 'The floor is no place for him, and not what you mean.'),
+          effect: { flag: 'asked' }, says: { en: 'Zenroku brightens, then hesitates. "If a room comes free, I\'d be glad of it. …And the people next door?" Kane has been listening from the hearth: "Leave the asking to me. I\'ll ask the Upper House myself when a room will come free. And tonight I\'ll sit with the people next door."' } },
         { id: 'stay', kind: 'propose', label: say('{隣|となり} の {方|かた} たち に 、 キクエ さん の {薬|くすり} を {頼|たの}みましょう 。', 'Suggest asking Kikue for something to help the people next door sleep'), when: { claims: ['weep'] },
           task: task('v:薬', 'Which suggests asking Kikue for a remedy for the people next door?', '{隣|となり} の {方|かた} たち に 、 キクエ さん の {薬|くすり} を {頼|たの}みましょう 。', '{隣|となり} の {方|かた} たち に 、 {静|しず}か に する よう {言|い}いましょう 。', 'Telling grieving people to be quiet is what he couldn\'t bring himself to do.', '{隣|となり} の {方|かた} たち を 、 {外|そと} に {出|だ}しましょう 。', 'Turn them out? No.'),
           effect: { flag: 'stayed' }, says: { en: 'Zenroku nods. "Something to help them sleep. Yes. Then I\'ll sleep too."' } },
@@ -235,7 +237,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     conclusions: [
       { id: 'walked', when: { left: 'n:zenroku' }, result: 'end', text: { en: 'Zenroku goes off to the bath. Later Kane hears the rest from him herself, and moves the ridge family to a quieter corner.' } },
-      { id: 'moved', when: { flag: 'moved' }, result: 'win', text: { en: 'Zenroku will move to the Upper House\'s Plum room tomorrow. The two houses are passing guests between them.' }, flags: { yn_zenroku_moved: true } },
+      // (yn_zenroku_asked: the inquiry is Kane's to make; no answer, room or date is implied. An old save's yn_zenroku_moved
+      // stays as it is, read by nothing)
+      { id: 'asked', when: { flag: 'asked' }, result: 'win', text: { en: 'Kane will ask the Upper House when a room comes free for Zenroku. Tonight she sits with the people next door.' }, flags: { yn_zenroku_asked: true } },
       { id: 'stayed', when: { flag: 'stayed' }, result: 'win', text: { en: 'Zenroku stays. Kikue sends something warm for the people next door, and that night the whole corridor sleeps.' }, flags: { yn_zenroku_stayed: true } },
       { id: 'heard', when: { all: [{ understanding: 2 }, { rounds: 6 }] }, result: 'win', text: { en: 'Zenroku feels heard, which, he admits, was most of what he wanted.' } },
     ],

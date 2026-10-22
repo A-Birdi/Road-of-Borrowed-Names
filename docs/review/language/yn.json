@@ -899,11 +899,11 @@
   "jp": "{話|はなし} を {聞|き}いて みて くれる ？ {私|わたし} が {聞|き}く と 、 「いえいえ 、 {結構|けっこう} です 」 しか {言|い}わない の 。",
   "en": "Would you try talking to him? When I ask, all he says is \"No, no, it's quite all right.\""
  },
- "scene:yn.complaint_start#mefyfh": {
+ "scene:yn.complaint_start#bftrzb": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} へ ？ {女将|おかみ} が {承知|しょうち} したの ？ …… {上|かみ}の{湯|ゆ} と {下|しも}の{湯|ゆ} で 、 {客|きゃく} を {譲|ゆず}り{合|あ}う なんて 、 {何年|なんねん} ぶり かしら 。",
-  "en": "To the Upper House's Plum room? The proprietress agreed? …The Upper and Lower Houses passing guests between them. How many years has it been?"
+  "ref": "RBN-QA-115 self-review, 2026-10-22 (Agnes 6346428273, Local CL-209): the complaint's inquiry read in its encounter and with Kane's reply after it. いつから…空くか asks when a room comes free (the から lesson kept honestly); the distractor いつまで…空いているか asks until when one stays free, the contrast its feedback names; Kane's 上の湯には、私から聞いてみるわ in her plain, warm register (わ, かしら), the inquiry hers, no room or date promised; checked against the lexicon and grammar notes",
+  "jp": "{上|かみ}の{湯|ゆ} に は 、 {私|わたし} から {聞|き}いて みる わ 。 …… {客|きゃく} の こと で {向|む}こう に {相談|そうだん} する なんて 、 {何年|なんねん} ぶり かしら 。",
+  "en": "I'll ask the Upper House myself. …Going to them about a guest. How many years has it been?"
  },
  "scene:yn.complaint_start#wu2yex": {
   "status": "self-reviewed",
@@ -7169,16 +7169,16 @@
   "jp": "{何|なに} も ない なら 、 {帰|かえ}ります 。",
   "en": ""
  },
- "encounter:yn.complaint#21rpil": {
+ "encounter:yn.complaint#i8dp1z": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} が 、 {明日|あした} から {空|あ}きます 。",
+  "ref": "RBN-QA-115 self-review, 2026-10-22 (Agnes 6346428273, Local CL-209): the complaint's inquiry read in its encounter and with Kane's reply after it. いつから…空くか asks when a room comes free (the から lesson kept honestly); the distractor いつまで…空いているか asks until when one stays free, the contrast its feedback names; Kane's 上の湯には、私から聞いてみるわ in her plain, warm register (わ, かしら), the inquiry hers, no room or date promised; checked against the lexicon and grammar notes",
+  "jp": "{上|かみ}の{湯|ゆ} に 、 いつ から {部屋|へや} が {空|あ}く か 、 {聞|き}いて みます 。",
   "en": ""
  },
- "encounter:yn.complaint#14u18i2": {
+ "encounter:yn.complaint#15o2gk": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} は 、 {明日|あした} まで {空|あ}きません 。",
+  "ref": "RBN-QA-115 self-review, 2026-10-22 (Agnes 6346428273, Local CL-209): the complaint's inquiry read in its encounter and with Kane's reply after it. いつから…空くか asks when a room comes free (the から lesson kept honestly); the distractor いつまで…空いているか asks until when one stays free, the contrast its feedback names; Kane's 上の湯には、私から聞いてみるわ in her plain, warm register (わ, かしら), the inquiry hers, no room or date promised; checked against the lexicon and grammar notes",
+  "jp": "{上|かみ}の{湯|ゆ} に 、 いつ まで {部屋|へや} が {空|あ}いて いる か 、 {聞|き}いて みます 。",
   "en": ""
  },
  "encounter:yn.complaint#1txt41w": {
