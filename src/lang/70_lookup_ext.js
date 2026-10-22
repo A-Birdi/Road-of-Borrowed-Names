@@ -42,6 +42,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (e) meaning = e.m;
     }
     if (ctr === '月' && /がつ$/.test(tok.reading || '')) return { en: 'month number ' + num.en + (num.n ? ' (' + ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][num.n] + ')' : '') };
+    // a fraction's whole: 分 read ぶん ("part") before の, as in {三分|さんぶん} の {一|いち} (one third); as minutes it is ふん/ぷん
+    if (ctr === '分' && num.n && /ぶん$/.test(tok.reading || '') && tok.next === 'の') {
+      return { en: num.en + ' parts: a fraction ({' + s + '|' + tok.reading + '}の{一|いち} = 1/' + num.en + ')', form: 'fraction (〜分の〜)',
+        n: 'A fraction: the whole first, then の and the part. {三分|さんぶん}の{一|いち} is one of three parts, 1/3; {四分|よんぶん}の{三|さん} is 3/4.' };
+    }
     if (!meaning) return null;
     return { en: num.en + ' × ' + meaning };
   }
@@ -53,8 +58,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (c) {
       return Object.assign({}, r, {
         unknown: false,
-        entry: { w: t.surface, r: t.reading || r.reading, m: c.en, pos: 'ctr', lv: 'E', n: 'Number + counter. Japanese counts things with counters chosen by the kind of thing; readings of numbers can change before some counters.' },
-        forms: ['number + counter'],
+        entry: { w: t.surface, r: t.reading || r.reading, m: c.en, pos: 'ctr', lv: 'E', n: c.n || 'Number + counter. Japanese counts things with counters chosen by the kind of thing; readings of numbers can change before some counters.' },
+        forms: [c.form || 'number + counter'],
       });
     }
     return r;
