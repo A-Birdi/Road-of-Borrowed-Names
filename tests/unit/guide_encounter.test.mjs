@@ -10,6 +10,10 @@
 // - Stages next to them unchanged (the satchel after the courier, the letter's addressee, the spring eggs).
 // - The pin: a step that needs two different conclusions of one encounter at once is never "direct"; one that needs a
 //   single conclusion is.
+// - The other side of it (Agnes 6333669762): a path that went on as if a test failed keeps that, so a later test for the
+//   same value cannot hold there (`!if var._enc=alpha -> end` then `?(var._enc=alpha)`; `_res=0` likewise, after an
+//   encounter and after a challenge; a skipped `?(…) !end`; `!=`), while what can still happen does (another conclusion;
+//   the other `_res`, which is only ever 1 or 0).
 // - Reading never changes the state.
 import { load } from '../lib/load.mjs';
 
@@ -64,9 +68,21 @@ export default async (t) => {
     '@scene zz.pin_two', '!encounter yn.kettle', '?(var._enc=alpha) !set zz_alpha', '?(var._enc=beta) !set zz_beta', '?(zz_alpha&zz_beta) !quest zz_pin_two 1',
     '@scene zz.pin_one', '!encounter yn.kettle', '?(var._enc=alpha) !set zz_alpha1', '?(zz_alpha1) !quest zz_pin_one 1',
     '@scene zz.pin_res', '!encounter yn.kettle', '!if var._res=0 -> later', '!quest zz_pin_res 1', '!end', ':later', '!quest zz_pin_res 2',
+    // went on as if the test failed: the same test later cannot hold
+    '@scene zz.no_enc', '!encounter yn.kettle', '!if var._enc=alpha -> end', '?(var._enc=alpha) !quest zz_no_enc 1',
+    '@scene zz.no_res', '!encounter yn.kettle', '!if var._res=0 -> end', '?(var._res=0) !quest zz_no_res 1',
+    '@scene zz.no_skip', '!encounter yn.kettle', '?(var._enc=alpha) !end', '?(var._enc=alpha) !quest zz_no_skip 1',
+    '@scene zz.no_ne', '!encounter yn.kettle', '!if var._enc!=alpha -> end', '?(var._enc!=alpha) !quest zz_no_ne 1',
+    '@scene zz.no_chal', '!challenge ko.ao_teach1', '!if var._res=0 -> end', '?(var._res=0) !quest zz_no_chal 1',
+    // and what can still happen does
+    '@scene zz.yes_enc', '!encounter yn.kettle', '!if var._enc=alpha -> end', '?(var._enc=beta) !quest zz_yes_enc 1',
+    '@scene zz.yes_res', '!encounter yn.kettle', '!if var._res=0 -> end', '?(var._res=1) !quest zz_yes_res 1',
+    '@scene zz.yes_chal', '!challenge ko.ao_teach1', '!if var._res=0 -> end', '?(var._res=1) !quest zz_yes_chal 1',
   ].join('\n'), 'guide_encounter.test');
-  for (const id of ['zz_pin_two', 'zz_pin_one', 'zz_pin_res']) C.quests[id] = { title: { jp: 'テスト', en: id }, stages: [0, 1, 2].map((k) => ({ jp: 'テスト', en: id + ' ' + k })) };
+  const NO = ['zz_no_enc', 'zz_no_res', 'zz_no_skip', 'zz_no_ne', 'zz_no_chal'], YES = ['zz_yes_enc', 'zz_yes_res', 'zz_yes_chal'];
+  for (const id of ['zz_pin_two', 'zz_pin_one', 'zz_pin_res'].concat(NO, YES)) C.quests[id] = { title: { jp: 'テスト', en: id }, stages: [0, 1, 2].map((k) => ({ jp: 'テスト', en: id + ' ' + k })) };
   C.maps['yn.guild'].npcs.push({ id: 'zz_two', x: 2, y: 4, talk: 'zz.pin_two' }, { id: 'zz_one', x: 3, y: 4, talk: 'zz.pin_one' }, { id: 'zz_res', x: 4, y: 4, talk: 'zz.pin_res' });
+  NO.concat(YES).forEach((id, i) => C.maps['yn.guild'].npcs.push({ id: 'n' + id, x: 2 + i, y: 5, talk: id.replace('zz_', 'zz.') }));
   G.reset();
   // a stale win and a stale conclusion carried in: the pin must come from the walk, not from the save
   const pinned = (q) => live(q, mk(YN.concat(['yn_rooms_done']), { yn_main: 3, [q]: 0 }, { map: 'yn.guild', travel: {} }, { _res: 1, _enc: 'alpha' }));
@@ -74,4 +90,11 @@ export default async (t) => {
   t.ok(two.how !== 'direct', 'a step that needs two conclusions of one encounter at once is never direct (' + JSON.stringify(two) + ')');
   t.ok(one.how === 'direct' && one.t.join() === 'yn.guild:npc:zz_one@3,4', 'a step that needs one conclusion is direct, even with a stale _enc of that very value carried in (' + JSON.stringify(one) + ')');
   t.ok(res.how === 'direct' && res.t.join() === 'yn.guild:npc:zz_res@4,4', 'after an encounter the win and the other way both go on: the nearest stage is reached either way (' + JSON.stringify(res) + ')');
+  // whatever the save carries in, a test the path already went on without never holds later; what can still happen does
+  for (const v of INCOMING) {
+    const r = (q) => live(q, mk(YN.concat(['yn_rooms_done']), { yn_main: 3, [q]: 0 }, { map: 'yn.guild', travel: {} }, v));
+    const no = NO.map((q) => [q, r(q)]).filter(([, x]) => x.how === 'direct' || !x.pure);
+    const yes = YES.map((q) => [q, r(q)]).filter(([q, x]) => !(x.how === 'direct' && x.t.join() === 'yn.guild:npc:n' + q + '@' + (2 + NO.length + YES.indexOf(q)) + ',5' && x.pure));
+    t.ok(!no.length && !yes.length, 'incoming ' + JSON.stringify(v) + ': ' + NO.length + ' steps that need a conclusion the path went on without are never direct; ' + YES.length + ' that can still happen are (' + JSON.stringify({ no, yes }) + ')');
+  }
 };
