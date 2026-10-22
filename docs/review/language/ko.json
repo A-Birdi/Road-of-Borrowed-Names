@@ -2147,11 +2147,11 @@
   "jp": "「ねこ」 ！ ね の {最後|さいご} は 、 くるっと {丸|まる} 。 れ に は {丸|まる} が ない 。 …… {覚|おぼ}えた 。",
   "en": "ねこ, cat! ね ends in a little loop; れ doesn't. …Got it."
  },
- "scene:ko.ao_lesson#axqmq4": {
+ "scene:ko.ao_lesson#1atnyrm": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
-  "jp": "{言葉|ことば} の {後|あと} の 「は」 は 、 「わ」 。 …… ずるい けど 、 {覚|おぼ}えた 。",
-  "en": "After a word, は is said わ. …That's cheating, but I've got it."
+  "ref": "RBN-QA-082 self-review, 2026-10-22: Ao's lesson-2 success line read in its scene against the lesson's four profile tasks (ko/32_side_learning.js: こんにちは, はな は, はは は はなし, and the A task's own 助詞), Ao's established casual speech (〜んだ, ずるい けど), the lexicon and standard textbook grammar (〜って 読む); wording agreed by Agnes (6332271452, 6332338068), Local (CL-157) and Cloud (CC-086)",
+  "jp": "{助詞|じょし} の 「は」 は 、 「わ」 って {読|よ}む んだ 。 …… ずるい けど 、 {覚|おぼ}えた 。",
+  "en": "The particle は is read わ. …That's cheating, but I've got it."
  },
  "scene:ko.ao_lesson#qy4m6b": {
   "status": "self-reviewed",
