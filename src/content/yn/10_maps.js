@@ -37,7 +37,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bench', x: 14, y: 9, scene: 'yn.descent_view' },
     ],
     npcs: [
-      { id: 'yn_yasuke', x: 9, y: 16, dir: 'down', if: '!yn_done', talk: [{ if: 'yn_yasuke_met', scene: 'yn.yasuke_idle' }, { scene: 'yn.yasuke_road' }] },
+      // (after the chapter's end he stays only while Eggs for Everyone is under way and his egg is still owed, so the
+      // quest can be finished; given it, he goes as before. Nothing is given or set for you; RBN-QA-129)
+      { id: 'yn_yasuke', x: 9, y: 16, dir: 'down', if: '!yn_done|quest.yn_eggs=0&!yn_egg_yasuke', talk: [{ if: 'yn_yasuke_met', scene: 'yn.yasuke_idle' }, { scene: 'yn.yasuke_road' }] },
     ],
     foes: [
       { id: 'e1', enemy: 'yn.steamwisp', x: 18, y: 10, patrol: 2 },
@@ -79,6 +81,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'yn_rokubei', x: 24, y: 18, dir: 'left', if: '!yn_rokubei_met', talk: 'yn.rokubei_first' },
+      // (after the chapter's end her talk is her after-line, so Eggs for Everyone cannot be begun then: a quest already
+      // under way is kept finishable (RBN-QA-129), a quest never begun is not offered late; a known limitation)
       { id: 'yn_tama', x: 15, y: 18, dir: 'up', talk: [{ if: 'yn_done', scene: 'yn.tama_after' }, { if: 'yn_eggs_cooked&!yn_buns_cooked', scene: 'yn.tama_buns' }, { if: 'yn_eggs_cooked', scene: 'yn.tama_idle' }, { scene: 'yn.tama' }] },
       { id: 'yn_kihachi', x: 34, y: 12, dir: 'down', talk: [{ if: 'yn_done', scene: 'yn.kihachi_after' }, { scene: 'yn.kihachi' }] },
       { id: 'yn_toki', x: 2, y: 13, dir: 'right', talk: [{ if: 'yn_done', scene: 'yn.toki_after' }, { scene: 'yn.toki' }] },
@@ -129,8 +133,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'mp_tokube', x: 11, y: 18, dir: 'up', if: '!yn_tokube_gone', talk: [{ if: 'yn_done', scene: 'yn.tokube_after' }, { if: 'yn_tokube_done', scene: 'yn.tokube_idle' }, { scene: 'yn.tokube' }] },
       { id: 'yn_onatsu', x: 17, y: 11, dir: 'down', talk: [{ if: 'yn_done', scene: 'yn.onatsu_after' }, { scene: 'yn.onatsu' }] },
       // (once he has taken his egg home he is in the Lower House instead, by its hearth; he goes by its door or, if
-      // that way cannot be walked, fades where he stands: never by another exit; RBN-QA-120)
-      { id: 'yn_tsuneji', x: 22, y: 18, dir: 'left', if: '!yn_done&!yn_egg_tsuneji', leaveTo: 'yn.shimo', leave: 'way', talk: 'yn.tsuneji' },
+      // that way cannot be walked, fades where he stands: never by another exit; RBN-QA-120. After the chapter's end
+      // he stays here only while Eggs for Everyone is under way and his egg is still owed; given it then, he goes by
+      // the same door, and the hearth's place, which ends with the chapter, does not take him; RBN-QA-129)
+      { id: 'yn_tsuneji', x: 22, y: 18, dir: 'left', if: '!yn_done&!yn_egg_tsuneji|quest.yn_eggs=0&!yn_egg_tsuneji', leaveTo: 'yn.shimo', leave: 'way', talk: 'yn.tsuneji' },
       { id: 'yn_aki', x: 33, y: 22, dir: 'down', if: '!yn_vents_open', talk: [{ if: 'quest.yn_main>=5', scene: 'yn.aki_ready' }, { scene: 'yn.aki' }] },
     ],
     exits: [
