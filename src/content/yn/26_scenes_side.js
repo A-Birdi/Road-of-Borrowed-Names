@@ -124,7 +124,7 @@ yn_ginnojo: {今夜|こんや} 、 {一席|いっせき} やる よ 。 {落|お
 
 @scene yn.ginnojo_idle
 !faceplayer
-yn_ginnojo: {落|お}ち で {笑|わら}い が {来|き}た {時|とき} の {音|おと} 。 …… {四十年|よんじゅうねん} {経|た}って も 、 {同|おな}じ {音|おと} だった よ 。 || The sound when the laugh comes on the punchline. …Forty years on, it's the same sound.
+yn_ginnojo: {最後|さいご} の {台詞|せりふ} が 、 {戻|もど}って {来|き}た 。 …… {四十年|よんじゅうねん} {経|た}って も 、 {笑|わら}い が {来|く}る {間|ま} は 、 {体|からだ} が {覚|おぼ}えて いる 。 || The last line's come back. …Forty years on, my body still knows the beat where the laugh comes.
 
 @scene yn.onatsu_line
 !faceplayer
