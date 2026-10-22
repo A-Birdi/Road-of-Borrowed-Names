@@ -68,6 +68,11 @@ export default async (t) => {
   t.eq(C.quests.cr_main.stages.length, 9, 'the main story has nine steps');
   t.ok(C.places.cloudroad.edition === 2 && C.roads.some((r) => r[1] === 'cloudroad' && r[2] && r[2].if === 'ko_done'), 'the Cloudroad is on the twelve-chapter chart, after Kotonoha');
   t.ok(RB.tiles.PAL.cloudroad && RB.tiles.PAL.cloudtop, 'the road\'s two palettes: below and above the cloud');
+  // RBN-QA-104: the cloud sea is drawn from the cloud top's own pale water, not the river ramp it copied from the road below
+  const ownWater = RB.tiles.addRamps({ water: RB.tiles.PAL.cloudtop.water }).waterR;
+  t.eq(RB.tiles.PAL.cloudtop.waterR, ownWater, 'the cloud top\'s water ramp is made from its own water colours');
+  t.ok(JSON.stringify(RB.tiles.PAL.cloudtop.waterR) !== JSON.stringify(RB.tiles.PAL.cloudroad.waterR), 'and it is not the Cloudroad\'s river ramp');
+  t.eq(RB.tiles.PAL.cloudroad.waterR, RB.tiles.addRamps({ water: RB.tiles.PAL.cloudroad.water }).waterR, 'the Cloudroad\'s rivers keep their own ramp');
   t.eq((C.scriptErrors || []).filter((e) => /cr\/|cr\./.test(e)), [], 'the Cloudroad\'s scenes parse');
   t.ok(ops('cr.end').includes('set:cr_done') && ops('cr.end').includes('quest:cr_main done'), 'the chapter ends with cr_done');
 
