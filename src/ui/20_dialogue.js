@@ -165,6 +165,11 @@ RB.ui.dialogue = (function () {
     else RB.portraitAnim.stop();
     const whoEl = box.querySelector('.who');
     whoEl.innerHTML = ch ? '<span class="nm">' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '<span class="nm narr">' + (line.jp || line.en ? '' : '') + '</span>';
+    // someone the scene asked to walk up to you who did not arrive, speaking while off screen (RBN-QA-108): the plate
+    // says so, and which way they are; nothing claims they came
+    const away = ch && !ch.pc && RB.staging && RB.staging.unarrivedAway ? RB.staging.unarrivedAway(line.who) : null;
+    if (away) whoEl.insertAdjacentHTML('beforeend', '<span class="offscr" data-way="' + away + '" aria-label="off screen, ' + ({ left: 'to your left', right: 'to your right', up: 'ahead of you', down: 'behind you' })[away] + '">' + ({ left: '\u2190', right: '\u2192', up: '\u2191', down: '\u2193' })[away] + ' off screen</span>');
+    box.classList.toggle('offscreen-speaker', !!away);
     box.classList.toggle('narration', !ch);
     const main = box.querySelector('.main');
     const hasJp = !!line.jp;

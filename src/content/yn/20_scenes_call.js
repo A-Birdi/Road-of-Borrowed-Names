@@ -23,8 +23,12 @@ RB.script.add(`
 @scene yn.call
 # Staged: Jinpachi comes up the road at a run, waving a letter over his head, the first one ever to come up the relay
 # from beyond the pass. He reads the address out proudly; the companion answers in their own way.
+# He runs up to you first (RBN-QA-108), from his place on the road or from wherever he was still going: chained after
+# the Cloudroad's end he was walking to his place, 13 tiles off. No line says he came; if he cannot reach you (no free
+# place within 2, or the walk runs out) he speaks from where he is, and a line said while he is off screen says so.
 !set yn_called
 !chapter yn
+!walkto cr_jinpachi pc run max=8000
 !emote cr_jinpachi !
 !faceplayer cr_jinpachi
 cr_jinpachi: $name さん ！ {峠|とうげ} の {向|む}こう から 、 {手紙|てがみ} です ！ {谷|たに} の {側|がわ} から {継|つ}ぎ{飛脚|びきゃく} に {乗|の}った 、 {初|はじ}めて の {便|びん} です よ ！ || $name! A letter from over the pass! The first post ever to come up the relay from the valley side!

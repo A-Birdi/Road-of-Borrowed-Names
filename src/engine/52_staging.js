@@ -619,7 +619,7 @@ RB.staging = (function () {
       if (cross && liveTrigger(nx, ny)) return finish(false); // a trigger that has come true since: not stepped on
       const dir = dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up';
       if (c) trail.push([a.x, a.y]);
-      const moved = RB.world.scriptMove(id, dir, 1, a === W().player ? 200 : 240);
+      const moved = RB.world.scriptMove(id, dir, 1, a === W().player ? 200 : wo && wo.run ? 150 : 240); // (run: someone hurrying to you)
       // (once the figure has left the world, the map entered afresh or another or a load, nothing finishes its step:
       // it is not waited for, and the walk ends at the next step's check instead of waiting there for ever)
       return new Promise((res) => {
@@ -682,6 +682,94 @@ RB.staging = (function () {
     return ok;
   }
   function syncPlayer() { const s = RB.game.s, p = W().player; if (s) { s.x = p.x; s.y = p.y; s.dir = p.dir; } }
+
+  // ---- someone walks up to you (`!walkto <who> pc [dir]`, RBN-QA-108) ---------------------------------------------
+  // The mark: a free tile within 2 of you (the larger of the two distances), the one in front of you first, then the
+  // nearest; never an exit or a trigger, a tile the scene holds for someone else (sc.reserved), a tile someone stands on
+  // or is stepping onto, the end of someone's way here, or your companion's (where they stand or are stepping to). Of
+  // those, the first the walker can reach; none: null.
+  const near2 = (a, p) => Math.max(Math.abs(a.x - p.x), Math.abs(a.y - p.y)) <= 2;
+  function markNear(a) {
+    const w = W(), p = w.player, d = DIRS[p.dir] || DIRS.down;
+    const bound = new Set();
+    for (const n of w.npcs.concat(w.extras || [])) if (n !== a && n.route && n.route.length) bound.add(n.route[n.route.length - 1].join(','));
+    const c = w.comp, cAt = c && c !== a ? [[c.x, c.y]].concat(c.mv ? [[c.mv.tx, c.mv.ty]] : []) : [];
+    const ok = (x, y) => !(x === p.x && y === p.y) && free(x, y, a) && !bound.has(x + ',' + y) && !cAt.some((t) => t[0] === x && t[1] === y);
+    const cand = [[p.x + d[0], p.y + d[1]]];
+    for (let r = 1; r <= 2; r++) {
+      const ring = [];
+      for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (Math.max(Math.abs(dx), Math.abs(dy)) === r) ring.push([p.x + dx, p.y + dy]);
+      ring.sort((m, n) => (Math.abs(m[0] - p.x) + Math.abs(m[1] - p.y)) - (Math.abs(n[0] - p.x) + Math.abs(n[1] - p.y)));
+      cand.push(...ring);
+    }
+    for (const [x, y] of cand) if (ok(x, y) && ((x === a.x && y === a.y) || bfs(a, x, y))) return [x, y];
+    return null;
+  }
+  // The walk to that mark. Someone still on their way to a new place is turned from the tile they are stepping onto
+  // (never set at their way's end first). Already within 2: they stay where they are. No mark: nobody moves. Under
+  // Skip seen or behind a fade: set on the mark at once, when it is free. Otherwise walkTo's walk and its bound: a
+  // walk that runs out stops them on the tile they reached, never further. A walk that does not arrive is recorded (a
+  // walk fallback, with its reason) and, for the rest of the scene, a line of theirs said while they are off screen is
+  // marked as said from off screen (unarrivedAway; 20_dialogue.js). o.run: at a run (a step in 150 ms, not 240).
+  // Resolves { ok, why }: ok only when they arrived.
+  async function walkNear(ref, dir, o, ctx) {
+    o = o || {};
+    if (!st.on) return { ok: false, why: 'staging off' };
+    const w0 = W(), a = actor(ref, ctx);
+    if (!a || a === w0.player) { st.stats.walkFallbacks++; return { ok: false, why: 'nobody here to walk' }; }
+    const map0 = w0.map, sc = st.scene, tok = sc ? sc.token : 0;
+    if (a.route) {
+      a.route = null; a.arriving = false; a.alpha = 1; a.fadeIn = false;
+      // (their step under way finishes on its tile; nothing is set further on)
+      for (let i = 0; a.mv && i < 60; i++) await new Promise((r) => setTimeout(r, 16));
+    }
+    const live = () => present(a, map0) && (!sc || st.scene === sc) && (!tok || st.scene.token === tok);
+    if (!live()) { st.stats.walkFallbacks++; return { ok: false, why: 'the scene or the map is gone' }; }
+    own(a);
+    if (sc && !sc.moved.has(a)) sc.moved.set(a, { from: [a.x, a.y, a.dir], stay: !!o.stay });
+    else if (sc && o.stay) sc.moved.get(a).stay = true;
+    S(a).look = null;
+    const p = W().player;
+    let ok = false, why = null;
+    if (near2(a, p) && !a.mv) ok = true;
+    else {
+      const mark = markNear(a);
+      if (!mark) why = 'no free place within 2';
+      else {
+        if (sc) sc.reserved.set(a, mark[0] + ',' + mark[1]);
+        st.stats.walks++;
+        if (o.now || RB.game.fastForward()) {
+          if (free(mark[0], mark[1], a)) { a.x = mark[0]; a.y = mark[1]; a.fx = a.x; a.fy = a.y; a.mv = null; ok = true; } else why = 'its place was taken';
+        } else {
+          const path = bfs(a, mark[0], mark[1]);
+          if (!path) why = 'no way to its place';
+          else { ok = await walkPath(a, path, tok, o.max || 4000, o.run ? { run: true } : undefined); if (!ok) why = 'the walk ran out or was stopped'; }
+        }
+        if (sc && !ok && sc.reserved.get(a) === mark[0] + ',' + mark[1]) sc.reserved.delete(a);
+      }
+    }
+    const kept = present(a, map0);
+    if (!kept) { ok = false; why = why || 'gone from the map'; }
+    if (!ok) {
+      st.stats.walkFallbacks++;
+      st.stats.nearFallbacks = (st.stats.nearFallbacks || []).concat([{ id: idOf(a), why }]).slice(-20);
+      if (sc && st.scene === sc) (sc.unarrived = sc.unarrived || new Set()).add(a);
+    } else if (sc && sc.unarrived) sc.unarrived.delete(a);
+    if (kept && (!sc || st.scene === sc)) {
+      if (dir && DIRS[dir]) a.dir = dir;
+      else if (ok) a.dir = Math.abs(p.x - a.x) >= Math.abs(p.y - a.y) ? (p.x < a.x ? 'left' : 'right') : (p.y < a.y ? 'up' : 'down');
+    }
+    return { ok, why };
+  }
+  // a speaker this scene's `pc` walk did not bring to you, while they are off screen: the way they are (else null)
+  function unarrivedAway(who) {
+    const sc = st.scene;
+    if (!st.on || !sc || !sc.unarrived || !sc.unarrived.size || !who) return null;
+    const a = actor(who);
+    if (!a || !sc.unarrived.has(a) || !present(a, W().map) || onScreen(a)) return null;
+    const p = W().player, dx = a.x - p.x, dy = a.y - p.y;
+    return Math.abs(dx) >= Math.abs(dy) ? (dx < 0 ? 'left' : 'right') : dy < 0 ? 'up' : 'down';
+  }
 
   // ---- idle life ----------------------------------------------------------------------------------------------
   function onScreen(a) {
@@ -984,7 +1072,7 @@ RB.staging = (function () {
   }
 
   return {
-    begin, end, cue, look, pose, prop, beat, walkTo, settle, ambience, ambienceNow, owned, actor, own, playerMoved,
+    begin, end, cue, look, pose, prop, beat, walkTo, walkNear, markNear, unarrivedAway, settle, ambience, ambienceNow, owned, actor, own, playerMoved,
     sceneToken: () => (st.scene ? st.scene.token : 0),
     tick, frameOf, wanderPause, stepped, rand, examined, profileOf,
     get AMBIENCE() { return AMBIENCE; },

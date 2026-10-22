@@ -57,7 +57,7 @@ RB.questGuide = (function () {
   const NEEDS = 6;         // missing conditions per path
   const UNK = '\u0000?';   // an outcome not known yet (var._res after a challenge; var._res and var._enc after an encounter);
   //                         with '|x|y' after it: not known, but not x and not y (a path that went on as if the test failed)
-  const OUTCOME = new Set(['var:_res', 'var:_enc']); // the outcomes a scene can branch on
+  const OUTCOME = new Set(['var:_res', 'var:_enc', 'var:_walked']); // the outcomes a scene can branch on (_walked: `!walkto <who> pc`)
   const isUnk = (v) => typeof v === 'string' && v.startsWith(UNK);
   const OPS = { '>=': '<', '<=': '>', '!=': '=', '==': '!=', '=': '!=', '>': '<=', '<': '>=' };
 
@@ -352,6 +352,8 @@ RB.questGuide = (function () {
         }
         const c = f.sc.cmds[f.pc++];
         const op = c.op, a = c.args || [];
+        // (someone walking up to you, `!walkto <who> pc`: whether they arrive is not known ahead, RBN-QA-108)
+        if (op === 'walkto' && a[1] === 'pc') st.vars._walked = UNK;
         if (op === 'say' || op === 'emote' || op === 'move' || op === 'face' || op === 'faceplayer' || op === 'wait' || op === 'fade' ||
           op === 'shake' || op === 'music' || op === 'sfx' || op === 'card' || op === 'toast' || op === 'journal' || op === 'speakerless' || op === 'interlude' || op === 'sequence' || op === 'shot' ||
           // scene direction (52_staging.js): presentation only
