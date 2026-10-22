@@ -218,6 +218,8 @@ yn_tahei: {敬語|けいご} で {殴|なぐ}る の が 、 {上|かみ}の{湯
 !shake
 narr: {足元|あしもと} が 、 {大|おお}きく {揺|ゆ}れた 。 {川|かわ} の {湯気|ゆげ} が 、 {一度|いちど} に {噴|ふ}き{上|あ}がる 。 || The ground lurches underfoot. Steam bursts up from the river all at once.
 !shake
+# (the river runs cold from here, and its steam goes with this line: RBN-QA-119)
+!set yn_river_cold
 narr: …… そして 、 {急|きゅう} に {静|しず}か に なった 。 {川|かわ} から {湯気|ゆげ} が {消|き}えて いる 。 {冷|つめ}たい {風|かぜ} が 、 {谷|たに} を {抜|ぬ}けた 。 || …And then, suddenly, quiet. The steam has gone from the river. A cold wind passes down the valley.
 yn_oritsu: …… {湯|ゆ} が 。 || …The water.
 yn_tahei: {冷|つめ}てえ …… 。 || It's cold…
