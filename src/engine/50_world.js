@@ -148,6 +148,27 @@ RB.world = (function () {
     W.comp.id = cid;
     W.trail = [];
   }
+  // A companion who stays behind or comes back (`!hook comp_away` / `comp_back`, 58s_surety.js; RBN-QA-103). Staying:
+  // the figure following you stops where it stands and is a figure of the scene, as one who walked in to speak is: a
+  // place here for them now takes that same figure there (the bench at the Mist Barrier), otherwise they leave when
+  // the scene ends (dismissExtras). Coming back: their figure here (a place that now ends, or one who walked in to
+  // speak) is the one who follows you, from where it stands (the hook places them, as `!refresh comp` does); with no
+  // figure of theirs here, nobody is put in. Never a second of them.
+  function companionStays() {
+    const a = W.comp;
+    W.comp = null;
+    W.trail = [];
+    if (!a || !W.map) return;
+    Object.assign(a, { extra: true, map: W.map.id, def: { id: a.id }, home: a.mv ? [a.mv.tx, a.mv.ty] : [a.x, a.y], route: null });
+    W.extras.push(a);
+  }
+  function companionBack() {
+    const cid = partyCompanion();
+    const fig = cid && W.map && W.npcs.find((n) => personOf(n) === cid);
+    if (fig) { W.npcs = W.npcs.filter((n) => n !== fig); fig.extra = true; fig.route = null; W.extras.push(fig); }
+    refreshActors();
+    return !!cid && (W.extras.some((n) => personOf(n) === cid) || W.leavers.some((n) => personOf(n) === cid));
+  }
   // o.arrive: a scene's !refresh arrive — the people this brings walk in from the way in even just after the map
   // appeared (by default, people who appear while a map is still appearing were simply already there)
   function refreshActors(o) {
@@ -1361,7 +1382,7 @@ RB.world = (function () {
   }
 
   return {
-    W, DIRS, enter, update, interact, tapTile, refreshActors, arrivals, placeCompanion, companionHere, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
+    W, DIRS, enter, update, interact, tapTile, refreshActors, arrivals, placeCompanion, companionHere, companionStays, companionBack, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
     frontTile, frontAction, checkFoeContact, hush, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
     musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
