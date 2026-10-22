@@ -103,7 +103,7 @@ ko_yoshino: {朝|あさ} は 、 ここ で {子供|こども} たち に {字|�
 @scene ko.yoshino_ch9
 !faceplayer
 ?(!tell_ko.t_hall_ok) ko_yoshino: {館|やかた} の {壁|かべ} の {板|いた} は 、 {何年|なんねん} も {空|から} の まま 。 {誰|だれ} の {話|はなし} を {掛|か}ける か 、 {葉守|はもり} の {間|あいだ} で {決|き}まらなかった の です 。 || The panels on the hall's walls have been blank for years. The keepers never could agree whose story to hang.
-?(tell_ko.t_hall_ok) ko_yoshino[smile]: {子供|こども} たち が 、 {板|いた} の {前|まえ} で {喧嘩|けんか} して います 。 「わたし は {海蛇|うみへび} の {話|はなし} が いい 」 「{僕|ぼく} は {舟|ふね} ！」 …… いい {授業|じゅぎょう} に なりそう です 。 || The children are arguing in front of the panels. "I like the serpent one!" "The boat!" …It'll make a good lesson.
+?(tell_ko.t_hall_ok) ko_yoshino[smile]: これ で 、 {子供|こども} たち も {板|いた} の {話|はなし} を {比|くら}べられます 。 {何|なに} に {気付|きづ}く か 、 {楽|たの}しみ です 。 …… いい {授業|じゅぎょう} に なりそう です 。 || Now the children can compare the stories on the panels. I'm looking forward to seeing what they notice. …It should make a good lesson.
 @scene ko.yoshino_after
 !faceplayer
 ?(!ko_ao_reads) ko_yoshino: アオ が 、 {朝|あさ} の {授業|じゅぎょう} を {窓|まど} の {外|そと} から {聞|き}いて いる の です 。 …… {気付|きづ}かない ふり を して います 。 || Ao listens to the morning lessons from outside the window. …I'm pretending not to notice.
