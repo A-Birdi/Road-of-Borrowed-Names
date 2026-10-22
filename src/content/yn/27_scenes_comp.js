@@ -279,7 +279,12 @@ ren[laugh]: {明日|あした} の {取|と}り{決|き}め に 、 {古|ふる}
 # The evening after the mediation: the town out in yukata; a walk with the companion; a quiet confession; the one
 # earlier romance moment (C-63, C-67): holding hands only, the player's choice, answered as romance or as the closest
 # of friends, the companion's consent in their own voice, both warm, Bond the same either way. Then the vow (yn.end).
+# Illustrated from its first line (RBN-QA-127): the walk opens on the vow's own valley shot (the bridge, both lit
+# houses, the crowd in yukata) and holds it through the confession and the choice; yn.end carries the same sequence on
+# (src/ui/43_sequence.js cmd) and ends it.
 !ambience dusk
+!sequence yn.end begin
+!shot valley
 narr: その {晩|ばん} 、 {谷|たに} じゅう の {人|ひと} が {浴衣|ゆかた} で {外|そと} に {出|で}た 。 {赤|あか}い {橋|はし} の {上|うえ} を 、 {下駄|げた} の {音|おと} が {行|い}き{来|き} する 。 || That evening the whole valley is out in yukata. The clack of sandals goes back and forth across the red bridge.
 ?(comp=nao) comp[smirk]: {浴衣|ゆかた} は {走|はし}れない な 。 …… {今夜|こんや} は 、 {走|はし}らなくて いい か 。 || Can't run in a yukata. …Tonight I don't have to.
 ?(comp=mio) comp[shy]: {浴衣|ゆかた} 、 {左|ひだり} が {上|うえ} です よ 。 …… はい 、 {大丈夫|だいじょうぶ} 。 {似合|にあ}って います 。 || Left over right with a yukata. …There, all right. It suits you.

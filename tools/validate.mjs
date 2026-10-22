@@ -123,7 +123,8 @@ for (const id in C.scenes) {
     if (c.op === 'ambience' && a[0] !== '-' && !(RB.staging && RB.staging.AMBIENCE[a[0]])) E(where(c) + ' !ambience: unknown preset ' + a[0]);
   }
   // illustrated sequences: a defined sequence opened and closed in the same scene, shots and phases it has,
-  // no `!shake` inside (it is never fired there) and every `!shot` inside an open sequence
+  // no `!shake` inside (it is never fired there) and every `!shot` inside an open sequence. One hand-over: a scene
+  // may open a sequence and `!call` the sequence's own scene, which carries it on and ends it (RBN-QA-127)
   {
     const SQ = RB.sequence;
     let open = null;
@@ -141,6 +142,11 @@ for (const id in C.scenes) {
         if (!sd) E(where(c) + ' !shot: sequence ' + open + ' has no shot ' + a[0]);
         else if (a[1] && !sd.phases.some((p) => p.id === a[1])) E(where(c) + ' !shot ' + a[0] + ': no phase ' + a[1]);
       } else if (c.op === 'shake' && open) E(where(c) + ' !shake inside sequence ' + open + ' (never fired there: make it the shot\'s own action)');
+      else if (c.op === 'call' && open && SQ.get(open).scene === a[0]) {
+        const sub = C.scenes[a[0]], first = sub && sub.cmds.find((x) => x.op === 'sequence');
+        if (!first || first.args[0] !== open || (first.args[1] || 'begin') !== 'begin') E(where(c) + ' !call ' + a[0] + ': hands on sequence ' + open + ', but that scene does not begin it');
+        open = null; // handed on: the called scene carries it on and ends it
+      }
     }
     if (open) E(sc.file + ' [' + id + '] !sequence ' + open + ' is never ended in its scene');
   }

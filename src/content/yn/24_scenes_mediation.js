@@ -69,6 +69,8 @@ yn_rokubei: {上|かみ}の{湯|ゆ} だけ でも 、 {下|しも}の{湯|ゆ} 
 # The chapter's end: the vow, after the walk (yn.walk). The valley out in yukata, the lanterns lit, the north road open;
 # above it, the silent mountain and the road to the Archive.
 # Illustrated (src/ui/43m_seq_yn.js): the lit valley and the bridge; the silent ridge and the companion's resolve.
+# Called from the walk (yn.walk), the sequence is already up on the valley shot and is carried on, not begun again
+# (RBN-QA-127); run on its own, it begins here as before.
 !sequence yn.end begin
 !shot valley
 narr: {谷|たに} の {提灯|ちょうちん} が {全部|ぜんぶ} {点|つ}いた 。 {赤|あか}い {橋|はし} の {上|うえ} を 、 {上|かみ}の{湯|ゆ} の {客|きゃく} と {下|しも}の{湯|ゆ} の {客|きゃく} が 、 {同|おな}じ {下駄|げた} の {音|おと} で {歩|ある}いて いる 。 || Every lantern in the valley is lit. On the red bridge, guests of the Upper House and the Lower House walk with the same clack of wooden sandals.

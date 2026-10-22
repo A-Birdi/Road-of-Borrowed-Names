@@ -12,6 +12,8 @@
  *                               shot dissolves in (≈350 ms); a phase of the shot on screen starts that phase's
  *                               action (phases only go forward: earlier ones stay at their end state)
  *   !sequence <seqId> end       before the return to the world: the picture dissolves back into the map
+ *   (one hand-over: a scene may open a sequence and `!call` the sequence's own scene, whose begin then carries the
+ *   sequence on as it is and whose end ends it: the yukata walk and yn.end, RBN-QA-127; the validator allows only that)
  * State commands (!set !give !take !quest !note !refresh …) stay where they are and run once; review and
  * replay never run them. `?(cond)` prefixes work on these ops as on any, so a branch-only shot or phase is
  * written like a branch-only line. Inside a sequence the world is behind the picture: !move and !walkto
@@ -350,7 +352,7 @@ RB.sequence = (function () {
   }
 
   // ---- counters (tests: bounded listeners, timers, layers over many entries) ----------------------------------
-  const S = { begun: 0, ended: 0, disposed: 0, skipped: 0, listeners: 0, timers: 0, overlays: 0, errors: 0, views: 0, reviews: 0, replays: 0, absorbed: 0 };
+  const S = { begun: 0, ended: 0, disposed: 0, skipped: 0, listeners: 0, timers: 0, overlays: 0, errors: 0, views: 0, reviews: 0, replays: 0, absorbed: 0, carried: 0 };
   const timers = new Set();
   function later(fn, ms) {
     const id = setTimeout(() => { timers.delete(id); S.timers = timers.size; fn(); }, ms);
@@ -676,9 +678,16 @@ RB.sequence = (function () {
     if (RB.bus) RB.bus.emit('sequence:end', { id: inst.id, tok: inst.tok, why });
     return true;
   }
-  // the script runner's op (70_script.js): `!sequence <id> begin|end`
+  // the script runner's op (70_script.js): `!sequence <id> begin|end`. A begin of the very sequence already on screen in
+  // this campaign is carried on as it is (no second begin, no reset): a scene that opens a sequence and hands it to
+  // the sequence's own scene with a `!call` (the yukata walk calling yn.end, RBN-QA-127). Any other sequence on screen
+  // is replaced, as before; with none, it begins.
   async function cmd(id, verb, sc) {
-    if ((verb || 'begin') === 'begin') { begin(id, sc); return; }
+    if ((verb || 'begin') === 'begin') {
+      if (D && D.id === id && D.s === (RB.game && RB.game.s)) { S.carried++; return; }
+      begin(id, sc);
+      return;
+    }
     if (verb === 'end') await end(id);
   }
   const active = () => !!D;
