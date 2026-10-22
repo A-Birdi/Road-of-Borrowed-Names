@@ -568,9 +568,13 @@ RB.staging = (function () {
   //    arrive they finish following (the steps they still have, then their last step settled) until `max` + 2 s after
   //    the walk began at most, and only then does the walk resolve.
   // `max` bounds your own steps (none starts after it); a step under way always finishes (50_world.js scriptMove).
+  // A walk belongs to the map it began on and the figure it began with: once either is gone (a load, a new map, the
+  // map entered afresh), no further step is taken and it does not succeed; a step is never given to whoever now
+  // answers to the same name (RBN-QA-088, Agnes 6335192080).
   function walkPath(a, path, token, max, wo) {
     const id = idOf(a), t0 = now();
     const w = W(), map = w.map, cross = !!(wo && wo.cross);
+    const here = () => present(a, map) && RB.world.actorById(id) === a;
     const c = wo && wo.party && a === w.player && w.comp && !w.comp.route && !owned(w.comp) ? w.comp : null, trail = [];
     let walking = !!c;
     const sceneOn = () => !token || (st.scene && st.scene.token === token);
@@ -604,6 +608,7 @@ RB.staging = (function () {
     const finish = (r) => (c ? settle().then(() => r) : Promise.resolve(r));
     const liveTrigger = (x, y) => W().map.triggers.some((t) => x >= t.x && x < t.x + t.w && y >= t.y && y < t.y + t.h && !(t.if && !RB.state.test(RB.game.s, t.if)));
     const step = (i) => {
+      if (!here()) { walking = false; return Promise.resolve(false); } // its map or its figure gone: nothing more
       if (i >= path.length) return finish(true);
       if (!sceneOn()) { walking = false; return Promise.resolve(false); } // another scene began: nothing more
       if (now() - t0 > max) return finish(false); // bounded: stop where they are
@@ -614,16 +619,34 @@ RB.staging = (function () {
       if (cross && liveTrigger(nx, ny)) return finish(false); // a trigger that has come true since: not stepped on
       const dir = dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up';
       if (c) trail.push([a.x, a.y]);
-      return RB.world.scriptMove(id, dir, 1, a === W().player ? 200 : 240).then(() => step(i + 1));
+      const moved = RB.world.scriptMove(id, dir, 1, a === W().player ? 200 : 240);
+      // (once the figure has left the world, the map entered afresh or another or a load, nothing finishes its step:
+      // it is not waited for, and the walk ends at the next step's check instead of waiting there for ever)
+      return new Promise((res) => {
+        let over = false;
+        moved.then(() => { if (!over) { over = true; res(); } });
+        const watch = () => {
+          if (over) return;
+          if (!present(a, W().map)) { over = true; a.mv = null; res(); return; }
+          setTimeout(watch, 50);
+        };
+        setTimeout(watch, 50);
+      }).then(() => step(i + 1));
     };
     const run = step(0);
     return c ? run.finally(() => { walking = false; }) : run;
+  }
+  // someone still in the world a walk began in: that map, and still one of its people
+  function present(a, map) {
+    const w = W();
+    return !!a && w.map === map && (a === w.player || a === w.comp || w.npcs.includes(a) || (w.extras || []).includes(a));
   }
   async function walkTo(ref, x, y, dir, o, ctx) {
     o = o || {};
     if (!st.on) return false;
     const a = actor(ref, ctx);
     if (!a) return false;
+    const map0 = W().map;
     own(a);
     const sc = st.scene;
     if (sc && !sc.moved.has(a)) sc.moved.set(a, { from: [a.x, a.y, a.dir], stay: !!o.stay });
@@ -649,10 +672,13 @@ RB.staging = (function () {
       }
       if (path) ok = await walkPath(a, path, sc ? sc.token : 0, o.max || 4000, o.cross || o.party ? { cross: !!o.cross, party: !!o.party } : undefined);
     }
+    // (the walk's map or figure gone meanwhile: no success, and nothing more set on anyone)
+    const kept = present(a, map0);
+    if (!kept) ok = false;
     if (!ok) st.stats.walkFallbacks++;
     if (sc && sc.reserved.get(a) === x + ',' + y && !ok) sc.reserved.delete(a);
-    if (dir && DIRS[dir] && (!sc || st.scene === sc)) a.dir = dir;
-    if (a === W().player) syncPlayer();
+    if (kept && dir && DIRS[dir] && (!sc || st.scene === sc)) a.dir = dir;
+    if (kept && a === W().player) syncPlayer();
     return ok;
   }
   function syncPlayer() { const s = RB.game.s, p = W().player; if (s) { s.x = p.x; s.y = p.y; s.dir = p.dir; } }
@@ -959,6 +985,7 @@ RB.staging = (function () {
 
   return {
     begin, end, cue, look, pose, prop, beat, walkTo, settle, ambience, ambienceNow, owned, actor, own, playerMoved,
+    sceneToken: () => (st.scene ? st.scene.token : 0),
     tick, frameOf, wanderPause, stepped, rand, examined, profileOf,
     get AMBIENCE() { return AMBIENCE; },
     enabled(v) { if (v != null) { st.on = !!v; if (!st.on) yieldIdle('off'); } return st.on; },
