@@ -214,7 +214,7 @@ RB.script = (function () {
     try { await steps(sc, ctx, fr); } finally { const i = frames.lastIndexOf(fr); if (i >= 0) frames.splice(i, 1); }
   }
   async function steps(sc, ctx, fr) {
-    const s = RB.game.s;
+    const s = RB.game.s, g0 = gen;
     let pc = 0;
     const jump = (label) => {
       if (label === 'end') { pc = sc.cmds.length; return; }
@@ -224,7 +224,10 @@ RB.script = (function () {
     let guard = 0;
     while (pc < sc.cmds.length) {
       if (++guard > 20000) throw new Error('script loop in ' + sc.id);
-      if (RB.game.s !== s) return; // the campaign changed under this scene: it ends here
+      // the campaign changed under this scene: it ends here, and so it does from the moment the change begins (a load
+      // reads its save, and may ask about another tab, before the campaign is replaced: a scene waiting on a fade or a
+      // !wait would otherwise go on in between, RBN-QA-102)
+      if (RB.game.s !== s || g0 !== gen) return;
       const c = sc.cmds[pc++];
       fr.pc = pc;
       if (c.if && !RB.state.test(s, c.if)) continue;
