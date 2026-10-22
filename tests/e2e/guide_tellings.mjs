@@ -10,8 +10,8 @@
 //  2. from the hall and from the tide pools, the same answers;
 //  3. a save and load mid-stage keeps the answer;
 //  4. the real way on: the exhibition hung at the desk (the tellings sheet answered as the automated runs do) sets the
-//     flag and the guide turns to Otoha; her talk opens the hollow (stage 4), and stage 4's guidance is derived as before
-//     (not one of stage 3's places); no page errors.
+//     flag and the guide turns to Otoha; her talk opens the hollow (stage 4), and stage 4's guidance leaves stage 3's
+//     places for the Whispering Hollow's drifting leaf (RBN-QA-086, tests/e2e/guide_roots_leaf.mjs); no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/guide_tellings.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -96,7 +96,7 @@ for (const [map, x, y] of [['ko.hall', 8, 8], ['ko.tidepools', 30, 11]]) for (co
   ok(r.targets.length === 1 && r.targets[0] === CONCH.b && !wrong(r) && r.stage === 3, 'after a save and load: the same next place (the second conch) (' + sum(r) + ')');
 }
 
-// 4. the real way on: the exhibition hung, Otoha opens the hollow, stage 4 derived as before
+// 4. the real way on: the exhibition hung, Otoha opens the hollow, stage 4 to the drifting leaf (RBN-QA-086)
 {
   const run = await p.evaluate(async (flags) => {
     const s = RB.game.debugStart('ko.hall', 11, 7, { dir: 'up', edition: RB.edition.forNew(), comp: 'suzu', flags });
@@ -118,7 +118,7 @@ for (const [map, x, y] of [['ko.hall', 8, 8], ['ko.tidepools', 30, 11]]) for (co
     return { hung, toOtoha, stage, how4: g2.how, t4: g2.targets.map((t) => t.map + ':' + (t.id || t.p || t.kind)), next4: RB.questGuide.nextLines(g2).map((l) => l.en), hollow: !!RB.game.s.flags.ko_hollow_open };
   }, stateOf(15, 7, false));
   ok(run.hung && run.toOtoha.length === 1 && run.toOtoha[0] === 'ko.village:ko_otoha', 'the exhibition hung at the desk: the flag set, and the guide turns to Otoha (' + JSON.stringify(run) + ')');
-  ok(run.stage === 4 && run.hollow && run.how4 !== 'authored' && !run.t4.some((t) => /^ko\.(village|hall|tidepools):/.test(t)), 'Otoha opens the hollow: stage 4, guided as derived before, not to a stage-3 place (' + JSON.stringify(run) + ')');
+  ok(run.stage === 4 && run.hollow && run.t4.length === 1 && run.t4[0] === 'ko.roots1:ko_current' && !run.t4.some((t) => /^ko\.(village|hall|tidepools):/.test(t)), 'Otoha opens the hollow: stage 4, guided to the drifting leaf (RBN-QA-086), not to a stage-3 place (' + JSON.stringify(run) + ')');
 }
 
 ok(!errors.length, 'no page errors ' + errors.slice(0, 3).join(' | '));

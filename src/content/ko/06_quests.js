@@ -28,7 +28,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { if: '!ko_tell_shell', at: { map: 'ko.tidepools', prop: 'ko_conch', x: 7, y: 9 } },
         { if: '!tell_ko.t_hall_ok', at: { map: 'ko.hall', prop: 'desk', x: 11, y: 6 } },
       ] }),
-      T('{大|おお}きな {木|き} は 、 {根|ね} から {葉|は} を {落|お}として いる 。 {根|ね} の {洞|ほら} へ {下|お}りよう 。', 'The great tree is shedding from its roots. Go down into the Root Hollows.'),
+      // where it leads, named (RBN-QA-086): the next step, the tide splitting the party in the Tidal Hollow, lies behind
+      // the Whispering Hollow's way down, which opens only once its drifting leaf has its word back (ko_root_a,
+      // ko.root_leaf_a), and the guide does not route through a way that is shut, so derived it named the Tidal Hollow
+      // with "no way there". Until then, the drifting leaf (ko.roots1 4,10); after it, derived as before.
+      Object.assign(T('{大|おお}きな {木|き} は 、 {根|ね} から {葉|は} を {落|お}として いる 。 {根|ね} の {洞|ほら} へ {下|お}りよう 。', 'The great tree is shedding from its roots. Go down into the Root Hollows.'), { atIf: [
+        { if: '!ko_root_a', at: { map: 'ko.roots1', prop: 'ko_current', x: 4, y: 10 } },
+      ] }),
       T('{潮|しお} が {満|み}ちて 、 {仲間|なかま} と {離|はな}れて しまった 。 {回|まわ}り{道|みち} を {探|さが}そう 。', 'The tide has come in between you and your companion. Find a way round.'),
       T('{根|ね} の {奥|おく} で 、 {届|とど}かぬ {言葉|ことば} の {庭守|にわもり} に {会|あ}おう 。', 'Meet the Gardener of Unsent Words, deep in the roots.'),
       T('{木|き} は {静|しず}か に なった 。 オトハ に {知|し}らせよう 。', 'The tree is quiet again. Tell Otoha.'),
