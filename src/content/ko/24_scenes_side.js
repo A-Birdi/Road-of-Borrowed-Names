@@ -144,9 +144,8 @@ narr: （キヘイ は {手紙|てがみ} を {持|も}って 、 {潮|しお}�
 !take ko_kihei_letter
 !set ko_kihei_mitsu
 ko_kihei: …… {頼|たの}む 。 あの {宿|やど} で {読|よ}まれる なら 、 それ で いい 。 || …Please. If it's read in that house, that's enough.
-# (he goes with his last word, gone where he stood before the narration says so; RBN-QA-093)
-!refresh
-!wait 300
+# (he goes with his last word, gone where he stood before the narration says so: the scene waits for it; RBN-QA-093)
+!refresh gone
 narr: {波|なみ} が {引|ひ}く と 、 キヘイ の {足跡|あしあと} は もう なかった 。 || When the wave drew back, Kihei's footprints were gone.
 !journal {宿|やど} の ミツ さん に 、 キヘイ の {葉|は} を {届|とど}ける こと に した 。 || Decided to take Kihei's leaf to Mitsu at the lodging house.
 !goto close
@@ -155,8 +154,7 @@ narr: {波|なみ} が {引|ひ}く と 、 キヘイ の {足跡|あしあと} 
 !set ko_kihei_wind
 narr: キヘイ と {二人|ふたり} で 、 {村|むら} の {風石|かぜいし} まで {歩|ある}いた 。 {石|いし} の {上|うえ} で 、 {葉|は} が {浮|う}く 。 キヘイ が {帽子|ぼうし} を {取|と}って 、 {見送|みおく}る 。 || You walk up to the village's Wind Stone with Kihei. On the stone the leaf lifts. Kihei takes off his cap and watches it go.
 ko_kihei: …… {遅|おそ}く なった な 、 ハツ 。 || …I'm late, Hatsu.
-!refresh
-!wait 300
+!refresh gone
 narr: {葉|は} が {見|み}えなく なる と 、 キヘイ も いなかった 。 || When the leaf was out of sight, Kihei was gone too.
 !goto close
 :kept_go

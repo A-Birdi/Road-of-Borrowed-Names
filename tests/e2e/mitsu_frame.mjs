@@ -8,8 +8,10 @@
 //  1. the three endings from the real trigger (Kihei in the tide pools): in each, Kihei is there for his last line;
 //     in the Mitsu and wind endings, when the narration that says he has gone appears, no figure of his is drawn
 //     anywhere (standing, walked in or going: he is gone where he stood, leave 'here'), read normally and with "Skip
-//     seen" pressed after the choice; in the kept ending he stays; the note only in the Mitsu ending, once; "Not now"
-//     keeps the letter and leaves no note;
+//     seen" pressed after the choice, and on slow frames (the page's frames held to about seven a second, where his
+//     fade takes several times longer than at full speed: the scene waits for his going, not for a time); no figure
+//     of his at all, at any alpha (his state in the world, not pixels); in the kept ending he stays; the note only in
+//     the Mitsu ending, once; "Not now" keeps the letter and leaves no note;
 //  2. the lodging house after the choice: no frame until the handing-over, nothing at the back wall; Mitsu's talk is
 //     the handing-over; after it the frame is drawn at (3,7), it blocks that tile, and it is read from beside it (from
 //     the mat facing left, from above it, from its left); the way out from the mat still leads to the village;
@@ -47,8 +49,9 @@ async function start(p, o) {
       const say = RB.ui.dialogue.say;
       RB.ui.dialogue.say = function (l) {
         const W = RB.world.W, isK = (a) => a.id === 'ko_kihei' || (a.def && a.def.char === 'ko_kihei');
-        const figs = W.npcs.concat(W.extras, W.leavers).filter(isK).filter((a) => a.alpha == null || a.alpha > 0.02).map((a) => ({ at: [a.x, a.y], alpha: a.alpha == null ? 1 : +a.alpha.toFixed(2), leaving: W.leavers.includes(a) }));
-        window.__atLine.push({ en: l.en, figs, ff: RB.game.fastForward() });
+        const all = W.npcs.concat(W.extras, W.leavers).filter(isK);
+        const figs = all.filter((a) => a.alpha == null || a.alpha > 0.02).map((a) => ({ at: [a.x, a.y], alpha: a.alpha == null ? 1 : +a.alpha.toFixed(2), leaving: W.leavers.includes(a) }));
+        window.__atLine.push({ en: l.en, figs, any: all.length, ff: RB.game.fastForward(), t: performance.now() });
         return say.apply(this, arguments);
       };
       window.__lineWrap = true;
@@ -116,22 +119,31 @@ const frame = (p) => p.evaluate(() => {
 });
 
 // ---- 1. the three endings, and "Not now", from the real trigger ---------------------------------------------------
-for (const [end, picks, comp, skip] of [
+for (const [end, picks, comp, skip, slow] of [
   ['Mitsu', [/Give it to Mitsu/, /Give it to her/], 'mio'],
   ['wind', [/on the wind/, /Send it\./], 'nao'],
   ['kept', [/Give it back to Kihei/, /Give it back\./], 'suzu'],
   ['not now', [/Not now/], 'ren'],
   ['Mitsu, skipped', [/Give it to Mitsu/, /Give it to her/], 'ren', true],
   ['wind, skipped', [/on the wind/, /Send it\./], 'suzu', true],
+  ['Mitsu, slow frames', [/Give it to Mitsu/, /Give it to her/], 'nao', false, true],
+  ['wind, slow frames', [/on the wind/, /Send it\./], 'mio', false, true],
 ]) {
   const { p, errors } = await page(b, url);
-  await start(p, { map: 'ko.tidepools', x: 10, y: 19, dir: 'left', comp, letter: true, seenChoose: !!skip });
+  await start(p, { map: 'ko.tidepools', x: 10, y: 19, dir: 'left', comp, letter: true, seenChoose: !!skip, slow: !!slow });
   // (skipped: the scene seen before, and "Skip seen", the dialogue's own button, pressed at the first line after the
   // choice; a choice always stops a skip)
-  let skipped = null;
+  let skipped = null, slowed = null;
   const r = await play(p, picks, skip ? async (l) => {
     if (skipped || !/^ko_kihei: …(Please|I'm late)/.test(l.d)) return false;
     skipped = await p.evaluate(() => { const k = document.querySelector('.dlg .b-skip'); const vis = !!(k && k.offsetParent && !k.classList.contains('hidden')); if (vis) k.click(); return { vis, ff: RB.game.fastForward() }; });
+    return false;
+  } : slow ? async (l) => {
+    // slow frames from his last line on: the page's frames held to about seven a second (each frame advances the world
+    // by at most 50 ms, src/engine/90_game.js, so his 260 ms fade takes six frames, about 0.9 s; the world has been
+    // here long enough for a departure to be shown, not made at once, 50_world.js refreshActors)
+    if (slowed || !/^ko_kihei: …(Please|I'm late)/.test(l.d)) return false;
+    slowed = await p.evaluate(() => { window.requestAnimationFrame = (cb) => setTimeout(() => cb(performance.now()), 150); const W = RB.world.W; return { worldMs: Math.round(W.time - W.enteredAt) }; });
     return false;
   } : null);
   const atGone = await p.evaluate(() => window.__atLine.filter((x) => /footprints were gone|Kihei was gone too/.test(x.en || '')));
@@ -139,8 +151,8 @@ for (const [end, picks, comp, skip] of [
   const after = await p.evaluate(look), n = await notes(p), letter = await p.evaluate(() => RB.game.s.inv.ko_kihei_letter || 0);
   if (/^(Mitsu|wind)/.test(end)) {
     const last = line(r, /^Mitsu/.test(end) ? /^ko_kihei: …Please/ : /^ko_kihei: …I'm late, Hatsu/);
-    ok(last && last.kihei && last.kihei.join() === '9,19' && atGone.length === 1 && atGone[0].figs.length === 0 && !after.kihei && !after.leaving && (!skip || (skipped && skipped.vis && atGone[0].ff)),
-      end + ' ending: Kihei stands there for his last line; when the line that says he has gone appears, no figure of his is drawn anywhere (here, walked in or going), and after it he is gone (' + JSON.stringify({ last: last && last.kihei, atGone, skipped, after: { kihei: after.kihei, leaving: after.leaving } }) + ')');
+    ok(last && last.kihei && last.kihei.join() === '9,19' && atGone.length === 1 && atGone[0].figs.length === 0 && atGone[0].any === 0 && !after.kihei && !after.leaving && (!skip || (skipped && skipped.vis && atGone[0].ff)) && (!slow || (slowed && slowed.worldMs > 900)),
+      end + ' ending: Kihei stands there for his last line; when the line that says he has gone appears, no figure of his is drawn anywhere (here, walked in or going), and after it he is gone (' + JSON.stringify({ last: last && last.kihei, atGone, skipped, slowed, after: { kihei: after.kihei, leaving: after.leaving } }) + ')');
   } else if (end === 'kept') {
     const last = line(r, /^ko_kihei: …I should have said it myself/);
     ok(last && last.kihei && after.kihei && after.kihei.join() === '9,19' && !after.leaving, 'kept ending: Kihei stays by the pools (' + JSON.stringify({ last: last && last.kihei, after: after.kihei }) + ')');
