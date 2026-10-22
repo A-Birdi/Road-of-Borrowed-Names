@@ -202,7 +202,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'mb_heiji', x: 12, y: 6, dir: 'left', if: 'quest.mb_main=2&!mb_dispute_done', talk: 'mb.heiji_tally' },
     ],
   });
-  // Fujiya (藤屋): a trading house's shop front, its goods, and the grandfather's tally book
+  // Fujiya (藤屋): a trading house's shop front, its goods, and the tally book of the head two generations back (先々代)
   interior('mb.fujiya', T('Fujiya', '{藤屋|ふじや}'), 13, 9, 6, [39, 8], {
     props: [
       { p: 'exitmat', x: 6, y: 7 },

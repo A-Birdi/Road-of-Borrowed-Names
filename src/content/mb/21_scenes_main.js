@@ -48,7 +48,7 @@ narr: {掛|か}け{軸|じく} に 「{信用|しんよう} は {名前|なま�
 
 @scene mb.fujiya_tallybook
 !gesture pc read
-narr: {古|ふる}い {帳面|ちょうめん} 。 {藤屋|ふじや} の {先々代|せんせんだい} が 、 {橋|はし} の {札|ふだ} を {紙|かみ} に {写|うつ}し{取|と}った {拓本|たくほん} が {挟|はさ}まって いる 。 || An old ledger. Tucked inside are rubbings Fujiya's grandmother took of the bridges' plaques.
+narr: {古|ふる}い {帳面|ちょうめん} 。 {藤屋|ふじや} の {先々代|せんせんだい} が 、 {橋|はし} の {札|ふだ} を {紙|かみ} に {写|うつ}し{取|と}った {拓本|たくほん} が {挟|はさ}まって いる 。 || An old ledger. Tucked inside are rubbings of the bridges' plaques, taken by the head of Fujiya two generations back.
 ?(quest.mb_main>=3) narr: {一番|いちばん} {古|ふる}い {一枚|いちまい} に は 、 「{一|いち}」 と {番号|ばんごう} が あり 、 {名前|なまえ} の {最初|さいしょ} の {字|じ} だけ が {読|よ}める 。 「{結|むす}ぶ」 と {同|おな}じ {字|じ} だ 。 || The oldest is numbered "one", and only the first character of its name can be read: 結…
 ?(quest.mb_main>=3&!mb_ev_rubbing) !set mb_ev_rubbing
 ?(quest.mb_main>=3&!mb_ev_rubbing_j) !journal {藤屋|ふじや} の {拓本|たくほん} ： {一番|いちばん} の {橋|はし} の {名前|なまえ} の {最初|さいしょ} の {字|じ} は 、 「{結|むす}ぶ」 の {字|じ} 。 || Fujiya's rubbing: the first bridge's name begins with 結 (musu…).
