@@ -13,7 +13,9 @@
 //  4. two guests and one with no words of arrival (a definition made here, at run time): the two arrivals in the
 //     encounter's order, the third nothing;
 //  5. Reduce motion and seen battle lines skipped: the same, once;
-//  6. no page errors, no network.
+//  6. cancelled by a load while the creature's intro is said: no arrival written, no battle left; a battle with no
+//     guest after it has an empty log at its first decision; the same battle started again: the arrival once;
+//  7. no page errors, no network.
 // Usage: node tools/build.mjs && node tests/e2e/guest_arrivals.mjs
 import { serve, launch, page, companionTurn } from './lib.mjs';
 
@@ -224,6 +226,41 @@ async function encounter(o) {
 {
   const r = await encounter({ enc: 'ko.wander_kihei', map: 'ko.tidepools', x: 20, y: 12, reduce: true, seen: true });
   ok(r.lines.filter((x) => x.includes(KIHEI)).length === 1 && !r.hidden, 'Reduce motion, seen battle lines skipped: Kihei\'s arrival once at the first decision (' + JSON.stringify(r.lines) + ')');
+}
+
+// ---- 6. cancelled during the opening lines; another battle after it; the same battle started again ------------------
+{
+  const { p, errors, requests } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await p.evaluate(async ([PRE, settingsSrc]) => {
+    const flags = {}; PRE.forEach((f) => (flags[f] = true));
+    const s = RB.game.debugStart('ko.tidepools', 20, 12, { dir: 'left', edition: RB.edition.forNew(), comp: 'mio', flags });
+    s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; s.learn.difficulty = 'normal';
+    (0, eval)('(' + settingsSrc + ')')();
+    await RB.save.writeSlot(4, RB.game.s, { force: true });
+  }, [PRE, settings.toString()]);
+  await p.waitForTimeout(600);
+  await watch(p); await watchSteps(p);
+  const start = (enc) => p.evaluate((enc) => { window.__res = null; (enc ? RB.game.startEncounter(enc, {}) : RB.game.startBattle('ko.jelly', {})).then((r) => { window.__res = r; }); }, enc);
+  const load = async () => { await p.evaluate(async () => { await RB.game.loadCampaign(4, 'manual'); }); await p.waitForTimeout(2500); return p.evaluate(() => ({ ui: !!document.querySelector('.combat-ui'), state: !!RB.combat.state(), mode: RB.game.mode() })); };
+  // (a) a load while the creature's intro is being said: nothing of the arrival is written, nothing of the battle stays
+  await start('ko.wander_kihei');
+  await p.waitForFunction(() => !!document.querySelector('.combat-ui') && RB.ui.dialogue.isOpen(), null, { timeout: 15000 });
+  const during = await at(p);
+  const gone = await load();
+  ok(!during.lines.length && !gone.ui && gone.mode === 'world', 'cancelled while the intro is said (a load): no arrival written, no battle left (' + JSON.stringify({ during: during.lines, gone }) + ')');
+  // (b) another battle after it, with no guest: nothing of the cancelled battle's arrival in its log
+  await start(null);
+  await cards(p);
+  const other = await at(p);
+  ok(!other.lines.length, 'a battle with no guest after it: its log is its own, empty at the first decision (' + JSON.stringify(other.lines) + ')');
+  await load();
+  // (c) the same battle started again: the arrival once, never twice
+  await start('ko.wander_kihei');
+  await cards(p);
+  const again = await at(p);
+  ok(again.lines.filter((x) => x.includes(KIHEI)).length === 1 && again.lines.length === 1, 'the same battle started again: the arrival once at the first decision (' + JSON.stringify(again.lines) + ')');
+  errorsAll.push(...errors); requestsAll.push(...requests);
+  await p.close();
 }
 
 ok(!errorsAll.length && !requestsAll.length, 'no page errors, no network ' + errorsAll.concat(requestsAll).slice(0, 3).join(' | '));
