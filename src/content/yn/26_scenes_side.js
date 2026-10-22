@@ -155,6 +155,9 @@ narr: ヤスケ は {卵|たまご} を {食|た}べて 、 {小|ちい}さく �
 !take yn_eggs
 !set yn_egg_tsuneji
 yn_tsuneji: …… {村|むら} の {者|もの} に も 、 {分|わ}けて やって いい か 。 {一口|ひとくち} ずつ でも 。 || …Can I share it with the others from the village? Even a mouthful each.
+# (he walks back to the Lower House's door and in before the narration says he went: the riverbank no longer holds him
+# and the house does; it is further than the usual bound allows, so this one waits up to 9 s; RBN-QA-120)
+!refresh gone 9000
 narr: ツネジ は {卵|たまご} を {大事|だいじ} そう に {持|も}って 、 {下|しも}の{湯|ゆ} の {土間|どま} へ {帰|かえ}って いった 。 || Tsuneji carries the egg carefully back to the Lower House's floor.
 !call yn.egg_check
 

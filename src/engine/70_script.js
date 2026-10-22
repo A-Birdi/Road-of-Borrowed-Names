@@ -448,10 +448,11 @@ RB.script = (function () {
         // `!refresh comp`: your companion walks with you here, or not, as the map now says (its followerAway, 50_world.js),
         // beside you if not behind (never hidden under you while there is room)
         // `!refresh gone`: the people this sends away have left (faded where they stood, or walked off) before the scene
-        // goes on: it waits for their departure, not for a time (bounded; at once when skipping; RBN-QA-093)
+        // goes on: it waits for their departure, not for a time (bounded; at once when skipping; RBN-QA-093). `!refresh gone
+        // <ms>` sets the bound for a longer walk (at most 12 s; RBN-QA-120); without it, 4 s as before
         case 'refresh':
           if (a[0] === 'arrive') { RB.world.refreshActors({ arrive: true }); await RB.world.arrivals({ now: hidden() }); }
-          else if (a[0] === 'gone') { const before = new Set(RB.world.W.leavers); RB.world.refreshActors(); await RB.world.departures(RB.world.W.leavers.filter((l) => !before.has(l)), { now: hidden() }); }
+          else if (a[0] === 'gone') { const before = new Set(RB.world.W.leavers), ms = Math.min(12000, +a[1] || 0) || undefined; RB.world.refreshActors(); await RB.world.departures(RB.world.W.leavers.filter((l) => !before.has(l)), { now: hidden(), ms }); }
           else if (a[0] === 'comp') RB.world.placeCompanion({ near: true }); else RB.world.refreshActors();
           break;
         case 'recruit': await RB.game.recruit(a[0], a[1]); break;
