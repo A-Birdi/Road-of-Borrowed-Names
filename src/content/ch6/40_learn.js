@@ -422,7 +422,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: { jp: 'たかせ と ひおち は 、 けんか を して いました 。', en: 'Takase and Lanternfall were quarrelling.', short: 'たかせ と の けんか' },
         E: { jp: '{高瀬|たかせ} と {灯落|ひおち} は 、 {水門|すいもん} の こと で けんか して いました 。', en: 'Takase and Lanternfall were quarrelling about the sluice.', short: '{水門|すいもん} の けんか' },
         I: { jp: '{上流|じょうりゅう} の {高瀬|たかせ} と {灯落|ひおち} は 、 {水門|すいもん} を めぐって {何週間|なんしゅうかん} も {言|い}い{争|あらそ}って いました 。', en: 'For weeks, Takase upstream and Lanternfall had been arguing over the sluice.', short: '{水門|すいもん} を めぐる {争|あらそ}い' },
-        A: { jp: '{上流|じょうりゅう} の {高瀬|たかせ} と {灯落|ひおち} は 、 {水門|すいもん} の {開|ひら}け{閉|し}め を めぐって 、 {何週間|なんしゅうかん} も {平行線|へいこうせん} を たどって いました 。', en: 'For weeks Takase and Lanternfall had argued in parallel lines over the opening and shutting of the sluice, never meeting.', short: '{平行線|へいこうせん}' },
+        A: { jp: '{上流|じょうりゅう} の {高瀬|たかせ} と {灯落|ひおち} は 、 {水門|すいもん} の {開|あ}け{閉|し}め を めぐって 、 {何週間|なんしゅうかん} も {平行線|へいこうせん} を たどって いました 。', en: 'For weeks Takase and Lanternfall had argued in parallel lines over the opening and shutting of the sluice, never meeting.', short: '{平行線|へいこうせん}' },
       },
       {
         F: { jp: 'トウヤ が 、 たかせ の へんじ を もって かえりました 。 「 ひつようなら あける 」 。', en: 'Tōya brought back Takase\'s reply: "If needed, open."', short: 'たかせ の へんじ' },

@@ -126,7 +126,7 @@ narr: {熱|あつ}い 。 でも 、 すぐ に {足|あし} の {裏|うら} �
 :no
 
 @scene yn.steambox
-narr: {石|いし} の {蒸|む}し{場|ば} 。 {竹|たけ} の {籠|かご} に {入|い}った {卵|たまご} が 、 {湯気|ゆげ} の {中|なか} で {揺|ゆ}れて いる 。 || The stone steam box. Eggs in bamboo baskets sway in the steam.
+narr: {石|いし} の {蒸|む}し{場|ば} 。 {竹|たけ} の {籠|かご} に {入|はい}った {卵|たまご} が 、 {湯気|ゆげ} の {中|なか} で {揺|ゆ}れて いる 。 || The stone steam box. Eggs in bamboo baskets sway in the steam.
 ?(!yn_eggs_cooked) narr: タマ さん に {聞|き}けば 、 {作|つく}り{方|かた} を {教|おし}えて くれる そう だ 。 || Ask Tama and she'll show you how, they say.
 
 @scene yn.tama
@@ -263,7 +263,7 @@ yn_rokubei: {湯|ゆ} を {分|わ}ける の は {湯守|ゆもり} の {仕事
 narr: {寄合所|よりあいじょ} の {長|なが}い {机|つくえ} 。 {端|はし} から {端|はし} まで 、 {古|ふる}い {傷|きず} が {並|なら}んで いる 。 {何代|なんだい} も の {言|い}い{争|あらそ}い の {跡|あと} だ 。 || The guild hall's long table, scarred from end to end: the marks of generations of arguments.
 
 @scene yn.guild_ledger
-narr: {湯守|ゆもり} の {帳面|ちょうめん} 。 {毎日|まいにち} の {湯|ゆ} の {量|りょう} と 、 {切|き}り{替|か}え の {時刻|じこく} 。 {最近|さいきん} の {頁|ページ} は 、 {切|き}り{替|か}え の {時刻|じこく} が {毎日|まいにち} {少|すこ}し ずつ {遅|おそ}れて いる 。 || The guild's ledger: each day's flow and the hour of each switch. On the recent pages the switch comes a little later every day.
+narr: {湯守|ゆもり} の {帳面|ちょうめん} 。 {毎日|まいにち} の {湯|ゆ} の {量|りょう} と 、 {切|き}り{替|か}え の {時刻|じこく} 。 {最近|さいきん} の {頁|ページ} は 、 {切|き}り{替|か}え の {時刻|じこく} が {毎日|まいにち} {少|すこ}し ずつ {遅|おく}れて いる 。 || The guild's ledger: each day's flow and the hour of each switch. On the recent pages the switch comes a little later every day.
 !if item.yn_ledger -> end
 !give yn_ledger
 narr: ロクベエ が 、 {帳面|ちょうめん} の {写|うつ}し を {渡|わた}して くれた 。 || Rokubei hands you a copy of the ledger.

@@ -143,7 +143,7 @@ narr: {岩|いわ} に {彫|ほ}った {古|ふる}い {字|じ} 。 「{釜|か
 # The Kettle Below: a great iron-dark shape in the boiling pool, the size of a house, shaking. More frightened than
 # angry. The encounter (yn.kettle, 33_creatures.js) settles it; nothing here defeats it.
 narr: {煮|に}え{立|た}つ {湯|ゆ} の {真|ま}ん{中|なか} に 、 {大|おお}きな {黒|くろ}い {釜|かま} の よう な もの が {沈|しず}んで いる 。 {釜|かま} は 、 {震|ふる}えて いた 。 || In the middle of the boiling water sits a great black shape like a kettle. It is shaking.
-narr: {上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って くる 。 {尾根|おね} の {方|ほう} から は 、 {何|なに} の {音|おと} も {来|こ}ない 。 その {間|あいだ} で 、 {釜|かま} が {鳴|な}って いる 。 || From above, shouting rains down. From the ridge, no sound comes at all. Between the two, the Kettle rattles.
+narr: {上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って くる 。 {尾根|おね} の {方|ほう} から は 、 {何|なん} の {音|おと} も {来|こ}ない 。 その {間|あいだ} で 、 {釜|かま} が {鳴|な}って いる 。 || From above, shouting rains down. From the ridge, no sound comes at all. Between the two, the Kettle rattles.
 ?(comp=nao) comp[closed]: …… {怒|おこ}ってる ん じゃ ない 。 {怖|こわ}がってる ん だ 。 {走|はし}り{出|だ}す {前|まえ} の {馬|うま} と {同|おな}じ {顔|かお} だ 。 || …It isn't angry. It's frightened. Same face as a horse about to bolt.
 ?(comp=mio) comp[worry]: {震|ふる}えて います 。 {熱|ねつ} が {出|で}て いる {子|こ} みたい 。 …… {落|お}ち{着|つ}かせて あげないと 。 || It's shaking. Like someone running a fever. …We have to calm it.
 ?(comp=ren) comp[think]: {名前|なまえ} を {呼|よ}ばれず に 、 {長|なが}い {間|あいだ} ここ に いた ん です ね 。 || It's been down here a long time, without anyone calling its name.

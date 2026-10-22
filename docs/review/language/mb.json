@@ -635,10 +635,10 @@
   "jp": "「{米|こめ} 、 {毎週|まいしゅう} {十俵|じっぴょう} 。 {西|にし} の {蔵|くら} が {一杯|いっぱい} なら 、 {東|ひがし} の {蔵|くら} へ 。」",
   "en": "\"Rice, ten bales a week. If the west storehouse is full, to the east one.\""
  },
- "scene:mb.board_fish#7jr90d": {
+ "scene:mb.board_fish#n8euhe": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
-  "jp": "「{潮硝子|しおがらす} の {干物|ひもの} 、 {入|い}りました 。 {藤屋|ふじや} 」 。 {隣|となり} に 、 {潮硝子|しおがらす} の {浮|う}き{玉|だま} の {札|ふだ} も ある 。 「ガラス の {浮|う}き{玉|だま} 、 {一箱|ひとはこ} 。 {割|わ}れ{物|もの} {注意|ちゅうい} 。」",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "「{潮硝子|しおがらす} の {干物|ひもの} 、 {入|はい}りました 。 {藤屋|ふじや} 」 。 {隣|となり} に 、 {潮硝子|しおがらす} の {浮|う}き{玉|だま} の {札|ふだ} も ある 。 「ガラス の {浮|う}き{玉|だま} 、 {一箱|ひとはこ} 。 {割|わ}れ{物|もの} {注意|ちゅうい} 。」",
   "en": "\"Saltglass dried fish, just in. Fujiya.\" Beside it, a tally for Saltglass glass floats: \"Glass floats, one crate. Fragile.\""
  },
  "scene:mb.board_passage#51a7d6": {
@@ -1889,10 +1889,10 @@
   "jp": "{水門|すいもん} は {開|あ}いて いる 。 {池|いけ} の {水|みず} は {下|した} へ {流|なが}れた 。",
   "en": "The sluice is open; the basin has drained below."
  },
- "scene:mb.gate1#vh1kf0": {
+ "scene:mb.gate1#3zzjas": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
-  "jp": "{大|おお}きな {車輪|しゃりん} が ある 。 {何|なに} の {車輪|しゃりん} か {分|わ}からない まま {回|まわ}す の は 、 やめて おこう 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{大|おお}きな {車輪|しゃりん} が ある 。 {何|なん} の {車輪|しゃりん} か {分|わ}からない まま {回|まわ}す の は 、 やめて おこう 。",
   "en": "A great wheel. Better not turn it without knowing what it does."
  },
  "scene:mb.gate1#1lix78w": {

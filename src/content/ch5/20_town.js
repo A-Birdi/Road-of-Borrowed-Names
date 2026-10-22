@@ -579,7 +579,7 @@ narr: {窓口|まどぐち} の {台|だい} 。{判子|はんこ} が {二|ふ�
 ?(lf_bell_rung) narr: {三|みっ}つ {目|め} の {判子|はんこ} が {増|ふ}えて いる 。{真新|まあたら}しい 「{却下|きゃっか}」 。|| A third stamp has appeared. A brand-new "Rejected".
 
 @scene lf.clerk_desk
-narr: {誰|だれ} か の {机|つくえ} 。{写|うつ}し{直|なお}し の {台帳|だいちょう} が {積|つ}んで ある 。{元|もと} の {台帳|だいちょう} は 、{横|よこ} の {箱|はこ} に 「{廃棄|はいき}」 と {書|か}かれて {入|い}って いる 。|| Someone's desk, piled with recopied ledgers. The originals are in a box beside it marked "for disposal".
+narr: {誰|だれ} か の {机|つくえ} 。{写|うつ}し{直|なお}し の {台帳|だいちょう} が {積|つ}んで ある 。{元|もと} の {台帳|だいちょう} は 、{横|よこ} の {箱|はこ} に 「{廃棄|はいき}」 と {書|か}かれて {入|はい}って いる 。|| Someone's desk, piled with recopied ledgers. The originals are in a box beside it marked "for disposal".
 ?(lf_bell_rung) narr: 「{廃棄|はいき}」 の {字|じ} に {線|せん} が {引|ひ}かれ 、「{保存|ほぞん}」 と {書|か}き{直|なお}して ある 。|| "For disposal" has been struck through and rewritten: "Keep".
 
 @scene lf.returned_letters

@@ -337,7 +337,7 @@ narr: {灯|あか}り が ともる 。 {紙|かみ} の {上|うえ} で 、 {�
 !call rw.ren_lanterns_done
 !end
 :norecord
-narr: {灯|あか}り の {紙|かみ} は {白|しろ}い 。 {何|なに} と {書|か}けば いい か 、 {記録|きろく} が ない と わからない 。 {橋|はし} の {近|ちか}く の {灯守|ひもり} が {持|も}って いる かも しれない 。 || The lantern's paper is blank. Without a record, you don't know what to write. The keeper near the bridge might have one.
+narr: {灯|あか}り の {紙|かみ} は {白|しろ}い 。 {何|なん} と {書|か}けば いい か 、 {記録|きろく} が ない と わからない 。 {橋|はし} の {近|ちか}く の {灯守|ひもり} が {持|も}って いる かも しれない 。 || The lantern's paper is blank. Without a record, you don't know what to write. The keeper near the bridge might have one.
 
 @scene rw.lantern_bridge
 !if !rw_met_ren -> norecord

@@ -425,7 +425,7 @@ narr: 「 {母|はは} の {名前|なまえ} を {返|かえ}して 。 」 「
 ?(comp=mio) !gesture comp laugh
 ?(comp=mio) mio[laugh]: 「 {夫|おっと} と {喧嘩|けんか} が できない 」 。 …… ごめん 、 {笑|わら}っちゃった 。 でも 、 {分|わ}かる 。 || "I can't quarrel with my husband." …Sorry, I laughed. But I understand.
 ?(comp=ren) !gesture comp lowered
-?(comp=ren) ren: {頼|たの}まれて いた 。 {何百|なんびゃく} {回|かい} も 。 || They were asked. Hundreds of times.
+?(comp=ren) ren: {頼|たの}まれて いた 。 {何百回|なんびゃっかい} も 。 || They were asked. Hundreds of times.
 ?(comp=suzu) !gesture comp size
 ?(comp=suzu) suzu: {未払|みばら}い の {請求書|せいきゅうしょ} の {山|やま} だ 。 {利子|りし} が {膨|ふく}らんでる よ 。 || A mountain of unpaid bills. The interest must be enormous by now.
 

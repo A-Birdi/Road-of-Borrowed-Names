@@ -17,10 +17,10 @@
   "jp": "{相手|あいて} が いない と 、 {駒|こま} が {寂|さび}しがる わ 。 {一局|いっきょく} 、 どう ？ {初|はじ}めて なら 、 {教|おし}えて あげる 。",
   "en": "The pieces get lonely with no one to play. A game? If it's your first time, I'll teach you."
  },
- "scene:pt.fuku_bench:choice#kc2ly2": {
+ "scene:pt.fuku_bench:choice#10gcfa8": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
-  "jp": "{お願|ねが}い します 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "お{願|ねが}い します 。",
   "en": "Yes, please."
  },
  "scene:pt.fuku_bench:choice#1amva02": {

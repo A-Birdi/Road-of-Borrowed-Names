@@ -108,7 +108,7 @@ narr: 「{米|こめ} 、 {毎週|まいしゅう} {十俵|じっぴょう} 。 
 !set mb_ev_notice
 
 @scene mb.board_fish
-narr: 「{潮硝子|しおがらす} の {干物|ひもの} 、 {入|い}りました 。 {藤屋|ふじや} 」 。 {隣|となり} に 、 {潮硝子|しおがらす} の {浮|う}き{玉|だま} の {札|ふだ} も ある 。 「ガラス の {浮|う}き{玉|だま} 、 {一箱|ひとはこ} 。 {割|わ}れ{物|もの} {注意|ちゅうい} 。」 || "Saltglass dried fish, just in. Fujiya." Beside it, a tally for Saltglass glass floats: "Glass floats, one crate. Fragile."
+narr: 「{潮硝子|しおがらす} の {干物|ひもの} 、 {入|はい}りました 。 {藤屋|ふじや} 」 。 {隣|となり} に 、 {潮硝子|しおがらす} の {浮|う}き{玉|だま} の {札|ふだ} も ある 。 「ガラス の {浮|う}き{玉|だま} 、 {一箱|ひとはこ} 。 {割|わ}れ{物|もの} {注意|ちゅうい} 。」 || "Saltglass dried fish, just in. Fujiya." Beside it, a tally for Saltglass glass floats: "Glass floats, one crate. Fragile."
 
 @scene mb.board_passage
 narr: 「{札場|ふだば} の {下|した} の {閘門|こうもん} 。 {閘門番|こうもんばん} の {許|ゆる}し なく {入|はい}る こと を {禁止|きんし} します 。」 || "The lock beneath the Exchange. No entry without the lock-keeper's leave."

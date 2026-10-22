@@ -325,7 +325,7 @@ ren[think]: …… {行|い}きましょう 。 {彫|ほ}った {人|ひと} に
 !gesture pc lookroad up
 narr: {石段|いしだん} の {上|うえ} に 、 {書庫|しょこ} が {建|た}って いた 。 || At the top of the stone steps stands the Archive.
 !gesture pc cupear up
-narr: {壁|かべ} は {紙|かみ} の よう に {白|しろ}い 。 {窓|まど} に は {灯|ひ} が ある のに 、 {中|なか} から は {何|なに} の {音|おと} も しない 。 || Its walls are paper-white. There is light in the windows, yet no sound at all comes from inside.
+narr: {壁|かべ} は {紙|かみ} の よう に {白|しろ}い 。 {窓|まど} に は {灯|ひ} が ある のに 、 {中|なか} から は {何|なん} の {音|おと} も しない 。 || Its walls are paper-white. There is light in the windows, yet no sound at all comes from inside.
 !gesture pc lookbetween 3,12 and=26,12
 narr: {左右|さゆう} の {水路|すいろ} を 、 {黒|くろ}い {水|みず} が {流|なが}れて いく 。 {下|した} から 、 {上|うえ} へ 。 || In the channels to either side, black water flows — from below, upwards.
 ?(comp=nao) !gesture comp aside

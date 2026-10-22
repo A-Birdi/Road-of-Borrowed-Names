@@ -6,8 +6,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.dialect.add('kansai', `
 @ hall/hall.tsuru_ledger [hall.tsuru_ledger]
-= {百物語|ひゃくものがたり} ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百|ひゃく} {本|ほん} の {芝居|しばい} を {見|み}た って 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
-> {百物語|ひゃくものがたり} や ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百|ひゃく} {本|ほん} の {芝居|しばい} を {見|み}た って な 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
+= {百物語|ひゃくものがたり} ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百本|ひゃっぽん} の {芝居|しばい} を {見|み}た って 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
+> {百物語|ひゃくものがたり} や ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百本|ひゃっぽん} の {芝居|しばい} を {見|み}た って な 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
 @ hall/hall.foyer_first [hall.foyer_first]
 = {十|とお} の {舞台|ぶたい} と 、 {十|とお} の {幕|まく} ね 。 {一幕|ひとまく} ずつ 、 {観|み}て いこう よ 。 || Ten stages, ten curtains. Let's take them one act at a time.
 > {十|とお} の {舞台|ぶたい} と 、 {十|とお} の {幕|まく} や な 。 {一幕|ひとまく} ずつ 、 {観|み}て いこ か 。 || Ten stages, ten curtains. Let's take them one act at a time.
@@ -282,14 +282,14 @@ RB.dialect.add('kansai', `
 = {出|で}た ！ {欲張|よくば}り な {隣|となり} の {人|ひと} 。 この {役|やく} 、 {昔話|むかしばなし} で は {大抵|たいてい} {損|そん} を する の よ ね 。 || There he is! The greedy neighbour. In the old tales, that part usually comes off worst.
 > {出|で}た ！ {欲張|よくば}り な {隣|となり} の {人|ひと} や 。 この {役|やく} 、 {昔話|むかしばなし} で は {大抵|たいてい} {損|そん} する ん や で 。 || There he is! The greedy neighbour. In the old tales, that part usually comes off worst.
 @ hall/hall.w7.owan [hall.w7.owan]
-= {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
-> {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない な 。 {読|よ}んだら {分|わ}かる ん やろ か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+= {札|ふだ} に は 、 {何|なん} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+> {札|ふだ} に は 、 {何|なん} の こと か 、 {書|か}いて ない な 。 {読|よ}んだら {分|わ}かる ん やろ か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
 @ hall/hall.w7.t1 [hall.w7.t1]
 = {一番|いちばん} {大事|だいじ} な {人|ひと} が 、 {一度|いちど} も {出|で}て こない {話|はなし} 。 {粋|いき} だ わ 。 || A tale where the most important one never once comes on stage. Very stylish.
 > {一番|いちばん} {大事|だいじ} な {人|ひと} が 、 {一回|いっかい} も {出|で}て こない {話|はなし} 。 {粋|いき} や わ 。 || A tale where the most important one never once comes on stage. Very stylish.
 @ hall/hall.w7.h1 [hall.w7.h1]
-= {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
-> {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}んだら {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん や な 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+= {何|なん} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+> {何|なん} の こと か {書|か}いて ない のに 、 {読|よ}んだら {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん や な 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
 @ hall/hall.w7.t3 [hall.w7.t3]
 = {雪|ゆき} が 、 {間違|まちが}い を {隠|かく}して くれた ね 。 || The snow covered up the mistake for us.
 > {雪|ゆき} が 、 {間違|まちが}い を {隠|かく}して くれた な 。 || The snow covered up the mistake for us.

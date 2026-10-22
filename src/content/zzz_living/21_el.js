@@ -92,7 +92,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     scene: 'cr.lw_open_el_lookout', openedLabel: ['{崖|がけ} の {上|うえ} の {見張|みは}り{台|だい}', 'The lookout on the headland'],
     after: { p: 'stone_marker', scene: 'el.lw_lookout_after' } });
   L.seal('el_mould', { map: 'el.landing', x: 23, y: 11, p: 'cs_footing', needs: 'mod_zentai', opens: 'lw_el_mould',
-    hint: ['{砂|すな} から {古|ふる}い {石|いし} の {土台|どだい} が {覗|のぞ}いて いる 。 {周|まわ}り に 、 {割|わ}れた {型|かた} の {欠片|かけら} 。 {一|ひと}つ ずつ {見|み}て も 、 {何|なに} の {形|かたち} か {分|わ}からない 。', 'Old stone footings show through the sand, with pieces of a broken mould scattered round them. One by one, you can\'t tell what shape they made.'],
+    hint: ['{砂|すな} から {古|ふる}い {石|いし} の {土台|どだい} が {覗|のぞ}いて いる 。 {周|まわ}り に 、 {割|わ}れた {型|かた} の {欠片|かけら} 。 {一|ひと}つ ずつ {見|み}て も 、 {何|なん} の {形|かたち} か {分|わ}からない 。', 'Old stone footings show through the sand, with pieces of a broken mould scattered round them. One by one, you can\'t tell what shape they made.'],
     scene: 'yn.lw_open_el_mould', openedLabel: ['{鐘|かね} の {型|かた}', 'The bell mould'],
     after: { p: 'cs_footing', scene: 'el.lw_mould_after' } });
 

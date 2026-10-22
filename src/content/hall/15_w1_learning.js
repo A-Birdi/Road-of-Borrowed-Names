@@ -113,7 +113,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     F: [ch({ item: 'v:地図', prompt: { en: 'You want to know where the spring is on the map. What do you ask?' },
       options: [o('いずみ は 、 ちず の どこ です か 。', 1), o('いずみ は 、 なん です か 。', 0, 'That asks what a spring is, not where it is.'), o('ちず は 、 どこ です か 。', 0, 'They have the map in their hands; you want the spring.')] })],
     E: [ch({ item: 'v:地図', prompt: { en: 'You want to know where the spring is on the map. What do you ask?' },
-      options: [o('{泉|いずみ} は 、 {地図|ちず} の どこ に あります か 。', 1), o('{泉|いずみ} は 、 {地図|ちず} の {何|なに} です か 。', 0, 'That asks what the spring is.'), o('{地図|ちず} は 、 どこ に あります か 。', 0, 'They are holding the map: ask about the spring.')] })],
+      options: [o('{泉|いずみ} は 、 {地図|ちず} の どこ に あります か 。', 1), o('{泉|いずみ} は 、 {地図|ちず} の {何|なん} です か 。', 0, 'That asks what the spring is.'), o('{地図|ちず} は 、 どこ に あります か 。', 0, 'They are holding the map: ask about the spring.')] })],
     I: [ch({ item: 'g:qword_ka_mo', prompt: { en: 'You want them to tell you where the spring is and how to get there. What do you ask?' },
       options: [o('{泉|いずみ} が どこ に ある か 、 どう {行|い}けば いい か 、 {教|おし}えて くれます か 。', 1), o('{泉|いずみ} が どこ に ある 、 {教|おし}えて くれます か 。', 0, 'An embedded question needs か: どこ に ある か.'), o('{泉|いずみ} に {行|い}って も いい です か 。', 0, 'That asks permission, not the way.')] })],
     A: [ch({ item: 'g:indirectness', prompt: { en: 'They are studying the map closely. Ask, without hurrying them, whether they can see a spring on it.' },

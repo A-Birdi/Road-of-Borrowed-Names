@@ -95,10 +95,10 @@
   "jp": "{葉|は} は 、 また {後|あと} で {読|よ}もう 。",
   "en": "You can read the leaf later."
  },
- "scene:rt.grove_write#17oh8tl": {
+ "scene:rt.grove_write#7wgmlc": {
   "status": "self-reviewed",
-  "ref": "self-reviewed (P15g, the returns and the companions' beats): each line read in full against the lexicon, the grammar points' notes, sealed S8/S14 and the characters' existing lines (Hiro's twenty festivals, the keepers' register of lamp names, Sakichi's shelf, Kikue's unlabelled jar, Koume's promise to see the act); fixed: a headline's 刻み直さる now 刻み直される, 賛成致しかねます now 賛成しかねます (致す is not taught), 案 given its reading, the night walk made to start from the road's foot, Suzu's 待ってる contracted as her other Kansai lines are",
-  "jp": "{白|しろ}い {葉|は} が {何枚|なんまい} か 、 {籠|かご} に {入|い}って いる 。 {誰|だれ} でも {書|か}いて いい らしい 。",
+  "ref": "Language audit Tier A reading correction (CC-021 phase 2a F-findings and phase 1 H022, re-tiered in CC-022; RBN-QA-132 for 三分の一): one word's furigana reading (or its ruby grouping) corrected to the audit's cited reading; the words, their meaning and the English are unchanged; re-checked as a line against that reading",
+  "jp": "{白|しろ}い {葉|は} が {何枚|なんまい} か 、 {籠|かご} に {入|はい}って いる 。 {誰|だれ} でも {書|か}いて いい らしい 。",
   "en": "A few blank leaves lie in a basket. Anyone may write one, it seems."
  },
  "scene:rt.grove_write#1atdyii": {

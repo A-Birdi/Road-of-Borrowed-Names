@@ -12,7 +12,7 @@ narr: {家|いえ} の {方|ほう} から 、 フク さん が {降|お}りて
 fuku: その {歩|ふ} 、 イサム さん と {指|さ}して いた {頃|ころ} の {忘|わす}れ{物|もの} な の 。 || That pawn was left behind from when Isamu and I used to play.
 fuku: {相手|あいて} が いない と 、 {駒|こま} が {寂|さび}しがる わ 。 {一局|いっきょく} 、 どう ？ {初|はじ}めて なら 、 {教|おし}えて あげる 。 || The pieces get lonely with no one to play. A game? If it's your first time, I'll teach you.
 !choice
-* {お願|ねが}い します 。 || Yes, please. -> play
+* お{願|ねが}い します 。 || Yes, please. -> play
 * {今|いま} は いい です 。 || Not just now. -> later
 :play
 fuku: じゃあ 、 {駒|こま} を {並|なら}べましょう 。 || Then let's set out the pieces.

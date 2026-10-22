@@ -58,7 +58,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     name: T('Sulphur Toad', '{硫黄|いおう}{蛙|がえる}'), art: 'blot', artOpts: { col: '#c8b44e' }, look: { custom: 'blot', col: '#c8b44e' }, knots: 2, pool: POOL,
     pattern: ['sweep', 'strike', 'rest'],
     intro: T('A fat yellow toad squatting in the channel, stirring up the silt with its back feet. The water downstream runs cloudy.', '{湯樋|ゆどい} に {座|すわ}り{込|こ}み 、 {後|うし}ろ{足|あし} で {泥|どろ} を {掻|か}き{回|まわ}す 、 {太|ふと}った {黄色|きいろ} い {蛙|かえる} 。 {下|しも} の {湯|ゆ} が {濁|にご}って いる 。'),
-    settle: T('The toad hops out of the channel onto a warm stone and goes to sleep. The water clears.', '{蛙|かえる} は {湯樋|ゆどい} から {温|あたた}かい {石|いし} へ {跳|は}び{出|だ}して 、 {眠|ねむ}って しまった 。 {湯|ゆ} が {澄|す}んで いく 。') }));
+    settle: T('The toad hops out of the channel onto a warm stone and goes to sleep. The water clears.', '{蛙|かえる} は {湯樋|ゆどい} から {温|あたた}かい {石|いし} へ {跳|と}び{出|だ}して 、 {眠|ねむ}って しまった 。 {湯|ゆ} が {澄|す}んで いく 。') }));
   EN('yn.lostguest', {
     setting: null, name: T('Lost Guest', '{迷|まよ}い{客|きゃく}'), art: 'echo', artOpts: { col: '#bcb4cc' }, look: { custom: 'spirit', col: '#bcb4cc' }, knots: 2, pool: POOL,
     pattern: ['plea', 'strike', 'rest'],
@@ -147,7 +147,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       parties: [{ aid: 'n:kettle', name: say('{釜|かま}の{主|ぬし}', 'the Kettle Below'), stance: 'heated', wants: { en: 'Neither shouting nor silence.' } }],
       claims: {
         above: { by: 'n:kettle', jp: '{上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って くる 。 {降|ふ}って くる 。 {降|ふ}って くる 。', en: 'Shouting pours down from above. Pours down. Pours down.' },
-        ridge: { by: 'n:kettle', jp: '{尾根|おね} から は 、 {何|なに} の {音|おと} も {来|こ}ない 。 {冷|つめ}たい 。 {冷|つめ}たい の が 、 {近|ちか}づいて くる 。', en: 'From the ridge, no sound at all. Cold. The cold is coming closer.', hidden: true },
+        ridge: { by: 'n:kettle', jp: '{尾根|おね} から は 、 {何|なん} の {音|おと} も {来|こ}ない 。 {冷|つめ}たい 。 {冷|つめ}たい の が 、 {近|ちか}づいて くる 。', en: 'From the ridge, no sound at all. Cold. The cold is coming closer.', hidden: true },
         throat: { by: 'n:kettle', jp: '{喉|のど} が 、 {詰|つ}まって いた 。 {息|いき} が 、 できなかった 。', en: 'My throat was choked. I couldn\'t breathe.', hidden: true },
         wish: { by: 'n:kettle', jp: '…… {話|はな}す {声|こえ} が {好|す}き だ 。 {怒鳴|どな}る の で も 、 {黙|だま}る の で も ない 。 {話|はな}す {声|こえ} が 、 {一番|いちばん} {温|あたた}かい 。', en: '…I like the sound of talking. Not shouting, not silence. Talking is the warmest sound.', hidden: true },
       },

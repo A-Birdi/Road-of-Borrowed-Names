@@ -95,7 +95,7 @@ narr: {葉|は} は 、 また {後|あと} で {読|よ}もう 。 || You can r
 
 @scene rt.grove_write
 !if rt_grove_leaf -> done
-narr: {白|しろ}い {葉|は} が {何枚|なんまい} か 、 {籠|かご} に {入|い}って いる 。 {誰|だれ} でも {書|か}いて いい らしい 。 || A few blank leaves lie in a basket. Anyone may write one, it seems.
+narr: {白|しろ}い {葉|は} が {何枚|なんまい} か 、 {籠|かご} に {入|はい}って いる 。 {誰|だれ} でも {書|か}いて いい らしい 。 || A few blank leaves lie in a basket. Anyone may write one, it seems.
 !challenge rt.grove_write
 !if var._res=0 -> later
 ?(var._forge=home) !var rt_leaf_to = home

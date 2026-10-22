@@ -292,7 +292,7 @@ co_goro: {鐘|かね} の {音|おと} が {遠|とお}く まで {届|とど}�
 !if co_records_done&!co_upper_open -> gate
 !if co_chronicle_read -> mid
 !gesture co_tamotsu point 34,22
-co_tamotsu: {水番|みずばん} の タモツ だ 。 …… {水路|すいろ} を {見|み}て みろ 。 {三分|さんぶ} の {一|いち} しか ない 。 {雨|あめ} が {四十日|よんじゅうにち} {降|ふ}って ない 。 || I'm Tamotsu, the channel keeper. …Look at the channel. A third full. No rain in forty days.
+co_tamotsu: {水番|みずばん} の タモツ だ 。 …… {水路|すいろ} を {見|み}て みろ 。 {三分|さんぶん} の {一|いち} しか ない 。 {雨|あめ} が {四十日|よんじゅうにち} {降|ふ}って ない 。 || I'm Tamotsu, the channel keeper. …Look at the channel. A third full. No rain in forty days.
 !look co_tamotsu pc
 !gesture co_tamotsu size
 co_tamotsu: {変|へん} な {水路|すいろ} だ と {思|おも}わない か 。 {田畑|たはた} に {水|みず} を {引|ひ}く だけ なら 、 この {半分|はんぶん} の {幅|はば} で {足|た}りる 。 {誰|だれ} が 、 {何|なん} の ため に こんな {幅|はば} に した ん だ か 。 || Strange channel, don't you think? For watering fields, half this width would do. Who made it this wide, and why?
