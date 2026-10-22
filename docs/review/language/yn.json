@@ -2561,11 +2561,11 @@
   "jp": "{喜|よろこ}んで ！ …… {一生|いっしょう} の {自慢|じまん} に する わ 。",
   "en": "With pleasure! …I'll boast about this for the rest of my life."
  },
- "scene:yn.ginnojo_idle#io5q6c": {
+ "scene:yn.ginnojo_idle#15o8rhh": {
   "status": "self-reviewed",
-  "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
-  "jp": "{落|お}ち で {笑|わら}い が {来|き}た {時|とき} の {音|おと} 。 …… {四十年|よんじゅうねん} {経|た}って も 、 {同|おな}じ {音|おと} だった よ 。",
-  "en": "The sound when the laugh comes on the punchline. …Forty years on, it's the same sound."
+  "ref": "RBN-QA-130 self-review, 2026-10-22 (Agnes 6349358989, 6349514956; Local CL-218): Ginnojō's line once the retired actor's quest is done, read after its last lines (今夜、一席やるよ。落ちまでな。). It says the last line has come back and his body remembers the beat where the laugh comes; it claims no show has happened, so it holds that night and on any later day. 間 read ま (timing), 来る read くる; checked against the lexicon and grammar notes",
+  "jp": "{最後|さいご} の {台詞|せりふ} が 、 {戻|もど}って {来|き}た 。 …… {四十年|よんじゅうねん} {経|た}って も 、 {笑|わら}い が {来|く}る {間|ま} は 、 {体|からだ} が {覚|おぼ}えて いる 。",
+  "en": "The last line's come back. …Forty years on, my body still knows the beat where the laugh comes."
  },
  "scene:yn.onatsu_line#1oru0ye": {
   "status": "self-reviewed",
