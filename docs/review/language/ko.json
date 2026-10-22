@@ -2447,6 +2447,12 @@
   "jp": "{波|なみ} が {引|ひ}く と 、 キヘイ の {足跡|あしあと} は もう なかった 。",
   "en": "When the wave drew back, Kihei's footprints were gone."
  },
+ "scene:ko.kihei_choose#1gqjer8": {
+  "status": "self-reviewed",
+  "ref": "RBN-QA-093 self-review, 2026-10-22: the Mitsu ending's journal note read in its scene against the existing journal notes (plain past with no subject, as オトハ に 頼まれた and 潮 が 満ちて 、 仲間 と 離れて しまった), standard textbook grammar (〜こと に した: a decision taken, true before and after the leaf is handed over, never an instruction) and the lexicon (届ける; 宿 as Mitsu's own house); non-imperative as agreed by Agnes (6335147490) and Local (CL-176)",
+  "jp": "{宿|やど} の ミツ さん に 、 キヘイ の {葉|は} を {届|とど}ける こと に した 。",
+  "en": "Decided to take Kihei's leaf to Mitsu at the lodging house."
+ },
  "scene:ko.kihei_choose#e7onjc": {
   "status": "self-reviewed",
   "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
