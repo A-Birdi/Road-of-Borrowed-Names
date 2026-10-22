@@ -827,6 +827,16 @@
       too except for `3acf399`, whose one-line suite list also carries `leaf_home` (it adds only `prep_abandon`).
       Nothing agreed is left out. Newly seen in its runs, and not from it: `learning_ui`'s software-keyboard check
       fails now and then under load, on CC-016's bytes too (VALIDATION, CC-017); a fix is proposed as RBN-QA-080.
+      Verified live by Local (CL-149) and Agnes (6329410623).
+      CANDIDATE CC-018 (`index.html` `aa07a8da…`, built from `d65a598`): CC-017 plus only RBN-QA-080 (`34f5103` →
+      `d65a598`, cherry-picked with `-x`; patch-identical, full and without `run.mjs`, and the same tree; three AGREEs,
+      Agnes 6329880275 and Local CL-151; proposal refined by Agnes 6329415662, 6329418781 and Local CL-149, CL-150;
+      integration identity verified by Agnes 6330105048 and Local CL-152; scope agreed by Agnes 6330097510 and Local
+      CL-152): hardening against a synthetically measured reflow, not a bug seen in play. `learning_ui`'s keyboard
+      check waits for the book's type to be installed before raising its keyboard, and a typing task with the keyboard
+      up keeps its field, and its Submit as far as the field stays in view, in view when its own boxes grow; never
+      while feedback is shown or the answer is in, never with the keyboard closed, pinch-zoomed or focus elsewhere,
+      and let go when the task is finished or taken down (new suite `kb_reflow`). Nothing agreed is left out.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

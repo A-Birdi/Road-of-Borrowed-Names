@@ -5484,6 +5484,39 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-018:** `index.html` sha256 `aa07a8da2cdb68f3c54e0f498e96016178f06857a1a37a46f24ee029a876b19f`, built
+    from `d65a598` (CC-017 plus only RBN-QA-080 by its agreed commit `34f5103`; patch-identical, `run.mjs` included,
+    and the same tree; identity verified by Agnes 6330105048 and Local CL-152); byte-identical to the build the suites
+    ran on, and to the candidate's own build. On these bytes (B): `ko_first_sight` 87/0, `ko_crossing` 94/0,
+    `interlude_ahead` 30/0, `interlude_lifecycle` 14/0, `interludes` 76/0, `lf_arrival_view` 79/0, `lookout_vista`
+    22/0, `keeper_reveal` 69/0, `kotonoha` 7/0, `licence` 2/0, `battle_start_abandon` 28/0, `prep_abandon` 52/0,
+    `encounters` 10/0, `load_mid_scene` 19/0, `combat_ui` 7/0, `social_battle` 65/0, `card_press` 13/0,
+    `battle_settings` 10/0, `battle_presentation` 13/0, `fog_event` 26/0, `prologue` 100/0, `title_ledger` 18/0,
+    `play_ui` all ok (44), `world_view` all ok (20), `ui` 14/0, `wind_stone` 19/0, `kb_reflow` 4/0, `leaf_home` 42/0,
+    `hall_entry` all ok (16), `hall_door` 15/0, `walkto_options` 23/0, `quest_guide` all ok (55), `guide_next_step`
+    24/0, `ruin_lanterns` 31/0, `lodge_evening` 16/0, `lodge_quarrel` 31/0, `ren_apart` 7/0, `guide_reveal` 37/0,
+    `guide_kana` 11/0, `learning_ui` 15/0, `social_wait` 12/0, `look_purity` 9/0, `props_balance` 48/0, `road_oil`
+    14/0, `geese_event` 15/0, `keepers` 4/0, `lodge_arrival` 40/0, `guide_stacks` 8/0, `guide_archive` 14/0,
+    `companion_turn` 4/0, `road_on` 11/0, `leaf_marker` 18/0, `guide_vigil` 9/0, `learning_qa039` 44/0 (two runners
+    side by side, each suite in turn, with the whole unit suite running alongside), `sequence_world --only ko.end`
+    156/0 and `sequence_art_integrity` 32/0: 56 suites passing. U whole suite 57,787/0 on `d65a598`; `validate.mjs`
+    no errors. On the candidate's build (the same bytes), before the cut: `kb_reflow` 4/0 several times and, with five
+    busy CPU loops alongside, `learning_ui`'s keyboard check and `kb_reflow` 4 times each, all passing; `settings` all
+    ok (13). `kb_reflow` controls with the same file: CC-017's `index.html` 1 passed, 3 failed (390 × 844 after the
+    growth: Submit's bottom 588 against 514 visible; no observer to let go); the change without its guard 2 passed,
+    2 failed (360 × 640: the wrong answer's feedback at 266–458 against 310 visible; 390 × 844: keepFocusVisible wrote
+    with the answer in); a `locked`-only guard 3 passed, 1 failed (the same feedback). Its quiet-while-typing step does
+    not tell these apart at 390 × 844 (the browser's scroll anchoring holds the field), and Submit is checked only as
+    far as the field stays in view. Scratch probes only, not in the committed suite: with the keyboard up, Reveal
+    ("I don't know") leaves the observer quiet, and Step away lets it go with nothing written after (390 × 844 and
+    360 × 640). Agnes's review of QA-080 is source/model, not a browser, device or real-IME run. Recorded as they
+    happened, not made green afterwards:
+    - CC-017's `learning_ui` 14/1 runs (VALIDATION, CC-017) stand as they were.
+    - `pad_kanji` 7/1 here (the 郁 case, a `page.tap` timeout), as recorded since CC-015, not in the 56.
+    - On Local's Windows machine: `encounters` 9/1 (a Windows-only capture path), the unmodified `sequence_world`
+      26/33 (CC-016), and `play_ui`'s "tap outside the sheet", failing the same way on CC-017's sources (CL-151).
+    - The Reduce-motion provenance correction recorded under CC-016 stands unchanged.
+    Not shown by any of these runs: the keyboard on a real device or with a real IME. Voice: none.
   - **Candidate CC-017:** `index.html` sha256 `ceaffb81e1ae925edce89346ef849851e1bf2bb12300e3373afe33eac4c9e1cc`, built
     from `c69346d` (CC-016 plus only RBN-QA-078 and RBN-QA-079, each by its agreed commits; patch-identical to them
     over every file but `run.mjs`, and over it too except for `3acf399`, whose one-line suite list also carries

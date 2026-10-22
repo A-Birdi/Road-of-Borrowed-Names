@@ -1351,7 +1351,18 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   sight and the crossing draw it, one crown shape at every screen shape, clear of Otoha, its roots on a rise of the
   hill. B `prep_abandon` 52/0, `battle_start_abandon` 28/0, `sequence_world --only ko.end` 156/0,
   `sequence_art_integrity` 32/0 on CC-017's own bytes. In candidate CC-017 (`ceaffb81…`, built from `c69346d`),
-  READY_FOR_QA.
+  READY_FOR_QA; verified live by Local (CL-149) and Agnes (6329410623).
+  RBN-QA-080 (three-party AGREE, on the exact commit listed in HANDOFF's CC-018 entry; hardening against a
+  synthetically measured reflow, not a bug seen in play): with the software keyboard up, when a typing task's own
+  boxes change size (the book's type arriving after the keyboard, a line wrapping), the field stays in view, and its
+  Submit too as far as the field stays in view (on small layouts the field comes first); the overlay only scrolls and
+  never moves focus; it stays quiet while feedback is shown (a wrong answer's feedback stays in view, on a small phone
+  too) and once the answer is in, with the keyboard closed, pinch-zoomed or focus elsewhere, and leaves nothing behind
+  when the task is finished or taken down (QA-078). `learning_ui`'s keyboard check now waits for the book's type to be
+  installed first. B `kb_reflow` 4/0 and `learning_ui` 15/0 on CC-018's own bytes; CC-017's bytes fail `kb_reflow`
+  3 of 4. Agnes's review is source/model, not a browser, device or real-IME run; the Reveal and Step away paths with
+  the keyboard up were checked only in scratch probes, outside the committed suite (VALIDATION, CC-018). In candidate
+  CC-018 (`aa07a8da…`, built from `d65a598`), READY_FOR_QA.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
