@@ -339,7 +339,11 @@ RB.ui.menu = (function () {
   }
   function stageOf(x) {
     const st = x.d.stages && x.d.stages[Math.min(x.q.stage, x.d.stages.length - 1)];
-    return st ? '<div class="obj">' + j(st.jp) + en(st.en) + '</div>' : '';
+    // a stage may word its objective differently while a condition holds (textIf: [{ if, jp, en }], the first that
+    // holds; RBN-QA-117: once the Lower House is heard, where the quest goes on)
+    const alt = st && st.textIf ? st.textIf.find((t) => RB.state.test(RB.game.s, t.if)) : null;
+    const o = alt || st;
+    return o ? '<div class="obj">' + j(o.jp) + en(o.en) + '</div>' : '';
   }
   function questDetail(x) {
     const [k, kl] = questKind(x.id, x.d);

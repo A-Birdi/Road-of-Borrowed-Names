@@ -5735,6 +5735,12 @@
   "jp": "{上|かみ}の{湯|ゆ} と {下|しも}の{湯|ゆ} が 、 {一|ひと}つ の {湯|ゆ} を {巡|めぐ}って {揉|も}めて いる 。 {下|しも}の{湯|ゆ} の {話|はなし} も {聞|き}こう 。",
   "en": "The Upper House and the Lower House are quarrelling over the one spring they share. Hear the Lower House's side too."
  },
+ "quests:yn_main#1cxanyo": {
+  "status": "self-reviewed",
+  "ref": "RBN-QA-117 self-review, 2026-10-22 (Agnes 6345967079, Local CL-209): Steamhollow's guidance read where it shows. The Journey's stage-3 objective once Tahei is heard, 両方の宿の話を聞いた。下の町の赤い橋へ行こう。, names the place, not what happens there (the volitional 行こう as the Journey's other objectives); the guide's stage-5 hint while the grille is shut, 湯元の格子の鍵は、アキが持っている。, the plain statement of who holds the key (持っている for a state); checked against the lexicon and grammar notes",
+  "jp": "{両方|りょうほう} の {宿|やど} の {話|はなし} を {聞|き}いた 。 {下|しも} の {町|まち} の {赤|あか}い {橋|はし} へ {行|い}こう 。",
+  "en": "You've heard both houses. Go to the red bridge in the lower town."
+ },
  "quests:yn_main#w425vn": {
   "status": "self-reviewed",
   "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
@@ -5746,6 +5752,12 @@
   "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
   "jp": "{湯|ゆ} が {熱|あつ}すぎたり {冷|つめ}たすぎたり する 。 {湯元|ゆもと} の {下|した} 、 {湯気|ゆげ} の {抜|ぬ}け{穴|あな} へ {降|お}りよう 。",
   "en": "The water runs too hot, then too cold. Go down into the Steam Vents under the spring house."
+ },
+ "quests:yn_main#wmy55f": {
+  "status": "self-reviewed",
+  "ref": "RBN-QA-117 self-review, 2026-10-22 (Agnes 6345967079, Local CL-209): Steamhollow's guidance read where it shows. The Journey's stage-3 objective once Tahei is heard, 両方の宿の話を聞いた。下の町の赤い橋へ行こう。, names the place, not what happens there (the volitional 行こう as the Journey's other objectives); the guide's stage-5 hint while the grille is shut, 湯元の格子の鍵は、アキが持っている。, the plain statement of who holds the key (持っている for a state); checked against the lexicon and grammar notes",
+  "jp": "{湯元|ゆもと} の {格子|こうし} の {鍵|かぎ} は 、 アキ が {持|も}って いる 。",
+  "en": "Aki has the key to the grille at the spring house."
  },
  "quests:yn_main#1curmru": {
   "status": "self-reviewed",

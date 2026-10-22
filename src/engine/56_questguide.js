@@ -30,7 +30,9 @@
  *   and passed within one scene is recognised (nothing to mark).
  * - Authored per-stage fields override the derivation: `at` ({map, npc} |
  *   {map, prop, x, y} | {map, x, y} | {map}, or a list of those, or 'open')
- *   and `hint` ({jp, en}, shown as the second nudge).
+ *   and `hint` ({jp, en}, shown as the second nudge). `atIf: [{ if, at, hint? }]`
+ *   names the place while a condition holds (the first that holds); its own
+ *   `hint`, if it has one, is shown in place of the stage's.
  * - Investigation stages (cases, addendum §16.4) may carry `mark`:
  *   'now' (the default: marked as above), 'afterHypothesis' or 'onRequest'
  *   (never derived in live play; `markAt(st)` returns the place the player
@@ -1017,7 +1019,11 @@ RB.questGuide = (function () {
     else if (!list.length) out.push([WAIT]);
     else out.push(distinct(list).map(whereLine));
     const second = [];
-    if (stage && stage.hint) second.push({ jp: stage.hint.jp, en: stage.hint.en });
+    // the hint of the atIf entry that chose the place (the same first match targets() took), else the stage's own
+    // (RBN-QA-117: Aki holds the grille's key only while it is shut)
+    const via = stage && stage.atIf && !(stage.mark && stage.mark !== 'now') ? stage.atIf.find((x) => RB.state.test(s, x.if)) : null;
+    const hint = (via && via.hint) || (stage && stage.hint);
+    if (hint) second.push({ jp: hint.jp, en: hint.en });
     if (list.length) second.push.apply(second, distinct(list).map(doLine));
     if (second.length) out.push(second);
     return { lines: out, result: r, markable: list.length > 0 };
