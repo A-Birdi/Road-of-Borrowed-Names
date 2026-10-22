@@ -58,7 +58,13 @@ async function start(p, o) {
     }
     window.__atLine = []; window.__trail = [];
   }, [YN, o]);
-  await p.waitForTimeout(800);
+  await settled(p);
+}
+// the map has been shown a while (people come and go on foot only after its first 900 ms of world time, as a player
+// who walked up to him would have seen it)
+async function settled(p) {
+  await p.waitForFunction(() => RB.world.W.time - RB.world.W.enteredAt > 1500, null, { timeout: 15000 }).catch(() => {});
+  await p.waitForTimeout(100);
 }
 const look = () => {
   const W = RB.world.W, d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown();
@@ -181,7 +187,7 @@ for (const [comp, x, dir] of [[null, 21, 'right'], ['nao', 23, 'left'], ['mio', 
   const s = await state(p);
   ok(r.stopped && mid && mid.length === 1 && s.map === 'yn.lower' && !s.going && !s.run && !s.dlg && !s.flag && s.eggs === 3 && s.here.join() === '22,18', 'a journey loaded while he walks: nothing of his walk left, nothing running; that journey has him at the riverbank with the egg to give (' + JSON.stringify({ mid, here: s.here, going: s.going, eggs: s.eggs }) + ')');
   await p.evaluate(() => { RB.world.enter('yn.lower', 21, 18, 'right', {}); window.__trail = []; window.__atLine = []; });
-  await p.waitForTimeout(500);
+  await settled(p);
   await play(p);
   const s2 = await state(p);
   ok(s2.flag && s2.eggs === 2 && !s2.here.length && nearDoor(s2.trail), 'given again, it ends as before (' + JSON.stringify({ eggs: s2.eggs, trail: s2.trail }) + ')');
