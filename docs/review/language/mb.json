@@ -463,9 +463,9 @@
  },
  "scene:mb.fujiya_tallybook#z5sz1c": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
+  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08) English revised 2026-10-22: 先々代 is \"the head of the house two generations back\"; no family relationship is stated in the source (the Japanese is unchanged).",
   "jp": "{古|ふる}い {帳面|ちょうめん} 。 {藤屋|ふじや} の {先々代|せんせんだい} が 、 {橋|はし} の {札|ふだ} を {紙|かみ} に {写|うつ}し{取|と}った {拓本|たくほん} が {挟|はさ}まって いる 。",
-  "en": "An old ledger. Tucked inside are rubbings Fujiya's grandmother took of the bridges' plaques."
+  "en": "An old ledger. Tucked inside are rubbings of the bridges' plaques, taken by the head of Fujiya two generations back."
  },
  "scene:mb.fujiya_tallybook#1pshu02": {
   "status": "self-reviewed",
