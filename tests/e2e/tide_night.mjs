@@ -8,6 +8,11 @@
 //     gone, the quest done once, ko_tide_night set, and the world exactly as before (the map, everyone's place, your
 //     companion beside you, the daylight);
 //  2. Reduce motion: the same lines and shots, each shot's picture held at once;
+//  2b. the rising leaves, by their pixels (the world canvas, outside the far water's band where the moon's glints come
+//     and go): the drawing held at the end of the lift is the same picture 1.5 s later; "Replay shot" (R) brings the
+//     leaves back down to the flat and lifts them again, and the picture it settles to is the same held picture; with
+//     Reduce motion the held picture is there at once and is that same composition; and the drawing itself, for one
+//     moment of the lift, is the same however long the shot has been up (time in the shot is not what moves them);
 //  3. the scene seen before (played once in this campaign) and passed over with the sequence's own "Skip scene": it
 //     asks nothing, runs through, the pictures gone, the quest done once, ko_tide_night set, the world as before;
 //  4. a resize in the middle (to an upright phone and back): the sequence goes on, its focus above the sheet;
@@ -94,7 +99,7 @@ for (const [comp, reduce] of [['mio', false], ['nao', false], ['ren', false], ['
   const { p, errors } = await page(b, url);
   await setup(p, { comp, reduce });
   const before = await world(p);
-  const r = await play(p, reduce ? 300 : 1900);
+  const r = await play(p, reduce ? 300 : 2700);
   const after = await world(p);
   const tag = comp + (reduce ? ', Reduce motion' : ', read slowly');
   const sh = expectShots(r);
@@ -106,6 +111,77 @@ for (const [comp, reduce] of [['mio', false], ['nao', false], ['ren', false], ['
   ok(!q.seq && after.quest === 'done' && after.flag && q.quests.length === 1, tag + ': then the pictures gone, the quest done once, ko_tide_night set (' + JSON.stringify({ seq: q.seq, quest: after.quest, toasts: q.quests.length }) + ')');
   ok(after.map === before.map && after.npcs === before.npcs && after.tint === before.tint && after.night === before.night && JSON.stringify(after.pc) === JSON.stringify(before.pc) && after.comp && Math.abs(after.comp[0] - after.pc[0]) + Math.abs(after.comp[1] - after.pc[1]) <= 1,
     tag + ': the world exactly as before: the map, everyone\'s place, your companion beside you, the daylight (' + JSON.stringify({ before, after }) + ')');
+  errorsAll.push(...errors); await p.close();
+}
+
+// ---- 2b. the rising leaves, by their pixels: held, Replay, Reduce motion ---------------------------------------------
+// Frames of the world canvas are kept in the page; each comparison leaves out the far water's band (rows hz…far of the
+// shot's own geometry, where the moon's glints come and go) and counts the leaves' gold in the sky above it.
+const grab = (p, name) => p.evaluate((name) => {
+  const w = document.getElementById('world'), c = document.createElement('canvas');
+  c.width = w.width; c.height = w.height; c.getContext('2d').drawImage(w, 0, 0);
+  const q = RB.sequence.state(), V = RB.seqKit.stage(q.wh[0], q.wh[1], q.vb).vb, ky = w.height / q.wh[1];
+  const band = [Math.floor((Math.round(V * 0.36) - 1) * ky), Math.ceil((Math.round(V * 0.46) + 2) * ky)];
+  window.__fr = window.__fr || {};
+  window.__fr[name] = { d: c.getContext('2d').getImageData(0, 0, c.width, c.height).data, w: c.width, h: c.height, band, state: q.state, k: q.k, shot: q.shot };
+  const F = window.__fr[name];
+  let gold = 0;
+  for (let y = 0; y < band[0]; y++) for (let x = 0; x < F.w; x++) { const i = (y * F.w + x) * 4, r = F.d[i], g = F.d[i + 1], bl = F.d[i + 2]; if (r > 150 && g > 110 && bl < 150 && r > bl + 50) gold++; }
+  F.gold = gold;
+  return { state: q.state, k: q.k, shot: q.shot, gold, band };
+}, name);
+const differ = (p, a, b) => p.evaluate(([a, b]) => {
+  const A = window.__fr[a], B = window.__fr[b];
+  if (!A || !B || A.w !== B.w || A.h !== B.h) return -1;
+  let n = 0;
+  for (let y = 0; y < A.h; y++) { if (y >= A.band[0] && y <= A.band[1]) continue; for (let x = 0; x < A.w; x++) { const i = (y * A.w + x) * 4; if (A.d[i] !== B.d[i] || A.d[i + 1] !== B.d[i + 1] || A.d[i + 2] !== B.d[i + 2]) n++; } }
+  return n;
+}, [a, b]);
+const holding = (p) => p.waitForFunction(() => { const q = RB.sequence.state(); return q && q.shot === 'rise' && q.state === 'holding' && !q.replaying; }, null, { timeout: 8000 }).then(() => true).catch(() => false);
+const heldPics = {};
+for (const reduce of [false, true]) {
+  const { p, errors } = await page(b, url);
+  await setup(p, { comp: 'mio', reduce });
+  const tag = reduce ? 'Reduce motion' : 'full motion';
+  let res = null;
+  await play(p, 300, async (i, L) => {
+    if (i !== 2) return false; // Koyomi's line, under the risen leaves
+    const h0 = await holding(p);
+    const A = await grab(p, 'held');
+    await p.waitForTimeout(1500);
+    const B = await grab(p, 'later');
+    await p.keyboard.press('KeyR');
+    await p.waitForTimeout(reduce ? 200 : 120);
+    const C = await grab(p, 'replay');
+    const h1 = await holding(p);
+    await p.waitForTimeout(200);
+    const D = await grab(p, 'again');
+    res = { h0, h1, A, B, C, D, hold: await differ(p, 'held', 'later'), early: await differ(p, 'held', 'replay'), settled: await differ(p, 'held', 'again') };
+    heldPics[tag] = await p.evaluate(() => { const F = window.__fr.held; return { w: F.w, h: F.h, band: F.band, sum: Array.from(F.d.filter((v, i) => i % 4 !== 3 && (Math.floor(i / 4 / F.w) < F.band[0] || Math.floor(i / 4 / F.w) > F.band[1]))).reduce((s, v, i) => (s + v * ((i % 7) + 1)) % 1000000007, 0) }; });
+    return false;
+  });
+  const sum = res && { h0: res.h0, h1: res.h1, gold: [res.A.gold, res.B.gold, res.C.gold, res.D.gold], k: [res.A.k, res.C.k], hold: res.hold, early: res.early, settled: res.settled };
+  ok(res && res.h0 && res.A.gold >= 20 && res.hold === 0, tag + ': the leaves risen and the picture held: the same pixels 1.5 s later (' + JSON.stringify(sum) + ')');
+  if (!reduce) ok(res && res.C.gold < res.A.gold * 0.5 && res.early > 0, tag + ': "Replay shot" brings the leaves back down to the flat (the sky\'s gold falls) and lifts them again (' + JSON.stringify(sum) + ')');
+  ok(res && res.h1 && res.settled === 0 && res.D.gold === res.A.gold, tag + ': after Replay it settles to the same held picture (' + JSON.stringify(sum) + ')');
+  errorsAll.push(...errors); await p.close();
+}
+ok(heldPics['full motion'] && heldPics['Reduce motion'] && heldPics['full motion'].sum === heldPics['Reduce motion'].sum, 'Reduce motion holds the same composition the lift ends in (' + JSON.stringify(heldPics) + ')');
+// the drawing itself: one moment of the lift drawn with the shot up 3 s and up a minute is the same picture
+{
+  const { p, errors } = await page(b, url);
+  const d = await p.evaluate(() => {
+    const sd = RB.sequence.get('ko.tide_night').shots.rise, W = 640, H = 400, vb = Math.round(H * 0.64), out = {};
+    const cast = { pc: RB.seqDev.PC, comp: { id: 'mio', look: RB.content.chars.mio.look } };
+    const pic = (k, since) => { const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+      sd.draw(g, W, H, 5000, { seq: 'ko.tide_night', shot: 'rise', phase: 'lift', pi: 0, k, at: () => k, since, vb, still: false, review: false, hold: k >= 1, cast, test: () => false, t: 5000, sd });
+      return g.getImageData(0, 0, W, H).data; };
+    const n = (a, b) => { let x = 0; for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) x++; return x; };
+    for (const k of [0.3, 1]) out[k] = n(pic(k, 3000), pic(k, 60000));
+    out.lift = n(pic(0, 3000), pic(1, 3000));
+    return out;
+  });
+  ok(d['0.3'] === 0 && d['1'] === 0 && d.lift > 0, 'the drawing at one moment of the lift is the same picture whether the shot has been up 3 s or a minute; the lift itself moves the leaves (' + JSON.stringify(d) + ')');
   errorsAll.push(...errors); await p.close();
 }
 
