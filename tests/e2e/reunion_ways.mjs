@@ -52,10 +52,16 @@ const look = () => {
     comp: W.comp ? [W.comp.x, W.comp.y] : null, figs: W.npcs.concat(W.extras, W.leavers).filter(mine).length,
     apart: !!s.flags.ko_apart, stage: s.quests.ko_main && s.quests.ko_main.stage, mode: RB.game.mode() };
 };
-// one step in a direction with a real key press (you face that way first, as a held key would turn you)
+// one step in a direction with a real key press (you face that way first, as a held key would turn you). The key is let
+// go as soon as the step has begun, not after a fixed hold: a key still down when a step ends walks on, and after a stall
+// the frame clock (50 ms a frame at most) credits a new step with time from before it began, so a 130 ms hold could
+// outlast a 160 ms step and walk two tiles (the bridge route, 52d2441 on a loaded machine)
 async function step(p, dir) {
-  await p.evaluate((dir) => { RB.world.W.player.dir = dir; }, dir);
-  await p.keyboard.down(KEY[dir]); await p.waitForTimeout(130); await p.keyboard.up(KEY[dir]);
+  const from = await p.evaluate((dir) => { const P = RB.world.W.player; P.dir = dir; return [P.x, P.y]; }, dir);
+  await p.keyboard.down(KEY[dir]);
+  await p.waitForFunction(([x, y]) => { const P = RB.world.W.player; return !!P.mv || P.x !== x || P.y !== y || RB.game.mode() !== 'world'; },
+    from, { polling: 'raf', timeout: 1000 }).catch(() => {});
+  await p.keyboard.up(KEY[dir]);
   await p.waitForTimeout(420);
   // a way out: wait for the transition to settle
   for (let i = 0; i < 30 && (await p.evaluate(() => RB.game.mode())) === 'transition'; i++) await p.waitForTimeout(100);
