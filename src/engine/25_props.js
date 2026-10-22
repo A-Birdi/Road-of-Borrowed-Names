@@ -90,6 +90,15 @@ RB.props = (function () {
   def('shelf', {}, (c, x, y, p, t, o) => {
     px(c, x, y - 8, 16, 23, p.wood[2]);
     px(c, x + 1, y - 7, 14, 21, p.wood[0]);
+    // a keepsake shelf (o.keep === 'courier', RBN-QA-095): the straw hat above, the indigo relay coat with its pale
+    // crest below, no books
+    if (o && o.keep === 'courier') {
+      for (let r = 0; r < 3; r++) px(c, x + 1, y - 1 + r * 6, 14, 1, p.wood[2]);
+      px(c, x + 5, y - 5, 6, 1, '#d8bc80'); px(c, x + 3, y - 4, 10, 2, '#b89858');
+      px(c, x + 3, y + 1, 10, 3, '#34446e'); px(c, x + 5, y + 4, 6, 7, '#34446e');
+      px(c, x + 7, y + 2, 2, 2, '#e6dcc0'); px(c, x + 5, y + 10, 6, 1, '#e6dcc0');
+      return;
+    }
     for (let r = 0; r < 3; r++) {
       px(c, x + 1, y - 1 + r * 6, 14, 1, p.wood[2]);
       for (let i = 0; i < 5; i++) {
