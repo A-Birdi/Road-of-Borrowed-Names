@@ -480,7 +480,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return top * ease(sub(k, d, d + 0.5));
   }
   const rise = {
-    phases: [['lift', 2400]],
+    phases: [['lift', 1600]],
     safe: { wide: 'the leaves rising toward the moon over the party, above the sheet', narrow: 'the leaves and the moon in the upper half', land: 'the leaves and the moon' },
     draw(c, w, h, t, st) {
       const G = geomTide(w, h, st.vb), { s } = G;
