@@ -218,11 +218,14 @@ narr: {根|ね} の {間|あいだ} の {乾|かわ}いた {窪|くぼ}み 。 {
 # The separation (10_STORY §8, "in danger"): halfway over the root bridge the sea comes in under the island; it rises
 # over the bridge behind you, and your companion is left on the far bank. Staged: a roar from below; the water rises;
 # you look back; your companion calls across; the spray hides them; you step down onto the south bank. Calm, never a
-# warning: the way round is there.
-!set ko_tide_in
+# warning: the way round is there. Your companion steps back onto the north bank at the roar, before the water is
+# over the bridge, and calls across from there; the spray hides them (they are no longer with you: !refresh comp, as
+# the map now says while ko_apart holds), and then you step down (RBN-QA-090).
 !sfx splash
 !shake 2
 narr: {足|あし} の {下|した} から 、 {低|ひく}い {音|おと} 。 {潮|しお} が 、 {根|ね} の {間|あいだ} から {一気|いっき} に {満|み}ちて くる 。 || A low roar from under your feet. The tide is pouring in between the roots.
+!walkto comp 15 9 down
+!set ko_tide_in
 narr: {振|ふ}り{返|かえ}る と 、 {橋|はし} は もう {水|みず} の {下|した} だった 。 {仲間|なかま} は 、 {向|む}こう {岸|ぎし} に {残|のこ}って いる 。 || You look back: the bridge is already under water. Your companion is left on the far bank.
 ?(comp=nao) comp: {動|うご}く な ！ …… いや 、 {動|うご}け 。 そっち に {道|みち} が ある なら 、 {回|まわ}って {来|こ}い 。 {俺|おれ} は ここ で {待|ま}つ 。 {絶対|ぜったい} {動|うご}かない 。 || Don't move! …No, do move. If there's a way on your side, come round. I'll wait right here. I won't budge.
 ?(comp=mio) comp[worry]: {大丈夫|だいじょうぶ} ！？ …… わたし は {平気|へいき} 。 ここ で {待|ま}ってる から 、 {無理|むり} しない で ね 。 {絶対|ぜったい} 、 {迎|むか}え に {来|き}て 。 || Are you all right?! …I'm fine. I'll wait here, so don't push yourself. You will come for me, won't you.
@@ -230,8 +233,9 @@ narr: {振|ふ}り{返|かえ}る と 、 {橋|はし} は もう {水|みず} �
 ?(comp=suzu) comp: …… {大丈夫|だいじょうぶ} 、 {幕間|まくあい} よ 、 {幕間|まくあい} ！ {次|つぎ} の {幕|まく} で {会|あ}いましょう 。 {出番|でばん} {忘|わす}れたら 、 {承知|しょうち} しない から ね ！ || …It's all right, it's just the interval! See you in the next act. Miss your cue and I'll never forgive you!
 !set ko_apart
 !refresh
-!move pc down 1
+!refresh comp
 narr: {水|みず} しぶき の {向|む}こう に 、 {仲間|なかま} の {姿|すがた} が {見|み}えなく なった 。 {西|にし} に 、 {細|ほそ}い {道|みち} が {続|つづ}いて いる 。 || Through the spray you can't see your companion any more. To the west, a narrow way goes on.
+!move pc down 1
 !quest ko_main 5
 !journal {潮|しお} が {満|み}ちて 、 {仲間|なかま} と {離|はな}れて しまった 。 {西|にし} の {回|まわ}り{道|みち} から 、 {向|む}こう {岸|ぎし} へ {戻|もど}ろう 。 || The tide has come in between you and your companion. Find the way round to the far bank, west.
 
@@ -274,6 +278,9 @@ narr: {葉|は} は まだ {回|まわ}って いる 。 || The leaf is still tu
 !unset ko_apart
 !set ko_reunited
 !refresh
+# (your companion is with you again: placed here before they turn to you, a follower after, never a passing extra;
+# RBN-QA-090)
+!refresh comp
 !look comp pc
 ?(comp=nao) !gesture comp handover pc
 ?(comp=nao) comp: …… {遅|おそ}い 。 {配達|はいたつ} なら 、 {苦情|くじょう} もん だ ぞ 。 || …You're late. If you were a delivery, I'd be filing a complaint.
