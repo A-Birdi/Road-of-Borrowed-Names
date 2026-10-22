@@ -31,7 +31,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { n: 1, jp: '{追分|おいわけ}', en: 'Oiwake', ord: '{一番目|いちばんめ}', give: 'カンベエ', giveEn: 'Kanbe', light: '{分|わ}かれ{道|みち} の {道標|みちしるべ} が 、 {灯|ひ} に {照|て}らされた 。 || The signpost at the fork stands lit.' },
     { n: 2, jp: '{杉|すぎ}ノ{木|き}', en: 'Suginoki', ord: '{二番目|にばんめ}', give: 'イネ', giveEn: 'Ine', light: '{大杉|おおすぎ} の {幹|みき} に 、 {灯|ひ} が {映|うつ}った 。 || Light falls on the great cedar\'s trunk.' },
     { n: 3, jp: '{坂下|さかした}', en: 'Sakashita', ord: '{三番目|さんばんめ}', give: 'ヘイスケ', giveEn: 'Heisuke', light: '{雨|あめ} の {中|なか} で も 、 {灯|ひ} は {消|き}えない 。 || Even in the rain, the light holds.' },
-    { n: 4, jp: '{中山|なかやま}', en: 'Nakayama', ord: '{四番目|よんばんめ}', give: 'オタキ', giveEn: 'Otaki', light: '{向|む}かい{合|あ}う {二軒|にけん} の {宿屋|やどや} を 、 {同|おな}じ {灯|ひ} が {照|て}らす 。 || The same light falls on both inns facing each other.' },
+    { n: 4, jp: '{中山|なかやま}', en: 'Nakayama', ord: '{四番目|よんばんめ}', give: 'オタキ', giveEn: 'Otaki', light: '{並|なら}んだ {二軒|にけん} の {宿屋|やどや} を 、 {同|おな}じ {灯|ひ} が {照|て}らす 。 || The same light falls on the two inns standing side by side.' },
     { n: 5, jp: '{馬返|うまがえ}し', en: 'Umagaeshi', ord: '{五番目|ごばんめ}', give: 'ゲンジ', giveEn: 'Genji', light: '{霧|きり} の {中|なか} に 、 {灯|ひ} が {丸|まる}く {滲|にじ}んだ 。 || The light blurs round in the fog.' },
     { n: 6, jp: '{霧下|きりした}', en: 'Kirishita', ord: '{六番目|ろくばんめ}', give: 'サキチ', giveEn: 'Sakichi', light: '' },
     { n: 7, jp: '{雲居|くもい}', en: 'Kumoi', ord: '{七番目|ななばんめ}', give: 'シズ', giveEn: 'Shizu', light: '{雲|くも} の {上|うえ} で 、 {灯|ひ} が {一|ひと}つ ともった 。 || A single light catches, above the clouds.' },
@@ -301,7 +301,7 @@ cr_matazo: {頼|たの}む 。 {無事|ぶじ} だ 、 と な 。 {大袈裟|�
 
 RB.script.add(`
 @scene cr.arrive4
-# Nakayama: halfway up the mountain; the rain stops (phase 2); two inns face each other across the street, each with
+# Nakayama: halfway up the mountain; the rain stops (phase 2); two inns stand side by side along the street, each with
 # its door open and a grudge.
 !set cr_st4
 !var cr_st = 4
@@ -353,7 +353,7 @@ narr: {旧道|きゅうどう} の {浅瀬|あさせ} の {方|ほう} を 、 {
 
 @scene cr.otaki
 !faceplayer
-cr_otaki: {松葉屋|まつばや} へ ようこそ 。 {向|む}かい の {竹屋|たけや} より 、 {布団|ふとん} が {一枚|いちまい} {厚|あつ}い の よ 。 || Welcome to the Matsuba. Our futons are one layer thicker than the Take\'s across the way.
+cr_otaki: {松葉屋|まつばや} へ ようこそ 。 {隣|となり} の {竹屋|たけや} より 、 {布団|ふとん} が {一枚|いちまい} {厚|あつ}い の よ 。 || Welcome to the Matsuba. Our futons are one layer thicker than the Take\'s next door.
 ?(!quest.cr_guest=done) cr_otaki: …… あの タツ さん 、 うち の お{客|きゃく} な の に 、 {竹屋|たけや} で {寝|ね}た の よ 。 {宿代|やどだい} は どっち が もらう の ？ || …That Tatsu booked with us, and slept at the Take. Which of us gets paid?
 
 @scene cr.otaki_after
@@ -362,7 +362,7 @@ cr_otaki: {竹屋|たけや} と は 、 {今|いま} は {客|きゃく} を {�
 
 @scene cr.seibe
 !faceplayer
-cr_seibe: {竹屋|たけや} で ござる 。 {向|む}かい の {松葉屋|まつばや} より 、 {風呂|ふろ} が {熱|あつ}い 。 || This is the Take. Our bath is hotter than the Matsuba's across the way.
+cr_seibe: {竹屋|たけや} で ござる 。 {隣|となり} の {松葉屋|まつばや} より 、 {風呂|ふろ} が {熱|あつ}い 。 || This is the Take. Our bath is hotter than the Matsuba's next door.
 ?(!quest.cr_guest=done) cr_seibe: タツ どの は 、 うち で {寝|ね}た 。 うち の {客|きゃく} だ 。 {帳面|ちょうめん} より 、 {布団|ふとん} が {証拠|しょうこ} だ 。 || Master Tatsu slept here. He's our guest. A futon is better proof than a ledger.
 
 @scene cr.seibe_after

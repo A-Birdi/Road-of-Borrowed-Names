@@ -194,7 +194,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [{ id: 'cr_matazo', x: 24, y: 3, dir: 'left', if: 'cr_st3&!cr_matazo_done', talk: 'cr.matazo' }],
   });
 
-  // ==== 4 · Nakayama (中山宿), the middle of the mountain: two inns face each other ====================================
+  // ==== 4 · Nakayama (中山宿), the middle of the mountain: two inns side by side ======================================
   station('cr.nakayama', 4, T('Nakayama Station', '{中山宿|なかやまじゅく}'), {
     lamp: [32, 15], board: [27, 15], kago: [2, 15],
     structs: [
