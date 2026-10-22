@@ -58,7 +58,9 @@ async function play(p) {
   for (let i = 0; i < 400; i++) {
     const st = await p.evaluate(() => { const d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); return { d: d ? (d.who || '') + ': ' + String(d.en || '').slice(0, 70) : null, run: RB.script.isRunning() }; });
     if (st.d) {
-      if (!lines.length || lines[lines.length - 1] !== st.d) { lines.push(st.d); await p.waitForTimeout(120); await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance()); }
+      // (Next on every pass, not only on a new line: at any text speed the first press may only finish showing it)
+      if (!lines.length || lines[lines.length - 1] !== st.d) { lines.push(st.d); await p.waitForTimeout(120); }
+      await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance());
       await p.waitForTimeout(60);
       continue;
     }
@@ -82,6 +84,8 @@ const YAS = /^yn_yasuke: …Warm\. The egg's warm/, ALL = /All three eggs handed
   await first.p.close();
   const { p, errors } = await pageAt(null, { context: first.ctx });
   const ld = await p.evaluate(async () => { try { await RB.game.loadCampaign(1, 'manual'); return 'loaded'; } catch (e) { return 'failed: ' + e.message; } });
+  // (this page's settings as the other cases' are: device settings, not the save's)
+  await p.evaluate(() => { RB.game.settings.textSpeed = 'instant'; RB.game.settings.suzuSpeech = 'standard'; RB.game.settings.skipSeen = true; });
   await settled(p);
   const q0 = await quest(p);
   ok(ld === 'loaded' && q0.done && q0.q && !q0.q.done && q0.eggs === 1 && q0.flags.join() === 'tsuneji,oshige', 'the old save loads with the story done, the quest open, one egg held, Tsuneji\'s and Oshige\'s given (' + ld + ' ' + JSON.stringify(q0) + ')');
