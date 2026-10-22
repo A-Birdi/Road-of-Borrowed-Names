@@ -12,12 +12,14 @@
 //  2. a save and load while apart: still apart (no follower, no figure);
 //  3. the reunion (from the real trigger, once the hollows are reshaped): your companion is here, the one figure, from
 //     the first line, turns to you, and follows you after it; Company talks with them again; the quest goes on; who
-//     your companion is, their equipment, resolve and bonds, your pet and your satchel are as before the split;
+//     your companion is, the campaign's equipment, resolve and bonds, your pet and your satchel are as before the split
+//     (a new journey's defaults: not a broad range of loadouts);
 //  4. both scenes seen before and passed over with the dialogue's own "Skip seen" (Settings: offer to skip, on): the
 //     split ends apart (you on the south bank, no follower, no figure, the quest at 5), the reunion ends together (the
 //     follower beside you, the quest at 6), the same fields as before the split, and fast-forward off afterwards;
 //  5. no page errors.
-// Not covered here: a reload in the middle of either scene, a reload after the reunion, saves made before this fix.
+// Not covered here: a reload in the middle of either scene, a reload after the reunion, saves made before this fix, and a
+// staged walk that is blocked (your companion's step back to (15,9) succeeding here is no evidence about a blocked one).
 // Usage: node tools/build.mjs && node tests/e2e/tide_split.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -154,7 +156,7 @@ for (const comp of ['nao', 'mio', 'ren', 'suzu']) {
   ok(ask2.button && !ask2.notice && ask2.talk, comp + ': Company talks with them again (' + JSON.stringify(ask2) + ')');
   await closeAll(p);
   const keep1 = await p.evaluate(kept);
-  ok(keep1 === keep0, comp + ': who your companion is, their equipment, resolve and bonds, your pet and satchel as before the split (' + keep1 + ')');
+  ok(keep1 === keep0, comp + ': who your companion is, the campaign\'s equipment, resolve and bonds, your pet and satchel as before the split (' + keep1 + ')');
   errorsAll.push(...errors);
   await p.close();
 }
