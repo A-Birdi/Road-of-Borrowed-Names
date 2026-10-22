@@ -382,6 +382,11 @@ RB.encounter = (function () {
     if (!l) return '';
     return typeof l === 'string' ? l : l.en || '';
   }
+  // The guests here from the start, in the encounter's order, each with the words they come in with (their authored
+  // `arrive` line; RBN-QA-092): said once by the screen after the creature's intro. Reading them changes nothing.
+  function guestArrivals(st) {
+    return (st.actors || []).filter((a) => a.side === 'guest' && !a.left).map((a) => ({ aid: a.aid, en: line(a, 'arrive') })).filter((x) => x.en);
+  }
   // 4. The creatures still standing, each in turn. Returns { efx, standing, intents } as they were when the step
   // began (the screen plays each creature's move from these). A guest stunned a creature: its move comes to nothing.
   function foes(st, P, impl) {
@@ -924,6 +929,6 @@ RB.encounter = (function () {
   return {
     begin, exchange, player, companion, guests, foes, close, conclude, cards, coming, test, finishEncounter, helpOffer,
     wanderer, companionOptions, solvedKey, rec, defOf, actorOf, stateKey, compMenu, planned, planOf, pointCards, prepared,
-    phrasings, ordinaryRules, roamingWon, conclusionText,
+    phrasings, ordinaryRules, roamingWon, conclusionText, guestArrivals,
   };
 })();

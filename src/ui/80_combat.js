@@ -1726,6 +1726,10 @@ RB.combat = (function () {
     try {
       if (enemy.intro) await live(say(tierOf(enemy.intro) || enemy.intro, enemy.introWho));
       RB.ui.dialogue.hide();
+      // the guests here from the start come in with their own words (RBN-QA-092), once, after the creature's intro: in
+      // the exchange log, as the guests' other lines are (in English), standing under the responses as a recap when the
+      // first decision comes in; the first exchange's own lines take their place
+      if (st.enc) { const arr = ENC().guestArrivals(st); if (arr.length) { for (const g of arr) logLine(esc(g.en)); recap(); } }
       // a required story battle lost before: the companion offers help, more each time; always optional (E19)
       if (st.enc && st.compId && ENC().helpOffer(s, st.enc.def) > 0) await live(offerHelp(true));
       while (!outcome) {
