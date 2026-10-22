@@ -103,7 +103,10 @@ export default async (t) => {
   const P = M.profiles();
   t.eq(BESPOKE.filter((id) => !P[id] || P[id].tier !== 'bespoke'), [], 'the 26 bespoke profiles of GESTURES.md §5');
   t.eq(M.BESPOKE.slice().sort(), BESPOKE.slice().sort(), 'nothing else is marked bespoke');
-  t.eq(Object.keys(P).filter((id) => id !== 'pc' && !C.chars[id]), [], 'every profile names a character of the cast');
+  // (or a person placed on a map without a name, by the placement's own id: the little theatre's audience, RBN-QA-124;
+  // a profile whose id is neither still fails, so a misspelt id is caught)
+  const placed = new Set(Object.values(C.maps).flatMap((m) => (m.npcs || []).map((n) => n.char || n.id)));
+  t.eq(Object.keys(P).filter((id) => id !== 'pc' && !C.chars[id] && !placed.has(id)), [], 'every profile names a character of the cast, or a person placed on a map without a name');
   t.ok(Object.keys(P).length >= 76, 'profiles for the player, the companions and the recurring cast (' + Object.keys(P).length + ')');
   const badHabit = [], badTalk = [], badClass = [];
   for (const [id, pr] of Object.entries(P)) {
