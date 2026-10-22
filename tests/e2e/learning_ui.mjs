@@ -40,6 +40,7 @@ async function helpers(p) {
     window.__mizu = { kind: 'write', item: 'v:水', title: 'Test: water', ctx: { jp: '{冬|ふゆ} の {氷|こおり} を わら で {包|つつ}んで 、 {夏|なつ} まで しまって おく 。', en: 'Winter ice is wrapped in straw and stored until summer.' }, prompt: { en: 'Write the word for water.' }, answer: 'みず', accept: ['みず', '水'], mode: 'reading' };
   });
 }
+async function settledType(p) { await p.evaluate(async () => { await RB.bookType.install(); await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))); }); }
 async function setTextScale(p, k) { await p.evaluate((k) => { RB.game.settings.textScale = k; RB.game.applySettings(); }, k); }
 // Everything visible inside `root` must lie within the viewport horizontally
 // (a scrollable tab rail may overflow by design: it scrolls and shows arrows).
@@ -356,6 +357,9 @@ await test('the typing field stays above the software keyboard; pinch-zoom is ig
   await helpers(p);
   await p.evaluate(() => __start(__mizu, 'ime'));
   await p.waitForSelector('#ime-in');
+  // the book's type as a player has it once the game has settled: it is installed on the first idle moment after
+  // start-up, and arriving after the keyboard it re-wraps the task (RBN-QA-080, checked on its own in kb_reflow.mjs)
+  await settledType(p);
   await p.focus('#ime-in');
   // the browser reports a keyboard covering the lower 330px of the visual viewport
   const kb = await p.evaluate(async () => {

@@ -633,12 +633,24 @@ RB.challenge = (function () {
         }
       }
       if (vv) { vv.addEventListener('resize', syncVV); vv.addEventListener('scroll', syncVV); }
+      // and again when the task's own boxes change size while the keyboard is up (the book's type arriving after the
+      // keyboard, a line wrapping: RBN-QA-080). Only for this task while it is live, with the keyboard up as syncVV
+      // found it (never while pinch-zoomed) and a field of its own focused; never once the answer is in or while
+      // feedback is shown (a wrong answer leaves the answer open): fb() brings the feedback into view, and on a small
+      // phone that lets the field above it scroll away. Scrolling only, never focus.
+      const kbRO = vv && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => {
+        if (over || !wrap.isConnected || !wrap.classList.contains('kb') || locked || wrap.classList.contains('fb-on')) return;
+        const a = document.activeElement;
+        if (a && wrap.contains(a) && RB.input.isTextTarget(a)) keepFocusVisible();
+      }) : null;
+      if (kbRO) for (const box of [$('.chal-task'), $('.chal-work'), $('.chal-answer')]) kbRO.observe(box);
 
       function finish(cancelled) {
         if (over) return;
         over = true;
         if (PH) PH.finish(cancelled, res);
         if (vv) { vv.removeEventListener('resize', syncVV); vv.removeEventListener('scroll', syncVV); }
+        if (kbRO) kbRO.disconnect();
         if (tabsApi) { tabsApi.destroy(); tabsApi = null; }
         if (opts.keepInk && pad) res.ink = pad.ink(); // opts.keepInk: the handwritten characters' strokes (writing desk pages)
         if (pad) { pad.destroy(); pad = null; }
@@ -698,6 +710,7 @@ RB.challenge = (function () {
           // and nothing on it answers any more (a stray click on one of its detached buttons does nothing)
           for (const t of ['click', 'pointerdown', 'keydown', 'input', 'change']) wrap.addEventListener(t, (e) => { e.stopImmediatePropagation(); e.preventDefault(); }, true);
           if (vv) { vv.removeEventListener('resize', syncVV); vv.removeEventListener('scroll', syncVV); }
+          if (kbRO) kbRO.disconnect();
           if (tabsApi) { tabsApi.destroy(); tabsApi = null; }
           if (pad) { pad.destroy(); pad = null; }
           RB.ui.popLayer(layer, { keepHelp: true });
