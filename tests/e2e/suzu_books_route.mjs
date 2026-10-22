@@ -53,8 +53,10 @@ async function playOut(p, pick, until) {
   await p.waitForTimeout(300);
   return lines;
 }
+// coming out into a town by the game's own way in (RB.game.transition, as a door does): the map's enter events run there,
+// never by placing you on it (RB.world.enter alone runs none, so the books could not have played)
 async function enter(p, map, x, y) {
-  await p.evaluate(([map, x, y]) => { window.__scenes = []; RB.world.enter(map, x, y, 'down', {}); }, [map, x, y]);
+  await p.evaluate(async ([map, x, y]) => { window.__scenes = []; await RB.game.transition(map, x, y, 'down'); }, [map, x, y]);
   await p.waitForTimeout(600);
 }
 const state = (p) => p.evaluate(() => ({ books: !!RB.game.s.flags.yn_suzu_books, bond: (RB.game.s.company && RB.game.s.company.bond || {})['yn:settled'] || null, map: RB.world.W.map.id, scenes: window.__scenes.slice(), run: RB.script.isRunning() }));
