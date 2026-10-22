@@ -411,9 +411,9 @@ RB.script = (function () {
         // `!refresh gone`: the people this sends away have left (faded where they stood, or walked off) before the scene
         // goes on: it waits for their departure, not for a time (bounded; at once when skipping; RBN-QA-093)
         case 'refresh':
-          if (a[0] === 'arrive') { RB.world.refreshActors({ arrive: true }); await RB.world.arrivals({ now: hidden() }); } else if (a[0] === 'comp') RB.world.placeCompanion({ near: true });
+          if (a[0] === 'arrive') { RB.world.refreshActors({ arrive: true }); await RB.world.arrivals({ now: hidden() }); }
           else if (a[0] === 'gone') { const before = new Set(RB.world.W.leavers); RB.world.refreshActors(); await RB.world.departures(RB.world.W.leavers.filter((l) => !before.has(l)), { now: hidden() }); }
-          else RB.world.refreshActors();
+          else if (a[0] === 'comp') RB.world.placeCompanion({ near: true }); else RB.world.refreshActors();
           break;
         case 'recruit': await RB.game.recruit(a[0], a[1]); break;
         case 'depart': await RB.game.depart(); break;
