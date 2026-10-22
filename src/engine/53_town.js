@@ -193,7 +193,7 @@ RB.town = (function () {
     const seenAt = here.find((m) => near.indexOf(m) >= 0);
     if (seenAt) return { kind: 'sighting', target, map: seenAt, line: LINES.sighting(placeOf(seenAt), seenAt === mapId), note: { target, map: seenAt, kind: 'sighting' } };
     if (knows === 'routine') {
-      const u = (rels[target] || {}).usual;
+      const u = usualNow(s, target);
       const places = usualPlaces(target);
       const line = u || LINES.routine(who, places);
       return { kind: 'routine', target, line, note: { target, kind: 'routine', line, maps: places.map((p) => p.map) } };
@@ -216,11 +216,21 @@ RB.town = (function () {
     for (const target in rel.knows || {}) {
       const where = placed(target), who = nameOf(target);
       for (const m of mine) for (const nb of [m].concat(allLinks(m))) if (where.has(nb)) out.push(LINES.sighting(placeOf(nb), nb === m));
-      if (rel.knows[target] === 'routine') out.push((rels[target] || {}).usual || LINES.routine(who, usualPlaces(target)));
+      if (rel.knows[target] === 'routine') {
+        out.push((rels[target] || {}).usual || LINES.routine(who, usualPlaces(target)));
+        for (const w of (rels[target] || {}).usualIf || []) out.push({ jp: w.jp, en: w.en });
+      }
       else { out.push(LINES.uncertain(who, null)); for (const m of where) out.push(LINES.uncertain(who, placeOf(m))); }
     }
     const seen = new Set();
     return out.filter((l) => l && l.jp && !seen.has(l.jp) && seen.add(l.jp));
+  }
+  // what those who know someone say of their usual place now: the authored line, unless a story step has them
+  // somewhere else for a while (`usualIf`, the first that holds; RBN-QA-083); null when nothing is authored
+  function usualNow(s, person) {
+    const r = (C().relations || {})[person] || {};
+    const w = (r.usualIf || []).find((x) => RB.state.test(s, x.if));
+    return w ? { jp: w.jp, en: w.en } : r.usual || null;
   }
   // a resident's usual places: the maps their routine slots are on, in slot order ([{ map, en, jp }])
   function usualPlaces(person) {
