@@ -1362,7 +1362,54 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   installed first. B `kb_reflow` 4/0 and `learning_ui` 15/0 on CC-018's own bytes; CC-017's bytes fail `kb_reflow`
   3 of 4. Agnes's review is source/model, not a browser, device or real-IME run; the Reveal and Step away paths with
   the keyboard up were checked only in scratch probes, outside the committed suite (VALIDATION, CC-018). In candidate
-  CC-018 (`aa07a8da…`, built from `d65a598`), READY_FOR_QA.
+  CC-018 (`aa07a8da…`, built from `d65a598`), READY_FOR_QA; verified live by Local (CL-153) and Agnes (6330526850).
+  RBN-QA-081, 082, 086, 083, 085, 087, 090, 092 and 088 (three-party AGREE each, on the exact commits listed in
+  HANDOFF's CC-019 entry; counts below are on CC-019's own bytes, VALIDATION, CC-019):
+  RBN-QA-081: at Kotonoha's stage 3 the guide names the next place by what is still to do (the panels hung → Otoha;
+  the first telling missing, in Otoha's order; each conch not yet heard; then the desk in the keepers' hall), never
+  "Next: The Tidal Hollow — no way there from here just now"; data only. B `guide_tellings` 88/0
+  (CC-018's bytes fail 83 of 88). As Agnes bounds it: the 72 flag combinations are endpoint coverage, not every
+  interactive gathering order; cancelled states are injected, not real cancellations.
+  RBN-QA-082: the success line of Ao's second lesson teaches the particle は read わ
+  (「{助詞|じょし} の 「は」 は 、 「わ」 って {読|よ}む んだ 。 …」), with its review-ledger entry (`f72b28f`, added after
+  `review_ledger` failed on `b66f422`). B `ao_lesson_line` 20/0 (CC-018's bytes fail 6 of 20). As Agnes
+  bounds it: first-try success for all four profiles, wrong then right and cancel for F only; the wrong path asserts
+  the final count; the string and furigana fixture is not an on-screen ruby-layout review; the scene is invoked with
+  an initialized state, not reached by ordinary NPC traversal. The new line plays with the device voice (voice paused).
+  RBN-QA-086: at stage 4, until the Whispering Hollow's drifting leaf has its word back (`ko_root_a`), the guide names
+  the leaf (ko.roots1 4,10), then the tide as before; data only. B `guide_roots_leaf` 9/0 (CC-018's
+  bytes fail 5 of 9). As Agnes bounds it: the leaf's challenge is an automated scene invocation, not ordinary walking;
+  wrong and cancelled answers are not tested.
+  RBN-QA-083: while Ao reads in the keepers' hall (`quest.ko_ao=1`), "Have you seen…?" about him answers with an
+  ordered variant beside his unchanged usual line (「アオ なら 、 ヨシノ さん と {字|じ} を {読|よ}む って 、
+  {館|やかた} へ {行|い}った わ 。」); a refusal, an unknown and a sighting nearby still come first; the variant has its
+  ledger entry and no recording. B `ao_whereabouts` 18/0. As Agnes bounds it: injected quest states and
+  the automated sheet; string-level furigana, not visual; the new voice key not independently verified.
+  RBN-QA-085: Yoshino's word after the exhibition is choice-neutral and looks ahead
+  (「これ で 、 {子供|こども} たち も {板|いた} の {話|はなし} を {比|くら}べられます 。 …」), with its ledger entry; its
+  test fails a scene that errors. B `yoshino_exhibit_line` 14/0. As Agnes bounds it: an
+  initialized state and the scene played directly, not ordinary routing or visual proof.
+  RBN-QA-087: the quest guide reads an encounter's outcome (`_res`, `_enc`) as unknown and forks on it, never as what
+  the save carried in; a path that took or skipped a single outcome test keeps that outcome; a compound condition
+  still forks. No encounter, state or outcome changes. U `guide_encounter` 19/0 (12/7 on `0f8b9cc`, 7/12 on
+  `b66f422`). The compound-condition, result-pairing and code-hook limits stand as stated.
+  RBN-QA-090: at the Tidal Hollow your companion steps back onto the north bank, is gone for the spray and does not
+  follow you while apart (Company shows its existing "isn't beside you here"), and is with you again at the reunion,
+  following after; no line, flag or gate changes. B `tide_split` 49/0 (each companion, with Skip seen, and
+  who your companion is, equipment, resolve, bonds, pet and satchel kept). Not covered, as its header says: a reload
+  in the middle of either scene, a reload after the reunion, saves made before the fix, the blocked staged walk.
+  Combat while apart is RBN-QA-091, separate.
+  RBN-QA-092: a guest in an encounter from its start comes in with their own words, once, in the exchange log after
+  the creature's intro (English only, as the guests' other battle lines); Kihei's victory says he has moved a little
+  way off and waits at the water's edge. B `guest_arrivals` 17/0. As Agnes bounds it: an initialized
+  state, not ordinary play; not every cancellation timing.
+  RBN-QA-088: the sea cave's telling (`ko.suzu_stage`) brings Nana into the audience itself (`!enter`) and Suzu onto
+  the rock, pacing, and down beside you at the end; lines, branches and flags unchanged. An entrance and its walk
+  belong to their campaign, map, scene and figure: a load, another map or a fresh visit stops them, recorded as not
+  made, and no same-named figure elsewhere is moved. B `suzu_stage` 47/0, `enter_ownership`
+  12/0; U `enter_op` 11/0. As Agnes bounds it: 50 ms samples are not proof at every instant; a step
+  already started may settle on a scene-only change of ownership, but no next step starts.
+  In candidate CC-019 (`3baeeb9f…`, built from `8064756`), READY_FOR_QA.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:

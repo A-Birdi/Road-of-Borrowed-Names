@@ -5484,6 +5484,82 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-019:** `index.html` sha256 `3baeeb9fd3850f54c490a1a660913407b38b486045e0fa6a4615e2ea38a6cd13`
+    (24,267,846 bytes), built from `8064756` (CC-018 plus only RBN-QA-081, 082, 086, 083, 085, 087, 090, 092 and 088,
+    each by its agreed commits, listed in HANDOFF's CC-019 entry; scope agreed by Agnes 6337648132 and Local CL-181);
+    byte-identical to the build the suites ran on, and to the integrated head's own build before its push. The
+    integration, as it happened (cherry-picked with `-x`; patch-ids of 12 hex digits):
+    - `5cb2931` → `f7b1240` (QA-081, `fe50172`; `eb0ea5b80777` in full, `8afa4009aa9a` without `run.mjs`, equal; the
+      same tree) → `b66f422` (QA-082, `b4ebb9f`; `2a2e747f5ed2` without `run.mjs`, equal; `run.mjs` keeps both suites).
+      AGREEs: QA-081 Agnes 6332916876, 6332919869 and Local CL-161; QA-082 Agnes 6332922703 and Local CL-162. Head
+      verified by Local CL-164 and Agnes 6333264555.
+    - A regression of mine, found by the full units run for QA-083: `review_ledger` failed on `b66f422` (57,787/1),
+      QA-082's new line having no self-review entry; neither the candidate nor its review had run the full units.
+      Fixed by `6cc52fb` → `f72b28f` (Agnes 6333523142, Local CL-168); every candidate since has had a full units run
+      before integration.
+    - `b66f422` → `f72b28f` (`f1a28db4a829`), `d3cd72f` (QA-086, `facde9e`; `7d338c385588`), `fff1ce1` (QA-083,
+      `d0cb858`; `99edef1a514b` without `run.mjs`), `2d69d55`, `acf9045`, `58a4a1a` (QA-085, `a9c62f3`, `0e6848f`,
+      `1e24a27`; `2cc1c7edac15` without `run.mjs`, `6045c5ab8ce9`, `bf883e7f7f74`), all equal; `run.mjs` merged by hand
+      where it conflicted, only each item's suite added. AGREEs: QA-086 Agnes 6333531144, Local CL-166; QA-083 Agnes
+      6333531144, Local CL-168; QA-085 Agnes 6333523142, 6333665282, Local CL-168, CL-172. U 57,789/0 on `58a4a1a`.
+      Head verified by Agnes 6334301150 and Local CL-174.
+    - `58a4a1a` → `bedcd56`, `32a6c78` (QA-087, `0f8b9cc`, `f067bff`; `9c75dc998c94`, `5c1f3bf441fa`, equal). AGREEs:
+      Agnes 6334506153, Local CL-172, CL-174. U 57,815/0. Head verified by Agnes 6335140450 and Local CL-176.
+    - `32a6c78` → `4f1ee52`, `22fdbfd`, `10b0c07` (QA-090, `8270bc8`, `6eb42fd`, `b4b09b4`; `bdcabb7dd881` without
+      `run.mjs`, `fd985befcde4`, `2bd352592d00`) and `c3f2b1c`, `570a811`, `5940b34` (QA-092, `273d6d1`, `f2173c6`,
+      `069353a`; `c2bd8447e77c` without `run.mjs`, `b16b860873c2`, `aec580c0d80d`), all equal. AGREEs: QA-090 Agnes
+      6335155491, 6335744172, 6335976024, Local CL-177, CL-178; QA-092 Agnes 6335750856, Local CL-178. U 57,840/0.
+      Head verified by Agnes 6337370911 and Local CL-181.
+    - `5940b34` → `9212c34`, `8064756` (QA-088, `89b73b4`, `7fc43e6`; `b94a4aa1467b`, `c49d57908d7d` without `run.mjs`,
+      equal; `run.mjs` adds only `suzu_stage` and `enter_ownership`). AGREEs: Agnes 6336515002 (qualified), Local
+      CL-180. U 57,851/0 on `8064756` (the inherited `review_ledger` failure absent). Head verified by Agnes 6338763683
+      and Local CL-185.
+    On these bytes (B): `ko_first_sight` 87/0, `ko_crossing` 94/0, `interlude_ahead` 30/0, `interlude_lifecycle` 14/0,
+    `interludes` 76/0, `lf_arrival_view` 79/0, `lookout_vista` 22/0, `keeper_reveal` 69/0, `kotonoha` 7/0, `licence`
+    2/0, `battle_start_abandon` 28/0, `prep_abandon` 52/0, `encounters` 10/0, `load_mid_scene` 19/0, `combat_ui` 7/0,
+    `social_battle` 65/0, `card_press` 13/0, `battle_settings` 10/0, `battle_presentation` 13/0, `fog_event` 26/0,
+    `prologue` 100/0, `title_ledger` 18/0, `play_ui` all ok (44), `world_view` all ok (20), `ui` 14/0, `wind_stone`
+    19/0, `kb_reflow` 4/0, `leaf_home` 42/0, `sequence_world --only ko.end` 156/0, `guest_arrivals` 17/0, `tide_split`
+    49/0, `suzu_stage` 47/0, `enter_ownership` 12/0, `hall_entry` all ok (16), `hall_door` 15/0, `walkto_options`
+    23/0, `quest_guide` all ok (55), `guide_next_step` 24/0, `ruin_lanterns` 31/0, `lodge_evening` 16/0,
+    `lodge_quarrel` 31/0, `ren_apart` 7/0, `guide_reveal` 37/0, `guide_kana` 11/0, `learning_ui` 14/1 then 15/0,
+    `social_wait` 12/0, `look_purity` 9/0, `props_balance` 48/0, `road_oil` 14/0, `geese_event` 15/0, `keepers` 4/0,
+    `lodge_arrival` 40/0, `guide_stacks` 8/0, `guide_archive` 14/0, `companion_turn` 4/0, `road_on` 11/0,
+    `leaf_marker` 18/0, `guide_vigil` 9/0, `learning_qa039` 44/0, `sequence_art_integrity --quick` 32/0,
+    `ao_lesson_line` 20/0, `ao_whereabouts` 18/0, `yoshino_exhibit_line` 14/0, `guide_roots_leaf` 9/0, `battle_party`
+    14/0, `guide_tellings` 88/0 (two runners side by side, each suite in turn, and a third for `guide_tellings` after
+    them, with other candidates' full units and regression suites running alongside, load 9 to 15 on four CPUs): 66
+    suites, 65 passing on their first run, and `learning_ui` passing on its re-run (below).
+    Before the cut, on the integrated head's build (the same bytes): `enter_ownership` 12/0, `suzu_stage` 47/0,
+    `walkto_options` 23/0, `world_fixes` all ok, `lighthouse_top` 106/0, `fare_pay_staging` 36/0, `lodge_arrival` 40/0,
+    `load_mid_scene` 19/0, `interlude_lifecycle` 14/0, `look_purity` 9/0, `kotonoha` 7/0, `ko_crossing` 94/0,
+    `walk_round` all passed, `departures` all ok, `hall_entry` all ok, `lodge_evening` 16/0, `tide_split` 49/0,
+    `guest_arrivals` 17/0, `ren_apart` 7/0. U whole suite 57,851/0 on `8064756`; `validate.mjs` no errors (and again on
+    the cut's source). Recorded as they happened, not made green afterwards:
+    - `learning_ui` 14/1 on these bytes: its combat layout check at 844 × 390 measured the response dock at x
+      452.8–866.8 against an 844-wide view. The dock slides in from the right over 200 ms
+      (`60_learning.css:1162-1168`) and the check measures 200 ms after the cards appear, so a measurement mid-slide
+      under load is likely; not proven. Run again on the same bytes once the runners had finished: 15/0.
+    - The `review_ledger` regression above; the candidates built on `b66f422` before its fix each had it as their one
+      unit failure in their own full runs (QA-087 57,814/1; QA-088 57,798/1; QA-090 57,787/1).
+    - QA-087's build: `quest_guide` failed one check on its first run under load ("rw_tools … her door (undefined)",
+      read 500 ms after the journal closed) and passed on the immediate re-run; a starved render loop is likely (the
+      marks are those of the last drawn frame), not proven.
+    - QA-088: `suzu_stage` failed one check in each of four development runs from the test's own short key press (a
+      turn, not a step: `turnHold`); the driver now presses until the step is taken, the checks not loosened.
+      `enter_ownership` failed one check under load, a probe racing a skipped scene, fixed in the test (`7fc43e6`).
+      `ko_crossing` failed one fade-timing check under heavy load (472 and 507 ms against 400) on QA-088's build and on
+      the first combined head; 94/0 at lower load.
+    - QA-090: `tide_split` failed 3 checks in a regression set from the same short key press, fixed in the test; its
+      first full units were 57,786/2 (`review_ledger`, inherited; `lodge_quarrel`'s list of the scenes allowed
+      `!refresh comp`, which QA-090 extends on purpose, now naming them; 43/0); `ren_apart` 6/1 and `ko_crossing` 93/1
+      under load (a fade measured 647 ms against 400), 7/0 and 94/0 on the re-run and on CC-018's bytes.
+    - Local, under load: `leaf_home` 41/1 twice and 42/0 on the re-run (CL-174); `walkto_options` failed in a long
+      batch and passed 23/0 on its own three times and on the control, no load cause claimed proven (CC-109);
+      `companion_turn` failed once, shown to be outside QA-092 (CL-178).
+    Coverage as Agnes bounds it is in REQUIREMENTS (CC-019). Not shown by these runs: ordinary play of these items from
+    a real save (Agnes's native retests follow). Voice: none (paused); the new lines of QA-082, 083 and 085 play with
+    the device voice.
   - **Candidate CC-018:** `index.html` sha256 `aa07a8da2cdb68f3c54e0f498e96016178f06857a1a37a46f24ee029a876b19f`, built
     from `d65a598` (CC-017 plus only RBN-QA-080 by its agreed commit `34f5103`; patch-identical, `run.mjs` included,
     and the same tree; identity verified by Agnes 6330105048 and Local CL-152); byte-identical to the build the suites

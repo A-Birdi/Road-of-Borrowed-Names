@@ -837,6 +837,29 @@
       up keeps its field, and its Submit as far as the field stays in view, in view when its own boxes grow; never
       while feedback is shown or the answer is in, never with the keyboard closed, pinch-zoomed or focus elsewhere,
       and let go when the task is finished or taken down (new suite `kb_reflow`). Nothing agreed is left out.
+      Verified live by Local (CL-153) and Agnes (6330526850).
+      CANDIDATE CC-019 (`index.html` `3baeeb9f…`, built from `8064756`): CC-018 plus only what was agreed after it,
+      each by its exact commits (cherry-picked with `-x`; patch-identical to the agreed commits over every file but
+      `run.mjs`, which was merged by hand where it conflicted and only adds each item's own suites; three AGREEs each,
+      listed in VALIDATION, CC-019; integrated heads verified by Agnes and Local at `b66f422` (6333264555, CL-164),
+      `58a4a1a` (6334301150, CL-174), `32a6c78` (6335140450, CL-176), `5940b34` (6337370911, CL-181) and `8064756`
+      (6338763683, CL-185); scope agreed by Agnes 6337648132 and Local CL-181): RBN-QA-081 (`fe50172` → `f7b1240`:
+      Kotonoha's stage 3 names its own next place, never the next chapter's tide), RBN-QA-082 (`b4ebb9f`, `6cc52fb` →
+      `b66f422`, `f72b28f`: Ao's second lesson ends on the particle は read わ, with its review-ledger entry), RBN-QA-086
+      (`facde9e` → `d3cd72f`: stage 4 names the drifting leaf whose word opens the way down, not the Tidal Hollow
+      behind it), RBN-QA-083 (`d0cb858` → `fff1ce1`: while Ao reads in the hall, those who know him say so, beside his
+      unchanged usual line), RBN-QA-085 (`a9c62f3`, `0e6848f`, `1e24a27` → `2d69d55`, `acf9045`, `58a4a1a`: Yoshino's
+      word on the hung tellings is choice-neutral and looks ahead), RBN-QA-087 (`0f8b9cc`, `f067bff` → `bedcd56`,
+      `32a6c78`: the quest guide reads an encounter's outcome as unknown, never as what the save carried in),
+      RBN-QA-090 (`8270bc8`, `6eb42fd`, `b4b09b4` → `4f1ee52`, `22fdbfd`, `10b0c07`: at the Tidal Hollow your companion
+      is left on the far bank and is with you again at the reunion), RBN-QA-092 (`273d6d1`, `f2173c6`, `069353a` →
+      `c3f2b1c`, `570a811`, `5940b34`: a guest in an encounter from its start comes in with their own words; Kihei's
+      victory says he waits by the water), RBN-QA-088 (`89b73b4`, `7fc43e6` → `9212c34`, `8064756`: the sea cave's
+      telling brings Nana into the audience and Suzu onto the rock itself, `!enter`; an entrance and its walk belong to
+      their campaign, map, scene and figure). Nothing agreed for this scope is left out. Left out on purpose, each
+      separately attributable: RBN-QA-089, 093 and 094 (excluded by the agreed scope) and every later candidate.
+      Newly found while building QA-101, and not from this cut: a load while the screen is faded out leaves it
+      black (RBN-QA-102; reproduced on `5940b34`).
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
