@@ -1409,7 +1409,120 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   made, and no same-named figure elsewhere is moved. B `suzu_stage` 47/0, `enter_ownership`
   12/0; U `enter_op` 11/0. As Agnes bounds it: 50 ms samples are not proof at every instant; a step
   already started may settle on a scene-only change of ownership, but no next step starts.
-  In candidate CC-019 (`3baeeb9f…`, built from `8064756`), READY_FOR_QA.
+  In candidate CC-019 (`3baeeb9f…`, built from `8064756`), READY_FOR_QA; verified live by Local (CL-192) and Agnes
+  (6340095981, 6340185178).
+  RBN-QA-094, 089, 095, 099, 096, 104 (palette), 102, 101, 093, 104 (cloud material), 100 and 109 (three-party AGREE
+  each, on the exact commits listed in HANDOFF's CC-020 entry; counts below are on CC-020's own bytes, VALIDATION,
+  CC-020):
+  RBN-QA-094: the boulder beside the Stone Steps (`cr.leg2` 9,13) is drawn as a natural rock, mossed on its cap, crack
+  and shaded flank (its own cache variant), not a dressed, grooved marker; tile, scene, narration and one-tile block
+  unchanged, as are the other sixteen Cloudroad marker stones and every plain rock. B `leg2_boulder` 12/0 on CC-020's
+  bytes (candidate's build: 12/0; control on `32a6c78` 7/5). As Agnes bounds it: CPU-rendered prop
+  pixels, not native map or caption acceptance; Local's in-context desktop and phone review is separate; producer full
+  units not rerun by her.
+  RBN-QA-089: the spring-tide night (`ko.tide_night`) has its own pictures, no longer the daytime tide pools: `point`,
+  the point under the full moon with the tide drawn far out and Koyomi, you and your companion seen from behind; at
+  the wind's line, `rise`, the written leaves lifting one by one (1.6 s) toward the moon, held while lines are read,
+  lifted again by Replay, held at once with Reduce motion; lines, variants, flags, quest step and the world afterwards
+  unchanged. B `tide_night` 45/0 on CC-020's bytes (candidate's build: 45/0; control on `421498e` 40/5; the first 38
+  checks fail 11 on `32a6c78`); U `sequence_p16` in the full units on `05196f0` (57,960/0) (candidate: 374/0; failed
+  on `77e792d`'s 2.4 s lift,
+  fixed by `ff16922`). As Agnes bounds it: caption-free CPU renders, not native compositor proof (the wet flats'
+  regular texture on a phone is a non-blocking polish note); Local's desktop and phone review separate; producer
+  results not rerun by her; the language tasks are stubbed in the test, and the pet-labelled runs show no pet in the
+  pictures.
+  RBN-QA-095: the shelf in Sono's Courier's Inn (`cr.saka_inn` 1,2) shows what its scene says: a straw hat on top and,
+  hung below, an indigo relay coat from the back with a pale ring crest (no letters), straw sandals, no books; tile,
+  block, Look, scene and Sono's gated line unchanged, as are the other 88 shelves. B `courier_shelf` 9/0 on CC-020's
+  bytes (candidate's build: 9/0; control on `5940b34` 5/4). As Agnes bounds it: isolated CPU-render art
+  evidence, not a native map or interaction retest; Local's in-context review separate.
+  RBN-QA-099: climbing the Cloudroad (`cr_main` stage 2), the Journey names the furthest station's own work instead of
+  Kirishita: Kanbe while there's no ledger; then that station's person while the message from below is undelivered,
+  its lamp, its person while they have no message for you, the way east (34,12) until the road on is planned, then the
+  next station (Kirishita after Umagaeshi); the palanquin down doesn't move it, corrections aren't steps; data only
+  (`atIf`), the stage's text, gates and stage 3 onward unchanged. B `guide_climb` 10/0 on CC-020's bytes (candidate's
+  build: 10/0; control on `5940b34` 4/6); U `cr_guide_climb` in the full units on `05196f0` (57,960/0) (candidate:
+  53/0; 12/41 on `5940b34`). As
+  Agnes bounds it: her 480-combination truth table is source-model evidence, not ordinary traversal; "cancelled plan"
+  and "fog waited out" are constructed flags, not the real flows, and the fog fixtures omit `cr_fog_waited` and phase
+  5, so no end-to-end fog coverage; the step legitimately depends on `cr_plan`.
+  RBN-QA-096: left apart in the Tidal Hollow, you can no longer leave the Root Hollows' north side without the
+  reunion: the same scene (`ko_apart&ko_root_c`) is a step trigger on the landing (x2–3, rows 3–5, was 3–4) and before
+  the ways up to the Whispering Hollow (x14–17, rows 1–2) and on to the garden (x29–30, rows 3–4); once only, nothing
+  on the south bank, on arrival or on load; back from either way off on an older save, only the step straight back out
+  plays nothing; the reunion itself unchanged. B `reunion_ways` 33/0 on CC-020's bytes (candidate's build: 33/0;
+  control
+  on `5940b34` 12/21); U `ko_reunion_reach` in the full units on `05196f0` (57,960/0) (candidate: 22/0; 16/6 on
+  `5940b34`). Recorded:
+  `reunion_ways` 32/1 on the combined head `52d2441` (a fixed 130 ms key hold outlasting a stalled step), fixed
+  test-side by `2cb0e5e`. As Agnes bounds it: saves that already escaped are repaired only by a qualifying step on
+  return; the bridge case is relocated to (15,13), not walked from the lower bank, the load case is landing to north
+  only, Skip is one Mio landing; the test fix mitigates the measured race, not every driver stall.
+  RBN-QA-104, palette: the cloud sea above the Barrier no longer uses the Cloudroad's slate-blue river ramp; only
+  `cloudtop`'s water ramp is remade, from its own pale colours (its inherited grass, stone and leaf ramps left for
+  review); terrain, collision, snow, progression and the rivers unchanged. U `cr_ch10` in the full units on `05196f0`
+  (57,960/0) (candidate:
+  154/0; without the fix 151/2 per Cloud, 152/2 on `8064756` per Local). As Agnes bounds it: the blue is gone, but
+  ripples, sparkle and a sharp wet bank still read as pale water (isolated strips, not the native map), so colour
+  alone doesn't close the complaint.
+  RBN-QA-102: a load, new journey or Return to title while a scene reads over black no longer leaves you under a black
+  screen, and the scene being left goes no further (no line, flag or warp) while the save is read or the "another tab"
+  question is up; a door caught by a load mid-fade writes no map, name, checkpoint, autosave or arrival into the
+  loaded or kept journey, and a door taken after it, even before the old one settles, keeps its own mode; no scene,
+  line or timing changes. B `fade_load` 15/0 on CC-020's bytes (candidate's build: 15/0; control on `ad0b385` 9/6; its
+  first 8 checks fail 6 on `8064756`); U `mode_holder` in the full units on `05196f0` (57,960/0) (candidate: 12/0; 4/5
+  and an error with
+  `2807cd2`'s `90_game.js`). Recorded: one `voicebank_vrc1` timing failure in the first candidate's full units
+  (57,850/1; not reproduced, cause unproven). As Agnes bounds it: extracted source models, with a name-only removal
+  failing as the negative control, not her browser or full rerun; the load during a door is programmatic, not a claim
+  that ordinary UI can load mid-transition; integration is not publication or native replay.
+  RBN-QA-101: on the ledge (`cr.leg4` 11,3), unloading the pack horse and walking it back (calming it comes to the
+  same) is a cutaway: the unloading is read over black, the horse goes (`cr_horse_safe`) in the dark, and the light
+  returns on the empty ledge for the reactions, where the loaded horse used to stand through the line and vanish under
+  them; text, flag, both choices, reactions and the horse at Umagaeshi unchanged; no new art, walking or escort. On
+  QA-102, so a load while dark leaves nothing black. B `ledge_horse` 14/0 on CC-020's bytes (candidate's build: 14/0;
+  control on the task head 3/11). As Agnes bounds it: a cutaway, not a literal unloading; her source AGREE rested on
+  QA-102's transition ownership (since accepted); producer and Local totals are not her reruns.
+  RBN-QA-093: Kihei's leaf hangs framed in Mitsu's lodging house only once the handing-over has played
+  (`ko_kihei_mitsu&seen.ko.mitsu_letter`), not from the choice, and by the door as she says ((3,7), the way out
+  clear); in the Mitsu and wind endings Kihei goes where he stood after his last word, and the "gone" line waits for
+  it (`!refresh gone`, at most 4 s, at once when skipping); the Mitsu ending adds a note to self, 「{宿|やど} の ミツ さん に 、
+  キヘイ の {葉|は} を {届|とど}ける こと に した 。」, with its ledger entry; the kept ending, "Not now", the satchel and the quest's
+  completion unchanged, no note on old saves. While skipping, every `leave: 'here'` departure (Genzō, Mochi, the
+  delvers, Kihei) ends at once. B `mitsu_frame` 28/0 on CC-020's bytes (candidate's build: 28/0; control on `27cfddc`
+  26/2; the first 20 checks fail 12 on `32a6c78`). Recorded: `lodge_quarrel`'s source check failed on `c9b0fbd`
+  (57,820/1), fixed by `715c080`. As Agnes bounds it: his absence is actor state, not pixels, with no timing certainty
+  under every load; a load mid-scene is safe only through QA-102's guard, hence integrated after it; the other
+  `leave: 'here'` actors keep their regressions; a companion forced onto (3,7) is a disclosed limit.
+  RBN-QA-104, cloud material: at Above the Cloud, Kumoi, the Rope Bridge and the summit the sea is drawn as cloud:
+  soft banks lit from above, one faint slow wisp per tile (still under Reduce motion), shadow under a ledge, a rock
+  lip at the drop; no ripples, foam, glints or wet shore; collision (824 tiles, all impassable), terrain, maps and
+  palette unchanged, and the other palettes keep their water. B `cloud_sea` 6/0 on CC-020's bytes (candidate's build:
+  6/0; control on `ffa6222` 3/3); U `cr_ch10` in the full units on `05196f0` (57,960/0) (candidate: 156/0). As Agnes
+  bounds it: CPU material
+  fixtures at full and half size (four snow edges, open cloud, a bridge over cloud), not native screenshots or full
+  coverage of the four maps; no palette or depth refinement found mandatory; the native retest of the maps is pending.
+  RBN-QA-100: Nakayama's two inns, which stand side by side, are spoken of that way: the lamp 「{並|なら}んだ {二軒|にけん} の
+  {宿屋|やどや} を 、 {同|おな}じ {灯|ひ} が {照|て}らす 。」; Otaki and Seibe 「{隣|となり} の」 ("next door") for 「{向|む}かい の」; the seal 「……
+  {竹屋|たけや} は 、 {宿|やど} が {二|ふた}つ {並|なら}ぶ {絵|え} に したい らしい けど 。」; four ledger entries re-keyed; layout, routes, gates and
+  the inns' rivalry unchanged. The four lines play with the device voice (voice paused); the old recordings are kept.
+  B `nakayama_inns` 9/0 on CC-020's bytes (candidate's build: 9/0; its first 8 checks fail 5 on `5940b34`; 8/1 with
+  the
+  Japanese box's selector broken on purpose). As Agnes bounds it: an initialized state and repositioning, the lamp's
+  challenge stubbed to pass, not ordinary answering; the furigana check shows each kanji line's Japanese box and
+  readings are present, not pixel visibility or full source-to-screen equality.
+  RBN-QA-109: a reply's row is as tall as its words (`.choice { flex-shrink: 0 }`), so in a long bilingual menu (the
+  palanquin's eight replies) a reply's second line no longer runs into the next row; where replies don't fit, the list
+  scrolls, and the last can be scrolled to, clicked or tapped, reached by Tab and chosen with Enter; text and ruby
+  keep their size, no row is fixed taller. B `choice_rows` 6/0 on CC-020's bytes (candidate's build: 6/0; control on
+  `31206a0` 3/3). Recorded: `dialect_kansai` 58/1 in QA-109's integration lane (lane log; 43 px buttons measured mid
+  book-opening, the same frames on `da9072c`), a test-only fix proposed after the cut. As Agnes bounds it: the test
+  exempts an undersized list from pointer and keyboard reachability and measures the last row, not the tallest, so 6/0
+  is not universal accessibility or every option visible; producer and Local totals are not her reruns. Excluded and
+  open: RBN-QA-116, the reply list at 844×390, hidden with 140% text (8 px against a 103 px reply; 73 px at 100%).
+  In candidate CC-020 (`6278005a…`, built from `05196f0`), READY_FOR_QA, with `keeper_reveal` 68/1 retained (the
+  test's single sample of animated water; CC-019's bytes fail it the same way in the same harness; not an all-green
+  claim; Agnes 6350299208, Local CL-219; VALIDATION, CC-020); RBN-QA-116 stays open, outside it.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:

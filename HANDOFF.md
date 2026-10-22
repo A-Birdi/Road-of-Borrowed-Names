@@ -860,6 +860,41 @@
       separately attributable: RBN-QA-089, 093 and 094 (excluded by the agreed scope) and every later candidate.
       Newly found while building QA-101, and not from this cut: a load while the screen is faded out leaves it
       black (RBN-QA-102; reproduced on `5940b34`).
+      Verified live by Local (CL-192) and Agnes (6340095981, 6340185178).
+      CANDIDATE CC-020 (`index.html` `6278005a…`, built from `05196f0`): CC-019 plus only what was agreed after it,
+      each by its exact commits (cherry-picked with `-x`; patch-identical to the agreed commits over every file but
+      `run.mjs`, which was merged by hand where it conflicted and only adds each item's own suites; three AGREEs each,
+      listed in VALIDATION, CC-020; integrated heads verified by Agnes and Local at `cf6a4be` (6340888123, CL-194),
+      `ac8d3f3` (6341755352, CL-197), `31206a0` (6344257556, CL-203), `7dd1517` (6345357960, CL-207), `da9072c`
+      (6346419108, CL-208) and `05196f0` (6347081629, CL-210); scope agreed by Local CL-210 and Agnes 6347081629):
+      RBN-QA-094 (`0b3fc0f` → `85d89df`: the boulder beside the Stone Steps is a mossy natural rock, not an inscribed
+      marker stone), RBN-QA-089 (`421498e`, `77e792d`, `ff16922` → `15a17f7`, `aabec93`, `6988235`: the spring-tide
+      night on the point has its own pictures, the tide drawn out under the full moon and the leaves rising, 1.6 s),
+      RBN-QA-095 (`b71f5ec` → `cf6a4be`: the Courier's Inn shelf shows her grandfather's straw hat and relay coat),
+      RBN-QA-099 (`64957eb` → `ac8d3f3`: on the Cloudroad the Journey's next step is the furthest station's own work),
+      RBN-QA-096 (`4a799c1`, `1f33455` → `52d2441`, `2cb0e5e`: the reunion in the Root Hollows on every way off the
+      north side, and its test's key timing), RBN-QA-104 palette (`ffa6222` → `31206a0`: the cloud sea above the
+      Barrier drawn from the cloud top's own pale water, not the river ramp), RBN-QA-102 (`ad0b385`, `2807cd2`,
+      `c51721a`, `2a8e7d7` → `ea10627`, `62f8d49`, `4adec02`, `d996629`: a change of campaign lifts a scene's fade and
+      the scene left goes no further; a door's transition belongs to its campaign and takes only its own mode entry),
+      RBN-QA-101 (`9896e70` → `761845d`: the pack horse unloaded and walked back in the dark, not vanished under the
+      reactions), RBN-QA-093 (`72c33aa`, `27cfddc`, `c9b0fbd`, `715c080` → `1c8f3e7`, `2b0158b`, `903d0c1`, `7dd1517`:
+      Kihei's leaf by Mitsu's door once she has it; Kihei gone where he stood before the narration says so),
+      RBN-QA-104 cloud material (`cd27a5a` → `4546a18`: the cloud sea drawn as cloud: soft lit banks, a slow faint
+      drift, a rock lip at the drop; no ripples, glints or wet shore), RBN-QA-100 (`647ce60`, `f965534` → `34eecad`,
+      `da9072c`: Nakayama's two inns stand side by side and the lamp, Otaki, Seibe and the seal say so; its furigana
+      check can't pass vacuously), RBN-QA-109 (`8aa099f` → `05196f0`: a reply's row is as tall as its words; where the
+      replies don't fit, the list scrolls). Nothing agreed for this scope is left out. Left out on purpose, each
+      separately attributable: RBN-QA-103 and 113 (integrated and checked as `a0f63a9` on `05196f0`; they land on the
+      task branch after this cut, with QA-114, 111, 117 and 119, each with three AGREEs) and every later candidate.
+      Known and open, not fixed by this cut: RBN-QA-116, the reply list beside the dialogue sheet on a short
+      landscape screen (844×390 with 140% text: 8 px against a 103 px reply; 73 px at 100%). Its complete browser
+      run (VALIDATION, CC-020), on these bytes: CC-019's 66 suites, 65 passing and `keeper_reveal` 68/1 (its
+      contrast check reads one point of animated water once; CC-019's bytes fail it the same way in the same
+      harness; retained, not an all-green claim, Agnes 6350299208 and Local CL-219); the 18 suites added or named
+      since, all passing; and `sequence_world --only ko.tide_night` 158/0 (`sequence_world_p16_mb`, which I listed,
+      is a spec file: not run). `dialect_kansai` 58/1 in QA-109's integration stays on record. Units 57,960/0 on
+      `05196f0`.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

@@ -5484,6 +5484,175 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-020:** `index.html` sha256 `6278005abab991fc1eb240579ddb50b1dd318b16ab98b3c3732b1b523e9b6827`
+    (24,299,281 bytes), built from
+    `05196f0` (CC-019 at `885f399`, verified live by Local CL-192 and Agnes 6340095981, 6340185178, plus only
+    RBN-QA-094, 089, 095, 099, 096, 104 (palette), 102, 101, 093, 104 (cloud material), 100 and 109, each by its
+    agreed commits, listed in HANDOFF's CC-020 entry; scope agreed by Local CL-210 and Agnes 6347081629); the matrix
+    ran on a byte-identical build in a separate worktree, and the cut's own build in the checkout is byte-identical
+    too. The integration,
+    as it happened (cherry-picked with `-x` onto `885f399`; patch-ids of 12 hex digits; without `run.mjs` all 22 equal
+    to the agreed commits'; `run.mjs`, merged by hand where it conflicted, adds only each item's own suite):
+    - `885f399` → `85d89df` (QA-094, `0b3fc0f`; `5e5a8fdccd98` in full, `1d77c4c9eb46` without `run.mjs`, equal) →
+      `15a17f7`, `aabec93`, `6988235` (QA-089, `421498e`, `77e792d`, `ff16922`; `3d2c4e741d09` without `run.mjs`,
+      `68f7dcccc2b7`, `5fec4813ad12`) → `cf6a4be` (QA-095, `b71f5ec`; `903945169dac` without `run.mjs`), all equal;
+      `run.mjs` adds only `leg2_boulder`, `tide_night` and `courier_shelf`. AGREEs: QA-094 Agnes 6336214195, Local
+      CL-179; QA-089 Agnes 6339588807 (qualified), Local CL-187; QA-095 Agnes 6339596395, Local CL-191. U 57,862/0 on
+      `cf6a4be`. Head verified by Agnes 6340888123 and Local CL-194.
+    - `cf6a4be` → `ac8d3f3` (QA-099, `64957eb`; `660645553b81` without `run.mjs`, equal; `run.mjs` adds only
+      `guide_climb`). AGREEs: Agnes 6340106630, Local CL-193. U 57,915/0. Head verified by Agnes 6341755352 and Local
+      CL-197.
+    - `ac8d3f3` → `52d2441` (QA-096, `4a799c1`; `469898327800` without `run.mjs`; `run.mjs` adds only `reunion_ways`,
+      after `tide_split` on both sides), then, after a failure on `52d2441` (below), `2cb0e5e` (its test fix,
+      `1f33455`; `a6f89ee919e6`) → `31206a0` (QA-104 palette, `ffa6222`; `f896c56951c2`), all equal. AGREEs: Agnes
+      6343337713 and Local CL-202 on all three; before them, QA-096 Agnes 6340647163 (source and graph; the bridge
+      case relocated, not walked), QA-104 palette Agnes 6341772138, Local CL-197. U 57,940/0 on `31206a0`. Head
+      verified by Agnes 6344257556 and Local CL-203.
+    - `31206a0` → `ea10627`, `62f8d49`, `4adec02`, `d996629` (QA-102, `ad0b385`, `2807cd2`, `c51721a`, `2a8e7d7`;
+      `de786f20b1dd` without `run.mjs`, `f2ae70e21aa4`, `24baad6ba6e4`, `6e7675571a6b`) → `761845d` (QA-101,
+      `9896e70`; `efcc03c02a37` without `run.mjs`) → `1c8f3e7`, `2b0158b`, `903d0c1`, `7dd1517` (QA-093, `72c33aa`,
+      `27cfddc`, `c9b0fbd`, `715c080`; `7c90f42357fc` without `run.mjs`, `f2bcb61c1a9d`, `5c259a21eaeb`,
+      `2f9e7da19077`), all equal, in that order (QA-101 rests on QA-102's change-of-campaign cleanup, QA-093 on its
+      guard for a load mid-scene); `run.mjs` adds only `fade_load`, `ledge_horse` and `mitsu_frame`. AGREEs: QA-102
+      Agnes 6343354629, Local CL-203; QA-101 Agnes 6340911110, 6344257556, Local CL-203; QA-093 Agnes 6342170039
+      (qualified), Local CL-199; Agnes's go-ahead to integrate 6344235740. U 57,958/0 on `7dd1517`. Head verified by
+      Agnes 6345357960 and Local CL-207.
+    - `7dd1517` → `4546a18` (QA-104 cloud material, `cd27a5a`; `2bc7896c6b82` without `run.mjs`; U 57,960/0) →
+      `34eecad`, `da9072c` (QA-100, `647ce60`, and its furigana-check refine `f965534`; `e28972592a3b` without
+      `run.mjs`, `8470fd27b721`), all equal; `run.mjs` adds only `cloud_sea` and `nakayama_inns`, after `cloudroad`.
+      AGREEs: QA-104 cloud material Agnes 6344672182, Local CL-205; QA-100 Agnes 6345345458, Local CL-205. U 57,960/0
+      on `da9072c`. Head verified by Agnes 6346419108 (as source acceptance, not publication) and Local CL-208.
+    - `da9072c` → `05196f0` (QA-109, `8aa099f`; `d49b7c638eb3` without `run.mjs`, equal; `run.mjs` adds only
+      `choice_rows`, after `play_ui`). AGREEs: Agnes 6345675815 (qualified), Local CL-207. U 57,960/0 on `05196f0`.
+      Head verified by Agnes 6347081629 and Local CL-210, who agreed it as the cut's scope.
+    On these bytes (B), one suite at a time on a byte-identical build in a separate worktree at `05196f0`, 18:17Z to
+    20:03Z (QA-117's and QA-119's full unit runs alongside until 18:20Z and 18:31Z, and a rebuild of a QA-116 page of
+    mine, at the lowest CPU priority, from about 18:27Z to 18:29Z; nothing else alongside after 18:31Z): CC-019's 66
+    suites in its order, `ko_first_sight` 87/0, `ko_crossing` 94/0, `interlude_ahead` 30/0, `interlude_lifecycle`
+    14/0, `interludes` 76/0, `lf_arrival_view` 79/0, `lookout_vista` 22/0, `keeper_reveal` 68/1, `kotonoha` 7/0,
+    `licence` 2/0, `battle_start_abandon` 28/0, `prep_abandon` 52/0, `encounters` 10/0, `load_mid_scene` 19/0,
+    `combat_ui` 7/0, `social_battle` 65/0, `card_press` 13/0, `battle_settings` 10/0, `battle_presentation` 13/0,
+    `fog_event` 26/0, `prologue` 100/0, `title_ledger` 18/0, `play_ui` all ok (44), `world_view` all ok (20), `ui`
+    14/0, `wind_stone` 19/0, `kb_reflow` 4/0, `leaf_home` 42/0, `sequence_world --only ko.end` 158/0, `guest_arrivals`
+    17/0, `tide_split` 49/0, `suzu_stage` 47/0, `enter_ownership` 12/0, `hall_entry` all ok (16), `hall_door` 15/0,
+    `walkto_options` 23/0, `quest_guide` all passed (55), `guide_next_step` 24/0, `ruin_lanterns` 31/0,
+    `lodge_evening` 16/0, `lodge_quarrel` 31/0, `ren_apart` 7/0, `guide_reveal` 37/0, `guide_kana` 11/0, `learning_ui`
+    15/0, `social_wait` 12/0, `look_purity` 9/0, `props_balance` 48/0, `road_oil` 14/0, `geese_event` 15/0, `keepers`
+    4/0, `lodge_arrival` 40/0, `guide_stacks` 8/0, `guide_archive` 14/0, `companion_turn` 4/0, `road_on` 11/0,
+    `leaf_marker` 18/0, `guide_vigil` 9/0, `learning_qa039` 44/0, `sequence_art_integrity --quick` 32/0,
+    `ao_lesson_line` 20/0, `ao_whereabouts` 18/0, `yoshino_exhibit_line` 14/0, `guide_roots_leaf` 9/0, `battle_party`
+    14/0, `guide_tellings` 88/0; then the suites added since CC-019 and the regressions the items named, `choice_rows`
+    6/0, `cloud_sea` 6/0, `courier_shelf` 9/0, `fade_load` 15/0, `guide_climb` 10/0, `ledge_horse` 14/0,
+    `leg2_boulder` 12/0, `mitsu_frame` 28/0, `nakayama_inns` 9/0, `reunion_ways` 33/0, `tide_night` 45/0, `cloudroad`
+    4/0, `departures` all ok (24), `systems` 4/0, `travel_rules` 10/0, `answer_order` 5/0, `playtest_repairs` 7/0,
+    `dialect_kansai` all passed (59); and `sequence_world --only ko.tide_night` 158/0 (run afterwards on the same
+    bytes, for the entry below listed by
+    mistake). 85 suites with results, 84 passing on their first run; `keeper_reveal` 68/1 (below). Not run:
+    `sequence_world_p16_mb`, which I listed as a suite; it is the spec file `sequence_world.mjs` imports, and run on
+    its
+    own it does nothing (exit 0, no output). It is not counted as green.
+    Before the cut, on each integrated head's own build: on `cf6a4be`, `leg2_boulder` 12/0, `battle_backdrops` 38/0,
+    `tide_night` 45/0, `sequence_world --only ko.tide_night` 158/0, `sequence_art_integrity --quick` 32/0, `kotonoha`
+    7/0, `courier_shelf` 9/0, `cloudroad` 4/0, `props_balance` 48/0, `world_view` all ok; on `ac8d3f3`, `guide_climb`
+    10/0, `quest_guide` all passed, `guide_next_step` 24/0, `cloudroad` 4/0, `departures` all ok, `look_purity` 9/0,
+    `courier_shelf` 9/0, `leg2_boulder` 12/0; on `31206a0`, `reunion_ways` 33/0 twice, `cloudroad` 4/0, `world_view`
+    all ok, `props_balance` 48/0,
+    `battle_backdrops` 38/0, `sequence_art_integrity --quick` 32/0; on `7dd1517`, `fade_load` 15/0, `load_mid_scene`
+    19/0, `fog_event` 26/0, `interlude_lifecycle` 14/0, `title_ledger` 18/0, `battle_start_abandon` 28/0,
+    `prep_abandon` 52/0, `enter_ownership` 12/0, `suzu_stage` 47/0, `travel_rules` 10/0 (below), `departures` all ok,
+    `walk_round` all passed, `ledge_horse` 14/0, `cloudroad` 4/0, `mitsu_frame` 28/0, `lodge_quarrel` 31/0,
+    `ren_apart` 7/0, `reunion_ways` 33/0, `courier_shelf` 9/0, `leg2_boulder` 12/0; on `4546a18`, `cloud_sea` 6/0,
+    `cloudroad` 4/0, `world_view` all ok, `props_balance` 48/0, `battle_backdrops` 38/0,
+    `sequence_art_integrity --quick` 32/0, `landmarks` 54/0, `ledge_horse` 14/0; on `da9072c`, `nakayama_inns` 9/0,
+    `cloudroad` 4/0, `cloud_sea` 6/0, `departures` all ok, `courier_shelf` 9/0, `leg2_boulder` 12/0; on `05196f0`,
+    `choice_rows` 6/0, `play_ui` all ok, `answer_order` 5/0, `dialect_kansai` 58/1 (below), `playtest_repairs` 7/0,
+    `systems` 4/0, `travel_rules` 10/0, `load_mid_scene` 19/0. U whole suite 57,960/0 on
+    `05196f0` (at QA-109's integration; the cut adds only `index.html` and the records); `validate.mjs` no errors on
+    `05196f0`. Recorded as they happened, not made green afterwards:
+    - `keeper_reveal` 68/1 on these bytes in the matrix: Mio at 390 × 844, "on 'heaves' the water swells in front of
+      the bell, above the sheet, no keeper yet": the positions passed (water 505, sheet top 643), the contrast did not
+      (swell 65,74,104 against open water 64,71,102; a luminance difference of about 2 against the test's 6). Run
+      again in the same harness, with two full unit runs of later candidates alongside: 68/1 on these bytes, and 68/1
+      on CC-019's bytes (`3baeeb9f…`), the same check with the same values; CC-019's bytes passed it 69/0 in CC-019's
+      own matrix. A probe sampling the test's two points every 150 ms for 3 s after "heaves", three runs on each
+      build: the swell point 65,74,104 in every run on both builds, as in every earlier pass; the open-water point
+      55,61,90, every earlier pass's value, but in three of the six runs 64,71,102 for 0.6–1.0 s, at a different
+      moment in each (CC-020: 1.55–2.4 s on the stage clock in one run; CC-019: 1.86–2.5 s and 2.0–2.7 s), with about
+      60 frames drawn a second throughout. The picture's still water (`stillWater`, `43e_seq_ch5.js`) draws pale
+      streaks whose place and alpha follow the render clock, and the test reads one 3 × 3 point of it once, 1.9 s
+      after the line; with Reduce motion (Suzu at 390 × 844, the water held still) the same check passed in every run.
+      Not shown: why earlier environments missed the streaks. Local's own builds of `05196f0` and `8064756`, on an
+      idle machine, were 69/0 three times each (CL-216): corroboration, not these bytes. Local then reproduced the
+      failure on both builds (CL-219): a streak peaks at 64,71,102 about 5.0–5.25 s after the page loads, and with a
+      1.4–2.1 s wait before the scene both builds fail. Retained, not an all-green claim: Agnes's qualified AGREE
+      (6350299208) and Local's AGREE (CL-219) to publish with it. A test-only fix (a reference for the open water that
+      a passing streak cannot move, with a flattened-swell negative control) is to be proposed separately; the
+      threshold and the picture unchanged.
+    - `sequence_world_p16_mb` listed in the matrix by mistake (above): not run.
+    - `dialect_kansai` 58/1 on `05196f0`'s build, in QA-109's integration: its Company-page check measured 43 px
+      buttons against 44. The test measures the page 200 ms after `.co-page` appears, inside the book's 320 ms opening
+      animation (`bk-open`); a probe shows the same frames on `da9072c` and on QA-109's build (40–43.9 px while the
+      transform is about 0.98–0.99, 44 px once it is `none`), and the controls on `da9072c`'s and `7dd1517`'s builds
+      pass (59/0 each, 17:13Z); Local's own builds of `05196f0` and `da9072c` were 59/0 three times each (CL-214). The
+      task branch was pushed to `05196f0` at 17:14:58Z with this failure open, after CC-126 had said it would move
+      only once all eight passed; that was said plainly only in CC-129 (Local CL-210 and Agnes 6347081629 had verified
+      the head as source, not as a green run). On the cut's own bytes `dialect_kansai` passed in the matrix (59
+      checks); the 58/1 stays. A test-only fix (wait until no `bk-open` animation runs, bounded at 2 s) is proposed as
+      its own candidate after the cut (CC-127); nothing in the product changes.
+    - QA-089: `sequence_p16` failed on `77e792d`'s 2.4 s lift (full units 57,799/1; every one-time action is held to
+      1.6 s); `ff16922` makes it 1.6 s again (`tide_night` 45/0).
+    - QA-102: the first candidate's full units were 57,850/1, `voicebank_vrc1`'s `audio_not_delayed_by_cache_write` (a
+      voice file's bytes not ready within 80 ms of real time while its cache write was held), under load 9 to 13 on
+      four CPUs; the candidate doesn't touch that path. Not reproduced: alone 3 of 3 on the candidate and on the task
+      head, 5 of 5 on the task head with eight busy loops, and with the 12 and the 30 test files before it, on both
+      trees; cause unproven. QA-101's run on a tree with all of QA-102 57,851/0; QA-102's on `2a8e7d7` 57,863/0. Also
+      on record: `fade_load` doesn't tell the old mode cleanup from the new (15/0 on `2807cd2`'s build too);
+      `mode_holder` does (12/0; with `2807cd2`'s `90_game.js` 4 passed, 5 failed, then an error).
+    - QA-093: U `lodge_quarrel` failed on `c9b0fbd` (57,820/1): its source check reads the `!refresh comp` branch and
+      the plain refresh as one line, and `c9b0fbd` put the new `gone` branch between them; `715c080` puts `gone` first
+      (43/0; full units 57,821/0). On `715c080`'s build B `lodge_quarrel` crashed once in its third section (a fresh
+      page saved to slot 1, reloaded, and the load said "Nothing saved there"), with three full unit runs on the
+      machine, about four minutes before the memory kill below; 31/0 on the re-run and on CC-019's bytes. The save
+      waits for its IndexedDB transaction (`80_save.js:239-253`); cause unproven.
+    - Scheduling, mine: four full unit runs at once, plus probes; the container's memory limit killed QA-104's
+      (palette) at 4.7 GB resident (exit 137). QA-093's and QA-100's runs were stopped and the rest re-queued so that
+      at most two overlap.
+    - QA-096: the candidate's first `reunion_ways` run was stopped by the 40-minute bound; 33/0 run alone.
+    - The container restarted at about 13:14Z and stopped every run: QA-100's full units, QA-101's full units and
+      QA-103's regressions (at their first suite) were interrupted and started again from the beginning; nothing from
+      a partial run is counted.
+    - QA-096 on the combined head `52d2441`: `reunion_ways` 32/1, the bridge route ending at (15,8), not (15,9), with
+      nothing played (correct behaviour). A probe of the same walk on the same build, logging keys and the player's
+      tile every frame, went past (15,9) in 10 of 16 runs, all from main-thread stalls: in 6 the key-up came before
+      the fixed 130 ms hold ended, but the 160 ms step, credited with up to 50 ms from before it began (`dt` capped at
+      50), had ended 110–145 ms after it started; in 4 the key-up reached the page 174–351 ms after the step began.
+      The game unchanged; `1f33455` (test only) lets each key go once its step is under way, polled on the game's
+      frames: 16 of 16 to (15,9); `reunion_ways` 33/0 on the candidate and twice on the combined head; the control
+      without QA-096 12/21, as Local's (CL-194). `tide_split` and `suzu_stage` use the same 130 ms helper and pass;
+      left alone.
+    - `1f33455`'s tree: its first full units were 57,861/1, `kanji_chart`'s wall-clock budget ("a search takes well
+      under 25 ms here": seven searches, mean under 25 ms), with a second unit run, a browser lane, a build and three
+      `fade_load` runs of mine alongside. Alone a warm search takes 6–12 ms; under eight busy loops (load 13) 35–70
+      ms, failing 5 of 5 on that tree and 3 of 3 on `ac8d3f3`, and passing 3 of 3 once the load dropped. The busy-loop
+      experiment overlapped `31206a0`'s full units (57,940/0). Its repeat on `1f33455`'s tree: 57,862/0 (first posted
+      in CC-129).
+    - The container's disk allowance filled at about 15:35Z with my scratch worktrees; a worktree checkout for
+      QA-104's integration failed ("No space left on device"), and ten finished scratch worktrees were removed (their
+      commits pushed or integrated, no branch deleted). In that window B `travel_rules` on the combined tree
+      (`7dd1517`) was 8/2 (two timeouts, finished 15:38:57); 10/0 on the same build with space, and on `31206a0`'s.
+      QA-109's and the QA-103 refine's unit runs overlapped it and passed in full (57,940/0; 57,851/0).
+    - QA-109: the first `choice_rows` had two test bugs: it started the scene with
+      `p.evaluate(() => RB.script.run(...))`, which returns the scene's own promise, a deadlock stopped after 17
+      minutes; and a pick that missed left a scene open, so the next menu measured was the previous one, a false
+      "squeezed" result at 844 × 390. Both fixed in the test before its 6/0.
+    Coverage as Agnes bounds it is in REQUIREMENTS (CC-020). Not shown by these runs: ordinary play of these items
+    from a real save; the art items (QA-094, 089, 095 and both QA-104 parts) on a native map and compositor rather
+    than in CPU renders (QA-104's native retest is pending); that every reply is visible and reachable everywhere
+    (`choice_rows` exempts an undersized list and measures the last row, not the tallest). Known and open, outside
+    this cut: RBN-QA-116 (first run of its candidate and REFINE in CC-129, CC-130), the reply list beside the dialogue
+    sheet at 844 × 390 (8 px against a 103 px reply with 140%
+    text; 73 px at 100%). Voice: none (paused); QA-100's four re-keyed lines (their old recordings kept) and QA-093's
+    note-to-self line play with the device voice.
   - **Candidate CC-019:** `index.html` sha256 `3baeeb9fd3850f54c490a1a660913407b38b486045e0fa6a4615e2ea38a6cd13`
     (24,267,846 bytes), built from `8064756` (CC-018 plus only RBN-QA-081, 082, 086, 083, 085, 087, 090, 092 and 088,
     each by its agreed commits, listed in HANDOFF's CC-019 entry; scope agreed by Agnes 6337648132 and Local CL-181);
