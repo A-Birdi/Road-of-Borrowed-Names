@@ -579,7 +579,7 @@ RB.encounter = (function () {
       p.step = to;
       p.startOf = clone(p.machine);
       if (w.cost && !st.assist) st.pc = Math.max(0, st.pc - w.cost);
-      fx.push({ t: 'proc', ok: false, step: step.id, action: a.id, to: p.steps[to] ? p.steps[to].id : null, restart: to !== p.step || restart, en: w.en || 'That was not the way: the machine settles back.', cost: w.cost || 0 });
+      fx.push({ t: 'proc', ok: false, step: step.id, action: a.id, to: p.steps[to] ? p.steps[to].id : null, restart: to !== p.step || restart, en: w.en || 'That was not the way.', cost: w.cost || 0 });
     }
     return { fx, answered: st.foes.map(() => false), countered: false, perfect: ok && res.ok && res.firstTry !== false, proc: { ok } };
   }

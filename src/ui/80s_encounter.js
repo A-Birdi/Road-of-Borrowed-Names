@@ -113,7 +113,7 @@ RB.encScreen = (function () {
     if (!P) return '';
     const D = st.enc.def.procedure;
     const stp = P.steps[P.step];
-    return '<section class="enc-machine" aria-label="The machine"><h3>' + I('needle') + '<span>' + esc(st.enc.def.name.en) + '</span><span class="count">' + (P.done ? 'Done' : 'Step ' + (P.step + 1) + ' of ' + P.steps.length) + '</span></h3>' +
+    return '<section class="enc-machine" aria-label="Where things stand"><h3>' + I('needle') + '<span>' + esc(st.enc.def.name.en) + '</span><span class="count">' + (P.done ? 'Done' : 'Step ' + (P.step + 1) + ' of ' + P.steps.length) + '</span></h3>' +
       '<dl class="enc-parts">' + (D.show || []).map((sh) => { const v = sh.values[P.machine[sh.key]] || { en: String(P.machine[sh.key]) }; return '<div><dt>' + RB.ui.jhtml(sh.label.jp || '') + ' <span class="en">' + esc(sh.label.en) + '</span></dt><dd>' + (v.jp ? RB.ui.jhtml(v.jp) + ' ' : '') + '<span class="en">' + esc(v.en) + '</span></dd></div>'; }).join('') + '</dl>' +
       (stp && !P.done ? '<div class="enc-notice paper"><div class="slip-lab">The notice</div><div class="en-jp">' + RB.ui.jhtml(stp.text.jp) + '</div></div>' : '') + '</section>';
   }
@@ -160,7 +160,9 @@ RB.encScreen = (function () {
       while (!st.over) {
         const pick = await choose(st, fr, log);
         if (pick === 'away') {
-          const r = await RB.ui.confirm(st.enc.proc ? 'Step away? The machine stays as you leave it; you can come back whenever you like.' : 'Step away from this? Nothing is lost.', ['Step away', 'Stay']);
+          // these words and the footer's hold for every procedure: how far a wrong step goes back depends on its restart
+          // ('start' or 'stable'), and stepping away keeps where it stands unless the procedure says keep: false (RBN-QA-112)
+          const r = await RB.ui.confirm(st.enc.proc ? (st.enc.def.procedure.keep === false ? 'Step away? Next time, this starts again from the beginning.' : 'Step away? It stays as you leave it; you can come back whenever you like.') : 'Step away from this? Nothing is lost.', ['Step away', 'Stay']);
           if (r === 0) { result = 'flee'; break; }
           continue;
         }
@@ -255,7 +257,7 @@ RB.encScreen = (function () {
       fr.leaf.innerHTML = '<div class="enc-grid">' + '<div class="enc-col">' + peopleHtml(st) + machineHtml(st) + agreementHtml(st) + recordHtml(st) + '</div>' +
         '<div class="enc-col">' + logHtml(log) + '<section class="enc-choices" aria-label="What you can do"><h3>' + I('words') + '<span>What will you do?</span></h3><div class="rcards">' + shownOrder(st, cards).map((i) => cardHtml(cards[i], i)).join('') + '</div></section></div></div>';
       sayNewest(fr.leaf, log);
-      fr.foot.innerHTML = '<span class="muted small">' + esc(kind === 'machine' ? 'A wrong step sends the machine back; misreading the notice only means trying again.' : 'Nothing is timed. It will come to an end, one way or another.') + '</span>';
+      fr.foot.innerHTML = '<span class="muted small">' + esc(kind === 'machine' ? 'A wrong action may undo progress; a language mistake only means trying again.' : 'Nothing is timed. It will come to an end, one way or another.') + '</span>';
       let done = false;
       const fin = (v) => { if (done) return; done = true; fr.el.onclick = null; resolve(v); };
       fr.el.onclick = (e) => {
