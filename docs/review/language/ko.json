@@ -1913,11 +1913,11 @@
   "jp": "{館|やかた} の {壁|かべ} の {板|いた} は 、 {何年|なんねん} も {空|から} の まま 。 {誰|だれ} の {話|はなし} を {掛|か}ける か 、 {葉守|はもり} の {間|あいだ} で {決|き}まらなかった の です 。",
   "en": "The panels on the hall's walls have been blank for years. The keepers never could agree whose story to hang."
  },
- "scene:ko.yoshino_ch9#mremmp": {
+ "scene:ko.yoshino_ch9#1psqr7n": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
-  "jp": "{子供|こども} たち が 、 {板|いた} の {前|まえ} で {喧嘩|けんか} して います 。 「わたし は {海蛇|うみへび} の {話|はなし} が いい 」 「{僕|ぼく} は {舟|ふね} ！」 …… いい {授業|じゅぎょう} に なりそう です 。",
-  "en": "The children are arguing in front of the panels. \"I like the serpent one!\" \"The boat!\" …It'll make a good lesson."
+  "ref": "RBN-QA-085 self-review, 2026-10-22: Yoshino's post-exhibition line read in its scene against her established polite speech (です/ます, her closing いい 授業 に なりそう です), the hall's panels and choices (ko/10_maps.js), the lexicon and standard textbook grammar (比べられます, 何に 気付く か); choice-neutral and forward-looking as agreed by Agnes (6332791438, 6332916876), Local (CL-161) and Cloud (CC-087)",
+  "jp": "これ で 、 {子供|こども} たち も {板|いた} の {話|はなし} を {比|くら}べられます 。 {何|なに} に {気付|きづ}く か 、 {楽|たの}しみ です 。 …… いい {授業|じゅぎょう} に なりそう です 。",
+  "en": "Now the children can compare the stories on the panels. I'm looking forward to seeing what they notice. …It should make a good lesson."
  },
  "scene:ko.yoshino_after#13toipf": {
   "status": "self-reviewed",
