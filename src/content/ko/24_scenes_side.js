@@ -345,15 +345,19 @@ narr: {順番|じゅんばん} が {違|ちが}う よう だ 。 {月|つき} �
 narr: {円|えん} は {揃|そろ}って いる 。 {次|つぎ} の {大潮|おおしお} は 、 また {読|よ}もう 。 || The ring is whole. Read the next spring tide again later.
 
 @scene ko.tide_night
-# The Tide Calendar's end: the spring-tide night on the point, when the leaves rise on the night wind (an illustrated
-# sequence for the travel volume in P16, AC-1).
+# The Tide Calendar's end: the spring-tide night on the point, when the leaves rise on the night wind, in its pictures
+# (43k_seq_ko.js, RBN-QA-089); the world stays as it is.
+!sequence ko.tide_night begin
+!shot point
 narr: {大潮|おおしお} の {夜|よる} 、 コヨミ と {岬|みさき} に {立|た}つ 。 {満月|まんげつ} の {下|した} で 、 {潮|しお} が {遠|とお}く まで {引|ひ}いて いく 。 || On the night of the spring tide you stand on the point with Koyomi. Under the full moon, the tide draws far out.
+!shot rise
 narr: {風|かぜ} が {変|か}わった 。 {浜|はま} の {葉|は} が 、 {一枚|いちまい} 、 また {一枚|いちまい} と {浮|う}き{上|あ}がって 、 {月|つき} の {方|ほう} へ {昇|のぼ}って いく 。 || The wind changes. One by one, the leaves on the beach lift and rise towards the moon.
 ko_koyomi: {大潮|おおしお} の {夜|よる} に だけ 、 {帰|かえ}る {先|さき} の {分|わ}かった {葉|は} が 、 {自分|じぶん} で {飛|と}んで いく の です 。 {祖母|そぼ} から {聞|き}いた {話|はなし} です けど 、 {見|み}た の は {初|はじ}めて 。 || Only on a spring-tide night, the leaves that know their way home fly off by themselves. My grandmother told me so, but this is the first time I've seen it.
 ?(comp=nao) comp: …… {全部|ぜんぶ} 、 {宛先|あてさき} の ある {手紙|てがみ} か 。 {壮観|そうかん} だ な 。 || …Every one of them a letter with somewhere to go. Quite a sight.
 ?(comp=mio) comp[smile]: {綺麗|きれい} …… 。 {薬|くすり} の {瓶|びん} に {詰|つ}めて おきたい くらい 。 || Beautiful… I'd like to keep it in a bottle.
 ?(comp=ren) comp: {灯籠|とうろう} の {灯|ひ} が 、 {空|そら} に {上|あ}がって いく みたい です 。 || Like lantern lights going up into the sky.
 ?(comp=suzu) comp: …… {紙吹雪|かみふぶき} の {逆|ぎゃく} ね 。 {降|ふ}る の じゃ なくて 、 {昇|のぼ}って いく 。 {幕切|まくぎ}れ に は 、 もったいない くらい 。 || …Confetti in reverse. Not falling, rising. Almost too good for a final curtain.
+!sequence ko.tide_night end
 !quest ko_tide done
 !set ko_tide_night
 `);
