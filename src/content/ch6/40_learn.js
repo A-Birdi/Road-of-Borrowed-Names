@@ -1,7 +1,7 @@
 /* Chapter 6 learning moments. The Archive's puzzles are all about reading
  * in context: restoring a catalogue by meaning, recognising a paraphrase,
  * reading a conditional promise, and — at the climax — recovering what a
- * four-word reply meant from the letters around it. */
+ * reply meant from the letters around it. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
@@ -270,7 +270,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- 6. Tōya's note (the climax) --------------------------------------------------------------------------------
   // Chapter 5 established Takase's ambiguous reply 「必要なら開ける」, which the
   // messenger Tōya carried home and which Kasane, as clerk, read as a promise.
-  // Here: after their quarrel, Tōya left Kasane a note in the same four words,
+  // Here: after their quarrel, Tōya left Kasane a note in the same words,
   // on the back of the bell-tower key slip. Read in context, it is not vague.
   const DOC = {
     F: 'カサネ （ ろうか で ） ： 「 ひつよう ない 。 だれ も あけない 。 かぎ を おいて いきなさい 。 」 ／ トウヤ の かきおき （ かぎ の かみ の うら ） ： 「 ひつようなら あける 。 」',
@@ -287,7 +287,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const doc = (lv) => ({ jp: DOC[lv], en: DOC_EN[lv] });
   ch('sa.toya', {
     title: T('「必要なら開ける」', '「{必要|ひつよう}なら {開|あ}ける」'),
-    intro: T('You lay everything out on the floor of the Heart: Kasane\'s first folio, the key slip from the desk, the council\'s notice from the conduits. Tōya\'s four words are the same as Takase\'s. Read his where they belong.', '{芯|しん} の {床|ゆか} に 、 {全部|ぜんぶ} {並|なら}べる 。 カサネ の {最初|さいしょ} の {綴|つづ}り 。 {机|つくえ} の {上|うえ} の {鍵|かぎ} の {控|ひか}え 。 {水路|すいろ} で {見|み}つけた {貼|は}り{紙|がみ} 。'),
+    intro: T('You lay everything out on the floor of the Heart: Kasane\'s first folio, the key slip from the desk, the council\'s notice from the conduits. Tōya\'s words are the same as Takase\'s. Read his where they belong.', '{芯|しん} の {床|ゆか} に 、 {全部|ぜんぶ} {並|なら}べる 。 カサネ の {最初|さいしょ} の {綴|つづ}り 。 {机|つくえ} の {上|うえ} の {鍵|かぎ} の {控|ひか}え 。 {水路|すいろ} で {見|み}つけた {貼|は}り{紙|がみ} 。'),
     tiers: {
       F: [
         { kind: 'write', item: 'v:開ける', ctx: doc('F'), prompt: { en: 'Tōya\'s note ends with the verb "open". Write it: あける.' }, answer: 'あける', accept: ['あける', '開ける'], mode: 'reading', explain: { en: 'あける — to open (something).' } },
@@ -316,7 +316,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'order', item: 'c:sa_toya', ctx: doc('E'), prompt: { en: 'Say in full what Tōya meant: "If it\'s needed, I\'ll open the tower."' }, tiles: ['{必要|ひつよう}なら', '{僕|ぼく}が', '{塔|とう}を', '{開|あ}ける'], answer: ['{必要|ひつよう}なら', '{僕|ぼく}が', '{塔|とう}を', '{開|あ}ける'], alts: [['{僕|ぼく}が', '{必要|ひつよう}なら', '{塔|とう}を', '{開|あ}ける'], ['{必要|ひつよう}なら', '{塔|とう}を', '{僕|ぼく}が', '{開|あ}ける']], orderHint: { en: 'The condition (〜なら) usually comes first; the verb comes last.' } },
       ],
       I: [
-        choose('c:sa_toya', 'The same four words appear twice: Takase\'s reply in the notice, and Tōya\'s note. What is different about them?', doc('I'), [
+        choose('c:sa_toya', 'The same words appear twice: Takase\'s reply in the notice, and Tōya\'s note. What is different about them?', doc('I'), [
           { en: 'Who opens what. Takase meant its own sluice gate; Tōya meant that he would open the bell tower.', ok: true },
           { en: 'Nothing — Tōya was quoting Takase at Kasane.', ok: false, why: { en: 'That is how Kasane read it for thirty years. Look where he wrote it, and what it answers.' } },
           { en: 'Only the handwriting.', ok: false, why: { en: 'The handwriting is the least of it.' } },
@@ -335,7 +335,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       A: [
         choose('c:sa_toya', 'Why could Kasane read the note for thirty years as nothing but Takase\'s words thrown back at them?', doc('A'), [
           { en: 'Because Kasane had set down their own words from the corridor. Without them, the note matched only Takase\'s reply.', ok: true },
-          { en: 'Because Tōya\'s handwriting was hard to read.', ok: false, why: { en: 'The four words were never in doubt; their reference was.' } },
+          { en: 'Because Tōya\'s handwriting was hard to read.', ok: false, why: { en: 'The words were never in doubt; their reference was.' } },
           { en: 'Because the note was in a formal register.', ok: false, why: { en: 'It is plain speech — sibling to sibling.' } },
         ], { en: 'Lose the question and even a precise answer looks vague.' }),
         choose('c:sa_toya', 'Recover the omitted subject and object of the note.', doc('A'), [
@@ -453,7 +453,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       F: choose('c:sa_history', 'What does Kasane not remember?', null, [
         { en: 'What they said to Tōya in the quarrel', ok: true },
         { en: 'That the bell rang', ok: false, why: { en: 'Kasane remembers the bell.' } },
-        { en: 'Takase\'s reply', ok: false, why: { en: 'Kasane knows those four words by heart.' } },
+        { en: 'Takase\'s reply', ok: false, why: { en: 'Kasane knows those words by heart.' } },
       ], { en: 'なにを いったか は おぼえて いません — "what I said, I don\'t remember".' }),
       E: choose('c:sa_history', 'What does Kasane not remember?', null, [
         { jp: '{自分|じぶん} が {廊下|ろうか} で {何|なに} を {言|い}った か', en: 'what they said in the corridor', ok: true },

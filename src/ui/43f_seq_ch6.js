@@ -1,4 +1,4 @@
-/* Chapter 6's illustrated sequence: Tōya's four words read in context (`sa.toya_read`,
+/* Chapter 6's illustrated sequence: Tōya's note read in context (`sa.toya_read`,
  * src/content/ch6/52_scenes_climax.js; docs/expressive/SHOTS.md §6). The Heart of the Archive after the Hush has
  * come undone: a floor of paper floating over empty darkness, the white pages settled on it like snow, warm motes
  * in the air. Kasane (they) in their pale hooded robe. Five compositions:
@@ -563,8 +563,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   RB.sequence.define('ch6.toya', {
-    title: { en: 'Tōya\'s four words', jp: 'トウヤ の {四語|よんご}' }, chapter: 6, scene: 'sa.toya_read', memory: true,
-    memo: { jp: '', en: 'In the Heart of the Archive, Kasane read Tōya\'s four words in context at last: an answer, and a promise kept.' },
+    title: { en: 'Tōya\'s note', jp: 'トウヤ の {書|か}き{置|お}き' }, chapter: 6, scene: 'sa.toya_read', memory: true,
+    memo: { jp: '', en: 'In the Heart of the Archive, Kasane read Tōya\'s note in context at last: an answer, and a promise kept.' },
     shots: { folio: folioShot, floor: floorShot, turned, bell: bellIns, decide },
   });
 

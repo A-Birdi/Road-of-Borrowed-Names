@@ -93,6 +93,7 @@ RB.lex.add(RB.lex.parseTable(`
 郵便受け|ゆうびんうけ|n|I|mailbox, letterbox
 何千|なんぜん|n|I|thousands
 何百回|なんびゃっかい|n|I|hundreds of times
+一語|いちご|n|I|one word|{一語|いちご}{残|のこ}らず: every last word
 郵便局|ゆうびんきょく|n|E|post office
 郵便|ゆうびん|n|E|mail, post
 請求票|せいきゅうひょう|n|A|request slip, call slip (in a library)
