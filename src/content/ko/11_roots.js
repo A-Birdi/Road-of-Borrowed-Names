@@ -90,8 +90,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     triggers: [
       // halfway across the bridge, the first time, in Chapter 9: the tide comes in behind you
       { x: 15, y: 12, w: 2, h: 1, scene: 'ko.tide_split', if: 'ko_ch9&!ko_tide_in' },
-      // the reunion: back on the north side by the way round
-      { x: 2, y: 3, w: 2, h: 2, scene: 'ko.reunion', if: 'ko_apart&ko_root_c' },
+      // the reunion: back on the north side by the way round. Coming up at (2,4) (from_round), every step but the one
+      // back west into the passage plays it, the step south included (x2–3, rows 3–5). Once ko_root_c holds the bridge
+      // is open again, and the way round also leads back to the south bank and over it, so the two ways off the north
+      // side play it too, in front of each: up to the Whispering Hollow (x14–17, rows 1–2) and on to the garden
+      // (x29–30, rows 3–4). Nothing on the south bank; once only (the scene unsets ko_apart) (RBN-QA-096)
+      { x: 2, y: 3, w: 2, h: 3, scene: 'ko.reunion', if: 'ko_apart&ko_root_c' },
+      { x: 14, y: 1, w: 4, h: 2, scene: 'ko.reunion', if: 'ko_apart&ko_root_c' },
+      { x: 29, y: 3, w: 2, h: 2, scene: 'ko.reunion', if: 'ko_apart&ko_root_c' },
     ],
     exits: [
       { x: 15, y: 0, w: 2, h: 1, to: 'ko.roots1', sp: 'from_roots2', dir: 'up' },
