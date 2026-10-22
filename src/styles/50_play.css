@@ -168,9 +168,10 @@ body.dlg-top .place { top: calc(var(--dlg-h, 0px) + max(12px, env(safe-area-inse
 }
 .choices.with-dlg { bottom: calc(var(--dlg-h, 0px) + 14px); max-height: calc(100 * var(--vh) - var(--dlg-h, 0px) - 80px); }
 .choices.with-dlg.dlg-top { bottom: auto; top: calc(var(--dlg-h, 0px) + max(12px, env(safe-area-inset-top)) + 14px); }
+/* a row is as tall as its words: where the replies don't fit, the list scrolls, and no row is squeezed (RBN-QA-109) */
 .choice {
   display: grid; grid-template-columns: 2em minmax(0, 1fr); gap: 0.2em 0.7em; align-items: center; text-align: left; width: 100%;
-  min-height: 52px; padding: 0.55em 1em 0.55em 0.6em; background: var(--paper); color: var(--ink);
+  flex-shrink: 0; min-height: 52px; padding: 0.55em 1em 0.55em 0.6em; background: var(--paper); color: var(--ink);
   border: 1px solid var(--paper-edge); border-left: 5px solid var(--paper-3); border-radius: 3px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.4); font: inherit; font-size: 1.02em; cursor: pointer; touch-action: manipulation;
 }
