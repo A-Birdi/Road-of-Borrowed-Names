@@ -11,8 +11,13 @@
 //     shows the reason ("isn't beside you here") on screen and plays nothing;
 //  2. a save and load while apart: still apart (no follower, no figure);
 //  3. the reunion (from the real trigger, once the hollows are reshaped): your companion is here, the one figure, from
-//     the first line, turns to you, and follows you after it; Company talks with them again; the quest goes on;
-//  4. no page errors.
+//     the first line, turns to you, and follows you after it; Company talks with them again; the quest goes on; who
+//     your companion is, their equipment, resolve and bonds, your pet and your satchel are as before the split;
+//  4. both scenes seen before and passed over with the dialogue's own "Skip seen" (Settings: offer to skip, on): the
+//     split ends apart (you on the south bank, no follower, no figure, the quest at 5), the reunion ends together (the
+//     follower beside you, the quest at 6), the same fields as before the split, and fast-forward off afterwards;
+//  5. no page errors.
+// Not covered here: a reload in the middle of either scene, a reload after the reunion, saves made before this fix.
 // Usage: node tools/build.mjs && node tests/e2e/tide_split.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -57,6 +62,26 @@ async function askCompany(p) {
   });
   return Object.assign(r0, r);
 }
+// what the split and the reunion must leave as they were: who your companion is, equipment, resolve, bonds, your pet,
+// your satchel
+const kept = () => { const s = RB.game.s; return JSON.stringify({ comp: s.comp, party: RB.state.test(s, 'party'), equip: s.equip, resolve: s.resolve, bond: s.company && s.company.bond, pet: s.company && s.company.pet, inv: s.inv }); };
+// a seen scene passed over with the dialogue's own "Skip seen" button at its first line
+async function playSkip(p) {
+  let skip = null, lines = 0;
+  for (let i = 0; i < 400; i++) {
+    const st = await p.evaluate(() => ({ d: RB.ui.dialogue.isOpen(), run: RB.script.isRunning() }));
+    if (st.d) {
+      lines++;
+      if (!skip) { skip = await p.evaluate(() => { const k = document.querySelector('.dlg .b-skip'); const vis = !!(k && k.offsetParent && !k.classList.contains('hidden')); if (vis) k.click(); return { vis, ff: RB.game.fastForward() }; }); await p.waitForTimeout(150); continue; }
+      await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance());
+      await p.waitForTimeout(90); continue;
+    }
+    if (!st.run && skip) break;
+    await p.waitForTimeout(90);
+  }
+  await p.waitForTimeout(600);
+  return { skip, lines, ff: await p.evaluate(() => RB.game.fastForward()) };
+}
 async function closeAll(p) {
   for (let i = 0; i < 80; i++) {
     const st = await p.evaluate(() => ({ run: RB.script.isRunning(), dlg: RB.ui.dialogue.isOpen(), mode: RB.game.mode() }));
@@ -80,9 +105,12 @@ for (const comp of ['nao', 'mio', 'ren', 'suzu']) {
     // which she speaks, src/ui/56_suzu_speech.js; that question is not this test's)
     RB.game.settings.suzuSpeech = 'standard';
     RB.world.enter('ko.roots2', 15, 10, 'down', { fresh: true });
+    // (the bond milestones this journey's flags already earn, ch2_done to ch5_done, are awarded as after any scene,
+    // 58_companion.js sync on story:settled, so that what is compared below starts from them)
+    RB.bus.emit('story:settled', { mode: 'world' });
   }, [comp, KO]);
   await p.waitForTimeout(800);
-  const start = await p.evaluate(look);
+  const start = await p.evaluate(look), keep0 = await p.evaluate(kept);
   // 1. the split, from the real trigger
   await step(p, 'ArrowDown', 2);
   const B = await play(p);
@@ -125,6 +153,49 @@ for (const comp of ['nao', 'mio', 'ren', 'suzu']) {
   const ask2 = await askCompany(p);
   ok(ask2.button && !ask2.notice && ask2.talk, comp + ': Company talks with them again (' + JSON.stringify(ask2) + ')');
   await closeAll(p);
+  const keep1 = await p.evaluate(kept);
+  ok(keep1 === keep0, comp + ': who your companion is, their equipment, resolve and bonds, your pet and satchel as before the split (' + keep1 + ')');
+  errorsAll.push(...errors);
+  await p.close();
+}
+
+// ---- 4. both scenes seen before and passed over with "Skip seen" -------------------------------------------------
+for (const comp of ['nao', 'mio', 'ren', 'suzu']) {
+  const { p, errors } = await page(b, url);
+  await p.evaluate(([comp, KO]) => {
+    const flags = {}; KO.forEach((f) => (flags[f] = true));
+    const s = RB.game.debugStart('ko.roots2', 15, 10, { dir: 'down', edition: RB.edition.forNew(), comp, flags });
+    for (const m in RB.content.maps) for (const ev of RB.content.maps[m].onEnter || []) s.flags['enter:' + m + ':' + ev.scene] = true;
+    RB.state.setQuest(s, 'ko_main', 4);
+    s.seen['ko.tide_split'] = true; s.seen['ko.reunion'] = true;
+    RB.game.settings.textSpeed = 'instant'; RB.game.settings.skipSeen = true;
+    RB.game.settings.suzuSpeech = 'standard';
+    RB.world.enter('ko.roots2', 15, 10, 'down', { fresh: true });
+    // (the bond milestones this journey's flags already earn, ch2_done to ch5_done, are awarded as after any scene,
+    // 58_companion.js sync on story:settled, so that what is compared below starts from them)
+    RB.bus.emit('story:settled', { mode: 'world' });
+  }, [comp, KO]);
+  await p.waitForTimeout(800);
+  const keep0 = await p.evaluate(kept);
+  await step(p, 'ArrowDown', 2);
+  const A = await playSkip(p);
+  const a = await p.evaluate(() => ({ pc: [RB.world.W.player.x, RB.world.W.player.y], comp: RB.world.W.comp && [RB.world.W.comp.x, RB.world.W.comp.y], apart: !!RB.game.s.flags.ko_apart, tideIn: !!RB.game.s.flags.ko_tide_in, stage: RB.game.s.quests.ko_main.stage, here: RB.world.companionHere(RB.game.s, RB.world.W.map.def), run: RB.script.isRunning() }));
+  const af = await p.evaluate(look), keepA = await p.evaluate(kept);
+  ok(A.skip && A.skip.vis && A.skip.ff && !A.ff && !a.run && a.pc.join() === '15,13' && a.apart && a.tideIn && a.stage === 5 && !a.here && !a.comp && af.figs === 0 && keepA === keep0,
+    comp + ', the split skipped: it ends apart (you on the south bank, no follower, no figure, the quest at 5), the rest as before, fast-forward off (' + JSON.stringify({ skip: A.skip, ff: A.ff, a, figs: af.figs, kept: keepA === keep0 }) + ')');
+  await p.evaluate(() => { const s = RB.game.s; s.flags.ko_root_b = true; s.flags.ko_root_c = true; s.flags.ko_round_seen = true; RB.world.enter('ko.roots2', 3, 6, 'up', { fresh: true }); });
+  await p.waitForTimeout(800);
+  await step(p, 'ArrowUp', 2);
+  const R = await playSkip(p);
+  const r1 = await p.evaluate(() => ({ pc: [RB.world.W.player.x, RB.world.W.player.y], comp: RB.world.W.comp && [RB.world.W.comp.x, RB.world.W.comp.y], apart: !!RB.game.s.flags.ko_apart, stage: RB.game.s.quests.ko_main.stage, run: RB.script.isRunning() }));
+  const rf = await p.evaluate(look), keepR = await p.evaluate(kept);
+  ok(R.skip && R.skip.vis && R.skip.ff && !R.ff && !r1.run && r1.comp && Math.abs(r1.comp[0] - r1.pc[0]) + Math.abs(r1.comp[1] - r1.pc[1]) === 1 && !r1.apart && r1.stage === 6 && rf.figs === 0 && keepR === keep0,
+    comp + ', the reunion skipped: it ends together (the follower beside you, the one figure, the quest at 6), the rest as before the split, fast-forward off (' + JSON.stringify({ skip: R.skip, ff: R.ff, r1, figs: rf.figs, kept: keepR === keep0 }) + ')');
+  for (let i = 0; i < 5 && (await p.evaluate(() => RB.world.W.player.x)) < r1.pc[0] + 2; i++) await step(p, 'ArrowRight', 1);
+  await p.waitForTimeout(400);
+  const r2 = await p.evaluate(look);
+  ok(r2.comp && Math.abs(r2.comp[0] - r2.pc[0]) + Math.abs(r2.comp[1] - r2.pc[1]) === 1 && r2.pc[0] === r1.pc[0] + 2 && r2.figs === 0,
+    comp + ', after the skipped reunion they follow you (two steps east, at your side) (' + JSON.stringify({ pc: r2.pc, comp: r2.comp }) + ')');
   errorsAll.push(...errors);
   await p.close();
 }
