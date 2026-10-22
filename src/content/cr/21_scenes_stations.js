@@ -481,7 +481,13 @@ cr_chika: {高|たか}い {所|ところ} に {来|く}る と 、 {頭|あた�
 ?(comp=mio) !set cr_mio_labels
 
 @scene cr.chika_after
+# (the chest's labels were written out again only if Mio did it with you before the chapter's end, cr_mio_labels;
+# otherwise she speaks of the busier road and presumes no earlier meeting, relabelling or parcel; RBN-QA-131)
 !faceplayer
+!if cr_mio_labels -> labels
+cr_chika: {雲路|くもじ} を {通|とお}る {人|ひと} が {増|ふ}えて 、 {頭痛|ずつう} の {相談|そうだん} も {増|ふ}えた わ 。 {頭|あたま} が {痛|いた}く なったら 、 {無理|むり} を しないで 、 ここ で {休|やす}んで いって ね 。 || More people travel the Cloudroad now, and more of them come to me with headaches. If your head starts to ache, don't push on. Rest here a while.
+!end
+:labels
 cr_chika: {薬箱|くすりばこ} の ラベル 、 {全部|ぜんぶ} {読|よ}める よう に なった わ 。 「{不明|ふめい}」 の {瓶|びん} も {一|ひと}つ ある けど 、 それ も {正直|しょうじき} で いい わ ね 。 || I can read every label on the medicine chest now. There's one jar marked "unknown", but that's honest, and I like it.
 
 @scene cr.uma_stone
