@@ -659,11 +659,11 @@
   "jp": "{名前|なまえ} を {呼|よ}ぶ と 、 {紙|かみ} の {窓|まど} に {灯|ひ} が ともった 。",
   "en": "As you call its name, light comes up in the paper windows."
  },
- "scene:cr.lamp4#7r4uw8": {
+ "scene:cr.lamp4#jujn82": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{向|む}かい{合|あ}う {二軒|にけん} の {宿屋|やどや} を 、 {同|おな}じ {灯|ひ} が {照|て}らす 。",
-  "en": "The same light falls on both inns facing each other."
+  "ref": "RBN-QA-100 self-review, 2026-10-22: Nakayama's inns stand side by side (cr/10_maps.js, both at y6 with doors facing the street; the arrival's 「並んで」); 向かい (opposite) replaced by 隣 (next door) in Otaki's and Seibe's rivalry lines, and 向かい合う by 並んだ/並ぶ in the lamp's line and the seal line, each read in its scene against the speakers' established registers (Otaki's の よ, Seibe's で ござる), the lexicon and standard textbook grammar; the wording agreed by Agnes (6337082188, 6337348871), Local (CL-181) and Cloud (CC-106)",
+  "jp": "{並|なら}んだ {二軒|にけん} の {宿屋|やどや} を 、 {同|おな}じ {灯|ひ} が {照|て}らす 。",
+  "en": "The same light falls on the two inns standing side by side."
  },
  "scene:cr.lamp4#1j7gjv1": {
   "status": "self-reviewed",
@@ -1427,11 +1427,11 @@
   "jp": "{旧道|きゅうどう} の {浅瀬|あさせ} の {方|ほう} を 、 {探|さが}して みよう か 。",
   "en": "Perhaps look along the old road, by the shallows."
  },
- "scene:cr.otaki#145bov3": {
+ "scene:cr.otaki#mivlxo": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{松葉屋|まつばや} へ ようこそ 。 {向|む}かい の {竹屋|たけや} より 、 {布団|ふとん} が {一枚|いちまい} {厚|あつ}い の よ 。",
-  "en": "Welcome to the Matsuba. Our futons are one layer thicker than the Take's across the way."
+  "ref": "RBN-QA-100 self-review, 2026-10-22: Nakayama's inns stand side by side (cr/10_maps.js, both at y6 with doors facing the street; the arrival's 「並んで」); 向かい (opposite) replaced by 隣 (next door) in Otaki's and Seibe's rivalry lines, and 向かい合う by 並んだ/並ぶ in the lamp's line and the seal line, each read in its scene against the speakers' established registers (Otaki's の よ, Seibe's で ござる), the lexicon and standard textbook grammar; the wording agreed by Agnes (6337082188, 6337348871), Local (CL-181) and Cloud (CC-106)",
+  "jp": "{松葉屋|まつばや} へ ようこそ 。 {隣|となり} の {竹屋|たけや} より 、 {布団|ふとん} が {一枚|いちまい} {厚|あつ}い の よ 。",
+  "en": "Welcome to the Matsuba. Our futons are one layer thicker than the Take's next door."
  },
  "scene:cr.otaki#11z2g2u": {
   "status": "self-reviewed",
@@ -1445,11 +1445,11 @@
   "jp": "{竹屋|たけや} と は 、 {今|いま} は {客|きゃく} を {分|わ}け{合|あ}って いる の 。 {雲路|くもじ} の {客|きゃく} が {増|ふ}えた から 、 {喧嘩|けんか} して いる {暇|ひま} は ない わ 。",
   "en": "We share guests with the Take now. With so many more travellers on the Cloudroad, there's no time to quarrel."
  },
- "scene:cr.seibe#uc8gu9": {
+ "scene:cr.seibe#klyoxk": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{竹屋|たけや} で ござる 。 {向|む}かい の {松葉屋|まつばや} より 、 {風呂|ふろ} が {熱|あつ}い 。",
-  "en": "This is the Take. Our bath is hotter than the Matsuba's across the way."
+  "ref": "RBN-QA-100 self-review, 2026-10-22: Nakayama's inns stand side by side (cr/10_maps.js, both at y6 with doors facing the street; the arrival's 「並んで」); 向かい (opposite) replaced by 隣 (next door) in Otaki's and Seibe's rivalry lines, and 向かい合う by 並んだ/並ぶ in the lamp's line and the seal line, each read in its scene against the speakers' established registers (Otaki's の よ, Seibe's で ござる), the lexicon and standard textbook grammar; the wording agreed by Agnes (6337082188, 6337348871), Local (CL-181) and Cloud (CC-106)",
+  "jp": "{竹屋|たけや} で ござる 。 {隣|となり} の {松葉屋|まつばや} より 、 {風呂|ふろ} が {熱|あつ}い 。",
+  "en": "This is the Take. Our bath is hotter than the Matsuba's next door."
  },
  "scene:cr.seibe#137uvox": {
   "status": "self-reviewed",
@@ -3293,11 +3293,11 @@
   "jp": "{七|なな}つ の {印|いん} が {揃|そろ}った 。 {追分|おいわけ} の トメ に {見|み}せよう 。",
   "en": "All seven seals. Show Tome at Oiwake."
  },
- "scene:cr.seal4#zceaog": {
+ "scene:cr.seal4#1r9t9ot": {
   "status": "self-reviewed",
-  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
-  "jp": "{中山|なかやま} の {印|いん} は 、 {山|やま} の {真|ま}ん{中|なか} に {線|せん} が {一本|いっぽん} 。 …… {竹屋|たけや} は 、 {宿|やど} が {二|ふた}つ {向|む}かい{合|あ}う {絵|え} に したい らしい けど 。",
-  "en": "Nakayama's seal: a line across the middle of a mountain. …The Take would like two inns facing each other on it, apparently."
+  "ref": "RBN-QA-100 self-review, 2026-10-22: Nakayama's inns stand side by side (cr/10_maps.js, both at y6 with doors facing the street; the arrival's 「並んで」); 向かい (opposite) replaced by 隣 (next door) in Otaki's and Seibe's rivalry lines, and 向かい合う by 並んだ/並ぶ in the lamp's line and the seal line, each read in its scene against the speakers' established registers (Otaki's の よ, Seibe's で ござる), the lexicon and standard textbook grammar; the wording agreed by Agnes (6337082188, 6337348871), Local (CL-181) and Cloud (CC-106)",
+  "jp": "{中山|なかやま} の {印|いん} は 、 {山|やま} の {真|ま}ん{中|なか} に {線|せん} が {一本|いっぽん} 。 …… {竹屋|たけや} は 、 {宿|やど} が {二|ふた}つ {並|なら}ぶ {絵|え} に したい らしい けど 。",
+  "en": "Nakayama's seal: a line across the middle of a mountain. …The Take would like two inns side by side on it, apparently."
  },
  "scene:cr.seal4#tfw8yt": {
   "status": "self-reviewed",
