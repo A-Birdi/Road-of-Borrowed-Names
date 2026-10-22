@@ -272,7 +272,7 @@ yn_kane: {話|はなし} を {聞|き}いて みて くれる ？ {私|わたし
 !if var._enc=walked -> walked
 !if var._res=0 -> later
 !set yn_complaint_done
-?(var._enc=moved) yn_kane: {上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} へ ？ {女将|おかみ} が {承知|しょうち} したの ？ …… {上|かみ}の{湯|ゆ} と {下|しも}の{湯|ゆ} で 、 {客|きゃく} を {譲|ゆず}り{合|あ}う なんて 、 {何年|なんねん} ぶり かしら 。 || To the Upper House's Plum room? The proprietress agreed? …The Upper and Lower Houses passing guests between them. How many years has it been?
+?(var._enc=asked) yn_kane: {上|かみ}の{湯|ゆ} に は 、 {私|わたし} から {聞|き}いて みる わ 。 …… {客|きゃく} の こと で {向|む}こう に {相談|そうだん} する なんて 、 {何年|なんねん} ぶり かしら 。 || I'll ask the Upper House myself. …Going to them about a guest. How many years has it been?
 ?(var._enc=stayed) yn_kane: {部屋|へや} を {替|か}えず に 、 {泊|と}まって くれる って 。 {尾根|おね} の {人|ひと} たち の こと 、 {私|わたし} も {気|き}を {付|つ}ける わ 。 || He'll stay, without changing rooms. I'll keep an eye on the ridge folk too.
 yn_kane: ありがとう 。 {言|い}わない こと を {聞|き}く の は 、 {難|むずか}しい わ ね 。 || Thank you. Hearing what someone doesn't say is hard, isn't it.
 !end
