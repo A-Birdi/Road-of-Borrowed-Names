@@ -326,7 +326,7 @@ RB.questGuide = (function () {
         if (op === 'say' || op === 'emote' || op === 'move' || op === 'face' || op === 'faceplayer' || op === 'wait' || op === 'fade' ||
           op === 'shake' || op === 'music' || op === 'sfx' || op === 'card' || op === 'toast' || op === 'journal' || op === 'speakerless' || op === 'interlude' || op === 'sequence' || op === 'shot' ||
           // scene direction (52_staging.js): presentation only
-          op === 'gesture' || op === 'look' || op === 'pose' || op === 'walkto' || op === 'prop' || op === 'beat' || op === 'ambience') continue;
+          op === 'gesture' || op === 'look' || op === 'pose' || op === 'walkto' || op === 'enter' || op === 'prop' || op === 'beat' || op === 'ambience') continue;
         if (c.if && !p.forceNext) {
           const v = tv(ctx, st, c.if);
           const control = op === 'end' || op === 'goto';

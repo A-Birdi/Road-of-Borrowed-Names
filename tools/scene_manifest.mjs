@@ -216,7 +216,7 @@ function sceneFacts(C, sc) {
   }
   const actors = new Set();
   for (const c of sc.cmds) {
-    if (['move', 'face', 'faceplayer', 'emote', 'gesture', 'look', 'pose', 'walkto', 'prop'].includes(c.op) && c.args && c.args[0]) actors.add(c.args[0]);
+    if (['move', 'face', 'faceplayer', 'emote', 'gesture', 'look', 'pose', 'walkto', 'enter', 'prop'].includes(c.op) && c.args && c.args[0]) actors.add(c.args[0]);
   }
   const branches = {
     labels: Object.keys(sc.labels),

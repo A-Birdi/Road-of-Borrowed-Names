@@ -263,6 +263,35 @@ RB.script = (function () {
         // (opt-in, for one walk; 52_staging.js walkPath: `cross` may cross a trigger whose condition is false now;
         // `party` on a walk of yours: your companion follows a step behind; `max=<ms>` the bound on the walk's own
         // steps, the companion's catching up allowed 2 s more)
+        // `!enter <who> <x> <y> <dir>`: someone the scene brings in before they say anything (RBN-QA-088). They come
+        // on foot as a speaker does (50_world.js ensureSpeaker: from the nearest way out, straight to their place when
+        // it is free; at once when the scene is skipped or behind a picture). A scene extra: a later line of theirs
+        // finds them, and when the scene ends they leave as extras do (dismissExtras). Someone already standing here is
+        // walked there by staging (and put back by it at the scene's end). Safeguards (Agnes 6333527722): after every
+        // wait the scene must still own this campaign and map, or nothing more is done; a walk-in still under way at
+        // its bound is left to finish on its own (never snapped to its end); each entrance is recorded, with whether
+        // it reached its place (RB.test.entrances).
+        case 'enter': {
+          const who = resolveWho(a[0]), x = +a[1], y = +a[2], dir = DIRW[a[3]] ? a[3] : null;
+          const fast = hidden() || RB.game.fastForward(), g0 = gen, map = RB.world.W.map;
+          const owned = () => g0 === gen && RB.game.s === s && RB.world.W.map === map;
+          const note = (why) => {
+            if (!RB.test) return;
+            const list = (RB.test.entrances = RB.test.entrances || []);
+            list.push({ who, scene: sc.id, map: map && map.id, to: [x, y], ok: !why, why: why || null });
+            if (list.length > 50) list.shift();
+          };
+          const act = RB.world.ensureSpeaker(who, sc.id, { staged: true, at: [x, y] });
+          if (!act) { note('not brought'); break; }
+          if (!fast) await RB.world.whenArrived(who, 8000);
+          if (g0 !== gen || RB.game.s !== s) return; // (the campaign changed while they walked: this scene is over)
+          if (!owned()) { note('map changed'); break; }
+          if (!fast && (act.route || act.mv)) { note('not arrived'); break; }
+          const ok = RB.staging ? await RB.staging.walkTo(act, x, y, dir, { now: fast }, ctx) : false;
+          if (g0 !== gen || RB.game.s !== s) return;
+          note(ok ? null : 'blocked');
+          break;
+        }
         case 'walkto': {
           const mx = a.find((t) => /^max=\d+$/.test(t));
           if (RB.staging) await RB.staging.walkTo(a[0] === 'npc' ? ctx.npc : a[0], +a[1], +a[2], DIRW[a[3]] ? a[3] : null, { now: a.includes('now') || hidden(), stay: a.includes('stay'), cross: a.includes('cross'), party: a.includes('party'), max: mx ? +mx.slice(4) : 0 }, ctx);

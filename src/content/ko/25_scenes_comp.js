@@ -119,21 +119,29 @@ narr: スズ は {葉|は} を {帯|おび} に {挟|はさ}んだ 。 {捨|す}
 
 @scene ko.suzu_stage
 # The island's story on the sea cave's rock stage, for the village children who followed round the rocks, told the
-# way the exhibition's panels tell it.
+# way the exhibition's panels tell it. Nana comes in behind you as the scene begins and stands in the audience; she is
+# the scene's own (an extra: her encore finds her, and she walks off when it ends); Suzu takes the rock, paces it while
+# she tells it, and follows you again after (RBN-QA-088).
 !set ko_suzu_stage
+!enter ko_nana 13 10 up
 narr: {岩|いわ} の {舞台|ぶたい} の {前|まえ} で 、 スズ が {足|あし} を {止|と}めた 。 {後|うし}ろ で は 、 ナナ と {村|むら} の {子供|こども} たち が {覗|のぞ}いて いる 。 {岩場|いわば} を {付|つ}いて {来|き}た らしい 。 || Suzu stops in front of the rock stage. Behind you, Nana and the village children are peeking in. They must have followed you round the rocks.
 comp[smile]: …… お{客|きゃく} さん が いる なら 、 やる しか ない わ ね 。 || …Well, if there's an audience, there's nothing for it.
+!walkto comp 14 6 down cross
 !gesture comp bow
 comp: さあ さあ 、 お{立|た}ち{会|あ}い ！ {言|こと}の{葉|は}{島|じま} の 、 {始|はじ}まり の {話|はなし} ！ || Roll up, roll up! The story of how Kotonoha began!
 ?(var.tell_ko.t_hall_p1=otoha) comp: むかし 、 {一人|ひとり} の {女|おんな} の {人|ひと} が 、 {届|とど}かない {言葉|ことば} の ため に 、 {海|うみ} の {真|ま}ん{中|なか} に {種|たね} を {植|う}えた ！ || Long ago, a woman planted a seed in the middle of the sea, for words that never arrive!
 ?(var.tell_ko.t_hall_p1=hamaji) comp: むかし 、 {大|おお}きな {海蛇|うみへび} が {眠|ねむ}って いた 。 その {背中|せなか} に 、 ある {日|ひ} {木|き} が {生|は}えた ！ || Long ago a great sea serpent lay sleeping, and one day a tree grew on its back!
 ?(var.tell_ko.t_hall_p1=shell) comp: むかし 、 チトセ と いう {人|ひと} が 、 {自分|じぶん} と みんな の {手紙|てがみ} の ため に 、 {種|たね} を {植|う}えた ！ || Long ago, a woman called Chitose planted a seed, for her own letters and for everyone's!
+!walkto comp 12 6 down max=6000
+!walkto comp 17 6 down max=6000
+!walkto comp 14 6 down max=6000
 narr: {子供|こども} たち が {息|いき} を のむ 。 スズ は {岩|いわ} の {上|うえ} を {歩|ある}き{回|まわ}り 、 {波|なみ} の {音|おと} を {相方|あいかた} に 、 {話|はなし} を {続|つづ}ける 。 || The children hold their breath. Suzu paces the rock and goes on, with the waves as her partner.
 ?(var.tell_ko.t_hall_p3=otoha) comp: そして {葉守|はもり} は {誓|ちか}った 。 {葉|は} は 、 {一枚|いちまい} {残|のこ}らず {元|もと} の {場所|ばしょ} へ ！ || And the keepers swore: every last leaf, back where it belongs!
 ?(var.tell_ko.t_hall_p3=nami) comp: そして {舟|ふね} の {人|ひと} は {誓|ちか}った 。 どんな に {遠|とお}くて も 、 {届|とど}けて みせる ！ || And the boat people swore: however far, we'll get them there!
 ?(var.tell_ko.t_hall_p3=shell) comp: …… でも ね 、 {書|か}いた {人|ひと} だけ の {言葉|ことば} も ある の 。 それ は 、 そっと {仕舞|しま}って おく の よ 。 || …But some words belong only to the one who wrote them. Those, you put away gently.
 ko_nana[happy]: もう {一回|いっかい} ！ もう {一回|いっかい} ！ || Again! Again!
 comp[laugh]: アンコール ？ …… {相方|あいかた} が いない と 、 {二幕目|にまくめ} は できない の よ 。 ねえ 、 $name ？ || An encore? …I can't do a second act without a partner. Can I, $name?
+!walkto comp 13 9 up cross
 
 # ---- the rumour, told several ways (R4) ------------------------------------------------------------------------------
 @scene ko.rumour_tetsu
