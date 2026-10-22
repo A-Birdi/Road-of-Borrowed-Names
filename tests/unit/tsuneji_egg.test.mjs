@@ -8,7 +8,10 @@
 //  3. the scene: the egg taken and the flag set first, as before; his line; the walk (`!refresh gone 9000`: the bound
 //     for a walk longer than the usual 4 s); then the narration, then the egg count (a third egg ends the quest);
 //  4. his way out is the Lower House's door: the riverbank no longer holds him, the house does, and that door is the
-//     way there from the riverbank;
+//     way there from the riverbank; his riverbank placement leaves only by its own way (leaveTo the house, leave:
+//     'way': if that cannot be walked he fades where he stands, never by another exit; Agnes 6346676788, Local CL-209);
+//  4b. every bound given to `!refresh gone` in the game is a whole number of milliseconds from 1 to 12000 (the op
+//     clamps anything else to that or to the default);
 //  5. asking where he stands changes nothing in the journey.
 // (The walk itself, in Chromium on the built game: tests/e2e/tsuneji_egg.mjs.)
 import { load } from '../lib/load.mjs';
@@ -66,6 +69,12 @@ export default async (t) => {
   const ways = Object.keys(C.maps).filter((id) => id !== 'yn.lower' && (C.maps[id].npcs || []).some((n) => (n.char || n.id) === 'yn_tsuneji' && (!n.if || RB.state.test(s, n.if))));
   const door = (C.maps['yn.lower'].structs || []).find((b) => b.to === 'yn.shimo');
   t.ok(ways.join() === 'yn.shimo' && door && (door.x + door.door) + ',' + (door.y + door.h - 1) === '9,10', 'once the egg is his, the only other place that holds him is the Lower House, whose door on the street is (9,10)');
+  t.ok(outside.leaveTo === 'yn.shimo' && outside.leave === 'way', 'his riverbank placement goes only by its own way, to the Lower House (leaveTo yn.shimo, leave: way)');
+  // 4b. the bounds
+  const bounds = [];
+  for (const [id, sc] of Object.entries(C.scenes)) for (const c of sc.cmds || []) if (c.op === 'refresh' && c.args[0] === 'gone' && c.args.length > 1) bounds.push([id, c.args[1]]);
+  const badBound = bounds.filter(([, v]) => !/^\d+$/.test(v) || +v < 1 || +v > 12000);
+  t.ok(!badBound.length, 'every bound given to `!refresh gone` is a whole number of ms from 1 to 12000 (' + bounds.map((b) => b.join(' ')).join(', ') + ')');
   // 5. pure
   const before = JSON.stringify(s);
   where(s);

@@ -452,7 +452,7 @@ RB.script = (function () {
         // <ms>` sets the bound for a longer walk (at most 12 s; RBN-QA-120); without it, 4 s as before
         case 'refresh':
           if (a[0] === 'arrive') { RB.world.refreshActors({ arrive: true }); await RB.world.arrivals({ now: hidden() }); }
-          else if (a[0] === 'gone') { const before = new Set(RB.world.W.leavers), ms = Math.min(12000, +a[1] || 0) || undefined; RB.world.refreshActors(); await RB.world.departures(RB.world.W.leavers.filter((l) => !before.has(l)), { now: hidden(), ms }); }
+          else if (a[0] === 'gone') { const before = new Set(RB.world.W.leavers), n = Number(a[1]), ms = n > 0 ? Math.min(12000, Math.round(n)) : undefined; RB.world.refreshActors(); await RB.world.departures(RB.world.W.leavers.filter((l) => !before.has(l)), { now: hidden(), ms }); }
           else if (a[0] === 'comp') RB.world.placeCompanion({ near: true }); else RB.world.refreshActors();
           break;
         case 'recruit': await RB.game.recruit(a[0], a[1]); break;
