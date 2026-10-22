@@ -133,8 +133,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   C.notes.sa_toya = {
     title: T('「必要なら開ける」', '「{必要|ひつよう}なら {開|あ}ける」'), fiction: true,
-    jp: '{高瀬|たかせ} の {返事|へんじ} と {同|おな}じ {四語|よんご} 。 でも トウヤ の {書|か}き{置|お}き は 、 {鐘楼|しょうろう} の {鍵|かぎ} の {控|ひか}え の {裏|うら} に 、 カサネ へ の {返事|へんじ} と して {書|か}かれて いた 。 {開|あ}ける の は {自分|じぶん} 、 {開|あ}ける の は {鐘楼|しょうろう} 。',
-    en: 'The same four words as Takase\'s reply — but Tōya wrote his on the back of the bell-tower key slip, straight after Kasane told him "no one is opening it". Japanese often leaves out subject and object when context supplies them; here the context says: I will open the bell tower. Takase\'s 必要なら left open "needed by whom?"; in Tōya\'s note, the one who judges is the one who acts. He kept the promise.',
+    jp: '{高瀬|たかせ} の {返事|へんじ} と {同|おな}じ {言葉|ことば} 。 でも トウヤ の {書|か}き{置|お}き は 、 {鐘楼|しょうろう} の {鍵|かぎ} の {控|ひか}え の {裏|うら} に 、 カサネ へ の {返事|へんじ} と して {書|か}かれて いた 。 {開|あ}ける の は {自分|じぶん} 、 {開|あ}ける の は {鐘楼|しょうろう} 。',
+    en: 'The same words as Takase\'s reply — but Tōya wrote his on the back of the bell-tower key slip, straight after Kasane told him "no one is opening it". Japanese often leaves out subject and object when context supplies them; here the context says: I will open the bell tower. Takase\'s 必要なら left open "needed by whom?"; in Tōya\'s note, the one who judges is the one who acts. He kept the promise.',
   };
   C.notes.sa_ushio = {
     title: T('Master Ushio', 'ウシオ{師匠|ししょう}'), fiction: true,

@@ -29,7 +29,7 @@ narr: ページ は {床|ゆか} に {落|お}ちて 、 {静|しず}か に {�
 
 @scene sa.heart_kasane
 # Staged: Kasane's nod and an open hand: have you read enough? Their head goes down over deciding for everyone (or
-# they look away, then down, over Tōya's four words); as the spiral quickens you look to it and Kasane turns to it
+# they look away, then down, over Tōya's note); as the spiral quickens you look to it and Kasane turns to it
 # and starts back; they look away at the Hush that no longer listens, and turn to you with an open hand: stand back;
 # your companion's own answer (Nao's shake of the head, Mio's flat hand of refusal, Ren raises the lamp, Suzu's
 # showman's hands). Again: Kasane looks you over, and points you down to rest.
@@ -49,7 +49,7 @@ kasane: {待|ま}って いる {間|あいだ} に 、 また {誰|だれ}か �
 !goto hush
 :toya
 !gesture kasane aside
-kasane[closed]: …… {高瀬|たかせ} の {言葉|ことば} を 、 {写|うつ}した だけ の {紙|かみ} です 。 {何|なん} と でも {取|と}れる {四語|よんご} 。 || …A slip on which he copied Takase's words, that's all. Four words that could mean anything.
+kasane[closed]: …… {高瀬|たかせ} の {言葉|ことば} を 、 {写|うつ}した だけ の {紙|かみ} です 。 {何|なん} と でも {取|と}れる {一行|いちぎょう} 。 || …A slip on which he copied Takase's words, that's all. A line that could mean anything.
 !gesture kasane lowered
 kasane: {最後|さいご} に あの {子|こ} が わたし に {残|のこ}した の は 、 {人|ひと} を {殺|ころ}した {言葉|ことば} の {写|うつ}し でした 。 {三十年|さんじゅうねん} 、 {読|よ}んで も {読|よ}んで も 、 {答|こた}え は {出|で}ません でした 。 || The last thing he left me was a copy of the words that killed people. Thirty years of reading it, and no answer came.
 :hush
@@ -131,7 +131,7 @@ pc: あの {夜|よる} の こと 。 || About that night.
 !gesture kasane lowered hold
 kasane[closed]: …… いい でしょう 。 {誰|だれ}か に {話|はな}す の は 、 {初|はじ}めて です 。 || …Very well. I have never told anyone.
 !activity sa.flood_history
-kasane[sad]: あの {子|こ} と {何|なに} を {言|い}い{合|あ}った の か 、 {思|おも}い{出|だ}せない の です 。 {思|おも}い{出|だ}せる の は 、 {次|つぎ} の {朝|あさ} {机|つくえ} に あった 、 あの {四語|よんご} だけ 。 || I can't remember what the two of us said to each other. All I remember is the four words on my desk the next morning.
+kasane[sad]: あの {子|こ} と {何|なに} を {言|い}い{合|あ}った の か 、 {思|おも}い{出|だ}せない の です 。 {思|おも}い{出|だ}せる の は 、 {次|つぎ} の {朝|あさ} {机|つくえ} に あった 、 あの {書|か}き{置|お}き だけ 。 || I can't remember what the two of us said to each other. All I remember is the note on my desk the next morning.
 !gesture kasane palm pc
 kasane: {高瀬|たかせ} の {返事|へんじ} と 、 {一字|いちじ} {一句|いっく} {同|おな}じ 。 {皮肉|ひにく} か 、 {恨|うら}み{言|ごと} か 。 {曖昧|あいまい} な {言葉|ことば} で 、 {最後|さいご} まで 。 || Word for word the same as Takase's reply. Sarcasm? A reproach? Vague to the very last.
 kasane: だから わたし は …… {曖昧|あいまい} な {言葉|ことば} を 、 {世界|せかい} から {取|と}り{除|のぞ}こう と した 。 || So I tried… to remove vague words from the world.
@@ -181,11 +181,11 @@ kasane[closed]: …… 「 {誰|だれ} も {開|あ}けない 」 。 わたし
 narr: $name は 、 {鍵|かぎ} の {控|ひか}え と {議会|ぎかい} の {貼|は}り{紙|がみ} を 、 {床|ゆか} に {並|なら}べた 。 || You lay the key slip and the council notice out on the floor beside it.
 !challenge sa.toya
 !shot turned
-kasane[surprise]: …… {高瀬|たかせ} の {言葉|ことば} を {写|うつ}した ん じゃ なかった 。 わたし に {返事|へんじ} を した の です ね 。 {同|おな}じ {四語|よんご} で 。 || …He wasn't copying Takase's words. He was answering me. In the same four words.
+kasane[surprise]: …… {高瀬|たかせ} の {言葉|ことば} を {写|うつ}した ん じゃ なかった 。 わたし に {返事|へんじ} を した の です ね 。 {同|おな}じ {言葉|ことば} で 。 || …He wasn't copying Takase's words. He was answering me. In the same words.
 kasane: 「 {誰|だれ} も {開|あ}けない 」 と {言|い}った わたし に 、 「 {必要|ひつよう}なら 、 {僕|ぼく} が {開|あ}ける 」 と 。 …… {曖昧|あいまい} な ところ なんて 、 {一|ひと}つ も ない 。 || To me, who said "no one is opening it", he said: "If it's needed, I'll open it." …There isn't one vague thing in it.
 !shot turned front
 kasane[sad]: {三十年|さんじゅうねん} 、 {裏|うら} ばかり {見|み}て いた 。 {表|おもて} に は 、 わたし の {字|じ} で 、 {鍵|かぎ} を {持|も}って いった の は トウヤ だ と {書|か}いて ある のに 。 || For thirty years I only looked at the back. The front says, in my own hand, that Tōya was the one who took the key.
-kasane: {鐘|かね} を {鳴|な}らした の は 、 あの {子|こ} だった 。 {鍵|かぎ} の かかった {塔|とう} を 、 {自分|じぶん} で {開|あ}けて 。 {約束|やくそく} を {守|まも}った の です 。 {四語|よんご} {残|のこ}らず 。 || It was him who rang the bell. He opened the locked tower himself. He kept his promise. All four words of it.
+kasane: {鐘|かね} を {鳴|な}らした の は 、 あの {子|こ} だった 。 {鍵|かぎ} の かかった {塔|とう} を 、 {自分|じぶん} で {開|あ}けて 。 {約束|やくそく} を {守|まも}った の です 。 {一語|いちご} {残|のこ}らず 。 || It was him who rang the bell. He opened the locked tower himself. He kept his promise. Every word of it.
 !shot turned close
 kasane[closed]: わたし は 、 {自分|じぶん} の {言葉|ことば} を {棚|たな} に {上|あ}げて 、 あの {子|こ} の {言葉|ことば} だけ を {責|せ}めて きた 。 || I put my own words up on a shelf, and blamed his.
 ?(comp=ren) ren: {棚|たな} に {上|あ}げる 。 …… {文字通|もじどお}り に 。 || Put up on a shelf. …Literally.

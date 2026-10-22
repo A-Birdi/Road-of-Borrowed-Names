@@ -741,11 +741,11 @@ narr: {机|つくえ} の {上|うえ} に 、 {文鎮|ぶんちん} で {押|�
 # open hand). Taken: you lean in to the paperweight.
 !if item.sa_toya_reply -> have
 !gesture pc bend prop:desk
-narr: {文鎮|ぶんちん} の {下|した} に 、 {小|ちい}さな {紙|かみ} 。 {上|うえ} を {向|む}いた {面|めん} に 、 {急|いそ}いだ {若|わか}い {字|じ} で 、 {四語|よんご} 。 || Under the paperweight, a small slip of paper. On the side facing up, four words in a hurried young hand.
+narr: {文鎮|ぶんちん} の {下|した} に 、 {小|ちい}さな {紙|かみ} 。 {上|うえ} を {向|む}いた {面|めん} に 、 {急|いそ}いだ {若|わか}い {字|じ} で 、 {短|みじか}い {書|か}き{置|お}き 。 || Under the paperweight, a small slip of paper. On the side facing up, a short note in a hurried young hand.
 narr: 「 {必要|ひつよう}なら {開|あ}ける 。 」 || "If needed, open."
 !gesture pc read prop=paper hold
 narr: {裏|うら} を {返|かえ}す 。 {印刷|いんさつ} された {書式|しょしき} に 、 {几帳面|きちょうめん} な {字|じ} 。 「 {鐘楼|しょうろう} {鍵|かぎ} {持|も}ち{出|だ}し ── {使|つか}い トウヤ 。 {許可|きょか} なし 。 {書記|しょき} カサネ 」 || You turn it over. A printed form, filled in with a meticulous hand: "Bell tower key taken out — messenger Tōya. Without permission. Clerk Kasane."
-narr: {四語|よんご} の {面|めん} は 、 {何度|なんど} も {触|さわ}られて {柔|やわ}らかい 。 {書式|しょしき} の {面|めん} は 、 {新|あたら}しい まま だ 。 || The side with the four words has gone soft from handling. The form side is as crisp as new.
+narr: {書|か}き{置|お}き の {面|めん} は 、 {何度|なんど} も {触|さわ}られて {柔|やわ}らかい 。 {書式|しょしき} の {面|めん} は 、 {新|あたら}しい まま だ 。 || The side with the note has gone soft from handling. The form side is as crisp as new.
 !give sa_toya_reply
 ?(comp=nao) !gesture comp point pc
 ?(comp=nao) nao: {高瀬|たかせ} の {返事|へんじ} と 、 {一字|いちじ} {一句|いっく} {同|おな}じ だ 。 …… でも 、 {書|か}いて ある {紙|かみ} が {違|ちが}う 。 {鍵|かぎ} の {控|ひか}え の {裏|うら} だ 。 || Word for word the same as Takase's reply. …But look what it's written on. The back of the key slip.

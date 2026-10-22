@@ -243,7 +243,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
             { jp: '{言葉|ことば} は {文脈|ぶんみゃく} の {中|なか} で {意味|いみ} を {持|も}つ 。 {文脈|ぶんみゃく} を {失|うしな}えば 、 どんな {言葉|ことば} も {読|よ}み{違|ちが}えられる 。', ok: true },
             { jp: '{言葉|ことば} は {少|すく}なければ {少|すく}ない ほど いい 。', ok: false, why: { en: '"The fewer words the better" — that is the Hush\'s own logic.' } },
             { jp: '{誰|だれ}も {読|よ}み{違|ちが}えない {言葉|ことば} が 、 どこか に ある はず だ 。', ok: false, why: { en: '"Somewhere there must be words no one can misread" — the Hush\'s hope, restated.' } },
-          ], { en: 'Meaning lives in context (文脈). Strip the context and any word can be misread — including four words you have been carrying all the way up this mountain.' }),
+          ], { en: 'Meaning lives in context (文脈). Strip the context and any word can be misread — including the words you have been carrying all the way up this mountain.' }),
           A: choose('Which reply exposes what that night actually teaches?', null, [
             { jp: 'あの {夜|よる} {失|うしな}われた の は {言葉|ことば} の {明確|めいかく}さ で は なく 、 {言葉|ことば} が {置|お}かれて いた {文脈|ぶんみゃく} だ 。', ok: true },
             { jp: '{確|たし}か に 、 {曖昧|あいまい}な {言葉|ことば} は {避|さ}ける に {越|こ}した こと は ない 。', ok: false, why: { en: '"Admittedly, it\'s best to avoid vague words" — sensible advice, but it concedes the Hush\'s premise about that night.' } },
