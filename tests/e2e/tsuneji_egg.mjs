@@ -43,6 +43,7 @@ async function start(p, o) {
     if (!o.comp) s.comp = null;
     for (const m in RB.content.maps) for (const ev of RB.content.maps[m].onEnter || []) s.flags['enter:' + m + ':' + ev.scene] = true;
     s.quests.yn_eggs = { stage: 0, done: false, t: Date.now() };
+    if (o.quest === 'done') s.quests.yn_eggs.done = true;
     if (o.eggs) s.inv.yn_eggs = o.eggs;
     if (o.seen) s.seen['yn.egg_tsuneji'] = true;
     RB.game.settings.textSpeed = 'instant'; RB.game.settings.suzuSpeech = 'standard'; RB.game.settings.skipSeen = true;
@@ -209,8 +210,9 @@ for (const [comp, x, dir] of [[null, 21, 'right'], ['suzu', 23, 'left']]) {
   const s2 = await state(p);
   ok(s2.flag && s2.eggs === 2 && !s2.here.length && nearDoor(s2.trail), 'given again, it ends as before (' + JSON.stringify({ eggs: s2.eggs, trail: s2.trail }) + ')');
   // saves
-  for (const [name, flags, lower, shimo] of [['the egg given, the valley\'s story not done', { yn_egg_tsuneji: true }, '', '9,7'], ['the valley\'s story done', { yn_egg_tsuneji: true, yn_done: true }, '', ''], ['the story done, no egg given', { yn_done: true }, '', '']]) {
-    await start(p, { map: 'yn.lower', x: 21, y: 18, dir: 'right', comp: 'ren', eggs: 1, flags });
+  // (the story done with his egg still owed to the quest under way: he stays at the riverbank, RBN-QA-129)
+  for (const [name, flags, lower, shimo, quest] of [['the egg given, the valley\'s story not done', { yn_egg_tsuneji: true }, '', '9,7'], ['the valley\'s story done', { yn_egg_tsuneji: true, yn_done: true }, '', ''], ['the story done, no egg given, the quest under way', { yn_done: true }, '22,18', ''], ['the story done, no egg given, the quest finished', { yn_done: true }, '', '', 'done']]) {
+    await start(p, { map: 'yn.lower', x: 21, y: 18, dir: 'right', comp: 'ren', eggs: 1, flags, quest });
     await p.evaluate(async () => { await RB.save.writeSlot(4, RB.game.s, { force: true }); });
     await p.evaluate(async () => { await RB.game.loadCampaign(4); });
     await p.waitForTimeout(1200);
