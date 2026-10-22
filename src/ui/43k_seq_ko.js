@@ -15,7 +15,7 @@
  *          calendar stone's ring in the tide pools; RBN-QA-089). The world stays as it is: the night is the picture's.
  *   point  under the full moon the tide draws far out over a wide wet flat; the party small on the point's end from
  *          behind, Koyomi a step ahead, looking out; written leaves lying on the flat
- *   rise   the leaves lift one by one and rise toward the moon, and others after them
+ *   rise   the leaves lift one by one and rise toward the moon, each to its own height, and hold there
  * No letters, kana or kanji are drawn: the leaves carry a stroke or two of ink, never characters. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -411,7 +411,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const y = lerp(G.far + G.s(10), G.near - G.s(6), rnd() ** 0.8), x = lerp(G.tipX + G.s(14), G.w - G.s(6), rnd());
         const d = (y - G.far) / (G.near - G.far);
         out.push({ x, y, len: Math.max(3, Math.round(G.s(3 + d * 4))), ang: rnd() * 3.14, seed: i * 17 + 3,
-          delay: Math.round(i * 60 + rnd() * 200), rise: 7000 + rnd() * 5000, rest: rnd(), sway: rnd() * 6.28 });
+          rest: rnd(), sway: rnd() * 6.28 });
       }
       return out;
     });
@@ -471,19 +471,26 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     focus(w, h, vb) { return partyBox(geomTide(w, h, vb)); },
   };
+  // where each leaf is at the lift's progress k (0 … 1): it lies on the flat until its turn (one after another across
+  // the first part of the lift), then rises to its own height on the way to the moon and stays there. At k = 1 every
+  // leaf is at its height: the picture the shot holds, the same however long a line is read (only the moon's glints on
+  // the far water come and go, as in the first shot). Replay runs the lift again from the flat.
+  function liftAt(L0, i, n, k) {
+    const d = (i / n) * 0.5, top = 0.15 + L0.rest * 0.68; // (its height stays under 0.85: no leaf fades away)
+    return top * ease(sub(k, d, d + 0.5));
+  }
   const rise = {
-    phases: [['lift', 1600]],
+    phases: [['lift', 2400]],
     safe: { wide: 'the leaves rising toward the moon over the party, above the sheet', narrow: 'the leaves and the moon in the upper half', land: 'the leaves and the moon' },
     draw(c, w, h, t, st) {
       const G = geomTide(w, h, st.vb), { s } = G;
       c.drawImage(tideStatic(G).cv, 0, 0);
       SP.glints(c, G.moon.x - s(14), G.hz + 2, s(28), G.far - G.hz - 2, t, 16, 71, '226,234,255', st.still);
-      // one by one the leaves lift and rise toward the moon, and others after them (Reduce motion: held at their places
-      // along the way)
-      const since = st.still ? 0 : st.since, still = st.still || st.review;
-      for (const L0 of tideLeaves(G)) {
-        let q = still ? (L0.rest * 0.9) : (since - L0.delay) / L0.rise;
-        if (!still && q > 1) q = q % 1;
+      // one by one the leaves lift and rise toward the moon, each to its own height, and hold there (Reduce motion and a
+      // look back: there at once)
+      const k = st.at('lift'), Lv = tideLeaves(G);
+      for (let i = 0; i < Lv.length; i++) {
+        const L0 = Lv[i], q = liftAt(L0, i, Lv.length, k);
         if (q <= 0) { RB.firstSightArt.goldLeaf(c, L0.x, L0.y, L0.len, L0.ang, 0.9, L0.seed, h); continue; }
         const r = riseAt(G, L0, q);
         if (r.a <= 0) continue;
