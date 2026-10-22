@@ -515,6 +515,27 @@ RB.world = (function () {
       tick();
     });
   }
+  // The scene waits until the people a refresh has just sent away (`gone`, their figures in W.leavers) have left: faded
+  // where they stood or walked off and faded. The fade runs on the world's frames, which a slow device delivers late,
+  // so this waits for the departure itself, not for a time; bounded (o.ms) and at once when skipping, or behind an
+  // illustrated sequence (o.now): then whoever is still going is gone at once (`!refresh gone`; RBN-QA-093)
+  function departures(gone, o) {
+    o = o || {};
+    const going = () => gone.filter((a) => W.leavers.includes(a));
+    const settle = () => { const g = going(); if (g.length) W.leavers = W.leavers.filter((a) => !g.includes(a)); };
+    if (!gone.length) return Promise.resolve();
+    if (o.now || RB.game.fastForward()) { settle(); return Promise.resolve(); }
+    const map = W.map, t0 = performance.now();
+    return new Promise((res) => {
+      const tick = () => {
+        if (W.map !== map) return res();
+        if (RB.game.fastForward() || performance.now() - t0 > (o.ms || 4000)) { settle(); return res(); }
+        if (!going().length) return res();
+        setTimeout(tick, 40);
+      };
+      tick();
+    });
+  }
   // Follow a route one tile at a time; true when it is walked.
   function followRoute(a, dt, dur) {
     if (a.mv || !a.route) return !a.route;
@@ -1364,7 +1385,7 @@ RB.world = (function () {
   }
 
   return {
-    W, DIRS, enter, update, interact, tapTile, refreshActors, arrivals, placeCompanion, companionHere, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
+    W, DIRS, enter, update, interact, tapTile, refreshActors, arrivals, departures, placeCompanion, companionHere, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
     frontTile, frontAction, checkFoeContact, hush, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
     musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
