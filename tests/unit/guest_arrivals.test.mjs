@@ -36,6 +36,13 @@ export default async (t) => {
     t.ok(JSON.stringify(st) === before, id + ': reading it changes nothing in the encounter');
   }
 
+  // none of them is lost to the log: the exchange log keeps its last five lines (eight in a group;
+  // src/ui/80_combat.js logLine), and no encounter brings more guests with words of arrival than that
+  {
+    const most = Math.max(...Object.keys(C.encounters).map((id) => (C.encounters[id].actors || []).filter((a) => (a.side || 'guest') === 'guest' && a.lines && a.lines.arrive).length));
+    t.ok(most >= 1 && most <= 5, 'the most arrivals any encounter brings (' + most + ') fit in the log\'s five lines');
+  }
+
   // the encounter's order; a guest who has left, one with no words of arrival, and anyone not a guest give nothing
   {
     const def = { id: 'zz.arrive', name: { jp: '{二人|ふたり}', en: 'Two' }, lead: { enemy: 'ko.jelly', knots: 2 },
