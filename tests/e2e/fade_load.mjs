@@ -22,7 +22,11 @@
 //     own; you walk and the next door works (RBN-QA-102 refine, Agnes 6340882225);
 //  9. the same, the load cancelled at the "another tab" question: the journey kept, the door not taken, not left
 //     in a transition: lit, you walk, the next door works;
-//  10. no page errors.
+//  10. a load begun as the door's fade back in begins (the new map already entered), that fade held: the same as 8;
+//  11. a load after the door has been taken: the door's own name and checkpoint, then the saved journey as saved;
+//  12. loads again and again: inside one door's fade out, then inside the next door's fade back in, then a door taken
+//      with no load: each load as saved, and the last door taken in full (Local CL-198);
+//  13. no page errors.
 import { serve, launch, page } from './lib.mjs';
 
 const { srv, url } = await serve();
@@ -223,12 +227,15 @@ async function doorSetup(p, o) {
   await hold(p, Object.assign({ delay: 1 }, o));
   await p.evaluate(() => {
     const f = RB.ui.fade; window.__slow = 0;
-    RB.ui.fade = function (out) { const r = f.apply(this, arguments); if (window.__slow && out) { window.__slow = 0; return r.then(() => new Promise((res) => setTimeout(res, 1500))); } return r; };
+    // __slow = 1 or 'out' holds the next fade out 1.5 s after it ends; 'in', the next fade back in
+    RB.ui.fade = function (out) { const r = f.apply(this, arguments); if (window.__slow && (window.__slow === 'in' ? !out : out)) { window.__slow = 0; return r.then(() => new Promise((res) => setTimeout(res, 1500))); } return r; };
     const d = RB.content.maps['cr.leg5'].spawn.default;
     window.__door = () => RB.game.transition('cr.leg5', d[0], d[1], d[2] || 'right');
   });
 }
 const doorState = (p) => p.evaluate(() => ({ map: RB.world.W.map && RB.world.W.map.id, named: !!RB.game.s.flags['named:cr.leg5'], cp: RB.game.s.checkpoint ? RB.game.s.checkpoint.map : null, modes: RB.game.G.modes.slice(), dark: document.querySelector('#overlay > .fade').classList.contains('on'), veiled: document.body.classList.contains('veiled'), run: RB.script.isRunning() }));
+// the journey as it was saved (at Umagaeshi; leg 5 never named, never a checkpoint), in the world
+const asSaved = (st) => st.map === 'cr.umagaeshi' && !st.named && st.cp !== 'cr.leg5' && JSON.stringify(st.modes) === '["world"]' && !st.dark && !st.veiled;
 {
   const { p, errors } = await page(b, url);
   await doorSetup(p, {});
@@ -260,6 +267,60 @@ const doorState = (p) => p.evaluate(() => ({ map: RB.world.W.map && RB.world.W.m
   const next = await doorState(p);
   ok(asked && L.results.length === 1 && L.results[0] === false && after.map === 'cr.umagaeshi' && JSON.stringify(after.modes) === '["world"]' && !after.dark && !after.veiled && w && next.map === 'cr.leg5' && JSON.stringify(next.modes) === '["world"]',
     'a load cancelled at the "another tab" question inside a door\'s fade out: the journey kept, the door not taken, not left in a transition: lit, you walk, and the next door works (' + JSON.stringify({ asked, L, after, walks: w, next }) + ')');
+  allErrors.push(...errors); await p.close();
+}
+
+{
+  // 10. the load begun as the door's fade back in begins: the map is already entered, the fade back in held
+  const { p, errors } = await page(b, url);
+  await doorSetup(p, {});
+  await p.evaluate(() => { window.__slow = 'in'; window.__loadOn = 'in'; window.__door(); });
+  await p.waitForTimeout(150);
+  await whileLoading(p);
+  await p.waitForTimeout(2500);
+  const L = await p.evaluate(() => window.__log), after = await doorState(p), w = await walks(p);
+  await p.evaluate(() => window.__door());
+  await p.waitForTimeout(1500);
+  const next = await doorState(p);
+  ok(L.results.length === 1 && L.results[0] === true && asSaved(after) && w && next.map === 'cr.leg5' && JSON.stringify(next.modes) === '["world"]',
+    'a load begun as a door\'s fade back in begins, the new map already entered: the loaded journey as saved (no name or checkpoint from the old door), the modes its own; you walk, and the next door works (' + JSON.stringify({ L, after, walks: w, next }) + ')');
+  allErrors.push(...errors); await p.close();
+}
+{
+  // 11. a load after the door has been taken
+  const { p, errors } = await page(b, url);
+  await doorSetup(p, {});
+  await p.evaluate(() => window.__door());
+  await p.waitForTimeout(2000);
+  const taken = await doorState(p);
+  await p.evaluate(() => { window.__load(); });
+  await whileLoading(p);
+  await p.waitForTimeout(1500);
+  const L = await p.evaluate(() => window.__log), after = await doorState(p), w = await walks(p);
+  ok(taken.map === 'cr.leg5' && taken.named && taken.cp === 'cr.leg5' && L.results.length === 1 && L.results[0] === true && asSaved(after) && w,
+    'a load after a door has been taken: the door named and checkpointed its map, then the loaded journey is as saved, the modes its own, and you walk (' + JSON.stringify({ taken, L, after, walks: w }) + ')');
+  allErrors.push(...errors); await p.close();
+}
+{
+  // 12. loads again and again: inside one door's fade out, inside the next door's fade back in, then a door with no load
+  const { p, errors } = await page(b, url);
+  await doorSetup(p, {});
+  await p.evaluate(() => { window.__slow = 1; window.__door(); });
+  await p.waitForTimeout(150);
+  await p.evaluate(() => { window.__load(); });
+  await whileLoading(p);
+  await p.waitForTimeout(2500);
+  const one = await doorState(p);
+  await p.evaluate(() => { window.__slow = 'in'; window.__loadOn = 'in'; window.__door(); });
+  await p.waitForTimeout(150);
+  await whileLoading(p);
+  await p.waitForTimeout(2500);
+  const two = await doorState(p), w = await walks(p);
+  await p.evaluate(() => window.__door());
+  await p.waitForTimeout(2000);
+  const L = await p.evaluate(() => window.__log), last = await doorState(p);
+  ok(L.results.length === 2 && L.results.every((x) => x === true) && asSaved(one) && asSaved(two) && w && last.map === 'cr.leg5' && last.named && last.cp === 'cr.leg5' && JSON.stringify(last.modes) === '["world"]' && !last.dark,
+    'loads again and again (inside one door\'s fade out, then inside the next door\'s fade back in): each journey as saved; then a door with no load is taken in full, named and checkpointed, the modes the journey\'s own (' + JSON.stringify({ L, one, two, walks: w, last }) + ')');
   allErrors.push(...errors); await p.close();
 }
 
