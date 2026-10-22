@@ -133,7 +133,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [
       { id: 'mp_tokube', x: 11, y: 18, dir: 'up', if: '!yn_tokube_gone', talk: [{ if: 'yn_done', scene: 'yn.tokube_after' }, { if: 'yn_tokube_done', scene: 'yn.tokube_idle' }, { scene: 'yn.tokube' }] },
       { id: 'yn_onatsu', x: 17, y: 11, dir: 'down', talk: [{ if: 'yn_done', scene: 'yn.onatsu_after' }, { scene: 'yn.onatsu' }] },
-      { id: 'yn_tsuneji', x: 22, y: 18, dir: 'left', if: '!yn_done', talk: 'yn.tsuneji' },
+      // (once he has taken his egg home he is in the Lower House instead, by its hearth; RBN-QA-120)
+      { id: 'yn_tsuneji', x: 22, y: 18, dir: 'left', if: '!yn_done&!yn_egg_tsuneji', talk: 'yn.tsuneji' },
       { id: 'yn_aki', x: 33, y: 22, dir: 'down', if: '!yn_vents_open', talk: [{ if: 'quest.yn_main>=5', scene: 'yn.aki_ready' }, { scene: 'yn.aki' }] },
     ],
     exits: [
@@ -261,6 +262,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'yn_tahei', x: 3, y: 2, dir: 'down', talk: [{ if: 'yn_done', scene: 'yn.tahei_after' }, { if: 'yn_shimo_heard', scene: 'yn.tahei_idle' }, { scene: 'yn.tahei_first' }] },
       { id: 'yn_kane', x: 5, y: 5, dir: 'left', talk: [{ if: 'yn_done', scene: 'yn.kane_after' }, { if: 'yn_complaint_done', scene: 'yn.kane_idle' }, { if: 'yn_shimo_heard', scene: 'yn.complaint_start' }, { scene: 'yn.kane' }] },
       { id: 'yn_zenroku', x: 11, y: 4, dir: 'left', if: '!yn_done', talk: [{ if: 'yn_complaint_done', scene: 'yn.zenroku_idle' }, { scene: 'yn.zenroku' }] },
+      // Tsuneji, back with his egg for the ridge folk (yn.egg_tsuneji walks him here from the riverbank; RBN-QA-120)
+      { id: 'yn_tsuneji', x: 9, y: 7, dir: 'right', if: 'yn_egg_tsuneji&!yn_done', talk: 'yn.tsuneji' },
     ],
     onEnter: [{ scene: 'yn.shimo_first', if: '!yn_shimo_seen' }],
   });
