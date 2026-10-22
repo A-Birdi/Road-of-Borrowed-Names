@@ -7,6 +7,7 @@ RB.game = (function () {
   const G = {
     s: null,              // current campaign state (JSON)
     modes: [],            // mode stack, top = active
+    modeBy: [],           // who holds each entry of the stack (modeBy[i] holds modes[i]; most have no holder)
     settings: null,       // global settings
     ff: false,            // fast-forward seen dialogue
     running: false,
@@ -75,18 +76,25 @@ RB.game = (function () {
     if (typeof document !== 'undefined' && document.body) document.body.dataset.mode = mode();
     if (RB.bus && RB.bus.emit) RB.bus.emit('mode:change', mode());
   }
-  function pushMode(m) {
+  // An entry may have a holder (a transition holds the entry it pushed, RBN-QA-102, Agnes 6342104644): popMode with a
+  // holder removes that holder's entry only, never another's of the same name; without one, the topmost of the name.
+  function pushMode(m, by) {
+    G.modeBy.length = G.modes.length;
     G.modes.push(m);
+    G.modeBy.push(by);
     RB.input.clearHeld();
     syncMode();
   }
-  function popMode(m) {
-    const i = G.modes.lastIndexOf(m);
-    if (i >= 0) G.modes.splice(i, 1);
+  function popMode(m, by) {
+    G.modeBy.length = G.modes.length;
+    let i = G.modes.length - 1;
+    while (i >= 0 && !(G.modes[i] === m && (by === undefined || G.modeBy[i] === by))) i--;
+    if (i >= 0) { G.modes.splice(i, 1); G.modeBy.splice(i, 1); }
     syncMode();
   }
   function setBase(m) {
     G.modes = [m];
+    G.modeBy = [undefined];
     syncMode();
   }
 
@@ -354,7 +362,7 @@ RB.game = (function () {
     const tok = ++transTok, s0 = G.s;
     const mine = () => tok === transTok && G.s === s0;
     opts = opts || {};
-    pushMode('transition');
+    pushMode('transition', 'transition:' + tok);
     try {
       RB.audio && RB.audio.sfx('door', { vol: 0.5 });
       await RB.ui.fade(true, reducedMotion() ? 80 : 220);
@@ -380,9 +388,9 @@ RB.game = (function () {
         RB.ui.placeName(def.name);
       }
     } finally {
-      // its own mode goes while its journey is still the one here (unchanged, or kept when a load was cancelled); a
-      // journey loaded or begun meanwhile set its modes afresh, and its own next transition is never cleared from here
-      if (G.s === s0) popMode('transition');
+      // it takes away its own mode entry only: kept with the journey when a load was cancelled, gone when a journey loaded
+      // or begun meanwhile set its modes afresh; a newer transition's entry is never removed from here
+      popMode('transition', 'transition:' + tok);
       if (tok === transTok) transitioning = false;
     }
     if (!mine()) return;

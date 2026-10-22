@@ -26,7 +26,11 @@
 //  11. a load after the door has been taken: the door's own name and checkpoint, then the saved journey as saved;
 //  12. loads again and again: inside one door's fade out, then inside the next door's fade back in, then a door taken
 //      with no load: each load as saved, and the last door taken in full (Local CL-198);
-//  13. no page errors.
+//  13. a journey loaded inside a door's fade out, then a new door taken before the old door's fade has settled: when
+//      the old one settles, the new door's own mode is still there (the old takes away only its own), and the new door
+//      is taken in full (Agnes 6342104644);
+//  14. the same after a load cancelled at the "another tab" question: the old door's entry goes, the new door's stays;
+//  15. no page errors.
 import { serve, launch, page } from './lib.mjs';
 
 const { srv, url } = await serve();
@@ -227,8 +231,19 @@ async function doorSetup(p, o) {
   await hold(p, Object.assign({ delay: 1 }, o));
   await p.evaluate(() => {
     const f = RB.ui.fade; window.__slow = 0;
-    // __slow = 1 or 'out' holds the next fade out 1.5 s after it ends; 'in', the next fade back in
-    RB.ui.fade = function (out) { const r = f.apply(this, arguments); if (window.__slow && (window.__slow === 'in' ? !out : out)) { window.__slow = 0; return r.then(() => new Promise((res) => setTimeout(res, 1500))); } return r; };
+    // __slow = 1 or 'out' holds the next fade out __slowMs (1.5 s) after it ends; 'in', the next fade back in. Each
+    // held fade is listed in __held, marked done as it settles.
+    window.__held = [];
+    RB.ui.fade = function (out) {
+      const r = f.apply(this, arguments);
+      if (window.__slow && (window.__slow === 'in' ? !out : out)) {
+        window.__slow = 0;
+        const h = { out, done: false }, ms = window.__slowMs || 1500;
+        window.__held.push(h);
+        return r.then(() => new Promise((res) => setTimeout(() => { h.done = true; res(); }, ms)));
+      }
+      return r;
+    };
     const d = RB.content.maps['cr.leg5'].spawn.default;
     window.__door = () => RB.game.transition('cr.leg5', d[0], d[1], d[2] || 'right');
   });
@@ -321,6 +336,28 @@ const asSaved = (st) => st.map === 'cr.umagaeshi' && !st.named && st.cp !== 'cr.
   const L = await p.evaluate(() => window.__log), last = await doorState(p);
   ok(L.results.length === 2 && L.results.every((x) => x === true) && asSaved(one) && asSaved(two) && w && last.map === 'cr.leg5' && last.named && last.cp === 'cr.leg5' && JSON.stringify(last.modes) === '["world"]' && !last.dark,
     'loads again and again (inside one door\'s fade out, then inside the next door\'s fade back in): each journey as saved; then a door with no load is taken in full, named and checkpointed, the modes the journey\'s own (' + JSON.stringify({ L, one, two, walks: w, last }) + ')');
+  allErrors.push(...errors); await p.close();
+}
+
+// 13–14. a new door taken before the old door's held fade has settled, after a load (replaced, or cancelled)
+for (const cancel of [false, true]) {
+  const { p, errors } = await page(b, url);
+  await doorSetup(p, cancel ? { busy: true } : {});
+  await p.evaluate(() => { window.__slow = 1; window.__door(); });
+  await p.waitForTimeout(150);
+  await p.evaluate(() => { window.__load(); });
+  let asked = false;
+  await whileLoading(p, async (st) => { if (cancel && st.q) { asked = true; await click(p, /^Cancel$/); } });
+  const before = await p.evaluate(() => ({ oldDone: window.__held[0].done, modes: RB.game.G.modes.slice() }));
+  await p.evaluate(() => { window.__slowMs = 3000; window.__slow = 1; window.__door(); });
+  for (let i = 0; i < 40 && !(await p.evaluate(() => window.__held[0].done)); i++) await p.waitForTimeout(100);
+  await p.waitForTimeout(150);
+  const mid = await doorState(p), newOpen = await p.evaluate(() => !!window.__held[1] && !window.__held[1].done);
+  for (let i = 0; i < 60 && !(await p.evaluate(() => !!window.__held[1] && window.__held[1].done)); i++) await p.waitForTimeout(100);
+  await p.waitForTimeout(1000);
+  const L = await p.evaluate(() => window.__log), end = await doorState(p);
+  ok((!cancel || asked) && L.results.length === 1 && L.results[0] === !cancel && !before.oldDone && newOpen && JSON.stringify(mid.modes) === '["world","transition"]' && end.map === 'cr.leg5' && end.named && end.cp === 'cr.leg5' && JSON.stringify(end.modes) === '["world"]' && !end.dark && !end.veiled,
+    (cancel ? 'a load cancelled' : 'a journey loaded') + ' inside a door\'s fade out, then a new door taken before the old door\'s fade has settled: as the old one settles the new door\'s mode is still there, and the new door is taken in full, named and checkpointed, the modes the journey\'s own (' + JSON.stringify({ asked, L, before, mid, newOpen, end }) + ')');
   allErrors.push(...errors); await p.close();
 }
 
