@@ -240,6 +240,24 @@ export const SPECS = {
       { name: 'Suzu', comp: 'suzu', shots: ['stone', 'north'] },
     ],
   },
+  'ko.tide_night': {
+    edition: ED,
+    // the calendar stone in the tide pools (prop ko_tidestone 29,3, scene ko.tidestone; Koyomi beside it at 30,5): you
+    // below it facing up, the moon stones set and the ring whole (quest.ko_tide 2); the stone calls ko.tide_ring, whose
+    // next-tide challenge passes and calls this scene (RBN-QA-089). The night on the point is the pictures': the world
+    // stays as it is
+    scene: 'ko.tide_night', at: ['ko.tidepools', 29, 4, 'up'], flags: F(KO, { ko_lowtide: true }), quests: { ko_tide: 2 },
+    // Koyomi on the point with you in the pictures, and where she stands when the world returns
+    stay: ['ko_koyomi'],
+    reach: [{ to: 'ko.shore', why: 'out of the tide pools to the shore' }],
+    facts: [{ shot: 'point', cond: 'quest.ko_tide=2', why: 'the ring whole and the next spring tide read: the night on the point is that tide\'s' }],
+    runs: [
+      { name: 'Mio · the cat with you', comp: 'mio', pet: 'cat', shots: ['point', 'rise'], flagsAfter: { ko_tide_night: true }, quick: true },
+      { name: 'Nao · the dog with you', comp: 'nao', pet: 'dog', shots: ['point', 'rise'], flagsAfter: { ko_tide_night: true } },
+      { name: 'Ren · the tanuki met, hidden by the setting', comp: 'ren', pet: 'tanuki', petHidden: true, shots: ['point', 'rise'] },
+      { name: 'Suzu', comp: 'suzu', shots: ['point', 'rise'] },
+    ],
+  },
   'as.festival': {
     edition: ED,
     // Mitsue at her board-side place (slot 1, pinned while quest.as_main=3): "Begin the festival" in as.fest_prep

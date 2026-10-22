@@ -11,6 +11,11 @@
  *           behind them, on the island's crown, the great tree breathing, leaves falling slowly
  *   north   she looks north: over the island's shoulder and the strait the far mountains, and high up among them a
  *           pale point; a few leaves like torn pages drifting from that way
+ * ko.tide_night — the Tide Calendar's end, the spring-tide night on the point (`ko.tide_night`, called from the
+ *          calendar stone's ring in the tide pools; RBN-QA-089). The world stays as it is: the night is the picture's.
+ *   point  under the full moon the tide draws far out over a wide wet flat; the party small on the point's end from
+ *          behind, Koyomi a step ahead, looking out; written leaves lying on the flat
+ *   rise   the leaves lift one by one and rise toward the moon, and others after them
  * No letters, kana or kanji are drawn: the leaves carry a stroke or two of ink, never characters. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -295,6 +300,205 @@ var RB = (globalThis.RB = globalThis.RB || {});
   RB.sequence.define('ko.end', {
     title: { en: 'Leaves from the north', jp: '{北|きた} から {来|き}た {葉|は}' }, chapter: 'ko', scene: 'ko.end',
     shots: { stone, north },
+  });
+
+  // ==== ko.tide_night · the spring-tide night on the point (RBN-QA-089) =============================================
+  // Masses first: the night sky and the full moon, the sea drawn far out under it, the wide wet flat the tide leaves,
+  // and the point's dark rocks reaching into it from the left with two wind-bent pines; the party small on its end, from
+  // behind, looking out (Koyomi a step ahead). Detail last and little of it: the moon's road on the water, the leaves
+  // lying on the flat. Moonlight comes from the upper right: cool and pale on the rocks' right faces and the figures'
+  // right sides, the rest in shade. Nothing here is a clock or a tide table: the picture is the night the scene tells.
+  const MOONLIT = { mul: [0.5, 0.56, 0.78], add: [2, 6, 22], rim: { side: 'r', col: '#dfe8ff', k: [0.42, 0.18], below: 0.85 } };
+  function geomTide(w, h, vb) {
+    const S = stage(w, h, vb), narrow = S.lay === 'narrow', V = S.vb;
+    // the horizon, the far water's edge once the tide is out, the near edge of the flat, the point's tip
+    const hz = Math.round(V * 0.36), far = Math.round(V * 0.46), near = Math.round(V * 0.92);
+    const tipX = Math.round(w * (narrow ? 0.5 : 0.4)), tipY = Math.round(V * 0.7);
+    return Object.assign(S, { narrow, hz, far, near, tipX, tipY, slope: narrow ? 0.55 : 1.1,
+      moon: { x: Math.round(w * (narrow ? 0.72 : 0.7)), y: Math.round(V * (narrow ? 0.18 : 0.15)), r: Math.max(6, S.s(narrow ? 15 : 13)) } });
+  }
+  // where the point's rock meets the flat at row y (below its tip the shore runs back toward us and to the left)
+  const shoreX = (G, y) => G.tipX - Math.max(0, y - G.tipY) * G.slope + Math.round(Math.sin(y / G.s(5)) * G.s(1.5));
+  // the point's upper edge at x (left of its tip): rising toward the left edge, a few rock steps along it
+  function pointTop(G, x) {
+    const u = clamp(x / G.tipX, 0, 1);
+    return G.tipY - (1 - u) * (1 - u) * G.vb * 0.2 - Math.round(Math.sin(x / G.s(9)) * G.s(1.5)) - (((Math.floor(x / G.s(14))) % 3) === 0 ? G.s(2) : 0);
+  }
+  function tideStatic(G) {
+    return cached('ko.tide_night|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+      const { w, h, s, hz, far, moon } = G, p = P();
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      Q.bandsIn(g, 0, 0, w, hz + 1, ['#060918', '#090e22', '#0c142c', '#111a36', '#162040', '#1c2848'], 0.45);
+      SP.stars(g, 0, 0, w, Math.round(hz * 0.85), Math.round(70 * G.Z), 61, 9);
+      // the full moon: its light round it, then the disc, a little shaded at its lower left, with a few grey seas
+      SP.glow(g, moon.x, moon.y, moon.r * 5, '200,212,255', 0.22);
+      SP.glow(g, moon.x, moon.y, moon.r * 2.4, '226,232,255', 0.35);
+      const mr = moon.r;
+      for (let j = -mr; j <= mr; j++) for (let i = -mr; i <= mr; i++) {
+        const d = Math.hypot(i, j) / mr;
+        if (d > 1) continue;
+        const sea = (Math.hypot(i + mr * 0.25, j + mr * 0.2) < mr * 0.32) || (Math.hypot(i - mr * 0.3, j + mr * 0.05) < mr * 0.22) || (Math.hypot(i + mr * 0.05, j - mr * 0.4) < mr * 0.2);
+        const shade = (i + j) / mr > 0.55 && d > 0.7;
+        g.fillStyle = sea ? (shade ? '#b4bcc8' : '#c8ced8') : (shade ? '#dce0e8' : d > 0.88 ? '#e8ecf2' : '#f4f6fa');
+        g.fillRect(moon.x + i, moon.y + j, 1, 1);
+      }
+      const L = SP.layer(w, h);
+      // the sea drawn far out: ripple bands, the moon's road down it
+      const sea = p.mat('#24345a', { n: 7, at: 3, step: 0.07 });
+      const road = (x, y) => clamp(1 - Math.abs(x - moon.x) / (s(8) + (y - hz) * 1.4), 0, 1);
+      SP.water(L, 0, hz + 1, w, far, sea, { band: Math.max(2, s(3)), deep: 0.3, seed: 41, lit: (x, y) => road(x, y) * 0.3 });
+      // the flat the tide leaves: wet sand, quiet; the moon's road lying on it where it is wettest, sand ripples faint
+      const sand = p.mat('#3c4660', { n: 7, at: 3, step: 0.07 });
+      // two wet channels winding out across the flat from under the point toward the far water, darker, a lit lip
+      const chan = [[G.tipX - s(10), w * 0.62, 0.3], [G.tipX + s(30), w * 0.86, 1.7]];
+      const inChan = (x, y) => {
+        if (y > G.near) return 0;
+        const u = clamp((y - far) / (G.near - far), 0, 1);
+        for (const [x0, x1, ph] of chan) {
+          const cx = lerp(x1, x0, u) + Math.sin(u * 7 + ph) * s(10), hw = (s(1.5) + u * s(5)) * Math.min(1, (1 - u) * 6), d = x - cx;
+          if (Math.abs(d) < hw) return d < -hw + 1.2 ? 2 : 1; // (its far lip, toward the moon, lit)
+        }
+        return 0;
+      };
+      L.fill(0, far, w, h, () => true, sand, (x, y) => {
+        const d = (y - far) / (h - far);
+        const ripRow = ((Math.round(y * 2 + Math.sin(x / s(11)) * s(3)) % Math.max(4, s(6))) === 0);
+        // the moon's road on the wet sand: broken, caught only on the ripples' crests
+        const wet = road(x, y) * (1 - d) * (ripRow ? 0.22 : 0.05);
+        const c = inChan(x, y), ch = c === 1 ? -0.1 : c === 2 ? 0.08 : 0;
+        return clamp(0.36 + d * 0.1 + (ripRow ? 0.05 : 0) + wet + ch + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999);
+      });
+      // a few pools left on the flat, holding the sky
+      const pool = p.mat('#2a3a62', { n: 5, at: 2, step: 0.08 }), rp = p.rnd(43);
+      for (let i = 0; i < 6; i++) {
+        const px = Math.round(G.tipX + s(8) + rp() * (w - G.tipX - s(8))), py = Math.round(lerp(far + s(8), G.near - s(4), rp())), rw = s(8 + rp() * 14);
+        L.ell(px, py, rw, Math.max(1, Math.round(rw * 0.22)), pool, (x) => clamp(0.45 + road(x, py) * 0.4, 0.02, 0.999));
+      }
+      // the point: dark rock from the left edge out to its tip, its right faces taking the moon
+      const rock = p.mat('#323848', { n: 7, at: 3, step: 0.09 });
+      L.fill(0, 0, G.tipX + s(4), h, (x, y) => y >= pointTop(G, x) && x <= shoreX(G, y), rock, (x, y) => {
+        const top = pointTop(G, x), face = y - top, side = shoreX(G, y) - x;
+        // its top and its seaward side take the moon; ledges across the face; darker into the land
+        const lit = face < s(2.5) ? 0.34 : side < s(2.5) ? 0.4 : side < s(7) ? 0.2 : 0;
+        const ledge = ((Math.round(y - top * 0.5 + x * 0.25) % Math.max(6, s(11))) === 0) ? 0.12 : 0;
+        return clamp(0.3 + lit + ledge - (face / h) * 0.3 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999);
+      });
+      // boulders fallen at the point's foot, lit on their seaward side
+      const rb = p.rnd(29);
+      for (let i = 0; i < 7; i++) {
+        const by = Math.round(lerp(G.tipY + s(6), G.near, rb())), bx = Math.round(shoreX(G, by) + s(2) + rb() * s(10)), br = s(2 + rb() * 4);
+        L.ell(bx, by, br, Math.max(1, Math.round(br * 0.65)), rock, (x, y) => clamp((x > bx ? 0.62 : 0.36) + (y < by - br * 0.3 ? 0.14 : 0), 0.02, 0.999));
+      }
+      // two pines on the point, bent by the wind off the sea, dark against the sky
+      const bark = p.mat('#1c1a1e', { n: 4, at: 2, step: 0.06 }), pine = p.mat('#16202a', { n: 5, at: 2, step: 0.06 });
+      for (const [fx, ht, lean, seed] of [[0.07, 54, -1, 5], [0.17, 38, -1, 6]]) {
+        const tx = Math.round(w * fx), ty = Math.round(pointTop(G, tx)), H = s(ht);
+        L.path([[tx, ty, s(4)], [tx + lean * s(6), ty - H * 0.5, s(3)], [tx + lean * s(14), ty - H, s(2)]], s(3), bark, 0.4);
+        SP.crown(L, tx + lean * s(18), ty - H - s(2), s(ht * 0.5), s(10), pine, { n: 6, seed });
+        SP.crown(L, tx + lean * s(8), ty - H * 0.6, s(ht * 0.34), s(7), pine, { n: 4, seed: seed + 10 });
+      }
+      L.outline();
+      g.drawImage(L.canvas(), 0, 0);
+      return { cv };
+    });
+  }
+  // the leaves on the flat: where each lies, its size, how it lies, and when it lifts and how long it takes to rise
+  function tideLeaves(G) {
+    return Q.small('ko.tide_leaves|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+      const rnd = P().rnd(53), out = [];
+      for (let i = 0; i < 22; i++) {
+        const y = lerp(G.far + G.s(10), G.near - G.s(6), rnd() ** 0.8), x = lerp(G.tipX + G.s(14), G.w - G.s(6), rnd());
+        const d = (y - G.far) / (G.near - G.far);
+        out.push({ x, y, len: Math.max(3, Math.round(G.s(3 + d * 4))), ang: rnd() * 3.14, seed: i * 17 + 3,
+          delay: Math.round(i * 60 + rnd() * 200), rise: 7000 + rnd() * 5000, rest: rnd(), sway: rnd() * 6.28 });
+      }
+      return out;
+    });
+  }
+  // a leaf rising from where it lay toward the moon: q 0 lying … 1 high under the moon (and gone)
+  function riseAt(G, L0, q) {
+    const e = ease(clamp(q * 1.15, 0, 1));
+    const x = lerp(L0.x, G.moon.x + (L0.x - G.moon.x) * 0.25, e) + Math.sin(q * 9 + L0.sway) * G.s(6) * Math.min(1, q * 4);
+    const y = lerp(L0.y, G.moon.y + G.moon.r * 3, e);
+    return { x: Math.round(x), y: Math.round(y), len: Math.max(2, Math.round(L0.len * (1 - e * 0.55))), a: q < 0.85 ? 1 : clamp((1 - q) / 0.15, 0, 1) };
+  }
+  // the party on the point's end, from behind, looking out to sea: Koyomi a step ahead, you and your companion
+  function tideParty(c, G, st) {
+    const sc = clamp(0.5 * G.Z, 0.3, 0.6), ko = (RB.content.chars.ko_koyomi || {}).look;
+    const shadow = (x, y) => { c.fillStyle = 'rgba(6,8,16,0.4)'; P().disc(c, x, y, G.s(6), Math.max(1, G.s(1.5))); };
+    const at = (dx) => { const x = G.tipX - G.s(dx); return [x, Math.round(pointTop(G, x)) + 1]; };
+    const people = [[at(6), ko], [at(22), st.cast.pc]];
+    if (st.cast.comp) people.push([at(36), st.cast.comp.look]);
+    for (const [[x, y], look] of people.reverse()) {
+      const f = Q.figure(look, 'up', 'i0', sc, MOONLIT);
+      if (!f) continue;
+      shadow(x, y);
+      c.drawImage(f.cv, x - f.ax, y - f.ay);
+    }
+  }
+  function partyBox(G) {
+    const sc = clamp(0.5 * G.Z, 0.3, 0.6), x0 = G.tipX - G.s(36) - Math.round(14 * sc), x1 = G.tipX - G.s(6) + Math.round(14 * sc);
+    const y1 = Math.round(pointTop(G, G.tipX - G.s(6))) + 2, y0 = Math.round(pointTop(G, G.tipX - G.s(36))) - Math.round(58 * sc);
+    return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+  }
+  const point = {
+    phases: [['ebb', 1400]],
+    safe: { wide: 'the moon, the point and the party on it, above the sheet', narrow: 'the moon and the party in the upper half', land: 'the party on the point' },
+    draw(c, w, h, t, st) {
+      const G = geomTide(w, h, st.vb), { s } = G;
+      c.drawImage(tideStatic(G).cv, 0, 0);
+      // the tide drawing out: a sheet of shallow water over the flat whose edge goes out from near the point to the far
+      // water (Reduce motion: out at once)
+      const k = ease(st.at('ebb')), edge = Math.round(lerp(G.tipY + s(6), G.far, k));
+      if (edge > G.far + 1) {
+        for (let y = G.far; y < edge; y++) {
+          const dd = (y - G.far) / Math.max(1, edge - G.far);
+          c.fillStyle = 'rgba(40,58,98,' + (0.55 - dd * 0.25).toFixed(2) + ')';
+          c.fillRect(G.tipX, y, w - G.tipX, 1);
+        }
+        c.fillStyle = 'rgba(190,204,232,0.55)';
+        for (let x = G.tipX; x < w; x += 2) if (((x >> 2) + (edge >> 1)) % 3) c.fillRect(x, edge + (((x >> 3) % 2) ? 0 : -1), 2, 1);
+      }
+      SP.glints(c, G.moon.x - s(14), G.hz + 2, s(28), G.far - G.hz - 2, t, 16, 71, '226,234,255', st.still);
+      // the leaves lying on the flat, faintly lit
+      for (const L0 of tideLeaves(G)) {
+        if (L0.y < edge) continue;
+        SP.glow(c, L0.x, L0.y, L0.len + 2, '240,228,170', 0.1);
+        RB.firstSightArt.goldLeaf(c, L0.x, L0.y, L0.len, L0.ang, 0.9, L0.seed, h);
+      }
+      tideParty(c, G, st);
+    },
+    focus(w, h, vb) { return partyBox(geomTide(w, h, vb)); },
+  };
+  const rise = {
+    phases: [['lift', 1600]],
+    safe: { wide: 'the leaves rising toward the moon over the party, above the sheet', narrow: 'the leaves and the moon in the upper half', land: 'the leaves and the moon' },
+    draw(c, w, h, t, st) {
+      const G = geomTide(w, h, st.vb), { s } = G;
+      c.drawImage(tideStatic(G).cv, 0, 0);
+      SP.glints(c, G.moon.x - s(14), G.hz + 2, s(28), G.far - G.hz - 2, t, 16, 71, '226,234,255', st.still);
+      // one by one the leaves lift and rise toward the moon, and others after them (Reduce motion: held at their places
+      // along the way)
+      const since = st.still ? 0 : st.since, still = st.still || st.review;
+      for (const L0 of tideLeaves(G)) {
+        let q = still ? (L0.rest * 0.9) : (since - L0.delay) / L0.rise;
+        if (!still && q > 1) q = q % 1;
+        if (q <= 0) { RB.firstSightArt.goldLeaf(c, L0.x, L0.y, L0.len, L0.ang, 0.9, L0.seed, h); continue; }
+        const r = riseAt(G, L0, q);
+        if (r.a <= 0) continue;
+        c.globalAlpha = r.a;
+        SP.glow(c, r.x, r.y, r.len + 3, '244,232,176', 0.18);
+        RB.firstSightArt.goldLeaf(c, r.x, r.y, r.len, L0.ang + q * 6, 0.35 + 0.6 * Math.abs(Math.sin(q * 7 + L0.sway)), L0.seed, h);
+        c.globalAlpha = 1;
+      }
+      tideParty(c, G, st);
+    },
+    focus(w, h, vb) { const G = geomTide(w, h, vb), b = partyBox(G), y0 = G.moon.y - G.moon.r; return { x: Math.min(b.x, G.tipX), y: y0, w: Math.max(b.x + b.w, G.moon.x + G.moon.r) - Math.min(b.x, G.tipX), h: b.y + b.h - y0 }; },
+  };
+  RB.sequence.define('ko.tide_night', {
+    title: { en: 'The spring-tide night', jp: '{大潮|おおしお} の {夜|よる}' }, chapter: 'ko', scene: 'ko.tide_night',
+    shots: { point, rise },
   });
 
   // The leaves coming down, for the island's first sight on landing (src/ui/42g_interlude_firstsight.js, RBN-QA-073),
