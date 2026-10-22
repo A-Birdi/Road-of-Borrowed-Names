@@ -16,6 +16,13 @@
 // - every companion's own lines and gestures (Nao, Mio, Ren, Suzu) play; no page errors, no network requests;
 // - a battle that takes the screen from the picture draws itself, not the picture, and a campaign change (back to the
 //   title) leaves no picture behind.
+// On "heaves" the swell is compared with the open water beside it, taken as the median of a fixed grid of pixels
+// (measure(), below), not one point: the still water's shimmer dashes drift and pulse with the render clock, and one
+// passing over a single point made it read as bright as the swell (CC-020's 68/1; Local CL-219, Agnes 6350671939).
+// Controls for reviewing that check (each changes only this test's run, never the game):
+//   RB_KEEPER_FLAT=1     the swell flattened (the open water beside it copied over its box as it is drawn): the swell
+//                        check must fail;
+//   RB_KEEPER_WAIT=<ms>  the scene started that much later (the render clock's phase shifted against the sample).
 // Usage: node tests/e2e/keeper_reveal.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -30,8 +37,9 @@ const FL = { rw_arrived: true, departed: true, ch1_done: true, ch2_done: true, c
 const WANT = [[/heaves upwards/, 'heave'], [/Pipes twist together/, 'rise'], [/You must not ring it/, 'rise'], [/comes apart/, 'apart'], [/loosen and fall/, 'loosen']];
 
 // set up the moment and start the scene; o.noPictures: the same scene with the pictures switched off (the state check)
+const CONTROL = { flat: process.env.RB_KEEPER_FLAT === '1', wait: +(process.env.RB_KEEPER_WAIT || 0) };
 async function begin(p, comp, reduce, o) {
-  return p.evaluate(async ([FL, comp, reduce, o]) => {
+  return p.evaluate(async ([FL, comp, reduce, o, CONTROL]) => {
     RB.game.settings.textSpeed = 'instant'; RB.game.settings.reducedMotion = reduce; RB.game.applySettings();
     const s = RB.game.debugStart('lf.bellhall', 8, 5, { comp, flags: FL, dir: 'down' });
     s.quests.lf_main = { stage: 7, done: false, t: 1 };
@@ -62,14 +70,36 @@ async function begin(p, comp, reduce, o) {
       RB.test.enable({ battle: 'unravel' });
       try { const r = await sb.apply(this, arguments); log.push({ t: 'won', r }); return r; } finally { RB.test.disable(); }
     };
+    // (the controls: the swell flattened as it is drawn; the scene started later)
+    if (CONTROL.flat) {
+      const A = RB.interlude.ART.lf_keeper, draw0 = A.draw;
+      A.draw = function (c, w, h, t, st) {
+        const r = draw0.apply(this, arguments);
+        const pr = A.probe && A.probe();
+        if (pr && st && st.stage === 'heave') {
+          const sx = Math.min(pr.w - 2 - 18, pr.swell.x + pr.swell.w + 4), sw = Math.max(1, Math.min(18, pr.w - 2 - sx));
+          for (let x = pr.swell.x; x < pr.swell.x + pr.swell.w; x += sw) c.drawImage(c.canvas, sx, pr.swell.y, sw, pr.swell.h, x, pr.swell.y, sw, pr.swell.h);
+        }
+        return r;
+      };
+    }
+    if (CONTROL.wait) await new Promise((r) => setTimeout(r, CONTROL.wait));
     window.__done = false; window.__err = null;
     RB.script.run('lf.boss_intro').then(() => { window.__done = true; }, (e) => { window.__err = String(e); window.__done = true; });
     return before;
-  }, [FL, comp, reduce, o || {}]);
+  }, [FL, comp, reduce, o || {}, CONTROL]);
 }
 const nextLine = (p, last) => p.waitForFunction((last) => { const l = RB.ui.dialogue.shown && RB.ui.dialogue.shown(); if (l && RB.ui.dialogue.isOpen() && (l.en || '') !== last) return l.en; return window.__done ? '__done' : false; }, last, { timeout: 60000, polling: 50 }).then((h) => h.jsonValue(), () => '__timeout');
 // the picture's probe against the dialogue sheet as the page lays it out (CSS px), and the colour on screen at the
-// keeper's sluice plate, over the swell and on the open water beside it (to its right, away from your lamp); at the
+// keeper's sluice plate, over the swell and on the open water beside it (to its right, away from your lamp). The open
+// water is a grid of single pixels (`grid`), 6 columns by 5 rows, 3 picture px apart, its first column 14 px right of
+// the swell's right edge (the single point this test read before, still reported as `open`) and its middle row at the
+// height the swell is read; it is fixed by the probe alone, never by what a frame shows. Why it stands for the water's
+// own colour: the shimmer dashes are 1 px tall and 2-12 px long (43e_seq_ch5.js, stillWater), so one dash covers at most
+// one row and four columns (4 of 30 pixels) and the median moves only if about four bright dashes lie in this 16 x 13 px
+// patch at once; it is right of the swell, away from your lamp's reflection (at the left, G.lx); the swell's rings are
+// drawn only while it rises (k < 1) and are gone when it is read, 1.9 s after the line, and the grid is clear of the
+// swell's own box. At the
 // plate also the brightest brass within 2 px of it (plateNear): the keeper's idle frames move it by a pixel or two, and
 // on one of them the point itself is on the plate's shaded rim (85,55,32: still the plate, just too dark for brass)
 const measure = (p) => p.evaluate(() => {
@@ -80,10 +110,17 @@ const measure = (p) => p.evaluate(() => {
   const at = (x, y) => { const d = g.getImageData(Math.round(x * kx) - 1, Math.round(y * ky) - 1, 3, 3).data; let r = 0, gg = 0, bb = 0; for (let i = 0; i < d.length; i += 4) { r += d[i]; gg += d[i + 1]; bb += d[i + 2]; } return [r / 9, gg / 9, bb / 9].map(Math.round); };
   const near = (x, y, R) => { let m = null; for (let dy = -R; dy <= R; dy++) for (let dx = -R; dx <= R; dx++) { const d = g.getImageData(Math.round((x + dx) * kx), Math.round((y + dy) * ky), 1, 1).data; if (d[0] - d[2] > 40 && (!m || d[0] > m[0])) m = [d[0], d[1], d[2]]; } return m; };
   return { pr, sheet: dlg.getBoundingClientRect().top, css: { keeperTop: cr.top + pr.keeper.y * k, water: cr.top + pr.water * k, swellTop: cr.top + pr.swell.y * k, bellTop: cr.top + pr.bell.y * k, canvasTop: cr.top },
-    plate: at(pr.plate[0], pr.plate[1]), plateNear: near(pr.plate[0], pr.plate[1], 2), swell: at(pr.swell.x + pr.swell.w / 2, pr.water - Math.round(pr.swell.h * 0.45)), open: at(Math.min(pr.w - 6, pr.swell.x + pr.swell.w + 14), pr.water - Math.round(pr.swell.h * 0.45)) };
+    plate: at(pr.plate[0], pr.plate[1]), plateNear: near(pr.plate[0], pr.plate[1], 2), swell: at(pr.swell.x + pr.swell.w / 2, pr.water - Math.round(pr.swell.h * 0.45)), open: at(Math.min(pr.w - 6, pr.swell.x + pr.swell.w + 14), pr.water - Math.round(pr.swell.h * 0.45)),
+    grid: (() => {
+      const x0 = Math.min(pr.w - 2 - 15, pr.swell.x + pr.swell.w + 14), y0 = pr.water - Math.round(pr.swell.h * 0.45), out = [];
+      for (let j = -2; j <= 2; j++) for (let i = 0; i < 6; i++) { const d = g.getImageData(Math.floor((x0 + i * 3 + 0.5) * kx), Math.floor((y0 + j * 3 + 0.5) * ky), 1, 1).data; out.push([d[0], d[1], d[2]]); }
+      return { x0, y0, px: out };
+    })() };
 });
 const brass = (c) => !!c && c[0] > 90 && c[0] - c[2] > 40;
 const lum = (c) => (c ? c[0] * 0.3 + c[1] * 0.59 + c[2] * 0.11 : 0);
+// the open water's colour: the grid's pixel of median brightness
+const water = (g) => { if (!g || !g.px.length) return null; const s = g.px.slice().sort((a, b) => lum(a) - lum(b)); return s[(s.length - 1) >> 1]; };
 const frameOf = (p) => p.evaluate(() => document.getElementById('world').toDataURL());
 
 // the whole scene for one companion; returns what it saw
@@ -141,7 +178,7 @@ for (const [comp, W, H, reduce] of RUNS) {
   ok(compBefore.length === 1 && compBefore[0].stage === 'face', `${tag}: your companion's answer to it is said over the keeper (${compBefore.map((e) => e.stage || 'map').join(',') || 'no line'})`);
   const P = r.probes;
   const sw = P.heave, kp = P.rise, kf = P.face;
-  ok(!!(sw && sw.pr) && sw.css.swellTop < sw.sheet && sw.css.water <= sw.sheet + 0.5 && lum(sw.swell) > lum(sw.open) + 6 && !brass(sw.plate) && !brass(sw.plateNear), `${tag}: on "heaves" the water swells in front of the bell, above the sheet, no keeper yet${sw && sw.pr ? ` (water ${Math.round(sw.css.water)} / sheet ${Math.round(sw.sheet)}; swell ${sw.swell} vs open water ${sw.open})` : ' (no picture)'}`);
+  ok(!!(sw && sw.pr) && sw.css.swellTop < sw.sheet && sw.css.water <= sw.sheet + 0.5 && lum(sw.swell) > lum(water(sw.grid)) + 6 && !brass(sw.plate) && !brass(sw.plateNear), `${tag}: on "heaves" the water swells in front of the bell, above the sheet, no keeper yet${sw && sw.pr ? ` (water ${Math.round(sw.css.water)} / sheet ${Math.round(sw.sheet)}; swell ${sw.swell} vs open water ${water(sw.grid)}, the median of the grid at ${sw.grid.x0},${sw.grid.y0} of ${sw.pr.w}×${sw.pr.h}; the single point read before ${sw.open})` : ' (no picture)'}`);
   for (const [nm, m] of [['"Pipes twist together"', kp], ['your companion\'s answer', kf]]) {
     ok(!!(m && m.pr) && brass(m.plateNear) && m.css.keeperTop >= m.css.canvasTop - 0.5 && m.css.water <= m.sheet + 0.5, `${tag}: on ${nm} the keeper stands in the water, its sluice plate on screen, crown to water above the dialogue sheet${m && m.pr ? ` (keeper ${Math.round(m.css.keeperTop)}–${Math.round(m.css.water)}, sheet ${Math.round(m.sheet)}, plate ${m.plate}, brightest within 2 px ${m.plateNear})` : ' (no picture)'}`);
   }
