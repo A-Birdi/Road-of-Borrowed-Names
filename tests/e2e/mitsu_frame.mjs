@@ -6,9 +6,10 @@
 // and the Mitsu ending leaves a note to self ("Decided to take Kihei's leaf to Mitsu at the lodging house."). In
 // Chromium on the built game:
 //  1. the three endings from the real trigger (Kihei in the tide pools): in each, Kihei is there for his last line;
-//     in the Mitsu and wind endings he is no longer standing there for the narration that says he has gone, and is
-//     gone after; in the kept ending he stays; the note only in the Mitsu ending, once; "Not now" keeps the letter
-//     and leaves no note;
+//     in the Mitsu and wind endings, when the narration that says he has gone appears, no figure of his is drawn
+//     anywhere (standing, walked in or going: he is gone where he stood, leave 'here'), read normally and with "Skip
+//     seen" pressed after the choice; in the kept ending he stays; the note only in the Mitsu ending, once; "Not now"
+//     keeps the letter and leaves no note;
 //  2. the lodging house after the choice: no frame until the handing-over, nothing at the back wall; Mitsu's talk is
 //     the handing-over; after it the frame is drawn at (3,7), it blocks that tile, and it is read from beside it (from
 //     the mat facing left, from above it, from its left); the way out from the mat still leads to the village;
@@ -38,8 +39,21 @@ async function start(p, o) {
     s.quests.ko_kihei = o.done ? { stage: 2, done: true, t: Date.now() } : { stage: 2, done: false, t: Date.now() };
     if (o.letter) s.inv.ko_kihei_letter = 1;
     if (o.seen) s.seen['ko.mitsu_letter'] = true;
-    RB.game.settings.textSpeed = 'instant'; RB.game.settings.suzuSpeech = 'standard';
+    if (o.seenChoose) s.seen['ko.kihei_choose'] = true;
+    RB.game.settings.textSpeed = 'instant'; RB.game.settings.suzuSpeech = 'standard'; RB.game.settings.skipSeen = true;
     RB.world.enter(o.map, o.x, o.y, o.dir, { fresh: true });
+    // every figure of Kihei's, here, walked in or going (and how visible), at the moment each line is shown
+    if (!window.__lineWrap) {
+      const say = RB.ui.dialogue.say;
+      RB.ui.dialogue.say = function (l) {
+        const W = RB.world.W, isK = (a) => a.id === 'ko_kihei' || (a.def && a.def.char === 'ko_kihei');
+        const figs = W.npcs.concat(W.extras, W.leavers).filter(isK).filter((a) => a.alpha == null || a.alpha > 0.02).map((a) => ({ at: [a.x, a.y], alpha: a.alpha == null ? 1 : +a.alpha.toFixed(2), leaving: W.leavers.includes(a) }));
+        window.__atLine.push({ en: l.en, figs, ff: RB.game.fastForward() });
+        return say.apply(this, arguments);
+      };
+      window.__lineWrap = true;
+    }
+    window.__atLine = [];
   }, [KO, o]);
   await p.waitForTimeout(800);
 }
@@ -102,29 +116,39 @@ const frame = (p) => p.evaluate(() => {
 });
 
 // ---- 1. the three endings, and "Not now", from the real trigger ---------------------------------------------------
-for (const [end, picks, comp] of [
+for (const [end, picks, comp, skip] of [
   ['Mitsu', [/Give it to Mitsu/, /Give it to her/], 'mio'],
   ['wind', [/on the wind/, /Send it\./], 'nao'],
   ['kept', [/Give it back to Kihei/, /Give it back\./], 'suzu'],
   ['not now', [/Not now/], 'ren'],
+  ['Mitsu, skipped', [/Give it to Mitsu/, /Give it to her/], 'ren', true],
+  ['wind, skipped', [/on the wind/, /Send it\./], 'suzu', true],
 ]) {
   const { p, errors } = await page(b, url);
-  await start(p, { map: 'ko.tidepools', x: 10, y: 19, dir: 'left', comp, letter: true });
-  const r = await play(p, picks);
+  await start(p, { map: 'ko.tidepools', x: 10, y: 19, dir: 'left', comp, letter: true, seenChoose: !!skip });
+  // (skipped: the scene seen before, and "Skip seen", the dialogue's own button, pressed at the first line after the
+  // choice; a choice always stops a skip)
+  let skipped = null;
+  const r = await play(p, picks, skip ? async (l) => {
+    if (skipped || !/^ko_kihei: …(Please|I'm late)/.test(l.d)) return false;
+    skipped = await p.evaluate(() => { const k = document.querySelector('.dlg .b-skip'); const vis = !!(k && k.offsetParent && !k.classList.contains('hidden')); if (vis) k.click(); return { vis, ff: RB.game.fastForward() }; });
+    return false;
+  } : null);
+  const atGone = await p.evaluate(() => window.__atLine.filter((x) => /footprints were gone|Kihei was gone too/.test(x.en || '')));
   await p.waitForTimeout(3500);
   const after = await p.evaluate(look), n = await notes(p), letter = await p.evaluate(() => RB.game.s.inv.ko_kihei_letter || 0);
-  if (end === 'Mitsu' || end === 'wind') {
-    const last = line(r, end === 'Mitsu' ? /^ko_kihei: …Please/ : /^ko_kihei: …I'm late, Hatsu/), gone = line(r, end === 'Mitsu' ? /footprints were gone/ : /Kihei was gone too/);
-    ok(last && last.kihei && last.kihei.join() === '9,19' && gone && !gone.kihei && !after.kihei && !after.leaving,
-      end + ' ending: Kihei stands there for his last line; for the line that says he has gone he is no longer standing there, and after it he is gone (' + JSON.stringify({ last: last && last.kihei, gone: gone && { kihei: gone.kihei, leaving: gone.leaving }, after: { kihei: after.kihei, leaving: after.leaving } }) + ')');
+  if (/^(Mitsu|wind)/.test(end)) {
+    const last = line(r, /^Mitsu/.test(end) ? /^ko_kihei: …Please/ : /^ko_kihei: …I'm late, Hatsu/);
+    ok(last && last.kihei && last.kihei.join() === '9,19' && atGone.length === 1 && atGone[0].figs.length === 0 && !after.kihei && !after.leaving && (!skip || (skipped && skipped.vis && atGone[0].ff)),
+      end + ' ending: Kihei stands there for his last line; when the line that says he has gone appears, no figure of his is drawn anywhere (here, walked in or going), and after it he is gone (' + JSON.stringify({ last: last && last.kihei, atGone, skipped, after: { kihei: after.kihei, leaving: after.leaving } }) + ')');
   } else if (end === 'kept') {
     const last = line(r, /^ko_kihei: …I should have said it myself/);
     ok(last && last.kihei && after.kihei && after.kihei.join() === '9,19' && !after.leaving, 'kept ending: Kihei stays by the pools (' + JSON.stringify({ last: last && last.kihei, after: after.kihei }) + ')');
   } else {
     ok(letter === 1 && after.kihei && after.kihei.join() === '9,19', 'Not now: the letter stays with you and Kihei waits (' + JSON.stringify({ letter, kihei: after.kihei }) + ')');
   }
-  ok(end === 'Mitsu' ? n.length === 1 && n[0] === '{宿|やど} の ミツ さん に 、 キヘイ の {葉|は} を {届|とど}ける こと に した 。' : n.length === 0,
-    end + ': ' + (end === 'Mitsu' ? 'one note to self, word for word' : 'no note about Mitsu') + ' (' + JSON.stringify(n) + ')');
+  ok(/^Mitsu/.test(end) ? n.length === 1 && n[0] === '{宿|やど} の ミツ さん に 、 キヘイ の {葉|は} を {届|とど}ける こと に した 。' : n.length === 0,
+    end + ': ' + (/^Mitsu/.test(end) ? 'one note to self, word for word' : 'no note about Mitsu') + ' (' + JSON.stringify(n) + ')');
   if (end === 'Mitsu') {
     // the note where notes are shown: the Journey's "Notes to self"
     await p.evaluate(() => RB.ui.menu.open('journal'));
