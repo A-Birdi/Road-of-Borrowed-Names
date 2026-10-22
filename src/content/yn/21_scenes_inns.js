@@ -174,7 +174,9 @@ narr: どの {湯|ゆ} に {入|はい}る ？ （この {後|あと} も 、 {�
 
 @scene yn.bath_scene
 # Every time you step into a bath: the bath itself (or a sentence, with the comfort setting on Summarised); the first
-# time anywhere, the companion's bath beat (yn.bath_beat).
+# time anywhere, the companion's bath beat (yn.bath_beat). On different sides of the bamboo partition the companion is
+# a voice from beyond it, never a figure brought to your side (RBN-QA-113; the names as speakers resolve, not "comp").
+?(yn_bath_apart) !speakerless nao mio ren suzu
 ?(bathview=shown) narr: {洗|あら}い{場|ば} で {腰掛|こしか}け に {座|すわ}り 、 {桶|おけ} で {湯|ゆ} を {浴|あ}びて から 、 {湯船|ゆぶね} に {入|はい}る 。 {手拭|てぬぐ}い は {畳|たた}んで {頭|あたま} の {上|うえ} 。 {熱|あつ}い {湯|ゆ} が 、 {肩|かた} まで {来|く}る 。 || You sit on a stool at the washing place, rinse off with a bucket, then step into the bath, towel folded on your head. Hot water up to your shoulders.
 ?(bathview=summarised) narr: {体|からだ} を {流|なが}して から 、 {湯|ゆ} に {浸|つ}かった 。 || You rinse off, then soak.
 ?(yn_bath_apart) narr: {竹|たけ} の {垣根|かきね} の {向|む}こう から 、 {聞|き}き{慣|な}れた {声|こえ} が する 。 || From beyond the bamboo partition comes a familiar voice.
