@@ -69,7 +69,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   M('ko.hall').npcs.push({ id: 'ko_ao_hall', char: 'ko_ao', x: 6, y: 8, dir: 'up', if: 'quest.ko_ao=1', talk: 'ko.ao_reads' });
 
   // Kihei at the tide pools once met (the wanderer, 33_creatures.js); gone if the letter went to Mitsu or the wind
-  M('ko.tidepools').npcs.push({ id: 'ko_kihei', x: 9, y: 19, dir: 'right', if: 'ko_kihei_met&!ko_kihei_mitsu&!ko_kihei_wind', talk: [
+  // (when the Mitsu or the wind ending sends him off he is gone where he stood, not walking away: leave 'here';
+  // RBN-QA-093)
+  M('ko.tidepools').npcs.push({ id: 'ko_kihei', x: 9, y: 19, dir: 'right', if: 'ko_kihei_met&!ko_kihei_mitsu&!ko_kihei_wind', leave: 'here', talk: [
     { if: 'ko_kihei_kept', scene: 'ko.kihei_kept' },
     { if: 'quest.ko_kihei=2', scene: 'ko.kihei_choose' },
     { if: 'quest.ko_kihei=1', scene: 'ko.kihei_found' },

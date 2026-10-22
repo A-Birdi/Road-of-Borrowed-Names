@@ -455,6 +455,9 @@ RB.world = (function () {
     if (!onScreen(a)) return;
     if (a.def && a.def.leave === 'here') {
       noteDeparture(a, { goals: new Set(), to: null, reason: 'authored: gone where they were' }, [], false);
+      // (passing over seen lines, an authored disappearance is over at once: nothing is left fading under the next
+      // line, which a skip shows only for a moment; RBN-QA-093)
+      if (RB.game.fastForward()) return;
       W.leavers.push(Object.assign({}, a, { mv: null, route: [], goals: null, alpha: 1, fading: true, wait: 0 }));
       return;
     }
