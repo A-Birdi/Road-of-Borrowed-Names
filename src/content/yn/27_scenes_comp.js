@@ -143,10 +143,18 @@ narr: {筧|かけい} から 、 また {湯|ゆ} が ポタン と {落|お}ち
 
 @scene yn.suzu_evening
 # Suzu's crossroads (S14): the troupe's show; Koume and the old act.
+# RBN-QA-124: the evening is the theatre's first sight (its daytime introduction never follows it); the show is at
+# night (the scene's own light); the house is packed while it lasts (the audience in yn/28_playhouse_audience.js, there
+# only while this scene runs); Koume comes over once the show ends, and the narration says what happened: she walked
+# over, or (if she could not reach you) she called out to you.
+!set yn_playhouse_seen
 !warp yn.playhouse 8 7 up
+!ambience night_in
 narr: {芝居小屋|しばいごや} は {満員|まんいん} だ 。 {尾根|おね} から {来|き}た {人|ひと} たち も 、 {土間|どま} に {座|すわ}って いる 。 || The little theatre is packed. The people from the ridge are sitting on the floor too.
 narr: {舞台|ぶたい} の コウメ が 、 {扇|おうぎ} を {落|お}とす {芸|げい} で {大笑|おおわら}い を {取|と}った 。 {客席|きゃくせき} の {一番|いちばん} {後|うし}ろ で 、 スズ が {小|ちい}さく {笑|わら}った 。 || On stage Koume gets a huge laugh with a dropped-fan routine. At the very back, Suzu laughs quietly.
-narr: {芝居|しばい} が {終|お}わる と 、 コウメ が {真|ま}っ{直|す}ぐ に {歩|ある}いて {来|き}た 。 || When the show ends, Koume walks straight over.
+!walkto yn_koume pc
+?(var._walked=1) narr: {芝居|しばい} が {終|お}わる と 、 コウメ が {真|ま}っ{直|す}ぐ に {歩|ある}いて {来|き}た 。 || When the show ends, Koume walks straight over.
+?(var._walked=0) narr: {芝居|しばい} が {終|お}わる と 、 コウメ が こちら に {声|こえ} を かけた 。 || When the show ends, Koume calls out to you.
 yn_koume: …… {手紙|てがみ} 、 {届|とど}いた よ 。 {雲路|くもじ} の {飛脚|ひきゃく} が 、 {一言一句|いちごんいっく} {変|か}えず に 、 って {言|い}って た 。 || …Your letter came. The Cloudroad's runner said, not one word changed.
 yn_koume: だから {来|き}た の 。 {峠|とうげ} を {越|こ}えて 。 …… スズ 、 {戻|もど}って {来|き}て 。 {二人|ふたり} の {芸|げい} 、 まだ {誰|だれ} も {代|か}わり が できない の 。 || That's why we came. Over the pass. …Suzu, come back. Our act, the two of us. Nobody's been able to take your place.
 yn_shinza: {座|ざ} の {席|せき} は 、 {空|あ}けて ある 。 {明日|あした} {出|で}る {時|とき} に 、 {一緒|いっしょ} に {来|く}れば いい 。 || Your place in the company is kept open. Come with us when we leave tomorrow.

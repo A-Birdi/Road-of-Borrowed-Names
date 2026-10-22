@@ -154,6 +154,11 @@ RB.script = (function () {
   function position() {
     return frames.slice().reverse().map((f) => ({ sceneId: f.sc.id, pc: f.pc, called: f.called }));
   }
+  // the condition head `scene.<id>`: true while that scene is being run (on its own or called) for this campaign. For
+  // the people a scene brings on only while it lasts, the audience of a show (RBN-QA-124): runtime only, never in a
+  // save, so a load, a new map, Skip or the scene's end takes them away at the next placing of people
+  const inScene = (id) => frames.some((f) => f.sc && f.sc.id === id);
+  if (RB.state && RB.state.addTerm) RB.state.addTerm('scene', (s, rest) => !!(RB.game && s === RB.game.s) && inScene(rest));
 
   async function run(sceneId, ctx) {
     const sc = RB.content.scenes[sceneId];
@@ -521,5 +526,5 @@ RB.script = (function () {
   // the world is behind an illustrated sequence's picture (src/ui/43_sequence.js)
   const hidden = () => !!(RB.sequence && RB.sequence.hidesWorld());
 
-  return { parse, add, run, runInline, isRunning, position, enVars, jpVars, splitBilingual, stageArgs };
+  return { parse, add, run, runInline, isRunning, inScene, position, enVars, jpVars, splitBilingual, stageArgs };
 })();

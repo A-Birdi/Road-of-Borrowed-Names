@@ -2969,6 +2969,12 @@
   "jp": "{芝居|しばい} が {終|お}わる と 、 コウメ が {真|ま}っ{直|す}ぐ に {歩|ある}いて {来|き}た 。",
   "en": "When the show ends, Koume walks straight over."
  },
+ "scene:yn.suzu_evening#1qpiur7": {
+  "status": "self-reviewed",
+  "ref": "RBN-QA-124 self-review, 2026-10-22 (Agnes 6351678399; Local CL-226): the narration when Koume could not reach you after the show (her walk over found no free place within 2, or ran out). Position-neutral, as agreed: こちら に 声 を かけた (she called out to you), never from the stage, since a walk that runs out can leave her midway; the original line (真っ直ぐに歩いて来た) plays only when she arrived. 芝居 read しばい, 終わる read おわる, 声 read こえ; checked against the lexicon and grammar notes",
+  "jp": "{芝居|しばい} が {終|お}わる と 、 コウメ が こちら に {声|こえ} を かけた 。",
+  "en": "When the show ends, Koume calls out to you."
+ },
  "scene:yn.suzu_evening#1tx6rug": {
   "status": "self-reviewed",
   "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
