@@ -209,6 +209,15 @@ const mioAfter = (p) => p.evaluate(() => {
 for (const pick of [/waiting/, /Call me/, 'skip']) {
   const { p, errors } = await page(b, url);
   await start(p, 'yn.lower', 20, 16, 'mio', { cr_done: true, ch10_done: true, yn_evening: true, yn_eve_started: true });
+  // where you are when "The dispensary door closes quietly behind you" is shown: already outside it (Local CL-200)
+  await p.evaluate(() => {
+    const say = RB.ui.dialogue.say;
+    window.__doorLine = null;
+    RB.ui.dialogue.say = function (l) {
+      if (!window.__doorLine && /dispensary door closes/.test((l && l.en) || '')) { const W = RB.world.W; window.__doorLine = { map: W.map.id, at: [W.player.x, W.player.y] }; }
+      return say.apply(this, arguments);
+    };
+  });
   if (pick === 'skip') {
     await p.evaluate(() => { RB.game.s.seen['yn.mio_evening'] = true; RB.game.settings.skipSeen = true; RB.game.applySettings(); RB.script.run('yn.mio_evening'); });
     let skipped = false;
@@ -224,6 +233,8 @@ for (const pick of [/waiting/, /Call me/, 'skip']) {
     ok(skipped, 'mio\'s night seen before: "Skip seen" offered and taken');
   } else await play(p, 'yn.mio_evening', [pick]);
   const a = await mioAfter(p);
+  const door = await p.evaluate(() => window.__doorLine);
+  if (pick !== 'skip' || door) ok(!!door && door.map === 'yn.lower' && door.at.join() === '8,25', 'mio\'s night, ' + (pick === 'skip' ? 'skipped' : String(pick)) + ': the door closing is told with you already outside it, at (8,25) (' + JSON.stringify(door) + ')');
   const label = pick === 'skip' ? 'passed over with Skip seen' : 'chose "' + pick.source + '"';
   ok(a.map === 'yn.lower' && a.at.join() === '8,25' && a.dir === 'down' && !a.others.length && a.mio === 0 && a.comp === null && a.away === 'mio' && a.night && a.apart && !a.run && a.mode === 'world',
     'mio\'s night, ' + label + ': you stand outside the dispensary\'s door (8,25, facing down) on nobody\'s tile; Mio away and unseen; the night\'s flags set (' + JSON.stringify(a) + ')');
