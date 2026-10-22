@@ -227,6 +227,18 @@ RB.world = (function () {
         } else if (behind) atOnce(b, true);
         else if (arriveOnFoot(b, onFoot)) onFoot++;
       }
+    } else {
+      // While the map is still appearing, someone with a new place was simply already there, but never as a second
+      // of someone already on the map: their figure here (one who was following you and stays behind, or walked in to
+      // speak) is the one that takes the place, from where it stands (RBN-QA-103, Agnes 6344263706).
+      for (const b of W.npcs) {
+        if (before.has(b.id) || keep.has(b.id)) continue;
+        const here = W.extras.find((e) => personOf(e) === personOf(b)) || W.leavers.find((e) => personOf(e) === personOf(b));
+        if (!here) continue;
+        W.extras = W.extras.filter((e) => e !== here);
+        W.leavers = W.leavers.filter((e) => e !== here);
+        if (!behind) shiftTo(b, here);
+      }
     }
     // LW-09: a person whose placement moved on this map. While the map is appearing (or behind an illustrated
     // sequence) they are simply at the new place; otherwise they walk there, as anyone the story moves does (a
