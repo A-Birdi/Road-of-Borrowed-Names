@@ -8,7 +8,8 @@
 //  3. Otaki and Seibe, each talked to with the world's own interact: "next door", the rivalry otherwise word for word;
 //  4. the seal (Otaki, with Tome's seal book): two inns side by side on it;
 //  5. no line read at Nakayama says the inns face each other (「{向|む}かい」, "across the way", "facing each other");
-//     every kanji in the dialogue box's Japanese line has its furigana; no page errors.
+//     every kanji in the dialogue box's Japanese line has its furigana, and (not vacuously) every line with kanji was
+//     shown in a Japanese box that carries its readings; no page errors.
 import { serve, launch, page } from './lib.mjs';
 
 const { srv, url } = await serve();
@@ -54,7 +55,8 @@ async function readAll(p) {
           if (!el.closest('ruby')) bare.push(n.nodeValue.trim().slice(0, 20));
         }
       }
-      return d ? [String(d.jp || ''), String(d.en || ''), bare] : null;
+      // and whether that box was there and how many readings it shows, so a missing box can't pass as "nothing bare"
+      return d ? [String(d.jp || ''), String(d.en || ''), bare, !!box, box ? box.querySelectorAll('ruby rt').length : 0] : null;
     });
     if (l && !(lines.length && lines[lines.length - 1][0] === l[0] && lines[lines.length - 1][1] === l[1])) lines.push(l);
     await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance());
@@ -125,6 +127,9 @@ const seen = [];
   ok(seen.length >= 6 && facing.length === 0, 'no line read at Nakayama says the inns face each other (' + seen.length + ' lines; ' + JSON.stringify(facing.map((l) => l[1].slice(0, 60))) + ')');
   const bare = seen.filter((l) => l[2].length);
   ok(bare.length === 0, 'every kanji in the dialogue box\'s Japanese line has its furigana (' + JSON.stringify(bare.map((l) => l[2])) + ')');
+  // (Agnes 6340101521) not vacuous: each line with kanji was shown in a Japanese box that carries its readings
+  const kanji = seen.filter((l) => /[一-鿿々]/.test(l[0])), unread = kanji.filter((l) => !l[3] || !l[4]);
+  ok(kanji.length >= 6 && unread.length === 0, 'and each of the ' + kanji.length + ' lines with kanji was shown in a Japanese box with its readings (' + JSON.stringify(unread.map((l) => [l[1].slice(0, 40), l[3], l[4]])) + ')');
   allErrors.push(...errors);
   await p.close();
 }
