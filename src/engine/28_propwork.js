@@ -136,16 +136,59 @@ var RB = (globalThis.RB = globalThis.RB || {});
       x += w;
     }
   }
+  // A keepsake shelf (o.keep === 'courier': Sono's inn at Sakashita, RBN-QA-095): her grandfather's spare straw hat
+  // on the top shelf, and below it his short relay coat hung from a rod, seen from the back with the relay's crest (a
+  // plain ring, no letters); a pair of straw sandals beside it. No books.
+  const STRAW = ramp('#c8a868', 0.45, 0.35), INDIGO = ramp('#34446e', 0.5, 0.4), CREST = ramp('#e6dcc0', 0.4, 0.3);
+  function keepsakes(g, w5) {
+    // the hat: a wide, shallow cone of woven straw resting on the top shelf, lit from the upper left; its tie hangs
+    for (let y = -11; y <= -4; y++) {
+      const hw = Math.round(1 + (y + 11) * 1.6), rim = y === -4;
+      for (let x = 16 - hw; x <= 16 + hw; x++) {
+        const side = (x - 16) / Math.max(1, hw); // -1 left (lit) … 1 right
+        let k = side < -0.35 ? 3 : side < 0.3 ? 2 : 1;
+        if (!rim && (y + 11) % 2 === 1 && k > 1) k--; // the weave's rings
+        if (rim) k = side < 0 ? 1 : 0;
+        R(g, x, y, 1, 1, STRAW[k]);
+      }
+    }
+    R(g, 15, -11, 2, 1, STRAW[4]);
+    R(g, 5, -3, 22, 1, w5[1]); // its shadow on the board
+    R(g, 18, -3, 1, 2, '#6a3a2a');
+    // the rod, then the coat hung on it (back view): sleeves out, body, the hem band, the crest
+    R(g, 2, 1, 28, 1, w5[3]); R(g, 2, 2, 28, 1, w5[1]);
+    for (let y = 2; y <= 21; y++) {
+      // the wide square sleeves hang to row 11, open from the body below the shoulder
+      const sleeve = y <= 11, x0 = sleeve ? 4 : 9, x1 = sleeve ? 28 : 23;
+      for (let x = x0; x < x1; x++) {
+        const inSleeve = x < 9 || x >= 23;
+        let k = x < 12 ? 3 : x < 20 ? 2 : 1;
+        if (inSleeve && y === 11) k = 0;                      // the sleeves' lower edges
+        if ((x === 9 || x === 22) && y > 5) k = Math.max(0, k - 2); // where sleeve and body part
+        if (!inSleeve && (x === 13 || x === 18) && y > 12) k = Math.max(0, k - 1); // two folds
+        if (y >= 19 && !inSleeve) k = 4 - (x >= 16 ? 1 : 0); // the hem band, pale
+        R(g, x, y, 1, 1, y >= 19 && !inSleeve ? CREST[k] : INDIGO[k]);
+      }
+    }
+    R(g, 13, 2, 6, 1, INDIGO[0]); // the neck
+    for (let j = -4; j <= 4; j++) for (let i = -4; i <= 4; i++) {
+      const d = Math.hypot(i, j);
+      if (d <= 4.5 && d >= 2.5) R(g, 16 + i, 10 + j, 1, 1, CREST[i + j < 0 ? 4 : i + j < 3 ? 3 : 2]);
+    }
+    // straw sandals on the bottom shelf, left of the coat
+    for (const sx of [3, 6]) { R(g, sx + 1, 19, 2, 3, STRAW[2]); R(g, sx + 1, 19, 1, 3, STRAW[3]); R(g, sx + 1, 21, 2, 1, STRAW[1]); }
+  }
   art('shelf', {
     box: [-2, -22, 36, 56],
-    v: (o) => cxy(o) % 12,
-    draw(g, M, v) {
-      const w5 = M.wood;
+    v: (o) => cxy(o) % 12 + (o.keep === 'courier' ? 12 : 0),
+    draw(g, M, v0) {
+      const w5 = M.wood, keep = v0 >= 12, v = v0 % 12;
       R(g, 3, -16, 26, 42, w5[0]);
-      for (const [y, h] of [[-16, 14], [0, 10], [12, 10]]) books(g, 4, 28, y + h, h - 1, v * 31 + y + 40);
+      if (!keep) for (const [y, h] of [[-16, 14], [0, 10], [12, 10]]) books(g, 4, 28, y + h, h - 1, v * 31 + y + 40);
       post(g, 0, -18, 3, 48, w5);
       post(g, 29, -18, 3, 48, w5);
       for (const y of [-2, 10, 22]) { R(g, 3, y, 26, 2, w5[3]); R(g, 3, y, 26, 1, w5[4]); R(g, 3, y + 2, 26, 1, w5[0]); }
+      if (keep) keepsakes(g, w5);
       plank(g, -1, -20, 34, 4, w5, v);
       R(g, 3, 24, 26, 6, w5[2]); R(g, 3, 24, 26, 1, w5[1]);
       R(g, 14, 26, 4, 1, BR[3]);
