@@ -65,7 +65,8 @@ for (const [pick, reply] of [[0, 'You\'re saying no?'], [1, 'If you want to go b
   for (const [inn, out, other] of [['yn.kami', UP, LO], ['yn.shimo', LO, UP]]) {
     const { p, errors } = await page(b, url);
     await start(p, inn, 7, 6, 'suzu', {});
-    await p.evaluate(() => RB.script.run('yn.suzu_garden'));
+    // (started, not awaited: the scene waits on its lines and its choice, which playOut gives it)
+    await p.evaluate(() => { RB.script.run('yn.suzu_garden'); });
     await playOut(p, pick);
     const g = await p.evaluate(() => ({ back: !!RB.game.s.flags.yn_suzu_back, books: !!RB.game.s.flags.yn_suzu_books }));
     await enter(p, ...out);
