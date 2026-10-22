@@ -2,7 +2,8 @@
 // folk and the narration said he carried it back to the Lower House, but he stood on by the river. Now he walks to the
 // Lower House's door and in before the narration says he went, and he is in the Lower House after:
 //  1. where he stands, state by state: before the egg, the riverbank only; once it is his, the Lower House only (by the
-//     hearth); once the valley's story is done (yn_done), neither, as before; never both;
+//     hearth); once the valley's story is done (yn_done), neither, except that while Eggs for Everyone is under way
+//     and his egg is still owed he stays at the riverbank (RBN-QA-129); never both;
 //  2. the Lower House's place: floor, nothing on it that blocks, off the entrance's earth and the doorway, nobody else
 //     placed there; his talk there is his own lines, with no egg in it;
 //  3. the scene: the egg taken and the flag set first, as before; his line; the walk (`!refresh gone 9000`: the bound
@@ -20,10 +21,12 @@ export default async (t) => {
   globalThis.__RB_TEST__ = true;
   const RB = load(['core', 'lang', 'recog', 'engine', 'learn', 'ui', 'content'], { __RB_TEST__: true });
   const C = RB.content;
-  const st = (flags) => {
+  const st = (flags, quest) => {
     const s = RB.state.newCampaign({ difficulty: 'normal' });
     Object.assign(s.flags, { yn_called: true, yn_rooms_done: true }, flags);
     s.quests.yn_eggs = { stage: 0, done: false, t: 1 };
+    if (quest === 'done') s.quests.yn_eggs.done = true;
+    if (quest === 'never') delete s.quests.yn_eggs;
     return s;
   };
   const where = (s) => {
@@ -37,10 +40,12 @@ export default async (t) => {
     ['the egg his', { yn_egg_tsuneji: true }, ['yn.shimo@9,7']],
     ['the egg his, the other two given too', { yn_egg_tsuneji: true, yn_egg_yasuke: true, yn_egg_oshige: true }, ['yn.shimo@9,7']],
     ['the valley\'s story done, the egg his', { yn_egg_tsuneji: true, yn_done: true }, []],
-    ['the valley\'s story done, no egg', { yn_done: true }, []],
+    ['the valley\'s story done, no egg, the quest under way (his egg owed: RBN-QA-129)', { yn_done: true }, ['yn.lower@22,18']],
+    ['the valley\'s story done, no egg, the quest finished', { yn_done: true }, [], 'done'],
+    ['the valley\'s story done, no egg, the quest never begun', { yn_done: true }, [], 'never'],
   ];
-  const bad = CASES.filter(([, f, want]) => JSON.stringify(where(st(f))) !== JSON.stringify(want)).map(([n, f]) => n + ': ' + where(st(f)).join(' '));
-  t.ok(!bad.length, 'where he stands: the riverbank before the egg, the Lower House after, neither once the valley\'s story is done, never both' + (bad.length ? ' (' + bad.join('; ') + ')' : ''));
+  const bad = CASES.filter(([, f, want, q]) => JSON.stringify(where(st(f, q))) !== JSON.stringify(want)).map(([n, f, , q]) => n + ': ' + where(st(f, q)).join(' '));
+  t.ok(!bad.length, 'where he stands: the riverbank before the egg, the Lower House after, neither once the valley\'s story is done unless his egg is still owed to an unfinished quest, never both' + (bad.length ? ' (' + bad.join('; ') + ')' : ''));
   // 2. the Lower House's place
   const m = C.maps['yn.shimo'], him = m.npcs.find((n) => n.id === 'yn_tsuneji');
   if (!him) { t.ok(false, 'he has a place in the Lower House'); return; }
