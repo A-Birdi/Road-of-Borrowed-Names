@@ -400,8 +400,12 @@ narr: {荷|に} を {背負|せお}った {馬|うま} が 、 {崖道|がけみ
 :calm
 narr: {声|こえ} を かける と 、 {馬|うま} は {耳|みみ} を こちら に {向|む}けた 。 {少|すこ}し {落|お}ち{着|つ}いた 。 でも 、 {荷|に} が {重|おも}くて {動|うご}けない 。 || At your voice the horse turns an ear your way and settles a little. But the load is too heavy for it to move.
 :back
+# (the unloading and the walk back happen while the screen is dark: the narration over black, the horse led off
+# the ledge in the dark, and the ledge without it when the light comes back; RBN-QA-101)
+!fade out
 narr: {荷|に} を {下|お}ろして 、 {手綱|たづな} を {引|ひ}き 、 {一歩|いっぽ} ずつ {後|うし}ろ へ 。 {広|ひろ}い {所|ところ} まで {出|で}る と 、 {馬|うま} は {大|おお}きく {息|いき} を {吐|は}いた 。 || You take off the load, hold the reins and back it up a step at a time. Out where it's wider, the horse lets out a big breath.
 !set cr_horse_safe
+!fade in
 ?(comp=mio) comp[smile]: {怖|こわ}かった でしょう ね 。 …… もう {大丈夫|だいじょうぶ} よ 。 || That must have been frightening. …You're all right now.
 ?(comp=ren) comp: {道|みち} に {迷|まよ}った {者|もの} の {気持|きも}ち は 、 よく {分|わ}かります 。 || I know exactly how it feels to be lost on a road.
 ?(comp=nao) comp: {馬|うま} を {連|つ}れて {行|い}こう 。 {馬返|うまがえ}し の {馬|うま} だろう 。 || Let's take it along. It'll be an Umagaeshi horse.
