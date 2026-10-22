@@ -161,6 +161,39 @@ for (const comp of ['suzu', 'nao']) {
   allErrors.push(...errors); await p.close();
 }
 
+// ---- 1b. the surety told while the office is still appearing (Agnes 6344263706) -----------------------------------------------
+// The office entered afresh and the surety played at once: its lines advanced as fast as they show, the questions answered
+// by the stub, "Thank you. I'll be back soon." chosen as soon as it shows. Suzu stays behind inside the office's first
+// 900 ms, when people with a new place are "simply already there": still one Suzu, the one who was following you,
+// walking to the bench.
+{
+  const { p, errors } = await page(b, url);
+  await start(p, 'cr.barrier_office', 6, 4, 'suzu', { cr_seals_checked: true });
+  await p.evaluate(() => {
+    const stays = RB.world.companionStays;
+    window.__ageAtAway = null;
+    RB.world.companionStays = function () { window.__ageAtAway = RB.world.W.time - RB.world.W.enteredAt; return stays.apply(this, arguments); };
+    RB.world.enter('cr.barrier_office', 6, 4, 'up', {});
+    window.__figs.max = 0; window.__figs.at = [];
+    RB.script.run('cr.ujie');
+    window.__fast = setInterval(() => {
+      const rows = [...document.querySelectorAll('.choices:not(.hidden) .choice')];
+      const go = rows.find((r) => /back soon/.test(r.textContent));
+      if (go) go.click();
+      else if (!rows.length && RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance();
+      if (!RB.script.isRunning()) clearInterval(window.__fast);
+    }, 16);
+  });
+  await p.waitForFunction(() => !RB.script.isRunning(), null, { timeout: 15000 }).catch(() => {});
+  await p.waitForTimeout(2500);
+  const age = await p.evaluate(() => window.__ageAtAway);
+  const quick = await state(p);
+  ok(age != null && age <= 900, 'suzu, the surety told at once: she stays behind inside the office\'s first 900 ms (' + Math.round(age) + ' ms after it appeared)');
+  ok(quick.figs === 1 && quick.comp === null && quick.away === 'suzu' && !quick.follower && quick.placed.length === 1 && quick.placed[0].join() === '2,4' && !quick.extras.length && !quick.leaving,
+    'suzu, the surety told at once: never two of her; the one who was following you is the one on the bench (' + JSON.stringify(quick) + ')');
+  allErrors.push(...errors); await p.close();
+}
+
 // ---- 3. Steamhollow: Nao's quarrel and making up at the footbath -----------------------------------------------------------
 {
   const { p, errors } = await page(b, url);
