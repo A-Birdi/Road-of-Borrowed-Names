@@ -5,6 +5,7 @@
 // batch's source revision; tools/voice/review_page.mjs uses it only when a take's key no longer resolves, and marks the
 // take retired and unused. No audio is changed, made or re-keyed. In node:
 //  1. the file's schema; each retired take is on the review list, and none of its line keys resolves in the script now;
+//     each keeps those keys, as on the review list, for tracing;
 //  2. the committed page shows each retired take with its English as recorded and marked retired (the revision, why);
 //  3. no other take is marked retired, and every take whose key resolves keeps the script's English.
 import fs from 'node:fs';
@@ -25,6 +26,9 @@ export default async (t) => {
     'the retired takes: schema, each with its id, a full source revision, its English and why (' + rt.retired.map((r) => r.id).join(', ') + ')');
   const bad = rt.retired.filter((r) => { const it = items.get(r.id); return !it || (it.lineKeys || []).some((k) => keys.has(k)); });
   t.eq(bad.map((r) => r.id), [], 'each is on the review list, and none of its line keys resolves in the script now');
+  // (the keys it was recorded under, kept with it for tracing; Local CL-246)
+  const untraced = rt.retired.filter((r) => JSON.stringify(r.lineKeys || null) !== JSON.stringify((items.get(r.id) || {}).lineKeys || []));
+  t.eq(untraced.map((r) => r.id), [], 'each keeps the line keys it was recorded under, as on the review list (' + rt.retired.map((r) => (r.lineKeys || []).join(',')).join(' ') + ')');
   t.ok(rt.retired.some((r) => r.id === 'r1-f25c42a39756bbfb' && /RV0047/.test(r.retiredBy) && /^Heard about the bell\?/.test(r.en)), 'Nao\'s retired bell line is kept with the English it was recorded with');
   // ---- 2. and 3.
   const html = fs.readFileSync(P('docs/future/voice/production/run/REVIEW_LISTENING.html'), 'utf8');

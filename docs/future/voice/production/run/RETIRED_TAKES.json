@@ -1,10 +1,11 @@
 {
  "schema": "rbn.voice.retired-takes/1",
- "about": "Takes on the review list whose line has since left the game's script, so its key no longer resolves. The listening page (tools/voice/review_page.mjs) shows each with the words it was recorded with, as of the batch's source revision, marked retired and unused. A historical record, not a listener's decision; no audio is changed, made or re-keyed.",
+ "about": "Takes on the review list whose line has since left the game's script, so its key no longer resolves. The listening page (tools/voice/review_page.mjs) shows each with the words it was recorded with, as of the batch's source revision, marked retired and unused; lineKeys are the keys it was recorded under (as on the review list), which no longer resolve. A historical record, not a listener's decision; no audio is changed, made or re-keyed.",
  "retired": [
   {
    "id": "r1-f25c42a39756bbfb",
    "sourceRevision": "ff8a0fa87cfacb322b8c277305eddd9b4cc196fb",
+   "lineKeys": ["co.b_nao4#d8c80dccd9"],
    "retiredBy": "RV0047: Nao's fourth orchard banter opens on the bell only if it rang (co.b_nao4)",
    "en": "Heard about the bell? Everyone ran to the channel when it rang. Their heads forgot; their feet remembered the way.",
    "prev": null
