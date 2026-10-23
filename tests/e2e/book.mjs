@@ -33,6 +33,10 @@ const assert = (c, m) => { if (!c) throw new Error(m); };
 
 const FIXTURE = (style) => {
   if (style) { RB.game.settings.ledgerStyle = style; RB.game.applySettings(); }
+  // (no device voice: on a machine with a Japanese voice, a line without a recording gets a "say this line" button
+  // (src/audio/54_voice_route.js canSayLine), which the classic folio's recorded controls never had; the parity is
+  // about the book's own controls, so it reads the same on every machine; Local CL-247)
+  if (RB.voice) RB.voice.japaneseVoices = () => [];
   // (the Archive's catalogue in order, sg_da_catalog: the state this journey's Next, the Tide Clerk at the Returns Counter,
   // was written for; since RBN-QA-069 the step before it, while the inner door is shut, is the Receiving Hall's door)
   const s = RB.game.debugStart('sg.harbor', 20, 22, { comp: 'suzu', flags: { departed: true, ch1_done: true, rw_echo_done: true, sg_arrived: true, sg_da_catalog: true } });
@@ -88,6 +92,8 @@ await test('the book is the Ledger for everyone: a new profile, and a record tha
 await test('the book offers exactly the classic folio\'s controls and actions (Journey, Company), as recorded before it was retired', async () => {
   const classic = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/book_parity_classic.json'), 'utf8'));
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
+  // (as on a machine with a Japanese voice: the fixture leaves it out)
+  await p.evaluate(() => { RB.voice.japaneseVoices = () => [{ name: 'a Japanese voice', lang: 'ja-JP', localService: true }]; });
   await p.evaluate(FIXTURE, 'book');
   const book = {};
   for (const w of ['journal', 'companion', 'memories', 'pet']) { await open(p, w); await p.waitForTimeout(150); book[w] = await p.evaluate(ACTIONS); }
