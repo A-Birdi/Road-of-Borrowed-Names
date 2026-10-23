@@ -2,7 +2,8 @@
 // first (Agnes 6353888589; Local CL-234, CL-235): of every number + 分 in the game's Japanese, only these were wrong. One
 // lexicon entry, 十分 じゅっぷん "ten minutes"; the lookup takes the entry whose reading matches. In node, at every place in
 // src/ where 十分 is written (scenes, challenges, drills, the atlas sign): read じゅっぷん, "ten minutes"; read じゅうぶん,
-// "enough"; and the other number + 分 words read as before (minutes, fifteen minutes; Tamotsu's fraction).
+// "enough"; and the other number + 分 words read as before (minutes, fifteen minutes; Tamotsu's fraction). じっぷん, the
+// other reading of ten minutes, has its own entry (no line writes it yet).
 import fs from 'node:fs';
 import path from 'node:path';
 import { load, root } from '../lib/load.mjs';
@@ -22,4 +23,6 @@ export default async (t) => {
   t.ok(jip.length >= 5 && jip.some((x) => /atlas/.test(x.file)), `十分 read じゅっぷん is written in ${jip.length} places, the atlas sign among them (${[...new Set(jip.map((x) => x.file))].join(', ')})`);
   t.eq(bad.map((x) => x.file + ' ' + x.w + ' ' + x.r + ': ' + x.m), [], `every number + 分 (${rows.length}) reads as its reading says: じゅっぷん "ten minutes", じゅうぶん "enough", the minutes as minutes`);
   t.ok(look('{十分|じゅっぷん} の {休|やす}み 。', '十分').entry.m === 'ten minutes' && look('{十分|じゅうぶん} の {量|りょう} 。', '十分').entry.m === 'enough', 'before の as well: 十分 じゅっぷん is ten minutes, 十分 じゅうぶん is enough');
+  // (じっぷん, the reading the note names, is "ten minutes" too: it was "enough", the first 十分; Agnes 6374203241)
+  t.eq(['じゅっぷん', 'じっぷん', 'じゅうぶん'].map((r) => r + ' ' + look('{十分|' + r + '} の {休|やす}み 。', '十分').entry.m), ['じゅっぷん ten minutes', 'じっぷん ten minutes', 'じゅうぶん enough'], 'each reading of 十分 its own sense: じゅっぷん and じっぷん ten minutes, じゅうぶん enough');
 };

@@ -7,7 +7,7 @@
 //  1. the file's schema; each retired take is on the review list, and none of its line keys resolves in the script now;
 //     each keeps those keys, as on the review list, for tracing;
 //  2. the committed page shows each retired take with its English as recorded and marked retired (the revision, why);
-//  3. no other take is marked retired, and every take whose key resolves keeps the script's English.
+//  3. no other take is marked retired, and every take whose key resolves shows the script's English, exactly.
 import fs from 'node:fs';
 import path from 'node:path';
 import { root } from '../lib/load.mjs';
@@ -41,4 +41,9 @@ export default async (t) => {
   t.ok(/Retired · unused/.test(html), 'and the card says so: "Retired · unused"');
   const others = shown.filter((x) => !byId.has(x.id));
   t.ok(others.every((x) => !x.retired), 'no other take is marked retired (' + others.length + ' listings)');
+  // (the current words win: a take whose line is in the script shows that line's English exactly; Agnes 6374203241)
+  const line = new Map(allLines().map((l) => [l.key, l]));
+  const live = shown.filter((x) => (items.get(x.id) || {}).lineKeys && items.get(x.id).lineKeys.some((k) => line.has(k)));
+  const off = live.filter((x) => x.en !== line.get(items.get(x.id).lineKeys.find((k) => line.has(k))).en);
+  t.ok(live.length > 100 && off.length === 0, 'every take whose line is in the script shows that line\'s English (' + live.length + ' listings' + (off.length ? '; not: ' + off.slice(0, 3).map((x) => x.id).join(', ') : '') + ')');
 };
