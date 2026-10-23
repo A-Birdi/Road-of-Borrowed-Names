@@ -90,7 +90,7 @@ for (const id in C.scenes) {
     if (c.op === 'battle' && !C.enemies[a[0]]) E(where(c) + ' unknown enemy ' + a[0]);
     if (c.op === 'encounter' && !(C.encounters || {})[a[0]]) E(where(c) + ' unknown encounter ' + a[0]);
     if (c.op === 'teach' && RB.grammar && !(RB.grammar.get ? RB.grammar.get(a[0]) : null)) E(where(c) + ' unknown grammar point ' + a[0]);
-    if (c.op === 'warp') { const m = C.maps[a[0]]; if (!m) E(where(c) + ' unknown map ' + a[0]); }
+    if (c.op === 'warp') { const m = C.maps[a[0]]; if (!m) E(where(c) + ' unknown map ' + a[0]); const amb = a.find((x) => /^ambience=/.test(x)); if (amb && !(RB.staging && RB.staging.AMBIENCE[amb.slice(9)])) E(where(c) + ' !warp: unknown ambience ' + amb.slice(9)); }
     if (c.op === 'music' && a[0] !== '-' && RB.audio && RB.audio.songList && !RB.audio.songList().some((s) => s.id === a[0])) Wn(where(c) + ' unknown song ' + a[0]);
     if (c.op === 'recruit' && !['nao', 'mio', 'ren', 'suzu', 'none'].includes(a[0])) E(where(c) + ' bad recruit id');
     if (c.op === 'hook' && !(RB.hooks && RB.hooks[a[0]])) E(where(c) + ' unknown hook ' + a[0]);

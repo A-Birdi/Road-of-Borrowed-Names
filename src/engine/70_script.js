@@ -427,8 +427,11 @@ RB.script = (function () {
         }
         case 'lesson': if (RB.sequence) RB.sequence.stopSkip('lesson'); RB.ui.dialogue.hide(); await RB.lessons.run(a[0], a.slice(1)); break;
         case 'teach': if (RB.sequence) RB.sequence.stopSkip('teach'); RB.ui.dialogue.hide(); await RB.lessons.grammarCard(a[0]); break;
+        // `!warp <map> <x> <y> [dir] [ambience=<preset>]`: with an ambience, the scene's light is set while the screen is
+        // dark, so the place is first seen in it (not under the light before, then changed; RBN-QA-124, Agnes 6374739355)
         case 'warp': {
-          await RB.game.transition(a[0], +a[1], +a[2], a[3] || null, { inScript: true });
+          const amb = a.find((x) => /^ambience=/.test(x)), w = a.filter((x) => !/^ambience=/.test(x));
+          await RB.game.transition(w[0], +w[1], +w[2], w[3] || null, { inScript: true, entered: amb && RB.staging ? () => RB.staging.ambience(amb.slice(9)) : null });
           break;
         }
         case 'music': RB.audio && (a[0] === '-' ? RB.audio.stopSong({ fade: 800 }) : RB.audio.playSong(a[0])); break;

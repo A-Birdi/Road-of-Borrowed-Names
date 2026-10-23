@@ -4,7 +4,8 @@
 // throwaway journeys:
 //  1. the evening as it comes (the valley's dusk, then Suzu's evening called from it), at a desktop and a phone size:
 //     every line in the theatre with the seven of the audience in their places, seated (four on the benches, three on
-//     the floor), at night; Koume walks up to you after the show (within 2, on screen, no off-screen mark) and the
+//     the floor), at night; the theatre first seen at night (night already on when its fade-in begins), the place before
+//     it not turned to night as it fades out (Agnes 6374739355); Koume walks up to you after the show (within 2, on screen, no off-screen mark) and the
 //     narration says so; afterwards the audience goes (each by the way out, or where they are), nobody is left, the room
 //     has its own light, Koume goes back to her place and nothing of the audience is in the journey;
 //  2. Skip seen: the same, Koume set beside you at once;
@@ -29,9 +30,12 @@ const errorsAll = [];
 
 // every line: where everyone is, who of the audience is placed and seated, Koume on screen, the plate's mark, the light
 const hook = () => {
-  window.__L = []; window.__cap = null;
+  window.__L = []; window.__cap = null; window.__fades = [];
   if (window.__paWrap) return;
   window.__paWrap = true;
+  // every fade, as it begins: in or out, on which map, and whether the scene's night is on
+  const fade = RB.ui.fade;
+  RB.ui.fade = function (on) { const W = RB.world.W, amb = RB.staging.ambienceNow(); window.__fades.push({ out: !!on, map: W.map && W.map.id, night: !!(amb && amb.night) }); return fade.apply(this, arguments); };
   const say = RB.ui.dialogue.say;
   RB.ui.dialogue.say = function (l) {
     const r = say.apply(this, arguments);
@@ -99,6 +103,10 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
   await p.evaluate(() => { RB.script.run('yn.evening'); });
   await drive(p, w + 'x' + h);
   const L = await p.evaluate(() => window.__L.slice());
+  const F = await p.evaluate(() => window.__fades.slice());
+  const fi = F.findIndex((f) => !f.out && f.map === 'yn.playhouse'), fo = F[fi - 1];
+  ok(fi > 0 && F[fi].night && fo && fo.out && fo.map !== 'yn.playhouse' && !fo.night,
+    `${w}x${h}: the theatre is first seen at night (night on as its fade-in begins); the place before it was not turned to night as it faded out (${JSON.stringify(F)})`);
   const T = inTheatre(L), K = T.filter((l) => l.who === 'yn_koume');
   ok(T.length >= 8 && T.every(full) && T.every((l) => l.aud.every((a) => { const id = a.split('@')[0]; return T[T.length - 1].rest[id] === SEATS[id]; })),
     `${w}x${h}: every line in the theatre with the seven in their places, seated (four on the benches, three on the floor), at night (${T.length} lines; ${JSON.stringify(T[T.length - 1] && T[T.length - 1].rest)})`);
