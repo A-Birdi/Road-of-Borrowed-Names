@@ -36,7 +36,7 @@ const hook = () => {
       const W = RB.world.W, a = W.npcs.concat(W.extras || []).find((n) => n.id === 'cr_jinpachi' || (n.def && (n.def.char || n.def.id) === 'cr_jinpachi'));
       const css = a ? RB.render.tileToCss(a.fx + 0.5, a.fy + 0.5) : null;
       const mark = document.querySelector('#ui .dlg .who .offscr');
-      window.__jin.push({ t: performance.now(), en: String(l.en || '').slice(0, 30), map: W.map.id, pc: [W.player.x, W.player.y], jin: a ? [a.x, a.y] : null, mv: !!(a && (a.mv || a.route)),
+      window.__jin.push({ t: performance.now(), en: String(l.en || '').slice(0, 30), map: W.map.id, called: !!RB.game.s.flags.yn_called, pc: [W.player.x, W.player.y], jin: a ? [a.x, a.y] : null, mv: !!(a && (a.mv || a.route)),
         on: css ? css.x >= 0 && css.y >= 0 && css.x <= innerWidth && css.y <= innerHeight : false, mark: mark ? mark.dataset.way : null });
     }
     return r;
@@ -79,7 +79,9 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
     await p.evaluate(() => { RB.script.run('cr.end'); });
     await drive(p);
     const a = await after(p);
-    const L = a.jin.filter((l) => l.map === 'cr.sakashita');
+    // (his lines in yn.call only: it sets yn_called first. Chained after the Cloudroad's end, Mio's, Ren's and Suzu's
+    // endings have him speak a message for them before it, from where he stands: cr.mio_kikue, cr.ren_lit, cr.suzu_reply)
+    const L = a.jin.filter((l) => l.map === 'cr.sakashita' && l.called);
     ok(a.called && a.letter && a.walked === 1 && near(L), `${w}x${h} ${comp}: after the Cloudroad's end, every line of his within 2 of you and on screen, no mark; _walked 1 (${fmt(L)})`);
     errorsAll.push(...errors);
     await ctx.close();
