@@ -17,7 +17,9 @@
 //  5. Steamhollow, Mio's night (Agnes 6340911110), both choices and passed over with "Skip seen": you leave by the
 //     dispensary's own door to where it opens (yn.lower 8,25, facing down), on nobody's tile; Mio away and unseen; the
 //     night's flags set; you walk and nobody follows; a save and load keeps it;
-//  6. no page errors.
+//  6. every scene the test plays ends within its bound (a scene that does not is recorded with the line on screen, the
+//     sequence's state and phase and whether the script runs); the garden's check fails when her return is withheld;
+//     no page errors.
 // The Barrier interview's own challenge is answered by a stub (it is not what this tests).
 import { serve, launch, page } from './lib.mjs';
 
@@ -26,6 +28,7 @@ const b = await launch();
 let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) { pass++; console.log('ok   ' + m); } else { fail++; console.log('FAIL ' + m); } };
 const allErrors = [];
+const unfinished = []; // scenes play() could not take to their end, with why
 const DONE = { departed: true, ch1_done: true, ch2_done: true, mb1_done: true, mb2_done: true, ch3_done: true, ch4_done: true, kr_done: true, ch5_done: true, ko_done: true, cr_called: true };
 for (let n = 1; n <= 6; n++) Object.assign(DONE, { ['cr_st' + n]: true, ['cr_lamp' + n]: true, ['cr_given' + n]: true, ['cr_plan' + n]: true });
 
@@ -52,10 +55,19 @@ async function start(p, map, x, y, comp, flags) {
 }
 // a scene played through: lines advanced, choices picked by their words (null: the first)
 async function play(p, scene, picks) {
-  await p.evaluate((sc) => { RB.script.run(sc); }, scene);
+  // (Agnes 6372390238: Next only while a line of the scene is shown and can go on; while an illustrated sequence is still
+  // entering, wait as a player would rather than press into its dissolve; while the same line stays, press again, since
+  // a press can still be swallowed there. Bounded: a scene not ended within the bound is recorded with why, the line on
+  // screen, the sequence's state and phase, whether the script runs, and checked at the end, not passed over silently)
+  await p.evaluate((sc) => { window.__played = false; RB.script.run(sc).then(() => { window.__played = true; }); }, scene);
   let k = 0, last = null;
+  const look = () => p.evaluate(() => {
+    const d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(), q = RB.sequence && RB.sequence.state ? RB.sequence.state() : null;
+    return { d: !!d, en: d ? String(d.en || '') : null, run: RB.script.isRunning(), done: window.__played, ch: [...document.querySelectorAll('.choices:not(.hidden) .choice')].map((c) => c.textContent),
+      seq: q ? { id: q.id, state: q.state, phase: q.phase, shot: q.shot } : null };
+  });
   for (let i = 0; i < 400; i++) {
-    const st = await p.evaluate(() => { const d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); return { d: !!d, en: d ? String(d.en || '') : null, run: RB.script.isRunning(), ch: [...document.querySelectorAll('.choices:not(.hidden) .choice')].map((x) => x.textContent) }; });
+    const st = await look();
     if (st.ch.length) {
       const re = picks && picks[k++];
       const loc = p.locator('.choices:not(.hidden) .choice');
@@ -64,15 +76,17 @@ async function play(p, scene, picks) {
       continue;
     }
     if (st.d) {
-      // (Next on every pass while the same line stays, not once per new line: a press during a picture's dissolve can be
-      // swallowed, and the line then waits for another; as tests/e2e/egg_recovery.mjs does. Local CL-237)
+      if (st.seq && st.seq.state === 'entering') { await p.waitForTimeout(80); continue; }
       if (st.en !== last) { last = st.en; await p.waitForTimeout(100); } else await p.waitForTimeout(80);
       await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance()); await p.waitForTimeout(80); continue;
     }
-    if (!st.run && i > 3) break;
+    if (st.done && !st.run) { await p.waitForTimeout(2500); return true; }
     await p.waitForTimeout(80);
   }
+  const why = await look();
+  unfinished.push({ scene, line: why.en && why.en.slice(0, 60), seq: why.seq, run: why.run, choices: why.ch.length });
   await p.waitForTimeout(2500);
+  return false;
 }
 const state = (p) => p.evaluate(() => {
   const W = RB.world.W, s = RB.game.s, cid = window.__cid;
@@ -224,9 +238,25 @@ for (const comp of ['suzu', 'nao']) {
   await resetMax(p);
   await play(p, 'yn.suzu_garden', null);
   const g = await state(p);
-  ok(g.figs === 1 && g.comp === 'suzu' && !!g.follower && !g.extras.length && !g.leaving,
+  const gardenOk = (x) => x.figs === 1 && x.comp === 'suzu' && !!x.follower && !x.extras.length && !x.leaving && !x.run;
+  ok(gardenOk(g),
     'suzu, the garden: never two; the Suzu who walked in to speak is the one who follows you after (' + JSON.stringify(g) + ')');
   allErrors.push(...errors); await p.close();
+  // the same check on a garden whose return is withheld (`!hook comp_back` made to do nothing): it must fail, or it proves
+  // nothing (Agnes 6372390238)
+  {
+    const n = await page(b, url);
+    await start(n.p, 'yn.lower', 20, 16, 'suzu', { cr_done: true, ch10_done: true, yn_evening: true, yn_eve_started: true });
+    await play(n.p, 'yn.suzu_evening', null);
+    await n.p.evaluate(() => { RB.world.enter('yn.lower', 20, 16, 'up', {}); });
+    await n.p.waitForTimeout(1200);
+    await resetMax(n.p);
+    await n.p.evaluate(() => { window.__realBack = RB.hooks.comp_back; RB.hooks.comp_back = () => {}; });
+    await play(n.p, 'yn.suzu_garden', null);
+    const w = await state(n.p);
+    ok(!gardenOk(w), 'negative control: the garden with her return withheld fails that check (' + JSON.stringify({ comp: w.comp, follower: w.follower, away: w.away, figs: w.figs }) + ')');
+    await n.p.close();
+  }
 }
 
 // ---- 5. Steamhollow: Mio's night (Agnes 6340911110): you leave by the dispensary's own door ------------------------------
@@ -287,6 +317,8 @@ for (const pick of [/waiting/, /Call me/, 'skip']) {
   allErrors.push(...errors); await p.close();
 }
 
+// (the negative control's garden ends too: only her return is withheld)
+ok(unfinished.length === 0, 'every scene played to its end within the bound' + (unfinished.length ? ': ' + JSON.stringify(unfinished) : ''));
 ok(allErrors.length === 0, 'no page errors' + (allErrors.length ? ' (' + allErrors.slice(0, 3).join(' | ') + ')' : ''));
 console.log(`\n${pass} passed, ${fail} failed`);
 await b.close(); srv.close();
