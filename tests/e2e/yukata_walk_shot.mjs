@@ -136,7 +136,10 @@ for (const [comp, pick] of [['nao', 0], ['nao', 1], ['mio', 0], ['mio', 1], ['re
     tag + ': ' + (comp ? (pick ? 'yn_side' : 'yn_hand') + ', the yn:walk bond once, ' : 'no reply flag, no bond, ') + 'the chapter\'s end, the sequence recorded once (' + JSON.stringify({ done: a.done, hand: a.hand, side: a.side, bond: a.bond, rec: a.rec }) + ')');
   if (comp === 'suzu' && pick === 0) {
     // 6. the Records replay after the walk: read only, the vow's lines
-    const before = await p.evaluate(() => { const s = JSON.parse(JSON.stringify(RB.game.s)); delete s.playtime; return JSON.stringify(s); });
+    // (opening the Records reads the fishing record, which fills its missing fields with their empty values: an older
+    // record gains castSeq 0, catches 0, recentSituations [] and outings {}, on the cut's build as on this one. That
+    // normalisation runs first, so the journey is compared exactly in everything else)
+    const before = await p.evaluate(() => { if (RB.fishing && RB.fishing.st) RB.fishing.st(RB.game.s); const s = JSON.parse(JSON.stringify(RB.game.s)); delete s.playtime; return JSON.stringify(s); });
     await p.evaluate(() => { RB.ui.menu.open('volume'); });
     await p.waitForSelector('[data-a="watch"][data-page="yn.end"]', { timeout: 8000 }).catch(() => {});
     const can = await p.evaluate(() => !!document.querySelector('[data-a="watch"][data-page="yn.end"]'));
