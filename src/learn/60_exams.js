@@ -103,7 +103,7 @@ RB.exams = (function () {
     if (k === 'k') return RB.tasks.kanaStep(v, { bare: n % 2 === 1 });
     if (k === 'j') {
       const info = RB.kanjiInfo && RB.kanjiInfo.get(v);
-      const w = info && (info.words || [])[n % Math.max(1, (info.words || []).length)];
+      const len = Math.max(1, (info && info.words || []).length), w = info && (info.words || [])[n % len];
       if (!w) return null;
       // A word with more than one kanji names the target's place among its kanji (RBN audit T02): the words carry
       // only a whole-word reading, so "the kanji in がっこう" could be either. A target written twice is asked at one
@@ -112,7 +112,9 @@ RB.exams = (function () {
       // mark as one (and the mark is not shown when it is the answer).
       const kj = Array.from(w.w).filter((c) => RB.kana.isKanji(c));
       const at = kj.map((c, i) => (c === v ? i : -1)).filter((i) => i >= 0);
-      const nth = kj.length > 1 && at.length ? ORDINAL[at[n % at.length]] || null : null;
+      // (a target written twice is asked at each of its places in turn, one round of the word list after another; taken
+      // from n % at.length, a list of even length asked one place only: RBN audit T02's 一字一句)
+      const nth = kj.length > 1 && at.length ? ORDINAL[at[Math.floor(n / len) % at.length]] || null : null;
       const odo = kj.indexOf('々') >= 0, kana = kj.length < Array.from(w.w).length;
       const unit = odo ? 'character' : 'kanji';
       const what = nth ? 'the ' + nth + ' ' + unit + ' of ' + w.r + ' (“' + w.m + '”)' : null;
