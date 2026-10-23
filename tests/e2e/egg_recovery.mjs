@@ -95,6 +95,8 @@ const YAS = /^yn_yasuke: …Warm\. The egg's warm/, ALL = /All three eggs handed
   const lines = await play(p);
   const q1 = await quest(p);
   ok(lines.some((l) => YAS.test(l)) && lines.some((l) => ALL.test(l)) && q1.q && q1.q.done && q1.eggs === 0, 'his egg scene plays and the quest is done (' + JSON.stringify(lines.slice(0, 4)) + ')');
+  // (his own egg is recorded given, beside the other two: Local CL-235)
+  ok(q1.flags.join() === 'yasuke,tsuneji,oshige', 'his egg is recorded given (yn_egg_yasuke), with the other two (' + q1.flags.join() + ')');
   await p.waitForTimeout(3000);
   const after = await p.evaluate(() => ({ npcs: RB.world.W.npcs.filter((a) => a.id === 'yn_yasuke' && (a.alpha == null || a.alpha > 0.02)).length, dep: RB.world.W.departures.filter((d) => d.id === 'yn_yasuke').pop() || null }));
   ok(after.npcs === 0, 'afterwards he no longer stands there (his going recorded as ' + JSON.stringify(after.dep && { to: after.dep.to, exit: after.dep.exit, reason: after.dep.reason, fallback: after.dep.fallback }) + ')');
