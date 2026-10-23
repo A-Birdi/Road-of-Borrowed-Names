@@ -43,6 +43,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     props: [
       plaque('hangi', 17, 8), plaque('sumi', 21, 21),
+      // the ink the brush-washing leaves in the water at the Ink Bridge (RBN-QA-163 C; Agnes 6375174827)
+      { p: 'mp_inkwater', x: 18, y: 24 },
       // the drying racks: printed sheets hung on lines (the racks Sōbē's blank sheets come off)
       { p: 'laundry', x: 3, y: 19 }, { p: 'laundry', x: 8, y: 19 }, { p: 'laundry', x: 12, y: 19 }, { p: 'laundry', x: 3, y: 22 }, { p: 'laundry', x: 8, y: 22 },
       { p: 'noticeboard', x: 11, y: 13, scene: 'mp.pressboard' },
