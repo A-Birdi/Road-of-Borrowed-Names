@@ -17,7 +17,7 @@ let suites = [
   full ? ['story_ch1.mjs'] : ['story_ch1.mjs', 'F', 'mio'],
   full ? ['story_ch3.mjs'] : ['story_ch3.mjs', 'E', 'nao'], ['side_ch3.mjs'], ['cinder_clue_order.mjs'], ['kiln_door.mjs'], ['shino_thanks.mjs'], ['kana_homophones.mjs'],
   full ? ['story_ch4.mjs'] : ['story_ch4.mjs', 'I', 'ren', 'go'],
-  ['postgame_quests.mjs'],
+  ['postgame_quests.mjs'], ['census_plaques.mjs'],
   full ? ['story_ch5.mjs'] : ['story_ch5.mjs', 'A', 'suzu'],
   ...(full ? [0, 1, 2, 3, 4].map((i) => ['story_ch6.mjs', String(i)]) : [['story_ch6.mjs', '2']]),
   ['atlas.check.mjs'],

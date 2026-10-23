@@ -12,7 +12,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   const T = (en, jp) => ({ en, jp });
   const CITY = { region: 'manybridge', music: 'manybridge', edition: 2 };
-  const plaque = (id, x, y) => ({ p: 'mb_plaque', x, y, scene: 'mp.plaque_' + id, o: { bridge: id } });
+  // (these three are cut again once Sen has the census's names: until then a recorded name leaves the board blank, as
+  // the census says; RBN-QA-163, Agnes 6375174827)
+  const plaque = (id, x, y) => ({ p: 'mb_plaque', x, y, scene: 'mp.plaque_' + id, o: { bridge: id, cut: 'quest.mp_census=done' } });
 
   // ---- the way up from the Exchange district -----------------------------------------------------------------------
   C.maps['mb.exchange'].exits.push({ x: 34, y: 0, w: 2, h: 1, to: 'mp.blockprint', tx: 22, ty: 30, dir: 'up', if: 'mb1_done' });
