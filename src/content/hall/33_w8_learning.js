@@ -2,7 +2,7 @@
  * plan 04_DUNGEONS.md D9; scenes in 34_w8_scenes.js). The theme: whose account? (what was seen, heard, told or
  * guessed: ～そうだ for looks and for hearsay, ～らしい, ～ようだ and ～みたいだ, ～はずだ, ～かもしれない, ～でしょう;
  * at Advanced ～に違いない and ～とのことだ). Every task has its four levels and an Advanced stretch.
- *   hall.w8.story      the tale in four pictures, back in order (A38)
+ *   hall.w8.story      the tale's four written passages, back in order (A38)
  *   hall.w8.story_q    how each witness knew, and how sure they were (optional)
  *   hall.w8.counter0/1 the sayings on the inn's scrolls: the one that breaks the rule (A34)
  *   hall.w8.ask        asking your companion where Hisa's note says they went (A12)
@@ -30,13 +30,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'としより の きゃく は 「 きつね の せい らしい 」 と いった', 'みんな の はなし を あわせる と 、 ちいさい あしあと が みえて きた'];
   C.hallW8TaleF = FT;
   C.challenges['hall.w8.story'] = { title: T('{宿|やど} の {三人|さんにん} の {証人|しょうにん}', 'Three Witnesses at the Inn'), tiers: {
-    F: [OR({ item: 'v:宿', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:宿', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'The box gone; what two people saw and heard; what the old guest guessed; and what all of it together showed.' } })],
-    E: [OR({ item: 'v:足跡', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:足跡', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the loss, then the two who saw and heard, then the one who guessed, then the accounts put together.' } })],
-    I: [OR({ item: 'g:rashii', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:rashii', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'What was seen and heard comes before the rumour (らしい); only when the three are laid side by side does the answer show.' } })],
-    A: [OR({ item: 'g:ni_chigainai', prompt: { en: 'Order the pictures; the turn is the one where the accounts are put together.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:ni_chigainai', prompt: { en: 'Order the passages; the turn is the one where the accounts are put together.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'No single witness had it; 合わせると, putting them together, is the turn.' } })],
   },
   stretchA: [ch({ item: 'g:ni_chigainai', ctx: { jp: P3 + ' 。 ／ 「 {狐|きつね} の {仕業|しわざ} に {違|ちが}いない 」', en: '' }, prompt: { en: 'The old guest said らしい. What would に違いない change?' },

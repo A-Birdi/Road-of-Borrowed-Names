@@ -2,7 +2,7 @@
  * 04_DUNGEONS.md D9; scenes in 25_w5_scenes.js). The theme: reasons and contrasts (～から and ～ので; けど and が;
  * ～のに; ～おかげで and ～せいで; ～ために; at Advanced ～からこそ, ～にもかかわらず, ～ものの). Every task has its four
  * levels and an Advanced stretch.
- *   hall.w5.story      the tale in four pictures, back in order (A38)
+ *   hall.w5.story      the tale's four written passages, back in order (A38)
  *   hall.w5.story_q    what the frog at the bottom of the well knew (optional)
  *   hall.w5.counter0/1 the old sayings on reasons: the one that breaks the rule (A34)
  *   hall.w5.ask        asking your companion what the well-digger's record says (A12)
@@ -27,13 +27,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const FT = ['むかし 、 むら に いど が ふたつ あった', 'ひがし の みず は あまい のに 、 にし の みず は にがかった', 'ふたつ の いえ は 、 「 そっち の せい だ 」 と けんか を した', 'いど の そこ の かえる だけ が 、 ほんとう の りゆう を しって いた'];
   C.hallW5TaleF = FT;
   C.challenges['hall.w5.story'] = { title: T('{二|ふた}つ の {井戸|いど}', 'The Two Wells'), tiers: {
-    F: [OR({ item: 'v:井戸', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:井戸', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'Two wells; one sweet and one bitter; the two houses quarrel; only the frog knows why.' } })],
-    E: [OR({ item: 'v:井戸', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:井戸', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the two wells, then how they differed, then the blame, then who really knew.' } })],
-    I: [OR({ item: 'g:noni', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:noni', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'Two wells that should have been alike (のに: one was bitter all the same); each house blamed the other (せい); the reason lay where nobody asked.' } })],
-    A: [OR({ item: 'g:okage_sei', prompt: { en: 'Order the pictures; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:okage_sei', prompt: { en: 'Order the passages; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The blame goes back and forth; だけ sets the frog apart: the one witness nobody thought of.' } })],
   },
   stretchA: [ch({ item: 'g:noni', ctx: { jp: P2 + ' 。 ／ {東|ひがし} の {水|みず} は {甘|あま}い けど 、 {西|にし} の {水|みず} は {苦|にが}かった 。', en: '' }, prompt: { en: 'The tale says のに. What would けど change?' },

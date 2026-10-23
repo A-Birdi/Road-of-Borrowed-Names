@@ -2,7 +2,7 @@
  * 04_DUNGEONS.md D9; scenes in 23_w3_scenes.js). The theme: sequence and timing (～てから; ～前に and ～後で; まで and
  * までに; ～と, ～たら and ～とき; on the Grow route ～うちに and ～ところ; at Advanced ～次第). Every task has its four
  * levels and an Advanced stretch.
- *   hall.w3.story      the tale in four pictures, back in order (A38)
+ *   hall.w3.story      the tale's four written passages, back in order (A38)
  *   hall.w3.story_q    why the bell rings before the dawn (optional)
  *   hall.w3.counter0/1 the bell-ringer's sayings: the one that breaks the rule (A34)
  *   hall.w3.ask        asking your companion what the almanac says about today's hour (A12)
@@ -28,14 +28,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const FT = ['むかし 、 やまでら の かね は 、 まいあさ よあけ の まえ に なった', 'かね を つく ジンベエ が 、 ある ばん 、 びょうき に なった', 'まご の シノ は 、 ひ を もって 、 くらい さか を のぼった', 'かね が なる と 、 むら の ひと が おきた'];
   C.hallW3TaleF = FT;
   C.challenges['hall.w3.story'] = { title: T('{夜明|よあ}け {前|まえ} の {鐘|かね}', 'The Bell Before Dawn'), tiers: {
-    F: [OR({ item: 'v:鐘', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:鐘', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'The bell every morning; the ringer falls ill; his granddaughter climbs the slope; the village wakes.' } })],
-    E: [OR({ item: 'v:鐘', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:鐘', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First how it always was, then the night it changed, then what Shino did, then what came of it.' } })],
-    I: [OR({ item: 'g:mae_ato', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:mae_ato', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The bell rang before dawn every morning; one night its ringer fell ill, so Shino climbed up in his place, and the bell still rang.' } })],
-    A: [OR({ item: 'g:toki', prompt: { en: 'Order the pictures; the turn is the one with ある晩 in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
-      orderHint: { en: '毎朝 sets out what always happened; ある晩 breaks it; the last picture\'s と says that once the bell rang, the waking followed as it always had.' } })],
+    A: [OR({ item: 'g:toki', prompt: { en: 'Order the passages; the turn is the one with ある晩 in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+      orderHint: { en: '毎朝 sets out what always happened; ある晩 breaks it; the last passage\'s と says that once the bell rang, the waking followed as it always had.' } })],
   },
   stretchA: [ch({ item: 'g:cond_tara', ctx: { jp: P4 + ' 。 ／ {鐘|かね} が {鳴|な}ったら 、 {村|むら} が {目|め} を {覚|さ}ました 。', en: '' }, prompt: { en: 'The tale says 鳴ると. What would 鳴ったら change?' },
     options: [e('と tells it as what always follows, as sure as habit; ～たら would make that morning one particular event, and in the past it can sound as if the waking surprised the teller.', 1),

@@ -2,7 +2,7 @@
  * 04_DUNGEONS.md D9; scenes in 37_w9_scenes.js). The theme: to whom are you speaking? (plain and polite speech, what
  * you call people and your own family, respectful and humble verbs; at Intermediate ～てくださる／～ていただく, at
  * Advanced ～させていただく). Every task has its four levels and an Advanced stretch.
- *   hall.w9.story      the tale in four pictures, back in order (A38)
+ *   hall.w9.story      the tale's four written passages, back in order (A38)
  *   hall.w9.story_q    who asked what of whom, and how (optional)
  *   hall.w9.counter0/1 the prayer boards at the shrine: the one that breaks the rule (A34)
  *   hall.w9.ask        asking your companion what the young woman asked of you (A12)
@@ -30,13 +30,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'むすめ は 「 みないで ください 」 と いって 、 ぬの を おった', 'へや を のぞく と 、 つる@鶴 が じぶん の はね で ぬの を おって いた'];
   C.hallW9TaleF = FT;
   C.challenges['hall.w9.story'] = { title: T('{鶴|つる} の {恩返|おんがえ}し', 'The Crane\'s Return'), tiers: {
-    F: [OR({ item: 'v:鶴', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:鶴', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'The crane saved; a visitor at night; the cloth and the one thing she asked; and what they saw when they looked.' } })],
-    E: [OR({ item: 'v:機', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:機', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the kindness, then the stranger at the door, then the weaving, then the promise broken.' } })],
-    I: [OR({ item: 'g:keigo_kenjo', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:keigo_kenjo', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'She asks to stay as a stranger asks, very humbly, before she is one of the family; the promise comes before it is broken.' } })],
-    A: [OR({ item: 'g:te_kudasaru', prompt: { en: 'Order the pictures; the turn is the promise broken.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:te_kudasaru', prompt: { en: 'Order the passages; the turn is the promise broken.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'A kindness, a stranger\'s request (～ていただけませんか), a request kept, and then the one that was not.' } })],
   },
   stretchA: [ch({ item: 'g:te_kudasaru', ctx: { jp: '「 {一晩|ひとばん} {泊|と}めて ください 」 ／ 「 {一晩|ひとばん} {泊|と}めて いただけません か 」', en: '' }, prompt: { en: 'The young woman says the second. What does it do that the first does not?' },

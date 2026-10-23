@@ -1,7 +1,7 @@
 /* The Hall of a Hundred Tales, wing 2, The Fox's Wedding: the language tasks and encounters (expansion P15; plan
  * 04_DUNGEONS.md D9; scenes in 22_w2_scenes.js). The theme: who does what, from whom to whom (に and から, を and が;
  * あげる, くれる, もらう; 貸す and 借りる). Every task has its four levels and an Advanced stretch.
- *   hall.w2.story      the tale in four pictures, back in order (A38)
+ *   hall.w2.story      the tale's four written passages, back in order (A38)
  *   hall.w2.story_q    what Sayo's chestnuts mean (optional)
  *   hall.w2.counter0/1 the go-between's cards: the one that breaks the rule (A34)
  *   hall.w2.ask        asking your companion where Sayo sits (A12)
@@ -24,15 +24,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     P3 = 'サヨ だけ が 、 {花嫁|はなよめ} に {傘|かさ} を {貸|か}して あげた', P4 = '{次|つぎ} の {朝|あさ} 、 サヨ の {家|いえ} の {前|まえ} に 、 お{礼|れい} の {栗|くり} が {置|お}いて あった';
   C.hallW2Tale = { P1, P2, P3, P4 };
   C.challenges['hall.w2.story'] = { title: T('{狐|きつね} の {嫁入|よめい}り', 'The Fox\'s Wedding'), tiers: {
-    F: [OR({ item: 'v:傘', prompt: { en: 'Put the four pictures of the tale back in order.' },
+    F: [OR({ item: 'v:傘', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' },
       tiles: ['はれて いる のに 、 あめ が ふって きた', 'むら の ひと は 、 と を しめた', 'サヨ だけ が 、 かさ を かして あげた', 'つぎ の あさ 、 くり が おいて あった'],
       answer: ['はれて いる のに 、 あめ が ふって きた', 'むら の ひと は 、 と を しめた', 'サヨ だけ が 、 かさ を かして あげた', 'つぎ の あさ 、 くり が おいて あった'],
       orderHint: { en: 'The sun-shower; the village shuts its doors; Sayo lends her umbrella; the chestnuts the next morning.' } })],
-    E: [OR({ item: 'v:傘', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:傘', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the strange rain, then the villagers hiding from it, then Sayo\'s umbrella, then what came of it.' } })],
-    I: [OR({ item: 'g:te_giving', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:te_giving', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'Everyone else shut their doors; only Sayo lent the umbrella (貸してあげた: a kindness done for the bride), so only her door got the chestnuts.' } })],
-    A: [OR({ item: 'g:te_giving', prompt: { en: 'Order the pictures; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:te_giving', prompt: { en: 'Order the passages; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'だけ sets Sayo apart from the village; the gift that follows is the answer to that one kindness.' } })],
   },
   stretchA: [ch({ item: 'g:te_giving', ctx: { jp: P3 + ' 。 ' + P4 + ' 。', en: '' }, prompt: { en: 'The tale says 貸してあげた and then 置いてあった. What do the two endings, side by side, tell you?' },
