@@ -48,10 +48,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 18, y - 12, 12, 10, sign);
   });
 
+  // the ink in the water at the Ink Bridge (墨橋, Blockprint Row; RBN-QA-163 C): the ink-makers wash their brushes under it,
+  // so the canal is clouded black beside it. Placed on the first water row south of the bridge (3 tiles wide); it paints
+  // that row and the two after it (downstream), never the bridge's own rows. Always there (it is the
+  // washing's, not the census's), never in the way, nothing to look at.
+  def('mp_inkwater', { w: 3, block: false }, (c, x, y) => {
+    px(c, x + 2, y, 44, 5, 'rgba(16,18,28,0.62)'); px(c, x + 6, y + 5, 30, 6, 'rgba(16,18,28,0.45)');
+    px(c, x + 12, y + 18, 20, 5, 'rgba(16,18,28,0.32)'); px(c, x + 22, y + 36, 12, 3, 'rgba(16,18,28,0.18)');
+  });
+
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
-  const { R, ell, poly, line, cyl, streaks, ramp } = K;
+  const { R, ell, poly, line, cyl, streaks, ramp, mix } = K;
   const IR = K.FIX.iron, PP = K.FIX.paper, INK = K.FIX.ink, GL = K.FIX.glow;
   const MADDER = ramp('#8e3a36', 0.5, 0.42), INDIGO = ramp('#34406a', 0.5, 0.42);
   void cyl; void INK;
@@ -194,5 +203,32 @@ var RB = (globalThis.RB = globalThis.RB || {});
       else if (v === 4) { R(g, 34, -20, 28, 22, MADDER[2]); R(g, 34, -20, 28, 2, MADDER[4]); ell(g, 48, -20, 6, 2, '#1a1414'); }
       else if (v === 5) { R(g, 34, -12, 4, 14, w5[2]); R(g, 58, -12, 4, 14, w5[2]); ell(g, 48, -18, 14, 12, w5[2]); ell(g, 48, -18, 11, 10, PP[3]); ell(g, 48, -18, 3, 3, MADDER[3]); }
     },
+  });
+  // The ink in the water at the Ink Bridge, baked into the ground under everyone (it lies on the water): clouds of
+  // ink in three flat tones of the canal's own blue taken toward black, thickest against the bridge's south face and
+  // trailing downstream (south) in two curling plumes that thin out, with tendrils drawn off them by the current. Only
+  // the water south of the bridge is painted (the bridge's rows and the row north of it, under its railing, are not);
+  // the banks' edges (the outer 4 px of the canal) are left to the water tile. The water's own glints still play over it.
+  art('mp_inkwater', {
+    box: [0, 0, 96, 32],
+    bake: {
+      box: [0, 0, 96, 96],
+      when: () => true,
+      draw(g, M) {
+        const W = M.water, INKD = '#0d0f15', INK = mix(W[0], '#0d0f15', 0.82), INKL = mix(W[0], '#12141c', 0.6);
+        // the south face: a pool of ink where it comes out from under the bridge, thinning into clouds
+        R(g, 4, 0, 88, 7, INKD); R(g, 5, 7, 86, 5, INK);
+        ell(g, 24, 13, 19, 7, INK); ell(g, 64, 14, 21, 8, INK); ell(g, 44, 9, 14, 5, INKD); ell(g, 22, 8, 10, 3, INKD); ell(g, 70, 9, 12, 4, INKD);
+        // two plumes trailing downstream, curling and thinning
+        ell(g, 22, 26, 12, 7, INKL); ell(g, 30, 38, 10, 6, INKL); ell(g, 26, 50, 7, 4, INKL); ell(g, 20, 60, 4, 3, INKL);
+        ell(g, 68, 28, 13, 7, INKL); ell(g, 60, 42, 9, 6, INKL); ell(g, 66, 56, 7, 4, INKL); ell(g, 72, 70, 5, 3, INKL); ell(g, 68, 82, 3, 2, INKL);
+        ell(g, 24, 24, 7, 4, INK); ell(g, 66, 26, 8, 4, INK);
+        // tendrils: ink drawn out by the current, curling off the plumes
+        line(g, 34, 30, 42, 40, INKL, 2); line(g, 42, 40, 40, 52, INKL, 1);
+        line(g, 56, 34, 50, 46, INKL, 2); line(g, 50, 46, 54, 60, INKL, 1);
+        line(g, 12, 30, 10, 42, INKL, 1); line(g, 80, 34, 84, 46, INKL, 1);
+      },
+    },
+    draw() {},
   });
 })();
