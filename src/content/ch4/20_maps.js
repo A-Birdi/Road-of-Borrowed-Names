@@ -151,7 +151,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'sousuke', x: 26, y: 19, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_sousuke' },
       // After the story: Hoshino on his bench if he stayed.
       { id: 'hoshino', x: 36, y: 9, dir: 'down', if: 'post&!sb_hoshino_goes', talk: 'sb.hoshino_post' },
-      { id: 'fuki', x: 23, y: 16, dir: 'down', if: 'ch4_done&!sb_evening', talk: [{ if: 'post', scene: 'sb.fuki_post' }, { if: 'quest.sb_bell&!quest.sb_bell=done', scene: 'sb.fuki' }, { scene: 'sb.fuki_after' }] },
+      // (an open Bell-Post first, after the story too: her news after the story came first, and a bell rung at noon
+      // could never be reported to her; RBN-QA-161, Agnes 6373640071, Local CL-243, Cloud CC-150 §1)
+      { id: 'fuki', x: 23, y: 16, dir: 'down', if: 'ch4_done&!sb_evening', talk: [{ if: 'quest.sb_bell=active', scene: 'sb.fuki' }, { if: 'post', scene: 'sb.fuki_post' }, { scene: 'sb.fuki_after' }] },
     ],
     exits: [
       { x: 22, y: 35, w: 2, h: 1, to: 'sb.road', tx: 18, ty: 1, dir: 'down' },
