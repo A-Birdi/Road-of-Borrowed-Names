@@ -2,7 +2,7 @@
  * 04_DUNGEONS.md D9; scenes in 31_w7_scenes.js). The theme: what was left unsaid (leaving out what is understood;
  * こ・そ・あ; の for "the one"; at Advanced 例の, 前者 and 後者). Every task has its four levels and an Advanced
  * stretch.
- *   hall.w7.story      the tale in four pictures, back in order (A38)
+ *   hall.w7.story      the tale's four written passages, back in order (A38)
  *   hall.w7.story_q    what the house had laid out, and who it gave to (optional)
  *   hall.w7.counter0/1 the sayings on the garden stones: the one that breaks the rule (A34)
  *   hall.w7.ask        asking your companion which keepsake the letter means (A12)
@@ -30,13 +30,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'へや に は あかい おぜん と くろい おわん が あって 、 おゆ が わいて いた', 'むすめ は なにも とらない で かえった 。 すると 、 あかい おわん が かわ を ながれて きた'];
   C.hallW7TaleF = FT;
   C.challenges['hall.w7.story'] = { title: T('{覚|おぼ}えて いる {家|いえ}', 'The House That Remembers'), tiers: {
-    F: [OR({ item: 'v:家', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:家', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'Lost in the mountains; a big house with nobody in it; the room laid out and the water on the boil; home with nothing, and a bowl down the river.' } })],
-    E: [OR({ item: 'v:椀', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:椀', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the girl lost, then the empty house, then what was laid out inside, then what came after her.' } })],
-    I: [OR({ item: 'g:omission', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:omission', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The tale never says who laid out the bowls or who boiled the water: it leaves that out, and so does the house.' } })],
-    A: [OR({ item: 'g:omission', prompt: { en: 'Order the pictures; the turn is the one with すると in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:omission', prompt: { en: 'Order the passages; the turn is the one with すると in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'Everything is laid out and nobody is there; すると brings the turn: what she did not take came after her.' } })],
   },
   stretchA: [ch({ item: 'g:omission', ctx: { jp: P4 + ' 。', en: '' }, prompt: { en: 'The tale never says who sent the bowl down the river. Why might it leave that out?' },

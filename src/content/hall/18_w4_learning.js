@@ -2,7 +2,7 @@
  * 04_DUNGEONS.md D9; scenes in 24_w4_scenes.js). The theme: requests, permission, intention and misunderstanding
  * (～てください, ～てもらえますか; ～てもいい and ～てはいけない; ～つもり and ～ようと思う; at the top the humble
  * ways to ask). Every task has its four levels and an Advanced stretch.
- *   hall.w4.story      the tale in four pictures, back in order (A38)
+ *   hall.w4.story      the tale's four written passages, back in order (A38)
  *   hall.w4.story_q    what the umbrella's going home says (optional)
  *   hall.w4.counter0/1 the peddler's cards on asking: the one that breaks the rule (A34)
  *   hall.w4.ask        asking your companion what the river notice allows today (A12)
@@ -28,13 +28,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const FT = ['あらし の よる 、 ゴサク は やまでら で かさ を かりた', '「 あめ が やんだら 、 かえしに きます 」 と 、 ゴサク は いった', 'けれど かわ が あふれて 、 ゴサク は いちねん もどれなかった', 'かさ は いっぽんあし で はねて 、 じぶん で てら へ むかった'];
   C.hallW4TaleF = FT;
   C.challenges['hall.w4.story'] = { title: T('{借|か}りた {傘|かさ}', 'The Borrowed Umbrella'), tiers: {
-    F: [OR({ item: 'v:傘', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:傘', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'The umbrella borrowed; the promise; the flood; the umbrella setting off on its own.' } })],
-    E: [OR({ item: 'v:傘', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:傘', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the borrowing, then the promise, then what stopped him, then what the umbrella did.' } })],
-    I: [OR({ item: 'g:tsumori', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:tsumori', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'He borrowed it and promised to return it (he meant to); the flood kept him away; the umbrella, waiting, went home by itself.' } })],
-    A: [OR({ item: 'g:tsumori', prompt: { en: 'Order the pictures; the turn is the one with けれど in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:tsumori', prompt: { en: 'Order the passages; the turn is the one with けれど in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The promise is kept in words; けれど turns it: the flood, not a change of heart, is why it was broken.' } })],
   },
   stretchA: [ch({ item: 'g:tsumori', ctx: { jp: '{返|かえ}す つもり だった 。 ／ {返|かえ}した つもり だった 。', en: '' }, prompt: { en: 'One letter apart. What does each say about Gosaku?' },

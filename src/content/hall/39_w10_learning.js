@@ -2,8 +2,8 @@
  * 04_DUNGEONS.md D9; scenes in 39a_w10_scenes.js). The theme: everything at once (finding the way, who did what to
  * whom, sequence, requests, reasons, conditions, what goes unsaid, whose account, to whom you speak), and the tale
  * told is the player's own journey. Every task has its four levels and an Advanced stretch.
- *   hall.w10.story      your journey in four pictures, back in order (A38)
- *   hall.w10.story_q    what the pictures say (optional)
+ *   hall.w10.story      your journey's four written passages, back in order (A38)
+ *   hall.w10.story_q    what the passages say (optional)
  *   hall.w10.counter0/1 the keepers' practice slates: the one that breaks its rule, one rule from each tale (A34)
  *   hall.w10.ask        asking your companion where the keepers' note says the hundredth wick is kept (A12)
  *   hall.w10.riddle     the riddle stone (a reprieve)
@@ -30,14 +30,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'しじま の しょこ で 、 ながい たび が おわった', 'いま 、 やかた で 、 きゅうじゅうきゅう の ひ が ついて いる'];
   C.hallW10TaleF = FT;
   C.challenges['hall.w10.story'] = { title: T('{百話目|ひゃくわめ} の {話|はなし}', 'The Hundredth Tale'), tiers: {
-    F: [OR({ item: 'g:v_ta', prompt: { en: 'Put the four pictures of your journey back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'g:v_ta', prompt: { en: 'Arrange the four written passages to retell your journey.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'Setting out; companions and words called back; the end of the long road; and now.' } })],
-    E: [OR({ item: 'g:mae_ato', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'g:mae_ato', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'Reedwake first, then the road, then the Archive, then the Hall.' } })],
-    I: [OR({ item: 'g:relative_clause', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:relative_clause', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'そして今 ("and now") can only come last; the Archive is where the long road ended.' } })],
-    A: [OR({ item: 'g:relative_clause', prompt: { en: 'Order the pictures; the turn is the one that says the journey ended, but not the tale.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
-      orderHint: { en: '一つの終わり is "an ending", not "the end": the fourth picture goes on from it.' } })],
+    A: [OR({ item: 'g:relative_clause', prompt: { en: 'Order the passages; the turn is the one that says the journey ended, but not the tale.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+      orderHint: { en: '一つの終わり is "an ending", not "the end": the fourth passage goes on from it.' } })],
   },
   stretchA: [ch({ item: 'g:relative_clause', ctx: { jp: P3 + ' 。', en: '' }, prompt: { en: 'Why 一つの終わりを迎えた, and not simply 終わった?' },
     options: [e('It calls the Archive an ending, one of several, and leaves room for what came after: the Hall, and this tale.', 1), e('It is only more polite.', 0, 'It changes the meaning: "an ending", not "the end".'), e('It means the journey failed.', 0, 'Nothing in it says the journey failed.')] })] };
@@ -49,7 +49,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     I: [ch({ item: 'g:relative_clause', ctx: { jp: P4 + ' 。', en: '' }, prompt: { en: 'How many lights burn in the Hall now?' },
       options: [e('Ninety-nine: one is still dark.', 1), e('A hundred.', 0, '九十九: ninety-nine.'), e('Nine.', 0, 'Nine wings; ninety-nine lights.')] })],
     A: [ch({ item: 'g:relative_clause', ctx: { jp: P1 + ' 。 ' + P2 + ' 。 ' + P3 + ' 。 ' + P4 + ' 。', en: '' }, prompt: { en: 'Whose tale is the hundredth?' },
-      options: [e('The traveller\'s: yours. The other ninety-nine were the keepers\' tales; the last is the one you lived.', 1), e('Keeper Tsuru\'s.', 0, 'The pictures follow the traveller.'), e('Nobody\'s: it is never told.', 0, 'It is about to be told.')] })],
+      options: [e('The traveller\'s: yours. The other ninety-nine were the keepers\' tales; the last is the one you lived.', 1), e('Keeper Tsuru\'s.', 0, 'The passages follow the traveller.'), e('Nobody\'s: it is never told.', 0, 'It is about to be told.')] })],
   } };
 
   // ---- the keepers' practice slates: the one that breaks its rule (A34) ------------------------------------------------------

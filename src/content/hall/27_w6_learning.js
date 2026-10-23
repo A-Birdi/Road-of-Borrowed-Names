@@ -2,7 +2,7 @@
  * 04_DUNGEONS.md D9; scenes in 28_w6_scenes.js). The theme: conditions and exceptions (～と, ～ば, ～たら, ～なら; ～ても;
  * ～場合, ただし, ～以外; at Advanced ～限り, ～さえ～ば, ～を除いて). Every task has its four levels and an Advanced
  * stretch.
- *   hall.w6.story      the tale in four pictures, back in order (A38)
+ *   hall.w6.story      the tale's four written passages, back in order (A38)
  *   hall.w6.story_q    what the board filled up with, and the rule that was never written (optional)
  *   hall.w6.counter0/1 the waymarkers' sayings on conditions: the one that breaks the rule (A34)
  *   hall.w6.ask        asking your companion what Kihei's ledger says about going on after dark (A12)
@@ -30,13 +30,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'きまり は ふえて 、 ふだ は 「 でも 」 と 「 なら 」 で いっぱい に なった', 'さいご の きまり だけ は 、 どこ に も かいて なかった'];
   C.hallW6TaleF = FT;
   C.challenges['hall.w6.story'] = { title: T('{変|か}わった {通行料|つうこうりょう}', 'The Toll That Changed'), tiers: {
-    F: [OR({ item: 'v:決まり', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:決まり', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'One coin for everyone; then a rule for rainy days; then rule after rule; and one rule written nowhere.' } })],
-    E: [OR({ item: 'v:通行料', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:通行料', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the toll as it began, then the first rule added, then the board filling up, then the rule that was never written.' } })],
-    I: [OR({ item: 'g:cond_nara', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:cond_nara', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The plain toll; the first condition (なら: if that is your case); the conditions and exceptions piling up (ただし); and, last, the one rule outside them all.' } })],
-    A: [OR({ item: 'g:igai', prompt: { en: 'Order the pictures; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:igai', prompt: { en: 'Order the passages; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'Every hard case became a written exception; だけ sets apart the one rule that was never written down.' } })],
   },
   stretchA: [ch({ item: 'g:cond_nara', ctx: { jp: P2 + ' 。 ／ 「 {雨|あめ} が {降|ふ}ったら 、 {帰|かえ}り に {払|はら}えば いい 」', en: '' }, prompt: { en: 'The keeper said 雨なら. What would 雨が降ったら change?' },

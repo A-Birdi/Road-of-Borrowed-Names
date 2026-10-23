@@ -2,7 +2,7 @@
  * plan 04_DUNGEONS.md D9; scenes in 21_w1_scenes.js, which this file comes before so they can show the plaques). The wing's theme: finding the way (directions, signs, which
  * turning, asking again). Every task has its four levels and an Advanced stretch (the Grow route at Advanced: nuance,
  * never an invented level); the Grow route elsewhere runs the next level up, taught first (src/learn/70_grow.js).
- *   hall.w1.story      the tale in four pictures, back in order (A38: the story room)
+ *   hall.w1.story      the tale's four written passages, back in order (A38: the story room)
  *   hall.w1.story_q    what the tale is about (optional: never counted against you)
  *   hall.w1.sign0/1    the signpost: which way to the place the traveller asks for (by the wing's pattern)
  *   hall.w1.counter0/1 the plaques: the one that breaks the rule (A34: a counterexample hall)
@@ -21,19 +21,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const e = (en, ok, why) => Object.assign({ en, ok: !!ok }, why ? { why: { en: why } } : {});
   const say = (jp, en) => ({ jp, en });
 
-  // ---- the story room: the tale in four pictures -----------------------------------------------------------------------
+  // ---- the story room: the tale's four passages ------------------------------------------------------------------------
   const P1 = '{昔|むかし} 、 {山|やま} の {辻|つじ} に 、 {灯籠|とうろう} が {一|ひと}つ {立|た}って いた', P2 = '{灯籠|とうろう} の {番|ばん} を して いた の は 、 {耳|みみ} の {遠|とお}い おばあさん だった',
     P3 = '{旅人|たびびと} が {道|みち} を {聞|き}く と 、 おばあさん は いつも 「 もう {一度|いちど} 、 {言|い}って ください 」 と {言|い}った', P4 = '{二度|にど} {聞|き}いた {旅人|たびびと} は 、 {一人|ひとり} も {道|みち} に {迷|まよ}わなかった';
   C.challenges['hall.w1.story'] = { title: T('{辻|つじ} の {灯籠|とうろう}', 'The Lamp at the Crossroads'), tiers: {
-    F: [OR({ item: 'v:道', prompt: { en: 'Put the four pictures of the tale back in order.' },
+    F: [OR({ item: 'v:道', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' },
       tiles: ['とうろう が ひとつ たって いた', 'おばあさん が ばん を して いた', '「もう いちど いって ください」', 'だれ も みち に まよわなかった'],
       answer: ['とうろう が ひとつ たって いた', 'おばあさん が ばん を して いた', '「もう いちど いって ください」', 'だれ も みち に まよわなかった'],
       orderHint: { en: 'The lamp; the old woman who kept it; what she always said; and what came of it.' } })],
-    E: [OR({ item: 'v:道', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:道', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the lamp, then its keeper, then what she said to travellers, then what happened to them.' } })],
-    I: [OR({ item: 'v:迷う', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'v:迷う', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'She was hard of hearing (耳が遠い), so she asked again; because they said it twice, nobody got lost.' } })],
-    A: [OR({ item: 'v:迷う', prompt: { en: 'Order the pictures; the tale turns on the line in quotation marks.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'v:迷う', prompt: { en: 'Order the passages; the tale turns on the line in quotation marks.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The quoted request is the hinge: everything after it is its consequence.' } })],
   },
   stretchA: [ch({ item: 'v:迷う', ctx: { jp: P2 + ' 。 ' + P3 + ' 。 ' + P4 + ' 。', en: '' }, prompt: { en: 'Read the tale against the grain: who, in it, is actually doing the travellers a favour?' },
