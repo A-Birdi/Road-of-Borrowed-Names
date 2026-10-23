@@ -16,7 +16,9 @@
 //   there once for every line and walks to the Hall at nightfall; a person
 //   whose place on the map changes walks there (no second figure); someone
 //   who walked in to speak and whose place here a scene began (Jinpachi when
-//   the Cloudroad is done) walks from where they spoke to that place.
+//   the Cloudroad is done) walks from where they spoke to that place; and when
+//   the valley's letter ends that place, he runs up to you with it and then
+//   goes on down the road by his own way out (RBN-QA-108).
 // Usage: node tests/e2e/departures.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -220,46 +222,63 @@ assert(shift.most === 1 && shift.start[0] === shift.from.join(',') && /^tsuru_ou
 // ---- 7. one figure from speaking to its place: the Cloudroad's last post delivered (twelve-chapter edition) ----
 // Heisuke reads the letter at his door in Sakashita, the chapter ends, and Jinpachi brings Mio Kikue's message: he
 // walks in to speak, and since the chapter's end his place is this station's (5,14). At the scene's end that same
-// figure walks there (it used to vanish beside you while a second Jinpachi walked in from the road), and Heisuke,
+// figure sets out for it (it used to vanish beside you while a second Jinpachi walked in from the road), and Heisuke,
 // whose place is now Sono's inn until the coins are decided, walks off to the inn's door (no longer at his door too).
+// Then the valley's letter (yn.call), played through: his place ends with it, so he runs up to you with it (the approach:
+// _walked 1, every line of his within 2 of you), and at its end goes on down the road by his own way out, the station's
+// west exit to the leg below (the departure: a record naming cr.leg2, not a fallback), and is gone; one Jinpachi
+// throughout (RBN-QA-108; Agnes 6372889134, Local CL-240, Cloud CC-149 §4).
 const CR = { departed: true, ch1_done: true, ch2_done: true, mb1_done: true, mb2_done: true, ch3_done: true, ch4_done: true, kr_done: true, ch5_done: true, ko_done: true,
   cr_called: true, cr_kanbe_met: true, cr_passed: true, cr_courier_done: true, cr_message_taken: true };
 for (let n = 1; n <= 7; n++) Object.assign(CR, { ['cr_st' + n]: true, ['cr_lamp' + n]: true }, n <= 5 ? { ['cr_given' + n]: true, ['cr_plan' + n]: true } : {});
 ({ p } = await page(b, url, { viewport: { width: 1280, height: 800 } }));
 await start('cr.sakashita', 18, 12, CR, 'up', 'mio');
 const relay = await p.evaluate(async () => {
-  const W = RB.world.W, s = RB.game.s, seen = { most: 0, near: null };
+  const W = RB.world.W, s = RB.game.s, seen = { most: 0, near: null, lines: [] };
   const who = (a) => (a.def && (a.def.char || a.def.id)) || a.id;
+  const figs = () => W.npcs.concat(W.extras, W.leavers).filter((a) => who(a) === 'cr_jinpachi');
   s.inv.cr_message = 1; s.quests.cr_main = { stage: 8, done: false, t: Date.now() };
   let done = false;
   RB.script.run('cr.deliver').then(() => { done = true; });
-  for (let i = 0; i < 1600 && !done; i++) {
-    const figs = W.npcs.concat(W.extras, W.leavers).filter((a) => who(a) === 'cr_jinpachi');
-    seen.most = Math.max(seen.most, figs.length);
+  // the post, the chapter's end, Mio Kikue's message, then the valley's letter, each played to its end
+  for (let i = 0; i < 2400 && !(done && s.flags.yn_called && !RB.script.isRunning() && !RB.ui.dialogue.isOpen()); i++) {
+    const f = figs();
+    seen.most = Math.max(seen.most, f.length);
     if (RB.ui.dialogue.isOpen()) {
       const d = document.querySelector('.dlg .who .nm');
-      if (d && /Jinpachi/.test(d.textContent) && figs.length) seen.near = figs.map((a) => a.x + ',' + a.y).join('|');
+      if (d && /Jinpachi/.test(d.textContent) && f.length) {
+        seen.near = f.map((a) => a.x + ',' + a.y).join('|');
+        if (s.flags.yn_called) seen.lines.push({ jin: [f[0].x, f[0].y], pc: [W.player.x, W.player.y] });
+      }
       RB.ui.dialogue.advance(true);
     }
     const c = document.querySelector('.choices:not(.hidden) .choice'); if (c) c.click();
     await new Promise((r) => setTimeout(r, 40));
   }
+  // and then he goes (the world's own walk, after the scene: at most 20 s)
   const after = [];
-  for (let i = 0; i < 160; i++) {
-    const figs = W.npcs.concat(W.extras, W.leavers).filter((a) => who(a) === 'cr_jinpachi');
-    seen.most = Math.max(seen.most, figs.length);
-    after.push(figs.map((a) => a.x + ',' + a.y + (a.alpha < 1 ? '~' : '')).join('|'));
-    if (figs.length === 1 && !figs[0].route && !figs[0].mv && !W.leavers.some((a) => who(a) === 'cr_heisuke')) break;
+  for (let i = 0; i < 400; i++) {
+    const f = figs();
+    seen.most = Math.max(seen.most, f.length);
+    after.push(f.map((a) => a.x + ',' + a.y + (a.alpha < 1 ? '~' : '')).join('|'));
+    if (!f.length && !W.leavers.some((a) => who(a) === 'cr_heisuke')) break;
     await new Promise((r) => setTimeout(r, 50));
   }
-  const jin = W.npcs.filter((a) => who(a) === 'cr_jinpachi');
-  return { done, flags: { cr_done: !!s.flags.cr_done, kikue: !!s.flags.cr_mio_kikue }, most: seen.most, near: seen.near, first: after[0], end: jin.map((a) => a.x + ',' + a.y + ' a' + a.alpha),
-    jdep: W.departures.filter((d) => d.id === 'cr_jinpachi').map((d) => ({ arriving: d.arriving, reason: d.reason })),
+  const trail = after.filter((q, i, A) => q && (!i || q !== A[i - 1]));
+  return { done, flags: { cr_done: !!s.flags.cr_done, kikue: !!s.flags.cr_mio_kikue, called: !!s.flags.yn_called, letter: !!(s.inv && s.inv.yn_letter) }, walked: s.vars._walked, most: seen.most, near: seen.near,
+    lines: seen.lines, trail: trail.slice(0, 2).concat(trail.slice(-2)), left: figs().length,
+    jdep: W.departures.filter((d) => d.id === 'cr_jinpachi').map((d) => ({ arriving: d.arriving, reason: d.reason, to: d.to, exit: d.exit, fallback: d.fallback || null })),
     heisuke: W.npcs.filter((a) => who(a) === 'cr_heisuke').length, hdep: W.departures.filter((d) => d.id === 'cr_heisuke').map((d) => ({ to: d.to, exit: d.exit, arriving: d.arriving })) };
 });
 assert(relay.done && relay.flags.cr_done && relay.flags.kikue, 'the last post delivered, the chapter ended and Jinpachi brought Mio Kikue\'s message (' + JSON.stringify(relay.flags) + ')');
-assert(relay.most === 1 && relay.end.length === 1 && /^5,14 a1$/.test(relay.end[0]), 'one Jinpachi, from where he spoke (' + relay.near + ') to his place at (5,14), fully visible (' + JSON.stringify(relay) + ')');
-assert(relay.jdep.filter((d) => d.arriving).length === 1 && /new place here/.test((relay.jdep[relay.jdep.length - 1] || {}).reason), 'he walks in once, to speak, and from there to his place: never in again from the road (' + JSON.stringify(relay.jdep) + ')');
+const rd = relay.jdep, shifted = rd.findIndex((d) => /new place here/.test(d.reason)), gone = rd.filter((d) => !d.arriving && !/new place here/.test(d.reason));
+// (his place at (5,14) passes to the figure that spoke, which sets out for it; the letter, which starts at once, ends it)
+assert(rd.filter((d) => d.arriving).length === 1 && shifted >= 0 && rd[shifted].exit === '5,14', 'he walks in once, to speak, and from there sets out for his place at (5,14): never in again from the road (' + JSON.stringify(rd) + ')');
+const cheb = (l) => Math.max(Math.abs(l.jin[0] - l.pc[0]), Math.abs(l.jin[1] - l.pc[1]));
+assert(relay.flags.called && relay.flags.letter && relay.walked === 1 && relay.lines.length >= 3 && relay.lines.every((l) => cheb(l) <= 2), 'the valley\'s letter: he runs up to you with it, every line of his within 2 of you, _walked 1 (' + JSON.stringify({ walked: relay.walked, lines: relay.lines.map((l) => l.jin.join(',') + '/' + l.pc.join(',')) }) + ')');
+assert(gone.length === 1 && rd.indexOf(gone[0]) > shifted && gone[0].to === 'cr.leg2' && gone[0].reason === 'authored' && !gone[0].fallback && /^0,\d+$/.test(gone[0].exit || '') && relay.left === 0,
+  'then he goes on down the road by his own way out: the west exit to the leg below, not a fallback, and is gone (' + JSON.stringify({ gone, trail: relay.trail, left: relay.left }) + ')');
+assert(relay.most === 1, 'one Jinpachi throughout, from the post to his going (' + relay.most + ' at most)');
 assert(relay.heisuke === 0 && relay.hdep.some((d) => !d.arriving && d.to === 'cr.saka_inn'), 'Heisuke goes to Sono\'s inn and is no longer at his door (' + JSON.stringify(relay.hdep) + ')');
 
 assert(!errors.length, 'no page errors ' + errors.slice(0, 3).join(' | '));

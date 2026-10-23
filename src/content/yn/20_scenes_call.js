@@ -11,10 +11,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   // the runner, wherever the party next is on the Cloudroad (a station or the Pass) or in Lanternfall's street
   const where = (C.cloudroad && C.cloudroad.STATIONS ? C.cloudroad.STATIONS : []).map((id) => [id, 5, 14]).concat([['cr.summit', 5, 12], ['lf.town', 6, 18]]);
+  // When the letter is given (yn.call sets yn_called) his place here ends, and at the scene's close he goes on down the
+  // road on his round, by his own way out: the place's west exit, down the relay (stations: the leg below, Oiwake:
+  // Lanternfall's road; the Pass: the hut; Lanternfall's street: its road). If that way cannot be walked he fades where
+  // he stands, recorded (leave: 'way', src/engine/50_world.js); never by some other exit. (RBN-QA-108; Agnes
+  // 6372889134, Local CL-240, Cloud CC-147 §3, CC-149 §4)
   for (const [id, x, y] of where) {
     const m = C.maps[id];
     if (!m) continue;
-    m.npcs.push({ id: 'cr_jinpachi', x, y, dir: 'up', if: 'ed>=2&cr_done&!yn_called', talk: 'yn.call' });
+    const down = (m.exits || []).find((e) => e.x === 0);
+    m.npcs.push(Object.assign({ id: 'cr_jinpachi', x, y, dir: 'up', if: 'ed>=2&cr_done&!yn_called', talk: 'yn.call' }, down ? { leave: 'way', leaveTo: down.to } : {}));
     m.onEnter = (m.onEnter || []).concat([{ scene: 'yn.call', if: 'ed>=2&cr_done&!yn_called' }]);
   }
 })(RB.content);

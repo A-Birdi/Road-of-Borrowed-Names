@@ -5,14 +5,20 @@
 //     desktop and a phone size: for every line of his he is within 2 tiles of you and on screen, with no off-screen
 //     mark; var._walked 1;
 //  2. arriving at every station, the Pass and Lanternfall's street by each of its ways in: the same;
-//  3. Skip seen: he is set within 2 at once;
+//     and in 1. and 2., once the letter is given his place there ends and he goes on down the road by his own way out,
+//     that place's west exit (RBN-QA-108; Agnes 6372889134, Local CL-240, Cloud CC-149 §4): a departure recorded to its
+//     road (not a fallback), at the west edge, and then he is gone; one Jinpachi throughout;
+//  3. Skip seen: he is set within 2 at once, and goes the same way;
 //  4. a journey loaded while he walks: nothing of the walk left (no one walking, nothing running), the loaded journey
 //     untouched (no _walked written into it), and arriving again plays the letter with him walking up;
 //  5. no free place within 2 (a crowd round you): nobody moves, _walked 0, recorded as a walk fallback; his lines say
-//     he speaks from off screen (the plate's mark, which way he is), and the scene still gives the letter;
+//     he speaks from off screen (the plate's mark, which way he is), and the scene still gives the letter; then he is
+//     gone, and never by some other way;
 //  6. a walk that runs out (a test scene with the shortest bound, from far off): he stops on the tile he reached on his
 //     way (never set further on), _walked 0; the mark exactly when he is off screen;
-//  7. no page errors.
+//  7. his road closed (the station's west exit leads nowhere): he fades where he stood, recorded as a fallback, without a
+//     step towards any exit;
+//  8. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/jinpachi_letter.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -26,9 +32,15 @@ const errorsAll = [];
 
 // every line of his: where he and you are, whether he is on screen, and the plate's off-screen mark
 const hook = () => {
-  window.__jin = []; window.__lineN = 0;
+  window.__jin = []; window.__lineN = 0; window.__jinMost = 0;
   if (window.__jinWrap) return;
   window.__jinWrap = true;
+  // (how many figures of him there are, every frame)
+  (function count() {
+    const W = RB.world.W;
+    if (W && W.map) window.__jinMost = Math.max(window.__jinMost, W.npcs.concat(W.extras || [], W.leavers || []).filter((n) => n.id === 'cr_jinpachi' || (n.def && (n.def.char || n.def.id)) === 'cr_jinpachi').length);
+    requestAnimationFrame(count);
+  })();
   const say = RB.ui.dialogue.say;
   RB.ui.dialogue.say = function (l) {
     const r = say.apply(this, arguments);
@@ -69,6 +81,24 @@ async function begin(p, map, x, y, comp, flags, o) {
   }, [map, x, y, comp, flags, o || {}]);
   await p.evaluate(hook);
 }
+// his road from each place where the letter is given (its west exit's map)
+const ROAD = { 'cr.oiwake': 'lf.road', 'cr.suginoki': 'cr.leg1', 'cr.sakashita': 'cr.leg2', 'cr.nakayama': 'cr.leg3', 'cr.umagaeshi': 'cr.leg4', 'cr.kirishita': 'cr.leg5', 'cr.kumoi': 'cr.above', 'cr.summit': 'cr.hut', 'lf.town': 'lf.road' };
+// After the letter: until he is gone (at most 20 s), where he went; his going's record (not his walking in, nor taking up
+// a new place here), the tiles he was seen on, and the most figures of him at once
+const goes = (p) => p.evaluate(async () => {
+  const W = RB.world.W, map = W.map.id, mine = (n) => n.id === 'cr_jinpachi' || (n.def && (n.def.char || n.def.id)) === 'cr_jinpachi';
+  const figs = () => W.npcs.concat(W.extras || [], W.leavers || []).filter(mine), trail = [], t0 = performance.now();
+  while (figs().length && performance.now() - t0 < 20000) {
+    const k = figs().map((a) => a.x + ',' + a.y).join('|');
+    if (k !== trail[trail.length - 1]) trail.push(k);
+    await new Promise((r) => setTimeout(r, 40));
+  }
+  const recs = W.departures.filter((d) => d.id === 'cr_jinpachi' && d.map === map && !d.arriving && !/new place here/.test(d.reason));
+  return { map, left: figs().length, ms: Math.round(performance.now() - t0), recs, trail, most: window.__jinMost };
+});
+// he went down his road: one record, to that place's road, at its west edge, not a fallback; gone; one figure throughout
+const wentDown = (g) => g.left === 0 && g.most === 1 && g.recs.length === 1 && g.recs[0].to === ROAD[g.map] && g.recs[0].reason === 'authored' && !g.recs[0].fallback && /^0,\d+$/.test(g.recs[0].exit || '');
+const fmtGo = (g) => JSON.stringify({ recs: g.recs.map((d) => ({ to: d.to, exit: d.exit, reason: d.reason, fallback: d.fallback })), trail: g.trail.slice(0, 1).concat(g.trail.slice(-2)), left: g.left, most: g.most, ms: g.ms });
 const after = (p) => p.evaluate(() => ({ called: !!RB.game.s.flags.yn_called, letter: !!(RB.game.s.inv && RB.game.s.inv.yn_letter), walked: RB.game.s.vars._walked, run: RB.script.isRunning(), jin: window.__jin.slice(), fb: (RB.staging.stats().nearFallbacks || []).slice(-3) }));
 
 // ---- 1. chained after the Cloudroad's end at Sakashita ---------------------------------------------------------------------
@@ -83,6 +113,8 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
     // endings have him speak a message for them before it, from where he stands: cr.mio_kikue, cr.ren_lit, cr.suzu_reply)
     const L = a.jin.filter((l) => l.map === 'cr.sakashita' && l.called);
     ok(a.called && a.letter && a.walked === 1 && near(L), `${w}x${h} ${comp}: after the Cloudroad's end, every line of his within 2 of you and on screen, no mark; _walked 1 (${fmt(L)})`);
+    const g = await goes(p);
+    ok(wentDown(g), `${w}x${h} ${comp}: then he goes on down the road, by the west exit to the leg below, not a fallback, and is gone; one Jinpachi throughout (${fmtGo(g)})`);
     errorsAll.push(...errors);
     await ctx.close();
   }
@@ -91,7 +123,7 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
 // ---- 2. arriving at every station, the Pass and Lanternfall's street ------------------------------------------------------
 {
   const maps = await (async () => { const { p, ctx } = await page(b, url); const r = await p.evaluate(() => RB.content.cloudroad.STATIONS.concat(['cr.summit', 'lf.town']).map((id) => [id, Object.keys(RB.content.maps[id].spawn || {})])); await ctx.close(); return r; })();
-  const bad = [], waits = [];
+  const bad = [], badGo = [], waits = [];
   let n = 0;
   for (const [map, keys] of maps) {
     for (const key of keys.filter((k) => k !== 'default' || keys.length === 1)) {
@@ -107,11 +139,14 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
       if (L.length) waits.push([map + ' ' + key, Math.round(L[0].t - wait)]);
       n++;
       if (!(a.called && a.walked === 1 && near(L))) bad.push(map + ' ' + key + ' ' + fmt(L) + ' walked ' + a.walked);
+      const g = await goes(p);
+      if (!wentDown(g)) badGo.push(map + ' ' + key + ' ' + fmtGo(g));
       errorsAll.push(...errors);
       await ctx.close();
     }
   }
   ok(n >= 17 && !bad.length, 'every station, the Pass and Lanternfall\'s street, by each way in (' + n + ' arrivals): every line of his within 2 and on screen' + (bad.length ? ': ' + bad.join(' | ') : ''));
+  ok(n >= 17 && !badGo.length, 'and then, from each, he goes on down its road by its west exit (' + Object.entries(ROAD).map(([m, r]) => m + ' > ' + r).join(', ') + '), not a fallback, and is gone; one Jinpachi throughout' + (badGo.length ? ': ' + badGo.join(' | ') : ''));
   waits.sort((x, y) => y[1] - x[1]);
   console.log('     from arriving to his first line (ms, the longest first): ' + JSON.stringify(waits.slice(0, 6)));
 }
@@ -125,6 +160,8 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
   const a = await after(p);
   const L = a.jin;
   ok(a.called && a.walked === 1 && L.length && L.every((l) => l.jin && cheb(l) <= 2 && !l.mark), 'Skip seen: he is set within 2 of you at once (' + fmt(L) + ')');
+  const g = await goes(p);
+  ok(wentDown(g), 'Skip seen: and he goes on down the road the same way (' + fmtGo(g) + ')');
   errorsAll.push(...errors);
   await ctx.close();
 }
@@ -175,6 +212,9 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
   const L = a.jin;
   ok(crowd > 0 && a.called && a.letter && a.walked === 0 && L.length >= 3 && L.every((l) => l.jin && l.jin.join() === String(before) && !l.on && l.mark === 'left') && a.fb.some((f) => f.id === 'cr_jinpachi' && f.why === 'no free place within 2'),
     'no free place within 2: nobody moves, _walked 0, recorded; every line of his says he speaks from off screen, to your left; the letter is given (' + JSON.stringify({ crowd, before, fb: a.fb, lines: fmt(L) }) + ')');
+  // (off screen where he stands, so nobody sees him go: the world records only a going that is seen)
+  const g = await goes(p);
+  ok(g.left === 0 && g.most === 1 && g.recs.every((d) => d.to === 'lf.road'), 'then he is gone, and never by some other way (' + fmtGo(g) + ')');
   errorsAll.push(...errors);
   await ctx.close();
 }
@@ -199,6 +239,24 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
   const L = r.jin, last = r.path[r.path.length - 1];
   ok(r.walked === 0 && L.length === 2 && L.every((l) => l.jin && l.jin.join() === last && cheb(l) > 2 && (l.mark === 'left') === !l.on) && r.path.length > 3 && r.fb.some((f) => f.why === 'the walk ran out or was stopped'),
     'a walk that runs out: he stops on the tile he reached on his way, _walked 0; the mark exactly when he is off screen (' + JSON.stringify({ path: r.path.slice(-3), lines: fmt(L), fb: r.fb }) + ')');
+  errorsAll.push(...errors);
+  await ctx.close();
+}
+
+// ---- 7. his road closed ----------------------------------------------------------------------------------------------------------
+{
+  const { p, ctx, errors } = await page(b, url, { viewport: { width: 1180, height: 756 } });
+  await begin(p, 'cr.oiwake', 30, 12, 'mio', Object.assign({ cr_done: true, cr_delivered: true }, DONE), { dir: 'left' });
+  // (the station's west exit leads nowhere, for this journey only: as if the road below were shut)
+  const shut = await p.evaluate(() => { const e = RB.content.maps['cr.oiwake'].exits.find((x) => x.to === 'lf.road'); if (!e) return null; e.to = null; return e.x + ',' + e.y; });
+  await p.evaluate(() => { RB.script.run('yn.call'); });
+  await drive(p);
+  const a = await after(p);
+  const last = a.jin.length ? a.jin[a.jin.length - 1].jin.join(',') : null;
+  const g = await goes(p);
+  const d = g.recs[0] || {};
+  ok(shut && a.called && a.letter && a.walked === 1 && g.recs.length === 1 && /^faded where they stood: no way to lf\.road/.test(d.fallback || '') && d.from === last && g.trail.every((t) => t === last) && g.left === 0 && g.most === 1,
+    'his road closed: he fades where he stood beside you, recorded as a fallback, without a step towards any exit (' + JSON.stringify({ shut, last, fallback: d.fallback, from: d.from, trail: g.trail, left: g.left }) + ')');
   errorsAll.push(...errors);
   await ctx.close();
 }
