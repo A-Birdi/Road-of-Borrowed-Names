@@ -50,6 +50,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 3 + Math.min(h, 3) * 3, y + 6, 1, 1, '#ffbf5c');
   });
 
+  // the first wing's companion map (RBN-QA-166 A): a stone table with an old map laid on it, its roads drawn faintly;
+  // once the map has been read (the floor's trial, o.trial), a small mark at the spring where the floor's pattern
+  // puts it (hall.<wing>.pat: 0 the top right, 1 the bottom left), never before
+  const mapMark = (o) => {
+    const s = RB.game && RB.game.s;
+    if (!s || !o || !o.wing || !o.trial || !RB.state.test(s, 'hall.' + o.wing + '.' + o.trial)) return 0;
+    return RB.state.test(s, 'hall.' + o.wing + '.pat=1') ? 2 : 1;
+  };
+  def('hall_maptable', { w: 2 }, (c, x, y, p, t, o) => {
+    px(c, x + 1, y + 2, 30, 8, '#8c8a84'); px(c, x + 1, y + 2, 30, 1, '#b4b2aa');
+    px(c, x + 3, y + 10, 5, 5, '#6c6a64'); px(c, x + 24, y + 10, 5, 5, '#6c6a64');
+    px(c, x + 6, y + 3, 20, 6, '#e6d8b4'); px(c, x + 15, y + 3, 1, 6, '#a48a62'); px(c, x + 6, y + 5, 20, 1, '#a48a62');
+    const m = mapMark(o);
+    if (m) px(c, x + (m === 1 ? 23 : 7), y + (m === 1 ? 4 : 7), 2, 1, '#a8322a');
+  });
+
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
@@ -182,6 +198,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i < 4; i++) { R(g, 6 + i * 6, 15, 4, 2, i < v ? PP[0] : '#5a3e2c'); R(g, 6 + i * 6, 13, 1, 2, BR[3]); }
       const tx = 6 + v * 6;
       R(g, tx, 14, 2, 2, f ? GL[3] : GL[2]); R(g, tx, 10, 1, 4, 'rgba(220,220,230,0.35)');
+    },
+  });
+  // The first wing's companion map (RBN-QA-166 A): the stone table the scene names ("On the stone table, an old map"),
+  // a grey slab on two squared stone feet, with a sheet of old paper laid on it, its corners darkened and lifting a
+  // little, and the floor's roads drawn on it faintly in brown (the middle road, its three crossings, the two side
+  // roads); nothing marks the spring until the map has been read, then a small red mark where the floor's pattern
+  // puts it. Same footprint, block and scene as the plain table it replaces; an ink outline, as for anything to look at.
+  art('hall_maptable', {
+    box: [-2, -4, 68, 40],
+    v: (o) => mapMark(o),
+    ink: true,
+    shadow: () => [32, 29, 30, 3.5, 0.3],
+    draw(g, M, v) {
+      const S = M.stone, PA = PP, ROAD = '#9a7c54', ROADL = '#b89c70';
+      // the feet and the slab
+      for (const fx of [6, 48]) { R(g, fx, 18, 10, 12, S[1]); R(g, fx, 18, 2, 12, S[3]); R(g, fx + 9, 18, 1, 12, S[0]); }
+      R(g, 0, 4, 64, 14, S[2]); R(g, 0, 4, 64, 1, S[4]); R(g, 0, 17, 64, 2, S[1]); R(g, 0, 18, 64, 1, S[0]);
+      R(g, 4, 9, 6, 1, S[1]); R(g, 52, 12, 7, 1, S[1]);
+      // the paper
+      R(g, 9, 5, 46, 12, PA[3]); R(g, 9, 5, 46, 1, PA[4]); R(g, 9, 16, 46, 1, PA[1]);
+      R(g, 9, 5, 2, 2, PA[2]); R(g, 53, 5, 2, 2, PA[2]); R(g, 9, 15, 2, 2, PA[2]); R(g, 53, 15, 2, 2, PA[1]);
+      // its roads, faint: the middle road, three crossings, two side roads
+      R(g, 31, 6, 2, 10, ROAD);
+      for (const ry of [8, 11, 14]) R(g, 12, ry, 40, 1, ROADL);
+      R(g, 17, 8, 1, 7, ROADL); R(g, 47, 8, 1, 7, ROADL);
+      // read: the spring, marked where the pattern puts it
+      if (v === 1) { R(g, 49, 6, 3, 2, '#a8322a'); R(g, 50, 6, 1, 1, '#d4584a'); }
+      if (v === 2) { R(g, 12, 14, 3, 2, '#a8322a'); R(g, 13, 14, 1, 1, '#d4584a'); }
     },
   });
 })();

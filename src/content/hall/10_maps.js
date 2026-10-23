@@ -150,7 +150,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ...Object.keys(ENDS).map((k) => ({ p: 'kr_toro', x: ENDS[k][0], y: ENDS[k][1], scene: 'hall.w1.l4_' + k, if: '!xp_hall_w1_f1_lamp_' + k })),
       ...Object.keys(ENDS).map((k) => ({ p: 'kr_toro', x: ENDS[k][0], y: ENDS[k][1], scene: 'hall.w1.l4_' + k, if: 'xp_hall_w1_f1_lamp_' + k, light: 34, o: { lit: true } })),
       // the companion's map on the stone table (t6), and the spring's two hollows
-      { p: 'table', x: 26, y: 22, scene: 'hall.w1.t6' }, ...andon(30, 22, 'w1', 't6'),
+      { p: 'hall_maptable', x: 26, y: 22, scene: 'hall.w1.t6', o: { wing: 'w1', trial: 't6' } }, ...andon(30, 22, 'w1', 't6'),
       { p: 'rock', x: 6, y: 23, scene: 'hall.w1.t6_sw' }, { p: 'rock', x: 35, y: 3, scene: 'hall.w1.t6_ne' },
       // the riddle stone (t7)
       { p: 'kr_stele', x: 13, y: 3, scene: 'hall.w1.t7' }, ...andon(11, 2, 'w1', 't7'),
