@@ -36,7 +36,8 @@ mb_sen: お{礼|れい} に 、 {刷|す}り{場|ば} で {刷|す}った {町|�
 !journal {版木|はんぎ} と {芝居|しばい} の {通|とお}り の {橋|はし} の {名前|なまえ} を 、 セン に {届|とど}けた 。 || Took the names of Blockprint and Playhouse Rows' bridges to Sen.
 
 @scene mp.plaque_hangi
-?(mb_pl_hangi) narr: {橋|はし} の {札|ふだ} に 、 「{版木橋|はんぎばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Woodblock Bridge."
+?(mb_pl_hangi&quest.mp_census=done) narr: {橋|はし} の {札|ふだ} に 、 「{版木橋|はんぎばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Woodblock Bridge."
+?(mb_pl_hangi&!quest.mp_census=done) narr: {名前|なまえ} は {帳面|ちょうめん} に ある 。 セン に {伝|つた}えれば 、 {札|ふだ} は {彫|ほ}り{直|なお}される 。 || The name is in your notebook. The plaque will be cut again once Sen has it.
 ?(mb_pl_hangi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
@@ -49,7 +50,8 @@ narr: {名前|なまえ} を {帳面|ちょうめん} に {書|か}き{留|と}�
 ?(var.mp_census>=3) !quest mp_census 1
 
 @scene mp.plaque_sumi
-?(mb_pl_sumi) narr: {橋|はし} の {札|ふだ} に 、 「{墨橋|すみばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Ink Bridge."
+?(mb_pl_sumi&quest.mp_census=done) narr: {橋|はし} の {札|ふだ} に 、 「{墨橋|すみばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Ink Bridge."
+?(mb_pl_sumi&!quest.mp_census=done) narr: {名前|なまえ} は {帳面|ちょうめん} に ある 。 セン に {伝|つた}えれば 、 {札|ふだ} は {彫|ほ}り{直|なお}される 。 || The name is in your notebook. The plaque will be cut again once Sen has it.
 ?(mb_pl_sumi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
@@ -62,7 +64,8 @@ narr: {名前|なまえ} を {帳面|ちょうめん} に {書|か}き{留|と}�
 ?(var.mp_census>=3) !quest mp_census 1
 
 @scene mp.plaque_maku
-?(mb_pl_maku) narr: {橋|はし} の {札|ふだ} に 、 「{幕橋|まくばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Curtain Bridge."
+?(mb_pl_maku&quest.mp_census=done) narr: {橋|はし} の {札|ふだ} に 、 「{幕橋|まくばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Curtain Bridge."
+?(mb_pl_maku&!quest.mp_census=done) narr: {名前|なまえ} は {帳面|ちょうめん} に ある 。 セン に {伝|つた}えれば 、 {札|ふだ} は {彫|ほ}り{直|なお}される 。 || The name is in your notebook. The plaque will be cut again once Sen has it.
 ?(mb_pl_maku) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end

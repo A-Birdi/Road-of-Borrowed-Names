@@ -12,8 +12,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const px = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
   const def = (id, o, draw) => (P[id] = Object.assign({ id, w: 1, h: 1, block: true }, o, { draw }));
   const still = () => RB.game && RB.game.reducedMotion && RB.game.reducedMotion();
-  // a plaque reads once its bridge's name has been read back (flag mb_pl_<bridge>)
-  const named = (o) => { const s = RB.game && RB.game.s; return !!(s && o && o.bridge && s.flags && s.flags['mb_pl_' + o.bridge]); };
+  // a plaque reads once its bridge's name has been read back (flag mb_pl_<bridge>), and, for one that is cut again
+  // later (o.cut: Chapter 4's census, cut once Sen has the names; RBN-QA-163), once that holds too
+  const named = (o) => {
+    const s = RB.game && RB.game.s;
+    return !!(s && o && o.bridge && s.flags && s.flags['mb_pl_' + o.bridge] && (!o.cut || RB.state.test(s, o.cut)));
+  };
 
   // ---- flat fallbacks (16 px a tile) -------------------------------------------------------------------------------
   def('mb_plaque', {}, (c, x, y, p, t, o) => {

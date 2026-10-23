@@ -2309,6 +2309,12 @@
   "jp": "{橋|はし} の {札|ふだ} に 、 「{版木橋|はんぎばし}」 と {彫|ほ}って ある 。",
   "en": "The plaque reads: \"Woodblock Bridge.\""
  },
+ "scene:mp.plaque_hangi#1jymmru": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the scene's own note-down line (セン に 伝えれば 、 札 は 彫り直される, reused so the two agree) and the game's lexicon; corrected in review: 札 は 、 セン に 届けて から 彫り直される (its 届けて read as the plaque's own act) → セン に 伝えれば 、 札 は 彫り直される (RBN-QA-163)",
+  "jp": "{名前|なまえ} は {帳面|ちょうめん} に ある 。 セン に {伝|つた}えれば 、 {札|ふだ} は {彫|ほ}り{直|なお}される 。",
+  "en": "The name is in your notebook. The plaque will be cut again once Sen has it."
+ },
  "scene:mp.plaque_hangi#a1vu0c": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
@@ -2333,6 +2339,12 @@
   "jp": "{橋|はし} の {札|ふだ} に 、 「{墨橋|すみばし}」 と {彫|ほ}って ある 。",
   "en": "The plaque reads: \"Ink Bridge.\""
  },
+ "scene:mp.plaque_sumi#1jymmru": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the scene's own note-down line (セン に 伝えれば 、 札 は 彫り直される, reused so the two agree) and the game's lexicon; corrected in review: 札 は 、 セン に 届けて から 彫り直される (its 届けて read as the plaque's own act) → セン に 伝えれば 、 札 は 彫り直される (RBN-QA-163)",
+  "jp": "{名前|なまえ} は {帳面|ちょうめん} に ある 。 セン に {伝|つた}えれば 、 {札|ふだ} は {彫|ほ}り{直|なお}される 。",
+  "en": "The name is in your notebook. The plaque will be cut again once Sen has it."
+ },
  "scene:mp.plaque_sumi#a1vu0c": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
@@ -2356,6 +2368,12 @@
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
   "jp": "{橋|はし} の {札|ふだ} に 、 「{幕橋|まくばし}」 と {彫|ほ}って ある 。",
   "en": "The plaque reads: \"Curtain Bridge.\""
+ },
+ "scene:mp.plaque_maku#1jymmru": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the scene's own note-down line (セン に 伝えれば 、 札 は 彫り直される, reused so the two agree) and the game's lexicon; corrected in review: 札 は 、 セン に 届けて から 彫り直される (its 届けて read as the plaque's own act) → セン に 伝えれば 、 札 は 彫り直される (RBN-QA-163)",
+  "jp": "{名前|なまえ} は {帳面|ちょうめん} に ある 。 セン に {伝|つた}えれば 、 {札|ふだ} は {彫|ほ}り{直|なお}される 。",
+  "en": "The name is in your notebook. The plaque will be cut again once Sen has it."
  },
  "scene:mp.plaque_maku#a1vu0c": {
   "status": "self-reviewed",
