@@ -40,7 +40,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':'); k.rect(4, 11, 25, 2, ':');
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         // Jinbei's house: the picture scroll, his bed, a lantern
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w3.t1' }, ...K.andon(5, 9, W, 't1'),
@@ -93,7 +93,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(9, 12, 3, 3, '.'); k.rect(24, 11, 5, 5, '.'); k.rect(17, 2, 2, 20, ':');
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [17, 2] }),
       [
         { p: 'well', x: 9, y: 22, scene: 'hall.w3.spring' },
         // the incense clock (its hour drawn from the floor's hour flag) and Jinbei's slate

@@ -34,6 +34,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     at.ret ? [K.lit(at.ret[0], at.ret[1], null, 'hall.return')] : [],
     at.bench ? [{ p: 'bench', x: at.bench[0], y: at.bench[1], scene: 'hall.' + w + '.bench' + (k + 1) }] : [],
     at.gate ? [{ p: 'hall_gate', x: at.gate[0], y: at.gate[1], if: '!hall.' + w + '.f' + k + '.clear', scene: 'hall.gate' }] : [],
+    // (the stairs are drawn on the floor's way up itself, its exit tile, so the art is where the step is: RBN-QA-164)
     at.stairs ? [{ p: 'stairs', x: at.stairs[0], y: at.stairs[1] }] : []);
   K.lv = (w) => {
     const G = 'hall.' + w + '.route=grow';

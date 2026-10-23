@@ -39,7 +39,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':');
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w8.t1' }, ...K.andon(5, 9, W, 't1'),
         { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } },
@@ -87,7 +87,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(17, 2, 2, 20, ':');
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [17, 2] }),
       [
         { p: 'well', x: 9, y: 22, scene: 'hall.w8.spring' },
         // the witnesses' places
