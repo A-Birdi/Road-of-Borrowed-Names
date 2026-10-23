@@ -44,7 +44,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':'); k.rect(4, 11, 25, 2, ':');
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w4.t1' }, ...K.andon(5, 9, W, 't1'),
         { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } },
@@ -101,7 +101,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(17, 2, 2, 20, ':'); k.rect(4, 2, 24, 3, '.');
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [28, 3], stairs: [31, 3] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [28, 3], stairs: [30, 3] }),
       [
         { p: 'well', x: 4, y: 22, scene: 'hall.w4.spring' },
         // Gosaku's diary, and the forks' markers

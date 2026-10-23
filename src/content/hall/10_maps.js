@@ -111,7 +111,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       lit(29, 19),
       // the way on: the sacred rope until the floor is cleared
       { p: 'hall_gate', x: 17, y: 6, if: '!hall.w1.f0.clear', scene: 'hall.gate' },
-      { p: 'stairs', x: 17, y: 1 },
+      { p: 'stairs', x: 18, y: 1 }, // (on the way up itself: RBN-QA-164)
     ],
     npcs: [
       { id: 'hall_traveller', x: 20, y: 13, dir: 'left', if: '!hall.w1.t2', talk: [{ scene: 'hall.w1.t2' }] },
@@ -158,7 +158,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the resting place (a delver may be waiting)
       { p: 'teaset', x: 35, y: 24 }, { p: 'bench', x: 34, y: 25 },
       { p: 'hall_gate', x: 20, y: 3, if: '!hall.w1.f1.clear', scene: 'hall.gate' },
-      { p: 'stairs', x: 21, y: 1 },
+      { p: 'stairs', x: 20, y: 1 }, // (on the way up itself: RBN-QA-164)
     ],
     npcs: [],
     foes: [
