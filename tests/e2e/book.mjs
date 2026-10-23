@@ -33,7 +33,9 @@ const assert = (c, m) => { if (!c) throw new Error(m); };
 
 const FIXTURE = (style) => {
   if (style) { RB.game.settings.ledgerStyle = style; RB.game.applySettings(); }
-  const s = RB.game.debugStart('sg.harbor', 20, 22, { comp: 'suzu', flags: { departed: true, ch1_done: true, rw_echo_done: true, sg_arrived: true } });
+  // (the Archive's catalogue in order, sg_da_catalog: the state this journey's Next, the Tide Clerk at the Returns Counter,
+  // was written for; since RBN-QA-069 the step before it, while the inner door is shut, is the Receiving Hall's door)
+  const s = RB.game.debugStart('sg.harbor', 20, 22, { comp: 'suzu', flags: { departed: true, ch1_done: true, rw_echo_done: true, sg_arrived: true, sg_da_catalog: true } });
   s.player.name = 'Robin'; s.chapter = 2; s.playtime = 3 * 3600 + 27 * 60;
   s.quests = { rw_labels: { stage: 2, done: true, t: 1 }, rw_mill: { stage: 4, done: true, t: 2 }, rw_depart: { stage: 1, done: true, t: 3 }, sg_main: { stage: 8, done: false, t: 9 }, sg_cove: { stage: 1, done: false, t: 7 }, sg_seaglass: { stage: 1, done: false, t: 6 } };
   RB.pets.meet(s, 'cat', { map: 'sg.harbor' }); RB.pets.select(s, 'cat'); s.company.pets.cat.name = 'Samson';
