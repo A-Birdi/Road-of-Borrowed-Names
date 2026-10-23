@@ -46,6 +46,11 @@ RB.tasks = (function () {
     }
     return kanaWords;
   }
+  // a lexicon entry that is a deliberate non-word (its meaning begins "(not a word"): a wrong choice the tasks that
+  // teach it write by hand (しほさい in ko.toro_2), never an example, and never a generated wrong meaning either
+  // (RBN-QA-165 and its follow-up: the kana completion, and the meaning-choice pools of vocabStep, the listening exam
+  // and bookmark practice)
+  const nonWord = (e) => /^\(not a word\b/.test((e && e.m) || '');
   function wordsWith(ch, known) {
     return kanaWordIndex().filter((e) => e.r.indexOf(ch) >= 0 && (e.lv === 'F' || e.lv === 'E') && Array.from(e.r).every((c) => c === ch || known(c)));
   }
@@ -76,7 +81,7 @@ RB.tasks = (function () {
     const hb = HOMOPHONE_BASE[ch];
     // a kana is completed only in a real word: the lexicon also holds deliberate non-words, the wrong choices of the
     // tasks that teach them (しほさい in ko.toro_2), never an example (RBN-QA-165; before, only for a homophone)
-    const ws = wordsWith(ch, known).filter((e) => !/^\(not a word\b/.test(e.m || ''));
+    const ws = wordsWith(ch, known).filter((e) => !nonWord(e));
     const rom = RB.kana.romaji(ch);
     const kata = RB.kana.isKata(ch);
     if (ws.length && !opts.bare) {
@@ -139,7 +144,7 @@ RB.tasks = (function () {
       };
     }
     // recognition: show the word, choose its meaning
-    const pool = kanaWordIndex().filter((x) => x.m !== e.m && x.pos === e.pos && x.w !== e.w);
+    const pool = kanaWordIndex().filter((x) => x.m !== e.m && x.pos === e.pos && x.w !== e.w && !nonWord(x));
     const rr = RB.util.rng((RB.learn.clock() * 104729 + e.r.length) | 0);
     const wrong = rr.shuffle(pool).slice(0, 3);
     const jp = e.w !== e.r ? '{' + e.w + '|' + e.r + '}' : e.w;
@@ -284,5 +289,5 @@ RB.tasks = (function () {
     return (ch.steps || []).map(prepare);
   }
 
-  return { fromItem, kanaStep, vocabStep, prepare, stepsOf, next, drillPool, itemPool, stepFor, findWord, plain, readingOf, kanaWordIndex, askScript, LV };
+  return { fromItem, kanaStep, vocabStep, prepare, stepsOf, next, drillPool, itemPool, stepFor, findWord, plain, readingOf, kanaWordIndex, nonWord, askScript, LV };
 })();

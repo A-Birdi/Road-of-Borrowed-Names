@@ -97,7 +97,7 @@ RB.exams = (function () {
       const e = k === 'v' ? RB.tasks.findWord(v) : null;
       if (!e) return null;
       const r = RB.util.rng(RB.util.hashStr(id + '|' + n));
-      const wrong = r.shuffle(RB.tasks.kanaWordIndex().filter((x) => x.m !== e.m && x.pos === e.pos)).slice(0, 3);
+      const wrong = r.shuffle(RB.tasks.kanaWordIndex().filter((x) => x.m !== e.m && x.pos === e.pos && !RB.tasks.nonWord(x))).slice(0, 3);
       return { kind: 'listen', item: id, transcript: { jp: e.w !== e.r ? '{' + e.w + '|' + e.r + '}' : e.w, en: e.m }, prompt: { en: 'What does the word mean?' }, options: [{ en: e.m, ok: true }].concat(wrong.map((w) => ({ en: w.m, ok: false, why: { en: 'That would be ' + (w.w !== w.r ? w.w + '（' + w.r + '）' : w.w) + '.' } }))) };
     }
     if (k === 'k') return RB.tasks.kanaStep(v, { bare: n % 2 === 1 });

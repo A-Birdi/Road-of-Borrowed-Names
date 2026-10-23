@@ -305,7 +305,7 @@ RB.bookmarks = (function () {
     for (const w of wordsOf(b)) {
       const e = w.entry;
       if (!CONTENT(e) || !e.m || !e.r || seen.has(e.w)) continue;
-      const pool = index.filter((x) => x.m !== e.m && x.pos === e.pos && x.w !== e.w && x.r !== e.r);
+      const pool = index.filter((x) => x.m !== e.m && x.pos === e.pos && x.w !== e.w && x.r !== e.r && !(RB.tasks.nonWord && RB.tasks.nonWord(x)));
       if (pool.length < 2) continue;
       const rr = RB.util.rng(RB.util.hashStr(b.id + '|' + e.w) | 0);
       const wrong = rr.shuffle(pool.slice()).slice(0, 3);
