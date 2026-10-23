@@ -169,8 +169,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // shade to write", so Nagi says so once, wherever she is (her one talk list: the avenue, the gardens and the Records
   // Hall share it; at a slot, after its own first line), and after the ending too. Gated on the lantern's own scene
   // (where the note lw_lf_lower_town is given), so a save that already holds the note has it: a seen. condition stays
-  // talk after the routine began (src/engine/53_town.js pastTalk), a note would not
-  L.talk('lf.town:lf_nagi', [{ if: 'seen.cr.lw_lf_lamps_open&!seen.cr.lw_lf_nagi_lower', scene: 'cr.lw_lf_nagi_lower' }]);
+  // talk after the routine began (src/engine/53_town.js pastTalk), a note would not. Or on the lit lantern's scene,
+  // which gives the note too: a journey saved while the lantern's scene was still going (the lantern lit, its note
+  // given or not, the scene not yet seen) does not play it again, and looking at the lit lantern is how it recovers
+  // (Agnes 6354879437; Local CL-237). The guard is in both terms (a condition is ORs of ANDs, no brackets).
+  L.talk('lf.town:lf_nagi', [{ if: 'seen.cr.lw_lf_lamps_open&!seen.cr.lw_lf_nagi_lower|seen.cr.lw_lf_lamps_after&!seen.cr.lw_lf_nagi_lower', scene: 'cr.lw_lf_nagi_lower' }]);
   L.seal('lf_objections', { map: 'lf.records', x: 15, y: 7, p: 'chest', needs: 'mod_arayuru', opens: 'lw_lf_box_open', scene: 'ko.lw_lf_box_open', if: 'ed>=2',
     hint: ['{判子|はんこ} で {封|ふう} を された {箱|はこ} 。 「{承認|しょうにん}」 「{受理|じゅり}」 「{保留|ほりゅう}」 …… {違|ちが}う {種類|しゅるい} の {判子|はんこ} が 、 {何十|なんじゅう} も {重|かさ}ねて {押|お}して ある 。', 'A box sealed shut with stamps: "Approved", "Received", "Pending"… dozens of stamps of every kind, one over another.'],
     openedLabel: ['{判子|はんこ} の {箱|はこ}', 'The box of stamps, opened'], after: { p: 'chest', o: { open: true }, scene: 'ko.lw_lf_box_after' } });
@@ -274,6 +277,7 @@ lf_nagi[smile]: 「{下町|したまち}{通|どお}り」 、 {浅瀬|あさせ
 
 @scene cr.lw_lf_lamps_after
 narr: {浅瀬|あさせ} の {灯籠|とうろう} が 、 {丁目|ちょうめ} ごと に {灯|とも}って いる 。 「{下町|したまち}{通|どお}り」 。 || The lanterns in the shallows burn block by block. Lower Town Street.
+!note lw_lf_lower_town
 
 @scene ko.lw_lf_box_open
 !gesture pc observe prop:chest
