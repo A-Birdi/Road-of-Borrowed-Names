@@ -165,6 +165,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.seal('lf_lamps', { map: 'lf.sluice', x: 9, y: 16, p: 'deadlantern', needs: 'mod_goto', opens: 'lw_lf_lamps_lit', scene: 'cr.lw_lf_lamps_open',
     hint: ['{浅瀬|あさせ} に {沈|しず}んだ {灯籠|とうろう} 。 {笠|かさ} に 「{二丁目|にちょうめ}」 。 {一丁目|いっちょうめ} から {順|じゅん} に {火|ひ} を {送|おく}らない と 、 {点|つ}かない よう だ 。', 'A lantern sunk in the shallows. On its shade: "2nd Block". It seems it won\'t light unless the flame is passed along from the 1st Block, block by block, in order.'],
     openedLabel: ['{下町|したまち} の {灯|あか}り', 'The Lower Town\'s lamps'], after: { p: 'lantern', o: { lit: true }, scene: 'cr.lw_lf_lamps_after' } });
+  // RBN-QA-134 (Agnes 6353888589; Local CL-234, CL-235): the lantern's last line says "Tell Nagi, and there'll be one more
+  // shade to write", so Nagi says so once, wherever she is (her one talk list: the avenue, the gardens and the Records
+  // Hall share it; at a slot, after its own first line), and after the ending too. Gated on the lantern's own scene
+  // (where the note lw_lf_lower_town is given), so a save that already holds the note has it: a seen. condition stays
+  // talk after the routine began (src/engine/53_town.js pastTalk), a note would not
+  L.talk('lf.town:lf_nagi', [{ if: 'seen.cr.lw_lf_lamps_open&!seen.cr.lw_lf_nagi_lower', scene: 'cr.lw_lf_nagi_lower' }]);
   L.seal('lf_objections', { map: 'lf.records', x: 15, y: 7, p: 'chest', needs: 'mod_arayuru', opens: 'lw_lf_box_open', scene: 'ko.lw_lf_box_open', if: 'ed>=2',
     hint: ['{判子|はんこ} で {封|ふう} を された {箱|はこ} 。 「{承認|しょうにん}」 「{受理|じゅり}」 「{保留|ほりゅう}」 …… {違|ちが}う {種類|しゅるい} の {判子|はんこ} が 、 {何十|なんじゅう} も {重|かさ}ねて {押|お}して ある 。', 'A box sealed shut with stamps: "Approved", "Received", "Pending"… dozens of stamps of every kind, one over another.'],
     openedLabel: ['{判子|はんこ} の {箱|はこ}', 'The box of stamps, opened'], after: { p: 'chest', o: { open: true }, scene: 'ko.lw_lf_box_after' } });
@@ -261,6 +267,10 @@ narr: {浅瀬|あさせ} の {下|した} で 、 {灯籠|とうろう} が {一
 narr: {最後|さいご} の {灯籠|とうろう} の {笠|かさ} に 、 {通|とお}り の {名前|なまえ} 。 「{下町|したまち}{通|どお}り」 。 || On the shade of the last lantern, the street's name: Lower Town Street.
 narr: ナギ に {教|おし}えたら 、 {笠|かさ} が {一枚|いちまい} {増|ふ}える だろう 。 || Tell Nagi, and there'll be one more shade to write.
 !note lw_lf_lower_town
+
+@scene cr.lw_lf_nagi_lower
+!faceplayer lf_nagi
+lf_nagi[smile]: 「{下町|したまち}{通|どお}り」 、 {浅瀬|あさせ} の {灯籠|とうろう} に あった の ね 。 {笠|かさ} を {一枚|いちまい} {増|ふ}やす よ 。 {教|おし}えて くれて ありがとう 。 || "Lower Town Street" — on the lantern in the shallows. I'll make one more shade. Thanks for telling me.
 
 @scene cr.lw_lf_lamps_after
 narr: {浅瀬|あさせ} の {灯籠|とうろう} が 、 {丁目|ちょうめ} ごと に {灯|とも}って いる 。 「{下町|したまち}{通|どお}り」 。 || The lanterns in the shallows burn block by block. Lower Town Street.

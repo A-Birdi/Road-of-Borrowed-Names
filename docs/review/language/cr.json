@@ -4385,6 +4385,12 @@
   "jp": "ナギ に {教|おし}えたら 、 {笠|かさ} が {一枚|いちまい} {増|ふ}える だろう 。",
   "en": "Tell Nagi, and there'll be one more shade to write."
  },
+ "scene:cr.lw_lf_nagi_lower#9o3tl6": {
+  "status": "self-reviewed",
+  "ref": "RBN-QA-134: self-reviewed against Nagi's established speech (ch5/20_town.js: plain and warm, だよ / ね), the lantern's own words (cr.lw_lf_lamps_open: 下町通り, 笠が一枚増える) and its English; Agnes to check the Japanese",
+  "jp": "「{下町|したまち}{通|どお}り」 、 {浅瀬|あさせ} の {灯籠|とうろう} に あった の ね 。 {笠|かさ} を {一枚|いちまい} {増|ふ}やす よ 。 {教|おし}えて くれて ありがとう 。",
+  "en": "\"Lower Town Street\" — on the lantern in the shallows. I'll make one more shade. Thanks for telling me."
+ },
  "scene:cr.lw_lf_lamps_after#ygs4nn": {
   "status": "self-reviewed",
   "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
