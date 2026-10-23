@@ -7,8 +7,9 @@
 //     RB_OLD_PAGE the save is written by this build from the same state, and the log says which;
 //  2. after the ending, the lantern seen: the line, first;
 //  3. before the lantern: not the line;
-//  4. a save holding the note and the lit lantern with the lantern's scene unseen (a manual save from the menu during
-//     that scene's last moment): not the line. A recorded limitation, not a wish: the scene is not played again;
+//  4. a journey saved while the lantern's scene was going (the lantern lit, the scene unseen), the note not yet given
+//     or given during its toast: talking to her on load, not the line; then the lit lantern at the sluice looked at (its
+//     line, and the note given once), and on the avenue she says the line, first (Agnes 6354879437; Local CL-237);
 //  5. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/nagi_lower_town.mjs   (RB_OLD_PAGE=zz_old.html for 1's old save)
 import { serve, launch, page } from './lib.mjs';
@@ -26,14 +27,32 @@ const pageAt = (file, opts) => page(b, file ? url + file : url, opts || {});
 // a journey on the avenue, near Nagi's place, in the state o describes
 async function start(p, o) {
   await p.evaluate(([DONE, o, NOTE]) => {
-    const at = RB.content.maps['lf.town'].npcs.find((n) => n.id === 'lf_nagi');
-    const s = RB.game.debugStart('lf.town', at.x, at.y + 2, { dir: 'up', edition: RB.edition.forNew(), flags: Object.assign({}, DONE, o.flags || {}) });
+    const at = o.map ? { x: o.x, y: o.y - 2 } : RB.content.maps['lf.town'].npcs.find((n) => n.id === 'lf_nagi');
+    const map = o.map || 'lf.town';
+    const s = RB.game.debugStart(map, at.x, at.y + 2, { dir: 'up', edition: RB.edition.forNew(), flags: Object.assign({}, DONE, o.flags || {}) });
     for (const id of o.seen || []) s.seen[id] = true;
     if (o.note) s.notebook.push({ kind: 'lore', id: NOTE, t: Date.now() });
     RB.game.settings.textSpeed = 'instant'; RB.game.settings.skipSeen = false;
-    RB.world.enter('lf.town', at.x, at.y + 2, 'up', { fresh: true });
+    RB.world.enter(map, at.x, at.y + 2, 'up', { fresh: true });
   }, [DONE, o, NOTE]);
   await settled(p);
+}
+// the lines that play from what is in front of you (the drain of talk(), without placing you)
+async function drainLines(p) {
+  const lines = [];
+  for (let i = 0; i < 300; i++) {
+    const st = await p.evaluate(() => { const d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); return { d: d ? (d.who || '') + ': ' + String(d.en || '') : null, run: RB.script.isRunning() }; });
+    if (st.d) {
+      if (!lines.length || lines[lines.length - 1] !== st.d) { lines.push(st.d); await p.waitForTimeout(100); }
+      await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance());
+      await p.waitForTimeout(60);
+      continue;
+    }
+    if (!st.run && (lines.length || i > 20)) break;
+    await p.waitForTimeout(60);
+  }
+  await p.waitForTimeout(300);
+  return lines;
 }
 async function settled(p) {
   await p.waitForFunction(() => RB.world.W && RB.world.W.time - RB.world.W.enteredAt > 1500, null, { timeout: 15000 }).catch(() => {});
@@ -113,12 +132,28 @@ const fmt = (r) => JSON.stringify({ at: r.where, lines: r.lines.slice(0, 3).map(
   allErrors.push(...errors);
   await ctx.close();
 }
-// ---- 4. the note held, the lantern's scene unseen (the recorded limitation) ---------------------------------------------------
-{
+// ---- 4. saved while the lantern's scene was going: the lit lantern looked at again recovers it ------------------------------
+for (const [tag, o] of [['before its note', {}], ['during its note\'s toast', { note: true }]]) {
   const { p, ctx, errors } = await pageAt(null);
-  await start(p, { flags: { lw_lf_lamps_lit: true }, note: true });
-  const r = await talk(p);
-  ok(r.lines.length >= 1 && !named(r), 'the note and the lit lantern without the lantern\'s scene seen: not the line, a recorded limitation (' + fmt(r) + ')');
+  await start(p, Object.assign({ flags: { lw_lf_lamps_lit: true } }, o));
+  const r0 = await talk(p);
+  await p.evaluate(() => { const sp = RB.content.maps['lf.sluice'].spawn || {}; RB.world.enter('lf.sluice', sp.x, sp.y, sp.dir || 'up', { fresh: true }); });
+  await settled(p);
+  // (the lit lantern at (9,16), the prop whose condition holds now; you stand on a free tile beside it, facing it)
+  const lamp = await p.evaluate(() => {
+    const W = RB.world.W, m = W.map, pr = (m.def.props || []).find((x) => x.x === 9 && x.y === 16 && (!x.if || RB.state.test(RB.game.s, x.if)));
+    const at = [[0, 1, 'up'], [-1, 0, 'right'], [1, 0, 'left'], [0, -1, 'down']].find(([dx, dy]) => !RB.maps.blockedStatic(m, 9 + dx, 16 + dy) && !RB.maps.exitAt(m, 9 + dx, 16 + dy) && !W.npcs.some((n) => n.x === 9 + dx && n.y === 16 + dy));
+    if (!pr || !at) return null;
+    RB.test.place(9 + at[0], 16 + at[1], at[2]); RB.world.interact();
+    return pr.p;
+  });
+  const lit = await drainLines(p);
+  const got = await p.evaluate(([NOTE, AFTER]) => ({ notes: RB.game.s.notebook.filter((e) => e.id === NOTE).length, seen: !!RB.game.s.seen[AFTER] }), [NOTE, 'cr.lw_lf_lamps_after']);
+  await p.evaluate(() => { const at = RB.content.maps['lf.town'].npcs.find((n) => n.id === 'lf_nagi'); RB.world.enter('lf.town', at.x, at.y + 2, 'up', { fresh: true }); });
+  await settled(p);
+  const r1 = await talk(p);
+  ok(!named(r0) && lamp === 'lantern' && lit.some((l) => /Lower Town Street/.test(l)) && got.notes === 1 && got.seen && r1.lines.length >= 1 && LINE.test(r1.lines[0]),
+    'saved ' + tag + ': on load not the line (' + fmt(r0) + '); the lit lantern looked at (' + lamp + ', ' + JSON.stringify(lit.map((l) => l.slice(0, 40))) + ', ' + JSON.stringify(got) + '); then her line, first (' + fmt(r1) + ')');
   allErrors.push(...errors);
   await ctx.close();
 }
