@@ -338,7 +338,7 @@ RB.ui.settings = (function () {
     strokePractice: () => sw('strokePractice', 'Stroke-order notes after handwriting', 'Off keeps handwriting lenient: only the shape is checked.'),
     questGuide: () => radios('questGuide', 'Quest guidance', [['full', 'Markers and hints', { i: 'mark' }], ['hints', 'Hints only', { i: 'nudge' }], ['off', 'Objectives only', { i: 'none' }]], null,
       'Markers point to where the followed quest’s next step happens, in the world and on the Map. Hints are nudges you open in the Journey. Asking for them is free and never counts as a mistake.'),
-    townHints: () => radios('townHints', 'Towns that have changed', [['on', 'A line in the Journey'], ['off', 'Off']], null, 'When a town you know has changed since you were last there, the Journey says so in one line. It never says what changed.'),
+    townHints: () => radios('townHints', 'Town hints', [['on', 'Shown'], ['off', 'Off']], null, 'When a town you know has changed since you were last there, the Journey says so in one line. It never says what changed. In Reedwake it also says when something you noticed there may open now, or a stamp you have earned waits to be pressed, and the map tags the town.'),
     // (expansion E17, C-65: how a grave outcome is told; it never changes what happened or what follows)
     outcomeView: () => radios('outcomeView', 'Grave outcomes', [['shown', 'Shown'], ['summarised', 'Summarised']], null, 'Rarely, a side story can end badly for someone in it. Shown tells it as it happens, with restraint; Summarised tells it in a sentence. What happened, and the talk with your companion afterwards, are the same either way.'),
     // (expansion P13, R3: towel-wrapped and nonsexual either way; presentation only)

@@ -41,6 +41,13 @@ making a missed conversation feel like lost content.
 - **The S1 phase table** names the beats, so content reads `if: 'phase>=mid'`.
 - **"What's new" is gentle.** The Journey shows a one-line hint per changed town ("Saltglass has changed since you
   last visited"). It never lists the changes. It can be turned off.
+- **What waits on a return: the Reedwake pilot** (Robin, 2026-10-23, issue #1 comment 6373239443, "That would work,
+  give it a shot"). In Reedwake only, the same setting also shows a passive, town-level line in Journey › Places and a
+  tag on the Map's chart: when a return key you have noticed can open now, or a stamp you have earned waits at the
+  stand, and either is within reach. It says the kind of thing, never what it is. It is read from the journey, so it
+  keeps no state of its own and clears only when the thing is done, not on a visit. No notifications, no new item or
+  mechanic, nothing in six-chapter journeys. Other towns, authored leads and a "consult" trace need a further owner
+  decision. (`RB.town.returns`, `src/ui/50_menu.js`.)
 - **Nothing is missable.** A beat's content stays until seen. Later beats add to it, never replace it. A changed
   NPC still offers the old topic through "Talk about…".
 - **Each new region's own after-states** are in [07_REGIONS.md](07_REGIONS.md). Existing towns gain beats from the
