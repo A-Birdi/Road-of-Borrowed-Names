@@ -4,7 +4,8 @@
 // (lw_lf_lower_town) has it too. No quest, item or flag. In node:
 //  1. her placements (the avenue, the gardens, the Records Hall) share one talk list, and the line is at its head;
 //  2. what she says first: before the lantern, as before; after it, the line; once heard, as before again; after the
-//     ending, the line still comes first; an old save holding the note and the lantern seen, the line;
+//     ending, the line still comes first; an old save holding the note and the lantern seen, the line; a save holding
+//     the note and the lit lantern without the lantern's scene seen, not the line (a recorded limitation, below);
 //  3. at a routine slot it is said after the slot's own first line (not taken for talk from before the routine);
 //  4. the scene: one line of hers that names Lower Town Street, nothing given or set; the lantern's scene as it was.
 import { load } from '../lib/load.mjs';
@@ -27,6 +28,12 @@ export default async (t) => {
   t.eq(first(st({ seen: { 'cr.lw_lf_lamps_open': true, [SC]: true } })), before, 'once heard: what she said before');
   t.eq(first(st({ flags: { postgame: true }, seen: { 'cr.lw_lf_lamps_open': true } })), SC, 'after the ending: the line still comes first');
   t.eq(first(st({ seen: { 'cr.lw_lf_lamps_open': true }, notes: [{ id: 'lw_lf_lower_town', kind: 'note' }] })), SC, 'an old save holding the note, the lantern seen: the line');
+  // (Agnes 6354377552: the note is given before the scene's awaited toast, and the scene is recorded seen only at its
+  // end. A save made from the menu, which opens during dialogue, in that moment holds the note and the lit lantern, the
+  // lantern's scene unseen; loaded, the scene does not play again (the lantern is lit). Not covered: a limitation, kept
+  // and recorded. A note condition would need a new kind of condition, a broader change than this one.)
+  const noteOnly = first(st({ flags: { lw_lf_lamps_lit: true }, notes: [{ id: 'lw_lf_lower_town', kind: 'lore' }] }));
+  t.ok(noteOnly && noteOnly !== SC, 'a save holding the note and the lit lantern, the lantern\'s scene unseen: not the line, a recorded limitation (' + noteOnly + ')');
   // ---- 3.
   const s = st({ seen: { 'cr.lw_lf_lamps_open': true } });
   t.ok(RB.town.pastTalk(s, 'lf_nagi', base.talk[0]) === false, 'at the gardens and the Records Hall it is said after the slot\'s own line, not taken for talk from before the routine');

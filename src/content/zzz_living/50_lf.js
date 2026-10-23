@@ -270,7 +270,7 @@ narr: ナギ に {教|おし}えたら 、 {笠|かさ} が {一枚|いちまい
 
 @scene cr.lw_lf_nagi_lower
 !faceplayer lf_nagi
-lf_nagi[smile]: 「{下町|したまち}{通|どお}り」 、 {浅瀬|あさせ} の {灯籠|とうろう} に あった の ね 。 {笠|かさ} を {一枚|いちまい} {増|ふ}やす よ 。 {教|おし}えて くれて ありがとう 。 || "Lower Town Street" — on the lantern in the shallows. I'll make one more shade. Thanks for telling me.
+lf_nagi[smile]: 「{下町|したまち}{通|どお}り」 、 {浅瀬|あさせ} の {灯籠|とうろう} に あった の ね 。 {笠|かさ} を {一枚|いちまい} {増|ふ}やす よ 。 {教|おし}えて くれて ありがとう 。 || Lower Town Street. You found it on a lantern in the shallows, then. I'll add another shade. Thanks for telling me.
 
 @scene cr.lw_lf_lamps_after
 narr: {浅瀬|あさせ} の {灯籠|とうろう} が 、 {丁目|ちょうめ} ごと に {灯|とも}って いる 。 「{下町|したまち}{通|どお}り」 。 || The lanterns in the shallows burn block by block. Lower Town Street.
