@@ -69,7 +69,7 @@ narr: {名前|なまえ} を {帳面|ちょうめん} に {書|か}き{留|と}�
 ?(mb_pl_maku) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {欄干|らんかん} に 、 {大|おお}きな {布|ぬの} を {干|ほ}した {跡|あと} が ある 。 {太鼓|たいこ} の ハヤシ が 、 {岸|きし} から {声|こえ} を かけて きた 。 || The railing has the marks of a great cloth hung to dry. Hayashi the drummer calls out from the bank.
+narr: {欄干|らんかん} に 、 {大|おお}きな {布|ぬの} を {干|ほ}した {跡|あと} が ある 。 {太鼓|たいこ} の ハヤシ が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。 || The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge.
 !challenge mb.census_maku
 !set mb_pl_maku
 !var mp_census + 1
