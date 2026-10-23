@@ -129,7 +129,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Tetsuji at his pen gate.
       { id: 'tetsuji', x: 9, y: 27, dir: 'right', if: '!sb_evening|post', talk: [{ if: 'post', scene: 'sb.tetsuji_post' }, { scene: 'sb.tetsuji' }] },
       // Children by their sculptures.
-      { id: 'kanta', x: 19, y: 19, dir: 'down', wander: 1, if: '!sb_evening|post', talk: [{ if: 'post', scene: 'sb.kanta_post' }, { scene: 'sb.kanta' }] },
+      // (an open snow-sculpture contest first, after the story too: his news after the story came first, and the judging
+      // could never be finished; RBN-QA-162, Agnes 6373739758)
+      { id: 'kanta', x: 19, y: 19, dir: 'down', wander: 1, if: '!sb_evening|post', talk: [{ if: 'quest.sb_snow=active', scene: 'sb.kanta' }, { if: 'post', scene: 'sb.kanta_post' }, { scene: 'sb.kanta' }] },
       { id: 'chiyo', x: 21, y: 20, dir: 'down', if: '!sb_evening|post', talk: [{ if: 'post', scene: 'sb.chiyo_post' }, { scene: 'sb.chiyo' }] },
       { id: 'rokuta', x: 25, y: 20, dir: 'left', wander: 1, if: '!sb_evening|post', talk: [{ if: 'post', scene: 'sb.rokuta_post' }, { scene: 'sb.rokuta' }] },
       // Denji ice-fishing on the stream.
