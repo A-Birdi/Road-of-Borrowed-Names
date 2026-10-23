@@ -2237,10 +2237,10 @@
   "jp": "{全部|ぜんぶ} {届|とど}いた な 。 {一通|いっつう} も {落|お}とさず に 。",
   "en": "Every one delivered. Not a single letter dropped."
  },
- "scene:mp.boss_won#1bkld92": {
+ "scene:mp.boss_won#17loqbc": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "よかった …… 。 {怒|おこ}った かい が ありました 。",
+  "ref": "kana かい given its word by a word@lemma hint (Agnes 6354873848; Local CL-236; Cloud CC-144 §7): the line's text, reading and English unchanged, re-read with its earlier entry; Word Help now reads the hinted word (甲斐 worth / 貝 shellfish)",
+  "jp": "よかった …… 。 {怒|おこ}った かい@甲斐 が ありました 。",
   "en": "Thank goodness… It was worth getting angry."
  },
  "scene:mp.boss_won#121kiwh": {

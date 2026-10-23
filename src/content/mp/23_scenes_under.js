@@ -167,7 +167,7 @@ pc: {読|よ}む 。 {一行|いちぎょう} ずつ 。 || I'll read it. One li
 narr: {縄|なわ} が {緩|ゆる}み 、 {車|くるま} が {止|と}まった 。 {名前|なまえ} が {一|ひと}つ ずつ 、 {床|ゆか} を {抜|ぬ}けて {上|うえ} へ {昇|のぼ}って いく 。 || The ropes go slack; the wheels stop. One by one the names rise up through the boards.
 narr: {遠|とお}く {上|うえ} の {舞台|ぶたい} から 、 {声|こえ} が {聞|き}こえる 。 {役者|やくしゃ} たち が 、 {自分|じぶん} の {役|やく} の {名前|なまえ} を {呼|よ}び{合|あ}って いる 。 || Far above, from the stage, voices: the actors are calling out their parts' names to each other.
 ?(comp=nao) comp[smile]: {全部|ぜんぶ} {届|とど}いた な 。 {一通|いっつう} も {落|お}とさず に 。 || Every one delivered. Not a single letter dropped.
-?(comp=mio) comp[smile]: よかった …… 。 {怒|おこ}った かい が ありました 。 || Thank goodness… It was worth getting angry.
+?(comp=mio) comp[smile]: よかった …… 。 {怒|おこ}った かい@甲斐 が ありました 。 || Thank goodness… It was worth getting angry.
 ?(comp=ren) comp[smile]: {上|うえ} が {明|あか}るい 。 {名前|なまえ} の {灯|あか}り です 。 || It's bright up there. The light of names.
 ?(comp=suzu) comp[laugh]: カーテンコール よ ！ {一人|ひとり} {残|のこ}らず 、 {名前|なまえ} を {呼|よ}ばれて ！ || Curtain call! Every last one, called by name!
 !warp mp.theatre 10 9 up
