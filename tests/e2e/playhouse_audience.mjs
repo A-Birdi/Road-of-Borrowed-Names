@@ -40,7 +40,7 @@ const hook = () => {
     const css = k ? RB.render.tileToCss(k.fx + 0.5, k.fy + 0.5) : null;
     const mark = document.querySelector('#ui .dlg .who .offscr');
     const amb = RB.staging.ambienceNow();
-    window.__L.push({ who: l && l.who, en: String((l && l.en) || '').slice(0, 44), map: W.map.id, pc: [W.player.x, W.player.y],
+    window.__L.push({ who: l && l.who, en: String((l && l.en) || ''), map: W.map.id, pc: [W.player.x, W.player.y],
       aud: W.npcs.filter((n) => AUD.includes(n.id)).map((n) => n.id + '@' + n.x + ',' + n.y),
       rest: Object.fromEntries(st.filter((a) => AUD.includes(a.id)).map((a) => [a.id, a.rest])),
       koume: k ? [k.x, k.y] : null, kmv: !!(k && (k.mv || k.route)), on: css ? css.x >= 0 && css.y >= 0 && css.x <= innerWidth && css.y <= innerHeight : false,
@@ -79,7 +79,7 @@ const fmtK = (L) => JSON.stringify(L.filter((l) => l.who === 'yn_koume').map((l)
 // after the scene: wait until nobody of the audience is placed or still on their way out; how each went; Koume's way back
 async function settle(p) {
   return p.evaluate(async () => {
-    const AUD = RB.content.playhouseAudience, W = RB.world.W, t0 = performance.now();
+    const AUD = RB.content.playhouseAudience || [], W = RB.world.W, t0 = performance.now();
     const left = () => W.npcs.concat(W.leavers || [], W.extras || []).filter((n) => AUD.includes(n.id) || AUD.includes(n.def && n.def.id));
     while (left().length && performance.now() - t0 < 20000) await new Promise((r) => setTimeout(r, 100));
     const gone = Math.round(performance.now() - t0);
@@ -134,17 +134,17 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
   await p.evaluate(async () => { await RB.save.manualSave(3); });
   await p.evaluate(() => { RB.game.settings.textSpeed = 'normal'; RB.script.run('yn.suzu_evening'); });
   await p.waitForFunction(() => RB.world.W.map.id === 'yn.playhouse' && RB.ui.dialogue.isOpen(), null, { timeout: 8000 }).catch(() => {});
-  const mid = await p.evaluate(() => RB.world.W.npcs.filter((n) => RB.content.playhouseAudience.includes(n.id)).length);
+  const mid = await p.evaluate(() => RB.world.W.npcs.filter((n) => (RB.content.playhouseAudience || []).includes(n.id)).length);
   const ld = await p.evaluate(async () => { try { await RB.game.loadCampaign(3, 'manual'); return 'loaded'; } catch (e) { return 'failed: ' + e.message; } });
   await p.waitForTimeout(1500);
-  const g = await p.evaluate(() => { const W = RB.world.W, AUD = RB.content.playhouseAudience; return { map: W.map.id, run: RB.script.isRunning(), dlg: RB.ui.dialogue.isOpen(), aud: W.npcs.concat(W.leavers || [], W.extras || []).filter((n) => AUD.includes(n.id)).length, term: RB.state.test(RB.game.s, 'scene.yn.suzu_evening'), walked: RB.game.s.vars._walked === undefined ? null : RB.game.s.vars._walked, seen: !!RB.game.s.flags.yn_playhouse_seen, night: !!RB.staging.ambienceNow() }; });
+  const g = await p.evaluate(() => { const W = RB.world.W, AUD = RB.content.playhouseAudience || []; return { map: W.map.id, run: RB.script.isRunning(), dlg: RB.ui.dialogue.isOpen(), aud: W.npcs.concat(W.leavers || [], W.extras || []).filter((n) => AUD.includes(n.id)).length, term: RB.state.test(RB.game.s, 'scene.yn.suzu_evening'), walked: RB.game.s.vars._walked === undefined ? null : RB.game.s.vars._walked, seen: !!RB.game.s.flags.yn_playhouse_seen, night: !!RB.staging.ambienceNow() }; });
   ok(ld === 'loaded' && mid === 7 && g.map === 'yn.lower' && !g.run && !g.dlg && !g.aud && !g.term && g.walked === null && !g.seen && !g.night,
     'a journey loaded during the show: nothing of it left, the loaded journey untouched (' + JSON.stringify({ ld, mid, g }) + ')');
   // that journey walks into the theatre by its door: no audience (its own first visit plays)
   await p.evaluate(() => { RB.game.settings.textSpeed = 'instant'; RB.save.autosave = async () => {}; const d = RB.content.maps['yn.playhouse'].spawn.default; RB.game.transition('yn.playhouse', d[0], d[1], d[2] || 'up'); });
   await p.waitForTimeout(1200);
   await drive(p);
-  const e = await p.evaluate(() => { const W = RB.world.W; return { map: W.map.id, aud: W.npcs.filter((n) => RB.content.playhouseAudience.includes(n.id)).length }; });
+  const e = await p.evaluate(() => { const W = RB.world.W; return { map: W.map.id, aud: W.npcs.filter((n) => (RB.content.playhouseAudience || []).includes(n.id)).length }; });
   ok(e.map === 'yn.playhouse' && !e.aud, 'then that journey walks into the theatre: no audience (' + JSON.stringify(e) + ')');
   errorsAll.push(...errors);
   await ctx.close();
@@ -206,7 +206,7 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
     }
     await drive(p);
     await p.waitForTimeout(1500);
-    const e = await p.evaluate(() => { const W = RB.world.W; return { map: W.map.id, aud: W.npcs.concat(W.leavers || []).filter((n) => RB.content.playhouseAudience.includes(n.id)).length }; });
+    const e = await p.evaluate(() => { const W = RB.world.W; return { map: W.map.id, aud: W.npcs.concat(W.leavers || []).filter((n) => (RB.content.playhouseAudience || []).includes(n.id)).length }; });
     if (e.map !== 'yn.playhouse' || e.aud) bad.push(label + ' ' + JSON.stringify(e));
     errorsAll.push(...errors);
     await ctx.close();
