@@ -671,23 +671,23 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `co.b_nao1` | src/content/ch3/48_banter.js:13 | banter | 3 | comp×3 |  | banter co.* nao [!co_chronicle_read] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
 | `co.b_nao2` | src/content/ch3/48_banter.js:18 | banter | 4 | comp×3 pc |  | banter co.* nao [co_chronicle_read&!co_upper_open] |  | Quiet (H) | travel banter, 4 lines: attentive posture and facing only |
 | `co.b_nao3` | src/content/ch3/48_banter.js:24 | banter | 3 | comp×3 |  | banter co.* nao [co_upper_open&!co_kiln_done] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
-| `co.b_nao4` | src/content/ch3/48_banter.js:29 | banter | 3 | comp×3 |  | banter co.* nao [co_kiln_done&!ch3_done] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
-| `co.b_nao5` | src/content/ch3/48_banter.js:34 | banter | 2 | comp×2 |  | banter co.* nao [ch3_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
-| `co.b_mio1` | src/content/ch3/48_banter.js:38 | banter | 3 | comp×3 |  | banter co.* mio [!co_chronicle_read] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
-| `co.b_mio2` | src/content/ch3/48_banter.js:43 | banter | 4 | comp×3 pc |  | banter co.* mio [co_chronicle_read&!co_upper_open] |  | Quiet (H) | travel banter, 4 lines: attentive posture and facing only |
-| `co.b_mio3` | src/content/ch3/48_banter.js:49 | banter | 4 | comp×4 |  | banter co.* mio [co_upper_open&!co_kiln_done] |  | Quiet (H) | travel banter, 4 lines: attentive posture and facing only |
-| `co.b_mio4` | src/content/ch3/48_banter.js:55 | banter | 2 | comp×2 |  | banter co.* mio [co_kiln_done&!ch3_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
-| `co.b_mio5` | src/content/ch3/48_banter.js:59 | banter | 2 | comp×2 |  | banter co.* mio [ch3_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
-| `co.b_ren1` | src/content/ch3/48_banter.js:63 | banter | 3 | comp×3 |  | banter co.* ren [!co_chronicle_read] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
-| `co.b_ren2` | src/content/ch3/48_banter.js:68 | banter | 3 | comp×3 |  | banter co.* ren [co_chronicle_read&!co_upper_open] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
-| `co.b_ren3` | src/content/ch3/48_banter.js:73 | banter | 2 | comp×2 |  | banter co.* ren [co_upper_open&!co_kiln_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
-| `co.b_ren4` | src/content/ch3/48_banter.js:77 | banter | 3 | comp×3 |  | banter co.* ren [co_kiln_done&!ch3_done] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
-| `co.b_ren5` | src/content/ch3/48_banter.js:82 | banter | 2 | comp×2 |  | banter co.* ren [ch3_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
-| `co.b_suzu1` | src/content/ch3/48_banter.js:86 | banter | 3 | comp×2 pc |  | banter co.* suzu [!co_chronicle_read] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
-| `co.b_suzu2` | src/content/ch3/48_banter.js:91 | banter | 2 | comp×2 |  | banter co.* suzu [co_chronicle_read&!co_upper_open] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
-| `co.b_suzu3` | src/content/ch3/48_banter.js:95 | banter | 3 | comp×3 |  | banter co.* suzu [co_upper_open&!co_kiln_done] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
-| `co.b_suzu4` | src/content/ch3/48_banter.js:100 | banter | 4 | comp×4 | 1 if | banter co.* suzu [co_kiln_done&!ch3_done] |  | Quiet (H) | travel banter, 4 lines: attentive posture and facing only |
-| `co.b_suzu5` | src/content/ch3/48_banter.js:109 | banter | 2 | comp×2 |  | banter co.* suzu [ch3_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
+| `co.b_nao4` | src/content/ch3/48_banter.js:29 | banter | 4 | comp×4 | 2 cond | banter co.* nao [co_kiln_done&!ch3_done] |  | Quiet (H) | travel banter, 4 lines: attentive posture and facing only |
+| `co.b_nao5` | src/content/ch3/48_banter.js:35 | banter | 2 | comp×2 |  | banter co.* nao [ch3_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
+| `co.b_mio1` | src/content/ch3/48_banter.js:39 | banter | 3 | comp×3 |  | banter co.* mio [!co_chronicle_read] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
+| `co.b_mio2` | src/content/ch3/48_banter.js:44 | banter | 4 | comp×3 pc |  | banter co.* mio [co_chronicle_read&!co_upper_open] |  | Quiet (H) | travel banter, 4 lines: attentive posture and facing only |
+| `co.b_mio3` | src/content/ch3/48_banter.js:50 | banter | 4 | comp×4 |  | banter co.* mio [co_upper_open&!co_kiln_done] |  | Quiet (H) | travel banter, 4 lines: attentive posture and facing only |
+| `co.b_mio4` | src/content/ch3/48_banter.js:56 | banter | 2 | comp×2 |  | banter co.* mio [co_kiln_done&!ch3_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
+| `co.b_mio5` | src/content/ch3/48_banter.js:60 | banter | 2 | comp×2 |  | banter co.* mio [ch3_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
+| `co.b_ren1` | src/content/ch3/48_banter.js:64 | banter | 3 | comp×3 |  | banter co.* ren [!co_chronicle_read] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
+| `co.b_ren2` | src/content/ch3/48_banter.js:69 | banter | 3 | comp×3 |  | banter co.* ren [co_chronicle_read&!co_upper_open] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
+| `co.b_ren3` | src/content/ch3/48_banter.js:74 | banter | 2 | comp×2 |  | banter co.* ren [co_upper_open&!co_kiln_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
+| `co.b_ren4` | src/content/ch3/48_banter.js:78 | banter | 3 | comp×3 |  | banter co.* ren [co_kiln_done&!ch3_done] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
+| `co.b_ren5` | src/content/ch3/48_banter.js:83 | banter | 2 | comp×2 |  | banter co.* ren [ch3_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
+| `co.b_suzu1` | src/content/ch3/48_banter.js:87 | banter | 3 | comp×2 pc |  | banter co.* suzu [!co_chronicle_read] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
+| `co.b_suzu2` | src/content/ch3/48_banter.js:92 | banter | 2 | comp×2 |  | banter co.* suzu [co_chronicle_read&!co_upper_open] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
+| `co.b_suzu3` | src/content/ch3/48_banter.js:96 | banter | 3 | comp×3 |  | banter co.* suzu [co_upper_open&!co_kiln_done] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
+| `co.b_suzu4` | src/content/ch3/48_banter.js:101 | banter | 4 | comp×4 | 1 if | banter co.* suzu [co_kiln_done&!ch3_done] |  | Quiet (H) | travel banter, 4 lines: attentive posture and facing only |
+| `co.b_suzu5` | src/content/ch3/48_banter.js:110 | banter | 2 | comp×2 |  | banter co.* suzu [ch3_done] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
 
 ### Ch4 Snowbell (171)
 
