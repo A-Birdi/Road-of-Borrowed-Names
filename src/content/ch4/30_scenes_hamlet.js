@@ -403,10 +403,12 @@ RB.script.add(`
 @scene sb.fuki
 # Staged: Fuki (in bed with her cold, a cane at hand) nods hello, shakes her head over the blank board, looks
 # from her notebook to you; her laugh and her nod for help; when the noon bell has rung she laughs and hands
-# you the cord she braided, side-on, and nods over the storm bell.
+# you the cord she braided, side-on, and nods over the storm bell. After the chapter she is up and about, by the post
+# in the square: an open Bell-Post comes to her there (the reminder from stage 0, as the first meeting is over), and
+# the report's first line is said where she stands (RBN-QA-161).
 !if quest.sb_bell=done -> done
 !if quest.sb_bell>=2 -> report
-!if quest.sb_bell>=1 -> go
+!if quest.sb_bell=active -> go
 !gesture fuki nod pc
 fuki[tired]: ごほっ …… 。 おや 、 {旅|たび} の {人|ひと} かい 。 {見苦|みぐる}しい ところ を 。 || Koff… Oh, travellers, is it. Forgive the state of me.
 fuki: {鐘撞|かねつ}き の フキ だよ 。 {広場|ひろば} の {鐘|かね} を 、 {五十年|ごじゅうねん} {鳴|な}らして きた 。 {朝|あさ} 、 {昼|ひる} 、 {夕方|ゆうがた} 。 {吹雪|ふぶき} の とき も 、 {迷子|まいご} の とき も 。 || I'm Fuki, keeper of the bell. I've rung the bell in the square for fifty years. Morning, noon and evening. For storms, and for people lost.
@@ -433,7 +435,8 @@ fuki: {帳面|ちょうめん} は {読|よ}めた かい 。 {昼|ひる} の {
 !end
 :report
 !gesture fuki laugh
-fuki[laugh]: {聞|き}こえた よ 。 {昼|ひる} の {鐘|かね} 。 {二|ふた}つ 、 きれい に 。 {五十年|ごじゅうねん} ぶり に 、 {寝床|ねどこ} で {鐘|かね} を {聞|き}いた よ 。 || I heard it. The noon bell. Two strokes, clean. First time in fifty years I've heard the bell from my bed.
+?(!ch4_done) fuki[laugh]: {聞|き}こえた よ 。 {昼|ひる} の {鐘|かね} 。 {二|ふた}つ 、 きれい に 。 {五十年|ごじゅうねん} ぶり に 、 {寝床|ねどこ} で {鐘|かね} を {聞|き}いた よ 。 || I heard it. The noon bell. Two strokes, clean. First time in fifty years I've heard the bell from my bed.
+?(ch4_done) fuki[laugh]: {聞|き}こえた よ 。 {昼|ひる} の {鐘|かね} 。 {二|ふた}つ 、 きれい に 。 {五十年|ごじゅうねん} {鳴|な}らして きて 、 {下|した} から {聞|き}く の は {初|はじ}めて だ よ 。 || I heard it. The noon bell. Two strokes, clean. Fifty years of ringing it, and the first time I've listened from down here.
 !prop fuki cord
 !gesture fuki handover pc
 !gesture pc receive fuki
