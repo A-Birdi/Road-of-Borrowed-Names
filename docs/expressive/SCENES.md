@@ -3320,15 +3320,15 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `yn.mio_evening` | src/content/yn/27_scenes_comp.js:66 | ambient | 14 | mio×5 narr×4 yn_kikue×4 yn_toki | 1 choice | call← yn.evening |  | Performed (H) | 14 lines, 3 speakers, expressions surprise/closed, 1 choice |
 | `yn.mio_sleep` | src/content/yn/27_scenes_comp.js:100 | ambient | 2 | narr×2 |  | call← yn.kami_room |  | Quiet (H) | a frame around 1 called scene; its own narration only (2 lines): stillness and the place carry it |
 | `yn.mio_dawn` | src/content/yn/27_scenes_comp.js:109 | ambient | 12 | mio×8 narr×4 | 1 if, 1 choice | call← yn.mio_sleep, yn.terrace_footbath |  | Performed (H) | 12 lines, 1 speaker, expressions tired/closed/sad/surprise, 1 choice |
-| `yn.suzu_evening` | src/content/yn/27_scenes_comp.js:144 | ambient | 8 | narr×3 yn_koume×2 suzu×2 yn_shinza |  | call← yn.evening |  | Performed (H) | 8 lines, 3 speakers, expressions closed |
-| `yn.suzu_garden` | src/content/yn/27_scenes_comp.js:162 | ambient | 11 | suzu×8 narr×3 | 1 choice | call← yn.kami_room |  | Performed (H) | 11 lines, 1 speaker, expressions laugh/sad/closed, 1 choice |
-| `yn.suzu_books` | src/content/yn/27_scenes_comp.js:192 | ambient | 11 | yn_koume×4 narr×3 suzu×3 yn_shinza |  | enter yn.upper [comp=suzu&yn_suzu_back&!yn_suzu_books]; enter yn.lower [comp=suzu&yn_suzu_back&!yn_suzu_books] |  | Performed (H) | 11 lines, 3 speakers, expressions closed/laugh |
-| `yn.nao_evening` | src/content/yn/27_scenes_comp.js:210 | ambient | 7 | nao×5 narr×2 | 1 choice | call← yn.evening |  | Performed (H) | 7 lines, 1 speaker, expressions closed/angry, 1 choice |
-| `yn.nao_footbath` | src/content/yn/27_scenes_comp.js:230 | ambient | 8 | nao×7 narr | 1 choice | call← yn.footbath |  | Performed (H) | 8 lines, 1 speaker, expressions closed, 1 choice |
-| `yn.ren_evening` | src/content/yn/27_scenes_comp.js:254 | ambient | 5 | ren×3 narr×2 | 1 choice | call← yn.evening |  | Performed (H) | 5 lines, 1 speaker, expressions angry, 1 choice |
-| `yn.ren_lanterns` | src/content/yn/27_scenes_comp.js:272 | ambient | 5 | ren×4 narr | 1 choice | npc yn.upper yn_toki [slot.yn_toki=1\|!yn_done & yn_ren_quarrel&!yn_ren_madeup]; npc yn.lower yn_toki [slot.yn_toki=2&yn_done & yn_ren_quarrel&!yn_ren_madeup]; +1 more |  | Performed (H) | 5 lines, 1 speaker, expressions closed/laugh, 1 choice |
-| `yn.walk` | src/content/yn/27_scenes_comp.js:290 | ambient | 14 | comp×12 narr×2 | 1 if, 1 choice, 4 cond, comp:mio/nao/ren/suzu | enter yn.upper [yn_mediated&!yn_done] |  | Performed (H) | 14 lines, 1 speaker, expressions shy/laugh, 1 choice |
-| `yn.confess` | src/content/yn/27_scenes_comp.js:323 | ambient | 4 | comp×4 | 4 cond, comp:mio/nao/ren/suzu | call← yn.walk |  | Performed (H) | 4 lines, 1 speaker, expressions closed |
+| `yn.suzu_evening` | src/content/yn/27_scenes_comp.js:144 | ambient | 9 | narr×4 yn_koume×2 suzu×2 yn_shinza | 2 cond | call← yn.evening |  | Performed (H) | 9 lines, 3 speakers, expressions closed |
+| `yn.suzu_garden` | src/content/yn/27_scenes_comp.js:170 | ambient | 11 | suzu×8 narr×3 | 1 choice | call← yn.kami_room |  | Performed (H) | 11 lines, 1 speaker, expressions laugh/sad/closed, 1 choice |
+| `yn.suzu_books` | src/content/yn/27_scenes_comp.js:200 | ambient | 11 | yn_koume×4 narr×3 suzu×3 yn_shinza |  | enter yn.upper [comp=suzu&yn_suzu_back&!yn_suzu_books]; enter yn.lower [comp=suzu&yn_suzu_back&!yn_suzu_books] |  | Performed (H) | 11 lines, 3 speakers, expressions closed/laugh |
+| `yn.nao_evening` | src/content/yn/27_scenes_comp.js:218 | ambient | 7 | nao×5 narr×2 | 1 choice | call← yn.evening |  | Performed (H) | 7 lines, 1 speaker, expressions closed/angry, 1 choice |
+| `yn.nao_footbath` | src/content/yn/27_scenes_comp.js:238 | ambient | 8 | nao×7 narr | 1 choice | call← yn.footbath |  | Performed (H) | 8 lines, 1 speaker, expressions closed, 1 choice |
+| `yn.ren_evening` | src/content/yn/27_scenes_comp.js:262 | ambient | 5 | ren×3 narr×2 | 1 choice | call← yn.evening |  | Performed (H) | 5 lines, 1 speaker, expressions angry, 1 choice |
+| `yn.ren_lanterns` | src/content/yn/27_scenes_comp.js:280 | ambient | 5 | ren×4 narr | 1 choice | npc yn.upper yn_toki [slot.yn_toki=1\|!yn_done & yn_ren_quarrel&!yn_ren_madeup]; npc yn.lower yn_toki [slot.yn_toki=2&yn_done & yn_ren_quarrel&!yn_ren_madeup]; +1 more |  | Performed (H) | 5 lines, 1 speaker, expressions closed/laugh, 1 choice |
+| `yn.walk` | src/content/yn/27_scenes_comp.js:298 | ambient | 14 | comp×12 narr×2 | 1 if, 1 choice, 4 cond, comp:mio/nao/ren/suzu | enter yn.upper [yn_mediated&!yn_done] |  | Performed (H) | 14 lines, 1 speaker, expressions shy/laugh, 1 choice |
+| `yn.confess` | src/content/yn/27_scenes_comp.js:331 | ambient | 4 | comp×4 | 4 cond, comp:mio/nao/ren/suzu | call← yn.walk |  | Performed (H) | 4 lines, 1 speaker, expressions closed |
 
 ### zzz_living (345)
 
