@@ -74,8 +74,9 @@ RB.tasks = (function () {
     opts = opts || {};
     const known = (c) => RB.learn.kanaKnown(c);
     const hb = HOMOPHONE_BASE[ch];
-    // a homophone is completed only in a real word: the lexicon also holds deliberate non-words for spotting tasks
-    const ws = wordsWith(ch, known).filter((e) => !hb || !/^\(not a word\b/.test(e.m || ''));
+    // a kana is completed only in a real word: the lexicon also holds deliberate non-words, the wrong choices of the
+    // tasks that teach them (しほさい in ko.toro_2), never an example (RBN-QA-165; before, only for a homophone)
+    const ws = wordsWith(ch, known).filter((e) => !/^\(not a word\b/.test(e.m || ''));
     const rom = RB.kana.romaji(ch);
     const kata = RB.kana.isKata(ch);
     if (ws.length && !opts.bare) {
