@@ -6,7 +6,8 @@
 //  3. saved, back to the title and loaded, the census still open: the board still blank, the same line;
 //  4. once Sen has the names: the board carved, the same as an older plaque read back, and the plaque reads its name;
 //  5. (B) the namer remembered, in each of their places: Kakeru (his usual place, the guild, Playhouse Row) at the ink
-//     bridge and Sanpei (on the street before Sōbē, in the press room after) at the woodblock bridge: the scene says
+//     bridge, Sanpei (on the street before Sōbē, in the press room after) at the woodblock bridge and (B2) Hayashi (his
+//     usual place on Playhouse Row, Blockprint Row, the meeting house's corner) at the curtain bridge: the scene says
 //     what they once told you, and no figure of theirs appears, walks or is left over (the scene at its own pace, not
 //     fast-forwarded);
 //  6. no page errors.
@@ -89,13 +90,17 @@ errorsAll.push(...errors); await ctx.close();
     ['Kakeru, on Playhouse Row', 'mp_kakeru', 3, {}, 21, 21, 'The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.'],
     ['Sanpei, on the street', 'mp_sanpei', 1, { mp_sobe_met: false }, 17, 8, 'Sanpei once told you about this bridge.'],
     ['Sanpei, in the press room', 'mp_sanpei', 1, {}, 17, 8, 'Sanpei once told you about this bridge.'],
+    // (B2) Hayashi at the curtain bridge, from his usual place on Playhouse Row, Blockprint Row and the meeting house's corner
+    ['Hayashi, his usual place', 'mp_hayashi', 1, {}, 23, 25, 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge.', 'mp.playhouse', 24, 24],
+    ['Hayashi, on Blockprint Row', 'mp_hayashi', 2, {}, 23, 25, 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge.', 'mp.playhouse', 24, 24],
+    ['Hayashi, by the meeting house', 'mp_hayashi', 3, {}, 23, 25, 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge.', 'mp.playhouse', 24, 24],
   ];
   const res = [];
-  for (const [name, who, slot, fl, px, py, line] of CASES) {
+  for (const [name, who, slot, fl, px, py, line, map, sx, sy] of CASES) {
     const { p: q, ctx: c2, errors: e2 } = await page(b, url, { viewport: { width: 1280, height: 800 } });
-    const r = await q.evaluate(async ([FLAGS, fl, who, slot, px, py]) => {
+    const r = await q.evaluate(async ([FLAGS, fl, who, slot, px, py, map, sx, sy]) => {
       const flags = Object.assign({}, FLAGS, fl); for (const k in fl) if (!fl[k]) delete flags[k];
-      const s = RB.game.debugStart('mp.blockprint', 22, 21, { dir: 'down', edition: RB.edition.forNew(), flags });
+      const s = RB.game.debugStart(map, sx, sy, { dir: 'down', edition: RB.edition.forNew(), flags });
       s.comp = null; s.quests.mp_census = { stage: 0, done: false, t: 1 };
       for (const m in RB.content.maps) for (const ev of RB.content.maps[m].onEnter || []) s.flags['enter:' + m + ':' + ev.scene] = true;
       const T = RB.town.rec(s).towns; T.blockprint = Object.assign({ tick: 1, leftAt: null, flags: {}, rests: 0 }, T.blockprint || {}, { slots: Object.assign({}, (T.blockprint || {}).slots, { [who]: slot }) });
@@ -113,7 +118,7 @@ errorsAll.push(...errors); await ctx.close();
       await new Promise((res) => setTimeout(res, 1500));
       on = false;
       return { before, after: mine().map((n) => n.x + ',' + n.y), most, moved, said };
-    }, [FLAGS, fl, who, slot, px, py]);
+    }, [FLAGS, fl, who, slot, px, py, map || 'mp.blockprint', sx || 22, sy || 21]);
     const fit = r.said[1] === line && !r.said.some((l) => /runs up|says something|goes over the bridge|calls out/.test(l)) && r.most === r.before.length && !r.moved && JSON.stringify(r.after) === JSON.stringify(r.before);
     res.push(name + ': ' + (fit ? 'ok' : JSON.stringify(r)));
     errorsAll.push(...e2); await c2.close();
