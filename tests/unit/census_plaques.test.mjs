@@ -6,7 +6,10 @@
 //     blank; once Sen has the names, carved; an older plaque read back is carved as before, census or not;
 //  3. each scene with the real runner: read back with the census open, the name noted once; looked at again before
 //     Sen, the new line, nothing counted again; after Sen, the plaque reads its name;
-//  4. the older census's plaque scenes are untouched by this.
+//  4. the older census's plaque scenes are untouched by this;
+//  5. (B) the person who named the bridge is remembered, never brought in: the scene says what they once told you, no
+//     line says they arrive, pass or speak now, and the scene neither brings anyone in nor walks anyone (no !enter,
+//     !walkto or !move), so nobody can appear at the map's edge or be left standing there.
 import { load } from '../lib/load.mjs';
 
 export default async (t) => {
@@ -65,6 +68,18 @@ export default async (t) => {
     if (!(L3.length === 1 && /^The plaque reads: "/.test(L3[0]) && s.vars.mp_census === 1)) bad.push(id + ' after Sen: ' + JSON.stringify(L3));
   }
   t.eq(bad, [], 'each scene: the name noted once; looked at again before Sen, the new line and nothing counted; after Sen, the name');
+
+  // ---- 5. (B: Agnes's report, Kakeru at the ink bridge, and Sanpei with him)
+  const TOLD = { hangi: 'Sanpei once told you about this bridge.', sumi: 'The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.' };
+  const NOW = /runs up|says something|goes over the bridge|calls out/;
+  const told = [];
+  for (const [id, line] of Object.entries(TOLD)) {
+    journey({ census: { stage: 0, done: false, t: 1 } });
+    const L = await run(id);
+    const cmds = C.scenes['mp.plaque_' + id].cmds;
+    told.push(id + ': ' + (L[1] === line && !L.some((l) => NOW.test(l)) && !cmds.some((c) => /^(enter|walkto|move)$/.test(c.op)) ? 'ok' : JSON.stringify({ L, ops: cmds.map((c) => c.op) })));
+  }
+  t.eq(told, ['hangi: ok', 'sumi: ok'], 'the bridge\'s namer remembered, never brought in: what they once told you, nothing said to happen now, nobody walked');
 
   // ---- 4.
   const older = Object.keys(C.scenes).filter((id) => /^mb\.plaque_|^mb\.firstbridge_plaque$/.test(id));
