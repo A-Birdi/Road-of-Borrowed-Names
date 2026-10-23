@@ -108,6 +108,10 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
     await begin(p, 'cr.sakashita', 18, 12, comp, DONE, { quest: true });
     await p.evaluate(() => { RB.script.run('cr.end'); });
     await drive(p);
+    // (on a busy machine the drive can stop in the gap between the Cloudroad's end, with the companion's message and
+    // its bond beat, and the letter's first line: go on until the letter has been given and its scene is over,
+    // bounded; Local CL-247)
+    for (let k = 0; k < 20 && !(await p.evaluate(() => !!RB.game.s.flags.yn_called && !RB.script.isRunning() && !RB.ui.dialogue.isOpen())); k++) { await p.waitForTimeout(250); await drive(p); }
     const a = await after(p);
     // (his lines in yn.call only: it sets yn_called first. Chained after the Cloudroad's end, Mio's, Ren's and Suzu's
     // endings have him speak a message for them before it, from where he stands: cr.mio_kikue, cr.ren_lit, cr.suzu_reply)
