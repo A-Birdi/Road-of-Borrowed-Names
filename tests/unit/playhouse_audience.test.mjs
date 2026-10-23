@@ -5,7 +5,7 @@
 //  1. the condition head `scene.<id>`: true only while that scene runs for this journey, on its own or called; false
 //     before and after, for any other journey object, and after a journey is replaced; never guessed ahead (peek);
 //  2. the scene's commands: the theatre marked seen before the warp (its daytime introduction never follows), the
-//     night's light, Koume's walk before her first line and the narration for each outcome; every other command,
+//     night's light set by the warp while the screen is dark, Koume's walk before her first line and the narration for each outcome; every other command,
 //     line and flag as it was;
 //  3. the audience: seven townsfolk without lines or names (four on the benches, three newcomers from the ridge on the
 //     floor), there only while the scene runs; their places on the benches' own tiles or free floor, clear of every
@@ -38,7 +38,8 @@ export default async (t) => {
   RB.ui.toast = async () => {};
   RB.game.afterScene = () => {};
   RB.save.autosave = async () => {};
-  RB.game.transition = async (id, x, y, dir) => { RB.world.enter(id, x, y, dir || 'down', {}); if (onWarp) onWarp(); };
+  // (as the real transition: the map entered, then what the warp sets for it, then the reveal)
+  RB.game.transition = async (id, x, y, dir, o) => { RB.world.enter(id, x, y, dir || 'down', {}); if (o && o.entered) o.entered(); if (onWarp) onWarp(); };
   RB.staging.enabled(true);
   const fresh = (o = {}) => {
     const s = S.newCampaign({ edition: 2 });
@@ -77,14 +78,15 @@ export default async (t) => {
   const iSeen = at((c) => c.op === 'set' && (c.args || [])[0] === 'yn_playhouse_seen'), iWarp = at((c) => c.op === 'warp'), iAmb = at((c) => c.op === 'ambience');
   const iWalk = at((c) => c.op === 'walkto'), iK = at((c) => c.who === 'yn_koume');
   const iW1 = at((c) => c.if === 'var._walked=1'), iW0 = at((c) => c.if === 'var._walked=0');
-  t.ok(iSeen === 0 && iWarp === 1 && iAmb === 2 && cmds[iAmb].args[0] === 'night_in' && !cmds[iSeen].if && !cmds[iAmb].if,
-    'the theatre marked seen before the warp (its daytime introduction never follows); the night\'s light from the warp on');
-  t.ok(iWalk > iAmb && iWalk === iW1 - 1 && iW0 === iW1 + 1 && iK === iW0 + 1 && !cmds[iWalk].if && cmds[iWalk].args.join(' ') === 'yn_koume pc' && cmds.filter((c) => c.op === 'walkto').length === 1,
+  t.ok(iSeen === 0 && iWarp === 1 && iAmb === -1 && cmds[iWarp].args.includes('ambience=night_in') && !cmds[iSeen].if && !cmds[iWarp].if,
+    'the theatre marked seen before the warp (its daytime introduction never follows); the night\'s light set by the warp, while the screen is dark (Agnes 6374739355)');
+  t.ok(iWalk > iWarp && iWalk === iW1 - 1 && iW0 === iW1 + 1 && iK === iW0 + 1 && !cmds[iWalk].if && cmds[iWalk].args.join(' ') === 'yn_koume pc' && cmds.filter((c) => c.op === 'walkto').length === 1,
     'Koume walks up to you after the show and before her first line, on every path; then the narration for what happened');
   t.ok(iW1 >= 0 && /walks straight over/.test(cmds[iW1].en) && iW0 >= 0 && cmds[iW0].en === 'When the show ends, Koume calls out to you.' && !/stage/.test(cmds[iW0].en) && !/舞台/.test(cmds[iW0].jp),
     'she walked: the line as it was; she could not: she calls out to you, said without a place (never "from the stage")');
   const added = (c) => (c.op === 'set' && (c.args || [])[0] === 'yn_playhouse_seen') || (c.op === 'ambience' && (c.args || [])[0] === 'night_in') || c.op === 'walkto' || c.if === 'var._walked=0';
-  const shape = cmds.filter((c) => !added(c)).map((c) => [c.op, c.args || null, c.if === 'var._walked=1' ? null : c.if || null, c.who || null, c.expr || null, c.jp || null, c.en || null]);
+  // (the warp's own ambience is checked above; its place, as before)
+  const shape = cmds.filter((c) => !added(c)).map((c) => [c.op, c.op === 'warp' ? c.args.filter((x) => !/^ambience=/.test(x)) : c.args || null, c.if === 'var._walked=1' ? null : c.if || null, c.who || null, c.expr || null, c.jp || null, c.en || null]);
   t.eq(crypto.createHash('sha256').update(JSON.stringify(shape)).digest('hex').slice(0, 16), '52e5a9c1bc031aab', 'every other command, line and flag of the evening as it was');
 
   // ---- 3. the audience ------------------------------------------------------------------------------------------------

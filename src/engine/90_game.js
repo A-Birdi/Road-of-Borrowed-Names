@@ -381,6 +381,7 @@ RB.game = (function () {
       RB.world.enter(mapId, x, y, dir, { sp: opts.sp });
       if (RB.town) RB.town.visited(G.s, mapId);
       RB.render.prewarm(); // build the new map's art while the screen is still dark
+      if (opts.entered) opts.entered(); // (a scene's warp: what it sets for the new place, before it is seen)
       await RB.ui.fade(false, reducedMotion() ? 80 : 220);
       if (!mine()) return;
       if (def.name && !opts.inScript && !G.s.flags['named:' + mapId]) {
