@@ -40,7 +40,10 @@ export function ruby(jp, spoken) {
 // what the page needs from the repository: the GO manifest and the supplements for the line's display, the script for
 // the English and the line before; each part optional, so the page still builds from the list alone
 async function context() {
-  const ctx = { entries: new Map(), refs: new Map(), lines: new Map(), chars: {}, corrections: new Map(), notes: [] };
+  const ctx = { entries: new Map(), refs: new Map(), lines: new Map(), chars: {}, corrections: new Map(), retired: new Map(), notes: [] };
+  // takes whose line has since left the script (its key no longer resolves): their words as recorded, pinned to the
+  // batch's revision, shown marked retired and unused (run/RETIRED_TAKES.json; Agnes 6355139781, Local CL-237)
+  try { for (const r of readJson(P('docs/future/voice/production/run/RETIRED_TAKES.json')).retired || []) ctx.retired.set(r.id, r); } catch (e) { /* none */ }
   try {
     const m = JSON.parse(zlib.gunzipSync(fs.readFileSync(P('docs/future/voice/production/manifest/RECORDING_MANIFEST.json.gz'))));
     for (const e of m.entries) ctx.entries.set(e.id, e);
@@ -78,7 +81,7 @@ function prepare(it, group, ctx) {
   const e = ctx.entries.get(it.id), ref = ctx.refs.get(it.id);
   const line = (it.lineKeys || []).map((k) => ctx.lines.get(k)).find(Boolean) || null;
   const who = speakerOf(it, ctx, ref);
-  let jp, en = '', prev = null;
+  let jp, en = '', prev = null, retired = null;
   if (ref) {
     jp = esc(ref.written || ref.spoken) + (ref.reading && ref.reading !== ref.written ? ' <span class="rd">' + esc(ref.reading) + '</span>' : '');
     en = ({ kana: 'Kana', kanji: 'Kanji and its readings', word: 'Word', phrase: 'Phrase' })[ref.kind] || '';
@@ -88,6 +91,10 @@ function prepare(it, group, ctx) {
     if (line) {
       en = line.en;
       if (line.prev) prev = { who: ({ narr: 'Narrator', comp: 'A companion', pc: 'You' })[line.prev.who] || (ctx.chars[line.prev.who] || { en: line.prev.who }).en, jp: line.prev.plain, en: line.prev.en };
+    } else if (ctx.retired.has(it.id)) {
+      const r = ctx.retired.get(it.id);
+      en = r.en || ''; prev = r.prev || null;
+      retired = { rev: String(r.sourceRevision || '').slice(0, 7), by: r.retiredBy || '' };
     }
   }
   const spoken = it.spoken || (ref && ref.spoken) || (e && e.spoken) || '';
@@ -95,7 +102,7 @@ function prepare(it, group, ctx) {
   const sc = ctx.corrections.get(it.id);
   return {
     id: it.id, g: group.key, who, delivery: it.delivery && !(it.delivery in DELIVERY) ? it.delivery : (DELIVERY[it.delivery] || ''),
-    jp, en, prev, why: it.why || '', sent: sent && sent !== spoken ? sent : '',
+    jp, en, prev, retired, why: it.why || '', sent: sent && sent !== spoken ? sent : '',
     sc: sc ? { ref: sc.ref, send: sc.send, recorded: sent === sc.send, target: sc.lengthFit && sc.lengthFit.targetSeconds } : null,
     more: Math.max(0, (it.lineKeys || []).length - 1),
     take: { file: it.file, s: it.seconds },
@@ -162,6 +169,7 @@ function card(it,gi){
   const who=it.who,nm='d-'+it.g+'-'+it.id;
   let h='<div class="head"><b>'+esc(who.en)+'</b>'+(who.jp?'<span lang="ja" class="mute jpn">'+who.jp+'</span>':'')+(who.sub?'<span class="chip">'+esc(who.sub)+'</span>':'')+(it.delivery?'<span class="chip">'+esc(it.delivery)+'</span>':'')+'<span class="ids">'+esc(it.id)+'</span></div>';
   h+='<div><div class="jp" lang="ja">'+it.jp+'</div>'+(it.en?'<div class="en">'+esc(it.en)+'</div>':'');
+  if(it.retired)h+='<div class="why"><span class="chip">Retired · unused</span> This line has since left the game ('+esc(it.retired.by)+'). Shown with the words it was recorded with, as of revision '+esc(it.retired.rev)+'.</div>';
   if(it.prev)h+='<div class="prev">Before this: <b>'+esc(it.prev.who)+'</b> <span lang="ja">'+esc(it.prev.jp)+'</span>'+(it.prev.en?' · '+esc(it.prev.en):'')+'</div>';
   if(it.why)h+='<div class="why"><b>Why it is here:</b> '+esc(it.why)+'</div>';
   it.also.forEach((x)=>{h+='<div class="why small">Also under <a href="#t-'+esc(x.g)+'-'+esc(it.id)+'">'+esc(SHORT[x.g]||x.g)+'</a>: '+esc(x.why)+' (one decision for both)</div>'});
