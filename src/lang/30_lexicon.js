@@ -1485,6 +1485,7 @@ RB.lex = (function () {
 素敵|すてき|adj-na|E|lovely
 適当|てきとう|adj-na|I|suitable|In casual speech it often means "half-hearted, careless".
 十分|じゅうぶん|adj-na|E|enough
+十分|じゅっぷん|n|E|ten minutes|{十|じゅっ}{分|ぷん}: 十 and 分 change sound together (also read じっぷん). Not {十分|じゅうぶん} "enough".
 同じ|おなじ|adj-na|E|same|Comes directly before a noun without な: {同|おな}じ{道|みち}.
 色々|いろいろ|adj-na|E|various
 様々|さまざま|adj-na|I|various, diverse
