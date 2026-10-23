@@ -64,9 +64,10 @@ async function play(p, scene, picks) {
       continue;
     }
     if (st.d) {
-      if (st.en === last) { await p.waitForTimeout(80); continue; }
-      last = st.en;
-      await p.waitForTimeout(100); await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance()); await p.waitForTimeout(80); continue;
+      // (Next on every pass while the same line stays, not once per new line: a press during a picture's dissolve can be
+      // swallowed, and the line then waits for another; as tests/e2e/egg_recovery.mjs does. Local CL-237)
+      if (st.en !== last) { last = st.en; await p.waitForTimeout(100); } else await p.waitForTimeout(80);
+      await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance()); await p.waitForTimeout(80); continue;
     }
     if (!st.run && i > 3) break;
     await p.waitForTimeout(80);
