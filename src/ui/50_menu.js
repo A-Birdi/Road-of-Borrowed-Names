@@ -440,7 +440,7 @@ RB.ui.menu = (function () {
   const returnsShown = (s) => (RB.town && RB.town.returns && RB.game.settings.townHints !== 'off' ? RB.town.returns(s) : []);
   function returnLine(r) {
     const nm = r.name || { jp: '', en: r.town }, k = r.keys.length > 0, n = r.stamps.length;
-    const jp = k ? nm.jp + ' で {気|き}づいた もの が 、 {今|いま} なら {開|ひら}けそう だ 。' + (n ? ' {押|お}せる {判|はん} も {待|ま}って いる 。' : '') : nm.jp + ' に 、 {押|お}せる {判|はん} が {待|ま}って いる 。';
+    const jp = k ? nm.jp + ' で {気|き}づいた もの が 、 {今|いま} なら {開|あ}けられそう だ 。' + (n ? ' {押|お}せる {判|はん} も {待|ま}って いる 。' : '') : nm.jp + ' に 、 {押|お}せる {判|はん} が {待|ま}って いる 。';
     const st = n > 1 ? 'stamps you have earned wait to be pressed' : 'a stamp you have earned waits to be pressed';
     const en = k ? 'Something you noticed in ' + nm.en + ' may open now' + (n ? ', and ' + st + ' there.' : '.') : st.charAt(0).toUpperCase() + st.slice(1) + ' in ' + nm.en + '.';
     return { jp, en };

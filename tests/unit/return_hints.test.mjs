@@ -94,6 +94,8 @@ export default async (t) => {
     ], 'the English: one line, the kind of thing only, never what');
     const bare = (jp) => jp.replace(/\{[^|}]*\|[^}]*\}/g, '');
     t.ok(lines.every((l) => !/[㐀-鿿豈-﫿々]/.test(bare(l.jp)) && /\{葦\|あし\}ノ\{瀬\|せ\}/.test(l.jp)), 'the Japanese: every kanji with its reading, the town named (' + lines.map((l) => l.jp).join(' / ') + ')');
+    // (a key the player opens: 開けられそう, "you could open it now", not 開けそう ひらける "open up"; Local CL-248, Agnes 6375174827)
+    t.ok(lines[0].jp === '{葦|あし}ノ{瀬|せ} で {気|き}づいた もの が 、 {今|いま} なら {開|あ}けられそう だ 。' && lines.filter((l, i) => i !== 1 && i !== 2).every((l) => /\{開\|あ\}けられそう/.test(l.jp)), 'the key line says you could open it now: 開けられそう (' + lines[0].jp + ')');
     const named = /jar|stone|flood|votive|lamp|壺|石|灯/;
     t.ok(lines.every((l) => !named.test(l.en) && !named.test(bare(l.jp))), 'neither names a key or what it opens');
   }
