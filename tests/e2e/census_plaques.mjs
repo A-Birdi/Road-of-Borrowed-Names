@@ -5,7 +5,11 @@
 //  2. looked at again: the new line, nothing counted again;
 //  3. saved, back to the title and loaded, the census still open: the board still blank, the same line;
 //  4. once Sen has the names: the board carved, the same as an older plaque read back, and the plaque reads its name;
-//  5. no page errors.
+//  5. (B) the namer remembered, in each of their places: Kakeru (his usual place, the guild, Playhouse Row) at the ink
+//     bridge and Sanpei (on the street before Sōbē, in the press room after) at the woodblock bridge: the scene says
+//     what they once told you, and no figure of theirs appears, walks or is left over (the scene at its own pace, not
+//     fast-forwarded);
+//  6. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/census_plaques.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -76,6 +80,46 @@ const r4 = await look();
 ok(b4.likeOlder && !b4.blank && r4.said.length === 1 && /^The plaque reads: "Ink Bridge\."$/.test(r4.said[0]) && r4.n === 1,
   'once Sen has the names: the board carved like an older plaque, and the plaque reads its name (' + JSON.stringify({ b4, r4 }) + ')');
 errorsAll.push(...errors); await ctx.close();
+
+// ---- 5. the namer remembered, in each of their places
+{
+  const CASES = [
+    ['Kakeru, his usual place', 'mp_kakeru', 1, {}, 21, 21, 'The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.'],
+    ['Kakeru, at the guild', 'mp_kakeru', 2, {}, 21, 21, 'The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.'],
+    ['Kakeru, on Playhouse Row', 'mp_kakeru', 3, {}, 21, 21, 'The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.'],
+    ['Sanpei, on the street', 'mp_sanpei', 1, { mp_sobe_met: false }, 17, 8, 'Sanpei once told you about this bridge.'],
+    ['Sanpei, in the press room', 'mp_sanpei', 1, {}, 17, 8, 'Sanpei once told you about this bridge.'],
+  ];
+  const res = [];
+  for (const [name, who, slot, fl, px, py, line] of CASES) {
+    const { p: q, ctx: c2, errors: e2 } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+    const r = await q.evaluate(async ([FLAGS, fl, who, slot, px, py]) => {
+      const flags = Object.assign({}, FLAGS, fl); for (const k in fl) if (!fl[k]) delete flags[k];
+      const s = RB.game.debugStart('mp.blockprint', 22, 21, { dir: 'down', edition: RB.edition.forNew(), flags });
+      s.comp = null; s.quests.mp_census = { stage: 0, done: false, t: 1 };
+      for (const m in RB.content.maps) for (const ev of RB.content.maps[m].onEnter || []) s.flags['enter:' + m + ':' + ev.scene] = true;
+      const T = RB.town.rec(s).towns; T.blockprint = Object.assign({ tick: 1, leftAt: null, flags: {}, rests: 0 }, T.blockprint || {}, { slots: Object.assign({}, (T.blockprint || {}).slots, { [who]: slot }) });
+      RB.game.settings.textSpeed = 'instant'; RB.save.autosave = async () => {}; RB.test.enable();
+      await new Promise((res) => setTimeout(res, 700)); RB.world.refreshActors();
+      const id = (n) => (n.def && (n.def.char || n.def.id)) || n.id, W = RB.world.W;
+      const mine = () => W.npcs.concat(W.extras || [], W.leavers || []).filter((n) => id(n) === who);
+      const before = mine().map((n) => n.x + ',' + n.y);
+      let most = before.length, moved = false, said = [];
+      const say = RB.ui.dialogue.say; RB.ui.dialogue.say = function (l) { if (l) said.push(l.en || ''); return say.apply(this, arguments); };
+      let on = true;
+      (function watch() { if (!on) return; const m = mine(); most = Math.max(most, m.length); if (m.some((n) => n.mv || n.route || !before.includes(n.x + ',' + n.y))) moved = true; requestAnimationFrame(watch); })();
+      const ff = RB.game.fastForward; RB.game.fastForward = () => false; // (the scene at its own pace)
+      try { await RB.test.use(px, py); await RB.test.idle(); } finally { RB.game.fastForward = ff; }
+      await new Promise((res) => setTimeout(res, 1500));
+      on = false;
+      return { before, after: mine().map((n) => n.x + ',' + n.y), most, moved, said };
+    }, [FLAGS, fl, who, slot, px, py]);
+    const fit = r.said[1] === line && !r.said.some((l) => /runs up|says something|goes over the bridge|calls out/.test(l)) && r.most === r.before.length && !r.moved && JSON.stringify(r.after) === JSON.stringify(r.before);
+    res.push(name + ': ' + (fit ? 'ok' : JSON.stringify(r)));
+    errorsAll.push(...e2); await c2.close();
+  }
+  ok(res.every((x) => /: ok$/.test(x)), 'the namer remembered in each of their places: what they once told you; no figure of theirs appears, walks or is left over (' + res.join(' | ') + ')');
+}
 
 ok(!errorsAll.length, 'no page errors' + (errorsAll.length ? ': ' + errorsAll.slice(0, 3).join(' | ') : ''));
 await b.close(); srv.close();

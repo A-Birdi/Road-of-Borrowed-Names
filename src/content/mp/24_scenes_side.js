@@ -41,7 +41,7 @@ mb_sen: お{礼|れい} に 、 {刷|す}り{場|ば} で {刷|す}った {町|�
 ?(mb_pl_hangi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {近|ちか}く で 、 サンペイ が {版木|はんぎ} を {抱|かか}えて {渡|わた}って いく 。 || Nearby, Sanpei goes over the bridge with an armful of woodblocks.
+narr: サンペイ が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。 || Sanpei once told you about this bridge.
 !challenge mb.census_hangi
 !set mb_pl_hangi
 !var mp_census + 1
@@ -55,7 +55,7 @@ narr: {名前|なまえ} を {帳面|ちょうめん} に {書|か}き{留|と}�
 ?(mb_pl_sumi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {橋|はし} の {下|した} の {水|みず} が 、 {黒|くろ}く {濁|にご}って いる 。 {飛脚|ひきゃく} の カケル が {走|はし}って {来|き}て 、 {何|なに} か {言|い}った 。 || The water under the bridge is cloudy black. Kakeru the courier runs up and says something.
+narr: {橋|はし} の {下|した} の {水|みず} が 、 {黒|くろ}く {濁|にご}って いる 。 {飛脚|ひきゃく} の カケル が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。 || The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.
 !challenge mb.census_sumi
 !set mb_pl_sumi
 !var mp_census + 1
