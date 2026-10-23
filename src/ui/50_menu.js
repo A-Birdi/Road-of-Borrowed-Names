@@ -434,10 +434,22 @@ RB.ui.menu = (function () {
   // The living world in the Journey (expansion W1, W5): one line for each town that has changed since you were last
   // there (never what changed; Settings can turn it off), and a road's first event you left unfinished. Only the new
   // chapters' towns and roads have either, so a six-chapter journey shows nothing here.
+  // What waits on a return (the Reedwake pilot; Robin, 2026-10-23, issue #1 6373239443; RB.town.returns): one line for
+  // the town, never what it is (a noticed spot that may open now, an earned stamp to press), in the Journey's Places
+  // and as a tag on the Map; Settings' town hints turn both off. Nothing pops up and nothing is kept: it goes once done.
+  const returnsShown = (s) => (RB.town && RB.town.returns && RB.game.settings.townHints !== 'off' ? RB.town.returns(s) : []);
+  function returnLine(r) {
+    const nm = r.name || { jp: '', en: r.town }, k = r.keys.length > 0, n = r.stamps.length;
+    const jp = k ? nm.jp + ' で {気|き}づいた もの が 、 {今|いま} なら {開|ひら}けそう だ 。' + (n ? ' {押|お}せる {判|はん} も {待|ま}って いる 。' : '') : nm.jp + ' に 、 {押|お}せる {判|はん} が {待|ま}って いる 。';
+    const st = n > 1 ? 'stamps you have earned wait to be pressed' : 'a stamp you have earned waits to be pressed';
+    const en = k ? 'Something you noticed in ' + nm.en + ' may open now' + (n ? ', and ' + st + ' there.' : '.') : st.charAt(0).toUpperCase() + st.slice(1) + ' in ' + nm.en + '.';
+    return { jp, en };
+  }
   function placesBlock(s) {
     if (!RB.town || !s.world) return '';
     const lines = [];
     if (RB.game.settings.townHints !== 'off') for (const c of RB.town.changed(s)) lines.push('<li class="entry"><span class="mark">' + I('map') + '</span><div>' + (c.name && c.name.jp ? j(c.name.jp) : '') + en((c.name ? c.name.en : c.town) + ' has changed since you were last there.') + '</div></li>');
+    for (const r of returnsShown(s)) { const L = returnLine(r); lines.push('<li class="entry ret-line" data-town="' + esc(r.town) + '"><span class="mark">' + I('map') + '</span><div>' + j(L.jp) + en(L.en) + '</div></li>'); }
     for (const r of RB.town.unfinished(s)) {
       const d = (RB.content.roadEvents || {})[r] || {}, u = d.unique || {}, m = RB.content.maps[(d.maps || [])[0]];
       lines.push('<li class="entry"><span class="mark">' + I('side') + '</span><div>' + (u.title && u.title.jp ? j(u.title.jp) : '') + en('Unfinished on ' + (m && m.name ? m.name.en : 'the road') + (u.title ? ': ' + u.title.en : '') + '. It will be there when you pass again.') + '</div></li>');
@@ -1092,14 +1104,17 @@ RB.ui.menu = (function () {
     const hereOld = places.find((p) => curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub));
     const hereId = hereOld ? hereOld.id : RB.questGuide.placeOf(s.map);
     const nextName = gm ? gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'an unexplored place')).join(', ') : '';
+    const rets = returnsShown(s).filter((r) => r.place && s.travel[r.place]);
     return '<svg class="chart" viewBox="' + chartView(chartState()).join(' ') + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Route chart. Known places: ' + esc(places.filter((p) => s.travel[p.id]).map((p) => p.name.en).join(', ') || 'none yet') +
-      (hereId && RB.content.places[hereId] ? '. You are in or near ' + esc(RB.content.places[hereId].name.en) : '') + (gm ? '. The next step of the followed quest is in ' + esc(nextName) : '') + '.">' +
-      chartInk(s, places, hereId, gm, 1, chartView(chartState())) + '</svg>';
+      (hereId && RB.content.places[hereId] ? '. You are in or near ' + esc(RB.content.places[hereId].name.en) : '') + (gm ? '. The next step of the followed quest is in ' + esc(nextName) : '') +
+      (rets.length ? '. Something may be waiting for you in ' + esc(rets.map((r) => r.name.en).join(', ')) : '') + '.">' +
+      chartInk(s, places, hereId, gm, 1, chartView(chartState()), rets) + '</svg>';
   }
   // what is drawn on the chart at a scale of k chart units to one screen pixel, its names placed inside the part of
-  // the chart in view (vb: x, y, width, height)
-  function chartInk(s, places, hereId, gm, k, vb) {
+  // the chart in view (vb: x, y, width, height); rets: the towns where something waits on your return
+  function chartInk(s, places, hereId, gm, k, vb, rets) {
     const W = CH.W, H = CH.H, NS = ' vector-effect="non-scaling-stroke"';
+    rets = rets || [];
     const ts = Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1));
     const fs = CH.LBL * ts * k;
     // paper, folds and the sea/mountain washes; the coast runs just below the coastal places, so the harbours and the
@@ -1162,6 +1177,10 @@ RB.ui.menu = (function () {
       if (next) svg += '<circle class="next-ring" cx="' + x + '" cy="' + y + '" r="' + 14 * k + '" fill="none" stroke="#c0761c" stroke-width="3" stroke-dasharray="5 3"' + NS + '/>';
       if (here) svg += '<circle class="here-pulse" cx="' + x + '" cy="' + y + '" r="' + 10 * k + '" fill="none" stroke="#a83e27" stroke-width="2.5"' + NS + '/>';
       svg += '<circle cx="' + x + '" cy="' + y + '" r="' + (here ? 6.5 : 6) * k + '" fill="' + (here ? '#a83e27' : known ? '#2a2217' : '#efe3c6') + '" stroke="' + (here ? '#fff6e2' : '#2a2217') + '" stroke-width="' + (here ? 2 : 1.5) + '"' + NS + '/>';
+      // something waiting on your return: a small paper tag tied to the place's lower right, named in its title (and in the
+      // chart's own description, and on the place's Travel row)
+      const ret = rets.find((r) => r.place === p.id);
+      if (ret) { const tx = x + 7 * k, ty = y + 5 * k; svg += '<g class="ret-tag"><title>Something may be waiting for you in ' + esc(ret.name.en) + '</title><path d="M' + tx + ' ' + (ty + 4 * k) + ' l' + 4 * k + ' ' + -4 * k + ' h' + 9 * k + ' v' + 8 * k + ' h' + -9 * k + 'z" fill="#fff8e8" stroke="#2a2217" stroke-width="1.4"' + NS + '/><circle cx="' + (tx + 4.5 * k) + '" cy="' + (ty + 4 * k) + '" r="' + 1.3 * k + '" fill="#2a2217"/></g>'; }
       // the quest marker: the same inked amber diamond as in the world, just above its place
       if (next) { const dx = x + (here ? 16 * k : 0), dy = y - (here ? 12 : 16) * k; svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 18 * k) + ' l' + 8 * k + ' ' + 9 * k + ' ' + -8 * k + ' ' + 9 * k + ' ' + -8 * k + ' ' + -9 * k + 'z" fill="#f0b43c" stroke="#2a2024" stroke-width="2"' + NS + '/>'; }
       const c = L.c;
@@ -1186,13 +1205,14 @@ RB.ui.menu = (function () {
     const st = chartState();
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => inEd(s, p));
     const gm = guideMarks(s);
+    const rets = returnsShown(s).filter((r) => r.place && s.travel[r.place]);
     const hereOld = places.find((p) => curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub));
     const hereId = hereOld ? hereOld.id : RB.questGuide.placeOf(s.map);
     const scaleK = () => { const w = svg.clientWidth || box.clientWidth || CH.W, h = svg.clientHeight || w * CH.H / CH.W; return 1 / (Math.min(w / CH.W, h / CH.H) * st.z); };
     function draw() {
       const k = scaleK(), vb = chartView(st);
       svg.setAttribute('viewBox', vb.join(' '));
-      svg.innerHTML = chartInk(s, places, hereId, gm, k, vb);
+      svg.innerHTML = chartInk(s, places, hereId, gm, k, vb, rets);
       box.classList.toggle('zoomed', st.z > 1.001);
       const out = box.querySelector('[data-cz="out"]'), inn = box.querySelector('[data-cz="in"]');
       if (out) out.disabled = st.z <= 1.001;
@@ -1307,6 +1327,7 @@ RB.ui.menu = (function () {
     const canTravel = tr.ok && RB.game.mode() === 'menu';
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id] && inEd(s, p));
     const gm = guideMarks(s);
+    const rets = returnsShown(s).filter((r) => r.place && s.travel[r.place]);
     const zb = (k, icon, label) => '<button type="button" class="ch-z" data-cz="' + k + '" aria-label="' + label + '" title="' + label + '">' + icon + '</button>';
     const ZI = { in: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
       out: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
@@ -1314,14 +1335,15 @@ RB.ui.menu = (function () {
     const chart = '<div class="chartbox" tabindex="0" aria-describedby="chart-how">' + chartSvg(s, curMap) +
       '<div class="ch-zoom" role="group" aria-label="Zoom the chart">' + zb('in', ZI.in, 'Zoom in') + zb('out', ZI.out, 'Zoom out') + zb('here', ZI.here, 'Show where you are') + '</div></div>' +
       '<p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of' + ((RB.content.roads || []).some((r) => r[2] && r[2].sea && inEd(s, r[2]) && (!r[2].if || RB.state.test(s, r[2].if))) ? '; blue dashes are ferry routes' : '') + '. The red ring is where you are.' +
-      (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + ' <span id="chart-how">' + (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches ? 'Zoom with + and − or two fingers and drag to move around; touch a place to read its name.' : 'Zoom with + and − (or Ctrl and the wheel) and drag to move around; point at a place to read its name.') + '</span></p>' +
+      (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + (rets.length ? ' A small tag by a town means something may be waiting for you there; the Journey\'s Places says what kind.' : '') + ' <span id="chart-how">' + (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches ? 'Zoom with + and − or two fingers and drag to move around; touch a place to read its name.' : 'Zoom with + and − (or Ctrl and the wheel) and drag to move around; point at a place to read its name.') + '</span></p>' +
       (gm ? '<p class="note-slip next-note">' + I('follow') + ' <span>Next step of <b>' + esc(gm.title.en) + '</b>: ' + esc(gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'a place you have not reached yet')).join(', ')) + '.</span></p>' : '');
     const list = '<h3>' + I('travel') + ' Travel <span class="count">' + places.length + ' known</span></h3>' +
       (canTravel ? '' : '<p class="note-slip warn travel-why" data-kind="' + esc(tr.kind) + '">' + esc(tr.en || 'You can’t travel quickly from here just now.') + '</p>') +
       '<ul class="entries">' + places.map((p) => {
         const here = curMap.region && p.region === curMap.region && p.hub;
         const next = gm && gm.places.includes(p.id);
-        return '<li class="entry"><span class="mark">' + I(here ? 'here' : 'map') + '</span><div><div class="t">' + j(p.name.jp) + ' <span class="en">' + esc(p.name.en) + '</span></div>' + (p.desc ? '<div class="muted small">' + esc(p.desc) + '</div>' : '') + (here ? '<div class="kind">you are in this region</div>' : '') + (next ? '<div class="kind next-kind">' + I('follow') + ' next step of the quest you follow</div>' : '') + '</div>' +
+        const ret = rets.find((r) => r.place === p.id);
+        return '<li class="entry"><span class="mark">' + I(here ? 'here' : 'map') + '</span><div><div class="t">' + j(p.name.jp) + ' <span class="en">' + esc(p.name.en) + '</span></div>' + (p.desc ? '<div class="muted small">' + esc(p.desc) + '</div>' : '') + (here ? '<div class="kind">you are in this region</div>' : '') + (next ? '<div class="kind next-kind">' + I('follow') + ' next step of the quest you follow</div>' : '') + (ret ? '<div class="kind ret-kind">something may be waiting for you here</div>' : '') + '</div>' +
           (canTravel ? '<button class="pbtn" data-go="' + p.id + '">Travel</button>' : '<span></span>') + '</li>';
       }).join('') + '</ul><p class="muted small">Roads you have walked can be travelled quickly.</p>';
     if (two) { A.innerHTML = nav + chart; B.innerHTML = list; } else { A.innerHTML = nav + chart + list; }
@@ -1413,7 +1435,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, returnLine, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits

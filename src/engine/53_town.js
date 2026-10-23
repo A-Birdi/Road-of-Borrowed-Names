@@ -23,7 +23,9 @@
  *     visit, recorded as unfinished); once solved, variants on a seeded chance; a stamp for solving them all.
  *   sealed[id] = { map, x, y, needs: <concept id> | cond, hint: { jp, en }, opens: <flag>, scene }
  *     Return keys (W6): visible from the start with an in-world hint; noticed when examined; opened once the word
- *     or mechanic it needs is known. */
+ *     or mechanic it needs is known.
+ *   What waits on a return (the Reedwake pilot, returns()): in a pilot town, a noticed key that can open now and an
+ *   earned stamp waiting at its stand, both within reach; read from the journey, nothing kept, gone once done. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.town = (function () {
@@ -398,6 +400,48 @@ RB.town = (function () {
     return Object.keys(R.sealed).filter((id) => R.sealed[id] === 'noticed').map((id) => Object.assign({ id }, (C().sealed || {})[id]));
   }
 
+  // ---- what waits on a return (the Reedwake pilot: Robin, 2026-10-23, issue #1 6373239443) -----------------------
+  // Passive and town-level, read from the journey as it is now; nothing of its own is kept, so nothing clears it but
+  // its being done (never just going there): a return key you have examined whose need is now met, its spot still
+  // there and its map within reach; and a stamp you have earned, not yet pressed, whose stand in the town is there and
+  // within reach. Within reach is the quest guide's: exits and doors open now, and the places you can travel to.
+  // Twelve-chapter journeys and the pilot towns only; it only reads (a six-chapter journey is never touched). The
+  // Journey's Places and the Map show it unless Settings › Play turns town hints off (src/ui/50_menu.js).
+  // → [{ town, name, place, keys: [sealed ids], stamps: [stamp ids] }]
+  const RETURN_TOWNS = ['reedwake'];
+  function returns(s) {
+    const out = [];
+    if (!s || !isObj(s.world) || !RB.edition || RB.edition.of(s) < 2) return out;
+    const marks = isObj(s.world.sealed) ? s.world.sealed : {}, SL = C().sealed || {}, ST = C().stampStands || {};
+    let R; // (the maps within reach, worked out once)
+    const near = (map) => {
+      if (R === undefined) { try { R = RB.questGuide ? RB.questGuide.reachable(s) : null; } catch (e) { R = null; } }
+      return !!(R && R.has(map));
+    };
+    // a prop of `map` that `is` it and stands there now
+    const there = (map, is) => ((C().maps[map] || {}).props || []).some((p) => is(p) && (!p.if || RB.state.test(s, p.if)));
+    for (const id of RETURN_TOWNS) {
+      const T = towns()[id];
+      if (!T) continue;
+      const keys = Object.keys(SL).filter((k) => {
+        const d = SL[k];
+        return marks[k] === 'noticed' && townOf(d.map) === id && canOpen(s, k) && !(d.opens && s.flags[d.opens]) &&
+          there(d.map, (p) => p.x === d.x && p.y === d.y && String(p.scene || '').endsWith('.lw_seal_' + k)) && near(d.map);
+      });
+      const stamps = [];
+      if (RB.stampBook) {
+        for (const sid in ST) {
+          if (townOf(ST[sid].map) !== id || !there(ST[sid].map, (p) => p.o && p.o.stand === sid) || !near(ST[sid].map)) continue;
+          for (const k of RB.stampBook.ready(s, sid)) if (RB.stampBook.known(s, (C().stamps || {})[k])) stamps.push(k);
+        }
+      }
+      if (!keys.length && !stamps.length) continue;
+      const place = Object.keys(C().places || {}).find((p) => (T.maps || []).includes(C().places[p].map)) || null;
+      out.push({ town: id, name: T.name, place, keys, stamps });
+    }
+    return out;
+  }
+
   // ---- the conditions content uses -------------------------------------------------------------------------------
   if (RB.state && RB.state.addTerm) {
     // slot.<person>=k : the resident's current routine slot
@@ -480,6 +524,6 @@ RB.town = (function () {
     rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, answersOf, askable, findable, usualPlaces, note, seen, spotWords,
     pastTalk, talkOption,
     roadOf, roadEventAt, eventHere, placedAt, storyOnArrival, LINES,
-    roadDone, unfinished, sealedOn, canOpen, examine, noticed,
+    roadDone, unfinished, sealedOn, canOpen, examine, noticed, returns, RETURN_TOWNS,
   };
 })();
