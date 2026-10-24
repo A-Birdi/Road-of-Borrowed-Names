@@ -34,8 +34,11 @@
  *          since (ms in this shot), vb (the sheet's top: keep the focal area above it), still (reduced motion:
  *          k is 1 at once and ambient motion stops), review (a read-only look back), hold (the action is
  *          over), cast: { pc: the player's look snapshotted at entry, comp: { id, look } | null — only a
- *          companion who is actually here }, test(cond) (RB.state.test on the campaign), t (ms, ambient) }
- *   The shared drawing kit is RB.seqKit (43_sequence_kit.js). A shot reads state; it never writes it.
+ *          companion who is actually here }, test(cond) (RB.state.test on the campaign), t (ms, ambient),
+ *          keep (this playing's own scratch object: empty when it starts, gone with it; a fresh one for every
+ *          drawAt unless the caller passes one) }
+ *   The shared drawing kit is RB.seqKit (43_sequence_kit.js). A shot reads state; it never writes it, save what it
+ *   must remember from one frame to the next of the same playing (st.keep: where the fire's ring came to rest).
  *
  * ---- Runtime -----------------------------------------------------------------------------------------
  *   RB.sequence.active() / state() / stats()          (tests: state, token, shot, phase, beats, review …)
@@ -91,6 +94,7 @@ RB.sequence = (function () {
     this.isStill = o.still || (() => !!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion()));
     this.cast = o.cast || {};
     this.test = o.test || (() => false);
+    this.keep = {};       // the shots' own scratch for this playing (st.keep)
     this.tok = ++TOK;
     this.state = 'entering';
     this.cur = null;      // { id, sd, pi, t0 (entered), a0 (the current phase's action starts) }
@@ -273,7 +277,7 @@ RB.sequence = (function () {
       seq: this.def.id, shot: v.shot, phase: sd.phases[pi].id, pi, k: kOf(pi),
       at: (name) => { const j = typeof name === 'number' ? name : sd.phases.findIndex((p) => p.id === name); return j < 0 ? 0 : kOf(j); },
       since: review || !this.cur ? 1e9 : T - this.cur.t0, vb, still: this.isStill(), review, hold: this.state === 'holding' || this.state === 'advancing' || review,
-      cast: this.cast, test: this.test, t, sd,
+      cast: this.cast, test: this.test, t, sd, keep: this.keep,
     };
   };
   PP.draw = function (c, w, h, t, vb) {
@@ -706,7 +710,7 @@ RB.sequence = (function () {
     const kOf = (j) => (o.still ? (j <= pi ? 1 : 0) : j < pi ? 1 : j > pi ? 0 : k);
     const st = {
       seq: o.seq, shot: o.shot, phase: sd.phases[pi].id, pi, k: kOf(pi), at: (name) => { const j = typeof name === 'number' ? name : sd.phases.findIndex((p) => p.id === name); return j < 0 ? 0 : kOf(j); },
-      since: 1e9, vb, still: !!o.still, review: !!o.review, hold: kOf(pi) >= 1, cast: o.cast || { pc: {}, comp: null }, test: o.test || (() => false), t: o.t || 0, sd,
+      since: 1e9, vb, still: !!o.still, review: !!o.review, hold: kOf(pi) >= 1, cast: o.cast || { pc: {}, comp: null }, test: o.test || (() => false), t: o.t || 0, sd, keep: o.keep || {},
     };
     c.imageSmoothingEnabled = false;
     sd.draw(c, w, h, o.t || 0, st);

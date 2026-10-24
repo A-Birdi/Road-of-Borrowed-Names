@@ -896,8 +896,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // lanterns strung overhead; then Mitsue holding out the planting hat
   const DANCERS = ['as_mitsue', 'as_yoshizo', 'as_taki', 'as_natsu', 'as_kotoe', 'as_mohei'];
   const FIRE_G = (side) => ({ mul: [0.78, 0.6, 0.5], add: [26, 8, 0], rim: { side, col: '#ffb060', k: [0.5, 0.24] } });
-  // the ring's turn when it came to rest (the 'settle' phase): kept through the gift, forgotten when the dance plays again
-  let restTurn = null;
   const fire = {
     phases: [['dance', 1200], ['settle', 900], ['gift', 900]],
     safe: { wide: 'the fire and the ring of dancers above the sheet', narrow: 'the fire in the upper half', land: 'the fire' },
@@ -924,9 +922,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i < 9; i++) { const u = i / 8, x = w * (0.04 + u * 0.92), y = vb * 0.06 + Math.sin(u * Math.PI) * vb * 0.1; SP.lantern(c, Math.round(x), Math.round(y), Math.max(2, s(4)), Math.max(3, s(8)), true, t, still); }
       // the ring, turning slowly: the far half, the fire, the near half. Once it settles ('settle', then the gift: "Last of
       // all, everyone gathers round the fire"; RBN-QA-177) it stops where it is, and everyone stands still, facing the fire.
-      const settled = st.at('settle') > 0;
+      // Where it came to rest is this playing's own (st.keep: a replay, another scene or a drawing on its own starts
+      // afresh): taken on its first settled frame, kept through the gift and while looking back (Previous), forgotten
+      // only when the live shot dances again.
+      const settled = st.at('settle') > 0, K = st.keep || {};
       let turn = still ? 0.4 : (t / 11000) * Math.PI * 2;
-      if (settled && !still) { if (restTurn == null) restTurn = turn; turn = restTurn; } else if (!settled) restTurn = null;
+      if (settled && !still) { if (K.restTurn == null) K.restTurn = turn; turn = K.restTurn; } else if (!settled && !st.review) K.restTurn = null;
       const ring = DANCERS.map((id, i) => { const a = turn + (i / DANCERS.length) * Math.PI * 2 + (i === 2 ? -0.35 : 0); return { id, x: fx + Math.cos(a) * rx, y: fy + Math.sin(a) * ry, a }; });
       const toFire = (r) => (Math.abs(Math.cos(r.a)) > 0.75 ? (r.x < fx ? 'right' : 'left') : r.y > fy ? 'up' : 'down');
       const fig = (r) => {
