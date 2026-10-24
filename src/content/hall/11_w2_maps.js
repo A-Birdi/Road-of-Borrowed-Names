@@ -48,9 +48,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { p: 'ko_basket', x: GIFTS.chestnut[0], y: GIFTS.chestnut[1], scene: 'hall.w2.g_chestnut', if: '!xp_hall_w2_f0_put_chestnut' },
         ...Object.keys(TRAYS).map((k) => ({ p: 'table', x: TRAYS[k][0], y: TRAYS[k][1], scene: 'hall.w2.tray_' + k })),
         ...K.andon(28, 4, W, 't2'),
-        // the go-between's practice cards, and her stone (t3)
-        { p: 'signblank', x: 5, y: 3, scene: 'hall.w2.card1' }, { p: 'signblank', x: 7, y: 3, scene: 'hall.w2.card2' },
-        { p: 'signblank', x: 9, y: 3, scene: 'hall.w2.card3' }, { p: 'signblank', x: 11, y: 3, scene: 'hall.w2.card4' },
+        // the go-between's practice cards, and her stone (t3); the wrong card gone once the trial is passed, as its line
+        // says ("The wrong card blows away on the wind": hall/22_w2_scenes.js sets which)
+        ...[5, 7, 9, 11].map((x, i) => ({ p: 'signblank', x, y: 3, scene: 'hall.w2.card' + (i + 1), if: '!xp_hall_w2_f0_t3_gone' + (i + 1) })),
         { p: 'stone_marker', x: 13, y: 3, scene: 'hall.w2.t3' }, ...K.andon(14, 2, W, 't3'),
         K.lit(15, 10), K.lit(19, 10), K.lit(15, 14), K.lit(19, 14),
       ]),

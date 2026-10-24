@@ -161,10 +161,19 @@ ${K.mark(W, 0, 't2')}
       I: ['A friend gave me a letter.', 'The teacher gave my little sister a book.', 'The bride "gave-toward-me" the groom chestnuts.', 'A villager gave me an umbrella.'],
       A: ['Konta kindly showed me the way.', 'I had the groom pass the cup.', 'Toku "did-as-a-favour-outward" listening to me.', 'I carried the bride\'s luggage for her.'] },
   };
+  // Which card blows away: the one the trial just passed has wrong, by the floor's pattern and the tier it was asked at
+  // (the cards' own conditions, as their scenes below read them): pattern 0, card 3; pattern 1, card 4 at F and E and
+  // card 3 at I and A. Set as the trial passes, just before the line says so, so that a later change of tier cannot
+  // move it; under the floor's own prefix, so that the floor's reset brings the card back. Its prop is gone with it
+  // (hall/11_w2_maps.js); the other three stay to be read.
+  const GONE = (i) => 'xp_hall_w2_f0_t3_gone' + (i + 1);
+  const goneIf = [0, 1, 2, 3].map((i) => [0, 1].flatMap((p) => ['F', 'E', 'I', 'A'].filter((tier) => C.hallW2Cards[p][tier][i][1] === 1).map((tier) => both(L[tier], 'hall.w2.pat=' + p))).join('|'));
+  const blown = [0, 1, 2, 3].filter((i) => goneIf[i]);
+  const blow = [...blown.map((i) => `!if ${goneIf[i]} -> gone${i + 1}`), '!goto blown', ...blown.flatMap((i) => [`:gone${i + 1}`, `!set ${GONE(i)}`, '!goto blown']), ':blown'];
   out += '\n@scene hall.w2.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {仲人|なこうど} の {石|いし} に 、 {字|じ} が {刻|きざ}んで ある 。 「 {四|よん} {枚|まい} の {札|ふだ} の うち 、 {一枚|いちまい} だけ が {間違|まちが}って いる 。 」 || Carved on the go-between\'s stone: "Of the four cards, one alone is wrong."'],
     task: { 0: 'hall.w2.counter0', 1: 'hall.w2.counter1' },
-    after: ['narr: {間違|まちが}った {札|ふだ} が 、 {風|かぜ} に {飛|と}んで いった 。 || The wrong card blows away on the wind.', '?(comp&comp!=ren) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に ならない から ね 。 || A go-between who mixes up who gives to whom is out of work.', '?(comp=ren) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に なりません から ね 。 || A go-between who mixes up who gives to whom is out of work.'],
+    after: [...blow, 'narr: {間違|まちが}った {札|ふだ} が 、 {風|かぜ} に {飛|と}んで いった 。 || The wrong card blows away on the wind.', '?(comp&comp!=ren) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に ならない から ね 。 || A go-between who mixes up who gives to whom is out of work.', '?(comp=ren) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に なりません から ね 。 || A go-between who mixes up who gives to whom is out of work.'],
     later: 'narr: {札|ふだ} を {一枚|いちまい} ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the cards one by one, then come back.',
     done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
   for (let i = 0; i < 4; i++) {

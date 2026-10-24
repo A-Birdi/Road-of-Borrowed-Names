@@ -22,7 +22,7 @@ let suites = [
   ...(full ? [0, 1, 2, 3, 4].map((i) => ['story_ch6.mjs', String(i)]) : [['story_ch6.mjs', '2']]),
   ['atlas.check.mjs'],
   // the Hall of a Hundred Tales (P15): the card with its furigana, the chip, the sheet, the reprieve, suspend and resume
-  ['hall.mjs'], ['hall_stairs.mjs'], ['hall_story_passages.mjs'], ['hall_gifts.mjs'], ['hall_trays.mjs'], ['postgame.mjs'],
+  ['hall.mjs'], ['hall_stairs.mjs'], ['hall_story_passages.mjs'], ['hall_gifts.mjs'], ['hall_trays.mjs'], ['hall_card_gone.mjs'], ['postgame.mjs'],
   // the travel volume's pages painted in the art pass (P16): every page through the volume's viewer at three sizes
   ['sequence_p16.mjs'],
   // AR-1: every illustrated shot at three sizes paints its whole frame, keeps held things within reach, draws cleanly
