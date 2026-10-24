@@ -109,7 +109,8 @@ await test('a copy step (model shown) is recorded as guided practice, not unaide
   await p.keyboard.press('Enter');
   await p.waitForSelector('.fbwrap[data-fb=ok]', { timeout: 5000 });
   const fb = await p.evaluate(() => document.querySelector('.fbwrap[data-fb=ok]').textContent);
-  assert(/Guided practice/.test(fb), 'feedback says guided practice: ' + fb.slice(0, 120));
+  // the line under a helped success names the help used (FR-1 F10, 33fc2a0): for a copy step, the model to copy
+  assert(/Practiced with the model to copy/.test(fb), 'feedback names the help, the model to copy: ' + fb.slice(0, 120));
   await p.click('.fb-go');
   await p.waitForFunction(() => window.__res);
   const r = await p.evaluate(() => ({ res: window.__res, recs: window.__recs.filter((x) => x.ids.includes('v:audit_copy')) }));
