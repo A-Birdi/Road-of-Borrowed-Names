@@ -159,10 +159,29 @@ RB.props = (function () {
     px(c, x + 2, y + 1, 12, 1, p.wood[3]);
     px(c, x + 5, y + 3, 1, 3, '#00000030');
   });
-  def('noticeboard', { w: 2 }, (c, x, y, p) => {
+  // A board whose placement lists its notices (o.papers: each one's condition, in order; o.picture: a child's drawing,
+  // when its condition holds) shows those that hold and nothing else (RBN-QA-175: Ashihara's, whose notices you write);
+  // every other board, its usual few. posted(o): which hold, as bits (the drawn art's variant reads it too).
+  const posted = (o) => {
+    const s = RB.game && RB.game.s;
+    let b = 0;
+    if (!s || !o) return 0;
+    (o.papers || []).forEach((cond, i) => { if (RB.state.test(s, cond)) b |= 1 << i; });
+    if (o.picture && RB.state.test(s, o.picture)) b |= 16;
+    return b;
+  };
+  def('noticeboard', { w: 2, posted }, (c, x, y, p, t, o) => {
     px(c, x + 3, y + 8, 2, 7, p.wood[2]);
     px(c, x + 27, y + 8, 2, 7, p.wood[2]);
     px(c, x + 1, y - 6, 30, 15, p.wood[0]);
+    if (o && o.papers) {
+      // the board's own boards, and on them only what is posted (the first slot, a notice alone, is the middle)
+      px(c, x + 3, y - 4, 26, 11, p.wood[1]);
+      const b = posted(o);
+      [[12, -4, 8, 8], [5, -3, 6, 6], [13, -3, 6, 6], [21, -3, 6, 5]].forEach(([dx, dy, w, h], i) => { if (b & (1 << i)) px(c, x + dx, y + dy, w, h, '#f4efe0'); });
+      if (b & 16) { px(c, x + 23, y + 2, 5, 4, '#efe6d0'); px(c, x + 24, y + 3, 3, 2, '#3a4a6a'); }
+      return;
+    }
     px(c, x + 3, y - 4, 26, 11, '#d8cca8');
     px(c, x + 5, y - 3, 7, 5, '#f4efe0');
     px(c, x + 14, y - 2, 6, 6, '#efe6d0');

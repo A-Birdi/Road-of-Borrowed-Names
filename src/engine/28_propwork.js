@@ -335,10 +335,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     shadow: () => [16, 30, 8, 2.5, 0.3],
   });
-  // Notice board: two posts, a plank roof, pinned notices with lettering.
+  // Notice board: two posts, a plank roof, pinned notices with lettering. A board whose placement lists its notices
+  // (o.papers, o.picture; src/engine/25_props.js) shows those that hold and nothing else (RBN-QA-175): its variant is
+  // 8 + their bits, in fixed places (the first, a notice alone, in the middle; a picture low on the right).
+  const SLOTS = [[22, -11, 18, 16], [7, -10, 12, 15], [23, -9, 11, 12], [38, -11, 12, 11]];
   art('noticeboard', {
     box: [-2, -26, 68, 60], ink: true,
-    v: (o) => cxy(o) % 3,
+    v: (o) => (o.papers ? 8 + RB.props.P.noticeboard.posted(o) : cxy(o) % 3),
     draw(g, M, v, f, info) {
       const w5 = M.wood;
       post(g, 5, -8, 5, 38, w5);
@@ -350,15 +353,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let x = 0; x < 64; x += 4) R(g, x, -16, 3, 2, M.roof[1]);
       R(g, 4, -22, 56, 1, M.roof[4]);
       R(g, 0, -14, 64, 1, M.roof[0]);
-      const notes = [[7, -10, 12, 15], [22, -9, 10, 12], [35, -11, 13, 10], [49, -8, 9, 13], [36, 1, 11, 10]];
-      notes.forEach(([x, y, w, h], i) => {
-        const r = hh(v, i, 13);
-        if (i === 4 && v === 1) return;
+      const note = (x, y, w, h, r) => {
         R(g, x, y, w, h, PP[3]); R(g, x, y, w, 1, PP[4]); R(g, x + w - 1, y + 1, 1, h - 1, PP[1]); R(g, x, y + h - 1, w, 1, PP[1]);
         for (let k = 0; k < (h - 4) / 2; k++) R(g, x + 2, y + 3 + k * 2, w - 4 - ((r >>> k) % 3), 1, INK[3]);
         if (r % 3 === 0) R(g, x + w - 4, y + h - 4, 3, 3, '#b84a3a');
         R(g, x + (w >> 1), y, 1, 1, (r >>> 5) & 1 ? '#c83a3a' : BR[3]);
-      });
+      };
+      if (v >= 8) {
+        const b = v - 8;
+        SLOTS.forEach(([x, y, w, h], i) => { if (b & (1 << i)) note(x, y, w, h, hh(3, i, 13)); });
+        if (b & 16) {
+          // a child's picture of the festival night: a dark sky, two lanterns
+          R(g, 50, -4, 10, 10, PP[3]); R(g, 51, -3, 8, 8, '#3a4a6a');
+          R(g, 52, 0, 2, 2, '#e8a040'); R(g, 56, -1, 2, 2, '#c83a3a'); R(g, 51, 3, 8, 1, '#5a6a4a');
+          R(g, 55, -4, 1, 1, BR[3]);
+        }
+      } else {
+        const notes = [[7, -10, 12, 15], [22, -9, 10, 12], [35, -11, 13, 10], [49, -8, 9, 13], [36, 1, 11, 10]];
+        notes.forEach(([x, y, w, h], i) => {
+          if (i === 4 && v === 1) return;
+          note(x, y, w, h, hh(v, i, 13));
+        });
+      }
       if (info.snow) K.snowTops(g, -2, -26, 68, 12, M.snow, v, 2);
     },
     shadow: () => [32, 30, 30, 3, 0.3],
