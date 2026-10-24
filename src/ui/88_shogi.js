@@ -50,7 +50,7 @@ RB.ui.shogi = (function () {
     });
   }
   function close() { if (!V) return; RB.ui.popLayer(V.layer); const r = V.resolve; V = null; r({ ok: true }); }
-  function leave() { if (!V) return; if (V.view === 'ladder' || V.direct) close(); else { V.view = 'ladder'; V.g = null; V.said = null; render(); } }
+  function leave() { if (!V) return; if (V.view === 'ladder' || V.direct) close(); else { V.g = null; V.said = null; toLadder(); } }
   const rec = () => RB.pastimes.rec(S(), 'shogi');
 
   // ---- the ladder ---------------------------------------------------------------------------------------------
@@ -320,7 +320,32 @@ RB.ui.shogi = (function () {
   function render() {
     if (!V) return;
     const h = V.view === 'ladder' ? ladder() : V.view === 'game' ? gameHtml() : V.view === 'hasami' ? hasamiHtml() : V.view === 'lesson' ? lessonHtml() : tsumeHtml();
+    const onTop = !!(document.activeElement && document.activeElement.classList.contains('sg-top') && V.leaf.contains(document.activeElement));
     V.leaf.innerHTML = h;
+    if (onTop) heading();
+  }
+  // A lesson, a puzzle or a game opened from the ladder starts at its top, its heading focused; the ladder's place and
+  // the button that opened it are kept, and both come back with the ladder (Back to the ladder, Leave). Start again and
+  // New game redraw the same view where it is (RBN-QA-179).
+  const KEY = ['a', 'id', 'v', 'hc'];
+  function heading() {
+    const hd = V.leaf.querySelector('.sg-top');
+    if (hd) { hd.tabIndex = -1; hd.focus({ preventScroll: true }); }
+  }
+  function open(b, start) {
+    V.back = { top: V.leaf.scrollTop, key: KEY.map((k) => b.dataset[k] || '') };
+    start();
+    if (!V) return;
+    V.leaf.scrollTop = 0;
+    heading();
+  }
+  function toLadder() {
+    V.view = 'ladder'; render();
+    const back = V.back; V.back = null;
+    if (!back) return;
+    V.leaf.scrollTop = back.top;
+    const b = [...V.leaf.querySelectorAll('[data-a]')].find((x) => KEY.every((k, i) => (x.dataset[k] || '') === back.key[i]));
+    if (b) b.focus({ preventScroll: true });
   }
   function onClick(e) {
     if (!V) return;
@@ -334,10 +359,10 @@ RB.ui.shogi = (function () {
     const b = t.closest('[data-a]');
     if (!b) { const lv = t.closest('input[name="sg-level"]'); if (lv) V.level = +lv.value; return; }
     const a = b.dataset.a;
-    if (a === 'lesson') return startLesson(b.dataset.id);
-    if (a === 'tsume') return startTsume(b.dataset.id);
-    if (a === 'play') return b.dataset.v === 'hasami' ? startGame('hasami') : startGame(b.dataset.v, b.dataset.hc);
-    if (a === 'ladder') { if (V.direct) return close(); V.view = 'ladder'; render(); return; }
+    if (a === 'lesson') return open(b, () => startLesson(b.dataset.id));
+    if (a === 'tsume') return open(b, () => startTsume(b.dataset.id));
+    if (a === 'play') return open(b, () => (b.dataset.v === 'hasami' ? startGame('hasami') : startGame(b.dataset.v, b.dataset.hc)));
+    if (a === 'ladder') { if (V.direct) return close(); toLadder(); return; }
     if (a === 'reset') return V.view === 'lesson' ? startLesson(V.L.id) : startTsume(V.T.id);
     if (a === 'again') return startGame(V.kind, V.hc);
     if (a === 'show') { V.show = b.checked; render(); return; }
