@@ -2,7 +2,9 @@
 // and enemy moves are staged from the rules' own fx events (RB.battleSeq,
 // RB.battleStage), with real mouse, keyboard and pad input where practical.
 // - choice, typing and handwriting reach the same response sequence;
-//   wrong and cancelled answers play none; rapid clicks never add one;
+//   wrong and cancelled answers play none; rapid clicks never add one; a slip
+//   costs 1 (shown first) where mistakes cost, and nothing with Assisted, a new
+//   journey's default (FR-1);
 // - the acting adventurer, the word on paper at the ACTUAL target, the
 //   effect and recovery; the creature's preparation → execution → recovery;
 //   Strike on one target, Sweep on both, each target reacting;
@@ -55,12 +57,13 @@ async function helpers(p) {
         BA.calls[k]++;
         const before = JSON.parse(JSON.stringify(pick(st)));
         const r = f.call(this, st, ...a);
-        BA.exch.push({ k, before, after: pick(st), fx: k === 'playerAct' ? r.fx : k === 'enemyAct' ? r : null });
+        BA.exch.push({ k, before, after: pick(st), fx: k === 'playerAct' ? r.fx : k === 'enemyAct' ? r : null, mcost: k === 'playerAct' ? st.mistakeCostThisRound : null });
         return r;
       };
     }
     const run = RB.challenge.runStep;
-    RB.challenge.runStep = (step, o) => { window.__step = step; return run(step, o); };
+    BA.results = [];
+    RB.challenge.runStep = (step, o) => { window.__step = step; return Promise.resolve(run(step, o)).then((r) => { try { BA.results.push(JSON.parse(JSON.stringify(r))); } catch (e) { BA.results.push(null); } return r; }); };
     BA.sampleOn = () => {
       BA.samples = []; BA.sampling = true;
       const loop = () => {
@@ -104,6 +107,8 @@ async function battle(p, enemy, o) {
   await p.evaluate(([enemy, o]) => {
     const s = RB.game.debugStart(o.map || 'rw.millroad', o.x || 10, o.y || 22, o.comp ? { comp: o.comp } : {});
     s.learn.kanaKnown = 'both'; s.learn.profile = o.profile || 'E';
+    // a new journey's mistakes cost nothing (Assisted, FR-1 33fc2a0); o.assist: 'normal' chooses the cost, before the battle
+    if (o.assist) s.learn.assist = o.assist;
     s.words = (o.words || ['mamoru', 'mizu', 'hikari']).slice();
     BA.onInit = (st) => { if (o.harmony) st.harmony = o.harmony; if (o.intent) st.intent = Object.assign(RB.combatLogic.intentDef({}, o.intent[0]), o.intent[1] ? { target: o.intent[1] } : {}); };
     // the dialogue sheet exists before the battle, as in real play
@@ -261,7 +266,9 @@ await test('choice, typing and handwriting all reach the same response sequence 
 await test('a wrong answer or a cancelled response plays no success sequence; a slip is shown as a −1 before the response', async () => {
   const { p, errors, ctx } = await page(b, url, DESK);
   await helpers(p);
-  await battle(p, 'rw.reedling', { comp: 'mio', knots: 4 });
+  // mistakes that cost (chosen: a new journey is Assisted, where a slip costs nothing; the next test)
+  await battle(p, 'rw.reedling', { comp: 'mio', knots: 4, assist: 'normal' });
+  assert((await p.evaluate(() => RB.combat.state().assist)) === false, 'the battle is one where mistakes cost (Assisted off)');
   await p.evaluate(() => BA.sampleOn());
   const c = await cardAt(p, 'unravel');
   await p.mouse.click(c.x, c.y);
@@ -298,6 +305,43 @@ await test('a wrong answer or a cancelled response plays no success sequence; a 
   const tr = last(await trace(p), 'player');
   assert(tr.beats[0].t === 'cost' && tr.beats[1].t === 'unravel', 'the slip beat comes first, then the knot: ' + tr.beats.map((x) => x.t).join());
   assert(seen(S, (s) => (s.nums || []).indexOf('pc:-1') >= 0) && seen(S, (s) => (s.effects || []).some((e) => /^drop/.test(e))), 'the slip shows as an ink drop and −1 on you');
+  // the answer as given: one slip, then the right one; and the rules' player act, measured before your companion and the
+  // creature act: the cost charged once, resolve one lower, the cost first in what it did
+  const g = await p.evaluate(() => ({ res: BA.results.filter((r) => r && !r.cancelled).slice(-1)[0], pa: BA.exch.filter((x) => x.k === 'playerAct').slice(-1)[0] }));
+  assert(g.res && g.res.ok && g.res.mistakes === 1, 'the answer: right after one slip ' + JSON.stringify(g.res));
+  assert(g.pa && g.pa.mcost === 1 && g.pa.after.pc === g.pa.before.pc - 1 && g.pa.fx[0] && g.pa.fx[0].t === 'cost', 'your response costs 1 resolve for the slip, charged once, first ' + JSON.stringify(g.pa && { mcost: g.pa.mcost, pc: [g.pa.before.pc, g.pa.after.pc], fx: g.pa.fx.map((x) => x.t) }));
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+await test('Assisted (a new journey\'s default, FR-1): a slip costs nothing; the response plays with no cost beat and no −1', async () => {
+  const { p, errors, ctx } = await page(b, url, DESK);
+  await helpers(p);
+  await battle(p, 'rw.reedling', { comp: 'mio', knots: 4 });
+  assert((await p.evaluate(() => RB.combat.state().assist)) === true, 'a fresh journey\'s battle is Assisted');
+  // a wrong answer then the right one, as above
+  await p.evaluate(() => BA.sampleOn());
+  const c = await cardAt(p, 'unravel');
+  await p.mouse.click(c.x, c.y);
+  await p.waitForSelector('.chal .mc .btn');
+  const w = await p.evaluate(() => BA.wrong());
+  await p.mouse.click(w.x, w.y);
+  await p.waitForSelector('.fbwrap[data-fb=no]');
+  assert(!(await p.evaluate(() => RB.battleSeq.busy())), 'nothing plays while the task is open');
+  const r = await p.evaluate(() => BA.right());
+  await p.mouse.click(r.x, r.y);
+  await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go');
+  await p.click('.fbwrap[data-fb=ok] .fb-go');
+  await companionTurn(p);
+  await idle(p);
+  const S = await samples(p);
+  const tr = last(await trace(p), 'player');
+  const g = await p.evaluate(() => ({ res: BA.results.filter((x) => x && !x.cancelled).slice(-1)[0], pa: BA.exch.filter((x) => x.k === 'playerAct').slice(-1)[0] }));
+  assert(g.res && g.res.ok && g.res.mistakes === 1, 'the answer: right after one slip ' + JSON.stringify(g.res));
+  assert(g.pa && g.pa.mcost === 0 && g.pa.after.pc === g.pa.before.pc && !g.pa.fx.some((x) => x.t === 'cost'), 'your response costs nothing for the slip: resolve unchanged by it, no cost in what it did ' + JSON.stringify(g.pa && { mcost: g.pa.mcost, pc: [g.pa.before.pc, g.pa.after.pc], fx: g.pa.fx.map((x) => x.t) }));
+  assert(tr.beats[0].t === 'unravel' && !tr.beats.some((x) => x.t === 'cost'), 'the knot plays with no cost beat before it: ' + tr.beats.map((x) => x.t).join());
+  const P = during(S, 'player');
+  assert(P.length && !P.some((s) => (s.nums || []).indexOf('pc:-1') >= 0) && !P.some((s) => (s.effects || []).some((e) => /^drop/.test(e))), 'no ink drop and no −1 on you while your response plays');
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
