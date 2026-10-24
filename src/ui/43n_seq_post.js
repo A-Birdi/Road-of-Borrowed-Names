@@ -924,10 +924,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // all, everyone gathers round the fire"; RBN-QA-177) it stops where it is, and everyone stands still, facing the fire.
       // Where it came to rest is this playing's own (st.keep: a replay, another scene or a drawing on its own starts
       // afresh): taken on its first settled frame, kept through the gift and while looking back (Previous), forgotten
-      // only when the live shot dances again.
+      // only when the live shot dances again. Looking back, the shot's own Replay dances again and comes to rest exactly
+      // where the ring stands in this playing, so that neither what is looked back at nor the live shot after it changes
+      // (Local CL-293, Agnes 6383443005).
       const settled = st.at('settle') > 0, K = st.keep || {};
       let turn = still ? 0.4 : (t / 11000) * Math.PI * 2;
-      if (settled && !still) { if (K.restTurn == null) K.restTurn = turn; turn = K.restTurn; } else if (!settled && !st.review) K.restTurn = null;
+      if (!still && !settled && st.review && st.replay && K.restTurn != null) {
+        const si = st.sd.phases.findIndex((p) => p.id === 'settle');
+        let left = 0; // (ms of the replayed dance still to come before it settles)
+        for (let j = 0; j < si; j++) left += (1 - st.at(j)) * st.sd.phases[j].ms;
+        turn = K.restTurn - (left / 11000) * Math.PI * 2;
+      } else if (settled && !still) { if (K.restTurn == null) K.restTurn = turn; turn = K.restTurn; } else if (!settled && !st.review) K.restTurn = null;
       const ring = DANCERS.map((id, i) => { const a = turn + (i / DANCERS.length) * Math.PI * 2 + (i === 2 ? -0.35 : 0); return { id, x: fx + Math.cos(a) * rx, y: fy + Math.sin(a) * ry, a }; });
       const toFire = (r) => (Math.abs(Math.cos(r.a)) > 0.75 ? (r.x < fx ? 'right' : 'left') : r.y > fy ? 'up' : 'down');
       const fig = (r) => {

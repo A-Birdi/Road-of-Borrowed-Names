@@ -8,7 +8,8 @@
 //  2. the fire shot: dancing, the ring turns and its figures walk; from the 'settle' phase (and through the gift) it
 //     stands where it stopped, everyone still and facing the fire, Shō's beat at rest; the gift's hat as before; where
 //     it stopped belongs to its playing: a drawing on its own rests where its own moment puts it; in a playing,
-//     Previous back to the dance and Next again find it where it stopped; the shot's Replay stops it anew; a new
+//     Previous back to the dance and Next again find it where it stopped; the shot's Replay stops it anew, live or
+//     while looking back; a new
 //     playing that opens settled never takes the last playing's place;
 //  3. the scene, played with Next, with reduced motion, and with and without the school, with and without a
 //     companion: the pupils' phase begins right before the pupils' line (only with the school), the settle right before
@@ -112,7 +113,7 @@ for (const [W, H] of [[1188, 848], [390, 844]]) {
     // (a playing draws into its own buffer, an offscreen canvas where there is one)
     for (const K of [window.CanvasRenderingContext2D, window.OffscreenCanvasRenderingContext2D].filter(Boolean)) {
       const di = K.prototype.drawImage;
-      K.prototype.drawImage = function (img, x, y) { if (made.has(img)) { drawn.push(made.get(img) + ' @' + x + ',' + y); if (drawn.length > 600) drawn.splice(0, 300); } return di.apply(this, arguments); };
+      K.prototype.drawImage = function (img, x, y) { if (made.has(img)) { const e = made.get(img) + ' @' + x + ',' + y; drawn.push(e); if (window.__rec) window.__rec.push(e); if (drawn.length > 600) drawn.splice(0, 300); } return di.apply(this, arguments); };
     }
     // the ring as last drawn: the six dancers of the latest frame
     window.__ring = async () => { await new Promise((r) => setTimeout(r, 260)); return drawn.slice(-6).sort(); };
@@ -138,6 +139,31 @@ for (const [W, H] of [[1188, 848], [390, 844]]) {
   await wait(3600);
   const replayed = await p.evaluate(() => window.__ring());
   ok(still(replayed), 'the shot\'s Replay: the dance again, then the six stand still, facing the fire (' + J(replayed.slice(0, 2)) + ')');
+  // the shot's Replay while looking back (Previous to the settle, then Replay; Local CL-293, Agnes 6383443005): it dances
+  // again and comes to rest without a jump, exactly where the ring stood; Next to the live gift finds it there too
+  await click('prev'); await wait(400);
+  const backBefore = await p.evaluate(() => window.__ring());
+  await p.evaluate(() => { window.__rec = []; const el = document.querySelector('.seq-view [data-a="replay"]'); if (el) el.click(); });
+  await wait(3200);
+  const backRest = await p.evaluate(() => window.__ring());
+  const rec = await p.evaluate(() => { const r = window.__rec; window.__rec = null; return r; });
+  // each dancer, from its last dancing frame to its first at rest: how far it moved, against its largest step between
+  // the dancing frames just before (the ring turning, and the dance's little bob)
+  const SIX = ['as_mitsue', 'as_yoshizo', 'as_taki', 'as_natsu', 'as_kotoe', 'as_mohei'];
+  const parse = (e) => { const m = /^(\S+) (\S+) (\S+) @(-?\d+),(-?\d+)$/.exec(e); return m && { id: m[1], key: m[3], x: +m[4], y: +m[5] }; };
+  const steps = SIX.map((id) => {
+    const seq = rec.map(parse).filter((q) => q && q.id === id);
+    const i = seq.findIndex((q, k) => k > 0 && q.key === 'i0' && /^w\d$/.test(seq[k - 1].key));
+    if (i < 2) return { id, none: seq.length };
+    let pace = 0;
+    for (let k = Math.max(1, i - 6); k < i; k++) pace = Math.max(pace, Math.hypot(seq[k].x - seq[k - 1].x, seq[k].y - seq[k - 1].y));
+    return { id, jump: Math.round(Math.hypot(seq[i].x - seq[i - 1].x, seq[i].y - seq[i - 1].y)), pace: Math.round(pace) };
+  });
+  ok(steps.every((q) => q.jump != null && q.jump <= Math.max(16, q.pace * 2)) && still(backRest) && J(backRest) === J(backBefore),
+    'the shot\'s Replay while looking back: the dance again, coming to rest without a jump, exactly where the ring stood (' + J({ steps, rest: backRest.slice(0, 2), before: backBefore.slice(0, 2) }) + ')');
+  await click('next'); await wait(600);
+  const liveAgain = await p.evaluate(() => window.__ring());
+  ok(J(liveAgain) === J(replayed), 'and Next to the live gift after it: the ring where it stood there (' + J({ now: liveAgain.slice(0, 2), before: replayed.slice(0, 2) }) + ')');
   // a new playing that opens on the settled ring (a memory's replay, another scene), seconds later
   await p.evaluate(() => { const el = document.querySelector('.seq-view [data-a="skip"]'); if (el) el.click(); });
   await p.evaluate(() => RB.sequence.closeView && RB.sequence.closeView('test'));
