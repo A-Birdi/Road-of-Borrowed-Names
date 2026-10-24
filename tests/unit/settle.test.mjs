@@ -99,7 +99,8 @@ export default async (t) => {
     s.flags['as_forge_' + o.forge] = true;
     await run('as.natsu', { enc: () => ({ result: 'win', outcome: o.forge }) });
     t.ok(s.flags.as_dp_noise && s.vars.as_forge === o.forge, o.tag + ': the forge settled: ' + o.forge);
-    t.ok(o.forge === 'moved' ? propAt(s, 'anvil') === '33,8' : propAt(s, 'sign').indexOf('16,8') >= 0, o.tag + ': ' + (o.forge === 'moved' ? 'an anvil and a fire out beyond the paddies' : 'the forge\'s hours on its door'));
+    // (the hours' tag on the forge door, on the wall beside it, and no longer a freestanding sign: RBN-QA-176)
+    t.ok(o.forge === 'moved' ? propAt(s, 'anvil') === '33,8' : propAt(s, 'as_forgetag') === '14,7' && propAt(s, 'sign').indexOf('16,8') < 0, o.tag + ': ' + (o.forge === 'moved' ? 'an anvil and a fire out beyond the paddies' : 'the forge\'s hours on its door'));
     t.ok(s.flags.as_hall && qs(s) === 3, o.tag + ': both settled: the meeting house, and a festival proposed');
     // the festival
     await run('as.mitsue', { forge: { 'as.fest_lanterns': o.lan }, choice: 0 });

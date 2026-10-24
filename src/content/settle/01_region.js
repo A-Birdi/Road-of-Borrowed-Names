@@ -117,7 +117,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'counter', x: 25, y: 12, across: true, if: 'var.as_market=bridge' }, { p: 'crate', x: 28, y: 12, if: 'var.as_market=bridge' },
       // the channel's rota, and the forge's hours or its new place by the paddies
       { p: 'sign', x: 25, y: 9, if: 'as_dp_water', scene: 'as.rota' },
-      { p: 'sign', x: 16, y: 8, if: 'var.as_forge=hours', scene: 'as.forge_hours' },
+      // (the hours' tag hangs on the forge door, on the wall beside it, read from in front of it at (14,8); the door
+      // (13,7) keeps its own line: RBN-QA-176)
+      { p: 'as_forgetag', x: 14, y: 7, if: 'var.as_forge=hours', scene: 'as.forge_hours' },
       { p: 'anvil', x: 33, y: 8, if: 'var.as_forge=moved' }, { p: 'campfire', x: 34, y: 8, if: 'var.as_forge=moved' },
       // the festival's lanterns, where they were hung, stay up afterwards
       ...[2, 6, 15, 20, 31].map((x) => ({ p: 'lantern', x, y: 12, o: { lit: true }, if: 'var.as_lan=street' })),

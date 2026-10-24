@@ -148,7 +148,15 @@ narr: {鍛冶場|かじば} の {戸|と} に 、 {札|ふだ} が {掛|か}か�
   out += `
 @scene as.water_talk
 !if as_dp_water -> done
-narr: {水門|すいもん} の {前|まえ} で 、 ヨシゾウ と タキ が {言|い}い{合|あ}って いる 。 || Yoshizō and Taki are arguing at the sluice.
+!walkto as_yoshizo pc max=8000
+!if var._walked=0 -> apart
+!walkto as_taki pc max=8000
+!if var._walked=0 -> talk
+narr: {水門|すいもん} の こと で 、 ヨシゾウ と タキ が {言|い}い{合|あ}って いる 。 || Yoshizō and Taki are arguing over the sluice.
+!goto talk
+:apart
+!walkto as_taki pc max=8000
+:talk
 as_yoshizo: {俺|おれ} が {掘|ほ}った {水路|すいろ} だ ！ || I dug that channel!
 as_taki: {掘|ほ}った {人|ひと} の もの なら 、 {雨|あめ} も あんた の もの なの ？ || If it's whoever dug it, does the rain belong to you too?
 narr: {二人|ふたり} と も 、 {本当|ほんとう} に {困|こま}って いる よう だ 。 || They both look genuinely worried.
@@ -169,7 +177,15 @@ narr: {話|はなし} は 、 また {今度|こんど} 。 {二人|ふたり} �
 
 @scene as.noise_talk
 !if as_dp_noise -> done
-narr: {鍛冶場|かじば} の {前|まえ} で 、 {赤|あか}ちゃん を {抱|だ}いた ナツ が 、 ショウ と {向|む}かい{合|あ}って いる 。 || Outside the forge, Natsu stands facing Shō, the baby in her arms.
+!walkto as_natsu pc max=8000
+!if var._walked=0 -> apart
+!walkto as_sho pc max=8000
+!if var._walked=0 -> talk
+narr: {赤|あか}ちゃん を {抱|だ}いた ナツ が 、 ショウ と {向|む}かい{合|あ}って いる 。 || Natsu stands facing Shō, the baby in her arms.
+!goto talk
+:apart
+!walkto as_sho pc max=8000
+:talk
 as_natsu: お{願|ねが}い です から 、 {少|すこ}し だけ {静|しず}か に して ください 。 || Please, just a little quiet. I'm begging you.
 as_sho: {鎌|かま} が なければ 、 {稲|いね} は {刈|か}れない 。 || No sickles, no harvest.
 narr: どちら も 、 {間違|まちが}って は いない 。 || Neither of them is wrong.
@@ -191,10 +207,12 @@ narr: {話|はなし} は 、 また {今度|こんど} 。 || Another time.
 
 @scene as.quarrels_done
 !if !as_dp_water|!as_dp_noise -> one
+!fade out 600
 !set as_hall
 !quest as_main 3
 narr: {二|ふた}つ の {喧嘩|けんか} が {片付|かたづ}いた {日|ひ} 、 {村|むら} の {人|ひと} たち が {材木|ざいもく} を {担|かつ}いで {集|あつ}まった 。 || The day the second quarrel is settled, the villagers gather, carrying timber.
 as_mitsue: {話|はな}し{合|あ}う {屋根|やね} が {要|い}る って 、 {皆|みんな} が {言|い}う ん です 。 {寄合所|よりあいじょ} です よ 。 …… それ と 、 もう {一|ひと}つ 。 {祭|まつ}り を しません か 。 {村|むら} の 、 {最初|さいしょ} の {祭|まつ}り を 。 || Everyone says we need a roof to talk under. A meeting house. …And one more thing. Shall we have a festival? The village's very first.
+!fade in 600
 !end
 :one
 narr: {喧嘩|けんか} は 、 あと {一|ひと}つ 。 || One quarrel to go.
