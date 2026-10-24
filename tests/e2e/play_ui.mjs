@@ -273,15 +273,32 @@ const faceNpc = (p) => p.evaluate(() => {
   await playScene();
   await p.waitForTimeout(700);
   assert(!(await p.evaluate(() => !!document.querySelector('.csheet'))), 'once answered, the offer is not made again');
-  // the offer pending for one journey (the scene just ended) while another journey begins: no offer over it
+  // the offer pending for one journey (the scene just ended) while another journey begins: no offer over it. Both the
+  // beginning and the look are timed in the page, not from here: the new journey begins 100 ms after the story settles,
+  // inside the offer's 400 ms delay however slow the round trips from here are (begun from here, a loaded machine could
+  // take longer than the delay, and the finished journey's offer was then rightly made first); and the look is 600 ms
+  // after it has begun, so after the offer's own timer has run (timers run in the order they fall due; beginning a
+  // journey holds the page for a while, and a look sent from here could be served before that timer)
   await finished(false);
   await p.waitForTimeout(500);
-  await p.evaluate(() => { RB.script.run('rw.road_marker'); });
+  await p.evaluate(() => {
+    window.__stale = null;
+    const off = RB.bus.on('story:settled', () => {
+      off();
+      const s = RB.game.s, armed = !!(s && s.flags.postgame && !s.flags.ngp_offered);
+      setTimeout(() => {
+        const m = RB.content.maps['rw.village'], sp = m.spawn.default;
+        RB.game.debugStart('rw.village', sp[0], sp[1], { comp: 'mio', edition: RB.edition.forNew() });
+        const begun = RB.game.s !== s;
+        setTimeout(() => { window.__stale = { armed, begun, offered: !!s.flags.ngp_offered, sheet: !!document.querySelector('.csheet'), text: (document.querySelector('.csheet') || {}).textContent || '' }; }, 600);
+      }, 100);
+    });
+    RB.script.run('rw.road_marker');
+  });
   for (let i = 0; i < 40 && await p.evaluate(() => RB.ui.dialogue.isOpen()); i++) { await p.keyboard.press('Enter'); await p.waitForTimeout(60); }
-  await p.evaluate(() => { const m = RB.content.maps['rw.village'], sp = m.spawn.default; RB.game.debugStart('rw.village', sp[0], sp[1], { comp: 'mio', edition: RB.edition.forNew() }); });
-  await p.waitForTimeout(900);
-  const stale = await p.evaluate(() => ({ sheet: !!document.querySelector('.csheet'), text: (document.querySelector('.csheet') || {}).textContent || '' }));
-  assert(!stale.sheet, 'a journey begun while another\'s offer was pending is not offered that journey\'s New Game+: ' + stale.text.slice(0, 80));
+  await p.waitForFunction(() => window.__stale, null, { timeout: 15000 });
+  const stale = await p.evaluate(() => window.__stale);
+  assert(stale.armed && stale.begun && !stale.offered && !stale.sheet, 'a journey begun while another\'s offer was pending is not offered that journey\'s New Game+ (' + JSON.stringify(Object.assign({}, stale, { text: stale.text.slice(0, 60) })) + ')');
   assert(!errors.length, 'no page errors (New Game+ offer) ' + errors.join('; '));
   await ctx.close();
 }
