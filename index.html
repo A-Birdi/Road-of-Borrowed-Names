@@ -1969,6 +1969,7 @@ body.veiled #ui > .dlg, body.veiled #ui > .choices, body.veiled #ui > .folio-scr
 .dlg .who .nm { font-family: var(--serif); font-weight: 600; font-size: 1.05em; color: var(--ink); }
 .dlg .who .jp { font-size: 0.9em; color: var(--ink-2); }
 .dlg .who .jp .jline { line-height: 1.7; }
+.dlg .who .offscr { margin-left: 0.6em; font-size: 0.8em; font-style: italic; color: var(--ink-2); white-space: nowrap; } /* RBN-QA-108: a speaker who did not arrive, off screen */
 .dlg.narration .dlg-tab { display: none; }
 .dlg-sheet {
   grid-area: sheet; display: flex; flex-direction: column; min-height: 0; max-height: calc(56 * var(--vh));
@@ -7415,6 +7416,7 @@ RB.jp = (function () {
       if (out[i].punct) continue;
       out[i].prev = i > 0 ? out[i - 1].surface : '';
       out[i].next = i + 1 < out.length ? out[i + 1].surface : '';
+      out[i].next2 = i + 2 < out.length ? out[i + 2].surface : ''; // (the word after next: a fraction's N分の + M)
     }
     return out;
   }
@@ -7986,6 +7988,7 @@ RB.jp = (function () {
         after: t.after || null,
         prev: t.prev != null ? t.prev : null,
         next: t.next != null ? t.next : null,
+        next2: t.next2 != null ? t.next2 : null,
       };
     }
     const toks = parse(String(t == null ? '' : t));
@@ -9642,6 +9645,7 @@ RB.lex = (function () {
 素敵|すてき|adj-na|E|lovely
 適当|てきとう|adj-na|I|suitable|In casual speech it often means "half-hearted, careless".
 十分|じゅうぶん|adj-na|E|enough
+十分|じゅっぷん|n|E|ten minutes|{十|じゅっ}{分|ぷん}: both kanji change sound together (also read じっぷん). Not {十分|じゅうぶん} "enough".
 同じ|おなじ|adj-na|E|same|Comes directly before a noun without な: {同|おな}じ{道|みち}.
 色々|いろいろ|adj-na|E|various
 様々|さまざま|adj-na|I|various, diverse
@@ -11782,6 +11786,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (e) meaning = e.m;
     }
     if (ctr === '月' && /がつ$/.test(tok.reading || '')) return { en: 'month number ' + num.en + (num.n ? ' (' + ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][num.n] + ')' : '') };
+    // a fraction's whole: 分 read ぶん ("part") in N分のM, as in {三分|さんぶん} の {一|いち} (one third): の, then a number;
+    // as minutes it is ふん/ぷん
+    if (ctr === '分' && num.n && /ぶん$/.test(tok.reading || '') && tok.next === 'の' && parseNum(tok.next2 || '') && parseNum(tok.next2).n) {
+      return { en: num.en + ' parts: a fraction ({' + s + '|' + tok.reading + '}の{一|いち} = 1/' + num.en + ')', form: 'fraction (〜分の〜)',
+        n: 'A fraction: the whole first, then の and the part. {三分|さんぶん}の{一|いち} is one of three parts, 1/3; {四分|よんぶん}の{三|さん} is 3/4.' };
+    }
     if (!meaning) return null;
     return { en: num.en + ' × ' + meaning };
   }
@@ -11793,8 +11803,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (c) {
       return Object.assign({}, r, {
         unknown: false,
-        entry: { w: t.surface, r: t.reading || r.reading, m: c.en, pos: 'ctr', lv: 'E', n: 'Number + counter. Japanese counts things with counters chosen by the kind of thing; readings of numbers can change before some counters.' },
-        forms: ['number + counter'],
+        entry: { w: t.surface, r: t.reading || r.reading, m: c.en, pos: 'ctr', lv: 'E', n: c.n || 'Number + counter. Japanese counts things with counters chosen by the kind of thing; readings of numbers can change before some counters.' },
+        forms: [c.form || 'number + counter'],
       });
     }
     return r;
@@ -11832,8 +11842,8 @@ RB.kanjiRead = {
   r: '一いち,ひと,いっ;丁ちょう;七なな,しち;万まん;丈たけ;三さん,み,みっ;上あ,うえ,じょう,うわ;下した,お,しも,くだ;不ふ;与あた;世よ;丘おか;両りょう;並な,なら;中なか,ちゅう,じゅう;丸まる;丹たん;主ぬし,あるじ;久ひさ;乗の;九きゅう,く,ここの;乱みだ;乳ちち;乾かわ;亀かめ;了りょう;予よ;争あらそ;事ごと,こと;二に,ふた;云い;互たが;五ご,いつ;井い;亡な;交か;京きょう;亭てい;人にん,ひと,じん,びと;仇あだ;' +
     '今いま;介かい;仏ほとけ;仕つか;他ほか;付つ;代だい,か,しろ;令れい;以もっ;仮かり;仰おお;仲なか;件けん;任まか;伎き;伏ふ;休やす;会かい,あ;伝つた,づた;伯はく;伴ともな;伸の;伺うかが;似に;但ただ;位い;低ひく;住す;体からだ;何なん,なに;余あま;作さく,つく,づく;使つか;例れい;供そな;依よ;価か;便びん,たよ;係かかり,がかり;促うなが;' +
     '保たも;信しん;修しゅう;俵ひょう,びょう;俺おれ;倉くら,ぐら;個こ;倍ばい;倒たお;候こう;借か;値あたい;偉えら;偏へん;健けな;側がわ,そば;偶ぐう;偽にせ,いつわ;傘かさ;備そな;催さい;傷きず,いた;傾かし,かたむ;働はたら;像ぞう;僕ぼく;僚りょう;僧ぞう;儀ぎ;儂わし;償つぐな;優やさ;儲もう;元もと;兄あに,にい;先さき;光ひか,ひかり;免めん;入い,はい;全すべ,まった;' +
-    '八はち,や,やっ;公こう;六ろく,む,むっ;共とも;兵べ;具ぐ;典てん;内うち;円えん;冊さつ;再さい,ふたた;冗じょう;写うつ;冥みょう;冬ふゆ;冴さ;冶じ;冷さ,つめ,ひ;凌しの;凍い,こお,こご;凝こ;几き;処か;凧たこ;凪なぎ;凰おう;凹へこ;出で,だ,い;函かん;刀かたな,とう;刃は;分ぶん,ふん,わ;切き,ぎ;刈か;列れつ;初はつ,はじ;判はん;別べつ,わか;利き;到とう;' +
-    '制せい;刷す,ず;刺さ;刻きざ;則そく;削けず;前まえ;剣けん;剥は,む;副ふく;割わり,わ;劇げき;力ちから;功こう;加くわ;助たす;努ど;励はげ;労ろう;効き;勇ゆう;勉べん;動うご;勘かん;務つと;勝か,が;募ぼ;勢いきお;勧すす;匂にお;包つつ;化か,ば;北きた;匙さじ;匠しょう;匹ひき,びき;区く;医い;十じゅう,とお;千せん;' +
+    '八はち,や,やっ;公こう;六ろく,む,むっ;共とも;兵べ;具ぐ;典てん;内うち;円えん;冊さつ;再さい,ふたた;冗じょう;写うつ;冥みょう;冬ふゆ;冴さ;冶じ;冷さ,つめ,ひ;凌しの;凍い,こお,こご;凝こ;几き;処か;凧たこ;凪なぎ;凰おう;凹へこ;出で,だ,い;函かん;刀かたな,とう;刃は;分ぶん,ぷん,わ,ふん;切き,ぎ;刈か;列れつ;初はつ,はじ;判はん;別べつ,わか;利き;到とう;' +
+    '制せい;刷す,ず;刺さ;刻きざ;則そく;削けず;前まえ;剣けん;剥は,む;副ふく;割わり,わ;劇げき;力ちから;功こう;加くわ;助たす;努ど;励はげ;労ろう;効き;勇ゆう;勉べん;動うご;勘かん;務つと;勝か,が;募ぼ;勢いきお;勧すす;匂にお;包つつ;化か,ば;北きた;匙さじ;匠しょう;匹ひき,びき;区く;医い;十じゅう,とお,じゅっ;千せん;' +
     '升しょう;午ご;半はん,なか;卓たく;協きょう;南みなみ;単たん;博はく;印しるし,いん;危あぶ;即そく;却きゃく;卵たまご;卸おろ;厄やく;厚あつ;原はら;厳きび;去さ;参まい;又また;及およ;友とも,ゆう;双ふた;反たん,はん;収おさ;取と;受う;口くち,ぐち;古ふる;句く;叩たた;只ただ;叫さけ;召め;可か;台だい;叱しか;史し;右みぎ;' +
     '叶かな;号ごう;司し;各かく;合あ;吊つ;同おな;名めい,な;吐は;向む;君きみ;吠ほ;否いな;含ふく;吸す;吹ふ;呂ろ;告つ;呑の;呟つぶや;周まわ;呪のろ;味み,あじ;呼よ;命めい,いのち;和より;咲さ;咳せき;品しな;員いん;唄うた;唇くちびる;唐から;唱とな;唸うな;商あきな;問と;啓けい;善ぜん;喉のど;' +
     '喋しゃべ;喜よろこ;喧けん;喩ゆ;喪くも;喫きつ;営えい;嗅か;嘆なげ;嘘うそ;嘩か;噂うわさ;噌そ;噛か;器うつわ;噴ふ;囁ささや;囃はや;四よん,し,よ,よっ;回かい,まわ;因いん;団だん;困こま;囲かこ;図ず;固かた;国くに;園えん;土ど,つち;在あ;圭けい;地ち,じ;坂さか,ざか;坊ぼう;垂た;型かた;垣かき,がき;埃ほこり;埋う;城しろ;' +
@@ -11848,7 +11858,7 @@ RB.kanjiRead = {
     '挨あい;挫ざ;振ふ;挽ひ;捌さば;捏こ;捕つか,と;捨す;据す;捲まく;捻ねん;掃は;授じゅ;排はい;掘ほ;掛か;掟おきて;採と;探さが,さぐ;接つ,は;控ひか;推すい;掲かか;掴つか;掻か;揃そろ;揉も;描か,えが;提さ;揚あ;換か;握にぎ;援えん;揺ゆ;損そん,そこ,ぞん;搾しぼ;摘つ;摩ま;摺す;撃げき;' +
     '撒ま;撞つ;撫な;撮と;操そう;擦す,こす;攣つ;攫さら;支ささ;改あらた;攻こう;放はな,ほう;故こ;救すく;敗はい;教おし,おそ;散ち;敬けい;数すう,かず,かぞ;整ととの;敵てき,がたき;敷し;文ぶん,もん,ふみ,ぶみ;斉せい;斎さい;斐い;斗ご;料りょう;斜なな;斧おの;断ことわ;新あたら;方かた,ほう,がた;施せ;旅たび;旋せん;族ぞく;旗はた;既すで;日にち,ひ,か,び;' +
     '旦だん;旧きゅう;旨うま,むね;早はや;昇のぼ;明あ,あか,あき;易やさ,やす;昔むかし;星ほし;映うつ,は;春はる;昧まい;昨さく;是これ;昼ひる;時じ,とき,どき;晩ばん;普ふ;景けい;晴は;晶しょう;暇ひま;暑あつ;暖あたた;暗くら;暦こよみ;暮く;暴あば;曇くも;曖あい;曜よう;曰いわ;曲ま;更さら;書か,が;替か,が;最さい,も;月がつ,つき,げつ;有あ;服ふく;' +
-    '朔さく;望ぼう,もち,のぞ;朝あさ;期き;木き,こ,ぎ;未いま;末まつ,すえ;本ほん,もと;札ふだ;朱しゅ;机つくえ;杉すぎ;杏あんず;材ざい;村むら;杖つえ;束たば;条じょう;来き,く,こ;杭くい;杯はい,ぱい,さかずき;東ひがし;杼ひ;松まつ;板いた;枕まくら;林はやし;枚まい;果は;枝えだ;枠わく;枡ます;枯か;架か;柄がら;某なにがし;染し,そ;柔やわ;柚ゆ;柝き;' +
+    '朔さく;望ぼう,もち,のぞ;朝あさ;期き;木き,こ,ぎ;未いま;末まつ,すえ;本ほん,もと;札ふだ;朱しゅ;机つくえ;杉すぎ;杏あんず;材ざい;村むら;杖つえ;束たば;条じょう;来き,く,こ;杭くい;杯はい,さかずき;東ひがし;杼ひ;松まつ;板いた;枕まくら;林はやし;枚まい;果は;枝えだ;枠わく;枡ます;枯か;架か;柄がら;某なにがし;染し,そ;柔やわ;柚ゆ;柝き;' +
     '柱はしら;柳やなぎ;柵さく;査さ;柿かき,がき;栄えい;栓せん;栗くり,ぐり;栞しおり;校こう;株かぶ;根ね;格かく;桁げた;桂りけい;桃もも;案あん;桐きり;桜さくら;桟さん;桶おけ;梁はり;梅うめ;梨なし;梯はし;械かい;棄き;棋ぎ;棒ぼう;棚たな,だな;森もり;棹さお;椀わん;椅い;植う;検けん;楔くさび;楠くす;業ぎょう;極ごく;' +
     '楼ろう;楽らく,たの;構かま;槌つち;様さま,よう;槽そう;樋どい;標しるべ;模も;権けん;横よこ;樹じゅ;樽たる;橋はし,ばし;橙だいだい;機き,はた;檜ひのき;櫂かい;櫓やぐら,ろ;櫛くし;欄らん;欠か;次つぎ;欲よく,ほ;歌うた;歓かん;止と,ど,や;正ただ;此こ;歩ある,ふ;歪ゆが;歯は;歳さい,とし;歴れき;死し;残のこ;殴なぐ;段だん;殺ころ;殻から;' +
     '殿との,どの;母はは,かあ;毎まい;毒どく;比くら;毛け,げ;毯たん;氏し;民みん;気き,け;水すい,みず;氷こおり,ごおり;永えい;汁しる;求もと;汗あせ;汚きたな,よご;江え;池いけ;汰た;汲く;決き,けっ;沈しず;沓くつ;沖おき;沙さ;没ぼつ;沢さわ;河が;沸わ;油あぶら;治なお;沼ぬま;沿そ,ぞ;況きょう;泉いずみ;泊と;法ほう;泡あわ;波なみ;' +
@@ -42219,6 +42229,27 @@ RB.world = (function () {
     W.comp.id = cid;
     W.trail = [];
   }
+  // A companion who stays behind or comes back (`!hook comp_away` / `comp_back`, 58s_surety.js; RBN-QA-103). Staying:
+  // the figure following you stops where it stands and is a figure of the scene, as one who walked in to speak is: a
+  // place here for them now takes that same figure there (the bench at the Mist Barrier), otherwise they leave when
+  // the scene ends (dismissExtras). Coming back: their figure here (a place that now ends, or one who walked in to
+  // speak) is the one who follows you, from where it stands (the hook places them, as `!refresh comp` does); with no
+  // figure of theirs here, nobody is put in. Never a second of them.
+  function companionStays() {
+    const a = W.comp;
+    W.comp = null;
+    W.trail = [];
+    if (!a || !W.map) return;
+    Object.assign(a, { extra: true, map: W.map.id, def: { id: a.id }, home: a.mv ? [a.mv.tx, a.mv.ty] : [a.x, a.y], route: null });
+    W.extras.push(a);
+  }
+  function companionBack() {
+    const cid = partyCompanion();
+    const fig = cid && W.map && W.npcs.find((n) => personOf(n) === cid);
+    if (fig) { W.npcs = W.npcs.filter((n) => n !== fig); fig.extra = true; fig.route = null; W.extras.push(fig); }
+    refreshActors();
+    return !!cid && (W.extras.some((n) => personOf(n) === cid) || W.leavers.some((n) => personOf(n) === cid));
+  }
   // o.arrive: a scene's !refresh arrive — the people this brings walk in from the way in even just after the map
   // appeared (by default, people who appear while a map is still appearing were simply already there)
   function refreshActors(o) {
@@ -42255,7 +42286,9 @@ RB.world = (function () {
     // they show a !move or a !walkto there: people are at once where the story now puts them, so the world the
     // picture dissolves back into already matches it (nobody seen going in twice; docs/expressive/CONTRACT.md HX52).
     const behind = !!(RB.sequence && RB.sequence.hidesWorld && RB.sequence.hidesWorld());
-    if (W.time - W.enteredAt > 900 || (o && o.arrive)) {
+    // (a going the scene asks for and waits on, `!refresh gone`, is watched: it is walked however soon after the map
+    // appeared, as a talk to someone just there can come before 900 ms are up; RBN-QA-120, Agnes 6347484032)
+    if (W.time - W.enteredAt > 900 || (o && (o.arrive || o.watched))) {
       const arriving = W.npcs.filter((a) => !before.has(a.id) && !keep.has(a.id));
       const atOnce = (a, arr) => noteDeparture(a, { goals: new Set(), to: arr ? m.id : null, reason: 'behind an illustrated sequence: at once' }, [], arr);
       let k = 0;
@@ -42276,6 +42309,18 @@ RB.world = (function () {
           if (behind) atOnce(b, true); else shiftTo(b, here);
         } else if (behind) atOnce(b, true);
         else if (arriveOnFoot(b, onFoot)) onFoot++;
+      }
+    } else {
+      // While the map is still appearing, someone with a new place was simply already there, but never as a second
+      // of someone already on the map: their figure here (one who was following you and stays behind, or walked in to
+      // speak) is the one that takes the place, from where it stands (RBN-QA-103, Agnes 6344263706).
+      for (const b of W.npcs) {
+        if (before.has(b.id) || keep.has(b.id)) continue;
+        const here = W.extras.find((e) => personOf(e) === personOf(b)) || W.leavers.find((e) => personOf(e) === personOf(b));
+        if (!here) continue;
+        W.extras = W.extras.filter((e) => e !== here);
+        W.leavers = W.leavers.filter((e) => e !== here);
+        if (!behind) shiftTo(b, here);
       }
     }
     // LW-09: a person whose placement moved on this map. While the map is appearing (or behind an illustrated
@@ -42394,7 +42439,10 @@ RB.world = (function () {
   // way out, and test runs list those (RB.test.departures) for review.
   // Someone who neither walks off nor walks in — picked up and carried, set
   // down beside someone — says so with npc.leave: 'here' / npc.arrive: 'here':
-  // they fade out (or in) where they are.
+  // they fade out (or in) where they are. npc.leave: 'way' goes only by its own
+  // way out (to leaveTo, or where the story now puts them): if that cannot be
+  // walked, they fade where they stand, never through some other exit, and the
+  // record says so (RBN-QA-120).
   const personOf = (n) => (n.def && (n.def.char || n.def.id)) || n.id;
   // the maps where `person` appears now (any: where the story ever puts them)
   function mapsWith(person, except, any) {
@@ -42472,6 +42520,7 @@ RB.world = (function () {
     W.departures.push(rec);
     if (W.departures.length > 40) W.departures.shift();
     if (RB.test && RB.test.auto) (RB.test.departures = RB.test.departures || []).push(rec);
+    return rec;
   }
   // The same person takes up a new place on this map: the figure `b` starts
   // where `from` stands and walks to b's own spot (no fade, no second figure).
@@ -42535,9 +42584,12 @@ RB.world = (function () {
     const way = wayFor(a, false);
     // already standing in the doorway they need: they just go
     const there = way.goals && way.goals.has(a.x + ',' + a.y);
-    const route = there ? [] : (way.goals && routeRound(a, 160, way.goals)) || routeRound(a, 18) || [];
-    noteDeparture(a, there ? Object.assign({}, way, { reason: way.reason + ', at the way out' }) : route.length && way.goals ? way : Object.assign({}, way, { goals: null }), route, false);
-    W.leavers.push(Object.assign({}, a, { mv: null, route, goals: way.goals, alpha: 1, fading: !route.length, wait: (i || 0) * 380 }));
+    // (leave: 'way': their own way out or none; no route to it, and they fade where they stand)
+    const own = a.def && a.def.leave === 'way';
+    const route = there ? [] : (way.goals && routeRound(a, 160, way.goals)) || (own ? null : routeRound(a, 18)) || [];
+    const rec = noteDeparture(a, there ? Object.assign({}, way, { reason: way.reason + ', at the way out' }) : route.length && way.goals ? way : Object.assign({}, way, { goals: null }), route, false);
+    if (own && !there && !route.length) rec.fallback = 'faded where they stood: no way to ' + (way.to || 'their place');
+    W.leavers.push(Object.assign({}, a, { mv: null, route, goals: way.goals, alpha: 1, fading: !route.length, wait: (i || 0) * 380, rec }));
   }
   // i: the order of people arriving at once; each comes through the way in a moment after the last (they would
   // otherwise all stand in the doorway together). True when they walk in.
@@ -42590,18 +42642,27 @@ RB.world = (function () {
   // where they stood or walked off and faded. The fade runs on the world's frames, which a slow device delivers late,
   // so this waits for the departure itself, not for a time; bounded (o.ms) and at once when skipping, or behind an
   // illustrated sequence (o.now): then whoever is still going is gone at once (`!refresh gone`; RBN-QA-093)
+  // At the bound, whoever is still walking stops and fades where they are (their record says so: a fallback, not a walk
+  // completed); the scene goes on once they have (at most 400 ms more; RBN-QA-120).
   function departures(gone, o) {
     o = o || {};
     const going = () => gone.filter((a) => W.leavers.includes(a));
     const settle = () => { const g = going(); if (g.length) W.leavers = W.leavers.filter((a) => !g.includes(a)); };
     if (!gone.length) return Promise.resolve();
     if (o.now || RB.game.fastForward()) { settle(); return Promise.resolve(); }
-    const map = W.map, t0 = performance.now();
+    const map = W.map, t0 = performance.now(), bound = o.ms || 4000;
+    let cut = 0;
     return new Promise((res) => {
       const tick = () => {
         if (W.map !== map) return res();
-        if (RB.game.fastForward() || performance.now() - t0 > (o.ms || 4000)) { settle(); return res(); }
+        if (RB.game.fastForward()) { settle(); return res(); }
         if (!going().length) return res();
+        const t = performance.now() - t0;
+        if (!cut && t > bound) {
+          cut = t;
+          for (const a of going()) if (!a.fading) { a.route = null; a.fading = true; if (a.rec) a.rec.fallback = 'faded where they were at ' + a.x + ',' + a.y + ': the walk was cut at ' + bound + ' ms'; }
+        }
+        if (cut && t - cut > 400) { settle(); return res(); }
         setTimeout(tick, 40);
       };
       tick();
@@ -43456,7 +43517,7 @@ RB.world = (function () {
   }
 
   return {
-    W, DIRS, enter, update, interact, tapTile, refreshActors, arrivals, departures, placeCompanion, companionHere, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
+    W, DIRS, enter, update, interact, tapTile, refreshActors, arrivals, departures, placeCompanion, companionHere, companionStays, companionBack, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
     frontTile, frontAction, checkFoeContact, hush, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
     musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
@@ -44452,7 +44513,7 @@ RB.staging = (function () {
       if (cross && liveTrigger(nx, ny)) return finish(false); // a trigger that has come true since: not stepped on
       const dir = dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up';
       if (c) trail.push([a.x, a.y]);
-      const moved = RB.world.scriptMove(id, dir, 1, a === W().player ? 200 : 240);
+      const moved = RB.world.scriptMove(id, dir, 1, a === W().player ? 200 : wo && wo.run ? 150 : 240); // (run: someone hurrying to you)
       // (once the figure has left the world, the map entered afresh or another or a load, nothing finishes its step:
       // it is not waited for, and the walk ends at the next step's check instead of waiting there for ever)
       return new Promise((res) => {
@@ -44515,6 +44576,94 @@ RB.staging = (function () {
     return ok;
   }
   function syncPlayer() { const s = RB.game.s, p = W().player; if (s) { s.x = p.x; s.y = p.y; s.dir = p.dir; } }
+
+  // ---- someone walks up to you (`!walkto <who> pc [dir]`, RBN-QA-108) ---------------------------------------------
+  // The mark: a free tile within 2 of you (the larger of the two distances), the one in front of you first, then the
+  // nearest; never an exit or a trigger, a tile the scene holds for someone else (sc.reserved), a tile someone stands on
+  // or is stepping onto, the end of someone's way here, or your companion's (where they stand or are stepping to). Of
+  // those, the first the walker can reach; none: null.
+  const near2 = (a, p) => Math.max(Math.abs(a.x - p.x), Math.abs(a.y - p.y)) <= 2;
+  function markNear(a) {
+    const w = W(), p = w.player, d = DIRS[p.dir] || DIRS.down;
+    const bound = new Set();
+    for (const n of w.npcs.concat(w.extras || [])) if (n !== a && n.route && n.route.length) bound.add(n.route[n.route.length - 1].join(','));
+    const c = w.comp, cAt = c && c !== a ? [[c.x, c.y]].concat(c.mv ? [[c.mv.tx, c.mv.ty]] : []) : [];
+    const ok = (x, y) => !(x === p.x && y === p.y) && free(x, y, a) && !bound.has(x + ',' + y) && !cAt.some((t) => t[0] === x && t[1] === y);
+    const cand = [[p.x + d[0], p.y + d[1]]];
+    for (let r = 1; r <= 2; r++) {
+      const ring = [];
+      for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (Math.max(Math.abs(dx), Math.abs(dy)) === r) ring.push([p.x + dx, p.y + dy]);
+      ring.sort((m, n) => (Math.abs(m[0] - p.x) + Math.abs(m[1] - p.y)) - (Math.abs(n[0] - p.x) + Math.abs(n[1] - p.y)));
+      cand.push(...ring);
+    }
+    for (const [x, y] of cand) if (ok(x, y) && ((x === a.x && y === a.y) || bfs(a, x, y))) return [x, y];
+    return null;
+  }
+  // The walk to that mark. Someone still on their way to a new place is turned from the tile they are stepping onto
+  // (never set at their way's end first). Already within 2: they stay where they are. No mark: nobody moves. Under
+  // Skip seen or behind a fade: set on the mark at once, when it is free. Otherwise walkTo's walk and its bound: a
+  // walk that runs out stops them on the tile they reached, never further. A walk that does not arrive is recorded (a
+  // walk fallback, with its reason) and, for the rest of the scene, a line of theirs said while they are off screen is
+  // marked as said from off screen (unarrivedAway; 20_dialogue.js). o.run: at a run (a step in 150 ms, not 240).
+  // Resolves { ok, why }: ok only when they arrived.
+  async function walkNear(ref, dir, o, ctx) {
+    o = o || {};
+    if (!st.on) return { ok: false, why: 'staging off' };
+    const w0 = W(), a = actor(ref, ctx);
+    if (!a || a === w0.player) { st.stats.walkFallbacks++; return { ok: false, why: 'nobody here to walk' }; }
+    const map0 = w0.map, sc = st.scene, tok = sc ? sc.token : 0;
+    if (a.route) {
+      a.route = null; a.arriving = false; a.alpha = 1; a.fadeIn = false;
+      // (their step under way finishes on its tile; nothing is set further on)
+      for (let i = 0; a.mv && i < 60; i++) await new Promise((r) => setTimeout(r, 16));
+    }
+    const live = () => present(a, map0) && (!sc || st.scene === sc) && (!tok || st.scene.token === tok);
+    if (!live()) { st.stats.walkFallbacks++; return { ok: false, why: 'the scene or the map is gone' }; }
+    own(a);
+    if (sc && !sc.moved.has(a)) sc.moved.set(a, { from: [a.x, a.y, a.dir], stay: !!o.stay });
+    else if (sc && o.stay) sc.moved.get(a).stay = true;
+    S(a).look = null;
+    const p = W().player;
+    let ok = false, why = null;
+    if (near2(a, p) && !a.mv) ok = true;
+    else {
+      const mark = markNear(a);
+      if (!mark) why = 'no free place within 2';
+      else {
+        if (sc) sc.reserved.set(a, mark[0] + ',' + mark[1]);
+        st.stats.walks++;
+        if (o.now || RB.game.fastForward()) {
+          if (free(mark[0], mark[1], a)) { a.x = mark[0]; a.y = mark[1]; a.fx = a.x; a.fy = a.y; a.mv = null; ok = true; } else why = 'its place was taken';
+        } else {
+          const path = bfs(a, mark[0], mark[1]);
+          if (!path) why = 'no way to its place';
+          else { ok = await walkPath(a, path, tok, o.max || 4000, o.run ? { run: true } : undefined); if (!ok) why = 'the walk ran out or was stopped'; }
+        }
+        if (sc && !ok && sc.reserved.get(a) === mark[0] + ',' + mark[1]) sc.reserved.delete(a);
+      }
+    }
+    const kept = present(a, map0);
+    if (!kept) { ok = false; why = why || 'gone from the map'; }
+    if (!ok) {
+      st.stats.walkFallbacks++;
+      st.stats.nearFallbacks = (st.stats.nearFallbacks || []).concat([{ id: idOf(a), why }]).slice(-20);
+      if (sc && st.scene === sc) (sc.unarrived = sc.unarrived || new Set()).add(a);
+    } else if (sc && sc.unarrived) sc.unarrived.delete(a);
+    if (kept && (!sc || st.scene === sc)) {
+      if (dir && DIRS[dir]) a.dir = dir;
+      else if (ok) a.dir = Math.abs(p.x - a.x) >= Math.abs(p.y - a.y) ? (p.x < a.x ? 'left' : 'right') : (p.y < a.y ? 'up' : 'down');
+    }
+    return { ok, why };
+  }
+  // a speaker this scene's `pc` walk did not bring to you, while they are off screen: the way they are (else null)
+  function unarrivedAway(who) {
+    const sc = st.scene;
+    if (!st.on || !sc || !sc.unarrived || !sc.unarrived.size || !who) return null;
+    const a = actor(who);
+    if (!a || !sc.unarrived.has(a) || !present(a, W().map) || onScreen(a)) return null;
+    const p = W().player, dx = a.x - p.x, dy = a.y - p.y;
+    return Math.abs(dx) >= Math.abs(dy) ? (dx < 0 ? 'left' : 'right') : dy < 0 ? 'up' : 'down';
+  }
 
   // ---- idle life ----------------------------------------------------------------------------------------------
   function onScreen(a) {
@@ -44817,7 +44966,7 @@ RB.staging = (function () {
   }
 
   return {
-    begin, end, cue, look, pose, prop, beat, walkTo, settle, ambience, ambienceNow, owned, actor, own, playerMoved,
+    begin, end, cue, look, pose, prop, beat, walkTo, walkNear, markNear, unarrivedAway, settle, ambience, ambienceNow, owned, actor, own, playerMoved,
     sceneToken: () => (st.scene ? st.scene.token : 0),
     tick, frameOf, wanderPause, stepped, rand, examined, profileOf,
     get AMBIENCE() { return AMBIENCE; },
@@ -44989,7 +45138,9 @@ RB.travel = (function () {
  *     visit, recorded as unfinished); once solved, variants on a seeded chance; a stamp for solving them all.
  *   sealed[id] = { map, x, y, needs: <concept id> | cond, hint: { jp, en }, opens: <flag>, scene }
  *     Return keys (W6): visible from the start with an in-world hint; noticed when examined; opened once the word
- *     or mechanic it needs is known. */
+ *     or mechanic it needs is known.
+ *   What waits on a return (the Reedwake pilot, returns()): in a pilot town, a noticed key that can open now and an
+ *   earned stamp waiting at its stand, both within reach; read from the journey, nothing kept, gone once done. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.town = (function () {
@@ -45364,6 +45515,48 @@ RB.town = (function () {
     return Object.keys(R.sealed).filter((id) => R.sealed[id] === 'noticed').map((id) => Object.assign({ id }, (C().sealed || {})[id]));
   }
 
+  // ---- what waits on a return (the Reedwake pilot: Robin, 2026-10-23, issue #1 6373239443) -----------------------
+  // Passive and town-level, read from the journey as it is now; nothing of its own is kept, so nothing clears it but
+  // its being done (never just going there): a return key you have examined whose need is now met, its spot still
+  // there and its map within reach; and a stamp you have earned, not yet pressed, whose stand in the town is there and
+  // within reach. Within reach is the quest guide's: exits and doors open now, and the places you can travel to.
+  // Twelve-chapter journeys and the pilot towns only; it only reads (a six-chapter journey is never touched). The
+  // Journey's Places and the Map show it unless Settings › Play turns town hints off (src/ui/50_menu.js).
+  // → [{ town, name, place, keys: [sealed ids], stamps: [stamp ids] }]
+  const RETURN_TOWNS = ['reedwake'];
+  function returns(s) {
+    const out = [];
+    if (!s || !isObj(s.world) || !RB.edition || RB.edition.of(s) < 2) return out;
+    const marks = isObj(s.world.sealed) ? s.world.sealed : {}, SL = C().sealed || {}, ST = C().stampStands || {};
+    let R; // (the maps within reach, worked out once)
+    const near = (map) => {
+      if (R === undefined) { try { R = RB.questGuide ? RB.questGuide.reachable(s) : null; } catch (e) { R = null; } }
+      return !!(R && R.has(map));
+    };
+    // a prop of `map` that `is` it and stands there now
+    const there = (map, is) => ((C().maps[map] || {}).props || []).some((p) => is(p) && (!p.if || RB.state.test(s, p.if)));
+    for (const id of RETURN_TOWNS) {
+      const T = towns()[id];
+      if (!T) continue;
+      const keys = Object.keys(SL).filter((k) => {
+        const d = SL[k];
+        return marks[k] === 'noticed' && townOf(d.map) === id && canOpen(s, k) && !(d.opens && s.flags[d.opens]) &&
+          there(d.map, (p) => p.x === d.x && p.y === d.y && String(p.scene || '').endsWith('.lw_seal_' + k)) && near(d.map);
+      });
+      const stamps = [];
+      if (RB.stampBook) {
+        for (const sid in ST) {
+          if (townOf(ST[sid].map) !== id || !there(ST[sid].map, (p) => p.o && p.o.stand === sid) || !near(ST[sid].map)) continue;
+          for (const k of RB.stampBook.ready(s, sid)) if (RB.stampBook.known(s, (C().stamps || {})[k])) stamps.push(k);
+        }
+      }
+      if (!keys.length && !stamps.length) continue;
+      const place = Object.keys(C().places || {}).find((p) => (T.maps || []).includes(C().places[p].map)) || null;
+      out.push({ town: id, name: T.name, place, keys, stamps });
+    }
+    return out;
+  }
+
   // ---- the conditions content uses -------------------------------------------------------------------------------
   if (RB.state && RB.state.addTerm) {
     // slot.<person>=k : the resident's current routine slot
@@ -45446,7 +45639,7 @@ RB.town = (function () {
     rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, answersOf, askable, findable, usualPlaces, note, seen, spotWords,
     pastTalk, talkOption,
     roadOf, roadEventAt, eventHere, placedAt, storyOnArrival, LINES,
-    roadDone, unfinished, sealedOn, canOpen, examine, noticed,
+    roadDone, unfinished, sealedOn, canOpen, examine, noticed, returns, RETURN_TOWNS,
   };
 })();
 
@@ -46630,7 +46823,9 @@ RB.verbs = (function () {
  *   and passed within one scene is recognised (nothing to mark).
  * - Authored per-stage fields override the derivation: `at` ({map, npc} |
  *   {map, prop, x, y} | {map, x, y} | {map}, or a list of those, or 'open')
- *   and `hint` ({jp, en}, shown as the second nudge).
+ *   and `hint` ({jp, en}, shown as the second nudge). `atIf: [{ if, at, hint? }]`
+ *   names the place while a condition holds (the first that holds); its own
+ *   `hint`, if it has one, is shown in place of the stage's.
  * - Investigation stages (cases, addendum §16.4) may carry `mark`:
  *   'now' (the default: marked as above), 'afterHypothesis' or 'onRequest'
  *   (never derived in live play; `markAt(st)` returns the place the player
@@ -46655,7 +46850,7 @@ RB.questGuide = (function () {
   const NEEDS = 6;         // missing conditions per path
   const UNK = '\u0000?';   // an outcome not known yet (var._res after a challenge; var._res and var._enc after an encounter);
   //                         with '|x|y' after it: not known, but not x and not y (a path that went on as if the test failed)
-  const OUTCOME = new Set(['var:_res', 'var:_enc']); // the outcomes a scene can branch on
+  const OUTCOME = new Set(['var:_res', 'var:_enc', 'var:_walked']); // the outcomes a scene can branch on (_walked: `!walkto <who> pc`)
   const isUnk = (v) => typeof v === 'string' && v.startsWith(UNK);
   const OPS = { '>=': '<', '<=': '>', '!=': '=', '==': '!=', '=': '!=', '>': '<=', '<': '>=' };
 
@@ -46950,6 +47145,8 @@ RB.questGuide = (function () {
         }
         const c = f.sc.cmds[f.pc++];
         const op = c.op, a = c.args || [];
+        // (someone walking up to you, `!walkto <who> pc`: whether they arrive is not known ahead, RBN-QA-108)
+        if (op === 'walkto' && a[1] === 'pc') st.vars._walked = UNK;
         if (op === 'say' || op === 'emote' || op === 'move' || op === 'face' || op === 'faceplayer' || op === 'wait' || op === 'fade' ||
           op === 'shake' || op === 'music' || op === 'sfx' || op === 'card' || op === 'toast' || op === 'journal' || op === 'speakerless' || op === 'interlude' || op === 'sequence' || op === 'shot' ||
           // scene direction (52_staging.js): presentation only
@@ -47617,7 +47814,11 @@ RB.questGuide = (function () {
     else if (!list.length) out.push([WAIT]);
     else out.push(distinct(list).map(whereLine));
     const second = [];
-    if (stage && stage.hint) second.push({ jp: stage.hint.jp, en: stage.hint.en });
+    // the hint of the atIf entry that chose the place (the same first match targets() took), else the stage's own
+    // (RBN-QA-117: Aki holds the grille's key only while it is shut)
+    const via = stage && stage.atIf && !(stage.mark && stage.mark !== 'now') ? stage.atIf.find((x) => RB.state.test(s, x.if)) : null;
+    const hint = (via && via.hint) || (stage && stage.hint);
+    if (hint) second.push({ jp: hint.jp, en: hint.en });
     if (list.length) second.push.apply(second, distinct(list).map(doLine));
     if (second.length) out.push(second);
     return { lines: out, result: r, markable: list.length > 0 };
@@ -49329,6 +49530,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     s.vars._away = s.comp;
     s.vars._away_why = (a && a[0]) || '';
     s.comp = null;
+    // the one following you stays where they stand: never still following you while their waiting place appears (RBN-QA-103)
+    try { if (RB.world && RB.world.companionStays && RB.world.W && RB.world.W.map) RB.world.companionStays(); } catch (e) { /* never blocks the story */ }
     refresh();
   };
   RB.hooks.comp_back = () => {
@@ -49337,6 +49540,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     s.comp = s.vars._away;
     delete s.vars._away;
     delete s.vars._away_why;
+    // their figure here, if any, is the one who follows you again, from where it stands (RBN-QA-103)
+    try { if (RB.world && RB.world.companionBack && RB.world.W && RB.world.W.map) { if (RB.world.companionBack()) RB.world.placeCompanion({ near: true }); return; } } catch (e) { /* never blocks the story */ }
     refresh();
   };
   if (RB.state && RB.state.addTerm) RB.state.addTerm('away', (s, rest, op, val, num, cmp) => (op ? cmp((s.vars && s.vars._away) || 'none', op, val) : !!(s.vars && s.vars._away)));
@@ -56428,6 +56633,11 @@ RB.script = (function () {
   function position() {
     return frames.slice().reverse().map((f) => ({ sceneId: f.sc.id, pc: f.pc, called: f.called }));
   }
+  // the condition head `scene.<id>`: true while that scene is being run (on its own or called) for this campaign. For
+  // the people a scene brings on only while it lasts, the audience of a show (RBN-QA-124): runtime only, never in a
+  // save, so a load, a new map, Skip or the scene's end takes them away at the next placing of people
+  const inScene = (id) => frames.some((f) => f.sc && f.sc.id === id);
+  if (RB.state && RB.state.addTerm) RB.state.addTerm('scene', (s, rest) => !!(RB.game && s === RB.game.s) && inScene(rest));
 
   async function run(sceneId, ctx) {
     const sc = RB.content.scenes[sceneId];
@@ -56578,6 +56788,13 @@ RB.script = (function () {
         }
         case 'walkto': {
           const mx = a.find((t) => /^max=\d+$/.test(t));
+          // `!walkto <who> pc [dir] [run]`: they walk (or run) up to you (RBN-QA-108); var._walked says whether they arrived (1) or
+          // not (0: no free place within 2 of you, or the walk ran out), for a scene that tells the two apart
+          if (a[1] === 'pc') {
+            const r = RB.staging ? await RB.staging.walkNear(a[0] === 'npc' ? ctx.npc : a[0], DIRW[a[2]] ? a[2] : null, { now: a.includes('now') || hidden(), stay: a.includes('stay'), run: a.includes('run'), max: mx ? +mx.slice(4) : 0 }, ctx) : { ok: false };
+            if (RB.game.s === s) s.vars._walked = r && r.ok ? 1 : 0;
+            break;
+          }
           if (RB.staging) await RB.staging.walkTo(a[0] === 'npc' ? ctx.npc : a[0], +a[1], +a[2], DIRW[a[3]] ? a[3] : null, { now: a.includes('now') || hidden(), stay: a.includes('stay'), cross: a.includes('cross'), party: a.includes('party'), max: mx ? +mx.slice(4) : 0 }, ctx);
           break;
         }
@@ -56689,8 +56906,11 @@ RB.script = (function () {
         }
         case 'lesson': if (RB.sequence) RB.sequence.stopSkip('lesson'); RB.ui.dialogue.hide(); await RB.lessons.run(a[0], a.slice(1)); break;
         case 'teach': if (RB.sequence) RB.sequence.stopSkip('teach'); RB.ui.dialogue.hide(); await RB.lessons.grammarCard(a[0]); break;
+        // `!warp <map> <x> <y> [dir] [ambience=<preset>]`: with an ambience, the scene's light is set while the screen is
+        // dark, so the place is first seen in it (not under the light before, then changed; RBN-QA-124, Agnes 6374739355)
         case 'warp': {
-          await RB.game.transition(a[0], +a[1], +a[2], a[3] || null, { inScript: true });
+          const amb = a.find((x) => /^ambience=/.test(x)), w = a.filter((x) => !/^ambience=/.test(x));
+          await RB.game.transition(w[0], +w[1], +w[2], w[3] || null, { inScript: true, entered: amb && RB.staging ? () => RB.staging.ambience(amb.slice(9)) : null });
           break;
         }
         case 'music': RB.audio && (a[0] === '-' ? RB.audio.stopSong({ fade: 800 }) : RB.audio.playSong(a[0])); break;
@@ -56722,10 +56942,11 @@ RB.script = (function () {
         // `!refresh comp`: your companion walks with you here, or not, as the map now says (its followerAway, 50_world.js),
         // beside you if not behind (never hidden under you while there is room)
         // `!refresh gone`: the people this sends away have left (faded where they stood, or walked off) before the scene
-        // goes on: it waits for their departure, not for a time (bounded; at once when skipping; RBN-QA-093)
+        // goes on: it waits for their departure, not for a time (bounded; at once when skipping; RBN-QA-093). `!refresh gone
+        // <ms>` sets the bound for a longer walk (at most 12 s; RBN-QA-120); without it, 4 s as before
         case 'refresh':
           if (a[0] === 'arrive') { RB.world.refreshActors({ arrive: true }); await RB.world.arrivals({ now: hidden() }); }
-          else if (a[0] === 'gone') { const before = new Set(RB.world.W.leavers); RB.world.refreshActors(); await RB.world.departures(RB.world.W.leavers.filter((l) => !before.has(l)), { now: hidden() }); }
+          else if (a[0] === 'gone') { const before = new Set(RB.world.W.leavers), n = Number(a[1]), ms = n > 0 ? Math.min(12000, Math.round(n)) : undefined; RB.world.refreshActors({ watched: true }); await RB.world.departures(RB.world.W.leavers.filter((l) => !before.has(l)), { now: hidden(), ms }); }
           else if (a[0] === 'comp') RB.world.placeCompanion({ near: true }); else RB.world.refreshActors();
           break;
         case 'recruit': await RB.game.recruit(a[0], a[1]); break;
@@ -56787,7 +57008,7 @@ RB.script = (function () {
   // the world is behind an illustrated sequence's picture (src/ui/43_sequence.js)
   const hidden = () => !!(RB.sequence && RB.sequence.hidesWorld());
 
-  return { parse, add, run, runInline, isRunning, position, enVars, jpVars, splitBilingual, stageArgs };
+  return { parse, add, run, runInline, isRunning, inScene, position, enVars, jpVars, splitBilingual, stageArgs };
 })();
 
 
@@ -63644,6 +63865,7 @@ RB.game = (function () {
       RB.world.enter(mapId, x, y, dir, { sp: opts.sp });
       if (RB.town) RB.town.visited(G.s, mapId);
       RB.render.prewarm(); // build the new map's art while the screen is still dark
+      if (opts.entered) opts.entered(); // (a scene's warp: what it sets for the new place, before it is seen)
       await RB.ui.fade(false, reducedMotion() ? 80 : 220);
       if (!mine()) return;
       if (def.name && !opts.inScript && !G.s.flags['named:' + mapId]) {
@@ -66115,7 +66337,7 @@ RB.encounter = (function () {
       p.step = to;
       p.startOf = clone(p.machine);
       if (w.cost && !st.assist) st.pc = Math.max(0, st.pc - w.cost);
-      fx.push({ t: 'proc', ok: false, step: step.id, action: a.id, to: p.steps[to] ? p.steps[to].id : null, restart: to !== p.step || restart, en: w.en || 'That was not the way: the machine settles back.', cost: w.cost || 0 });
+      fx.push({ t: 'proc', ok: false, step: step.id, action: a.id, to: p.steps[to] ? p.steps[to].id : null, restart: to !== p.step || restart, en: w.en || 'That was not the way.', cost: w.cost || 0 });
     }
     return { fx, answered: st.foes.map(() => false), countered: false, perfect: ok && res.ok && res.firstTry !== false, proc: { ok } };
   }
@@ -67654,8 +67876,9 @@ RB.tasks = (function () {
     opts = opts || {};
     const known = (c) => RB.learn.kanaKnown(c);
     const hb = HOMOPHONE_BASE[ch];
-    // a homophone is completed only in a real word: the lexicon also holds deliberate non-words for spotting tasks
-    const ws = wordsWith(ch, known).filter((e) => !hb || !/^\(not a word\b/.test(e.m || ''));
+    // a kana is completed only in a real word: the lexicon also holds deliberate non-words, the wrong choices of the
+    // tasks that teach them (しほさい in ko.toro_2), never an example (RBN-QA-165; before, only for a homophone)
+    const ws = wordsWith(ch, known).filter((e) => !/^\(not a word\b/.test(e.m || ''));
     const rom = RB.kana.romaji(ch);
     const kata = RB.kana.isKata(ch);
     if (ws.length && !opts.bare) {
@@ -68276,7 +68499,7 @@ RB.exams = (function () {
     if (k === 'k') return RB.tasks.kanaStep(v, { bare: n % 2 === 1 });
     if (k === 'j') {
       const info = RB.kanjiInfo && RB.kanjiInfo.get(v);
-      const w = info && (info.words || [])[n % Math.max(1, (info.words || []).length)];
+      const len = Math.max(1, (info && info.words || []).length), w = info && (info.words || [])[n % len];
       if (!w) return null;
       // A word with more than one kanji names the target's place among its kanji (RBN audit T02): the words carry
       // only a whole-word reading, so "the kanji in がっこう" could be either. A target written twice is asked at one
@@ -68285,7 +68508,9 @@ RB.exams = (function () {
       // mark as one (and the mark is not shown when it is the answer).
       const kj = Array.from(w.w).filter((c) => RB.kana.isKanji(c));
       const at = kj.map((c, i) => (c === v ? i : -1)).filter((i) => i >= 0);
-      const nth = kj.length > 1 && at.length ? ORDINAL[at[n % at.length]] || null : null;
+      // (a target written twice is asked at each of its places in turn, one round of the word list after another; taken
+      // from n % at.length, a list of even length asked one place only: RBN audit T02's 一字一句)
+      const nth = kj.length > 1 && at.length ? ORDINAL[at[Math.floor(n / len) % at.length]] || null : null;
       const odo = kj.indexOf('々') >= 0, kana = kj.length < Array.from(w.w).length;
       const unit = odo ? 'character' : 'kanji';
       const what = nth ? 'the ' + nth + ' ' + unit + ' of ' + w.r + ' (“' + w.m + '”)' : null;
@@ -69923,6 +70148,11 @@ RB.ui.dialogue = (function () {
     else RB.portraitAnim.stop();
     const whoEl = box.querySelector('.who');
     whoEl.innerHTML = ch ? '<span class="nm">' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '<span class="nm narr">' + (line.jp || line.en ? '' : '') + '</span>';
+    // someone the scene asked to walk up to you who did not arrive, speaking while off screen (RBN-QA-108): the plate
+    // says so, and which way they are; nothing claims they came
+    const away = ch && !ch.pc && RB.staging && RB.staging.unarrivedAway ? RB.staging.unarrivedAway(line.who) : null;
+    if (away) whoEl.insertAdjacentHTML('beforeend', '<span class="offscr" data-way="' + away + '" aria-label="off screen, ' + ({ left: 'to your left', right: 'to your right', up: 'ahead of you', down: 'behind you' })[away] + '">' + ({ left: '\u2190', right: '\u2192', up: '\u2191', down: '\u2193' })[away] + ' off screen</span>');
+    box.classList.toggle('offscreen-speaker', !!away);
     box.classList.toggle('narration', !ch);
     const main = box.querySelector('.main');
     const hasJp = !!line.jp;
@@ -84739,7 +84969,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 
 /* ==== src/ui/43f_seq_ch6.js ==== */
-/* Chapter 6's illustrated sequence: Tōya's four words read in context (`sa.toya_read`,
+/* Chapter 6's illustrated sequence: Tōya's note read in context (`sa.toya_read`,
  * src/content/ch6/52_scenes_climax.js; docs/expressive/SHOTS.md §6). The Heart of the Archive after the Hush has
  * come undone: a floor of paper floating over empty darkness, the white pages settled on it like snow, warm motes
  * in the air. Kasane (they) in their pale hooded robe. Five compositions:
@@ -85304,8 +85534,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   RB.sequence.define('ch6.toya', {
-    title: { en: 'Tōya\'s four words', jp: 'トウヤ の {四語|よんご}' }, chapter: 6, scene: 'sa.toya_read', memory: true,
-    memo: { jp: '', en: 'In the Heart of the Archive, Kasane read Tōya\'s four words in context at last: an answer, and a promise kept.' },
+    title: { en: 'Tōya\'s note', jp: 'トウヤ の {書|か}き{置|お}き' }, chapter: 6, scene: 'sa.toya_read', memory: true,
+    memo: { jp: '', en: 'In the Heart of the Archive, Kasane read Tōya\'s note in context at last: an answer, and a promise kept.' },
     shots: { folio: folioShot, floor: floorShot, turned, bell: bellIns, decide },
   });
 
@@ -89657,7 +89887,11 @@ RB.ui.menu = (function () {
   }
   function stageOf(x) {
     const st = x.d.stages && x.d.stages[Math.min(x.q.stage, x.d.stages.length - 1)];
-    return st ? '<div class="obj">' + j(st.jp) + en(st.en) + '</div>' : '';
+    // a stage may word its objective differently while a condition holds (textIf: [{ if, jp, en }], the first that
+    // holds; RBN-QA-117: once the Lower House is heard, where the quest goes on)
+    const alt = st && st.textIf ? st.textIf.find((t) => RB.state.test(RB.game.s, t.if)) : null;
+    const o = alt || st;
+    return o ? '<div class="obj">' + j(o.jp) + en(o.en) + '</div>' : '';
   }
   function questDetail(x) {
     const [k, kl] = questKind(x.id, x.d);
@@ -89748,10 +89982,22 @@ RB.ui.menu = (function () {
   // The living world in the Journey (expansion W1, W5): one line for each town that has changed since you were last
   // there (never what changed; Settings can turn it off), and a road's first event you left unfinished. Only the new
   // chapters' towns and roads have either, so a six-chapter journey shows nothing here.
+  // What waits on a return (the Reedwake pilot; Robin, 2026-10-23, issue #1 6373239443; RB.town.returns): one line for
+  // the town, never what it is (a noticed spot that may open now, an earned stamp to press), in the Journey's Places
+  // and as a tag on the Map; Settings' town hints turn both off. Nothing pops up and nothing is kept: it goes once done.
+  const returnsShown = (s) => (RB.town && RB.town.returns && RB.game.settings.townHints !== 'off' ? RB.town.returns(s) : []);
+  function returnLine(r) {
+    const nm = r.name || { jp: '', en: r.town }, k = r.keys.length > 0, n = r.stamps.length;
+    const jp = k ? nm.jp + ' で {気|き}づいた もの が 、 {今|いま} なら {開|あ}けられそう だ 。' + (n ? ' {押|お}せる {判|はん} も {待|ま}って いる 。' : '') : nm.jp + ' に 、 {押|お}せる {判|はん} が {待|ま}って いる 。';
+    const st = n > 1 ? 'stamps you have earned wait to be pressed' : 'a stamp you have earned waits to be pressed';
+    const en = k ? 'Something you noticed in ' + nm.en + ' may open now' + (n ? ', and ' + st + ' there.' : '.') : st.charAt(0).toUpperCase() + st.slice(1) + ' in ' + nm.en + '.';
+    return { jp, en };
+  }
   function placesBlock(s) {
     if (!RB.town || !s.world) return '';
     const lines = [];
     if (RB.game.settings.townHints !== 'off') for (const c of RB.town.changed(s)) lines.push('<li class="entry"><span class="mark">' + I('map') + '</span><div>' + (c.name && c.name.jp ? j(c.name.jp) : '') + en((c.name ? c.name.en : c.town) + ' has changed since you were last there.') + '</div></li>');
+    for (const r of returnsShown(s)) { const L = returnLine(r); lines.push('<li class="entry ret-line" data-town="' + esc(r.town) + '"><span class="mark">' + I('map') + '</span><div>' + j(L.jp) + en(L.en) + '</div></li>'); }
     for (const r of RB.town.unfinished(s)) {
       const d = (RB.content.roadEvents || {})[r] || {}, u = d.unique || {}, m = RB.content.maps[(d.maps || [])[0]];
       lines.push('<li class="entry"><span class="mark">' + I('side') + '</span><div>' + (u.title && u.title.jp ? j(u.title.jp) : '') + en('Unfinished on ' + (m && m.name ? m.name.en : 'the road') + (u.title ? ': ' + u.title.en : '') + '. It will be there when you pass again.') + '</div></li>');
@@ -90406,14 +90652,17 @@ RB.ui.menu = (function () {
     const hereOld = places.find((p) => curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub));
     const hereId = hereOld ? hereOld.id : RB.questGuide.placeOf(s.map);
     const nextName = gm ? gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'an unexplored place')).join(', ') : '';
+    const rets = returnsShown(s).filter((r) => r.place && s.travel[r.place]);
     return '<svg class="chart" viewBox="' + chartView(chartState()).join(' ') + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Route chart. Known places: ' + esc(places.filter((p) => s.travel[p.id]).map((p) => p.name.en).join(', ') || 'none yet') +
-      (hereId && RB.content.places[hereId] ? '. You are in or near ' + esc(RB.content.places[hereId].name.en) : '') + (gm ? '. The next step of the followed quest is in ' + esc(nextName) : '') + '.">' +
-      chartInk(s, places, hereId, gm, 1, chartView(chartState())) + '</svg>';
+      (hereId && RB.content.places[hereId] ? '. You are in or near ' + esc(RB.content.places[hereId].name.en) : '') + (gm ? '. The next step of the followed quest is in ' + esc(nextName) : '') +
+      (rets.length ? '. Something may be waiting for you in ' + esc(rets.map((r) => r.name.en).join(', ')) : '') + '.">' +
+      chartInk(s, places, hereId, gm, 1, chartView(chartState()), rets) + '</svg>';
   }
   // what is drawn on the chart at a scale of k chart units to one screen pixel, its names placed inside the part of
-  // the chart in view (vb: x, y, width, height)
-  function chartInk(s, places, hereId, gm, k, vb) {
+  // the chart in view (vb: x, y, width, height); rets: the towns where something waits on your return
+  function chartInk(s, places, hereId, gm, k, vb, rets) {
     const W = CH.W, H = CH.H, NS = ' vector-effect="non-scaling-stroke"';
+    rets = rets || [];
     const ts = Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1));
     const fs = CH.LBL * ts * k;
     // paper, folds and the sea/mountain washes; the coast runs just below the coastal places, so the harbours and the
@@ -90476,6 +90725,10 @@ RB.ui.menu = (function () {
       if (next) svg += '<circle class="next-ring" cx="' + x + '" cy="' + y + '" r="' + 14 * k + '" fill="none" stroke="#c0761c" stroke-width="3" stroke-dasharray="5 3"' + NS + '/>';
       if (here) svg += '<circle class="here-pulse" cx="' + x + '" cy="' + y + '" r="' + 10 * k + '" fill="none" stroke="#a83e27" stroke-width="2.5"' + NS + '/>';
       svg += '<circle cx="' + x + '" cy="' + y + '" r="' + (here ? 6.5 : 6) * k + '" fill="' + (here ? '#a83e27' : known ? '#2a2217' : '#efe3c6') + '" stroke="' + (here ? '#fff6e2' : '#2a2217') + '" stroke-width="' + (here ? 2 : 1.5) + '"' + NS + '/>';
+      // something waiting on your return: a small paper tag tied to the place's lower right, named in its title (and in the
+      // chart's own description, and on the place's Travel row)
+      const ret = rets.find((r) => r.place === p.id);
+      if (ret) { const tx = x + 7 * k, ty = y + 5 * k; svg += '<g class="ret-tag"><title>Something may be waiting for you in ' + esc(ret.name.en) + '</title><path d="M' + tx + ' ' + (ty + 4 * k) + ' l' + 4 * k + ' ' + -4 * k + ' h' + 9 * k + ' v' + 8 * k + ' h' + -9 * k + 'z" fill="#fff8e8" stroke="#2a2217" stroke-width="1.4"' + NS + '/><circle cx="' + (tx + 4.5 * k) + '" cy="' + (ty + 4 * k) + '" r="' + 1.3 * k + '" fill="#2a2217"/></g>'; }
       // the quest marker: the same inked amber diamond as in the world, just above its place
       if (next) { const dx = x + (here ? 16 * k : 0), dy = y - (here ? 12 : 16) * k; svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 18 * k) + ' l' + 8 * k + ' ' + 9 * k + ' ' + -8 * k + ' ' + 9 * k + ' ' + -8 * k + ' ' + -9 * k + 'z" fill="#f0b43c" stroke="#2a2024" stroke-width="2"' + NS + '/>'; }
       const c = L.c;
@@ -90500,13 +90753,14 @@ RB.ui.menu = (function () {
     const st = chartState();
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => inEd(s, p));
     const gm = guideMarks(s);
+    const rets = returnsShown(s).filter((r) => r.place && s.travel[r.place]);
     const hereOld = places.find((p) => curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub));
     const hereId = hereOld ? hereOld.id : RB.questGuide.placeOf(s.map);
     const scaleK = () => { const w = svg.clientWidth || box.clientWidth || CH.W, h = svg.clientHeight || w * CH.H / CH.W; return 1 / (Math.min(w / CH.W, h / CH.H) * st.z); };
     function draw() {
       const k = scaleK(), vb = chartView(st);
       svg.setAttribute('viewBox', vb.join(' '));
-      svg.innerHTML = chartInk(s, places, hereId, gm, k, vb);
+      svg.innerHTML = chartInk(s, places, hereId, gm, k, vb, rets);
       box.classList.toggle('zoomed', st.z > 1.001);
       const out = box.querySelector('[data-cz="out"]'), inn = box.querySelector('[data-cz="in"]');
       if (out) out.disabled = st.z <= 1.001;
@@ -90621,6 +90875,7 @@ RB.ui.menu = (function () {
     const canTravel = tr.ok && RB.game.mode() === 'menu';
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id] && inEd(s, p));
     const gm = guideMarks(s);
+    const rets = returnsShown(s).filter((r) => r.place && s.travel[r.place]);
     const zb = (k, icon, label) => '<button type="button" class="ch-z" data-cz="' + k + '" aria-label="' + label + '" title="' + label + '">' + icon + '</button>';
     const ZI = { in: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
       out: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
@@ -90628,14 +90883,15 @@ RB.ui.menu = (function () {
     const chart = '<div class="chartbox" tabindex="0" aria-describedby="chart-how">' + chartSvg(s, curMap) +
       '<div class="ch-zoom" role="group" aria-label="Zoom the chart">' + zb('in', ZI.in, 'Zoom in') + zb('out', ZI.out, 'Zoom out') + zb('here', ZI.here, 'Show where you are') + '</div></div>' +
       '<p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of' + ((RB.content.roads || []).some((r) => r[2] && r[2].sea && inEd(s, r[2]) && (!r[2].if || RB.state.test(s, r[2].if))) ? '; blue dashes are ferry routes' : '') + '. The red ring is where you are.' +
-      (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + ' <span id="chart-how">' + (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches ? 'Zoom with + and − or two fingers and drag to move around; touch a place to read its name.' : 'Zoom with + and − (or Ctrl and the wheel) and drag to move around; point at a place to read its name.') + '</span></p>' +
+      (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + (rets.length ? ' A small tag by a town means something may be waiting for you there; the Journey\'s Places says what kind.' : '') + ' <span id="chart-how">' + (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches ? 'Zoom with + and − or two fingers and drag to move around; touch a place to read its name.' : 'Zoom with + and − (or Ctrl and the wheel) and drag to move around; point at a place to read its name.') + '</span></p>' +
       (gm ? '<p class="note-slip next-note">' + I('follow') + ' <span>Next step of <b>' + esc(gm.title.en) + '</b>: ' + esc(gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'a place you have not reached yet')).join(', ')) + '.</span></p>' : '');
     const list = '<h3>' + I('travel') + ' Travel <span class="count">' + places.length + ' known</span></h3>' +
       (canTravel ? '' : '<p class="note-slip warn travel-why" data-kind="' + esc(tr.kind) + '">' + esc(tr.en || 'You can’t travel quickly from here just now.') + '</p>') +
       '<ul class="entries">' + places.map((p) => {
         const here = curMap.region && p.region === curMap.region && p.hub;
         const next = gm && gm.places.includes(p.id);
-        return '<li class="entry"><span class="mark">' + I(here ? 'here' : 'map') + '</span><div><div class="t">' + j(p.name.jp) + ' <span class="en">' + esc(p.name.en) + '</span></div>' + (p.desc ? '<div class="muted small">' + esc(p.desc) + '</div>' : '') + (here ? '<div class="kind">you are in this region</div>' : '') + (next ? '<div class="kind next-kind">' + I('follow') + ' next step of the quest you follow</div>' : '') + '</div>' +
+        const ret = rets.find((r) => r.place === p.id);
+        return '<li class="entry"><span class="mark">' + I(here ? 'here' : 'map') + '</span><div><div class="t">' + j(p.name.jp) + ' <span class="en">' + esc(p.name.en) + '</span></div>' + (p.desc ? '<div class="muted small">' + esc(p.desc) + '</div>' : '') + (here ? '<div class="kind">you are in this region</div>' : '') + (next ? '<div class="kind next-kind">' + I('follow') + ' next step of the quest you follow</div>' : '') + (ret ? '<div class="kind ret-kind">something may be waiting for you here</div>' : '') + '</div>' +
           (canTravel ? '<button class="pbtn" data-go="' + p.id + '">Travel</button>' : '<span></span>') + '</li>';
       }).join('') + '</ul><p class="muted small">Roads you have walked can be travelled quickly.</p>';
     if (two) { A.innerHTML = nav + chart; B.innerHTML = list; } else { A.innerHTML = nav + chart + list; }
@@ -90727,7 +90983,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, returnLine, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits
@@ -91996,7 +92252,7 @@ RB.ui.settings = (function () {
     strokePractice: () => sw('strokePractice', 'Stroke-order notes after handwriting', 'Off keeps handwriting lenient: only the shape is checked.'),
     questGuide: () => radios('questGuide', 'Quest guidance', [['full', 'Markers and hints', { i: 'mark' }], ['hints', 'Hints only', { i: 'nudge' }], ['off', 'Objectives only', { i: 'none' }]], null,
       'Markers point to where the followed quest’s next step happens, in the world and on the Map. Hints are nudges you open in the Journey. Asking for them is free and never counts as a mistake.'),
-    townHints: () => radios('townHints', 'Towns that have changed', [['on', 'A line in the Journey'], ['off', 'Off']], null, 'When a town you know has changed since you were last there, the Journey says so in one line. It never says what changed.'),
+    townHints: () => radios('townHints', 'Town hints', [['on', 'Shown'], ['off', 'Off']], null, 'When a town you know has changed since you were last there, the Journey says so in one line. It never says what changed. In Reedwake it also says when something you noticed there may open now, or a stamp you have earned waits to be pressed, and the map tags the town.'),
     // (expansion E17, C-65: how a grave outcome is told; it never changes what happened or what follows)
     outcomeView: () => radios('outcomeView', 'Grave outcomes', [['shown', 'Shown'], ['summarised', 'Summarised']], null, 'Rarely, a side story can end badly for someone in it. Shown tells it as it happens, with restraint; Summarised tells it in a sentence. What happened, and the talk with your companion afterwards, are the same either way.'),
     // (expansion P13, R3: towel-wrapped and nonsexual either way; presentation only)
@@ -117127,7 +117383,7 @@ RB.encScreen = (function () {
     if (!P) return '';
     const D = st.enc.def.procedure;
     const stp = P.steps[P.step];
-    return '<section class="enc-machine" aria-label="The machine"><h3>' + I('needle') + '<span>' + esc(st.enc.def.name.en) + '</span><span class="count">' + (P.done ? 'Done' : 'Step ' + (P.step + 1) + ' of ' + P.steps.length) + '</span></h3>' +
+    return '<section class="enc-machine" aria-label="Where things stand"><h3>' + I('needle') + '<span>' + esc(st.enc.def.name.en) + '</span><span class="count">' + (P.done ? 'Done' : 'Step ' + (P.step + 1) + ' of ' + P.steps.length) + '</span></h3>' +
       '<dl class="enc-parts">' + (D.show || []).map((sh) => { const v = sh.values[P.machine[sh.key]] || { en: String(P.machine[sh.key]) }; return '<div><dt>' + RB.ui.jhtml(sh.label.jp || '') + ' <span class="en">' + esc(sh.label.en) + '</span></dt><dd>' + (v.jp ? RB.ui.jhtml(v.jp) + ' ' : '') + '<span class="en">' + esc(v.en) + '</span></dd></div>'; }).join('') + '</dl>' +
       (stp && !P.done ? '<div class="enc-notice paper"><div class="slip-lab">The notice</div><div class="en-jp">' + RB.ui.jhtml(stp.text.jp) + '</div></div>' : '') + '</section>';
   }
@@ -117174,7 +117430,9 @@ RB.encScreen = (function () {
       while (!st.over) {
         const pick = await choose(st, fr, log);
         if (pick === 'away') {
-          const r = await RB.ui.confirm(st.enc.proc ? 'Step away? The machine stays as you leave it; you can come back whenever you like.' : 'Step away from this? Nothing is lost.', ['Step away', 'Stay']);
+          // these words and the footer's hold for every procedure: how far a wrong step goes back depends on its restart
+          // ('start' or 'stable'), and stepping away keeps where it stands unless the procedure says keep: false (RBN-QA-112)
+          const r = await RB.ui.confirm(st.enc.proc ? (st.enc.def.procedure.keep === false ? 'Step away? Next time, this starts again from the beginning.' : 'Step away? It stays as you leave it; you can come back whenever you like.') : 'Step away from this? Nothing is lost.', ['Step away', 'Stay']);
           if (r === 0) { result = 'flee'; break; }
           continue;
         }
@@ -117269,7 +117527,7 @@ RB.encScreen = (function () {
       fr.leaf.innerHTML = '<div class="enc-grid">' + '<div class="enc-col">' + peopleHtml(st) + machineHtml(st) + agreementHtml(st) + recordHtml(st) + '</div>' +
         '<div class="enc-col">' + logHtml(log) + '<section class="enc-choices" aria-label="What you can do"><h3>' + I('words') + '<span>What will you do?</span></h3><div class="rcards">' + shownOrder(st, cards).map((i) => cardHtml(cards[i], i)).join('') + '</div></section></div></div>';
       sayNewest(fr.leaf, log);
-      fr.foot.innerHTML = '<span class="muted small">' + esc(kind === 'machine' ? 'A wrong step sends the machine back; misreading the notice only means trying again.' : 'Nothing is timed. It will come to an end, one way or another.') + '</span>';
+      fr.foot.innerHTML = '<span class="muted small">' + esc(kind === 'machine' ? 'A wrong action may undo progress; a language mistake only means trying again.' : 'Nothing is timed. It will come to an end, one way or another.') + '</span>';
       let done = false;
       const fin = (v) => { if (done) return; done = true; fr.el.onclick = null; resolve(v); };
       fr.el.onclick = (e) => {
@@ -136665,7 +136923,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     chill: {
       F: [{ jp: '$tgt が さむく なる ！', en: '$tgtEn is going to freeze!' }],
       E: [{ jp: '{冷|つめ}たい {息|いき} を $tgt に かけよう と して いる 。', en: 'It is about to breathe cold air on $tgtEn.' }, { jp: '$other に は {息|いき} を かけない 。', en: 'It won\'t breathe on $otherEn.', neg: true }],
-      I: [{ jp: '{凍|こお}える よう な {息|いき} が 、 $tgt を ねらって いる 。', en: 'A freezing breath is aimed at $tgtEn.' }],
+      I: [{ jp: '{凍|こご}える よう な {息|いき} が 、 $tgt を ねらって いる 。', en: 'A freezing breath is aimed at $tgtEn.' }],
       A: [{ jp: '{骨|ほね} まで {凍|い}てつく よう な {冷気|れいき} が 、 $tgt に {迫|せま}る 。', en: 'A chill that freezes to the bone closes in on $tgtEn.' }],
     },
     silence: {
@@ -140098,7 +140356,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   add('case:parcel', 'mio', 'helped', [L('{分|わ}からない とき に {聞|き}く の は 、 {大事|だいじ} な こと です 。 {小包|こづつみ} も 、 ちゃんと {届|とど}きました 。', 'Asking when you don\'t know is important. And the parcel got where it was going.', 'smile')]);
   add('case:parcel', 'ren', 'reasoned', [L('{宛名|あてな} 、 {記録|きろく} 、 {今|いま} の {道具|どうぐ} 。 {三|みっ}つ が {一|ひと}つ の {場所|ばしょ} を {指|さ}した 。 {灯|ひ} の {名|な} を {読|よ}む の と {同|おな}じ {手順|てじゅん} です 。', 'The address, the record, the tools as they are now: all three pointed to one place. The same way one reads a lantern\'s name.')]);
   add('case:parcel', 'ren', 'early', [L('{印|しるし} を {覚|おぼ}えて いた の です ね 。 {私|わたし} は {道|みち} は {覚|おぼ}えられません が 、 {印|しるし} なら …… {少|すこ}し は 。', 'You remembered the mark. I can\'t remember roads, but marks… a little.')]);
-  add('case:parcel', 'ren', 'helped', [L('{教|おし}わった {道|みち} で も 、 {歩|ある}いた の は あなた です 。', 'Even on a road someone pointed out, you were the one who walked it.')]);
+  add('case:parcel', 'ren', 'helped', [L('{教|おそ}わった {道|みち} で も 、 {歩|ある}いた の は あなた です 。', 'Even on a road someone pointed out, you were the one who walked it.')]);
   add('case:parcel', 'suzu', 'reasoned', [L('{伏線|ふくせん} を ぜんぶ {回収|かいしゅう} ！ {帳簿|ちょうぼ} も {合|あ}った し 、 {気持|きも}ち いい わ 。', 'Every thread tied up! And the books balance. Lovely.', 'laugh')]);
   add('case:parcel', 'suzu', 'early', [L('{最後|さいご} の {幕|まく} まで {待|ま}たず に {犯人|はんにん} を {当|あ}てる {観客|かんきゃく} 、 いる の よ ね 。 あなた みたい な 。', 'There\'s always someone in the audience who guesses before the last act. Someone like you.', 'smirk')]);
   add('case:parcel', 'suzu', 'helped', [L('{台本|だいほん} を {覗|のぞ}いて も 、 {舞台|ぶたい} は {舞台|ぶたい} 。 {届|とど}けた の は {本物|ほんもの} よ 。', 'Peek at the script if you like; the performance is still real. That was a real delivery.', 'smile')]);
@@ -141886,7 +142144,7 @@ narr: {灯|あか}り が ともる 。 {紙|かみ} の {上|うえ} で 、 {�
 !call rw.ren_lanterns_done
 !end
 :norecord
-narr: {灯|あか}り の {紙|かみ} は {白|しろ}い 。 {何|なに} と {書|か}けば いい か 、 {記録|きろく} が ない と わからない 。 {橋|はし} の {近|ちか}く の {灯守|ひもり} が {持|も}って いる かも しれない 。 || The lantern's paper is blank. Without a record, you don't know what to write. The keeper near the bridge might have one.
+narr: {灯|あか}り の {紙|かみ} は {白|しろ}い 。 {何|なん} と {書|か}けば いい か 、 {記録|きろく} が ない と わからない 。 {橋|はし} の {近|ちか}く の {灯守|ひもり} が {持|も}って いる かも しれない 。 || The lantern's paper is blank. Without a record, you don't know what to write. The keeper near the bridge might have one.
 
 @scene rw.lantern_bridge
 !if !rw_met_ren -> norecord
@@ -145900,7 +146158,7 @@ narr: {二|ふた}つ の ラベル を {比|くら}べて みる 。 {片方|�
 wataru[worry]: …… {何|なに} か 、 {分|わ}かりました か 。 || …Did you find anything?
 !choice
 * この ラベル 、 {新|あたら}しい です ね 。 || This label is new, isn't it? -> ask
-* まだ {何|なに} とも 。 || Nothing definite yet. -> quiet
+* まだ {何|なん} とも 。 || Nothing definite yet. -> quiet
 :ask
 !gesture wataru flinch pc
 wataru[surprise]: え 、 ええ 。 {嵐|あらし} の {後|あと} に {貼|は}り{直|なお}した もの です 。 {壊|こわ}れた {荷|に} は {分|わ}けて おかない と …… 。 {港長|こうちょう} も ご{存|ぞん}じ です よ 。 || Y-yes. I put those on after the storm. Damaged goods have to be kept separate… The harbourmaster knows all about it.
@@ -151756,7 +152014,7 @@ co_tokiwa: {里|さと} の {皆|みな} は 、 {今|いま} 、 {笑|わら}�
 co_tokiwa: それ を {記録係|きろくがかり} の {私|わたし} が 、 {確|たし}か でも ない {証拠|しょうこ} で {決|き}めて いい の です か 。 || Should I — the recorder — decide that, on evidence that isn't even certain?
 !gesture pc listen 6,9
 narr: {扉|とびら} が {開|あ}いた 。 {水番|みずばん} の タモツ が 、 {泥|どろ} の ついた {長靴|ながぐつ} の まま {入|はい}って きた 。 || The door opens. Tamotsu, the channel keeper, walks in without taking off his muddy boots.
-co_tamotsu: トキワ 。 {水路|すいろ} が {三分|さんぶ} の {一|いち} を {切|き}った 。 {雨|あめ} は {四十日|よんじゅうにち} {降|ふ}って ない 。 || Tokiwa. The channel's below a third. It hasn't rained in forty days.
+co_tamotsu: トキワ 。 {水路|すいろ} が {三分|さんぶん} の {一|いち} を {切|き}った 。 {雨|あめ} は {四十日|よんじゅうにち} {降|ふ}って ない 。 || Tokiwa. The channel's below a third. It hasn't rained in forty days.
 !gesture co_tamotsu folded hold
 co_tamotsu: {話|はなし} は {外|そと} で {聞|き}こえた 。 {火事|かじ} が あった か なかった か 、 {俺|おれ} に は {分|わ}からん 。 だが {今|いま} {上|うえ} で {火|ひ} が {出|で}たら 、 {止|と}める もの は {何|なに} も ない 。 {火除|ひよ}け{道|みち} は {草|くさ} だらけ だ 。 || I heard you from outside. Whether there was a fire or not, I couldn't say. But if fire broke out up there now, nothing would stop it. The firebreaks are all weeds.
 !gesture co_tokiwa glasses
@@ -152727,7 +152985,7 @@ co_goro: {鐘|かね} の {音|おと} が {遠|とお}く まで {届|とど}�
 !if co_records_done&!co_upper_open -> gate
 !if co_chronicle_read -> mid
 !gesture co_tamotsu point 34,22
-co_tamotsu: {水番|みずばん} の タモツ だ 。 …… {水路|すいろ} を {見|み}て みろ 。 {三分|さんぶ} の {一|いち} しか ない 。 {雨|あめ} が {四十日|よんじゅうにち} {降|ふ}って ない 。 || I'm Tamotsu, the channel keeper. …Look at the channel. A third full. No rain in forty days.
+co_tamotsu: {水番|みずばん} の タモツ だ 。 …… {水路|すいろ} を {見|み}て みろ 。 {三分|さんぶん} の {一|いち} しか ない 。 {雨|あめ} が {四十日|よんじゅうにち} {降|ふ}って ない 。 || I'm Tamotsu, the channel keeper. …Look at the channel. A third full. No rain in forty days.
 !look co_tamotsu pc
 !gesture co_tamotsu size
 co_tamotsu: {変|へん} な {水路|すいろ} だ と {思|おも}わない か 。 {田畑|たはた} に {水|みず} を {引|ひ}く だけ なら 、 この {半分|はんぶん} の {幅|はば} で {足|た}りる 。 {誰|だれ} が 、 {何|なん} の ため に こんな {幅|はば} に した ん だ か 。 || Strange channel, don't you think? For watering fields, half this width would do. Who made it this wide, and why?
@@ -152921,7 +153179,7 @@ co_tokiwa: あの {夜|よる} 、 {窯|かま} の {火|ひ} を {見|み}て �
 co_tokiwa: {火|ひ} の {粉|こ} が {上|うえ} の {段|だん} へ {飛|と}びました 。 トモエ さん は {私|わたし} に {子|こ}ども たち を {連|つ}れて {逃|に}げろ と {言|い}い 、 {自分|じぶん} は {水門|すいもん} へ {上|のぼ}って {行|い}きました 。 || Sparks flew onto the upper terraces. Tomoe told me to take the children and run, and climbed to the water gate herself.
 co_tokiwa: {五人|ごにん} が {亡|な}くなり 、 {工房|こうぼう} {通|どお}り の {五軒|ごけん} が {焼|や}けました 。 {冬|ふゆ} に 、 {白|しろ}い {服|ふく} の {旅人|たびびと} が {来|き}て 、 {悲|かな}しみ を {預|あず}かる と {言|い}いました 。 {私|わたし} は {頼|たの}みました 。 {頼|たの}んだ {人|ひと} は 、 {他|ほか} に も いました 。 || Five people died, and the five houses of the workshop row burned. That winter a traveller in white came and offered to keep our grief. I asked. I was not the only one.
 co_tokiwa[sad]: {悲|かな}しみ だけ を {預|あず}けた つもり でした 。 でも {静寂|しじま} は 、 {火事|かじ} ごと {持|も}って {行|い}った 。 {記録|きろく} も 、 {火除|ひよ}け{道|みち} の {草刈|くさか}り も 。 || I thought we were handing over only the grief. But the Hush took the whole fire — the record, and the cutting of the firebreaks with it.
-co_tamotsu: …… {雨|あめ} は {四十日|よんじゅうにち} {降|ふ}って ない 。 {水路|すいろ} は {三分|さんぶ} の {一|いち} 。 {火除|ひよ}け{道|みち} は {草|くさ} だらけ だ 。 {今|いま} {火|ひ} が {出|で}たら 、 {下|した} の {里|さと} まで {来|く}る 。 || …No rain for forty days. The channel's at a third. The firebreaks are weeds. If fire broke out now, it would reach the lower village.
+co_tamotsu: …… {雨|あめ} は {四十日|よんじゅうにち} {降|ふ}って ない 。 {水路|すいろ} は {三分|さんぶん} の {一|いち} 。 {火除|ひよ}け{道|みち} は {草|くさ} だらけ だ 。 {今|いま} {火|ひ} が {出|で}たら 、 {下|した} の {里|さと} まで {来|く}る 。 || …No rain for forty days. The channel's at a third. The firebreaks are weeds. If fire broke out now, it would reach the lower village.
 !shot confess ask
 co_tokiwa: {今夜|こんや} 、 {決|き}めて ください 。 この {火事|かじ} を 、 {年代記|ねんだいき} に {書|か}き{戻|もど}す か どう か 。 || Tonight I ask you to decide: do we write this fire back into the chronicle, or not?
 co_tokiwa: {書|か}き{戻|もど}せば 、 {皆|みな} {思|おも}い{出|だ}します 。 {亡|な}くした {人|ひと} の こと も 、 {痛|いた}み も 。 {書|か}かなければ 、 {明日|あした} の {祭|まつ}り は 、 {例年|れいねん} どおり {楽|たの}しい まま です 。 || Write it back, and everyone will remember — the people we lost, and the pain. Leave it out, and tomorrow's festival will be as happy as every year.
@@ -153432,7 +153690,7 @@ co_fusa: {御礼|おれい} に 、 {干|ほ}し{柿|がき} を ひと{束|た�
 !end
 :eve
 !gesture co_fusa guard
-co_fusa[worry]: トキワ さん が 、 {夕方|ゆうがた} {広場|ひろば} に {集|あつ}まれ って 。 {何|なに} の {話|はなし} かしら 。 {胸|むね} が ざわざわ する の 。 || Tokiwa wants everyone in the square at dusk. I wonder what it's about. My chest feels all fluttery.
+co_fusa[worry]: トキワ さん が 、 {夕方|ゆうがた} {広場|ひろば} に {集|あつ}まれ って 。 {何|なん} の {話|はなし} かしら 。 {胸|むね} が ざわざわ する の 。 || Tokiwa wants everyone in the square at dusk. I wonder what it's about. My chest feels all fluttery.
 
 @scene co.fusa_first
 # Staged: Fusa's open-handed welcome, her laugh at your luck, and a look from the aired futons to you; with
@@ -153454,7 +153712,7 @@ co_fusa[smile]: {今年|ことし} から 、 {旗|はた} の {一枚|いちま
 # Staged: Fusa looks from the bucket and salve at the front desk to you; with Mio, she leans in to the labels;
 # Fusa's head goes down over what she left on the mountain.
 !gesture co_fusa lookbetween 3,4 and=pc
-co_fusa: {宿|やど} の {帳場|ちょうば} に 、 {新|あたら}しい {桶|おけ} と {火傷|やけど} の {薬|くすり} を {置|お}いた の 。 {旅|たび} の {薬師|くすし} さん に {教|おし}わった {作|つく}り{方|かた} で ね 。 || I keep a new bucket and burn salve at the front desk now. Made the way a travelling apothecary taught me.
+co_fusa: {宿|やど} の {帳場|ちょうば} に 、 {新|あたら}しい {桶|おけ} と {火傷|やけど} の {薬|くすり} を {置|お}いた の 。 {旅|たび} の {薬師|くすし} さん に {教|おそ}わった {作|つく}り{方|かた} で ね 。 || I keep a new bucket and burn salve at the front desk now. Made the way a travelling apothecary taught me.
 ?(comp=mio) !gesture comp observe 3,4
 ?(comp=mio) comp[smile]: …… ちゃんと {作|つく}って くれて いる んです ね 。 ラベル まで 。 || …You've been making it properly. Labels and all.
 ?(end_mem_choose) !gesture co_fusa lowered
@@ -154285,7 +154543,8 @@ comp[smirk]: {戻|もど}る {時|とき} は {走|はし}る ぞ 。 {文句|�
 comp: {上|うえ} で {何|なに} か が {熱|ねつ} を {溜|た}めてる 。 {水|みず} か {氷|こおり} 。 {札|ふだ} を {二枚|にまい} {持|も}ってる の は 、 {心強|こころづよ}い な 。 || Something up there is building heat. Water or ice. Good to have two cards to play.
 
 @scene co.b_nao4
-comp: {鐘|かね} の {話|はなし} 、 {聞|き}いた か 。 {皆|みな} 、 {鐘|かね} が {鳴|な}ったら {水路|すいろ} へ {走|はし}った って 。 {頭|あたま} が {忘|わす}れて も 、 {足|あし} が {道|みち} を {覚|おぼ}えてた 。 || Heard about the bell? Everyone ran to the channel when it rang. Their heads forgot; their feet remembered the way.
+?(co_bell_rung) comp: {鐘|かね} が {鳴|な}った {時|とき} 、 {皆|みな} 、 {水路|すいろ} へ {走|はし}った な 。 {頭|あたま} が {忘|わす}れて も 、 {足|あし} が {道|みち} を {覚|おぼ}えてた 。 || Everyone ran to the channel when the bell rang. Their heads forgot; their feet remembered the way.
+?(!co_bell_rung) comp: {頭|あたま} で {思|おも}い{出|だ}せなくて も 、 {足|あし} が {道|みち} を {覚|おぼ}えてる こと は ある ん だ よ な 。 || Sometimes your feet remember the way even when you can't call it to mind.
 comp: {配達|はいたつ} も そう だ 。 {宛名|あてな} が {消|き}えて も 、 {足|あし} が {家|いえ} を {覚|おぼ}えてる こと が ある 。 || Deliveries are like that. Even when the address fades, your feet sometimes remember the house.
 comp: …… {今夜|こんや} の {集|あつ}まり 、 {重|おも}い {荷物|にもつ} に なる な 。 {一緒|いっしょ} に {運|はこ}ぼう 。 || …Tonight's gathering is going to be a heavy parcel. Let's carry it together.
 
@@ -155912,7 +156171,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Tetsuji at his pen gate.
       { id: 'tetsuji', x: 9, y: 27, dir: 'right', if: '!sb_evening|post', talk: [{ if: 'post', scene: 'sb.tetsuji_post' }, { scene: 'sb.tetsuji' }] },
       // Children by their sculptures.
-      { id: 'kanta', x: 19, y: 19, dir: 'down', wander: 1, if: '!sb_evening|post', talk: [{ if: 'post', scene: 'sb.kanta_post' }, { scene: 'sb.kanta' }] },
+      // (an open snow-sculpture contest first, after the story too: his news after the story came first, and the judging
+      // could never be finished; RBN-QA-162, Agnes 6373739758)
+      { id: 'kanta', x: 19, y: 19, dir: 'down', wander: 1, if: '!sb_evening|post', talk: [{ if: 'quest.sb_snow=active', scene: 'sb.kanta' }, { if: 'post', scene: 'sb.kanta_post' }, { scene: 'sb.kanta' }] },
       { id: 'chiyo', x: 21, y: 20, dir: 'down', if: '!sb_evening|post', talk: [{ if: 'post', scene: 'sb.chiyo_post' }, { scene: 'sb.chiyo' }] },
       { id: 'rokuta', x: 25, y: 20, dir: 'left', wander: 1, if: '!sb_evening|post', talk: [{ if: 'post', scene: 'sb.rokuta_post' }, { scene: 'sb.rokuta' }] },
       // Denji ice-fishing on the stream.
@@ -155934,7 +156195,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'sousuke', x: 26, y: 19, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_sousuke' },
       // After the story: Hoshino on his bench if he stayed.
       { id: 'hoshino', x: 36, y: 9, dir: 'down', if: 'post&!sb_hoshino_goes', talk: 'sb.hoshino_post' },
-      { id: 'fuki', x: 23, y: 16, dir: 'down', if: 'ch4_done&!sb_evening', talk: [{ if: 'post', scene: 'sb.fuki_post' }, { if: 'quest.sb_bell&!quest.sb_bell=done', scene: 'sb.fuki' }, { scene: 'sb.fuki_after' }] },
+      // (an open Bell-Post first, after the story too: her news after the story came first, and a bell rung at noon
+      // could never be reported to her; RBN-QA-161, Agnes 6373640071, Local CL-243, Cloud CC-150 §1)
+      { id: 'fuki', x: 23, y: 16, dir: 'down', if: 'ch4_done&!sb_evening', talk: [{ if: 'quest.sb_bell=active', scene: 'sb.fuki' }, { if: 'post', scene: 'sb.fuki_post' }, { scene: 'sb.fuki_after' }] },
     ],
     exits: [
       { x: 22, y: 35, w: 2, h: 1, to: 'sb.road', tx: 18, ty: 1, dir: 'down' },
@@ -156718,10 +156981,12 @@ RB.script.add(`
 @scene sb.fuki
 # Staged: Fuki (in bed with her cold, a cane at hand) nods hello, shakes her head over the blank board, looks
 # from her notebook to you; her laugh and her nod for help; when the noon bell has rung she laughs and hands
-# you the cord she braided, side-on, and nods over the storm bell.
+# you the cord she braided, side-on, and nods over the storm bell. After the chapter she is up and about, by the post
+# in the square: an open Bell-Post comes to her there (the reminder from stage 0, as the first meeting is over), and
+# the report's first line is said where she stands (RBN-QA-161).
 !if quest.sb_bell=done -> done
 !if quest.sb_bell>=2 -> report
-!if quest.sb_bell>=1 -> go
+!if quest.sb_bell=active -> go
 !gesture fuki nod pc
 fuki[tired]: ごほっ …… 。 おや 、 {旅|たび} の {人|ひと} かい 。 {見苦|みぐる}しい ところ を 。 || Koff… Oh, travellers, is it. Forgive the state of me.
 fuki: {鐘撞|かねつ}き の フキ だよ 。 {広場|ひろば} の {鐘|かね} を 、 {五十年|ごじゅうねん} {鳴|な}らして きた 。 {朝|あさ} 、 {昼|ひる} 、 {夕方|ゆうがた} 。 {吹雪|ふぶき} の とき も 、 {迷子|まいご} の とき も 。 || I'm Fuki, keeper of the bell. I've rung the bell in the square for fifty years. Morning, noon and evening. For storms, and for people lost.
@@ -156740,7 +157005,7 @@ fuki[smile]: ありがたい 。 {帳面|ちょうめん} は そこ の {本|�
 !end
 :no
 !gesture fuki nod pc
-fuki: いい よ 、 いい よ 。 {昼|ひる} ごはん が {遅|おそ}れる だけ さ 。 …… {村|むら} じゅう の ね 。 || Fine, fine. Lunch will just be late. …For the whole hamlet.
+fuki: いい よ 、 いい よ 。 {昼|ひる} ごはん が {遅|おく}れる だけ さ 。 …… {村|むら} じゅう の ね 。 || Fine, fine. Lunch will just be late. …For the whole hamlet.
 !end
 :go
 !gesture fuki lookbetween 5,4 and=pc
@@ -156748,7 +157013,8 @@ fuki: {帳面|ちょうめん} は {読|よ}めた かい 。 {昼|ひる} の {
 !end
 :report
 !gesture fuki laugh
-fuki[laugh]: {聞|き}こえた よ 。 {昼|ひる} の {鐘|かね} 。 {二|ふた}つ 、 きれい に 。 {五十年|ごじゅうねん} ぶり に 、 {寝床|ねどこ} で {鐘|かね} を {聞|き}いた よ 。 || I heard it. The noon bell. Two strokes, clean. First time in fifty years I've heard the bell from my bed.
+?(!ch4_done) fuki[laugh]: {聞|き}こえた よ 。 {昼|ひる} の {鐘|かね} 。 {二|ふた}つ 、 きれい に 。 {五十年|ごじゅうねん} ぶり に 、 {寝床|ねどこ} で {鐘|かね} を {聞|き}いた よ 。 || I heard it. The noon bell. Two strokes, clean. First time in fifty years I've heard the bell from my bed.
+?(ch4_done) fuki[laugh]: {聞|き}こえた よ 。 {昼|ひる} の {鐘|かね} 。 {二|ふた}つ 、 きれい に 。 {五十年|ごじゅうねん} {鳴|な}らして きて 、 {下|した} から {聞|き}く の は {初|はじ}めて だ よ 。 || I heard it. The noon bell. Two strokes, clean. Fifty years of ringing it, and the first time I've listened from down here.
 !prop fuki cord
 !gesture fuki handover pc
 !gesture pc receive fuki
@@ -159173,7 +159439,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         hint: { en: 'Who brews amazake for guests — and keeps tabs "until spring"?' }, why: { en: 'Rice and koji for amazake — Yae\'s inn.' } },
       { to: 'denji', items: ['v:橋'], text: { F: { jp: 'せんせい の はし は 、 おおみず でも だいじょうぶ でした 。', en: 'Your bridge held up, even in the flood.' }, E: { jp: '{先生|せんせい} に {教|おそ}わった {作|つく}り{方|かた} の {橋|はし} は 、 {大水|おおみず} でも {流|なが}されません でした 。', en: 'The bridge built the way you taught me wasn\'t washed away, even in the flood.' }, I: { jp: '{親方|おやかた} の {言|い}う とおり 、 {柱|はしら} を {一本|いっぽん} {増|ふ}やして おいて よかった です 。 {秋|あき} の {大水|おおみず} に も {耐|た}えました 。', en: 'Just as you said, master, I\'m glad I added one more post. It stood up to the autumn flood.' }, A: { jp: '{親方|おやかた} に 「 {無駄|むだ} だ 」 と {笑|わら}われた {裏|うら} の {柱|はしら} こそ が 、 {秋|あき} の {大水|おおみず} で {橋|はし} を {救|すく}いました 。 {親方|おやかた} も {昔|むかし} 、 {同|おな}じ こと を {言|い}われた と {伺|うかが}って います 。', en: 'The back post you laughed at as "a waste" was precisely what saved the bridge in the autumn flood. I hear someone once said the same to you, too.' } },
         hint: { en: 'Who used to build things, and taught others?' }, why: { en: 'Bridges and posts — Denji, the old carpenter.' } },
-      { to: 'natsume', items: ['v:会う'], text: { F: { jp: 'はる に ヤギ を かい に いきます 。 また あいたい です 。', en: 'I\'ll come to buy goats in spring. I\'d like to see you again.' }, E: { jp: '{春|はる} に ヤギ を {買|か}い に {行|い}きます 。 その とき 、 また {会|あ}えます か 。', en: 'I\'ll come up to buy goats in spring. Can we meet again then?' }, I: { jp: 'ヤギ を {見|み}に {行|い}く と いう の は {口実|こうじつ} で 、 {本当|ほんとう} は {夜|よる} の ヤギ {番|ばん} の {話|はなし} を また {聞|き}きたい の です 。', en: '"Coming to see the goats" is an excuse. Really, I want to hear more stories about the night goat-watch.' }, A: { jp: '{春|はる} の ヤギ {市|いち} に は {必|かなら}ず {参|まい}ります 。 {目当|めあ}て が ヤギ で は ない こと は 、 {伯父|おじ} {上|うえ} に は {内緒|ないしょ} に して ください 。', en: 'I will be at the spring goat market without fail. Please don\'t tell your uncle that it isn\'t the goats I\'m coming for.' } },
+      { to: 'natsume', items: ['v:会う'], text: { F: { jp: 'はる に ヤギ を かい@買う に いきます 。 また あいたい です 。', en: 'I\'ll come to buy goats in spring. I\'d like to see you again.' }, E: { jp: '{春|はる} に ヤギ を {買|か}い に {行|い}きます 。 その とき 、 また {会|あ}えます か 。', en: 'I\'ll come up to buy goats in spring. Can we meet again then?' }, I: { jp: 'ヤギ を {見|み}に {行|い}く と いう の は {口実|こうじつ} で 、 {本当|ほんとう} は {夜|よる} の ヤギ {番|ばん} の {話|はなし} を また {聞|き}きたい の です 。', en: '"Coming to see the goats" is an excuse. Really, I want to hear more stories about the night goat-watch.' }, A: { jp: '{春|はる} の ヤギ {市|いち} に は {必|かなら}ず {参|まい}ります 。 {目当|めあ}て が ヤギ で は ない こと は 、 {伯父|おじ} {上|うえ} に は {内緒|ないしょ} に して ください 。', en: 'I will be at the spring goat market without fail. Please don\'t tell your uncle that it isn\'t the goats I\'m coming for.' } },
         hint: { en: 'Not a business letter. Who watches the goats at night — and whose uncle owns them?' }, why: { en: 'Someone wants to see the night goat-watch again — Natsume. (Tetsuji must not find out.)' } },
     ] };
 
@@ -161900,7 +162166,7 @@ narr: {窓口|まどぐち} の {台|だい} 。{判子|はんこ} が {二|ふ�
 ?(lf_bell_rung) narr: {三|みっ}つ {目|め} の {判子|はんこ} が {増|ふ}えて いる 。{真新|まあたら}しい 「{却下|きゃっか}」 。|| A third stamp has appeared. A brand-new "Rejected".
 
 @scene lf.clerk_desk
-narr: {誰|だれ} か の {机|つくえ} 。{写|うつ}し{直|なお}し の {台帳|だいちょう} が {積|つ}んで ある 。{元|もと} の {台帳|だいちょう} は 、{横|よこ} の {箱|はこ} に 「{廃棄|はいき}」 と {書|か}かれて {入|い}って いる 。|| Someone's desk, piled with recopied ledgers. The originals are in a box beside it marked "for disposal".
+narr: {誰|だれ} か の {机|つくえ} 。{写|うつ}し{直|なお}し の {台帳|だいちょう} が {積|つ}んで ある 。{元|もと} の {台帳|だいちょう} は 、{横|よこ} の {箱|はこ} に 「{廃棄|はいき}」 と {書|か}かれて {入|はい}って いる 。|| Someone's desk, piled with recopied ledgers. The originals are in a box beside it marked "for disposal".
 ?(lf_bell_rung) narr: 「{廃棄|はいき}」 の {字|じ} に {線|せん} が {引|ひ}かれ 、「{保存|ほぞん}」 と {書|か}き{直|なお}して ある 。|| "For disposal" has been struck through and rewritten: "Keep".
 
 @scene lf.returned_letters
@@ -164758,6 +165024,8 @@ RB.lex.add(RB.lex.parseTable(`
 果て|はて|n|I|the end, limit (of something far)
 郵便受け|ゆうびんうけ|n|I|mailbox, letterbox
 何千|なんぜん|n|I|thousands
+何百回|なんびゃっかい|n|I|hundreds of times
+一語|いちご|n|I|one word|{一語|いちご}{残|のこ}らず: every last word
 郵便局|ゆうびんきょく|n|E|post office
 郵便|ゆうびん|n|E|mail, post
 請求票|せいきゅうひょう|n|A|request slip, call slip (in a library)
@@ -165066,8 +165334,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   C.notes.sa_toya = {
     title: T('「必要なら開ける」', '「{必要|ひつよう}なら {開|あ}ける」'), fiction: true,
-    jp: '{高瀬|たかせ} の {返事|へんじ} と {同|おな}じ {四語|よんご} 。 でも トウヤ の {書|か}き{置|お}き は 、 {鐘楼|しょうろう} の {鍵|かぎ} の {控|ひか}え の {裏|うら} に 、 カサネ へ の {返事|へんじ} と して {書|か}かれて いた 。 {開|あ}ける の は {自分|じぶん} 、 {開|あ}ける の は {鐘楼|しょうろう} 。',
-    en: 'The same four words as Takase\'s reply — but Tōya wrote his on the back of the bell-tower key slip, straight after Kasane told him "no one is opening it". Japanese often leaves out subject and object when context supplies them; here the context says: I will open the bell tower. Takase\'s 必要なら left open "needed by whom?"; in Tōya\'s note, the one who judges is the one who acts. He kept the promise.',
+    jp: '{高瀬|たかせ} の {返事|へんじ} と {同|おな}じ {言葉|ことば} 。 でも トウヤ の {書|か}き{置|お}き は 、 {鐘楼|しょうろう} の {鍵|かぎ} の {控|ひか}え の {裏|うら} に 、 カサネ へ の {返事|へんじ} と して {書|か}かれて いた 。 {開|あ}ける の は {自分|じぶん} 、 {開|あ}ける の は {鐘楼|しょうろう} 。',
+    en: 'The same words as Takase\'s reply — but Tōya wrote his on the back of the bell-tower key slip, straight after Kasane told him "no one is opening it". Japanese often leaves out subject and object when context supplies them; here the context says: I will open the bell tower. Takase\'s 必要なら left open "needed by whom?"; in Tōya\'s note, the one who judges is the one who acts. He kept the promise.',
   };
   C.notes.sa_ushio = {
     title: T('Master Ushio', 'ウシオ{師匠|ししょう}'), fiction: true,
@@ -166088,7 +166356,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
             { jp: '{言葉|ことば} は {文脈|ぶんみゃく} の {中|なか} で {意味|いみ} を {持|も}つ 。 {文脈|ぶんみゃく} を {失|うしな}えば 、 どんな {言葉|ことば} も {読|よ}み{違|ちが}えられる 。', ok: true },
             { jp: '{言葉|ことば} は {少|すく}なければ {少|すく}ない ほど いい 。', ok: false, why: { en: '"The fewer words the better" — that is the Hush\'s own logic.' } },
             { jp: '{誰|だれ}も {読|よ}み{違|ちが}えない {言葉|ことば} が 、 どこか に ある はず だ 。', ok: false, why: { en: '"Somewhere there must be words no one can misread" — the Hush\'s hope, restated.' } },
-          ], { en: 'Meaning lives in context (文脈). Strip the context and any word can be misread — including four words you have been carrying all the way up this mountain.' }),
+          ], { en: 'Meaning lives in context (文脈). Strip the context and any word can be misread — including the words you have been carrying all the way up this mountain.' }),
           A: choose('Which reply exposes what that night actually teaches?', null, [
             { jp: 'あの {夜|よる} {失|うしな}われた の は {言葉|ことば} の {明確|めいかく}さ で は なく 、 {言葉|ことば} が {置|お}かれて いた {文脈|ぶんみゃく} だ 。', ok: true },
             { jp: '{確|たし}か に 、 {曖昧|あいまい}な {言葉|ことば} は {避|さ}ける に {越|こ}した こと は ない 。', ok: false, why: { en: '"Admittedly, it\'s best to avoid vague words" — sensible advice, but it concedes the Hush\'s premise about that night.' } },
@@ -166108,7 +166376,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 /* Chapter 6 learning moments. The Archive's puzzles are all about reading
  * in context: restoring a catalogue by meaning, recognising a paraphrase,
  * reading a conditional promise, and — at the climax — recovering what a
- * four-word reply meant from the letters around it. */
+ * reply meant from the letters around it. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
@@ -166377,7 +166645,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- 6. Tōya's note (the climax) --------------------------------------------------------------------------------
   // Chapter 5 established Takase's ambiguous reply 「必要なら開ける」, which the
   // messenger Tōya carried home and which Kasane, as clerk, read as a promise.
-  // Here: after their quarrel, Tōya left Kasane a note in the same four words,
+  // Here: after their quarrel, Tōya left Kasane a note in the same words,
   // on the back of the bell-tower key slip. Read in context, it is not vague.
   const DOC = {
     F: 'カサネ （ ろうか で ） ： 「 ひつよう ない 。 だれ も あけない 。 かぎ を おいて いきなさい 。 」 ／ トウヤ の かきおき （ かぎ の かみ の うら ） ： 「 ひつようなら あける 。 」',
@@ -166394,7 +166662,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const doc = (lv) => ({ jp: DOC[lv], en: DOC_EN[lv] });
   ch('sa.toya', {
     title: T('「必要なら開ける」', '「{必要|ひつよう}なら {開|あ}ける」'),
-    intro: T('You lay everything out on the floor of the Heart: Kasane\'s first folio, the key slip from the desk, the council\'s notice from the conduits. Tōya\'s four words are the same as Takase\'s. Read his where they belong.', '{芯|しん} の {床|ゆか} に 、 {全部|ぜんぶ} {並|なら}べる 。 カサネ の {最初|さいしょ} の {綴|つづ}り 。 {机|つくえ} の {上|うえ} の {鍵|かぎ} の {控|ひか}え 。 {水路|すいろ} で {見|み}つけた {貼|は}り{紙|がみ} 。'),
+    intro: T('You lay everything out on the floor of the Heart: Kasane\'s first folio, the key slip from the desk, the council\'s notice from the conduits. Tōya\'s words are the same as Takase\'s. Read his where they belong.', '{芯|しん} の {床|ゆか} に 、 {全部|ぜんぶ} {並|なら}べる 。 カサネ の {最初|さいしょ} の {綴|つづ}り 。 {机|つくえ} の {上|うえ} の {鍵|かぎ} の {控|ひか}え 。 {水路|すいろ} で {見|み}つけた {貼|は}り{紙|がみ} 。'),
     tiers: {
       F: [
         { kind: 'write', item: 'v:開ける', ctx: doc('F'), prompt: { en: 'Tōya\'s note ends with the verb "open". Write it: あける.' }, answer: 'あける', accept: ['あける', '開ける'], mode: 'reading', explain: { en: 'あける — to open (something).' } },
@@ -166423,7 +166691,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'order', item: 'c:sa_toya', ctx: doc('E'), prompt: { en: 'Say in full what Tōya meant: "If it\'s needed, I\'ll open the tower."' }, tiles: ['{必要|ひつよう}なら', '{僕|ぼく}が', '{塔|とう}を', '{開|あ}ける'], answer: ['{必要|ひつよう}なら', '{僕|ぼく}が', '{塔|とう}を', '{開|あ}ける'], alts: [['{僕|ぼく}が', '{必要|ひつよう}なら', '{塔|とう}を', '{開|あ}ける'], ['{必要|ひつよう}なら', '{塔|とう}を', '{僕|ぼく}が', '{開|あ}ける']], orderHint: { en: 'The condition (〜なら) usually comes first; the verb comes last.' } },
       ],
       I: [
-        choose('c:sa_toya', 'The same four words appear twice: Takase\'s reply in the notice, and Tōya\'s note. What is different about them?', doc('I'), [
+        choose('c:sa_toya', 'The same words appear twice: Takase\'s reply in the notice, and Tōya\'s note. What is different about them?', doc('I'), [
           { en: 'Who opens what. Takase meant its own sluice gate; Tōya meant that he would open the bell tower.', ok: true },
           { en: 'Nothing — Tōya was quoting Takase at Kasane.', ok: false, why: { en: 'That is how Kasane read it for thirty years. Look where he wrote it, and what it answers.' } },
           { en: 'Only the handwriting.', ok: false, why: { en: 'The handwriting is the least of it.' } },
@@ -166442,7 +166710,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       A: [
         choose('c:sa_toya', 'Why could Kasane read the note for thirty years as nothing but Takase\'s words thrown back at them?', doc('A'), [
           { en: 'Because Kasane had set down their own words from the corridor. Without them, the note matched only Takase\'s reply.', ok: true },
-          { en: 'Because Tōya\'s handwriting was hard to read.', ok: false, why: { en: 'The four words were never in doubt; their reference was.' } },
+          { en: 'Because Tōya\'s handwriting was hard to read.', ok: false, why: { en: 'The words were never in doubt; their reference was.' } },
           { en: 'Because the note was in a formal register.', ok: false, why: { en: 'It is plain speech — sibling to sibling.' } },
         ], { en: 'Lose the question and even a precise answer looks vague.' }),
         choose('c:sa_toya', 'Recover the omitted subject and object of the note.', doc('A'), [
@@ -166529,7 +166797,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: { jp: 'たかせ と ひおち は 、 けんか を して いました 。', en: 'Takase and Lanternfall were quarrelling.', short: 'たかせ と の けんか' },
         E: { jp: '{高瀬|たかせ} と {灯落|ひおち} は 、 {水門|すいもん} の こと で けんか して いました 。', en: 'Takase and Lanternfall were quarrelling about the sluice.', short: '{水門|すいもん} の けんか' },
         I: { jp: '{上流|じょうりゅう} の {高瀬|たかせ} と {灯落|ひおち} は 、 {水門|すいもん} を めぐって {何週間|なんしゅうかん} も {言|い}い{争|あらそ}って いました 。', en: 'For weeks, Takase upstream and Lanternfall had been arguing over the sluice.', short: '{水門|すいもん} を めぐる {争|あらそ}い' },
-        A: { jp: '{上流|じょうりゅう} の {高瀬|たかせ} と {灯落|ひおち} は 、 {水門|すいもん} の {開|ひら}け{閉|し}め を めぐって 、 {何週間|なんしゅうかん} も {平行線|へいこうせん} を たどって いました 。', en: 'For weeks Takase and Lanternfall had argued in parallel lines over the opening and shutting of the sluice, never meeting.', short: '{平行線|へいこうせん}' },
+        A: { jp: '{上流|じょうりゅう} の {高瀬|たかせ} と {灯落|ひおち} は 、 {水門|すいもん} の {開|あ}け{閉|し}め を めぐって 、 {何週間|なんしゅうかん} も {平行線|へいこうせん} を たどって いました 。', en: 'For weeks Takase and Lanternfall had argued in parallel lines over the opening and shutting of the sluice, never meeting.', short: '{平行線|へいこうせん}' },
       },
       {
         F: { jp: 'トウヤ が 、 たかせ の へんじ を もって かえりました 。 「 ひつようなら あける 」 。', en: 'Tōya brought back Takase\'s reply: "If needed, open."', short: 'たかせ の へんじ' },
@@ -166560,7 +166828,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       F: choose('c:sa_history', 'What does Kasane not remember?', null, [
         { en: 'What they said to Tōya in the quarrel', ok: true },
         { en: 'That the bell rang', ok: false, why: { en: 'Kasane remembers the bell.' } },
-        { en: 'Takase\'s reply', ok: false, why: { en: 'Kasane knows those four words by heart.' } },
+        { en: 'Takase\'s reply', ok: false, why: { en: 'Kasane knows those words by heart.' } },
       ], { en: 'なにを いったか は おぼえて いません — "what I said, I don\'t remember".' }),
       E: choose('c:sa_history', 'What does Kasane not remember?', null, [
         { jp: '{自分|じぶん} が {廊下|ろうか} で {何|なに} を {言|い}った か', en: 'what they said in the corridor', ok: true },
@@ -167009,7 +167277,7 @@ ren[think]: …… {行|い}きましょう 。 {彫|ほ}った {人|ひと} に
 !gesture pc lookroad up
 narr: {石段|いしだん} の {上|うえ} に 、 {書庫|しょこ} が {建|た}って いた 。 || At the top of the stone steps stands the Archive.
 !gesture pc cupear up
-narr: {壁|かべ} は {紙|かみ} の よう に {白|しろ}い 。 {窓|まど} に は {灯|ひ} が ある のに 、 {中|なか} から は {何|なに} の {音|おと} も しない 。 || Its walls are paper-white. There is light in the windows, yet no sound at all comes from inside.
+narr: {壁|かべ} は {紙|かみ} の よう に {白|しろ}い 。 {窓|まど} に は {灯|ひ} が ある のに 、 {中|なか} から は {何|なん} の {音|おと} も しない 。 || Its walls are paper-white. There is light in the windows, yet no sound at all comes from inside.
 !gesture pc lookbetween 3,12 and=26,12
 narr: {左右|さゆう} の {水路|すいろ} を 、 {黒|くろ}い {水|みず} が {流|なが}れて いく 。 {下|した} から 、 {上|うえ} へ 。 || In the channels to either side, black water flows — from below, upwards.
 ?(comp=nao) !gesture comp aside
@@ -167466,7 +167734,7 @@ narr: 「 {母|はは} の {名前|なまえ} を {返|かえ}して 。 」 「
 ?(comp=mio) !gesture comp laugh
 ?(comp=mio) mio[laugh]: 「 {夫|おっと} と {喧嘩|けんか} が できない 」 。 …… ごめん 、 {笑|わら}っちゃった 。 でも 、 {分|わ}かる 。 || "I can't quarrel with my husband." …Sorry, I laughed. But I understand.
 ?(comp=ren) !gesture comp lowered
-?(comp=ren) ren: {頼|たの}まれて いた 。 {何百|なんびゃく} {回|かい} も 。 || They were asked. Hundreds of times.
+?(comp=ren) ren: {頼|たの}まれて いた 。 {何百回|なんびゃっかい} も 。 || They were asked. Hundreds of times.
 ?(comp=suzu) !gesture comp size
 ?(comp=suzu) suzu: {未払|みばら}い の {請求書|せいきゅうしょ} の {山|やま} だ 。 {利子|りし} が {膨|ふく}らんでる よ 。 || A mountain of unpaid bills. The interest must be enormous by now.
 
@@ -167782,11 +168050,11 @@ narr: {机|つくえ} の {上|うえ} に 、 {文鎮|ぶんちん} で {押|�
 # open hand). Taken: you lean in to the paperweight.
 !if item.sa_toya_reply -> have
 !gesture pc bend prop:desk
-narr: {文鎮|ぶんちん} の {下|した} に 、 {小|ちい}さな {紙|かみ} 。 {上|うえ} を {向|む}いた {面|めん} に 、 {急|いそ}いだ {若|わか}い {字|じ} で 、 {四語|よんご} 。 || Under the paperweight, a small slip of paper. On the side facing up, four words in a hurried young hand.
+narr: {文鎮|ぶんちん} の {下|した} に 、 {小|ちい}さな {紙|かみ} 。 {上|うえ} を {向|む}いた {面|めん} に 、 {急|いそ}いだ {若|わか}い {字|じ} で 、 {短|みじか}い {書|か}き{置|お}き 。 || Under the paperweight, a small slip of paper. On the side facing up, a short note in a hurried young hand.
 narr: 「 {必要|ひつよう}なら {開|あ}ける 。 」 || "If needed, open."
 !gesture pc read prop=paper hold
 narr: {裏|うら} を {返|かえ}す 。 {印刷|いんさつ} された {書式|しょしき} に 、 {几帳面|きちょうめん} な {字|じ} 。 「 {鐘楼|しょうろう} {鍵|かぎ} {持|も}ち{出|だ}し ── {使|つか}い トウヤ 。 {許可|きょか} なし 。 {書記|しょき} カサネ 」 || You turn it over. A printed form, filled in with a meticulous hand: "Bell tower key taken out — messenger Tōya. Without permission. Clerk Kasane."
-narr: {四語|よんご} の {面|めん} は 、 {何度|なんど} も {触|さわ}られて {柔|やわ}らかい 。 {書式|しょしき} の {面|めん} は 、 {新|あたら}しい まま だ 。 || The side with the four words has gone soft from handling. The form side is as crisp as new.
+narr: {書|か}き{置|お}き の {面|めん} は 、 {何度|なんど} も {触|さわ}られて {柔|やわ}らかい 。 {書式|しょしき} の {面|めん} は 、 {新|あたら}しい まま だ 。 || The side with the note has gone soft from handling. The form side is as crisp as new.
 !give sa_toya_reply
 ?(comp=nao) !gesture comp point pc
 ?(comp=nao) nao: {高瀬|たかせ} の {返事|へんじ} と 、 {一字|いちじ} {一句|いっく} {同|おな}じ だ 。 …… でも 、 {書|か}いて ある {紙|かみ} が {違|ちが}う 。 {鍵|かぎ} の {控|ひか}え の {裏|うら} だ 。 || Word for word the same as Takase's reply. …But look what it's written on. The back of the key slip.
@@ -167919,7 +168187,7 @@ narr: ページ は {床|ゆか} に {落|お}ちて 、 {静|しず}か に {�
 
 @scene sa.heart_kasane
 # Staged: Kasane's nod and an open hand: have you read enough? Their head goes down over deciding for everyone (or
-# they look away, then down, over Tōya's four words); as the spiral quickens you look to it and Kasane turns to it
+# they look away, then down, over Tōya's note); as the spiral quickens you look to it and Kasane turns to it
 # and starts back; they look away at the Hush that no longer listens, and turn to you with an open hand: stand back;
 # your companion's own answer (Nao's shake of the head, Mio's flat hand of refusal, Ren raises the lamp, Suzu's
 # showman's hands). Again: Kasane looks you over, and points you down to rest.
@@ -167939,7 +168207,7 @@ kasane: {待|ま}って いる {間|あいだ} に 、 また {誰|だれ}か �
 !goto hush
 :toya
 !gesture kasane aside
-kasane[closed]: …… {高瀬|たかせ} の {言葉|ことば} を 、 {写|うつ}した だけ の {紙|かみ} です 。 {何|なに} と でも {取|と}れる {四語|よんご} 。 || …A slip on which he copied Takase's words, that's all. Four words that could mean anything.
+kasane[closed]: …… {高瀬|たかせ} の {言葉|ことば} を 、 {写|うつ}した だけ の {紙|かみ} です 。 {何|なん} と でも {取|と}れる {一行|いちぎょう} 。 || …A slip on which he copied Takase's words, that's all. A line that could mean anything.
 !gesture kasane lowered
 kasane: {最後|さいご} に あの {子|こ} が わたし に {残|のこ}した の は 、 {人|ひと} を {殺|ころ}した {言葉|ことば} の {写|うつ}し でした 。 {三十年|さんじゅうねん} 、 {読|よ}んで も {読|よ}んで も 、 {答|こた}え は {出|で}ません でした 。 || The last thing he left me was a copy of the words that killed people. Thirty years of reading it, and no answer came.
 :hush
@@ -168021,7 +168289,7 @@ pc: あの {夜|よる} の こと 。 || About that night.
 !gesture kasane lowered hold
 kasane[closed]: …… いい でしょう 。 {誰|だれ}か に {話|はな}す の は 、 {初|はじ}めて です 。 || …Very well. I have never told anyone.
 !activity sa.flood_history
-kasane[sad]: あの {子|こ} と {何|なに} を {言|い}い{合|あ}った の か 、 {思|おも}い{出|だ}せない の です 。 {思|おも}い{出|だ}せる の は 、 {次|つぎ} の {朝|あさ} {机|つくえ} に あった 、 あの {四語|よんご} だけ 。 || I can't remember what the two of us said to each other. All I remember is the four words on my desk the next morning.
+kasane[sad]: あの {子|こ} と {何|なに} を {言|い}い{合|あ}った の か 、 {思|おも}い{出|だ}せない の です 。 {思|おも}い{出|だ}せる の は 、 {次|つぎ} の {朝|あさ} {机|つくえ} に あった 、 あの {書|か}き{置|お}き だけ 。 || I can't remember what the two of us said to each other. All I remember is the note on my desk the next morning.
 !gesture kasane palm pc
 kasane: {高瀬|たかせ} の {返事|へんじ} と 、 {一字|いちじ} {一句|いっく} {同|おな}じ 。 {皮肉|ひにく} か 、 {恨|うら}み{言|ごと} か 。 {曖昧|あいまい} な {言葉|ことば} で 、 {最後|さいご} まで 。 || Word for word the same as Takase's reply. Sarcasm? A reproach? Vague to the very last.
 kasane: だから わたし は …… {曖昧|あいまい} な {言葉|ことば} を 、 {世界|せかい} から {取|と}り{除|のぞ}こう と した 。 || So I tried… to remove vague words from the world.
@@ -168071,11 +168339,11 @@ kasane[closed]: …… 「 {誰|だれ} も {開|あ}けない 」 。 わたし
 narr: $name は 、 {鍵|かぎ} の {控|ひか}え と {議会|ぎかい} の {貼|は}り{紙|がみ} を 、 {床|ゆか} に {並|なら}べた 。 || You lay the key slip and the council notice out on the floor beside it.
 !challenge sa.toya
 !shot turned
-kasane[surprise]: …… {高瀬|たかせ} の {言葉|ことば} を {写|うつ}した ん じゃ なかった 。 わたし に {返事|へんじ} を した の です ね 。 {同|おな}じ {四語|よんご} で 。 || …He wasn't copying Takase's words. He was answering me. In the same four words.
+kasane[surprise]: …… {高瀬|たかせ} の {言葉|ことば} を {写|うつ}した ん じゃ なかった 。 わたし に {返事|へんじ} を した の です ね 。 {同|おな}じ {言葉|ことば} で 。 || …He wasn't copying Takase's words. He was answering me. In the same words.
 kasane: 「 {誰|だれ} も {開|あ}けない 」 と {言|い}った わたし に 、 「 {必要|ひつよう}なら 、 {僕|ぼく} が {開|あ}ける 」 と 。 …… {曖昧|あいまい} な ところ なんて 、 {一|ひと}つ も ない 。 || To me, who said "no one is opening it", he said: "If it's needed, I'll open it." …There isn't one vague thing in it.
 !shot turned front
 kasane[sad]: {三十年|さんじゅうねん} 、 {裏|うら} ばかり {見|み}て いた 。 {表|おもて} に は 、 わたし の {字|じ} で 、 {鍵|かぎ} を {持|も}って いった の は トウヤ だ と {書|か}いて ある のに 。 || For thirty years I only looked at the back. The front says, in my own hand, that Tōya was the one who took the key.
-kasane: {鐘|かね} を {鳴|な}らした の は 、 あの {子|こ} だった 。 {鍵|かぎ} の かかった {塔|とう} を 、 {自分|じぶん} で {開|あ}けて 。 {約束|やくそく} を {守|まも}った の です 。 {四語|よんご} {残|のこ}らず 。 || It was him who rang the bell. He opened the locked tower himself. He kept his promise. All four words of it.
+kasane: {鐘|かね} を {鳴|な}らした の は 、 あの {子|こ} だった 。 {鍵|かぎ} の かかった {塔|とう} を 、 {自分|じぶん} で {開|あ}けて 。 {約束|やくそく} を {守|まも}った の です 。 {一語|いちご} {残|のこ}らず 。 || It was him who rang the bell. He opened the locked tower himself. He kept his promise. Every word of it.
 !shot turned close
 kasane[closed]: わたし は 、 {自分|じぶん} の {言葉|ことば} を {棚|たな} に {上|あ}げて 、 あの {子|こ} の {言葉|ことば} だけ を {責|せ}めて きた 。 || I put my own words up on a shelf, and blamed his.
 ?(comp=ren) ren: {棚|たな} に {上|あ}げる 。 …… {文字通|もじどお}り に 。 || Put up on a shelf. …Literally.
@@ -168201,7 +168469,7 @@ kasane: {閉|と}じる なら 、 {扉|とびら} に {封|ふう} を して �
 ?(comp=mio) !gesture comp guard
 ?(comp=mio) mio: {洪水|こうずい} や {火事|かじ} の {後|あと} に は 、 {記録|きろく} が {要|い}る 。 {本当|ほんとう} に 。 …… でも 、 ここ で {傷|きず}ついた {人|ひと} も いる 。 || After floods and fires, you really do need records. …But people were hurt here, too.
 ?(comp=ren) !gesture comp tendlamp
-?(comp=ren) ren: {灯守|ひもり} と して は 、 {名前|なまえ} の {写|うつ}し が ある の は {心強|こころづよ}い 。 でも 、 {灯|ひ} に は {消|け}える {権利|けんり} も ある 。 || As a lantern keeper, I'd feel safer knowing copies of the names exist. But a lamp has the right to go out, too.
+?(comp=ren) ren: {灯守|ひもり} と して は 、 {名前|なまえ} の {写|うつ}し が ある の は {心強|こころづよ}い 。 でも 、 {灯|ひ} に は {消|き}える {権利|けんり} も ある 。 || As a lantern keeper, I'd feel safer knowing copies of the names exist. But a lamp has the right to go out, too.
 ?(comp=suzu) !gesture comp palm
 ?(comp=suzu) suzu: {劇場|げきじょう} は 、 {客|きゃく} が {来|く}る から {劇場|げきじょう} な んだ よ 。 {誰|だれ} も {来|こ}ない なら 、 ただ の {倉庫|そうこ} 。 || A theatre is a theatre because people come. If no one does, it's just a warehouse.
 !choice
@@ -171280,6 +171548,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
+  // the Courier's Inn's new noren, hung in its doorway at Sakashita once Sono has named the inn for her grandfather
+  // (cr_family_inn; RBN-QA-111): two indigo panels with pale brush strokes, as the signs write. You walk through it; it
+  // hangs on the inn's front wall, so it is drawn on that wall, after the building (onWall).
+  def('cr_noren', { block: false, onWall: true }, (c, x, y) => {
+    px(c, x + 1, y - 3, 14, 2, '#5a4226'); px(c, x + 2, y - 1, 5, 9, '#2c3e6a'); px(c, x + 9, y - 1, 5, 9, '#2c3e6a');
+    px(c, x + 4, y + 1, 2, 1, '#e8e0cc'); px(c, x + 4, y + 4, 2, 1, '#e8e0cc'); px(c, x + 10, y + 1, 2, 1, '#e8e0cc'); px(c, x + 10, y + 4, 2, 1, '#e8e0cc');
+  });
+
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
   const { R, ell, line } = K;
@@ -171457,6 +171733,24 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(g, 6, 12, 20, 13, LQ[0]); R(g, 6, 12, 20, 3, LQ[1]); R(g, 25, 12, 1, 13, '#1a0a0c');
       line(g, 6, 18, 26, 18, LQ[3], 1); line(g, 16, 12, 16, 25, LQ[3], 1);
       R(g, 2, 24, 28, 3, SN[3]);
+    },
+  });
+  // The Courier's Inn's noren (RBN-QA-111), modelled on the baths' curtain (yn_noren): a pole under the lintel and two
+  // indigo panels split down the middle, a little shorter than the doorway so the way in still reads; on them pale
+  // brush strokes in two short columns, written as the game's signs are (no legible word: the inn's name is Sono's
+  // line, Hikyaku-yado Genta). Light from the upper left: the left edges lit, a darker fold on each panel's right.
+  const NV = ['#16203a', '#1e2a4a', '#2c3e6a', '#4a5e8e'];
+  // (Its place: the doorway on the house's front face spans about x 4..28 and y -4..25 of the door's tile; the noren hangs
+  // from a pole across its top and covers its upper half.)
+  art('cr_noren', {
+    box: [-2, -12, 36, 36],
+    ink: false,
+    draw(g, M) {
+      R(g, 2, -7, 28, 3, M.wood[1]); R(g, 2, -7, 28, 1, M.wood[3]); R(g, 2, -5, 28, 1, M.wood[0]);
+      for (const px0 of [4, 17]) {
+        R(g, px0, -4, 11, 18, NV[2]); R(g, px0, -4, 1, 18, NV[3]); R(g, px0 + 10, -4, 1, 18, NV[1]); R(g, px0, 13, 11, 1, NV[0]);
+        for (let i = 0; i < 3; i++) RB.propArt.kit.glyph(g, px0 + 3, -2 + i * 5, K.hh(px0, i, 41), '#e8e0cc');
+      }
     },
   });
 })();
@@ -171879,7 +172173,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 15, y: 7, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1, 4], lit: true },
       { type: 'house', x: 24, y: 7, w: 5, h: 4, roof: 'thatch', wall: 'wood', door: null, windows: [1, 3] },
     ],
-    props: [{ p: 'bench', x: 15, y: 15 }, { p: 'well', x: 27, y: 15 }],
+    // (the inn's new noren once Sono has named it for her grandfather: RBN-QA-111)
+    props: [{ p: 'bench', x: 15, y: 15 }, { p: 'well', x: 27, y: 15 }, { p: 'cr_noren', x: 7, y: 10, if: 'cr_family_inn' }],
     npcs: [
       // (from the letter's delivery until the coins are decided he is at Sono's inn: src/content/cr/25_side.js)
       { id: 'cr_heisuke', x: 18, y: 11, dir: 'down', if: '!cr_delivered|quest.cr_family=done', talk: [{ if: 'cr_done', scene: 'cr.heisuke_after' }, { scene: 'cr.heisuke' }] },
@@ -172937,7 +173232,13 @@ cr_chika: {高|たか}い {所|ところ} に {来|く}る と 、 {頭|あた�
 ?(comp=mio) !set cr_mio_labels
 
 @scene cr.chika_after
+# (the chest's labels were written out again only if Mio did it with you before the chapter's end, cr_mio_labels;
+# otherwise she speaks of the busier road and presumes no earlier meeting, relabelling or parcel; RBN-QA-131)
 !faceplayer
+!if cr_mio_labels -> labels
+cr_chika: {雲路|くもじ} を {通|とお}る {人|ひと} が {増|ふ}えて 、 {頭痛|ずつう} の {相談|そうだん} も {増|ふ}えた わ 。 {頭|あたま} が {痛|いた}く なったら 、 {無理|むり} を しないで 、 ここ で {休|やす}んで いって ね 。 || More people travel the Cloudroad now, and more of them come to me with headaches. If your head starts to ache, don't push on. Rest here a while.
+!end
+:labels
 cr_chika: {薬箱|くすりばこ} の ラベル 、 {全部|ぜんぶ} {読|よ}める よう に なった わ 。 「{不明|ふめい}」 の {瓶|びん} も {一|ひと}つ ある けど 、 それ も {正直|しょうじき} で いい わ ね 。 || I can read every label on the medicine chest now. There's one jar marked "unknown", but that's honest, and I like it.
 
 @scene cr.uma_stone
@@ -175107,6 +175408,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     K('いっぺん', '', 'adv', 'I', 'once; one time', '一度'),
     K('気ぃ', 'きぃ', 'n', 'E', 'feeling; attention (気, drawn out)', '気', '気ぃ つけて "take care". A one-kana word is often lengthened in Kansai speech: 気 → 気ぃ, 目 → 目ぇ.'),
     K('おる', '', 'v5r', 'E', 'to be; to be there (people, animals)', 'いる', 'In Kansai おる is everyday "be"; in standard Japanese it is humble.'),
+    // RV0115: Suzu's 値切られても断られへんから (lf.b_suzu2) is "can't refuse"; read through 〜へん alone it came out as the
+    // passive negative 断られない "isn't refused". Only this word: other 〜られへん keep their own analysis
+    K('断られへん', 'ことわられへん', 'v5r', 'I', 'can\'t refuse; can\'t say no', '断れない', 'Here the Kansai potential: 〜られへん also means "can\'t …" in Kansai ({行|い}かれへん "can\'t go"). In standard Japanese, {断|ことわ}れない.'),
     K('やて', '', 'exp', 'I', 'they say; it says (quoting: = だって)', 'だって'),
     K('えらい', '', 'adj-i', 'I', 'terrible; awful; (before a word) very', '大変', 'In Kansai えらい often means "awful" or "very" (えらい こと = a disaster), not only "great".'),
     K('なんぼ', '', 'adv', 'I', 'how much; however much', 'いくら'),
@@ -178533,8 +178837,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.dialect.add('kansai', `
 @ hall/hall.tsuru_ledger [hall.tsuru_ledger]
-= {百物語|ひゃくものがたり} ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百|ひゃく} {本|ほん} の {芝居|しばい} を {見|み}た って 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
-> {百物語|ひゃくものがたり} や ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百|ひゃく} {本|ほん} の {芝居|しばい} を {見|み}た って な 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
+= {百物語|ひゃくものがたり} ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百本|ひゃっぽん} の {芝居|しばい} を {見|み}た って 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
+> {百物語|ひゃくものがたり} や ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百本|ひゃっぽん} の {芝居|しばい} を {見|み}た って な 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
 @ hall/hall.foyer_first [hall.foyer_first]
 = {十|とお} の {舞台|ぶたい} と 、 {十|とお} の {幕|まく} ね 。 {一幕|ひとまく} ずつ 、 {観|み}て いこう よ 。 || Ten stages, ten curtains. Let's take them one act at a time.
 > {十|とお} の {舞台|ぶたい} と 、 {十|とお} の {幕|まく} や な 。 {一幕|ひとまく} ずつ 、 {観|み}て いこ か 。 || Ten stages, ten curtains. Let's take them one act at a time.
@@ -178809,14 +179113,14 @@ RB.dialect.add('kansai', `
 = {出|で}た ！ {欲張|よくば}り な {隣|となり} の {人|ひと} 。 この {役|やく} 、 {昔話|むかしばなし} で は {大抵|たいてい} {損|そん} を する の よ ね 。 || There he is! The greedy neighbour. In the old tales, that part usually comes off worst.
 > {出|で}た ！ {欲張|よくば}り な {隣|となり} の {人|ひと} や 。 この {役|やく} 、 {昔話|むかしばなし} で は {大抵|たいてい} {損|そん} する ん や で 。 || There he is! The greedy neighbour. In the old tales, that part usually comes off worst.
 @ hall/hall.w7.owan [hall.w7.owan]
-= {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
-> {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない な 。 {読|よ}んだら {分|わ}かる ん やろ か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+= {札|ふだ} に は 、 {何|なん} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+> {札|ふだ} に は 、 {何|なん} の こと か 、 {書|か}いて ない な 。 {読|よ}んだら {分|わ}かる ん やろ か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
 @ hall/hall.w7.t1 [hall.w7.t1]
 = {一番|いちばん} {大事|だいじ} な {人|ひと} が 、 {一度|いちど} も {出|で}て こない {話|はなし} 。 {粋|いき} だ わ 。 || A tale where the most important one never once comes on stage. Very stylish.
 > {一番|いちばん} {大事|だいじ} な {人|ひと} が 、 {一回|いっかい} も {出|で}て こない {話|はなし} 。 {粋|いき} や わ 。 || A tale where the most important one never once comes on stage. Very stylish.
 @ hall/hall.w7.h1 [hall.w7.h1]
-= {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
-> {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}んだら {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん や な 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+= {何|なん} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+> {何|なん} の こと か {書|か}いて ない のに 、 {読|よ}んだら {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん や な 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
 @ hall/hall.w7.t3 [hall.w7.t3]
 = {雪|ゆき} が 、 {間違|まちが}い を {隠|かく}して くれた ね 。 || The snow covered up the mistake for us.
 > {雪|ゆき} が 、 {間違|まちが}い を {隠|かく}して くれた な 。 || The snow covered up the mistake for us.
@@ -185938,6 +186242,7 @@ RB.lex.add(RB.lex.parseTable(`
 聞かん|きかん|exp|I|(older) doesn't listen, won't obey (= 聞かない); 言うことを聞かん: won't do as it's told
 汲まねば|くまねば|exp|A|(old, literary) if one does not draw (water) (= 汲まなければ)
 見がち|みがち|exp|A|apt to look (見る + 〜がち: tending to)
+何十杯|なんじゅっぱい|n|I|dozens of cupfuls or bucketfuls
 # ---- wing 6: conditions and exceptions -------------------------------------------------------------------------------
 第六幕|だいろくまく|n|I|the sixth act
 名場面|めいばめん|n|I|a famous scene (in a play or film)
@@ -186669,6 +186974,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     at.ret ? [K.lit(at.ret[0], at.ret[1], null, 'hall.return')] : [],
     at.bench ? [{ p: 'bench', x: at.bench[0], y: at.bench[1], scene: 'hall.' + w + '.bench' + (k + 1) }] : [],
     at.gate ? [{ p: 'hall_gate', x: at.gate[0], y: at.gate[1], if: '!hall.' + w + '.f' + k + '.clear', scene: 'hall.gate' }] : [],
+    // (the stairs are drawn on the floor's way up itself, its exit tile, so the art is where the step is: RBN-QA-164)
     at.stairs ? [{ p: 'stairs', x: at.stairs[0], y: at.stairs[1] }] : []);
   K.lv = (w) => {
     const G = 'hall.' + w + '.route=grow';
@@ -186803,7 +187109,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       lit(29, 19),
       // the way on: the sacred rope until the floor is cleared
       { p: 'hall_gate', x: 17, y: 6, if: '!hall.w1.f0.clear', scene: 'hall.gate' },
-      { p: 'stairs', x: 17, y: 1 },
+      { p: 'stairs', x: 18, y: 1 }, // (on the way up itself: RBN-QA-164)
     ],
     npcs: [
       { id: 'hall_traveller', x: 20, y: 13, dir: 'left', if: '!hall.w1.t2', talk: [{ scene: 'hall.w1.t2' }] },
@@ -186850,7 +187156,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the resting place (a delver may be waiting)
       { p: 'teaset', x: 35, y: 24 }, { p: 'bench', x: 34, y: 25 },
       { p: 'hall_gate', x: 20, y: 3, if: '!hall.w1.f1.clear', scene: 'hall.gate' },
-      { p: 'stairs', x: 21, y: 1 },
+      { p: 'stairs', x: 20, y: 1 }, // (on the way up itself: RBN-QA-164)
     ],
     npcs: [],
     foes: [
@@ -186973,7 +187279,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':'); k.rect(4, 11, 23, 2, ':');
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         // the story room
         { p: 'kr_scroll', x: 2, y: 10, scene: 'hall.w2.t1' }, ...K.andon(4, 9, W, 't1'), { p: 'lantern', x: 1, y: 9, light: 30, o: { lit: true } },
@@ -187020,7 +187326,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(23, 10, 5, 5, '.');                 // the clearing where the foxfire sways
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [17, 2] }),
       [
         { p: 'well', x: 10, y: 22, scene: 'hall.w2.spring' },
         { p: 'sign', x: 20, y: 20, scene: 'hall.w2.t4_card' }, ...K.andon(14, 20, W, 't4'),
@@ -187158,7 +187464,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':'); k.rect(4, 11, 25, 2, ':');
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         // Jinbei's house: the picture scroll, his bed, a lantern
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w3.t1' }, ...K.andon(5, 9, W, 't1'),
@@ -187211,7 +187517,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(9, 12, 3, 3, '.'); k.rect(24, 11, 5, 5, '.'); k.rect(17, 2, 2, 20, ':');
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [17, 2] }),
       [
         { p: 'well', x: 9, y: 22, scene: 'hall.w3.spring' },
         // the incense clock (its hour drawn from the floor's hour flag) and Jinbei's slate
@@ -187364,7 +187670,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':'); k.rect(4, 11, 25, 2, ':');
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w4.t1' }, ...K.andon(5, 9, W, 't1'),
         { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } },
@@ -187421,7 +187727,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(17, 2, 2, 20, ':'); k.rect(4, 2, 24, 3, '.');
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [28, 3], stairs: [31, 3] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [28, 3], stairs: [30, 3] }),
       [
         { p: 'well', x: 4, y: 22, scene: 'hall.w4.spring' },
         // Gosaku's diary, and the forks' markers
@@ -187563,7 +187869,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':'); k.rect(4, 11, 27, 2, ':');
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w5.t1' }, ...K.andon(5, 9, W, 't1'),
         { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } },
@@ -187612,7 +187918,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(17, 2, 2, 20, ':');
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [17, 2] }),
       [
         { p: 'well', x: 9, y: 22, scene: 'hall.w5.spring' },
         // the jars (gone once set where they belong), the drinking shelf and the drain stone
@@ -187825,7 +188131,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     F: [ch({ item: 'v:地図', prompt: { en: 'You want to know where the spring is on the map. What do you ask?' },
       options: [o('いずみ は 、 ちず の どこ です か 。', 1), o('いずみ は 、 なん です か 。', 0, 'That asks what a spring is, not where it is.'), o('ちず は 、 どこ です か 。', 0, 'They have the map in their hands; you want the spring.')] })],
     E: [ch({ item: 'v:地図', prompt: { en: 'You want to know where the spring is on the map. What do you ask?' },
-      options: [o('{泉|いずみ} は 、 {地図|ちず} の どこ に あります か 。', 1), o('{泉|いずみ} は 、 {地図|ちず} の {何|なに} です か 。', 0, 'That asks what the spring is.'), o('{地図|ちず} は 、 どこ に あります か 。', 0, 'They are holding the map: ask about the spring.')] })],
+      options: [o('{泉|いずみ} は 、 {地図|ちず} の どこ に あります か 。', 1), o('{泉|いずみ} は 、 {地図|ちず} の {何|なん} です か 。', 0, 'That asks what the spring is.'), o('{地図|ちず} は 、 どこ に あります か 。', 0, 'They are holding the map: ask about the spring.')] })],
     I: [ch({ item: 'g:qword_ka_mo', prompt: { en: 'You want them to tell you where the spring is and how to get there. What do you ask?' },
       options: [o('{泉|いずみ} が どこ に ある か 、 どう {行|い}けば いい か 、 {教|おし}えて くれます か 。', 1), o('{泉|いずみ} が どこ に ある 、 {教|おし}えて くれます か 。', 0, 'An embedded question needs か: どこ に ある か.'), o('{泉|いずみ} に {行|い}って も いい です か 。', 0, 'That asks permission, not the way.')] })],
     A: [ch({ item: 'g:indirectness', prompt: { en: 'They are studying the map closely. Ask, without hurrying them, whether they can see a spring on it.' },
@@ -188930,7 +189236,7 @@ tsuru: {百|ひゃく} の {灯|ひ} を 、 {一|ひと}つ ずつ {戻|もど}
 ?(comp=nao) comp: {百|ひゃく} の {話|はなし} か 。 {一|ひと}つ ずつ なら 、 {届|とど}けられる 。 || A hundred tales. One at a time, we can deliver those.
 ?(comp=mio) comp[happy]: {一|ひと}つ ずつ 、 ね 。 {急|いそ}がない の なら 、 {私|わたし} も {付|つ}いて {行|い}ける 。 || One at a time. If there's no hurry, I can keep up.
 ?(comp=ren) comp[think]: {師匠|ししょう} の {師匠|ししょう} の {方|かた} が …… 。 {灯守|ひもり} の {館|やかた} に 、 {入|はい}れる {日|ひ} が {来|く}る と は 。 || Your teacher's teacher… I never thought the day would come when I could enter the keepers' hall.
-?(comp=suzu) comp[happy]: {百物語|ひゃくものがたり} ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百|ひゃく} {本|ほん} の {芝居|しばい} を {見|み}た って 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
+?(comp=suzu) comp[happy]: {百物語|ひゃくものがたり} ！ {一座|いちざ} の {年寄|としよ}り に {自慢|じまん} できる わ 。 {百本|ひゃっぽん} の {芝居|しばい} を {見|み}た って 。 || A hundred tales! I can boast to the troupe's old-timers: I saw a hundred plays.
 
 @scene hall.door_open
 # The Shuttered Hall's door, with the ledger: the rope gives way.
@@ -189596,7 +189902,7 @@ ${resetAll}
 !refresh
 !end
 :all
-narr: {行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あか}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。 || The procession stands complete. The lanterns' light begins to move quietly through the rain.
+narr: {行列|ぎょうれつ} が {揃|そろ}った 。 {提灯|ちょうちん} の {明|あ}かり が 、 {雨|あめ} の {中|なか} を {静|しず}か に {進|すす}み{始|はじ}める 。 || The procession stands complete. The lanterns' light begins to move quietly through the rain.
 ${K.mark(W, 1, 't4')}
 !end
 :placed
@@ -191018,7 +191324,7 @@ narr: {記録|きろく} は 、 {机|つくえ} の {上|うえ} に {戻|も�
 narr: {記録|きろく} は 、 {西|にし} の {井戸|いど} の {頁|ページ} で {開|ひら}いた まま だ 。 || The record lies open at the page on the west well.
 `;
   const FIX6 = { willow: ['{柳|やなぎ} の {木|き}', 'the willow', '{井戸|いど} の {方|ほう} へ {伸|の}びた {根|ね} を 、 {鋸|のこぎり} で {切|き}った 。', 'You saw through the roots growing toward the well.', 0],
-    draw: ['{西|にし} の {井戸|いど}', 'the west well', '{桶|おけ} で {何|なん}{十|じゅう} {杯|ぱい} も {汲|く}み{出|だ}す と 、 {水|みず} が {澄|す}んで きた 。', 'You draw bucket after bucket, dozens, until the water starts to run clear.', 1],
+    draw: ['{西|にし} の {井戸|いど}', 'the west well', '{桶|おけ} で {何十杯|なんじゅっぱい} も {汲|く}み{出|だ}す と 、 {水|みず} が {澄|す}んで きた 。', 'You draw bucket after bucket, dozens, until the water starts to run clear.', 1],
     lid: ['{井戸|いど} の {蓋|ふた}', 'a lid for the well', null, null, -1] };
   for (const f of Object.keys(FIX6)) {
     out += `
@@ -191236,7 +191542,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':'); k.rect(4, 11, 27, 2, ':');
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w6.t1' }, ...K.andon(5, 9, W, 't1'),
         { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } }, { p: 'sb_futon', x: 2, y: 11 },
@@ -191288,7 +191594,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(17, 2, 2, 11, ':'); k.rect(17, 15, 2, 7, ':');
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [17, 2] }),
       [
         { p: 'well', x: 9, y: 22, scene: 'hall.w6.spring' },
         // the five lanterns (dark until lit), the lighting rule and the festival notice
@@ -192132,7 +192438,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':');
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w7.t1' }, ...K.andon(5, 9, W, 't1'),
         { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } },
@@ -192184,7 +192490,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(13, 22, 3, 2, '.');
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [17, 2] }),
       [
         { p: 'well', x: 9, y: 22, scene: 'hall.w7.spring' },
         // the kitchen: the memo on the post, and everything it might mean
@@ -192573,8 +192879,8 @@ narr: {中庭|なかにわ} の {井戸|いど} 。 {水|みず} が 、 {雪|�
 !faceplayer hall_owan
 !if hall.w7.t2 -> done
 hall_owan: いらっしゃい 。 この {家|いえ} の {椀|わん} だ よ 。 {昔|むかし} の {人|ひと} が {置|お}いて いった {物|もの} が 、 {片付|かたづ}かない の 。 {札|ふだ} の {下|した} に 、 {掛|か}けて あげて 。 || Welcome. (I'm) this house's bowl. The things people left behind long ago never got put away. Hang each one under its note.
-?(comp&comp!=ren) comp: {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
-?(comp=ren) comp: {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて いません ね 。 {読|よ}めば {分|わ}かる の でしょう か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+?(comp&comp!=ren) comp: {札|ふだ} に は 、 {何|なん} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+?(comp=ren) comp: {札|ふだ} に は 、 {何|なん} の こと か 、 {書|か}いて いません ね 。 {読|よ}めば {分|わ}かる の でしょう か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
 !end
 :done
 hall_owan: {全部|ぜんぶ} 、 {元|もと} の {所|ところ} 。 {家|いえ} が 、 {少|すこ}し {思|おも}い{出|だ}した みたい 。 || All back where they belong. The house seems to remember a little.
@@ -192650,8 +192956,8 @@ narr: 「 ${ITEM[HOOKN[p][h]][0]} 」 を {鉤|かぎ} に {掛|か}けた 。 |
 !end
 :all
 narr: {忘|わす}れ{物|もの} が 、 {全部|ぜんぶ} {元|もと} の {鉤|かぎ} に {戻|もど}った 。 || Everything left behind is back on its hook.
-?(comp&comp!=ren) comp: {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
-?(comp=ren) comp: {何|なに} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+?(comp&comp!=ren) comp: {何|なん} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+?(comp=ren) comp: {何|なん} の こと か {書|か}いて いない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん です ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
 ${K.mark(W, 0, 't2')}
 !end
 :done
@@ -192964,7 +193270,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':');
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w8.t1' }, ...K.andon(5, 9, W, 't1'),
         { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } },
@@ -193012,7 +193318,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(17, 2, 2, 20, ':');
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [17, 2] }),
       [
         { p: 'well', x: 9, y: 22, scene: 'hall.w8.spring' },
         // the witnesses' places
@@ -193811,7 +194117,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':');                 // the path north, and south
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w9.t1' }, ...K.andon(5, 9, W, 't1'),
         { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } },
@@ -193863,7 +194169,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(17, 2, 2, 20, ':');                 // the passage north
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [17, 2] }),
       [
         { p: 'well', x: 9, y: 22, scene: 'hall.w9.spring' },
         // the hearth, its four seats and the board; the name tags (who is here tonight depends on the night)
@@ -194799,7 +195105,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(16, 1, 2, 21, ':');                 // the path north, and south
     }),
     props: [].concat(
-      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [16, 1] }),
       [
         { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w10.t1' }, ...K.andon(5, 9, W, 't1'),
         { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } },
@@ -194845,7 +195151,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(17, 2, 2, 20, ':');                 // the passage north
     }),
     props: [].concat(
-      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [17, 2] }),
       [
         { p: 'well', x: 9, y: 22, scene: 'hall.w10.spring' },
         // the nine lanterns of the nine tales, and the five sayings (gone once set by their lantern)
@@ -200898,7 +201204,7 @@ ko_nami: {葉|は} を {届|とど}けに {陸|りく} へ {漕|こ}いで い�
 !faceplayer
 ?(quest.ko_main<=2) ko_nami: {葉|は} を {返|かえ}す とき は 、 {風石|かぜいし} に {任|まか}せて いい 。 {遠|とお}い {所|ところ} の {葉|は} は 、 わたし が {舟|ふね} で {運|はこ}ぶ 。 || When you send a leaf home, leave it to the Wind Stone. Leaves for far places, I take by boat.
 ?(quest.ko_main>=4) ko_nami[worry]: {根|ね} の {洞|ほら} に {下|お}りる の ？ {潮|しお} が {入|はい}る から 、 {気|き} を つけて 。 {潮|しお} は {待|ま}って くれない 。 でも 、 {必|かなら}ず {引|ひ}く 。 || You're going down into the Root Hollows? The tide comes in down there, so take care. The tide won't wait for you. But it always goes out again.
-?(quest.ko_main=3) ko_nami: {館|やかた} の {板|いた} 、 {楽|たの}しみ に してる 。 {舟|ふね} の {話|はなし} も 、 {一枚|いちまい} ぐらい {入|はい}れて くれる と うれしい な 。 || I'm looking forward to the hall's panels. I'd like it if the boat story got on one, at least.
+?(quest.ko_main=3) ko_nami: {館|やかた} の {板|いた} 、 {楽|たの}しみ に してる 。 {舟|ふね} の {話|はなし} も 、 {一枚|いちまい} ぐらい {入|い}れて くれる と うれしい な 。 || I'm looking forward to the hall's panels. I'd like it if the boat story got on one, at least.
 @scene ko.nami_after
 !faceplayer
 ko_nami[smile]: {葉|は} の {数|かず} が 、 {漕|こ}げる {数|かず} に {戻|もど}った 。 {腕|うで} が {喜|よろこ}んでる よ 。 || The leaves are back to as many as I can row. My arms are delighted.
@@ -208153,7 +208459,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'mb_heiji', x: 12, y: 6, dir: 'left', if: 'quest.mb_main=2&!mb_dispute_done', talk: 'mb.heiji_tally' },
     ],
   });
-  // Fujiya (藤屋): a trading house's shop front, its goods, and the grandfather's tally book
+  // Fujiya (藤屋): a trading house's shop front, its goods, and the tally book of the head two generations back (先々代)
   interior('mb.fujiya', T('Fujiya', '{藤屋|ふじや}'), 13, 9, 6, [39, 8], {
     props: [
       { p: 'exitmat', x: 6, y: 7 },
@@ -208773,7 +209079,7 @@ narr: {掛|か}け{軸|じく} に 「{信用|しんよう} は {名前|なま�
 
 @scene mb.fujiya_tallybook
 !gesture pc read
-narr: {古|ふる}い {帳面|ちょうめん} 。 {藤屋|ふじや} の {先々代|せんせんだい} が 、 {橋|はし} の {札|ふだ} を {紙|かみ} に {写|うつ}し{取|と}った {拓本|たくほん} が {挟|はさ}まって いる 。 || An old ledger. Tucked inside are rubbings Fujiya's grandmother took of the bridges' plaques.
+narr: {古|ふる}い {帳面|ちょうめん} 。 {藤屋|ふじや} の {先々代|せんせんだい} が 、 {橋|はし} の {札|ふだ} を {紙|かみ} に {写|うつ}し{取|と}った {拓本|たくほん} が {挟|はさ}まって いる 。 || An old ledger. Tucked inside are rubbings of the bridges' plaques, taken by the head of Fujiya two generations back.
 ?(quest.mb_main>=3) narr: {一番|いちばん} {古|ふる}い {一枚|いちまい} に は 、 「{一|いち}」 と {番号|ばんごう} が あり 、 {名前|なまえ} の {最初|さいしょ} の {字|じ} だけ が {読|よ}める 。 「{結|むす}ぶ」 と {同|おな}じ {字|じ} だ 。 || The oldest is numbered "one", and only the first character of its name can be read: 結…
 ?(quest.mb_main>=3&!mb_ev_rubbing) !set mb_ev_rubbing
 ?(quest.mb_main>=3&!mb_ev_rubbing_j) !journal {藤屋|ふじや} の {拓本|たくほん} ： {一番|いちばん} の {橋|はし} の {名前|なまえ} の {最初|さいしょ} の {字|じ} は 、 「{結|むす}ぶ」 の {字|じ} 。 || Fujiya's rubbing: the first bridge's name begins with 結 (musu…).
@@ -208833,7 +209139,7 @@ narr: 「{米|こめ} 、 {毎週|まいしゅう} {十俵|じっぴょう} 。 
 !set mb_ev_notice
 
 @scene mb.board_fish
-narr: 「{潮硝子|しおがらす} の {干物|ひもの} 、 {入|い}りました 。 {藤屋|ふじや} 」 。 {隣|となり} に 、 {潮硝子|しおがらす} の {浮|う}き{玉|だま} の {札|ふだ} も ある 。 「ガラス の {浮|う}き{玉|だま} 、 {一箱|ひとはこ} 。 {割|わ}れ{物|もの} {注意|ちゅうい} 。」 || "Saltglass dried fish, just in. Fujiya." Beside it, a tally for Saltglass glass floats: "Glass floats, one crate. Fragile."
+narr: 「{潮硝子|しおがらす} の {干物|ひもの} 、 {入|はい}りました 。 {藤屋|ふじや} 」 。 {隣|となり} に 、 {潮硝子|しおがらす} の {浮|う}き{玉|だま} の {札|ふだ} も ある 。 「ガラス の {浮|う}き{玉|だま} 、 {一箱|ひとはこ} 。 {割|わ}れ{物|もの} {注意|ちゅうい} 。」 || "Saltglass dried fish, just in. Fujiya." Beside it, a tally for Saltglass glass floats: "Glass floats, one crate. Fragile."
 
 @scene mb.board_passage
 narr: 「{札場|ふだば} の {下|した} の {閘門|こうもん} 。 {閘門番|こうもんばん} の {許|ゆる}し なく {入|はい}る こと を {禁止|きんし} します 。」 || "The lock beneath the Exchange. No entry without the lock-keeper's leave."
@@ -209381,7 +209687,7 @@ narr: {西|にし} の {水門|すいもん} は 、 {南|みなみ} の {通路
 @scene mb.gate1
 ?(mb_u1_low) narr: {水門|すいもん} は {開|あ}いて いる 。 {池|いけ} の {水|みず} は {下|した} へ {流|なが}れた 。 || The sluice is open; the basin has drained below.
 ?(mb_u1_low) !end
-?(!mb_tab1) narr: {大|おお}きな {車輪|しゃりん} が ある 。 {何|なに} の {車輪|しゃりん} か {分|わ}からない まま {回|まわ}す の は 、 やめて おこう 。 || A great wheel. Better not turn it without knowing what it does.
+?(!mb_tab1) narr: {大|おお}きな {車輪|しゃりん} が ある 。 {何|なん} の {車輪|しゃりん} か {分|わ}からない まま {回|まわ}す の は 、 やめて おこう 。 || A great wheel. Better not turn it without knowing what it does.
 ?(!mb_tab1) !end
 narr: {西|にし} の {水門|すいもん} の {車輪|しゃりん} 。 {石板|せきばん} の {通|とお}り なら 、 これ を {開|あ}ける と 、 {池|いけ} の {水|みず} が {下|した} へ {流|なが}れる 。 || The west sluice wheel. If the tablet is right, opening this sends the basin's water down below.
 !choice
@@ -212158,7 +212464,7 @@ pc: {読|よ}む 。 {一行|いちぎょう} ずつ 。 || I'll read it. One li
 narr: {縄|なわ} が {緩|ゆる}み 、 {車|くるま} が {止|と}まった 。 {名前|なまえ} が {一|ひと}つ ずつ 、 {床|ゆか} を {抜|ぬ}けて {上|うえ} へ {昇|のぼ}って いく 。 || The ropes go slack; the wheels stop. One by one the names rise up through the boards.
 narr: {遠|とお}く {上|うえ} の {舞台|ぶたい} から 、 {声|こえ} が {聞|き}こえる 。 {役者|やくしゃ} たち が 、 {自分|じぶん} の {役|やく} の {名前|なまえ} を {呼|よ}び{合|あ}って いる 。 || Far above, from the stage, voices: the actors are calling out their parts' names to each other.
 ?(comp=nao) comp[smile]: {全部|ぜんぶ} {届|とど}いた な 。 {一通|いっつう} も {落|お}とさず に 。 || Every one delivered. Not a single letter dropped.
-?(comp=mio) comp[smile]: よかった …… 。 {怒|おこ}った かい が ありました 。 || Thank goodness… It was worth getting angry.
+?(comp=mio) comp[smile]: よかった …… 。 {怒|おこ}った かい@甲斐 が ありました 。 || Thank goodness… It was worth getting angry.
 ?(comp=ren) comp[smile]: {上|うえ} が {明|あか}るい 。 {名前|なまえ} の {灯|あか}り です 。 || It's bright up there. The light of names.
 ?(comp=suzu) comp[laugh]: カーテンコール よ ！ {一人|ひとり} {残|のこ}らず 、 {名前|なまえ} を {呼|よ}ばれて ！ || Curtain call! Every last one, called by name!
 !warp mp.theatre 10 9 up
@@ -215225,7 +215531,7 @@ mio: {言葉|ことば} を {選|えら}んだ の は あなた 。 {絵|え} �
 
 @scene road.mio.r3
 mio: あの {日|ひ} 、 {店|みせ} で {瓶|びん} を {渡|わた}した でしょ 。 {中身|なかみ} の ない {瓶|びん} 。 || That day at the shop, I gave you a bottle. An empty one.
-mio: {今|いま} {思|おも}う と 、 {中身|なかみ} が ない から 、 {何|なに} でも {入|い}れられる の よ ね 。 || Thinking about it now — because there's nothing in it, you can put anything in.
+mio: {今|いま} {思|おも}う と 、 {中身|なかみ} が ない から 、 {何|なん} でも {入|い}れられる の よ ね 。 || Thinking about it now — because there's nothing in it, you can put anything in.
 ?(memory.ending_retro:mio) mio: {灯|あか}り{堂|どう} で {話|はな}した {日|ひ} から 、 {少|すこ}し {肩|かた} の {力|ちから} が {抜|ぬ}けた の 。 {言|い}いそびれて いた こと って 、 {重|おも}い の ね 。 || And since the day we talked in the Lantern Hall, my shoulders have loosened a little. Things you never got round to saying are heavy.
 
 @scene road.mio.r4
@@ -215688,7 +215994,7 @@ narr: {家|いえ} の {方|ほう} から 、 フク さん が {降|お}りて
 fuku: その {歩|ふ} 、 イサム さん と {指|さ}して いた {頃|ころ} の {忘|わす}れ{物|もの} な の 。 || That pawn was left behind from when Isamu and I used to play.
 fuku: {相手|あいて} が いない と 、 {駒|こま} が {寂|さび}しがる わ 。 {一局|いっきょく} 、 どう ？ {初|はじ}めて なら 、 {教|おし}えて あげる 。 || The pieces get lonely with no one to play. A game? If it's your first time, I'll teach you.
 !choice
-* {お願|ねが}い します 。 || Yes, please. -> play
+* お{願|ねが}い します 。 || Yes, please. -> play
 * {今|いま} は いい です 。 || Not just now. -> later
 :play
 fuku: じゃあ 、 {駒|こま} を {並|なら}べましょう 。 || Then let's set out the pieces.
@@ -218789,7 +219095,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         },
         E: {
           purpose: T('A note packed with Mio\'s medicine order.', 'ミオ の {薬|くすり} の {荷|に} に {入|い}れる {書|か}き{付|つ}け 。'),
-          evidence: [{ k: 'count', title: T('Packed in the box', '{箱|はこ} に {入|い}って いる もの'), icon: 'bottle', n: 5, label: T('five bottles of medicine', '{薬|くすり} の {瓶|びん} {五本|ごほん}'), alt: 'Five bottles of medicine are packed in the box.' }],
+          evidence: [{ k: 'count', title: T('Packed in the box', '{箱|はこ} に {入|はい}って いる もの'), icon: 'bottle', n: 5, label: T('five bottles of medicine', '{薬|くすり} の {瓶|びん} {五本|ごほん}'), alt: 'Five bottles of medicine are packed in the box.' }],
           notice: { en: 'We are sending six bottles of medicine.', title: T('The note', '{書|か}き{付|つ}け'), segs: [
             { jp: '{薬|くすり} の {瓶|びん} を' },
             { jp: '{六本|ろっぽん}', bad: true, options: [o('{五本|ごほん}', 'five (long things)', true), o('{五|いつ}つ', 'five', true, 'Also right, with the general counter.'), o('{六本|ろっぽん}', 'six', false, 'Only five are packed.'), o('{四本|よんほん}', 'four', false, 'Count again: five.')] },
@@ -220239,7 +220545,7 @@ narr: {葉|は} は 、 また {後|あと} で {読|よ}もう 。 || You can r
 
 @scene rt.grove_write
 !if rt_grove_leaf -> done
-narr: {白|しろ}い {葉|は} が {何枚|なんまい} か 、 {籠|かご} に {入|い}って いる 。 {誰|だれ} でも {書|か}いて いい らしい 。 || A few blank leaves lie in a basket. Anyone may write one, it seems.
+narr: {白|しろ}い {葉|は} が {何枚|なんまい} か 、 {籠|かご} に {入|はい}って いる 。 {誰|だれ} でも {書|か}いて いい らしい 。 || A few blank leaves lie in a basket. Anyone may write one, it seems.
 !challenge rt.grove_write
 !if var._res=0 -> later
 ?(var._forge=home) !var rt_leaf_to = home
@@ -224487,7 +224793,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A: [ch({ item: 'g:counters', ctx: { jp: 'ミナ ： {十匹|じゅっぴき} の 「じゅっ 」 と 、 {十本|じゅっぽん} の 「じゅっ 」 、 {同|おな}じ ？', en: '' }, prompt: { en: 'Mina has spotted a pattern. Is she right?' }, options: [o('{同|おな}じ だ よ 。 {十|じゅう} は {後|あと} に 「ひ 」 や 「ほ 」 が {来|く}る と 、 {小|ちい}さい 「っ」 に なって 、 「ぴ 」 「ぽ 」 に {変|か}わる 。', 1), o('{違|ちが}う よ 。 {十本|じゅっぽん} は {正|ただ}しく ない 。', 0, '十本 (じゅっぽん) is right: the same change as じゅっぴき.'), o('{同|おな}じ だ けど 、 {数|かず} が {十|じゅう} の {時|とき} だけ だ よ 。', 0, 'It is the same pattern after いち, ろく, はち too: いっぴき, ろっぴき, はっぴき.')] })],
   });
   task('sz.school_3', T('{潮|しお}だまり の {立|た}て{札|ふだ}', 'The notice by the pools'), {
-    F: [ch({ item: 'g:v_naide_kudasai', ctx: { jp: 'たてふだ ： 「かい を とらないで ください 。」', en: '' }, prompt: { en: 'Riku asks what the notice says.' }, options: [o('かい を とったら だめ 。', 1), o('かい を とって いい よ 。', 0, '～ないでください asks you not to.'), o('かい を かって ね 。', 0, 'とらないで: don\'t take.')] })],
+    F: [ch({ item: 'g:v_naide_kudasai', ctx: { jp: 'たてふだ ： 「かい@貝 を とらないで ください 。」', en: '' }, prompt: { en: 'Riku asks what the notice says.' }, options: [o('かい@貝 を とったら だめ 。', 1), o('かい@貝 を とって いい よ 。', 0, '～ないでください asks you not to.'), o('かい@貝 を かって ね 。', 0, 'とらないで: don\'t take.')] })],
     E: [ch({ item: 'g:v_naide_kudasai', ctx: { jp: '{立|た}て{札|ふだ} ： 「{貝|かい} を {取|と}らないで ください 。 {石|いし} は {元|もと} に {戻|もど}して ください 。」', en: '' }, prompt: { en: 'Read the notice to Riku in his words.' }, options: [o('{貝|かい} は {取|と}らない で 、 {動|うご}かした {石|いし} は {元|もと} の ところ に {戻|もど}して ね 。', 1), o('{貝|かい} を {取|と}ったら 、 {石|いし} の {下|した} に {隠|かく}して ね 。', 0, '戻してください: put the stones back as they were.'), o('{石|いし} を {持|も}って {帰|かえ}って いい よ 。', 0, 'The notice asks the opposite.')] })],
     I: [ch({ item: 'g:n_desu', ctx: { jp: 'リク ： なんで {石|いし} を {戻|もど}す の ？ {誰|だれ} も {困|こま}らない よ 。', en: '' }, prompt: { en: 'Explain why to Riku.' }, options: [o('{石|いし} の {下|した} は 、 {生|い}き{物|もの} の {家|いえ} な ん だ よ 。 {戻|もど}さない と 、 {住|す}む {所|ところ} が なくなる 。', 1), o('{立|た}て{札|ふだ} に {書|か}いて ある から 、 {守|まも}る ん だ よ 。', 0, 'True, but it doesn\'t say why: the stones are the creatures\' homes.'), o('{大人|おとな} に {怒|おこ}られる から だ よ 。', 0, 'That is a reason to be careful, not why it matters.')] })],
     A: [ch({ item: 'v:採取', ctx: { jp: '{潮|しお}だまり の {生物|せいぶつ} の {採取|さいしゅ} を {禁|きん}ずる 。 {転石|てんせき} は {原状|げんじょう} に {復|ふく}する こと 。', en: '' }, prompt: { en: 'An older notice in formal written style. Put it in words the children will understand.' }, options: [o('{生|い}き{物|もの} を {取|と}っちゃ だめ 。 ひっくり{返|かえ}した {石|いし} は 、 {元|もと} どおり に {戻|もど}そう 。', 1), o('{生|い}き{物|もの} を {取|と}る {時|とき} は 、 {石|いし} を ひっくり{返|かえ}そう 。', 0, '禁ずる forbids: no taking at all.'), o('{石|いし} を {転|ころ}がして {遊|あそ}ぼう 。', 0, '原状に復する: put things back as they were.')] })],
@@ -225216,7 +225522,7 @@ comp: {私|わたし} も 。 {頭|あたま} の {中|なか} の {棚|たな} 
 !goto close
 :together
 !gesture mio fidget
-comp[shy]: …… うん 。 {何|なに} の {役|やく} に も {立|た}たない のに 、 {楽|たの}しかった 。 そう {言|い}って も いい ん だ ね 。 || …Yes. It wasn't useful for anything, and it was fun. I'm allowed to say that, aren't I.
+comp[shy]: …… うん 。 {何|なん} の {役|やく} に も {立|た}たない のに 、 {楽|たの}しかった 。 そう {言|い}って も いい ん だ ね 。 || …Yes. It wasn't useful for anything, and it was fun. I'm allowed to say that, aren't I.
 !hook wp_reflect together
 :close
 ?(wordplay.won) !gesture mio laugh
@@ -226241,9 +226547,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
+  // the Lower House's earthen entrance (土間, RBN-QA-114): packed earth inside the door, the raised floor's edge
+  // (the agari-gamachi) along its top. It lies at floor level; with the art below it is baked into the ground, under everyone.
+  def('yn_doma', { w: 3, h: 2, block: false }, (c, x, y, p) => {
+    px(c, x, y, 48, 32, '#7c7166'); px(c, x + 16, y + 32, 16, 16, '#7c7166');
+    px(c, x, y, 48, 3, p.floor[1]); px(c, x, y + 3, 48, 2, 'rgba(30,20,12,0.3)'); px(c, x, y + 3, 2, 29, 'rgba(30,20,12,0.22)');
+  });
+
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
-  const { R, ell, line } = K;
+  const { R, ell, line, mix } = K;
   const poly = (g, pts, c) => K.poly(g, Array.isArray(pts[0]) ? pts.flat() : pts, c);
   const I = K.FIX.iron, BR = K.FIX.brass, PP = K.FIX.paper, ST = K.FIX.straw;
   const puff = (g, cx, cy, r, a) => { ell(g, cx, cy, r, r * 0.8, 'rgba(246,246,242,' + a + ')'); ell(g, cx - r * 0.3, cy - r * 0.3, r * 0.55, r * 0.45, 'rgba(255,255,252,' + Math.min(1, a + 0.1) + ')'); };
@@ -226407,6 +226720,38 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(g, 15, -6, 3, 28, BR[1]); ell(g, 16, 20, 7, 5, BR[2]); ell(g, 14, 18, 4, 2, BR[3]);
       ell(g, 16, 27, 12, 3, D[2]);
     },
+  });
+  // The Lower House's earthen entrance (土間, RBN-QA-114): packed earth (三和土) from the door to the raised floor, greyer
+  // and harder than the street outside, worn a little lighter where feet go from the door to the step; along its top
+  // the raised floor's edge (the agari-gamachi), a timber face with a lit arris, its shadow on the earth, and the floor's edge
+  // down each side. All of it lies at floor level, so it is baked into the ground under everyone (spec.bake); the
+  // shared wood and earth tiles are untouched. The footprint is the strip (5..7, 7..8) and the doorway below it.
+  art('yn_doma', {
+    box: [0, 0, 96, 64],
+    bake: {
+      box: [-2, -2, 100, 100],
+      when: () => true,
+      draw(g, M, v, info, pal) {
+        const E = ['#62594f', '#7c7166', '#877b6e', '#988c7e'], F = pal.floor;
+        // the earth: the strip and the doorway below its middle, a quiet mass
+        R(g, 0, 0, 96, 64, E[1]); R(g, 32, 64, 32, 32, E[1]);
+        // the trodden line, door to step
+        ell(g, 48, 58, 13, 34, E[2]); ell(g, 48, 60, 8, 28, 'rgba(160,148,132,0.35)');
+        // sparse grit, larger in the corners where nobody walks
+        for (let i = 0; i < 26; i++) {
+          const r = K.hh(5, 7, 600 + i), gx = r % 96, gy = (r >>> 8) % 64;
+          const edge = gx < 20 || gx > 76;
+          R(g, gx, gy, edge && (r >>> 16) % 3 === 0 ? 2 : 1, 1, (r >>> 18) % 2 ? E[0] : E[3]);
+        }
+        // the raised floor's edge: down each side, then the timber face along the top
+        R(g, 0, 0, 3, 64, 'rgba(30,20,12,0.24)'); R(g, -2, 0, 2, 64, F[2]);
+        R(g, 95, 0, 1, 64, 'rgba(30,20,12,0.16)'); R(g, 96, 0, 2, 64, F[2]);
+        R(g, -2, 7, 100, 4, 'rgba(30,20,12,0.30)'); R(g, -2, 11, 100, 2, 'rgba(30,20,12,0.12)');
+        R(g, -2, -2, 100, 9, F[1]); R(g, -2, -2, 100, 1, mix(F[0], '#fff4dc', 0.35)); R(g, -2, 6, 100, 1, F[2]);
+        for (const [gx, gl] of [[8, 18], [40, 12], [70, 20]]) R(g, gx, 2, gl, 1, mix(F[1], F[2], 0.6));
+      },
+    },
+    draw() {},
   });
 })();
 
@@ -226605,9 +226950,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       T('{峠|とうげ} の {向|む}こう の {湯|ゆ} の {谷|たに} から 、 {継|つ}ぎ{飛脚|びきゃく} が {手紙|てがみ} を {運|はこ}んで {来|き}た 。 {雲路峠|くもじとうげ} から {北東|ほくとう} へ {下|くだ}ろう 。', 'The relay has brought a letter from the valley of hot springs beyond the pass. Go down to the north-east from the Cloudroad Pass.'),
       T('{湯|ゆ}ノ{谷|たに} に {着|つ}いた 。 {手紙|てがみ} を {書|か}いた {湯守|ゆもり} の {頭|かしら} 、 ロクベエ を {探|さが}そう 。', 'Steamhollow. Find Rokubei, the head bath-keeper who wrote the letter.'),
       T('{宿|やど} は どこ も {満員|まんいん} だ 。 {上|かみ}の{湯|ゆ} の {帳場|ちょうば} を {手伝|てつだ}って 、 {新|あたら}しく {来|き}た {人|ひと} たち の {部屋|へや} を {決|き}めよう 。', 'Every inn is full. Help at the Upper House\'s front desk and find rooms for the newcomers.'),
-      T('{上|かみ}の{湯|ゆ} と {下|しも}の{湯|ゆ} が 、 {一|ひと}つ の {湯|ゆ} を {巡|めぐ}って {揉|も}めて いる 。 {下|しも}の{湯|ゆ} の {話|はなし} も {聞|き}こう 。', 'The Upper House and the Lower House are quarrelling over the one spring they share. Hear the Lower House\'s side too.'),
+      // (once Tahei has been heard, the Journey names where the quest goes on, not what happens there: RBN-QA-117)
+      Object.assign(T('{上|かみ}の{湯|ゆ} と {下|しも}の{湯|ゆ} が 、 {一|ひと}つ の {湯|ゆ} を {巡|めぐ}って {揉|も}めて いる 。 {下|しも}の{湯|ゆ} の {話|はなし} も {聞|き}こう 。', 'The Upper House and the Lower House are quarrelling over the one spring they share. Hear the Lower House\'s side too.'),
+        { textIf: [{ if: 'yn_shimo_heard', jp: '{両方|りょうほう} の {宿|やど} の {話|はなし} を {聞|き}いた 。 {下|しも} の {町|まち} の {赤|あか}い {橋|はし} へ {行|い}こう 。', en: 'You\'ve heard both houses. Go to the red bridge in the lower town.' }] }),
       T('{橋|はし} の {上|うえ} で {口論|こうろん} が {始|はじ}まり 、 {地面|じめん} が {揺|ゆ}れた 。 {湯守|ゆもり} の {寄合所|よりあいじょ} で 、 ロクベエ に {会|あ}おう 。', 'A quarrel broke out on the bridge and the ground shook. See Rokubei at the bath-keepers\' hall.'),
-      T('{湯|ゆ} が {熱|あつ}すぎたり {冷|つめ}たすぎたり する 。 {湯元|ゆもと} の {下|した} 、 {湯気|ゆげ} の {抜|ぬ}け{穴|あな} へ {降|お}りよう 。', 'The water runs too hot, then too cold. Go down into the Steam Vents under the spring house.'),
+      // (the grille under the spring house is shut until Aki opens it: until then the guide points to her, RBN-QA-117)
+      Object.assign(T('{湯|ゆ} が {熱|あつ}すぎたり {冷|つめ}たすぎたり する 。 {湯元|ゆもと} の {下|した} 、 {湯気|ゆげ} の {抜|ぬ}け{穴|あな} へ {降|お}りよう 。', 'The water runs too hot, then too cold. Go down into the Steam Vents under the spring house.'),
+        { atIf: [{ if: '!yn_vents_open', at: { map: 'yn.lower', npc: 'yn_aki' }, hint: T('{湯元|ゆもと} の {格子|こうし} の {鍵|かぎ} は 、 アキ が {持|も}って いる 。', 'Aki has the key to the grille at the spring house.') }] }),
       T('{釜|かま}の{主|ぬし} は {落|お}ち{着|つ}いた 。 {寄合所|よりあいじょ} で 、 {二|ふた}つ の {宿|やど} と {湯守|ゆもり} と {湯|ゆ} に 、 {話|はな}し{合|あ}って もらおう 。', 'The Kettle Below has settled. At the guild hall, bring the two houses, the guild and the spring to talk it out.'),
       T('{谷|たに} {全体|ぜんたい} で {決|き}めた 。 {北|きた} の {道|みち} が {開|ひら}いて いる 。', 'The valley has decided, as a whole. The north road is open.'),
     ],
@@ -226647,6 +226996,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const STEAM = { weather: 'motes', tint: 'rgba(240,236,226,0.10)' };
   const DUSK = { if: 'yn_evening&!yn_done', ambient: { weather: 'motes', tint: 'rgba(232,130,70,0.16)', dark: 0.18 } };
   const steam = (x, y) => ({ p: 'yn_steam', x, y });
+  // the river's own steam goes when the quarrel runs it cold (yn_river_cold, set at the line that says so; an older save
+  // past the quarrel's end, stage 4, without that flag counts as cold too) and comes back when the Kettle settles
+  // (RBN-QA-119; Agnes 6345974122). Land vents are not the river's.
+  const RIVER_STEAM = '!yn_river_cold&!yn_quarrel|!yn_river_cold&quest.yn_main<4|yn_kettle_settled';
+  const riverSteam = (x, y) => Object.assign(steam(x, y), { if: RIVER_STEAM });
 
   // ==== the way down (湯けむりの坂): from the Pass through steaming rock ================================================
   C.maps['yn.descent'] = Object.assign({}, TOWN, {
@@ -226665,7 +227019,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bench', x: 14, y: 9, scene: 'yn.descent_view' },
     ],
     npcs: [
-      { id: 'yn_yasuke', x: 9, y: 16, dir: 'down', if: '!yn_done', talk: [{ if: 'yn_yasuke_met', scene: 'yn.yasuke_idle' }, { scene: 'yn.yasuke_road' }] },
+      // (after the chapter's end he stays only while Eggs for Everyone is under way and his egg is still owed, so the
+      // quest can be finished; given it, he goes as before. Nothing is given or set for you; RBN-QA-129)
+      { id: 'yn_yasuke', x: 9, y: 16, dir: 'down', if: '!yn_done|quest.yn_eggs=0&!yn_egg_yasuke', talk: [{ if: 'yn_yasuke_met', scene: 'yn.yasuke_idle' }, { scene: 'yn.yasuke_road' }] },
     ],
     foes: [
       { id: 'e1', enemy: 'yn.steamwisp', x: 18, y: 10, patrol: 2 },
@@ -226707,6 +227063,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'yn_rokubei', x: 24, y: 18, dir: 'left', if: '!yn_rokubei_met', talk: 'yn.rokubei_first' },
+      // (after the chapter's end her talk is her after-line, so Eggs for Everyone cannot be begun then: a quest already
+      // under way is kept finishable (RBN-QA-129), a quest never begun is not offered late; a known limitation)
       { id: 'yn_tama', x: 15, y: 18, dir: 'up', talk: [{ if: 'yn_done', scene: 'yn.tama_after' }, { if: 'yn_eggs_cooked&!yn_buns_cooked', scene: 'yn.tama_buns' }, { if: 'yn_eggs_cooked', scene: 'yn.tama_idle' }, { scene: 'yn.tama' }] },
       { id: 'yn_kihachi', x: 34, y: 12, dir: 'down', talk: [{ if: 'yn_done', scene: 'yn.kihachi_after' }, { scene: 'yn.kihachi' }] },
       { id: 'yn_toki', x: 2, y: 13, dir: 'right', talk: [{ if: 'yn_done', scene: 'yn.toki_after' }, { scene: 'yn.toki' }] },
@@ -226748,7 +227106,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sg_stall', x: 16, y: 12, scene: 'yn.onatsu_stall' },
       { p: 'yn_divider', x: 32, y: 24, scene: 'yn.divider' },
       { p: 'lamppost', x: 24, y: 17 }, { p: 'lamppost', x: 32, y: 14 }, { p: 'lamppost', x: 18, y: 17 }, { p: 'lamppost', x: 2, y: 12 },
-      steam(29, 6), steam(28, 22), steam(14, 24), steam(37, 24), steam(22, 4),
+      riverSteam(29, 6), riverSteam(28, 22), steam(14, 24), steam(37, 24), steam(22, 4),
       // the stone steps down behind the spring house: the grille's notice until Aki opens it, then a way down
       { p: 'stairs', x: 37, y: 26, if: '!yn_vents_open', scene: 'yn.vents_door' },
       { p: 'stairs', x: 37, y: 26, if: 'yn_vents_open' },
@@ -226756,7 +227114,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [
       { id: 'mp_tokube', x: 11, y: 18, dir: 'up', if: '!yn_tokube_gone', talk: [{ if: 'yn_done', scene: 'yn.tokube_after' }, { if: 'yn_tokube_done', scene: 'yn.tokube_idle' }, { scene: 'yn.tokube' }] },
       { id: 'yn_onatsu', x: 17, y: 11, dir: 'down', talk: [{ if: 'yn_done', scene: 'yn.onatsu_after' }, { scene: 'yn.onatsu' }] },
-      { id: 'yn_tsuneji', x: 22, y: 18, dir: 'left', if: '!yn_done', talk: 'yn.tsuneji' },
+      // (once he has taken his egg home he is in the Lower House instead, by its hearth; he goes by its door or, if
+      // that way cannot be walked, fades where he stands: never by another exit; RBN-QA-120. After the chapter's end
+      // he stays here only while Eggs for Everyone is under way and his egg is still owed; given it then, he goes by
+      // the same door, and the hearth's place, which ends with the chapter, does not take him; RBN-QA-129)
+      { id: 'yn_tsuneji', x: 22, y: 18, dir: 'left', if: '!yn_done&!yn_egg_tsuneji|quest.yn_eggs=0&!yn_egg_tsuneji', leaveTo: 'yn.shimo', leave: 'way', talk: 'yn.tsuneji' },
       { id: 'yn_aki', x: 33, y: 22, dir: 'down', if: '!yn_vents_open', talk: [{ if: 'quest.yn_main>=5', scene: 'yn.aki_ready' }, { scene: 'yn.aki' }] },
     ],
     exits: [
@@ -226871,8 +227233,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the Lower House's lobby (下の湯): loud, warm; the house rules on one short board; the way out back to the open-air
   // bath; Zenroku's corner
   interior('yn.shimo', T('The Lower House', '{下|しも}の{湯|ゆ}'), 15, 10, 6, 'yn.lower', [9, 11], {
-    terrain: K.build(15, 10, '#', (k) => { k.rect(1, 2, 13, 7, '_'); k.rect(9, 3, 4, 3, 'm'); k.set(6, 9, '_'); k.set(13, 2, '_'); }),
+    // (the earthen entrance, 土間, inside the door: packed earth, with the raised floor's edge along it; RBN-QA-114)
+    terrain: K.build(15, 10, '#', (k) => { k.rect(1, 2, 13, 7, '_'); k.rect(9, 3, 4, 3, 'm'); k.rect(5, 7, 3, 2, ':'); k.set(6, 9, ':'); k.set(13, 2, '_'); }),
     props: [
+      { p: 'yn_doma', x: 5, y: 7 },
       { p: 'exitmat', x: 6, y: 8 }, { p: 'counter', x: 2, y: 3, w: 3, across: true, scene: 'yn.shimo_desk' },
       { p: 'noticeboard', x: 6, y: 2, scene: 'yn.shimo_rules' },
       { p: 'yn_noren', x: 13, y: 2, o: { side: 'men' }, scene: 'yn.bath_shimo' },
@@ -226882,6 +227246,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'yn_tahei', x: 3, y: 2, dir: 'down', talk: [{ if: 'yn_done', scene: 'yn.tahei_after' }, { if: 'yn_shimo_heard', scene: 'yn.tahei_idle' }, { scene: 'yn.tahei_first' }] },
       { id: 'yn_kane', x: 5, y: 5, dir: 'left', talk: [{ if: 'yn_done', scene: 'yn.kane_after' }, { if: 'yn_complaint_done', scene: 'yn.kane_idle' }, { if: 'yn_shimo_heard', scene: 'yn.complaint_start' }, { scene: 'yn.kane' }] },
       { id: 'yn_zenroku', x: 11, y: 4, dir: 'left', if: '!yn_done', talk: [{ if: 'yn_complaint_done', scene: 'yn.zenroku_idle' }, { scene: 'yn.zenroku' }] },
+      // Tsuneji, back with his egg for the ridge folk (yn.egg_tsuneji walks him here from the riverbank; RBN-QA-120)
+      { id: 'yn_tsuneji', x: 9, y: 7, dir: 'right', if: 'yn_egg_tsuneji&!yn_done', talk: 'yn.tsuneji' },
     ],
     onEnter: [{ scene: 'yn.shimo_first', if: '!yn_shimo_seen' }],
   });
@@ -227113,10 +227479,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   // the runner, wherever the party next is on the Cloudroad (a station or the Pass) or in Lanternfall's street
   const where = (C.cloudroad && C.cloudroad.STATIONS ? C.cloudroad.STATIONS : []).map((id) => [id, 5, 14]).concat([['cr.summit', 5, 12], ['lf.town', 6, 18]]);
+  // When the letter is given (yn.call sets yn_called) his place here ends, and at the scene's close he goes on down the
+  // road on his round, by his own way out: the place's west exit, down the relay (stations: the leg below, Oiwake:
+  // Lanternfall's road; the Pass: the hut; Lanternfall's street: its road). If that way cannot be walked he fades where
+  // he stands, recorded (leave: 'way', src/engine/50_world.js); never by some other exit. (RBN-QA-108; Agnes
+  // 6372889134, Local CL-240, Cloud CC-147 §3, CC-149 §4)
   for (const [id, x, y] of where) {
     const m = C.maps[id];
     if (!m) continue;
-    m.npcs.push({ id: 'cr_jinpachi', x, y, dir: 'up', if: 'ed>=2&cr_done&!yn_called', talk: 'yn.call' });
+    const down = (m.exits || []).find((e) => e.x === 0);
+    m.npcs.push(Object.assign({ id: 'cr_jinpachi', x, y, dir: 'up', if: 'ed>=2&cr_done&!yn_called', talk: 'yn.call' }, down ? { leave: 'way', leaveTo: down.to } : {}));
     m.onEnter = (m.onEnter || []).concat([{ scene: 'yn.call', if: 'ed>=2&cr_done&!yn_called' }]);
   }
 })(RB.content);
@@ -227125,8 +227497,12 @@ RB.script.add(`
 @scene yn.call
 # Staged: Jinpachi comes up the road at a run, waving a letter over his head, the first one ever to come up the relay
 # from beyond the pass. He reads the address out proudly; the companion answers in their own way.
+# He runs up to you first (RBN-QA-108), from his place on the road or from wherever he was still going: chained after
+# the Cloudroad's end he was walking to his place, 13 tiles off. No line says he came; if he cannot reach you (no free
+# place within 2, or the walk runs out) he speaks from where he is, and a line said while he is off screen says so.
 !set yn_called
 !chapter yn
+!walkto cr_jinpachi pc run max=8000
 !emote cr_jinpachi !
 !faceplayer cr_jinpachi
 cr_jinpachi: $name さん ！ {峠|とうげ} の {向|む}こう から 、 {手紙|てがみ} です ！ {谷|たに} の {側|がわ} から {継|つ}ぎ{飛脚|びきゃく} に {乗|の}った 、 {初|はじ}めて の {便|びん} です よ ！ || $name! A letter from over the pass! The first post ever to come up the relay from the valley side!
@@ -227156,7 +227532,7 @@ cr_jinpachi: {峠|とうげ} まで は 、 {駕籠|かご} も あります か
 narr: {岩|いわ} の {割|わ}れ{目|め} から 、 {湯気|ゆげ} が {上|あ}がって いる 。 {卵|たまご} の よう な 、 {硫黄|いおう} の {匂|にお}い が する 。 || Steam rises from cracks in the rock. There's a smell like eggs: sulphur.
 narr: {下|した} の {谷|たに} から 、 {人|ひと} の {声|こえ} 、 {下駄|げた} の {音|おと} 、 {三味線|しゃみせん} が {聞|き}こえて くる 。 || From the valley below come voices, the clack of wooden sandals, a shamisen.
 !gesture pc lookroad up
-narr: {振|ふ}り{返|かえ}る と 、 {峠|とうげ} の {上|うえ} の {尾根|おね} は 、 {何|なに} の {音|おと} も しない 。 {鳥|とり} も 、 {風|かぜ} も 。 || When you look back, the ridge above the pass makes no sound at all. No birds. No wind.
+narr: {振|ふ}り{返|かえ}る と 、 {峠|とうげ} の {上|うえ} の {尾根|おね} は 、 {何|なん} の {音|おと} も しない 。 {鳥|とり} も 、 {風|かぜ} も 。 || When you look back, the ridge above the pass makes no sound at all. No birds. No wind.
 ?(comp=nao) comp[closed]: …… {上|うえ} は 、 {静|しず}か すぎる な 。 {下|した} へ {行|い}こう 。 || …Too quiet up there. Let's go down.
 ?(comp=mio) comp[worry]: {尾根|おね} の {方|ほう} 、 {何|なん} だか 、 {耳|みみ} が {詰|つ}まった みたい です 。 {高|たか}い {所|ところ} の せい だけ で は ない よう な 。 || Up towards the ridge, it's as if my ears are blocked. And not only from the height, I think.
 ?(comp=ren) comp[worry]: {灯|ひ} の ない {尾根|おね} です ね 。 …… {音|おと} まで 、 {消|き}えて いる 。 || A ridge without a single lamp. …Even the sound has gone out.
@@ -227241,7 +227617,7 @@ yn_rokubei: {部屋|へや} は {見|み}つかった か 。 {上|かみ}の{�
 yn_rokubei: {湯守|ゆもり} は 、 {湯|ゆ} を {分|わ}ける の が {仕事|しごと} だ 。 {人|ひと} の {気持|きも}ち まで は 、 {分|わ}けられん 。 || A bath-keeper's job is dividing the water. People's feelings, we can't divide.
 
 @scene yn.north_closed
-narr: {北|きた} へ {登|のぼ}る {道|みち} 。 {上|うえ} の {村|むら} の {方|ほう} は 、 {何|なに} の {音|おと} も しない 。 || The road north climbs towards the villages above. No sound comes from that way at all.
+narr: {北|きた} へ {登|のぼ}る {道|みち} 。 {上|うえ} の {村|むら} の {方|ほう} は 、 {何|なん} の {音|おと} も しない 。 || The road north climbs towards the villages above. No sound comes from that way at all.
 ?(!yn_done) narr: {今|いま} は 、 {谷|たに} で する こと が ある 。 || For now, there's work to do in the valley.
 !move pc down 1
 
@@ -227428,7 +227804,9 @@ narr: どの {湯|ゆ} に {入|はい}る ？ （この {後|あと} も 、 {�
 
 @scene yn.bath_scene
 # Every time you step into a bath: the bath itself (or a sentence, with the comfort setting on Summarised); the first
-# time anywhere, the companion's bath beat (yn.bath_beat).
+# time anywhere, the companion's bath beat (yn.bath_beat). On different sides of the bamboo partition the companion is
+# a voice from beyond it, never a figure brought to your side (RBN-QA-113; the names as speakers resolve, not "comp").
+?(yn_bath_apart) !speakerless nao mio ren suzu
 ?(bathview=shown) narr: {洗|あら}い{場|ば} で {腰掛|こしか}け に {座|すわ}り 、 {桶|おけ} で {湯|ゆ} を {浴|あ}びて から 、 {湯船|ゆぶね} に {入|はい}る 。 {手拭|てぬぐ}い は {畳|たた}んで {頭|あたま} の {上|うえ} 。 {熱|あつ}い {湯|ゆ} が 、 {肩|かた} まで {来|く}る 。 || You sit on a stool at the washing place, rinse off with a bucket, then step into the bath, towel folded on your head. Hot water up to your shoulders.
 ?(bathview=summarised) narr: {体|からだ} を {流|なが}して から 、 {湯|ゆ} に {浸|つ}かった 。 || You rinse off, then soak.
 ?(yn_bath_apart) narr: {竹|たけ} の {垣根|かきね} の {向|む}こう から 、 {聞|き}き{慣|な}れた {声|こえ} が する 。 || From beyond the bamboo partition comes a familiar voice.
@@ -227524,7 +227902,7 @@ yn_kane: {話|はなし} を {聞|き}いて みて くれる ？ {私|わたし
 !if var._enc=walked -> walked
 !if var._res=0 -> later
 !set yn_complaint_done
-?(var._enc=moved) yn_kane: {上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} へ ？ {女将|おかみ} が {承知|しょうち} したの ？ …… {上|かみ}の{湯|ゆ} と {下|しも}の{湯|ゆ} で 、 {客|きゃく} を {譲|ゆず}り{合|あ}う なんて 、 {何年|なんねん} ぶり かしら 。 || To the Upper House's Plum room? The proprietress agreed? …The Upper and Lower Houses passing guests between them. How many years has it been?
+?(var._enc=asked) yn_kane: {上|かみ}の{湯|ゆ} に は 、 {私|わたし} から {聞|き}いて みる わ 。 …… {客|きゃく} の こと で {向|む}こう に {相談|そうだん} する なんて 、 {何年|なんねん} ぶり かしら 。 || I'll ask the Upper House myself. …Going to them about a guest. How many years has it been?
 ?(var._enc=stayed) yn_kane: {部屋|へや} を {替|か}えず に 、 {泊|と}まって くれる って 。 {尾根|おね} の {人|ひと} たち の こと 、 {私|わたし} も {気|き}を {付|つ}ける わ 。 || He'll stay, without changing rooms. I'll keep an eye on the ridge folk too.
 yn_kane: ありがとう 。 {言|い}わない こと を {聞|き}く の は 、 {難|むずか}しい わ ね 。 || Thank you. Hearing what someone doesn't say is hard, isn't it.
 !end
@@ -227696,7 +228074,7 @@ narr: {熱|あつ}い 。 でも 、 すぐ に {足|あし} の {裏|うら} �
 :no
 
 @scene yn.steambox
-narr: {石|いし} の {蒸|む}し{場|ば} 。 {竹|たけ} の {籠|かご} に {入|い}った {卵|たまご} が 、 {湯気|ゆげ} の {中|なか} で {揺|ゆ}れて いる 。 || The stone steam box. Eggs in bamboo baskets sway in the steam.
+narr: {石|いし} の {蒸|む}し{場|ば} 。 {竹|たけ} の {籠|かご} に {入|はい}った {卵|たまご} が 、 {湯気|ゆげ} の {中|なか} で {揺|ゆ}れて いる 。 || The stone steam box. Eggs in bamboo baskets sway in the steam.
 ?(!yn_eggs_cooked) narr: タマ さん に {聞|き}けば 、 {作|つく}り{方|かた} を {教|おし}えて くれる そう だ 。 || Ask Tama and she'll show you how, they say.
 
 @scene yn.tama
@@ -227788,6 +228166,8 @@ yn_tahei: {敬語|けいご} で {殴|なぐ}る の が 、 {上|かみ}の{湯
 !shake
 narr: {足元|あしもと} が 、 {大|おお}きく {揺|ゆ}れた 。 {川|かわ} の {湯気|ゆげ} が 、 {一度|いちど} に {噴|ふ}き{上|あ}がる 。 || The ground lurches underfoot. Steam bursts up from the river all at once.
 !shake
+# (the river runs cold from here, and its steam goes with this line: RBN-QA-119)
+!set yn_river_cold
 narr: …… そして 、 {急|きゅう} に {静|しず}か に なった 。 {川|かわ} から {湯気|ゆげ} が {消|き}えて いる 。 {冷|つめ}たい {風|かぜ} が 、 {谷|たに} を {抜|ぬ}けた 。 || …And then, suddenly, quiet. The steam has gone from the river. A cold wind passes down the valley.
 yn_oritsu: …… {湯|ゆ} が 。 || …The water.
 yn_tahei: {冷|つめ}てえ …… 。 || It's cold…
@@ -227831,7 +228211,7 @@ yn_rokubei: {湯|ゆ} を {分|わ}ける の は {湯守|ゆもり} の {仕事
 narr: {寄合所|よりあいじょ} の {長|なが}い {机|つくえ} 。 {端|はし} から {端|はし} まで 、 {古|ふる}い {傷|きず} が {並|なら}んで いる 。 {何代|なんだい} も の {言|い}い{争|あらそ}い の {跡|あと} だ 。 || The guild hall's long table, scarred from end to end: the marks of generations of arguments.
 
 @scene yn.guild_ledger
-narr: {湯守|ゆもり} の {帳面|ちょうめん} 。 {毎日|まいにち} の {湯|ゆ} の {量|りょう} と 、 {切|き}り{替|か}え の {時刻|じこく} 。 {最近|さいきん} の {頁|ページ} は 、 {切|き}り{替|か}え の {時刻|じこく} が {毎日|まいにち} {少|すこ}し ずつ {遅|おそ}れて いる 。 || The guild's ledger: each day's flow and the hour of each switch. On the recent pages the switch comes a little later every day.
+narr: {湯守|ゆもり} の {帳面|ちょうめん} 。 {毎日|まいにち} の {湯|ゆ} の {量|りょう} と 、 {切|き}り{替|か}え の {時刻|じこく} 。 {最近|さいきん} の {頁|ページ} は 、 {切|き}り{替|か}え の {時刻|じこく} が {毎日|まいにち} {少|すこ}し ずつ {遅|おく}れて いる 。 || The guild's ledger: each day's flow and the hour of each switch. On the recent pages the switch comes a little later every day.
 !if item.yn_ledger -> end
 !give yn_ledger
 narr: ロクベエ が 、 {帳面|ちょうめん} の {写|うつ}し を {渡|わた}して くれた 。 || Rokubei hands you a copy of the ledger.
@@ -228031,7 +228411,8 @@ narr: {古|ふる}い {湯樋|ゆどい} 。 {石|いし} で {組|く}んだ {�
 @scene yn.shutter
 # The shutter in the middle chamber: the steam into the upper corridor or the lower. Turn it from here, whichever way.
 !if yn_shutter -> back
-narr: {大|おお}きな {弁|べん} を {回|まわ}す 。 {下|した} の {通|とお}り{道|みち} に {湯気|ゆげ} が {流|なが}れ{込|こ}み 、 {上|うえ} の {通|とお}り{道|みち} が {晴|は}れた 。 || You turn the big valve. Steam floods the lower passage, and the upper one clears.
+# ("the valve", not "the big valve": this line also follows the small wheel at either end of the Channel; RBN-QA-121)
+narr: {弁|べん} を {回|まわ}す 。 {下|した} の {通|とお}り{道|みち} に {湯気|ゆげ} が {流|なが}れ{込|こ}み 、 {上|うえ} の {通|とお}り{道|みち} が {晴|は}れた 。 || You turn the valve. Steam floods the lower passage, and the upper one clears.
 !set yn_shutter
 !sfx wind
 !refresh
@@ -228076,7 +228457,7 @@ narr: {岩|いわ} に {彫|ほ}った {古|ふる}い {字|じ} 。 「{釜|か
 # The Kettle Below: a great iron-dark shape in the boiling pool, the size of a house, shaking. More frightened than
 # angry. The encounter (yn.kettle, 33_creatures.js) settles it; nothing here defeats it.
 narr: {煮|に}え{立|た}つ {湯|ゆ} の {真|ま}ん{中|なか} に 、 {大|おお}きな {黒|くろ}い {釜|かま} の よう な もの が {沈|しず}んで いる 。 {釜|かま} は 、 {震|ふる}えて いた 。 || In the middle of the boiling water sits a great black shape like a kettle. It is shaking.
-narr: {上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って くる 。 {尾根|おね} の {方|ほう} から は 、 {何|なに} の {音|おと} も {来|こ}ない 。 その {間|あいだ} で 、 {釜|かま} が {鳴|な}って いる 。 || From above, shouting rains down. From the ridge, no sound comes at all. Between the two, the Kettle rattles.
+narr: {上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って くる 。 {尾根|おね} の {方|ほう} から は 、 {何|なん} の {音|おと} も {来|こ}ない 。 その {間|あいだ} で 、 {釜|かま} が {鳴|な}って いる 。 || From above, shouting rains down. From the ridge, no sound comes at all. Between the two, the Kettle rattles.
 ?(comp=nao) comp[closed]: …… {怒|おこ}ってる ん じゃ ない 。 {怖|こわ}がってる ん だ 。 {走|はし}り{出|だ}す {前|まえ} の {馬|うま} と {同|おな}じ {顔|かお} だ 。 || …It isn't angry. It's frightened. Same face as a horse about to bolt.
 ?(comp=mio) comp[worry]: {震|ふる}えて います 。 {熱|ねつ} が {出|で}て いる {子|こ} みたい 。 …… {落|お}ち{着|つ}かせて あげないと 。 || It's shaking. Like someone running a fever. …We have to calm it.
 ?(comp=ren) comp[think]: {名前|なまえ} を {呼|よ}ばれず に 、 {長|なが}い {間|あいだ} ここ に いた ん です ね 。 || It's been down here a long time, without anyone calling its name.
@@ -228389,7 +228770,7 @@ yn_ginnojo: {今夜|こんや} 、 {一席|いっせき} やる よ 。 {落|お
 
 @scene yn.ginnojo_idle
 !faceplayer
-yn_ginnojo: {落|お}ち で {笑|わら}い が {来|き}た {時|とき} の {音|おと} 。 …… {四十年|よんじゅうねん} {経|た}って も 、 {同|おな}じ {音|おと} だった よ 。 || The sound when the laugh comes on the punchline. …Forty years on, it's the same sound.
+yn_ginnojo: {最後|さいご} の {台詞|せりふ} が 、 {戻|もど}って {来|き}た 。 …… {四十年|よんじゅうねん} {経|た}って も 、 {笑|わら}い が {来|く}る {間|ま} は 、 {体|からだ} が {覚|おぼ}えて いる 。 || The last line's come back. …Forty years on, my body still knows the beat where the laugh comes.
 
 @scene yn.onatsu_line
 !faceplayer
@@ -228420,6 +228801,9 @@ narr: ヤスケ は {卵|たまご} を {食|た}べて 、 {小|ちい}さく �
 !take yn_eggs
 !set yn_egg_tsuneji
 yn_tsuneji: …… {村|むら} の {者|もの} に も 、 {分|わ}けて やって いい か 。 {一口|ひとくち} ずつ でも 。 || …Can I share it with the others from the village? Even a mouthful each.
+# (he walks back to the Lower House's door and in before the narration says he went: the riverbank no longer holds him
+# and the house does; it is further than the usual bound allows, so this one waits up to 9 s; RBN-QA-120)
+!refresh gone 9000
 narr: ツネジ は {卵|たまご} を {大事|だいじ} そう に {持|も}って 、 {下|しも}の{湯|ゆ} の {土間|どま} へ {帰|かえ}って いった 。 || Tsuneji carries the egg carefully back to the Lower House's floor.
 !call yn.egg_check
 
@@ -228514,11 +228898,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const m = C.maps[id];
     if (m) m.onEnter = (m.onEnter || []).concat([{ scene: 'yn.evening', if: 'yn_evening&!yn_eve_started' }]);
   }
-  // Suzu's books, the morning after her night apart: the troupe is leaving
+  // Suzu's books, the morning after her night apart: the troupe is leaving. On coming out into either town, and in the
+  // upper town before anything else that waits there (the walk after the mediation among it): the Upper House and the
+  // Bath-Keepers' Hall both open onto it, so your first step outside after the garden plays them, whichever way you go
+  // (RBN-QA-128; once, by its own flag; the scene takes you to the playhouse itself)
+  const BOOKS = { scene: 'yn.suzu_books', if: 'comp=suzu&yn_suzu_back&!yn_suzu_books' };
   const lo = C.maps['yn.lower'];
-  if (lo) lo.onEnter = lo.onEnter.concat([{ scene: 'yn.suzu_books', if: 'comp=suzu&yn_suzu_back&!yn_suzu_books' }]);
-  // Ren among the lanterns, with Toki, the evening of the quarrel
+  if (lo) lo.onEnter = lo.onEnter.concat([BOOKS]);
   const up = C.maps['yn.upper'];
+  if (up) up.onEnter = [Object.assign({}, BOOKS)].concat(up.onEnter || []);
+  // Ren among the lanterns, with Toki, the evening of the quarrel
   const toki = up && up.npcs.find((n) => n.id === 'yn_toki');
   if (toki) toki.talk.unshift({ if: 'yn_ren_quarrel&!yn_ren_madeup', scene: 'yn.ren_lanterns' });
 })(RB.content);
@@ -228575,6 +228964,9 @@ mio[closed]: {大丈夫|だいじょうぶ} です 。 {本当|ほんとう} に
 !set yn_apart
 !hook co_bond yn:crossroads
 !hook comp_away night
+# you leave by the dispensary's own door (to where it opens, yn.lower 8,25), and the door closes behind you; Mio stays
+# inside with Oshige, unseen (RBN-QA-103, Agnes 6340911110)
+!warp yn.lower 8 25 down
 narr: {薬処|くすりどころ} の {戸|と} が 、 {静|しず}か に {閉|し}まった 。 || The dispensary door closes quietly behind you.
 !journal ミオ は {薬処|くすりどころ} に {残|のこ}った 。 キクエ さん に 、 {店|みせ} を {継|つ}がない か と {言|い}われた の だ 。 {今夜|こんや} は {町|まち} で {過|す}ごし 、 {階段|かいだん} の {下|した} の {部屋|へや} で {休|やす}もう 。 || Mio stayed at the dispensary: Kikue asked her to take it on. Spend the evening in town, then rest in the room under the stairs.
 
@@ -228619,14 +229011,23 @@ narr: {筧|かけい} から 、 また {湯|ゆ} が ポタン と {落|お}ち
 !set yn_eve_done
 !hook co_bond yn:night
 !hook co_remember together yn_footbath
+!refresh comp
 :end
 
 @scene yn.suzu_evening
 # Suzu's crossroads (S14): the troupe's show; Koume and the old act.
-!warp yn.playhouse 8 7 up
+# RBN-QA-124: the evening is the theatre's first sight (its daytime introduction never follows it); the show is at
+# night (the scene's own light, set while the screen is dark, so the theatre is first seen at night); the house is
+# packed while it lasts (the audience in yn/28_playhouse_audience.js, there only while this scene runs); Koume comes
+# over once the show ends, and the narration says what happened: she walked over, or (if she could not reach you)
+# she called out to you.
+!set yn_playhouse_seen
+!warp yn.playhouse 8 7 up ambience=night_in
 narr: {芝居小屋|しばいごや} は {満員|まんいん} だ 。 {尾根|おね} から {来|き}た {人|ひと} たち も 、 {土間|どま} に {座|すわ}って いる 。 || The little theatre is packed. The people from the ridge are sitting on the floor too.
 narr: {舞台|ぶたい} の コウメ が 、 {扇|おうぎ} を {落|お}とす {芸|げい} で {大笑|おおわら}い を {取|と}った 。 {客席|きゃくせき} の {一番|いちばん} {後|うし}ろ で 、 スズ が {小|ちい}さく {笑|わら}った 。 || On stage Koume gets a huge laugh with a dropped-fan routine. At the very back, Suzu laughs quietly.
-narr: {芝居|しばい} が {終|お}わる と 、 コウメ が {真|ま}っ{直|す}ぐ に {歩|ある}いて {来|き}た 。 || When the show ends, Koume walks straight over.
+!walkto yn_koume pc
+?(var._walked=1) narr: {芝居|しばい} が {終|お}わる と 、 コウメ が {真|ま}っ{直|す}ぐ に {歩|ある}いて {来|き}た 。 || When the show ends, Koume walks straight over.
+?(var._walked=0) narr: {芝居|しばい} が {終|お}わる と 、 コウメ が こちら に {声|こえ} を かけた 。 || When the show ends, Koume calls out to you.
 yn_koume: …… {手紙|てがみ} 、 {届|とど}いた よ 。 {雲路|くもじ} の {飛脚|ひきゃく} が 、 {一言一句|いちごんいっく} {変|か}えず に 、 って {言|い}って た 。 || …Your letter came. The Cloudroad's runner said, not one word changed.
 yn_koume: だから {来|き}た の 。 {峠|とうげ} を {越|こ}えて 。 …… スズ 、 {戻|もど}って {来|き}て 。 {二人|ふたり} の {芸|げい} 、 まだ {誰|だれ} も {代|か}わり が できない の 。 || That's why we came. Over the pass. …Suzu, come back. Our act, the two of us. Nobody's been able to take your place.
 yn_shinza: {座|ざ} の {席|せき} は 、 {空|あ}けて ある 。 {明日|あした} {出|で}る {時|とき} に 、 {一緒|いっしょ} に {来|く}れば いい 。 || Your place in the company is kept open. Come with us when we leave tomorrow.
@@ -228667,6 +229068,7 @@ suzu: {明日|あした} の {朝|あさ} 、 {一座|いちざ} に {会|あ}�
 !set yn_eve_done
 !hook co_bond yn:night
 !hook co_remember together yn_garden
+!refresh comp
 
 @scene yn.suzu_books
 # Suzu's unfinished matter (S14): for years she covered the troupe's losses from her own share and told everyone the
@@ -228728,6 +229130,7 @@ nao[smile]: {明日|あした} 、 {座|すわ}って {聞|き}け 。 {俺|お�
 !set yn_eve_done
 !hook co_bond yn:makeup
 !hook co_remember together yn_footbath
+!refresh comp
 
 @scene yn.ren_evening
 # Ren's quarrel over the mediation: the oldest agreement, exactly as it was ("When lost, go back to the oldest name").
@@ -228763,6 +229166,7 @@ ren[laugh]: {明日|あした} の {取|と}り{決|き}め に 、 {古|ふる}
 !set yn_eve_done
 !hook co_bond yn:makeup
 !hook co_remember together yn_lanterns
+!refresh comp
 
 @scene yn.walk
 # The evening after the mediation: the town out in yukata; a walk with the companion; a quiet confession; the one
@@ -228804,6 +229208,37 @@ narr: {人込|ひとご}み の {中|なか} で 、 {手|て} と {手|て} が
 ?(comp=ren) comp[closed]: {見習|みなら}い の {頃|ころ} 、 {迷|まよ}って 、 {灯|ひ} を {一|ひと}つ {消|け}して しまった {夢|ゆめ} を 、 {今|いま} でも {見|み}ます 。 …… {今夜|こんや} は 、 {全部|ぜんぶ} の {灯|ひ} が {点|つ}いて いて 、 {一度|いちど} も {思|おも}い{出|だ}しません でした 。 || I still dream of the lamp that went out when I got lost as an apprentice. …Tonight, with every lamp lit, I didn't think of it once.
 ?(comp=suzu) comp[closed]: ねえ 。 {一座|いちざ} に {戻|もど}らない って {決|き}めた の 、 {後悔|こうかい} して ない わ よ 。 {元手|もとで} が かかり{過|す}ぎてる って {言|い}った けど 。 …… {本当|ほんとう} は 、 {一緒|いっしょ} に {舞台|ぶたい} に {立|た}ちたい {人|ひと} に 、 {久|ひさ}しぶり に {会|あ}えた から よ 。 || Listen. I don't regret deciding not to go back to the troupe. I said the investment was too great. …The truth is, it's the first time in ages I've met someone I want to share a stage with.
 `);
+
+
+/* ==== src/content/yn/28_playhouse_audience.js ==== */
+/* Steamhollow, Chapter 11: the little theatre's audience on the night of the troupe's show (RBN-QA-124; Agnes
+ * 6347127013, 6351678399, 6350945110; Local CL-222, CL-226; Cloud CC-127 §8, CC-128 §3). Suzu's evening says the house
+ * is packed and that people from the ridge are sitting on the earthen floor; until now Ginnojō was its only spectator.
+ * Seven townsfolk without lines: four on the benches facing the stage, and three newcomers from the ridge seated on the
+ * floor (the 土間) in front of it. Their looks are the world's own (made from each one's id, as for any unnamed
+ * person), they are never talked to, and they are there only while that scene runs (the condition head `scene.<id>`,
+ * src/engine/70_script.js): placed with the theatre when the scene brings you in, gone at the next placing of people
+ * after it ends, a load, Skip or a new map, so none can stay behind. Their places keep clear of the way down from the
+ * stage to you (x 6–7) and of your place and your companion's. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const m = C.maps['yn.playhouse'];
+  if (!m) return;
+  const show = 'scene.yn.suzu_evening';
+  // [id, x, y, rest]: on the benches (4,6)–(5,6), (10,6)–(11,6), (10,8)–(11,8); on the floor in front of the stage
+  const AUDIENCE = [
+    ['yn_aud_bench1', 4, 6, 'sit'], ['yn_aud_bench2', 5, 6, 'sit'], ['yn_aud_bench3', 11, 6, 'sit'], ['yn_aud_bench4', 11, 8, 'sit'],
+    ['yn_aud_ridge1', 10, 5, 'sitlap'], ['yn_aud_ridge2', 11, 5, 'sitlap'], ['yn_aud_ridge3', 3, 5, 'sitlap'],
+  ];
+  for (const [id, x, y, rest] of AUDIENCE) {
+    // (seated on a bench: on the bench's own tile, which nobody walks on; `block: false` tells the validator so)
+    m.npcs.push(Object.assign({ id, x, y, dir: 'up', if: show }, rest === 'sit' ? { block: false } : {}));
+    if (RB.mannerisms) RB.mannerisms.add(id, { class: 'town', tier: 'overlay', rest, every: [16, 30], idle: [['glance', 1]] });
+  }
+  C.playhouseAudience = AUDIENCE.map((a) => a[0]);
+})(RB.content);
 
 
 /* ==== src/content/yn/30_learning.js ==== */
@@ -229126,9 +229561,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { id: 'ask_why', kind: 'ask', label: say('{何|なに} か 、 {言|い}いにくい こと が あります か 。', 'Ask if there\'s something hard to say'), once: true, when: { stance: { 'n:zenroku': 'listening' } },
           task: task('v:話す', 'Which gently asks whether there is something he finds hard to say?', '{何|なに} か 、 {言|い}いにくい こと が あります か 。', '{何|なに} か 、 {言|い}いたい こと が あったら 、 はっきり {言|い}って ください 。', 'Demanding it plainly is exactly what he can\'t do.', '{何|なに} も ない なら 、 {帰|かえ}ります 。', 'That walks away from him.'),
           effect: { reveal: 'weep' }, says: { en: 'Zenroku looks at the wall. "…The people in the next room weep at night. They\'re from the ridge. How can I complain about that?"' } },
-        { id: 'move', kind: 'propose', label: say('{上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} が 、 {明日|あした} から {空|あ}きます 。', 'Offer him the Upper House\'s Plum room from tomorrow'), when: { claims: ['weep'] },
-          task: task('g:prt_kara_made', 'Which offers him the Upper House\'s Plum room from tomorrow?', '{上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} が 、 {明日|あした} から {空|あ}きます 。', '{上|かみ}の{湯|ゆ} の {梅|うめ} の {間|ま} は 、 {明日|あした} まで {空|あ}きません 。', 'That says it won\'t be free until tomorrow, and offers nothing.', '{下|しも}の{湯|ゆ} の {土間|どま} が 、 {今夜|こんや} {空|あ}きます 。', 'The floor is no place for him, and not what you mean.'),
-          effect: { flag: 'moved' }, says: { en: 'Zenroku brightens, then hesitates. "And the people next door?" Kane says she\'ll sit with them tonight.' } },
+        // (a genuine inquiry, not a booking: Kane takes it over in her reply, and no room or date is promised; RBN-QA-115,
+        // Agnes 6346428273, Local CL-209)
+        { id: 'move', kind: 'propose', label: say('{上|かみ}の{湯|ゆ} に 、 いつ から {部屋|へや} が {空|あ}く か 、 {聞|き}いて みます 。', 'Offer to ask the Upper House when a room will come free'), when: { claims: ['weep'] },
+          task: task('g:prt_kara_made', 'Which offers to ask the Upper House when a room will come free?', '{上|かみ}の{湯|ゆ} に 、 いつ から {部屋|へや} が {空|あ}く か 、 {聞|き}いて みます 。', '{上|かみ}の{湯|ゆ} に 、 いつ まで {部屋|へや} が {空|あ}いて いる か 、 {聞|き}いて みます 。', 'いつまで…空いているか asks until when a room stays free: when that ends, not when one comes free.', '{下|しも}の{湯|ゆ} の {土間|どま} が 、 {今夜|こんや} {空|あ}きます 。', 'The floor is no place for him, and not what you mean.'),
+          effect: { flag: 'asked' }, says: { en: 'Zenroku brightens, then hesitates. "If a room comes free, I\'d be glad of it. …And the people next door?" Kane has been listening from the hearth: "Leave the asking to me. I\'ll ask the Upper House myself when a room will come free. And tonight I\'ll sit with the people next door."' } },
         { id: 'stay', kind: 'propose', label: say('{隣|となり} の {方|かた} たち に 、 キクエ さん の {薬|くすり} を {頼|たの}みましょう 。', 'Suggest asking Kikue for something to help the people next door sleep'), when: { claims: ['weep'] },
           task: task('v:薬', 'Which suggests asking Kikue for a remedy for the people next door?', '{隣|となり} の {方|かた} たち に 、 キクエ さん の {薬|くすり} を {頼|たの}みましょう 。', '{隣|となり} の {方|かた} たち に 、 {静|しず}か に する よう {言|い}いましょう 。', 'Telling grieving people to be quiet is what he couldn\'t bring himself to do.', '{隣|となり} の {方|かた} たち を 、 {外|そと} に {出|だ}しましょう 。', 'Turn them out? No.'),
           effect: { flag: 'stayed' }, says: { en: 'Zenroku nods. "Something to help them sleep. Yes. Then I\'ll sleep too."' } },
@@ -229151,7 +229588,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     conclusions: [
       { id: 'walked', when: { left: 'n:zenroku' }, result: 'end', text: { en: 'Zenroku goes off to the bath. Later Kane hears the rest from him herself, and moves the ridge family to a quieter corner.' } },
-      { id: 'moved', when: { flag: 'moved' }, result: 'win', text: { en: 'Zenroku will move to the Upper House\'s Plum room tomorrow. The two houses are passing guests between them.' }, flags: { yn_zenroku_moved: true } },
+      // (yn_zenroku_asked: the inquiry is Kane's to make; no answer, room or date is implied. An old save's yn_zenroku_moved
+      // stays as it is, read by nothing)
+      { id: 'asked', when: { flag: 'asked' }, result: 'win', text: { en: 'Kane will ask the Upper House when a room comes free for Zenroku. Tonight she sits with the people next door.' }, flags: { yn_zenroku_asked: true } },
       { id: 'stayed', when: { flag: 'stayed' }, result: 'win', text: { en: 'Zenroku stays. Kikue sends something warm for the people next door, and that night the whole corridor sleeps.' }, flags: { yn_zenroku_stayed: true } },
       { id: 'heard', when: { all: [{ understanding: 2 }, { rounds: 6 }] }, result: 'win', text: { en: 'Zenroku feels heard, which, he admits, was most of what he wanted.' } },
     ],
@@ -229379,7 +229818,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     name: T('Sulphur Toad', '{硫黄|いおう}{蛙|がえる}'), art: 'blot', artOpts: { col: '#c8b44e' }, look: { custom: 'blot', col: '#c8b44e' }, knots: 2, pool: POOL,
     pattern: ['sweep', 'strike', 'rest'],
     intro: T('A fat yellow toad squatting in the channel, stirring up the silt with its back feet. The water downstream runs cloudy.', '{湯樋|ゆどい} に {座|すわ}り{込|こ}み 、 {後|うし}ろ{足|あし} で {泥|どろ} を {掻|か}き{回|まわ}す 、 {太|ふと}った {黄色|きいろ} い {蛙|かえる} 。 {下|しも} の {湯|ゆ} が {濁|にご}って いる 。'),
-    settle: T('The toad hops out of the channel onto a warm stone and goes to sleep. The water clears.', '{蛙|かえる} は {湯樋|ゆどい} から {温|あたた}かい {石|いし} へ {跳|は}び{出|だ}して 、 {眠|ねむ}って しまった 。 {湯|ゆ} が {澄|す}んで いく 。') }));
+    settle: T('The toad hops out of the channel onto a warm stone and goes to sleep. The water clears.', '{蛙|かえる} は {湯樋|ゆどい} から {温|あたた}かい {石|いし} へ {跳|と}び{出|だ}して 、 {眠|ねむ}って しまった 。 {湯|ゆ} が {澄|す}んで いく 。') }));
   EN('yn.lostguest', {
     setting: null, name: T('Lost Guest', '{迷|まよ}い{客|きゃく}'), art: 'echo', artOpts: { col: '#bcb4cc' }, look: { custom: 'spirit', col: '#bcb4cc' }, knots: 2, pool: POOL,
     pattern: ['plea', 'strike', 'rest'],
@@ -229468,7 +229907,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       parties: [{ aid: 'n:kettle', name: say('{釜|かま}の{主|ぬし}', 'the Kettle Below'), stance: 'heated', wants: { en: 'Neither shouting nor silence.' } }],
       claims: {
         above: { by: 'n:kettle', jp: '{上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って くる 。 {降|ふ}って くる 。 {降|ふ}って くる 。', en: 'Shouting pours down from above. Pours down. Pours down.' },
-        ridge: { by: 'n:kettle', jp: '{尾根|おね} から は 、 {何|なに} の {音|おと} も {来|こ}ない 。 {冷|つめ}たい 。 {冷|つめ}たい の が 、 {近|ちか}づいて くる 。', en: 'From the ridge, no sound at all. Cold. The cold is coming closer.', hidden: true },
+        ridge: { by: 'n:kettle', jp: '{尾根|おね} から は 、 {何|なん} の {音|おと} も {来|こ}ない 。 {冷|つめ}たい 。 {冷|つめ}たい の が 、 {近|ちか}づいて くる 。', en: 'From the ridge, no sound at all. Cold. The cold is coming closer.', hidden: true },
         throat: { by: 'n:kettle', jp: '{喉|のど} が 、 {詰|つ}まって いた 。 {息|いき} が 、 できなかった 。', en: 'My throat was choked. I couldn\'t breathe.', hidden: true },
         wish: { by: 'n:kettle', jp: '…… {話|はな}す {声|こえ} が {好|す}き だ 。 {怒鳴|どな}る の で も 、 {黙|だま}る の で も ない 。 {話|はな}す {声|こえ} が 、 {一番|いちばん} {温|あたた}かい 。', en: '…I like the sound of talking. Not shouting, not silence. Talking is the warmest sound.', hidden: true },
       },
@@ -231400,7 +231839,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     scene: 'cr.lw_open_el_lookout', openedLabel: ['{崖|がけ} の {上|うえ} の {見張|みは}り{台|だい}', 'The lookout on the headland'],
     after: { p: 'stone_marker', scene: 'el.lw_lookout_after' } });
   L.seal('el_mould', { map: 'el.landing', x: 23, y: 11, p: 'cs_footing', needs: 'mod_zentai', opens: 'lw_el_mould',
-    hint: ['{砂|すな} から {古|ふる}い {石|いし} の {土台|どだい} が {覗|のぞ}いて いる 。 {周|まわ}り に 、 {割|わ}れた {型|かた} の {欠片|かけら} 。 {一|ひと}つ ずつ {見|み}て も 、 {何|なに} の {形|かたち} か {分|わ}からない 。', 'Old stone footings show through the sand, with pieces of a broken mould scattered round them. One by one, you can\'t tell what shape they made.'],
+    hint: ['{砂|すな} から {古|ふる}い {石|いし} の {土台|どだい} が {覗|のぞ}いて いる 。 {周|まわ}り に 、 {割|わ}れた {型|かた} の {欠片|かけら} 。 {一|ひと}つ ずつ {見|み}て も 、 {何|なん} の {形|かたち} か {分|わ}からない 。', 'Old stone footings show through the sand, with pieces of a broken mould scattered round them. One by one, you can\'t tell what shape they made.'],
     scene: 'yn.lw_open_el_mould', openedLabel: ['{鐘|かね} の {型|かた}', 'The bell mould'],
     after: { p: 'cs_footing', scene: 'el.lw_mould_after' } });
 
@@ -233674,7 +234113,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 narr: {祠|ほこら} の {横|よこ} の {灯籠|とうろう} 。 {湖|みずうみ} の {方|ほう} を {向|む}いて {灯|とも}って いる 。 || A lamp beside the shrine, lit and turned towards the lake.
 
 @scene ko.lw_lf_minutes
-narr: {額|がく} に {入|い}った {古|ふる}い {議事録|ぎじろく} 。 {一行|いちぎょう} だけ 、 {字|じ} が {新|あたら}しく {見|み}える 。 「はんたい」 。 || Old minutes in a frame. Only one line looks newly written: はんたい, "against".
+narr: {額|がく} に {入|はい}った {古|ふる}い {議事録|ぎじろく} 。 {一行|いちぎょう} だけ 、 {字|じ} が {新|あたら}しく {見|み}える 。 「はんたい」 。 || Old minutes in a frame. Only one line looks newly written: はんたい, "against".
 narr: {下|した} に 、 タミ の {字|じ} 。 「{昔|むかし} の {誰|だれ} か へ 。 {聞|き}こえました 。」 || Beneath, in Tami's hand: "To whoever it was, long ago: we heard you."
 
 @scene yn.lw_lf_guest
@@ -234286,7 +234725,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     I: [ch({ item: 'g:rashii', ctx: { jp: '{猟師|りょうし} ： 「{雲|くも} の {牛|うし} は {人|ひと} を {食|く}う らしい 。 だから {鉄砲|てっぽう} を {持|も}って きた 。」 あなた は {霧|きり} の {坂|さか} で 、 その {牛|うし} に {会|あ}った 。 {大|おお}きかった が 、 {霧|きり} で できて いた 。', en: '' }, prompt: { en: 'What do you tell them?' },
       options: [o('それ は {噂|うわさ} です 。 わたし が {会|あ}った {牛|うし} は 、 {霧|きり} で できて いました 。', 1), o('{本当|ほんとう} です 。 {気|き} を つけて ください 。', 0, 'You met it: it was mist, not a man-eater.'), o('{牛|うし} は いません 。', 0, 'You did meet it.')] })],
     A: [ch({ item: 'g:adv_ni_suginai', ctx: { jp: '{馬子|まご} の ゲンジ ： 「{雲|くも} の {牛|うし} は 、 {霧|きり} が {牛|うし} の {形|かたち} を して いる に すぎん 。 {人|ひと} を {食|く}う など 、 {噂|うわさ} だ 。」', en: '' }, prompt: { en: 'What does Genji hold the Cloud Ox to be?' },
-      options: [o('{牛|うし} の {形|かたち} を した {霧|きり} に すぎない', 1), o('{人|ひと} を {食|く}う {本物|ほんもの} の {牛|うし}', 0, '噂だ: just talk.'), o('{霧|きり} を {食|く}べる {牛|うし}', 0, 'It is the mist that takes an ox\'s shape.')] })],
+      options: [o('{牛|うし} の {形|かたち} を した {霧|きり} に すぎない', 1), o('{人|ひと} を {食|く}う {本物|ほんもの} の {牛|うし}', 0, '噂だ: just talk.'), o('{霧|きり} を {食|た}べる {牛|うし}', 0, 'It is the mist that takes an ox\'s shape.')] })],
   } };
   C.challenges['cr.lw_papers'] = { title: J('{落|お}ちた {手形|てがた}', 'Dropped papers'), tiers: {
     F: [ch({ item: 'v:名前', ctx: { jp: 'てがた ： 「なまえ ： トヨ 。 いきさき ： くもい 。」 ひとり は 「くもい へ いく」 と いう 。 もう ひとり は 「うまがえし へ かえる」 と いう 。', en: '' }, prompt: { en: 'Whose papers are these?' },

@@ -1523,6 +1523,407 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   In candidate CC-020 (`6278005a…`, built from `05196f0`), READY_FOR_QA, with `keeper_reveal` 68/1 retained (the
   test's single sample of animated water; CC-019's bytes fail it the same way in the same harness; not an all-green
   claim; Agnes 6350299208, Local CL-219; VALIDATION, CC-020); RBN-QA-116 stays open, outside it.
+  RBN-QA-103, 113, 114, 111, 117, 119, 112, 115, 121, 130, 131, 120, 129 and 128, the `dialect_kansai` and
+  `keeper_reveal` test fixes, the language audit's Tier A with RBN-QA-132, the kanji exams' place rotation,
+  RBN-QA-133, RV0047, 先々代, RV0115, 十分 じゅっぷん, the かい hints, the listening page's retired take, the `book`
+  fixture, RBN-QA-161 and 162, the Reedwake return-discovery pilot, and RBN-QA-108, 124, 164 and 165 (each on the
+  exact commits listed in HANDOFF's CC-021 entry, with its AGREEs as VALIDATION, CC-021 lists them and the ids the
+  record lacks marked; counts below are on the candidates' and the integrated heads' own builds, as posted; the
+  matrix on CC-021's own bytes is in VALIDATION, CC-021):
+  RBN-QA-103: a companion who stays behind (`!hook comp_away`) left the party but their following figure stayed, so
+  at the Mist Barrier two of them stood in the office; `!hook comp_back` put nobody beside you until the next map.
+  Now the follower stops where it stands and becomes a figure of the scene (a placement for them here takes that same
+  figure there; otherwise they leave when the scene ends), and the one who comes back is their figure here, or
+  nobody: never a second. The four Steamhollow returns end with `!refresh comp`; Mio's night leaves by the
+  dispensary's own door (`yn.lower` 8,25) before "the door closes quietly behind you". Refined: within a map's first
+  900 ms a new place whose person has a figure here takes that figure, from where it stands. No line, flag, bond or
+  journal change. B `companion_away` 31/0 on the refine's build (30 passed, 1 failed on `48d65dd`'s build: two of
+  Suzu, on the bench and left standing at 6,5); 29/0 on `48d65dd`'s build with Mio's door check (`fec8666`); U full
+  57,851/0 on the refine. Integrated with QA-113 and checked on `05196f0` as `a0f63a9` before the cut (units
+  57,960/0); on batch 1's head `6a7afbc` B `companion_away` 31/0 among 20 regressions (VALIDATION, CC-021). Limits:
+  not in the record drawn on.
+  RBN-QA-113: `yn.bath_scene` narrates a familiar voice from beyond the bamboo partition, but each of the companion's
+  lines brought a figure of them in beside you on your own, dry side. Now, with `yn_bath_apart`, the scene's first
+  line makes the four companions off-screen speakers (`?(yn_bath_apart) !speakerless nao mio ren suzu`); `!call`
+  shares the scene's context, so the bath beat and repeat baths are covered; together, nothing changes; no text, flag
+  or bond change. B `bath_partition` 5/0 (first the Upper House, 32 baths apart and 8 together; with `97dd467` both
+  houses, 40 apart and 16 together, counted and required; control on `7dd1517`'s build 4/1: a figure by you, the
+  lines on screen); 5/0 on `6a7afbc`'s build. The scene manifest now classes `yn.bath_scene` as Quiet by design.
+  RBN-QA-114: the Lower House's entrance is earthen-floored, as its arrival line says (土間): the strip inside the door
+  (5..7, 7..8) and the doorway are packed earth (the game's own earth tile), and a floor-level prop, `yn_doma`, draws
+  it as packed earth (三和土) with the raised floor's edge along its top and down its sides; the bench, counter,
+  lantern, hearth, tatami, people, exit and walkability unchanged, the shared tiles untouched. U `lower_house_doma`
+  10/0; full units 57,968/0 and `book_type` 60/0 on `2f9d69f`. Recorded: the run on `673c501` was 57,963/5 (框 in
+  source comments is not in the font subset; `2f9d69f` says it in romaji); `673c501` checks the house's people as
+  they were, not by count, so QA-120's later placement leaves it true. Captures went to the owner privately. Agnes's
+  AGREE is qualified (6347499245); its terms are not in the record drawn on.
+  RBN-QA-111: Sono's noren hangs in the Courier's Inn's doorway at Sakashita once she has named it for her grandfather:
+  `cr_noren`, a prop you walk through, drawn on the inn's front wall (a pole under the lintel, two indigo panels split
+  down the middle, pale brush strokes with no legible word), at `cr.sakashita` (7,10), the doorway into
+  `cr.saka_inn`, only with `cr_family_inn`; nothing else on the map changes. U `sakashita_noren` 5/0 (the control
+  fails); full units 57,963/0; B `courier_shelf` 9/0 on `6a7afbc`'s build. Captures went to the owner privately; art
+  per AC1_ART.md. Agnes's AGREE is qualified (6347945501); its terms are not in the record drawn on.
+  RBN-QA-117: Steamhollow's Journey and guide point where the quest can go on: at `yn_main` stage 3, once
+  `yn_shimo_heard`, the Journey's "What to do now" says "You've heard both houses. Go to the red bridge in the lower
+  town." (before Tahei, as it was); at stage 5, while `!yn_vents_open`, the guide points to Aki in the lower town with
+  the hint "Aki has the key to the grille at the spring house.", and once the grille is open the way on is derived as
+  before. Both stay read-only; the two new lines are in the language ledger, self-reviewed, not voiced. B `yn_guide`
+  25/0 (control on `da9072c` 17/8); U `yn_guide_qa117` 10/0; `book_type` 60/0; full units 57,970/0; B `yn_guide` 25/0
+  on the builds of `6a7afbc`, `5cd2cd3`, `730fb40`, `8001c3e`, `0fca3fa`, `0944868` and `bc1bf37`. As Agnes bounds it:
+  constructed states; the reload is reconstructed, not an actual save and load; no Tahei or Aki interaction played;
+  stage 6 is checked for absence only.
+  RBN-QA-119: the river's own steam goes when the quarrel runs it cold, and comes back when the Kettle settles: the
+  lower town's two plumes on the river, (29,6) and (28,22), show only while
+  `!yn_river_cold&!yn_quarrel|!yn_river_cold&quest.yn_main<4|yn_kettle_settled`; `yn_river_cold` is set in
+  `yn.bridge_quarrel` just before the line that the river's steam has gone (after the boil line, which keeps its
+  steam); an older save past the quarrel's end (`yn_quarrel` and stage 4 or later) without the flag counts as cold;
+  a save between the line and stage 4 stays as it was (ambiguous; nothing inferred, no quest state touched). Land
+  vents, baths, the Vents and every other map's steam unchanged. U `river_cold` (which plumes, twelve states, the
+  order in the scene; its count is not in the record drawn on); full units 57,967/0 on `40f4010`.
+  RBN-QA-112: the room allocation (`yn_rooms`), Tama's recipe card and the buns are procedures too (`restart:
+  'stable'`), but the footer said "A wrong step sends the machine back", Step away "The machine stays as you leave it"
+  and the generic wrong step "the machine settles back". Now the footer "A wrong action may undo progress; a language
+  mistake only means trying again."; Step away "It stays as you leave it…", or, for a procedure marked `keep: false`,
+  "Next time, this starts again from the beginning."; the generic wrong step "That was not the way."; the panel's
+  label "Where things stand". Each procedure's own wrong-step text and every reset rule unchanged; English UI strings
+  only (no ledger entries, no voice keys). U `procedure_copy` 8/0 (the 27 procedures, 5 `start` and 22 `stable`, and
+  `keep: false`); B `procedure_copy` 7/0 over the 22 procedures on the encounter sheet (control on `7dd1517`'s build
+  2/5); on its build `encounters` 10/0, `steamhollow` 5/0, `answer_order` 5/0, `hall` 4/0; full units 57,966/0; B
+  `procedure_copy` 7/0 on `5cd2cd3`'s build. Recorded: its earlier browser runs, stopped by its own `keep: false`
+  case and then by a battle-led procedure leaving combat mode, kept as superseded. As Agnes bounds it: standalone
+  sheets, not the five battle-led procedures; no direct retry coverage.
+  RBN-QA-115: Zenroku's complaint ends in a genuine inquiry that Kane takes over, not a Plum-room booking nobody made:
+  `yn.complaint`'s action 'move' (its id kept; its flag and end renamed 'asked') offers to ask the Upper House when a
+  room will come free (the から lesson kept, with its near miss on いつまで and its feedback); Zenroku would be glad of
+  a room and asks after the people next door, and Kane, listening from the hearth, takes the asking over and will sit
+  with them tonight; the end 'asked' sets `yn_zenroku_asked` (an inquiry to make; no answer, room or date implied);
+  Kane's line after it says she will ask the Upper House herself. The stay, blunt, walked and heard branches and the
+  front desk's own Plum booking untouched; an old save's `yn_zenroku_moved` stays, read by nothing; no migration.
+  Three new ledger lines, self-reviewed; voice keys `yn.complaint_start#d5fb278a76` → `#c8825a515b` and
+  `code.enc#c55c5faccb` → `#0d0ff8ff4e`, no new recording. U `zenroku_inquiry` 14/0 (the other branches'
+  fingerprints as on `05196f0`); `yn_ch11` 193/0, `book_type` 60/0; B `zenroku_inquiry` 4/0 (control on `05196f0`'s
+  build 1/3); full units 57,974/0; B 4/0 on `5cd2cd3`'s build. A whole-tree search at `e2e4008` found no reader of
+  `yn_zenroku_moved` or of `_enc=moved` in `src/` or `tools/`. As Agnes bounds it: the browser test stubs the
+  encounter's result, and the units play it separately.
+  RBN-QA-121: the wheel at either end of the Old Channel first says it is a small wheel piped to the big valve, then
+  shared `yn.shutter`'s forward line, "You turn the big valve", while you stood at the small one. The line drops 大きな
+  / "big"; the reverse line, the end wheels' own line, the calls, the flag and the refreshes unchanged; its ledger
+  entry replaced, self-reviewed; voice key `yn.shutter#7e69685a7f` → `#7f0f3ac762`, no new recording until the full
+  QA ends. U `valve_line` 6/0 (the control fails 2); B `valve_line` 7/0 at the middle valve and both end wheels, each
+  way (control on `da9072c`'s build 4/3: the three forward lines say "the big valve"); full units 57,966/0; B 7/0 on
+  `5cd2cd3`'s build.
+  RBN-QA-130: Ginnojō's quest ends on "Tonight, I'll do my turn" with no performance scene, but his idle line looked
+  back on a show ("…Forty years on, it's the same sound."). One line replaced (`yn.ginnojo_idle`): "The last line's
+  come back. …Forty years on, my body still knows the beat where the laugh comes."; its ledger entry replaced; the
+  talk order, the quest, rewards, flags and Suzu's exchange unchanged. Voice: the old key `yn.ginnojo_idle#287e4ce7ad`
+  has a cast recording, kept on the site, unused; the new key `#42224fea3f` has none and is on the re-record list
+  (device voice or silence). U `ginnojo_idle` 11/0 (on the old line 5/6); full units 57,971/0 on `3d5d02a`; on
+  `730fb40`'s build B `steamhollow` 5/0, `cloudroad` 4/0, `yn_guide` 25/0 (not clean rows).
+  RBN-QA-131: `cr.chika_after` said every label on the medicine chest could be read, on every journey, though only Mio
+  relabels the chest (`cr_mio_labels`) and Ginji's parcel writes one dosage label. Now `!if cr_mio_labels -> labels`
+  keeps the labels line (its key `cr.chika_after#0aebd1fc23` and its recording); every other journey hears one new
+  line: "More people travel the Cloudroad now, and more of them come to me with headaches. If your head starts to
+  ache, don't push on. Rest here a while." (new key `#c2a03806f5`, on the re-record list; device voice or silence).
+  The talk order, the parcel's place first and every flag unchanged; one new ledger entry. U `chika_after` 10/0
+  (control on the cut 7/3); full units 57,970/0 on `b4381a1`.
+  RBN-QA-120: given his spring egg, Tsuneji said he would share it with the ridge folk and the narration said he
+  carried it back to the Lower House, but he stood on by the river. Now the riverbank holds him only until the egg is
+  his (`yn_egg_tsuneji`), and the Lower House from then until the valley's story is done, at (9,7) by the hearth; in
+  `yn.egg_tsuneji`, after his line, `!refresh gone 9000` walks him round you to the house's door at (9,10), where he
+  fades, and only then the narration. `!refresh gone <ms>` takes an optional bound (a positive number, rounded, at
+  most 12000; otherwise 4 s); `npc.leave: 'way'` (his placement, with `leaveTo: 'yn.shimo'`) means his own way out or
+  none: with no route he fades where he stands, recorded as a fallback, never through another exit; at the bound
+  whoever is still walking stops and fades where they are, recorded (at most 400 ms more); a going the scene waits on
+  (`!refresh gone`) is walked however soon after the map appeared. Your place is never touched. Kihei's `!refresh
+  gone` (QA-093) now also fades him when he is spoken to at once. B `tsuneji_egg` 33/0 on `8e2e15b`'s build; on its
+  build `mitsu_frame` 28/0, `departures` all ok, `fade_load` 15/0, `load_mid_scene` 19/0, `lodge_quarrel` 31/0; full
+  units 57,972/0. On `a3883be`'s build `tsuneji_egg` 33/0, `companion_away` 31/0, `departures` all ok, `kotonoha` 7/0
+  (not clean rows); full units 58,053/0. Recorded: the first browser run, 20/11 on `16dc2d0` with the test as it was
+  before `64a6b26` (talked to within the street's first 900 ms, he simply vanished), a real finding that `8e2e15b`
+  fixes; the delay-only attempt; the control on `da9072c`'s build, 2/29 and then the run threw (its fallback section
+  edits a `!refresh` the old scene lacks), not a completed comparison; Local's bounded scratch probe completed. Agnes's
+  AGREE 6352065812 is qualified; its terms are not in the record drawn on.
+  RBN-QA-129: after the chapter's end Yasuke and Tsuneji were gone, Eggs for Everyone needs all three eggs, and the
+  guide found no way on, even with Oshige still owed. Each now stays after the end only while the quest is under way
+  and his own egg is owed (Yasuke `!yn_done|quest.yn_eggs=0&!yn_egg_yasuke`; Tsuneji's lower-town place
+  `!yn_done&!yn_egg_tsuneji|quest.yn_eggs=0&!yn_egg_tsuneji`); given it, he goes as before (Tsuneji by the Lower
+  House's door). Placement only: no `yn_done` rewind, nothing given or set, no new line; a quest never begun cannot be
+  begun after the end (kept, noted beside Tama). U `egg_recovery` 19/0 (control on QA-120's source 17/2). Full units
+  on `3ba19ee` 57,990/1: QA-120's `tsuneji_egg` case still expected the old rule, so `9e867a7` (test only) expects
+  the riverbank (22,18) with the quest under way and keeps "neither" where it is finished or never begun (U
+  `tsuneji_egg` 12/0); full units 57,991/0 on `c424b42`. B `tsuneji_egg` 34/0 (control on QA-120's build 33/1: the
+  new rule's case); B `egg_recovery` 25/0 (control on QA-120's build 8/17); its first run was 21/4, all in case 1
+  (the loading page kept the default text speed and `play()` pressed once per line), fixed by `c424b42` (test only);
+  `b846c3b` (test only) asserts `yn_egg_yasuke` beside the other two. On the combined head `8001c3e`: `egg_recovery`
+  26/0 with the 2/3 save written by the task head's build (QA-120 without QA-129) and 26/0 with the save written by
+  the cut's build; `tsuneji_egg` 34/0. Recorded: after his egg Yasuke goes `{"to":null,"exit":null,"reason":"nearest
+  (unknown)"}`, no fallback: how the world chose, not a named route, and not asserted; what is asserted is that he is
+  gone, and still gone after a reload. The old saves are built inside the test by each build's own manual save;
+  neither is Agnes's playthrough save.
+  RBN-QA-128: `yn.suzu_books` (the morning after her night apart) played only on arriving in the lower town, while the
+  mediation needs only `yn_eve_done`, so going from the Upper House to the hall reached the mediation, the walk and
+  the chapter's end first. The same arrival scene is now also the upper town's first. Routing only: the scene, its
+  flag, its bond event (`yn:settled`, once), both garden replies and other companions unchanged; a save past the
+  mediation or the chapter with the books pending plays them on the next arrival in either town. Kept and documented:
+  a save made inside the hall between the garden and the mediation on an earlier build can still start the mediation
+  first; the books then follow on the next arrival outside. B `suzu_books_route` 13/0 on `cf155c3`'s build (control
+  on CC-020's build 7/6: the four upper-town cases, the mediated save, loading while the books play; the lower-town
+  cases pass on both); full units 57,975/0 (begun at `432dc4e`; `cf155c3` changes only the test); 13/0 on
+  `8001c3e`'s build. Recorded: the runs before `cf155c3` measured nothing: the first awaited the garden scene, which
+  waits on lines nobody advanced, until its 30-minute bound (fixed by `432dc4e`); its rerun and the 2/11 control
+  placed you with `RB.world.enter`, which runs no enter events (fixed by `cf155c3`).
+  The `dialect_kansai` test (CC-020's 58/1 in QA-109's integration): the Company page's two buttons are measured once
+  no `bk-open` animation runs and the book has no transform of its own, bounded at 2 s (if the bound runs out it
+  measures anyway); the 44 px requirement and the product's animation unchanged; `RB_ANIM_RATE` (test runs only)
+  slows the page's animations. The new test passed in full on CC-020's bytes (twice) and CC-019's; the old test passed
+  at normal speed and failed with the animation slowed to 0.25 (270×43, 173×43), as in the CC-020 matrix; the new one
+  passed at 0.25 and 0.1. Shrink control (the buttons forced to 36 px): the first attempt was ineffective (a style
+  injected by `addInitScript` after navigation; every check passed with 44 px buttons), kept on record; the second
+  fails exactly the two 44 px checks (Company 274×36 and 175×36; phone 36 px), 57/2. Full units 57,960/0. On
+  `0944868`'s build `dialect_kansai` all passed. Promised and not in this cut: the message saying so when the bound
+  runs out.
+  The `keeper_reveal` test (CC-020's 68/1, one 3×3 point of animated water read once): the swell is the median of 15
+  pixels (5 columns at u −0.2…0.2 of its half-width × 3 rows, yR − 2, yR and yR + 2, yR = water − round(0.45·H)) and
+  the open water the median of up to 36 pixels at the same rows, every 2 px from 2 px right of the swell's box and
+  stopping before the picture's innermost vignette step (x 500–522 at 1280×800; x 312–324 at 390×844); fewer than 6
+  water pixels fails; `RB_KEEPER_FLAT` copies 8 px strips of that water over the box, each clipped to it; the picture
+  and the threshold (6) unchanged; each message still prints the old points. Its clean matrix (nothing else running
+  at each start and end), the same on CC-020's and CC-019's bytes: normal 69/0; flattened 65/4 (each of the four
+  swell checks, swell = water = 55,61,90); start +1,750 ms 69/0 and +2,100 ms 69/0; Ren's and Suzu's reduced-motion
+  configurations in every run; load rows beside its own full unit run 69/0 on both; producer full units 57,960/0. On
+  `8001c3e`'s build 69/0 (not a clean row). Recorded: the first revision, `4efc4e6` (30 pixels, 6 columns × 5 rows),
+  is not a valid fix: with its own switch the flattened swell passed in three of four configurations (CC-138 gave
+  the suite total, 68/1, as if it were the case's; corrected in CC-139), in two with Local's corrected switch (67/2),
+  and the original switch overran; both commits are cherry-picked, so it stays in the history; a development run
+  (65/4, with two unit runs alongside) is not evidence. Agnes's AGREE is qualified (6353897775); its terms are not in
+  the record drawn on.
+  The language audit's Tier A (display only): 48 furigana readings corrected in 35 files, each moving a reading or
+  its ruby grouping, the words and so the spoken text unchanged: F01 教わった おし→おそ (2); F02 遅れる/遅れて おそ→おく
+  (2); F03 明かり あかかり→あかり; F04 凍える こお→こご; F05 跳び出して は→と; F06 消える け→き; F07 霧を食べる く→た;
+  F10 お願い, お back outside the ruby; F11 入っている/入った/入りました い→はい (6); F12 入れてくれる はい→い; F13
+  開け閉め ひら→あ (`ch6/40_learn.js` only); F14 三分の一 さんぶ→さんぶん (Tamotsu's three, RBN-QA-132); F15 何百回
+  なんびゃっかい; F16 何十杯 なんじゅっぱい; F17 百本 ひゃっぽん (with Suzu's Kansai line and its "=" key); 何 before
+  の/と/とも/でも/です read なん (22 lines, with the four Kansai lines that key them). Tier B (開ける by meaning) and Tier
+  C untouched. Two lexicon entries (何百回, 何十杯); the 34 expansion lines re-keyed in the language ledger, nothing
+  else moved; the kanji table regenerated (杯 no longer ぱい on its own). Voice: 49 spoken keys change; 43 of the 49
+  old keys have cast recordings and 6 none (`code.comp#3bc1edb85e`, the four F04 telegraphs, `code.town#5e60ef93e4`);
+  what any recording says is unknown until someone listens; device voice or silence until a listening check after
+  QA, re-keyed only on a confirmed reading. U `tier_a_readings` 5/0 (control on `5cd2cd3` 3/2: the places and
+  Tamotsu's lines); `validate.mjs` no errors, `dialect_kansai` 9,528/0, `review_ledger` 2/0, `lang_lexicon` 43/0; full
+  units 58,041/1 on `9d66813` (`recog-coverage`: the generated kanji table out of date), 58,042/0 on `8380d17`. On
+  `0fca3fa`: full units 58,109/0; B `play_ui` all ok, `practice_b` 6/0, `choice_rows` 6/0, `yn_guide` 25/0, and `book`
+  13/2, the same two failures as before Tier A (the `book` fixture, below). Recorded: CC-141's `tier_a_readings` 7/0
+  with a control of 5/2 was wrong (the only control before the split was 11/4, on the combined test); "21 of 22
+  AivisSpeech/Nemo recordings already say the corrected reading" is withdrawn (it matched engine predictions; nobody
+  had listened to the served recordings).
+  RBN-QA-132, Word Help: 三分 showed as "number + counter: 3 × minute(s)" whatever its reading (the counter lookup in
+  `src/lang/70_lookup_ext.js` read 分 as minutes). Now a number + 分 read ぶん is a fraction's whole only in the whole
+  N分のM, a number after の as well (the parser records the word after next, `next2`, in `src/lang/20_jp.js`), with a
+  furigana note on how fractions are said; 十分 じゅうぶん, the minutes (ふん/ぷん), other counters and portions (〜人分)
+  untouched; only Tamotsu's three 三分の一 qualify today. U `fraction_lookup` 17/0 (control 11/3: the fraction cases
+  read "3 × minute(s)"); 14/0 at `74edc10`, before the rule needed the whole N分のM.
+  The kanji exams' place rotation: for a target written twice the place was `at[n % at.length]` and the word
+  `words[n % len]`, so whenever the list's length and the count of places shared a factor some places were never asked
+  (an even list and a target twice: always the same place); found when QA-133's 一語 made 一's list even and
+  `kana_homophones`' "一 in 一字一句: asked at the first and at the third place" got "first" twice. The place now turns
+  once per round of the word list, `at[Math.floor(n / len) % at.length]`; words with the target once, the word
+  chosen, the prompt's counting, the answer, the options and their ruby unchanged; deliberately, every word's first ask
+  is now its first place (before, a word at an odd index with the target twice began on its second place). U
+  `exam_place_rotation` 7/0 (control 5/2); `kana_homophones` 1,466/0 (control on `cec2871` 1,465/1, on that check),
+  `exams` 113/0, `kanji` 637/0. Recorded: "the first ask of each word is its first place, as before" (CC-146) was
+  wrong; corrected in CC-147.
+  RBN-QA-133: Tōya's note 「必要なら開ける」 ("If needed, open.") was counted as "four words" (四語), though it has three
+  English words and the Japanese count depends on how it is segmented. Every place now refers to it count-neutrally:
+  six spoken lines (`sa.study_desk`, `sa.heart_kasane`, `sa.after_battle`, `sa.toya_read`), the notebook note
+  `sa_toya`, the sequence `ch6.toya`'s title and memo ("Tōya's note"; a Company memory already in a save keeps the
+  title it was saved with), the Hush's explanation and the challenge's intro, prompt and two explanations (English
+  only), and source comments; the quote, the four-tile ordering task and its answer, every id and the art kept. 一語
+  gets a lexicon entry (Word Help read it as "1 × language"). The six spoken lines get new keys (device voice or
+  silence; recordings kept, none generated). U `toya_note` 7/0 (control on Tier A 2/5).
+  RV0047: Nao's fourth orchard banter (`co.b_nao4`) played after the kiln whether or not the optional bell quest was
+  done, and opened as hearsay: "Heard about the bell? Everyone ran to the channel when it rang." Its first line now
+  branches on `co_bell_rung`, in Agnes's wording: rung, "Everyone ran to the channel when the bell rang. Their heads
+  forgot; their feet remembered the way."; not rung, "Sometimes your feet remember the way even when you can't call it
+  to mind."; when it plays, its flags, the quest and the two lines after it unchanged; both openers are new lines with
+  new keys (device voice or silence). U `nao_bell_banter` 6/0 (control 1/5). The retired line's take is kept and
+  marked retired on the listening page (below).
+  先々代 at Fujiya (`mb.fujiya_tallybook`): the English said the tally book's rubbings were taken by "Fujiya's
+  grandmother"; 先々代 is the head of the house two generations back (the game's own lexicon) and the source settles
+  no relationship. English only: "…taken by the head of Fujiya two generations back."; the map's source comment says
+  the same without a relative; its ledger entry's English follows; the Japanese, its voice key and its ledger key
+  unchanged. U `fujiya_tallybook` 3/0.
+  RV0115: in Suzu's Kansai line in `lf.b_suzu2`, 値切られても断られへんから ("She can't say no when folks haggle"),
+  Word Help read 断られへん through 〜へん alone, as the passive (standard 断られない). One Kansai lexicon entry gives it
+  "can't refuse; can't say no", standard 断れない, with a note that 〜られへん is also Kansai's "can't …" (行かれへん);
+  her words and voice key unchanged. U `kansai_kotowararehen` 4/0 (it also checks that the real passive 値切られて is
+  still a passive and the 12 other 〜られへん in her Kansai lines still read as 〜られない; control 3/1, failing on
+  断られへん); `dialect_kansai` 9,530/0.
+  十分 read じゅっぷん: Word Help glossed it "enough" (the lexicon had only 十分 じゅうぶん). One entry, 十分 じゅっぷん
+  "ten minutes"; the lookup takes the entry whose reading matches, so じゅうぶん stays "enough"; no general
+  reading-mismatch rule. Of every number + 分 written in `src/`, only the じゅっぷん row changes: 5 places, the atlas
+  sign, Mio at the inn (`yn.bath_scene`) and the eggs task among them. The kanji table
+  gains 十 じゅっ and 分 ぷん from the entry's note; the note first named 十 and 分 without readings, which
+  `lang_lexicon` failed in the batch's full units, and now says "both kanji change sound together". U `jippun` 3/0
+  (control 1/2). Open, outside this cut: 十分 written じっぷん still looks up as "enough" (no line writes it today; the
+  follow-up entry `55db809` is not in this cut).
+  The かい hints: Word Help read kana かい as 回 "times" in Mio's 怒ったかいがありました (`mp.boss_won`; 甲斐), the
+  F-level tide-pool notice and its three answers (`sz.school_3`; 貝) and the letter to Natsume, ヤギをかいにいきます
+  (`sb.a_letters`; 買う). Six word@lemma hints, the content's own mechanism for kana homophones, give each its word;
+  no word, reading, spacing or English changes. Of the 86 kana かい, the 78 sentence-final particles are unchanged;
+  the two left as 回 are 回(かい) itself and an English explanation of the particle (`sb.c_reply`), left as both
+  reviewers said. Mio's key `mp.boss_won#4b56230210` → `#aaa8214dfd` (its cast recording `r1-da5c5a67c49f42b9` kept,
+  unused; a listening check before any re-key); the notice and the letter are not voiced; five ledger entries take
+  the new keys. U `kai_hints` 4/0 (control without the hints 2/2). Recorded: a parser rule first built for Mio's line
+  (`446c241`) was dropped before the batch was pushed.
+  The listening page's retired take: the page takes each take's English from the current script by key, and RV0047
+  retires Nao's old first line, which has a take on Robin's review list (`r1-f25c42a39756bbfb`, group "edges"). A
+  small data file, `docs/future/voice/production/run/RETIRED_TAKES.json`, keeps each retired take's English and the
+  line before it, with the batch's revision (`ff8a0fa…`) and why; the page tool reads it only when no key of the take
+  resolves, and the card says "Retired · unused". No audio changed, made or re-keyed; the take's group and decision
+  untouched. U `voice_retired_takes` 6/0 (control with the old page 4/2); `voice_review_page` 124/0; the regenerated
+  page's second generation is the same bytes (`1beee1cc1fa47233…`). Agnes's qualification: the test's comment
+  promised more than it checked; the follow-up assertion (`55db809`) and the take's recorded key (`6f34bf0`) are not
+  in this cut.
+  The `book` test (RBN-QA-069's journey): on the task branch, and on CC-020's published cut, `book` failed "the
+  Journey's Next says one destination once" (it read "Drowned Archive — Receiving Hall", not the Tide Clerk) and the
+  Journey's word-help targets (164, not 160; the four are that Next line's words). RBN-QA-069 (`8f66b79`, before the
+  cut) made `sg_main`'s stage 8 point at the Receiving Hall's door while the inner door is shut (`atIf
+  !sg_da_catalog`), and the test's journey, at that stage without the flag, was never updated. The test now sets the
+  flag; the product is unchanged. B `book` 15/0 on the task head's build (the same build with the old test 13/2);
+  15/0 on `0944868`'s and `bc1bf37`'s builds. Recorded: the cut and `a3883be` also fail "opening, turning, restyling
+  and closing never change the journey" (the book wrote `newItems`); the task head passes it; what cured it is not
+  traced. Not in this cut: its parity check made device-independent (`d9fbc73`).
+  RBN-QA-161: after Chapter 4 Fuki stands by the bell-post in the square, and her talk list there put her postgame
+  news first, so after the story a Bell-Post rung at noon (stage 2) could never be reported: no cord, no signals note,
+  no end to the quest. Her list in the square is now `quest.sb_bell=active` → `sb.fuki`, then `post` →
+  `sb.fuki_post`, then `sb.fuki_after` (a stuck stage 2 reports at its next talk; no migration or reset); in
+  `sb.fuki`, `quest.sb_bell>=1 -> go` becomes `quest.sb_bell=active -> go`, so at stage 0 she reminds you instead of
+  meeting you again with her cold and the offer; the report's first line splits on `ch4_done`: in her house as before
+  (the same key and recording), in the square 「{聞|き}こえた よ 。 {昼|ひる} の {鐘|かね} 。 {二|ふた}つ 、 きれい に 。
+  {五十年|ごじゅうねん} {鳴|な}らして きて 、 {下|した} から {聞|き}く の は {初|はじ}めて だ よ 。」 / "I heard it. The
+  noon bell. Two strokes, clean. Fifty years of ringing it, and the first time I've listened from down here." (a new
+  key, unvoiced). The quest guide's next step for that stage 2 is now Fuki in the square (on the task head, none). U
+  `fuki_bell_post` 12/0 (on the head's source 4/8); B `postgame_quests` 6/0 on its build `8fab8d12…` (control on the
+  head's build `22e06af3…` 2/4: the four postgame checks); full units 58,131/0 on `cc1ce18`; on its build `story_ch4`
+  (eight playthroughs, all checks ok), `goatshed_fence` 10/0, `guide_next_step` 24/0, `quest_guide` all passed; on
+  `bc1bf37`'s build `postgame_quests` 6/0, `guide_next_step` 24/0. As Agnes bounds it (6374675900): part B, the
+  never-started offer after the story, is not in it; the browser journeys are synthetic, the automated player
+  answering; Kanta's routine places share the list but are not each traversed in the browser; a mid-scene
+  interruption is not covered; the new outdoor line is unvoiced; neither stuck quest is closed on source agreement
+  alone, and her native regression on `bc1bf37`'s build is not in the record.
+  RBN-QA-162: the snow-sculpture contest is judged by talking to Kanta, whose list put his postgame news first, so
+  after the story a contest left open could never be finished (his star-names line, no judging, no scarf, no next
+  step). His list is now `quest.sb_snow=active` → `sb.kanta`, then `post` → `sb.kanta_post`, then `sb.kanta` (his two
+  routine places share it); the contest's own scene unchanged; no line changes. U `kanta_snow_judge` 10/0 (on
+  QA-161's commit without this change 3/7); in `postgame_quests`, Kanta judges, Chiyo's observatory wins, the scarf
+  once, then his news. Not changed (an observation): after the story his judging opens with the late-lamp `:after`
+  line, which rings a little stale.
+  The Reedwake return-discovery pilot (Robin's approval, issue #1 6373239443: Reedwake only, passive and town-level;
+  opportunities you have noticed that are reachable and unresolved, and stamps earned but not pressed; persisting
+  until resolved, not cleared by a visit; no pop-ups, no spoilers, no new item or saved state): `returns(s)` in
+  `src/engine/53_town.js` (pilot towns `['reedwake']`) reads a return key that was noticed, whose need is now known,
+  whose spot still stands and whose map is within reach, and the town stand's earned, unpressed, known stamps, the
+  stand within reach; within reach is the quest guide's `reachable()`; it only reads, so only opening the key or
+  pressing the stamp clears it; twelve-chapter journeys only. Journey › Places gets one line per town, never what
+  waits: 「{葦|あし}ノ{瀬|せ} で {気|き}づいた もの が 、 {今|いま} なら {開|あ}けられそう だ 。」 / "Something you
+  noticed in Reedwake may open now." and 「{葦|あし}ノ{瀬|せ} に 、 {押|お}せる {判|はん} が {待|ま}って いる 。」 / "A
+  stamp you have earned waits to be pressed in Reedwake.", one line when both hold; the Map's chart, a small paper tag
+  by the town's dot with a title, its description, a legend sentence and the Travel row in words; "Town hints" (Shown
+  / Off) turns all of it off; `docs/future/plan/06_WORLD.md` records the pilot. The key line first read 開けそう
+  (ひらける, "open up", of a view or a way forward); `c6dfc35` makes it 開けられそう. U `return_hints` 26/0 (25/1 with
+  the line as before; 25/0 at `4b105e1`, failing on the head, where `returns()` is not there); B `return_hints` 12/0
+  (desktop and phone, a visit, save and load, opening and pressing, four absent cases, an older journey as one line
+  with nothing popping up); nearby units `town` 87/0, `records` 272/0, `stampbook_sb1` 39/0, `living_world` 110/0,
+  `chart_coast` 69/0; full units 58,134/0 on `4b105e1` (another unit run alongside); on `bc1bf37`'s build
+  `return_hints` 12/0. Recorded: the browser test's first run was 7/5, all five its own legend check, which searched
+  the page's whole text, the script included; the product was the same bytes in both runs. As Agnes bounds it
+  (6374687480): "within reach" is the guide's map graph (exits and doors open now, places you can travel to), not
+  tile-level access or leave to fast-travel from where you stand; the line can go before its resolution when what it
+  depends on changes, and comes back when that holds again (no state of its own, by design); the "older journey" in
+  the browser test is built by this build, not a historical save; the stone and the stamp were resolved through their
+  own scene and the stand's hook, not by walking up and pressing. Before any wider acceptance: Local's independent
+  review, the exact combined build and Agnes's native checks; their results are not in the record.
+  RBN-QA-108: `yn.call` put Jinpachi at his place on the road, (5,14) on every station, off screen for every line when
+  you stood further along; chained after the Cloudroad's end at Sakashita he was still walking there. Now
+  `!walkto <who> pc [dir] [now|stay|run|max=N]` walks someone to a free tile within 2 of you (the one in front of you
+  first, then the nearest; never an exit or a trigger, a reserved or occupied tile, the end of someone's way here, or
+  your companion's tile), the first the walker can reach; already within 2, or no mark, nobody moves (no mark is
+  recorded as a walk fallback); under Skip seen or behind a fade, set on the mark at once when it is free; a walk that
+  runs out stops on the tile it reached; `var._walked` records 1 or 0, an outcome the quest guide does not guess; a
+  speaker the scene's `pc` walk did not bring to you, speaking off screen, gets an arrow and "off screen" on the name
+  plate. `yn.call`: `!walkto cr_jinpachi pc run max=8000` before his first line on every path; every line, flag and
+  placement as it was; no new voice keys. After the letter he goes on down the road by his own way out: each placement
+  carries `leave: 'way'` and `leaveTo`, the map of that place's west exit (`cr.oiwake` > `lf.road`, `cr.suginoki` >
+  `cr.leg1`, `cr.sakashita` > `cr.leg2`, `cr.nakayama` > `cr.leg3`, `cr.umagaeshi` > `cr.leg4`, `cr.kirishita` >
+  `cr.leg5`, `cr.kumoi` > `cr.above`, `cr.summit` > `cr.hut`, `lf.town` > `lf.road`); if that way cannot be walked he
+  fades where he stands, recorded, never by another exit (before, the nearest way out, one tile, "nearest
+  (unknown)"). B `jinpachi_letter` 15/0 with `1535c21`'s test fix (control on the base's build 2/13), then with the
+  road 27/0 (control 16/11: exactly the 11 new departure checks); U `jinpachi_road` 4/0 (control without the road
+  2/2); B `departures` all ok (the relay plays `yn.call` through: the approach `_walked` 1 and every line within 2;
+  the departure one record to `cr.leg2` at 0,13, reason "authored", no fallback; control: exactly the departure check
+  fails, "nearest (unknown)"); full units 58,131/0 on `fa32d23` (a browser test alongside); `b3a34ac` (test only)
+  drives section 1 on until the letter is given and its scene is over, bounded at 20 rounds: `jinpachi_letter` 27/0
+  on the road build; on `bc1bf37`'s build `jinpachi_letter` 27/0, `departures` all ok. Recorded: its first
+  `jinpachi_letter` runs failed "every line of his within 2 of you" for Mio, Ren and Suzu at both sizes (the test took
+  his lines in the companions' Cloudroad endings, before `yn.call`); one was stopped unfinished at a lane reorder and
+  one, 9/6, began before the fix was committed; `departures` failed on its build ("one Jinpachi, from where he spoke
+  (11,12) to his place at (5,14)": he settled at (18,11), beside you), its check sampling while `yn.call` still ran,
+  which led to the decision on where he goes after the letter. As Agnes bounds it (6374238260): the roads come from
+  each place's first west-edge exit, not a fixed table (`jinpachi_road` pins all nine against an explicit table and
+  checks that no other way exists); the eight-second approach bounds the steps started, not the wall clock including
+  the one under way; QA-124's failed control supplied nothing for QA-108. Out of scope, as Local agrees: his message
+  in the three Cloudroad endings from 6 tiles away, on screen and unmarked.
+  RBN-QA-124: Suzu's evening at the little theatre (`yn.suzu_evening`): the theatre is marked seen before the warp, so
+  its daytime introduction never follows; the show is at night; Koume walks up to you after it (`!walkto yn_koume
+  pc`, QA-108), the narration saying she walked over (the line as it was) or, with no free place near you, "When the
+  show ends, Koume calls out to you." (a new key, `#b0ce1f1f0f`, on the re-record list; "walks straight over" keeps
+  its key); a condition head `scene.<id>`, true while that scene runs for this journey, runtime only, places an
+  audience of seven townsfolk without lines or names (`src/content/yn/28_playhouse_audience.js`): four on the
+  benches' own tiles and three newcomers from the ridge on the floor in front of the stage, clear of the way down from
+  the stage, your place, your companion's, the way out and every other placement; a mannerism profile may name such
+  a person. `!warp <map> <x> <y> [dir] [ambience=<preset>]` sets the scene's ambience once the new map is entered and
+  before its fade-in (an `entered` step in `RB.game.transition`), so the theatre is first seen at night and the place
+  you leave is not tinted; `validate` checks the preset. U `playhouse_audience` 26/0 (on `3bfa708` 14/12; with
+  `b006a78`, on `3b283cb`'s source 25/1, the warp's command check); `actors` 180/0; B `playhouse_audience` 15/0
+  (control on the cut's build 4/11, and on QA-108's road build 4/11), then 17/0 with every fade recorded as it begins
+  (control on `3b283cb`'s build 15/2: night off as the theatre's fade-in began); full units 58,157/0 on `3b283cb` and
+  on `b006a78`; on its build (`5222612f…`) `steamhollow` 5/0, `companion_away` 31/0, `walkto_options` 23/0,
+  `load_mid_scene` 19/0, `yn_guide` 25/0, `tsuneji_egg` 34/0, `departures` all ok. Recorded: its first full units
+  58,035/1 (`actors.test`: the audience's mannerism profiles name people placed without a name), fixed test-side;
+  its first browser run 13/2 ("Koume walks up to you after the show" at both sizes, with her beside you: the test's
+  hook cut each line's English at 44 characters), and its control threw on the missing audience table; its control on
+  QA-108's road build first did not run (the page outside the folder the test serves); the first full run on
+  `e98cac6`, never pushed, had 4 failures, all in its unit test (58,153 passed). The seated poses are art: stills went
+  to the owner privately, "implemented provisionally" until then. As noted with Agnes's REFINE (6374739355), and
+  claimed no further: Suzu's journey only, not every companion or a six-chapter journey; a synthetic pre-show save,
+  not a mid-show save; Skip's cleanup happens with the scene's end, not on toggling Skip.
+  RBN-QA-164: each of the Hall's twenty floors with a way up has a one-tile exit, and its stairs stood on the tile
+  beside it, so walking onto the stairs did nothing (natively, the first wing's first floor). Each stairs prop moves
+  onto its exit's tile, on the same road and row: wing 1 (17,1)→(18,1) and (21,1)→(20,1); wings 2–10 floor 1
+  (17,1)→(16,1), floor 2 (18,2)→(17,2); wing 4 floor 2 (31,3)→(30,3) (its stairs had no free tile beside them but the
+  exit). Exits, destinations, arrival points, facing and the cleared-floor condition unchanged; the stairs stay
+  non-blocking; the floor-3 lanterns and the foyer untouched; the art moved, not changed. U `hall_stairs` 4/0 (the
+  source as before 3/1); B `hall_stairs` 4/0 on its build (on the task head's build 1/3: all twenty "no transition",
+  wing 4 floor 2 unreachable); `hall` 4/0; full units 58,225/0 on `20e4121`. AGREEs on the exact candidate: Local
+  CL-250, Agnes 6376447128. As Agnes bounds it: not native lighting inspection or whole-floor traversal, and the
+  uncleared fixtures start beyond their gate. Not captured under Hall lighting; her native look is to come.
+  RBN-QA-165: the kana completion took its example word from the whole lexicon, which also holds deliberate
+  non-words (the wrong choices of the tasks that teach them: しほさい in `ko.toro_2`); only a homophone target left
+  them out, so ほ could be asked, and accepted, in しほさい "(not a word: …)" (natively, the Hall's first tale); 46
+  kana targets, hiragana and katakana, could draw one. Now every kana target leaves the non-words out; with only
+  non-words to hand, the bare kana question, as before for a kana with no example. The task (item, answer, what it
+  accepts, mode, script) and the mastery accounting unchanged; every other target asks exactly as before (59 pinned
+  over 50 clocks by hash); `ko.toro_2` keeps its wrong choice and the lexicon its entry. U `kana_nonword` 7/0 (the
+  source as before 4/3: the native case at its clock, the 46 targets at 200 clocks each, the fallback); the `kana`
+  set 1,581/0, `homoph` 1,466/0; full units 58,228/0 on `42e7cd6`. Counts agreed with Local (CL-249, CL-251): 39
+  deliberate non-words, 37 in the kana word index, the 25 at levels F and E holding the 46 targets. AGREEs on the
+  exact candidate: Local CL-251, Agnes 6376447128 (who inspected but did not recompute the 59-target hash; the
+  affected-target assertion is at least 40, not exactly 46; a repair of explicitly marked non-words, not a language
+  audit). Open, a separate item outside this cut: the meaning-choice tasks draw their wrong options from the same
+  index (candidate `a563040`, with its test refinement `7a3d6ee`).
+  In candidate CC-021 (`6e3787fd…`, built from `26c08c7`), READY_FOR_QA, with `hall_door` 14/1 (a stale allowlist from
+  before this cut, failing the same way on the task head's own build) and `fade_load`'s stopped run (15/0 on a quiet
+  re-run on the same bytes) retained (VALIDATION, CC-021; not an all-green claim); RBN-QA-116 stays open, outside it.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:

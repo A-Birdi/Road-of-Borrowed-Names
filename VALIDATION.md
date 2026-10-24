@@ -5484,6 +5484,304 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-021:** `index.html` sha256 `6e3787fda6d5497aa8ccde5085ec739c8d86966963ac427e07e03652a4b80e6e`
+    (24,336,422 bytes), built from `26c08c7` (CC-020 at `1272636`, verified live by Local CL-220 (the bytes against a
+    rebuild, the record, the live page and a live smoke; Agnes's check is not in the record), plus only RBN-QA-103, 113,
+    114, 111, 117, 119, 112, 115, 121, 130, 131, 120, 129 and 128, the `dialect_kansai` and `keeper_reveal` test fixes,
+    the language audit's Tier A with RBN-QA-132, the kanji exams' place rotation, RBN-QA-133, RV0047, 先々代, RV0115, 十分
+    じゅっぷん, the かい hints, the listening page's retired take, the `book` fixture, RBN-QA-161 and 162, the Reedwake
+    return-discovery pilot and RBN-QA-108, 124, 164 and 165, each by its agreed commits, listed in HANDOFF's CC-021
+    entry; scope agreed by Agnes 6376014281 and Local CL-249). The integration, as it happened (cherry-picked with `-x`;
+    patch-ids of 12 hex digits where the posts give them, otherwise as posted; `run.mjs`, merged by hand where it
+    conflicted, adds only each item's own suite; the task branch's pushes posted as fast-forwards with the remote ref
+    equal: `6a7afbc`, `730fb40`, `f51a635`, `e362a8d`, `0fca3fa`, `0944868`, `bc1bf37`; `1657b0c` and `26c08c7` are on
+    integration branches):
+    - Batch 1: `1272636` → `ac11324`, `75ba996`, `0dd5259` (QA-103, `48d65dd`, `fec8666`, `207a831`) → `25a2107`,
+      `8fda88b` (QA-113, `5aeed6f`, `97dd467`) → `a64f531`, `bdad610`, `ecb51f4` (QA-114, `245d1dd`, `673c501`,
+      `2f9d69f`) → `b0b138b` (QA-111, `b54316f`) → `37a5c4c` (QA-117, `125c079`) → `6a7afbc` (QA-119, `40f4010`).
+      Without `run.mjs` all equal but `48d65dd`'s, which differs only in `50_world.js`'s export line (on this base it
+      also lists `departures`, as at `a0f63a9`); QA-103/113's source tree is identical to `a0f63a9`'s (records and
+      `index.html` aside), the integration Agnes 6346866857 and Local CL-208 cleared on `05196f0` before the cut
+      (units 57,960/0 there). AGREEs: QA-103's refine Agnes 6345967079 (QA-103's commit cites Agnes 6338841549,
+      6338848728, 6339444153, 6340911110 and Local CL-186); QA-113 Agnes 6345967079 (source; the commit cites Agnes
+      6344832644, 6344844762 and Local CL-206); QA-114 Agnes 6347499245 (qualified), Local CL-211; QA-111 Local CL-212,
+      Agnes 6347945501 (qualified); QA-117 Agnes 6348219357, Local CL-213; QA-119 three AGREEs as posted, the ids not
+      in the record (the commit cites Agnes 6345669438, 6345974122). `validate.mjs` no errors. U 57,992/0 on
+      `6a7afbc`. `index.html` stayed the cut's build. Verification of the head: not in the record.
+    - Batch 2: `6a7afbc` → `d19a8c1` (QA-112, `0a55dab`) → `26b9db2` (QA-115, `e2e4008`) → `5cd2cd3` (QA-121,
+      `3723625`), all three equal without `run.mjs`. AGREEs: QA-112 Agnes 6344362652, Local CL-207 (her REFINE
+      6345961972 taken); QA-115's commit cites Agnes 6345961972, 6346428273, 6346676788 and Local CL-209; QA-121 scope
+      Local CL-209 (the commit cites Agnes 6346458503); the candidate reviews closed by Local CL-221 and Agnes's
+      source AGREEs (ids not in the record). `validate.mjs` no errors. U 58,020/0 on `5cd2cd3` (177 test files, a clean
+      worktree, exit 0). The page was built in that worktree and removed with it, so its own hash is not on record;
+      two later builds of the pushed `5cd2cd3` give `84771b84a083f87c…`, 24,310,348 bytes (the build is
+      byte-deterministic for identical sources). Head: Local's AGREE CL-230 and Agnes's acceptance, noted in the
+      post that answers her 6352569987.
+    - Batch 3: `5cd2cd3` → `6930527` (QA-130, `3d5d02a`; `6e8882bfa62f` in full and without `run.mjs`) → `730fb40`
+      (QA-131, `b4381a1`; `72eb8fb438bd`), equal. AGREEs: QA-130 Agnes 6351323077, Local CL-224 (wording Agnes
+      6349514956); QA-131 Local CL-225 on the pushed candidate, Agnes's not in the record (the commit cites Agnes
+      6350324790, 6350682819 and Local CL-219, CL-221). U 58,041/0 on `730fb40`. Page `97d15d94efbf50e7…`,
+      24,311,123 bytes; a rebuild gives the same bytes. Local's verification not yet at the post (CC-142 §2); later,
+      not in the record.
+    - QA-120: `730fb40` → `357ea18`, `18e161a`, `3d69600`, `a3883be` (`fa479fd`, `16dc2d0`, `64a6b26`, `8e2e15b`) on
+      `int/post-cc020-d`: equal for all four without `run.mjs`, and in full for the last three; `357ea18` differs only
+      in the suite list, merged by hand (`tsuneji_egg` after `steamhollow`). The merged `refreshActors` hunk of
+      `src/engine/50_world.js` was posted in full, identical to the candidate's. AGREEs: Agnes 6352065812 (qualified)
+      and 6352291621, Local CL-227. U 58,053/0 on `a3883be`. Page `6d857719d18a53ef…`, 24,313,429 bytes. Then
+      `f51a635`, the scene manifest generated at `a3883be` (the tool unchanged; as agreed, Agnes 6351117900 and Local
+      CL-223; last generated at `85d89df`): 3,397 entries before and after (3,224 scenes, 173 inline), none added or
+      removed; 519 updated from the source since (source file:line 458, branches 134, staging 23, prerequisites 13,
+      objects 7, reasons 5, participants 4, maps 2, lines and speakers 1 (`cr.chika_after`), calls 1
+      (`kr.ruin_lanterns`)); one draft class changes, `yn.bath_scene`, Performed overworld → Quiet by design (QA-113);
+      curated 511 and heuristic 2,886, as before; a second generation the same bytes (`scenes.json`
+      `0e888e9e8c33aa4f…`, `SCENES.md` `09bbeb3fe7843ba4…`); U `scene_manifest` 1,023/0. Local verified `a3883be` and
+      `f51a635` (CL-236).
+    - Batch 4, QA-129 first: `f51a635` → `ecf64eb`, `dc1b328`, `9df2157`, `509a041` (QA-129, `3ba19ee`, `9e867a7`,
+      `c424b42`, `b846c3b`; `509a041` `867039af82f8`) → `1f0c553`, `1c8d924`, `a174d40` (QA-128, `77aa5ef`,
+      `432dc4e`, `cf155c3`) → `04a175d` (the `dialect_kansai` fix, `1b62407`) → `e6a7b9b`, `8001c3e` (the
+      `keeper_reveal` fix, `4efc4e6`, `fcae4e6`) on `int/post-cc020-e`: equal in full for eight; `ecf64eb` and
+      `1f0c553` without `run.mjs` (their suites added by hand, `egg_recovery` after `tsuneji_egg`, `suzu_books_route`
+      after `egg_recovery`). Both keeper commits are cherry-picked, so the withdrawn revision stays in the history.
+      AGREEs: QA-128 and the dialect fix Local CL-231, Agnes 6353618099; the keeper fix Local CL-233, Agnes 6353897775
+      (qualified); QA-129 validated as one head with QA-120, as Agnes 6354377552 asked (the exact-candidate AGREE ids
+      not in the record). `validate.mjs` no errors. Page `22652880cee27f91…`, 24,314,669 bytes; two builds the same.
+      U 58,087/0 on `8001c3e` (a browser suite alongside: not a clean row). Then `e362a8d`, the scene manifest (the
+      same procedure; Agnes 6351117900, Local CL-223; last generated at `a3883be`): 3,397 entries before and after,
+      none added or removed, no class changes; 18 updated (source file:line 13, prerequisites 6, maps 1); a second
+      generation the same bytes (`scenes.json` `b24b56f93577b045…`, `SCENES.md` `5a8b9849e1842a3f…`); U
+      `scene_manifest` 1,023/0. Head `e362a8d`: Agnes's AGREE (id not in the record), Local's verification then under
+      way.
+    - Tier A: `e362a8d` → `c814d6a`, `f20bd83`, `cc7adc9`, `0fca3fa` (`54e9641`, `74edc10`, `9d66813`, `8380d17`) on
+      `int/post-cc020-f`, all four equal. Regenerating the kanji table and the scene manifest on the new base changes
+      nothing (the readings move, no line does), so no manifest commit. AGREEs: three, as posted, the ids of the exact
+      candidate's not in the record (Agnes's source AGREE noted); the commits cite, for QA-132, Agnes 6353337774,
+      6353618099, 6353888589 and Local CL-231. `validate.mjs` no errors. Page `22e06af3093f2a8a…`. U 58,109/0 on
+      `0fca3fa`.
+    - The quiz, the language batch and the `book` fixture: `0fca3fa` → `6afe108` (the quiz, `734a8cf`) → `9513f64`,
+      `bcdcaf6`, `a68556a`, `cc17077`, `d0cfc03`, `194a7dd`, `18e177f`, `a4cceea`, `08673c7`, `1e7aca8` (`1381eb4`,
+      `1e4c0e7`, `fe59fa2`, `3e8bfee`, `bbc7bc1`, `dfa3219`, `f8cee4c`, `9d0a298`, `1e2d7a6`, `a5f8511`) → `6ac5e86`
+      (the scene manifest) → `0944868` (the fixture, `729086d`): twelve cherry-picks, every patch-id equal. `6ac5e86`:
+      RV0047 gave `co.b_nao4` four lines, two of them conditional, and the banter scenes after it moved down a line;
+      the candidate's own manifest was stale too, since the manifest test checks scene ids, not line counts; a second
+      generation the same bytes. The kanji table and the listening page regenerate unchanged on the new base.
+      AGREEs: the quiz and the language batch Local CL-246, Agnes 6374203241; the fixture Agnes 6373245628, Local
+      CL-247. `validate.mjs` no errors. Page `90f7d5d8e683be61…`. U 58,151/0 on `6ac5e86` (another unit run
+      alongside); the fixture after it changes only `tests/e2e`.
+    - QA-161/162, the pilot and QA-108: `0944868` → `e12fa49`, `cf7ac62`, `a534bb4` (QA-161/162, `fc3a758`,
+      `cc1ce18`, `c209731`) → `20dec12`, `b7cb482` (the pilot, `4b105e1`, and its key line, `c6dfc35`) → `6caf843`,
+      `f556efe`, `85d2ddb` (QA-108, `3bb0e9d`, `4ce2066`, `fa32d23`) → `bc1bf37` (the scene manifest): equal;
+      `6caf843` without `run.mjs` (its suite line in a list that has gained suites since; each suite listed once).
+      Before this, QA-108's first two commits were rebased onto `0fca3fa` (`3bb0e9d` ← `3bfa708`, `4ce2066` ←
+      `1535c21`; equal without `run.mjs`; never pushed before, so nothing pushed was rewritten). `bc1bf37`: Fuki's and
+      Kanta's lists, `sb.fuki`'s two report lines, and the line moves in `yn/20_scenes_call.js`; a second generation
+      the same bytes; the kanji table and the listening page unchanged. AGREEs: QA-161/162 Agnes 6374675900, Local
+      CL-248; the pilot Agnes 6374687480 (qualified), Local CL-248, on Robin's approval (issue #1 6373239443); its key
+      line Local CL-248, Agnes 6375174827; QA-108 Agnes 6374238260 (qualified), Local CL-247. `validate.mjs` no
+      errors. Page sha256 `f530c2cc2400ef570c4939dbe8ef7d556270cbe584127332363d1a81dd46c0b4`, 24,332,189 bytes,
+      built in a clean checkout of `bc1bf37`, a second build the same; at `bc1bf37` `docs/expressive/scenes.json`
+      sha256 `5f12df69f71dfb1c39711c47cd02554eb827abaec8a84b054bb70d16c5b40dfc` (2,188,769 bytes) and `SCENES.md`
+      `0b206db53c4bc713ec3b780c31a152c805053bfa6fd0af5cd7041e9ed5998baf`. U 58,221/0 on `bc1bf37` (another unit run
+      alongside). The exact build for Agnes's native checks (the stuck Fuki and Kanta saves, QA-108's ordinary
+      regression, the pilot); their results are not in the record. The branch's `index.html` stayed CC-020's.
+    - For this cut, on `int/cc021`: `bc1bf37` → `034f5ea`, `49c22fa`, `5414c61`, `9596103` (QA-124, `169b4c6`,
+      `af07182`, `3b283cb`, `b006a78`) → `2eb1dbb` (QA-108's test, `b3a34ac`) → `1657b0c` (the scene manifest):
+      equal; `034f5ea` without `run.mjs` (its one `run.mjs` line the same, only its hunk's position differs). QA-124's
+      first three were rebased onto QA-108's road before (`169b4c6` ← `2f0abb0`, `af07182` ← `f834ebf`, `3b283cb` ←
+      `12be71e`; equal without `run.mjs`). `1657b0c`: `yn.suzu_evening` and the line shifts after it; a second
+      generation the same bytes; the kanji table and the listening page unchanged. AGREEs: the scope Agnes
+      6376014281, Local CL-249; QA-124's `b006a78` and `b3a34ac` Agnes 6375800847; QA-124's shape Local CL-248.
+      `validate.mjs` no errors. Page sha256 `aa213004ea5d4a1a7d531c8de7ba27fa17de921542ba2576190c2aa24e7b6f3c`,
+      24,336,114 bytes. U 58,247/0 on `1657b0c` (CC-157 §1); its browser runs are below.
+    - Then, on `int/cc021b`: `1657b0c` → `178199d` (QA-164, `20e4121`) → `26c08c7` (QA-165, `42e7cd6`), both equal in
+      full; the manifest, the kanji table and the listening page regenerate unchanged. AGREEs on the exact candidates:
+      Local CL-250 (QA-164) and CL-251 (QA-165), Agnes 6376447128 (both). `node tools/build.mjs` on `26c08c7` gives the
+      matrix's bytes. U 58,258/0 on `26c08c7` (CC-157 §1). Pushed as `int/cc021b`, the remote ref equal; integrated
+      source agreed by Agnes 6376933092 (seven picked patches as approved, 28 files against `bc1bf37`, nothing
+      unexpected), who asks that the `jinpachi_letter` failure below be kept and diagnosed; Local AGREE on `26c08c7`
+      (CL-254: every patch-id equal, the manifest, the kanji table and the listening page regenerated byte for byte,
+      full units 58,194 with the five Windows-only path failures, and `jinpachi_letter` 27/0, `playhouse_audience` 17/0,
+      `hall_stairs` 4/0, `postgame_quests` 6/0, `return_hints` 12/0, `departures` all ok, `companion_away` 31/0 and
+      `steamhollow` 5/0 on its own build, `fb9b7401…`, 24,336,424 bytes, which it is to compare span by span with this
+      cut's bytes).
+    On these bytes (B): 107 suites, one at a time, on these exact bytes (`index.html` as built from `26c08c7`), from
+    23:21Z to 01:38Z; full units of other candidates ran alongside for most of it (not clean rows). CC-020's 85, in its
+    order: `ko_first_sight` 87/0, `ko_crossing` 94/0, `interlude_ahead` 30/0, `interlude_lifecycle` 14/0, `interludes`
+    76/0, `lf_arrival_view` 79/0, `lookout_vista` 22/0, `keeper_reveal` 69/0, `kotonoha` 7/0, `licence` 2/0,
+    `battle_start_abandon` 28/0, `prep_abandon` 52/0, `encounters` 10/0, `load_mid_scene` 19/0, `combat_ui` 7/0,
+    `social_battle` 65/0, `card_press` 13/0, `battle_settings` 10/0, `battle_presentation` 13/0, `fog_event` 26/0,
+    `prologue` 100/0, `title_ledger` 18/0, `play_ui` all ok, `world_view` all ok, `ui` 14/0, `wind_stone` 19/0,
+    `kb_reflow` 4/0, `leaf_home` 42/0, `sequence_world --only ko.end` 158/0, `guest_arrivals` 17/0, `tide_split` 49/0,
+    `suzu_stage` 47/0, `enter_ownership` 12/0, `hall_entry` all ok, `hall_door` 14/1 (below), `walkto_options` 23/0,
+    `quest_guide` all passed (55 checks), `guide_next_step` 24/0, `ruin_lanterns` 31/0, `lodge_evening` 16/0,
+    `lodge_quarrel` 31/0, `ren_apart` 7/0, `guide_reveal` 37/0, `guide_kana` 11/0, `learning_ui` 15/0, `social_wait`
+    12/0, `look_purity` 9/0, `props_balance` 48/0, `road_oil` 14/0, `geese_event` 15/0, `keepers` 4/0, `lodge_arrival`
+    40/0, `guide_stacks` 8/0, `guide_archive` 14/0, `companion_turn` 4/0, `road_on` 11/0, `leaf_marker` 18/0,
+    `guide_vigil` 9/0, `learning_qa039` 44/0, `sequence_art_integrity` 32/0, `ao_lesson_line` 20/0, `ao_whereabouts`
+    18/0, `yoshino_exhibit_line` 14/0, `guide_roots_leaf` 9/0, `battle_party` 14/0, `guide_tellings` 88/0, `choice_rows`
+    6/0, `cloud_sea` 6/0, `courier_shelf` 9/0, `fade_load` stopped after 2 passing cases (below), `guide_climb` 10/0,
+    `ledge_horse` 14/0, `leg2_boulder` 12/0, `mitsu_frame` 28/0, `nakayama_inns` 9/0, `reunion_ways` 33/0, `tide_night`
+    45/0, `cloudroad` 4/0, `departures` all ok, `systems` 4/0, `travel_rules` 10/0, `answer_order` 5/0,
+    `playtest_repairs` 7/0, `dialect_kansai` all passed, `sequence_world --only ko.tide_night` 158/0; the 14 added
+    since: `bath_partition` 5/0, `companion_away` 31/0, `egg_recovery` 26/0, `hall_stairs` 4/0, `jinpachi_letter` 27/0,
+    `playhouse_audience` 17/0, `postgame_quests` 6/0, `procedure_copy` 7/0, `return_hints` 12/0, `suzu_books_route`
+    13/0, `tsuneji_egg` 34/0, `valve_line` 7/0, `yn_guide` 25/0, `zenroku_inquiry` 4/0; the regressions the items named:
+    `steamhollow` 5/0, `book` 15/0, `practice_b` 6/0, `world_living` 4/0, `goatshed_fence` 10/0, `kana_homophones`
+    208/0, `hall` 4/0, `story_ch4` 53/53 checks (one playthrough, I/Ren). 105 of 107 passed; `hall_door` and `fade_load`
+    are below, kept as they happened. Before the cut, on each integrated head's own build, one after another in the
+    browser lane (not clean rows where said): on `6a7afbc`, all 20 exited 0 with no failure (QA-103/113's 18 from
+    `a0f63a9`, `yn_guide` and `courier_shelf`): `bath_partition` 5/0, `companion_away` 31/0, `choice_rows` 6/0,
+    `cloudroad` 4/0, `departures` all ok, `enter_ownership` 12/0, `fade_load` 15/0, `guest_arrivals` 17/0,
+    `load_mid_scene` 19/0, `lodge_arrival` 40/0, `lodge_evening` 16/0, `lodge_quarrel` 31/0, `mitsu_frame` 28/0,
+    `ren_apart` 7/0, `steamhollow` 5/0, `suzu_stage` 47/0, `tide_split` 49/0, `walkto_options` 23/0, `yn_guide` 25/0,
+    `courier_shelf` 9/0; on `5cd2cd3`'s page, `procedure_copy` 7/0, `zenroku_inquiry` 4/0, `valve_line` 7/0,
+    `encounters` 10/0, `steamhollow` 5/0, `answer_order` 5/0, `hall` 4/0, `yn_guide` 25/0, each exit 0 (other
+    candidates' unit runs not held back: not clean rows; Local's CL-230 runs are the clean ones); on `730fb40`,
+    `steamhollow` 5/0, `cloudroad` 4/0, `yn_guide` 25/0 (a unit run alongside); on `a3883be`, `tsuneji_egg` 33/0,
+    `companion_away` 31/0, `departures` all ok, `kotonoha` 7/0 (two unit runs alongside); on `8001c3e`, `egg_recovery`
+    26/0 with the old save written by the task head's build (QA-120 without QA-129, `6d857719d18a53ef…`) and 26/0 with
+    the old save written by the cut's build (`6278005abab991fc…`), both in the 2/3 state, `tsuneji_egg` 34/0,
+    `departures` all ok, `companion_away` 31/0, `suzu_books_route` 13/0, `keeper_reveal` 69/0, `keepers` 4/0,
+    `steamhollow` 5/0, `yn_guide` 25/0 (two unit runs alongside); on `0fca3fa`, `play_ui` all ok, `practice_b` 6/0,
+    `choice_rows` 6/0, `yn_guide` 25/0, `book` 13/2 (below; a unit run alongside); on `0944868`, `dialect_kansai` all
+    passed, `play_ui` all ok, `practice_b` 6/0, `choice_rows` 6/0, `yn_guide` 25/0, `book` 15/0 (a unit run alongside);
+    on `bc1bf37`, `postgame_quests` 6/0, `return_hints` 12/0, `jinpachi_letter` 27/0, `departures` all ok,
+    `world_living` 4/0, `guide_next_step` 24/0, `book` 15/0, `play_ui` all ok, `yn_guide` 25/0, `tsuneji_egg` 34/0 (a
+    unit run alongside); on `1657b0c`, `playhouse_audience`, `jinpachi_letter`, `departures`, `steamhollow`,
+    `companion_away`, `walkto_options`, `load_mid_scene`, `yn_guide` and `tsuneji_egg`: `playhouse_audience` 17/0,
+    `jinpachi_letter` 26/1 (below), `departures` all ok, `steamhollow` 5/0, `companion_away` 31/0, `walkto_options`
+    23/0, `load_mid_scene` 19/0, `yn_guide` 25/0, `tsuneji_egg` 34/0 (two unit runs alongside); on `26c08c7`'s page
+    (`6e3787fd…`), `hall_stairs` 4/0, `hall` 4/0, `kana_homophones` 208/0, `guide_kana` 11/0, `practice_b` 6/0,
+    `learning_ui` 15/0 (two unit runs alongside). U whole suite 57,992/0 on `6a7afbc`, 58,020/0 on `5cd2cd3`, 58,041/0
+    on `730fb40`, 58,053/0 on `a3883be`, 58,087/0 on `8001c3e`, 58,109/0 on `0fca3fa`, 58,151/0 on `6ac5e86`, 58,221/0
+    on `bc1bf37`, 58,247/0 on `1657b0c`, 58,258/0 on `26c08c7`. Recorded as they happened, not made green afterwards:
+    - `jinpachi_letter` on `1657b0c`'s build: 26/1. "Skip seen: and he goes on down the road the same way" found no
+      departure record and no figure (`{"recs":[],"trail":[],"left":0,"ms":0}`); the case's arrival passed, as did every
+      other case. `b3a34ac` changes only the first section's drive, not this one (Agnes 6376933092). On `bc1bf37`'s
+      build it was 27/0. Diagnosed (Local CL-254; the source reads the same way; Agnes 6377645693): `refreshActors`
+      (`src/engine/50_world.js`) walks a person out and records the departure, on a plain refresh (not `!refresh gone`,
+      which is watched), only once the map has been up 900 ms of map time; inside that window whoever's place ends is
+      dropped without a walk or a record. The case begins `yn.call` 800 ms of real time after the map; map time advances
+      at most 50 ms a frame (`src/engine/90_game.js`), so it lags real time on a busy machine, and skipped, the scene
+      ends about 530 to 880 ms of map time later (the probe below): the result turns on which side of 900 its last
+      refresh lands. Local reproduced it at will on `26c08c7` and `bc1bf37` (a 300 ms wait 0/5, this signature exactly;
+      800 ms 10/10; 2,000 ms 5/5). A scratch probe of mine on these bytes, with the page's CPU throttled (three runs at
+      each rate, the scene begun 800 ms of real time after the map, at map time 367 to 450 unthrottled and 133 to 150
+      throttled): his place ended at map time 950, 983, 983 (×1), 867, 967, 1,033 (×4), 833, 850, 900 (×8) and 900, 933,
+      1,000 (×16); every run past 900 recorded his authored departure and every run at 900 or less recorded none and
+      left no figure (5 of 12, this signature). The matrix's run on these bytes was 27/0. Not caused by CC-021: it
+      reproduces on `bc1bf37`, and CC-021 changes neither `refreshActors` nor `leave`. The engine's behaviour inside the
+      window stays as it is (Local CL-256 and Cloud: option (a); Agnes 6377645693: early Skip behaviour unchanged in
+      CC-021): on an on-arrival Skip, possible only where seen scenes carry over, Jinpachi is simply gone. A test-only
+      fix, `a4b3823` on `26c08c7` (begun once the window is past, bounded, the strict assertion kept, with a control
+      inside the window), is outside this cut.
+    - `hall_door` on these bytes: 14 passed, 1 failed: "only kr_halldoor and the Great Kiln's seal and doorway draw on
+      the wall" found `["co_seal","co_kilnmouth","cr_noren","kr_halldoor"]`. Its check is an exact allowlist, last
+      changed for RBN-QA-024 (`cffd4ad`); RBN-QA-111 (`b0b138b`, integrated after CC-020) gave Sono's noren `onWall:
+      true` so that it is drawn on the inn's front wall, and the list was not updated; the suite had not run since
+      CC-020's matrix. CC-021 touches neither file. Controls, one after another after the matrix: the unchanged test on
+      the task head's own build (`bc1bf37`, `f530c2cc…`) 14/1, the same check and the same list; the fixed test there
+      15/0 and on these bytes 15/0; on a scratch build where `bench` is also `onWall`, the fixed test 14/1 (its list
+      then holds `bench`). A test-only fix, `5273ac7` on `bc1bf37` (the list adds `cr_noren`; the village `door` markers
+      and every other prop stay outside it), is outside this cut.
+    - `fade_load` on these bytes, in the matrix: its first two cases passed; opening the page for its third case, the
+      harness's wait for the game to report ready (15 s, `tests/e2e/lib.mjs`) ran out, and the suite exited 1 with no
+      further result. A full unit run of another candidate was alongside, and a short unit control of mine had ended
+      less than a minute before. Re-run once after the matrix, on the same bytes, with nothing else running: 15/0 (its
+      run on `6a7afbc`'s build was 15/0 too). What slowed the page's start is not shown; the first run is kept as it
+      happened, not replaced by the re-run.
+    - `keeper_reveal`'s fix, its clean matrix (one run after another; at each run's start and end the runner found
+      nothing else running), the same on CC-020's (`6278005a…`) and CC-019's (`3baeeb9f…`) bytes: normal 69/0;
+      flattened (the clipped switch) 65/4; start +1,750 ms 69/0; +2,100 ms 69/0. Every normal and shifted run read the
+      swell 65,74,104 against open water 55,61,90 in all four configurations; flattened, all four read 55,61,90
+      against 55,61,90 and fail; Ren's and Suzu's reduced-motion configurations in every run. Load rows, kept apart:
+      69/0 on both, each beside `fcae4e6`'s own full unit run (57,960/0, recorded separately). Local's clean matrix
+      was identical (CL-233). The first revision, `4efc4e6`: with the old test 68/1 on both bytes and the new 69/0;
+      shifted 1,750 ms, 60 samples, three runs each, the old single point failed 0, 4 and 0 times on CC-020's bytes and
+      0, 0 and 0 on CC-019's, its grid 0 times; "flattened 68/1, the swell case fails" was the suite total: per
+      configuration only Nao at 1280 failed, so it accepted a missing swell in three of four configurations, in two
+      under Local's corrected switch (67/2), and the original switch overran; not a valid fix; full units on it
+      57,960/0. The picture's stepped vignette (four flat steps, the innermost `round(0.165·min(w, h))` px in: x 574
+      at 1280×800, x 326 at 390×844) was measured on CC-020's bytes with a scratch probe, not committed. A development
+      run of `fcae4e6` flattened on CC-020 (65/4, two unit runs alongside) is not evidence.
+    - The `dialect_kansai` fix: its first shrink control was ineffective (a style injected by `addInitScript` after
+      navigation; every check passed with 44 px buttons), kept on record; the second fails exactly the two 44 px
+      checks (57/2). With the animation slowed to 0.25 the old test fails (270×43, 173×43), the new one passes at 0.25
+      and 0.1. The message for a bound that runs out, promised as a separate small commit, is not in this cut.
+    - Batch 1's full unit run: for about a second a temporary control test file was placed in that run's worktree.
+      The log was created at 20:28:38Z; the runner lists its folder once, before its loop, and prints `# <file>` for
+      each test; the log has 174 `#` entries ending at `yn_guide_qa117.test.mjs`, exactly the 174 test files in that
+      worktree, checked file by file; the temporary file's name sorted after every test file and does not appear.
+    - The disk filled at about 20:36–20:38Z while a control worktree was being made (it failed and was removed); eight
+      finished worktrees were removed (their commits pushed or on a local branch), no log or evidence deleted. In
+      flight: batch 1's full units (57,992/0), QA-120's (57,972/0) and QA-116's room control; none logged an error.
+      Again at about 23:58: five finished worktrees removed (branches kept, scratch probes saved); QA-125's unit rerun
+      hit "no space left on device" in a keyify test and does not count (QA-125 is not in this cut).
+    - QA-114: the full units on `673c501` were 57,963/5 (框 in source comments, outside the font subset; `book_type`);
+      `2f9d69f` says it in romaji: 57,968/0, `book_type` 60/0.
+    - QA-112: `procedure_copy`'s earlier browser runs, on the superseded string, then stopped by its own `keep: false`
+      case and by a battle-led procedure leaving combat mode, are kept as superseded.
+    - QA-120: its first browser run, 20/11 on `16dc2d0` with the test before `64a6b26`, a real finding (talked to
+      within the street's first 900 ms he simply vanished), fixed by `8e2e15b`; the delay-only attempt; the control on
+      `da9072c`'s build 2/29, then the run threw, not a completed comparison; Local's bounded scratch probe completed.
+      QA-120 was fast-forwarded alone (`a3883be`, then `f51a635`) before Agnes's note that QA-120 and QA-129 go in
+      together had been read; QA-129 was then put first in the next integration and the combined head validated at
+      `8001c3e`, both old saves included. The optional extra guard `8d298d3` (test only; its full units 57,972/0) is
+      not part of what was agreed and not in this cut.
+    - QA-129: full units on `3ba19ee` 57,990/1 (`tsuneji_egg` expecting QA-120's old rule), refined by `9e867a7`;
+      `egg_recovery`'s first browser run 21/4, all in case 1 (the loading page kept the default text speed and
+      `play()` pressed once per line), fixed by `c424b42`. Yasuke's going after his egg is recorded, not asserted:
+      `{"to":null,"exit":null,"reason":"nearest (unknown)"}`, no fallback.
+    - QA-128: the runs before `cf155c3` measured nothing: the first waited on the garden scene until its 30-minute
+      bound; `432dc4e`'s rerun and the 2/11 control placed you with `RB.world.enter`, which runs no enter events.
+    - Tier A: CC-141's `tier_a_readings` 7/0 with a control of 5/2 was wrong; after the test's split 5/0, control on
+      `5cd2cd3` 3/2 (the only control before the split was 11/4, on the combined test). `fraction_lookup` 14/0 at
+      `74edc10`, 17/0 with `9d66813` (control 11/3). The first full units, on `9d66813`, were 58,041/1
+      (`recog-coverage`: the kanji table still gave 杯 ぱい); `8380d17` regenerates it, 58,042/0. "21 of 22
+      AivisSpeech/Nemo recordings already say the corrected reading" is withdrawn: known is presence only, 43 of the
+      49 old keys with cast recordings and 6 without.
+    - The language batch: its first full units, on the head before the rebase onto `8380d17`, were stopped by hand
+      (EXIT 143) and do not count; on `cec2871` 58,069/3: `lang_lexicon` ("all entries valid": the じゅっぷん note
+      named two kanji without readings, fixed by `18e177f`), `kana_homophones` ("一 in 一字一句: asked at the first and
+      at the third place": the quiz, found by bisecting to QA-133's 一語 and split out as `734a8cf`) and
+      `voice_review_page` ("the committed page is current with the list": regenerated, the retired line's take would
+      show no English; settled by the retired-takes file, `08673c7`, and the regenerated page, `1e7aca8`); on
+      `a5f8511`, 58,084/0. A parser rule for Mio's かい (`446c241`) was dropped before the batch was pushed, for the
+      hints. CC-142 §8's count of 43 じゅうぶん is withdrawn (CC-144 §8: 37 groups in `src/`; 28 tokens in 27 strings
+      in the loaded content). Rebases while local (CC-143 §3, CC-147 §7) kept every patch-id.
+    - The `book` suite, 13/2 on the task head's and Tier A's builds: "the Journey's Next says one destination once"
+      and the journal's word-help targets (164 vs 160), both from RBN-QA-069 (`8f66b79`, before CC-020), so on
+      `a3883be` and CC-020's cut as well, each with one more failure there ("opening, turning, restyling and closing
+      never change the journey": the book wrote `newItems`), which the task head passes; what cured it is not traced.
+      `729086d` fixes the test (15/0; the same build with the old test 13/2).
+    - QA-108: its first `jinpachi_letter` runs failed "every line of his within 2 of you" for Mio, Ren and Suzu at both
+      sizes; one was stopped unfinished when the lane was reordered, and one, 9/6, began at 00:05:51, before the fix
+      was committed at 00:08:31. At the second reorder an orphaned QA-108 run overlapped QA-120's first integration
+      suite for a few seconds; both were stopped, the partial log discarded and the lane restarted alone. `departures`
+      failed on QA-108's build (he settled at (18,11), beside you); a probe through `yn.call`'s end showed the check
+      sampling mid-scene, and his going after the letter became the authored road. QA-124's `jinpachi_letter` was 9/6
+      while its branch sat before `1535c21`.
+    - QA-124: its first full units 58,035/1 (`actors.test`); its first `playhouse_audience` run 13/2 (the hook cut
+      each line's English at 44 characters), its control throwing on the missing audience table; its control on
+      QA-108's road build first never reached a check (the page outside the served folder), then 4/11 with the page
+      served; the first full run on `e98cac6`, never pushed, 58,153 passed and 4 failed, all in its unit test.
+    - The pilot: its browser test's first run was 7/5, the five its own legend check reading the page's whole text,
+      script included; the product was the same bytes in both runs.
+    - `bc1bf37`: a first build of this integration, before Agnes asked for QA-108 and the pilot's wording in it, was
+      stopped part-way through its units and never pushed.
+    - The container restarted while the session was paused; every run queued before had finished by 01:19, and the
+      logs and worktrees survived.
+    - Local noted five Windows-only path failures (also on `0fca3fa`) and a `jinpachi_letter` flake on a busy PC,
+      which `b3a34ac` addresses.
+    Coverage as Agnes bounds it is in REQUIREMENTS (CC-021). Not shown by these runs: ordinary play of these items from
+    a real save (QA-129's old saves are written inside the test by each build's own manual save; QA-161/162's
+    journeys are synthetic, the automated player answering; the pilot's "older journey" is built by this build); the
+    art (QA-111's noren, QA-114's earth, QA-124's seating, QA-164's moved stairs) on a native map and compositor;
+    Agnes's native checks on `bc1bf37`'s build; Local's independent review of the pilot. Known and open, outside this
+    cut: RBN-QA-116; the postgame shadows beyond QA-161 and 162 and QA-161's part B; 十分 written じっぷん; deliberate
+    non-words as wrong options in the meaning-choice tasks. Voice: none (paused). New keys play with the device voice
+    or silence until a listening check after QA, recordings kept and unused: QA-115 (two), QA-121, QA-130, QA-131's
+    new line, Tier A's 49 (43 with cast recordings), QA-133's six, RV0047's two openers, Mio's かい line, QA-161's
+    outdoor line and QA-124's "calls out to you"; the retired take `r1-f25c42a39756bbfb` is kept, marked retired.
   - **Candidate CC-020:** `index.html` sha256 `6278005abab991fc1eb240579ddb50b1dd318b16ab98b3c3732b1b523e9b6827`
     (24,299,281 bytes), built from
     `05196f0` (CC-019 at `885f399`, verified live by Local CL-192 and Agnes 6340095981, 6340185178, plus only

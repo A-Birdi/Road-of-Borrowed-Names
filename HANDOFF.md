@@ -895,6 +895,94 @@
       since, all passing; and `sequence_world --only ko.tide_night` 158/0 (`sequence_world_p16_mb`, which I listed,
       is a spec file: not run). `dialect_kansai` 58/1 in QA-109's integration stays on record. Units 57,960/0 on
       `05196f0`.
+      CANDIDATE CC-021 (`index.html` `6e3787fd…`, 24,336,422 bytes, built from `26c08c7`): CC-020 plus only what was
+      agreed after it, each by its exact commits (cherry-picked with `-x`; patch-identical to the agreed commits in full
+      or over every file but `run.mjs`, which was merged by hand where it conflicted and only adds each item's own
+      suites; `ac11324` also differs in `50_world.js`'s export line, which on this base already lists `departures`, as
+      at `a0f63a9`; AGREEs listed in VALIDATION, CC-021, with the ids the record lacks marked; integrated on the task
+      branch as `6a7afbc`, `5cd2cd3`, `730fb40`, `a3883be` and its manifest `f51a635`, `8001c3e` and its manifest
+      `e362a8d`, `0fca3fa`, `0944868` and `bc1bf37`, then for this cut `1657b0c` and `26c08c7`; heads verified:
+      `5cd2cd3` by Local (CL-230, with Agnes's acceptance), `a3883be` and `f51a635` by Local (CL-236), `e362a8d` agreed
+      by Agnes (id not in the record) with Local's check under way; `26c08c7` as integrated source by Agnes 6376933092
+      and by Local (CL-254: patch-ids, generated documents, runtime); the other heads' verification is not in the
+      record; scope agreed by Agnes 6376014281, 6376447128 and Local CL-249, CL-250, CL-251): RBN-QA-103 (`48d65dd`,
+      `fec8666`, `207a831` → `ac11324`, `75ba996`, `0dd5259`: a companion who stays behind is the figure that was
+      following you and the one who comes back is theirs here, never a second; Mio's night ends with you outside the
+      dispensary's door), RBN-QA-113 (`5aeed6f`, `97dd467` → `25a2107`, `8fda88b`: across the bath's bamboo partition
+      the companion is a voice from beyond it, never a figure on your side), RBN-QA-114 (`245d1dd`, `673c501`, `2f9d69f`
+      → `a64f531`, `bdad610`, `ecb51f4`: the Lower House's entrance is earthen-floored, as its arrival line says),
+      RBN-QA-111 (`b54316f` → `b0b138b`: Sono's noren hangs in the Courier's Inn's doorway once she has named it for her
+      grandfather), RBN-QA-117 (`125c079` → `37a5c4c`: Steamhollow's Journey and guide point where the quest can go on:
+      the red bridge once Tahei is heard, and Aki while the spring house's grille is shut), RBN-QA-119 (`40f4010` →
+      `6a7afbc`: the river's own steam goes when the quarrel runs it cold, and comes back when the Kettle settles),
+      RBN-QA-112 (`0a55dab` → `d19a8c1`: the procedures' footer, Step away and wrong-step words no longer call every
+      procedure "the machine"), RBN-QA-115 (`e2e4008` → `26b9db2`: Zenroku's complaint ends in an inquiry Kane takes
+      over, not a Plum-room booking nobody made), RBN-QA-121 (`3723625` → `5cd2cd3`: the Channel's forward valve line
+      says "You turn the valve", true at the big valve and at the small wheel at either end), RBN-QA-130 (`3d5d02a` →
+      `6930527`: Ginnojō's line after his quest claims no show he hasn't done), RBN-QA-131 (`b4381a1` → `730fb40`: after
+      the Cloudroad Chika speaks of the labels Mio rewrote only on the journey where Mio rewrote them), RBN-QA-120
+      (`fa479fd`, `16dc2d0`, `64a6b26`, `8e2e15b` → `357ea18`, `18e161a`, `3d69600`, `a3883be`: Tsuneji walks his spring
+      egg home by the Lower House's door before the narration says he went, or fades where he is, recorded; `leave:
+      'way'`), RBN-QA-129 (`3ba19ee`, `9e867a7`, `c424b42`, `b846c3b` → `ecf64eb`, `dc1b328`, `9df2157`, `509a041`: Eggs
+      for Everyone can be finished after the valley's story; Yasuke and Tsuneji stay while their eggs are owed),
+      RBN-QA-128 (`77aa5ef`, `432dc4e`, `cf155c3` → `1f0c553`, `1c8d924`, `a174d40`: Suzu's books play on coming out
+      into either town), the `dialect_kansai` test fix (`1b62407` → `04a175d`: the Company page's buttons measured once
+      the book has opened), the `keeper_reveal` test fix (`4efc4e6`, `fcae4e6` → `e6a7b9b`, `8001c3e`: the swell and the
+      open water each read as a median of pixels at the same rows; the withdrawn first revision kept in the history),
+      the language audit's Tier A with RBN-QA-132 (`54e9641`, `74edc10`, `9d66813`, `8380d17` → `c814d6a`, `f20bd83`,
+      `cc7adc9`, `0fca3fa`: 48 furigana readings corrected in 35 files, display only; Word Help reads a whole N分のM as a
+      fraction; the kanji table regenerated), the kanji exams' place rotation (`734a8cf` → `6afe108`: a target written
+      twice or more is asked at each of its places in turn), RBN-QA-133 (`1381eb4` → `9513f64`: Tōya's note is never
+      counted as "four words"), RV0047 (`1e4c0e7` → `bcdcaf6`: Nao's fourth orchard banter opens on the bell only if it
+      rang), 先々代 at Fujiya (`fe59fa2` → `a68556a`: "the head of Fujiya two generations back", English only), RV0115
+      (`3e8bfee` → `cc17077`: Word Help reads Suzu's 断られへん as "can't refuse"), 十分 read じゅっぷん (`bbc7bc1`, `dfa3219`,
+      `f8cee4c` → `d0cfc03`, `194a7dd`, `18e177f`: "ten minutes", one lexicon entry, its kanji table and its note), the
+      かい hints (`9d0a298` → `a4cceea`: six word@lemma hints give Mio's 甲斐, the notice's 貝 and the letter's 買う), the
+      listening page's retired take (`1e2d7a6`, `a5f8511` → `08673c7`, `1e7aca8`: a take whose line has left the script
+      keeps its recorded words, marked retired and unused), the `book` test fixture (`729086d` → `0944868`: its journey
+      has the Archive's catalogue in order, as RBN-QA-069 needs), RBN-QA-161 (`fc3a758` → `e12fa49`: an open Bell-Post
+      comes to Fuki in the square before her news after the story; at stage 0 she reminds you; the report's first line
+      says where she stands), RBN-QA-162 (`cc1ce18` → `cf7ac62`: an open snow-sculpture contest comes to Kanta before
+      his news after the story), with their browser test (`c209731` → `a534bb4`), the Reedwake return-discovery pilot
+      (`4b105e1`, `c6dfc35` → `20dec12`, `b7cb482`: in Reedwake only, Journey › Places and the Map say when something
+      you noticed may open now or an earned stamp waits to be pressed; the key line 「…{今|いま} なら {開|あ}けられそう だ 。」),
+      RBN-QA-108 (`3bb0e9d`, `4ce2066`, `fa32d23`, `b3a34ac` → `6caf843`, `f556efe`, `85d2ddb`, `2eb1dbb`: Jinpachi runs
+      up to you with the valley's letter, `!walkto <who> pc`, a speaker who cannot reach you is marked off screen, and
+      after the letter he goes on down the road by his own way out), RBN-QA-124 (`169b4c6`, `af07182`, `3b283cb`,
+      `b006a78` → `034f5ea`, `49c22fa`, `5414c61`, `9596103`: Suzu's evening fills the little theatre while the show
+      lasts, the theatre is first seen at night, and Koume comes over to you after it), RBN-QA-164 (`20e4121` →
+      `178199d`: the Hall's stairs drawn on each floor's way up itself) and RBN-QA-165 (`42e7cd6` → `26c08c7`: a kana
+      completion's example word is never one of the lexicon's deliberate non-words). Generated only, each its own commit
+      by the unchanged tool, a second generation identical: the scene manifest `f51a635`, `e362a8d`, `6ac5e86`,
+      `bc1bf37` and `1657b0c`. Nothing in the agreed scope is left out; QA-164 and QA-165 are in it on Local's AGREEs
+      (CL-250, CL-251) and Agnes's (6376447128). Left out on purpose, each separately attributable: RBN-QA-125
+      (`afaf2f5`), 127 (`96f8275`) and 134 (`b4325f1`), each waiting on its own reviews; the language follow-up
+      (`6f34bf0`, `55db809`, `349e582`: the retired take's recorded key, the じっぷん entry, its kanji table); `book-voice`
+      (`d9fbc73`, test only); RBN-QA-163 (A, B and B2 `5b54df6`, three AGREEs; the staged `bc72ae1` withdrawn, never
+      pushed; C `c47f171`), RBN-QA-166 (A `6da3544`, B `44ebd46`) and QA-165's follow-up (`a563040`, `7a3d6ee`), each
+      for the next cut; the two test-only fixes this cut's matrix calls for (`hall_door` `5273ac7`, `jinpachi_letter`
+      `a4b3823`; VALIDATION, CC-021); QA-161's part B (the never-started Bell-Post offer after the story); QA-120's
+      optional extra guard `8d298d3` (not part of what was agreed); the `dialect_kansai` message for a bound that runs
+      out (promised as its own small commit); and every later candidate. Known and open, not fixed by this cut:
+      RBN-QA-116 (the reply list beside the dialogue sheet on a short landscape screen); the postgame shadows beyond
+      QA-161 and 162 (Local's and my audits, CC-151 §2: triage, QA-161's shape for the real ones, a guard test, not
+      built); 十分 written じっぷん would gloss "enough" (no line writes it today); deliberate non-words can still show as
+      wrong options in the meaning-choice tasks (its narrow candidate, outside this cut); `jinpachi_letter`'s Skip-seen
+      departure check failed once on `1657b0c`'s build (26/1, kept on record): the test raced the engine's 900 ms
+      map-entry window, inside which a figure whose place ends is dropped without a walk or a record; so on an
+      on-arrival Skip (only where seen scenes carry over) Jinpachi is simply gone, which stays as it is (Local CL-256),
+      and the test's fix is outside this cut (VALIDATION, CC-021); RBN-QA-135 to 160, confirmed in source (CC-148), none
+      built here; the three Cloudroad endings' message from Jinpachi six tiles away (out of scope, as Local agrees);
+      five Windows-only path failures Local noted (also on `0fca3fa`). Art in this cut went to the owner as private
+      captures (QA-111's noren, per AC1_ART.md; QA-114's earth; QA-124's seated audience, "implemented provisionally"
+      until then); QA-164's stairs are moved, not redrawn, and not yet captured under Hall lighting. Its complete
+      browser run (VALIDATION, CC-021), on these bytes: 107 suites, one after another: 105 passing, among them
+      `jinpachi_letter` 27/0; `hall_door` 14/1, its exact allowlist of wall-drawn props never updated when RBN-QA-111
+      (`b0b138b`, after CC-020) hung Sono's noren on the inn's wall (the unchanged test fails the same way on the task
+      head's own build); `fade_load` stopped after 2 passing cases when a page did not report ready within 15 s, with a
+      full unit run alongside, then 15/0 on the same bytes with nothing else running. Units 58,258/0 on `26c08c7`. Voice
+      stays paused: every changed spoken line has a new key and plays with the device voice or silence until a listening
+      check after QA; recordings kept.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
