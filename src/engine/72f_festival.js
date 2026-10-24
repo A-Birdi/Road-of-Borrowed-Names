@@ -1,6 +1,7 @@
 /* Festival games (expansion P06 for P09; plan C10, Robin's C-17 and C-55): the shell every booth game uses.
  *   - Practice, the default: untimed, no score kept, no rewards; help changes nothing.
- *   - Timed, opt-in and chosen each time: the same game against a clock that stops while help is open; it keeps the
+ *   - Timed, opt-in and chosen each time: the same game against a clock (in water-balloon fishing and ring toss, their
+ *     help, def.helpPause, stops it for up to 2.5 seconds, then it runs again; RBN-QA-169); it keeps the
  *     player's own personal bests (and streaks where natural), shown only in the game itself, never ranked.
  *   - Just for fun: no stamp, keepsake or other reward from any score or mode.
  * A game: RB.festival.define(id, { title: { en, jp }, about: { en, jp }, seconds (the timed round), better: 'more',

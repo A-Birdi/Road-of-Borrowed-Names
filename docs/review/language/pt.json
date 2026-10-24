@@ -1007,11 +1007,11 @@
   "jp": "{練習|れんしゅう} か 、 {時間|じかん} を {計|はか}る か 。",
   "en": "Choose Practice (untimed) or Timed each time you play."
  },
- "pastime:festival:page#cawtmx": {
+ "pastime:festival:page#c1fknx": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
-  "jp": "ヒント の {間|あいだ} 、 {時計|とけい} は {止|と}まる 。",
-  "en": "In a timed round the clock stops while a hint is open."
+  "ref": "self-reviewed by the lead line by line against its English (RBN-QA-169, Agnes 6379628204 and 6379877999: up to 2.5 seconds), the line it replaces (ヒント の 間 、 時計 は 止まる) and the game's lexicon: neither 秒 nor 最大 is in it and a number with a counter is not read as a word, so up to 2.5 seconds reads 少し の 間 だけ here, the English giving the number; the ring toss's button is quoted as the player sees it (What does it say?); Agnes's check to come",
+  "jp": "{時間|じかん} を {計|はか}る ヨーヨー{釣|つ}り と {輪投|わな}げ で は 、 ヒント か 「What does it say?」 を {押|お}す と 、 {時計|とけい} が {少|すこ}し の {間|あいだ} だけ {止|と}まり 、 また {動|うご}きだす 。 ヒント は その あと も {出|で}た まま の こと が ある 。",
+  "en": "In a timed round of water-balloon fishing or ring toss, Hint or \"What does it say?\" stops the clock for up to 2.5 seconds, then it runs again. The clue can stay on screen after that."
  },
  "pastime:fishing:page#oandp5": {
   "status": "self-reviewed",

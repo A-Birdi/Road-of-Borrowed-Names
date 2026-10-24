@@ -1,7 +1,9 @@
 /* ヨーヨー釣り, water-balloon fishing (expansion P06 for P09; src/content/pastimes/50_festival.js): balloons bob in
  * a tub, each with a word and its reading; you are asked for one in English and hook the balloon that says it. In
  * practice a round is eight balloons, at your own pace; in a timed round they drift and you hook as many as you can.
- * A wrong balloon says what it is; a hint shows the word's first sound (the clock stops while it is shown). */
+ * A wrong balloon says what it is; a hint shows the word's first sound: in a timed round the clock stops for up to 2.5
+ * seconds (the right balloon ends it sooner), then runs again, and the hint stays until the balloon is hooked
+ * (RBN-QA-169). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui.festivalGames = RB.ui.festivalGames || {};
 

@@ -106,6 +106,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     });
     RB.festival.define('wanage', {
       title: T('Ring toss', '{輪投|わな}げ'), seconds: 60, better: 'more', streaks: true, ui: 'wanage',
+      helpPause: { button: '"What does it say?"', stays: 'its English stays shown' },
       about: T('The stall-keeper describes a prize. Throw your ring at the one described.', '{説明|せつめい} を {聞|き}いて 、 {輪|わ} を {投|な}げる 。'),
     });
     RB.festival.define('kuji', {
