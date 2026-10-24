@@ -425,11 +425,11 @@
   "jp": "{鍛冶場|かじば} の {戸|と} に 、 {札|ふだ} が {掛|か}かって いる 。 「 {打|う}つ の は {朝|あさ} だけ 。 {昼|ひる} から は {田|た}んぼ に います 」",
   "en": "A tag hangs on the forge door: \"Hammering mornings only. Afternoons, in the paddies.\""
  },
- "scene:as.water_talk#2s2kvb": {
+ "scene:as.water_talk#19oscp9": {
   "status": "self-reviewed",
-  "ref": "self-reviewed (P15f, Ashihara Shinden): each line read in full against the lexicon, the grammar points' notes and the established places (葦ノ瀬, 潮硝子, 灯の道); fixed: a pedlar's 持ってきな ('bring it') now 持っていきな ('take it'), 隣 alone for neighbours now 隣同士, a split counter (ひと{つ}) and 終演 written as one word",
-  "jp": "{水門|すいもん} の {前|まえ} で 、 ヨシゾウ と タキ が {言|い}い{合|あ}って いる 。",
-  "en": "Yoshizō and Taki are arguing at the sluice."
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜の こと で 言い合う for arguing over a thing; the second line the old one without its place) (RBN-QA-176; Agnes 6381764389, 6381966861; Local CL-282, CL-283)",
+  "jp": "{水門|すいもん} の こと で 、 ヨシゾウ と タキ が {言|い}い{合|あ}って いる 。",
+  "en": "Yoshizō and Taki are arguing over the sluice."
  },
  "scene:as.water_talk#z8p7va": {
   "status": "self-reviewed",
@@ -473,11 +473,11 @@
   "jp": "{一日|いちにち} おき だ 。 {札|ふだ} を {裏返|うらがえ}す の は 、 {俺|おれ} の {仕事|しごと} に なった 。",
   "en": "A day each. Turning the tag over is my job now."
  },
- "scene:as.noise_talk#s1mxgr": {
+ "scene:as.noise_talk#1vam1la": {
   "status": "self-reviewed",
-  "ref": "self-reviewed (P15f, Ashihara Shinden): each line read in full against the lexicon, the grammar points' notes and the established places (葦ノ瀬, 潮硝子, 灯の道); fixed: a pedlar's 持ってきな ('bring it') now 持っていきな ('take it'), 隣 alone for neighbours now 隣同士, a split counter (ひと{つ}) and 終演 written as one word",
-  "jp": "{鍛冶場|かじば} の {前|まえ} で 、 {赤|あか}ちゃん を {抱|だ}いた ナツ が 、 ショウ と {向|む}かい{合|あ}って いる 。",
-  "en": "Outside the forge, Natsu stands facing Shō, the baby in her arms."
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜の こと で 言い合う for arguing over a thing; the second line the old one without its place) (RBN-QA-176; Agnes 6381764389, 6381966861; Local CL-282, CL-283)",
+  "jp": "{赤|あか}ちゃん を {抱|だ}いた ナツ が 、 ショウ と {向|む}かい{合|あ}って いる 。",
+  "en": "Natsu stands facing Shō, the baby in her arms."
  },
  "scene:as.noise_talk#xppm4z": {
   "status": "self-reviewed",

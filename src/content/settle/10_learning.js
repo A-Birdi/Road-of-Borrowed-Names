@@ -170,7 +170,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       actions: [
         { id: 'restate', kind: 'restate', label: say('お{二人|ふたり} と も 、 {自分|じぶん} の {田|た}んぼ の {水|みず} が {心配|しんぱい} なん です ね 。', 'Say back what both of them are afraid of'),
           task: task('g:n_desu', 'Which says back what both of them are afraid of?', 'お{二人|ふたり} と も 、 {自分|じぶん} の {田|た}んぼ の {水|みず} が {心配|しんぱい} なん です ね 。', 'お{二人|ふたり} と も 、 {水|みず} が {嫌|きら}い なん です ね 。', 'They both need water; neither dislikes it.', 'ヨシゾウ さん が {悪|わる}い ん です ね 。', 'That takes a side before you have heard either.'),
-          cases: [{ when: { stance: { 'n:yoshizo': 'heated' } }, effect: { stance: { 'n:yoshizo': 'listening' } }, says: { en: 'Yoshizō folds his arms. "…Well. Yes."' } },
+          // (heard first, while the other still waits, the words say so: one use calms one person; RBN-QA-176)
+          cases: [{ when: { stance: { 'n:yoshizo': 'heated', 'n:taki': 'heated' } }, effect: { stance: { 'n:yoshizo': 'listening' } }, says: { en: 'Yoshizō folds his arms. "…Well. Yes." Taki is still waiting to be heard.' } },
+            { when: { stance: { 'n:yoshizo': 'heated' } }, effect: { stance: { 'n:yoshizo': 'listening' } }, says: { en: 'Yoshizō folds his arms. "…Well. Yes."' } },
             { when: { stance: { 'n:taki': 'heated' } }, effect: { stance: { 'n:taki': 'listening' }, understanding: 1 }, says: { en: 'Taki lets out a breath. "Somebody finally said it."' } }],
           says: { en: 'They are already listening.' } },
         { id: 'ask_yoshizo', kind: 'ask', label: say('ヨシゾウ さん 、 {水門|すいもん} を {開|あ}けたら 、 どう なる ん です か 。', 'Ask Yoshizō what happens if he opens the sluice'), once: true, when: { stance: { 'n:yoshizo': 'listening' } },
@@ -231,7 +233,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       actions: [
         { id: 'restate', kind: 'restate', label: say('ショウ さん は {仕事|しごと} を 、 ナツ さん は {赤|あか}ちゃん の {眠|ねむ}り を 、 {守|まも}りたい ん です ね 。', 'Say back what each of them wants to protect'),
           task: task('g:v_tai', 'Which says back what each of them wants to protect?', 'ショウ さん は {仕事|しごと} を 、 ナツ さん は {赤|あか}ちゃん の {眠|ねむ}り を 、 {守|まも}りたい ん です ね 。', 'お{二人|ふたり} と も 、 {静|しず}か に したい ん です ね 。', 'Shō wants to work, not to be quiet.', 'ショウ さん は {寝|ね}たい ん です ね 。', 'It is the baby who needs to sleep.'),
-          cases: [{ when: { stance: { 'n:sho': 'heated' } }, effect: { stance: { 'n:sho': 'listening' } }, says: { en: 'Shō sets down the hammer. "…Yes."' } },
+          cases: [{ when: { stance: { 'n:sho': 'heated', 'n:natsu': 'heated' } }, effect: { stance: { 'n:sho': 'listening' } }, says: { en: 'Shō sets down the hammer. "…Yes." Natsu is still waiting to be heard.' } },
+            { when: { stance: { 'n:sho': 'heated' } }, effect: { stance: { 'n:sho': 'listening' } }, says: { en: 'Shō sets down the hammer. "…Yes."' } },
             { when: { stance: { 'n:natsu': 'heated' } }, effect: { stance: { 'n:natsu': 'listening' }, understanding: 1 }, says: { en: 'Natsu\'s shoulders drop. "Yes. That\'s all. Just sleep."' } }],
           says: { en: 'They are already listening.' } },
         { id: 'ask_natsu', kind: 'ask', label: say('{赤|あか}ちゃん は 、 いつ {眠|ねむ}る ん です か 。', 'Ask Natsu when the baby sleeps'), once: true, when: { stance: { 'n:natsu': 'listening' } },
