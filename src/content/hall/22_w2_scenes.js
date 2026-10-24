@@ -81,7 +81,19 @@ narr: {盃|さかずき} が 、 {台|だい} の {上|うえ} で {光|ひか}�
   };
   const GIFT = { red: ['{赤|あか}い {包|つつ}み', 'a red bundle', 'the red bundle'], white: ['{白|しろ}い {箱|はこ}', 'a white box', 'the white box'], chestnut: ['{栗|くり} の {籠|かご}', 'a basket of chestnuts', 'the basket of chestnuts'] };
   const TRAY = { groom: ['{花婿|はなむこ} の {家|いえ} の {台|だい}', 'the groom\'s family\'s tray'], mother: ['{花嫁|はなよめ} の {母|はは} の {台|だい}', 'the bride\'s mother\'s tray'], toku: ['{仲人|なこうど} の {台|だい}', 'the go-between\'s tray'] };
-  const HOLD = (g) => 'xp_hall_w2_f0_hold_' + g, PUT = (g) => 'xp_hall_w2_f0_put_' + g;
+  const HOLD = (g) => 'xp_hall_w2_f0_hold_' + g, PUT = (g) => 'xp_hall_w2_f0_put_' + g, TOLD = 'xp_hall_w2_f0_carry_told';
+  // What each tray shows (RBN-QA-181): once the gift its pattern sends there is set on it, that gift on the table; else
+  // the bare table. One prop on each tray's tile in every state, with the tray's own scene and footprint. Made here,
+  // from TAG itself, so that the trays can never disagree with the tags.
+  {
+    const M1 = C.maps['hall.w2f1'], TR = C.hallW2.TRAYS;
+    for (const t of Object.keys(TR)) {
+      const here = [0, 1].map((p) => [p, Object.keys(TAG[p]).find((g) => TAG[p][g][4] === t)]);
+      const plain = M1.props.find((q) => q.p === 'table' && q.scene === 'hall.w2.tray_' + t);
+      plain.if = here.map(([p, g]) => 'hall.w2.pat=' + p + '&!' + PUT(g)).join('|');
+      for (const [p, g] of here) M1.props.push({ p: 'hall_tray', x: plain.x, y: plain.y, scene: plain.scene, o: { gift: g }, if: 'hall.w2.pat=' + p + '&' + PUT(g) });
+    }
+  }
   for (const g of Object.keys(GIFT)) {
     out += `
 @scene hall.w2.g_${g}
@@ -94,9 +106,27 @@ narr: ${GIFT[g][0]} 。 {札|ふだ} が {付|つ}いて いる 。 || ${GIFT[g]
 ?(${both(L.IA, 'hall.w2.pat=' + p)}) narr: 「 ${tg[2]} 」 || "${tg[3]}"
 `;
     }
-    out += `!unset ${Object.keys(GIFT).map(HOLD).join(' ')}
+    // You carry one gift at a time (RBN-QA-181): the one in your hands already is said to be, another one held is put
+    // back in its place as this one is taken up, and with your hands empty the gift is picked up as before; the first
+    // time on the floor, that you can carry only one (remembered under the floor's own prefix, so it resets with it).
+    const others = Object.keys(GIFT).filter((h) => h !== g);
+    out += `!if ${HOLD(g)} -> held_${g}
+${others.map((h) => `!if ${HOLD(h)} -> swap_${h}`).join('\n')}
 !set ${HOLD(g)}
 narr: ${GIFT[g][0]} を {持|も}った 。 || You pick up ${GIFT[g][1]}.
+!if ${TOLD} -> end_${g}
+!set ${TOLD}
+narr: {一度|いちど} に {持|も}てる の は 、 {一|ひと}つ だけ だ 。 || You can carry only one at a time.
+!goto end_${g}
+:held_${g}
+narr: ${GIFT[g][0]} は 、 もう {持|も}って いる 。 || You're already carrying ${GIFT[g][2]}.
+!goto end_${g}
+${others.map((h) => `:swap_${h}
+!unset ${HOLD(h)}
+!set ${HOLD(g)}
+narr: ${GIFT[h][0]} を {元|もと} の {場所|ばしょ} に {戻|もど}して 、 ${GIFT[g][0]} を {持|も}った 。 || You put ${GIFT[h][2]} back in its place and pick up ${GIFT[g][2]}.
+!goto end_${g}`).join('\n')}
+:end_${g}
 `;
   }
   for (const t of Object.keys(TRAY)) {

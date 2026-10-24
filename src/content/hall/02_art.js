@@ -82,6 +82,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 11, y + 9, 3, 3, '#e8dcb8');
   });
 
+  // a tray on the veranda with the gift set on it (RBN-QA-181): the tray's own table, and on it the gift as it stood
+  // on the path (the white box, the red bundle, the chestnut basket)
+  const ON_TRAY = { red: 'hall_bundle', white: 'hall_giftbox', chestnut: 'ko_basket' };
+  def('hall_tray', {}, (c, x, y, p, t, o) => {
+    P.table.draw(c, x, y, p, t, o);
+    const g = P[ON_TRAY[o && o.gift]];
+    if (g) g.draw(c, x, y - 6, p, t, {});
+  });
+
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
@@ -297,4 +306,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       tag(g, 22, 15, [18, 12]);
     },
   });
+  // The tray with its gift (RBN-QA-181): the table drawn as every table is, then the gift's own art set on its top (lifted
+  // so that the gift's foot stands on the tabletop). Each part is cached by its own art; nothing new is drawn.
+  P.hall_tray.draw2 = function (c, x, y, pal, t, o) {
+    if (P.table.draw2) P.table.draw2(c, x, y, pal, t, o); else P.table.draw(c, x, y, pal, t, o);
+    const g = P[ON_TRAY[o && o.gift]];
+    if (g && g.draw2) g.draw2(c, x, y - 12, pal, t, {});
+  };
 })();

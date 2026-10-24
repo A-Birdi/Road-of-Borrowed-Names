@@ -1991,6 +1991,30 @@
   "jp": "{赤|あか}い {包|つつ}み を {持|も}った 。",
   "en": "You pick up a red bundle."
  },
+ "scene:hall.w2.g_red#hdbo4d": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{一度|いちど} に {持|も}てる の は 、 {一|ひと}つ だけ だ 。",
+  "en": "You can carry only one at a time."
+ },
+ "scene:hall.w2.g_red#1ogglvh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{赤|あか}い {包|つつ}み は 、 もう {持|も}って いる 。",
+  "en": "You're already carrying the red bundle."
+ },
+ "scene:hall.w2.g_red#mw5ouz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{白|しろ}い {箱|はこ} を {元|もと} の {場所|ばしょ} に {戻|もど}して 、 {赤|あか}い {包|つつ}み を {持|も}った 。",
+  "en": "You put the white box back in its place and pick up the red bundle."
+ },
+ "scene:hall.w2.g_red#1hlv56k": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{栗|くり} の {籠|かご} を {元|もと} の {場所|ばしょ} に {戻|もど}して 、 {赤|あか}い {包|つつ}み を {持|も}った 。",
+  "en": "You put the basket of chestnuts back in its place and pick up the red bundle."
+ },
  "scene:hall.w2.g_white#1aocxuy": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
@@ -2039,6 +2063,30 @@
   "jp": "{白|しろ}い {箱|はこ} を {持|も}った 。",
   "en": "You pick up a white box."
  },
+ "scene:hall.w2.g_white#hdbo4d": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{一度|いちど} に {持|も}てる の は 、 {一|ひと}つ だけ だ 。",
+  "en": "You can carry only one at a time."
+ },
+ "scene:hall.w2.g_white#148lavy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{白|しろ}い {箱|はこ} は 、 もう {持|も}って いる 。",
+  "en": "You're already carrying the white box."
+ },
+ "scene:hall.w2.g_white#owunaj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{赤|あか}い {包|つつ}み を {元|もと} の {場所|ばしょ} に {戻|もど}して 、 {白|しろ}い {箱|はこ} を {持|も}った 。",
+  "en": "You put the red bundle back in its place and pick up the white box."
+ },
+ "scene:hall.w2.g_white#15ctynl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{栗|くり} の {籠|かご} を {元|もと} の {場所|ばしょ} に {戻|もど}して 、 {白|しろ}い {箱|はこ} を {持|も}った 。",
+  "en": "You put the basket of chestnuts back in its place and pick up the white box."
+ },
  "scene:hall.w2.g_chestnut#ulhly3": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
@@ -2086,6 +2134,30 @@
   "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
   "jp": "{栗|くり} の {籠|かご} を {持|も}った 。",
   "en": "You pick up a basket of chestnuts."
+ },
+ "scene:hall.w2.g_chestnut#hdbo4d": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{一度|いちど} に {持|も}てる の は 、 {一|ひと}つ だけ だ 。",
+  "en": "You can carry only one at a time."
+ },
+ "scene:hall.w2.g_chestnut#14opxtf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{栗|くり} の {籠|かご} は 、 もう {持|も}って いる 。",
+  "en": "You're already carrying the basket of chestnuts."
+ },
+ "scene:hall.w2.g_chestnut#4ymrv0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{赤|あか}い {包|つつ}み を {元|もと} の {場所|ばしょ} に {戻|もど}して 、 {栗|くり} の {籠|かご} を {持|も}った 。",
+  "en": "You put the red bundle back in its place and pick up the basket of chestnuts."
+ },
+ "scene:hall.w2.g_chestnut#1oj4d7p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (〜に 持てる の は 一つ だけ for the one-at-a-time rule; 〜を 元の 場所に 戻して、〜を 持った for the swap; もう 持って いる for the gift already held) (RBN-QA-181; Agnes 6382521898, 6382693177; Local CL-289)",
+  "jp": "{白|しろ}い {箱|はこ} を {元|もと} の {場所|ばしょ} に {戻|もど}して 、 {栗|くり} の {籠|かご} を {持|も}った 。",
+  "en": "You put the white box back in its place and pick up the basket of chestnuts."
  },
  "scene:hall.w2.tray_groom#1oe052t": {
   "status": "self-reviewed",
