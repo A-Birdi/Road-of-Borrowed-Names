@@ -42,6 +42,9 @@ async function start(p, comp, sp) {
     // a settled campaign, as in play: the companion's verified milestones (setting out together) are
     // recorded when a scene ends, so the synthetic start records them now, before the baseline
     if (RB.company && RB.company.sync) RB.company.sync(RB.game.s, 'live');
+    // and the quests that start by themselves (the letter of introduction, rw_letter), which any scene's end records
+    // (RB.state.autoQuests, from afterScene): else the greeting's end records it and looks like a gain
+    RB.state.autoQuests(RB.game.s);
   }, [comp, sp]);
   await wait(p, 400);
   // a few steps, so your companion walks behind you as in play (and the animal follows)
