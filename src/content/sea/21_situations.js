@@ -47,12 +47,17 @@ narr: {答|こた}える {前|まえ} に 、 {漁船|ぎょせん} は {波|な
 
 @scene sea.sit_fog
 # Fog: the light on the point flashes its own pattern; the chart's key says which light is which.
+# (the fog is this scene's: on, then lifted at its end, which it always reaches, a challenge put off included; run
+# within the crew's crossing it would otherwise last into the arrival. A load ends it with the scene. The light is
+# never drawn as countable flashes, since how many there are depends on the profile: RBN-QA-174)
+!ambience fog
 narr: {急|きゅう} に {霧|きり} が {出|で}て きた 。 {陸|りく} も {島|しま} も {見|み}えない 。 || Fog comes down all at once. No land, no islands.
 narr: {霧|きり} の {向|む}こう で 、 {光|ひかり} が {点|つ}いて は {消|き}える 。 || Somewhere beyond the fog, a light comes and goes.
 !challenge sea.fog
 ?(var._res=1) narr: {光|ひかり} の {数|かず} で 、 どこ の {灯台|とうだい} か {分|わ}かった 。 {舵|かじ} を {少|すこ}し {切|き}って 、 {霧|きり} を {抜|ぬ}ける 。 || The count of the flashes tells you which light it is. A touch on the tiller, and you're out of the fog.
 ?(var._res=0) narr: {乗組員|のりくみいん} が {笑|わら}う 。 「{慌|あわ}て なくて いい 。 {霧|きり} は 、 {待|ま}てば {晴|は}れる 。」 {少|すこ}し {待|ま}つ と 、 {本当|ほんとう} に {晴|は}れた 。 || The crew laughs. "No need to hurry. Fog lifts if you wait." You wait a little, and it does.
 !hook sail_log sight fog
+!ambience -
 
 @scene sea.sit_cargo
 # A crate in the water: read its label.
