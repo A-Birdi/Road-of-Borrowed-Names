@@ -8,7 +8,11 @@
 //     and in 1. and 2., once the letter is given his place there ends and he goes on down the road by his own way out,
 //     that place's west exit (RBN-QA-108; Agnes 6372889134, Local CL-240, Cloud CC-149 §4): a departure recorded to its
 //     road (not a fallback), at the west edge, and then he is gone; one Jinpachi throughout;
-//  3. Skip seen: he is set within 2 at once, and goes the same way;
+//  3. Skip seen, the scene begun once the map has been up 900 ms of its own time (past the window in which a refresh
+//     drops whoever's place ends without a walk or a record): he is set within 2 at once, and goes the same way. This
+//     is not the on-arrival case: and, the control, begun as the map appears (as on arrival): he still comes up and the
+//     letter is given, and his place ends inside the window, so on an on-arrival Skip he is simply gone, with no walk
+//     and no departure record, one figure throughout (the engine's early-window behaviour, unchanged here);
 //  4. a journey loaded while he walks: nothing of the walk left (no one walking, nothing running), the loaded journey
 //     untouched (no _walked written into it), and arriving again plays the letter with him walking up;
 //  5. no free place within 2 (a crowd round you): nobody moves, _walked 0, recorded as a walk fallback; his lines say
@@ -77,7 +81,7 @@ async function begin(p, map, x, y, comp, flags, o) {
     if (o.quest) s.quests.cr_main = { stage: 8, done: false, t: 1 };
     RB.game.settings.textSpeed = 'instant'; RB.game.settings.skipSeen = !!o.skip;
     RB.save.autosave = async () => {};
-    await new Promise((r) => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, o.wait == null ? 800 : o.wait));
   }, [map, x, y, comp, flags, o || {}]);
   await p.evaluate(hook);
 }
@@ -156,18 +160,45 @@ for (const [w, h] of [[1180, 756], [390, 844]]) {
 }
 
 // ---- 3. Skip seen ---------------------------------------------------------------------------------------------------------------
-{
+// A refresh while the map is still appearing (its first 900 ms of map time, src/engine/50_world.js refreshActors) drops
+// whoever's place ends there without a walk or a record; skipped, the scene ends about 600 ms after it begins. Begun 800 ms
+// (real time, which map time lags on a busy machine) after the map, it raced that window; now it is begun once the window
+// is past, and the control begins it inside the window (Local CL-254; Agnes 6376933092). `end`: the map time at the
+// refresh that ended his place.
+const skipSeen = async (inside) => {
   const { p, ctx, errors } = await page(b, url, { viewport: { width: 1180, height: 756 } });
-  await begin(p, 'cr.oiwake', 30, 12, 'mio', Object.assign({ cr_done: true, cr_delivered: true }, DONE), { skip: true, dir: 'left' });
-  await p.evaluate(() => { RB.game.s.seen['yn.call'] = true; RB.game.setFastForward(true); RB.script.run('yn.call'); });
+  await begin(p, 'cr.oiwake', 30, 12, 'mio', Object.assign({ cr_done: true, cr_delivered: true }, DONE), { skip: true, dir: 'left', wait: inside ? 0 : 800 });
+  const start = await p.evaluate(async (inside) => {
+    const W = RB.world.W, t0 = performance.now(), mine = () => W.npcs.some((n) => n.id === 'cr_jinpachi');
+    while (!inside && W.time - W.enteredAt <= 900 && performance.now() - t0 < 10000) await new Promise((r) => setTimeout(r, 40));
+    // (compared unrounded, as the engine compares them; rounded only to report)
+    window.__end = null;
+    const rf = RB.world.refreshActors;
+    RB.world.refreshActors = function () { const had = mine(), r = rf.apply(this, arguments); if (had && !mine() && window.__end == null) { const t = W.time - W.enteredAt; window.__end = { ms: Math.round(t), past: t > 900 }; } return r; };
+    const t = W.time - W.enteredAt;
+    RB.game.s.seen['yn.call'] = true; RB.game.setFastForward(true); RB.script.run('yn.call');
+    return { ms: Math.round(t), past: t > 900 };
+  }, inside);
   await drive(p);
   const a = await after(p);
-  const L = a.jin;
-  ok(a.called && a.walked === 1 && L.length && L.every((l) => l.jin && cheb(l) <= 2 && !l.mark), 'Skip seen: he is set within 2 of you at once (' + fmt(L) + ')');
   const g = await goes(p);
-  ok(wentDown(g), 'Skip seen: and he goes on down the road the same way (' + fmtGo(g) + ')');
+  const end = await p.evaluate(() => window.__end);
   errorsAll.push(...errors);
   await ctx.close();
+  return { a, g, start, end };
+};
+{
+  const { a, g, start, end } = await skipSeen(false);
+  const L = a.jin;
+  ok(a.called && a.walked === 1 && L.length && L.every((l) => l.jin && cheb(l) <= 2 && !l.mark), 'Skip seen, begun once the map has been up 900 ms: he is set within 2 of you at once (' + fmt(L) + ')');
+  // (start.past is false, and the case fails, if the wait ran out)
+  ok(start.past && end && end.past && wentDown(g), 'Skip seen, begun once the map has been up 900 ms: and he goes on down the road the same way (begun at map time ' + start.ms + ', his place ended at ' + (end && end.ms) + '; ' + fmtGo(g) + ')');
+}
+{
+  const { a, g, start, end } = await skipSeen(true);
+  const L = a.jin;
+  ok(end && !end.past && a.called && a.walked === 1 && L.length && L.every((l) => l.jin && cheb(l) <= 2 && !l.mark) && g.left === 0 && g.most === 1 && !g.recs.length,
+    'Skip seen on arrival (the control, begun as the map appears): he comes up (within 2, _walked 1) and the letter is given; his place ends while the map is still appearing, so on an on-arrival Skip he is simply gone: no walk down the road, no departure record, one figure throughout (begun at map time ' + start.ms + ', his place ended at ' + (end && end.ms) + '; ' + fmtGo(g) + ')');
 }
 
 // ---- 4. a journey loaded while he walks ----------------------------------------------------------------------------------------
