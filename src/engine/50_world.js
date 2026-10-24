@@ -1214,7 +1214,10 @@ RB.world = (function () {
   // A tap on something you can interact with (a person, an interactive prop, your companion)
   // walks to a free tile beside it (any tile of a larger prop), faces it and does what the
   // action key would do there, exactly once. The target is remembered by identity and checked
-  // again on arrival: gone, moved away or no longer shown means nothing happens. A tap on an
+  // again on arrival: gone or no longer shown means nothing happens. Someone who walks (a
+  // person, a creature) and has moved away while you walked is followed once more, to beside
+  // where they stand now, and checked again there; moved again, gone or blocked, nothing happens
+  // and there is no third walk (RBN-QA-182: no chase, nothing done from afar). A tap on an
   // interactive prop you are standing on steps off it first. A new tap, a direction key, a
   // scene, a battle or a map change drops the queued interaction (the path it belonged to ends).
   function tapTargetAt(tx, ty) {
@@ -1247,10 +1250,21 @@ RB.world = (function () {
     if (pt.tile) { faceTo(p, pt.tile[0], pt.tile[1]); interact(); return; }
     if (!stillThere(pt.target)) return;
     const t = beside(tilesOf(pt.target), p.x, p.y);
-    if (!t) return; // it moved away while you walked
-    if (pt.only && actorAt(t[0], t[1]) !== pt.only) return; // (a retry from across a counter: that person, nobody else)
+    if (!t) { retry(pt); return; } // it moved away while you walked
+    if (pt.only && actorAt(t[0], t[1]) !== pt.only) return; // (a retry: that one, nobody else)
     faceTo(p, t[0], t[1]);
     interact();
+  }
+  // The one retry for someone who walks and has moved away while you walked to them (RBN-QA-182, as across a counter):
+  // a new walk to beside where they stand now, for them only, the retry spent. Props never move; your companion keeps
+  // close by itself; a retry already spent (or across a counter's): nothing.
+  function retry(pt) {
+    if (pt.target.kind !== 'actor' || pt.tries >= 1) return;
+    const n = pt.target.ref, tiles = tilesOf(pt.target);
+    const path = bfsGoal((x, y) => !tiles.some(([a, b]) => a === x && b === y) && !!beside(tiles, x, y));
+    if (!path || !path.length) return;
+    W.path = path;
+    W.pathTarget = { target: pt.target, path, only: n, tries: 1 };
   }
   // a tap inside the drawn top of a tall interactive thing whose footprint is the tile below (a lantern's lamp; its
   // prop's top/topW, 25_props.js): that thing. The rest of the tile, around and above the picture, is ground as before.
@@ -1318,7 +1332,7 @@ RB.world = (function () {
     const tiles = tilesOf(a.target), near = beside(tiles, p.x, p.y);
     if (near) { if (actorAt(near[0], near[1]) === n) { faceTo(p, near[0], near[1]); interact(); } return; }
     const path = bfsGoal((x, y) => !tiles.some(([tx, ty]) => tx === x && ty === y) && !!beside(tiles, x, y));
-    if (path && path.length) { W.path = path; W.pathTarget = { target: a.target, path, only: n }; return; }
+    if (path && path.length) { W.path = path; W.pathTarget = { target: a.target, path, only: n, tries: 1 }; return; }
     talkAcross(a.target, a.tries + 1);
   }
   // the places a person can be talked to across a counter: a counter (or an `across` prop) beside them, and its free
