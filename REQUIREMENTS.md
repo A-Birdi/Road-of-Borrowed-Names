@@ -1924,6 +1924,105 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   In candidate CC-021 (`6e3787fd…`, built from `26c08c7`), READY_FOR_QA, with `hall_door` 14/1 (a stale allowlist from
   before this cut, failing the same way on the task head's own build) and `fade_load`'s stopped run (15/0 on a quiet
   re-run on the same bytes) retained (VALIDATION, CC-021; not an all-green claim); RBN-QA-116 stays open, outside it.
+  RBN-QA-163 A, B, B2 and C, QA-165's follow-up, RBN-QA-166 A and B, RBN-QA-167, RBN-QA-168, the `hall_door` and
+  `jinpachi_letter` test fixes, RBN-QA-169 A and B and RBN-QA-170 (each on the exact commits listed in HANDOFF's CC-022
+  entry, with its AGREEs as VALIDATION, CC-022 lists them; counts below are on the candidates' and the integrated
+  heads' own builds, as posted; the matrix on CC-022's own bytes is in VALIDATION, CC-022):
+  RBN-QA-163 A: the census's three new plaques (Chapter 4's, `mp/10_maps.js`) were drawn carved as soon as you had
+  recorded a bridge's name, though the census says they are cut again once Sen has the names. They now carry
+  `o.cut 'quest.mp_census=done'`, and the shared art's `named()` (`mb/02_art.js`: the flat and the drawn renderer and
+  the drawn art's cache key) draws them carved only when that holds too; every older plaque, with no cut, as before.
+  Their repeat text splits: before Sen, "The name is in your notebook. The plaque will be cut again once Sen has it."
+  (self-reviewed in `docs/review/language/mp.json`); after, "The plaque reads: …" as before. Collection, count and
+  reward unchanged. U `census_plaques` 4/0 (the source as before 1/3); B `census_plaques` 5/0 with a save and load
+  mid-census (the task head's build 2/3). RBN-QA-163 B: at the Ink Bridge "Kakeru the courier runs up and says
+  something" and at the Woodblock Bridge "Nearby, Sanpei goes over the bridge…", wherever they were (none of
+  Kakeru's three places is at the bridge; Sanpei is on the street far from it, or in the press room). Each line now
+  says what they once told you about the bridge, which the census's clue then gives in their words; nobody is brought
+  in or walked (a staged arrival was tried and not kept: from these distances the walk-ins fell short of their
+  bounds). U 5/0 (A's source 4/1); B 6/0, the scene at its own pace with Kakeru in each of his three places and Sanpei
+  in both of his (A's build 5/1). RBN-QA-163 B2: Hayashi "calls out from the bank" at the Curtain Bridge, though none
+  of his three places is on that bank; the line says what he once told you, as B does (U 5/0, B's source 4/1; B 6/0,
+  B's build 5/1). AGREEs: A, B and B2 Local CL-253 and Agnes 6376933092 (source; her test limits: a mid-census save
+  built for the test, Sen's handover simulated, one older plaque rendered though all are checked structurally).
+  RBN-QA-163 C: the water under the Ink Bridge is said to be cloudy black, but the canal was drawn clear. A prop on
+  Blockprint Row's first water row south of the bridge, `mp_inkwater` (18,24; 3 tiles), bakes a patch of ink into the
+  ground under everyone: a pool in three flat tones of the canal's blue taken toward black where it comes out from
+  under the bridge, two plumes trailing downstream, tendrils off them; only that row's water and the two after it,
+  clear of the banks; the bridge's rows untouched; the water's glints still play over it; always there; nothing to
+  look at, never in the way; a flat 16-px drawing for the fallback renderer. U `ink_water` 3/0 (the source as before
+  2/1); B `ink_water` 3/0 (the ground there 50 against 69 further down; the bridge's rows 88 on both builds, reported,
+  not asserted equal; the task head's build 1/2). AGREEs: Local CL-255; Agnes 6376933092 (bounded source scope, not
+  pixel or art acceptance). Art: provisional under AC1_ART.md until Robin approves; captures to the owner privately.
+  QA-165's follow-up: the three generated wrong-meaning pools (`vocabStep`'s recognition, the listening exam,
+  bookmark practice) drew from the whole kana word index, which also holds the deliberate non-words, so a choice could
+  read "(not a word: しほさゐ …)". Each pool now leaves out an entry the shared `RB.tasks.nonWord` marks (the kana
+  completion's own test, `/^\(not a word\b/`). Targets, right answers, items, transcripts, explanations, seeds, the
+  part-of-speech and inequality rules, bookmark practice's no-record steps and two-option floor unchanged; `ko.toro_2`'s
+  hand-written wrong choice stays. U `meaning_pools` 13/0 after `7a3d6ee` (the source before 8/5): every unaffected
+  target (5,895) hashed at one clock and one turn against the source before, bookmark practice sampled (said so), the
+  whole journey unchanged by its steps, same-seed replay, and a sparse pool as a fixture (reported, not changed).
+  AGREEs: Local CL-256, CL-261; Agnes 6377645693 (her limits: sampled bookmark checks, absent item ids rather than
+  before/after learning state) and 6379369762 (the refinement: generation state through assertions, not the runner's
+  noRecord path; sparse-pool behaviour documented, not a new guarantee).
+  RBN-QA-166 A: the first wing's companion-map trial (`hall.w1f2` 26,22) says "On the stone table, an old map", but the
+  station was a plain wooden table. That placement now uses `hall_maptable`: a grey stone slab on two squared feet, an
+  old sheet with the floor's roads drawn faintly, an ink outline; no spring marked until the trial is completed
+  (`hall.w1.t6`), then one small red mark where the floor's pattern puts it. Footprint, block, coordinates and scene
+  the plain table's; no other table changes; a flat 16-px drawing too. U `hall_maptable` 4/0 (the source as before
+  0/4); `12c0a6c` corrects three comments only. AGREEs: Local CL-255, CL-257; Agnes 6377645693 (qualified: the flat
+  renderer's states do not establish the drawn art's readability or cache behaviour) and 6378506608 (the comments).
+  Local's note for Robin: the red mark is only a couple of pixels at 1280×800. Art: provisional; captures to the owner.
+  RBN-QA-166 B: each story room's task asked you to put "the four pictures" in order, but the cards are four written
+  passages. The 43 English strings of CC-156 §5 change and nothing else (the narration, which is recorded, the tiles,
+  answers, items, hints' substance and the Japanese as they were). U `hall_story_passages` 3/0 (the source as before
+  2/1); B 4/0, each tier's first use, a wrong order and "Come back later" in the first wing (the task head's build
+  3/1). AGREEs: Local CL-256; Agnes 6377645693 (all 43 changes checked; the ten wings covered structurally and the
+  first wing's four tiers in the browser, kept distinct; the generic scroll art's limitation stays open).
+  RBN-QA-167: with the Ledger open, a setting changed on its Settings sheet (Town hints, Finding the way) left the
+  Journey's Places, the Map's tags and the followed quest's mark as they were until the Ledger was opened again. The
+  menu's `refresh()` now redraws an open Ledger's page in place (its scroll remembered; no reopening, restyle or reset)
+  when the ordinary Settings sheet closes over it; a battle's, a new journey's review or draft, and Settings opened on
+  their own, open no Ledger. B `settings_ledger_refresh` 8/0 (CC-021's build 5/3). AGREEs: Local CL-262; Agnes
+  6379369762 (her limits: Reedwake's eligibility synthetic; the first leaf's scroll measured, not both; focus "inside
+  the Ledger", not the exact control; the exclusions read in source, not run). Her native retest follows publication.
+  RBN-QA-168: in "Review a saved chain" each record's button sat in the 1.6em icon column of the generic `.entry`
+  grid, about 44 px wide, its words spilling out. `.wp-trlist > .entry > .wp-tr` now spans the row; the generic
+  `.entry` and `.pbtn`, the markup, labels, behaviour and focus ring unchanged. B `wordplay_records` 11/0 (CC-021's
+  build 3/8), at 1188×848 and 390×844, 100 % and 140 % text, one record and four, with Tab and the list's navigation.
+  AGREEs: Local CL-265; Agnes 6379877999 (scoped to the saved-chain list; synthetic copies, not native history).
+  The `hall_door` test fix: its exact allowlist of wall-drawn props had not been updated when RBN-QA-111 gave Sono's
+  noren `onWall`, so it had failed since (CC-021's matrix, 14/1). The list adds `cr_noren` only; the village doors stay
+  outside it. No product change. AGREEs: Local CL-259; Agnes 6378879095.
+  The `jinpachi_letter` test fix: its Skip-seen case raced the engine's 900 ms map-entry window (VALIDATION, CC-021).
+  It now begins once the map time is past 900 (bounded; a wait that runs out fails), keeps the strict assertion, and
+  a control inside the window asserts what the engine does there, unchanged (he comes up, the letter is given, `a.letter`
+  checked since `3117524`, and he is simply gone, unrecorded). No product change. AGREEs: Local CL-261, CL-265; Agnes
+  6379877999 (every earlier timing qualification and failure kept on record).
+  RBN-QA-169 A: the festival corner's Timed label and the Pastimes how-to line said the clock stops "while a hint is
+  open". Now the how-to line says that in a timed round of water-balloon fishing or ring toss, Hint or "What does it
+  say?" stops the clock for up to 2.5 seconds, then it runs again, the clue able to stay shown (its Japanese says
+  少し の 間 だけ, neither 秒 nor 最大 being in the lexicon; Agnes approved it, 6380181634); each game's definition can
+  carry `helpPause`, and only those two say so; the other three say nothing of a pause. Copy only. RBN-QA-169 B: every
+  press of ring toss's "What does it say?" added a pause and its own resume, so pressing again and again held a timed
+  round's clock, and a timer from a round just left could resume the next round's own stop. Now one stop at a time
+  (pressed again during it, the English shows again, the stop neither deepened nor lengthened); once over, another
+  press stops it again for 2.5 s (successive stops are not prevented); the timer is the round's own, cleared when the
+  game stops. Practice, scores and records unchanged. B `festival_help_pause` 13/0 (A's build 11/2; CC-021's build
+  9/4). AGREEs: Local CL-265, CL-267; Agnes 6380186097 (her limits: synthetic and direct controls; the Japanese checked
+  for the games' names, not meaning; dedicated wrong-answer, Practice-finish and visibility-overlap cases not in the
+  suite; isolation for this help timer, not every animation timer).
+  RBN-QA-170: a companion's action read `st.lastPlayer`, which only an ordinary response writes, so in a procedure
+  under pressure (the Founder's Voice) Suzu's Encore spent its use on a step right first time and gave no Harmony, and
+  an earlier response could qualify or disqualify a step for Encore, Lend a hand, Heckle and Spot the opening. Now
+  `compAct` reads this exchange's response (`playerAct`'s, which now carries `ok`, or a step's), and `st.lastPlayer`
+  only without one; a step answers no move, and is ok and perfect only when it is the right step written so (Resolve
+  neither). Visible: Lend a hand loosens a knot on a step right first time. Ordinary battles read exactly as before.
+  U `companion_response` 17/0 (on CC-021's engine 6/11, reconciled in VALIDATION, CC-022); the simulator's 96 battles'
+  digest `7dda451b22994346` on both. AGREEs: Local CL-270; Agnes 6380556574 (the digest sampled, not exhaustive; direct
+  absent-response and failed-language-response cases are coverage limits).
+  In candidate CC-022 (`90cf14b3…`, built from `3d90956`), READY_FOR_QA (the matrix on these bytes: 116 of 116
+  suites; VALIDATION, CC-022); RBN-QA-116 stays open, outside it.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:

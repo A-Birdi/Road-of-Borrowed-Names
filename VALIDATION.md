@@ -5484,6 +5484,94 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-022:** `index.html` sha256 `90cf14b3664aa261522cfe7413b17e6dd938ee1314cc5815f1a4ce7fe2668762`
+    (24,347,183 bytes), built from `3d90956` (CC-021 at `3451937`, verified by Local CL-257 and CL-258 (live smoke) and,
+    as published, by Agnes 6378492652, plus only RBN-QA-163 A, B, B2 and C, QA-165's follow-up, RBN-QA-166 A and B,
+    167 and 168, the `hall_door` and `jinpachi_letter` test fixes, and RBN-QA-169 A and B and 170, each by its agreed
+    commits, listed in HANDOFF's CC-022 entry). A second `node tools/build.mjs` in the integration's worktree at
+    `3d90956` gives the same bytes as the build the matrix ran on. The integration, on `int/cc022` (cherry-picked with
+    `-x` onto the cut; pushed, the remote ref equal; patch-ids of 12 hex digits, agreed → integrated):
+    - QA-163 A, B, B2: `3406abb` → `487298d` (`bc9a98abc9c4`), `e4388aa` → `192bc4c` (`4c8302f31301`), `5b54df6` →
+      `7d6786c` (`b1349f7c62ce`); C: `c47f171` → `dc88c68` (`d9dd111b9637`, without `run.mjs`); QA-165's follow-up:
+      `a563040` → `a41e155` (`1fea9e1c96bf`), `7a3d6ee` → `3a90752` (`697ec1d1d8d5`); QA-166 A: `1b7d127` → `8d26590`
+      (`7328e950b4c2`), `6da3544` → `12c0a6c` (`5b8390e79f9a`); B: `44ebd46` → `15cf064` (`7dc10b5e3357`, without
+      `run.mjs`); QA-167: `4c26ab3` → `90e343a` (`cfa608b8c4b6`); QA-168: `a564e46` → `c7ebe62` (`5ccdd8f8a66b`); the
+      `hall_door` fix: `5273ac7` → `286025b` (`fc3bcb2f30c3`); the `jinpachi_letter` fix: `5798c5a` → `5a1695c`
+      (`85ec9ea65d37`), `627a73c` → `3117524` (`c1b165759926`); then `6c70380`, the scene manifest (the tool
+      unchanged; `SCENES.md` and `scenes.json` 34 lines each, 17 existing entries; regenerated at the head: unchanged);
+      QA-169 A: `8d9ef00` → `29d6f93` (`10d0056fbca2`, without `run.mjs`); B: `47feddd` → `3a4c11b` (`731c052d17b4`);
+      QA-170: `d518ebd` → `3d90956` (`1eaf10790278`). Equal in full but for the three marked, equal over every file
+      but `run.mjs`, whose entries were merged by hand beside the entry added before each (`ink_water` after
+      `census_plaques`; `hall_story_passages` after `hall_stairs`; `festival_help_pause` after `festival_games`, on
+      the line that holds `settings_ledger_refresh`); each suite listed once.
+    - AGREEs on the exact candidates: QA-163 A, B, B2 Local CL-253 (6376662673), Agnes 6376933092 (source); C Local
+      CL-255 (6377462355), Agnes 6376933092 (bounded source scope, not pixel or art acceptance); QA-165's follow-up
+      Local CL-256 (6377743655) and CL-261 (6379045177), Agnes 6377645693 and 6379369762; QA-166 A Local CL-255 and
+      CL-257, Agnes 6377645693 (qualified) and 6378506608; B Local CL-256, Agnes 6377645693; QA-167 Local CL-262
+      (6379304893), Agnes 6379369762 (evidence limits); QA-168 Local CL-265 (6379770973), Agnes 6379877999; the
+      `hall_door` fix Local CL-259 (6378727276), Agnes 6378879095; the `jinpachi_letter` fix Local CL-261 and CL-265,
+      Agnes 6379877999; QA-169 Local CL-267 (6380106677), Agnes 6380186097 (with the Japanese, 6380181634); QA-170
+      Local CL-270 (6380329693), Agnes 6380556574; and mine for each. The integrated source: Local CL-276 (6381213199:
+      every patch-id equal, the manifest, kanji table and listening page regenerated identical, 13 browser suites all
+      passing with `jinpachi_letter` 28/0, full units 58,239 passed with the five Windows-only path failures, its own
+      build `63cc9a85…`, 24,347,185 bytes, to be compared with this cut's bytes) and Agnes 6381286063 (a linear
+      18-commit chain from the cut; every pick patch-identical ignoring hunk positions but the three `run.mjs` merges;
+      44 final blobs equal, the two combined map files the unions; 49 files, nothing of QA-171 to 174, no `index.html`
+      or records; source integration only, not publication or native acceptance).
+    - `validate.mjs` no errors. U 58,286/0 on `3a4c11b`; 58,303/0 on `3d90956`.
+    - Before the cut, on the integrated heads' builds (other candidates' unit runs alongside: not clean rows): on
+      `3a4c11b`'s (`ab4c170474279fe1…`, 24,346,460 bytes) `festival_help_pause` 13/0, `festival` 3/0, `festival_games`
+      5/0, `census_plaques` 6/0, `ink_water` 3/0, `hall_story_passages` 4/0, `settings_ledger_refresh` 8/0,
+      `wordplay_records` 11/0, `hall_door` 15/0, `jinpachi_letter` 28/0, `hall` 4/0, `hall_stairs` 4/0, `wordplay`
+      83/0; on `3d90956`'s (these bytes) `companion_turn` 4/0, `procedure_copy` 7/0, `battle_group` 6/0.
+    On these bytes (B): 116 suites, one at a time, on these exact bytes (`index.html` as built from `3d90956`), from
+    07:03Z to 09:43Z; other candidates' unit and browser runs went on alongside for most of it (not clean rows).
+    CC-021's 107, in its order: `ko_first_sight` 87/0, `ko_crossing` 94/0, `interlude_ahead` 30/0, `interlude_lifecycle`
+    14/0, `interludes` 76/0, `lf_arrival_view` 79/0, `lookout_vista` 22/0, `keeper_reveal` 69/0, `kotonoha` 7/0,
+    `licence` 2/0, `battle_start_abandon` 28/0, `prep_abandon` 52/0, `encounters` 10/0, `load_mid_scene` 19/0,
+    `combat_ui` 7/0, `social_battle` 65/0, `card_press` 13/0, `battle_settings` 10/0, `battle_presentation` 13/0,
+    `fog_event` 26/0, `prologue` 100/0, `title_ledger` 18/0, `play_ui` all ok, `world_view` all ok, `ui` 14/0,
+    `wind_stone` 19/0, `kb_reflow` 4/0, `leaf_home` 42/0, `sequence_world --only ko.end` 158/0, `guest_arrivals` 17/0,
+    `tide_split` 49/0, `suzu_stage` 47/0, `enter_ownership` 12/0, `hall_entry` all ok, `hall_door` 15/0,
+    `walkto_options` 23/0, `quest_guide` all passed (55 checks), `guide_next_step` 24/0, `ruin_lanterns` 31/0,
+    `lodge_evening` 16/0, `lodge_quarrel` 31/0, `ren_apart` 7/0, `guide_reveal` 37/0, `guide_kana` 11/0, `learning_ui`
+    15/0, `social_wait` 12/0, `look_purity` 9/0, `props_balance` 48/0, `road_oil` 14/0, `geese_event` 15/0, `keepers`
+    4/0, `lodge_arrival` 40/0, `guide_stacks` 8/0, `guide_archive` 14/0, `companion_turn` 4/0, `road_on` 11/0,
+    `leaf_marker` 18/0, `guide_vigil` 9/0, `learning_qa039` 44/0, `sequence_art_integrity` 32/0, `ao_lesson_line` 20/0,
+    `ao_whereabouts` 18/0, `yoshino_exhibit_line` 14/0, `guide_roots_leaf` 9/0, `battle_party` 14/0, `guide_tellings`
+    88/0, `choice_rows` 6/0, `cloud_sea` 6/0, `courier_shelf` 9/0, `fade_load` 15/0, `guide_climb` 10/0, `ledge_horse`
+    14/0, `leg2_boulder` 12/0, `mitsu_frame` 28/0, `nakayama_inns` 9/0, `reunion_ways` 33/0, `tide_night` 45/0,
+    `cloudroad` 4/0, `departures` all ok, `systems` 4/0, `travel_rules` 10/0, `answer_order` 5/0, `playtest_repairs`
+    7/0, `dialect_kansai` all passed, `sequence_world --only ko.tide_night` 158/0, `bath_partition` 5/0,
+    `companion_away` 31/0, `egg_recovery` 26/0, `hall_stairs` 4/0, `jinpachi_letter` 28/0, `playhouse_audience` 17/0,
+    `postgame_quests` 6/0, `procedure_copy` 7/0, `return_hints` 12/0, `suzu_books_route` 13/0, `tsuneji_egg` 34/0,
+    `valve_line` 7/0, `yn_guide` 25/0, `zenroku_inquiry` 4/0, `steamhollow` 5/0, `book` 15/0, `practice_b` 6/0,
+    `world_living` 4/0, `goatshed_fence` 10/0, `kana_homophones` 208/0, `hall` 4/0, `story_ch4` 53/53 checks (one
+    playthrough, I/Ren); the 9 this cut's items name: `census_plaques` 6/0, `ink_water` 3/0, `hall_story_passages` 4/0,
+    `settings_ledger_refresh` 8/0, `wordplay_records` 11/0, `festival_help_pause` 13/0, `battle_group` 6/0, `festival`
+    3/0, `festival_games` 5/0. 116 of 116 passed; none was re-run.
+    Recorded as they happened, not made green afterwards:
+    - The integration's first full unit run was stopped by hand to add QA-169 (its log kept, not counted) and run
+      again on the new head; QA-170 was then added and the units run once more (58,303/0).
+    - The container restarted while the regression lane ran `jinpachi_letter` on `3a4c11b`'s build; the lane was
+      resumed from that suite on the same bytes.
+    - QA-170's control: my first, 5 passed and 12 failed on CC-021's engine, ran a revision of the test before its
+      simulator digest was pinned (that check then expected the placeholder `PIN_SIM_DIGEST`; CC-021's engine already
+      gave `7dda451b22994346`). The committed test on CC-021's engine (`3451937` with only the test added): 6/11, the
+      same as Local's (CL-270), its eleven failures every case QA-170 changes.
+    - QA-169: A's build alone `festival_help_pause` 11/2 (the repeated presses and the stale timer, which B fixes);
+      CC-021's build 9/4.
+    - The matrix began once three candidates' unit runs had finished, and every suite exited 0 at its first run.
+    Coverage as Agnes and Local bound it is in REQUIREMENTS (CC-022). Not shown by these runs: ordinary play of these
+    items from a real save (QA-167's and QA-168's native retests follow publication); the art (QA-163 C's ink, QA-166
+    A's map table) on a native compositor and Robin's approval; Agnes's native checks. Known and open, outside this cut:
+    RBN-QA-116; RBN-QA-171 to 181 (171 awaits the owner's choice of form; 172 and 175 agreed for the next integration;
+    173, 174 and 177 to 180 built and under review; 176 and 181 agreed plans, not built); the postgame shadows beyond
+    QA-161 and 162 and QA-161's part B; 十分 written じっぷん; `pets_greet`'s "nothing gained" check, which fails the same way
+    on CC-021's build (its synthetic start records no Chapter 1 quests, and the greeting's end lets the quest tracker
+    record `rw_letter`). Voice: none (paused). New keys play with the device voice or silence until a listening check
+    after QA, recordings kept and unused: QA-163's note at the new plaques, Kakeru's, Sanpei's and Hayashi's lines,
+    QA-169's how-to line.
   - **Candidate CC-021:** `index.html` sha256 `6e3787fda6d5497aa8ccde5085ec739c8d86966963ac427e07e03652a4b80e6e`
     (24,336,422 bytes), built from `26c08c7` (CC-020 at `1272636`, verified live by Local CL-220 (the bytes against a
     rebuild, the record, the live page and a live smoke; Agnes's check is not in the record), plus only RBN-QA-103, 113,

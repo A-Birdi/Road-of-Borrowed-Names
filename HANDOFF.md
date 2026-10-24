@@ -983,6 +983,45 @@
       full unit run alongside, then 15/0 on the same bytes with nothing else running. Units 58,258/0 on `26c08c7`. Voice
       stays paused: every changed spoken line has a new key and plays with the device voice or silence until a listening
       check after QA; recordings kept.
+      CANDIDATE CC-022 (`index.html` `90cf14b3…`, 24,347,183 bytes, built from `3d90956`): CC-021 (`3451937`, verified
+      by Local CL-257 and, as published, by Agnes 6378492652) plus only what was agreed after it, each by its exact
+      commits (cherry-picked with `-x` onto the cut; patch-identical to the agreed commits in full, or for QA-163 C,
+      QA-166 B and QA-169 A over every file but `tests/e2e/run.mjs`, merged by hand where it conflicted and only adding
+      each item's own suite; AGREEs listed in VALIDATION, CC-022; integrated as `int/cc022`, head `3d90956`, its
+      integrated source agreed by Local (CL-276: patch-ids, generated documents, runtime) and by Agnes 6381286063
+      (source integration only, not publication or native acceptance)): RBN-QA-163 A, B and B2 (`3406abb`, `e4388aa`,
+      `5b54df6` → `487298d`, `192bc4c`, `7d6786c`: the census's three new plaques stay blank until Sen has the names;
+      Kakeru, Sanpei and Hayashi are remembered at their bridges, never narrated arriving), RBN-QA-163 C (`c47f171` →
+      `dc88c68`: the ink in the water at the Ink Bridge; art, provisional), QA-165's follow-up (`a563040`, `7a3d6ee` →
+      `a41e155`, `3a90752`: the three generated wrong-meaning pools never draw the lexicon's deliberate non-words; the
+      second commit test only), RBN-QA-166 A (`1b7d127`, `6da3544` → `8d26590`, `12c0a6c`: the first wing's companion
+      map is an old map on a stone table; art, provisional; the second commit comments only), RBN-QA-166 B (`44ebd46` →
+      `15cf064`: the story rooms' tasks name the written passages, not "pictures"), RBN-QA-167 (`4c26ab3` → `90e343a`: a
+      setting changed on the Settings sheet over the Ledger shows on the page under it at once), RBN-QA-168 (`a564e46` →
+      `c7ebe62`: a saved Shiritori chain's button spans its row), the `hall_door` test fix (`5273ac7` → `286025b`: its
+      allowlist of wall-drawn props includes Sono's noren), the `jinpachi_letter` test fix (`5798c5a`, `627a73c` →
+      `5a1695c`, `3117524`: its Skip-seen case begins once the map's 900 ms window is past, with a control inside it),
+      RBN-QA-169 A and B (`8d9ef00`, `47feddd` → `29d6f93`, `3a4c11b`: the festival's help says what the timer does, up
+      to 2.5 seconds in water-balloon fishing and ring toss only; ring toss's "What does it say?" stops the clock one
+      stop at a time, its timer the round's own) and RBN-QA-170 (`d518ebd` → `3d90956`: a companion's action reads this
+      exchange's response, a procedure step's included). Generated only, by the unchanged tool, a second generation
+      identical: the scene manifest `6c70380` (17 existing entries in each document). Nothing in the agreed scope is
+      left out. Left out on purpose, each separately attributable: RBN-QA-125 (`afaf2f5`), 127 (`96f8275`) and 134
+      (`b4325f1`), each waiting on its own reviews; RBN-QA-172 (`c2a1616`) and 175 (`5986d0a`), agreed after this
+      integration's source was fixed, for the next; 173 (`afef0ca`), 174 (`1e738b7`; a comment-only `f300a0e` to
+      follow), 177 (`4d63e7d` and its refinement), 178, 179 and 180 (built on this source), under review; 176 and 181
+      (agreed plans, not built); RBN-QA-171 (no candidate: the owner's choice of form, and the transition-free design's
+      reviews); `book-voice` (`d9fbc73`, test only); the language follow-up (`6f34bf0`, `55db809`, `349e582`); QA-161's
+      part B; QA-120's optional guard `8d298d3`; the `dialect_kansai` message for a bound that runs out; and every later
+      candidate. Known and open, not fixed by this cut: RBN-QA-116; the postgame shadows beyond QA-161 and 162 (triage,
+      not built); 十分 written じっぷん would gloss "enough" (no line writes it); RBN-QA-135 to 160, confirmed in source
+      (CC-148), none built here; the three Cloudroad endings' message from Jinpachi six tiles away; five Windows-only
+      path failures Local notes. Art in this cut went to the owner as private captures (QA-163 C's ink, QA-166 A's map
+      table, per AC1_ART.md, "implemented provisionally" until Robin approves). The matrix on these bytes, one suite at
+      a time from 07:03Z to 09:43Z: 116 of 116 passed (CC-021's 107 in its order and the 9 this cut's items name;
+      VALIDATION, CC-022). Units 58,303/0 on `3d90956`. Voice stays paused: every changed spoken line (QA-163's note at
+      the three new plaques, Kakeru's, Sanpei's and Hayashi's lines, QA-169's how-to line) has a new key and plays with
+      the device voice or silence until a listening check after QA; recordings kept.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

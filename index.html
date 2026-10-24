@@ -5194,6 +5194,9 @@ body.reduced-motion .wp-seat.mv .wp-face, body.reduced-motion .wp-pet, body.redu
 .wp-review-chain .wp-slip.before .w { opacity: 0.8; }
 .wp-turninfo { margin-top: 0.5em; padding: 0.4em 0.6em; border: 1px dashed var(--paper-edge); border-radius: var(--r-2); }
 .wp-turninfo h4 { margin: 0 0 0.2em; }
+/* a saved chain's row holds only its button: it spans the entry's whole row, not the icon column an .entry starts
+   with (RBN-QA-168) */
+.wp-trlist > .entry > .wp-tr { grid-column: 1 / -1; }
 .wp-trlist .wp-tr { width: 100%; justify-content: flex-start; flex-wrap: wrap; text-align: left; height: auto; padding: 0.3em 0.6em; }
 
 /* ---- Company › Wordplay ----------------------------------------------------------- */
@@ -51877,7 +51880,7 @@ RB.bookmarks = (function () {
     for (const w of wordsOf(b)) {
       const e = w.entry;
       if (!CONTENT(e) || !e.m || !e.r || seen.has(e.w)) continue;
-      const pool = index.filter((x) => x.m !== e.m && x.pos === e.pos && x.w !== e.w && x.r !== e.r);
+      const pool = index.filter((x) => x.m !== e.m && x.pos === e.pos && x.w !== e.w && x.r !== e.r && !(RB.tasks.nonWord && RB.tasks.nonWord(x)));
       if (pool.length < 2) continue;
       const rr = RB.util.rng(RB.util.hashStr(b.id + '|' + e.w) | 0);
       const wrong = rr.shuffle(pool.slice()).slice(0, 3);
@@ -58836,7 +58839,8 @@ RB.karuta = (function () {
 /* ==== src/engine/72f_festival.js ==== */
 /* Festival games (expansion P06 for P09; plan C10, Robin's C-17 and C-55): the shell every booth game uses.
  *   - Practice, the default: untimed, no score kept, no rewards; help changes nothing.
- *   - Timed, opt-in and chosen each time: the same game against a clock that stops while help is open; it keeps the
+ *   - Timed, opt-in and chosen each time: the same game against a clock (in water-balloon fishing and ring toss, their
+ *     help, def.helpPause, stops it for up to 2.5 seconds, then it runs again; RBN-QA-169); it keeps the
  *     player's own personal bests (and streaks where natural), shown only in the game itself, never ranked.
  *   - Just for fun: no stamp, keepsake or other reward from any score or mode.
  * A game: RB.festival.define(id, { title: { en, jp }, about: { en, jp }, seconds (the timed round), better: 'more',
@@ -64628,7 +64632,7 @@ RB.combatLogic = (function () {
     if (perfect && card.kind !== 'tech' && (any || card.kind === 'unravel')) st.harmony = Math.min(st.harmonyMax, st.harmony + 1);
     st.lastCountered = countered;
     st.lastPlayer = { perfect, ok: !!result.ok, answered: any, kind: card.kind, target: T };
-    return { fx, countered, answered, answered2, perfect };
+    return { fx, countered, answered, answered2, perfect, ok: !!result.ok };
   }
   // E5 (expansion plan; Robin's C-64): what a response would do right now, by the same rule that will run, on a copy
   // of the state (nothing changes, no randomness is drawn). The card's "Here:" line is built from this, so the
@@ -64716,7 +64720,7 @@ RB.combatLogic = (function () {
     return { foes: [], allies: [] };
   }
   // Resolve the companion's action (after your response, before the creatures).
-  // P: what your response did (playerAct's result). Returns {fx}.
+  // P: what your response did (playerAct's result, or a procedure step's: src/engine/97_encounter.js). Returns {fx}.
   function compAct(st, actionId, P) {
     const fx = [];
     if (!st.compId || st.comp <= 0 || !actionId) return { fx };
@@ -64730,7 +64734,10 @@ RB.combatLogic = (function () {
     }
     const e = def.effect || {};
     const T = st.cur;
-    const lp = st.lastPlayer || { perfect: false, ok: false, answered: false };
+    // what your response did in this exchange (P), never an earlier one: a procedure's step answers no creature's move,
+    // and is right first time only when it was the right step written so (RBN-QA-170); the last response only without P
+    const lp = P ? { perfect: !!P.perfect, ok: !!P.ok, answered: (P.answered || []).some(Boolean) || (P.answered2 || []).some(Boolean) }
+      : st.lastPlayer || { perfect: false, ok: false, answered: false };
     const answered = (P && P.answered) || st.foes.map(() => false);
     const R = compReach(st, def);
     const say = (en, extra) => fx.push(Object.assign({ t: 'cact', who, id: def.id, en }, extra || {}));
@@ -66339,7 +66346,10 @@ RB.encounter = (function () {
       if (w.cost && !st.assist) st.pc = Math.max(0, st.pc - w.cost);
       fx.push({ t: 'proc', ok: false, step: step.id, action: a.id, to: p.steps[to] ? p.steps[to].id : null, restart: to !== p.step || restart, en: w.en || 'That was not the way.', cost: w.cost || 0 });
     }
-    return { fx, answered: st.foes.map(() => false), countered: false, perfect: ok && res.ok && res.firstTry !== false, proc: { ok } };
+    // right (ok) and right first time (perfect) only when it was the right step and written so; Resolve this step writes
+    // nothing, so it is neither (a companion's action reads these: RBN-QA-170)
+    const wrote = card.kind !== 'resolve';
+    return { fx, answered: st.foes.map(() => false), countered: false, perfect: wrote && ok && res.ok && res.firstTry !== false, ok: wrote && ok && !!res.ok, proc: { ok } };
   }
 
   // ---- social encounters (E8) ------------------------------------------------------------------------------------
@@ -67848,6 +67858,11 @@ RB.tasks = (function () {
     }
     return kanaWords;
   }
+  // a lexicon entry that is a deliberate non-word (its meaning begins "(not a word"): a wrong choice the tasks that
+  // teach it write by hand (しほさい in ko.toro_2), never an example, and never a generated wrong meaning either
+  // (RBN-QA-165 and its follow-up: the kana completion, and the meaning-choice pools of vocabStep, the listening exam
+  // and bookmark practice)
+  const nonWord = (e) => /^\(not a word\b/.test((e && e.m) || '');
   function wordsWith(ch, known) {
     return kanaWordIndex().filter((e) => e.r.indexOf(ch) >= 0 && (e.lv === 'F' || e.lv === 'E') && Array.from(e.r).every((c) => c === ch || known(c)));
   }
@@ -67878,7 +67893,7 @@ RB.tasks = (function () {
     const hb = HOMOPHONE_BASE[ch];
     // a kana is completed only in a real word: the lexicon also holds deliberate non-words, the wrong choices of the
     // tasks that teach them (しほさい in ko.toro_2), never an example (RBN-QA-165; before, only for a homophone)
-    const ws = wordsWith(ch, known).filter((e) => !/^\(not a word\b/.test(e.m || ''));
+    const ws = wordsWith(ch, known).filter((e) => !nonWord(e));
     const rom = RB.kana.romaji(ch);
     const kata = RB.kana.isKata(ch);
     if (ws.length && !opts.bare) {
@@ -67941,7 +67956,7 @@ RB.tasks = (function () {
       };
     }
     // recognition: show the word, choose its meaning
-    const pool = kanaWordIndex().filter((x) => x.m !== e.m && x.pos === e.pos && x.w !== e.w);
+    const pool = kanaWordIndex().filter((x) => x.m !== e.m && x.pos === e.pos && x.w !== e.w && !nonWord(x));
     const rr = RB.util.rng((RB.learn.clock() * 104729 + e.r.length) | 0);
     const wrong = rr.shuffle(pool).slice(0, 3);
     const jp = e.w !== e.r ? '{' + e.w + '|' + e.r + '}' : e.w;
@@ -68086,7 +68101,7 @@ RB.tasks = (function () {
     return (ch.steps || []).map(prepare);
   }
 
-  return { fromItem, kanaStep, vocabStep, prepare, stepsOf, next, drillPool, itemPool, stepFor, findWord, plain, readingOf, kanaWordIndex, askScript, LV };
+  return { fromItem, kanaStep, vocabStep, prepare, stepsOf, next, drillPool, itemPool, stepFor, findWord, plain, readingOf, kanaWordIndex, nonWord, askScript, LV };
 })();
 
 
@@ -68493,7 +68508,7 @@ RB.exams = (function () {
       const e = k === 'v' ? RB.tasks.findWord(v) : null;
       if (!e) return null;
       const r = RB.util.rng(RB.util.hashStr(id + '|' + n));
-      const wrong = r.shuffle(RB.tasks.kanaWordIndex().filter((x) => x.m !== e.m && x.pos === e.pos)).slice(0, 3);
+      const wrong = r.shuffle(RB.tasks.kanaWordIndex().filter((x) => x.m !== e.m && x.pos === e.pos && !RB.tasks.nonWord(x))).slice(0, 3);
       return { kind: 'listen', item: id, transcript: { jp: e.w !== e.r ? '{' + e.w + '|' + e.r + '}' : e.w, en: e.m }, prompt: { en: 'What does the word mean?' }, options: [{ en: e.m, ok: true }].concat(wrong.map((w) => ({ en: w.m, ok: false, why: { en: 'That would be ' + (w.w !== w.r ? w.w + '（' + w.r + '）' : w.w) + '.' } }))) };
     }
     if (k === 'k') return RB.tasks.kanaStep(v, { bare: n % 2 === 1 });
@@ -90982,8 +90997,12 @@ RB.ui.menu = (function () {
   }
 
   function settingsStandalone() { return RB.ui.settings.open(); }
+  // a setting changed on the Settings sheet over this Ledger (Town hints, Finding the way): the pages read the settings
+  // as they are drawn, so the page open is drawn again where it was, its scroll kept (RBN-QA-167); nothing reopened,
+  // restyled or turned
+  function refresh() { if (!layer || !fr) return; remember(); render(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, returnLine, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, refresh, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, returnLine, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits
@@ -92024,6 +92043,9 @@ RB.ui.settings = (function () {
     lay = null; fr = null; tabsApi = null;
     const was = mode;
     mode = 'normal';
+    // back onto an open Ledger from the ordinary sheet: its page is drawn again with the settings as they now are
+    // (RBN-QA-167); not after battle, a new journey's review or its draft
+    if (was === 'normal' && RB.ui.menu && RB.ui.menu.isOpen && RB.ui.menu.isOpen() && RB.ui.menu.refresh) RB.ui.menu.refresh();
     if (was === 'battle' && !(o && o.leaving)) resumeBattle();
   }
   // a tab asked for by name (the Ledger, a test, a link from another page)
@@ -132704,7 +132726,7 @@ RB.ui.festival = (function () {
     return '<p class="fv-about">' + RB.ui.jhtml(d.about.jp) + '<span class="en">' + esc(d.about.en) + '</span></p>' +
       '<fieldset class="sg-level"><legend>How to play this round</legend>' +
       '<label class="opt"><input type="radio" name="fv-mode" value="practice"' + (V.mode === 'practice' ? ' checked' : '') + '><span><b>Practice</b>: untimed; nothing is kept</span></label>' +
-      '<label class="opt"><input type="radio" name="fv-mode" value="timed"' + (V.mode === 'timed' ? ' checked' : '') + '><span><b>Timed</b>: ' + d.seconds + ' seconds; your own best is kept. The clock stops while a hint is open</span></label></fieldset>' +
+      '<label class="opt"><input type="radio" name="fv-mode" value="timed"' + (V.mode === 'timed' ? ' checked' : '') + '><span><b>Timed</b>: ' + d.seconds + ' seconds; your own best is kept' + (d.helpPause ? '. The clock stops for up to 2.5 seconds when you press ' + esc(d.helpPause.button) + ', then runs again; ' + esc(d.helpPause.stays) : '') + '</span></label></fieldset>' +
       '<div class="sg-acts"><button type="button" class="pbtn primary" data-a="begin">' + I('next') + '<span>Begin</span></button></div>' +
       (p.timed ? '<p class="muted small">' + esc('Your best: ' + p.best + (d.streaks && p.bestStreak ? '; longest run ' + p.bestStreak : '') + '. Just for fun: nothing is won by it.') + '</p>' : '<p class="muted small">Just for fun: no score here wins anything.</p>');
   }
@@ -132772,7 +132794,9 @@ RB.ui.festival = (function () {
 /* ヨーヨー釣り, water-balloon fishing (expansion P06 for P09; src/content/pastimes/50_festival.js): balloons bob in
  * a tub, each with a word and its reading; you are asked for one in English and hook the balloon that says it. In
  * practice a round is eight balloons, at your own pace; in a timed round they drift and you hook as many as you can.
- * A wrong balloon says what it is; a hint shows the word's first sound (the clock stops while it is shown). */
+ * A wrong balloon says what it is; a hint shows the word's first sound: in a timed round the clock stops for up to 2.5
+ * seconds (the right balloon ends it sooner), then runs again, and the hint stays until the balloon is hooked
+ * (RBN-QA-169). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui.festivalGames = RB.ui.festivalGames || {};
 
@@ -133043,7 +133067,14 @@ RB.ui.festivalGames = RB.ui.festivalGames || {};
       const w = b.dataset.w;
       if (w === 'finish') return end();
       if (w === 'listen') return speak();
-      if (w === 'en') { G.api.pause(); G.api.say('<span class="en">' + esc(desc().en) + '</span>'); setTimeout(() => { if (G) G.api.resume(); }, 2500); return; }
+      // the English, and the clock stopped 2.5 s for it: one stop at a time (pressed again during it, the English shows
+      // again and the stop is neither deepened nor lengthened; once it is over, another press stops the clock again),
+      // its timer this round's own: cleared when the game stops, and never resuming a later round (RBN-QA-169)
+      if (w === 'en') {
+        G.api.say('<span class="en">' + esc(desc().en) + '</span>');
+        if (!G.enTimer) { const g = G; g.api.pause(); g.enTimer = setTimeout(() => { if (G !== g) return; g.enTimer = null; g.api.resume(); }, 2500); }
+        return;
+      }
       const p = G.row[+w];
       if (!p) return;
       G.throws++; G.busy = true;
@@ -133058,7 +133089,7 @@ RB.ui.festivalGames = RB.ui.festivalGames || {};
       }, reduced() ? 150 : 650);
     }
     function end() { if (!G) return null; const r = { score: G.score, streak: G.best }; const api = G.api; stop(); api.done(r); return r; }
-    function stop() { if (!G) return null; const r = { score: G.score, streak: G.best }; G.el.removeEventListener('click', onClick); if (RB.voice && RB.voice.cancel) RB.voice.cancel(); G = null; return r; }
+    function stop() { if (!G) return null; clearTimeout(G.enTimer); const r = { score: G.score, streak: G.best }; G.el.removeEventListener('click', onClick); if (RB.voice && RB.voice.cancel) RB.voice.cancel(); G = null; return r; }
     return { start, stop, state: () => (G ? { target: G.target.id, row: G.row.map((p) => p.id), score: G.score, throws: G.throws } : null) };
   })();
 
@@ -186800,6 +186831,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 3 + Math.min(h, 3) * 3, y + 6, 1, 1, '#ffbf5c');
   });
 
+  // the first wing's companion map (RBN-QA-166 A): a stone table with an old map laid on it, its roads drawn faintly;
+  // once the floor's trial (o.trial) is completed, a small mark at the spring where the floor's pattern
+  // puts it (hall.<wing>.pat: 0 the top right, 1 the bottom left), never before
+  const mapMark = (o) => {
+    const s = RB.game && RB.game.s;
+    if (!s || !o || !o.wing || !o.trial || !RB.state.test(s, 'hall.' + o.wing + '.' + o.trial)) return 0;
+    return RB.state.test(s, 'hall.' + o.wing + '.pat=1') ? 2 : 1;
+  };
+  def('hall_maptable', { w: 2 }, (c, x, y, p, t, o) => {
+    px(c, x + 1, y + 2, 30, 8, '#8c8a84'); px(c, x + 1, y + 2, 30, 1, '#b4b2aa');
+    px(c, x + 3, y + 10, 5, 5, '#6c6a64'); px(c, x + 24, y + 10, 5, 5, '#6c6a64');
+    px(c, x + 6, y + 3, 20, 6, '#e6d8b4'); px(c, x + 15, y + 3, 1, 6, '#a48a62'); px(c, x + 6, y + 5, 20, 1, '#a48a62');
+    const m = mapMark(o);
+    if (m) px(c, x + (m === 1 ? 23 : 7), y + (m === 1 ? 4 : 7), 2, 1, '#a8322a');
+  });
+
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
@@ -186932,6 +186979,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i < 4; i++) { R(g, 6 + i * 6, 15, 4, 2, i < v ? PP[0] : '#5a3e2c'); R(g, 6 + i * 6, 13, 1, 2, BR[3]); }
       const tx = 6 + v * 6;
       R(g, tx, 14, 2, 2, f ? GL[3] : GL[2]); R(g, tx, 10, 1, 4, 'rgba(220,220,230,0.35)');
+    },
+  });
+  // The first wing's companion map (RBN-QA-166 A): the stone table the scene names ("On the stone table, an old map"),
+  // a grey slab on two squared stone feet, with a sheet of old paper laid on it, its corners darkened and lifting a
+  // little, and the floor's roads drawn on it faintly in brown (the middle road, its three crossings, the two side
+  // roads); nothing marks the spring until the floor's trial is completed, then a small red mark where the floor's pattern
+  // puts it. Same footprint, block and scene as the plain table it replaces; an ink outline, as for anything to look at.
+  art('hall_maptable', {
+    box: [-2, -4, 68, 40],
+    v: (o) => mapMark(o),
+    ink: true,
+    shadow: () => [32, 29, 30, 3.5, 0.3],
+    draw(g, M, v) {
+      const S = M.stone, PA = PP, ROAD = '#9a7c54', ROADL = '#b89c70';
+      // the feet and the slab
+      for (const fx of [6, 48]) { R(g, fx, 18, 10, 12, S[1]); R(g, fx, 18, 2, 12, S[3]); R(g, fx + 9, 18, 1, 12, S[0]); }
+      R(g, 0, 4, 64, 14, S[2]); R(g, 0, 4, 64, 1, S[4]); R(g, 0, 17, 64, 2, S[1]); R(g, 0, 18, 64, 1, S[0]);
+      R(g, 4, 9, 6, 1, S[1]); R(g, 52, 12, 7, 1, S[1]);
+      // the paper
+      R(g, 9, 5, 46, 12, PA[3]); R(g, 9, 5, 46, 1, PA[4]); R(g, 9, 16, 46, 1, PA[1]);
+      R(g, 9, 5, 2, 2, PA[2]); R(g, 53, 5, 2, 2, PA[2]); R(g, 9, 15, 2, 2, PA[2]); R(g, 53, 15, 2, 2, PA[1]);
+      // its roads, faint: the middle road, three crossings, two side roads
+      R(g, 31, 6, 2, 10, ROAD);
+      for (const ry of [8, 11, 14]) R(g, 12, ry, 40, 1, ROADL);
+      R(g, 17, 8, 1, 7, ROADL); R(g, 47, 8, 1, 7, ROADL);
+      // the trial completed: the spring, marked where the pattern puts it
+      if (v === 1) { R(g, 49, 6, 3, 2, '#a8322a'); R(g, 50, 6, 1, 1, '#d4584a'); }
+      if (v === 2) { R(g, 12, 14, 3, 2, '#a8322a'); R(g, 13, 14, 1, 1, '#d4584a'); }
     },
   });
 })();
@@ -187148,7 +187223,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ...Object.keys(ENDS).map((k) => ({ p: 'kr_toro', x: ENDS[k][0], y: ENDS[k][1], scene: 'hall.w1.l4_' + k, if: '!xp_hall_w1_f1_lamp_' + k })),
       ...Object.keys(ENDS).map((k) => ({ p: 'kr_toro', x: ENDS[k][0], y: ENDS[k][1], scene: 'hall.w1.l4_' + k, if: 'xp_hall_w1_f1_lamp_' + k, light: 34, o: { lit: true } })),
       // the companion's map on the stone table (t6), and the spring's two hollows
-      { p: 'table', x: 26, y: 22, scene: 'hall.w1.t6' }, ...andon(30, 22, 'w1', 't6'),
+      { p: 'hall_maptable', x: 26, y: 22, scene: 'hall.w1.t6', o: { wing: 'w1', trial: 't6' } }, ...andon(30, 22, 'w1', 't6'),
       { p: 'rock', x: 6, y: 23, scene: 'hall.w1.t6_sw' }, { p: 'rock', x: 35, y: 3, scene: 'hall.w1.t6_ne' },
       // the riddle stone (t7)
       { p: 'kr_stele', x: 13, y: 3, scene: 'hall.w1.t7' }, ...andon(11, 2, 'w1', 't7'),
@@ -188020,7 +188095,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * plan 04_DUNGEONS.md D9; scenes in 21_w1_scenes.js, which this file comes before so they can show the plaques). The wing's theme: finding the way (directions, signs, which
  * turning, asking again). Every task has its four levels and an Advanced stretch (the Grow route at Advanced: nuance,
  * never an invented level); the Grow route elsewhere runs the next level up, taught first (src/learn/70_grow.js).
- *   hall.w1.story      the tale in four pictures, back in order (A38: the story room)
+ *   hall.w1.story      the tale's four written passages, back in order (A38: the story room)
  *   hall.w1.story_q    what the tale is about (optional: never counted against you)
  *   hall.w1.sign0/1    the signpost: which way to the place the traveller asks for (by the wing's pattern)
  *   hall.w1.counter0/1 the plaques: the one that breaks the rule (A34: a counterexample hall)
@@ -188039,19 +188114,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const e = (en, ok, why) => Object.assign({ en, ok: !!ok }, why ? { why: { en: why } } : {});
   const say = (jp, en) => ({ jp, en });
 
-  // ---- the story room: the tale in four pictures -----------------------------------------------------------------------
+  // ---- the story room: the tale's four passages ------------------------------------------------------------------------
   const P1 = '{昔|むかし} 、 {山|やま} の {辻|つじ} に 、 {灯籠|とうろう} が {一|ひと}つ {立|た}って いた', P2 = '{灯籠|とうろう} の {番|ばん} を して いた の は 、 {耳|みみ} の {遠|とお}い おばあさん だった',
     P3 = '{旅人|たびびと} が {道|みち} を {聞|き}く と 、 おばあさん は いつも 「 もう {一度|いちど} 、 {言|い}って ください 」 と {言|い}った', P4 = '{二度|にど} {聞|き}いた {旅人|たびびと} は 、 {一人|ひとり} も {道|みち} に {迷|まよ}わなかった';
   C.challenges['hall.w1.story'] = { title: T('{辻|つじ} の {灯籠|とうろう}', 'The Lamp at the Crossroads'), tiers: {
-    F: [OR({ item: 'v:道', prompt: { en: 'Put the four pictures of the tale back in order.' },
+    F: [OR({ item: 'v:道', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' },
       tiles: ['とうろう が ひとつ たって いた', 'おばあさん が ばん を して いた', '「もう いちど いって ください」', 'だれ も みち に まよわなかった'],
       answer: ['とうろう が ひとつ たって いた', 'おばあさん が ばん を して いた', '「もう いちど いって ください」', 'だれ も みち に まよわなかった'],
       orderHint: { en: 'The lamp; the old woman who kept it; what she always said; and what came of it.' } })],
-    E: [OR({ item: 'v:道', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:道', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the lamp, then its keeper, then what she said to travellers, then what happened to them.' } })],
-    I: [OR({ item: 'v:迷う', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'v:迷う', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'She was hard of hearing (耳が遠い), so she asked again; because they said it twice, nobody got lost.' } })],
-    A: [OR({ item: 'v:迷う', prompt: { en: 'Order the pictures; the tale turns on the line in quotation marks.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'v:迷う', prompt: { en: 'Order the passages; the tale turns on the line in quotation marks.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The quoted request is the hinge: everything after it is its consequence.' } })],
   },
   stretchA: [ch({ item: 'v:迷う', ctx: { jp: P2 + ' 。 ' + P3 + ' 。 ' + P4 + ' 。', en: '' }, prompt: { en: 'Read the tale against the grain: who, in it, is actually doing the travellers a favour?' },
@@ -188278,7 +188353,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 /* The Hall of a Hundred Tales, wing 2, The Fox's Wedding: the language tasks and encounters (expansion P15; plan
  * 04_DUNGEONS.md D9; scenes in 22_w2_scenes.js). The theme: who does what, from whom to whom (に and から, を and が;
  * あげる, くれる, もらう; 貸す and 借りる). Every task has its four levels and an Advanced stretch.
- *   hall.w2.story      the tale in four pictures, back in order (A38)
+ *   hall.w2.story      the tale's four written passages, back in order (A38)
  *   hall.w2.story_q    what Sayo's chestnuts mean (optional)
  *   hall.w2.counter0/1 the go-between's cards: the one that breaks the rule (A34)
  *   hall.w2.ask        asking your companion where Sayo sits (A12)
@@ -188301,15 +188376,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     P3 = 'サヨ だけ が 、 {花嫁|はなよめ} に {傘|かさ} を {貸|か}して あげた', P4 = '{次|つぎ} の {朝|あさ} 、 サヨ の {家|いえ} の {前|まえ} に 、 お{礼|れい} の {栗|くり} が {置|お}いて あった';
   C.hallW2Tale = { P1, P2, P3, P4 };
   C.challenges['hall.w2.story'] = { title: T('{狐|きつね} の {嫁入|よめい}り', 'The Fox\'s Wedding'), tiers: {
-    F: [OR({ item: 'v:傘', prompt: { en: 'Put the four pictures of the tale back in order.' },
+    F: [OR({ item: 'v:傘', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' },
       tiles: ['はれて いる のに 、 あめ が ふって きた', 'むら の ひと は 、 と を しめた', 'サヨ だけ が 、 かさ を かして あげた', 'つぎ の あさ 、 くり が おいて あった'],
       answer: ['はれて いる のに 、 あめ が ふって きた', 'むら の ひと は 、 と を しめた', 'サヨ だけ が 、 かさ を かして あげた', 'つぎ の あさ 、 くり が おいて あった'],
       orderHint: { en: 'The sun-shower; the village shuts its doors; Sayo lends her umbrella; the chestnuts the next morning.' } })],
-    E: [OR({ item: 'v:傘', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:傘', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the strange rain, then the villagers hiding from it, then Sayo\'s umbrella, then what came of it.' } })],
-    I: [OR({ item: 'g:te_giving', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:te_giving', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'Everyone else shut their doors; only Sayo lent the umbrella (貸してあげた: a kindness done for the bride), so only her door got the chestnuts.' } })],
-    A: [OR({ item: 'g:te_giving', prompt: { en: 'Order the pictures; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:te_giving', prompt: { en: 'Order the passages; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'だけ sets Sayo apart from the village; the gift that follows is the answer to that one kindness.' } })],
   },
   stretchA: [ch({ item: 'g:te_giving', ctx: { jp: P3 + ' 。 ' + P4 + ' 。', en: '' }, prompt: { en: 'The tale says 貸してあげた and then 置いてあった. What do the two endings, side by side, tell you?' },
@@ -188505,7 +188580,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * 04_DUNGEONS.md D9; scenes in 23_w3_scenes.js). The theme: sequence and timing (～てから; ～前に and ～後で; まで and
  * までに; ～と, ～たら and ～とき; on the Grow route ～うちに and ～ところ; at Advanced ～次第). Every task has its four
  * levels and an Advanced stretch.
- *   hall.w3.story      the tale in four pictures, back in order (A38)
+ *   hall.w3.story      the tale's four written passages, back in order (A38)
  *   hall.w3.story_q    why the bell rings before the dawn (optional)
  *   hall.w3.counter0/1 the bell-ringer's sayings: the one that breaks the rule (A34)
  *   hall.w3.ask        asking your companion what the almanac says about today's hour (A12)
@@ -188531,14 +188606,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const FT = ['むかし 、 やまでら の かね は 、 まいあさ よあけ の まえ に なった', 'かね を つく ジンベエ が 、 ある ばん 、 びょうき に なった', 'まご の シノ は 、 ひ を もって 、 くらい さか を のぼった', 'かね が なる と 、 むら の ひと が おきた'];
   C.hallW3TaleF = FT;
   C.challenges['hall.w3.story'] = { title: T('{夜明|よあ}け {前|まえ} の {鐘|かね}', 'The Bell Before Dawn'), tiers: {
-    F: [OR({ item: 'v:鐘', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:鐘', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'The bell every morning; the ringer falls ill; his granddaughter climbs the slope; the village wakes.' } })],
-    E: [OR({ item: 'v:鐘', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:鐘', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First how it always was, then the night it changed, then what Shino did, then what came of it.' } })],
-    I: [OR({ item: 'g:mae_ato', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:mae_ato', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The bell rang before dawn every morning; one night its ringer fell ill, so Shino climbed up in his place, and the bell still rang.' } })],
-    A: [OR({ item: 'g:toki', prompt: { en: 'Order the pictures; the turn is the one with ある晩 in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
-      orderHint: { en: '毎朝 sets out what always happened; ある晩 breaks it; the last picture\'s と says that once the bell rang, the waking followed as it always had.' } })],
+    A: [OR({ item: 'g:toki', prompt: { en: 'Order the passages; the turn is the one with ある晩 in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+      orderHint: { en: '毎朝 sets out what always happened; ある晩 breaks it; the last passage\'s と says that once the bell rang, the waking followed as it always had.' } })],
   },
   stretchA: [ch({ item: 'g:cond_tara', ctx: { jp: P4 + ' 。 ／ {鐘|かね} が {鳴|な}ったら 、 {村|むら} が {目|め} を {覚|さ}ました 。', en: '' }, prompt: { en: 'The tale says 鳴ると. What would 鳴ったら change?' },
     options: [e('と tells it as what always follows, as sure as habit; ～たら would make that morning one particular event, and in the past it can sound as if the waking surprised the teller.', 1),
@@ -188754,7 +188829,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * 04_DUNGEONS.md D9; scenes in 24_w4_scenes.js). The theme: requests, permission, intention and misunderstanding
  * (～てください, ～てもらえますか; ～てもいい and ～てはいけない; ～つもり and ～ようと思う; at the top the humble
  * ways to ask). Every task has its four levels and an Advanced stretch.
- *   hall.w4.story      the tale in four pictures, back in order (A38)
+ *   hall.w4.story      the tale's four written passages, back in order (A38)
  *   hall.w4.story_q    what the umbrella's going home says (optional)
  *   hall.w4.counter0/1 the peddler's cards on asking: the one that breaks the rule (A34)
  *   hall.w4.ask        asking your companion what the river notice allows today (A12)
@@ -188780,13 +188855,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const FT = ['あらし の よる 、 ゴサク は やまでら で かさ を かりた', '「 あめ が やんだら 、 かえしに きます 」 と 、 ゴサク は いった', 'けれど かわ が あふれて 、 ゴサク は いちねん もどれなかった', 'かさ は いっぽんあし で はねて 、 じぶん で てら へ むかった'];
   C.hallW4TaleF = FT;
   C.challenges['hall.w4.story'] = { title: T('{借|か}りた {傘|かさ}', 'The Borrowed Umbrella'), tiers: {
-    F: [OR({ item: 'v:傘', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:傘', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'The umbrella borrowed; the promise; the flood; the umbrella setting off on its own.' } })],
-    E: [OR({ item: 'v:傘', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:傘', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the borrowing, then the promise, then what stopped him, then what the umbrella did.' } })],
-    I: [OR({ item: 'g:tsumori', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:tsumori', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'He borrowed it and promised to return it (he meant to); the flood kept him away; the umbrella, waiting, went home by itself.' } })],
-    A: [OR({ item: 'g:tsumori', prompt: { en: 'Order the pictures; the turn is the one with けれど in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:tsumori', prompt: { en: 'Order the passages; the turn is the one with けれど in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The promise is kept in words; けれど turns it: the flood, not a change of heart, is why it was broken.' } })],
   },
   stretchA: [ch({ item: 'g:tsumori', ctx: { jp: '{返|かえ}す つもり だった 。 ／ {返|かえ}した つもり だった 。', en: '' }, prompt: { en: 'One letter apart. What does each say about Gosaku?' },
@@ -188981,7 +189056,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * 04_DUNGEONS.md D9; scenes in 25_w5_scenes.js). The theme: reasons and contrasts (～から and ～ので; けど and が;
  * ～のに; ～おかげで and ～せいで; ～ために; at Advanced ～からこそ, ～にもかかわらず, ～ものの). Every task has its four
  * levels and an Advanced stretch.
- *   hall.w5.story      the tale in four pictures, back in order (A38)
+ *   hall.w5.story      the tale's four written passages, back in order (A38)
  *   hall.w5.story_q    what the frog at the bottom of the well knew (optional)
  *   hall.w5.counter0/1 the old sayings on reasons: the one that breaks the rule (A34)
  *   hall.w5.ask        asking your companion what the well-digger's record says (A12)
@@ -189006,13 +189081,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const FT = ['むかし 、 むら に いど が ふたつ あった', 'ひがし の みず は あまい のに 、 にし の みず は にがかった', 'ふたつ の いえ は 、 「 そっち の せい だ 」 と けんか を した', 'いど の そこ の かえる だけ が 、 ほんとう の りゆう を しって いた'];
   C.hallW5TaleF = FT;
   C.challenges['hall.w5.story'] = { title: T('{二|ふた}つ の {井戸|いど}', 'The Two Wells'), tiers: {
-    F: [OR({ item: 'v:井戸', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:井戸', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'Two wells; one sweet and one bitter; the two houses quarrel; only the frog knows why.' } })],
-    E: [OR({ item: 'v:井戸', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:井戸', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the two wells, then how they differed, then the blame, then who really knew.' } })],
-    I: [OR({ item: 'g:noni', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:noni', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'Two wells that should have been alike (のに: one was bitter all the same); each house blamed the other (せい); the reason lay where nobody asked.' } })],
-    A: [OR({ item: 'g:okage_sei', prompt: { en: 'Order the pictures; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:okage_sei', prompt: { en: 'Order the passages; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The blame goes back and forth; だけ sets the frog apart: the one witness nobody thought of.' } })],
   },
   stretchA: [ch({ item: 'g:noni', ctx: { jp: P2 + ' 。 ／ {東|ひがし} の {水|みず} は {甘|あま}い けど 、 {西|にし} の {水|みず} は {苦|にが}かった 。', en: '' }, prompt: { en: 'The tale says のに. What would けど change?' },
@@ -191700,7 +191775,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * 04_DUNGEONS.md D9; scenes in 28_w6_scenes.js). The theme: conditions and exceptions (～と, ～ば, ～たら, ～なら; ～ても;
  * ～場合, ただし, ～以外; at Advanced ～限り, ～さえ～ば, ～を除いて). Every task has its four levels and an Advanced
  * stretch.
- *   hall.w6.story      the tale in four pictures, back in order (A38)
+ *   hall.w6.story      the tale's four written passages, back in order (A38)
  *   hall.w6.story_q    what the board filled up with, and the rule that was never written (optional)
  *   hall.w6.counter0/1 the waymarkers' sayings on conditions: the one that breaks the rule (A34)
  *   hall.w6.ask        asking your companion what Kihei's ledger says about going on after dark (A12)
@@ -191728,13 +191803,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'きまり は ふえて 、 ふだ は 「 でも 」 と 「 なら 」 で いっぱい に なった', 'さいご の きまり だけ は 、 どこ に も かいて なかった'];
   C.hallW6TaleF = FT;
   C.challenges['hall.w6.story'] = { title: T('{変|か}わった {通行料|つうこうりょう}', 'The Toll That Changed'), tiers: {
-    F: [OR({ item: 'v:決まり', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:決まり', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'One coin for everyone; then a rule for rainy days; then rule after rule; and one rule written nowhere.' } })],
-    E: [OR({ item: 'v:通行料', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:通行料', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the toll as it began, then the first rule added, then the board filling up, then the rule that was never written.' } })],
-    I: [OR({ item: 'g:cond_nara', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:cond_nara', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The plain toll; the first condition (なら: if that is your case); the conditions and exceptions piling up (ただし); and, last, the one rule outside them all.' } })],
-    A: [OR({ item: 'g:igai', prompt: { en: 'Order the pictures; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:igai', prompt: { en: 'Order the passages; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'Every hard case became a written exception; だけ sets apart the one rule that was never written down.' } })],
   },
   stretchA: [ch({ item: 'g:cond_nara', ctx: { jp: P2 + ' 。 ／ 「 {雨|あめ} が {降|ふ}ったら 、 {帰|かえ}り に {払|はら}えば いい 」', en: '' }, prompt: { en: 'The keeper said 雨なら. What would 雨が降ったら change?' },
@@ -192592,7 +192667,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * 04_DUNGEONS.md D9; scenes in 31_w7_scenes.js). The theme: what was left unsaid (leaving out what is understood;
  * こ・そ・あ; の for "the one"; at Advanced 例の, 前者 and 後者). Every task has its four levels and an Advanced
  * stretch.
- *   hall.w7.story      the tale in four pictures, back in order (A38)
+ *   hall.w7.story      the tale's four written passages, back in order (A38)
  *   hall.w7.story_q    what the house had laid out, and who it gave to (optional)
  *   hall.w7.counter0/1 the sayings on the garden stones: the one that breaks the rule (A34)
  *   hall.w7.ask        asking your companion which keepsake the letter means (A12)
@@ -192620,13 +192695,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'へや に は あかい おぜん と くろい おわん が あって 、 おゆ が わいて いた', 'むすめ は なにも とらない で かえった 。 すると 、 あかい おわん が かわ を ながれて きた'];
   C.hallW7TaleF = FT;
   C.challenges['hall.w7.story'] = { title: T('{覚|おぼ}えて いる {家|いえ}', 'The House That Remembers'), tiers: {
-    F: [OR({ item: 'v:家', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:家', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'Lost in the mountains; a big house with nobody in it; the room laid out and the water on the boil; home with nothing, and a bowl down the river.' } })],
-    E: [OR({ item: 'v:椀', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:椀', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the girl lost, then the empty house, then what was laid out inside, then what came after her.' } })],
-    I: [OR({ item: 'g:omission', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:omission', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'The tale never says who laid out the bowls or who boiled the water: it leaves that out, and so does the house.' } })],
-    A: [OR({ item: 'g:omission', prompt: { en: 'Order the pictures; the turn is the one with すると in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:omission', prompt: { en: 'Order the passages; the turn is the one with すると in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'Everything is laid out and nobody is there; すると brings the turn: what she did not take came after her.' } })],
   },
   stretchA: [ch({ item: 'g:omission', ctx: { jp: P4 + ' 。', en: '' }, prompt: { en: 'The tale never says who sent the bowl down the river. Why might it leave that out?' },
@@ -193418,7 +193493,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * plan 04_DUNGEONS.md D9; scenes in 34_w8_scenes.js). The theme: whose account? (what was seen, heard, told or
  * guessed: ～そうだ for looks and for hearsay, ～らしい, ～ようだ and ～みたいだ, ～はずだ, ～かもしれない, ～でしょう;
  * at Advanced ～に違いない and ～とのことだ). Every task has its four levels and an Advanced stretch.
- *   hall.w8.story      the tale in four pictures, back in order (A38)
+ *   hall.w8.story      the tale's four written passages, back in order (A38)
  *   hall.w8.story_q    how each witness knew, and how sure they were (optional)
  *   hall.w8.counter0/1 the sayings on the inn's scrolls: the one that breaks the rule (A34)
  *   hall.w8.ask        asking your companion where Hisa's note says they went (A12)
@@ -193446,13 +193521,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'としより の きゃく は 「 きつね の せい らしい 」 と いった', 'みんな の はなし を あわせる と 、 ちいさい あしあと が みえて きた'];
   C.hallW8TaleF = FT;
   C.challenges['hall.w8.story'] = { title: T('{宿|やど} の {三人|さんにん} の {証人|しょうにん}', 'Three Witnesses at the Inn'), tiers: {
-    F: [OR({ item: 'v:宿', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:宿', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'The box gone; what two people saw and heard; what the old guest guessed; and what all of it together showed.' } })],
-    E: [OR({ item: 'v:足跡', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:足跡', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the loss, then the two who saw and heard, then the one who guessed, then the accounts put together.' } })],
-    I: [OR({ item: 'g:rashii', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:rashii', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'What was seen and heard comes before the rumour (らしい); only when the three are laid side by side does the answer show.' } })],
-    A: [OR({ item: 'g:ni_chigainai', prompt: { en: 'Order the pictures; the turn is the one where the accounts are put together.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:ni_chigainai', prompt: { en: 'Order the passages; the turn is the one where the accounts are put together.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'No single witness had it; 合わせると, putting them together, is the turn.' } })],
   },
   stretchA: [ch({ item: 'g:ni_chigainai', ctx: { jp: P3 + ' 。 ／ 「 {狐|きつね} の {仕業|しわざ} に {違|ちが}いない 」', en: '' }, prompt: { en: 'The old guest said らしい. What would に違いない change?' },
@@ -194277,7 +194352,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * 04_DUNGEONS.md D9; scenes in 37_w9_scenes.js). The theme: to whom are you speaking? (plain and polite speech, what
  * you call people and your own family, respectful and humble verbs; at Intermediate ～てくださる／～ていただく, at
  * Advanced ～させていただく). Every task has its four levels and an Advanced stretch.
- *   hall.w9.story      the tale in four pictures, back in order (A38)
+ *   hall.w9.story      the tale's four written passages, back in order (A38)
  *   hall.w9.story_q    who asked what of whom, and how (optional)
  *   hall.w9.counter0/1 the prayer boards at the shrine: the one that breaks the rule (A34)
  *   hall.w9.ask        asking your companion what the young woman asked of you (A12)
@@ -194305,13 +194380,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'むすめ は 「 みないで ください 」 と いって 、 ぬの を おった', 'へや を のぞく と 、 つる@鶴 が じぶん の はね で ぬの を おって いた'];
   C.hallW9TaleF = FT;
   C.challenges['hall.w9.story'] = { title: T('{鶴|つる} の {恩返|おんがえ}し', 'The Crane\'s Return'), tiers: {
-    F: [OR({ item: 'v:鶴', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'v:鶴', prompt: { en: 'Arrange the four written passages to retell the scroll\'s story.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'The crane saved; a visitor at night; the cloth and the one thing she asked; and what they saw when they looked.' } })],
-    E: [OR({ item: 'v:機', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'v:機', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'First the kindness, then the stranger at the door, then the weaving, then the promise broken.' } })],
-    I: [OR({ item: 'g:keigo_kenjo', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:keigo_kenjo', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'She asks to stay as a stranger asks, very humbly, before she is one of the family; the promise comes before it is broken.' } })],
-    A: [OR({ item: 'g:te_kudasaru', prompt: { en: 'Order the pictures; the turn is the promise broken.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+    A: [OR({ item: 'g:te_kudasaru', prompt: { en: 'Order the passages; the turn is the promise broken.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
       orderHint: { en: 'A kindness, a stranger\'s request (～ていただけませんか), a request kept, and then the one that was not.' } })],
   },
   stretchA: [ch({ item: 'g:te_kudasaru', ctx: { jp: '「 {一晩|ひとばん} {泊|と}めて ください 」 ／ 「 {一晩|ひとばん} {泊|と}めて いただけません か 」', en: '' }, prompt: { en: 'The young woman says the second. What does it do that the first does not?' },
@@ -195248,8 +195323,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * 04_DUNGEONS.md D9; scenes in 39a_w10_scenes.js). The theme: everything at once (finding the way, who did what to
  * whom, sequence, requests, reasons, conditions, what goes unsaid, whose account, to whom you speak), and the tale
  * told is the player's own journey. Every task has its four levels and an Advanced stretch.
- *   hall.w10.story      your journey in four pictures, back in order (A38)
- *   hall.w10.story_q    what the pictures say (optional)
+ *   hall.w10.story      your journey's four written passages, back in order (A38)
+ *   hall.w10.story_q    what the passages say (optional)
  *   hall.w10.counter0/1 the keepers' practice slates: the one that breaks its rule, one rule from each tale (A34)
  *   hall.w10.ask        asking your companion where the keepers' note says the hundredth wick is kept (A12)
  *   hall.w10.riddle     the riddle stone (a reprieve)
@@ -195276,14 +195351,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'しじま の しょこ で 、 ながい たび が おわった', 'いま 、 やかた で 、 きゅうじゅうきゅう の ひ が ついて いる'];
   C.hallW10TaleF = FT;
   C.challenges['hall.w10.story'] = { title: T('{百話目|ひゃくわめ} の {話|はなし}', 'The Hundredth Tale'), tiers: {
-    F: [OR({ item: 'g:v_ta', prompt: { en: 'Put the four pictures of your journey back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+    F: [OR({ item: 'g:v_ta', prompt: { en: 'Arrange the four written passages to retell your journey.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
       orderHint: { en: 'Setting out; companions and words called back; the end of the long road; and now.' } })],
-    E: [OR({ item: 'g:mae_ato', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+    E: [OR({ item: 'g:mae_ato', prompt: { en: 'Arrange the four passages in the tale\'s order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
       orderHint: { en: 'Reedwake first, then the road, then the Archive, then the Hall.' } })],
-    I: [OR({ item: 'g:relative_clause', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+    I: [OR({ item: 'g:relative_clause', prompt: { en: 'Order the passages so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
       orderHint: { en: 'そして今 ("and now") can only come last; the Archive is where the long road ended.' } })],
-    A: [OR({ item: 'g:relative_clause', prompt: { en: 'Order the pictures; the turn is the one that says the journey ended, but not the tale.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
-      orderHint: { en: '一つの終わり is "an ending", not "the end": the fourth picture goes on from it.' } })],
+    A: [OR({ item: 'g:relative_clause', prompt: { en: 'Order the passages; the turn is the one that says the journey ended, but not the tale.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+      orderHint: { en: '一つの終わり is "an ending", not "the end": the fourth passage goes on from it.' } })],
   },
   stretchA: [ch({ item: 'g:relative_clause', ctx: { jp: P3 + ' 。', en: '' }, prompt: { en: 'Why 一つの終わりを迎えた, and not simply 終わった?' },
     options: [e('It calls the Archive an ending, one of several, and leaves room for what came after: the Hall, and this tale.', 1), e('It is only more polite.', 0, 'It changes the meaning: "an ending", not "the end".'), e('It means the journey failed.', 0, 'Nothing in it says the journey failed.')] })] };
@@ -195295,7 +195370,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     I: [ch({ item: 'g:relative_clause', ctx: { jp: P4 + ' 。', en: '' }, prompt: { en: 'How many lights burn in the Hall now?' },
       options: [e('Ninety-nine: one is still dark.', 1), e('A hundred.', 0, '九十九: ninety-nine.'), e('Nine.', 0, 'Nine wings; ninety-nine lights.')] })],
     A: [ch({ item: 'g:relative_clause', ctx: { jp: P1 + ' 。 ' + P2 + ' 。 ' + P3 + ' 。 ' + P4 + ' 。', en: '' }, prompt: { en: 'Whose tale is the hundredth?' },
-      options: [e('The traveller\'s: yours. The other ninety-nine were the keepers\' tales; the last is the one you lived.', 1), e('Keeper Tsuru\'s.', 0, 'The pictures follow the traveller.'), e('Nobody\'s: it is never told.', 0, 'It is about to be told.')] })],
+      options: [e('The traveller\'s: yours. The other ninety-nine were the keepers\' tales; the last is the one you lived.', 1), e('Keeper Tsuru\'s.', 0, 'The passages follow the traveller.'), e('Nobody\'s: it is never told.', 0, 'It is about to be told.')] })],
   } };
 
   // ---- the keepers' practice slates: the one that breaks its rule (A34) ------------------------------------------------------
@@ -207903,8 +207978,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const px = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
   const def = (id, o, draw) => (P[id] = Object.assign({ id, w: 1, h: 1, block: true }, o, { draw }));
   const still = () => RB.game && RB.game.reducedMotion && RB.game.reducedMotion();
-  // a plaque reads once its bridge's name has been read back (flag mb_pl_<bridge>)
-  const named = (o) => { const s = RB.game && RB.game.s; return !!(s && o && o.bridge && s.flags && s.flags['mb_pl_' + o.bridge]); };
+  // a plaque reads once its bridge's name has been read back (flag mb_pl_<bridge>), and, for one that is cut again
+  // later (o.cut: Chapter 4's census, cut once Sen has the names; RBN-QA-163), once that holds too
+  const named = (o) => {
+    const s = RB.game && RB.game.s;
+    return !!(s && o && o.bridge && s.flags && s.flags['mb_pl_' + o.bridge] && (!o.cut || RB.state.test(s, o.cut)));
+  };
 
   // ---- flat fallbacks (16 px a tile) -------------------------------------------------------------------------------
   def('mb_plaque', {}, (c, x, y, p, t, o) => {
@@ -210610,10 +210689,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 18, y - 12, 12, 10, sign);
   });
 
+  // the ink in the water at the Ink Bridge (墨橋, Blockprint Row; RBN-QA-163 C): the ink-makers wash their brushes under it,
+  // so the canal is clouded black beside it. Placed on the first water row south of the bridge (3 tiles wide); it paints
+  // that row and the two after it (downstream), never the bridge's own rows. Always there (it is the
+  // washing's, not the census's), never in the way, nothing to look at.
+  def('mp_inkwater', { w: 3, block: false }, (c, x, y) => {
+    px(c, x + 2, y, 44, 5, 'rgba(16,18,28,0.62)'); px(c, x + 6, y + 5, 30, 6, 'rgba(16,18,28,0.45)');
+    px(c, x + 12, y + 18, 20, 5, 'rgba(16,18,28,0.32)'); px(c, x + 22, y + 36, 12, 3, 'rgba(16,18,28,0.18)');
+  });
+
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
-  const { R, ell, poly, line, cyl, streaks, ramp } = K;
+  const { R, ell, poly, line, cyl, streaks, ramp, mix } = K;
   const IR = K.FIX.iron, PP = K.FIX.paper, INK = K.FIX.ink, GL = K.FIX.glow;
   const MADDER = ramp('#8e3a36', 0.5, 0.42), INDIGO = ramp('#34406a', 0.5, 0.42);
   void cyl; void INK;
@@ -210756,6 +210844,33 @@ var RB = (globalThis.RB = globalThis.RB || {});
       else if (v === 4) { R(g, 34, -20, 28, 22, MADDER[2]); R(g, 34, -20, 28, 2, MADDER[4]); ell(g, 48, -20, 6, 2, '#1a1414'); }
       else if (v === 5) { R(g, 34, -12, 4, 14, w5[2]); R(g, 58, -12, 4, 14, w5[2]); ell(g, 48, -18, 14, 12, w5[2]); ell(g, 48, -18, 11, 10, PP[3]); ell(g, 48, -18, 3, 3, MADDER[3]); }
     },
+  });
+  // The ink in the water at the Ink Bridge, baked into the ground under everyone (it lies on the water): clouds of
+  // ink in three flat tones of the canal's own blue taken toward black, thickest against the bridge's south face and
+  // trailing downstream (south) in two curling plumes that thin out, with tendrils drawn off them by the current. Only
+  // the water south of the bridge is painted (the bridge's rows and the row north of it, under its railing, are not);
+  // the banks' edges (the outer 4 px of the canal) are left to the water tile. The water's own glints still play over it.
+  art('mp_inkwater', {
+    box: [0, 0, 96, 32],
+    bake: {
+      box: [0, 0, 96, 96],
+      when: () => true,
+      draw(g, M) {
+        const W = M.water, INKD = '#0d0f15', INK = mix(W[0], '#0d0f15', 0.82), INKL = mix(W[0], '#12141c', 0.6);
+        // the south face: a pool of ink where it comes out from under the bridge, thinning into clouds
+        R(g, 4, 0, 88, 7, INKD); R(g, 5, 7, 86, 5, INK);
+        ell(g, 24, 13, 19, 7, INK); ell(g, 64, 14, 21, 8, INK); ell(g, 44, 9, 14, 5, INKD); ell(g, 22, 8, 10, 3, INKD); ell(g, 70, 9, 12, 4, INKD);
+        // two plumes trailing downstream, curling and thinning
+        ell(g, 22, 26, 12, 7, INKL); ell(g, 30, 38, 10, 6, INKL); ell(g, 26, 50, 7, 4, INKL); ell(g, 20, 60, 4, 3, INKL);
+        ell(g, 68, 28, 13, 7, INKL); ell(g, 60, 42, 9, 6, INKL); ell(g, 66, 56, 7, 4, INKL); ell(g, 72, 70, 5, 3, INKL); ell(g, 68, 82, 3, 2, INKL);
+        ell(g, 24, 24, 7, 4, INK); ell(g, 66, 26, 8, 4, INK);
+        // tendrils: ink drawn out by the current, curling off the plumes
+        line(g, 34, 30, 42, 40, INKL, 2); line(g, 42, 40, 40, 52, INKL, 1);
+        line(g, 56, 34, 50, 46, INKL, 2); line(g, 50, 46, 54, 60, INKL, 1);
+        line(g, 12, 30, 10, 42, INKL, 1); line(g, 80, 34, 84, 46, INKL, 1);
+      },
+    },
+    draw() {},
   });
 })();
 
@@ -210970,7 +211085,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   const T = (en, jp) => ({ en, jp });
   const CITY = { region: 'manybridge', music: 'manybridge', edition: 2 };
-  const plaque = (id, x, y) => ({ p: 'mb_plaque', x, y, scene: 'mp.plaque_' + id, o: { bridge: id } });
+  // (these three are cut again once Sen has the census's names: until then a recorded name leaves the board blank, as
+  // the census says; RBN-QA-163, Agnes 6375174827)
+  const plaque = (id, x, y) => ({ p: 'mb_plaque', x, y, scene: 'mp.plaque_' + id, o: { bridge: id, cut: 'quest.mp_census=done' } });
 
   // ---- the way up from the Exchange district -----------------------------------------------------------------------
   C.maps['mb.exchange'].exits.push({ x: 34, y: 0, w: 2, h: 1, to: 'mp.blockprint', tx: 22, ty: 30, dir: 'up', if: 'mb1_done' });
@@ -210999,6 +211116,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     props: [
       plaque('hangi', 17, 8), plaque('sumi', 21, 21),
+      // the ink the brush-washing leaves in the water at the Ink Bridge (RBN-QA-163 C; Agnes 6375174827)
+      { p: 'mp_inkwater', x: 18, y: 24 },
       // the drying racks: printed sheets hung on lines (the racks Sōbē's blank sheets come off)
       { p: 'laundry', x: 3, y: 19 }, { p: 'laundry', x: 8, y: 19 }, { p: 'laundry', x: 12, y: 19 }, { p: 'laundry', x: 3, y: 22 }, { p: 'laundry', x: 8, y: 22 },
       { p: 'noticeboard', x: 11, y: 13, scene: 'mp.pressboard' },
@@ -212514,11 +212633,12 @@ mb_sen: お{礼|れい} に 、 {刷|す}り{場|ば} で {刷|す}った {町|�
 !journal {版木|はんぎ} と {芝居|しばい} の {通|とお}り の {橋|はし} の {名前|なまえ} を 、 セン に {届|とど}けた 。 || Took the names of Blockprint and Playhouse Rows' bridges to Sen.
 
 @scene mp.plaque_hangi
-?(mb_pl_hangi) narr: {橋|はし} の {札|ふだ} に 、 「{版木橋|はんぎばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Woodblock Bridge."
+?(mb_pl_hangi&quest.mp_census=done) narr: {橋|はし} の {札|ふだ} に 、 「{版木橋|はんぎばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Woodblock Bridge."
+?(mb_pl_hangi&!quest.mp_census=done) narr: {名前|なまえ} は {帳面|ちょうめん} に ある 。 セン に {伝|つた}えれば 、 {札|ふだ} は {彫|ほ}り{直|なお}される 。 || The name is in your notebook. The plaque will be cut again once Sen has it.
 ?(mb_pl_hangi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {近|ちか}く で 、 サンペイ が {版木|はんぎ} を {抱|かか}えて {渡|わた}って いく 。 || Nearby, Sanpei goes over the bridge with an armful of woodblocks.
+narr: サンペイ が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。 || Sanpei once told you about this bridge.
 !challenge mb.census_hangi
 !set mb_pl_hangi
 !var mp_census + 1
@@ -212527,11 +212647,12 @@ narr: {名前|なまえ} を {帳面|ちょうめん} に {書|か}き{留|と}�
 ?(var.mp_census>=3) !quest mp_census 1
 
 @scene mp.plaque_sumi
-?(mb_pl_sumi) narr: {橋|はし} の {札|ふだ} に 、 「{墨橋|すみばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Ink Bridge."
+?(mb_pl_sumi&quest.mp_census=done) narr: {橋|はし} の {札|ふだ} に 、 「{墨橋|すみばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Ink Bridge."
+?(mb_pl_sumi&!quest.mp_census=done) narr: {名前|なまえ} は {帳面|ちょうめん} に ある 。 セン に {伝|つた}えれば 、 {札|ふだ} は {彫|ほ}り{直|なお}される 。 || The name is in your notebook. The plaque will be cut again once Sen has it.
 ?(mb_pl_sumi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {橋|はし} の {下|した} の {水|みず} が 、 {黒|くろ}く {濁|にご}って いる 。 {飛脚|ひきゃく} の カケル が {走|はし}って {来|き}て 、 {何|なに} か {言|い}った 。 || The water under the bridge is cloudy black. Kakeru the courier runs up and says something.
+narr: {橋|はし} の {下|した} の {水|みず} が 、 {黒|くろ}く {濁|にご}って いる 。 {飛脚|ひきゃく} の カケル が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。 || The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.
 !challenge mb.census_sumi
 !set mb_pl_sumi
 !var mp_census + 1
@@ -212540,11 +212661,12 @@ narr: {名前|なまえ} を {帳面|ちょうめん} に {書|か}き{留|と}�
 ?(var.mp_census>=3) !quest mp_census 1
 
 @scene mp.plaque_maku
-?(mb_pl_maku) narr: {橋|はし} の {札|ふだ} に 、 「{幕橋|まくばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Curtain Bridge."
+?(mb_pl_maku&quest.mp_census=done) narr: {橋|はし} の {札|ふだ} に 、 「{幕橋|まくばし}」 と {彫|ほ}って ある 。 || The plaque reads: "Curtain Bridge."
+?(mb_pl_maku&!quest.mp_census=done) narr: {名前|なまえ} は {帳面|ちょうめん} に ある 。 セン に {伝|つた}えれば 、 {札|ふだ} は {彫|ほ}り{直|なお}される 。 || The name is in your notebook. The plaque will be cut again once Sen has it.
 ?(mb_pl_maku) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {欄干|らんかん} に 、 {大|おお}きな {布|ぬの} を {干|ほ}した {跡|あと} が ある 。 {太鼓|たいこ} の ハヤシ が 、 {岸|きし} から {声|こえ} を かけて きた 。 || The railing has the marks of a great cloth hung to dry. Hayashi the drummer calls out from the bank.
+narr: {欄干|らんかん} に 、 {大|おお}きな {布|ぬの} を {干|ほ}した {跡|あと} が ある 。 {太鼓|たいこ} の ハヤシ が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。 || The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge.
 !challenge mb.census_maku
 !set mb_pl_maku
 !var mp_census + 1
@@ -216141,6 +216263,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   if (RB.festival) RB.festival.define('yoyo', {
     title: T('Water-balloon fishing', 'ヨーヨー{釣|つ}り'), seconds: 60, better: 'more', streaks: true, ui: 'yoyo',
+    helpPause: { button: 'Hint', stays: 'the clue stays shown' },
     about: T('Balloons bob in the tub, each with a word on it. Hook the one you are asked for: read the labels.', '{言葉|ことば} の ヨーヨー を {釣|つ}る 。'),
   });
   if (RB.pastimes) RB.pastimes.define('festival', {
@@ -216151,7 +216274,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     blurb: T('The stall games of the festival, kept after it. Practice is untimed and keeps nothing; a timed round keeps only your own best. Just for fun.', '{屋台|やたい} の {遊|あそ}び 。'),
     howto: [
       T('Choose Practice (untimed) or Timed each time you play.', '{練習|れんしゅう} か 、 {時間|じかん} を {計|はか}る か 。'),
-      T('In a timed round the clock stops while a hint is open.', 'ヒント の {間|あいだ} 、 {時計|とけい} は {止|と}まる 。'),
+      T('In a timed round of water-balloon fishing or ring toss, Hint or "What does it say?" stops the clock for up to 2.5 seconds, then it runs again. The clue can stay on screen after that.', '{時間|じかん} を {計|はか}る ヨーヨー{釣|つ}り と {輪投|わな}げ で は 、 ヒント か 「What does it say?」 を {押|お}す と 、 {時計|とけい} が {少|すこ}し の {間|あいだ} だけ {止|と}まり 、 また {動|うご}きだす 。 ヒント は その あと も {出|で}た まま の こと が ある 。'),
     ],
     records: (s) => (RB.festival ? RB.festival.list().map((d) => ({ d, p: RB.festival.peek(s, d.id) })).filter((x) => x.p.timed).map((x) => ({ en: x.d.title.en + ', best', value: String(x.p.best) })) : []),
   });
@@ -216267,6 +216390,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     });
     RB.festival.define('wanage', {
       title: T('Ring toss', '{輪投|わな}げ'), seconds: 60, better: 'more', streaks: true, ui: 'wanage',
+      helpPause: { button: '"What does it say?"', stays: 'its English stays shown' },
       about: T('The stall-keeper describes a prize. Throw your ring at the one described.', '{説明|せつめい} を {聞|き}いて 、 {輪|わ} を {投|な}げる 。'),
     });
     RB.festival.define('kuji', {
