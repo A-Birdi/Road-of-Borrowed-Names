@@ -9,9 +9,10 @@
 //  3. taken away while you walk: nothing, and no second walk;
 //  4. a new tap, a direction key, a map change or a new journey during the second walk: it is dropped (no encounter);
 //     a scene begun on its own during the first walk, during the second, or as the last step is under way, and a battle
-//     begun on its own (fled): the walk ends where it was, and its encounter never starts, through them or after them
-//     (Agnes 6384084366, Local CL-300); another creature put in the place of the one tapped, or the one tapped moved to
-//     where no way reaches beside it: no second walk, nothing;
+//     begun on its own (fled): the walk ends where it was, and its encounter never starts, through them or for 1.5 s
+//     after they have ended, nothing still running (Agnes 6384084366, 6385502985; Local CL-300); the Ledger opened while
+//     you walk only pauses the walk, which goes on once it is closed; another creature put in the place of the one
+//     tapped, or the one tapped moved to where no way reaches beside it: no second walk, nothing;
 //  5. a person (one of the procession, waiting on the grass), moved once: followed, and their scene plays; moved again:
 //     nothing;
 //  6. a prop moved while you walk (a fixture; props never move): no second walk;
@@ -86,18 +87,36 @@ const run = (tap, moves, through) => p.evaluate(async ([tap, moves, process_env_
           if (!RB.world.blocked(x, y, { ignorePlayer: true })) W.map.props.push({ p: 'crate', x, y, if: 'hall_w2_f2_seen', __fixture: true });
         }
       }
-      else if (m.do === 'key') { window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', code: 'ArrowDown', bubbles: true })); setTimeout(() => window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowDown', code: 'ArrowDown', bubbles: true })), 120); }
+      else if (m.do === 'key') {
+        // (held until the walk has been dropped, 1.5 s at most: the game reads a direction only while it is held, between
+        // steps, so a short press can fall inside one step and never be seen)
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', code: 'ArrowDown', bubbles: true }));
+        const k0 = performance.now();
+        const up = () => { if ((W.path || W.pathTarget) && performance.now() - k0 < 1500) return setTimeout(up, 16); window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowDown', code: 'ArrowDown', bubbles: true })); };
+        setTimeout(up, 16);
+      }
+      else if (m.do === 'menu') {
+        // (the Ledger opened while you walk, and closed a second later: where you were, and whether the walk is still
+        // queued, as it opens and just before it closes)
+        RB.ui.menu.open();
+        window.__menu = { at0: [P.x, P.y], path0: !!W.path, mode: RB.game.mode() };
+        setTimeout(() => { Object.assign(window.__menu, { at1: [P.x, P.y], path1: !!W.path, open1: RB.ui.menu.isOpen() }); RB.ui.menu.close(); }, 1000);
+      }
     }
     if (through) {
       // play a scene through and flee a battle; afterwards wait on, to see whether the tap's walk or its interaction
-      // comes back
+      // comes back. It ends `returned` only once nothing is running (no scene, dialogue or battle) and 1500 ms have
+      // been watched since; otherwise `encounter`, or `timeout` if the scene or battle never ended
       if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true);
+      // (Step back, then its confirmation: "Step back from this encounter?" › Step back)
       const fl = document.querySelector('.cb-dock [data-flee]');
       if (fl && RB.game.inBattle()) fl.click();
+      const sb = [...document.querySelectorAll('.csheet button')].filter((x) => /^\s*Step back\s*$/.test(x.textContent)).pop();
+      if (sb && RB.game.inBattle()) sb.click();
       const busy = RB.script.isRunning() || RB.ui.dialogue.isOpen() || RB.game.inBattle();
       if (busy) window.__busyUntil = performance.now();
-      if (window.__enc.length) break;
-      if (window.__busyUntil && !busy && !W.path && !P.mv && performance.now() - window.__busyUntil > 1500) break;
+      if (window.__enc.length) { window.__outcome = 'encounter'; break; }
+      if (window.__busyUntil && !busy && !W.path && !P.mv && performance.now() - window.__busyUntil > 1500) { window.__outcome = 'returned'; window.__watched = Math.round(performance.now() - window.__busyUntil); break; }
       await new Promise((r) => setTimeout(r, 40));
       continue;
     }
@@ -105,12 +124,15 @@ const run = (tap, moves, through) => p.evaluate(async ([tap, moves, process_env_
     if (!W.path && !P.mv && performance.now() - t0 > 600) break;
     await new Promise((r) => setTimeout(r, 16));
   }
+  const outcome = through ? window.__outcome || 'timeout' : null, watched = through ? window.__watched || 0 : null;
+  // (what is still running at the end of the watch, before anything below closes it)
+  const active = through ? [RB.ui.dialogue.isOpen() && 'dialogue', RB.script.isRunning() && 'script', RB.game.inBattle() && 'battle'].filter(Boolean) : null;
   await new Promise((r) => setTimeout(r, 400));
   const scene = RB.ui.dialogue.isOpen() ? (RB.ui.dialogue.shown() || {}).who || 'open' : RB.script.isRunning() ? 'running' : null;
   for (let i = 0; i < 80 && (RB.ui.dialogue.isOpen() || RB.script.isRunning()); i++) { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); await new Promise((r) => setTimeout(r, 40)); }
   const tr = window.__trace.filter((t, i, a) => !i || t.join() !== a[i - 1].join());
-  const r = { enc: window.__enc.slice(), scene, map: W.map.id, at: [W.player.x, W.player.y], dir: P.dir, walks, retries, moved: done.filter(Boolean).length, path: !!W.path, target: !!W.pathTarget, sceneAt: window.__sceneAt || null, busy: !!window.__busyUntil, trace: process_env_dbg ? tr : undefined };
-  window.__sceneAt = null; window.__busyUntil = 0;
+  const r = { enc: window.__enc.slice(), scene, map: W.map.id, at: [W.player.x, W.player.y], dir: P.dir, walks, retries, moved: done.filter(Boolean).length, path: !!W.path, target: !!W.pathTarget, sceneAt: window.__sceneAt || null, busy: !!window.__busyUntil, outcome, watched, active, menu: window.__menu || null, foe: W.foes[0] ? [W.foes[0].x, W.foes[0].y] : null, trace: process_env_dbg ? tr : undefined };
+  window.__sceneAt = null; window.__busyUntil = 0; window.__outcome = null; window.__watched = 0; window.__menu = null;
   return r;
 }, [tap, moves || [], !!process.env.DBG, !!through]);
 
@@ -163,18 +185,35 @@ console.log('     (the foxfire at ' + J(F.at) + ', moved to ' + J(A1) + ' then '
 {
   // (where you stood when it began, give or take the step then under way)
   const stopped = (r) => r.sceneAt && Math.abs(r.at[0] - r.sceneAt[0]) + Math.abs(r.at[1] - r.sceneAt[1]) <= 1;
+  // (played through to its end: nothing still running, and at least 1500 ms watched after it ended; Agnes 6385502985)
+  const returned = (r) => r.busy && r.outcome === 'returned' && r.watched >= 1500 && !r.active.length;
   await begin(21, 16);
   const s1 = await run([fx, fy], [{ when: 'walking', who: 'foe', do: 'scene', scene: 'hall.w2.t4_card' }], true);
-  ok(s1.busy && !s1.enc.length && !s1.path && !s1.target && stopped(s1), 'a scene begun on its own during the walk: played through, then nothing: no encounter, and you stay where it found you (' + J(s1) + ')');
+  ok(returned(s1) && !s1.enc.length && !s1.path && !s1.target && stopped(s1), 'a scene begun on its own during the walk: played through to its end, then nothing for 1.5 s: no encounter, and you stay where it found you (' + J(s1) + ')');
   await begin(21, 16);
   const s2 = await run([fx, fy], [{ when: 'walking', who: 'foe', do: 'move', to: A1 }, { when: 'retry', who: 'foe', do: 'scene', scene: 'hall.w2.t4_card' }], true);
-  ok(s2.busy && s2.retries === 1 && !s2.enc.length && !s2.path && !s2.target && stopped(s2), 'and during the second walk: the same (' + J(s2) + ')');
+  ok(returned(s2) && s2.retries === 1 && !s2.enc.length && !s2.path && !s2.target && stopped(s2), 'and during the second walk: the same (' + J(s2) + ')');
   await begin(21, 16);
   const s3 = await run([fx, fy], [{ when: 'last', who: 'foe', do: 'scene', scene: 'hall.w2.t4_card' }], true);
-  ok(s3.busy && !s3.enc.length && !s3.path && !s3.target, 'a scene begun as the walk\'s last step is under way: the step ends, and the encounter never starts, through the scene or after it (' + J(s3) + ')');
+  ok(returned(s3) && !s3.enc.length && !s3.path && !s3.target, 'a scene begun as the walk\'s last step is under way: the step ends, and the encounter never starts, through the scene or for 1.5 s after it (' + J(s3) + ')');
   await begin(21, 16);
   const s4 = await run([fx, fy], [{ when: 'walking', who: 'foe', do: 'battle', enemy: F.enemy }], true);
-  ok(s4.busy && !s4.enc.length && !s4.path && !s4.target && stopped(s4), 'a battle begun on its own during the walk (fled): then nothing, no encounter, no walk on (' + J(s4) + ')');
+  ok(returned(s4) && !s4.enc.length && !s4.path && !s4.target && stopped(s4), 'a battle begun on its own during the walk (fled): back in the world, then nothing for 1.5 s: no encounter, no walk on (' + J(s4) + ')');
+}
+// 4b'. the Ledger opened while you walk only pauses it, as before (the guard drops a walk for a scene or a battle, not
+// for every mode but the world's): open, you go no further than the step then under way and the walk stays queued;
+// closed, the walk goes on to the foxfire and its encounter starts from beside it, as the same tap with no Ledger does
+// (Agnes 6385502985). (The held foxfire may still finish a step it had begun, so either may take its one follow-up)
+{
+  const beside = (r) => r.foe && Math.abs(r.at[0] - r.foe[0]) + Math.abs(r.at[1] - r.foe[1]) === 1;
+  await begin(21, 16);
+  const plain = await run([fx, fy], []);
+  await begin(21, 16);
+  const m = await run([fx, fy], [{ when: 'walking', who: 'foe', do: 'menu' }]);
+  const M = m.menu || {};
+  const held = M.at0 && M.at1 && Math.abs(M.at1[0] - M.at0[0]) + Math.abs(M.at1[1] - M.at0[1]) <= 1;
+  const asPlain = plain.enc.length === 1 && beside(plain) && plain.retries <= 1 && m.enc.length === 1 && beside(m) && m.retries <= 1;
+  ok(M.mode === 'menu' && M.path0 && M.path1 && M.open1 && held && asPlain, 'the Ledger opened while you walk: the walk paused, still queued (a second later at most the step then under way); once it is closed the walk goes on and the encounter starts from beside the foxfire, as with no Ledger (' + J({ plain: { at: plain.at, foe: plain.foe, retries: plain.retries, enc: plain.enc }, menu: m }) + ')');
 }
 // 4c. someone else in the place of the one tapped; one moved to where no way reaches beside them
 {
