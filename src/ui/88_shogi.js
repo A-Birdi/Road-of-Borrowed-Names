@@ -266,8 +266,11 @@ RB.ui.shogi = (function () {
         V.g = SG().play(g, ms.find((m) => !m.promote) || ms[0]);
         V.sel = null;
         const goals = [L.goal].concat(L.alt || []);
+        const nm = SG().NAMES[L.piece].en.toLowerCase();
         if (pc.t === L.piece && goals.some((x) => x.to[0] === r && x.to[1] === c)) { V.solved = true; rec().lessons[L.id] = Date.now(); }
-        else V.said = 'A fine move, but not the one asked for: start again and try the ' + SG().NAMES[L.piece].en.toLowerCase() + '.';
+        // the lesson's own piece, somewhere it can go but not a square the lesson asks for (RBN-QA-178)
+        else if (pc.t === L.piece) V.said = 'The ' + nm + ' can go there, but that isn\'t the square asked for: start again.';
+        else V.said = 'A fine move, but not the one asked for: start again and try the ' + nm + '.';
         render(); return;
       }
     }

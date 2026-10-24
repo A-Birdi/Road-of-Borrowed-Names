@@ -1049,52 +1049,52 @@
   "jp": "{初|はじ}めて {見|み}た {魚|さかな} は ノート に {描|か}かれる 。",
   "en": "A fish seen for the first time is drawn in your notes, with where and with whom."
  },
- "pastime:shogi#1ytgjt4": {
+ "pastime:shogi#1j11oen": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
-  "jp": "{歩|ふ} は {前|まえ} に {一|ひと}つ {進|すす}む 。 {取|と}る の も {前|まえ} 。",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (段 for a rank, 玉 for your king) and textbook grammar (～てみよう for the task, ～てもいい for the second square) (RBN-QA-178; Agnes 6382141488, 6382201500)",
+  "jp": "{歩|ふ} は {前|まえ} に {一|ひと}つ {進|すす}む 。 {取|と}る の も {前|まえ} 。 {前|まえ} の {歩|ふ} を {取|と}って みよう 。",
   "en": "The pawn steps straight forward, one square, and takes the same way. Take the pawn in front of it."
  },
- "pastime:shogi#gmvsi": {
+ "pastime:shogi#1ec3bwo": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
-  "jp": "{香車|きょうしゃ} は {前|まえ} に どこ まで も {進|すす}める 。 {後|うし}ろ に は {戻|もど}れない 。",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (段 for a rank, 玉 for your king) and textbook grammar (～てみよう for the task, ～てもいい for the second square) (RBN-QA-178; Agnes 6382141488, 6382201500)",
+  "jp": "{香車|きょうしゃ} は {前|まえ} に どこ まで も {進|すす}める 。 {後|うし}ろ に は {戻|もど}れない 。 {上|うえ} に いる {歩|ふ} を {取|と}って みよう 。",
   "en": "The lance runs straight forward as far as it likes, but never back. Take the pawn up its file."
  },
- "pastime:shogi#7vcfss": {
+ "pastime:shogi#rc113o": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
-  "jp": "{桂馬|けいま} は {二|ふた}つ {前|まえ} 、 {一|ひと}つ {横|よこ} に {跳|と}ぶ 。",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (段 for a rank, 玉 for your king) and textbook grammar (～てみよう for the task, ～てもいい for the second square) (RBN-QA-178; Agnes 6382141488, 6382201500)",
+  "jp": "{桂馬|けいま} は {二|ふた}つ {前|まえ} 、 {一|ひと}つ {横|よこ} に {跳|と}ぶ 。 {歩|ふ} の ところ へ {跳|と}んで 、 {取|と}って みよう 。",
   "en": "The knight jumps: two forward and one to the side, over anything in the way. Jump onto the pawn."
  },
- "pastime:shogi#2do3q4": {
+ "pastime:shogi#pz2mja": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
-  "jp": "{銀|ぎん} は {前|まえ} と {斜|なな}め に {一|ひと}つ {進|すす}む 。",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (段 for a rank, 玉 for your king) and textbook grammar (～てみよう for the task, ～てもいい for the second square) (RBN-QA-178; Agnes 6382141488, 6382201500)",
+  "jp": "{銀|ぎん} は {前|まえ} と {斜|なな}め に {一|ひと}つ {進|すす}む 。 {斜|なな}め {前|まえ} の {歩|ふ} を {取|と}って みよう 。",
   "en": "The silver steps one square forward or diagonally, five ways in all, but never straight to the side or straight back. Take the pawn diagonally ahead."
  },
- "pastime:shogi#16ue5o2": {
+ "pastime:shogi#ov43z9": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
-  "jp": "{金|きん} は {斜|なな}め {後|うし}ろ {以外|いがい} に {一|ひと}つ {動|うご}く 。",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (段 for a rank, 玉 for your king) and textbook grammar (～てみよう for the task, ～てもいい for the second square) (RBN-QA-178; Agnes 6382141488, 6382201500)",
+  "jp": "{金|きん} は {斜|なな}め {後|うし}ろ {以外|いがい} に {一|ひと}つ {動|うご}く 。 {横|よこ} の {歩|ふ} を {取|と}って みよう 。",
   "en": "The gold steps one square any way but diagonally back. Take the pawn beside it."
  },
- "pastime:shogi#1l5kpq1": {
+ "pastime:shogi#17t2ze5": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
-  "jp": "{角|かく} は {斜|なな}め に どこ まで も {進|すす}む 。",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (段 for a rank, 玉 for your king) and textbook grammar (～てみよう for the task, ～てもいい for the second square) (RBN-QA-178; Agnes 6382141488, 6382201500)",
+  "jp": "{角|かく} は {斜|なな}め に どこ まで も {進|すす}む 。 {遠|とお}く の {隅|すみ} の {歩|ふ} を {取|と}って みよう 。",
   "en": "The bishop slides diagonally as far as the way is clear. Take the pawn in the far corner."
  },
- "pastime:shogi#1cod03j": {
+ "pastime:shogi#1t3xjna": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
-  "jp": "{飛車|ひしゃ} は {縦|たて} と {横|よこ} に どこ まで も {進|すす}む 。",
-  "en": "The rook slides straight along a rank or a file as far as the way is clear. Move it up its file."
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (段 for a rank, 玉 for your king) and textbook grammar (～てみよう for the task, ～てもいい for the second square) (RBN-QA-178; Agnes 6382141488, 6382201500)",
+  "jp": "{飛車|ひしゃ} は {縦|たて} と {横|よこ} に どこ まで も {進|すす}む 。 {歩|ふ} と {同|おな}じ {段|だん} まで {上|うえ} に {進|すす}めて みよう 。 {一番|いちばん} {下|した} の {段|だん} を {横|よこ} に {進|すす}めて 、 {自分|じぶん} の {玉|ぎょく} の {隣|となり} に {置|お}いて も いい 。",
+  "en": "The rook slides straight along a rank or a file as far as the way is clear. Move it up its file to the pawn's rank, where it attacks the pawn, or along the bottom rank to beside your king."
  },
- "pastime:shogi#10fhg53": {
+ "pastime:shogi#1aw6vmn": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
-  "jp": "{玉|ぎょく} は どの {方向|ほうこう} に も {一|ひと}つ {進|すす}む 。",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (段 for a rank, 玉 for your king) and textbook grammar (～てみよう for the task, ～てもいい for the second square) (RBN-QA-178; Agnes 6382141488, 6382201500)",
+  "jp": "{玉|ぎょく} は どの {方向|ほうこう} に も {一|ひと}つ {進|すす}む 。 {斜|なな}め {前|まえ} の {歩|ふ} を {取|と}って みよう 。",
   "en": "The king steps one square any way. Keep it safe: if it is caught, the game is lost. Take the pawn next to it."
  },
  "pastime:shogi#1ena15p": {
