@@ -261,22 +261,36 @@ RB.sail = (function () {
   // the crew takes over: what situations are left still happen (story ones are never skipped), then arrival.
   // From port the crossing is seen at sea, as when you sail her yourself: the boat on the sea map at the port's water
   // (the same one transition as putting out yourself); a crew taking over at sea stays where she is. She comes
-  // alongside at the destination's water (placed there in the dark of a fade, on the same map), then docks (RBN-QA-174)
+  // alongside at the destination's water (placed there in the dark of a fade, on the same map), then docks (RBN-QA-174).
+  // When she cannot be placed there (the water taken, or no staging), the arrival is told over the dark and she is seen
+  // next at the dock. A campaign change (a load, even one cancelled; a new journey; the title) ends the crossing where it
+  // is, as it ends the scene it runs in: nothing more is run, placed or arrived for the journey left (a cancelled load
+  // leaves this voyage open where she is, to be sailed on).
+  let campTok = 0;
+  if (RB.bus) RB.bus.on('campaign:changing', () => { campTok++; });
   async function crew(s) {
     const q = of(s), v = q.voyage;
     if (!v) return;
+    const tok = campTok, live = () => tok === campTok && S() === s && q.voyage === v;
     v.crewFrom = v.steps;
     const W = RB.world.W, A = port(v.from), B = port(v.to);
     if (!onSea(W.map) && A && A.sea) await RB.game.transition(C().seaMap || 'sea.coast', A.sea.x, A.sea.y, A.sea.dir || 'down', { inScript: true });
     let x;
-    while ((x = due(s, true))) await runSituation(s, x);
+    while (live() && (x = due(s, true))) await runSituation(s, x);
+    if (!live()) return;
+    let dark = false;
     if (onSea(W.map) && B && B.sea && RB.staging) {
       await RB.ui.fade(true, 220);
-      await RB.staging.walkTo('pc', B.sea.x, B.sea.y, B.sea.dir || null, { now: true });
-      await RB.ui.fade(false, 220);
+      if (!live()) return;
+      const placed = await RB.staging.walkTo('pc', B.sea.x, B.sea.y, B.sea.dir || null, { now: true });
+      if (!live()) return;
+      if (placed) await RB.ui.fade(false, 220);
+      else dark = true;
     }
     if (RB.content.scenes['sea.crew_arrive']) await RB.script.run('sea.crew_arrive');
+    if (!live()) return;
     await arrive(s, v.to);
+    if (dark && S() === s && tok === campTok) await RB.ui.fade(false, 220);
   }
   // put out: the boat on the sea map at the port's water, or the crew's crossing
   async function putOut(s, from, to, mode) {
