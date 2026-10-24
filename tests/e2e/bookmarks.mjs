@@ -566,15 +566,19 @@ for (const [w, h] of [[390, 844], [320, 640]]) {
     await startScene(p, { text: 2 });
     const g = await p.evaluate((LINES) => {
       const q = (s) => { const r = document.querySelector(s).getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height, x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
-      return { tab: q('.dlg-keep'), next: q('.dlg .b-next'), txt: q('.dlg .txt'), ctrl: q('.dlg .ctrl'), who: document.querySelector('.dlg-tab').offsetParent ? q('.dlg-tab') : null, vw: innerWidth, lines: eval(LINES) };
+      // (Next without the tab, measured in the same frame: the box may still be settling as it opens, a couple of pixels
+      // in the first 50 ms, so a second measure a moment later could differ by that alone)
+      const t = document.querySelector('.dlg-keep'), next = q('.dlg .b-next'); t.style.display = 'none'; const without = q('.dlg .b-next'); t.style.display = '';
+      return { tab: q('.dlg-keep'), next, without, txt: q('.dlg .txt'), ctrl: q('.dlg .ctrl'), who: document.querySelector('.dlg-tab').offsetParent ? q('.dlg-tab') : null, vw: innerWidth, lines: eval(LINES) };
     }, LINES);
     assert(g.lines.length && !coversText(g.tab, g.lines) && !meet(g.tab, g.next) && !meet(g.tab, g.ctrl) && !(g.who && meet(g.tab, g.who)), 'the tab covers nothing ' + JSON.stringify(g));
     assert(g.tab.r <= g.vw && g.tab.w >= 44 && g.tab.h >= 44, 'the tab fits and is a 44 px target');
-    const without = await p.evaluate(() => { const t = document.querySelector('.dlg-keep'); t.style.display = 'none'; const r = document.querySelector('.dlg .b-next').getBoundingClientRect(); t.style.display = ''; return { l: r.left, t: r.top }; });
-    assert(Math.abs(without.l - g.next.l) < 0.5 && Math.abs(without.t - g.next.t) < 0.5, 'Next does not move for the tab');
+    const without = g.without;
+    assert(Math.abs(without.l - g.next.l) < 0.5 && Math.abs(without.t - g.next.t) < 0.5, 'Next does not move for the tab (' + JSON.stringify({ next: [g.next.l, g.next.t], without: [without.l, without.t] }) + ')');
     const l0 = await lineNow(p);
     await press(p, '.dlg-keep', true); await wait(p, 400);
-    assert(await lineNow(p) === l0 && await p.evaluate(() => RB.game.s.bookmarks.length) === 1, 'a tap on Keep keeps without advancing');
+    const kept = { same: await lineNow(p) === l0, n: await p.evaluate(() => RB.game.s.bookmarks.length) };
+    assert(kept.same && kept.n === 1, 'a tap on Keep keeps without advancing ' + JSON.stringify(kept));
     await shot(p, 'dlg_kept_' + w + '_200');
     // (a line longer than the sheet: Next first shows the rest — "More" — then advances)
     let l1 = l0;
