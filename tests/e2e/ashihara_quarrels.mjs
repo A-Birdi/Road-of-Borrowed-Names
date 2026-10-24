@@ -11,7 +11,9 @@
 //     the reeds, Yoshizō in his paddy): the other walks up to you before anything is said (within 8 s); the intro
 //     ("arguing over the sluice"; "Natsu stands facing Shō") is said only when both are there, every line then spoken by
 //     someone beside you; from too far to arrive in time, no intro and their lines from where they stand; the near
-//     pairs arrive;
+//     pairs arrive; at "Natsu stands facing Shō", each faces the other, from either starter, and nothing staged is left
+//     after the scene toward the other (Agnes 6384074869); with Natsu brought up two tiles from you (a fixture), where
+//     facing you and facing each other differ, each faces the other;
 //  3. a walk that cannot arrive (every tile near you taken): no intro, the away party's lines marked as said from off
 //     screen, and the quarrel still settles;
 //  4. the gathering, in both orders: the screen goes dark for the narration and Mitsue's line and comes back up with the
@@ -48,13 +50,16 @@ async function begin(p, x, y, dir, o) {
       if (id === 'as.noise') { s2.flags.as_forge_hours = true; return { result: 'win', outcome: 'hours' }; }
       return { result: 'lose' };
     };
-    // every line said: who, its English, where its speaker stood, whether it was marked as said from off screen
+    // every line said: who, its English, where its speaker stood, whether it was marked as said from off screen; and
+    // where Natsu and Shō stand and the way each is drawn facing (a staged look, else their own)
+    const face = () => Object.fromEntries(['as_natsu', 'as_sho'].map((id) => { const W = RB.world.W, n = W.npcs.find((q) => q.id === id); if (!n) return [id, null]; const f = RB.staging.frameOf(n), lk = n.stg && n.stg.look, t = lk && lk.target; return [id, { at: [n.x, n.y], dir: (f && f.dir) || n.dir, staged: !!(f && f.dir), lookAt: !lk ? null : t === W.player ? 'pc' : (t && t.id) || '?' }]; }));
+    window.__face = face;
     window.__said = [];
     const say0 = RB.ui.dialogue.say;
     RB.ui.dialogue.say = function (l) {
       const W = RB.world.W, who = l && l.who, n = who && W.npcs.find((q) => q.id === who);
       window.__said.push({ who, en: String((l && l.en) || '').slice(0, 70), at: n ? [n.x, n.y] : null, pc: [W.player.x, W.player.y], away: who && RB.staging.unarrivedAway ? RB.staging.unarrivedAway(who) : null,
-        dark: !!document.querySelector('#overlay > .fade.on') });
+        dark: !!document.querySelector('#overlay > .fade.on'), face: face() });
       return say0.apply(this, arguments);
     };
     let quiet = 0;
@@ -80,6 +85,11 @@ const talk = (p, id, o) => p.evaluate(async ([id, o]) => {
   return window.__said.slice();
 }, [id, o || null]);
 const near = (l) => l.at && Math.max(Math.abs(l.at[0] - l.pc[0]), Math.abs(l.at[1] - l.pc[1])) <= 2;
+// the way one stands facing another, by the game's own rule (src/engine/52_staging.js dirTo: the longer axis; a diagonal
+// above, sideways, so that the face stays seen)
+const toward = (a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1]; if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? 'right' : 'left'; if (Math.abs(dx) === Math.abs(dy) && dy < 0) return dx > 0 ? 'right' : 'left'; return dy > 0 ? 'down' : 'up'; };
+// at "Natsu stands facing Shō": each faces the other
+const facingAt = (said) => { const l = said.find((x) => /^Natsu stands facing Shō/.test(x.en)); const F = l && l.face; return { said: !!l, F: F || null, pc: l ? l.pc : null, ok: !!(F && F.as_natsu && F.as_sho && F.as_natsu.dir === toward(F.as_natsu.at, F.as_sho.at) && F.as_sho.dir === toward(F.as_sho.at, F.as_natsu.at)) }; };
 
 const { p, ctx, errors } = await page(b, url, { viewport: { width: 1188, height: 848 } });
 
@@ -159,8 +169,34 @@ for (const [who, at, dir, slots, wash, what, close] of NOISE) {
   await begin(p, at[0], at[1], dir, { slots: Object.assign({ as_mitsue: 2 }, slots), wash, flags: { as_dp_water: true, as_rota_time: true }, vars: { as_rota: 'time' } });
   const said = await talk(p, who);
   const T = told(said, ['as_sho', 'as_natsu'], /^Natsu stands facing Shō/);
+  // at the intro, each faces the other; after the scene, no staged facing is left on either
+  const FA = facingAt(said);
+  const after = await p.evaluate(() => window.__face());
+  const left = Object.values(after).some((x) => x && /^as_(natsu|sho)$/.test(x.lookAt || ''));
+  ok((FA.ok || !FA.said) && !left && (!close || FA.said), 'the forge\'s noise, ' + what + ', started by ' + who + ': at "Natsu stands facing Shō" each faces the other; no look toward the other left after the scene (' + J({ at: FA.F, after }) + ')');
   ok(T.fine && (!close || T.both) && !said.some((l) => /Outside the forge/.test(l.en)) && (await p.evaluate(() => !!RB.game.s.flags.as_dp_noise)),
     'the forge\'s noise, ' + what + ', started by ' + who + ': the other walks up first; ' + (T.both ? 'both there: "Natsu stands facing Shō", every line from beside you' : 'not there in time: no intro, their lines from where they stand') + ' (no "Outside the forge"); settled (' + J(said.slice(0, 3).map((l) => [l.who, l.en.slice(0, 30), l.at, l.pc, l.away])) + ')');
+}
+
+// ---- 2b. where facing you and facing each other differ: Natsu brought up two tiles from you, Shō beside you ----------------
+{
+  await begin(p, 13, 9, 'up', { slots: { as_mitsue: 2, as_sho: 1, as_natsu: 1 }, wash: 'stream', flags: { as_dp_water: true, as_rota_time: true }, vars: { as_rota: 'time' } });
+  // (a fixture: every free tile within 2 of you taken by a crate but (11,9), two to your left: beside you, facing you
+  // and facing each other are the same by the game's rule; from two away they are not)
+  await p.evaluate(() => {
+    const W = RB.world.W, p0 = W.player;
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+      const x = p0.x + dx, y = p0.y + dy;
+      if ((!dx && !dy) || (x === 11 && y === 9) || W.npcs.some((n) => n.x === x && n.y === y) || RB.world.blocked(x, y, { ignorePlayer: true })) continue;
+      W.map.props.push({ p: 'crate', x, y, if: 'departed', __fixture: true });
+    }
+  });
+  const said = await talk(p, 'as_sho');
+  const FA = facingAt(said);
+  // (here facing each other is not facing you: the case tells the two apart)
+  const apart = FA.F && FA.pc && (toward(FA.F.as_sho.at, FA.F.as_natsu.at) !== toward(FA.F.as_sho.at, FA.pc) || toward(FA.F.as_natsu.at, FA.F.as_sho.at) !== toward(FA.F.as_natsu.at, FA.pc));
+  ok(FA.said && apart && FA.ok, 'Natsu brought up two tiles from you, Shō beside you: at "Natsu stands facing Shō" each faces the other, not you (' + J({ at: FA.F, you: FA.pc }) + ')');
+  await p.evaluate(() => { const m = RB.world.W.map; m.props = m.props.filter((q) => !q.__fixture); });
 }
 
 // ---- 3. a walk that cannot arrive --------------------------------------------------------------------------------------------
