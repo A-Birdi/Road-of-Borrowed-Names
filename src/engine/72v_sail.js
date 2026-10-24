@@ -262,10 +262,10 @@ RB.sail = (function () {
   // From port the crossing is seen at sea, as when you sail her yourself: the boat on the sea map at the port's water
   // (the same one transition as putting out yourself); a crew taking over at sea stays where she is. She comes
   // alongside at the destination's water (placed there in the dark of a fade, on the same map), then docks (RBN-QA-174).
-  // When she cannot be placed there (the water taken, or no staging), the arrival is told over the dark and she is seen
-  // next at the dock. A campaign change (a load, even one cancelled; a new journey; the title) ends the crossing where it
-  // is, as it ends the scene it runs in: nothing more is run, placed or arrived for the journey left (a cancelled load
-  // leaves this voyage open where she is, to be sailed on).
+  // When she cannot be placed there (the water taken; RB.staging is always loaded in the game), the arrival is told
+  // over the dark and she is seen next at the dock. A campaign change (a load, even one cancelled; a new journey; the
+  // title) ends the crossing where it is, as it ends the scene it runs in: nothing more is run, placed or arrived for the
+  // journey left (a cancelled load leaves this voyage open where she is, to be sailed on).
   let campTok = 0;
   if (RB.bus) RB.bus.on('campaign:changing', () => { campTok++; });
   async function crew(s) {
