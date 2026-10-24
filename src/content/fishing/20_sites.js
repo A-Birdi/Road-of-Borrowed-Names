@@ -93,10 +93,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const P = RB.props && RB.props.P;
   if (P) {
     P.fish_station = { id: 'fish_station', w: 1, h: 1, block: true, draw(c, x, y) { c.fillStyle = '#7a5a36'; c.fillRect(x + 7, y + 2, 2, 12); c.fillStyle = '#efe4c8'; c.fillRect(x + 9, y + 4, 4, 3); } };
+    // the low shelf of wet rock under a station's stand on a rocky shore (Sazanami's): flat, walked on, never solid (RBN-QA-173)
+    P.coast_shelf = { id: 'coast_shelf', w: 1, h: 1, block: false, draw(c, x, y) { c.fillStyle = '#77716a'; c.fillRect(x + 1, y + 2, 14, 12); c.fillStyle = '#5a5650'; c.fillRect(x + 1, y + 12, 14, 2); } };
   }
   if (RB.propArt && RB.propKit && P) {
     const K = RB.propKit, kit = RB.propArt.kit;
-    const { R, ell, mix } = K;
+    const { R, ell, mix, poly, line } = K;
     const PP = K.FIX.paper, IR = K.FIX.iron;
     RB.propArt.art('fish_station', {
       box: [-8, -30, 48, 64], ink: true,
@@ -107,6 +109,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
           // two planks laid out over the reed line to the water's edge, reeds on either side
           for (let k = 0; k < 2; k++) { R(g, 2, 12 + k * 8, 30, 6, w5[2 + k]); R(g, 2, 12 + k * 8, 30, 1, w5[4]); R(g, 2, 17 + k * 8, 30, 1, w5[1]); }
           for (const x of [0, 4, 27, 31]) { R(g, x, 2, 2, 12, rd[2]); R(g, x, 0, 1, 4, rd[3]); }
+        } else if (v === 'rocks') {
+          // the stake set among rocks at the shelf's seaward edge (Sazanami's station, RBN-QA-173): two wet lumps round
+          // its foot, the sea lapping between them
+          const r5 = M.stone, wet = mix(r5[1], wt[1], 0.35);
+          ell(g, 16, 28, 13, 3, mix(wt[2], '#ffffff', 0.3));
+          ell(g, 9, 24, 9, 6, r5[1]); ell(g, 8, 22, 8, 5, r5[2]); ell(g, 6, 20, 4, 2, r5[3]); R(g, 3, 27, 12, 2, wet);
+          ell(g, 24, 26, 7, 5, r5[1]); ell(g, 24, 24, 6, 4, r5[2]); ell(g, 22, 22, 3, 1.5, r5[3]); R(g, 19, 28, 10, 1, wet);
+          for (const [bx, by] of [[4, 25], [12, 26], [27, 27]]) R(g, bx, by, 1, 1, r5[4]);
         } else {
           // the stake stands in the shallows: a ring of rippled water round its foot
           ell(g, 16, 27, 9, 3, mix(wt[2], '#ffffff', 0.35));
@@ -119,9 +129,45 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (let k = 0; k < 3; k++) R(g, 20, -11 + k * 3, 5 - (k & 1), 1, '#3c3450');
         R(g, 17, -13, 2, 1, '#b8342a'); // the cord that ties it
         if (v === 'quay') { R(g, 9, -6, 4, 4, IR[2]); R(g, 10, -5, 2, 2, IR[0]); }
+        if (v === 'rocks') {
+          // a rod lashed to the stake's seaward side, its tip out over the water and its line down into it (RBN-QA-173)
+          const bam = mix(w5[3], '#c8b070', 0.5), cord = '#8a3a2a';
+          line(g, 11, 20, 9, -6, mix(bam, '#000000', 0.25), 2); line(g, 9, -6, -3, -27, bam, 1);
+          line(g, 10, 20, 8, -6, bam, 1);
+          R(g, 7, 6, 10, 2, cord); R(g, 7, 7, 10, 1, mix(cord, '#000000', 0.3));
+          R(g, 7, -4, 9, 2, cord); R(g, 7, -3, 9, 1, mix(cord, '#000000', 0.3));
+          line(g, -3, -27, -5, 26, 'rgba(240,244,248,0.55)', 1);
+          ell(g, -5, 27, 3, 1, mix(wt[2], '#ffffff', 0.45));
+        }
         if (v === 'pond') { R(g, 9, 6, 3, 1, rd[2]); R(g, 21, 8, 3, 1, rd[2]); }
       },
       shadow: (v) => (v === 'river' ? [16, 28, 14, 3, 0.25] : null),
+    });
+    // the shelf under the stand: a low slab of wet rock reaching back to the shingle, its seaward face dark and wet, a tide
+    // pool and a few limpets; flat (drawn under whoever stands on it), the tile still what it was (RBN-QA-173)
+    RB.propArt.art('coast_shelf', {
+      box: [-12, -12, 56, 46],
+      draw(g, M) {
+        const r5 = M.stone, wt = M.water, wet = mix(r5[1], wt[1], 0.4), weed = mix(M.reed[1], '#203020', 0.55);
+        const top = mix(r5[1], r5[2], 0.45), lit = mix(r5[2], r5[3], 0.35);
+        // two low broken pieces where it runs back up onto the shingle
+        poly(g, [3, -2, 8, -6, 14, -5, 13, 0, 6, 1], top); poly(g, [5, -3, 8, -5, 12, -4, 9, -2], lit);
+        poly(g, [22, -1, 27, -5, 32, -3, 31, 1, 24, 2], top); poly(g, [24, -2, 27, -4, 30, -3, 27, -1], lit);
+        // the slab: its seaward face, then its top, low and flat
+        poly(g, [-8, 20, -4, 27, 10, 29, 26, 28, 40, 24, 40, 18, -8, 16], r5[0]);
+        poly(g, [-8, 8, -2, 2, 12, 1, 24, 0, 36, 3, 42, 9, 40, 19, 26, 23, 10, 24, -4, 22, -8, 16], top);
+        // lit facets (the light from the upper left) and the cracks between them
+        poly(g, [-4, 8, 0, 4, 12, 3, 13, 8, 4, 11], lit);
+        poly(g, [18, 2, 30, 3, 33, 8, 22, 9], lit);
+        poly(g, [7, 14, 16, 12, 19, 17, 10, 18], mix(top, lit, 0.5));
+        line(g, 13, 8, 17, 13, r5[0], 1); line(g, 17, 13, 15, 20, r5[0], 1); line(g, 22, 9, 29, 12, r5[0], 1); line(g, 4, 11, 2, 17, r5[0], 1);
+        // a tide pool, the wet margin above the face, limpets and a little weed at the waterline
+        ell(g, 28, 15, 5, 2.5, mix(wt[1], r5[0], 0.25)); ell(g, 27, 14, 2, 1, mix(wt[2], '#ffffff', 0.5));
+        R(g, -6, 18, 46, 2, wet); R(g, -4, 20, 42, 1, mix(wet, r5[0], 0.4));
+        for (const [bx, by] of [[0, 17], [6, 19], [19, 20], [33, 17], [36, 19]]) R(g, bx, by, 1, 1, r5[4]);
+        for (const [sx, sy, sh] of [[-2, 23, 3], [12, 26, 2], [30, 25, 3]]) R(g, sx, sy, 1, sh, weed);
+      },
+      shadow: () => null,
     });
   }
 })(RB.fishing, RB.content);

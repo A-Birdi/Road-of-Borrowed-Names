@@ -61,7 +61,7 @@ let suites = [
   ['fishing.mjs'],
   // A Quiet Cast's coast (P15g): the two coast stations from the world, every coast situation on the stage, the six
   // fish observed, and a six-chapter journey keeping its three stations
-  ['fishing_coast.mjs'],
+  ['fishing_coast.mjs'], ['rocky_station.mjs'],
   // painted Harmony busts: the contract v2 raster path with the SYNTHETIC sample (docs/harmony/contract/CONTRACT.md)
   ['harmony_raster.mjs'],
   ['harmony_appearance.mjs'], // HX66: every hairstyle, cut, accessory and keepsake on the painted kit; stress pairs; equip, unequip, save/load, slot switch
