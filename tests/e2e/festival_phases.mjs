@@ -6,7 +6,10 @@
 //     before the phase, nobody; for each lantern place (street, channel, hill), at 1188×848 and 390×844, every sheet
 //     above the dialogue sheet; Kotoe drawn once (with her pupils, or else walking along the road);
 //  2. the fire shot: dancing, the ring turns and its figures walk; from the 'settle' phase (and through the gift) it
-//     stands where it stopped, everyone still and facing the fire, Shō's beat at rest; the gift's hat as before;
+//     stands where it stopped, everyone still and facing the fire, Shō's beat at rest; the gift's hat as before; where
+//     it stopped belongs to its playing: a drawing on its own rests where its own moment puts it; in a playing,
+//     Previous back to the dance and Next again find it where it stopped; the shot's Replay stops it anew; a new
+//     playing that opens settled never takes the last playing's place;
 //  3. the scene, played with Next, with reduced motion, and with and without the school, with and without a
 //     companion: the pupils' phase begins right before the pupils' line (only with the school), the settle right before
 //     "Last of all, everyone gathers round the fire." (its Japanese as before), the gift before Mitsue's line; the hat
@@ -53,12 +56,12 @@ for (const [W, H] of [[1188, 848], [390, 844]]) {
     }
     // 2. the ring: record each figure drawn (its look's name, facing, frame and where it is put)
     const Q = RB.seqKit, fig0 = Q.figure, names = new Map(Object.entries(RB.content.chars).map(([id, ch]) => [ch.look, id]));
-    const ring = (phase, t) => {
+    const ring = (phase, t, keep) => {
       const drawn = [], made = new Map();
       Q.figure = function (look, dir, key) { const f = fig0.apply(this, arguments); if (f) made.set(f.cv, (names.get(look) || '?') + ' ' + dir + ' ' + key); return f; };
       const di = c.drawImage;
       c.drawImage = function (img, x, y) { if (made.has(img)) drawn.push(made.get(img) + ' @' + x + ',' + y); return di.apply(this, arguments); };
-      try { RB.sequence.drawAt(c, W, H, { seq: 'as.festival', shot: 'fire', phase, k: 1, t, vb, test: () => false }); } finally { Q.figure = fig0; c.drawImage = di; }
+      try { RB.sequence.drawAt(c, W, H, { seq: 'as.festival', shot: 'fire', phase, k: 1, t, vb, test: () => false, keep }); } finally { Q.figure = fig0; c.drawImage = di; }
       return drawn.filter((s) => !/^as_sho /.test(s));
     };
     // Kotoe drawn once: with her pupils (from the phase), else on her way along the road
@@ -70,10 +73,14 @@ for (const [W, H] of [[1188, 848], [390, 844]]) {
     };
     const once = [kotoe(true, 'pupils'), kotoe(false, 'pupils'), kotoe(true, 'light')];
     const dance = [ring('dance', 1000), ring('dance', 4000)];
-    const settle = [ring('settle', 1000), ring('settle', 4000), ring('gift', 6000)];
+    // one playing (one keep): settled at 1000 ms, then later frames and the gift; then drawings on their own (a fresh
+    // keep each), settled at 4000 ms: their own resting place, the same each time, not the playing's
+    const one = {};
+    const settle = [ring('settle', 1000, one), ring('settle', 4000, one), ring('gift', 6000, one)];
+    const alone = [ring('settle', 4000), ring('settle', 4000)];
     const sho = (phase, t) => { c.clearRect(0, 0, W, H); RB.sequence.drawAt(c, W, H, { seq: 'as.festival', shot: 'fire', phase, k: 1, t, vb, test: () => false }); return c.getImageData(0, 0, Math.round(W * 0.4), H).data.length; };
     void sho;
-    return { vb, out, dance, settle, once };
+    return { vb, out, dance, settle, alone, once };
   }, [W, H]);
   const ways = Object.entries(R.out);
   ok(ways.every(([, o]) => o.school.n > 40 && o.school.below === 0 && o.school.strokes > 0 && o.none.n === 0 && o.before.n === 0 && o.moving.n > 40),
@@ -84,6 +91,63 @@ for (const [W, H] of [[1188, 848], [390, 844]]) {
     W + '×' + H + ': dancing, the ring walks and turns (' + J({ a: R.dance[0].slice(0, 2), b: R.dance[1].slice(0, 2) }) + ')');
   ok(R.settle.every((l) => l.length === 6 && l.every((s) => / i0 @/.test(s))) && J(R.settle[0]) === J(R.settle[1]) && J(R.settle[1]) === J(R.settle[2]),
     W + '×' + H + ': from the settle and through the gift, the six stand still where they stopped, each facing the fire (' + J(R.settle[0]) + ')');
+  ok(R.alone.every((l) => l.length === 6 && l.every((s) => / i0 @/.test(s))) && J(R.alone[0]) === J(R.alone[1]) && J(R.alone[0]) !== J(R.settle[0]),
+    W + '×' + H + ': a settled drawing on its own rests where its own moment puts it, the same each time, not where another playing stopped (' + J({ alone: R.alone[0].slice(0, 2), playing: R.settle[0].slice(0, 2) }) + ')');
+  errorsAll.push(...errors);
+  await ctx.close();
+}
+
+// ---- 2b. the ring's rest belongs to its playing (Agnes 6382514084): Previous and back finds it where it stopped; a new
+// playing (a replay of the memory, another scene) that opens on the settled ring rests where its own moment puts it,
+// never where an earlier playing stopped; the shot's own Replay dances again and stops where it then is --------------
+{
+  const { p, ctx, errors } = await page(b, url, { viewport: { width: 1188, height: 848 } });
+  await p.evaluate(() => {
+    RB.game.debugStart('as.village', 10, 10, { edition: RB.edition.forNew(), comp: null, flags: { departed: true }, dir: 'up' });
+    RB.game.settings.textSpeed = 'instant'; RB.save.autosave = async () => {};
+    const Q = RB.seqKit, fig0 = Q.figure, names = new Map(Object.entries(RB.content.chars).map(([id, ch]) => [ch.look, id]));
+    const DANCERS = ['as_mitsue', 'as_yoshizo', 'as_taki', 'as_natsu', 'as_kotoe', 'as_mohei'];
+    const made = new WeakMap(), drawn = [];
+    Q.figure = function (look, dir, key) { const f = fig0.apply(this, arguments); const id = names.get(look); if (f && DANCERS.includes(id)) made.set(f.cv, id + ' ' + dir + ' ' + key); return f; };
+    // (a playing draws into its own buffer, an offscreen canvas where there is one)
+    for (const K of [window.CanvasRenderingContext2D, window.OffscreenCanvasRenderingContext2D].filter(Boolean)) {
+      const di = K.prototype.drawImage;
+      K.prototype.drawImage = function (img, x, y) { if (made.has(img)) { drawn.push(made.get(img) + ' @' + x + ',' + y); if (drawn.length > 600) drawn.splice(0, 300); } return di.apply(this, arguments); };
+    }
+    // the ring as last drawn: the six dancers of the latest frame
+    window.__ring = async () => { await new Promise((r) => setTimeout(r, 260)); return drawn.slice(-6).sort(); };
+    const line = (en) => ({ who: 'narr', jp: 'あ 。', en });
+    window.__beats = (from) => [['dance', 'They dance.'], ['settle', 'They gather round.'], ['gift', 'The hat.']].slice(from).map(([phase, en]) => ({ shot: 'fire', phase, line: line(en) }));
+    window.__view = (from) => { window.__done = RB.sequence.view({ seq: 'as.festival', beats: window.__beats(from || 0), label: 'Test', name: 'seq-test', seen: () => true }); };
+  });
+  const click = (a) => p.evaluate((a) => { const el = document.querySelector('.seq-view [data-a="' + a + '"]'); if (el) el.click(); return !!el; }, a);
+  const wait = (ms) => p.waitForTimeout(ms);
+  await p.evaluate(() => window.__view(0));
+  await wait(1600); await click('next'); await wait(1300); await click('next'); await wait(1300);
+  const atGift = await p.evaluate(() => window.__ring());
+  await click('prev'); await wait(300); await click('prev'); await wait(400);
+  const lookedBack = await p.evaluate(() => window.__ring());
+  await wait(1500);
+  await click('next'); await wait(300); await click('next'); await wait(600);
+  const again = await p.evaluate(() => window.__ring());
+  const still = (l) => l.length === 6 && l.every((x) => / i0 @/.test(x));
+  ok(still(atGift) && lookedBack.some((x) => / w\d @/.test(x)) && J(again) === J(atGift),
+    'one playing: at the gift the ring stands where it stopped; Previous back to the dance shows it dancing; Next back to the gift finds it where it stopped, though time has passed (' + J({ gift: atGift.slice(0, 2), back: lookedBack.slice(0, 1), again: again.slice(0, 2) }) + ')');
+  // the shot's own Replay: the dance again, then it stops where it then is, everyone facing the fire
+  await p.evaluate(() => { const el = document.querySelector('.seq-view [data-a="replay"]'); if (el) el.click(); });
+  await wait(3600);
+  const replayed = await p.evaluate(() => window.__ring());
+  ok(still(replayed), 'the shot\'s Replay: the dance again, then the six stand still, facing the fire (' + J(replayed.slice(0, 2)) + ')');
+  // a new playing that opens on the settled ring (a memory's replay, another scene), seconds later
+  await p.evaluate(() => { const el = document.querySelector('.seq-view [data-a="skip"]'); if (el) el.click(); });
+  await p.evaluate(() => RB.sequence.closeView && RB.sequence.closeView('test'));
+  await wait(2500);
+  await p.evaluate(() => window.__view(1));
+  await wait(2000);
+  const fresh = await p.evaluate(() => window.__ring());
+  ok(still(fresh) && J(fresh) !== J(replayed) && J(fresh) !== J(atGift),
+    'a new playing opening on the settled ring rests where its own moment puts it, not where the last playing stopped (' + J({ fresh: fresh.slice(0, 2), last: replayed.slice(0, 2) }) + ')');
+  ok(!errors.length, 'the playings: no page errors (' + J(errors).slice(0, 300) + ')');
   errorsAll.push(...errors);
   await ctx.close();
 }
