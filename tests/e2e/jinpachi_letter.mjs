@@ -197,7 +197,7 @@ const skipSeen = async (inside) => {
 {
   const { a, g, start, end } = await skipSeen(true);
   const L = a.jin;
-  ok(end && !end.past && a.called && a.walked === 1 && L.length && L.every((l) => l.jin && cheb(l) <= 2 && !l.mark) && g.left === 0 && g.most === 1 && !g.recs.length,
+  ok(end && !end.past && a.called && a.letter && a.walked === 1 && L.length && L.every((l) => l.jin && cheb(l) <= 2 && !l.mark) && g.left === 0 && g.most === 1 && !g.recs.length,
     'Skip seen on arrival (the control, begun as the map appears): he comes up (within 2, _walked 1) and the letter is given; his place ends while the map is still appearing, so on an on-arrival Skip he is simply gone: no walk down the road, no departure record, one figure throughout (begun at map time ' + start.ms + ', his place ended at ' + (end && end.ms) + '; ' + fmtGo(g) + ')');
 }
 
