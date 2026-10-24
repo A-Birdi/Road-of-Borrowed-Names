@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import http from 'node:http';
 import zlib from 'node:zlib';
 import { spawn, spawnSync } from 'node:child_process';
@@ -27,7 +28,7 @@ function unzip(buf) {
 }
 
 export default async (t) => {
-  const { packKit } = await import(path.join(root, 'tools/voice/pack_local_kit.mjs'));
+  const { packKit } = await import(pathToFileURL(path.join(root, 'tools/voice/pack_local_kit.mjs')).href);
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-va1-kit-'));
   try {
     const r = packKit(path.join(tmp, 'kit.zip'));

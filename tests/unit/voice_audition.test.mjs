@@ -13,11 +13,12 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import http from 'node:http';
 import { spawn, spawnSync } from 'node:child_process';
 import { root } from '../lib/load.mjs';
 
-const tool = (f) => import(path.join(root, 'tools/voice', f));
+const tool = (f) => import(pathToFileURL(path.join(root, 'tools/voice', f)).href);
 function runAsync(args, env) {
   return new Promise((resolve) => {
     const p = spawn(process.execPath, ['tools/voice/audition.mjs', ...args], { cwd: root, env: env || process.env });

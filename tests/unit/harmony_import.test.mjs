@@ -272,7 +272,7 @@ export default async (t) => {
       fs.writeFileSync(path.join(b1, 'PROVENANCE.md'), '# SYNTHETIC SAMPLE — not art\n\nTest provenance note.\n');
       const out = path.join(work, 'assets');
       const dirs = [b1, path.join(root, 'tests/fixtures/harmony_rich/incoming')];
-      const hashAll = () => { const m = {}; const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const q = path.join(d, e.name); if (e.isDirectory()) walk(q); else m[path.relative(out, q)] = crypto.createHash('sha256').update(fs.readFileSync(q)).digest('hex'); } }; walk(out); return m; };
+      const hashAll = () => { const m = {}; const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const q = path.join(d, e.name); if (e.isDirectory()) walk(q); else m[path.relative(out, q).split(path.sep).join('/')] = crypto.createHash('sha256').update(fs.readFileSync(q)).digest('hex'); } }; walk(out); return m; };
       const first = importSets(dirs, { out, replace: true });
       const h1 = hashAll();
       fs.rmSync(out, { recursive: true, force: true });
