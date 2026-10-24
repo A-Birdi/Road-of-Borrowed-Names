@@ -42,8 +42,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         // the story room
         { p: 'kr_scroll', x: 2, y: 10, scene: 'hall.w2.t1' }, ...K.andon(4, 9, W, 't1'), { p: 'lantern', x: 1, y: 9, light: 30, o: { lit: true } },
         // the gifts on the path, and the trays on the veranda (t2)
-        { p: 'crate', x: GIFTS.red[0], y: GIFTS.red[1], scene: 'hall.w2.g_red', if: '!xp_hall_w2_f0_put_red' },
-        { p: 'chest', x: GIFTS.white[0], y: GIFTS.white[1], scene: 'hall.w2.g_white', if: '!xp_hall_w2_f0_put_white' },
+        // (the red bundle and the white box drawn as what the tags call them, not a crate and a chest: RBN-QA-180)
+        { p: 'hall_bundle', x: GIFTS.red[0], y: GIFTS.red[1], scene: 'hall.w2.g_red', if: '!xp_hall_w2_f0_put_red' },
+        { p: 'hall_giftbox', x: GIFTS.white[0], y: GIFTS.white[1], scene: 'hall.w2.g_white', if: '!xp_hall_w2_f0_put_white' },
         { p: 'ko_basket', x: GIFTS.chestnut[0], y: GIFTS.chestnut[1], scene: 'hall.w2.g_chestnut', if: '!xp_hall_w2_f0_put_chestnut' },
         ...Object.keys(TRAYS).map((k) => ({ p: 'table', x: TRAYS[k][0], y: TRAYS[k][1], scene: 'hall.w2.tray_' + k })),
         ...K.andon(28, 4, W, 't2'),
