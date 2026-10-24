@@ -181,6 +181,8 @@ narr: {話|はなし} は 、 また {今度|こんど} 。 {二人|ふたり} �
 !if var._walked=0 -> apart
 !walkto as_sho pc max=8000
 !if var._walked=0 -> talk
+!look as_natsu as_sho
+!look as_sho as_natsu
 narr: {赤|あか}ちゃん を {抱|だ}いた ナツ が 、 ショウ と {向|む}かい{合|あ}って いる 。 || Natsu stands facing Shō, the baby in her arms.
 !goto talk
 :apart
