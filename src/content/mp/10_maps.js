@@ -136,18 +136,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the festival crowd (RBN-QA-020: "the bank is packed with people"): townsfolk of Manybridge and Blockprint Row,
       // on the night only, standing off the booths' fronts, the street's lane along the bank (rows 20-21, where you come
       // onto the bank), the bridge and Tomi's foot of it;
-      // a family by the stalls, wherever the stalls were put
+      // a family by the stalls, wherever the stalls were put. Each is `visiting`: a night's place, not one the story
+      // keeps them in, so that someone not yet seen elsewhere never walks in from the festival on an ordinary day
+      // (50_world.js wayFor; the lock's boatmen did)
       ...[['mb_vb_gosuke', 5, 19, 'right'], ['mb_vb_otane', 6, 19, 'left'], ['mp_vb_chosuke', 11, 19, 'down'], ['mp_vb_ohatsu', 12, 19, 'down'],
         ['mb_sen', 23, 19, 'down'], ['mb_zenzo', 28, 19, 'left'], ['mb_fujiko', 40, 19, 'down'], ['mb_vb_magobe', 42, 19, 'right'],
         ['mp_vb_ginta', 43, 19, 'left'], ['mp_shinobu', 48, 19, 'down'],
         ['mb_take', 8, 22, 'right'], ['mb_uno', 9, 22, 'left'], ['mb_vb_kinji', 18, 22, 'down'], ['mp_vb_rokuro', 29, 22, 'left'],
         ['mb_vb_torakichi', 34, 22, 'down'], ['mp_kakeru', 49, 22, 'up'],
         ['mp_sanpei', 19, 25, 'down'], ['mp_miyo', 20, 25, 'down'], ['mp_tokube', 36, 25, 'down']]
-        .map(([c, x, y, dir]) => ({ id: c + '_fest', char: c, x, y, dir, if: 'mp_fest_night&!mb2_done' })),
-      { id: 'mb_haru_fest', char: 'mb_haru', x: 23, y: 16, dir: 'right', if: 'mp_fest_night&!mb2_done&mp_st_square' },
-      { id: 'mb_ichi_fest', char: 'mb_ichi', x: 24, y: 16, dir: 'left', if: 'mp_fest_night&!mb2_done&mp_st_square' },
-      { id: 'mb_haru_festb', char: 'mb_haru', x: 12, y: 22, dir: 'right', if: 'mp_fest_night&!mb2_done&!mp_st_square' },
-      { id: 'mb_ichi_festb', char: 'mb_ichi', x: 13, y: 22, dir: 'left', if: 'mp_fest_night&!mb2_done&!mp_st_square' },
+        .map(([c, x, y, dir]) => ({ id: c + '_fest', char: c, x, y, dir, if: 'mp_fest_night&!mb2_done', visiting: true })),
+      { id: 'mb_haru_fest', char: 'mb_haru', x: 23, y: 16, dir: 'right', if: 'mp_fest_night&!mb2_done&mp_st_square', visiting: true },
+      { id: 'mb_ichi_fest', char: 'mb_ichi', x: 24, y: 16, dir: 'left', if: 'mp_fest_night&!mb2_done&mp_st_square', visiting: true },
+      { id: 'mb_haru_festb', char: 'mb_haru', x: 12, y: 22, dir: 'right', if: 'mp_fest_night&!mb2_done&!mp_st_square', visiting: true },
+      { id: 'mb_ichi_festb', char: 'mb_ichi', x: 13, y: 22, dir: 'left', if: 'mp_fest_night&!mb2_done&!mp_st_square', visiting: true },
       { id: 'mp_ryusui', x: 45, y: 18, dir: 'down', if: 'quest.mp_ghost>=1&!mp_ghost_exposed', talk: 'mp.ryusui' },
       { id: 'mp_saku', x: 30, y: 23, dir: 'down', if: '!quest.mp_actor=done', talk: [{ if: 'quest.mp_actor>=1', scene: 'mp.saku_rehearse' }, { scene: 'mp.saku_first' }] },
     ],
