@@ -110,6 +110,9 @@ RB.ui.settings = (function () {
     lay = null; fr = null; tabsApi = null;
     const was = mode;
     mode = 'normal';
+    // back onto an open Ledger from the ordinary sheet: its page is drawn again with the settings as they now are
+    // (RBN-QA-167); not after battle, a new journey's review or its draft
+    if (was === 'normal' && RB.ui.menu && RB.ui.menu.isOpen && RB.ui.menu.isOpen() && RB.ui.menu.refresh) RB.ui.menu.refresh();
     if (was === 'battle' && !(o && o.leaving)) resumeBattle();
   }
   // a tab asked for by name (the Ledger, a test, a link from another page)

@@ -1434,8 +1434,12 @@ RB.ui.menu = (function () {
   }
 
   function settingsStandalone() { return RB.ui.settings.open(); }
+  // a setting changed on the Settings sheet over this Ledger (Town hints, Finding the way): the pages read the settings
+  // as they are drawn, so the page open is drawn again where it was, its scroll kept (RBN-QA-167); nothing reopened,
+  // restyled or turned
+  function refresh() { if (!layer || !fr) return; remember(); render(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, returnLine, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, refresh, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, returnLine, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits
