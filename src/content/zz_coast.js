@@ -9,7 +9,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const T = (en, jp) => ({ en, jp });
   // ---- the stations in the maps, and the islet --------------------------------------------------------------------------
   const sz = C.maps['sz.hamlet'];
-  sz.props = (sz.props || []).concat([{ p: 'fish_station', x: 34, y: 20, o: { kind: 'quay' }, scene: 'coast.station_rocks', if: 'post' }]);
+  // (on the rocks: the stake among them and a rod lashed to it, and under its stand a low shelf of rock running back to the
+  // shingle, as its narration says; the tiles, walking and blocking as they were: RBN-QA-173)
+  sz.props = (sz.props || []).concat([
+    { p: 'coast_shelf', x: 34, y: 19, if: 'post' },
+    { p: 'fish_station', x: 34, y: 20, o: { kind: 'rocks' }, scene: 'coast.station_rocks', if: 'post' },
+  ]);
   // the One-Pine Islet (一本松の小島): the pine islet off the coast's south-east (the sea chart's islet with one pine),
   // a destination for the boat after the story; nothing but the pine, a stone where boats carve their names, the
   // jetty and the fishing. Reached by boat only; leaving it by quick travel leaves nothing behind (the boat waits at
