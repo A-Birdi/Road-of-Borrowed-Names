@@ -103,6 +103,17 @@ export default async (t) => {
     const ms = S.legal(g).filter((m) => m.from && g.b[m.from[0]][m.from[1]].t === L.piece);
     t.ok(goals.every((goal) => ms.some((m) => m.to[0] === goal.to[0] && m.to[1] === goal.to[1])), 'lesson ' + L.id + ': its goal is a legal move of its piece');
     t.ok(L.say.jp && L.say.en && RB.jp.validate(L.say.jp).length === 0, 'lesson ' + L.id + ': words with furigana');
+    // the lesson asks for its move in both languages, and never starts with your partner's king already in check
+    // (RBN-QA-178: the rook's file ran straight up to it, so taking the king was offered)
+    t.ok(/みよう 。/.test(L.say.jp) && /\. [A-Z][^.]*\.$/.test(L.say.en), 'lesson ' + L.id + ': the task said in Japanese and in English');
+    t.ok(!S.inCheck(g, 1), 'lesson ' + L.id + ': your partner\'s king is not in check at the start');
+  }
+  // the rook's lesson names both squares it accepts: up its file to the pawn's rank, or along the bottom rank to
+  // beside your king (RBN-QA-178)
+  {
+    const R = C.shogi.lessons.find((x) => x.id === 'R');
+    t.eq([R.goal.to, R.alt.map((a) => a.to)], [[2, 0], [[4, 3]]], 'the rook: up its file to (2,0), or along the bottom rank to (4,3)');
+    t.ok(/pawn's rank/.test(R.say.en) && /beside your king/.test(R.say.en) && /{段|だん} まで {上|うえ}/.test(R.say.jp) && /{玉|ぎょく} の {隣|となり}/.test(R.say.jp), 'the rook: both squares named in English and Japanese');
   }
   // ---- words for a move ----------------------------------------------------------------------------------------------
   {
