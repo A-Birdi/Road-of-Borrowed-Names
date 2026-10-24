@@ -4,8 +4,8 @@
 // of the default suite. Synthetic debug start; no save is read or written.
 // Usage: node tests/e2e/review_held_portrait.mjs [--root <checkout>]   (default: this checkout)
 const ai = process.argv.indexOf('--root');
-const root = ai > 0 ? process.argv[ai + 1] : new URL('../..', import.meta.url).pathname.replace(/\/$/, '');
-const { serve, launch, page } = await import(root + '/tests/e2e/lib.mjs');
+const root = ai > 0 ? process.argv[ai + 1] : (await import('node:url')).fileURLToPath(new URL('../..', import.meta.url)).replace(/[\\/]$/, '');
+const { serve, launch, page } = await import((await import('node:url')).pathToFileURL(root + '/tests/e2e/lib.mjs').href);
 const { srv, url } = await serve();
 const browser = await launch();
 const out = {};

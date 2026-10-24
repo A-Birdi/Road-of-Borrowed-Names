@@ -8,7 +8,7 @@
 // somewhere, phrases, lines with a run-time name ($name), an example of an unvoiced one.
 import fs from 'node:fs';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import { RB, allLines, spoken } from './lines.mjs';
 
 const a = process.argv.slice(2), opt = (k, d) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : d; };
@@ -43,7 +43,7 @@ export function dataSurfaces(depth = 2) {
   return Object.entries(groups).map(([g, G]) => ({ where: g, sentences: G.sentences.size, voiced: G.voiced.size, phrases: G.phrases.size, dollar: G.dollar, example: G.example }));
 }
 export function codeSurfaces() {
-  const src = path.join(path.dirname(new URL(import.meta.url).pathname), '..', '..', 'src');
+  const src = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'src');
   const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : e.name.endsWith('.js') ? [path.join(d, e.name)] : []));
   const out = [];
   for (const dir of ['ui', 'engine', 'learn', 'atlas', 'lang']) for (const f of walk(path.join(src, dir))) {

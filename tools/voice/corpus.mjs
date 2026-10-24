@@ -8,12 +8,13 @@
 // Nothing here generates audio. Usage: node tools/voice/corpus.mjs [--check]   (--check: build and compare, no write)
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { RB, allLines } from './lines.mjs';
 import { CASES, KANSAI_OF, PLAYER_OF, ANCHORS } from './corpus_selection.mjs';
 
-const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..');
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const OUT = path.join(root, 'docs/future/voice/corpus');
 const tpl = JSON.parse(fs.readFileSync(path.join(root, 'docs/future/voice/templates/audition_matrix.json'), 'utf8'));
 const sha = (s) => crypto.createHash('sha256').update(s, 'utf8').digest('hex');

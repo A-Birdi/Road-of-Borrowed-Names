@@ -36,6 +36,7 @@
 //   --quick: one run per sequence (the default suite); without it every branch and every companion listed
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { serve, launch, page } from './lib.mjs';
 
 const args = process.argv.slice(2);
@@ -190,7 +191,7 @@ const SEQ = {
 // the twelve-chapter edition's sequences (the travel volume's pages played in the world, P16): their specs in their
 // own files, one per group of regions, same format
 for (const f of ['sequence_world_p16_mb.mjs', 'sequence_world_p16_cr.mjs', 'sequence_world_p16_gd.mjs', 'sequence_world_p16_hall.mjs']) {
-  if (fs.existsSync(path.join(path.dirname(new URL(import.meta.url).pathname), f))) Object.assign(SEQ, (await import('./' + f)).SPECS);
+  if (fs.existsSync(path.join(path.dirname(fileURLToPath(import.meta.url)), f))) Object.assign(SEQ, (await import('./' + f)).SPECS);
 }
 
 // ---- in the page: the recorders ---------------------------------------------------------------------------------
