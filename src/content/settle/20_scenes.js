@@ -256,6 +256,7 @@ narr: {日|ひ} が {暮|く}れた 。 {葦原|あしはら}{新田|しんで�
 ?(var.as_lan=hill) narr: {提灯|ちょうちん} が 、 {坂|さか} を {一本松|いっぽんまつ} まで {登|のぼ}って いく 。 || Lanterns climb the slope all the way to the lone pine.
 as_mitsue: {皆|みな}さん 。 {去年|きょねん} の {今頃|いまごろ} 、 ここ は {葦|あし} の {原|はら} でした 。 {今|いま} は 、 {名前|なまえ} の ある {道|みち} と {決|き}まり が あって 、 {仲直|なかなお}り した {隣同士|となりどうし} が います 。 || Everyone. This time last year, this was reed plain. Now there are roads with names, rules, and neighbours who've made up.
 as_mitsue: {葦原|あしはら}{新田|しんでん} 。 …… {今日|きょう} から 、 {本当|ほんとう} の {村|むら} です 。 || Ashihara Shinden. …From today, a real village.
+?(as_kotoe) !shot night pupils
 ?(as_kotoe) narr: コトエ の {生徒|せいと} たち が 、 {覚|おぼ}えた ばかり の {字|じ} で {書|か}いた {紙|かみ} を {持|も}って 、 {歌|うた} を {歌|うた}う 。 {紙|かみ} に は 、 {村|むら} の {道|みち} の {名前|なまえ} 。 || Kotoe's pupils sing, holding up paper with the letters they've only just learned: the names of the village's roads.
 ?(as_kotoe) as_kotoe: {自分|じぶん} の {住|す}んで いる {道|みち} の {名前|なまえ} が 、 {最初|さいしょ} に {覚|おぼ}えた {字|じ} です 。 {一生|いっしょう} {忘|わす}れません よ 。 || The name of the road they live on was the first thing they learned to write. They'll never forget it.
 as_mohei: さあ さあ 、 {今夜|こんや} は {全部|ぜんぶ} {只|ただ} だ ！ {持|も}って {行|い}きな ！ || Come on, come on, tonight everything's free! Take what you like!
@@ -266,7 +267,8 @@ narr: それから 、 {皆|みんな} で {踊|おど}った 。 ヨシゾウ �
 ?(comp=ren) comp: {灯|ひ} が {一|ひと}つ {増|ふ}える の を 、 {初|はじ}めて {自分|じぶん} の {目|め} で {見|み}た {気|き} が します 。 || I think it's the first time I've seen, with my own eyes, a light being added to the world.
 ?(comp=suzu) comp: {客|きゃく} も {役者|やくしゃ} も {同|おな}じ {人|ひと} 。 こういう {舞台|ぶたい} が 、 {一番|いちばん} {好|す}き かも しれない わ 。 || The audience and the cast are the same people. I think I might like this kind of stage best of all.
 ?(!comp) narr: {誰|だれ} か が {手|て} を {引|ひ}いて 、 {踊|おど}り の {輪|わ} に {入|い}れて くれた 。 || Someone takes your hand and pulls you into the circle of dancers.
-narr: {最後|さいご} に 、 {皆|みんな} で {焚|た}き{火|び} を {囲|かこ}んだ 。 || Last of all, everyone sits round the fire.
+!shot fire settle
+narr: {最後|さいご} に 、 {皆|みんな} で {焚|た}き{火|び} を {囲|かこ}んだ 。 || Last of all, everyone gathers round the fire.
 !shot fire gift
 as_mitsue: これ を 。 {村|むら} の {皆|みんな} から です 。 {田植|たう}え の {時|とき} に かぶる {笠|かさ} です けど 、 {旅|たび} に も いい でしょう 。 || This is for you, from all of us. It's the hat we wear for planting, but it'll do for travelling too.
 !sequence as.festival end

@@ -839,8 +839,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     for (let i = 0; i < 18; i++) { const u = i / 17, v = 1 - u; out.push([0, 1, 2].map((k) => v * v * P3[0][k] + 2 * v * u * P3[1][k] + u * u * P3[2][k])); }
     return out;
   }
+  // Kotoe's pupils, for the night's 'pupils' phase (RBN-QA-177): four children of the village in their festival best
+  const PUPILS = [
+    { size: 'child', skin: 1, hair: 'short', hairColor: 0, cloth: ['#3a5a8a', '#2e4870', '#e8dcc0'], shape: 'tunic', acc: [] },
+    { size: 'child', skin: 2, hair: 'bob', hairColor: 1, cloth: ['#a84a4a', '#8a3a3a', '#f0e0c0'], shape: 'tunic', acc: [] },
+    { size: 'child', skin: 2, hair: 'short', hairColor: 3, cloth: ['#c8783a', '#a8602c', '#f0e0c0'], shape: 'tunic', acc: [] },
+    { size: 'child', skin: 3, hair: 'bob', hairColor: 0, cloth: ['#5a7a4a', '#46623a', '#e8dcc0'], shape: 'tunic', acc: [] },
+  ];
   const night = {
-    phases: [['light', 1500]],
+    phases: [['light', 1500], ['pupils', 900]],
     safe: { wide: 'the village and its lanterns above the sheet', narrow: 'the lanterns in the upper half', land: 'the lanterns' },
     draw(c, w, h, t, st) {
       const G = geomFest(w, h, st.vb), { s } = G, still = st.still, vb = st.vb;
@@ -854,10 +861,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
         SP.lantern(c, Math.round(x), Math.round(y - s(10) * sc), Math.max(2, Math.round(s(3.4) * sc)), Math.max(3, Math.round(s(7) * sc)), on, t, still);
         if (way === 'canal' && on) for (let j = 0; j < 4; j++) R(c, Math.round(x - 1 + (still ? 0 : Math.sin(t / 300 + i + j))), Math.round(vb * 0.68 + (y - vb * 0.58) * 0.3 + j * s(3) * sc), Math.max(2, Math.round(3 * sc)), 1, 'rgba(255,190,110,' + (0.6 - j * 0.12).toFixed(2) + ')');
       });
-      // villagers on their way along the road
-      const rnd = P().rnd(5);
-      for (const [id, u] of [['as_taki', 0.32], ['as_yoshizo', 0.36], ['as_kotoe', 0.62]]) { const x = w * (0.18 + u * 0.7), y = vb * (0.66 - u * 0.06), sc = clamp(0.9 - u * 0.5, 0.4, 0.9), f = Q.figure(look(id), 'right', still ? 'i0' : 'w' + (Math.floor(t / 240 + rnd() * 4) % 4), sc, NIGHT_G); if (f) c.drawImage(f.cv, Math.round(x - f.ax + (still ? 0 : ((t / 120) % (w * 0.05)))), Math.round(y - f.ay)); }
+      // villagers on their way along the road (Kotoe, once her pupils are up, is with them: below)
+      const rnd = P().rnd(5), withPupils = st.at('pupils') > 0 && st.test('as_kotoe');
+      for (const [id, u] of [['as_taki', 0.32], ['as_yoshizo', 0.36], ['as_kotoe', 0.62]]) {
+        if (id === 'as_kotoe' && withPupils) { rnd(); continue; } const x = w * (0.18 + u * 0.7), y = vb * (0.66 - u * 0.06), sc = clamp(0.9 - u * 0.5, 0.4, 0.9), f = Q.figure(look(id), 'right', still ? 'i0' : 'w' + (Math.floor(t / 240 + rnd() * 4) % 4), sc, NIGHT_G); if (f) c.drawImage(f.cv, Math.round(x - f.ax + (still ? 0 : ((t / 120) % (w * 0.05)))), Math.round(y - f.ay)); }
       if (way === 'canal') SP.glints(c, 0, Math.round(vb * 0.66), w, Math.round(vb * 0.3), t, 24, 9, '255,190,120', still);
+      // Kotoe's pupils, only with her school (RBN-QA-177): with Kotoe at the roadside, on the road where it comes toward us
+      // at the left (never on the paddies), each holding up a sheet of the letters they have just learned, and singing.
+      // The sheets show brush strokes, never letters (the names on them are the player's own, and nothing in these
+      // pictures is lettered).
+      const kp = st.at('pupils');
+      if (kp > 0 && st.test('as_kotoe')) {
+        const e = ease(kp), up = Math.round((1 - e) * s(4));
+        // the road's near edge at x: vb·0.66, widening toward us left of w·0.3 (villageStatic); feet inside it
+        const feet = (x) => Math.round(vb * 0.652 + Math.max(0, w * 0.3 - x) * 0.4);
+        const sc = (x) => clamp(0.92 - x / w, 0.6, 0.9);
+        const kx = Math.round(w * 0.07), kf = Q.figure(look('as_kotoe'), 'right', 'i0', sc(kx), NIGHT_G);
+        if (kf) c.drawImage(kf.cv, Math.round(kx - kf.ax), feet(kx) + up - kf.ay);
+        PUPILS.forEach((lk, i) => {
+          const x = Math.round(w * (0.13 + i * 0.065)), y = feet(x) + up, sing = still ? 0 : Math.round(Math.max(0, Math.sin(t / 380 + i * 1.7)) * 1);
+          const f = Q.figure(lk, 'down', 'i0', sc(x), NIGHT_G);
+          if (!f) return;
+          c.drawImage(f.cv, Math.round(x - f.ax), y - f.ay - sing);
+          // the sheet, held up in front: lantern-lit paper with a few strokes of ink
+          const pw = Math.max(5, s(11)), ph = Math.max(4, s(8)), px = x - (pw >> 1), py = y - f.ay - sing + Math.round(f.h * 0.42);
+          R(c, px, py, pw, ph, '#e8d8b0'); R(c, px, py, pw, 1, '#f4ead0'); R(c, px, py + ph - 1, pw, 1, '#b89a70');
+          for (let k = 0; k < 3; k++) { const ly = py + 2 + k * Math.max(1, Math.round(ph / 3.2)); if (ly < py + ph - 1) R(c, px + 2, ly, Math.max(1, pw - 4 - ((i + k) % 3) * 2), 1, '#2a2024'); }
+        });
+      }
     },
     focus(w, h, vb) { return { x: Math.round(w * 0.06), y: Math.round(vb * 0.24), w: Math.round(w * 0.9), h: Math.round(vb * 0.5) }; },
   };
@@ -865,8 +896,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // lanterns strung overhead; then Mitsue holding out the planting hat
   const DANCERS = ['as_mitsue', 'as_yoshizo', 'as_taki', 'as_natsu', 'as_kotoe', 'as_mohei'];
   const FIRE_G = (side) => ({ mul: [0.78, 0.6, 0.5], add: [26, 8, 0], rim: { side, col: '#ffb060', k: [0.5, 0.24] } });
+  // the ring's turn when it came to rest (the 'settle' phase): kept through the gift, forgotten when the dance plays again
+  let restTurn = null;
   const fire = {
-    phases: [['dance', 1200], ['gift', 900]],
+    phases: [['dance', 1200], ['settle', 900], ['gift', 900]],
     safe: { wide: 'the fire and the ring of dancers above the sheet', narrow: 'the fire in the upper half', land: 'the fire' },
     draw(c, w, h, t, st) {
       const G = geomFest(w, h, st.vb), { s } = G, still = st.still, vb = st.vb;
@@ -889,10 +922,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       SP.glow(c, fx, fy - s(16), Math.round(Math.min(w, vb) * 0.55), '255,150,70', 0.26 + (still ? 0 : Math.sin(t / 300) * 0.03));
       // the lanterns strung across overhead
       for (let i = 0; i < 9; i++) { const u = i / 8, x = w * (0.04 + u * 0.92), y = vb * 0.06 + Math.sin(u * Math.PI) * vb * 0.1; SP.lantern(c, Math.round(x), Math.round(y), Math.max(2, s(4)), Math.max(3, s(8)), true, t, still); }
-      // the ring, turning slowly: the far half, the fire, the near half
-      const turn = still ? 0.4 : (t / 11000) * Math.PI * 2;
+      // the ring, turning slowly: the far half, the fire, the near half. Once it settles ('settle', then the gift: "Last of
+      // all, everyone gathers round the fire"; RBN-QA-177) it stops where it is, and everyone stands still, facing the fire.
+      const settled = st.at('settle') > 0;
+      let turn = still ? 0.4 : (t / 11000) * Math.PI * 2;
+      if (settled && !still) { if (restTurn == null) restTurn = turn; turn = restTurn; } else if (!settled) restTurn = null;
       const ring = DANCERS.map((id, i) => { const a = turn + (i / DANCERS.length) * Math.PI * 2 + (i === 2 ? -0.35 : 0); return { id, x: fx + Math.cos(a) * rx, y: fy + Math.sin(a) * ry, a }; });
-      const fig = (r) => { const sc = clamp(0.78 + ((r.y - fy) / ry) * 0.18, 0.55, 1); const f = Q.figure(look(r.id), Math.sin(r.a) > 0 ? 'right' : 'left', still ? 'i0' : 'w' + (Math.floor(t / 200 + r.x) % 4), sc, FIRE_G(r.x < fx ? 'r' : 'l')); if (f) c.drawImage(f.cv, Math.round(r.x - f.ax), Math.round(r.y - f.ay - (still ? 0 : Math.abs(Math.sin(t / 200 + r.x)) * 2))); };
+      const toFire = (r) => (Math.abs(Math.cos(r.a)) > 0.75 ? (r.x < fx ? 'right' : 'left') : r.y > fy ? 'up' : 'down');
+      const fig = (r) => {
+        const sc = clamp(0.78 + ((r.y - fy) / ry) * 0.18, 0.55, 1);
+        const f = settled ? Q.figure(look(r.id), toFire(r), 'i0', sc, FIRE_G(r.x < fx ? 'r' : 'l')) : Q.figure(look(r.id), Math.sin(r.a) > 0 ? 'right' : 'left', still ? 'i0' : 'w' + (Math.floor(t / 200 + r.x) % 4), sc, FIRE_G(r.x < fx ? 'r' : 'l'));
+        if (f) c.drawImage(f.cv, Math.round(r.x - f.ax), Math.round(r.y - f.ay - (still || settled ? 0 : Math.abs(Math.sin(t / 200 + r.x)) * 2)));
+      };
       ring.filter((r) => r.y < fy).forEach(fig);
       // the fire: a cone of logs, tongues of flame over it, sparks going up
       for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2, bx = fx + Math.cos(a) * s(16), by = fy + Math.sin(a) * s(5); for (let j = 0; j <= s(24); j++) { const u = j / s(24); R(c, lerp(bx, fx, u), lerp(by, fy - s(24), u), Math.max(2, s(3)), 1, i % 2 ? '#3a2418' : '#4a2e1c'); } }
@@ -903,7 +944,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Shō at the left, close, keeping time on the cooking pot
       const sx = Math.round(w * (G.narrow ? 0.16 : 0.12)), sy = Math.round(vb * 0.86), sf = Q.figure(look('as_sho'), 'right', 'i0', 1, FIRE_G('r'));
       if (sf) c.drawImage(sf.cv, Math.round(sx - sf.ax), Math.round(sy - sf.ay));
-      const beat = still ? 0 : Math.max(0, Math.sin(t / 160)) * s(3);
+      const beat = still || settled ? 0 : Math.max(0, Math.sin(t / 160)) * s(3);
       R(c, sx + s(10), sy - s(9), s(16), s(9), '#2a2626'); R(c, sx + s(9), sy - s(10), s(18), s(2), '#4a4444'); R(c, sx + s(12), sy - s(9), s(12), 1, '#8a6a50');
       R(c, sx + s(6), sy - s(16) - beat, s(8), Math.max(1, s(1.5)), '#6a5038');
       // the gift: Mitsue holds out the planting hat
