@@ -189,7 +189,14 @@ RB.ui.festivalGames = RB.ui.festivalGames || {};
       const w = b.dataset.w;
       if (w === 'finish') return end();
       if (w === 'listen') return speak();
-      if (w === 'en') { G.api.pause(); G.api.say('<span class="en">' + esc(desc().en) + '</span>'); setTimeout(() => { if (G) G.api.resume(); }, 2500); return; }
+      // the English, and the clock stopped 2.5 s for it: one stop at a time (pressed again during it, the English shows
+      // again and the stop is neither deepened nor lengthened; once it is over, another press stops the clock again),
+      // its timer this round's own: cleared when the game stops, and never resuming a later round (RBN-QA-169)
+      if (w === 'en') {
+        G.api.say('<span class="en">' + esc(desc().en) + '</span>');
+        if (!G.enTimer) { const g = G; g.api.pause(); g.enTimer = setTimeout(() => { if (G !== g) return; g.enTimer = null; g.api.resume(); }, 2500); }
+        return;
+      }
       const p = G.row[+w];
       if (!p) return;
       G.throws++; G.busy = true;
@@ -204,7 +211,7 @@ RB.ui.festivalGames = RB.ui.festivalGames || {};
       }, reduced() ? 150 : 650);
     }
     function end() { if (!G) return null; const r = { score: G.score, streak: G.best }; const api = G.api; stop(); api.done(r); return r; }
-    function stop() { if (!G) return null; const r = { score: G.score, streak: G.best }; G.el.removeEventListener('click', onClick); if (RB.voice && RB.voice.cancel) RB.voice.cancel(); G = null; return r; }
+    function stop() { if (!G) return null; clearTimeout(G.enTimer); const r = { score: G.score, streak: G.best }; G.el.removeEventListener('click', onClick); if (RB.voice && RB.voice.cancel) RB.voice.cancel(); G = null; return r; }
     return { start, stop, state: () => (G ? { target: G.target.id, row: G.row.map((p) => p.id), score: G.score, throws: G.throws } : null) };
   })();
 
