@@ -8,13 +8,14 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import http from 'node:http';
 import { spawn } from 'node:child_process';
 import { root, launch } from './lib.mjs';
 
 const corpus = JSON.parse(fs.readFileSync(path.join(root, 'docs/future/voice/corpus/audition_corpus.json'), 'utf8'));
-const { moraeOf } = await import(path.join(root, 'tools/voice/audio_check.mjs'));
-const { writeGallery } = await import(path.join(root, 'tools/voice/gallery.mjs'));
+const { moraeOf } = await import(pathToFileURL(path.join(root, 'tools/voice/audio_check.mjs')).href);
+const { writeGallery } = await import(pathToFileURL(path.join(root, 'tools/voice/gallery.mjs')).href);
 let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) pass++; else fail++; console.log((c ? 'ok   ' : 'FAIL ') + m); };
 

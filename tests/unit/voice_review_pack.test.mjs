@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import zlib from 'node:zlib';
 import crypto from 'node:crypto';
 import { root } from '../lib/load.mjs';
@@ -24,7 +25,7 @@ function unzip(buf) {
 }
 
 export default async (t) => {
-  const { packReview } = await import(path.join(root, 'tools/voice/pack_review.mjs'));
+  const { packReview } = await import(pathToFileURL(path.join(root, 'tools/voice/pack_review.mjs')).href);
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-va1-rev-'));
   try {
     const dir = path.join(tmp, 'review');
@@ -51,7 +52,7 @@ export default async (t) => {
     t.ok(/Extract every part into ONE folder/.test(listing) && all.flat().filter((f) => f.name !== 'REVIEW_PARTS.txt').every((f) => listing.includes(crypto.createHash('sha256').update(f.data).digest('hex'))), 'REVIEW_PARTS.txt says how to open it and lists every file\'s SHA-256');
 
     // the gallery: START_REVIEW.html and the provisional-lead label
-    const { writeGallery } = await import(path.join(root, 'tools/voice/gallery.mjs'));
+    const { writeGallery } = await import(pathToFileURL(path.join(root, 'tools/voice/gallery.mjs')).href);
     const castDir = path.join(tmp, 'cast');
     fs.mkdirSync(castDir);
     const cast = JSON.parse(fs.readFileSync(path.join(root, 'docs/future/voice/casting/voicevox.json'), 'utf8'));
