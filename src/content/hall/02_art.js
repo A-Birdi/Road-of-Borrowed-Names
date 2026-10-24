@@ -51,7 +51,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   // the first wing's companion map (RBN-QA-166 A): a stone table with an old map laid on it, its roads drawn faintly;
-  // once the map has been read (the floor's trial, o.trial), a small mark at the spring where the floor's pattern
+  // once the floor's trial (o.trial) is completed, a small mark at the spring where the floor's pattern
   // puts it (hall.<wing>.pat: 0 the top right, 1 the bottom left), never before
   const mapMark = (o) => {
     const s = RB.game && RB.game.s;
@@ -203,7 +203,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // The first wing's companion map (RBN-QA-166 A): the stone table the scene names ("On the stone table, an old map"),
   // a grey slab on two squared stone feet, with a sheet of old paper laid on it, its corners darkened and lifting a
   // little, and the floor's roads drawn on it faintly in brown (the middle road, its three crossings, the two side
-  // roads); nothing marks the spring until the map has been read, then a small red mark where the floor's pattern
+  // roads); nothing marks the spring until the floor's trial is completed, then a small red mark where the floor's pattern
   // puts it. Same footprint, block and scene as the plain table it replaces; an ink outline, as for anything to look at.
   art('hall_maptable', {
     box: [-2, -4, 68, 40],
@@ -223,7 +223,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(g, 31, 6, 2, 10, ROAD);
       for (const ry of [8, 11, 14]) R(g, 12, ry, 40, 1, ROADL);
       R(g, 17, 8, 1, 7, ROADL); R(g, 47, 8, 1, 7, ROADL);
-      // read: the spring, marked where the pattern puts it
+      // the trial completed: the spring, marked where the pattern puts it
       if (v === 1) { R(g, 49, 6, 3, 2, '#a8322a'); R(g, 50, 6, 1, 1, '#d4584a'); }
       if (v === 2) { R(g, 12, 14, 3, 2, '#a8322a'); R(g, 13, 14, 1, 1, '#d4584a'); }
     },
