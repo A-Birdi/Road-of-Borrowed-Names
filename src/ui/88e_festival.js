@@ -52,7 +52,7 @@ RB.ui.festival = (function () {
     return '<p class="fv-about">' + RB.ui.jhtml(d.about.jp) + '<span class="en">' + esc(d.about.en) + '</span></p>' +
       '<fieldset class="sg-level"><legend>How to play this round</legend>' +
       '<label class="opt"><input type="radio" name="fv-mode" value="practice"' + (V.mode === 'practice' ? ' checked' : '') + '><span><b>Practice</b>: untimed; nothing is kept</span></label>' +
-      '<label class="opt"><input type="radio" name="fv-mode" value="timed"' + (V.mode === 'timed' ? ' checked' : '') + '><span><b>Timed</b>: ' + d.seconds + ' seconds; your own best is kept. The clock stops while a hint is open</span></label></fieldset>' +
+      '<label class="opt"><input type="radio" name="fv-mode" value="timed"' + (V.mode === 'timed' ? ' checked' : '') + '><span><b>Timed</b>: ' + d.seconds + ' seconds; your own best is kept' + (d.helpPause ? '. The clock stops for up to 2.5 seconds when you press ' + esc(d.helpPause.button) + ', then runs again; ' + esc(d.helpPause.stays) : '') + '</span></label></fieldset>' +
       '<div class="sg-acts"><button type="button" class="pbtn primary" data-a="begin">' + I('next') + '<span>Begin</span></button></div>' +
       (p.timed ? '<p class="muted small">' + esc('Your best: ' + p.best + (d.streaks && p.bestStreak ? '; longest run ' + p.bestStreak : '') + '. Just for fun: nothing is won by it.') + '</p>' : '<p class="muted small">Just for fun: no score here wins anything.</p>');
   }

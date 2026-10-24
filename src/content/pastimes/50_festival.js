@@ -17,6 +17,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   if (RB.festival) RB.festival.define('yoyo', {
     title: T('Water-balloon fishing', 'ヨーヨー{釣|つ}り'), seconds: 60, better: 'more', streaks: true, ui: 'yoyo',
+    helpPause: { button: 'Hint', stays: 'the clue stays shown' },
     about: T('Balloons bob in the tub, each with a word on it. Hook the one you are asked for: read the labels.', '{言葉|ことば} の ヨーヨー を {釣|つ}る 。'),
   });
   if (RB.pastimes) RB.pastimes.define('festival', {
@@ -27,7 +28,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     blurb: T('The stall games of the festival, kept after it. Practice is untimed and keeps nothing; a timed round keeps only your own best. Just for fun.', '{屋台|やたい} の {遊|あそ}び 。'),
     howto: [
       T('Choose Practice (untimed) or Timed each time you play.', '{練習|れんしゅう} か 、 {時間|じかん} を {計|はか}る か 。'),
-      T('In a timed round the clock stops while a hint is open.', 'ヒント の {間|あいだ} 、 {時計|とけい} は {止|と}まる 。'),
+      T('In a timed round of water-balloon fishing or ring toss, Hint or "What does it say?" stops the clock for up to 2.5 seconds, then it runs again. The clue can stay on screen after that.', '{時間|じかん} を {計|はか}る ヨーヨー{釣|つ}り と {輪投|わな}げ で は 、 ヒント か 「What does it say?」 を {押|お}す と 、 {時計|とけい} が {少|すこ}し の {間|あいだ} だけ {止|と}まり 、 また {動|うご}きだす 。 ヒント は その あと も {出|で}た まま の こと が ある 。'),
     ],
     records: (s) => (RB.festival ? RB.festival.list().map((d) => ({ d, p: RB.festival.peek(s, d.id) })).filter((x) => x.p.timed).map((x) => ({ en: x.d.title.en + ', best', value: String(x.p.best) })) : []),
   });
