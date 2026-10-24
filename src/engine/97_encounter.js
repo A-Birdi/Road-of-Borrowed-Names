@@ -581,7 +581,10 @@ RB.encounter = (function () {
       if (w.cost && !st.assist) st.pc = Math.max(0, st.pc - w.cost);
       fx.push({ t: 'proc', ok: false, step: step.id, action: a.id, to: p.steps[to] ? p.steps[to].id : null, restart: to !== p.step || restart, en: w.en || 'That was not the way.', cost: w.cost || 0 });
     }
-    return { fx, answered: st.foes.map(() => false), countered: false, perfect: ok && res.ok && res.firstTry !== false, proc: { ok } };
+    // right (ok) and right first time (perfect) only when it was the right step and written so; Resolve this step writes
+    // nothing, so it is neither (a companion's action reads these: RBN-QA-170)
+    const wrote = card.kind !== 'resolve';
+    return { fx, answered: st.foes.map(() => false), countered: false, perfect: wrote && ok && res.ok && res.firstTry !== false, ok: wrote && ok && !!res.ok, proc: { ok } };
   }
 
   // ---- social encounters (E8) ------------------------------------------------------------------------------------

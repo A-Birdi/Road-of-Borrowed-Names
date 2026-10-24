@@ -549,7 +549,7 @@ RB.combatLogic = (function () {
     if (perfect && card.kind !== 'tech' && (any || card.kind === 'unravel')) st.harmony = Math.min(st.harmonyMax, st.harmony + 1);
     st.lastCountered = countered;
     st.lastPlayer = { perfect, ok: !!result.ok, answered: any, kind: card.kind, target: T };
-    return { fx, countered, answered, answered2, perfect };
+    return { fx, countered, answered, answered2, perfect, ok: !!result.ok };
   }
   // E5 (expansion plan; Robin's C-64): what a response would do right now, by the same rule that will run, on a copy
   // of the state (nothing changes, no randomness is drawn). The card's "Here:" line is built from this, so the
@@ -637,7 +637,7 @@ RB.combatLogic = (function () {
     return { foes: [], allies: [] };
   }
   // Resolve the companion's action (after your response, before the creatures).
-  // P: what your response did (playerAct's result). Returns {fx}.
+  // P: what your response did (playerAct's result, or a procedure step's: src/engine/97_encounter.js). Returns {fx}.
   function compAct(st, actionId, P) {
     const fx = [];
     if (!st.compId || st.comp <= 0 || !actionId) return { fx };
@@ -651,7 +651,10 @@ RB.combatLogic = (function () {
     }
     const e = def.effect || {};
     const T = st.cur;
-    const lp = st.lastPlayer || { perfect: false, ok: false, answered: false };
+    // what your response did in this exchange (P), never an earlier one: a procedure's step answers no creature's move,
+    // and is right first time only when it was the right step written so (RBN-QA-170); the last response only without P
+    const lp = P ? { perfect: !!P.perfect, ok: !!P.ok, answered: (P.answered || []).some(Boolean) || (P.answered2 || []).some(Boolean) }
+      : st.lastPlayer || { perfect: false, ok: false, answered: false };
     const answered = (P && P.answered) || st.foes.map(() => false);
     const R = compReach(st, def);
     const say = (en, extra) => fx.push(Object.assign({ t: 'cact', who, id: def.id, en }, extra || {}));
