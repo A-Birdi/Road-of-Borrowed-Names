@@ -111,12 +111,32 @@ const faceNpc = (p) => p.evaluate(() => {
   const h1 = await p.evaluate(() => { const h = document.querySelector('.help'); if (!h) return null; const r = h.getBoundingClientRect(); const c = h.querySelector('.hclose').getBoundingClientRect(); return { sheet: h.classList.contains('sheet'), inView: r.left >= -1 && r.right <= innerWidth + 1 && r.bottom <= innerHeight + 1, close: c.top >= r.top && c.bottom <= innerHeight && c.height >= 43.5, line: document.querySelector('.dlg .main').textContent }; });
   assert(h1 && h1.sheet && h1.inView && h1.close, 'tapping a word opens a bottom sheet with its Close in view');
   assert(h1 && h1.line === line0, 'tapping a word did not advance the dialogue');
-  // tapping the line (which would normally advance) while the sheet is up only closes the sheet
-  const nb = await p.evaluate(() => { const r = document.querySelector('.dlg .main').getBoundingClientRect(); return { x: r.left + 20, y: r.top + 12 }; });
-  await p.touchscreen.tap(nb.x, nb.y);
-  await p.waitForTimeout(150);
-  const h2 = await p.evaluate(() => ({ help: !!document.querySelector('.help'), line: document.querySelector('.dlg .main').textContent }));
-  assert(!h2.help && h2.line === line0, 'a tap outside the sheet closes it without also advancing');
+  // tapping the line (which would normally advance) while the sheet is up only closes the sheet. The point tapped is one
+  // of the line's own that is outside the sheet, measured, not assumed (with other fonts the sheet can reach over the
+  // line: Local CL-308, Agnes 6385735167). If no part of the line is outside it, that is reported as what it is, the
+  // sheet over the whole line at this size, for product review, and nothing is tapped
+  const nb = await p.evaluate(() => {
+    const m = document.querySelector('.dlg .main'), r = m.getBoundingClientRect(), help = document.querySelector('.help'), h = help.getBoundingClientRect();
+    const box = (b) => [b.left, b.top, b.right, b.bottom].map(Math.round);
+    const pts = [[r.left + 20, r.top + 12]];
+    for (let y = r.top + 6; y < r.bottom - 2; y += 8) for (let x = r.left + 10; x < r.right - 2; x += 20) pts.push([x, y]);
+    for (const [x, y] of pts) {
+      const outside = x < h.left || x > h.right || y < h.top || y > h.bottom, e = outside && document.elementFromPoint(x, y);
+      if (e && m.contains(e)) return { x, y, line: box(r), sheet: box(h) };
+    }
+    return { x: null, line: box(r), sheet: box(h) };
+  });
+  if (nb.x == null) {
+    assert(false, 'for product review: at this size the word-help sheet covers the whole line it explains, so a tap on the line outside the sheet cannot be made (line ' + JSON.stringify(nb.line) + ', sheet ' + JSON.stringify(nb.sheet) + ')');
+    // (then closed with its own Close, so what follows starts as it would have: the sheet shut, the line where it was)
+    await p.locator('.help .hclose').tap();
+    await p.waitForTimeout(150);
+  } else {
+    await p.touchscreen.tap(nb.x, nb.y);
+    await p.waitForTimeout(150);
+    const h2 = await p.evaluate(() => ({ help: !!document.querySelector('.help'), line: document.querySelector('.dlg .main').textContent }));
+    assert(!h2.help && h2.line === line0, 'a tap on the line outside the sheet closes it without also advancing (at ' + JSON.stringify([Math.round(nb.x), Math.round(nb.y)]) + '; line ' + JSON.stringify(nb.line) + ', sheet ' + JSON.stringify(nb.sheet) + ')');
+  }
   // an open sheet survives a resize to a wide window as a card beside its word, fully on screen
   await p.locator('.dlg .jt >> nth=3').tap();
   await p.waitForTimeout(120);
