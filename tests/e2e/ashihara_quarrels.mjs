@@ -144,7 +144,7 @@ for (const [who, at, dir, slots, wash, what, close] of WATER) {
   await begin(p, at[0], at[1], dir, { slots, wash });
   const said = await talk(p, who);
   const T = told(said, ['as_yoshizo', 'as_taki'], /arguing over the sluice/);
-  ok(T.fine && (!close || T.both) && (await p.evaluate(() => !!RB.game.s.flags.as_dp_water)),
+  ok(T.fine && (!close || T.both) && !said.some((l) => /arguing at the sluice/.test(l.en)) && (await p.evaluate(() => !!RB.game.s.flags.as_dp_water)),
     'the water, ' + what + ', started by ' + who + ': the other walks up first; ' + (T.both ? 'both there: "arguing over the sluice", every line from beside you' : 'not there in time: no intro, their lines from where they stand') + '; settled (' + J(said.slice(0, 3).map((l) => [l.who, l.en.slice(0, 30), l.at, l.pc, l.away])) + ')');
 }
 const NOISE = [
@@ -178,7 +178,7 @@ for (const [who, at, dir, slots, wash, what, close] of NOISE) {
   });
   const said = await talk(p, 'as_yoshizo');
   const taki = said.filter((l) => l.who === 'as_taki');
-  ok(!said.some((l) => /arguing over the sluice/.test(l.en)) && taki.length > 0 && taki.every((l) => l.away) && (await p.evaluate(() => !!RB.game.s.flags.as_dp_water)),
+  ok(!said.some((l) => /arguing (over|at) the sluice/.test(l.en)) && taki.length > 0 && taki.every((l) => l.away) && (await p.evaluate(() => !!RB.game.s.flags.as_dp_water)),
     'Taki cannot come up from the reeds (every tile near you taken): no intro, her lines marked as said from off screen, and it still settles (' + J(taki.map((l) => [l.en.slice(0, 30), l.at, l.away])) + ')');
   await p.evaluate(() => { const m = RB.world.W.map; m.props = m.props.filter((q) => !q.__fixture); });
 }
