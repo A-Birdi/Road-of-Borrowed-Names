@@ -68,7 +68,7 @@ let suites = [
   // the expansion's own suites (P01–P15), each run at its phase end and gathered here at P17 so that a complete run
   // covers them: the world proof, the living world and its actions, the workshop, the records, the pastimes, the
   // Distractions tab, the pilot expedition and the Atlas's board, then the six new chapters, the sea and the ports
-  ['world.mjs'], ['world_light.mjs'], ['world_slice.mjs'], ['world_living.mjs'], ['living_world.mjs'], ['return_hints.mjs'], ['verbs.mjs'], ['verbs_journey.mjs'], ['perform.mjs'], ['workshop.mjs'], ['records.mjs'], ['letters_order.mjs'], ['answer_order.mjs'], ['old_saves.mjs'],
+  ['world.mjs'], ['world_light.mjs'], ['world_slice.mjs'], ['world_living.mjs'], ['living_world.mjs'], ['return_hints.mjs'], ['settings_ledger_refresh.mjs'], ['verbs.mjs'], ['verbs_journey.mjs'], ['perform.mjs'], ['workshop.mjs'], ['records.mjs'], ['letters_order.mjs'], ['answer_order.mjs'], ['old_saves.mjs'],
   ['distractions.mjs'], ['hanafuda.mjs'], ['karuta.mjs'], ['shogi.mjs'], ['festival.mjs'], ['festival_games.mjs'], ['expedition.mjs'], ['atlas_board.mjs'],
   ['manybridge.mjs'], ['manybridge2.mjs'], ['keepers.mjs'], ['licence.mjs'], ['sailing.mjs'], ['ports.mjs'], ['kotonoha.mjs'],
   ['cloudroad.mjs'], ['nakayama_inns.mjs'], ['cloud_sea.mjs'], ['ledge_horse.mjs'], ['courier_shelf.mjs'], ['jinpachi_letter.mjs'], ['leg2_boulder.mjs'], ['steamhollow.mjs'], ['playhouse_audience.mjs'], ['tsuneji_egg.mjs'], ['egg_recovery.mjs'], ['suzu_books_route.mjs'], ['zenroku_inquiry.mjs'], ['valve_line.mjs'], ['yn_guide.mjs'], ['archive12.mjs'],
