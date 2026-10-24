@@ -78,9 +78,32 @@ RB.bookmarks = (function () {
     }
     return null;
   }
+  // A prop's own line is shown under its own scene id, so its recording is found (src/engine/50_world.js), but it is
+  // still the prop's: its source is the prop the player is reading, the one the world reads in front of them (its
+  // condition holding, the last such prop on that tile, as RB.world's propAt picks), when that prop's own line is this
+  // one. Never a prop elsewhere with the same words, nor a hidden one: without a match, nothing is guessed.
+  const PROP_SCENE = 'code.prop';
+  function ownPropInFront(line, s) {
+    const W = RB.world && RB.world.W;
+    if (!W || !W.map || !W.player || !RB.world.frontTile) return null;
+    const [fx, fy] = RB.world.frontTile();
+    let best = null;
+    for (const pr of W.map.props || []) {
+      if (!pr.text && !pr.scene) continue;
+      if (pr.if && !(RB.state && s && RB.state.test(s, pr.if))) continue;
+      const pd = (RB.props && RB.props.P && RB.props.P[pr.p]) || {};
+      const pw = pr.w || pd.w || 1, ph = pr.h || pd.h || 1;
+      if (fx >= pr.x && fx < pr.x + pw && fy >= pr.y && fy < pr.y + ph) best = pr;
+    }
+    return best && !best.scene && best.text && best.text.jp === line.jp ? best : null;
+  }
   function sourceOf(line, s) {
     const m = liveMap(s);
     const inBattle = RB.combat && RB.combat.state && RB.combat.state();
+    if (line.sceneId === PROP_SCENE) {
+      const pr = !inBattle ? ownPropInFront(line, s) : null;
+      return pr ? { k: 'pr', m, x: pr.x, y: pr.y, o: pr.p } : { k: 'sc', id: line.sceneId };
+    }
     if (line.sceneId) {
       const pr = line.who === 'narr' && !inBattle ? propInFront(line) : null;
       return pr ? { k: 'sc', id: line.sceneId, o: pr.p, x: pr.x, y: pr.y } : { k: 'sc', id: line.sceneId };

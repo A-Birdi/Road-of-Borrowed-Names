@@ -280,4 +280,57 @@ export default async (t) => {
     if (/[一-鿿]/.test(RB.jp.plain(x)) && !/\{[^|}]+\|[^}]+\}/.test(x)) bad.push(w + ': kanji without a reading');
   }
   t.eq(bad, [], 'every Japanese label of the Words pages is valid, with readings and known words (' + strs.length + ')');
+
+  // ---- a prop's own line (code.prop, so its recording is found) is kept with the prop read ---------------------------
+  // The world's front tile and props stubbed: the source is the prop the world reads in front of the player (its
+  // condition holding, the last on the tile), only when that prop's own line is the one shown; nothing guessed
+  // otherwise; scene, battle, door and plain-line sources as before; an old bookmark left as it is.
+  {
+    const s = fresh({ map: 'rw.mill1' });
+    const W0 = RB.world.W, ft0 = RB.world.frontTile, cs0 = RB.combat.state, cc0 = RB.combat.context;
+    const notice = C.maps['rw.mill1'].props.find((q) => q.x === 9 && q.y === 9 && q.text);
+    const T = { jp: 'テスト の {札|ふだ} 。', en: 'A test notice.' }, T2 = { jp: 'テスト の {机|つくえ} 。', en: 'A test table.' };
+    const props = [
+      notice,
+      { p: 'sign', x: 5, y: 5, text: T }, { p: 'sign', x: 7, y: 5, text: T },  // twins: the same line on two signs
+      { p: 'table', x: 10, y: 5, text: T2 },                                   // two tiles wide
+      { p: 'sign', x: 13, y: 5, text: T }, { p: 'board', x: 13, y: 5, text: T, if: 'test_never_set' }, // a hidden one over a visible one
+      { p: 'board', x: 15, y: 5, text: T, if: 'test_never_set' },               // only a hidden one
+      { p: 'sign', x: 17, y: 5, scene: 'wt.unit' },                            // a prop with a scene
+    ];
+    let front = [9, 9];
+    RB.world.W = { map: { id: 'rw.mill1', props }, player: { x: 0, y: 0, dir: 'up' } };
+    RB.world.frontTile = () => front;
+    RB.combat.state = () => null;
+    const own = (text) => ({ who: 'narr', jp: text.jp, en: text.en, sceneId: 'code.prop' });
+    const srcAt = (xy, line) => { front = xy; return show(s, line).k.src; };
+    try {
+      const e = (front = [9, 9], show(s, own(notice.text)));
+      t.eq(e.k.src, { k: 'pr', m: 'rw.mill1', x: 9, y: 9, o: 'sign' }, "the miller's notice: its own line kept with the notice (the prop, its tile)");
+      const kb = BM.keep(s, e).b;
+      t.ok(kb.obj === 'sign' && kb.map === 'rw.mill1' && kb.place && kb.place.en === C.maps['rw.mill1'].name.en && BM.status(kb) === 'ok', 'kept: the notice, the mill, and its source found as it is (' + JSON.stringify({ obj: kb.obj, map: kb.map, src: kb.src, status: BM.status(kb) }) + ')');
+      const back = JSON.parse(JSON.stringify(s.bookmarks)).find((x) => x.id === kb.id);
+      t.eq([back.src, BM.status(back)], [kb.src, 'ok'], 'the same after a save round trip');
+      t.eq(srcAt([7, 5], own(T)), { k: 'pr', m: 'rw.mill1', x: 7, y: 5, o: 'sign' }, 'twin signs, the same line: the one read, in front');
+      t.eq(srcAt([5, 5], own(T)), { k: 'pr', m: 'rw.mill1', x: 5, y: 5, o: 'sign' }, 'and the other, read in its turn');
+      t.eq(srcAt([11, 5], own(T2)), { k: 'pr', m: 'rw.mill1', x: 10, y: 5, o: 'table' }, 'a prop two tiles wide, read from its second tile: the prop itself');
+      t.eq(srcAt([13, 5], own(T)), { k: 'pr', m: 'rw.mill1', x: 13, y: 5, o: 'sign' }, 'a hidden prop over a visible one with the same line: the visible one');
+      t.eq(srcAt([15, 5], own(T)), { k: 'sc', id: 'code.prop' }, 'only a hidden prop there: nothing guessed');
+      t.eq(srcAt([5, 5], own(T2)), { k: 'sc', id: 'code.prop' }, 'the prop in front has another line: nothing guessed');
+      t.eq(srcAt([17, 5], own(T)), { k: 'sc', id: 'code.prop' }, 'the prop in front plays a scene, so the line is not its own: nothing guessed');
+      t.eq(srcAt([17, 5], say(0)), { k: 'sc', id: 'wt.unit', o: 'sign', x: 17, y: 5 }, 'unchanged: a scene line read from a prop with that scene');
+      t.eq(srcAt([5, 5], { who: 'narr', jp: 'テスト 。', en: 'Test.', sceneId: 'code.door' }), { k: 'sc', id: 'code.door' }, 'unchanged: a shut door');
+      t.eq(srcAt([5, 5], { who: 'narr', jp: T.jp, en: T.en }), { k: 'pr', m: 'rw.mill1', x: 5, y: 5, o: 'sign' }, 'unchanged: a prop line shown without a scene id');
+      RB.combat.state = () => ({ phase: 'player' }); RB.combat.context = () => ({ id: 'rw.reedling' });
+      t.eq(srcAt([5, 5], { who: 'narr', jp: T.jp, en: T.en }), { k: 'bt', id: 'rw.reedling' }, 'unchanged: a line in a battle');
+      t.eq(srcAt([5, 5], own(T)), { k: 'sc', id: 'code.prop' }, 'and a prop line in a battle is not given a prop');
+      // an old bookmark kept before this (its source the scene id alone): left as it is, not reconstructed
+      const old = { id: 'bm-old', t: 1, key: 'x', jp: notice.text.jp, en: notice.text.en, who: 'narr', src: { k: 'sc', id: 'code.prop' }, map: 'rw.mill1', h: kb.h, title: '', note: '' };
+      const st = { bookmarks: [JSON.parse(JSON.stringify(old))] };
+      BM.migrate(st);
+      t.eq([st.bookmarks[0].src, st.bookmarks[0].obj, BM.status(st.bookmarks[0])], [{ k: 'sc', id: 'code.prop' }, undefined, BM.status(old)], 'an old bookmark with only the scene id: left as it was (no migration, no place guessed)');
+    } finally {
+      RB.world.W = W0; RB.world.frontTile = ft0; RB.combat.state = cs0; RB.combat.context = cc0;
+    }
+  }
 };
