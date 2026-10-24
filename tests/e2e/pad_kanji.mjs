@@ -65,6 +65,8 @@ async function helpers(p) {
         mode: RB.pad.__last.mode(), sel: document.querySelector('[data-script-sel]').value, state: rd.getAttribute('data-state'), text: rd.textContent.replace(/\s+/g, ' ').trim(),
         big: (document.querySelector('.readas .big ruby') || document.querySelector('.readas .big') || {}).textContent || '', rt: (document.querySelector('.readas .big rt') || {}).textContent || '',
         cands: [...document.querySelectorAll('.cands .cand')].map((x) => x.firstChild ? (x.querySelector('ruby') ? x.querySelector('ruby').firstChild.textContent : x.firstChild.textContent) : ''),
+        // (those actually in view: \`cands\` counts every one in the DOM, hidden or not)
+        shown: [...document.querySelectorAll('.cands .cand')].filter((x) => !x.hidden && getComputedStyle(x).display !== 'none' && x.getClientRects().length).map((x) => x.querySelector('ruby') ? x.querySelector('ruby').firstChild.textContent : x.textContent),
         acts: [...document.querySelectorAll('.cands [data-a]')].map((x) => x.getAttribute('data-a')),
         confirm: !document.querySelector('[data-a=confirm]').disabled, hint: !!document.querySelector('.rd-hint'),
         result: RB.pad.__last._state.result && { status: RB.pad.__last._state.result.status, kanjiHint: RB.pad.__last._state.result.kanjiHint, kanjiLike: RB.pad.__last._state.result.kanjiLike },
@@ -176,7 +178,7 @@ await test('a kanji outside the game (郁): kana reading off: said plainly, no k
     if (off) {
       assert(/looks like a kanji/i.test(rd.text) && /kanji reading is off/i.test(rd.text) && rd.acts.includes('kanji') && rd.cands.length === 0, 'kana mode: plain message, Read kanji too, no kana candidates: ' + JSON.stringify(rd));
     } else {
-      assert(/not sure/i.test(rd.text) && /chart/i.test(rd.text) && rd.cands.length > 0 && rd.cands.every((c) => /^[一-鿿]$/.test(c)), 'kanji mode: the closest kanji to choose from: ' + JSON.stringify(rd));
+      assert(/not sure/i.test(rd.text) && /chart/i.test(rd.text) && rd.cands.length > 0 && rd.cands.every((c) => /^[一-鿿]$/.test(c)) && rd.shown.length === rd.cands.length, 'kanji mode: the closest kanji to choose from, every one in view: ' + JSON.stringify(rd));
       await p.screenshot({ path: 'tests/e2e/out/pad_kanji_unknown.png' });
       // choosing one lets it be confirmed (assisted)
       await p.tap('.cands .cand >> nth=0');
@@ -321,6 +323,11 @@ await test('no horizontal overflow with More open at 320/360 px and 200 % text; 
         const q = el.getBoundingClientRect();
         if (q.width && q.height && (q.right > W + 1 || q.left < -1)) out.push((el.className && el.className.baseVal == null ? el.className : el.tagName) + ' ' + Math.round(q.left) + '..' + Math.round(q.right));
       }
+      // (when Add character waits for a pick, none of those offered may be hidden: the loop above skips hidden ones)
+      if (document.querySelector('.readas').getAttribute('data-state') === 'outside' && document.querySelector('[data-a=confirm]').disabled) {
+        const hid = [...document.querySelectorAll('.cands .cand')].filter((x) => x.hidden || getComputedStyle(x).display === 'none').length;
+        if (hid) out.push(hid + ' offered candidate(s) hidden');
+      }
       const s = document.querySelector('[data-script-sel]').getBoundingClientRect();
       return { out: out.slice(0, 6), sel: { h: s.height, l: s.left, r: s.right } };
     });
@@ -331,6 +338,124 @@ await test('no horizontal overflow with More open at 320/360 px and 200 % text; 
     await ctx.close();
   }
   assert(!bad.length, bad.join('\n   '));
+});
+
+// ---------------------------------------------------------------------------
+// A kanji the pad is not sure of (郁, kanji reading on): Add character waits for a pick among the closest kanji, so
+// every one offered must be in view and reachable, at phone sizes and with larger text, on its first showing and
+// after a resize. A pick is still required before Add character does anything; a tap (or the keyboard) picks, Add
+// character then adds it, counted as it is on a wide screen. A kana read with confidence is laid out as before: the
+// button beside the reading, the row not wrapped. (Agnes 6386208750, Local CL-312.)
+const offeredNow = (p) => p.evaluate(() => {
+  const W = innerWidth, H = innerHeight, pad = RB.pad.__last._state;
+  const all = [...document.querySelectorAll('.cands .cand')];
+  const box = (q) => ({ l: q.left, t: q.top, r: q.right, b: q.bottom, w: q.width, h: q.height });
+  // (each brought into view first, as a player would scroll to it: with large text on a small screen the pad is
+  // taller than the screen; then where it is, and what a tap on its middle would reach)
+  const each = all.map((c) => {
+    if (!c.hidden) c.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    const ink = document.querySelector('.pad-ink').getBoundingClientRect();
+    const q = c.getBoundingClientRect(), e = document.elementFromPoint(q.left + q.width / 2, q.top + q.height / 2);
+    return { ch: c.querySelector('ruby') ? c.querySelector('ruby').firstChild.textContent : c.textContent, hidden: c.hidden || getComputedStyle(c).display === 'none', ...box(q), on: !!(e && c.contains(e)), inkOverlap: q.left < ink.right && q.right > ink.left && q.top < ink.bottom && q.bottom > ink.top };
+  });
+  return { W, H, scrollW: document.documentElement.scrollWidth, state: document.querySelector('.readas').getAttribute('data-state'), confirm: !document.querySelector('[data-a=confirm]').disabled, strokes: pad.strokes.length, chars: pad.chars.map((c) => c.ch), each };
+});
+const inView = (g) => g.each.length > 0 && g.each.every((c) => !c.hidden && c.on && !c.inkOverlap && c.l >= 0 && c.r <= g.W + 0.5 && c.t >= 0 && c.b <= g.H + 0.5 && c.w >= 44 && c.h >= 44) && g.scrollW <= g.W + 1;
+const brief = (g) => JSON.stringify({ state: g.state, confirm: g.confirm, strokes: g.strokes, chars: g.chars, scrollW: g.scrollW, W: g.W, each: g.each.map((c) => [c.ch, c.hidden ? 'hidden' : Math.round(c.l) + ',' + Math.round(c.t) + ' ' + Math.round(c.w) + 'x' + Math.round(c.h) + (c.on ? '' : ' covered') + (c.inkOverlap ? ' over the ink' : '')]) });
+await test('a kanji the pad is not sure of, at phone sizes and 200 % text: every closest kanji offered in view and reachable; a pick before Add character; a tap, the keyboard and a resize', async () => {
+  const read = offeredNow;
+  // on a wide screen first: what the last candidate counts as once added (the same everywhere)
+  let wide;
+  {
+    const { p, errors, ctx } = await openPad(null, 'E');
+    await p.evaluate((g) => __write(g), GEN);
+    const g = await read(p);
+    assert(g.state === 'outside' && !g.confirm && inView(g), 'wide: the closest kanji, all in view ' + brief(g));
+    const last = g.each[g.each.length - 1];
+    await p.mouse.click(last.l + last.w / 2, last.t + last.h / 2);
+    await p.click('[data-a=confirm]');
+    wide = await p.evaluate(() => RB.pad.__last._state.chars.map((c) => ({ ch: c.ch, assisted: c.assisted })));
+    assert(wide.length === 1 && wide[0].ch === last.ch, 'wide: the last one picked, then added ' + JSON.stringify(wide));
+    assert(!errors.length, errors.join('; '));
+    await ctx.close();
+  }
+  const bad = [];
+  for (const [w, h] of [[320, 640], [360, 740], [390, 844], [412, 915]]) for (const scale of [1, 2]) {
+    const { p, errors, ctx } = await page(b, url, phone(w, h));
+    await helpers(p);
+    await p.evaluate((k) => { RB.game.settings.textScale = k; RB.game.applySettings(); }, scale);
+    await p.evaluate((st) => __start(st, 'E'), MIZU);
+    await p.waitForSelector('.pad-ink');
+    await p.evaluate((g) => __write(g), GEN);
+    await p.waitForTimeout(150);
+    const g = await read(p);
+    const tag = w + 'x' + h + ' at ' + scale * 100 + ' %';
+    if (!(g.state === 'outside' && !g.confirm && g.strokes === GEN.length && inView(g))) bad.push(tag + ': not all in view ' + brief(g));
+    // Add character before a pick: nothing added
+    await p.evaluate(() => document.querySelector('[data-a=confirm]').click());
+    if ((await read(p)).chars.length) bad.push(tag + ': Add character added something before a pick');
+    // a real tap on the last one offered: picked, then Add character adds it, counted as on a wide screen
+    const last = g.each[g.each.length - 1];
+    if (last && !last.hidden) {
+      await p.touchscreen.tap(last.l + last.w / 2, last.t + last.h / 2);
+      await p.waitForTimeout(120);
+      const after = await read(p);
+      if (!(after.confirm && after.state === 'sure' && after.chars.length === 0)) bad.push(tag + ': a tap on ' + last.ch + ' did not pick it ' + brief(after));
+      const ab = await p.evaluate(() => { const c = document.querySelector('[data-a=confirm]'); c.scrollIntoView({ block: 'nearest' }); const q = c.getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 }; });
+      await p.touchscreen.tap(ab.x, ab.y);
+      await p.waitForTimeout(120);
+      const added = await p.evaluate(() => RB.pad.__last._state.chars.map((c) => ({ ch: c.ch, assisted: c.assisted })));
+      if (JSON.stringify(added) !== JSON.stringify(wide)) bad.push(tag + ': added ' + JSON.stringify(added) + ', on a wide screen ' + JSON.stringify(wide));
+    }
+    if (errors.length) bad.push(tag + ': ' + errors.join('; '));
+    if (w === 390 && scale === 1) await p.screenshot({ path: 'tests/e2e/out/pad_kanji_unsure_390.png' });
+    await ctx.close();
+  }
+  assert(!bad.length, bad.join('\n   '));
+  // the keyboard: a candidate focused and Enter picks it, at 390 px
+  {
+    const { p, errors, ctx } = await page(b, url, phone(390, 844));
+    await helpers(p);
+    await p.evaluate((st) => __start(st, 'E'), MIZU);
+    await p.waitForSelector('.pad-ink');
+    await p.evaluate((g) => __write(g), GEN);
+    await p.waitForTimeout(150);
+    const first = await p.evaluate(() => { const c = document.querySelector('.cands .cand'); c.focus(); return document.activeElement === c ? (c.querySelector('ruby') ? c.querySelector('ruby').firstChild.textContent : c.textContent) : null; });
+    await p.keyboard.press('Enter');
+    await p.waitForTimeout(120);
+    const k = await p.evaluate(() => ({ big: (document.querySelector('.readas .big ruby') || document.querySelector('.readas .big') || {}).textContent || '', confirm: !document.querySelector('[data-a=confirm]').disabled }));
+    assert(first && k.confirm && k.big.startsWith(first), 'the keyboard: the first one focused, Enter picks it ' + JSON.stringify({ first, k }));
+    assert(!errors.length, errors.join('; '));
+    await ctx.close();
+  }
+  // a resize while it waits for a pick: wide to narrow and back, every one still in view
+  {
+    const { p, errors, ctx } = await openPad(null, 'E');
+    await p.evaluate((g) => __write(g), GEN);
+    const g0 = await read(p);
+    await p.setViewportSize({ width: 360, height: 740 });
+    await p.waitForTimeout(300);
+    const g1 = await read(p);
+    await p.setViewportSize({ width: 1280, height: 800 });
+    await p.waitForTimeout(300);
+    const g2 = await read(p);
+    assert(inView(g0) && inView(g1) && inView(g2) && g1.each.length === g0.each.length && g2.each.length === g0.each.length && !g1.confirm, 'a resize to 360 px and back: every one offered still in view, Add character still waiting ' + brief(g1));
+    assert(!errors.length, errors.join('; '));
+    await ctx.close();
+  }
+  // a kana read with confidence: laid out as before, the button beside the reading (the row not wrapped)
+  {
+    const { p, errors, ctx } = await page(b, url, phone(390, 844));
+    await helpers(p);
+    await p.evaluate(() => __start({ kind: 'write', item: 'k:あ', prompt: { en: 'Write a' }, answer: 'あ', accept: ['あ'], mode: 'kana', single: true, script: 'hira' }, 'E'));
+    await p.waitForSelector('.pad-ink');
+    await p.evaluate(() => __write(__ink('あ')));
+    await p.waitForTimeout(150);
+    const s = await p.evaluate(() => { const c = document.querySelector('[data-a=confirm]'), big = document.querySelector('.readas .big'); return { state: document.querySelector('.readas').getAttribute('data-state'), confirm: !c.disabled, row: c.offsetTop <= big.offsetTop + 4 }; });
+    assert(s.state === 'sure' && s.confirm && s.row, 'a kana read with confidence: Add character beside the reading, as before ' + JSON.stringify(s));
+    assert(!errors.length, errors.join('; '));
+    await ctx.close();
+  }
 });
 
 await b.close(); srv.close();

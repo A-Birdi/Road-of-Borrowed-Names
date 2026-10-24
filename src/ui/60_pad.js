@@ -462,6 +462,7 @@ RB.pad = (function () {
       candsEl.innerHTML = '';
       moreRow.innerHTML = '';
       P.list = [];
+      P.mustPick = false;
       if (PH) {
         // while a pace is stopped for review, one press inserts the character and continues
         conf.lastChild.textContent = PH.reviewing() ? 'Add character & continue' : 'Add character';
@@ -496,6 +497,7 @@ RB.pad = (function () {
         near.forEach((cd) => candsEl.appendChild(candButton(cd)));
         if (!r.kanjiHint) candsEl.appendChild(button('chart', 'grid', 'Chart'));
         conf.disabled = true;
+        P.mustPick = true; // (Add character waits for a pick: every one offered stays in view; fitAlts)
         fitAlts();
         RB.audio && RB.audio.sfx('recog_unsure', { vol: 0.5 });
         return;
@@ -552,10 +554,15 @@ RB.pad = (function () {
       return b;
     }
     // Show as many other readings as fit on the row beside Confirm (the rest
-    // stay reachable through the chart), so the row never wraps.
+    // stay reachable through the chart), so the row never wraps. Not when a
+    // pick is required (a kanji the pad is not sure of, Add character waiting
+    // for one): then every one offered stays, and the button takes the next
+    // line, rather than leave nothing to pick (at 390 px "Add character" no
+    // longer fits beside even one).
     function fitAlts() {
       const bs = Array.from(candsEl.querySelectorAll('.cand'));
       bs.forEach((b) => (b.hidden = false));
+      if (P.mustPick) { const or = candsEl.querySelector('.or'); if (or) or.hidden = !bs.length; return; }
       const conf = el.querySelector('[data-a=confirm]');
       const big = readas.querySelector('.big');
       if (!big || !conf.offsetParent) return;
