@@ -113,8 +113,10 @@ const faceNpc = (p) => p.evaluate(() => {
   assert(h1 && h1.line === line0, 'tapping a word did not advance the dialogue');
   // tapping the line (which would normally advance) while the sheet is up only closes the sheet. The point tapped is one
   // of the line's own that is outside the sheet, measured, not assumed (with other fonts the sheet can reach over the
-  // line: Local CL-308, Agnes 6385735167). If no part of the line is outside it, that is reported as what it is, the
-  // sheet over the whole line at this size, for product review, and nothing is tapped
+  // line: Local CL-308, Agnes 6385735167). If none of the points sampled on the line (every 20 by 8 px) is outside it
+  // and hit-testable, that is reported as just that, for product review, and nothing is tapped: sampling is not proof
+  // the sheet covers the whole line (a narrow gap between points, or another layer, would read the same; Agnes
+  // 6386433446)
   const nb = await p.evaluate(() => {
     const m = document.querySelector('.dlg .main'), r = m.getBoundingClientRect(), help = document.querySelector('.help'), h = help.getBoundingClientRect();
     const box = (b) => [b.left, b.top, b.right, b.bottom].map(Math.round);
@@ -127,7 +129,7 @@ const faceNpc = (p) => p.evaluate(() => {
     return { x: null, line: box(r), sheet: box(h) };
   });
   if (nb.x == null) {
-    assert(false, 'for product review: at this size the word-help sheet covers the whole line it explains, so a tap on the line outside the sheet cannot be made (line ' + JSON.stringify(nb.line) + ', sheet ' + JSON.stringify(nb.sheet) + ')');
+    assert(false, 'for product review: at this size no sampled point of the line it explains (every 20 by 8 px) is outside the word-help sheet and hit-testable, so no tap on the line outside the sheet is made (line ' + JSON.stringify(nb.line) + ', sheet ' + JSON.stringify(nb.sheet) + ')');
     // (then closed with its own Close, so what follows starts as it would have: the sheet shut, the line where it was)
     await p.locator('.help .hclose').tap();
     await p.waitForTimeout(150);
