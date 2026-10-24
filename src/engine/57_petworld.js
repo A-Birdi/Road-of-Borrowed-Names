@@ -11,9 +11,10 @@
  * - it never makes you wait: when it falls far behind, or the route breaks
  *   (a door, a scene cut, a warp), it catches up discreetly — a short fade at
  *   the tile behind your companion;
- * - when you stop it settles near you on a free tile (not a door, exit,
- *   trigger, person or the tile in front of you), sits, and after a while lies
- *   down; small idle movements are timed from its own random stream, never
+ * - when you stop it settles near you on a free tile of dry ground (not
+ *   water, a door, exit, trigger, person or the tile in front of you), sits,
+ *   and after a while lies down (in water it stays on its feet, in a scene's
+ *   movements too); small idle movements are timed from its own random stream, never
  *   the game's; at rest it breathes and its tail keeps moving, on its own beat
  *   (so do the animals not yet met, between the moments their scenes author);
  * - hidden before it has joined you, when "Show pet in exploration" is off,
@@ -92,23 +93,29 @@ RB.petWorld = (function () {
     return true;
   }
   // ---- placement --------------------------------------------------------------------------------------
+  // the free dry tile behind the lead (your companion, or you), then any within three steps of them; or null
+  function spotNear() {
+    const w = W(), p = w.player;
+    const lead = w.comp || p, back = DIRS[{ up: 'down', down: 'up', left: 'right', right: 'left' }[p.dir]] || [0, 1];
+    const cand = [[lead.x + back[0], lead.y + back[1]]];
+    for (let r = 1; r <= 3; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (Math.abs(dx) + Math.abs(dy) === r) cand.push([lead.x + dx, lead.y + dy]);
+    const ok = ([x, y]) => floor(x, y) && !wet(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y);
+    return cand.find((q) => ok(q) && !covered(q[0], q[1])) || cand.find(ok) || null;
+  }
   // At a map's entry (a door, a load, a warp): the free tile behind your companion (or behind you),
   // then any free tile near; it fades in there. Nothing is placed where nobody can stand.
   function place() {
     const w = W(), p = w.player;
-    P.map = w.map.id; P.queue = []; P.mv = null; P.act = null; P.idle = null; P.still = 0;
+    P.map = w.map.id; P.queue = []; P.mv = null; P.act = null; P.idle = null; P.still = 0; P.unseen = null;
     P.leadAt = p.x + ',' + p.y; P.leadMv = p.mv || null;
-    const lead = w.comp || p, back = DIRS[{ up: 'down', down: 'up', left: 'right', right: 'left' }[p.dir]] || [0, 1];
-    const cand = [[lead.x + back[0], lead.y + back[1]]];
-    for (let r = 1; r <= 3; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (Math.abs(dx) + Math.abs(dy) === r) cand.push([lead.x + dx, lead.y + dy]);
-    // just met on this map: it starts where it was (the vignette's animal becomes the one that follows)
+    // just met on this map: it starts where it was (the vignette's animal becomes the one that follows; that spot is
+    // authored, so it is taken as it is: on water it steps off once still, as from any tile it should not rest on)
     const hand = P.handoff && P.handoff.map === w.map.id ? P.handoff : null;
     P.handoff = null;
-    const ok = ([x, y]) => floor(x, y) && !wet(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y);
-    const spot = hand ? [hand.x, hand.y] : cand.find((q) => ok(q) && !covered(q[0], q[1])) || cand.find(ok) || null;
-    if (hand) { P.x = spot[0]; P.y = spot[1]; P.alpha = 1; P.fade = 0; P.fx = P.x; P.fy = P.y; P.dir = hand.dir || p.dir; P.placed = true; return; }
+    if (hand) { P.x = hand.x; P.y = hand.y; P.alpha = 1; P.fade = 0; P.fx = P.x; P.fy = P.y; P.dir = hand.dir || p.dir; P.placed = true; return; }
+    const spot = spotNear();
     if (spot) { P.x = spot[0]; P.y = spot[1]; P.alpha = 0; P.fade = 1; }
-    else { P.x = lead.x; P.y = lead.y; P.alpha = 0; P.fade = 0; } // nowhere yet: it appears after your first step
+    else { const lead = w.comp || p; P.x = lead.x; P.y = lead.y; P.alpha = 0; P.fade = 0; P.unseen = P.leadAt; } // nowhere yet: unseen until there is (update)
     P.fx = P.x; P.fy = P.y; P.dir = p.dir; P.placed = true;
     if (RB.game.reducedMotion() && P.fade) { P.alpha = 1; P.fade = 0; }
   }
@@ -163,6 +170,18 @@ RB.petWorld = (function () {
         const [lx, ly] = P.leadAt.split(',').map(Number);
         if (Math.abs(lx - p.x) + Math.abs(ly - p.y) > 1) { P.leadAt = at; catchUp('warp'); }
         else P.leadAt = at;
+      }
+    }
+    // placed where there was nowhere to stand (no dry, free tile near the lead): it looks again each time you reach a
+    // new tile, and fades in at the first spot there is (as at a map's entry)
+    if (P.unseen && P.unseen !== p.x + ',' + p.y) {
+      P.unseen = p.x + ',' + p.y;
+      const spot = spotNear();
+      if (spot) {
+        P.unseen = null; P.queue = []; P.mv = null; P.still = 0; P.idle = null;
+        P.x = spot[0]; P.y = spot[1]; P.fx = P.x; P.fy = P.y; P.dir = p.dir;
+        P.leadAt = p.x + ',' + p.y; P.leadMv = p.mv || null;
+        if (RB.game.reducedMotion()) { P.alpha = 1; P.fade = 0; } else { P.alpha = 0; P.fade = 1; }
       }
     }
     if (P.fade) { P.alpha = Math.min(1, P.alpha + dt / 320); if (P.alpha >= 1) P.fade = 0; }
@@ -326,7 +345,12 @@ RB.petWorld = (function () {
   function poseNow() {
     const po = {};
     const sp = P.sp;
-    if (P.act && P.act.pose) return Object.assign(po, P.act.pose(P.t - P.act.t0, P.act));
+    if (P.act && P.act.pose) {
+      Object.assign(po, P.act.pose(P.t - P.act.t0, P.act));
+      // (an authored movement in water: the same movement on its feet, never sitting or lying there)
+      if (wet(P.x, P.y)) { delete po.sit; delete po.lie; }
+      return po;
+    }
     if (P.mv) {
       const k = P.mv.t / P.mv.dur;
       if (sp === 'bird') {
@@ -475,16 +499,23 @@ RB.petWorld = (function () {
       if (RB.test && RB.test.auto) { P.act = null; res(); }
     });
   }
-  // walk to a free tile beside someone ('comp', 'pc' or an npc id), then face them
+  // the free dry tile beside someone ('comp', 'pc' or an npc id) where come() would go, or null
+  function beside(who) {
+    const w = W(), a = RB.world.actorById(who);
+    if (!a || !w || !w.map) return null;
+    const cand = [];
+    for (const d of ['left', 'right', 'down', 'up']) cand.push([a.x + DIRS[d][0], a.y + DIRS[d][1]]);
+    return cand.find(([x, y]) => floor(x, y) && !wet(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y)) || null;
+  }
+  // walk to a free tile beside someone, then face them; false (and it stays where it is) when there is none or it is
+  // not shown (Greet together is not offered then: RB.pets.canGreet)
   function come(who) {
     return new Promise((res) => {
-      const w = W();
       const a = RB.world.actorById(who);
       if (!a || !P.sp || !shown()) { res(false); return; }
-      const cand = [];
-      for (const d of ['left', 'right', 'down', 'up']) cand.push([a.x + DIRS[d][0], a.y + DIRS[d][1]]);
-      const spot = cand.find(([x, y]) => floor(x, y) && !wet(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y));
+      const spot = beside(who);
       if (!spot) { res(false); return; }
+      if (P.unseen) { P.unseen = null; if (RB.game.reducedMotion()) { P.alpha = 1; P.fade = 0; } else { P.alpha = 0; P.fade = 1; } }
       if (spot[0] === P.x && spot[1] === P.y) { face(a); res(true); return; }
       // a short route over floor; too far or none: it simply appears there (a discreet cut)
       P.queue = [];
@@ -508,7 +539,7 @@ RB.petWorld = (function () {
     return {
       sp: P.sp, look: P.look, shown: !!(st && P.sp && shown()), x: P.x, y: P.y, fx: P.fx, fy: P.fy, dir: P.dir, moving: !!P.mv, gait: P.mv ? P.mv.gait : null,
       queue: P.queue.length, still: Math.round(P.still), alpha: +P.alpha.toFixed(2), map: P.map, stats: Object.assign({}, P.stats), last: P.lastDraw || null, drawn: P.drawn || 0,
-      acting: !!P.act, lastCatchUp: P.lastCatchUp || null, lastField: P.lastField || null, pose: P.sp ? poseNow() : null,
+      acting: !!P.act, lastCatchUp: P.lastCatchUp || null, lastField: P.lastField || null, pose: P.sp ? poseNow() : null, unseen: !!P.unseen,
     };
   }
 
@@ -539,5 +570,5 @@ RB.petWorld = (function () {
       } catch (err) { /* cosmetic */ }
     });
   }
-  return { update, push, state, act, come, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, nearTile, faceFrom, actorFrame, WILD, _P: P };
+  return { update, push, state, act, come, beside, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, nearTile, faceFrom, actorFrame, WILD, _P: P };
 })();

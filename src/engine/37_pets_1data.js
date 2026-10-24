@@ -314,6 +314,8 @@ RB.pets = (function () {
     if (RB.discovery && RB.discovery.busy && RB.discovery.busy()) return 'Not while you are working something out — afterwards.';
     if (!visible(s, 'world')) return 'Your pet is hidden in exploration (Settings › Display).';
     if (!RB.content.scenes['pets.greet.' + s.comp + '.' + sp]) return 'Not now.';
+    // the moment begins with the animal coming to your companion's side: a free tile on dry ground beside them (RBN-QA-172)
+    if (RB.petWorld && RB.petWorld.beside && !RB.petWorld.beside('comp')) return 'Not here — there is no free spot on dry ground beside your companion. Try again somewhere with room.';
     return true;
   }
   function greet(s, o) {
