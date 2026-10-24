@@ -7,7 +7,8 @@
  * showing how far the night has gone (wing 3). Each has a flat 16-px drawing (the fallback, as every prop) and its
  * art-resolution version in the world's prop style (light from the upper left, an ink outline on what can be looked at,
  * a soft contact shadow). Regional assets under AC-1 (C-82), reviewed in the art pass (P16d; implemented provisionally,
- * internally reviewed): kept as drawn. */
+ * internally reviewed): kept as drawn. Wing 2's two wrapped gifts (a white box, a red cloth bundle; RBN-QA-180) are
+ * provisional under AC1_ART, for Robin. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
@@ -64,6 +65,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 6, y + 3, 20, 6, '#e6d8b4'); px(c, x + 15, y + 3, 1, 6, '#a48a62'); px(c, x + 6, y + 5, 20, 1, '#a48a62');
     const m = mapMark(o);
     if (m) px(c, x + (m === 1 ? 23 : 7), y + (m === 1 ? 4 : 7), 2, 1, '#a8322a');
+  });
+
+  // the second wing's gifts on the path (RBN-QA-180): the white box (白い箱) wrapped in white paper and tied with a red
+  // and white cord, and the red bundle (赤い包み), red cloth knotted on top; each with a blank tag (who it is from and to
+  // changes with the floor's pattern, so nothing is written on it)
+  def('hall_giftbox', {}, (c, x, y) => {
+    px(c, x + 3, y + 6, 10, 8, '#e4e2dc'); px(c, x + 2, y + 5, 12, 2, '#f4f3ef'); px(c, x + 3, y + 13, 10, 1, '#b8b6b0');
+    px(c, x + 7, y + 5, 2, 9, '#b8322c'); px(c, x + 3, y + 9, 10, 1, '#b8322c'); px(c, x + 6, y + 3, 4, 2, '#b8322c');
+    px(c, x + 11, y + 10, 3, 3, '#e8dcb8');
+  });
+  def('hall_bundle', {}, (c, x, y) => {
+    px(c, x + 3, y + 7, 10, 7, '#a8382c'); px(c, x + 4, y + 6, 8, 1, '#c04a36'); px(c, x + 3, y + 13, 10, 1, '#82281e');
+    px(c, x + 4, y + 3, 2, 2, '#a8382c'); px(c, x + 5, y + 4, 2, 2, '#a8382c'); px(c, x + 10, y + 3, 2, 2, '#a8382c'); px(c, x + 9, y + 4, 2, 2, '#a8382c');
+    px(c, x + 7, y + 5, 2, 2, '#82281e');
+    px(c, x + 11, y + 9, 3, 3, '#e8dcb8');
   });
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
@@ -226,6 +242,59 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the trial completed: the spring, marked where the pattern puts it
       if (v === 1) { R(g, 49, 6, 3, 2, '#a8322a'); R(g, 50, 6, 1, 1, '#d4584a'); }
       if (v === 2) { R(g, 12, 14, 3, 2, '#a8322a'); R(g, 13, 14, 1, 1, '#d4584a'); }
+    },
+  });
+  // The second wing's gifts on the path (RBN-QA-180; the line says 「白い箱」 and 「赤い包み」, and the generic chest and
+  // crate there took the wing's red wood): a box wrapped in white paper (a cool white, so it reads white in the
+  // sun-shower), tied once each way with a red and white cord knotted on top; and a bundle of red cloth (風呂敷), its
+  // corners knotted into two ears on top, the folds darker. Each has a small blank paper tag on a string (nothing
+  // written: who it goes to changes with the floor's pattern). Same tile, block and scene as the props they replace.
+  const WHITE = ['#8e8c88', '#b8b6b0', '#d8d6d0', '#ecebe6', '#fbfbf8'];
+  const CORD = ['#7a1e1a', '#b8322c', '#d8584a'];
+  const CLOTH = ['#5a1a16', '#86281f', '#a8382c', '#c84e3a', '#e07a5c'];
+  const tag = (g, x, y, from) => {
+    line(g, from[0], from[1], x + 2, y, '#6a5a44', 1);
+    R(g, x, y, 5, 7, PP[3]); R(g, x, y, 5, 1, PP[4]); R(g, x + 4, y + 1, 1, 6, PP[1]); R(g, x, y + 6, 5, 1, PP[1]);
+    R(g, x + 2, y + 1, 1, 1, PP[0]);
+  };
+  art('hall_giftbox', {
+    box: [0, -8, 32, 42],
+    ink: true,
+    shadow: () => [16, 29, 12, 3, 0.32],
+    draw(g) {
+      // the box, its paper wrapping: front and the lid's top
+      R(g, 7, 14, 18, 14, WHITE[2]); R(g, 7, 14, 1, 14, WHITE[3]); R(g, 24, 14, 1, 14, WHITE[1]); R(g, 7, 27, 18, 1, WHITE[0]);
+      R(g, 6, 9, 20, 5, WHITE[3]); R(g, 6, 9, 20, 1, WHITE[4]); R(g, 6, 13, 20, 1, WHITE[1]);
+      R(g, 9, 17, 6, 1, WHITE[3]); R(g, 18, 22, 4, 1, WHITE[1]);
+      // the cord, once each way, and its knot on top with two loops
+      R(g, 15, 9, 2, 19, CORD[1]); R(g, 16, 9, 1, 19, CORD[2]); R(g, 6, 19, 20, 2, CORD[1]); R(g, 6, 19, 20, 1, CORD[2]);
+      R(g, 15, 9, 1, 19, WHITE[4]);
+      R(g, 10, 5, 5, 3, CORD[1]); R(g, 17, 5, 5, 3, CORD[1]); R(g, 11, 6, 3, 1, CORD[0]); R(g, 18, 6, 3, 1, CORD[0]);
+      R(g, 14, 6, 4, 3, CORD[2]); R(g, 15, 7, 2, 1, CORD[0]);
+      tag(g, 22, 22, [18, 20]);
+    },
+  });
+  art('hall_bundle', {
+    box: [0, -8, 32, 42],
+    ink: true,
+    shadow: () => [16, 29, 12, 3, 0.32],
+    draw(g) {
+      // the bundle: a soft rounded mass of cloth, lit from the upper left
+      for (let y = 12; y < 29; y++) {
+        const u = (y - 12) / 16, half = Math.round(8 + Math.sin(Math.min(1, u * 1.4) * Math.PI / 2) * 3 - (u > 0.85 ? (u - 0.85) * 14 : 0));
+        R(g, 16 - half, y, half * 2, 1, CLOTH[2]);
+        R(g, 16 - half, y, 2, 1, y < 22 ? CLOTH[3] : CLOTH[2]); R(g, 16 + half - 2, y, 2, 1, CLOTH[1]);
+      }
+      R(g, 7, 28, 18, 1, CLOTH[0]);
+      // the folds, gathered up toward the knot
+      line(g, 10, 26, 14, 14, CLOTH[1], 1); line(g, 22, 26, 18, 14, CLOTH[1], 1); line(g, 12, 25, 15, 15, CLOTH[3], 1);
+      // the knot, and its two tied corners splaying out from it, up and away to either side
+      for (let i = 0; i < 6; i++) {
+        R(g, 12 - i, 9 - i, 3, 2, i > 3 ? CLOTH[3] : CLOTH[2]); R(g, 12 - i, 9 - i, 1, 1, CLOTH[4]);
+        R(g, 17 + i, 9 - i, 3, 2, i > 3 ? CLOTH[2] : CLOTH[1]); R(g, 19 + i, 10 - i, 1, 1, CLOTH[0]);
+      }
+      R(g, 13, 9, 6, 5, CLOTH[2]); R(g, 13, 9, 6, 1, CLOTH[3]); R(g, 14, 11, 4, 2, CLOTH[1]); R(g, 15, 10, 2, 1, CLOTH[4]);
+      tag(g, 22, 15, [18, 12]);
     },
   });
 })();
