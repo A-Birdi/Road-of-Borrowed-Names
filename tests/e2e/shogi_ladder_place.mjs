@@ -27,7 +27,16 @@ async function open(p, scale) {
     window.__sg = RB.activity.launch('shogi', { source: 'distractions' });
   }, scale || null);
   await p.waitForSelector('.sg-ladder');
-  await p.evaluate(() => document.fonts.ready);
+  // the game's own faces loaded, and the ladder laid out with them: when the ladder is drawn before any face has been
+  // asked for, document.fonts.ready resolves at once and the faces arrive about half a second later, re-wrapping a
+  // rung's small print (the ladder some 40 px taller), after the test had measured where it stood
+  await p.evaluate(async () => {
+    await Promise.all([...document.fonts].map((f) => f.load().catch(() => {})));
+    await document.fonts.ready;
+    const leaf = document.querySelector('.sg-leaf');
+    let h = -1, same = 0;
+    for (let i = 0; i < 200 && same < 10; i++) { await new Promise((r) => requestAnimationFrame(r)); same = leaf.scrollHeight === h ? same + 1 : 0; h = leaf.scrollHeight; }
+  });
 }
 // the leaf's scroll, the heading's place in it, and what has focus
 const where = (p) => p.evaluate(() => {
@@ -127,7 +136,8 @@ async function lessonMove(p, id) {
   ok(t0 > 0 && w1.top === t0, 'choosing the rook, scrolled down (' + t0 + ' px): the page stays where it is (' + J(w1) + ')');
   await tap(p, '[data-sq="1,0"]');
   const w2 = await where(p);
-  ok(w2.top === t0 && /not the one asked|not the square asked/.test(await p.textContent('.sg-status')), 'a move that is not the one asked: its words, the page where it is (' + J(w2) + ')');
+  const said = await p.textContent('.sg-status');
+  ok(w2.top === t0 && said.includes('The rook can go there, but that isn\'t the square asked for: start again.'), 'a square the rook can reach that is not the one asked: its words (RBN-QA-178\'s), the page where it is (' + J({ w2, said }) + ')');
   await tap(p, '[data-a="reset"]');
   const w3 = await where(p);
   ok(w3.view === 'lesson' && w3.top === t0, 'Start again: the same lesson, where it is (' + J(w3) + ')');
