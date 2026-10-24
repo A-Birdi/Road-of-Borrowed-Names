@@ -92,7 +92,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the station marker (map art) -------------------------------------------------------------------------------
   const P = RB.props && RB.props.P;
   if (P) {
-    P.fish_station = { id: 'fish_station', w: 1, h: 1, block: true, draw(c, x, y) { c.fillStyle = '#7a5a36'; c.fillRect(x + 7, y + 2, 2, 12); c.fillStyle = '#efe4c8'; c.fillRect(x + 9, y + 4, 4, 3); } };
+    // (the flat renderer: the stake and its notice; on the rocks (o.kind 'rocks', Sazanami's), two wet rocks at its foot and
+    // a rod lashed to its seaward side with its line down into the water, as the drawn art has them; RBN-QA-173)
+    P.fish_station = {
+      id: 'fish_station', w: 1, h: 1, block: true,
+      draw(c, x, y, pal, t, o) {
+        const f = (col, a, b, w, h) => { c.fillStyle = col; c.fillRect(x + a, y + b, w, h); };
+        if (o && o.kind === 'rocks') { f('#5e5a54', 2, 11, 6, 4); f('#6e6a62', 9, 12, 5, 3); f('#8a857c', 3, 11, 3, 1); f('#8a857c', 10, 12, 2, 1); }
+        f('#7a5a36', 7, 2, 2, 12); f('#efe4c8', 9, 4, 4, 3);
+        if (o && o.kind === 'rocks') { f('#8a6a3a', 6, 3, 1, 9); f('#8a6a3a', 5, 1, 1, 3); f('#6a4a2a', 6, 8, 3, 1); f('#cfd2cc', 4, 2, 1, 12); }
+      },
+    };
     // the low shelf of wet rock under a station's stand on a rocky shore (Sazanami's): flat, walked on, never solid (RBN-QA-173)
     P.coast_shelf = { id: 'coast_shelf', w: 1, h: 1, block: false, draw(c, x, y) { c.fillStyle = '#77716a'; c.fillRect(x + 1, y + 2, 14, 12); c.fillStyle = '#5a5650'; c.fillRect(x + 1, y + 12, 14, 2); } };
   }

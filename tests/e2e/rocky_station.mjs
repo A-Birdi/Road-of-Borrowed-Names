@@ -7,7 +7,9 @@
 //  2. nothing else changes: the tiles, what is solid (the map's collision, a digest the same as on CC-021's build), the
 //     stand walkable, the stake solid;
 //  3. from the stand, facing the stake, the station's menu opens as before (Cast, Fishing notes, …);
-//  4. the shelf is drawn under whoever stands on it (its depth below theirs);
+//  4. the shelf is drawn under whoever stands on it (its depth below theirs, as the renderer computes it; not pixels);
+//  4b. the flat renderer (Agnes 6381589930): the station on the rocks has its two rocks, the lashed rod and its line;
+//     every other station draws exactly its stake and notice, as before;
 //  5. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/rocky_station.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -75,6 +77,15 @@ const depth = await p.evaluate(() => {
   return { shelfZ, standZ, block: P.block };
 });
 ok(depth.block === false && depth.shelfZ < depth.standZ, 'the shelf is flat and never solid, drawn below whoever stands on it (' + J(depth) + ')');
+// ---- 4b. the flat renderer --------------------------------------------------------------------------------------------------
+const flat = await p.evaluate(() => {
+  const P = RB.props.P.fish_station;
+  const fills = (o) => { const out = []; const c = { set fillStyle(v) { this._f = v; }, get fillStyle() { return this._f; }, fillRect(x, y, w, h) { out.push(this._f + ':' + x + ',' + y + ',' + w + ',' + h); } }; P.draw(c, 0, 0, null, 0, o); return out; };
+  return { rocks: fills({ kind: 'rocks' }), quay: fills({ kind: 'quay' }), river: fills({ kind: 'river' }), pond: fills({ kind: 'pond' }), none: fills({}) };
+});
+const OLD = ['#7a5a36:7,2,2,12', '#efe4c8:9,4,4,3'];
+ok(['quay', 'river', 'pond', 'none'].every((k) => J(flat[k]) === J(OLD)) && flat.rocks.some((f) => f.startsWith('#5e5a54')) && flat.rocks.some((f) => f.startsWith('#8a6a3a')) && flat.rocks.some((f) => f.startsWith('#cfd2cc')) && OLD.every((f) => flat.rocks.includes(f)),
+  'the flat renderer: on the rocks, its two rocks, the lashed rod and its line with the stake and notice; every other station exactly as before (' + J({ rocks: flat.rocks.length, quay: flat.quay }) + ')');
 errorsAll.push(...errors);
 await ctx.close();
 ok(!errorsAll.length, 'no page errors' + (errorsAll.length ? ': ' + errorsAll.slice(0, 3).join(' | ') : ''));
