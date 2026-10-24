@@ -825,6 +825,13 @@ RB.world = (function () {
     RB.audio && RB.audio.sfx((t && t.step) || 'step', { vol: 0.5 });
   }
 
+  // a map can hold you while a story moment lasts (e.g. a night that only this map has): map.def.hold = [{ if, scene,
+  // except: [map ids], doors }]. The hold that holds this exit now, or null: its condition holding, the exit not
+  // excepted, a door only when the hold says doors (arrive() below; the test driver routes by it too, tests/e2e/drive.mjs)
+  function holdAt(def, ex, st) {
+    return ((def && def.hold) || []).find((h) => RB.state.test(st, h.if) && !(h.except || []).includes(ex.to) && (h.doors || !ex.door)) || null;
+  }
+
   function arrive() {
     const p = W.player;
     const st = s();
@@ -833,9 +840,7 @@ RB.world = (function () {
     if (W.map.def.sea && RB.sail) { W.path = W.path && W.path.length ? W.path : null; RB.sail.onStep(); return; }
     const ex = RB.maps.exitAt(W.map, p.x, p.y);
     if (ex) {
-      // a map can hold you while a story moment lasts (e.g. a night that only
-      // this map has): map.def.hold = [{ if, scene, except: [map ids], doors }]
-      const hold = (W.map.def.hold || []).find((h) => RB.state.test(st, h.if) && !(h.except || []).includes(ex.to) && (h.doors || !ex.door));
+      const hold = holdAt(W.map.def, ex, st);
       if (hold || (ex.locked && (!ex.unlock || !RB.state.test(st, ex.unlock)))) {
         W.path = null;
         // step back and explain
@@ -1465,5 +1470,6 @@ RB.world = (function () {
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
     musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
     routeOut, peopleTiles, personAt, // routes and who is in the way (tests/e2e/walk_round.mjs)
+    holdAt, // the hold that holds an exit now (arrive(); tests/e2e/drive.mjs routes by it)
   };
 })();
