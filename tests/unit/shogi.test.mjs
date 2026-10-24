@@ -113,7 +113,7 @@ export default async (t) => {
   {
     const R = C.shogi.lessons.find((x) => x.id === 'R');
     t.eq([R.goal.to, R.alt.map((a) => a.to)], [[2, 0], [[4, 3]]], 'the rook: up its file to (2,0), or along the bottom rank to (4,3)');
-    t.ok(/pawn's rank/.test(R.say.en) && /beside your king/.test(R.say.en) && /{段|だん} まで {上|うえ}/.test(R.say.jp) && /{玉|ぎょく} の {隣|となり}/.test(R.say.jp), 'the rook: both squares named in English and Japanese');
+    t.ok(/pawn's rank/.test(R.say.en) && /beside your king/.test(R.say.en) && R.say.jp.includes('{段|だん} まで {上|うえ}') && R.say.jp.includes('{自分|じぶん} の {玉|ぎょく} の {隣|となり}'), 'the rook: both squares named in English and Japanese');
   }
   // ---- words for a move ----------------------------------------------------------------------------------------------
   {
