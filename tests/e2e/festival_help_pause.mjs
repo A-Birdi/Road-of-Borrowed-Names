@@ -13,6 +13,10 @@
 //     leaving inside it, the next timed round starts with the clock running; a round whose clock runs out after a hint
 //     keeps its best in the same record shape;
 //  4. ring toss, timed: "What does it say?" stops the clock about 2.5 s, then it runs again, the English still shown;
+//     one stop at a time (before, every press stopped it again, so pressing held it): pressed again and again during
+//     a stop, the English shown again, the stop neither deepened nor lengthened; a ring thrown during it, the clock
+//     runs again once at its end; left during it and a new round begun, the old stop's timer never resumes the new
+//     round (its own stop runs its full 2.5 s); once a stop is over, another press stops the clock again (allowed);
 //  5. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/festival_help_pause.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -136,6 +140,55 @@ const ui = () => p.evaluate(() => ({ hint: !!document.querySelector('.fv-hint'),
   const z2 = await fs();
   ok(a.paused === 1 && Math.abs(m.left - a.left) < 300 && z.paused === 0 && z2.left < z.left - 400 && uz.say && uz.say === ua.say,
     '"What does it say?": the clock stopped about 2.5 s, then running again, the English still shown (' + fmt({ a: [a.paused, a.left], m: m.left, z: [z.paused, z.left], z2: z2.left, say: uz.say }) + ')');
+  await leave();
+}
+// ---- 4b. ring toss: one stop at a time, its timer the round's own
+{
+  const press = () => p.evaluate(() => document.querySelector('[data-w="en"]').click());
+  const timedWanage = async () => { await p.click('input[name="fv-mode"][value="timed"]'); await p.click('[data-a="begin"]'); await p.waitForSelector('.fv-clock'); await wait(400); };
+  await open('wanage', 60);
+  await timedWanage();
+  // pressed again and again during one stop
+  await press();
+  const r0 = await fs();
+  const depths = [];
+  for (let i = 0; i < 5; i++) { await wait(200); await press(); depths.push((await fs()).paused); }
+  await wait(1700); // (about 2.9 s after the first press)
+  const r1 = await fs();
+  await wait(600);
+  const r2 = await fs();
+  ok(r0.paused === 1 && depths.every((d) => d === 1) && r1.paused === 0 && r2.left < r1.left - 300,
+    'pressed again and again during a stop: never deeper than one, and the clock runs again at the first press\'s 2.5 s, not later (' + fmt({ depths, r0: r0.paused, r1: r1.paused, left: [r1.left, r2.left] }) + ')');
+  // a ring thrown during the stop
+  await press();
+  await wait(300);
+  const st = await p.evaluate(() => RB.ui.festivalGames.wanage.state());
+  await p.evaluate((i) => document.querySelector('.fv-peg[data-w="' + i + '"]').click(), st.row.indexOf(st.target));
+  await wait(1000);
+  const t1 = await fs();
+  await wait(1700);
+  const t2 = await fs();
+  ok(t1.paused === 1 && t2.paused === 0, 'a ring thrown during the stop: the clock runs again once at the stop\'s end (' + fmt([t1.paused, t2.paused]) + ')');
+  // left during a stop, a new round begun: the old timer does not resume the new round
+  await press();
+  await wait(300);
+  await p.evaluate(() => { const c = document.querySelector('.fv-folio [data-folio-close]'); if (c) c.click(); }); // (back to the corner)
+  await wait(300);
+  await timedWanage(); // (about 1.0 s after the old press)
+  const n0 = await fs();
+  await press();
+  await wait(1900); // (the old press's 2.5 s has passed; the new press's has not)
+  const n1 = await fs();
+  await wait(1000);
+  const n2 = await fs();
+  ok(n0.paused === 0 && n1.paused === 1 && n2.paused === 0, 'left during a stop and a new round begun: the old timer leaves the new round alone; the new stop runs its own 2.5 s (' + fmt([n0.paused, n1.paused, n2.paused]) + ')');
+  // once a stop is over, another press stops the clock again
+  await press();
+  await wait(300);
+  const a1 = await fs();
+  await wait(2600);
+  const a2 = await fs();
+  ok(a1.paused === 1 && a2.paused === 0, 'once a stop is over, another press stops the clock again for its 2.5 s (allowed: one at a time, not one per prize) (' + fmt([a1.paused, a2.paused]) + ')');
   await leave();
 }
 // ---- 3, last: a round run out after a hint keeps its best in the same shape
