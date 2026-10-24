@@ -891,6 +891,11 @@ RB.world = (function () {
     if (!W.map) return;
     const p = W.player;
     if (W.turnHold > 0) W.turnHold -= dt;
+    // a tap's walk is the world's: a scene or a battle begun while it is under way (any scene: every one holds the
+    // world, and the walk's own arrival clears it before starting one) ends it here, before the step in progress
+    // arrives, so that its interaction never fires through that scene or once it is over (RBN-QA-182; Agnes
+    // 6384084366, Local CL-300). A menu or the folio only pauses it, as before.
+    if ((W.path || W.pathTarget) && (RB.script.isRunning() || (RB.game.inBattle && RB.game.inBattle()))) { W.path = null; W.pathTarget = null; }
     if (stepActor(p, dt)) arrive();
     if (W.comp) stepActor(W.comp, dt);
     if (controllable && !p.mv && RB.game.mode() === 'world') {
@@ -1217,7 +1222,9 @@ RB.world = (function () {
   // again on arrival: gone or no longer shown means nothing happens. Someone who walks (a
   // person, a creature) and has moved away while you walked is followed once more, to beside
   // where they stand now, and checked again there; moved again, gone or blocked, nothing happens
-  // and there is no third walk (RBN-QA-182: no chase, nothing done from afar). A tap on an
+  // and there is no third walk (RBN-QA-182: no chase, nothing done from afar). A scene or a battle
+  // that begins while such a walk is under way (one it did not start itself) ends it: what the
+  // tap was walking to never happens through it or after it (the update's first check). A tap on an
   // interactive prop you are standing on steps off it first. A new tap, a direction key, a
   // scene, a battle or a map change drops the queued interaction (the path it belonged to ends).
   function tapTargetAt(tx, ty) {
