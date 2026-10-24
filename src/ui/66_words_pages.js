@@ -238,7 +238,8 @@ RB.ui.wordsPages = (function () {
   }
   // a kept line's recording: its scene and its standard markup, shown as the player's Suzu speaks (54_voice_route.js)
   function bmVoice(b) {
-    const source = { sceneId: b.src && b.src.k === 'sc' ? b.src.id : null, jp: b.jp, who: b.who };
+    // the scene id it was shown under (sid; a prop's own line: code.prop, its source the prop); one kept before sid: its scene's
+    const source = { sceneId: b.sid || (b.src && b.src.k === 'sc' ? b.src.id : null), jp: b.jp, who: b.who };
     return { source, display: RB.dialect && RB.dialect.line ? RB.dialect.line(b.who, source) : source };
   }
   function bmDetail(b, s) {

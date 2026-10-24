@@ -7,7 +7,9 @@
  * was shown with (the player's or companion's name then), the faithful
  * English as it read then, who said it or what it was written on, where,
  * and a compact reference to its source (scene, prop or encounter) with a
- * hash of the source text. The page never re-reads the source to display a
+ * hash of the source text. The scene id it was shown under is kept apart
+ * from that source (sid): it is the voice's lookup for "Hear it", and a
+ * prop's own line is shown under code.prop while its source is the prop. The page never re-reads the source to display a
  * bookmark: a later content change cannot silently give it another meaning.
  * If the source line has changed or gone, the bookmark says it is a saved
  * excerpt (status()).
@@ -122,6 +124,7 @@ RB.bookmarks = (function () {
     flushChoice(s);
     lastLine = line;
     const k = { m: liveMap(s), src: sourceOf(line, s) };
+    if (line.sceneId) k.sid = line.sceneId; // the scene id it was shown under (the voice's lookup), whatever its source
     const v = varsFor(line.jp);
     if (v) k.v = v;
     const en = line.en && RB.script ? RB.script.enVars(line.en) : line.en || '';
@@ -204,6 +207,7 @@ RB.bookmarks = (function () {
       src, map, place: placeName(map), h: hash(entry.jp, entry.en), title: '', note: '',
     };
     if (v) b.v = v;
+    if (k && k.sid) b.sid = k.sid;
     if (src.o) b.obj = src.o;
     if (entry.choice) b.choice = true;
     if (!k) b.approx = true; // an old history entry: names are as they are now
