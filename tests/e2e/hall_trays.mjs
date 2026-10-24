@@ -9,11 +9,12 @@
 //     holding a gift without the note's flag: the swap said, never the empty-hand line;
 //  2. the trays: a wrong tray keeps the gift held; the right one takes it, and only then is it gone from the path and
 //     on that tray (the gift the tray's pattern sends there); exactly one prop on each tray's tile in every state, its
-//     scene and solidity the table's; one delivered, then all three;
+//     scene and solidity the table's; one delivered, then all three; the table's whole footprint (both of its tiles),
+//     bare and with its gift: each tile solid, and Look from in front of it opens that tray;
 //  3. how the tray with its gift is drawn: the table, and the gift on it (the white box's pale paper, the bundle's red
 //     cloth), in both renderers;
-//  4. a save and load with one gift on its tray: still on it; the floor reset: the trays bare again, the gifts back on
-//     the path, the note to be said again;
+//  4. a save and load with one gift on its tray: still on it, its whole footprint as before; the floor reset: the trays
+//     bare again (the whole footprint), the gifts back on the path, the note to be said again;
 //  5. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/hall_trays.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -63,6 +64,27 @@ const state = () => p.evaluate(() => {
   const path = Object.fromEntries(Object.keys(G).map((g) => [g, shown(G[g][0], G[g][1]).map((q) => q.p)]));
   return { held, trays, path, told: !!s.flags.xp_hall_w2_f0_carry_told };
 });
+// each tray's whole footprint, the table's own width: each tile solid, and Look from in front of it (from below, facing
+// up) opens that tray's scene (the scene recorded, not played)
+const foot = () => p.evaluate(() => {
+  const W = RB.world.W, P = W.player, T = RB.content.hallW2.TRAYS, w = RB.props.P.table.w || 1;
+  const at = [P.x, P.y, P.dir], run0 = RB.script.run, trays = {};
+  let opened = null;
+  RB.script.run = (id) => { opened = id; return Promise.resolve(); };
+  try {
+    for (const t of Object.keys(T)) {
+      trays[t] = [];
+      for (let i = 0; i < w; i++) {
+        const x = T[t][0] + i, y = T[t][1];
+        P.x = x; P.y = y + 1; P.fx = P.x; P.fy = P.y; P.dir = 'up'; P.mv = null; opened = null;
+        RB.world.interact();
+        trays[t].push([!!RB.world.blocked(x, y, { ignorePlayer: true }), opened]);
+      }
+    }
+  } finally { RB.script.run = run0; P.x = at[0]; P.y = at[1]; P.fx = P.x; P.fy = P.y; P.dir = at[2]; }
+  return { w, trays };
+});
+const whole = (f) => f.w === 2 && Object.keys(f.trays).every((t) => f.trays[t].length === f.w && f.trays[t].every(([solid, opened]) => solid && opened === 'hall.w2.tray_' + t));
 
 // ---- 1. the words ---------------------------------------------------------------------------------------------------------
 for (const pat of [0, 1]) {
@@ -103,6 +125,8 @@ for (const pat of [0, 1]) {
   const one = (t) => (st) => st.trays[t].length === 1;
   const s0 = await state();
   ok(Object.keys(s0.trays).every((t) => one(t)(s0) && s0.trays[t][0][0] === 'table' && s0.trays[t][0][3]), 'pattern ' + pat + ', nothing delivered: each tray its bare table, solid (' + J(s0.trays) + ')');
+  const f0 = await foot();
+  ok(whole(f0), 'pattern ' + pat + ', nothing delivered: each table\'s two tiles solid, each opening its tray (' + J(f0) + ')');
   const steps = [];
   for (const g of ['white', 'red', 'chestnut']) {
     const right = RIGHT[pat][g], wrong = ['groom', 'mother', 'toku'].find((t) => t !== right);
@@ -116,6 +140,8 @@ for (const pat of [0, 1]) {
       Object.keys(r.trays).every((t) => one(t)(r)) && r.trays[right][0][0] === 'hall_tray' && r.trays[right][0][1] === g && r.trays[right][0][2] === 'hall.w2.tray_' + right && r.trays[right][0][3],
       'pattern ' + pat + ', the ' + g + ' gift: a wrong tray keeps it held; the right one (' + right + ') takes it, gone from the path and on that tray, one prop a tile, same scene, solid (' + J(steps[steps.length - 1]) + ')');
   }
+  const f3 = await foot();
+  ok(whole(f3), 'pattern ' + pat + ', all three delivered: each tray\'s two tiles still solid, each still opening its tray (' + J(f3) + ')');
 }
 
 // ---- 3. how the tray with its gift is drawn --------------------------------------------------------------------------------
@@ -155,8 +181,12 @@ for (const pat of [0, 1]) {
   await p.waitForTimeout(800);
   const L = await state();
   ok(L.trays.mother.length === 1 && L.trays.mother[0][0] === 'hall_tray' && L.trays.mother[0][1] === 'white' && L.path.white.length === 0, 'saved and loaded with the white box on its tray: still on it (' + J(L.trays.mother) + ')');
+  const fl = await foot();
+  ok(whole(fl), 'and its whole footprint after the load: each tray\'s two tiles solid, each opening its tray (' + J(fl) + ')');
   await p.evaluate(() => RB.hall.resetFloor(RB.game.s, 'w2', 0));
   const R = await state();
+  const fr = await foot();
+  ok(whole(fr), 'the floor reset: each tray\'s two tiles solid, each opening its tray (' + J(fr) + ')');
   ok(Object.values(R.trays).every((x) => x.length === 1 && x[0][0] === 'table') && GIFTS.every((g) => R.path[g].length === 1) && !R.told && !R.held.length,
     'the floor reset: the trays bare, the gifts back on the path, nothing held, the note to be said again (' + J(R) + ')');
 }

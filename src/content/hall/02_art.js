@@ -83,9 +83,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   // a tray on the veranda with the gift set on it (RBN-QA-181): the tray's own table, and on it the gift as it stood
-  // on the path (the white box, the red bundle, the chestnut basket)
+  // on the path (the white box, the red bundle, the chestnut basket); the table's own footprint, so that both of its
+  // tiles stay solid and open the tray as they did bare (Agnes 6383653732, Local CL-298)
   const ON_TRAY = { red: 'hall_bundle', white: 'hall_giftbox', chestnut: 'ko_basket' };
-  def('hall_tray', {}, (c, x, y, p, t, o) => {
+  def('hall_tray', { w: P.table.w, h: P.table.h, block: P.table.block }, (c, x, y, p, t, o) => {
     P.table.draw(c, x, y, p, t, o);
     const g = P[ON_TRAY[o && o.gift]];
     if (g) g.draw(c, x, y - 6, p, t, {});
