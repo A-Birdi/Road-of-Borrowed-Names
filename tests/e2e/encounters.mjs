@@ -358,7 +358,7 @@ await test('preparation (look around first), a story battle\'s help (point), a c
 await test('five on the creatures\' side: two rows, every creature on the stage, at desktop and phone sizes (captures)', async () => {
   const fs = await import('node:fs');
   const path = await import('node:path');
-  const out = path.join(path.dirname(new URL(import.meta.url).pathname), '..', '..', 'docs', 'screenshots', 'encounters');
+  const out = path.join(path.dirname((await import('node:url')).fileURLToPath(import.meta.url)), '..', '..', 'docs', 'screenshots', 'encounters');
   fs.mkdirSync(out, { recursive: true });
   for (const [w, h, name, mobile] of [[1280, 800, 'five_desktop', false], [390, 844, 'five_phone', true]]) {
     const { p, errors, ctx } = await page(b, url, { viewport: { width: w, height: h }, isMobile: mobile, hasTouch: mobile });

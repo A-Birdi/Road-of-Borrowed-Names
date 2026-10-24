@@ -14,11 +14,12 @@
 //   node tools/voice/va2/plan.mjs --check    build and compare, no write (exit 1 if different or invalid)
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { RB, allLines } from '../lines.mjs';
 
-const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..', '..');
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const DIR = path.join(root, 'docs/future/voice/va2');
 const OUT = process.env.VA2_PLAN_OUT || path.join(DIR, 'va2_plan.json'); // (the env overrides are for the job's self-test)
 const errors = [];

@@ -8,6 +8,7 @@
 //                                           actually reviewing them); stale entries (text changed or gone) are dropped
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { load, root } from '../tests/lib/load.mjs';
 
 export function lines(RB) {
@@ -94,7 +95,7 @@ export function lines(RB) {
   for (const id in C.towns || {}) walk('lw.town', 'town:' + id, { beats: C.towns[id].beats }, new Set());
   return out;
 }
-if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname)) {
+if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) {
   globalThis.__RB_TEST__ = true;
   const RB = load(['core', 'lang', 'recog', 'engine', 'learn', 'ui', 'content', 'atlas'], { __RB_TEST__: true });
   const L = lines(RB);

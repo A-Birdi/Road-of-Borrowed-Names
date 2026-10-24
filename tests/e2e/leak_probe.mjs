@@ -11,11 +11,11 @@
 //        LK_DEBUG=1 prints each cycle's states.
 import fs from 'node:fs';
 const ri = process.argv.indexOf('--root');
-const root = ri > 0 ? process.argv[ri + 1] : new URL('../..', import.meta.url).pathname.replace(/\/$/, '');
+const root = ri > 0 ? process.argv[ri + 1] : (await import('node:url')).fileURLToPath(new URL('../..', import.meta.url)).replace(/[\\/]$/, '');
 const pos = process.argv.slice(2).filter((a, i, all) => a !== '--root' && all[i - 1] !== '--root');
 const N = +(pos[0] || 10);
 const MODE = pos[1] || 'battle';
-const { serve, launch } = await import(root + '/tests/e2e/lib.mjs');
+const { serve, launch } = await import((await import('node:url')).pathToFileURL(root + '/tests/e2e/lib.mjs').href);
 const html = fs.readFileSync(root + '/index.html', 'utf8').split('\n');
 const marks = [];
 html.forEach((l, i) => { const m = l.match(/^\/\* ==== (src\/[^ ]+) ==== \*\/$/); if (m) marks.push([i + 1, m[1]]); });
