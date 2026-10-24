@@ -10,9 +10,11 @@
 //   the real save slots; one after the ending) that had never heard of the
 //   lines. After each run: no one drawn twice (RB.test.twice), no lq line
 //   spoken by someone who isn't there, no auto-answer problems, no page errors.
-// Part 2 — end to end (about 15 minutes). tests/e2e/pursue.mjs from a new
-//   campaign, with both lines as goals between the chapters (lq_ally1 after
-//   Snowbell, the fare paid, lq_ally2 and Koharuno before Lanternfall, Kayo
+// Part 2 — end to end (about 18 minutes). tests/e2e/pursue.mjs from a new
+//   campaign, with both lines as goals between the chapters (lq_ally1 at
+//   Chigusa on the Snowbell road before Snowbell's end, as the scene allows
+//   (its ?(!ch4_done) lines; the fixtures above play the later branch), the
+//   fare paid after Snowbell, lq_ally2 and Koharuno before Lanternfall, Kayo
 //   home after it), then the rest of the game.
 // Usage: node tests/e2e/long_quests.mjs [--fixtures-only | --e2e-only] [--all-companions] [profile]
 import { spawn } from 'node:child_process';
@@ -206,8 +208,8 @@ await b.close(); srv.close();
 if (only !== 'fix') {
   // Part 2: the whole game from a new campaign, with the two lines as goals
   const legs = [
-    'ch1_done@rw.@rw_mill', 'ch2_done@sg.@sg_main', 'ch3_done@co.@co_main', 'ch4_done@sb.@sb_lamp',
-    'lq_ally1@rw.|sg.|co.|sb.@lq_fare', 'lq_fare_done@rw.|sg.|co.|sb.@lq_fare',
+    'ch1_done@rw.@rw_mill', 'ch2_done@sg.@sg_main', 'ch3_done@co.@co_main',
+    'lq_ally1@rw.|sg.|co.|sb.@lq_fare', 'ch4_done@sb.@sb_lamp', 'lq_fare_done@rw.|sg.|co.|sb.@lq_fare',
     'lq_ally2@rw.|sg.|co.|lq.@lq_road', 'ch5_done@lf.@lf_main', 'lq_road_done@rw.|lf.|lq.@lq_road',
     'ch6_done@sa.@sa_main',
   ].join('>');

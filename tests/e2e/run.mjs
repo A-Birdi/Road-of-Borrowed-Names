@@ -46,6 +46,7 @@ let suites = [
   // the two quest lines across the chapters (fixtures; --full adds all four
   // companions and a whole-game run with both lines as goals)
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],
+  ['drive_hold.mjs'], // the test driver held where a player is held (a map's hold: the village's night), as arrive() holds you
   // the long-quest landmarks redrawn, Masaru's bakery, the warehouse's missing floorboard, the
   // observatory's headroom: geometry and use tiles as recorded before, draw2, paths (World review WR-04/05)
   ['landmarks.mjs'],

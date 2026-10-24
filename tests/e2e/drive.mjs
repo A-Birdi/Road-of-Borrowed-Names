@@ -95,7 +95,13 @@ export function install() {
     else add(W.map.id, W.player.x, W.player.y, null, null);
     while (q.length) {
       const id = q.shift(), e = entries[id], R = reach[e.map];
+      // a map that holds you while a story moment lasts (map.def.hold: a night that only this map has) holds the
+      // driver as it holds a player: an exit it holds now is no way out, by the world's own test (RB.world.holdAt, as
+      // arrive() uses it), so the driver, which goes through exits by RB.game.transition, never leaves where a player
+      // walking could not
+      const def = RB.content.maps[e.map];
       for (const ex of exitsOf(e.map)) {
+        if (RB.world.holdAt(def, ex, RB.game.s)) continue;
         let ok = false;
         for (let yy = ex.y; yy < ex.y + (ex.h || 1) && !ok; yy++) for (let xx = ex.x; xx < ex.x + (ex.w || 1) && !ok; xx++) {
           if (R.get(xx + ',' + yy) === id) ok = true;
