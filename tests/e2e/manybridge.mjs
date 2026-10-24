@@ -189,7 +189,7 @@ await test('the chart by edition: Manybridge and the ferry route only in a twelv
       const s = RB.game.s; s.travel.reedwake = true; s.travel.saltglass = true; s.travel.manybridge = true;
       RB.ui.menu.open('map');
       const svg = document.querySelector('.chart');
-      const r = { labels: [...svg.querySelectorAll('text')].map((t) => t.textContent), curves: [...svg.querySelectorAll('path[fill="none"]')].filter((x) => / Q/.test(x.getAttribute('d'))).length, dots: svg.querySelectorAll('circle').length, note: (document.querySelector('.chartbox + p') || {}).textContent || '' };
+      const r = { labels: [...svg.querySelectorAll('text')].map((t) => t.textContent), curves: [...svg.querySelectorAll('path[fill="none"]')].filter((x) => / Q/.test(x.getAttribute('d'))).length, dots: [...svg.querySelectorAll('circle')].filter((c) => !c.closest('.ret-tag')).length, tags: svg.querySelectorAll('.ret-tag').length, note: (document.querySelector('.chartbox + p') || {}).textContent || '' };
       RB.ui.menu.close();
       return r;
     });
@@ -198,7 +198,9 @@ await test('the chart by edition: Manybridge and the ferry route only in a twelv
   assert(!six.labels.includes('Manybridge') && six.curves === 0 && !/ferry/.test(six.note), 'a six-chapter chart is as it was: ' + JSON.stringify(six));
   const twelve = await chartOf(2);
   // one more place on the chart for each place only the twelve-chapter edition has (Manybridge; since P10 also the
-  // Keepers' Road, unexplored here)
+  // Keepers' Road, unexplored here). The places' own dots are counted: a town's "something may be waiting" tag has a
+  // circle of its own (the Reedwake pilot: here a stamp waits to be pressed in Reedwake, which only a twelve-chapter
+  // journey has), and is not a place
   const extra = await p.evaluate(() => Object.values(RB.content.places).filter((x) => x.edition === 2).length);
   assert(twelve.labels.includes('Manybridge') && twelve.curves >= 1 && /ferry routes/.test(twelve.note) && twelve.dots === six.dots + extra, 'a twelve-chapter chart: Manybridge across the sea (' + extra + ' places of its own): ' + JSON.stringify(twelve));
   assert(!errors.length && !requests.length, 'no errors, no network: ' + errors.concat(requests).join(' | '));
