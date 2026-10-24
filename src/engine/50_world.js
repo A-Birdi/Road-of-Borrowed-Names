@@ -364,12 +364,15 @@ RB.world = (function () {
   // record says so (RBN-QA-120).
   const personOf = (n) => (n.def && (n.def.char || n.def.id)) || n.id;
   // the maps where `person` appears now (any: where the story ever puts them)
-  function mapsWith(person, except, any) {
+  // `origin`: only the places the story keeps them, for where someone not yet seen comes from (wayFor): a placement
+  // marked `visiting` (one night's crowd: RBN-QA-020's festival) is not one of them
+  function mapsWith(person, except, any, origin) {
     const st = s(), out = [];
     for (const id in RB.content.maps) {
       if (id === except) continue;
       for (const n of RB.content.maps[id].npcs || []) {
         if ((n.char || n.id) !== person || (!any && n.if && !RB.state.test(st, n.if))) continue;
+        if (origin && n.visiting) continue;
         if (st.comp && n.id === st.comp && !n.alwaysShow) continue;
         out.push(id);
         break;
@@ -425,7 +428,7 @@ RB.world = (function () {
       // nearest place the story keeps them (their home, their work)
       const was = W.seenOn[person];
       if (was && was !== m.id) { dests = [was]; reason = 'came from'; }
-      else { dests = mapsWith(person, m.id, true); reason = 'from their place'; }
+      else { dests = mapsWith(person, m.id, true, true); reason = 'from their place'; }
     } else if (a.def && a.def.leaveTo) { dests = [].concat(a.def.leaveTo); reason = 'authored'; }
     else { dests = mapsWith(person, m.id); reason = 'destination'; }
     const hop = towards(m.id, dests);
