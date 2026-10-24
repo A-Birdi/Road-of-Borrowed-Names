@@ -279,14 +279,16 @@ RB.sail = (function () {
     while (live() && (x = due(s, true))) await runSituation(s, x);
     if (!live()) return;
     let dark = false;
-    if (onSea(W.map) && B && B.sea && RB.staging) {
+    if (onSea(W.map) && B && B.sea) {
       await RB.ui.fade(true, 220);
       if (!live()) return;
-      const placed = await RB.staging.walkTo('pc', B.sea.x, B.sea.y, B.sea.dir || null, { now: true });
+      const placed = RB.staging ? await RB.staging.walkTo('pc', B.sea.x, B.sea.y, B.sea.dir || null, { now: true }) : false;
       if (!live()) return;
       if (placed) await RB.ui.fade(false, 220);
       else dark = true;
     }
+    // (a campaign change while the screen lightens again must not begin the arrival's line on the journey loaded)
+    if (!live()) return;
     if (RB.content.scenes['sea.crew_arrive']) await RB.script.run('sea.crew_arrive');
     if (!live()) return;
     await arrive(s, v.to);

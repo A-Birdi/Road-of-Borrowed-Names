@@ -24,6 +24,7 @@
 //  7b, 8b. the same in the dark before the arrival (begun as the screen darkens to bring her to Saltglass's water,
 //     the one wait in the crossing that a load lets go on): loaded, nothing of the voyage runs on the journey loaded;
 //     cancelled, no arrival line and no dock, the voyage open at sea;
+//  7c, 8c. the same as the screen lightens again on her at Saltglass's water (Agnes 6382201500): the same outcomes;
 //  9. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/crew_voyage_sea.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -281,21 +282,22 @@ async function crewFog(p) {
   errorsAll.push(...errors);
   await ctx.close();
 }
-for (const [name, slot] of [['a load', 3], ['a load cancelled', 9]]) {
+for (const [name, slot, when] of [['a load', 3, 'dark'], ['a load cancelled', 9, 'dark'], ['a load', 3, 'light'], ['a load cancelled', 9, 'light']]) {
   const { p, ctx, errors } = await page(b, url, { viewport: { width: 1180, height: 820 } });
   await crewFog(p);
-  // the load begins as the screen darkens for the placement (the first fade after the fog's lines)
-  await p.evaluate((slot) => {
+  // the load begins as the screen darkens for the placement (the first fade after the fog's lines), or as it lightens
+  // again on her at Saltglass's water
+  await p.evaluate(([slot, when]) => {
     const fade = RB.ui.fade;
     window.__ld = null; window.__n0 = null;
     RB.ui.fade = function (out) {
-      if (out && window.__ld == null && window.__L.some((l) => /count of the flashes|crew laughs|beyond the fog/.test(l.en)) && !window.__L.some((l) => /lowers the sail/.test(l.en))) {
+      if (!!out === (when === 'dark') && window.__ld == null && window.__L.some((l) => /count of the flashes|crew laughs|beyond the fog/.test(l.en)) && !window.__L.some((l) => /lowers the sail/.test(l.en))) {
         window.__n0 = window.__L.length; window.__t0 = window.__T.length; window.__s0 = RB.game.s;
         window.__ld = RB.game.loadCampaign(slot).then((r) => 'loaded:' + r, () => 'threw');
       }
       return fade.apply(this, arguments);
     };
-  }, slot);
+  }, [slot, when]);
   // the fog's lines and its challenge go on (Next), until the load has begun
   for (let i = 0; i < 400 && !(await p.evaluate(() => window.__ld != null)); i++) { await p.evaluate(() => { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); }); await p.waitForTimeout(60); }
   const r = await p.evaluate(async () => {
@@ -309,7 +311,7 @@ for (const [name, slot] of [['a load', 3], ['a load cancelled', 9]]) {
   const clean = r.linesAfter && !r.linesAfter.some((l) => /lowers the sail/.test(l)) && r.transAfter && !r.transAfter.length;
   ok(slot === 3 ? /^loaded/.test(r.res) && !r.same && r.map === 'mb.pier' && !r.voyage && r.log === 0 && clean
     : r.res === 'threw' && r.same && r.map === 'sea.coast' && r.voyage === 'saltglass' && r.log === 0 && r.mode === 'world' && clean,
-  name + ' in the dark before the arrival: ' + (slot === 3 ? 'the journey as saved; nothing of the voyage runs on it' : 'no arrival line, no dock; the voyage open at sea') + ' (' + J(r) + ')');
+  name + (when === 'dark' ? ' in the dark before the arrival: ' : ' as the screen lightens on her at Saltglass\'s water: ') + (slot === 3 ? 'the journey as saved; nothing of the voyage runs on it' : 'no arrival line, no dock; the voyage open at sea') + ' (' + J(r) + ')');
   errorsAll.push(...errors);
   await ctx.close();
 }
