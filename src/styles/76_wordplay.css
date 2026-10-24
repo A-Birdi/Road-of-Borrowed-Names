@@ -159,6 +159,9 @@ body.reduced-motion .wp-seat.mv .wp-face, body.reduced-motion .wp-pet, body.redu
 .wp-review-chain .wp-slip.before .w { opacity: 0.8; }
 .wp-turninfo { margin-top: 0.5em; padding: 0.4em 0.6em; border: 1px dashed var(--paper-edge); border-radius: var(--r-2); }
 .wp-turninfo h4 { margin: 0 0 0.2em; }
+/* a saved chain's row holds only its button: it spans the entry's whole row, not the icon column an .entry starts
+   with (RBN-QA-168) */
+.wp-trlist > .entry > .wp-tr { grid-column: 1 / -1; }
 .wp-trlist .wp-tr { width: 100%; justify-content: flex-start; flex-wrap: wrap; text-align: left; height: auto; padding: 0.3em 0.6em; }
 
 /* ---- Company › Wordplay ----------------------------------------------------------- */
