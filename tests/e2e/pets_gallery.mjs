@@ -110,14 +110,30 @@ await test('coverage matrix: 4 species × every family, impacts, victory, idles 
 await test('quiet sounds: four synthesized effects (no files), heard but soft, never clipping; none with "Quiet pet sounds" off', async () => {
   const { p, errors, ctx } = await page(b, url);
   const r = await p.evaluate(async () => {
-    const out = { list: RB.audio.sfxList().filter((x) => /^pet_/.test(x)).sort(), fx: {} };
-    for (const id of out.list.concat(['confirm'])) { const q = await RB.audio.renderOffline('sfx:' + id, 1.2); out.fx[id] = { peak: q.peak, rms: q.rms, nan: q.nan, clipped: q.clipped }; }
+    const out = { list: RB.audio.sfxList().filter((x) => /^pet_/.test(x)).sort(), fx: {}, raw: {} };
+    // each as it is played: the options its own playback sends (RB.pets.sound: a pat, and any other moment), and the
+    // menu confirm as it is played, rendered alike (the effects themselves at full gain are louder than either)
+    RB.game.settings.petSounds = true;
+    const sent = [], sfx0 = RB.audio.sfx;
+    RB.audio.sfx = (id, opts) => { sent.push([id, opts || {}]); return true; };
+    const plays = [];
+    for (const sp of ['cat', 'dog', 'bird', 'tanuki']) for (const kind of ['pat', 'greet']) { sent.length = 0; RB.pets.sound(sp, kind); if (sent[0]) plays.push([sp + ' ' + kind].concat(sent[0])); }
+    sent.length = 0; RB.audio.sfx('confirm'); const conf = sent[0] || ['confirm', {}];
+    RB.audio.sfx = sfx0;
+    const m = (q, opts) => ({ peak: q.peak, rms: q.rms, nan: q.nan, clipped: q.clipped, opts });
+    out.fx.confirm = m(await RB.audio.renderOffline('sfx:confirm', 1.2, conf[1]), conf[1]);
+    for (const [k, id, opts] of plays) out.fx[k] = m(await RB.audio.renderOffline('sfx:' + id, 1.2, opts), opts);
+    out.plays = plays.map((x) => x[0] + ':' + x[1]);
+    // and each at full gain, the worst case: never clipping
+    for (const id of out.list) out.raw[id] = m(await RB.audio.renderOffline('sfx:' + id, 1.2), {});
     RB.game.settings.petSounds = false;
     out.off = ['cat', 'dog', 'bird', 'tanuki'].map((sp) => RB.pets.sound(sp, 'pat'));
     return out;
   });
   assert(r.list.join() === 'pet_bird,pet_cat,pet_dog,pet_tanuki', 'the four: ' + r.list.join());
-  for (const id of r.list) assert(!r.fx[id].nan && r.fx[id].peak > 0.01 && r.fx[id].peak < r.fx.confirm.peak && !r.fx[id].clipped, id + ' soft (quieter than a menu confirm) and clean: ' + JSON.stringify(r.fx[id]));
+  assert(r.plays.length === 8 && ['cat', 'dog', 'bird', 'tanuki'].every((sp) => r.plays.includes(sp + ' pat:pet_' + sp) && r.plays.includes(sp + ' greet:pet_' + sp)), 'each species plays its own sound, for a pat and otherwise: ' + r.plays.join(', '));
+  for (const k of Object.keys(r.fx).filter((x) => x !== 'confirm')) assert(!r.fx[k].nan && r.fx[k].peak > 0.01 && r.fx[k].peak < r.fx.confirm.peak && !r.fx[k].clipped, k + ' as played: soft (quieter than a menu confirm as played) and clean: ' + JSON.stringify({ pet: r.fx[k], confirm: r.fx.confirm }));
+  for (const id of r.list) assert(!r.raw[id].nan && !r.raw[id].clipped, id + ' at full gain never clips: ' + JSON.stringify(r.raw[id]));
   assert(r.off.every((x) => x === false), 'nothing plays with the setting off');
   assert(!errors.length, 'no page errors: ' + errors.join(' | '));
   await ctx.close();
