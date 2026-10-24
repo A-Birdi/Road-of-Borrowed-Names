@@ -102,7 +102,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 12, y: 13, w: 7, h: 3, roof: 'tile', wall: 'wood', door: 3, windows: [1, 5], grow: true, if: 'as_hall', shut: SHUT('The meeting house. New timber, and the smell of fresh tatami.', '{寄合所|よりあいじょ} 。 {新|あたら}しい {木|き} と 、 {新|あたら}しい {畳|たたみ} の {匂|にお}い 。') },
     ],
     props: [
-      { p: 'noticeboard', x: 9, y: 8, scene: 'as.board' },
+      // the notices on it are the ones as.board has: Mitsue's call for the roads' names until they are named, then
+      // blank, then the washing's notice, the market's, the channel's turns, and a child's picture of the festival
+      // (RBN-QA-175)
+      { p: 'noticeboard', x: 9, y: 8, scene: 'as.board', o: { papers: ['quest.as_main=0', 'as_nt_water', 'as_nt_market', 'as_dp_water'], picture: 'as_fest_done' } },
       { p: 'well', x: 19, y: 8, scene: 'as.well' },
       // the three ways: blank posts until they are named, then their signposts
       { p: 'signblank', x: 1, y: 9, scene: 'as.way_main', if: '!as_nm_main' }, { p: 'sign', x: 1, y: 9, scene: 'as.way_main', if: 'as_nm_main' },

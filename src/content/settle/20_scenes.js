@@ -79,7 +79,8 @@ as_mitsue: {次|つぎ} は 、 {掲示板|けいじばん} に {最初|さい�
 @scene as.board
 !if quest.as_main=0 -> early
 !if as_nt_water&as_nt_market -> read
-narr: {掲示板|けいじばん} 。 まだ {何|なに} も {貼|は}って ない 。 || The notice board. Nothing on it yet.
+# (with the washing's notice up and the market's put off, the board is not empty: straight on to the market; RBN-QA-175)
+?(!as_nt_water) narr: {掲示板|けいじばん} 。 まだ {何|なに} も {貼|は}って ない 。 || The notice board. Nothing on it yet.
 !if as_nt_water -> market
 narr: {井戸|いど} の {周|まわ}り が 、 {石鹸|せっけん} の {泡|あわ} で {白|しろ}い 。 {誰|だれ} か が 、 {飲|の}み{水|みず} の {井戸|いど} で {洗濯|せんたく} を して いる 。 || The ground round the well is white with soap suds. Someone has been washing clothes at the drinking well.
 !challenge as.notice_water
