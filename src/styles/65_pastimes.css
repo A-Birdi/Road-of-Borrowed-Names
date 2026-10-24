@@ -23,6 +23,8 @@
 .sg-level legend { font-weight: 600; margin-bottom: 4px; }
 .sg-level .opt { display: inline-flex; gap: 0.35em; align-items: center; min-height: var(--tap); }
 .sg-top { display: flex; flex-wrap: wrap; gap: 0.3em 0.6em; align-items: baseline; margin-bottom: 6px; font-weight: 600; }
+.sg-top:focus { outline: none; }
+.sg-top:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 .sg-top .en { font-weight: 400; color: var(--ink-2); }
 .sg-status { margin: 8px 0 4px; min-height: 1.6em; }
 .sg-check { color: var(--danger-ink); }
