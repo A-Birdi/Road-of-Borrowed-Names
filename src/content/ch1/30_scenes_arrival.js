@@ -252,7 +252,7 @@ narr: {帳面|ちょうめん} が {開|ひら}いて いる 。 {細|こま}か
 !gesture nao point 5,5
 nao: …… {入口|いりぐち} から {来|き}た なら 、 {足元|あしもと} {気|き}を つけて 。 {三|みっ}つ{目|め} の {床板|ゆかいた} 、 {抜|ぬ}けてる から 。 || …If you came in the front, watch your step. The third floorboard is gone.
 !gesture nao aside
-narr: {帽子|ぼうし} の {下|した} から 、 {黄土色|おうどいろ} の スカーフ 。 {膨|ふく}らんだ {鞄|かばん} 。 {話|はな}し ながら 、 {目|め} だけ が {裏口|うらぐち} の {方|ほう} を {確|たし}かめて いる 。 || An ochre scarf; a bulging satchel. While talking, their eyes check the back door.
+narr: {黄土色|おうどいろ} の スカーフ 。 {膨|ふく}らんだ {鞄|かばん} 。 {話|はな}し ながら 、 {目|め} だけ が {裏口|うらぐち} の {方|ほう} を {確|たし}かめて いる 。 || An ochre scarf; a bulging satchel. While talking, their eyes check the back door.
 !prop nao letter
 !gesture nao present pc hold
 nao: {配達人|はいたつにん} の ナオ 。 {嵐|あらし} で {足止|あしど}め 。 で 、 これ 。 || Nao, courier. Stuck here by the storm. And — this.
