@@ -245,7 +245,8 @@ await test('the Keep tab: in the tab row, clear of the text and Next; Next does 
     const c = await page(b, url, DESK);
     await c.p.evaluate(ENTRANCE);
     const ctl2 = await c.p.evaluate(async () => {
-      const mk = (cls) => { const d = document.createElement('div'); d.className = cls; d.style.cssText = 'position:fixed;left:0;bottom:0;width:200px;height:60px;display:block;'; document.body.appendChild(d); return d; };
+      // (placed as the real box is, position absolute: a fixed box has no offsetParent, and the wait counts it unseen)
+      const mk = (cls) => { const d = document.createElement('div'); d.className = cls; d.style.cssText = 'position:absolute;left:0;bottom:0;width:200px;height:60px;display:block;'; document.body.appendChild(d); return d; };
       const out = {}, wait = (ms) => new Promise((r) => setTimeout(r, ms));
       let d = mk('dlg dlg-in'); out.bottom = await window.__entrance(d, 3000); d.remove();
       d = mk('dlg top dlg-in'); out.top = await window.__entrance(d, 3000); d.remove();
