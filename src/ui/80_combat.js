@@ -934,13 +934,37 @@ RB.combat = (function () {
     container.onpointerout = (e) => { if (e.pointerType !== 'mouse') return; const b = at(e); if (b && !(e.relatedTarget && b.contains(e.relatedTarget))) { const f = document.activeElement && container.contains(document.activeElement) ? at({ target: document.activeElement }) : null; setHover(f && f === kbEl && f.matches(':focus-visible') ? reachFor(f) : null); } };
     // (focusin/focusout have no on… properties: listeners, removed again by unwirePreview)
     unwireFocus(container);
-    const fi = (e) => { const b = at(e); kbEl = b && byKeys() ? b : null; if (kbEl && !b.disabled) setHover(reachFor(b)); };
-    const fo = (e) => { if (!(e.relatedTarget && container.contains(e.relatedTarget))) { kbEl = null; setHover(null); } };
+    // FR-1 F14: a card under keyboard focus shows its whole description. The list keeps that as a class (kb-whole), set
+    // when a card receives keyboard focus (:focus-visible) and taken away when keyboard focus moves on or leaves the
+    // list, but never changed by a pointer press: a press that moves focus to another card must not fold the first
+    // while it is held, or the list's height and scroll change under it and the tap guard rejects the press as a
+    // scroll (CC-192). After a press, it folds at the next keyboard move or the next deal.
+    let pressing = false;
+    const whole = (b) => { for (const x of container.querySelectorAll('.rcard.kb-whole')) if (x !== b) x.classList.remove('kb-whole'); if (b) b.classList.add('kb-whole'); };
+    const fi = (e) => {
+      const b = at(e); kbEl = b && byKeys() ? b : null; if (kbEl && !b.disabled) setHover(reachFor(b));
+      const t = e.target;
+      if (t && t.matches && t.matches(':focus-visible')) whole(t.matches('.rcard[data-i]') ? t : null);
+    };
+    const fo = (e) => { if (!(e.relatedTarget && container.contains(e.relatedTarget))) { kbEl = null; setHover(null); if (!pressing) whole(null); } };
+    const pd = () => { pressing = true; }, pu = () => { pressing = false; };
     container.addEventListener('focusin', fi);
     container.addEventListener('focusout', fo);
-    container.__pv = { fi, fo };
+    container.addEventListener('pointerdown', pd, true);
+    for (const k of ['pointerup', 'pointercancel']) document.addEventListener(k, pu, true);
+    container.__pv = { fi, fo, pd, pu };
+    // (focus already given before the list was wired: Back from an exchange returns it to a card)
+    const a = document.activeElement;
+    if (a && container.contains(a) && a.matches(':focus-visible')) whole(a.matches('.rcard[data-i]') ? a : null);
   }
-  function unwireFocus(container) { const w = container.__pv; if (w) { container.removeEventListener('focusin', w.fi); container.removeEventListener('focusout', w.fo); container.__pv = null; } }
+  function unwireFocus(container) {
+    const w = container.__pv;
+    if (!w) return;
+    container.removeEventListener('focusin', w.fi); container.removeEventListener('focusout', w.fo);
+    container.removeEventListener('pointerdown', w.pd, true);
+    for (const k of ['pointerup', 'pointercancel']) document.removeEventListener(k, w.pu, true);
+    container.__pv = null;
+  }
   function unwirePreview(container) { container.onpointerover = container.onpointerout = null; unwireFocus(container); kbEl = null; }
   // A press that began before a menu opened (the click or the held Enter / Space that submitted the
   // answer, a key repeating across the exchange) never chooses anything in it, nor does the second
