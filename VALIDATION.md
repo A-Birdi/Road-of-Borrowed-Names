@@ -5484,6 +5484,90 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-026 (records for review; the cut follows them):** to be built from this records commit: CC-025
+    (`0062b37`; published 10-25 19:57:21Z by fast-forwarding the task branch, live and verified by Local CL-396 and
+    Agnes 6402478532) plus only RBN-QA-183, by its exact commit `5150612`, whose parent is `0062b37`, so `int/cc026` is
+    `5150612` itself (plan CC-260 with CC-261's order: Local CL-399 and CL-400 and Agnes 6403591707). The page the lane
+    ran on is the integrated tip's own build: `index.html` sha256
+    `b072a8b938131672bb3cfefd2c9e6afcdc0178ad78dbfcce43e0c7d746969cd4` (24,393,376 bytes); the records are not in the
+    page, so the cut is expected to give those bytes and is checked against them before it is committed.
+    - What it is (Agnes 6402876474: on live CC-025, fresh Slot 7, the Japanese of Nao's second narration opened with a
+      hat that neither the English nor the portrait and sprite show; proposal CC-257, Agnes's identical proposal and
+      AGREE 6402904713, Local CL-397): `src/content/ch1/30_scenes_arrival.js` 255, `rw.nao_first` command index 4, loses
+      only its leading `{帽子|ぼうし} の {下|した} から 、 `; it now reads 黄土色のスカーフ。膨らんだ鞄。話しながら、目だけが 裏口の方を確かめている。 The rest of the
+      line, its ruby and spacing, the English ("An ochre scarf; a bulging satchel. While talking, their eyes check the
+      back door."), the staging and the art are unchanged. Nao has no hat in her definition (`src/content/00_world.js`
+      look and portrait: scarf, satchel, pencil; Local CL-397); the phrase dates from Chapter 1's first content. Parsed
+      in node on both trees, `rw.nao_first` has 33 commands on `0062b37` and on `5150612`, and they differ only in index
+      4's Japanese, so C07 (`practice_b/30_compare.js` 181, index 2, Nao's floorboard line) is unaffected.
+    - Japanese self-reviewed (Robin's C-26: no native reviewer; the language review ledger covers only the expansion's
+      prefixes and the Living World, `tools/review_ledger.mjs` `lines()`, so it lists no `rw.` line and no entry is
+      possible; recorded here and in the commit instead, agreed by Local CL-398 and Agnes 6403367058, the ledger not
+      widened for this fix): two noun images and then the action, standard narrative description in the order of the
+      English; every kanji keeps its reading; lexicon entries for 黄土色, 膨らむ and 裏口 (`ch1/00_lex.js`) and for 鞄, 確かめる and
+      話す (`src/lang/30_lexicon.js`).
+    - Voice (paused; nothing generated, relabelled, moved or deleted): the game keys clips as `sceneId + '#' +
+      sha256(jp).slice(0, 10)` (`52_voicebank.js`); the key changes from `rw.nao_first#026f006360`, whose narrator take
+      `r1-77b692c86f9e3c1b` is listed in the live voice index (Local CL-397; presence in the index, not playback
+      observed on every device), to `rw.nao_first#46bb857498`, unrecorded. With Prepared voices (`54_voice_route.js`
+      4–5) the line now plays the device's Japanese voice where there is one, else nothing; the old take no longer plays
+      for it. Open follow-up: a new take for `#46bb857498` when voice work resumes (Robin's call). A text alignment, not
+      a completed voice repair.
+    - AGREEs on the exact candidate (`candidate/qa-183` = `5150612`): Agnes 6403367058 (source and test; its ruby-count
+      and bare-kanji assertions are not a general pronunciation validator, and source review confirms this line's
+      readings), Local CL-398, each with Cloud's.
+    - The candidate's own runs, Cloud's on Linux, one at a time, first outcomes in order, on its page `b072a8b9…` and
+      the control CC-025's page `d15e2854…`: `nao_first_words` first draft (it read `.dlg .txt .main`, which holds the
+      English when English leads; the Japanese is the `.jline` below it): candidate 5/2, control 4/3, both failing
+      "opens with 黄土色" and "every kanji has its reading" for want of any ruby read, the control also "no 帽子" through the
+      line's text; a test fault, fixed before commit; then as committed: candidate 7/0 (shown 黄土色のスカーフ。膨らんだ鞄。
+      話しながら、目だけが裏口の方を確かめている。, 8 ruby), control 5/2 (exactly "no 帽子" and "opens with 黄土色": shown 帽子の下から、…, first ruby
+      帽子|ぼうし; 10 ruby); `staging_chapters --ch=1 --only=rw.nao_first --branches` 28/0; U 58,365/0 (20:45Z to 21:03Z;
+      `review_ledger` passes). The check covers what is shown, not audio.
+    - On the integrated tip (`5150612`, page `b072a8b9…`), Cloud's lane on Linux, one step at a time, nothing else of
+      Cloud's beside it: the page built from it, `b072a8b9…`, 24,393,376 bytes, byte-identical to the candidate's page;
+      `validate.mjs` exit 0, no errors; `nao_first_words` 7/0; `staging_chapters --ch=1 --only=rw.nao_first --branches`
+      28/0; `practice_b` 6/0 (the comparison items, C07's quoted line among them); `landmarks` 54/0 (`rw.nao_first`
+      still starts from Nao in the warehouse); `voice_runtime` 9 passed, 1 failed, exit 1: the step "the voiced offline
+      package plays its recordings from file: with nothing fetched" failed when `tools/publish/offline_package.mjs`
+      exited non-zero (the test pipes the tool's output and prints only "Command failed", so its own message was not
+      captured). The tool's own error is not known; insufficient space in this container is the supported explanation,
+      not a proven specific error nor a categorical product exclusion (class agreed by Local CL-405, qualified so by
+      Agnes 6403904805): the step copies the runtime set that `prepare_runtime.mjs` reads from the tree's committed
+      `index.html` (CC-025's page, not the tip's, so the step does not exercise this candidate's page), 625 files and
+      524,418,136 bytes by its own `--list-only`, into the system temp folder, which had about 167 to 187 MB free; the
+      other nine steps passed, the route and its fallbacks among them. Not rerun in this container (none requested) and
+      not counted a pass; Local's Windows run of the suite, meant as supporting, changed-environment packaging evidence
+      (CL-405), did not run: its voice fixture needs `ffmpeg` (`voice_fixture.mjs` 27), which that machine does not have
+      on its PATH (`spawnSync ffmpeg ENOENT`, exit before any test); nothing was installed (CL-406). So there is no
+      supporting evidence for that step. 21:36:51Z to 21:41:20Z on 10-25; the tree clean at `5150612` after.
+    - Local's Windows run (`tools/run_qa183.sh`, on its build of `5150612`, `2676b682…`, 24,393,378 bytes, normalized
+      for the usual two trim bytes to `b072a8b9…`, equal to the tip's page; CL-399): terminal, first attempts, none
+      rerun, one step at a time, Node v24.19.0, 21:11Z to 21:21Z (CL-400, CL-401): build and validate no errors;
+      `nao_first_words` 7/0; its control on Local's build of CC-025's source (`06bc6c1`, `db86cb5a…`) 5/2, exactly the
+      two 帽子 checks (a separate fact: that step's log line printed "exit 0", Local's script reading `$?` after a command
+      substitution, CL-400; no exit code of the test process was observed for it, and the log is kept as it is);
+      `staging_chapters --ch=1 --only=rw.nao_first --branches` 28/0; the `review_ledger` unit 2/0. Equal to Cloud's
+      Linux outcomes; same-byte evidence for the cut once it equals `b072a8b9…`.
+    - Known and open, not fixed by CC-026: the voice follow-up above; three native renderer exits on live CC-025, each
+      Chromium "Aw, Snap!" error 9 (consistent with SIGKILL; not proof of out-of-memory, of a sender or of whose memory;
+      Agnes 6403598240), causes unclassified, no product change: 20:34:30Z, a Next at the s-row lesson's せ → そ step
+      (6402910866, 6402930349; Slot 7's 20:32 autosave resumed after a reload, about two minutes lost; one replay
+      crossed the step at 20:37Z), and 21:29:03Z, a Next into `rw.bridge_scene`'s second authored shot (reach → cup;
+      Agnes 6403687867) after Mill Echo and the h-row lesson (6403560594, 6403570199; Slot 7's 21:19 autosave resumed on
+      Old Mill's main floor before the battle, about ten minutes lost; the one replay from that autosave crossed Mill
+      Echo and the h-row lesson and showed reach's shots, then exited again at the same transition at 21:38:30Z
+      (6403672305); native QA stopped there, slots 1–6 untouched; Agnes's read-only source review found that
+      `cupShot.draw` calls `shojiPair` on every frame, which allocates a full-buffer pxkit layer, its outline and a
+      fresh canvas each time (`src/ui/43a_seq_ch1.js` 342–349, 434 and 748 in the door shot; `src/ui/77_pxkit.js`
+      135–138, 320–342, 377–383), an allocation lead, not crash causation, no retained reference established, no patch
+      (6403702619, 6403705366; confirmed in the source by Local CL-404 and Cloud, CC-263)); Local's one bounded
+      diagnostic (CL-402, agreed by Agnes 6403598240 and Cloud CC-262) is separate, its outcome not part of this
+      release; CC-025's open list (VALIDATION, CC-025). Not claimed: no audio check, no all-suite matrix on these bytes
+      (none requested), no native or owner acceptance (Nao's fresh run on live CC-025 is stopped at the bridge
+      transition, Slot 7's 21:14 manual and 21:19 autosave kept; the six protected native saves stay untouched), no
+      publication (held until Local's bounded diagnostic had loaded and confirmed the live CC-025 page: Agnes
+      6403904805, Local CL-405; it did so at 22:07:45Z, CL-406).
   - **Candidate CC-025 (records for review; the cut follows them):** to be built from this records commit: CC-024
     (`0ab9c53`; published 10-25 16:28Z by fast-forwarding the task branch, live and verified by Local CL-389 and Agnes
     6400268327) plus only the 20-slot Inn Ledger, by its exact commits, integrated as `int/cc025`, head `06bc6c1` (plan

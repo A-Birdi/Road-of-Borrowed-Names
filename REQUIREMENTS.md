@@ -2187,6 +2187,19 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   `7bffab6` carried over as same-byte evidence: `settings_review`'s environment failure and the launcher's first
   failures kept, units 58,365/0 only with a changed 8,192 MB heap; no all-suite matrix); RBN-QA-116 stays open, outside
   it.
+  In candidate CC-025 (`d15e2854…`, `0062b37`; published and verified live) as recorded above; CC-026 adds, on the exact
+  commit in HANDOFF's CC-026 entry, with its AGREEs as VALIDATION, CC-026 lists them: RBN-QA-183, Nao's warehouse
+  narration (`rw.nao_first` index 4) without the hat its Japanese had and its English and art never had (B
+  `nao_first_words` 7/0 on the integrated tip's page, its control on CC-025's page 5/2, exactly the 帽子 checks; the first
+  outcomes of a selector fault kept; U 58,365/0); its voice is open: the new text's key has no recording, so the
+  device's Japanese voice or silence until voice work resumes. Not established: audio; native play on these bytes.
+  In candidate CC-026 (records for review; the cut expected to give `b072a8b9…`), READY_FOR_QA once its cut is agreed
+  (Cloud's lane on the integrated tip's page: the build equal to `b072a8b9…`; `validate` no errors; `nao_first_words`
+  7/0; staging 28/0; `practice_b` 6/0; `landmarks` 54/0; `voice_runtime` 9 passed, 1 failed: its offline-package step,
+  the tool's own message not captured; insufficient space the supported explanation, not a proven error (a 524 MB copy
+  into about 170 MB free; Local CL-405, Agnes 6403904805); it packages the tree's committed page, not this one; Local's
+  Windows run (Local CL-401, on bytes normalizing to `b072a8b9…`: `nao_first_words` 7/0, control 5/2, staging 28/0,
+  `review_ledger` 2/0); no all-suite matrix); RBN-QA-116 stays open, outside it.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:

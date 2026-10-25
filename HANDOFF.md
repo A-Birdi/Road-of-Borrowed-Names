@@ -1151,6 +1151,46 @@
       browser step exit 0). No all-suite matrix (none requested); no native acceptance yet: Nao's fresh run follows
       CC-025's live verification; the six protected native saves stay untouched. Agnes's visual review not done (the
       capture page not shared with her). Voice stays paused: no spoken line changed; recordings kept.
+      CC-025 PUBLISHED 10-25 19:57:21Z (the task branch fast-forwarded to `0062b37`; Pages run 40228473266 success at
+      19:58:58Z) and verified live by Local CL-396 and Agnes 6402478532 (200, 24,393,423 bytes, sha256 `d15e2854…`,
+      Last-Modified 19:58:55 GMT, equal to the cut). Native on live CC-025 (Agnes 6402515208, 6402989720): the six
+      protected manual saves and Slot 4's Hall suspension intact (6 of 20 in use); Nao's fresh run in a verified-empty
+      Slot 7; not a native acceptance. Three native renderer exits on live CC-025, causes unclassified, no product
+      change (Chromium "Aw, Snap!" error 9; consistent with SIGKILL, not proof of out-of-memory, of a sender or of whose
+      memory; Agnes 6403598240): at 20:34:30Z as Next advanced the s-row kana lesson from せ to そ (6402910866,
+      6402930349: Slot 7's 20:32 autosave resumed after a reload, about two minutes lost; one replay crossed the same
+      step at 20:37Z); at 21:29:03Z after a Next into `rw.bridge_scene`'s second authored shot (reach → cup; Agnes
+      6403687867), after Mill Echo and the h-row lesson (6403560594, 6403570199: Slot 7's 21:19 autosave resumed on Old
+      Mill's main floor before the battle, about ten minutes lost; the one replay from that autosave crossed Mill Echo
+      and the h-row lesson and showed reach's shots, then the same transition exited again at 21:38:30Z (6403672305),
+      and native QA stopped there, slots 1–6 untouched. Agnes's source review found a per-frame full-buffer allocation
+      in `cupShot.draw`'s `shojiPair`, a lead, not causation (6403702619, 6403705366)). Local's one bounded diagnostic
+      (CL-402, agreed by Agnes 6403598240 and Cloud CC-262) is separate from this release.
+      CANDIDATE CC-026 (records for review; the cut, `index.html` only, follows them and is expected to give the
+      integrated tip's page, `b072a8b9…`, 24,393,376 bytes): CC-025 (`0062b37`) plus only RBN-QA-183 (`5150612`, whose
+      parent is `0062b37`: integrated as `int/cc026` = `5150612` itself, nothing cherry-picked or merged; AGREEs on the
+      exact candidate Agnes 6403367058 and Local CL-398; plan CC-260 with CC-261's order, agreed by Local CL-399 and
+      CL-400 and Agnes 6403591707): `rw.nao_first`, command index 4 (the narration after Nao's floorboard line), no
+      longer opens with 帽子の下から ("from under a hat"), which neither the English, Nao's brief nor the art has (Agnes
+      6402876474, seen on live CC-025); the rest of the line, the English, the staging, the art and every command index
+      unchanged (C07 still cites index 2). Voice follow-up, open: the line's key changes from `rw.nao_first#026f006360`
+      (the narrator's take `r1-77b692c86f9e3c1b`, deployed live, Local CL-397) to `#46bb857498`, which has no recording,
+      so with Prepared voices the line falls back to the device's Japanese voice where available, else silence; the old
+      clip and its index entry unchanged; a new take when voice work resumes (Robin's call). A text alignment, not a
+      completed voice repair. The language review ledger does not reach `rw.` lines (`tools/review_ledger.mjs`), so the
+      line's self-review is in the commit and VALIDATION (agreed: Local CL-398, Agnes 6403367058; the ledger not widened
+      for this fix). Evidence (VALIDATION, CC-026): the candidate's check and its control, first outcomes kept (the
+      test's selector fault 5/2 and 4/3, then 7/0 and 5/2); Cloud's lane on the integrated tip's page (the build equal
+      to `b072a8b9…`; `validate` no errors; `nao_first_words` 7/0; staging 28/0; `practice_b` 6/0; `landmarks` 54/0;
+      `voice_runtime` 9 passed, 1 failed: its offline-package step, the tool's own message not captured; insufficient
+      space the supported explanation, not a proven error (a 524 MB copy into about 170 MB free; Local CL-405, Agnes
+      6403904805); it packages the tree's committed page, not this one); Local's Windows run (Local CL-401, on bytes
+      normalizing to `b072a8b9…`: `nao_first_words` 7/0, control 5/2, staging 28/0, `review_ledger` 2/0). Known and
+      open: CC-025's list as recorded there. Not claimed: no audio check, no all-suite matrix, no native acceptance of
+      these bytes. Voice stays paused: one spoken line's text changed, nothing recorded, relabelled or deleted.
+      Publication held until Local's bounded diagnostic has loaded and confirmed the live CC-025 page (Agnes 6403904805;
+      Local CL-405); then it needs no further approval. Local's run loaded and confirmed the live CC-025 page
+      (`d15e2854…`) at 22:07:45Z and stays on that one page (CL-406), so that condition is met.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
