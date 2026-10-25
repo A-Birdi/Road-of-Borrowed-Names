@@ -137,7 +137,9 @@ body.reduced-motion .st-more svg { transition: none; }
 .folio-ledger .leaf { padding-top: 10px; container-type: inline-size; }
 .ledger { list-style: none; margin: 0; padding: 0; }
 /* the ledger's page tabs (the slots in pages of six): how many are in use, and this journey's or the newest save's mark */
-.folio-ledger .ptab { min-width: 4.4em; }
+/* wide only: on phones the folio's own rule (min-width: max-content) keeps each tab as wide as its label, so a rail
+ * that cannot fit scrolls with its arrows rather than clipping a label */
+@media (min-width: 600px) { .folio-ledger .ptab { min-width: 4.4em; } }
 .folio-ledger .ptab .tl { display: inline-flex; align-items: center; gap: 0.35em; }
 .folio-ledger .ptab .pg-n { min-width: 1.45em; padding: 0 0.35em; border-radius: 0.75em; background: var(--paper-3); color: var(--ink-2); font-size: 0.8em; font-weight: 700; line-height: 1.45; text-align: center; }
 .folio-ledger .ptab .pg-mk { display: inline-flex; }
