@@ -1382,7 +1382,7 @@ RB.ui.menu = (function () {
     box.setAttribute('aria-label', 'Save & Load');
     box.innerHTML = '<div class="eq-pick-h">' + lab('{宿帳|やどちょう}', 'The Inn Ledger') + '</div>' +
       (st.mode === 'session' ? '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>' : '') +
-      opt('save', 'save', 'Save this journey', 'Choose one of six slots. Overwriting asks first.') +
+      opt('save', 'save', 'Save this journey', 'Choose one of ' + RB.save.SLOTS + ' slots. Overwriting asks first.') +
       opt('load', 'load', 'Load a journey', 'Manual saves, autosaves and the pre-departure point.') +
       opt('title', 'title', 'Return to the title', 'Anything since your last save or autosave will be lost.') +
       '<p class="sv-foot">Autosaves happen at safe places: arriving somewhere new, finishing a scene that matters. Manual saves are kept apart from them.</p>';

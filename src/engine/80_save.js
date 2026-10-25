@@ -1,4 +1,4 @@
-/* Persistence: six campaign slots in IndexedDB (localStorage fallback,
+/* Persistence: twenty campaign slots in IndexedDB (localStorage fallback,
  * session-only as last resort), bounded recovery snapshots, schema
  * validation, revision checks and cross-tab ownership (spec §14).
  * There is deliberately no export/import of saves. */
@@ -8,7 +8,9 @@ RB.save = (function () {
   'use strict';
   const DB_NAME = 'road-of-borrowed-names';
   const DB_VER = 1;
-  const SLOTS = 6;
+  // Twenty slots (Robin, 2026-10-25, superseding SPECIFICATION §14's six for thorough testing): records are keyed by
+  // slot number, so slots 1–6 and their recovery records read as before; no schema change
+  const SLOTS = 20;
   const AUTO_KEEP = 3;
   let mode = 'unknown'; // 'idb' | 'local' | 'session'
   let db = null;
@@ -223,7 +225,7 @@ RB.save = (function () {
         rev: r ? r.rev : 0,
       });
     }
-    // a failed read is not six empty slots: the ledger shows an error with Try again
+    // a failed read is not a ledger of empty slots: the ledger shows an error with Try again
     if (readError) out.readError = readError;
     return out;
   }

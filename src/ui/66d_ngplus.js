@@ -44,7 +44,7 @@ RB.ui.ngplus = (function () {
       let close = null;
       const fr = RB.ui.folio.frame({ cls: 'folio-ngplus', onClose: () => close(null) });
       fr.setTitle('New Game+', 'Choose where the new journey is kept');
-      fr.box.innerHTML = '<section class="leaf cr-ngplus"><p id="ngp-d">The new journey carries your learning record and stars, stamps and seals, the illustrations you witnessed, your pastime records, noted words, kept sentences and your traveller as they are. Story, companion, quests and items start fresh.</p><ul class="ng-list">' +
+      fr.box.innerHTML = '<section class="leaf cr-ngplus"><p id="ngp-d">The new journey carries your learning record and stars, stamps and seals, the illustrations you witnessed, your pastime records, noted words, kept sentences and your traveller as they are. Story, companion, quests and items start fresh.</p><ul class="ng-list compact">' +
         list.map((x) => {
           const m = x.meta || {};
           const what = x.empty ? 'Empty' : x.slot === origin ? (o.old ? 'This journey (six-chapter edition): the new one takes its place' : 'This journey (finished): the new one takes its place') : (m.name || 'A journey') + (m.comp ? ' & ' + m.comp : '') + (m.chapter ? ', Chapter ' + m.chapter : '') + ': erased';

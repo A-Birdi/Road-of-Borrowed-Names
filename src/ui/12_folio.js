@@ -217,7 +217,8 @@ RB.ui.folio = (function () {
     const onFonts = () => { if (rail.isConnected) place(false, true); };
     if (fonts) fonts.addEventListener('loadingdone', onFonts);
     select(selected, null, false);
-    return { el: wrap, select: (id) => select(id, null, false), current: () => cur, destroy() { if (ro) ro.disconnect(); if (fonts) fonts.removeEventListener('loadingdone', onFonts); } };
+    // refit(): the tabs' own labels changed (counts, marks): measure them again and place the ribbon
+    return { el: wrap, select: (id) => select(id, null, false), current: () => cur, refit: () => place(false, true), destroy() { if (ro) ro.disconnect(); if (fonts) fonts.removeEventListener('loadingdone', onFonts); } };
   }
 
   // Two-page spread available at this width (matches the CSS breakpoint in

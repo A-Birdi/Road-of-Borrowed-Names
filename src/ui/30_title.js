@@ -1,4 +1,4 @@
-/* Title screen and the six-slot travel ledger.
+/* Title screen and the twenty-slot travel ledger.
  *
  * The title is a lantern road at dusk seen from a roadside inn's threshold:
  * the door frame, a writing desk with the folio and a lamp, and beyond it the
@@ -814,17 +814,50 @@ RB.ui.title = (function () {
     const close = () => {
       if (!lay) return;
       if (mq) mq.onchange = null;
+      if (tabsApi) tabsApi.destroy();
       // hand focus back to what opened the ledger before the layer goes
       if (opener && opener.focus && opener !== document.body && document.contains(opener)) opener.focus({ preventScroll: true });
       RB.ui.popLayer(lay);
       lay = null;
     };
     const fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-ledger' });
+    fr.box.id = 'ledger-page';
+    fr.box.setAttribute('role', 'tabpanel');
     fr.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), esc(ttl));
     lay = { el: fr.scrim, name: 'slots', noAutofocus: true };
     lay.onCancel = close;
     let list = null, err = null, failed = false, first = true, focusAfter = null;
     const mq = typeof matchMedia !== 'undefined' ? matchMedia('(min-width: 860px)') : null;
+    // the slots in pages of six, chosen with the book's paper tabs (as in Settings): 1–6, 7–12, 13–18, 19–20. The page
+    // stays through every re-render (a refresh, the wide/narrow change); only the opening rule and an action's slot
+    // (focusAfter) choose one.
+    const N = RB.save.SLOTS, PER = 6, PAGES = Math.ceil(N / PER);
+    const pageOf = (n) => Math.floor((n - 1) / PER);
+    const span = (i) => [i * PER + 1, Math.min(N, (i + 1) * PER)];
+    const named = (a, z) => (a === z ? 'Slot ' + a : 'Slots ' + a + ' to ' + z);
+    let page = null, tabsApi = null;
+    // the page it opens on: Load the newest journey's, Save this journey's (or the first empty slot's), New the first empty slot's
+    function openingPage() {
+      const cur = RB.save.current();
+      const used = (n) => n && list[n - 1] && !list[n - 1].empty;
+      const empty = () => { const e = list.find((x) => x.empty); return e ? e.slot : null; };
+      const last = ctx === 'load' ? newest(list) : null;
+      const n = ctx === 'load' ? last && last.slot : ctx === 'save' ? (fromGame && used(cur.slot) ? cur.slot : empty()) : empty();
+      return n ? pageOf(n) : 0;
+    }
+    // each tab says its slots and how many are in use, and carries this journey's mark or the newest save's
+    function markTabs(cur, last) {
+      const here = fromGame && cur.slot && list[cur.slot - 1] && !list[cur.slot - 1].empty ? cur.slot : null;
+      fr.tabslot.querySelectorAll('.ptab').forEach((b) => {
+        const i = +b.dataset.id.slice(2);
+        const [a, z] = span(i);
+        const n = list.slice(a - 1, z).filter((x) => !x.empty).length;
+        const mark = here && pageOf(here) === i ? 'here' : last && pageOf(last.slot) === i ? 'latest' : '';
+        b.querySelector('.tl').innerHTML = esc(a === z ? String(a) : a + '–' + z) + (n ? '<span class="pg-n">' + n + '</span>' : '') +
+          (mark ? '<span class="pg-mk">' + I('here') + '</span>' : '');
+        b.setAttribute('aria-label', named(a, z) + ', ' + n + ' in use' + (mark === 'here' ? ', this journey' : mark ? ', the most recent save' : ''));
+      });
+    }
 
     function render() {
       if (!lay) return;
@@ -836,25 +869,37 @@ RB.ui.title = (function () {
       const cur = RB.save.current();
       const info = storageInfo();
       const used = list ? list.filter((s) => !s.empty).length : 0;
-      // the six saves are the Inn Ledger (宿帳; Robin's C-58); the pause menu is the Wayfarer's Ledger
-      fr.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), esc(ttl) + (list && !failed ? ' · ' + used + ' of 6 in use' : ''));
+      // the saves are the Inn Ledger (宿帳; Robin's C-58); the pause menu is the Wayfarer's Ledger
+      fr.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), esc(ttl) + (list && !failed ? ' · ' + used + ' of ' + N + ' in use' : ''));
       let top = '';
       if (info.level === 'bad') top += '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>';
       if (cur.readOnly && ctx === 'save') top += '<p class="note-slip warn">' + I('warn') + ' This tab is read-only for this campaign because another tab owns it. Saving to other slots is still possible.</p>';
       if (err) top += '<div class="note-slip bad" role="alert">' + I('warn') + ' The ledger could not be read (' + esc(err) + ').' + (failed ? '' : ' Slots may show as empty.') + ' Nothing was changed. <button class="pbtn" data-a="retry">Try again</button></div>';
-      if (ctx === 'new' && list && !failed && used === 6) top += '<p class="note-slip">All six slots hold journeys. To start a new one, open Manage on a slot and overwrite it.</p>';
+      if (ctx === 'new' && list && !failed && used === N) top += '<p class="note-slip">All ' + N + ' slots hold journeys. To start a new one, open Manage on a slot and overwrite it.</p>';
       if (ctx === 'load' && list && !err && !list.some((s) => !s.empty && !s.corrupt)) top += '<p class="note-slip">No saved journeys yet. Choose New Game on the title to begin one.</p>';
       const last = ctx === 'load' && list ? newest(list) : null;
       const recs = (list || []).map((s) => record(s, ctx, cur, fromGame, last && last.slot === s.slot));
-      const foot = '<p class="ledger-foot muted small">Six local slots in ' + (info.mode === 'session' ? 'this session only' : 'this browser') + '. Copy makes an independent duplicate in another slot; deleting a slot also removes its autosaves. There is no export or cloud copy.</p>';
-      const ol = (a, b) => '<ol class="ledger" start="' + (a + 1) + '">' + recs.slice(a, b).join('') + '</ol>';
+      const foot = '<p class="ledger-foot muted small">' + N + ' local slots in ' + (info.mode === 'session' ? 'this session only' : 'this browser') + '. Copy makes an independent duplicate in another slot; deleting a slot also removes its autosaves. There is no export or cloud copy.</p>';
       if (!list) {
         fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="-1">' + top + '<p class="muted">Opening the ledger…</p></div></div>';
         return;
       }
+      if (page == null || page >= PAGES) page = openingPage();
+      if (!tabsApi) {
+        const items = Array.from({ length: PAGES }, (_, i) => ({ id: 'lp' + i, en: span(i).join('–'), jp: null, icon: 'ledger' }));
+        tabsApi = RB.ui.folio.tabs(fr.tabslot, items, 'lp' + page, (id) => { page = +id.slice(2); render(); }, { label: 'Ledger pages', panelId: 'ledger-page' });
+      } else if (tabsApi.current() !== 'lp' + page) tabsApi.select('lp' + page);
+      markTabs(cur, last);
+      tabsApi.refit();
+      fr.box.setAttribute('aria-labelledby', 'tab-lp' + page);
+      // this page's slots: three and three on the spread (19–20: one and one), all on one leaf when narrow
+      const [a0, z0] = span(page);
+      const pr = recs.slice(a0 - 1, z0);
+      const half = Math.ceil(pr.length / 2);
+      const ol = (i, j) => '<ol class="ledger" start="' + (a0 + i) + '">' + pr.slice(i, j).join('') + '</ol>';
       fr.box.innerHTML = two
-        ? '<div class="spread two"><div class="leaf" tabindex="-1" aria-label="Slots 1 to 3">' + top + ol(0, 3) + '</div><div class="leaf" tabindex="-1" aria-label="Slots 4 to 6">' + ol(3, 6) + foot + '</div></div>'
-        : '<div class="spread"><div class="leaf" tabindex="-1">' + top + ol(0, 6) + foot + '</div></div>';
+        ? '<div class="spread two"><div class="leaf" tabindex="-1" aria-label="' + named(a0, a0 + half - 1) + '">' + top + ol(0, half) + '</div><div class="leaf" tabindex="-1" aria-label="' + named(a0 + half, z0) + '">' + ol(half, pr.length) + foot + '</div></div>'
+        : '<div class="spread"><div class="leaf" tabindex="-1" aria-label="' + named(a0, z0) + '">' + top + ol(0, pr.length) + foot + '</div></div>';
       for (const id of openMg) {
         const b = fr.box.querySelector('[aria-controls="' + id + '"]');
         if (b) toggle(b, true);
@@ -896,6 +941,8 @@ RB.ui.title = (function () {
         // module provides it, list.readError) while returning empty slots
         err = list.readError || (after && after !== before ? after : null);
         failed = false;
+        // an action's slot opens its page (its control then takes focus, as before)
+        if (focusAfter && focusAfter.slot) page = pageOf(+focusAfter.slot);
       } catch (e) {
         list = list || [];
         err = String((e && e.message) || e);
@@ -986,12 +1033,24 @@ RB.ui.title = (function () {
     render();
     await refresh();
   }
-  async function pickSlot(list, except) {
-    const btns = list.filter((s) => s.slot !== except).map((s) => 'Slot ' + s.slot + (s.empty ? ' (empty)' : ' (' + (s.meta ? s.meta.name : 'used') + ')'));
-    btns.push('Cancel');
-    const r = await RB.ui.confirm('Copy slot ' + except + ' to which slot?', btns);
-    if (r === btns.length - 1) return null;
-    return list.filter((s) => s.slot !== except)[r].slot;
+  // where a copy goes: one compact line for each other slot (never the source itself), as New Game+ lists them;
+  // Cancel, Back or Escape chooses none. A used slot is replaced only after the ledger's own confirmation.
+  function pickSlot(list, except) {
+    return new Promise((resolve) => {
+      let done = false;
+      const fr = RB.ui.folio.frame({ cls: 'folio-ngplus folio-copyslot', onClose: () => finish(null), closeLabel: 'Cancel', closeIcon: 'back' });
+      fr.setTitle('Copy slot ' + except, 'Choose the slot it goes to');
+      fr.box.innerHTML = '<section class="leaf cr-ngplus"><ul class="ng-list compact">' + list.filter((s) => s.slot !== except).map((s) => {
+        const m = s.meta || {};
+        const what = s.empty ? 'Empty' : s.corrupt ? 'Unreadable save: replaced, asked first' : (m.name || 'A journey') + (m.comp ? ' & ' + m.comp : '') + (m.chapter ? ', Chapter ' + m.chapter : '') + ': replaced, asked first';
+        return '<li><button type="button" class="ng-opt" data-slot="' + s.slot + '"><span class="mk">' + I(s.empty ? 'blank' : 'warn') + '</span><span class="t">Slot ' + s.slot + '</span><span class="d">' + esc(what) + '</span></button></li>';
+      }).join('') + '</ul></section>';
+      const layer = { el: fr.scrim, name: 'copy-slot' };
+      const finish = (v) => { if (done) return; done = true; RB.ui.popLayer(layer); resolve(v); };
+      layer.onCancel = () => finish(null);
+      fr.box.addEventListener('click', (e) => { const b = e.target.closest('[data-slot]'); if (b) { RB.audio && RB.audio.sfx('cursor'); finish(+b.dataset.slot); } });
+      RB.ui.pushLayer(layer);
+    });
   }
 
   // ---- about & credits ------------------------------------------------------------------
