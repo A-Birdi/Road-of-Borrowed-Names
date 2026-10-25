@@ -826,7 +826,7 @@ RB.ui.title = (function () {
     fr.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), esc(ttl));
     lay = { el: fr.scrim, name: 'slots', noAutofocus: true };
     lay.onCancel = close;
-    let list = null, err = null, failed = false, first = true, focusAfter = null;
+    let list = null, err = null, failed = false, first = true, focusAfter = null, lostFocus = null;
     // one leaf or two follows the spread's own breakpoint (RB.ui.folio.WIDE, as the pause folio and Settings), so the
     // ledger re-renders when that changes; it listened at 860 px, a record-layout rule only, and a leaf could stay hidden
     const mq = typeof matchMedia !== 'undefined' ? matchMedia(RB.ui.folio.WIDE) : null;
@@ -866,7 +866,8 @@ RB.ui.title = (function () {
       const two = RB.ui.folio.wide();
       const keep = Array.from(fr.box.querySelectorAll('.leaf')).map((l) => l.scrollTop);
       const act = document.activeElement;
-      const fk = act && fr.box.contains(act) && act.closest('[data-slot]') ? { slot: act.closest('[data-slot]').getAttribute('data-slot'), a: act.getAttribute('data-a') } : null;
+      const fk = act && fr.box.contains(act) && act.closest('[data-slot]') ? { slot: act.closest('[data-slot]').getAttribute('data-slot'), a: act.getAttribute('data-a') }
+        : (!act || act === document.body) ? lostFocus : null;
       const openMg = Array.from(fr.box.querySelectorAll('.mg-t[aria-expanded=true]')).map((b) => b.getAttribute('aria-controls'));
       const cur = RB.save.current();
       const info = storageInfo();
@@ -902,6 +903,7 @@ RB.ui.title = (function () {
       fr.box.innerHTML = two
         ? '<div class="spread two"><div class="leaf" tabindex="-1" aria-label="' + named(a0, a0 + half - 1) + '">' + top + ol(0, half) + '</div><div class="leaf" tabindex="-1" aria-label="' + named(a0 + half, z0) + '">' + ol(half, pr.length) + foot + '</div></div>'
         : '<div class="spread"><div class="leaf" tabindex="-1" aria-label="' + named(a0, z0) + '">' + top + ol(0, pr.length) + foot + '</div></div>';
+      lostFocus = null; // the old controls' own blur, as they were replaced, is not a lost focus
       for (const id of openMg) {
         const b = fr.box.querySelector('[aria-controls="' + id + '"]');
         if (b) toggle(b, true);
@@ -1031,6 +1033,13 @@ RB.ui.title = (function () {
       }
     };
     RB.ui.pushLayer(lay);
+    // a focus lost because its control was hidden: a resize across the spread's breakpoint hides the second leaf, and
+    // the browser blurs its focused control before the change event re-renders; render() puts it back on the same slot's
+    // control (not a blur the player caused, which leaves its control visible)
+    fr.box.addEventListener('focusout', (e) => {
+      const t = e.target, r = t.closest && t.closest('[data-slot]');
+      lostFocus = !e.relatedTarget && r && t.isConnected && !t.getClientRects().length ? { slot: r.getAttribute('data-slot'), a: t.getAttribute('data-a') } : null;
+    });
     if (mq) mq.onchange = () => render();
     render();
     await refresh();

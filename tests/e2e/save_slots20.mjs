@@ -8,7 +8,8 @@
 //  2. the ledger in pages of six behind the book's paper tabs (1–6, 7–12, 13–18, 19–20): names, counts and marks,
 //     the list numbering, the leaves' labels, the last page holding only 19 and 20; Left/Right/Home/End keep focus on
 //     the selected tab; taps at 390×844; the page and an open Manage kept across the 860 px change; across the spread's
-//     own breakpoint alone (800 → 700 → 800 px) the page, focus on slot 20's Load, slot 19 visible, slot 20 actionable;
+//     own breakpoint alone (800 → 700 → 800 px, five times) the page, focus on slot 20's Load, slot 19 visible, slot 20
+//     actionable;
 //  3. New Game opens on the first empty slot's page and starts in slot 7; a journey saved into slot 15 from the game
 //     (focus then on slot 15's own control), loaded after a reload (Load opens on the newest's page);
 //  4. Copy: one line for each of the other nineteen slots (integer ids, never the source, slot 20 included); Escape
@@ -189,9 +190,9 @@ await test('ledger pages: four paper tabs, counts and marks, numbering, the last
 
 // ---------------------------------------------------------------------------------------------------------------------
 // across the spread's own breakpoint only (720 px; 1280 ↔ 700 above also crosses 860 px, which hid the fault): 800 → 700 →
-// 800 keeps the page, focus on slot 20's own Load, slot 19 visible and slot 20's Load actionable (Agnes 6399945694;
-// Local CL-387: the same fault hid slots 4–6 in CC-023)
-await test('ledger at 800 → 700 → 800 px: the page, focus on slot 20\'s Load, slot 19 visible and slot 20 actionable across the spread breakpoint', async () => {
+// 800, five times, keeps the page, focus on slot 20's own Load, slot 19 visible and slot 20's Load actionable (Agnes
+// 6399945694; Local CL-387: the same fault hid slots 4–6 in CC-023)
+await test('ledger at 800 → 700 → 800 px, five times: the page, focus on slot 20\'s Load, slot 19 visible and slot 20 actionable across the spread breakpoint', async () => {
   const ctx = await b.newContext({ viewport: { width: 800, height: 800 } });
   const { p, errors } = await page(b, url, { context: ctx });
   await seed(p, [1, 2, 3, 4, 5, 6, 9, 15, 20]);
@@ -200,7 +201,11 @@ await test('ledger at 800 → 700 → 800 px: the page, focus on slot 20\'s Load
   await p.waitForSelector('.folio-ledger .rec');
   await p.waitForTimeout(300);
   await p.focus('.rec[data-slot="20"] [data-a=load]');
-  for (const [w, leaves] of [[800, 'Slot 19|Slot 20'], [700, 'Slots 19 to 20'], [800, 'Slot 19|Slot 20']]) {
+  // five times over: the browser's own blur of the hidden control can come before the change event's re-render or
+  // after it (in about one 800 → 700 step in three, measured), so one step alone can pass by luck
+  const steps = [[800, 'Slot 19|Slot 20']];
+  for (let k = 0; k < 5; k++) steps.push([700, 'Slots 19 to 20'], [800, 'Slot 19|Slot 20']);
+  for (const [w, leaves] of steps) {
     await p.setViewportSize({ width: w, height: 800 });
     await p.waitForTimeout(350);
     const g = await ledger(p);
