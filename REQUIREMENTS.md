@@ -2136,9 +2136,12 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   Harmony hashes keyed with '/', so they hold on Windows (`9db07a5`, `f3fa22d`; Local's Windows 58,303/0).
   Known and open in CC-023, not fixed by it: the Lantern Hall's guidance after the companion choice (since `db05df2`,
   RBN-QA-004: "Next: here, in Lantern Hall." with no mark on the shrine; VALIDATION, CC-023, entry 151; repair for
-  CC-024); the first mouse press on a Respond card, when the first card has focus-visible styling (after keyboard focus;
-  a keyboard-only limitation is not established: which ways into a battle give that styling is being probed, a
-  mouse-only start among them; CC-210, Local CL-346, Agnes 6393770869), at enlarged-text, scrolled layouts (VALIDATION,
+  CC-024); the first mouse press on a Respond card, when the first card has focus-visible styling (given by keyboard
+  focus: of the four ways into a battle tested, a mouse click on the foe, a focusable control clicked first, touch taps
+  and the keyboard, only the keyboard reproduced it; the pointer ways may have included a click on Next, which the
+  probe did not log, so a bare click on the foe's tile is not isolated; a card focused by script in a page where
+  nothing focusable had been clicked, as in `card_fold_press`'s first start, also had that styling, so a keyboard-only
+  limitation is not established in general; CC-213, Agnes 6394392695), at enlarged-text, scrolled layouts (VALIDATION,
   CC-023's known limitation; repair for CC-024); `harmony_cutin`'s two painted sections' timing checks, classed fixture
   faults, repairs for CC-024 (VALIDATION, CC-023).
   In candidate CC-023 (`4d84f291…`, built from `3022cea`), READY_FOR_QA (the matrix on these bytes: 167 run, 164 with no

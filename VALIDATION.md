@@ -5609,11 +5609,14 @@ Yasu's story, when listening, has not begun being spoken."
       always the lower on screen), and failed twice of three in the copy, whose sampling shifts when they land (not
       counted as runs of the suite). Classed fixture by three AGREEs (Local CL-341, Agnes 6392978156, Cloud's; CC-204,
       with Local's Windows trace, CL-336: settling at about 300 ms, the suite measuring at 269 to 281 ms): a headless,
-      wide-layout fixture class, not native visual verification nor acceptance of the unbuilt CC-024 repair; the
+      wide-layout fixture class, not native visual verification nor acceptance of the CC-024 repair (candidate
+      `dfcaf11`, local, built since and excluded from CC-023); the
       matrix's 5/1, the three quiet 6/0 runs and the diagnostic copies recorded apart. Limits: Linux headless Chromium,
       the one wide layout; no native visual check. The repair is CC-024's (test only: the dialogue's own entrance
-      animations awaited within 3 s, the two measures in one evaluation on the same box, strict < 0.5 and the 160 px
-      control kept; Agnes 6392454018, Local CL-339).
+      animations awaited within 3 s, the two measures in one evaluation on the same box, strict < 0.5; Agnes
+      6392454018, Local CL-339). The 160 px control planned with it is superseded, an invalid premise: in the book look
+      Keep lies over the sheet, so a taller Keep moves nothing, and the candidate's control failed so in each of its
+      three runs on CC-023's page (CC-213); a replacement is under review.
     - Entry 156, `fishing`: exit 1, 10/1; "every companion and every pet species on the stage": `nao: settle, notes,
       watch, splash and lean were drawn: settle,notes,watch,respond,lean,rest` (the companion's `splash` never drawn).
       Its isolation was broken: a recursive `grep` of Cloud's over its scratch directory ran beside it from about
@@ -5658,7 +5661,8 @@ Yasu's story, when listening, has not begun being spoken."
       authored `open` only with its branch's provenance and a documented expectation, controls for an invalid map and an
       unexpected `open`, every transition and separate totals kept. Limits: headless Chromium, one route (E/Nao), one
       synthetic state; no native check.
-    Every rerun and diagnosis above ran after the attempt's DONE, one at a time, nothing else of Cloud's beside it; the
+    Every rerun and diagnosis above ran after the attempt's DONE, one at a time, nothing else of Cloud's beside it
+    except the intentional experiments that ran the same recursive grep beside a diagnostic copy (entry 156, above); the
     first attempt's files untouched. Evidence: 205 files (the attempt, both rerun attempts, the inputs and every
     diagnostic log and copy) listed with their bytes and sha256 in CC-209's manifest (`51b00736…`), kept unchanged in
     Cloud's container under bounded retention and not committed (the bridge's protocol; Local CL-345, Agnes 6393770869).
@@ -5679,8 +5683,9 @@ Yasu's story, when listening, has not begun being spoken."
       `sequence_world --only ko.end` (entry 29) was overwritten by `--only ko.tide_night`'s (entry 85). What remains
       for `ko.end` is each summary's exit code (0) and totals line (158 passed, 0 failed); no other entry shared a
       script there.
-    - The withdrawn guard rule (CC-192, `4451fdd`, never pushed): its build's `battle_anim` 13/3 at load 9.5 with my
-      runs beside it; alone and quiet 15/1, the base's stale-default check only, the same as the cut's page (15/1);
+    - The withdrawn guard rule (CC-192, `4451fdd`, never pushed): its build's `battle_anim` 13/3 at load 9.5 with
+      Cloud's runs beside it; alone and quiet 15/1, the base's stale-default check only, the same as the cut's page
+      (15/1);
       its other regressions passed (`card_press_guard` 15/0, `card_press` 13/0, `play_ui` all ok, `encounters` 10/0,
       `kanji_chart` 8/0, `letters_order` 4/0, `wordplay` 83/0, `ao_lesson_line` 20/0, `counter_tap` 30/0; `pad_kanji`
       7/1, its control on the cut 7/1, the base's own fault, fixed in this cut by `93690f1`).
@@ -5694,8 +5699,8 @@ Yasu's story, when listening, has not begun being spoken."
     `long_quests`'s first output was lost); one bookkeeping double rerun, one diagnosis run cut by a stray kill of Cloud's
     and one unit run of Cloud's stopped to lower the load (both void). The ten failures, each classed before any test
     changed: `pad_kanji` product (a required pick's candidates hidden since `33fc2a0`; repaired, `93690f1`);
-    `battle_anim` fixture (FR-1's Assisted default; `46e84e2`); `battle_pets_overworld` 4/14 harness (mine: run without
-    `--battles-only`; 3/0 as configured); `bookmarks` product (the kept prop line, since `abf574d`; `2ee20e0`,
+    `battle_anim` fixture (FR-1's Assisted default; `46e84e2`); `battle_pets_overworld` 4/14 harness (Cloud's: run
+    without `--battles-only`; 3/0 as configured); `bookmarks` product (the kept prop line, since `abf574d`; `2ee20e0`,
     `12a5492`) and fixture (Next's measurement; `01cbf2f`); `pets_greet` fixture (`610b7ba`); `pets_gallery` fixture
     (`6cb556c`); `long_quests --all-companions` harness and fixture (the driver ignored a map's hold; the legs forbade
     an order the game allows; `ac359cd`); `battle_invariance` harness (Cloud's 25-minute limit; alone, exit 0 in 2,076 s);
@@ -5704,9 +5709,15 @@ Yasu's story, when listening, has not begun being spoken."
     chosen for the matrix ran again on CC-023's own bytes (the matrix above); the sweep is not counted as CC-023's
     evidence.
     Known limitation, not fixed and not a fixture fault (Agnes 6390229057, Local CL-328 and CL-329): **the first mouse
-    press on a Respond card, when the first card has focus-visible styling (after keyboard focus; a keyboard-only
-    limitation is not established: which ways into a battle give that styling is being probed, a mouse-only start among
-    them; CC-210, Local CL-346, Agnes 6393770869), at affected enlarged-text, scrolled layouts, does nothing.** The card
+    press on a Respond card, when the first card has focus-visible styling (given by keyboard focus: of the four ways
+    into a battle tested, a mouse click on the foe, a focusable control clicked first, touch taps and the keyboard, only
+    the keyboard reproduced it; the pointer ways may have included a click on Next, which the probe did not log, so a
+    bare click on the foe's tile is not isolated; a card focused by script in a page where nothing focusable had been
+    clicked, as in `card_fold_press`'s first start, also had that styling, so a keyboard-only limitation is not
+    established in general; CC-213, Agnes 6394392695), at affected enlarged-text, scrolled layouts, does nothing.** The
+    ways in, probed (a diagnostic, not committed, sha256 prefix `538e4119`; CC-213): at 1648×840 and 200 % text on
+    CC-023's page, the mouse, focusable-control and touch ways left the first card without that styling and their first
+    press chose; the keyboard way gave it, and its first press did nothing. The card
     under keyboard focus shows its whole description (FR-1 F14, `.rcard:focus-visible .rc-more.folded`); the press moves
     focus, that card folds again, and the list's content height and scroll offset change while the press is held
     (measured at 1648×840, 200 % text: scrollTop 992 → 955, height 1,598 → 1,561 px, the card under the press 417 → 416

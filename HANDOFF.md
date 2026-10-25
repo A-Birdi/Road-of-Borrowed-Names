@@ -1027,8 +1027,9 @@
       commits (cherry-picked with `-x` onto the cut; patch-identical to the agreed commits in full, or for nine over
       every file but `tests/e2e/run.mjs`, merged by hand so that each adds only its own suite; AGREEs listed in
       VALIDATION, CC-023; integrated as `int/cc023`, head `3022cea`, its integrated source agreed by Local (CL-330 and
-      CL-331: every pick by patch-id, the list's and runner's hashes, the page rebuilt on Windows to these bytes) and by
-      Agnes 6390439894 (source integration only, not publication or native acceptance)): RBN-QA-172 (`748d876`,
+      CL-331: every pick by patch-id, the list's and runner's hashes, the page rebuilt on Windows to these bytes after
+      aligning the 12 platform trim values) and by Agnes 6390439894 (source integration only, not publication or native
+      acceptance)): RBN-QA-172 (`748d876`,
       `c2a1616` → `c7d5109`, `aac99d5`: your pet never settles, rests or is placed on water; seen again once there is
       dry ground; Greet together only with a dry spot beside your companion), RBN-QA-173 (`f24c3b3`, `afef0ca` →
       `da7258b`, `6cb9ed8`: Sazanami's fishing station on its rocks, with a rod lashed to it, in both renderers; art,
@@ -1058,14 +1059,19 @@
       `3dcee25`), the `bookmarks` Next measurement at the phone layouts (`01cbf2f` → `34e8b81`), the `pets_gallery`
       gains (`6cb556c` → `7d2cb31`), `audit_fixes`' F10 line (`d8a1ee6` → `43098c5`) and `battle_anim`'s Assisted
       default (`46e84e2` → `3022cea`). Nothing in the agreed scope is left out. Left out on purpose, each separately
-      attributable: the Respond list's fold-press repair (CC-024: proposal CC-193 §3, not built; the shared tap guard
-      unchanged; a content-size rule in the guard, `4451fdd`, withdrawn, never pushed) and the `harmony_cutin`
-      painted-section test repairs (CC-024, under Agnes's conditions 6390636882, not built); RBN-QA-125 (`afaf2f5`), 127
+      attributable: the Respond list's fold-press repair (CC-024: proposal CC-193 §3; built since as candidate
+      `be29531`, local, excluded from CC-023; the shared tap guard unchanged; a content-size rule in the guard,
+      `4451fdd`, withdrawn, never pushed), the `harmony_cutin` painted-section test repairs (CC-024, under Agnes's
+      conditions 6390636882; built since as candidate `6314800`, local, excluded from CC-023) and the `bookmarks`
+      wide-layout check's repair (CC-024; candidate `dfcaf11`, local, excluded from CC-023); RBN-QA-125 (`afaf2f5`), 127
       (`96f8275`) and 134 (`b4325f1`), each waiting on its own reviews; RBN-QA-171 (the owner's choice of form);
       QA-161's part B; the language follow-up; every later candidate. Known and open, not fixed by this cut: **the first
-      mouse press on a Respond card, when the first card has focus-visible styling (after keyboard focus; a
-      keyboard-only limitation is not established: which ways into a battle give that styling is being probed, a
-      mouse-only start among them; CC-210, Local CL-346, Agnes 6393770869), at affected enlarged-text, scrolled layouts,
+      mouse press on a Respond card, when the first card has focus-visible styling (given by keyboard focus: of the four
+      ways into a battle tested, a mouse click on the foe, a focusable control clicked first, touch taps and the
+      keyboard, only the keyboard reproduced it; the pointer ways may have included a click on Next, which the probe
+      did not log, so a bare click on the foe's tile is not isolated; a card focused by script in a page where nothing
+      focusable had been clicked, as in `card_fold_press`'s first start, also had that styling, so a keyboard-only
+      limitation is not established in general; CC-213, Agnes 6394392695), at affected enlarged-text, scrolled layouts,
       does nothing (a second press works; present since `33fc2a0`, FR-1; VALIDATION, CC-023)**; `harmony_cutin`'s
       painted sample and painted geometry checks, classed fixture faults (VALIDATION, CC-023); the Lantern Hall's
       guidance after the companion choice ("Next: here, in Lantern Hall.", no mark on the shrine; since `db05df2`,
