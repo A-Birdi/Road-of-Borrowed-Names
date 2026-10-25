@@ -5484,6 +5484,250 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-023:** `index.html` sha256 `4d84f2915324cc6bccfab1a5183ccbfa1c57b9c144ae22a299c228ffb03c0bf9`
+    (24,384,000 bytes), built from `3022cea` (CC-022 at `fe868bb`, verified by Local CL-291 and, as published, by Agnes
+    6383006577, plus only what was agreed after it, each by its exact commits, listed in HANDOFF's CC-023 entry). Local
+    rebuilt `3022cea` on Windows (CL-331): 24,384,002 bytes, the same 12 audio `trim` values one last digit apart as on
+    CC-022 (platform float rounding); with those 12 aligned, these bytes exactly. The integration, on `int/cc023`
+    (cherry-picked with `-x` onto the cut, 42 single-parent picks; pushed, the remote ref equal; patch-ids
+    `git patch-id --stable`, 12 hex digits, agreed → integrated):
+    - QA-172: `748d876` → `c7d5109` (`1a0002a208eb`), `c2a1616` → `aac99d5` (`a2e584f3861e`); QA-173: `f24c3b3` →
+      `da7258b` (`3b62ea5fd89a`), `afef0ca` → `6cb9ed8` (`b753c3325533`); QA-174: `2ee9422` → `b658979`
+      (`4afcf20d37fe`, without `run.mjs`), `147fbac` → `0067ae9` (`8269763aa14c`), `1e738b7` → `3870079`
+      (`0dab503187be`), `f300a0e` → `a821358` (`1fc663a3d72a`); QA-175: `5986d0a` → `021590d` (`aff11fb332bb`, without
+      `run.mjs`); QA-178: `1105b0e` → `d986eca` (`6cc64781f66e`, without `run.mjs`), `e56104c` → `de7b85c`
+      (`9bbecd0bf3ec`); QA-180: `67ba07a` → `57d9b6d` (`520a85d8cd05`); QA-177: `4d63e7d` → `399c614` (`f47cf86e02f7`,
+      without `run.mjs`), `919a359` → `97cc672` (`599fca8c7f48`), `8022726` → `675b943` (`44912dcac777`); QA-179:
+      `50634fc` → `a920799` (`c893a16ee852`, without `run.mjs`), `b942949` → `6483235` (`28062ed05903`); QA-181:
+      `46b8694` → `094773e` (`6f6677c94242`), `9cbe4e5` → `847dcaa` (`6be7087f5ffe`); QA-180's card: `f4af9c4` →
+      `e0a538e` (`f2e67b41d69d`); the `pets_greet` fixture: `610b7ba` → `52c5d0e` (`d7afdb5e0ead`); QA-176: `35a8369` →
+      `1f0f6aa` (`40a426008ef2`, without `run.mjs`), `2e216e9` → `b3d0759` (`af00096578c7`), `8c5d0ed` → `b181af4`
+      (`9a42b7f467a4`); the Windows paths: `9db07a5` → `5fbce3e` (`fdedb400c4ab`), `f3fa22d` → `399e702`
+      (`c245ff0a3378`); the Manybridge origin: `ffd82ce` → `56b90fc` (`be7a7dff95db`, without `run.mjs`); the
+      `manybridge` chart fixture: `e6e47d3` → `1dbe7ad` (`dcb25a6cd04e`); QA-182: `7f6fd0d` → `ef4f76f`
+      (`e50bc86a2000`, without `run.mjs`), `95e8b5f` → `5b7485e` (`18062bcb9c48`), `190a275` → `97ba6e6`
+      (`6f721143fb10`); the `play_ui` fixtures: `ff154c1` → `71c042c` (`23854e4e858c`), `e34ce97` → `12a2292`
+      (`016dfe98ff44`), `63f24cc` → `3dcee25` (`d3732df9b49a`); the `bookmarks` fixture: `01cbf2f` → `34e8b81`
+      (`96aeeb97bc4b`); the kanji pad: `93690f1` → `8dd2b59` (`ebf0a0848229`); the `pets_gallery` fixture: `6cb556c` →
+      `7d2cb31` (`c188473455a6`); the kept prop line: `2ee20e0` → `2bc8a5d` (`967952d1f10d`, without `run.mjs`),
+      `12a5492` → `42a57ed` (`877cd7aef3dd`); the driver's hold: `ac359cd` → `0a64099` (`4e45dba61901`); `audit_fixes`:
+      `d8a1ee6` → `43098c5` (`7c2b23c7a4bc`); `battle_anim`: `46e84e2` → `3022cea` (`6d68655cf409`). Equal in full but
+      for the nine marked, equal over every file but `run.mjs`, whose entries were merged by hand so that each adds only
+      its own suite; `run.mjs` at `3022cea` lists 248 entries, none twice, none of the cut's gone (Local CL-330). (CC-193
+      printed, for those nine, the integrated commit's whole patch-id instead; Local CL-330 corrected it.)
+    - AGREEs on the exact candidates: QA-172 `748d876` with `c2a1616` Local CL-284 (6381952051; CL-277 runtime on
+      `748d876`), Agnes 6381974896 (qualified: the recovery triggers on the player's tile change; a handoff taken as
+      authored); QA-173 `f24c3b3` Local CL-278, Agnes 6381589930 (qualified source, the pixel review hers to keep),
+      `afef0ca` Local CL-289, Agnes 6382693177 (source); QA-174 `1e738b7` (after `2ee9422` and `147fbac`, whose REFINEs
+      were Agnes 6381070442 and 6382201500 with Local CL-286) Local CL-289, Agnes 6382693177 (source), `f300a0e`
+      (comment only) Local CL-297 (carried; Agnes's exact review of it is her integrated-source AGREE below, not a
+      separate one); QA-175 `5986d0a` Local CL-286, Agnes 6382201500 (qualified source); QA-178 `1105b0e` Local CL-291,
+      Agnes 6383011149 (exact source), `e56104c` Local CL-294 (carried), Agnes 6383439177; QA-179 `50634fc` Local
+      CL-293, Agnes 6383439177 (source), `b942949` Local CL-301, Agnes 6384304346 (the combined chain); QA-180
+      `67ba07a` Local CL-295, Agnes 6383653732; QA-181 `46b8694` with `9cbe4e5` Local CL-302 (CL-296 withdrawn in CL-298's
+      REFINE), Agnes 6384508628; QA-177 `4d63e7d`, `919a359`, `8022726` Agnes 6384074869 (after 6382514084 and
+      6383443005, each a qualified AGREE with one REFINE), Local CL-300 (after CL-287 and CL-293); QA-180's card
+      `f4af9c4` Local CL-303, Agnes 6384737918 (not a migration of trials passed before it); the `pets_greet` fixture
+      `610b7ba` Local CL-304, Agnes 6384877987 (fixture initialization, not proof of a reward defect); QA-176 `35a8369`,
+      `2e216e9`, `8c5d0ed` Local CL-305 (after CL-299 and CL-300), Agnes 6385106726 (the first units' unnamed 58,302/1
+      stays open; the controls 6/13 and 3/16 are distinct); the Windows paths `9db07a5` Local CL-306, Agnes 6385108675
+      (source), `f3fa22d` Local CL-309, Agnes 6385506230; the Manybridge origin `ffd82ce` and the chart fixture
+      `e6e47d3` Local CL-307, Agnes 6385346612 (the chart: a targeted repair, not a universal dot selector; its 2/1 and
+      3/0 a baseline, not a mutation control); QA-182 `7f6fd0d` with `95e8b5f` Local CL-308 (CL-300 a REFINE on
+      `7f6fd0d`), Agnes 6385502985 (product); `190a275` (test) Local CL-312 (6386195836, exact), Agnes 6386203166 (the
+      original battle case a false pass); the New Game+ fixture `ff154c1` Local CL-311, Agnes 6385967053; the help-sheet
+      tap `e34ce97` Local CL-313, Agnes 6386433446 (sampling, not full coverage; Local's Windows 43 ok and one explicit
+      geometry failure is partial, not clean); the `bookmarks` fixture `01cbf2f` Local CL-314, Agnes 6386782599; the
+      kanji pad `93690f1` Local CL-316, Agnes 6387251353; the `pets_gallery` fixture `6cb556c` Local CL-317, Agnes
+      6387254193 (waveform peaks, not listening); the kept prop line `2ee20e0` with `12a5492` Local CL-320, Agnes
+      6387963096 (after her REFINE 6387447788); the driver's hold `ac359cd` Local CL-322, Agnes 6389089276; the
+      help-sheet wording `63f24cc` Local CL-323, Agnes 6389393577; `audit_fixes` `d8a1ee6` Local CL-324, Agnes
+      6389620546; `battle_anim` `46e84e2` Local CL-325, Agnes 6389822190 (Local's 17/0 attributed evidence, not her
+      rerun); and Cloud's for each. The integrated source: Local CL-330 (6390335339: 42 of 42 picks by patch-id, the list's
+      and runner's hashes reproduced, `run.mjs` keeping every suite) and CL-331 (the page reproduced, as above); Agnes
+      6390439894 (42 consecutive single-parent picks from CC-022, 33 patch bodies identical and nine differing only in
+      `run.mjs`'s context, 73 changed paths; every baseline invocation and the 15 additions present once; the overlaps
+      intact; source acceptance only, not publication or native acceptance).
+    - `validate.mjs` no errors. U 58,358/0 on `3022cea` (Cloud's), and 58,358/0 on Local's Windows build of `3022cea`
+      (CL-334, 6391823859; the five Windows-path suites ok; its first attempt, cut off by a PC restart, not counted).
+      Local's Windows subset on its build of `3022cea`, each suite alone (CL-336, 6392072200; evidence on a second
+      platform, not matrix rows): `sequence_world --only as.festival` 175/0, `encounters` 10/0, `voice_gallery` 23/0,
+      `pad_kanji` 9/0, `bookmarks` all ok (6), `bookmark_prop` 16/0, `tap_moving` 18/0, `battle_anim` 17/0,
+      `audit_fixes` 4/0, `pets_gallery` 7/0; `play_ui` 43 ok and exactly the one help-sheet product-review report.
+    On these bytes (B): the matrix, 167 invocations one at a time on the page as built from `3022cea` (sha256
+    `4d84f291…`), under `runonB.sh` in one attempt (head, page, list and runner checked and recorded before the first
+    run and found unchanged at the end; a log per invocation; first outcomes kept), 22:53:10Z on 10-24 to 03:11:19Z on
+    10-25, 15,488 s of runs. Nothing else of Cloud's ran beside it but one deviation, below. Every log was read for its
+    findings as well as its exit code (FAIL, not ok, MISS, errors or problems above 0, timeouts, uncaught exceptions,
+    skips, warnings). CC-022's 116, in its order: `ko_first_sight` 87/0, `ko_crossing` 94/0, `interlude_ahead` 30/0,
+    `interlude_lifecycle` 14/0, `interludes` 76/0, `lf_arrival_view` 79/0, `lookout_vista` 22/0, `keeper_reveal` 69/0,
+    `kotonoha` 7/0, `licence` 2/0, `battle_start_abandon` 28/0, `prep_abandon` 52/0, `encounters` 10/0, `load_mid_scene`
+    19/0, `combat_ui` 7/0, `social_battle` 65/0, `card_press` 13/0, `battle_settings` 10/0, `battle_presentation` 13/0,
+    `fog_event` 26/0, `prologue` 100/0, `title_ledger` 18/0, `play_ui` all ok, `world_view` all ok, `ui` 14/0,
+    `wind_stone` 19/0, `kb_reflow` 4/0, `leaf_home` 42/0, `sequence_world --only ko.end` 158/0, `guest_arrivals` 17/0,
+    `tide_split` 49/0, `suzu_stage` 47/0, `enter_ownership` 12/0, `hall_entry` all ok, `hall_door` 15/0,
+    `walkto_options` 23/0, `quest_guide` all quest guidance checks passed, `guide_next_step` 24/0, `ruin_lanterns` 31/0,
+    `lodge_evening` 16/0, `lodge_quarrel` 31/0, `ren_apart` 7/0, `guide_reveal` 37/0, `guide_kana` 11/0, `learning_ui`
+    15/0, `social_wait` 12/0, `look_purity` 9/0, `props_balance` 48/0, `road_oil` 14/0, `geese_event` 15/0, `keepers`
+    4/0, `lodge_arrival` 40/0, `guide_stacks` 8/0, `guide_archive` 14/0, `companion_turn` 4/0, `road_on` 11/0,
+    `leaf_marker` 18/0, `guide_vigil` 9/0, `learning_qa039` 44/0, `sequence_art_integrity --quick` 32/0,
+    `ao_lesson_line` 20/0, `ao_whereabouts` 18/0, `yoshino_exhibit_line` 14/0, `guide_roots_leaf` 9/0, `battle_party`
+    14/0, `guide_tellings` 88/0, `choice_rows` 6/0, `cloud_sea` 6/0, `courier_shelf` 9/0, `fade_load` 15/0,
+    `guide_climb` 10/0, `ledge_horse` 14/0, `leg2_boulder` 12/0, `mitsu_frame` 28/0, `nakayama_inns` 9/0, `reunion_ways`
+    33/0, `tide_night` 45/0, `cloudroad` 4/0, `departures` all ok, `systems` 4/0, `travel_rules` 10/0, `answer_order`
+    5/0, `playtest_repairs` 7/0, `dialect_kansai` all passed, `sequence_world --only ko.tide_night` 158/0,
+    `bath_partition` 5/0, `companion_away` 31/0, `egg_recovery` 26/0, `hall_stairs` 4/0, `jinpachi_letter` 28/0,
+    `playhouse_audience` 17/0, `postgame_quests` 6/0, `procedure_copy` 7/0, `return_hints` 12/0, `suzu_books_route`
+    13/0, `tsuneji_egg` 34/0, `valve_line` 7/0, `yn_guide` 25/0, `zenroku_inquiry` 4/0, `steamhollow` 5/0, `book` 15/0,
+    `practice_b` 6/0, `world_living` 4/0, `goatshed_fence` 10/0, `kana_homophones` 208/0, `hall` 4/0, `story_ch4 I ren
+    go` 53/53 checks, `census_plaques` 6/0, `ink_water` 3/0, `hall_story_passages` 4/0, `settings_ledger_refresh` 8/0,
+    `wordplay_records` 11/0, `festival_help_pause` 13/0, `battle_group` 6/0, `festival` 3/0, `festival_games` 5/0; then
+    the 51 this cut's items, the sweep and the agreed additions name: `arrival_origin` 5/0, `ashihara_board` 8/0,
+    `ashihara_quarrels` 24/0, `audit_fixes` 4/0, `bookmark_prop` 16/0, **`bookmarks` 5/1 (exit 1; entry 122)**,
+    `crew_voyage_sea` 18/0, `drive_hold` 9/0, `festival_phases` 20/0, `hall_card_gone` 24/0, `hall_gifts` 12/0,
+    `hall_trays` 27/0, `manybridge` 3/0, `pad_kanji` 9/0, `pet_dry_ground` 17/0, `pets_gallery` 7/0, `pets_greet` 17/0,
+    `review_held_portrait` 2 viewports with no errors, `rocky_station` 8/0, `shogi_ladder_place` 20/0,
+    `shogi_lesson_goals` 28/0, `tap_moving` 18/0, `voice_gallery` 23/0, `battle_anim` 17/0, `kanji_chart` 8/0,
+    `fr1_partial_word` all passed, `pets` 20/0, `world` 13/0, `world_fixes` all ok, `living_world` 9/0, `cases` all
+    passed, `cases_shots` all passed, `known` all passed, `naming_combos` 16/0, **`quest_guide_audit` (report: 56 moves
+    of the followed quest, 52 pointed at, 2 by design, 2 misses) (exit 0, its findings unresolved; entry 151)**,
+    `quest_guide_wrapped` all ok, `story_ch5` 8 playthroughs passed, `sailing` 3/0, `ports` 2/0, **`fishing` 10/1 (exit
+    1; entry 156)**, `folio` all ok, `addendum_integration` all ok, `long_quests --all-companions` all long-quest checks
+    passed (1306 s), `sequence_world --quick` 911/0, `counter_tap` 30/0, `shogi` 5/0, `hanafuda` 3/0, `fishing_coast`
+    4/0, `postgame` 2/0, `leak_probe` (report: 10 cycles; from cycle 3 to 10 listeners 117 to 117, nodes 234 to 234,
+    tracked 91 to 91; no growth listed; errors 0), `sequence_world --only mb1.named` 210/0. 165 exited 0 and two exited
+    1 (entries 122 and 156); one exit-0 report carries two unresolved findings (entry 151); the other 164 have no
+    finding in their logs; none was re-run within the attempt. This is the iteration's record, not a pass of every row.
+    First outcomes with failures or findings, each kept as it ran (reruns and diagnoses apart, below):
+    - Entry 122, `bookmarks`: exit 1, 5/1; the Keep tab's "Next does not move for the tab": Next with the tab 733.158,
+      hidden 733.742 (the assert prints the hidden measure first; 0.58 px lower at the later measure). Alone and quiet
+      afterwards (a new attempt, the first untouched; 03:11:54Z to 03:15:23Z): all ok (6) three times. A diagnostic copy
+      of the suite (not committed; Next's top sampled every 50 ms; three runs, load 2.1 to 2.8): measured with and
+      without the tab in one evaluation, Next equal three times of three (733.742/733.742, 733.952/733.952,
+      733.952/733.952), and 600 ms later equal at 734 three times; the suite's two reads, in separate round trips, fell
+      inside the entrance's settling each time (Next rises, overshoots about 7 px, and settles at 734; the second read
+      always the lower on screen), and failed twice of three in the copy, whose sampling shifts when they land (not
+      counted as runs of the suite). Classed fixture by three AGREEs (Local CL-341, Agnes 6392978156, Cloud's; CC-204,
+      with Local's Windows trace, CL-336: settling at about 300 ms, the suite measuring at 269 to 281 ms): a headless,
+      wide-layout fixture class, not native visual verification nor acceptance of the unbuilt CC-024 repair; the
+      matrix's 5/1, the three quiet 6/0 runs and the diagnostic copies recorded apart. Limits: Linux headless Chromium,
+      the one wide layout; no native visual check. The repair is CC-024's (test only: the dialogue's own entrance
+      animations awaited within 3 s, the two measures in one evaluation on the same box, strict < 0.5 and the 160 px
+      control kept; Agnes 6392454018, Local CL-339).
+    - Entry 156, `fishing`: exit 1, 10/1; "every companion and every pet species on the stage": `nao: settle, notes,
+      watch, splash and lean were drawn: settle,notes,watch,respond,lean,rest` (the companion's `splash` never drawn).
+      Its isolation was broken: a recursive `grep` of Cloud's over its scratch directory ran beside it from about
+      02:33:05Z to 02:35:07Z (the entry 02:31:11Z to 02:37:30Z; no other entry overlapped; stopped by its PID). Not put
+      down to load on that overlap alone (Agnes 6392717939). Alone and quiet afterwards (a new attempt; 03:17:26Z to
+      03:35:15Z): 11/0 three times; on Windows, Local's three runs on its build of `3022cea` 11/0 (CL-343). A diagnostic
+      copy recording every page frame and the stage's own count of `splash` drawn: 12 catches in three runs, each
+      drawing 37 to 42 `splash` frames (gap into the landing 33 to 45 ms). Experiments, each a separate run and not a
+      run of the suite (CC-205 to CC-208; Local CL-342, Agnes 6393516466 and 6393518429): an 800 ms main-thread block at
+      the landing did not reproduce it (the first frame after drew `splash`; the check passed); with the stage's draw
+      callbacks held 800 ms from the landing (none escaped; timers running), the check failed with this entry's exact
+      message (sufficiency only); the `_act` capture started to span the landing overlapped it in 4 of 12 catches, by 2
+      to 47 ms, each still drawing `splash` (the other 8 inconclusive); with the same recursive grep beside the run,
+      page paints stalled 0.6 to 3.5 s in every catch and the same test's stage-alone check failed in 3 runs of 3 (1, 6
+      and 8 phases drawn of 10), though no stall fell on a landing. Classed by three AGREEs (Agnes 6393670572, Local
+      CL-344 and CL-345, Cloud's): "Unreproduced first-attempt presentation failure; original cause unconfirmed.
+      Environment-related paint starvation is a supported hypothesis, not directly observed at the original failure." A
+      disclosed, non-blocking issue, not a pass; limits: the original frames absent, no exact `splash` failure under the
+      matched load, capture overlaps only to 47 ms; reopened if ordinary play or isolated runs show it again. No product
+      or check change.
+    - Entry 151, `quest_guide_audit`: exit 0, but its report lists two misses: `rw_depart 0→1 by rw.hall_shrine @
+      rw.hall [authored: rw.hall:enter]` and `co_main 6→7 by co.core_page @ co.kiln_core [open: ]` (56 moves of the
+      followed quest, 52 pointed at, 2 by design; its summary row's totals cell is empty, the audit printing no pass or
+      fail line, so only its log shows the misses; Local CL-347). Recorded as exit 0 with unresolved findings, not a
+      pass (Agnes 6392717939). The same two misses were in its run on the lq-route candidate's build (`ac359cd`, 10-24
+      19:34Z), which Cloud reported as "quest_guide_audit, quest_guide_wrapped all ok": wrong for the audit, corrected
+      here (CC-201). Its last record before that, 10-12 (`3ee9b15`), had 0 misses (55 moves, 52 pointed at, 3 by
+      design). Neither finding comes from CC-023: CC-022's page (911 s) and CC-021's (904 s) give the same step list,
+      both misses included (Local's Windows runs on `3022cea` and on its CC-022 build the same, CL-343). Dated by the
+      audit (a copy limited to the chapters needed, not committed) on pages built from each commit's exported source
+      (the method checked first: `3022cea` built so gives these bytes exactly; a first try lacking `docs/music` stopped
+      at that check, its log kept): `rw_depart 0→1` a hit at `d4806e6` ([direct: rw.hall:shrine]), a miss from `db05df2`
+      (RBN-QA-004, 10-20); `co_main 6→7` a hit at `d357e96` ([direct: co.kiln_core:co_tablet]), a miss from `374196e`
+      (RBN-QA-025, 10-20). Classed by three AGREEs (Agnes 6393575502, Local CL-343, Cloud's; CC-207): `rw_depart` a
+      product guidance regression since `db05df2` (the step's unconditional `at: { map: 'rw.hall' }` holds after the
+      gathering, when the step completes at the shrine: on these bytes, after the companion's choice, "Next: here, in
+      Lantern Hall." with no mark on the shrine; a synthetic probe on `d4806e6` read "waiting" in both states and is not
+      counted); `co_main 6→7` the kiln as designed (RBN-QA-025 leaves its interior unmarked; the audit's by-design rule
+      does not know an authored `open`). Both repairs are CC-024 proposals, under Agnes's REFINE: `atIf` replacing the
+      unconditional `at` (the hall before the gathering, the shrine derived after), with tests before and after the
+      gathering, of routing and of later stages, RBN-QA-004's old expectation superseded; the audit to report a literal
+      authored `open` only with its branch's provenance and a documented expectation, controls for an invalid map and an
+      unexpected `open`, every transition and separate totals kept. Limits: headless Chromium, one route (E/Nao), one
+      synthetic state; no native check.
+    Every rerun and diagnosis above ran after the attempt's DONE, one at a time, nothing else of Cloud's beside it; the
+    first attempt's files untouched. Evidence: 205 files (the attempt, both rerun attempts, the inputs and every
+    diagnostic log and copy) listed with their bytes and sha256 in CC-209's manifest (`51b00736…`), kept unchanged in
+    Cloud's container under bounded retention and not committed (the bridge's protocol; Local CL-345, Agnes 6393770869).
+    Fourteen of them were posted whole (CC-211a to CC-211c: the matrix's identity and summary, entries 122, 151 and
+    156's logs, both reruns' identity and summary, and the diagnostic and experiment logs) and Agnes recomputed each
+    one's size and hash (6393806719); the other 191 are producer-reported. Local's regenerated metadata and identical
+    Windows outputs (19 rows, CL-345) are corroboration, not verification of the original files. The diagnostic logs
+    record their copies' hashes as 16-digit prefixes: the fishing diagnostic's first version, extended in place for the
+    experiments, was rebuilt from `3022cea`'s `fishing.mjs` with the same scripted edits and matches the prefix its log
+    recorded (`9acbeb95d6e67f0c`); its full hash is producer-reported.
+    Recorded as they happened, not made green afterwards:
+    - The runner. The list was first to run under `runonA.sh`, which named a script's log by the script alone; Agnes
+      (6390422087) found that the four `sequence_world` entries would overwrite one another's full logs. It had not
+      started: no log from it exists for CC-023. The matrix ran under `runonB.sh` (sha256 `3c4ed11c…`): a fresh attempt
+      directory, a log per invocation named by its index and whole invocation, nothing overwritten, the head, page,
+      list and runner checked and recorded in `identity.txt` before the first run, refusing on any difference.
+    - **An evidence gap in CC-021's and CC-022's matrices:** both ran under `runonA.sh`, so in each the full log of
+      `sequence_world --only ko.end` (entry 29) was overwritten by `--only ko.tide_night`'s (entry 85). What remains
+      for `ko.end` is each summary's exit code (0) and totals line (158 passed, 0 failed); no other entry shared a
+      script there.
+    - The withdrawn guard rule (CC-192, `4451fdd`, never pushed): its build's `battle_anim` 13/3 at load 9.5 with my
+      runs beside it; alone and quiet 15/1, the base's stale-default check only, the same as the cut's page (15/1);
+      its other regressions passed (`card_press_guard` 15/0, `card_press` 13/0, `play_ui` all ok, `encounters` 10/0,
+      `kanji_chart` 8/0, `letters_order` 4/0, `wordplay` 83/0, `ao_lesson_line` 20/0, `counter_tap` 30/0; `pad_kanji`
+      7/1, its control on the cut 7/1, the base's own fault, fixed in this cut by `93690f1`).
+    The sweep of CC-022 (baseline evidence only, recorded apart from the matrix; Agnes's terms): CC-022's own page
+    (`90cf14b3…`, from `3d90956`) with CC-022's tests and one test change (`e6e47d3`, the `manybridge` chart), every
+    suite `run.mjs` lists, 13:58Z to 19:30Z on 10-24: a first pass of 25 suites (22 exit 0) that dropped `run.mjs`'s
+    arguments (Cloud's harness; stopped), then `run.mjs`'s own 84 invocations with their arguments (77 exit 0); 109 runs, 99
+    exit 0, 19,838 s summed; first attempts counted, reruns and diagnoses apart. Workload and deviations: a 25-minute
+    limit per script (stricter than `run.mjs`'s 40); candidate builds, unit runs and browser suites alongside (load 8-10
+    on 11 passing and two failing runs, 19 on `harmony_cutin`'s); a diagnosis lane that kept only FAIL lines (so
+    `long_quests`'s first output was lost); one bookkeeping double rerun, one diagnosis run cut by a stray kill of Cloud's
+    and one unit run of Cloud's stopped to lower the load (both void). The ten failures, each classed before any test
+    changed: `pad_kanji` product (a required pick's candidates hidden since `33fc2a0`; repaired, `93690f1`);
+    `battle_anim` fixture (FR-1's Assisted default; `46e84e2`); `battle_pets_overworld` 4/14 harness (mine: run without
+    `--battles-only`; 3/0 as configured); `bookmarks` product (the kept prop line, since `abf574d`; `2ee20e0`,
+    `12a5492`) and fixture (Next's measurement; `01cbf2f`); `pets_greet` fixture (`610b7ba`); `pets_gallery` fixture
+    (`6cb556c`); `long_quests --all-companions` harness and fixture (the driver ignored a map's hold; the legs forbade
+    an order the game allows; `ac359cd`); `battle_invariance` harness (Cloud's 25-minute limit; alone, exit 0 in 2,076 s);
+    `harmony_cutin` (timed out at Cloud's limit under load 19; alone, its geometry section is the known limitation above,
+    product; its painted sections' timing checks fixture faults, above); `audit_fixes` fixture (FR-1 F10's wording; `d8a1ee6`). Suites
+    chosen for the matrix ran again on CC-023's own bytes (the matrix above); the sweep is not counted as CC-023's
+    evidence.
+    Known limitation, not fixed and not a fixture fault (Agnes 6390229057, Local CL-328 and CL-329): **the first mouse
+    press on a Respond card, when the first card has focus-visible styling (after keyboard focus; a keyboard-only
+    limitation is not established: which ways into a battle give that styling is being probed, a mouse-only start among
+    them; CC-210, Local CL-346, Agnes 6393770869), at affected enlarged-text, scrolled layouts, does nothing.** The card
+    under keyboard focus shows its whole description (FR-1 F14, `.rcard:focus-visible .rc-more.folded`); the press moves
+    focus, that card folds again, and the list's content height and scroll offset change while the press is held
+    (measured at 1648×840, 200 % text: scrollTop 992 → 955, height 1,598 → 1,561 px, the card under the press 417 → 416
+    px; Local the same on Windows); the tap guard (`RB.learnUi.guardTaps`) rejects the click as a scroll. A second press
+    works; keyboard choices are not affected. Present since `33fc2a0` (FR-1, 10-17), in CC-022 and every cut since. Its
+    failing results stay visible: `harmony_cutin` "geometry: seven viewports" 0/1 on the cut alone (and on Windows,
+    Local CL-327), its five 200 % rows attributed to it; `card_press_guard` on the cut 14/3, exactly its three
+    first-press checks. The repair is CC-024's (a cause-level class in the Respond list, the guard unchanged; proposal
+    CC-193 §3, Local's in-principle AGREE).
+    `harmony_cutin`'s two painted sections, classed fixture faults (Local CL-331, Agnes 6390636882, Cloud's; not fixed in
+    this cut): in the sweep's whole-suite run (10/3), the painted sample at 1280×720 with reduced motion (one frame in
+    the cross-fade) and the painted geometry at 320×640 @2x ("gone before the first result", 1533.2 against 1533); alone
+    and quiet (load sampled every 5 s): sample FAIL (load ≤ 2.14; 1280×720 Fast reduced, one frame in the cross-fade),
+    PASS; geometry PASS, PASS; Local on Windows (CL-330) 4/4. The sample's check infers the cross-fade's length from
+    sampled frames (one valid frame reads 0 ms, though `mixAt` places a 100 presentation-ms fade); the geometry's
+    compares the disposal at 0.1 ms with the first result at 1 ms, so one frame carrying both (the stage removes the
+    portrait before dispatching results) can read reversed. The repairs, for CC-024 under Agnes's conditions: the
+    holds, at least one mix frame, ordered progression, no early mix and no travel still required, the 100 ms contract
+    anchored by deterministic overlong, missing-mix and missing-hold controls; the disposal on a common clock and origin
+    with its actual order in the frame and the overlay's absence at the result's delivery, a late disposal still failing.
+    These failures stay recorded; this is not visual or native acceptance.
   - **Candidate CC-022:** `index.html` sha256 `90cf14b3664aa261522cfe7413b17e6dd938ee1314cc5815f1a4ce7fe2668762`
     (24,347,183 bytes), built from `3d90956` (CC-021 at `3451937`, verified by Local CL-257 and CL-258 (live smoke) and,
     as published, by Agnes 6378492652, plus only RBN-QA-163 A, B, B2 and C, QA-165's follow-up, RBN-QA-166 A and B,

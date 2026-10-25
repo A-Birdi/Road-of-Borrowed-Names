@@ -1022,6 +1022,69 @@
       VALIDATION, CC-022). Units 58,303/0 on `3d90956`. Voice stays paused: every changed spoken line (QA-163's note at
       the three new plaques, Kakeru's, Sanpei's and Hayashi's lines, QA-169's how-to line) has a new key and plays with
       the device voice or silence until a listening check after QA; recordings kept.
+      CANDIDATE CC-023 (`index.html` `4d84f291…`, 24,384,000 bytes, built from `3022cea`): CC-022 (`fe868bb`, verified
+      by Local CL-291 and, as published, by Agnes 6383006577) plus only what was agreed after it, each by its exact
+      commits (cherry-picked with `-x` onto the cut; patch-identical to the agreed commits in full, or for nine over
+      every file but `tests/e2e/run.mjs`, merged by hand so that each adds only its own suite; AGREEs listed in
+      VALIDATION, CC-023; integrated as `int/cc023`, head `3022cea`, its integrated source agreed by Local (CL-330 and
+      CL-331: every pick by patch-id, the list's and runner's hashes, the page rebuilt on Windows to these bytes) and by
+      Agnes 6390439894 (source integration only, not publication or native acceptance)): RBN-QA-172 (`748d876`,
+      `c2a1616` → `c7d5109`, `aac99d5`: your pet never settles, rests or is placed on water; seen again once there is
+      dry ground; Greet together only with a dry spot beside your companion), RBN-QA-173 (`f24c3b3`, `afef0ca` →
+      `da7258b`, `6cb9ed8`: Sazanami's fishing station on its rocks, with a rod lashed to it, in both renderers; art,
+      provisional), RBN-QA-174 (`2ee9422`, `147fbac`, `1e738b7`, `f300a0e` → `b658979`, `0067ae9`, `3870079`, `a821358`:
+      a voyage the crew sails is seen at sea and the fog is shown; the arrival told truthfully when the water is taken;
+      a campaign change ends the crossing; the last commit comment only), RBN-QA-175 (`5986d0a` → `021590d`: Ashihara's
+      notice board shows the notices it has; art, provisional), RBN-QA-178 (`1105b0e`, `e56104c` → `d986eca`, `de7b85c`:
+      each shogi lesson's task in both languages; the rook's two squares named, out of check; the second test only),
+      RBN-QA-180 (`67ba07a` → `57d9b6d`: the white box and the red bundle drawn as their tags say; art, provisional),
+      RBN-QA-177 (`4d63e7d`, `919a359`, `8022726` → `399c614`, `97cc672`, `675b943`: the festival's pupils with their
+      papers, everyone still round the fire, the ring's rest kept per playing, Replay while looking back without a jump;
+      art, provisional), RBN-QA-179 (`50634fc`, `b942949` → `a920799`, `6483235`: a lesson, puzzle or game opened from
+      the shogi ladder starts at its top, and Back returns to the ladder's place; the second test only), RBN-QA-181
+      (`46b8694`, `9cbe4e5` → `094773e`, `847dcaa`: one gift carried at a time, said; the trays show what is on them and
+      keep the table's two tiles), QA-180's card (`f4af9c4` → `e0a538e`: the wrong card is gone once the go-between's
+      trial is passed), RBN-QA-176 (`35a8369`, `2e216e9`, `8c5d0ed` → `1f0f6aa`, `b3d0759`, `b181af4`: Ashihara's
+      quarrels told as they stand, the forge's tag on its door, the gathering over a fade, "Say back" naming who still
+      waits; art, provisional), RBN-QA-182 (`7f6fd0d`, `95e8b5f`, `190a275` → `ef4f76f`, `5b7485e`, `97ba6e6`: a tap on
+      someone who moves is followed once more; a scene or battle begun meanwhile drops the walk; the last test only),
+      the Manybridge origin (`ffd82ce` → `56b90fc`: someone not yet seen walks in from a place the story keeps them, not
+      one night's festival crowd), the kanji pad (`93690f1` → `8dd2b59`: every closest kanji stays in view when a pick
+      is required), the kept prop line (`2ee20e0`, `12a5492` → `2bc8a5d`, `42a57ed`: kept with its prop, and "Hear it"
+      finds its recording), the driver's hold (`ac359cd` → `0a64099`: `RB.world.holdAt`, the same test `arrive()` made
+      inline; the driver held where a player is), and test only: the `pets_greet` fixture (`610b7ba` → `52c5d0e`), the
+      Windows paths (`9db07a5`, `f3fa22d` → `5fbce3e`, `399e702`), the `manybridge` chart (`e6e47d3` → `1dbe7ad`), the
+      `play_ui` New Game+, word-help tap and wording fixtures (`ff154c1`, `e34ce97`, `63f24cc` → `71c042c`, `12a2292`,
+      `3dcee25`), the `bookmarks` Next measurement at the phone layouts (`01cbf2f` → `34e8b81`), the `pets_gallery`
+      gains (`6cb556c` → `7d2cb31`), `audit_fixes`' F10 line (`d8a1ee6` → `43098c5`) and `battle_anim`'s Assisted
+      default (`46e84e2` → `3022cea`). Nothing in the agreed scope is left out. Left out on purpose, each separately
+      attributable: the Respond list's fold-press repair (CC-024: proposal CC-193 §3, not built; the shared tap guard
+      unchanged; a content-size rule in the guard, `4451fdd`, withdrawn, never pushed) and the `harmony_cutin`
+      painted-section test repairs (CC-024, under Agnes's conditions 6390636882, not built); RBN-QA-125 (`afaf2f5`), 127
+      (`96f8275`) and 134 (`b4325f1`), each waiting on its own reviews; RBN-QA-171 (the owner's choice of form);
+      QA-161's part B; the language follow-up; every later candidate. Known and open, not fixed by this cut: **the first
+      mouse press on a Respond card, when the first card has focus-visible styling (after keyboard focus; a
+      keyboard-only limitation is not established: which ways into a battle give that styling is being probed, a
+      mouse-only start among them; CC-210, Local CL-346, Agnes 6393770869), at affected enlarged-text, scrolled layouts,
+      does nothing (a second press works; present since `33fc2a0`, FR-1; VALIDATION, CC-023)**; `harmony_cutin`'s
+      painted sample and painted geometry checks, classed fixture faults (VALIDATION, CC-023); the Lantern Hall's
+      guidance after the companion choice ("Next: here, in Lantern Hall.", no mark on the shrine; since `db05df2`,
+      RBN-QA-004; in CC-021 and CC-022 too; repair for CC-024); `fishing`'s unreproduced first-attempt failure
+      (VALIDATION, CC-023; reopened if it recurs); RBN-QA-116; the postgame shadows beyond QA-161 and 162; 十分 written
+      じっぷん; RBN-QA-135 to 160 (CC-148), none built here; the full log of `sequence_world --only ko.end` lost in CC-021's
+      and CC-022's matrices (overwritten by the old runner; their exit codes and totals remain). Art in this cut went to
+      the owner as private captures (QA-173's rocks, QA-175's board, QA-177's phases, QA-180's gifts, QA-176's tag),
+      "implemented provisionally" under AC1_ART.md until Robin approves. The matrix on these bytes, one invocation at a
+      time from 22:53Z on 10-24 to 03:11Z on 10-25 (VALIDATION, CC-023): 167 run; 165 exited 0, 164 of them with no
+      finding; `bookmarks` (entry 122) exited 1, classed fixture (the Keep tab's Next read twice during the box's
+      entrance; alone, 6/0 three times; a test repair for CC-024); `fishing` (entry 156) exited 1 with a run of Cloud's
+      beside it: an unreproduced first-attempt presentation failure, original cause unconfirmed (environment-related
+      paint starvation a supported hypothesis, not directly observed; alone, 11/0 three times on Linux and on Windows),
+      disclosed and non-blocking; `quest_guide_audit` (entry 151) exited 0 with two findings, both older than this cut
+      (the same on CC-021's and CC-022's pages): `rw_depart` a product guidance regression since `db05df2` (RBN-QA-004)
+      and `co_main 6→7` the kiln as designed, both with CC-024 repairs proposed. Units 58,358/0 on `3022cea`. Voice
+      stays paused: every new or changed spoken line has a new key and plays with the device voice or silence until a
+      listening check after QA; recordings kept.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

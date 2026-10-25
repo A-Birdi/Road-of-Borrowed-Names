@@ -2023,6 +2023,127 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   absent-response and failed-language-response cases are coverage limits).
   In candidate CC-022 (`90cf14b3…`, built from `3d90956`), READY_FOR_QA (the matrix on these bytes: 116 of 116
   suites; VALIDATION, CC-022); RBN-QA-116 stays open, outside it.
+  In candidate CC-022 (`90cf14b3…`, built from `3d90956`) as recorded above; CC-023 adds, each on the exact commits
+  listed in HANDOFF's CC-023 entry, with its AGREEs as VALIDATION, CC-023 lists them (counts below are on the
+  candidates' own builds or on the cut, as posted; the matrix on CC-023's own bytes is in VALIDATION, CC-023):
+  RBN-QA-172: your pet could settle, rest or be placed on water (at Sazanami's jetty it curled up on the shallow
+  waterline). Its resting place, step aside, placement at a map's entry or after a catch-up, and a scene's "come here"
+  now exclude water-kind tiles; a pet standing in water stays on its feet until it can step onto dry ground or you move
+  on; its trail still follows you through the shallows. Refined (Agnes 6381070442): nowhere dry and free within three
+  steps no longer leaves it placed unseen for good (it looks again at each new tile you reach and fades in at the first
+  dry spot); Greet together needs a free dry tile beside your companion and says why not ("Not here — there is no free
+  spot on dry ground beside your companion. Try again somewhere with room."), a rest point's menu leaving the choice
+  out; an authored movement on water keeps its feet. Narrowed as Agnes asks: a handoff (where a vignette's animal was)
+  is taken as authored, even on water, and steps off once still; actor pets and vignettes' animals untouched. B
+  `pet_dry_ground` 17/0 (the first commit's 7/0, CC-021's build 5/2).
+  RBN-QA-173: Sazanami's fishing station "among the rocks" stood on the shallows with nothing under its stand. For this
+  station only, a flat prop `coast_shelf` (never solid, drawn under whoever stands on it) lays a slab of wet rock at the
+  stand, and the station's new 'rocks' look puts its stake among two wet rocks with a rod lashed to it, its line in the
+  water; both appear with the station; tiles, walking, collision, interaction and boat routes unchanged; the flat (16 px)
+  renderer draws the same rocks and rod (refined, Agnes 6381589930). B `rocky_station` 8/0 (CC-021's build 5/3; its depth
+  check computes the renderer's order, and says so). Art: provisional under AC1_ART.md until Robin approves; captures to
+  the owner privately.
+  RBN-QA-174: a voyage the crew sails was not seen at sea, and the fog was not shown. From port the crew now puts the boat
+  out on the sea map with the same one transition a voyage you sail makes (the town count and visits move as a solo
+  voyage's do); before "The crew lowers the sail…", the boat is set at the destination's water in the dark of a fade (no
+  transition, visit, autosave or entry event), then docks as before; `sea.sit_fog` turns the fog ambience on and lifts it
+  at its end. Refined (Agnes 6381070442, 6382201500; Local CL-286): with the destination's water taken, or without
+  staging, the arrival is told over the dark and the boat is seen next at the dock; a campaign change (a load, even one
+  cancelled; a new journey; the title) ends the crossing where it is, also in the dark before the arrival and as the
+  screen lightens on her; the comment says what happens without a placement (comment only, `f300a0e`). B
+  `crew_voyage_sea` 18/0 (`147fbac`'s build 16/2; CC-021's 5/6 for the first commit's 11). Limits as Agnes states them:
+  the empty parity compares against a direct solo arrival; the fog fixture stubs the challenge's success; eventful,
+  battle and postponed parity are not run.
+  RBN-QA-175: Ashihara's notice board was drawn with its usual papers whatever was posted, so "Nothing on it yet" stood
+  under papers. The board now draws the notices `as.board` has (Mitsue's call for the roads' names, the washing's, the
+  market's and the channel's turns; a child's festival picture after the festival), in both renderers; the empty line is
+  said only with no washing notice up (text and voice key unchanged). Every other board draws as before. B
+  `ashihara_board` 8/0 (CC-021's build 1/7). Art: provisional under AC1_ART.md; captures to the owner privately.
+  RBN-QA-178: each shogi lesson says its task in both languages; the rook's lesson names both squares it accepts ("…up
+  its file to the pawn's rank…, or along the bottom rank to beside your king") and starts with your partner's king one
+  file over, out of check; the lesson's piece moved somewhere not asked: "The rook can go there, but that isn't the square
+  asked for: start again."; the eight lines self-reviewed (pastime:shogi), not spoken. U shogi 84/0 (before: 74/10); B
+  `shogi_lesson_goals` 28/0 (the base 12/16). The unit check matches the rook's Japanese by its exact ruby strings
+  (`e56104c`, test only).
+  RBN-QA-179: a lesson, puzzle or game opened from the shogi ladder kept the ladder's scroll, its heading above the page.
+  Opened from the ladder, it starts at its top with its heading focused; Back to the ladder, Leave and Escape bring the
+  ladder back where it was, the opening button focused; Start again, New game and in-game choices keep their place. B
+  `shogi_ladder_place` 20/0 (the base 8/12); its test checks QA-178's words for the rook's wrong square exactly and
+  measures the ladder once the game's faces are in (`b942949`: before, 19/1 in four runs; after, 20/0 in five of five).
+  RBN-QA-177: Ashihara's first festival had no pupils during "Kotoe's pupils sing, holding up paper…", and the fire's ring
+  kept walking through "everyone … round the fire". With Kotoe's school, a night phase shows Kotoe and four children with
+  sheets of brush strokes (never letters); the fire's last phase stops the ring where it is, everyone facing the fire
+  through the gift; the line's English becomes "Last of all, everyone gathers round the fire." (its Japanese and voice
+  key unchanged). Refined: where the ring came to rest belongs to its playing (looking back to the dance and forward
+  again finds it where it stopped); the shot's own Replay while looking back dances again and comes to rest exactly where
+  the ring stood, with no jump. B `festival_phases` 20/0 (`919a359`'s build 19/1; `4d63e7d`'s 15/3; CC-021's 5/7 for the
+  first 12). Art: provisional under AC1_ART.md; captures to the owner privately.
+  RBN-QA-180: on the Hall's second wing, floor 1, "a white box" was the generic chest and "a red bundle" the generic
+  crate. Two props, `hall_giftbox` (white paper tied with a red and white cord) and `hall_bundle` (red cloth knotted on
+  top), each with a blank tag; only the two map entries change; tiles, solidity, scenes and gates as before. B
+  `hall_gifts` 12/0 (the base 9/3; the other 130 chests and crates drawn as before, both renderers). Its card: passing
+  the go-between's trial says "The wrong card blows away on the wind", and the card it had wrong is now gone (recorded at
+  that moment by the floor's pattern and the tier asked, under the floor's prefix so its reset brings it back; put off,
+  nothing recorded); no line or voice change. B `hall_card_gone` 24/0 (its parent 5/19). Not a migration of trials passed
+  before it (Agnes 6384737918). Art: provisional under AC1_ART.md.
+  RBN-QA-181: picking up a second gift put the first down without a word, and the trays stayed bare. Already held:
+  "You're already carrying the X."; holding another: "You put the H back in its place and pick up the X."; the first time
+  on the floor, "You can carry only one at a time."; the trays show the gift put on them (built from the tags), and a tray
+  with its gift keeps the table's two-tile footprint (refined, Agnes 6383653732, Local CL-298). B `hall_trays` 27/0
+  (`46b8694`'s build 24/3). 12 new lines ledgered, unvoiced.
+  RBN-QA-176: Ashihara's quarrels were narrated "arguing at the sluice" and "Outside the forge" wherever the two stood;
+  the forge's hours went up on a freestanding sign though the line says the tag hangs on the door; the gathering was told
+  with nothing showing time pass; "Say back" said nothing of the other party. The hours' tag now hangs on the forge
+  door's post (the sign at (16,8) gone; `hall_door`'s allowlist gains it); the other party walks up to you first (a walk,
+  bounded at 8 s), the intro said only with both there ("Yoshizō and Taki are arguing over the sluice." / "Natsu stands
+  facing Shō, the baby in her arms.", the two then facing each other); a walk that does not arrive gives no intro and
+  marks the away party's lines as off screen (RBN-QA-108); the gathering is told over a fade; "Say back"'s first use with
+  the other still heated adds "Taki is still waiting to be heard." / "Natsu is still waiting to be heard.". New lines
+  self-reviewed and unvoiced; two retired takes kept. B `ashihara_quarrels` 24/0 (`2e216e9`'s build 23/1; the cut 3/16;
+  the test also rejects the old "arguing at the sluice"). Art: provisional under AC1_ART.md. The first units' unnamed
+  58,302/1 stays open (Agnes 6385106726).
+  RBN-QA-182: a tap on someone who moved while you walked to them found nobody and did nothing, silently. Someone who
+  walks, still there and moved away, is followed once more (one retry, for them only); moved again, gone, replaced or
+  unreachable: nothing, no third walk; props, your companion and counters as before. Refined: a scene or a battle begun
+  while a tap's walk is under way drops the walk before its step arrives (a menu or the folio only pauses it). B
+  `tap_moving` 18/0 (`7f6fd0d`'s build 14/4; the cut 3/8 for the first 11); `counter_tap` 30/0. Its test plays each
+  interruption through before claiming nothing after, leaves the battle by Step back, and holds the direction key until
+  the walk is dropped (`190a275`).
+  Manybridge's arrivals (`ffd82ce`): someone not yet seen walks in from the nearest place the story keeps them; RBN-QA-020's
+  festival-night placements are marked `visiting` and skipped by that one search, so the lock's boatmen no longer walk in
+  from the playhouse and stand blocked. B `arrival_origin` 5/0 (the cut 3/2); `sequence_world --only mb1.named` (full)
+  210/0 (the cut 206/4).
+  The writing pad (`93690f1`): a kanji it is not sure of offers up to four closest kanji and waits for a pick, but since
+  FR-1 renamed Confirm "Add character" the longer button hid all four at 390 px (two even at 1280 px). With a pick
+  required, every candidate stays in view and the button takes the next line. B `pad_kanji` 9/0 (CC-022 6/3).
+  The kept prop line (`2ee20e0`, `12a5492`): a prop's own line, kept, lost its prop and tile (its source read as
+  "removed"). Its source is now the prop read in front of you when its own line is the one shown (nothing guessed
+  otherwise; old bookmarks left as they are), and the scene id it was shown under is kept beside it, so "Hear it" asks
+  for its recording (`code.prop#790660feb5` for the miller's notice). U bookmarks 85/0; B `bookmark_prop` 16/0
+  (CC-022 12/4), `bookmarks` all ok.
+  The test driver's hold (`ac359cd`): `arrive()`'s hold test moved, as it was, into `RB.world.holdAt` (behaviour
+  unchanged); the driver takes no exit a map's hold holds; `long_quests` takes the fare line in the order the game allows.
+  U `map_hold` 17/0; B `drive_hold` 9/0; `long_quests --all-companions` all passed.
+  Test fixtures only, the game unchanged: `pets_greet` (the synthetic start records its self-starting quests before the
+  baseline: 5/0, without it 1/4); `manybridge` (the chart's places counted by their own dots: 3/0, without it 2/1);
+  `play_ui` (the New Game+ offer timed in the page; the word-help tap made on the line outside the sheet, measured, and
+  reported for product review when none is found, worded as measured); `bookmarks` (at the two phone layouts, Next measured with
+  and without the tab in the same frame; the wide layout's check left measuring twice, which failed once in the
+  matrix: entry 122, VALIDATION, CC-023); `pets_gallery` (each pet sound compared with the menu confirm as both are played: 7/0;
+  waveform peaks, not listening); `audit_fixes` (FR-1 F10's "Practiced with the model to copy": 4/0, CC-022's own 3/1);
+  `battle_anim` (the slip's −1 tested where mistakes cost, and Assisted, a new journey's default, costing nothing: 17/0 on
+  Local's run, CC-022's own 15/1). Test and tool paths from `import.meta.url` via `fileURLToPath`/`pathToFileURL` and the
+  Harmony hashes keyed with '/', so they hold on Windows (`9db07a5`, `f3fa22d`; Local's Windows 58,303/0).
+  Known and open in CC-023, not fixed by it: the Lantern Hall's guidance after the companion choice (since `db05df2`,
+  RBN-QA-004: "Next: here, in Lantern Hall." with no mark on the shrine; VALIDATION, CC-023, entry 151; repair for
+  CC-024); the first mouse press on a Respond card, when the first card has focus-visible styling (after keyboard focus;
+  a keyboard-only limitation is not established: which ways into a battle give that styling is being probed, a
+  mouse-only start among them; CC-210, Local CL-346, Agnes 6393770869), at enlarged-text, scrolled layouts (VALIDATION,
+  CC-023's known limitation; repair for CC-024); `harmony_cutin`'s two painted sections' timing checks, classed fixture
+  faults, repairs for CC-024 (VALIDATION, CC-023).
+  In candidate CC-023 (`4d84f291…`, built from `3022cea`), READY_FOR_QA (the matrix on these bytes: 167 run, 164 with no
+  finding; `bookmarks` and `fishing` first-attempt failures and `quest_guide_audit`'s two findings, each classed in
+  VALIDATION, CC-023); RBN-QA-116 stays open, outside it.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
