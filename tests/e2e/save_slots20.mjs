@@ -7,16 +7,20 @@
 //     ledger reads them; slots 7–20 list as empty; nothing is migrated;
 //  2. the ledger in pages of six behind the book's paper tabs (1–6, 7–12, 13–18, 19–20): names, counts and marks,
 //     the list numbering, the leaves' labels, the last page holding only 19 and 20; Left/Right/Home/End keep focus on
-//     the selected tab; taps at 390×844; the page and an open Manage kept across the 860 px change;
+//     the selected tab; taps at 390×844; the page and an open Manage kept across the 860 px change; across the spread's
+//     own breakpoint alone (800 → 700 → 800 px) the page, focus on slot 20's Load, slot 19 visible, slot 20 actionable;
 //  3. New Game opens on the first empty slot's page and starts in slot 7; a journey saved into slot 15 from the game
 //     (focus then on slot 15's own control), loaded after a reload (Load opens on the newest's page);
 //  4. Copy: one line for each of the other nineteen slots (integer ids, never the source, slot 20 included); Escape
-//     chooses none, the next choice is the one used; copying onto a used slot replaces it only after its confirmation;
-//     Delete and the overwrite confirmation ask first; New Game+'s list of twenty keeps its origin warning;
-//  5. cross-tab: slot 12 owned by one tab opens read-only in the other;
-//  6. localStorage only (IndexedDB blocked), the store forced full: a save fails visibly, nothing says it saved, the
+//     and Cancel choose none and put focus back on the source slot's Copy, the next choice is the one used; copying
+//     onto a used slot replaces it only after its confirmation; Delete and the overwrite confirmation ask first; New
+//     Game+'s list of twenty keeps its origin warning;
+//  5. the two compact lists by keyboard alone: Tab along Copy's list and New Game+'s, Escape (none), reopened, Tab and
+//     Enter (the target used is the one reached), focus never leaving the open list;
+//  6. cross-tab: slot 12 owned by one tab opens read-only in the other;
+//  7. localStorage only (IndexedDB blocked), the store forced full: a save fails visibly, nothing says it saved, the
 //     protected records are unchanged;
-//  7. storage.estimate() after twenty realistic slots (reported: IndexedDB headroom, not a fallback capacity claim).
+//  8. storage.estimate() after twenty realistic slots (reported: IndexedDB headroom, not a fallback capacity claim).
 // Captures for review go to tests/e2e/out/save_slots20/ (not committed).
 // Usage: node tools/build.mjs && node tests/e2e/save_slots20.mjs [filter]
 import fs from 'node:fs';
@@ -184,6 +188,35 @@ await test('ledger pages: four paper tabs, counts and marks, numbering, the last
 });
 
 // ---------------------------------------------------------------------------------------------------------------------
+// across the spread's own breakpoint only (720 px; 1280 ↔ 700 above also crosses 860 px, which hid the fault): 800 → 700 →
+// 800 keeps the page, focus on slot 20's own Load, slot 19 visible and slot 20's Load actionable (Agnes 6399945694;
+// Local CL-387: the same fault hid slots 4–6 in CC-023)
+await test('ledger at 800 → 700 → 800 px: the page, focus on slot 20\'s Load, slot 19 visible and slot 20 actionable across the spread breakpoint', async () => {
+  const ctx = await b.newContext({ viewport: { width: 800, height: 800 } });
+  const { p, errors } = await page(b, url, { context: ctx });
+  await seed(p, [1, 2, 3, 4, 5, 6, 9, 15, 20]);
+  await p.waitForSelector('.title [data-a=continue]:not(.hidden)');
+  await p.click('.title [data-a=load]');
+  await p.waitForSelector('.folio-ledger .rec');
+  await p.waitForTimeout(300);
+  await p.focus('.rec[data-slot="20"] [data-a=load]');
+  for (const [w, leaves] of [[800, 'Slot 19|Slot 20'], [700, 'Slots 19 to 20'], [800, 'Slot 19|Slot 20']]) {
+    await p.setViewportSize({ width: w, height: 800 });
+    await p.waitForTimeout(350);
+    const g = await ledger(p);
+    const vis19 = await p.locator('.rec[data-slot="19"]').isVisible();
+    const load20 = p.locator('.rec[data-slot="20"] [data-a=load]');
+    let actionable = true;
+    try { await load20.scrollIntoViewIfNeeded({ timeout: 1500 }); await load20.click({ trial: true, timeout: 1500 }); } catch (e) { actionable = false; }
+    assert(g.tabs[3].sel && g.panel === 'tab-lp3' && g.slots.join() === '19,20' && g.leaves.join('|') === leaves, w + ' px: ' + JSON.stringify(g));
+    assert(vis19 && actionable, w + ' px: slot 19 visible ' + vis19 + ', slot 20 Load actionable ' + actionable);
+    const f = await ledger(p);
+    assert(f.focus && f.focus.slot === 20 && f.focus.a === 'load', w + ' px: focus ' + JSON.stringify(f.focus));
+  }
+  assert(!errors.length, errors.slice(0, 3).join(' | '));
+  await ctx.close();
+});
+
 await test('New Game starts in slot 7 (its page opens); a journey saved into slot 15 from the game keeps focus there; loaded after a reload', async () => {
   const ctx = await b.newContext({ viewport: { width: 1280, height: 800 } });
   const { p, errors } = await page(b, url, { context: ctx });
@@ -254,6 +287,15 @@ await test('Copy: the other nineteen in a compact list (integer ids, slot 20 inc
   await p.keyboard.press('Escape');
   await until(p, () => !document.querySelector('.folio-copyslot'));
   assert(await p.evaluate(async () => (await RB.save.list()).filter((x) => !x.empty).length) === 6, 'Escape copied something');
+  // none chosen: focus back on slot 3's Copy, after Escape and after Cancel (Local CL-387)
+  let gc = await ledger(p);
+  assert(gc.focus && gc.focus.slot === 3 && gc.focus.a === 'copy', 'focus after Escape: ' + JSON.stringify(gc.focus));
+  await openCopy(3);
+  await p.tap('.folio-copyslot [data-folio-close]');
+  await until(p, () => !document.querySelector('.folio-copyslot'));
+  gc = await ledger(p);
+  assert(gc.focus && gc.focus.slot === 3 && gc.focus.a === 'copy', 'focus after Cancel: ' + JSON.stringify(gc.focus));
+  assert(await p.evaluate(async () => (await RB.save.list()).filter((x) => !x.empty).length) === 6, 'Cancel copied something');
   // the next choice is the one used: slot 15 (empty: no question), an independent journey
   await openCopy(3);
   await p.tap('.folio-copyslot .ng-opt[data-slot="15"]');
@@ -315,6 +357,70 @@ await test('Copy: the other nineteen in a compact list (integer ids, slot 20 inc
 });
 
 // ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+// the two compact lists by keyboard alone (Agnes 6399957399): Tab along Copy's list to slot 16, Escape (nothing copied,
+// focus back on slot 3's Copy), Enter reopens it, Tab to slot 17, Enter: the copy is in 17, focus on its Manage; New
+// Game+'s list: Tab to slot 20, Escape (none), reopened, Tab to slot 20, Enter: 20. Focus never leaves the open list.
+await test('keyboard: Copy\'s list and New Game+\'s list traversed with Tab; Escape chooses none; the next choice is the one used', async () => {
+  const ctx = await b.newContext({ viewport: { width: 1280, height: 800 } });
+  const { p, errors } = await page(b, url, { context: ctx });
+  await seed(p, [1, 2, 3, 4, 5, 6]);
+  await p.waitForSelector('.title [data-a=continue]:not(.hidden)');
+  await p.click('.title [data-a=load]');
+  await p.waitForSelector('.folio-ledger .rec');
+  await p.waitForTimeout(300);
+  // Tab from wherever the list opened its focus to `sel`, at most 30 presses, focus inside `scope` at every step
+  const tabTo = async (sel, scope) => {
+    for (let i = 0; i <= 30; i++) {
+      const at = await p.evaluate(([sel, scope]) => { const a = document.activeElement; return { on: !!a && a.matches(sel), inside: !!a && !!a.closest(scope) }; }, [sel, scope]);
+      assert(at.inside, 'focus left ' + scope + ' after ' + i + ' Tab presses');
+      if (at.on) return i;
+      await p.keyboard.press('Tab');
+    }
+    throw new Error('30 Tab presses did not reach ' + sel);
+  };
+  const used = () => p.evaluate(async () => (await RB.save.list()).filter((x) => !x.empty).map((x) => x.slot).join());
+  await p.focus('.rec[data-slot="3"] [data-a=manage]');
+  await p.keyboard.press('Enter');
+  await until(p, () => { const c = document.querySelector('.rec[data-slot="3"] [data-a=copy]'); return !!c && c.getClientRects().length > 0; });
+  await p.focus('.rec[data-slot="3"] [data-a=copy]');
+  await p.keyboard.press('Enter');
+  await p.waitForSelector('.folio-copyslot .ng-opt');
+  await p.waitForTimeout(150);
+  const t16 = await tabTo('.folio-copyslot .ng-opt[data-slot="16"]', '.folio-copyslot');
+  await p.keyboard.press('Escape');
+  await until(p, () => !document.querySelector('.folio-copyslot'));
+  let g = await ledger(p);
+  assert(g.focus && g.focus.slot === 3 && g.focus.a === 'copy' && (await used()) === '1,2,3,4,5,6', 'after Escape: ' + JSON.stringify(g.focus) + ' used ' + await used());
+  await p.keyboard.press('Enter');
+  await p.waitForSelector('.folio-copyslot .ng-opt');
+  await p.waitForTimeout(150);
+  const t17 = await tabTo('.folio-copyslot .ng-opt[data-slot="17"]', '.folio-copyslot');
+  await p.keyboard.press('Enter');
+  await until(p, () => /Traveller 3/.test((document.querySelector('.rec[data-slot="17"]') || {}).innerText || ''));
+  await p.waitForTimeout(200);
+  g = await ledger(p);
+  assert(g.tabs[2].sel && g.focus && g.focus.slot === 17 && g.focus.a === 'manage' && (await used()) === '1,2,3,4,5,6,17', 'after Enter on 17: ' + JSON.stringify({ tab: g.tabs.findIndex((t) => t.sel), focus: g.focus }) + ' used ' + await used());
+  await p.keyboard.press('Escape');
+  await until(p, () => !document.querySelector('.folio-ledger'));
+  // New Game+'s list
+  let pick = p.evaluate(async () => RB.ui.ngplus.chooseSlot(await RB.save.list(), 2));
+  await p.waitForSelector('.folio-ngplus .ng-opt');
+  await p.waitForTimeout(150);
+  const n1 = await tabTo('.folio-ngplus .ng-opt[data-slot="20"]', '.folio-ngplus');
+  await p.keyboard.press('Escape');
+  assert(await pick === null, 'Escape on New Game+\'s list chose ' + await pick);
+  pick = p.evaluate(async () => RB.ui.ngplus.chooseSlot(await RB.save.list(), 2));
+  await p.waitForSelector('.folio-ngplus .ng-opt');
+  await p.waitForTimeout(150);
+  const n2 = await tabTo('.folio-ngplus .ng-opt[data-slot="20"]', '.folio-ngplus');
+  await p.keyboard.press('Enter');
+  assert(await pick === 20, 'New Game+ chose ' + await pick);
+  console.log('     Tab presses: Copy to 16 ' + t16 + ', to 17 ' + t17 + '; New Game+ to 20 ' + n1 + ', ' + n2);
+  assert(!errors.length, errors.slice(0, 3).join(' | '));
+  await ctx.close();
+});
+
 await test('cross-tab: slot 12 owned by one tab opens read-only in the other', async () => {
   const ctx = await b.newContext();
   const A = await page(b, url, { context: ctx });

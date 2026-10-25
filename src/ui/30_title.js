@@ -827,7 +827,9 @@ RB.ui.title = (function () {
     lay = { el: fr.scrim, name: 'slots', noAutofocus: true };
     lay.onCancel = close;
     let list = null, err = null, failed = false, first = true, focusAfter = null;
-    const mq = typeof matchMedia !== 'undefined' ? matchMedia('(min-width: 860px)') : null;
+    // one leaf or two follows the spread's own breakpoint (RB.ui.folio.WIDE, as the pause folio and Settings), so the
+    // ledger re-renders when that changes; it listened at 860 px, a record-layout rule only, and a leaf could stay hidden
+    const mq = typeof matchMedia !== 'undefined' ? matchMedia(RB.ui.folio.WIDE) : null;
     // the slots in pages of six, chosen with the book's paper tabs (as in Settings): 1–6, 7–12, 13–18, 19–20. The page
     // stays through every re-render (a refresh, the wide/narrow change); only the opening rule and an action's slot
     // (focusAfter) choose one.
@@ -1038,6 +1040,7 @@ RB.ui.title = (function () {
   function pickSlot(list, except) {
     return new Promise((resolve) => {
       let done = false;
+      const opener = document.activeElement;
       const fr = RB.ui.folio.frame({ cls: 'folio-ngplus folio-copyslot', onClose: () => finish(null), closeLabel: 'Cancel', closeIcon: 'back' });
       fr.setTitle('Copy slot ' + except, 'Choose the slot it goes to');
       fr.box.innerHTML = '<section class="leaf cr-ngplus"><ul class="ng-list compact">' + list.filter((s) => s.slot !== except).map((s) => {
@@ -1046,7 +1049,14 @@ RB.ui.title = (function () {
         return '<li><button type="button" class="ng-opt" data-slot="' + s.slot + '"><span class="mk">' + I(s.empty ? 'blank' : 'warn') + '</span><span class="t">Slot ' + s.slot + '</span><span class="d">' + esc(what) + '</span></button></li>';
       }).join('') + '</ul></section>';
       const layer = { el: fr.scrim, name: 'copy-slot' };
-      const finish = (v) => { if (done) return; done = true; RB.ui.popLayer(layer); resolve(v); };
+      // none chosen: focus back on the control that opened it (the source slot's Copy), not the ledger's first control
+      const finish = (v) => {
+        if (done) return;
+        done = true;
+        RB.ui.popLayer(layer);
+        if (v == null && opener && opener.focus && opener !== document.body && document.contains(opener)) opener.focus({ preventScroll: true });
+        resolve(v);
+      };
       layer.onCancel = () => finish(null);
       fr.box.addEventListener('click', (e) => { const b = e.target.closest('[data-slot]'); if (b) { RB.audio && RB.audio.sfx('cursor'); finish(+b.dataset.slot); } });
       RB.ui.pushLayer(layer);
