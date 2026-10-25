@@ -735,7 +735,8 @@ body.high-contrast .kwcard { border-color: #000; }
 /* FR-1 F14: the general description and its Answers follow the Here: line, folded to two lines (whole on focus) */
 .rcard .rc-more { display: block; }
 .rcard .rc-more.folded { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
-.combat-ui .rcard:focus-visible .rc-more.folded { display: block; -webkit-line-clamp: none; line-clamp: none; }
+/* (whole while the card has keyboard focus: a class the Respond list keeps, unchanged during a pointer press; 80_combat.js wirePreview) */
+.combat-ui .rcard.kb-whole .rc-more.folded { display: block; -webkit-line-clamp: none; line-clamp: none; }
 .rcard .rc-more .rc-ans { display: inline; margin-left: 0.3em; }
 .rcard .rc-here b { font-weight: 700; }
 .rcard .rc-here.none { opacity: 0.78; font-style: italic; }
