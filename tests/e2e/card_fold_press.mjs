@@ -14,10 +14,13 @@
 //     script scroll before the release chooses nothing; a 30 px touch drag and a cancelled touch choose nothing; Enter
 //     and Space choose;
 //  4. 1648×840 at 100 % text (Local CL-328): nothing folds and the first press chooses;
-//  5. (Local CL-330) mouse only from the start: no card is whole and the first press chooses; after a 30 px touch drag
-//     that chose nothing, the next arrow key leaves exactly one card whole; with two creatures, "]" re-deals the cards
-//     with keyboard focus kept, and only the refocused card is whole;
-//  6. no page errors.
+//  5. (Local CL-330) mouse only from the start (a mouse player's start: a focusable control clicked before the battle,
+//     the HUD's menu and the folio's close, as real ways in leave it; CC-213): no card is whole and the first press
+//     chooses; after a 30 px touch drag that chose nothing, the next arrow key leaves exactly one card whole; with two
+//     creatures, "]" re-deals the cards with keyboard focus kept, and only the refocused card is whole;
+//  6. (Agnes 6394400254) a regression of its own, not a real way in: after a click on nothing focusable, the first card
+//     focused by script (which Chromium then shows as focus-visible), the first press on the last card chooses;
+//  7. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/card_fold_press.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -33,8 +36,8 @@ const allErrors = [];
 async function battle(w, h, o = {}) {
   const pg = await page(b, url, { viewport: { width: w, height: h }, touch: !!o.touch });
   const { p } = pg;
-  if (o.mouseFirst) { await wait(p, 300); await p.mouse.click(2, 2); await wait(p, 100); } // (the player's last input a pointer)
-  await p.evaluate(([text, foes]) => {
+  if (o.blankClick) { await wait(p, 300); await p.mouse.click(2, 2); await wait(p, 100); } // (a click on nothing focusable)
+  await p.evaluate(([text]) => {
     const s = RB.game.debugStart('rw.mill1', 7, 9, { comp: 'ren', flags: { rw_gears: true } });
     s.learn.kanaKnown = 'both'; s.learn.profile = 'E';
     s.words = ['mizu', 'iyasu', 'mamoru'];
@@ -46,9 +49,15 @@ async function battle(w, h, o = {}) {
     RB.save.autosave = async () => {};
     const L = RB.combatLogic, init = L.init;
     L.init = function (...a) { const st = init.apply(this, a); st.harmony = st.harmonyMax; for (const f of st.foes) f.knots = f.maxKnots = 6; st.pc = 8; return st; };
+  }, [o.text || 2]);
+  // the player's last input a pointer, as a mouse player's is: a focusable control clicked (the HUD's menu, then the
+  // folio's close) before the battle begins; a click on nothing focusable leaves Chromium showing a card focused by
+  // script as focus-visible (CC-213: no real way in probed did that but the keyboard)
+  if (o.mouseFirst) { await wait(p, 300); await p.click('.hud .menu-b'); await wait(p, 700); await p.click('[data-folio-close]'); await wait(p, 700); }
+  await p.evaluate(([foes]) => {
     const place = RB.content.maps['rw.mill1'].foes.find((f) => f.id === 'm1a');
     RB.game.startBattle(place.enemy, Object.assign({ place, where: { map: 'rw.mill1', x: place.x, y: place.y }, foeKey: 'cfp:' + Math.random() }, foes > 1 ? { group: Array(foes - 1).fill(place.enemy) } : {}));
-  }, [o.text || 2, o.foes || 1]);
+  }, [o.foes || 1]);
   for (let i = 0; i < 600; i++) {
     const s = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), cards: !!document.querySelector('.rcard[data-i]') && !document.querySelector('.chal') && !RB.battleSeq.busy() && RB.combat.phase() === 'choose' }));
     if (s.cards) break;
@@ -265,6 +274,18 @@ await run('a re-deal', 1648, 840, { foes: 2 }, async (p) => {
   const s1 = await state(p);
   const redealt = await p.evaluate(() => !!window.__oldCard && !window.__oldCard.isConnected && !!document.querySelector('.rcard[data-i]')); // (the cards drawn anew)
   ok(old && s0.focus === 1 && s1.focus === s0.focus && s1.fv && s1.whole.filter((x) => x === true).length === 1 && s1.whole[s1.focus] === true && redealt, 'two creatures: "]" re-deals the cards with keyboard focus kept, and only the refocused card is whole (' + J({ before: { focus: s0.focus, whole: s0.whole }, after: { focus: s1.focus, fv: s1.fv, whole: s1.whole } }) + ')');
+});
+
+// ---- 6. a blank click, then a card focused by script (Agnes 6394400254) ---------------------------------------------------
+await run('a blank click', 1648, 840, { blankClick: true }, async (p) => {
+  const s0 = await state(p);
+  await wheelTo(p, 1);
+  const s1 = await state(p);
+  const pt = await pointOf(p, s1.n - 1);
+  await presses(p);
+  if (pt) await p.mouse.click(pt.x, pt.y);
+  const s2 = await chosen(p);
+  ok(pt && s2.chal && s2.ignored === 0, 'a click on nothing focusable, then the first card focused by script: the first press on the last card chose it (' + J({ focus: s0.focus, fv: s0.fv, whole: s0.whole, list: s1.list, chal: s2.chal }) + ')');
 });
 
 ok(!allErrors.length, 'no page errors (' + J(allErrors).slice(0, 300) + ')');
