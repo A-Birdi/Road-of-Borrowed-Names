@@ -2147,6 +2147,30 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   In candidate CC-023 (`4d84f291…`, built from `3022cea`), READY_FOR_QA (the matrix on these bytes: 167 run, 164 with no
   finding; `bookmarks` and `fishing` first-attempt failures and `quest_guide_audit`'s two findings, each classed in
   VALIDATION, CC-023); RBN-QA-116 stays open, outside it.
+  In candidate CC-023 (`4d84f291…`, built from `3022cea`) as recorded above; CC-024 adds, each on the exact commits
+  listed in HANDOFF's CC-024 entry, with its AGREEs as VALIDATION, CC-024 lists them: the Respond list's first press (B
+  `card_fold_press` 23/0 on the candidate's build and on the integrated tip's page, 17/6 on CC-022's page, exactly its
+  first-press checks; Local's Windows 23/0, control 17/6; the shared guard unchanged); Two Names' first step (U
+  `quest_guide` five states, a saved state validated and loaded, the static derivation; B `two_names_guide` 13/0, on
+  CC-023's page 10/3, the shrine cases; `quest_guide_audit`'s `rw_depart 0→1` a hit); the `bookmarks` wide layout's Next
+  check (all ok (6) three times on CC-023's page, Linux and Windows); `harmony_cutin`'s painted sections' timing checks
+  ("painted sample" and "painted geometry" 3/3 each on CC-023's page, Linux; Windows evidence apart, VALIDATION,
+  CC-024). CC-023's known limitation, the first mouse press on a Respond card when the first card has focus-visible
+  styling at affected enlarged-text, scrolled layouts: fixed as tested (`card_fold_press`'s layouts and starts, the
+  guard's controls, CC-022's page failing exactly the first-press checks; not established beyond them). The Lantern
+  Hall's guidance after the companion choice: fixed (RBN-QA-004's `at` superseded by `atIf`).
+  Known and open in CC-024, not fixed by it: `co_main 6→7` (`quest_guide_audit`'s one miss; the kiln as designed; its
+  authored-open audit change a separate REFINE); CC-212, `harmony_cutin` "painted geometry"'s 2048×1046 compact choice:
+  a harness interaction with the art caches' one-set-per-page assumption (the suite's mid-page install of a same-version
+  synthetic set reusing the approved set's cached `prep_a`; the stated prediction held in all 45 of v6's row-instances
+  on Windows), not a shipped-player defect within the reviewed load-time install scope; its failures stay failures; no
+  repair authorized (VALIDATION, CC-024); `fishing`'s unreproduced first-attempt failure (VALIDATION, CC-023); the unit
+  run's memory near Node's default heap on Windows (VALIDATION, CC-024).
+  In candidate CC-024 (records for review; the cut expected to give `f47eb113…`), READY_FOR_QA once its cut is agreed
+  (Cloud's lane on the integrated tip's page: U 58,365/0 and every browser step exit 0, `quest_guide_audit`'s one
+  finding `co_main`; Local's Windows lane: every browser step passed but `play_ui`'s known help-sheet report; units
+  58,365/0 only with a changed 8,192 MB heap, two heap-limit failures at the default kept; no all-suite matrix);
+  RBN-QA-116 stays open, outside it.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:

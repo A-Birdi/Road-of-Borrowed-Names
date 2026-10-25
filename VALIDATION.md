@@ -5484,6 +5484,138 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-024 (records for review; the cut follows them):** to be built from this records commit: CC-023
+    (`f9f0576`; published 10-25 13:09Z by fast-forwarding the task branch, live and verified by Agnes 6398088715 and
+    Local CL-379) plus only the four items agreed after it, each by its exact commits (CC-230), integrated as
+    `int/cc024`, head `e665498`, its integration agreed exactly by Local CL-377 and Agnes 6397900861 (independent source
+    and integration verification, not a rerun). The page the lanes below ran on is the integrated tip's own build:
+    `index.html` sha256 `f47eb113c663adacd2cb12763fe34666c49820c021c33b6e6f84ee14713859be` (24,385,968 bytes). The
+    records are not in the page, so the cut is expected to give those bytes; it is checked against them before it is
+    committed. The integration (cherry-picked with `-x` onto `f9f0576`, 8 single-parent picks; pushed, the remote ref
+    equal; patch-ids `git patch-id --stable`, 12 hex digits, agreed → integrated):
+    - `bookmarks`: `dfcaf11` → `f25f983` (`fd9f7f3e7b6b`), `de6cd37` → `9f583db` (`742f57fe2b21`), `f6341bd` → `5a426a6`
+      (`4ff0a0b6aef4`); `harmony_cutin`: `6314800` → `3920348` (`7e05835e884a`); the Respond list's first press:
+      `be29531` → `aacfaa6` (`1a8dec72df06`, without `run.mjs`), `ebff0db` → `5c5206d` (`01ad726acebb`); Two Names'
+      first step: `98dfa10` → `b8fa269` (`c6d99f76ec0c`, without `run.mjs`), `fcb9e78` → `e665498` (`f7a5979dd2e6`).
+      Equal in full but for the two marked, equal over every file but `run.mjs`, whose two registrations were merged by
+      hand: 119 entries to 121, `['card_fold_press.mjs']` after `['battle_anim.mjs']` and `['two_names_guide.mjs']`
+      after `['guide_next_step.mjs']`, nothing else moved, lost or repeated (Local CL-377, Agnes 6397900861). Nine files
+      against `f9f0576`, +636/−20; each but `run.mjs` has its agreed commit's blob; `index.html` unchanged (CC-023's
+      bytes).
+    - AGREEs on the exact candidates: `bookmarks` `f6341bd` (after `dfcaf11` and `de6cd37`) Agnes 6395366726 (exact
+      source), Local CL-364 (Windows, all ok (6) three times); `harmony_cutin` `6314800` Agnes 6395453650, Local CL-366
+      (under Agnes's conditions 6390636882); the first press `be29531` with `ebff0db` Local CL-362, Agnes 6396380668
+      (exact source); Two Names `98dfa10` Agnes 6396044439 and 6396529618 (product), `fcb9e78` Agnes 6396811244 (the
+      save test), Local CL-370 (exact; Windows); each with Cloud's. The integration plan (CC-230): Local CL-369, Agnes
+      6396959761 (conditional on Local's Two Names lane, met by CL-370).
+    - On the candidates' own trees and builds, before integration (first outcomes; Cloud's on Linux unless named): the
+      first press: `card_fold_press` 23/0 on `ebff0db`'s build (`6ce576ad…`) and 17/6 on CC-022's page (`90cf14b3…`, the
+      control), the six exactly its first-press checks (1648×840 and 1280×720 at 200 %: the card held whole and the one
+      press choosing; a press on card 2 part way down; the blank-click start); U 58,303/0 on `be29531`; Local on Windows
+      23/0, control 17/6. Two Names: `two_names_guide` 12/0 on `98dfa10`'s build (`b52fd7d5…`) and 9/3 on CC-023's page;
+      `quest_guide_audit` on that build 56 moves, 53 pointed at, 2 by design, 1 miss (`rw_depart 0→1` a hit, `[direct:
+      rw.hall:shrine]`; `co_main 6→7` still missed); U 58,365/0 on a tree equal to `98dfa10`; then `fcb9e78` (the same
+      page bytes; its lane's first launch exited 126 before any step, the script not executable, nothing run) 13/0,
+      control 10/3 (the shrine cases), U 58,365/0; Local on Windows (CL-370) its build `b271685c…` (24,384,239 bytes:
+      these bytes but for the usual two trim bytes), 13/0, control 10/3, the audit 56/53/2/1, U 58,365/0. `bookmarks`:
+      on CC-023's page `dfcaf11` and `de6cd37` each failed the wide layout's Keep tab check (the 160 px control's
+      premise; then the synthetic entrance boxes placed `position: fixed`), each premise replaced after AGREEs;
+      `f6341bd` all ok (6) three times; U 58,358/0 on a tree equal to it; Local on Windows all ok (6) three times.
+      `harmony_cutin` `6314800`: attempt a1 void (the run's directory lacked `tools/harmony` and
+      `docs/harmony/contract`; no test body ran; CC-213); a2 on CC-023's page "painted sample" 3/3, "painted geometry"
+      3/3; U 58,358/0 on a tree equal to it.
+    - The first press's first lane, kept as it ran (`be29531` on `fe868bb`, its build `6ce576ad…`, 15 invocations one at
+      a time, 04:58Z to 05:41Z on 10-25, Linux): `card_fold_press` 21/1 (the mouse-only start left the first card with
+      focus-visible styling: the start's premise, replaced in `ebff0db` by a focusable control clicked first, the
+      blank-click start kept as its own case), `harmony_cutin` "geometry" with "painted geometry" 2/0, `card_press`
+      13/0, `combat_ui` 7/0, `combat_small` all ok, `encounters` 10/0, `social_battle` 65/0, `battle_settings` 10/0,
+      `learning_ui` 15/0, `play_ui` all ok, `kb_reflow` 4/0, `battle_anim` 15/1 (the slip check under Assisted, a new
+      journey's default: CC-022's own fault, fixed in CC-023 by `46e84e2`, which that base lacked), `choice_rows` 6/0,
+      `battle_group` 6/0, `companion_turn` 4/0; its controls on CC-022's page: `card_fold_press` 16/6, `harmony_cutin`
+      "geometry" with "painted geometry" 0/2 ("geometry" CC-023's known limitation; "painted geometry" a 2048×1046
+      assertion, consistent with CC-212's signature, not shown).
+    - On the integrated tip (`e665498`, page `f47eb113…`), Cloud's lane on Linux, one step at a time, 11:26Z to 12:36Z
+      on 10-25, nothing else of Cloud's beside it (CC-236): `validate.mjs` no errors; U 58,365/0; B `bookmarks` all ok
+      (6), `card_fold_press` 23/0, `two_names_guide` 13/0, `card_press` 13/0, `combat_ui` 7/0, `combat_small` all ok
+      (9), `encounters` 10/0, `battle_settings` 10/0, `learning_ui` 15/0, `play_ui` all ok (44), `kb_reflow` 4/0,
+      `choice_rows` 6/0, `battle_group` 6/0, `companion_turn` 4/0, `battle_anim` 17/0 (431 s), `bookmark_prop` 16/0,
+      `guide_next_step` 24/0, `harmony_cutin` "painted sample" 1/0 and "geometry" with "painted geometry" 2/0,
+      `quest_guide_audit` 56 moves, 53 pointed at, 2 by design, 1 miss (`rw_depart 0→1` a hit; `MISS co_main 6→7 …
+      [open: ]` kept visible; its authored-open audit change a separate REFINE). Every step exited 0; the tree was clean
+      at `e665498` at the end. "geometry: seven viewports" passing is CC-023's known limitation's visible failing result
+      (0/1 on CC-023 alone, its five 200 % rows) passing on these bytes, one run. "painted geometry"'s report gives the
+      sample's own fits (1648 and 1440 compact ×2; 2048 and 1920 standard-moved ×2, the rich fixture too), so no row
+      shows CC-212's fit signature; fits alone cannot rule out a race hit where both drawings give the same fit.
+    - Local's lane on Windows on its build of the tip (Node v24.19.0; raw `fe377f6a…`, 24,385,970 bytes, the usual two
+      trim bytes, normalized equal to `f47eb113…`), one step at a time (CL-382, CL-384): `bookmarks` all ok (6),
+      `card_fold_press` 23/0, `two_names_guide` 13/0, `card_press` 13/0, `kb_reflow` 4/0, `battle_group` 6/0,
+      `battle_anim` 17/0, `guide_next_step` 24/0, `combat_ui` 7/0, `combat_small` all ok, `encounters` 10/0,
+      `battle_settings` 10/0, `learning_ui` 15/0, `choice_rows` 6/0, `companion_turn` 4/0, `bookmark_prop` 16/0,
+      `harmony_cutin` "painted sample" 1/0 and "geometry" with "painted geometry" 2/0 (two rows it does not assert,
+      1648×840 and 1600×900 with the template faces, chose standard ×1 where Cloud's Linux run had compact ×2:
+      consistent with CC-212's race, not shown), `play_ui` 1 failed (the known help-sheet report for product review,
+      identical in text and coordinates to CC-023's Windows runs), `quest_guide_audit` 56/53/2/1 (equal). Units: at
+      Node's default 4,288 MB heap the first attempt failed (JavaScript heap out of memory in `procedure_copy`, about
+      758 s, 145 files done; alone it is 8/0) and a same-condition retry failed (heap out of memory in `press`); with a
+      changed 8,192 MB heap, 58,365/0 (maxRSS, the operating system's true peak, 5,387 MB; heap used, sampled every 500
+      ms, 4,363 MB); the control, the Two Names tree at the default heap, 58,365/0 (maxRSS 4,437 MB; sampled heap 4,043
+      MB, about 94 % of its limit; 25 min against 15). Class: unit-runner memory pressure near the Windows default heap,
+      supported; CC-024's own share not determined (Cloud's same-limit comparison on Linux, CC-242, CC-244: Node
+      v22.22.2, its default heap limit 8,640,266,240 bytes for both, `node --import <sampling preload>
+      tests/run-unit.mjs`, one at a time: CC-024's tree `e665498` 58,365/0, maxRSS 6,203,375,616 bytes, sampled heap
+      maximum 4,860,987,336 bytes; CC-023's tree `f9f0576` 58,358/0, maxRSS 6,294,528,000 bytes, sampled heap maximum
+      4,856,371,440 bytes; about 156 samples each, since the run blocks the sampling timer, so the sampled maxima are
+      lower bounds. At the same limit the sampled maxima were very close (CC-024's sampled heap maximum 4,615,896 bytes,
+      about 0.095 %, higher; its peak RSS 91,152,384 bytes, about 1.45 %, lower), with no clear source-related increase
+      established by this bounded comparison (sampling heavily delayed); not proof of no retention; a larger limit lets
+      V8 collect later, so these are not the live set and not comparable with the Windows limit; Agnes 6399378046, Local
+      CL-385). Nothing is counted a pass at the Windows candidate's default limit (the Linux runs passed at their own
+      default limit); no runner change is proposed now.
+    - `harmony_cutin`'s geometry evidence, kept apart by run and platform (Local CL-378): Cloud's Linux a2 (3/3) and the
+      tip's run (above) passed; Local's Windows runs: `6314800`'s lane on CC-023's page "painted sample" 3/3, "painted
+      geometry" run 1 failed (2048×1046 "the standard pair at 2×", the compact pair chosen), runs 2 and 3 passed;
+      `ebff0db`'s lane "geometry" passed and "painted geometry" failed at 2048×1046 (compact ×2). Both Windows failures
+      stay failures, consistent with CC-212's signature but not shown (those runs had no v6 instrumentation); the same
+      holds for v2 to v4's diagnostic rows. Only v6's 45 row-instances carry the shown classification.
+    - CC-212, "painted geometry"'s 2048×1046 compact choice (Local CL-366 to CL-375; Cloud's CC-227 to CC-235; Agnes
+      6397107506, 6397267731, 6397400538): a harness interaction with the art caches' one-set-per-page assumption, not a
+      shipped-player defect within the reviewed load-time install scope. The suite installs a synthetic set of the same
+      `artVersion` (1) mid-page while the overlay's encounter-start preparation of the embedded approved set may already
+      have composed its first phase; the approved `prep_a` busts (and a standard `prep_a` composition) are then reused,
+      since the composition and bust keys separate sets only by `artVersion` and an install does not clear them
+      (`src/ui/88_harmony_art.js` 107–111, 135, 523–537, 571; `88_harmony_raster.js` 36–45, 377; `82d_harmony_cutin.js`
+      719–738, 760). Shown by v6, Local's on Windows (three runs on CC-022's page, 45 row-instances; probe sha256
+      `abb91004…`, local; the snapshot taken in the same synchronous step as the install): the stated prediction held in
+      all 45. The full `prep_a` appeared in the 17 sample and template rows where the approved set's version-1 `prep_a`
+      busts were cached before the install, each matching the approved `prep_a`'s measured composed-pixel checksums
+      (32-bit FNV-1a over the canvas RGBA, `6493568c` standard, `9bd8ed25` compact); in none of the 22 sample and
+      template rows without them; and in none of the 6 rich-fixture rows (`artVersion` 2), including the 3 where they
+      were cached. After `RB.harmonyArt.clear()` (a causal intervention), each of the 39 sample and template rows drew
+      the sample's own `prep_a`. Each v6 run's one suite failure was exactly a full 2048 row; they stay failures with
+      this explanation. The race also moves fits the suite does not assert (1440×900 and 1648×840: standard ×1 when
+      full, compact ×2 otherwise). Check (c), the approved art through its normal loader (three runs on CC-022): stable
+      per-phase bounds and fit across 45 row-instances, not proof of stable pixel content or universal absence; at
+      1920×1080 the compact choice is a placement decision (both standard ×2 tries refused, "overlaps creature"); at
+      2048×1046 the reported dimensions support the intended scale fallback (the 30 % height limit for the art's 158-row
+      footprint). Consistency, not a further test: the measured evidence of 10-03 (`152411f`, before the approved set
+      was embedded on 10-06) records only the sample's own footprints. The only SHA-256 in this stage is the `2811798a…`
+      pair of PNG crops (v4's full sample `prep_a`, v5's approved `prep_a`). Future geometry failures need row-specific
+      evidence. No repair authorized; the options (test side: `RB.harmonyArt.clear()` after the suite's install, or a
+      distinct `artVersion` for the sample; product side: a set identity in both keys, or a clear on install) would each
+      be a separate three-party proposal with controls.
+    - CC-023's known limitation (the first mouse press on a Respond card when the first card has focus-visible styling,
+      at affected enlarged-text, scrolled layouts): fixed as tested. The tested set is `card_fold_press`'s layouts and
+      starts (1648×840 and 1280×720 at 200 %, part way down, the mouse-only start through a focusable control, the
+      blank-click start, the keyboard fold and Shift+Tab, a touch drag then an arrow key, a re-deal with two creatures),
+      the shared guard's controls (wheel, resize, script scroll, a 30 px touch drag, touch cancel, Enter, Space) and
+      CC-022's page failing exactly the first-press checks; it does not establish behaviour beyond them. The withdrawn
+      guard rule's own test (`card_press_guard`, `4451fdd`, never pushed) is not part of CC-024.
+    - Evidence kept: before any of the tip's browser suites ran, the integration worktree's earlier suite output
+      (`tests/e2e/out`, 412 files, 142,857,072 bytes, from CC-023's lane) was moved whole out of the worktree with a
+      sha256 manifest, identical after the move; nothing in it was deleted (CC-233). Each step's log is named for this
+      lane, first attempt.
+    - Not claimed: no all-suite matrix on these bytes (none requested; Agnes 6397107506, 6397900861); no native or owner
+      acceptance; no publication. Voice stays paused; no spoken line changed.
   - **Candidate CC-023:** `index.html` sha256 `4d84f2915324cc6bccfab1a5183ccbfa1c57b9c144ae22a299c228ffb03c0bf9`
     (24,384,000 bytes), built from `3022cea` (CC-022 at `fe868bb`, verified by Local CL-291 and, as published, by Agnes
     6383006577, plus only what was agreed after it, each by its exact commits, listed in HANDOFF's CC-023 entry). Local

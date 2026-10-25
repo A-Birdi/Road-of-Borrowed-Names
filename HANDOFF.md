@@ -1091,6 +1091,41 @@
       and `co_main 6→7` the kiln as designed, both with CC-024 repairs proposed. Units 58,358/0 on `3022cea`. Voice
       stays paused: every new or changed spoken line has a new key and plays with the device voice or silence until a
       listening check after QA; recordings kept.
+      CANDIDATE CC-024 (records for review; the cut, `index.html` only, follows them and is expected to give the
+      integrated tip's page, `f47eb113…`, 24,385,968 bytes): CC-023 (`f9f0576`; published 10-25 13:09Z, verified live by
+      Agnes 6398088715 and Local CL-379) plus only the four items agreed after it, each by its exact commits
+      (cherry-picked with `-x` onto `f9f0576`; patch-identical to the agreed commits in full, or for two over every file
+      but `tests/e2e/run.mjs`, merged by hand so that each adds only its own suite; AGREEs listed in VALIDATION, CC-024;
+      integrated as `int/cc024`, head `e665498`, its integration agreed exactly by Local CL-377 and Agnes 6397900861):
+      the Respond list's first press (`be29531`, `ebff0db` → `aacfaa6`, `5c5206d`: a card's first mouse press is not
+      lost to the fold of another card; the unfolding kept as a class set by keyboard focus and never changed by a
+      pointer press; the shared tap guard unchanged; the second commit test only), Two Names' first step (`98dfa10`,
+      `fcb9e78` → `b8fa269`, `e665498`: the Lantern Hall until the gathering and the companion choice, then the shrine
+      (4,2), marked; RBN-QA-004's unconditional `at` replaced by `atIf`; the second commit test only), and test only:
+      the `bookmarks` wide layout's Next check (`dfcaf11`, `de6cd37`, `f6341bd` → `f25f983`, `9f583db`, `5a426a6`) and
+      the `harmony_cutin` painted sections' timing checks (`6314800` → `3920348`, under Agnes's conditions 6390636882).
+      Nothing in the agreed scope is left out; every later candidate is left out (RBN-QA-125, 127 and 134 still waiting
+      on their own reviews; RBN-QA-171; QA-161's part B; the language follow-up; the `co_main 6→7` authored-open audit
+      change, a separate REFINE; the Windows trim rounding, not proposed for build). Changed from CC-023's open list:
+      **the first mouse press on a Respond card when the first card has focus-visible styling, fixed as tested**
+      (`card_fold_press`'s layouts and starts and the guard's controls, CC-022's page failing exactly the first-press
+      checks; not established beyond them; VALIDATION, CC-024); the Lantern Hall's guidance after the companion choice,
+      fixed (`quest_guide_audit`'s `rw_depart 0→1` a hit); `bookmarks` entry 122 and the two painted sections, test
+      repairs as classed in CC-023. Known and open, not fixed by this cut: `co_main 6→7` (the kiln as designed; its
+      audit change a separate REFINE); `fishing`'s unreproduced first-attempt failure (VALIDATION, CC-023; reopened if
+      it recurs); CC-212, "painted geometry"'s 2048×1046 compact choice, a harness interaction with the art caches'
+      one-set-per-page assumption, not a shipped-player defect within the reviewed load-time install scope, no repair
+      authorized (VALIDATION, CC-024); RBN-QA-116; the postgame shadows beyond QA-161 and 162; 十分 written じっぷん;
+      RBN-QA-135 to 160 (CC-148), none built here; the Windows `music_performance` trim rounding (12 values a last digit
+      apart; Windows-built pages two bytes longer); the single-process unit run near Node's default heap on Windows
+      (4,288 MB; CC-024's units failed there twice and passed with 8,192 MB; a runner change, files in batches for
+      example, would be its own proposal). Evidence (VALIDATION, CC-024): each candidate's own runs and controls before
+      integration; Cloud's lane on the integrated tip's own page, one step at a time (U 58,365/0; 21 browser steps and
+      `quest_guide_audit`, every one exit 0; the audit 56 moves, 53 pointed at, 2 by design, 1 miss, `co_main`); Local's
+      Windows lane on its build of the tip (every browser step's first outcome passed but `play_ui`'s known help-sheet
+      report; units at Node's default 4,288 MB heap failed twice, heap out of memory, and gave 58,365/0 only with a
+      changed 8,192 MB heap: memory pressure near the Windows default heap, CC-024's share not determined). No all-suite
+      matrix on these bytes (none requested). Voice stays paused: no spoken line changed; recordings kept.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
