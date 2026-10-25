@@ -5484,6 +5484,91 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-025 (records for review; the cut follows them):** to be built from this records commit: CC-024
+    (`0ab9c53`; published 10-25 16:28Z by fast-forwarding the task branch, live and verified by Local CL-389 and Agnes
+    6400268327) plus only the 20-slot Inn Ledger, by its exact commits, integrated as `int/cc025`, head `06bc6c1` (plan
+    CC-251: Local CL-392, Agnes 6401394927; its integration agreed exactly by Local CL-393 and Agnes 6401755992). The
+    page the lanes ran on is the integrated tip's own build: `index.html` sha256
+    `d15e28545a5298270b4ddd69719b4121d6b651489f7d281dd1e4b12cd581454e` (24,393,423 bytes), byte-identical to the build
+    of the candidate's last commit `7bffab6`; the records are not in the page, so the cut is expected to give those
+    bytes and is checked against them before it is committed.
+    - What it is (Robin via Agnes 6398218197, 6398223467, 6398253172: twenty slots, if needed for thorough testing,
+      concisely formatted, a redesign permitted, the book ledger considered; proposal CC-241, AGREEs Local CL-381 with
+      its refinements a–e and Agnes 6398364186 with hers 1–5): `RB.save.SLOTS` 6 → 20, superseding SPECIFICATION §14's
+      six by the owner's authorization (records are keyed by slot number, so slots 1–6 and every recovery record read as
+      before: no schema change, no migration, no export); the Inn Ledger in pages of six behind the book's paper tabs
+      (1–6, 7–12, 13–18, 19–20), each tab named with its range, its count in use and, on one tab, a mark ("this journey"
+      from the game, "the most recent save" from the title; one glyph for both, told apart by the names); the page it
+      opens on (Load: the newest save's; Save: this journey's, else the first empty slot's; New: the first empty
+      slot's), kept through every re-render; Copy's target as one compact line for each other slot in place of nineteen
+      dialog buttons; New Game+'s list compact; "Choose one of 20 slots."; the ledger re-rendering at the spread's own
+      breakpoint (`RB.ui.folio.WIDE`, 720 px) in place of an 860 px literal, closing a fault live in CC-023 and CC-024
+      (after a resize across 720 px only, the second leaf stayed hidden: slots 4–6 of six; Agnes 6399945694, Local
+      CL-387); focus back on the source slot's Copy when Copy's chooser closes with none chosen; focus kept on the same
+      slot's control when the browser blurs a control the breakpoint hides before the re-render.
+    - The integration (`git cherry-pick -x` onto `0ab9c53`, no conflict, no hand merge; patch-ids `git patch-id
+      --stable`, 12 hex digits, agreed → integrated, equal in full): `5d406f8` → `5d20466` (`6c6ee97db84b`), `ff7dbc5` →
+      `f8fcaf9` (`e51913c9b25e`), `fd12234` → `64edf57` (`259165652ada`), `936284d` → `0265523` (`f89d675e3a97`),
+      `7bffab6` → `06bc6c1` (`a30eae5cc90c`). Each of the eleven files the candidate touches has `7bffab6`'s blob;
+      against `7bffab6` the tree differs only in CC-024's records and committed page; `index.html` stays CC-024's bytes
+      until this cut.
+    - AGREEs on the exact candidate: Agnes 6400898477 (exact source and tests through `7bffab6`), Local CL-391 (exact
+      source and the Windows lane, terminal), each with Cloud's; the test changes along the way: CC-243 (Local CL-383,
+      Agnes 6398718288), the rail's settle wait and the four-page fixture (Local CL-385, Agnes 6399378046 and
+      6399562442), the breakpoint and keyboard checks (Agnes 6399945694 and 6399957399, Local CL-387), the race's class
+      and the five cycles (Local CL-390, Agnes 6400607160). Visual review: Local's inspection of the captures of its own
+      run, Local's only; Agnes has not seen the captures (the private capture page was not shared with her), so no
+      visual approval by her is claimed.
+    - The candidate's own runs, Cloud's on Linux, one at a time, first outcomes in order: on `5d406f8`'s tree (page
+      `fc0e8904…`): `save_slots20` 7/0 (the compatibility test first: CC-023's own page, sha-checked, writing six manual
+      saves with two autosaves and a pre-departure point each and one suspend, slot 4's: all 25 records byte-equal after
+      this page opens and lists them), its control on CC-024's page 0/7; `title_ledger` attempt 1 15/3 (the rail's tabs
+      outside the viewport at 200 % text, classed a test predicate; the change agreed in CC-243), attempt 2 15/4 (each
+      "label clipped": the candidate's own CSS defeating the folio's phone rule, fixed in `ff7dbc5`); `ui` 14/0,
+      `systems` 4/0, `folio` all ok, `settings_review` all passed, `shift_load_regression` 18/18 by origin and 18/18 by
+      file, `old_saves` 4/0, `records` 7/0, U 58,365/0; `save_slots20` 7/0 again. On `ff7dbc5`'s page: `title_ledger`
+      attempt 3 18/1 (`End`: the test's fixed 250 ms wait against the rail's smooth scroll, classed by a probe, fixed in
+      the test by `fd12234`), `save_slots20` 7/0, `folio` all ok, `ui` 14/0, `settings_review` all passed. On
+      `fd12234`'s page: `title_ledger` attempt 4 21/0, its control on `5d406f8`'s page 15/6 (attempt 2's four and the
+      four-page fixture at normal text at 320 and 390 px); U 58,365/0. On `936284d`'s page: `save_slots20` 9/0, its
+      control on `fd12234`'s page 6/3 (exactly the 700 px step and the two focus checks); `title_ledger` 21/0; `ui`
+      14/0; U 58,365/0; then a capture run of `save_slots20` on the same page 8/1 (the 700 px step: focus on nothing),
+      classed a product race in `936284d` by a probe (Chromium's blur of the hidden control before the breakpoint's
+      change event in 6 and 7 of 20 800 → 700 steps; none of 40 700 → 800), fixed in `7bffab6` (the same probe on its
+      page: 0 of 80 lost, 17 with the early blur); both of `936284d`'s outcomes stay as they ran. On `7bffab6`'s page:
+      `save_slots20` 9/0 (the breakpoint test five cycles), its control on `936284d`'s page 8/1 (a 700 px step's focus;
+      first run, not rerun); `title_ledger` attempt 6 21/0; `ui` 14/0; U 58,365/0; `save_slots20` again for the captures
+      9/0.
+    - Local's Windows lane on its build of `7bffab6` (CL-391; `db86cb5a…`, 24,393,425 bytes, the usual two trim bytes):
+      `save_slots20` 9/0, `title_ledger` 21/0, `folio` ok, `ui` 14/0, `systems` 4/0, `old_saves` 4/0, `records` 7/0,
+      `ledger_li` ok, `hall` 4/0; `settings_review` 1 failed ("none on this device", voices: 4; its control on CC-024's
+      tree fails identically: a Windows environment difference, kept as a failure); `shift_load_regression` failed to
+      launch first in both modes (the suite's `chromium.launch` without the installed browser's path), then 18/18 by
+      origin and 18/18 by file with a launcher-only copy; controls `936284d` 9/0 (the race not hit: a pass of limited
+      discrimination) and `fd12234` 6/3; units at the default heap a heap-limit failure in `press` (the known class,
+      kept) and 58,365/0 with a changed 8,192 MB heap. Local's Windows build of the integrated tip `06bc6c1` is
+      byte-identical to its `7bffab6` build (`db86cb5a…`; normalized `d15e2854…`, equal to Cloud's tip build; CL-393),
+      so these outcomes carry over to these bytes as same-byte evidence with every limitation kept; no duplicate lane
+      (Agnes 6401394927).
+    - On the integrated tip (`06bc6c1`, page `d15e2854…`), Cloud's lane on Linux, one step at a time, nothing else of
+      Cloud's beside it: `validate.mjs` exit 0; U 58,365/0; `save_slots20` 9/0 (CC-023's own page's 25 records
+      byte-equal after this page opens and lists them; Tab presses to 16, 17 and 20 as before; twenty slots with three
+      autosaves and a pre-departure point each used 2,019,508 bytes of IndexedDB of an 863,488,961-byte quota, reported,
+      not a fallback capacity claim), `title_ledger` 21/0, `folio` all ok, `ui` 14/0, `settings_review` all passed,
+      `systems` 4/0, `shift_load_regression` 18/18 by origin and 18/18 by file, `old_saves` 4/0, `records` 7/0. The
+      build and every step exited 0 (13 of 13), 18:23Z to 18:53Z on 10-25; the tree clean at `06bc6c1` at the end
+      (CC-253).
+    - Evidence kept: before the tip's browser suites ran, the integration worktree's earlier suite output (CC-024's
+      lane, 179 files, 24,923,687 bytes) was moved whole out of the worktree with a sha256 manifest, identical after the
+      move; nothing in it was deleted.
+    - Known and open, not fixed by CC-025: Local's cosmetic notes from its captures (a notice slip briefly over the rail
+      or header; the phone header's subtitle on four lines; a thin blank band atop Copy's list), each its own later
+      proposal; the folio's rail scrolling smoothly under reduced motion (pre-existing, Local CL-385), its own later
+      proposal; the tab mark's one glyph for both meanings (a capture question, not a defect); Windows
+      `settings_review`'s environment failure and `shift_load_regression`'s launcher; CC-024's open list (VALIDATION,
+      CC-024). Not claimed: no all-suite matrix on these bytes (none requested); no native or owner acceptance (Nao's
+      fresh run follows CC-025's live verification; the six protected native saves stay untouched); no publication.
+      Voice stays paused; no spoken line changed.
   - **Candidate CC-024 (records for review; the cut follows them):** to be built from this records commit: CC-023
     (`f9f0576`; published 10-25 13:09Z by fast-forwarding the task branch, live and verified by Agnes 6398088715 and
     Local CL-379) plus only the four items agreed after it, each by its exact commits (CC-230), integrated as

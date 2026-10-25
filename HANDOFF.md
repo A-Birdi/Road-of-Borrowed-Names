@@ -1127,6 +1127,30 @@
       report; units at Node's default 4,288 MB heap failed twice, heap out of memory, and gave 58,365/0 only with a
       changed 8,192 MB heap: memory pressure near the Windows default heap, CC-024's share not determined). No all-suite
       matrix on these bytes (none requested). Voice stays paused: no spoken line changed; recordings kept.
+      CANDIDATE CC-025 (records for review; the cut, `index.html` only, follows them and is expected to give the
+      integrated tip's page, `d15e2854…`, 24,393,423 bytes): CC-024 (`0ab9c53`; published 10-25 16:28Z, verified live by
+      Local CL-389 and Agnes 6400268327) plus only the 20-slot Inn Ledger (Robin via Agnes 6398218197, 6398223467,
+      6398253172; CC-241), by its exact commits (`5d406f8`, `ff7dbc5`, `fd12234`, `936284d`, `7bffab6` → `5d20466`,
+      `f8fcaf9`, `64edf57`, `0265523`, `06bc6c1`, cherry-picked with `-x` onto `0ab9c53`, patch-identical in full, no
+      hand merge; AGREEs on the exact candidate Agnes 6400898477 and Local CL-391; plan CC-251 agreed by Local CL-392
+      and Agnes 6401394927; integrated as `int/cc025`, head `06bc6c1`; its integration agreed exactly by Local CL-393
+      and Agnes 6401755992): twenty campaign slots, superseding SPECIFICATION §14's six by the owner's authorization
+      (records keyed by slot number: slots 1–6 and their recovery records read as before; no schema change, no
+      migration, no export); the Inn Ledger in pages of six behind the book's paper tabs, each tab named with its range,
+      count in use and mark; Copy's and New Game+'s compact slot lists; the ledger re-rendering at the spread's own 720
+      px breakpoint (**closing a fault live in CC-023 and CC-024: after a resize across 720 px only, the second leaf
+      stayed hidden until another action**); focus kept on the source slot's Copy after a cancelled Copy and on the same
+      slot's control across the breakpoint. Nothing else is in it. Known and open, not fixed by this cut: Local's three
+      cosmetic notes from its captures (a notice slip briefly over the rail or header; the phone header's subtitle on
+      four lines; a thin blank band atop Copy's list); the folio's rail scrolling smoothly under reduced motion
+      (pre-existing); the tab mark's one glyph for "this journey" and "the most recent save"; Windows
+      `settings_review`'s environment failure and `shift_load_regression`'s launcher (Local CL-391); and CC-024's open
+      list as recorded there. Evidence (VALIDATION, CC-025): the candidate's own runs and controls, first outcomes kept
+      (`title_ledger` 15/3, 15/4, 18/1, then 21/0; `save_slots20` on `936284d` 9/0 then 8/1, the race fixed in
+      `7bffab6`); Local's Windows lane on `7bffab6`; Cloud's lane on the integrated tip's own page (U 58,365/0 and every
+      browser step exit 0). No all-suite matrix (none requested); no native acceptance yet: Nao's fresh run follows
+      CC-025's live verification; the six protected native saves stay untouched. Agnes's visual review not done (the
+      capture page not shared with her). Voice stays paused: no spoken line changed; recordings kept.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

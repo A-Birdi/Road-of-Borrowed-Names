@@ -100,7 +100,8 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [i] R13.4 Fast/instant text, skip seen scenes, remap, volumes, reduced motion, text size, contrast — instant text, reduced motion, text size and contrast applied and persisted across reload (settings.mjs); volume/mute (audio.check.mjs); remap and skip-seen not browser-tested
 
 ## Saves [14]
-- [v] R14.1 Exactly six slots: new/save/load/copy/overwrite/delete; thumbnail + metadata
+- [v] R14.1 Twenty slots (Robin, 10-25, superseding SPECIFICATION §14's six for thorough testing; CC-025):
+  new/save/load/copy/overwrite/delete; thumbnail + metadata (as tested: VALIDATION, CC-025)
 - [v] R14.9 Load/Continue/autosave/pre-departure show the world (not the title backdrop) and accept input; reload keeps campaigns (shift_load_regression.mjs, http origin and file://)
 - [v] R14.2 IndexedDB; manual separate from autosave recovery; pre-departure snapshot
 - [v] R14.3 Copy independent; delete removes recovery data
@@ -2171,6 +2172,21 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   finding `co_main`; Local's Windows lane: every browser step passed but `play_ui`'s known help-sheet report; units
   58,365/0 only with a changed 8,192 MB heap, two heap-limit failures at the default kept; no all-suite matrix);
   RBN-QA-116 stays open, outside it.
+  In candidate CC-024 (`f47eb113…`, `0ab9c53`; published and verified live) as recorded above; CC-025 adds, on the exact
+  commits listed in HANDOFF's CC-025 entry, with its AGREEs as VALIDATION, CC-025 lists them: twenty campaign slots
+  (R14.1, by the owner's authorization superseding SPECIFICATION §14's six; B `save_slots20` 9/0 on the integrated tip's
+  page: CC-023's own page's 25 stored records byte-equal after this page opens and lists them, pages and tabs, the 720
+  px breakpoint five times, New Game's dispatch to slot 7, a save into 15 reloaded and loaded, Copy by touch and
+  keyboard with its replace question, Delete and overwrite asked first, New Game+'s twenty, slot 12 read-only in a
+  second tab, a full localStorage failing a save visibly; `title_ledger` 21/0; U 58,365/0); the 720 px breakpoint fault,
+  live in CC-023 and CC-024, fixed as tested (`save_slots20`'s 800 → 700 → 800 cycles; the controls on the earlier
+  commits failing exactly there). Not established: every one of the twenty slots exercised through every operation;
+  native play on these bytes.
+  In candidate CC-025 (records for review; the cut expected to give `d15e2854…`), READY_FOR_QA once its cut is agreed
+  (Cloud's lane on the integrated tip's page: U 58,365/0 and every browser step exit 0; Local's Windows outcomes on
+  `7bffab6` carried over as same-byte evidence: `settings_review`'s environment failure and the launcher's first
+  failures kept, units 58,365/0 only with a changed 8,192 MB heap; no all-suite matrix); RBN-QA-116 stays open, outside
+  it.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
