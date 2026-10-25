@@ -87,6 +87,36 @@ async function railProblems(p) {
   });
 }
 
+// the rail scrolls smoothly (End and Home cross all of it). Within one fixed 2 s deadline from the call, wait until its
+// scrollLeft is unchanged in three successive animation frames and the expected tab is selected (and focused, when
+// asked) and wholly in the rail's unobscured part; null then, else a failure with the final scroll, geometry and
+// selection (CC-244; Local CL-385; Agnes 6399378046)
+async function railSettled(p, id, focused) {
+  return p.evaluate(([id, focused]) => new Promise((res) => {
+    const wrap = document.querySelector('.folio-ledger .tabrail-wrap'), rail = wrap && wrap.querySelector('.tabrail');
+    if (!rail) return res('no tab rail');
+    const t0 = performance.now();
+    let last = NaN, same = 0;
+    const state = () => {
+      const sel = rail.querySelector('.ptab[aria-selected="true"]'), rr = rail.getBoundingClientRect();
+      let lo = Math.max(rr.left, 0), hi = Math.min(rr.right, window.innerWidth);
+      if (wrap.classList.contains('overflowing')) { lo = Math.max(lo, wrap.querySelector('.rail-arrow.l').getBoundingClientRect().right); hi = Math.min(hi, wrap.querySelector('.rail-arrow.r').getBoundingClientRect().left); }
+      const sr = sel && sel.getBoundingClientRect(), foc = !!sel && document.activeElement === sel;
+      const ok = !!sel && sel.dataset.id === id && (!focused || foc) && sr.left >= lo - 0.5 && sr.right <= hi + 0.5;
+      return { ok, sel: sel ? sel.dataset.id : null, focused: foc, tab: sr ? Math.round(sr.left) + '..' + Math.round(sr.right) : null, view: Math.round(lo) + '..' + Math.round(hi), scroll: Math.round(rail.scrollLeft) + '/' + (rail.scrollWidth - rail.clientWidth) };
+    };
+    const tick = () => {
+      const x = rail.scrollLeft;
+      same = x === last ? same + 1 : 0; last = x;
+      const st = state();
+      if (same >= 3 && st.ok) return res(null);
+      if (performance.now() - t0 > 2000) { delete st.ok; return res('rail not settled on ' + id + (focused ? ' (focused)' : '') + ' within 2 s: ' + JSON.stringify(st)); }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }), [id, !!focused]);
+}
+
 // ---------------------------------------------------------------------------
 await test('first visit: New Game has focus, no Continue, no word help over the title', async () => {
   const { p, errors, ctx, hit } = await ctxPage({ width: 390, height: 844 }, { touch: true });
@@ -319,6 +349,42 @@ for (const w of [320, 360, 390]) {
 }
 
 // ---------------------------------------------------------------------------
+// a save on every page and the newest in slot 20, so each tab carries its count and the last also the mark: on phones
+// no tab label clipped, at normal and 200 % text, and the rail fits or shows its arrows (Local CL-385; the six-slot
+// fixture's short labels missed the clipping at normal text)
+for (const width of [320, 390]) {
+  await test('ledger tabs with a save on each page, the newest in slot 20, at ' + width + ' px: no label clipped at normal and 200% text', async () => {
+    const { p, errors, ctx, hit } = await ctxPage({ width, height: 640 }, { touch: true });
+    await p.evaluate(async () => {
+      for (const n of [2, 9, 15, 20]) {
+        const s = RB.game.debugStart('rw.village', 22, 30, { edition: RB.edition.forNew(), comp: 'nao', profile: 'E', flags: { departed: true } });
+        s.player.name = 'Slot ' + n;
+        await new Promise((r) => setTimeout(r, 60));
+        await RB.save.writeSlot(n, s, { force: true, thumb: RB.render.thumbnail() });
+      }
+      await RB.game.toTitle();
+    });
+    await p.waitForSelector('.title [data-a=continue]:not(.hidden)');
+    for (const scale of [1, 2]) {
+      await p.evaluate((sc) => { RB.game.settings.textScale = sc; RB.game.applySettings(); }, scale);
+      await p.waitForTimeout(150);
+      await hit('.title [data-a=load]');
+      await p.waitForSelector('.folio-ledger .rec');
+      await p.waitForTimeout(400);
+      const tabs = await p.evaluate(() => [...document.querySelectorAll('.folio-ledger .ptab')].map((t) => t.dataset.id + ':' + (t.querySelector('.pg-n') ? t.querySelector('.pg-n').textContent : '-') + (t.querySelector('.pg-mk') ? '+mark' : '') + (t.getAttribute('aria-selected') === 'true' ? '*' : '')));
+      assert(tabs.join(' ') === 'lp0:1 lp1:1 lp2:1 lp3:1+mark*', 'the fixture: ' + tabs.join(' '));
+      const wait = await railSettled(p, 'lp3', false);
+      const probs = (wait ? [wait] : []).concat(await railProblems(p));
+      assert(!probs.length, width + ' px @' + scale + 'x: ' + probs.join(' | '));
+      await hit('.folio-ledger [data-folio-close]');
+      await p.waitForTimeout(150);
+    }
+    assert(!errors.length, errors.join('; '));
+    await ctx.close();
+  });
+}
+
+// ---------------------------------------------------------------------------
 // twenty slots in pages of six at 320 px and 200 % text, where the four tabs cannot fit in one row: the selected tab
 // wholly in view when the ledger opens on the newest's page, after arrow keys (focus kept on the tab) and after a save
 // moves to its slot's page; the rail's arrows scroll it; Back closes the ledger from page 3 (Local CL-383)
@@ -346,8 +412,8 @@ await test('ledger tabs at 320 px and 200% text: selected tab in view on opening
   await p.focus('.folio-ledger .ptab[aria-selected="true"]');
   for (const [key, id] of [['ArrowLeft', 'lp2'], ['ArrowLeft', 'lp1'], ['ArrowLeft', 'lp0'], ['End', 'lp3'], ['Home', 'lp0']]) {
     await p.keyboard.press(key);
-    await p.waitForTimeout(250);
-    s = await sel(); probs = await railProblems(p);
+    const wait = await railSettled(p, id, true);
+    s = await sel(); probs = (wait ? [wait] : []).concat(await railProblems(p));
     assert(s.id === id && s.focused && !probs.length, key + ': ' + JSON.stringify(s) + ' ' + probs.join(' | '));
   }
   // the rail's own arrows scroll it
@@ -372,13 +438,15 @@ await test('ledger tabs at 320 px and 200% text: selected tab in view on opening
   await p.waitForTimeout(300);
   await hit('.folio-ledger .ptab[data-id="lp2"]');
   await p.waitForTimeout(300);
-  probs = await railProblems(p);
+  const tapWait = await railSettled(p, 'lp2', false);
+  probs = (tapWait ? [tapWait] : []).concat(await railProblems(p));
   assert(!probs.length, 'page 3 chosen by tap: ' + probs.join(' | '));
   await hit('.rec[data-slot="15"] [data-a=save]');
   await p.waitForFunction(() => /Fifteen/.test((document.querySelector('.rec[data-slot="15"]') || {}).innerText || ''));
   await p.waitForTimeout(300);
+  const saveWait = await railSettled(p, 'lp2', false);
   const f = await p.evaluate(() => { const a = document.activeElement; return { slot: a && a.closest('[data-slot]') ? a.closest('[data-slot]').dataset.slot : null, a: a && a.getAttribute('data-a') }; });
-  s = await sel(); probs = await railProblems(p);
+  s = await sel(); probs = (saveWait ? [saveWait] : []).concat(await railProblems(p));
   assert(s.id === 'lp2' && f.slot === '15' && f.a === 'save' && !probs.length, 'after the save: ' + JSON.stringify({ s, f }) + ' ' + probs.join(' | '));
   // Back from page 3 closes the ledger
   await hit('.folio-ledger [data-folio-close]');
