@@ -1,4 +1,4 @@
-// Title screen and six-slot travel ledger, driven with real clicks and keys
+// Title screen and the travel ledger (twenty slots in pages of six), driven with real clicks and keys
 // against the built index.html (fresh isolated contexts, synthetic saves only).
 // Usage: node tests/e2e/title_ledger.mjs [filter]
 import { serve, launch, page } from './lib.mjs';
@@ -41,7 +41,8 @@ async function ctxPage(vp, opts = {}) {
   return Object.assign(r, { ctx, hit });
 }
 // visible controls inside a container that are narrower/shorter than 44 px,
-// and anything poking out past the right edge of the viewport
+// and anything poking out past the right edge of the viewport (except inside a paper-tab rail, which scrolls with
+// visible arrows when its tabs cannot fit, as tests/e2e/folio.mjs checks it: railProblems below)
 async function layoutProblems(p, scope) {
   return p.evaluate((scope) => {
     const out = [];
@@ -54,12 +55,36 @@ async function layoutProblems(p, scope) {
       if (!r.width || !r.height || el.closest('[hidden]')) continue;
       const cs = getComputedStyle(el);
       if (cs.visibility === 'hidden' || cs.display === 'none') continue;
-      if (r.right > W + 1.5 || r.left < -1.5) out.push('outside viewport: ' + el.tagName + '.' + el.className + ' ' + Math.round(r.left) + '..' + Math.round(r.right));
+      if ((r.right > W + 1.5 || r.left < -1.5) && !el.closest('.tabrail, .ribbon')) out.push('outside viewport: ' + el.tagName + '.' + el.className + ' ' + Math.round(r.left) + '..' + Math.round(r.right));
       if (el.matches('button') && !el.closest('.jline') && (r.height < 43.5 || r.width < 43.5)) out.push('small control: ' + (el.textContent || el.getAttribute('aria-label') || '').trim().slice(0, 30) + ' ' + Math.round(r.width) + 'x' + Math.round(r.height));
     }
     for (const sc of root.querySelectorAll('.leaf, .title, .tmenu, .deck')) if (sc.scrollWidth > sc.clientWidth + 1) out.push('horizontal overflow in .' + sc.className + ' ' + sc.scrollWidth + '>' + sc.clientWidth);
     return out.slice(0, 12);
   }, scope);
+}
+// the ledger's page tabs: the rail fits, or scrolls with visible arrows; no label clipped; the selected tab wholly in
+// the rail's visible part (not under an arrow); Back on screen
+async function railProblems(p) {
+  return p.evaluate(() => {
+    const out = [];
+    const W = window.innerWidth;
+    const wrap = document.querySelector('.folio-ledger .tabrail-wrap');
+    if (!wrap) return ['no tab rail'];
+    const rail = wrap.querySelector('.tabrail'), arrows = wrap.classList.contains('overflowing');
+    if (!(rail.scrollWidth <= rail.clientWidth + 1 || arrows)) out.push('rail neither fits nor shows its arrows');
+    for (const t of rail.querySelectorAll('.ptab')) {
+      const a = t.getBoundingClientRect(), l = t.querySelector('.tl').getBoundingClientRect();
+      if (l.left < a.left - 0.5 || l.right > a.right + 0.5) out.push('label clipped: ' + t.dataset.id);
+    }
+    const sel = rail.querySelector('.ptab[aria-selected="true"]');
+    const rr = rail.getBoundingClientRect(), sr = sel.getBoundingClientRect();
+    let lo = Math.max(rr.left, 0), hi = Math.min(rr.right, W);
+    if (arrows) { lo = Math.max(lo, wrap.querySelector('.rail-arrow.l').getBoundingClientRect().right); hi = Math.min(hi, wrap.querySelector('.rail-arrow.r').getBoundingClientRect().left); }
+    if (sr.left < lo - 0.5 || sr.right > hi + 0.5) out.push('selected tab ' + sel.dataset.id + ' not wholly in view: ' + Math.round(sr.left) + '..' + Math.round(sr.right) + ' in ' + Math.round(lo) + '..' + Math.round(hi));
+    const c = document.querySelector('.folio-ledger [data-folio-close]').getBoundingClientRect();
+    if (c.left < -0.5 || c.right > W + 0.5) out.push('Back off screen');
+    return out;
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -210,8 +235,9 @@ await test('Manage → Delete asks first and Cancel keeps the save; Copy duplica
   // Copy slot 2 into the empty slot 6
   if (!(await p.locator('.rec[data-slot="2"] [data-a=copy]').isVisible())) await hit('.rec[data-slot="2"] [data-a=manage]');
   await hit('.rec[data-slot="2"] [data-a=copy]');
-  await p.waitForSelector('[role=alertdialog]');
-  await p.click('[role=alertdialog] button:has-text("Slot 6 (empty)")');
+  // the copy's target: one line for each other slot (tests/e2e/save_slots20.mjs covers the list)
+  await p.waitForSelector('.folio-copyslot .ng-opt[data-slot="6"]');
+  await hit('.folio-copyslot .ng-opt[data-slot="6"]');
   await p.waitForFunction(async () => { const l = await RB.save.list(); return !l[5].empty; });
   const six = p.locator('.rec[data-slot="6"]');
   await p.waitForFunction(() => /Aki/.test((document.querySelector('.rec[data-slot="6"]') || {}).innerText || ''));
@@ -283,7 +309,7 @@ for (const w of [320, 360, 390]) {
       await hit('.title [data-a=load]');
       await p.waitForSelector('.folio-ledger .rec');
       await hit('.rec[data-slot="3"] [data-a=manage]');
-      probs = await layoutProblems(p, '.folio-ledger');
+      probs = (await layoutProblems(p, '.folio-ledger')).concat(await railProblems(p));
       assert(!probs.length, 'ledger @' + scale + 'x: ' + probs.join(' | '));
       await hit('.folio-ledger [data-folio-close]');
     }
@@ -291,6 +317,76 @@ for (const w of [320, 360, 390]) {
     await ctx.close();
   });
 }
+
+// ---------------------------------------------------------------------------
+// twenty slots in pages of six at 320 px and 200 % text, where the four tabs cannot fit in one row: the selected tab
+// wholly in view when the ledger opens on the newest's page, after arrow keys (focus kept on the tab) and after a save
+// moves to its slot's page; the rail's arrows scroll it; Back closes the ledger from page 3 (Local CL-383)
+await test('ledger tabs at 320 px and 200% text: selected tab in view on opening, by keys and after a save; arrows scroll; Back from page 3', async () => {
+  const { p, errors, ctx, hit } = await ctxPage({ width: 320, height: 640 }, { touch: true });
+  await seedSix(p, false);
+  await p.evaluate(async () => {
+    const s = RB.game.debugStart('rw.village', 22, 30, { edition: RB.edition.forNew(), comp: 'nao', profile: 'E', flags: { departed: true } });
+    s.player.name = 'Twenty';
+    await new Promise((r) => setTimeout(r, 90));
+    await RB.save.writeSlot(20, s, { force: true, thumb: RB.render.thumbnail() });
+    await RB.game.toTitle();
+    RB.game.settings.textScale = 2; RB.game.applySettings();
+  });
+  await p.waitForSelector('.title [data-a=continue]:not(.hidden)');
+  await hit('.title [data-a=load]');
+  await p.waitForSelector('.folio-ledger .rec');
+  await p.waitForTimeout(400);
+  const sel = () => p.evaluate(() => { const t = document.querySelector('.folio-ledger .ptab[aria-selected="true"]'); return { id: t.dataset.id, focused: document.activeElement === t }; });
+  let s = await sel(), probs = await railProblems(p);
+  assert(s.id === 'lp3' && !probs.length, 'opening on the newest\'s page: ' + JSON.stringify(s) + ' ' + probs.join(' | '));
+  assert(await p.evaluate(() => document.querySelector('.folio-ledger .tabrail-wrap').classList.contains('overflowing')), 'the rail should scroll here (four tabs at 200 %)');
+  await p.screenshot({ path: 'tests/e2e/out/title_ledger_tabs_320_2x.png' });
+  // arrow keys along the rail: each newly selected tab focused and wholly in view
+  await p.focus('.folio-ledger .ptab[aria-selected="true"]');
+  for (const [key, id] of [['ArrowLeft', 'lp2'], ['ArrowLeft', 'lp1'], ['ArrowLeft', 'lp0'], ['End', 'lp3'], ['Home', 'lp0']]) {
+    await p.keyboard.press(key);
+    await p.waitForTimeout(250);
+    s = await sel(); probs = await railProblems(p);
+    assert(s.id === id && s.focused && !probs.length, key + ': ' + JSON.stringify(s) + ' ' + probs.join(' | '));
+  }
+  // the rail's own arrows scroll it
+  const left = () => p.evaluate(() => document.querySelector('.folio-ledger .tabrail').scrollLeft);
+  const a0 = await left();
+  await hit('.folio-ledger .rail-arrow.r');
+  await p.waitForTimeout(400);
+  const a1 = await left();
+  await hit('.folio-ledger .rail-arrow.l');
+  await p.waitForTimeout(400);
+  const a2 = await left();
+  assert(a1 > a0 && a2 < a1, 'the arrows do not scroll the rail: ' + [a0, a1, a2].join(' → '));
+  await hit('.folio-ledger [data-folio-close]');
+  await p.waitForTimeout(150);
+  // from the game: Save into slot 15, whose page then opens with focus on its own control and its tab in view
+  await p.evaluate(() => { RB.game.debugStart('co.village', 20, 18, { edition: RB.edition.forNew(), comp: 'ren', profile: 'E', flags: { departed: true } }); RB.game.s.player.name = 'Fifteen'; });
+  await p.waitForTimeout(300);
+  await p.evaluate(() => RB.ui.menu.open());
+  await hit('[data-util=save]');
+  await hit('.sv-slip [data-a=save]');
+  await p.waitForSelector('.folio-ledger .rec');
+  await p.waitForTimeout(300);
+  await hit('.folio-ledger .ptab[data-id="lp2"]');
+  await p.waitForTimeout(300);
+  probs = await railProblems(p);
+  assert(!probs.length, 'page 3 chosen by tap: ' + probs.join(' | '));
+  await hit('.rec[data-slot="15"] [data-a=save]');
+  await p.waitForFunction(() => /Fifteen/.test((document.querySelector('.rec[data-slot="15"]') || {}).innerText || ''));
+  await p.waitForTimeout(300);
+  const f = await p.evaluate(() => { const a = document.activeElement; return { slot: a && a.closest('[data-slot]') ? a.closest('[data-slot]').dataset.slot : null, a: a && a.getAttribute('data-a') }; });
+  s = await sel(); probs = await railProblems(p);
+  assert(s.id === 'lp2' && f.slot === '15' && f.a === 'save' && !probs.length, 'after the save: ' + JSON.stringify({ s, f }) + ' ' + probs.join(' | '));
+  // Back from page 3 closes the ledger
+  await hit('.folio-ledger [data-folio-close]');
+  await p.waitForTimeout(200);
+  assert(await p.locator('.folio-ledger').count() === 0, 'Back did not close the ledger from page 3');
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
 
 // ---------------------------------------------------------------------------
 // the scene behind the title: the noren and the moon keep clear of the title

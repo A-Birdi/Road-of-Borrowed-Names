@@ -195,7 +195,7 @@ export default async (t) => {
     s.x = 9;
     await RB.save.writeRecovery(4, s, 'suspend');
     let ls = await RB.save.list();
-    t.ok(ls[3].suspend && ls[3].suspendNewer && ls.length === 6, 'a suspend point is listed with its slot; still six slots');
+    t.ok(ls[3].suspend && ls[3].suspendNewer && ls.length === RB.save.SLOTS && RB.save.SLOTS === 20, 'a suspend point is listed with its slot; still every slot (twenty)');
     const rd = await RB.save.read(4, 'suspend');
     t.eq(rd.state.x, 9, 'one suspend point per slot: the newest replaces the last');
     await RB.save.dropSuspend(4);

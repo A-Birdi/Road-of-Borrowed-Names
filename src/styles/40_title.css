@@ -136,6 +136,12 @@ body.reduced-motion .st-more svg { transition: none; }
 /* ---- the travel ledger -------------------------------------------------------------- */
 .folio-ledger .leaf { padding-top: 10px; container-type: inline-size; }
 .ledger { list-style: none; margin: 0; padding: 0; }
+/* the ledger's page tabs (the slots in pages of six): how many are in use, and this journey's or the newest save's mark */
+.folio-ledger .ptab { min-width: 4.4em; }
+.folio-ledger .ptab .tl { display: inline-flex; align-items: center; gap: 0.35em; }
+.folio-ledger .ptab .pg-n { min-width: 1.45em; padding: 0 0.35em; border-radius: 0.75em; background: var(--paper-3); color: var(--ink-2); font-size: 0.8em; font-weight: 700; line-height: 1.45; text-align: center; }
+.folio-ledger .ptab .pg-mk { display: inline-flex; }
+.folio-ledger .ptab .pg-mk svg { width: 1em; height: 1em; }
 .folio-ledger .slots, .ledger .slot { background: none; border-radius: 0; }
 .rec {
   border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; background: none;
