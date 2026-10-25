@@ -1120,8 +1120,9 @@
       apart; Windows-built pages two bytes longer); the single-process unit run near Node's default heap on Windows
       (4,288 MB; CC-024's units failed there twice and passed with 8,192 MB; a runner change, files in batches for
       example, would be its own proposal). Evidence (VALIDATION, CC-024): each candidate's own runs and controls before
-      integration; Cloud's lane on the integrated tip's own page, one step at a time (U 58,365/0; 21 browser steps and
-      `quest_guide_audit`, every one exit 0; the audit 56 moves, 53 pointed at, 2 by design, 1 miss, `co_main`); Local's
+      integration; Cloud's lane on the integrated tip's own page, one step at a time (U 58,365/0; 19 browser-suite runs
+      (20 tests, counting "geometry" and "painted geometry" apart), `validate.mjs` and `quest_guide_audit`, every one
+      exit 0; the audit 56 moves, 53 pointed at, 2 by design, 1 miss, `co_main`); Local's
       Windows lane on its build of the tip (every browser step's first outcome passed but `play_ui`'s known help-sheet
       report; units at Node's default 4,288 MB heap failed twice, heap out of memory, and gave 58,365/0 only with a
       changed 8,192 MB heap: memory pressure near the Windows default heap, CC-024's share not determined). No all-suite
