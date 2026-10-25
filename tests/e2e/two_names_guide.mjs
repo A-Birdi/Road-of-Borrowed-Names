@@ -9,8 +9,10 @@
 //  3. after the gathering with a companion chosen: the shrine (4,2), in the hall with its marker on the shrine, and from
 //     the village with a marker on the way;
 //  4. the next stage, as before: the coast road;
-//  5. a save made between the gathering and the choice, loaded: still the hall; reading the guide changes no flag or
-//     quest; no page errors.
+//  5. a save made between the gathering and the choice, loaded: the load succeeds and replaces the live state (a new
+//     state object, and a flag put on the live state after saving is gone), restoring the hall, the gathering, stage 0
+//     and no one chosen; still the hall (Agnes 6396529618); reading the guide changes no flag, quest or choice; no page
+//     errors.
 // Usage: node tools/build.mjs && node tests/e2e/two_names_guide.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -27,7 +29,16 @@ async function guide(map, x, y, flags, quests, qid, o = {}) {
     RB.game.settings.textSpeed = 'instant';
     let t = Date.now() - 100000;
     for (const [q, v] of quests) { RB.state.setQuest(s, q, v); s.quests[q].t = (t += 1000); }
-    if (o.save) { await RB.save.manualSave(1); await RB.game.loadCampaign(1, 'manual'); }
+    let load = null;
+    if (o.save) {
+      await RB.save.manualSave(1);
+      // a flag the save does not hold, put on the live state after saving: a load that really happened replaces it
+      const live = RB.game.s;
+      live.flags.tng_not_in_save = true;
+      const okLoad = await RB.game.loadCampaign(1, 'manual');
+      const L = RB.game.s;
+      load = { ok: okLoad, replaced: L !== live, sentinel: !!L.flags.tng_not_in_save, map: L.map, gathered: !!L.flags.rw_hall_gather, stage: L.quests.rw_depart ? L.quests.rw_depart.stage : null, prov: L.provisional || null };
+    }
     const S = RB.game.s;
     RB.questGuide.reset(); RB.questMarks.refresh();
     { const W = RB.world.W, t0 = performance.now(); while (W.time - W.enteredAt < 1100 && performance.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 50)); }
@@ -39,7 +50,7 @@ async function guide(map, x, y, flags, quests, qid, o = {}) {
     const N = G.nudges(qid, S);
     const marks = RB.questMarks.marks().marks.map((k) => ({ kind: k.kind, target: k.target, id: k.id, map: k.map, tx: k.tx, ty: k.ty, to: k.to, edge: k.edge }));
     const after = JSON.stringify([S.flags, S.quests, S.provisional || null]);
-    return { how: r.how, stage: S.quests[qid].stage, map: S.map, prov: S.provisional || null, targets: r.targets.map((tg) => tg.map + ':' + (tg.id || tg.p || tg.kind) + (tg.x != null ? '@' + tg.x + ',' + tg.y : '')), next, nudge: N.lines.map((ls) => ls.map((l) => l.en)), markable: N.markable, marks, pure: before === after };
+    return { load, how: r.how, stage: S.quests[qid].stage, map: S.map, prov: S.provisional || null, targets: r.targets.map((tg) => tg.map + ':' + (tg.id || tg.p || tg.kind) + (tg.x != null ? '@' + tg.x + ',' + tg.y : '')), next, nudge: N.lines.map((ls) => ls.map((l) => l.en)), markable: N.markable, marks, pure: before === after };
   }, [map, x, y, flags, quests, qid, o]);
 }
 const sum = (r) => JSON.stringify({ how: r.how, targets: r.targets, next: r.next, marks: r.marks.slice(0, 3) });
@@ -79,6 +90,8 @@ const GATHERED = Object.assign({}, EVE, { rw_hall_gather: true, 'enter:rw.hall:r
 // 5. a save between the gathering and the choice, loaded
 {
   const r = await guide('rw.hall', 5, 6, GATHERED, [['rw_depart', 0]], 'rw_depart', { save: true });
+  const L = r.load || {};
+  ok(L.ok === true && L.replaced && !L.sentinel && L.map === 'rw.hall' && L.gathered && L.stage === 0 && !L.prov, 'a save made between the gathering and the choice: the load succeeds and replaces the live state, restoring the hall, the gathering, stage 0 and no one chosen (' + JSON.stringify(L) + ')');
   ok(r.map === 'rw.hall' && !r.prov && r.how === 'authored' && r.targets[0] === 'rw.hall:enter' && !waiting(r), 'a save made between the gathering and the choice, loaded: still the hall (' + sum(r) + ')');
 }
 ok(!errors.length, 'no page errors ' + errors.slice(0, 3).join(' | '));
