@@ -105,6 +105,25 @@ export default async (t) => {
   t.eq(r.t, ['lf.records:npc:lf_tadashi'], 'lf_main 0: the Records Hall');
   r = live('rw_depart', mk(['rw_echo_done', 'departed'], { rw_depart: 1 }, { comp: 'suzu', map: 'rw.road' }));
   t.eq([r.how, r.t], ['authored', ['sg.road:enter:']], 'rw_depart 1: authored — the coast road');
+  // Two Names' first step (CC-223): the Lantern Hall while the gathering or the choice is still to come (the shrine
+  // turns you away before both), then the shrine, derived; a save made in between still points at the hall
+  const RD = ['rw_echo_done', 'rw_evening', 'rw_koji_back', 'bridge_fixed'];
+  r = live('rw_depart', mk(RD, { rw_depart: 0 }));
+  t.eq([r.how, r.t], ['authored', ['rw.hall:enter:']], 'rw_depart 0, before the gathering: authored — the Lantern Hall');
+  const between = mk(RD.concat(['rw_hall_gather']), { rw_depart: 0 }, { map: 'rw.hall', x: 5, y: 6 });
+  r = live('rw_depart', between);
+  t.eq([r.how, r.t], ['authored', ['rw.hall:enter:']], 'rw_depart 0, after the gathering, no one chosen yet: still the hall, not waiting');
+  const bj = JSON.parse(JSON.stringify(between));
+  t.eq(RB.save.validate(bj), [], 'a save between the gathering and the choice validates');
+  r = live('rw_depart', RB.save.migrate(bj));
+  t.eq([r.how, r.t], ['authored', ['rw.hall:enter:']], '… and, loaded, still points at the hall');
+  r = live('rw_depart', mk(RD.concat(['rw_hall_gather']), { rw_depart: 0 }, { map: 'rw.hall', x: 5, y: 6, provisional: 'nao' }));
+  t.eq([r.how, r.t], ['direct', ['rw.hall:prop:shrine@4,2']], 'rw_depart 0, after the gathering, Nao chosen, in the hall: the shrine');
+  const chosen = mk(RD.concat(['rw_hall_gather']), { rw_depart: 0 }, { provisional: 'nao' });
+  r = live('rw_depart', chosen);
+  t.eq([r.how, r.t], ['direct', ['rw.hall:prop:shrine@4,2']], '… and from the village');
+  t.ok(G.nudges('rw_depart', chosen).markable, '… marked');
+  t.eq(staticOf['rw_depart[0]'], ['rw.hall:prop:shrine'], 'rw_depart[0] derived statically: the shrine (no unconditional at)');
   // reachability: a scene warp counts as a way (Tokuji's boat to the tower)
   const lfst = mk(['ch4_done', 'departed', 'lf_arrived', 'lf_town_intro'], { lf_main: 6 }, LF);
   const reach = G.reachable(lfst);

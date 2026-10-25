@@ -57,9 +57,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ] };
   C.quests.rw_depart = { main: true, chapter: 1, title: { jp: 'ふたり の {名前|なまえ}', en: 'Two Names' },
     stages: [
-      // `at`: entering the hall starts the gathering (its onEnter), a step the guidance could not see on its own; it
-      // pointed nowhere and said the step could not go on yet (Agnes, RBN-QA-004)
-      { jp: '{灯|あか}り{堂|どう} に {行|い}こう 。 {誰|だれ} と {旅|たび} を する か 、 {決|き}める {時|とき} だ 。', en: 'Go to the Lantern Hall. It\'s time to decide who will travel with you.', at: { map: 'rw.hall' } },
+      // the hall while the gathering or the choice is still to come: entering it starts the gathering (its onEnter), a
+      // step the guidance could not see on its own (RBN-QA-004), and the shrine turns you away before both; once a
+      // companion is chosen the guidance finds the shrine itself, where the step ends (CC-223; an unconditional `at`
+      // kept pointing at the hall's door)
+      { jp: '{灯|あか}り{堂|どう} に {行|い}こう 。 {誰|だれ} と {旅|たび} を する か 、 {決|き}める {時|とき} だ 。', en: 'Go to the Lantern Hall. It\'s time to decide who will travel with you.', atIf: [{ if: '!rw_hall_gather|!prov', at: { map: 'rw.hall' } }] },
       // finished quietly when Chapter 2 begins (sg.arrive); `at` points the guidance at the coast road (docs/CONTENT.md §4)
       { jp: '{西|にし} の {灯|ひ} の {道|みち} へ 。 {潮硝子|しおがらす} を {目指|めざ}そう 。', en: 'Take the lantern road west, toward Saltglass.', at: { map: 'sg.road' } },
     ] };
