@@ -4003,6 +4003,8 @@ body.reduced-motion .cb-badges .cb-ib { transition: none; }
 .sg-level legend { font-weight: 600; margin-bottom: 4px; }
 .sg-level .opt { display: inline-flex; gap: 0.35em; align-items: center; min-height: var(--tap); }
 .sg-top { display: flex; flex-wrap: wrap; gap: 0.3em 0.6em; align-items: baseline; margin-bottom: 6px; font-weight: 600; }
+.sg-top:focus { outline: none; }
+.sg-top:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 .sg-top .en { font-weight: 400; color: var(--ink-2); }
 .sg-status { margin: 8px 0 4px; min-height: 1.6em; }
 .sg-check { color: var(--danger-ink); }
@@ -25860,7 +25862,7 @@ RB.state = (function () {
         known: {},       // map id -> { detail id -> { t, state } } authored annotations
         pins: {},        // map id -> [{ id, type, note, x, y }] player pins (≤ 20 per map)
       },
-      bookmarks: [],     // kept sentences [{ id, jp, en, who, src, map, t, title, note }]
+      bookmarks: [],     // kept sentences [{ id, jp, en, who, src, sid, map, t, title, note }]
       creatures: {},     // enemy id -> { t, maps: {}, notes: {} } creatures met
       awarded: {},       // award-bearing event id -> time (RB.state.once: at most once)
       practice: RB.practice ? RB.practice.fresh() : undefined, // roadside activities (src/engine/08_practice.js)
@@ -29430,10 +29432,29 @@ RB.props = (function () {
     px(c, x + 2, y + 1, 12, 1, p.wood[3]);
     px(c, x + 5, y + 3, 1, 3, '#00000030');
   });
-  def('noticeboard', { w: 2 }, (c, x, y, p) => {
+  // A board whose placement lists its notices (o.papers: each one's condition, in order; o.picture: a child's drawing,
+  // when its condition holds) shows those that hold and nothing else (RBN-QA-175: Ashihara's, whose notices you write);
+  // every other board, its usual few. posted(o): which hold, as bits (the drawn art's variant reads it too).
+  const posted = (o) => {
+    const s = RB.game && RB.game.s;
+    let b = 0;
+    if (!s || !o) return 0;
+    (o.papers || []).forEach((cond, i) => { if (RB.state.test(s, cond)) b |= 1 << i; });
+    if (o.picture && RB.state.test(s, o.picture)) b |= 16;
+    return b;
+  };
+  def('noticeboard', { w: 2, posted }, (c, x, y, p, t, o) => {
     px(c, x + 3, y + 8, 2, 7, p.wood[2]);
     px(c, x + 27, y + 8, 2, 7, p.wood[2]);
     px(c, x + 1, y - 6, 30, 15, p.wood[0]);
+    if (o && o.papers) {
+      // the board's own boards, and on them only what is posted (the first slot, a notice alone, is the middle)
+      px(c, x + 3, y - 4, 26, 11, p.wood[1]);
+      const b = posted(o);
+      [[12, -4, 8, 8], [5, -3, 6, 6], [13, -3, 6, 6], [21, -3, 6, 5]].forEach(([dx, dy, w, h], i) => { if (b & (1 << i)) px(c, x + dx, y + dy, w, h, '#f4efe0'); });
+      if (b & 16) { px(c, x + 23, y + 2, 5, 4, '#efe6d0'); px(c, x + 24, y + 3, 3, 2, '#3a4a6a'); }
+      return;
+    }
     px(c, x + 3, y - 4, 26, 11, '#d8cca8');
     px(c, x + 5, y - 3, 7, 5, '#f4efe0');
     px(c, x + 14, y - 2, 6, 6, '#efe6d0');
@@ -31014,10 +31035,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     shadow: () => [16, 30, 8, 2.5, 0.3],
   });
-  // Notice board: two posts, a plank roof, pinned notices with lettering.
+  // Notice board: two posts, a plank roof, pinned notices with lettering. A board whose placement lists its notices
+  // (o.papers, o.picture; src/engine/25_props.js) shows those that hold and nothing else (RBN-QA-175): its variant is
+  // 8 + their bits, in fixed places (the first, a notice alone, in the middle; a picture low on the right).
+  const SLOTS = [[22, -11, 18, 16], [7, -10, 12, 15], [23, -9, 11, 12], [38, -11, 12, 11]];
   art('noticeboard', {
     box: [-2, -26, 68, 60], ink: true,
-    v: (o) => cxy(o) % 3,
+    v: (o) => (o.papers ? 8 + RB.props.P.noticeboard.posted(o) : cxy(o) % 3),
     draw(g, M, v, f, info) {
       const w5 = M.wood;
       post(g, 5, -8, 5, 38, w5);
@@ -31029,15 +31053,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let x = 0; x < 64; x += 4) R(g, x, -16, 3, 2, M.roof[1]);
       R(g, 4, -22, 56, 1, M.roof[4]);
       R(g, 0, -14, 64, 1, M.roof[0]);
-      const notes = [[7, -10, 12, 15], [22, -9, 10, 12], [35, -11, 13, 10], [49, -8, 9, 13], [36, 1, 11, 10]];
-      notes.forEach(([x, y, w, h], i) => {
-        const r = hh(v, i, 13);
-        if (i === 4 && v === 1) return;
+      const note = (x, y, w, h, r) => {
         R(g, x, y, w, h, PP[3]); R(g, x, y, w, 1, PP[4]); R(g, x + w - 1, y + 1, 1, h - 1, PP[1]); R(g, x, y + h - 1, w, 1, PP[1]);
         for (let k = 0; k < (h - 4) / 2; k++) R(g, x + 2, y + 3 + k * 2, w - 4 - ((r >>> k) % 3), 1, INK[3]);
         if (r % 3 === 0) R(g, x + w - 4, y + h - 4, 3, 3, '#b84a3a');
         R(g, x + (w >> 1), y, 1, 1, (r >>> 5) & 1 ? '#c83a3a' : BR[3]);
-      });
+      };
+      if (v >= 8) {
+        const b = v - 8;
+        SLOTS.forEach(([x, y, w, h], i) => { if (b & (1 << i)) note(x, y, w, h, hh(3, i, 13)); });
+        if (b & 16) {
+          // a child's picture of the festival night: a dark sky, two lanterns
+          R(g, 50, -4, 10, 10, PP[3]); R(g, 51, -3, 8, 8, '#3a4a6a');
+          R(g, 52, 0, 2, 2, '#e8a040'); R(g, 56, -1, 2, 2, '#c83a3a'); R(g, 51, 3, 8, 1, '#5a6a4a');
+          R(g, 55, -4, 1, 1, BR[3]);
+        }
+      } else {
+        const notes = [[7, -10, 12, 15], [22, -9, 10, 12], [35, -11, 13, 10], [49, -8, 9, 13], [36, 1, 11, 10]];
+        notes.forEach(([x, y, w, h], i) => {
+          if (i === 4 && v === 1) return;
+          note(x, y, w, h, hh(v, i, 13));
+        });
+      }
       if (info.snow) K.snowTops(g, -2, -26, 68, 12, M.snow, v, 2);
     },
     shadow: () => [32, 30, 30, 3, 0.3],
@@ -40586,6 +40623,8 @@ RB.pets = (function () {
     if (RB.discovery && RB.discovery.busy && RB.discovery.busy()) return 'Not while you are working something out — afterwards.';
     if (!visible(s, 'world')) return 'Your pet is hidden in exploration (Settings › Display).';
     if (!RB.content.scenes['pets.greet.' + s.comp + '.' + sp]) return 'Not now.';
+    // the moment begins with the animal coming to your companion's side: a free tile on dry ground beside them (RBN-QA-172)
+    if (RB.petWorld && RB.petWorld.beside && !RB.petWorld.beside('comp')) return 'Not here — there is no free spot on dry ground beside your companion. Try again somewhere with room.';
     return true;
   }
   function greet(s, o) {
@@ -42448,12 +42487,15 @@ RB.world = (function () {
   // record says so (RBN-QA-120).
   const personOf = (n) => (n.def && (n.def.char || n.def.id)) || n.id;
   // the maps where `person` appears now (any: where the story ever puts them)
-  function mapsWith(person, except, any) {
+  // `origin`: only the places the story keeps them, for where someone not yet seen comes from (wayFor): a placement
+  // marked `visiting` (one night's crowd: RBN-QA-020's festival) is not one of them
+  function mapsWith(person, except, any, origin) {
     const st = s(), out = [];
     for (const id in RB.content.maps) {
       if (id === except) continue;
       for (const n of RB.content.maps[id].npcs || []) {
         if ((n.char || n.id) !== person || (!any && n.if && !RB.state.test(st, n.if))) continue;
+        if (origin && n.visiting) continue;
         if (st.comp && n.id === st.comp && !n.alwaysShow) continue;
         out.push(id);
         break;
@@ -42509,7 +42551,7 @@ RB.world = (function () {
       // nearest place the story keeps them (their home, their work)
       const was = W.seenOn[person];
       if (was && was !== m.id) { dests = [was]; reason = 'came from'; }
-      else { dests = mapsWith(person, m.id, true); reason = 'from their place'; }
+      else { dests = mapsWith(person, m.id, true, true); reason = 'from their place'; }
     } else if (a.def && a.def.leaveTo) { dests = [].concat(a.def.leaveTo); reason = 'authored'; }
     else { dests = mapsWith(person, m.id); reason = 'destination'; }
     const hop = towards(m.id, dests);
@@ -42906,6 +42948,13 @@ RB.world = (function () {
     RB.audio && RB.audio.sfx((t && t.step) || 'step', { vol: 0.5 });
   }
 
+  // a map can hold you while a story moment lasts (e.g. a night that only this map has): map.def.hold = [{ if, scene,
+  // except: [map ids], doors }]. The hold that holds this exit now, or null: its condition holding, the exit not
+  // excepted, a door only when the hold says doors (arrive() below; the test driver routes by it too, tests/e2e/drive.mjs)
+  function holdAt(def, ex, st) {
+    return ((def && def.hold) || []).find((h) => RB.state.test(st, h.if) && !(h.except || []).includes(ex.to) && (h.doors || !ex.door)) || null;
+  }
+
   function arrive() {
     const p = W.player;
     const st = s();
@@ -42914,9 +42963,7 @@ RB.world = (function () {
     if (W.map.def.sea && RB.sail) { W.path = W.path && W.path.length ? W.path : null; RB.sail.onStep(); return; }
     const ex = RB.maps.exitAt(W.map, p.x, p.y);
     if (ex) {
-      // a map can hold you while a story moment lasts (e.g. a night that only
-      // this map has): map.def.hold = [{ if, scene, except: [map ids], doors }]
-      const hold = (W.map.def.hold || []).find((h) => RB.state.test(st, h.if) && !(h.except || []).includes(ex.to) && (h.doors || !ex.door));
+      const hold = holdAt(W.map.def, ex, st);
       if (hold || (ex.locked && (!ex.unlock || !RB.state.test(st, ex.unlock)))) {
         W.path = null;
         // step back and explain
@@ -42975,6 +43022,11 @@ RB.world = (function () {
     if (!W.map) return;
     const p = W.player;
     if (W.turnHold > 0) W.turnHold -= dt;
+    // a tap's walk is the world's: a scene or a battle begun while it is under way (any scene: every one holds the
+    // world, and the walk's own arrival clears it before starting one) ends it here, before the step in progress
+    // arrives, so that its interaction never fires through that scene or once it is over (RBN-QA-182; Agnes
+    // 6384084366, Local CL-300). A menu or the folio only pauses it, as before.
+    if ((W.path || W.pathTarget) && (RB.script.isRunning() || (RB.game.inBattle && RB.game.inBattle()))) { W.path = null; W.pathTarget = null; }
     if (stepActor(p, dt)) arrive();
     if (W.comp) stepActor(W.comp, dt);
     if (controllable && !p.mv && RB.game.mode() === 'world') {
@@ -43298,7 +43350,12 @@ RB.world = (function () {
   // A tap on something you can interact with (a person, an interactive prop, your companion)
   // walks to a free tile beside it (any tile of a larger prop), faces it and does what the
   // action key would do there, exactly once. The target is remembered by identity and checked
-  // again on arrival: gone, moved away or no longer shown means nothing happens. A tap on an
+  // again on arrival: gone or no longer shown means nothing happens. Someone who walks (a
+  // person, a creature) and has moved away while you walked is followed once more, to beside
+  // where they stand now, and checked again there; moved again, gone or blocked, nothing happens
+  // and there is no third walk (RBN-QA-182: no chase, nothing done from afar). A scene or a battle
+  // that begins while such a walk is under way (one it did not start itself) ends it: what the
+  // tap was walking to never happens through it or after it (the update's first check). A tap on an
   // interactive prop you are standing on steps off it first. A new tap, a direction key, a
   // scene, a battle or a map change drops the queued interaction (the path it belonged to ends).
   function tapTargetAt(tx, ty) {
@@ -43331,10 +43388,21 @@ RB.world = (function () {
     if (pt.tile) { faceTo(p, pt.tile[0], pt.tile[1]); interact(); return; }
     if (!stillThere(pt.target)) return;
     const t = beside(tilesOf(pt.target), p.x, p.y);
-    if (!t) return; // it moved away while you walked
-    if (pt.only && actorAt(t[0], t[1]) !== pt.only) return; // (a retry from across a counter: that person, nobody else)
+    if (!t) { retry(pt); return; } // it moved away while you walked
+    if (pt.only && actorAt(t[0], t[1]) !== pt.only) return; // (a retry: that one, nobody else)
     faceTo(p, t[0], t[1]);
     interact();
+  }
+  // The one retry for someone who walks and has moved away while you walked to them (RBN-QA-182, as across a counter):
+  // a new walk to beside where they stand now, for them only, the retry spent. Props never move; your companion keeps
+  // close by itself; a retry already spent (or across a counter's): nothing.
+  function retry(pt) {
+    if (pt.target.kind !== 'actor' || pt.tries >= 1) return;
+    const n = pt.target.ref, tiles = tilesOf(pt.target);
+    const path = bfsGoal((x, y) => !tiles.some(([a, b]) => a === x && b === y) && !!beside(tiles, x, y));
+    if (!path || !path.length) return;
+    W.path = path;
+    W.pathTarget = { target: pt.target, path, only: n, tries: 1 };
   }
   // a tap inside the drawn top of a tall interactive thing whose footprint is the tile below (a lantern's lamp; its
   // prop's top/topW, 25_props.js): that thing. The rest of the tile, around and above the picture, is ground as before.
@@ -43402,7 +43470,7 @@ RB.world = (function () {
     const tiles = tilesOf(a.target), near = beside(tiles, p.x, p.y);
     if (near) { if (actorAt(near[0], near[1]) === n) { faceTo(p, near[0], near[1]); interact(); } return; }
     const path = bfsGoal((x, y) => !tiles.some(([tx, ty]) => tx === x && ty === y) && !!beside(tiles, x, y));
-    if (path && path.length) { W.path = path; W.pathTarget = { target: a.target, path, only: n }; return; }
+    if (path && path.length) { W.path = path; W.pathTarget = { target: a.target, path, only: n, tries: 1 }; return; }
     talkAcross(a.target, a.tries + 1);
   }
   // the places a person can be talked to across a counter: a counter (or an `across` prop) beside them, and its free
@@ -43525,6 +43593,7 @@ RB.world = (function () {
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
     musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
     routeOut, peopleTiles, personAt, // routes and who is in the way (tests/e2e/walk_round.mjs)
+    holdAt, // the hold that holds an exit now (arrive(); tests/e2e/drive.mjs routes by it)
   };
 })();
 
@@ -47852,9 +47921,10 @@ RB.questGuide = (function () {
  * - it never makes you wait: when it falls far behind, or the route breaks
  *   (a door, a scene cut, a warp), it catches up discreetly — a short fade at
  *   the tile behind your companion;
- * - when you stop it settles near you on a free tile (not a door, exit,
- *   trigger, person or the tile in front of you), sits, and after a while lies
- *   down; small idle movements are timed from its own random stream, never
+ * - when you stop it settles near you on a free tile of dry ground (not
+ *   water, a door, exit, trigger, person or the tile in front of you), sits,
+ *   and after a while lies down (in water it stays on its feet, in a scene's
+ *   movements too); small idle movements are timed from its own random stream, never
  *   the game's; at rest it breathes and its tail keeps moving, on its own beat
  *   (so do the animals not yet met, between the moments their scenes author);
  * - hidden before it has joined you, when "Show pet in exploration" is off,
@@ -47915,13 +47985,16 @@ RB.petWorld = (function () {
     return false;
   }
   function floor(x, y) { const m = W().map; return x >= 0 && y >= 0 && x < m.w && y < m.h && !RB.maps.blockedStatic(m, x, y); }
+  // water underfoot (the walkable shallows included): it follows you through it, but never settles, rests or is placed
+  // there (RBN-QA-172)
+  function wet(x, y) { const t = RB.maps.tileAt(W().map, x, y); return !!(t && t.water); }
   // a tile just above someone standing is behind their head and shoulders on screen: it would not be seen there
   function covered(x, y) { return occupied(x, y + 1); }
   // somewhere to settle: floor, nobody there, not a way out, a door, a trigger, a foe's patrol square or the
   // tile in front of you (so it never stands on what you are about to use)
   function restable(x, y) {
     const w = W(), m = w.map;
-    if (!floor(x, y) || occupied(x, y) || covered(x, y)) return false;
+    if (!floor(x, y) || wet(x, y) || occupied(x, y) || covered(x, y)) return false;
     if (RB.maps.exitAt(m, x, y) || RB.maps.shutDoorAt(m, x, y) || RB.maps.shutDoorAt(m, x, y - 1)) return false;
     if (m.triggers.some((t) => x >= t.x && x < t.x + t.w && y >= t.y && y < t.y + t.h)) return false;
     const [fx, fy] = RB.world.frontTile();
@@ -47930,23 +48003,29 @@ RB.petWorld = (function () {
     return true;
   }
   // ---- placement --------------------------------------------------------------------------------------
+  // the free dry tile behind the lead (your companion, or you), then any within three steps of them; or null
+  function spotNear() {
+    const w = W(), p = w.player;
+    const lead = w.comp || p, back = DIRS[{ up: 'down', down: 'up', left: 'right', right: 'left' }[p.dir]] || [0, 1];
+    const cand = [[lead.x + back[0], lead.y + back[1]]];
+    for (let r = 1; r <= 3; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (Math.abs(dx) + Math.abs(dy) === r) cand.push([lead.x + dx, lead.y + dy]);
+    const ok = ([x, y]) => floor(x, y) && !wet(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y);
+    return cand.find((q) => ok(q) && !covered(q[0], q[1])) || cand.find(ok) || null;
+  }
   // At a map's entry (a door, a load, a warp): the free tile behind your companion (or behind you),
   // then any free tile near; it fades in there. Nothing is placed where nobody can stand.
   function place() {
     const w = W(), p = w.player;
-    P.map = w.map.id; P.queue = []; P.mv = null; P.act = null; P.idle = null; P.still = 0;
+    P.map = w.map.id; P.queue = []; P.mv = null; P.act = null; P.idle = null; P.still = 0; P.unseen = null;
     P.leadAt = p.x + ',' + p.y; P.leadMv = p.mv || null;
-    const lead = w.comp || p, back = DIRS[{ up: 'down', down: 'up', left: 'right', right: 'left' }[p.dir]] || [0, 1];
-    const cand = [[lead.x + back[0], lead.y + back[1]]];
-    for (let r = 1; r <= 3; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (Math.abs(dx) + Math.abs(dy) === r) cand.push([lead.x + dx, lead.y + dy]);
-    // just met on this map: it starts where it was (the vignette's animal becomes the one that follows)
+    // just met on this map: it starts where it was (the vignette's animal becomes the one that follows; that spot is
+    // authored, so it is taken as it is: on water it steps off once still, as from any tile it should not rest on)
     const hand = P.handoff && P.handoff.map === w.map.id ? P.handoff : null;
     P.handoff = null;
-    const ok = ([x, y]) => floor(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y);
-    const spot = hand ? [hand.x, hand.y] : cand.find((q) => ok(q) && !covered(q[0], q[1])) || cand.find(ok) || null;
-    if (hand) { P.x = spot[0]; P.y = spot[1]; P.alpha = 1; P.fade = 0; P.fx = P.x; P.fy = P.y; P.dir = hand.dir || p.dir; P.placed = true; return; }
+    if (hand) { P.x = hand.x; P.y = hand.y; P.alpha = 1; P.fade = 0; P.fx = P.x; P.fy = P.y; P.dir = hand.dir || p.dir; P.placed = true; return; }
+    const spot = spotNear();
     if (spot) { P.x = spot[0]; P.y = spot[1]; P.alpha = 0; P.fade = 1; }
-    else { P.x = lead.x; P.y = lead.y; P.alpha = 0; P.fade = 0; } // nowhere yet: it appears after your first step
+    else { const lead = w.comp || p; P.x = lead.x; P.y = lead.y; P.alpha = 0; P.fade = 0; P.unseen = P.leadAt; } // nowhere yet: unseen until there is (update)
     P.fx = P.x; P.fy = P.y; P.dir = p.dir; P.placed = true;
     if (RB.game.reducedMotion() && P.fade) { P.alpha = 1; P.fade = 0; }
   }
@@ -48001,6 +48080,18 @@ RB.petWorld = (function () {
         const [lx, ly] = P.leadAt.split(',').map(Number);
         if (Math.abs(lx - p.x) + Math.abs(ly - p.y) > 1) { P.leadAt = at; catchUp('warp'); }
         else P.leadAt = at;
+      }
+    }
+    // placed where there was nowhere to stand (no dry, free tile near the lead): it looks again each time you reach a
+    // new tile, and fades in at the first spot there is (as at a map's entry)
+    if (P.unseen && P.unseen !== p.x + ',' + p.y) {
+      P.unseen = p.x + ',' + p.y;
+      const spot = spotNear();
+      if (spot) {
+        P.unseen = null; P.queue = []; P.mv = null; P.still = 0; P.idle = null;
+        P.x = spot[0]; P.y = spot[1]; P.fx = P.x; P.fy = P.y; P.dir = p.dir;
+        P.leadAt = p.x + ',' + p.y; P.leadMv = p.mv || null;
+        if (RB.game.reducedMotion()) { P.alpha = 1; P.fade = 0; } else { P.alpha = 0; P.fade = 1; }
       }
     }
     if (P.fade) { P.alpha = Math.min(1, P.alpha + dt / 320); if (P.alpha >= 1) P.fade = 0; }
@@ -48164,7 +48255,12 @@ RB.petWorld = (function () {
   function poseNow() {
     const po = {};
     const sp = P.sp;
-    if (P.act && P.act.pose) return Object.assign(po, P.act.pose(P.t - P.act.t0, P.act));
+    if (P.act && P.act.pose) {
+      Object.assign(po, P.act.pose(P.t - P.act.t0, P.act));
+      // (an authored movement in water: the same movement on its feet, never sitting or lying there)
+      if (wet(P.x, P.y)) { delete po.sit; delete po.lie; }
+      return po;
+    }
     if (P.mv) {
       const k = P.mv.t / P.mv.dur;
       if (sp === 'bird') {
@@ -48178,7 +48274,8 @@ RB.petWorld = (function () {
       return po;
     }
     const still = RB.game.reducedMotion();
-    if (P.still > 2500) {
+    // (standing in water it stays on its feet: no sitting or lying down there)
+    if (P.still > 2500 && !wet(P.x, P.y)) {
       if (P.still > 14000 && sp !== 'bird') po.lie = 1;
       else if (P.still > 14000) { po.lie = 1; }
       else if (sp !== 'bird') po.sit = P.still < 2800 ? 0.5 : 1;
@@ -48312,16 +48409,23 @@ RB.petWorld = (function () {
       if (RB.test && RB.test.auto) { P.act = null; res(); }
     });
   }
-  // walk to a free tile beside someone ('comp', 'pc' or an npc id), then face them
+  // the free dry tile beside someone ('comp', 'pc' or an npc id) where come() would go, or null
+  function beside(who) {
+    const w = W(), a = RB.world.actorById(who);
+    if (!a || !w || !w.map) return null;
+    const cand = [];
+    for (const d of ['left', 'right', 'down', 'up']) cand.push([a.x + DIRS[d][0], a.y + DIRS[d][1]]);
+    return cand.find(([x, y]) => floor(x, y) && !wet(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y)) || null;
+  }
+  // walk to a free tile beside someone, then face them; false (and it stays where it is) when there is none or it is
+  // not shown (Greet together is not offered then: RB.pets.canGreet)
   function come(who) {
     return new Promise((res) => {
-      const w = W();
       const a = RB.world.actorById(who);
       if (!a || !P.sp || !shown()) { res(false); return; }
-      const cand = [];
-      for (const d of ['left', 'right', 'down', 'up']) cand.push([a.x + DIRS[d][0], a.y + DIRS[d][1]]);
-      const spot = cand.find(([x, y]) => floor(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y));
+      const spot = beside(who);
       if (!spot) { res(false); return; }
+      if (P.unseen) { P.unseen = null; if (RB.game.reducedMotion()) { P.alpha = 1; P.fade = 0; } else { P.alpha = 0; P.fade = 1; } }
       if (spot[0] === P.x && spot[1] === P.y) { face(a); res(true); return; }
       // a short route over floor; too far or none: it simply appears there (a discreet cut)
       P.queue = [];
@@ -48345,7 +48449,7 @@ RB.petWorld = (function () {
     return {
       sp: P.sp, look: P.look, shown: !!(st && P.sp && shown()), x: P.x, y: P.y, fx: P.fx, fy: P.fy, dir: P.dir, moving: !!P.mv, gait: P.mv ? P.mv.gait : null,
       queue: P.queue.length, still: Math.round(P.still), alpha: +P.alpha.toFixed(2), map: P.map, stats: Object.assign({}, P.stats), last: P.lastDraw || null, drawn: P.drawn || 0,
-      acting: !!P.act, lastCatchUp: P.lastCatchUp || null, lastField: P.lastField || null, pose: P.sp ? poseNow() : null,
+      acting: !!P.act, lastCatchUp: P.lastCatchUp || null, lastField: P.lastField || null, pose: P.sp ? poseNow() : null, unseen: !!P.unseen,
     };
   }
 
@@ -48376,7 +48480,7 @@ RB.petWorld = (function () {
       } catch (err) { /* cosmetic */ }
     });
   }
-  return { update, push, state, act, come, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, nearTile, faceFrom, actorFrame, WILD, _P: P };
+  return { update, push, state, act, come, beside, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, nearTile, faceFrom, actorFrame, WILD, _P: P };
 })();
 
 
@@ -51582,7 +51686,9 @@ RB.questMarks = (function () {
  * was shown with (the player's or companion's name then), the faithful
  * English as it read then, who said it or what it was written on, where,
  * and a compact reference to its source (scene, prop or encounter) with a
- * hash of the source text. The page never re-reads the source to display a
+ * hash of the source text. The scene id it was shown under is kept apart
+ * from that source (sid): it is the voice's lookup for "Hear it", and a
+ * prop's own line is shown under code.prop while its source is the prop. The page never re-reads the source to display a
  * bookmark: a later content change cannot silently give it another meaning.
  * If the source line has changed or gone, the bookmark says it is a saved
  * excerpt (status()).
@@ -51653,9 +51759,32 @@ RB.bookmarks = (function () {
     }
     return null;
   }
+  // A prop's own line is shown under its own scene id, so its recording is found (src/engine/50_world.js), but it is
+  // still the prop's: its source is the prop the player is reading, the one the world reads in front of them (its
+  // condition holding, the last such prop on that tile, as RB.world's propAt picks), when that prop's own line is this
+  // one. Never a prop elsewhere with the same words, nor a hidden one: without a match, nothing is guessed.
+  const PROP_SCENE = 'code.prop';
+  function ownPropInFront(line, s) {
+    const W = RB.world && RB.world.W;
+    if (!W || !W.map || !W.player || !RB.world.frontTile) return null;
+    const [fx, fy] = RB.world.frontTile();
+    let best = null;
+    for (const pr of W.map.props || []) {
+      if (!pr.text && !pr.scene) continue;
+      if (pr.if && !(RB.state && s && RB.state.test(s, pr.if))) continue;
+      const pd = (RB.props && RB.props.P && RB.props.P[pr.p]) || {};
+      const pw = pr.w || pd.w || 1, ph = pr.h || pd.h || 1;
+      if (fx >= pr.x && fx < pr.x + pw && fy >= pr.y && fy < pr.y + ph) best = pr;
+    }
+    return best && !best.scene && best.text && best.text.jp === line.jp ? best : null;
+  }
   function sourceOf(line, s) {
     const m = liveMap(s);
     const inBattle = RB.combat && RB.combat.state && RB.combat.state();
+    if (line.sceneId === PROP_SCENE) {
+      const pr = !inBattle ? ownPropInFront(line, s) : null;
+      return pr ? { k: 'pr', m, x: pr.x, y: pr.y, o: pr.p } : { k: 'sc', id: line.sceneId };
+    }
     if (line.sceneId) {
       const pr = line.who === 'narr' && !inBattle ? propInFront(line) : null;
       return pr ? { k: 'sc', id: line.sceneId, o: pr.p, x: pr.x, y: pr.y } : { k: 'sc', id: line.sceneId };
@@ -51674,6 +51803,7 @@ RB.bookmarks = (function () {
     flushChoice(s);
     lastLine = line;
     const k = { m: liveMap(s), src: sourceOf(line, s) };
+    if (line.sceneId) k.sid = line.sceneId; // the scene id it was shown under (the voice's lookup), whatever its source
     const v = varsFor(line.jp);
     if (v) k.v = v;
     const en = line.en && RB.script ? RB.script.enVars(line.en) : line.en || '';
@@ -51756,6 +51886,7 @@ RB.bookmarks = (function () {
       src, map, place: placeName(map), h: hash(entry.jp, entry.en), title: '', note: '',
     };
     if (v) b.v = v;
+    if (k && k.sid) b.sid = k.sid;
     if (src.o) b.obj = src.o;
     if (entry.choice) b.choice = true;
     if (!k) b.approx = true; // an old history entry: names are as they are now
@@ -59555,15 +59686,41 @@ RB.sail = (function () {
     if (P && P.arrive && RB.content.scenes[P.arrive] && !(opts && opts.noWarp)) await RB.script.run(P.arrive, { port: to });
     return entry;
   }
-  // the crew takes over: what situations are left still happen (story ones are never skipped), then arrival
+  // the crew takes over: what situations are left still happen (story ones are never skipped), then arrival.
+  // From port the crossing is seen at sea, as when you sail her yourself: the boat on the sea map at the port's water
+  // (the same one transition as putting out yourself); a crew taking over at sea stays where she is. She comes
+  // alongside at the destination's water (placed there in the dark of a fade, on the same map), then docks (RBN-QA-174).
+  // When she cannot be placed there (the water taken; RB.staging is always loaded in the game), the arrival is told
+  // over the dark and she is seen next at the dock. A campaign change (a load, even one cancelled; a new journey; the
+  // title) ends the crossing where it is, as it ends the scene it runs in: nothing more is run, placed or arrived for the
+  // journey left (a cancelled load leaves this voyage open where she is, to be sailed on).
+  let campTok = 0;
+  if (RB.bus) RB.bus.on('campaign:changing', () => { campTok++; });
   async function crew(s) {
     const q = of(s), v = q.voyage;
     if (!v) return;
+    const tok = campTok, live = () => tok === campTok && S() === s && q.voyage === v;
     v.crewFrom = v.steps;
+    const W = RB.world.W, A = port(v.from), B = port(v.to);
+    if (!onSea(W.map) && A && A.sea) await RB.game.transition(C().seaMap || 'sea.coast', A.sea.x, A.sea.y, A.sea.dir || 'down', { inScript: true });
     let x;
-    while ((x = due(s, true))) await runSituation(s, x);
+    while (live() && (x = due(s, true))) await runSituation(s, x);
+    if (!live()) return;
+    let dark = false;
+    if (onSea(W.map) && B && B.sea) {
+      await RB.ui.fade(true, 220);
+      if (!live()) return;
+      const placed = RB.staging ? await RB.staging.walkTo('pc', B.sea.x, B.sea.y, B.sea.dir || null, { now: true }) : false;
+      if (!live()) return;
+      if (placed) await RB.ui.fade(false, 220);
+      else dark = true;
+    }
+    // (a campaign change while the screen lightens again must not begin the arrival's line on the journey loaded)
+    if (!live()) return;
     if (RB.content.scenes['sea.crew_arrive']) await RB.script.run('sea.crew_arrive');
+    if (!live()) return;
     await arrive(s, v.to);
+    if (dark && S() === s && tok === campTok) await RB.ui.fade(false, 220);
   }
   // put out: the boat on the sea map at the port's water, or the crew's crossing
   async function putOut(s, from, to, mode) {
@@ -79572,10 +79729,14 @@ RB.seqKit = (function () {
  *            safe: { wide, narrow, land } }              optional notes (SHOTS.md safe areas)
  *   st = { seq, shot, phase, pi, k (0..1 through this phase's action, then 1 for good), at(phase) → 0..1,
  *          since (ms in this shot), vb (the sheet's top: keep the focal area above it), still (reduced motion:
- *          k is 1 at once and ambient motion stops), review (a read-only look back), hold (the action is
- *          over), cast: { pc: the player's look snapshotted at entry, comp: { id, look } | null — only a
- *          companion who is actually here }, test(cond) (RB.state.test on the campaign), t (ms, ambient) }
- *   The shared drawing kit is RB.seqKit (43_sequence_kit.js). A shot reads state; it never writes it.
+ *          k is 1 at once and ambient motion stops), review (a read-only look back), replay (this shot's own
+ *          Replay is playing its actions again, live or while looking back), hold (the action is over),
+ *          cast: { pc: the player's look snapshotted at entry, comp: { id, look } | null — only a companion
+ *          who is actually here }, test(cond) (RB.state.test on the campaign), t (ms, ambient),
+ *          keep (this playing's own scratch object: empty when it starts, gone with it; a fresh one for every
+ *          drawAt unless the caller passes one) }
+ *   The shared drawing kit is RB.seqKit (43_sequence_kit.js). A shot reads state; it never writes it, save what it
+ *   must remember from one frame to the next of the same playing (st.keep: where the fire's ring came to rest).
  *
  * ---- Runtime -----------------------------------------------------------------------------------------
  *   RB.sequence.active() / state() / stats()          (tests: state, token, shot, phase, beats, review …)
@@ -79631,6 +79792,7 @@ RB.sequence = (function () {
     this.isStill = o.still || (() => !!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion()));
     this.cast = o.cast || {};
     this.test = o.test || (() => false);
+    this.keep = {};       // the shots' own scratch for this playing (st.keep)
     this.tok = ++TOK;
     this.state = 'entering';
     this.cur = null;      // { id, sd, pi, t0 (entered), a0 (the current phase's action starts) }
@@ -79812,8 +79974,8 @@ RB.sequence = (function () {
     return {
       seq: this.def.id, shot: v.shot, phase: sd.phases[pi].id, pi, k: kOf(pi),
       at: (name) => { const j = typeof name === 'number' ? name : sd.phases.findIndex((p) => p.id === name); return j < 0 ? 0 : kOf(j); },
-      since: review || !this.cur ? 1e9 : T - this.cur.t0, vb, still: this.isStill(), review, hold: this.state === 'holding' || this.state === 'advancing' || review,
-      cast: this.cast, test: this.test, t, sd,
+      since: review || !this.cur ? 1e9 : T - this.cur.t0, vb, still: this.isStill(), review, replay: !!(this.rep && this.rep.id === v.shot), hold: this.state === 'holding' || this.state === 'advancing' || review,
+      cast: this.cast, test: this.test, t, sd, keep: this.keep,
     };
   };
   PP.draw = function (c, w, h, t, vb) {
@@ -80246,7 +80408,7 @@ RB.sequence = (function () {
     const kOf = (j) => (o.still ? (j <= pi ? 1 : 0) : j < pi ? 1 : j > pi ? 0 : k);
     const st = {
       seq: o.seq, shot: o.shot, phase: sd.phases[pi].id, pi, k: kOf(pi), at: (name) => { const j = typeof name === 'number' ? name : sd.phases.findIndex((p) => p.id === name); return j < 0 ? 0 : kOf(j); },
-      since: 1e9, vb, still: !!o.still, review: !!o.review, hold: kOf(pi) >= 1, cast: o.cast || { pc: {}, comp: null }, test: o.test || (() => false), t: o.t || 0, sd,
+      since: 1e9, vb, still: !!o.still, review: !!o.review, hold: kOf(pi) >= 1, cast: o.cast || { pc: {}, comp: null }, test: o.test || (() => false), t: o.t || 0, sd, keep: o.keep || {},
     };
     c.imageSmoothingEnabled = false;
     sd.draw(c, w, h, o.t || 0, st);
@@ -89212,8 +89374,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     for (let i = 0; i < 18; i++) { const u = i / 17, v = 1 - u; out.push([0, 1, 2].map((k) => v * v * P3[0][k] + 2 * v * u * P3[1][k] + u * u * P3[2][k])); }
     return out;
   }
+  // Kotoe's pupils, for the night's 'pupils' phase (RBN-QA-177): four children of the village in their festival best
+  const PUPILS = [
+    { size: 'child', skin: 1, hair: 'short', hairColor: 0, cloth: ['#3a5a8a', '#2e4870', '#e8dcc0'], shape: 'tunic', acc: [] },
+    { size: 'child', skin: 2, hair: 'bob', hairColor: 1, cloth: ['#a84a4a', '#8a3a3a', '#f0e0c0'], shape: 'tunic', acc: [] },
+    { size: 'child', skin: 2, hair: 'short', hairColor: 3, cloth: ['#c8783a', '#a8602c', '#f0e0c0'], shape: 'tunic', acc: [] },
+    { size: 'child', skin: 3, hair: 'bob', hairColor: 0, cloth: ['#5a7a4a', '#46623a', '#e8dcc0'], shape: 'tunic', acc: [] },
+  ];
   const night = {
-    phases: [['light', 1500]],
+    phases: [['light', 1500], ['pupils', 900]],
     safe: { wide: 'the village and its lanterns above the sheet', narrow: 'the lanterns in the upper half', land: 'the lanterns' },
     draw(c, w, h, t, st) {
       const G = geomFest(w, h, st.vb), { s } = G, still = st.still, vb = st.vb;
@@ -89227,10 +89396,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
         SP.lantern(c, Math.round(x), Math.round(y - s(10) * sc), Math.max(2, Math.round(s(3.4) * sc)), Math.max(3, Math.round(s(7) * sc)), on, t, still);
         if (way === 'canal' && on) for (let j = 0; j < 4; j++) R(c, Math.round(x - 1 + (still ? 0 : Math.sin(t / 300 + i + j))), Math.round(vb * 0.68 + (y - vb * 0.58) * 0.3 + j * s(3) * sc), Math.max(2, Math.round(3 * sc)), 1, 'rgba(255,190,110,' + (0.6 - j * 0.12).toFixed(2) + ')');
       });
-      // villagers on their way along the road
-      const rnd = P().rnd(5);
-      for (const [id, u] of [['as_taki', 0.32], ['as_yoshizo', 0.36], ['as_kotoe', 0.62]]) { const x = w * (0.18 + u * 0.7), y = vb * (0.66 - u * 0.06), sc = clamp(0.9 - u * 0.5, 0.4, 0.9), f = Q.figure(look(id), 'right', still ? 'i0' : 'w' + (Math.floor(t / 240 + rnd() * 4) % 4), sc, NIGHT_G); if (f) c.drawImage(f.cv, Math.round(x - f.ax + (still ? 0 : ((t / 120) % (w * 0.05)))), Math.round(y - f.ay)); }
+      // villagers on their way along the road (Kotoe, once her pupils are up, is with them: below)
+      const rnd = P().rnd(5), withPupils = st.at('pupils') > 0 && st.test('as_kotoe');
+      for (const [id, u] of [['as_taki', 0.32], ['as_yoshizo', 0.36], ['as_kotoe', 0.62]]) {
+        if (id === 'as_kotoe' && withPupils) { rnd(); continue; } const x = w * (0.18 + u * 0.7), y = vb * (0.66 - u * 0.06), sc = clamp(0.9 - u * 0.5, 0.4, 0.9), f = Q.figure(look(id), 'right', still ? 'i0' : 'w' + (Math.floor(t / 240 + rnd() * 4) % 4), sc, NIGHT_G); if (f) c.drawImage(f.cv, Math.round(x - f.ax + (still ? 0 : ((t / 120) % (w * 0.05)))), Math.round(y - f.ay)); }
       if (way === 'canal') SP.glints(c, 0, Math.round(vb * 0.66), w, Math.round(vb * 0.3), t, 24, 9, '255,190,120', still);
+      // Kotoe's pupils, only with her school (RBN-QA-177): with Kotoe at the roadside, on the road where it comes toward us
+      // at the left (never on the paddies), each holding up a sheet of the letters they have just learned, and singing.
+      // The sheets show brush strokes, never letters (the names on them are the player's own, and nothing in these
+      // pictures is lettered).
+      const kp = st.at('pupils');
+      if (kp > 0 && st.test('as_kotoe')) {
+        const e = ease(kp), up = Math.round((1 - e) * s(4));
+        // the road's near edge at x: vb·0.66, widening toward us left of w·0.3 (villageStatic); feet inside it
+        const feet = (x) => Math.round(vb * 0.652 + Math.max(0, w * 0.3 - x) * 0.4);
+        const sc = (x) => clamp(0.92 - x / w, 0.6, 0.9);
+        const kx = Math.round(w * 0.07), kf = Q.figure(look('as_kotoe'), 'right', 'i0', sc(kx), NIGHT_G);
+        if (kf) c.drawImage(kf.cv, Math.round(kx - kf.ax), feet(kx) + up - kf.ay);
+        PUPILS.forEach((lk, i) => {
+          const x = Math.round(w * (0.13 + i * 0.065)), y = feet(x) + up, sing = still ? 0 : Math.round(Math.max(0, Math.sin(t / 380 + i * 1.7)) * 1);
+          const f = Q.figure(lk, 'down', 'i0', sc(x), NIGHT_G);
+          if (!f) return;
+          c.drawImage(f.cv, Math.round(x - f.ax), y - f.ay - sing);
+          // the sheet, held up in front: lantern-lit paper with a few strokes of ink
+          const pw = Math.max(5, s(11)), ph = Math.max(4, s(8)), px = x - (pw >> 1), py = y - f.ay - sing + Math.round(f.h * 0.42);
+          R(c, px, py, pw, ph, '#e8d8b0'); R(c, px, py, pw, 1, '#f4ead0'); R(c, px, py + ph - 1, pw, 1, '#b89a70');
+          for (let k = 0; k < 3; k++) { const ly = py + 2 + k * Math.max(1, Math.round(ph / 3.2)); if (ly < py + ph - 1) R(c, px + 2, ly, Math.max(1, pw - 4 - ((i + k) % 3) * 2), 1, '#2a2024'); }
+        });
+      }
     },
     focus(w, h, vb) { return { x: Math.round(w * 0.06), y: Math.round(vb * 0.24), w: Math.round(w * 0.9), h: Math.round(vb * 0.5) }; },
   };
@@ -89239,7 +89432,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const DANCERS = ['as_mitsue', 'as_yoshizo', 'as_taki', 'as_natsu', 'as_kotoe', 'as_mohei'];
   const FIRE_G = (side) => ({ mul: [0.78, 0.6, 0.5], add: [26, 8, 0], rim: { side, col: '#ffb060', k: [0.5, 0.24] } });
   const fire = {
-    phases: [['dance', 1200], ['gift', 900]],
+    phases: [['dance', 1200], ['settle', 900], ['gift', 900]],
     safe: { wide: 'the fire and the ring of dancers above the sheet', narrow: 'the fire in the upper half', land: 'the fire' },
     draw(c, w, h, t, st) {
       const G = geomFest(w, h, st.vb), { s } = G, still = st.still, vb = st.vb;
@@ -89262,10 +89455,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
       SP.glow(c, fx, fy - s(16), Math.round(Math.min(w, vb) * 0.55), '255,150,70', 0.26 + (still ? 0 : Math.sin(t / 300) * 0.03));
       // the lanterns strung across overhead
       for (let i = 0; i < 9; i++) { const u = i / 8, x = w * (0.04 + u * 0.92), y = vb * 0.06 + Math.sin(u * Math.PI) * vb * 0.1; SP.lantern(c, Math.round(x), Math.round(y), Math.max(2, s(4)), Math.max(3, s(8)), true, t, still); }
-      // the ring, turning slowly: the far half, the fire, the near half
-      const turn = still ? 0.4 : (t / 11000) * Math.PI * 2;
+      // the ring, turning slowly: the far half, the fire, the near half. Once it settles ('settle', then the gift: "Last of
+      // all, everyone gathers round the fire"; RBN-QA-177) it stops where it is, and everyone stands still, facing the fire.
+      // Where it came to rest is this playing's own (st.keep: a replay, another scene or a drawing on its own starts
+      // afresh): taken on its first settled frame, kept through the gift and while looking back (Previous), forgotten
+      // only when the live shot dances again. Looking back, the shot's own Replay dances again and comes to rest exactly
+      // where the ring stands in this playing, so that neither what is looked back at nor the live shot after it changes
+      // (Local CL-293, Agnes 6383443005).
+      const settled = st.at('settle') > 0, K = st.keep || {};
+      let turn = still ? 0.4 : (t / 11000) * Math.PI * 2;
+      if (!still && !settled && st.review && st.replay && K.restTurn != null) {
+        const si = st.sd.phases.findIndex((p) => p.id === 'settle');
+        let left = 0; // (ms of the replayed dance still to come before it settles)
+        for (let j = 0; j < si; j++) left += (1 - st.at(j)) * st.sd.phases[j].ms;
+        turn = K.restTurn - (left / 11000) * Math.PI * 2;
+      } else if (settled && !still) { if (K.restTurn == null) K.restTurn = turn; turn = K.restTurn; } else if (!settled && !st.review) K.restTurn = null;
       const ring = DANCERS.map((id, i) => { const a = turn + (i / DANCERS.length) * Math.PI * 2 + (i === 2 ? -0.35 : 0); return { id, x: fx + Math.cos(a) * rx, y: fy + Math.sin(a) * ry, a }; });
-      const fig = (r) => { const sc = clamp(0.78 + ((r.y - fy) / ry) * 0.18, 0.55, 1); const f = Q.figure(look(r.id), Math.sin(r.a) > 0 ? 'right' : 'left', still ? 'i0' : 'w' + (Math.floor(t / 200 + r.x) % 4), sc, FIRE_G(r.x < fx ? 'r' : 'l')); if (f) c.drawImage(f.cv, Math.round(r.x - f.ax), Math.round(r.y - f.ay - (still ? 0 : Math.abs(Math.sin(t / 200 + r.x)) * 2))); };
+      const toFire = (r) => (Math.abs(Math.cos(r.a)) > 0.75 ? (r.x < fx ? 'right' : 'left') : r.y > fy ? 'up' : 'down');
+      const fig = (r) => {
+        const sc = clamp(0.78 + ((r.y - fy) / ry) * 0.18, 0.55, 1);
+        const f = settled ? Q.figure(look(r.id), toFire(r), 'i0', sc, FIRE_G(r.x < fx ? 'r' : 'l')) : Q.figure(look(r.id), Math.sin(r.a) > 0 ? 'right' : 'left', still ? 'i0' : 'w' + (Math.floor(t / 200 + r.x) % 4), sc, FIRE_G(r.x < fx ? 'r' : 'l'));
+        if (f) c.drawImage(f.cv, Math.round(r.x - f.ax), Math.round(r.y - f.ay - (still || settled ? 0 : Math.abs(Math.sin(t / 200 + r.x)) * 2)));
+      };
       ring.filter((r) => r.y < fy).forEach(fig);
       // the fire: a cone of logs, tongues of flame over it, sparks going up
       for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2, bx = fx + Math.cos(a) * s(16), by = fy + Math.sin(a) * s(5); for (let j = 0; j <= s(24); j++) { const u = j / s(24); R(c, lerp(bx, fx, u), lerp(by, fy - s(24), u), Math.max(2, s(3)), 1, i % 2 ? '#3a2418' : '#4a2e1c'); } }
@@ -89276,7 +89487,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Shō at the left, close, keeping time on the cooking pot
       const sx = Math.round(w * (G.narrow ? 0.16 : 0.12)), sy = Math.round(vb * 0.86), sf = Q.figure(look('as_sho'), 'right', 'i0', 1, FIRE_G('r'));
       if (sf) c.drawImage(sf.cv, Math.round(sx - sf.ax), Math.round(sy - sf.ay));
-      const beat = still ? 0 : Math.max(0, Math.sin(t / 160)) * s(3);
+      const beat = still || settled ? 0 : Math.max(0, Math.sin(t / 160)) * s(3);
       R(c, sx + s(10), sy - s(9), s(16), s(9), '#2a2626'); R(c, sx + s(9), sy - s(10), s(18), s(2), '#4a4444'); R(c, sx + s(12), sy - s(9), s(12), 1, '#8a6a50');
       R(c, sx + s(6), sy - s(16) - beat, s(8), Math.max(1, s(1.5)), '#6a5038');
       // the gift: Mitsue holds out the planting hat
@@ -95553,6 +95764,7 @@ RB.pad = (function () {
       candsEl.innerHTML = '';
       moreRow.innerHTML = '';
       P.list = [];
+      P.mustPick = false;
       if (PH) {
         // while a pace is stopped for review, one press inserts the character and continues
         conf.lastChild.textContent = PH.reviewing() ? 'Add character & continue' : 'Add character';
@@ -95587,6 +95799,7 @@ RB.pad = (function () {
         near.forEach((cd) => candsEl.appendChild(candButton(cd)));
         if (!r.kanjiHint) candsEl.appendChild(button('chart', 'grid', 'Chart'));
         conf.disabled = true;
+        P.mustPick = true; // (Add character waits for a pick: every one offered stays in view; fitAlts)
         fitAlts();
         RB.audio && RB.audio.sfx('recog_unsure', { vol: 0.5 });
         return;
@@ -95643,10 +95856,15 @@ RB.pad = (function () {
       return b;
     }
     // Show as many other readings as fit on the row beside Confirm (the rest
-    // stay reachable through the chart), so the row never wraps.
+    // stay reachable through the chart), so the row never wraps. Not when a
+    // pick is required (a kanji the pad is not sure of, Add character waiting
+    // for one): then every one offered stays, and the button takes the next
+    // line, rather than leave nothing to pick (at 390 px "Add character" no
+    // longer fits beside even one).
     function fitAlts() {
       const bs = Array.from(candsEl.querySelectorAll('.cand'));
       bs.forEach((b) => (b.hidden = false));
+      if (P.mustPick) { const or = candsEl.querySelector('.or'); if (or) or.hidden = !bs.length; return; }
       const conf = el.querySelector('[data-a=confirm]');
       const big = readas.querySelector('.big');
       if (!big || !conf.offsetParent) return;
@@ -97858,7 +98076,8 @@ RB.ui.wordsPages = (function () {
   }
   // a kept line's recording: its scene and its standard markup, shown as the player's Suzu speaks (54_voice_route.js)
   function bmVoice(b) {
-    const source = { sceneId: b.src && b.src.k === 'sc' ? b.src.id : null, jp: b.jp, who: b.who };
+    // the scene id it was shown under (sid; a prop's own line: code.prop, its source the prop); one kept before sid: its scene's
+    const source = { sceneId: b.sid || (b.src && b.src.k === 'sc' ? b.src.id : null), jp: b.jp, who: b.who };
     return { source, display: RB.dialect && RB.dialect.line ? RB.dialect.line(b.who, source) : source };
   }
   function bmDetail(b, s) {
@@ -131725,7 +131944,7 @@ RB.ui.shogi = (function () {
     });
   }
   function close() { if (!V) return; RB.ui.popLayer(V.layer); const r = V.resolve; V = null; r({ ok: true }); }
-  function leave() { if (!V) return; if (V.view === 'ladder' || V.direct) close(); else { V.view = 'ladder'; V.g = null; V.said = null; render(); } }
+  function leave() { if (!V) return; if (V.view === 'ladder' || V.direct) close(); else { V.g = null; V.said = null; toLadder(); } }
   const rec = () => RB.pastimes.rec(S(), 'shogi');
 
   // ---- the ladder ---------------------------------------------------------------------------------------------
@@ -131941,8 +132160,11 @@ RB.ui.shogi = (function () {
         V.g = SG().play(g, ms.find((m) => !m.promote) || ms[0]);
         V.sel = null;
         const goals = [L.goal].concat(L.alt || []);
+        const nm = SG().NAMES[L.piece].en.toLowerCase();
         if (pc.t === L.piece && goals.some((x) => x.to[0] === r && x.to[1] === c)) { V.solved = true; rec().lessons[L.id] = Date.now(); }
-        else V.said = 'A fine move, but not the one asked for: start again and try the ' + SG().NAMES[L.piece].en.toLowerCase() + '.';
+        // the lesson's own piece, somewhere it can go but not a square the lesson asks for (RBN-QA-178)
+        else if (pc.t === L.piece) V.said = 'The ' + nm + ' can go there, but that isn\'t the square asked for: start again.';
+        else V.said = 'A fine move, but not the one asked for: start again and try the ' + nm + '.';
         render(); return;
       }
     }
@@ -131995,7 +132217,32 @@ RB.ui.shogi = (function () {
   function render() {
     if (!V) return;
     const h = V.view === 'ladder' ? ladder() : V.view === 'game' ? gameHtml() : V.view === 'hasami' ? hasamiHtml() : V.view === 'lesson' ? lessonHtml() : tsumeHtml();
+    const onTop = !!(document.activeElement && document.activeElement.classList.contains('sg-top') && V.leaf.contains(document.activeElement));
     V.leaf.innerHTML = h;
+    if (onTop) heading();
+  }
+  // A lesson, a puzzle or a game opened from the ladder starts at its top, its heading focused; the ladder's place and
+  // the button that opened it are kept, and both come back with the ladder (Back to the ladder, Leave). Start again and
+  // New game redraw the same view where it is (RBN-QA-179).
+  const KEY = ['a', 'id', 'v', 'hc'];
+  function heading() {
+    const hd = V.leaf.querySelector('.sg-top');
+    if (hd) { hd.tabIndex = -1; hd.focus({ preventScroll: true }); }
+  }
+  function open(b, start) {
+    V.back = { top: V.leaf.scrollTop, key: KEY.map((k) => b.dataset[k] || '') };
+    start();
+    if (!V) return;
+    V.leaf.scrollTop = 0;
+    heading();
+  }
+  function toLadder() {
+    V.view = 'ladder'; render();
+    const back = V.back; V.back = null;
+    if (!back) return;
+    V.leaf.scrollTop = back.top;
+    const b = [...V.leaf.querySelectorAll('[data-a]')].find((x) => KEY.every((k, i) => (x.dataset[k] || '') === back.key[i]));
+    if (b) b.focus({ preventScroll: true });
   }
   function onClick(e) {
     if (!V) return;
@@ -132009,10 +132256,10 @@ RB.ui.shogi = (function () {
     const b = t.closest('[data-a]');
     if (!b) { const lv = t.closest('input[name="sg-level"]'); if (lv) V.level = +lv.value; return; }
     const a = b.dataset.a;
-    if (a === 'lesson') return startLesson(b.dataset.id);
-    if (a === 'tsume') return startTsume(b.dataset.id);
-    if (a === 'play') return b.dataset.v === 'hasami' ? startGame('hasami') : startGame(b.dataset.v, b.dataset.hc);
-    if (a === 'ladder') { if (V.direct) return close(); V.view = 'ladder'; render(); return; }
+    if (a === 'lesson') return open(b, () => startLesson(b.dataset.id));
+    if (a === 'tsume') return open(b, () => startTsume(b.dataset.id));
+    if (a === 'play') return open(b, () => (b.dataset.v === 'hasami' ? startGame('hasami') : startGame(b.dataset.v, b.dataset.hc)));
+    if (a === 'ladder') { if (V.direct) return close(); toLadder(); return; }
     if (a === 'reset') return V.view === 'lesson' ? startLesson(V.L.id) : startTsume(V.T.id);
     if (a === 'again') return startGame(V.kind, V.hc);
     if (a === 'show') { V.show = b.checked; render(); return; }
@@ -183636,11 +183883,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the station marker (map art) -------------------------------------------------------------------------------
   const P = RB.props && RB.props.P;
   if (P) {
-    P.fish_station = { id: 'fish_station', w: 1, h: 1, block: true, draw(c, x, y) { c.fillStyle = '#7a5a36'; c.fillRect(x + 7, y + 2, 2, 12); c.fillStyle = '#efe4c8'; c.fillRect(x + 9, y + 4, 4, 3); } };
+    // (the flat renderer: the stake and its notice; on the rocks (o.kind 'rocks', Sazanami's), two wet rocks at its foot and
+    // a rod lashed to its seaward side with its line down into the water, as the drawn art has them; RBN-QA-173)
+    P.fish_station = {
+      id: 'fish_station', w: 1, h: 1, block: true,
+      draw(c, x, y, pal, t, o) {
+        const f = (col, a, b, w, h) => { c.fillStyle = col; c.fillRect(x + a, y + b, w, h); };
+        if (o && o.kind === 'rocks') { f('#5e5a54', 2, 11, 6, 4); f('#6e6a62', 9, 12, 5, 3); f('#8a857c', 3, 11, 3, 1); f('#8a857c', 10, 12, 2, 1); }
+        f('#7a5a36', 7, 2, 2, 12); f('#efe4c8', 9, 4, 4, 3);
+        if (o && o.kind === 'rocks') { f('#8a6a3a', 6, 3, 1, 9); f('#8a6a3a', 5, 1, 1, 3); f('#6a4a2a', 6, 8, 3, 1); f('#cfd2cc', 4, 2, 1, 12); }
+      },
+    };
+    // the low shelf of wet rock under a station's stand on a rocky shore (Sazanami's): flat, walked on, never solid (RBN-QA-173)
+    P.coast_shelf = { id: 'coast_shelf', w: 1, h: 1, block: false, draw(c, x, y) { c.fillStyle = '#77716a'; c.fillRect(x + 1, y + 2, 14, 12); c.fillStyle = '#5a5650'; c.fillRect(x + 1, y + 12, 14, 2); } };
   }
   if (RB.propArt && RB.propKit && P) {
     const K = RB.propKit, kit = RB.propArt.kit;
-    const { R, ell, mix } = K;
+    const { R, ell, mix, poly, line } = K;
     const PP = K.FIX.paper, IR = K.FIX.iron;
     RB.propArt.art('fish_station', {
       box: [-8, -30, 48, 64], ink: true,
@@ -183651,6 +183910,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
           // two planks laid out over the reed line to the water's edge, reeds on either side
           for (let k = 0; k < 2; k++) { R(g, 2, 12 + k * 8, 30, 6, w5[2 + k]); R(g, 2, 12 + k * 8, 30, 1, w5[4]); R(g, 2, 17 + k * 8, 30, 1, w5[1]); }
           for (const x of [0, 4, 27, 31]) { R(g, x, 2, 2, 12, rd[2]); R(g, x, 0, 1, 4, rd[3]); }
+        } else if (v === 'rocks') {
+          // the stake set among rocks at the shelf's seaward edge (Sazanami's station, RBN-QA-173): two wet lumps round
+          // its foot, the sea lapping between them
+          const r5 = M.stone, wet = mix(r5[1], wt[1], 0.35);
+          ell(g, 16, 28, 13, 3, mix(wt[2], '#ffffff', 0.3));
+          ell(g, 9, 24, 9, 6, r5[1]); ell(g, 8, 22, 8, 5, r5[2]); ell(g, 6, 20, 4, 2, r5[3]); R(g, 3, 27, 12, 2, wet);
+          ell(g, 24, 26, 7, 5, r5[1]); ell(g, 24, 24, 6, 4, r5[2]); ell(g, 22, 22, 3, 1.5, r5[3]); R(g, 19, 28, 10, 1, wet);
+          for (const [bx, by] of [[4, 25], [12, 26], [27, 27]]) R(g, bx, by, 1, 1, r5[4]);
         } else {
           // the stake stands in the shallows: a ring of rippled water round its foot
           ell(g, 16, 27, 9, 3, mix(wt[2], '#ffffff', 0.35));
@@ -183663,9 +183930,45 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (let k = 0; k < 3; k++) R(g, 20, -11 + k * 3, 5 - (k & 1), 1, '#3c3450');
         R(g, 17, -13, 2, 1, '#b8342a'); // the cord that ties it
         if (v === 'quay') { R(g, 9, -6, 4, 4, IR[2]); R(g, 10, -5, 2, 2, IR[0]); }
+        if (v === 'rocks') {
+          // a rod lashed to the stake's seaward side, its tip out over the water and its line down into it (RBN-QA-173)
+          const bam = mix(w5[3], '#c8b070', 0.5), cord = '#8a3a2a';
+          line(g, 11, 20, 9, -6, mix(bam, '#000000', 0.25), 2); line(g, 9, -6, -3, -27, bam, 1);
+          line(g, 10, 20, 8, -6, bam, 1);
+          R(g, 7, 6, 10, 2, cord); R(g, 7, 7, 10, 1, mix(cord, '#000000', 0.3));
+          R(g, 7, -4, 9, 2, cord); R(g, 7, -3, 9, 1, mix(cord, '#000000', 0.3));
+          line(g, -3, -27, -5, 26, 'rgba(240,244,248,0.55)', 1);
+          ell(g, -5, 27, 3, 1, mix(wt[2], '#ffffff', 0.45));
+        }
         if (v === 'pond') { R(g, 9, 6, 3, 1, rd[2]); R(g, 21, 8, 3, 1, rd[2]); }
       },
       shadow: (v) => (v === 'river' ? [16, 28, 14, 3, 0.25] : null),
+    });
+    // the shelf under the stand: a low slab of wet rock reaching back to the shingle, its seaward face dark and wet, a tide
+    // pool and a few limpets; flat (drawn under whoever stands on it), the tile still what it was (RBN-QA-173)
+    RB.propArt.art('coast_shelf', {
+      box: [-12, -12, 56, 46],
+      draw(g, M) {
+        const r5 = M.stone, wt = M.water, wet = mix(r5[1], wt[1], 0.4), weed = mix(M.reed[1], '#203020', 0.55);
+        const top = mix(r5[1], r5[2], 0.45), lit = mix(r5[2], r5[3], 0.35);
+        // two low broken pieces where it runs back up onto the shingle
+        poly(g, [3, -2, 8, -6, 14, -5, 13, 0, 6, 1], top); poly(g, [5, -3, 8, -5, 12, -4, 9, -2], lit);
+        poly(g, [22, -1, 27, -5, 32, -3, 31, 1, 24, 2], top); poly(g, [24, -2, 27, -4, 30, -3, 27, -1], lit);
+        // the slab: its seaward face, then its top, low and flat
+        poly(g, [-8, 20, -4, 27, 10, 29, 26, 28, 40, 24, 40, 18, -8, 16], r5[0]);
+        poly(g, [-8, 8, -2, 2, 12, 1, 24, 0, 36, 3, 42, 9, 40, 19, 26, 23, 10, 24, -4, 22, -8, 16], top);
+        // lit facets (the light from the upper left) and the cracks between them
+        poly(g, [-4, 8, 0, 4, 12, 3, 13, 8, 4, 11], lit);
+        poly(g, [18, 2, 30, 3, 33, 8, 22, 9], lit);
+        poly(g, [7, 14, 16, 12, 19, 17, 10, 18], mix(top, lit, 0.5));
+        line(g, 13, 8, 17, 13, r5[0], 1); line(g, 17, 13, 15, 20, r5[0], 1); line(g, 22, 9, 29, 12, r5[0], 1); line(g, 4, 11, 2, 17, r5[0], 1);
+        // a tide pool, the wet margin above the face, limpets and a little weed at the waterline
+        ell(g, 28, 15, 5, 2.5, mix(wt[1], r5[0], 0.25)); ell(g, 27, 14, 2, 1, mix(wt[2], '#ffffff', 0.5));
+        R(g, -6, 18, 46, 2, wet); R(g, -4, 20, 42, 1, mix(wet, r5[0], 0.4));
+        for (const [bx, by] of [[0, 17], [6, 19], [19, 20], [33, 17], [36, 19]]) R(g, bx, by, 1, 1, r5[4]);
+        for (const [sx, sy, sh] of [[-2, 23, 3], [12, 26, 2], [30, 25, 3]]) R(g, sx, sy, 1, sh, weed);
+      },
+      shadow: () => null,
     });
   }
 })(RB.fishing, RB.content);
@@ -186788,7 +187091,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * showing how far the night has gone (wing 3). Each has a flat 16-px drawing (the fallback, as every prop) and its
  * art-resolution version in the world's prop style (light from the upper left, an ink outline on what can be looked at,
  * a soft contact shadow). Regional assets under AC-1 (C-82), reviewed in the art pass (P16d; implemented provisionally,
- * internally reviewed): kept as drawn. */
+ * internally reviewed): kept as drawn. Wing 2's two wrapped gifts (a white box, a red cloth bundle; RBN-QA-180) are
+ * provisional under AC1_ART, for Robin. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
@@ -186845,6 +187149,31 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 6, y + 3, 20, 6, '#e6d8b4'); px(c, x + 15, y + 3, 1, 6, '#a48a62'); px(c, x + 6, y + 5, 20, 1, '#a48a62');
     const m = mapMark(o);
     if (m) px(c, x + (m === 1 ? 23 : 7), y + (m === 1 ? 4 : 7), 2, 1, '#a8322a');
+  });
+
+  // the second wing's gifts on the path (RBN-QA-180): the white box (白い箱) wrapped in white paper and tied with a red
+  // and white cord, and the red bundle (赤い包み), red cloth knotted on top; each with a blank tag (who it is from and to
+  // changes with the floor's pattern, so nothing is written on it)
+  def('hall_giftbox', {}, (c, x, y) => {
+    px(c, x + 3, y + 6, 10, 8, '#e4e2dc'); px(c, x + 2, y + 5, 12, 2, '#f4f3ef'); px(c, x + 3, y + 13, 10, 1, '#b8b6b0');
+    px(c, x + 7, y + 5, 2, 9, '#b8322c'); px(c, x + 3, y + 9, 10, 1, '#b8322c'); px(c, x + 6, y + 3, 4, 2, '#b8322c');
+    px(c, x + 11, y + 10, 3, 3, '#e8dcb8');
+  });
+  def('hall_bundle', {}, (c, x, y) => {
+    px(c, x + 3, y + 7, 10, 7, '#a8382c'); px(c, x + 4, y + 6, 8, 1, '#c04a36'); px(c, x + 3, y + 13, 10, 1, '#82281e');
+    px(c, x + 4, y + 3, 2, 2, '#a8382c'); px(c, x + 5, y + 4, 2, 2, '#a8382c'); px(c, x + 10, y + 3, 2, 2, '#a8382c'); px(c, x + 9, y + 4, 2, 2, '#a8382c');
+    px(c, x + 7, y + 5, 2, 2, '#82281e');
+    px(c, x + 11, y + 9, 3, 3, '#e8dcb8');
+  });
+
+  // a tray on the veranda with the gift set on it (RBN-QA-181): the tray's own table, and on it the gift as it stood
+  // on the path (the white box, the red bundle, the chestnut basket); the table's own footprint, so that both of its
+  // tiles stay solid and open the tray as they did bare (Agnes 6383653732, Local CL-298)
+  const ON_TRAY = { red: 'hall_bundle', white: 'hall_giftbox', chestnut: 'ko_basket' };
+  def('hall_tray', { w: P.table.w, h: P.table.h, block: P.table.block }, (c, x, y, p, t, o) => {
+    P.table.draw(c, x, y, p, t, o);
+    const g = P[ON_TRAY[o && o.gift]];
+    if (g) g.draw(c, x, y - 6, p, t, {});
   });
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
@@ -187009,6 +187338,66 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (v === 2) { R(g, 12, 14, 3, 2, '#a8322a'); R(g, 13, 14, 1, 1, '#d4584a'); }
     },
   });
+  // The second wing's gifts on the path (RBN-QA-180; the line says 「白い箱」 and 「赤い包み」, and the generic chest and
+  // crate there took the wing's red wood): a box wrapped in white paper (a cool white, so it reads white in the
+  // sun-shower), tied once each way with a red and white cord knotted on top; and a bundle of red cloth (風呂敷), its
+  // corners knotted into two ears on top, the folds darker. Each has a small blank paper tag on a string (nothing
+  // written: who it goes to changes with the floor's pattern). Same tile, block and scene as the props they replace.
+  const WHITE = ['#8e8c88', '#b8b6b0', '#d8d6d0', '#ecebe6', '#fbfbf8'];
+  const CORD = ['#7a1e1a', '#b8322c', '#d8584a'];
+  const CLOTH = ['#5a1a16', '#86281f', '#a8382c', '#c84e3a', '#e07a5c'];
+  const tag = (g, x, y, from) => {
+    line(g, from[0], from[1], x + 2, y, '#6a5a44', 1);
+    R(g, x, y, 5, 7, PP[3]); R(g, x, y, 5, 1, PP[4]); R(g, x + 4, y + 1, 1, 6, PP[1]); R(g, x, y + 6, 5, 1, PP[1]);
+    R(g, x + 2, y + 1, 1, 1, PP[0]);
+  };
+  art('hall_giftbox', {
+    box: [0, -8, 32, 42],
+    ink: true,
+    shadow: () => [16, 29, 12, 3, 0.32],
+    draw(g) {
+      // the box, its paper wrapping: front and the lid's top
+      R(g, 7, 14, 18, 14, WHITE[2]); R(g, 7, 14, 1, 14, WHITE[3]); R(g, 24, 14, 1, 14, WHITE[1]); R(g, 7, 27, 18, 1, WHITE[0]);
+      R(g, 6, 9, 20, 5, WHITE[3]); R(g, 6, 9, 20, 1, WHITE[4]); R(g, 6, 13, 20, 1, WHITE[1]);
+      R(g, 9, 17, 6, 1, WHITE[3]); R(g, 18, 22, 4, 1, WHITE[1]);
+      // the cord, once each way, and its knot on top with two loops
+      R(g, 15, 9, 2, 19, CORD[1]); R(g, 16, 9, 1, 19, CORD[2]); R(g, 6, 19, 20, 2, CORD[1]); R(g, 6, 19, 20, 1, CORD[2]);
+      R(g, 15, 9, 1, 19, WHITE[4]);
+      R(g, 10, 5, 5, 3, CORD[1]); R(g, 17, 5, 5, 3, CORD[1]); R(g, 11, 6, 3, 1, CORD[0]); R(g, 18, 6, 3, 1, CORD[0]);
+      R(g, 14, 6, 4, 3, CORD[2]); R(g, 15, 7, 2, 1, CORD[0]);
+      tag(g, 22, 22, [18, 20]);
+    },
+  });
+  art('hall_bundle', {
+    box: [0, -8, 32, 42],
+    ink: true,
+    shadow: () => [16, 29, 12, 3, 0.32],
+    draw(g) {
+      // the bundle: a soft rounded mass of cloth, lit from the upper left
+      for (let y = 12; y < 29; y++) {
+        const u = (y - 12) / 16, half = Math.round(8 + Math.sin(Math.min(1, u * 1.4) * Math.PI / 2) * 3 - (u > 0.85 ? (u - 0.85) * 14 : 0));
+        R(g, 16 - half, y, half * 2, 1, CLOTH[2]);
+        R(g, 16 - half, y, 2, 1, y < 22 ? CLOTH[3] : CLOTH[2]); R(g, 16 + half - 2, y, 2, 1, CLOTH[1]);
+      }
+      R(g, 7, 28, 18, 1, CLOTH[0]);
+      // the folds, gathered up toward the knot
+      line(g, 10, 26, 14, 14, CLOTH[1], 1); line(g, 22, 26, 18, 14, CLOTH[1], 1); line(g, 12, 25, 15, 15, CLOTH[3], 1);
+      // the knot, and its two tied corners splaying out from it, up and away to either side
+      for (let i = 0; i < 6; i++) {
+        R(g, 12 - i, 9 - i, 3, 2, i > 3 ? CLOTH[3] : CLOTH[2]); R(g, 12 - i, 9 - i, 1, 1, CLOTH[4]);
+        R(g, 17 + i, 9 - i, 3, 2, i > 3 ? CLOTH[2] : CLOTH[1]); R(g, 19 + i, 10 - i, 1, 1, CLOTH[0]);
+      }
+      R(g, 13, 9, 6, 5, CLOTH[2]); R(g, 13, 9, 6, 1, CLOTH[3]); R(g, 14, 11, 4, 2, CLOTH[1]); R(g, 15, 10, 2, 1, CLOTH[4]);
+      tag(g, 22, 15, [18, 12]);
+    },
+  });
+  // The tray with its gift (RBN-QA-181): the table drawn as every table is, then the gift's own art set on its top (lifted
+  // so that the gift's foot stands on the tabletop). Each part is cached by its own art; nothing new is drawn.
+  P.hall_tray.draw2 = function (c, x, y, pal, t, o) {
+    if (P.table.draw2) P.table.draw2(c, x, y, pal, t, o); else P.table.draw(c, x, y, pal, t, o);
+    const g = P[ON_TRAY[o && o.gift]];
+    if (g && g.draw2) g.draw2(c, x, y - 12, pal, t, {});
+  };
 })();
 
 
@@ -187359,14 +187748,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
         // the story room
         { p: 'kr_scroll', x: 2, y: 10, scene: 'hall.w2.t1' }, ...K.andon(4, 9, W, 't1'), { p: 'lantern', x: 1, y: 9, light: 30, o: { lit: true } },
         // the gifts on the path, and the trays on the veranda (t2)
-        { p: 'crate', x: GIFTS.red[0], y: GIFTS.red[1], scene: 'hall.w2.g_red', if: '!xp_hall_w2_f0_put_red' },
-        { p: 'chest', x: GIFTS.white[0], y: GIFTS.white[1], scene: 'hall.w2.g_white', if: '!xp_hall_w2_f0_put_white' },
+        // (the red bundle and the white box drawn as what the tags call them, not a crate and a chest: RBN-QA-180)
+        { p: 'hall_bundle', x: GIFTS.red[0], y: GIFTS.red[1], scene: 'hall.w2.g_red', if: '!xp_hall_w2_f0_put_red' },
+        { p: 'hall_giftbox', x: GIFTS.white[0], y: GIFTS.white[1], scene: 'hall.w2.g_white', if: '!xp_hall_w2_f0_put_white' },
         { p: 'ko_basket', x: GIFTS.chestnut[0], y: GIFTS.chestnut[1], scene: 'hall.w2.g_chestnut', if: '!xp_hall_w2_f0_put_chestnut' },
         ...Object.keys(TRAYS).map((k) => ({ p: 'table', x: TRAYS[k][0], y: TRAYS[k][1], scene: 'hall.w2.tray_' + k })),
         ...K.andon(28, 4, W, 't2'),
-        // the go-between's practice cards, and her stone (t3)
-        { p: 'signblank', x: 5, y: 3, scene: 'hall.w2.card1' }, { p: 'signblank', x: 7, y: 3, scene: 'hall.w2.card2' },
-        { p: 'signblank', x: 9, y: 3, scene: 'hall.w2.card3' }, { p: 'signblank', x: 11, y: 3, scene: 'hall.w2.card4' },
+        // the go-between's practice cards, and her stone (t3); the wrong card gone once the trial is passed, as its line
+        // says ("The wrong card blows away on the wind": hall/22_w2_scenes.js sets which)
+        ...[5, 7, 9, 11].map((x, i) => ({ p: 'signblank', x, y: 3, scene: 'hall.w2.card' + (i + 1), if: '!xp_hall_w2_f0_t3_gone' + (i + 1) })),
         { p: 'stone_marker', x: 13, y: 3, scene: 'hall.w2.t3' }, ...K.andon(14, 2, W, 't3'),
         K.lit(15, 10), K.lit(19, 10), K.lit(15, 14), K.lit(19, 14),
       ]),
@@ -189864,7 +190254,19 @@ narr: {盃|さかずき} が 、 {台|だい} の {上|うえ} で {光|ひか}�
   };
   const GIFT = { red: ['{赤|あか}い {包|つつ}み', 'a red bundle', 'the red bundle'], white: ['{白|しろ}い {箱|はこ}', 'a white box', 'the white box'], chestnut: ['{栗|くり} の {籠|かご}', 'a basket of chestnuts', 'the basket of chestnuts'] };
   const TRAY = { groom: ['{花婿|はなむこ} の {家|いえ} の {台|だい}', 'the groom\'s family\'s tray'], mother: ['{花嫁|はなよめ} の {母|はは} の {台|だい}', 'the bride\'s mother\'s tray'], toku: ['{仲人|なこうど} の {台|だい}', 'the go-between\'s tray'] };
-  const HOLD = (g) => 'xp_hall_w2_f0_hold_' + g, PUT = (g) => 'xp_hall_w2_f0_put_' + g;
+  const HOLD = (g) => 'xp_hall_w2_f0_hold_' + g, PUT = (g) => 'xp_hall_w2_f0_put_' + g, TOLD = 'xp_hall_w2_f0_carry_told';
+  // What each tray shows (RBN-QA-181): once the gift its pattern sends there is set on it, that gift on the table; else
+  // the bare table. One prop on each tray's tile in every state, with the tray's own scene and footprint. Made here,
+  // from TAG itself, so that the trays can never disagree with the tags.
+  {
+    const M1 = C.maps['hall.w2f1'], TR = C.hallW2.TRAYS;
+    for (const t of Object.keys(TR)) {
+      const here = [0, 1].map((p) => [p, Object.keys(TAG[p]).find((g) => TAG[p][g][4] === t)]);
+      const plain = M1.props.find((q) => q.p === 'table' && q.scene === 'hall.w2.tray_' + t);
+      plain.if = here.map(([p, g]) => 'hall.w2.pat=' + p + '&!' + PUT(g)).join('|');
+      for (const [p, g] of here) M1.props.push({ p: 'hall_tray', x: plain.x, y: plain.y, scene: plain.scene, o: { gift: g }, if: 'hall.w2.pat=' + p + '&' + PUT(g) });
+    }
+  }
   for (const g of Object.keys(GIFT)) {
     out += `
 @scene hall.w2.g_${g}
@@ -189877,9 +190279,27 @@ narr: ${GIFT[g][0]} 。 {札|ふだ} が {付|つ}いて いる 。 || ${GIFT[g]
 ?(${both(L.IA, 'hall.w2.pat=' + p)}) narr: 「 ${tg[2]} 」 || "${tg[3]}"
 `;
     }
-    out += `!unset ${Object.keys(GIFT).map(HOLD).join(' ')}
+    // You carry one gift at a time (RBN-QA-181): the one in your hands already is said to be, another one held is put
+    // back in its place as this one is taken up, and with your hands empty the gift is picked up as before; the first
+    // time on the floor, that you can carry only one (remembered under the floor's own prefix, so it resets with it).
+    const others = Object.keys(GIFT).filter((h) => h !== g);
+    out += `!if ${HOLD(g)} -> held_${g}
+${others.map((h) => `!if ${HOLD(h)} -> swap_${h}`).join('\n')}
 !set ${HOLD(g)}
 narr: ${GIFT[g][0]} を {持|も}った 。 || You pick up ${GIFT[g][1]}.
+!if ${TOLD} -> end_${g}
+!set ${TOLD}
+narr: {一度|いちど} に {持|も}てる の は 、 {一|ひと}つ だけ だ 。 || You can carry only one at a time.
+!goto end_${g}
+:held_${g}
+narr: ${GIFT[g][0]} は 、 もう {持|も}って いる 。 || You're already carrying ${GIFT[g][2]}.
+!goto end_${g}
+${others.map((h) => `:swap_${h}
+!unset ${HOLD(h)}
+!set ${HOLD(g)}
+narr: ${GIFT[h][0]} を {元|もと} の {場所|ばしょ} に {戻|もど}して 、 ${GIFT[g][0]} を {持|も}った 。 || You put ${GIFT[h][2]} back in its place and pick up ${GIFT[g][2]}.
+!goto end_${g}`).join('\n')}
+:end_${g}
 `;
   }
   for (const t of Object.keys(TRAY)) {
@@ -189914,10 +190334,19 @@ ${K.mark(W, 0, 't2')}
       I: ['A friend gave me a letter.', 'The teacher gave my little sister a book.', 'The bride "gave-toward-me" the groom chestnuts.', 'A villager gave me an umbrella.'],
       A: ['Konta kindly showed me the way.', 'I had the groom pass the cup.', 'Toku "did-as-a-favour-outward" listening to me.', 'I carried the bride\'s luggage for her.'] },
   };
+  // Which card blows away: the one the trial just passed has wrong, by the floor's pattern and the tier it was asked at
+  // (the cards' own conditions, as their scenes below read them): pattern 0, card 3; pattern 1, card 4 at F and E and
+  // card 3 at I and A. Set as the trial passes, just before the line says so, so that a later change of tier cannot
+  // move it; under the floor's own prefix, so that the floor's reset brings the card back. Its prop is gone with it
+  // (hall/11_w2_maps.js); the other three stay to be read.
+  const GONE = (i) => 'xp_hall_w2_f0_t3_gone' + (i + 1);
+  const goneIf = [0, 1, 2, 3].map((i) => [0, 1].flatMap((p) => ['F', 'E', 'I', 'A'].filter((tier) => C.hallW2Cards[p][tier][i][1] === 1).map((tier) => both(L[tier], 'hall.w2.pat=' + p))).join('|'));
+  const blown = [0, 1, 2, 3].filter((i) => goneIf[i]);
+  const blow = [...blown.map((i) => `!if ${goneIf[i]} -> gone${i + 1}`), '!goto blown', ...blown.flatMap((i) => [`:gone${i + 1}`, `!set ${GONE(i)}`, '!goto blown']), ':blown'];
   out += '\n@scene hall.w2.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {仲人|なこうど} の {石|いし} に 、 {字|じ} が {刻|きざ}んで ある 。 「 {四|よん} {枚|まい} の {札|ふだ} の うち 、 {一枚|いちまい} だけ が {間違|まちが}って いる 。 」 || Carved on the go-between\'s stone: "Of the four cards, one alone is wrong."'],
     task: { 0: 'hall.w2.counter0', 1: 'hall.w2.counter1' },
-    after: ['narr: {間違|まちが}った {札|ふだ} が 、 {風|かぜ} に {飛|と}んで いった 。 || The wrong card blows away on the wind.', '?(comp&comp!=ren) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に ならない から ね 。 || A go-between who mixes up who gives to whom is out of work.', '?(comp=ren) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に なりません から ね 。 || A go-between who mixes up who gives to whom is out of work.'],
+    after: [...blow, 'narr: {間違|まちが}った {札|ふだ} が 、 {風|かぜ} に {飛|と}んで いった 。 || The wrong card blows away on the wind.', '?(comp&comp!=ren) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に ならない から ね 。 || A go-between who mixes up who gives to whom is out of work.', '?(comp=ren) comp: {仲人|なこうど} は 、 {誰|だれ} が {誰|だれ} に 、 を {間違|まちが}えたら {仕事|しごと} に なりません から ね 。 || A go-between who mixes up who gives to whom is out of work.'],
     later: 'narr: {札|ふだ} を {一枚|いちまい} ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the cards one by one, then come back.',
     done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
   for (let i = 0; i < 4; i++) {
@@ -211209,18 +211638,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the festival crowd (RBN-QA-020: "the bank is packed with people"): townsfolk of Manybridge and Blockprint Row,
       // on the night only, standing off the booths' fronts, the street's lane along the bank (rows 20-21, where you come
       // onto the bank), the bridge and Tomi's foot of it;
-      // a family by the stalls, wherever the stalls were put
+      // a family by the stalls, wherever the stalls were put. Each is `visiting`: a night's place, not one the story
+      // keeps them in, so that someone not yet seen elsewhere never walks in from the festival on an ordinary day
+      // (50_world.js wayFor; the lock's boatmen did)
       ...[['mb_vb_gosuke', 5, 19, 'right'], ['mb_vb_otane', 6, 19, 'left'], ['mp_vb_chosuke', 11, 19, 'down'], ['mp_vb_ohatsu', 12, 19, 'down'],
         ['mb_sen', 23, 19, 'down'], ['mb_zenzo', 28, 19, 'left'], ['mb_fujiko', 40, 19, 'down'], ['mb_vb_magobe', 42, 19, 'right'],
         ['mp_vb_ginta', 43, 19, 'left'], ['mp_shinobu', 48, 19, 'down'],
         ['mb_take', 8, 22, 'right'], ['mb_uno', 9, 22, 'left'], ['mb_vb_kinji', 18, 22, 'down'], ['mp_vb_rokuro', 29, 22, 'left'],
         ['mb_vb_torakichi', 34, 22, 'down'], ['mp_kakeru', 49, 22, 'up'],
         ['mp_sanpei', 19, 25, 'down'], ['mp_miyo', 20, 25, 'down'], ['mp_tokube', 36, 25, 'down']]
-        .map(([c, x, y, dir]) => ({ id: c + '_fest', char: c, x, y, dir, if: 'mp_fest_night&!mb2_done' })),
-      { id: 'mb_haru_fest', char: 'mb_haru', x: 23, y: 16, dir: 'right', if: 'mp_fest_night&!mb2_done&mp_st_square' },
-      { id: 'mb_ichi_fest', char: 'mb_ichi', x: 24, y: 16, dir: 'left', if: 'mp_fest_night&!mb2_done&mp_st_square' },
-      { id: 'mb_haru_festb', char: 'mb_haru', x: 12, y: 22, dir: 'right', if: 'mp_fest_night&!mb2_done&!mp_st_square' },
-      { id: 'mb_ichi_festb', char: 'mb_ichi', x: 13, y: 22, dir: 'left', if: 'mp_fest_night&!mb2_done&!mp_st_square' },
+        .map(([c, x, y, dir]) => ({ id: c + '_fest', char: c, x, y, dir, if: 'mp_fest_night&!mb2_done', visiting: true })),
+      { id: 'mb_haru_fest', char: 'mb_haru', x: 23, y: 16, dir: 'right', if: 'mp_fest_night&!mb2_done&mp_st_square', visiting: true },
+      { id: 'mb_ichi_fest', char: 'mb_ichi', x: 24, y: 16, dir: 'left', if: 'mp_fest_night&!mb2_done&mp_st_square', visiting: true },
+      { id: 'mb_haru_festb', char: 'mb_haru', x: 12, y: 22, dir: 'right', if: 'mp_fest_night&!mb2_done&!mp_st_square', visiting: true },
+      { id: 'mb_ichi_festb', char: 'mb_ichi', x: 13, y: 22, dir: 'left', if: 'mp_fest_night&!mb2_done&!mp_st_square', visiting: true },
       { id: 'mp_ryusui', x: 45, y: 18, dir: 'down', if: 'quest.mp_ghost>=1&!mp_ghost_exposed', talk: 'mp.ryusui' },
       { id: 'mp_saku', x: 30, y: 23, dir: 'down', if: '!quest.mp_actor=done', talk: [{ if: 'quest.mp_actor>=1', scene: 'mp.saku_rehearse' }, { scene: 'mp.saku_first' }] },
     ],
@@ -215854,14 +216285,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const T = (en, jp) => ({ en, jp });
   C.shogi = C.shogi || {};
   C.shogi.lessons = [
-    { id: 'P', piece: 'P', board: ['..k..', '.....', '..p..', '..P..', '..K..'], goal: { to: [2, 2] }, say: T('The pawn steps straight forward, one square, and takes the same way. Take the pawn in front of it.', '{歩|ふ} は {前|まえ} に {一|ひと}つ {進|すす}む 。 {取|と}る の も {前|まえ} 。') },
-    { id: 'L', piece: 'L', board: ['..k..', '..p..', '.....', '.....', '..L.K'], goal: { to: [1, 2] }, say: T('The lance runs straight forward as far as it likes, but never back. Take the pawn up its file.', '{香車|きょうしゃ} は {前|まえ} に どこ まで も {進|すす}める 。 {後|うし}ろ に は {戻|もど}れない 。') },
-    { id: 'N', piece: 'N', board: ['k....', '.....', '..p..', '.....', '.N..K'], goal: { to: [2, 2] }, say: T('The knight jumps: two forward and one to the side, over anything in the way. Jump onto the pawn.', '{桂馬|けいま} は {二|ふた}つ {前|まえ} 、 {一|ひと}つ {横|よこ} に {跳|と}ぶ 。') },
-    { id: 'S', piece: 'S', board: ['k....', '.....', '...p.', '..S..', '....K'], goal: { to: [2, 3] }, say: T('The silver steps one square forward or diagonally, five ways in all, but never straight to the side or straight back. Take the pawn diagonally ahead.', '{銀|ぎん} は {前|まえ} と {斜|なな}め に {一|ひと}つ {進|すす}む 。') },
-    { id: 'G', piece: 'G', board: ['k....', '.....', '.....', '.pG..', '....K'], goal: { to: [3, 1] }, say: T('The gold steps one square any way but diagonally back. Take the pawn beside it.', '{金|きん} は {斜|なな}め {後|うし}ろ {以外|いがい} に {一|ひと}つ {動|うご}く 。') },
-    { id: 'B', piece: 'B', board: ['k...p', '.....', '.....', '.....', 'B...K'], goal: { to: [0, 4] }, say: T('The bishop slides diagonally as far as the way is clear. Take the pawn in the far corner.', '{角|かく} は {斜|なな}め に どこ まで も {進|すす}む 。') },
-    { id: 'R', piece: 'R', board: ['k....', '.....', '....p', '.....', 'R...K'], goal: { to: [2, 0] }, alt: [{ to: [4, 3] }], say: T('The rook slides straight along a rank or a file as far as the way is clear. Move it up its file.', '{飛車|ひしゃ} は {縦|たて} と {横|よこ} に どこ まで も {進|すす}む 。') },
-    { id: 'K', piece: 'K', board: ['k....', '.....', '.....', '...p.', '..K..'], goal: { to: [3, 3] }, say: T('The king steps one square any way. Keep it safe: if it is caught, the game is lost. Take the pawn next to it.', '{玉|ぎょく} は どの {方向|ほうこう} に も {一|ひと}つ {進|すす}む 。') },
+    { id: 'P', piece: 'P', board: ['..k..', '.....', '..p..', '..P..', '..K..'], goal: { to: [2, 2] }, say: T('The pawn steps straight forward, one square, and takes the same way. Take the pawn in front of it.', '{歩|ふ} は {前|まえ} に {一|ひと}つ {進|すす}む 。 {取|と}る の も {前|まえ} 。 {前|まえ} の {歩|ふ} を {取|と}って みよう 。') },
+    { id: 'L', piece: 'L', board: ['..k..', '..p..', '.....', '.....', '..L.K'], goal: { to: [1, 2] }, say: T('The lance runs straight forward as far as it likes, but never back. Take the pawn up its file.', '{香車|きょうしゃ} は {前|まえ} に どこ まで も {進|すす}める 。 {後|うし}ろ に は {戻|もど}れない 。 {上|うえ} に いる {歩|ふ} を {取|と}って みよう 。') },
+    { id: 'N', piece: 'N', board: ['k....', '.....', '..p..', '.....', '.N..K'], goal: { to: [2, 2] }, say: T('The knight jumps: two forward and one to the side, over anything in the way. Jump onto the pawn.', '{桂馬|けいま} は {二|ふた}つ {前|まえ} 、 {一|ひと}つ {横|よこ} に {跳|と}ぶ 。 {歩|ふ} の ところ へ {跳|と}んで 、 {取|と}って みよう 。') },
+    { id: 'S', piece: 'S', board: ['k....', '.....', '...p.', '..S..', '....K'], goal: { to: [2, 3] }, say: T('The silver steps one square forward or diagonally, five ways in all, but never straight to the side or straight back. Take the pawn diagonally ahead.', '{銀|ぎん} は {前|まえ} と {斜|なな}め に {一|ひと}つ {進|すす}む 。 {斜|なな}め {前|まえ} の {歩|ふ} を {取|と}って みよう 。') },
+    { id: 'G', piece: 'G', board: ['k....', '.....', '.....', '.pG..', '....K'], goal: { to: [3, 1] }, say: T('The gold steps one square any way but diagonally back. Take the pawn beside it.', '{金|きん} は {斜|なな}め {後|うし}ろ {以外|いがい} に {一|ひと}つ {動|うご}く 。 {横|よこ} の {歩|ふ} を {取|と}って みよう 。') },
+    { id: 'B', piece: 'B', board: ['k...p', '.....', '.....', '.....', 'B...K'], goal: { to: [0, 4] }, say: T('The bishop slides diagonally as far as the way is clear. Take the pawn in the far corner.', '{角|かく} は {斜|なな}め に どこ まで も {進|すす}む 。 {遠|とお}く の {隅|すみ} の {歩|ふ} を {取|と}って みよう 。') },
+    { id: 'R', piece: 'R', board: ['.k...', '.....', '....p', '.....', 'R...K'], goal: { to: [2, 0] }, alt: [{ to: [4, 3] }], say: T('The rook slides straight along a rank or a file as far as the way is clear. Move it up its file to the pawn\'s rank, where it attacks the pawn, or along the bottom rank to beside your king.', '{飛車|ひしゃ} は {縦|たて} と {横|よこ} に どこ まで も {進|すす}む 。 {歩|ふ} と {同|おな}じ {段|だん} まで {上|うえ} に {進|すす}めて みよう 。 {一番|いちばん} {下|した} の {段|だん} を {横|よこ} に {進|すす}めて 、 {自分|じぶん} の {玉|ぎょく} の {隣|となり} に {置|お}いて も いい 。') },
+    { id: 'K', piece: 'K', board: ['k....', '.....', '.....', '...p.', '..K..'], goal: { to: [3, 3] }, say: T('The king steps one square any way. Keep it safe: if it is caught, the game is lost. Take the pawn next to it.', '{玉|ぎょく} は どの {方向|ほうこう} に も {一|ひと}つ {進|すす}む 。 {斜|なな}め {前|まえ} の {歩|ふ} を {取|と}って みよう 。') },
   ];
   // mate in one (詰将棋): the side to move is you; hand: your pieces in hand
   C.shogi.tsume = [
@@ -222130,12 +222561,17 @@ narr: {答|こた}える {前|まえ} に 、 {漁船|ぎょせん} は {波|な
 
 @scene sea.sit_fog
 # Fog: the light on the point flashes its own pattern; the chart's key says which light is which.
+# (the fog is this scene's: on, then lifted at its end, which it always reaches, a challenge put off included; run
+# within the crew's crossing it would otherwise last into the arrival. A load ends it with the scene. The light is
+# never drawn as countable flashes, since how many there are depends on the profile: RBN-QA-174)
+!ambience fog
 narr: {急|きゅう} に {霧|きり} が {出|で}て きた 。 {陸|りく} も {島|しま} も {見|み}えない 。 || Fog comes down all at once. No land, no islands.
 narr: {霧|きり} の {向|む}こう で 、 {光|ひかり} が {点|つ}いて は {消|き}える 。 || Somewhere beyond the fog, a light comes and goes.
 !challenge sea.fog
 ?(var._res=1) narr: {光|ひかり} の {数|かず} で 、 どこ の {灯台|とうだい} か {分|わ}かった 。 {舵|かじ} を {少|すこ}し {切|き}って 、 {霧|きり} を {抜|ぬ}ける 。 || The count of the flashes tells you which light it is. A touch on the tiller, and you're out of the fog.
 ?(var._res=0) narr: {乗組員|のりくみいん} が {笑|わら}う 。 「{慌|あわ}て なくて いい 。 {霧|きり} は 、 {待|ま}てば {晴|は}れる 。」 {少|すこ}し {待|ま}つ と 、 {本当|ほんとう} に {晴|は}れた 。 || The crew laughs. "No need to hurry. Fog lifts if you wait." You wait a little, and it does.
 !hook sail_log sight fog
+!ambience -
 
 @scene sea.sit_cargo
 # A crate in the water: read its label.
@@ -223020,7 +223456,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 12, y: 13, w: 7, h: 3, roof: 'tile', wall: 'wood', door: 3, windows: [1, 5], grow: true, if: 'as_hall', shut: SHUT('The meeting house. New timber, and the smell of fresh tatami.', '{寄合所|よりあいじょ} 。 {新|あたら}しい {木|き} と 、 {新|あたら}しい {畳|たたみ} の {匂|にお}い 。') },
     ],
     props: [
-      { p: 'noticeboard', x: 9, y: 8, scene: 'as.board' },
+      // the notices on it are the ones as.board has: Mitsue's call for the roads' names until they are named, then
+      // blank, then the washing's notice, the market's, the channel's turns, and a child's picture of the festival
+      // (RBN-QA-175)
+      { p: 'noticeboard', x: 9, y: 8, scene: 'as.board', o: { papers: ['quest.as_main=0', 'as_nt_water', 'as_nt_market', 'as_dp_water'], picture: 'as_fest_done' } },
       { p: 'well', x: 19, y: 8, scene: 'as.well' },
       // the three ways: blank posts until they are named, then their signposts
       { p: 'signblank', x: 1, y: 9, scene: 'as.way_main', if: '!as_nm_main' }, { p: 'sign', x: 1, y: 9, scene: 'as.way_main', if: 'as_nm_main' },
@@ -223035,7 +223474,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'counter', x: 25, y: 12, across: true, if: 'var.as_market=bridge' }, { p: 'crate', x: 28, y: 12, if: 'var.as_market=bridge' },
       // the channel's rota, and the forge's hours or its new place by the paddies
       { p: 'sign', x: 25, y: 9, if: 'as_dp_water', scene: 'as.rota' },
-      { p: 'sign', x: 16, y: 8, if: 'var.as_forge=hours', scene: 'as.forge_hours' },
+      // (the hours' tag hangs on the forge door, on the wall beside it, read from in front of it at (14,8); the door
+      // (13,7) keeps its own line: RBN-QA-176)
+      { p: 'as_forgetag', x: 14, y: 7, if: 'var.as_forge=hours', scene: 'as.forge_hours' },
       { p: 'anvil', x: 33, y: 8, if: 'var.as_forge=moved' }, { p: 'campfire', x: 34, y: 8, if: 'var.as_forge=moved' },
       // the festival's lanterns, where they were hung, stay up afterwards
       ...[2, 6, 15, 20, 31].map((x) => ({ p: 'lantern', x, y: 12, o: { lit: true }, if: 'var.as_lan=street' })),
@@ -223095,6 +223536,54 @@ var RB = (globalThis.RB = globalThis.RB || {});
   at('as_mohei', 11, 13, 'up', 'var.as_market=board&slot.as_mohei=1');
   at('as_mohei', 26, 13, 'up', 'var.as_market=bridge&slot.as_mohei=1');
 })(RB.content, RB.mapkit);
+
+
+/* ==== src/content/settle/02_art.js ==== */
+/* Ashihara Shinden's own props (P11). The forge's hours tag (RBN-QA-176): once the noise is settled with working hours,
+ * a wooden tag hangs on the forge door, as the line says ("A tag hangs on the forge door"): on the wall beside the
+ * door (14,7), hung from a nail on the doorway's post so that it overlaps the frame, written in brush strokes (the
+ * hours are its scene's line; nothing on it is legible). It is read from in front of it (14,8); the door itself (13,7)
+ * keeps its own line. You cannot walk into a wall, so it blocks nothing new; it is drawn on that wall, after the
+ * building (onWall), as Sono's noren is (RBN-QA-111). Each has a flat 16-px drawing (the fallback, as every prop) and
+ * its art-resolution version; provisional under AC1_ART, for Robin. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const P = RB.props.P;
+  const px = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
+  const def = (id, o, draw) => (P[id] = Object.assign({ id, w: 1, h: 1, block: true }, o, { draw }));
+
+  // ---- flat fallback (16 px a tile): the door's post is at the tile's left edge, x -2..0 -------------------------------
+  def('as_forgetag', { block: false, onWall: true }, (c, x, y) => {
+    px(c, x - 1, y + 1, 1, 1, '#3a2a1c');
+    px(c, x - 3, y + 2, 5, 7, '#c8a878'); px(c, x - 3, y + 2, 5, 1, '#e0c898'); px(c, x - 3, y + 8, 5, 1, '#8a6a44');
+    px(c, x - 1, y + 3, 1, 4, '#2a2024');
+  });
+
+  if (!RB.propArt || !RB.propKit) return;
+  const K = RB.propKit, art = RB.propArt.art, { R, line } = K;
+  // The tag: a plank of pale, unpainted wood (木札) a little taller than wide, hung by a cord from a nail on the doorway's
+  // right-hand post (the doorway spans x 4..28 of the door's tile, so that post stands at about x -4 of this one), so it
+  // hangs half over the frame; two short columns of dark brush strokes on it, written as the game's signs are. Light
+  // from the upper left: the left edge and top lit, the right edge and foot in shade.
+  const TAG = ['#6a4e30', '#9a7a52', '#c8a878', '#e2c89c'];
+  art('as_forgetag', {
+    box: [-12, -4, 32, 40],
+    ink: true,
+    draw(g) {
+      // the nail and the cord
+      R(g, -3, 1, 2, 2, '#2a221e'); R(g, -3, 1, 1, 1, '#5a5048');
+      line(g, -2, 3, -5, 7, '#5a4630', 1); line(g, -2, 3, 1, 7, '#5a4630', 1);
+      // the plank
+      R(g, -8, 7, 12, 17, TAG[2]); R(g, -8, 7, 12, 1, TAG[3]); R(g, -8, 7, 1, 17, TAG[3]);
+      R(g, 3, 8, 1, 16, TAG[1]); R(g, -8, 23, 12, 1, TAG[0]); R(g, -7, 12, 4, 1, TAG[1]); R(g, -1, 18, 3, 1, TAG[1]);
+      // two short columns of brush strokes
+      for (let i = 0; i < 3; i++) RB.propArt.kit.glyph(g, -1, 9 + i * 5, K.hh(14, i, 7), '#2a2024');
+      for (let i = 0; i < 2; i++) RB.propArt.kit.glyph(g, -6, 9 + i * 5, K.hh(13, i, 7), '#2a2024');
+    },
+  });
+})();
 
 
 /* ==== src/content/settle/10_learning.js ==== */
@@ -223270,7 +223759,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       actions: [
         { id: 'restate', kind: 'restate', label: say('お{二人|ふたり} と も 、 {自分|じぶん} の {田|た}んぼ の {水|みず} が {心配|しんぱい} なん です ね 。', 'Say back what both of them are afraid of'),
           task: task('g:n_desu', 'Which says back what both of them are afraid of?', 'お{二人|ふたり} と も 、 {自分|じぶん} の {田|た}んぼ の {水|みず} が {心配|しんぱい} なん です ね 。', 'お{二人|ふたり} と も 、 {水|みず} が {嫌|きら}い なん です ね 。', 'They both need water; neither dislikes it.', 'ヨシゾウ さん が {悪|わる}い ん です ね 。', 'That takes a side before you have heard either.'),
-          cases: [{ when: { stance: { 'n:yoshizo': 'heated' } }, effect: { stance: { 'n:yoshizo': 'listening' } }, says: { en: 'Yoshizō folds his arms. "…Well. Yes."' } },
+          // (heard first, while the other still waits, the words say so: one use calms one person; RBN-QA-176)
+          cases: [{ when: { stance: { 'n:yoshizo': 'heated', 'n:taki': 'heated' } }, effect: { stance: { 'n:yoshizo': 'listening' } }, says: { en: 'Yoshizō folds his arms. "…Well. Yes." Taki is still waiting to be heard.' } },
+            { when: { stance: { 'n:yoshizo': 'heated' } }, effect: { stance: { 'n:yoshizo': 'listening' } }, says: { en: 'Yoshizō folds his arms. "…Well. Yes."' } },
             { when: { stance: { 'n:taki': 'heated' } }, effect: { stance: { 'n:taki': 'listening' }, understanding: 1 }, says: { en: 'Taki lets out a breath. "Somebody finally said it."' } }],
           says: { en: 'They are already listening.' } },
         { id: 'ask_yoshizo', kind: 'ask', label: say('ヨシゾウ さん 、 {水門|すいもん} を {開|あ}けたら 、 どう なる ん です か 。', 'Ask Yoshizō what happens if he opens the sluice'), once: true, when: { stance: { 'n:yoshizo': 'listening' } },
@@ -223331,7 +223822,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       actions: [
         { id: 'restate', kind: 'restate', label: say('ショウ さん は {仕事|しごと} を 、 ナツ さん は {赤|あか}ちゃん の {眠|ねむ}り を 、 {守|まも}りたい ん です ね 。', 'Say back what each of them wants to protect'),
           task: task('g:v_tai', 'Which says back what each of them wants to protect?', 'ショウ さん は {仕事|しごと} を 、 ナツ さん は {赤|あか}ちゃん の {眠|ねむ}り を 、 {守|まも}りたい ん です ね 。', 'お{二人|ふたり} と も 、 {静|しず}か に したい ん です ね 。', 'Shō wants to work, not to be quiet.', 'ショウ さん は {寝|ね}たい ん です ね 。', 'It is the baby who needs to sleep.'),
-          cases: [{ when: { stance: { 'n:sho': 'heated' } }, effect: { stance: { 'n:sho': 'listening' } }, says: { en: 'Shō sets down the hammer. "…Yes."' } },
+          cases: [{ when: { stance: { 'n:sho': 'heated', 'n:natsu': 'heated' } }, effect: { stance: { 'n:sho': 'listening' } }, says: { en: 'Shō sets down the hammer. "…Yes." Natsu is still waiting to be heard.' } },
+            { when: { stance: { 'n:sho': 'heated' } }, effect: { stance: { 'n:sho': 'listening' } }, says: { en: 'Shō sets down the hammer. "…Yes."' } },
             { when: { stance: { 'n:natsu': 'heated' } }, effect: { stance: { 'n:natsu': 'listening' }, understanding: 1 }, says: { en: 'Natsu\'s shoulders drop. "Yes. That\'s all. Just sleep."' } }],
           says: { en: 'They are already listening.' } },
         { id: 'ask_natsu', kind: 'ask', label: say('{赤|あか}ちゃん は 、 いつ {眠|ねむ}る ん です か 。', 'Ask Natsu when the baby sleeps'), once: true, when: { stance: { 'n:natsu': 'listening' } },
@@ -223454,7 +223946,8 @@ as_mitsue: {次|つぎ} は 、 {掲示板|けいじばん} に {最初|さい�
 @scene as.board
 !if quest.as_main=0 -> early
 !if as_nt_water&as_nt_market -> read
-narr: {掲示板|けいじばん} 。 まだ {何|なに} も {貼|は}って ない 。 || The notice board. Nothing on it yet.
+# (with the washing's notice up and the market's put off, the board is not empty: straight on to the market; RBN-QA-175)
+?(!as_nt_water) narr: {掲示板|けいじばん} 。 まだ {何|なに} も {貼|は}って ない 。 || The notice board. Nothing on it yet.
 !if as_nt_water -> market
 narr: {井戸|いど} の {周|まわ}り が 、 {石鹸|せっけん} の {泡|あわ} で {白|しろ}い 。 {誰|だれ} か が 、 {飲|の}み{水|みず} の {井戸|いど} で {洗濯|せんたく} を して いる 。 || The ground round the well is white with soap suds. Someone has been washing clothes at the drinking well.
 !challenge as.notice_water
@@ -223523,7 +224016,15 @@ narr: {鍛冶場|かじば} の {戸|と} に 、 {札|ふだ} が {掛|か}か�
   out += `
 @scene as.water_talk
 !if as_dp_water -> done
-narr: {水門|すいもん} の {前|まえ} で 、 ヨシゾウ と タキ が {言|い}い{合|あ}って いる 。 || Yoshizō and Taki are arguing at the sluice.
+!walkto as_yoshizo pc max=8000
+!if var._walked=0 -> apart
+!walkto as_taki pc max=8000
+!if var._walked=0 -> talk
+narr: {水門|すいもん} の こと で 、 ヨシゾウ と タキ が {言|い}い{合|あ}って いる 。 || Yoshizō and Taki are arguing over the sluice.
+!goto talk
+:apart
+!walkto as_taki pc max=8000
+:talk
 as_yoshizo: {俺|おれ} が {掘|ほ}った {水路|すいろ} だ ！ || I dug that channel!
 as_taki: {掘|ほ}った {人|ひと} の もの なら 、 {雨|あめ} も あんた の もの なの ？ || If it's whoever dug it, does the rain belong to you too?
 narr: {二人|ふたり} と も 、 {本当|ほんとう} に {困|こま}って いる よう だ 。 || They both look genuinely worried.
@@ -223544,7 +224045,17 @@ narr: {話|はなし} は 、 また {今度|こんど} 。 {二人|ふたり} �
 
 @scene as.noise_talk
 !if as_dp_noise -> done
-narr: {鍛冶場|かじば} の {前|まえ} で 、 {赤|あか}ちゃん を {抱|だ}いた ナツ が 、 ショウ と {向|む}かい{合|あ}って いる 。 || Outside the forge, Natsu stands facing Shō, the baby in her arms.
+!walkto as_natsu pc max=8000
+!if var._walked=0 -> apart
+!walkto as_sho pc max=8000
+!if var._walked=0 -> talk
+!look as_natsu as_sho
+!look as_sho as_natsu
+narr: {赤|あか}ちゃん を {抱|だ}いた ナツ が 、 ショウ と {向|む}かい{合|あ}って いる 。 || Natsu stands facing Shō, the baby in her arms.
+!goto talk
+:apart
+!walkto as_sho pc max=8000
+:talk
 as_natsu: お{願|ねが}い です から 、 {少|すこ}し だけ {静|しず}か に して ください 。 || Please, just a little quiet. I'm begging you.
 as_sho: {鎌|かま} が なければ 、 {稲|いね} は {刈|か}れない 。 || No sickles, no harvest.
 narr: どちら も 、 {間違|まちが}って は いない 。 || Neither of them is wrong.
@@ -223566,10 +224077,12 @@ narr: {話|はなし} は 、 また {今度|こんど} 。 || Another time.
 
 @scene as.quarrels_done
 !if !as_dp_water|!as_dp_noise -> one
+!fade out 600
 !set as_hall
 !quest as_main 3
 narr: {二|ふた}つ の {喧嘩|けんか} が {片付|かたづ}いた {日|ひ} 、 {村|むら} の {人|ひと} たち が {材木|ざいもく} を {担|かつ}いで {集|あつ}まった 。 || The day the second quarrel is settled, the villagers gather, carrying timber.
 as_mitsue: {話|はな}し{合|あ}う {屋根|やね} が {要|い}る って 、 {皆|みんな} が {言|い}う ん です 。 {寄合所|よりあいじょ} です よ 。 …… それ と 、 もう {一|ひと}つ 。 {祭|まつ}り を しません か 。 {村|むら} の 、 {最初|さいしょ} の {祭|まつ}り を 。 || Everyone says we need a roof to talk under. A meeting house. …And one more thing. Shall we have a festival? The village's very first.
+!fade in 600
 !end
 :one
 narr: {喧嘩|けんか} は 、 あと {一|ひと}つ 。 || One quarrel to go.
@@ -223630,6 +224143,7 @@ narr: {日|ひ} が {暮|く}れた 。 {葦原|あしはら}{新田|しんで�
 ?(var.as_lan=hill) narr: {提灯|ちょうちん} が 、 {坂|さか} を {一本松|いっぽんまつ} まで {登|のぼ}って いく 。 || Lanterns climb the slope all the way to the lone pine.
 as_mitsue: {皆|みな}さん 。 {去年|きょねん} の {今頃|いまごろ} 、 ここ は {葦|あし} の {原|はら} でした 。 {今|いま} は 、 {名前|なまえ} の ある {道|みち} と {決|き}まり が あって 、 {仲直|なかなお}り した {隣同士|となりどうし} が います 。 || Everyone. This time last year, this was reed plain. Now there are roads with names, rules, and neighbours who've made up.
 as_mitsue: {葦原|あしはら}{新田|しんでん} 。 …… {今日|きょう} から 、 {本当|ほんとう} の {村|むら} です 。 || Ashihara Shinden. …From today, a real village.
+?(as_kotoe) !shot night pupils
 ?(as_kotoe) narr: コトエ の {生徒|せいと} たち が 、 {覚|おぼ}えた ばかり の {字|じ} で {書|か}いた {紙|かみ} を {持|も}って 、 {歌|うた} を {歌|うた}う 。 {紙|かみ} に は 、 {村|むら} の {道|みち} の {名前|なまえ} 。 || Kotoe's pupils sing, holding up paper with the letters they've only just learned: the names of the village's roads.
 ?(as_kotoe) as_kotoe: {自分|じぶん} の {住|す}んで いる {道|みち} の {名前|なまえ} が 、 {最初|さいしょ} に {覚|おぼ}えた {字|じ} です 。 {一生|いっしょう} {忘|わす}れません よ 。 || The name of the road they live on was the first thing they learned to write. They'll never forget it.
 as_mohei: さあ さあ 、 {今夜|こんや} は {全部|ぜんぶ} {只|ただ} だ ！ {持|も}って {行|い}きな ！ || Come on, come on, tonight everything's free! Take what you like!
@@ -223640,7 +224154,8 @@ narr: それから 、 {皆|みんな} で {踊|おど}った 。 ヨシゾウ �
 ?(comp=ren) comp: {灯|ひ} が {一|ひと}つ {増|ふ}える の を 、 {初|はじ}めて {自分|じぶん} の {目|め} で {見|み}た {気|き} が します 。 || I think it's the first time I've seen, with my own eyes, a light being added to the world.
 ?(comp=suzu) comp: {客|きゃく} も {役者|やくしゃ} も {同|おな}じ {人|ひと} 。 こういう {舞台|ぶたい} が 、 {一番|いちばん} {好|す}き かも しれない わ 。 || The audience and the cast are the same people. I think I might like this kind of stage best of all.
 ?(!comp) narr: {誰|だれ} か が {手|て} を {引|ひ}いて 、 {踊|おど}り の {輪|わ} に {入|い}れて くれた 。 || Someone takes your hand and pulls you into the circle of dancers.
-narr: {最後|さいご} に 、 {皆|みんな} で {焚|た}き{火|び} を {囲|かこ}んだ 。 || Last of all, everyone sits round the fire.
+!shot fire settle
+narr: {最後|さいご} に 、 {皆|みんな} で {焚|た}き{火|び} を {囲|かこ}んだ 。 || Last of all, everyone gathers round the fire.
 !shot fire gift
 as_mitsue: これ を 。 {村|むら} の {皆|みんな} から です 。 {田植|たう}え の {時|とき} に かぶる {笠|かさ} です けど 、 {旅|たび} に も いい でしょう 。 || This is for you, from all of us. It's the hat we wear for planting, but it'll do for travelling too.
 !sequence as.festival end
@@ -230508,7 +231023,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const T = (en, jp) => ({ en, jp });
   // ---- the stations in the maps, and the islet --------------------------------------------------------------------------
   const sz = C.maps['sz.hamlet'];
-  sz.props = (sz.props || []).concat([{ p: 'fish_station', x: 34, y: 20, o: { kind: 'quay' }, scene: 'coast.station_rocks', if: 'post' }]);
+  // (on the rocks: the stake among them and a rod lashed to it, and under its stand a low shelf of rock running back to the
+  // shingle, as its narration says; the tiles, walking and blocking as they were: RBN-QA-173)
+  sz.props = (sz.props || []).concat([
+    { p: 'coast_shelf', x: 34, y: 19, if: 'post' },
+    { p: 'fish_station', x: 34, y: 20, o: { kind: 'rocks' }, scene: 'coast.station_rocks', if: 'post' },
+  ]);
   // the One-Pine Islet (一本松の小島): the pine islet off the coast's south-east (the sea chart's islet with one pine),
   // a destination for the boat after the story; nothing but the pine, a stone where boats carve their names, the
   // jetty and the fishing. Reached by boat only; leaving it by quick travel leaves nothing behind (the boat waits at
