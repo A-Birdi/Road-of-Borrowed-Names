@@ -22,12 +22,17 @@
 //   dev       the ?dev=harmony viewer: refused on a normal page; labelled synthetic; plays each pairing
 //   painted   the painted path with its SYNTHETIC sample (Suzu): the art's timeline of states, sizes from the
 //             API, the compact pair at a fractional CSS scale on a 3× phone; reduced motion (contract v3): peak
-//             held, then settle_b held, one cross-fade of at most 120 ms, no travel
+//             held, then settle_b held, one cross-fade of at most 120 ms, no travel — checked from the trace against
+//             the cut-in's own plan (every mix frame inside its window and moving forward, the holds either side),
+//             the window from the game's mixAt, and the check shown to reject a trace run long, begun early, without
+//             a mix frame or without the held peak
 //   painted geometry (contract v3 §3.3) the sample, and the rich fixture over it, at every geometry viewport and at
 //             2048×1046 and 1920×1080: the scale fitted on the visible footprint (and what the full canvas gave),
 //             the faces' size in CSS px, nothing within 12 px of a protected rectangle; 2× at 2048×1046 and 1920×1080;
 //             and the sample with the template's face boxes (real art's 50 × 52) at 1366, 1440, 1600 and 2048 wide:
-//             the pair whose faces come out larger is the one shown
+//             the pair whose faces come out larger is the one shown. Painted, the portrait is gone before its first
+//             result by the order the two happen in (one clock) and the page as the result is delivered; a portrait
+//             held past its end (a control) fails that
 // With --docs: real-time WebM captures of each pairing at Normal (1280×720), frame sheets of each stage
 // performance with the portrait Off, and the 390×844 compact cut-in, in docs/screenshots/harmony/cutin/.
 // With --painted-docs: the painted rows (scales, face sizes, footprints) in docs/screenshots/harmony/cutin/painted_v3.json.
@@ -74,6 +79,25 @@ async function install(p) {
     RB.challenge.runStep = (step, o) => { window.__lastStep = step; return run(step, o); };
     const L = RB.combatLogic, init = L.init;
     L.init = function (...a) { const st = init.apply(this, a); if (HC.onInit) HC.onInit(st); return st; };
+    // The portrait's removal and each result's delivery, in the order they happen, on one clock (the sequencer's
+    // presentation time), with whether the portrait is still in the page as a result is delivered (Agnes 6390636882).
+    // The stage advances the portrait before any cue of the same frame, so one long frame can carry both; their order
+    // is read here, not from two timestamps rounded differently. HC.holdPortrait (a control) keeps the portrait from
+    // advancing at all, so it is still up when its first result is delivered.
+    HC.order = [];
+    const frame0 = RB.harmonyCutin.frame, dispose0 = RB.harmonyCutin.dispose;
+    const up = () => !!document.querySelector('.cb-cutin');
+    const gone = (how) => HC.order.push({ k: 'gone', how, pt: +RB.battleSeq.now().toFixed(1) });
+    RB.harmonyCutin.frame = function (...a) { if (HC.holdPortrait) return; const had = up(); const r = frame0.apply(this, a); if (had && !up()) gone('frame'); return r; };
+    RB.harmonyCutin.dispose = function (...a) { const had = up(); const r = dispose0.apply(this, a); if (had && !up()) gone('dispose'); return r; };
+    const attach0 = RB.battleSeq.attach;
+    RB.battleSeq.attach = function (port) {
+      if (port && typeof port.beat === 'function') {
+        const beat0 = port.beat;
+        port = Object.assign({}, port, { beat: (f, c) => { HC.order.push({ k: 'beat', t: f ? f.t : null, pt: +RB.battleSeq.now().toFixed(1), portrait: up() }); return beat0(f, c); } });
+      }
+      return attach0.call(this, port);
+    };
     const vis = (e) => { if (!e) return null; const r = e.getBoundingClientRect(); if (r.width < 1 || r.height < 1) return null; const cs = getComputedStyle(e); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) return null; return { x: r.left, y: r.top, w: r.width, h: r.height }; };
     // what the addendum protects (§5.3), measured from the page itself
     HC.rects = () => {
@@ -233,7 +257,7 @@ async function settle(p) {
 // one committed technique with real clicks; returns what was recorded
 async function technique(p, comp, o) {
   o = o || {};
-  await p.evaluate(([every, entering]) => { const HC = window.__HC; HC.frames = []; HC.every = every || 3; HC.checkEntering = !!entering; HC.on = true; HC.s0 = RB.harmonyCutin.stats(); HC.trace0 = RB.battleSeq.trace().length; HC.look0 = JSON.stringify(RB.equip.look(RB.game.s)); HC.target0 = RB.combat.state().cur; }, [o.every, o.entering]);
+  await p.evaluate(([every, entering]) => { const HC = window.__HC; HC.frames = []; HC.order = []; HC.every = every || 3; HC.checkEntering = !!entering; HC.on = true; HC.s0 = RB.harmonyCutin.stats(); HC.trace0 = RB.battleSeq.trace().length; HC.look0 = JSON.stringify(RB.equip.look(RB.game.s)); HC.target0 = RB.combat.state().cur; }, [o.every, o.entering]);
   await clickCard(p, 'With ' + NAME[comp]);
   await answerRight(p);
   await companionPick(p, 'Join');
@@ -246,7 +270,7 @@ async function technique(p, comp, o) {
     const tech = tr.find((r) => (r.kind === 'player' || r.kind === 'finish') && r.meta && r.meta.card === 'tech');
     return { won, relaid: s1.relaid - HC.s0.relaid, started: s1.started - HC.s0.started, disposed: s1.disposed - HC.s0.disposed, suppressed: s1.suppressed, fallbacks: s1.fallbacks.length - HC.s0.fallbacks.length, fallback: s1.fallbacks[s1.fallbacks.length - 1] || null, last: RB.harmonyCutin.last(), layers: s1.layers, look0: HC.look0, target0: HC.target0,
       tech: tech && { kind: tech.kind, dur: tech.dur, beats: tech.beats, fired: tech.fired, settled: tech.settled, hurried: tech.hurried, meta: { action: tech.meta.action && tech.meta.action.id, actors: tech.meta.actors, target: tech.meta.target, gesture: tech.meta.gesture, end: tech.meta.end } },
-      frames: HC.frames };
+      frames: HC.frames, order: HC.order.slice() };
   }, s.r || null);
 }
 // the rules' state after the exchange (compared across presentation settings) and the learning record's counts
@@ -266,6 +290,37 @@ async function leave(p) {
 }
 const firstResult = (r) => Math.min(...r.tech.beats.filter((x) => x.t !== 'cost').map((x) => x.at));
 const markAt = (last, st) => { const m = last.marks.find((x) => x.state === st); return m ? m.at : null; };
+// the portrait gone before its first result is delivered: the order the two happened in, and the page at that moment
+// (a portrait still up when the first result is delivered fails, however near the two times are; Agnes 6390636882)
+const goneFirst = (r) => {
+  const o = r.order || [], i = o.findIndex((x) => x.k === 'beat' && x.t !== 'cost'), g = o.findIndex((x) => x.k === 'gone');
+  return { ok: i >= 0 && g >= 0 && g < i && o[g].pt <= o[i].pt && o[i].portrait === false, gone: g >= 0 ? o[g] : null, first: i >= 0 ? o[i] : null };
+};
+// reduced motion's cross-fade (contract v3: peak held, then settle_b held, one cross-fade between them, at most
+// 120 presentation ms), checked from the trace against the cut-in's own plan (its at and fade, presentation ms), not
+// inferred from the span of sampled frames (one valid frame spans 0 ms): the peak held before it, at least one frame
+// of the mix, every mix frame inside the planned window and moving forward, settle_b held after it, nothing else
+const reducedFade = (trace, plan) => {
+  const bad = [];
+  if (!plan || !(plan.fade > 0) || plan.fade > 120 || plan.a !== 'peak' || plan.b !== 'settle_b') { bad.push('the plan: ' + JSON.stringify(plan)); return bad; }
+  const t0 = plan.at - plan.fade / 2, t1 = plan.at + plan.fade / 2;
+  const mix = trace.filter((x) => x[5] != null), i0 = trace.findIndex((x) => x[5] != null);
+  let i1 = -1; for (let i = trace.length - 1; i >= 0; i--) if (trace[i][5] != null) { i1 = i; break; }
+  if (!mix.length) bad.push('no frame of the cross-fade');
+  else {
+    if (!trace.slice(0, i0).some((x) => x[5] == null && x[1] === 'h' && x[4] === 'peak')) bad.push('peak not held before the cross-fade');
+    if (!trace.slice(i1 + 1).some((x) => x[5] == null && x[1] === 'h' && x[4] === 'settle_b')) bad.push('settle_b not held after the cross-fade');
+    if (trace.slice(0, i0).some((x) => x[4] !== 'peak')) bad.push('a state other than peak before the cross-fade ' + JSON.stringify([...new Set(trace.slice(0, i0).map((x) => x[4]))]));
+    if (trace.slice(i1 + 1).some((x) => x[4] !== 'settle_b')) bad.push('a state other than settle_b after the cross-fade');
+    if (trace.slice(i0, i1 + 1).some((x) => x[5] == null)) bad.push('the cross-fade broken by a held frame');
+    if (mix[0][0] < t0 - 0.5) bad.push('the cross-fade began early: ' + mix[0][0] + ' ms, planned ' + t0);
+    if (mix[mix.length - 1][0] > t1 + 0.5) bad.push('the cross-fade ran long: ' + mix[mix.length - 1][0] + ' ms, planned to end at ' + t1);
+    if (mix.some((x, i) => i && x[5] < mix[i - 1][5])) bad.push('the cross-fade went backwards ' + JSON.stringify(mix.map((x) => x[5])));
+    // (the pose drawn under the mix turns at its middle; the trace's k is rounded to 0.001, so right at 0.5 either)
+    if (mix.some((x) => Math.abs(x[5] - 0.5) > 0.005 && x[4] !== (x[5] < 0.5 ? 'peak' : 'settle_b'))) bad.push('a mix frame drawn as the wrong pose');
+  }
+  return bad;
+};
 // a recorded frame where the portrait's drawn pixels come within 12 px of something protected: after its entrance,
 // anything; during the entrance (it slides in from the left edge), a withdrawn menu still visibly leaving — the
 // response dock or the telegraph (V3_REPORT.md open question 3)
@@ -897,8 +952,12 @@ async function paintedScene(v, which) {
       // (holding — or the fit order's recorded omission: no portrait for this action in this layout)
       const st = await p.waitForFunction(() => (RB.harmonyCutin.state().state === 'holding' ? 'holding' : RB.harmonyCutin.stats().fallbacks.length > window.__HC.s0.fallbacks.length ? 'omitted' : null), null, { timeout: 8000, polling: 'raf' }).then((h) => h.jsonValue()).catch(() => 'timeout');
       if (st !== 'holding') return;
+      // (the order check's control: from here the portrait is held where it is and never removed by its own frames, so
+      // it is still up when its first result is delivered)
+      if (v.control === 'late') await p.evaluate(() => { window.__HC.holdPortrait = true; });
       held = await p.evaluate(() => { const e = document.querySelector('.cb-cutin'), q = e.getBoundingClientRect(), s = RB.harmonyCutin.state(); return { cw: e.width, ch: e.height, css: [+q.width.toFixed(2), +q.height.toFixed(2)], top: +q.top.toFixed(2), scale: s.scale, variant: s.variant, fit: s.fit, phase: s.phase, rect: s.rect, footprint: s.footprint, relaid: RB.harmonyCutin.stats().relaid, party: RB.harmonyCutin.protectedRects().filter((r) => r.id === 'party' || r.id === 'status').map((r) => [r.id, Math.round(r.x), Math.round(r.y), Math.round(r.w), Math.round(r.h)]) }; });
     } });
+    if (v.control === 'late') return { row: { view: tag + ' (control: the portrait held past its end)', held: !!held, goneFirst: goneFirst(r) }, bad };
     const L = r.last;
     // the states shown, in order (consecutive frames merged; a cross-fade frame is "a~b"), against the timeline's order
     const seq = [];
@@ -915,10 +974,28 @@ async function paintedScene(v, which) {
     if (r.started !== 1 || !L || L.why !== 'done') { bad.push(tag + ': one cut-in, done ' + JSON.stringify({ started: r.started, why: L && L.why, fb: r.fallback && r.fallback.reason })); return { row, bad }; }
     if (src.some((x) => !x || x.suzu !== 'painted' || x.pc !== 'painted')) bad.push(tag + ': every state shown is painted ' + JSON.stringify(src));
     if (v.reduce) {
-      // contract v3: peak held, then settle_b held, one cross-fade between them (≤ 120 ms), never any travel
-      if (JSON.stringify(seq) !== JSON.stringify(['peak', 'peak~', 'settle_b~', 'settle_b'])) bad.push(tag + ': reduced motion — peak, a cross-fade, settle_b ' + JSON.stringify(seq));
-      if (!(mixSpan > 0 && mixSpan <= 120)) bad.push(tag + ': the cross-fade lasts ' + mixSpan + ' ms (≤ 120)');
+      // contract v3: peak held, then settle_b held, one cross-fade between them inside the cut-in's planned window
+      // (≤ 120 presentation ms), never any travel. Checked from the trace against the cut-in's own plan: the trace is in
+      // presentation time already, but its frames are samples, so their span is not the fade's length (one valid frame
+      // spans 0 ms; CC-194, Agnes 6390636882, Local CL-332)
+      const plan = L.reducedPlan;
+      for (const m of reducedFade(L.trace, plan)) bad.push(tag + ': reduced motion — ' + m + ' ' + JSON.stringify(seq));
       if (row.travel !== 0) bad.push(tag + ': reduced motion never travels (' + row.travel + ' px)');
+      // the window itself, from the game's own mixAt on that plan (deterministic, no frames): mixing only inside its
+      // 100 presentation ms (the contract's crossFade)
+      const win = plan ? await p.evaluate((pl) => { const m = (el) => !!RB.harmonyCutin._.mixAt({ rm: pl }, el), a = pl.at - pl.fade / 2, z = pl.at + pl.fade / 2; return { before: m(a - 0.5), first: m(a + 0.5), last: m(z - 0.5), after: m(z + 0.5) }; }, plan) : null;
+      if (!(plan && plan.fade === 100 && win.first && win.last && !win.before && !win.after)) bad.push(tag + ': the cross-fade window by mixAt on its plan ' + JSON.stringify({ plan, win }));
+      // and the check itself, on this trace altered four ways: a mix frame past the window, one before it, no mix frame,
+      // and no held peak before it — each must fail
+      const tr = L.trace, i0 = tr.findIndex((x) => x[5] != null);
+      if (plan && i0 >= 0) {
+        let i1 = -1; for (let i = tr.length - 1; i >= 0; i--) if (tr[i][5] != null) { i1 = i; break; }
+        const t0 = plan.at - plan.fade / 2, t1 = plan.at + plan.fade / 2;
+        const long = tr.slice(); long.splice(i1 + 1, 0, [t1 + 10, 'h', 1, 0, 'settle_b', 0.99]);
+        const early = tr.slice(); early.splice(i0, 0, [t0 - 10, 'h', 1, 0, 'peak', 0.01]);
+        const ctl = { long: reducedFade(long, plan), early: reducedFade(early, plan), none: reducedFade(tr.filter((x) => x[5] == null), plan), nohold: reducedFade(tr.filter((x, i) => i >= i0 || !(x[1] === 'h' && x[4] === 'peak')), plan) };
+        if (!(ctl.long.some((m) => /ran long/.test(m)) && ctl.early.some((m) => /began early/.test(m)) && ctl.none.some((m) => /no frame/.test(m)) && ctl.nohold.some((m) => /peak not held/.test(m)))) bad.push(tag + ': the cross-fade check rejects its four controls ' + JSON.stringify(ctl));
+      }
     } else if (v.order !== false) {
       const pos = seq.map((ph) => order.indexOf(ph));
       if (pos.some((k) => k < 0) || pos.some((k, i) => i && k < pos[i - 1])) bad.push(tag + ': the states in the timeline\'s order ' + JSON.stringify({ seq, order }));
@@ -928,7 +1005,11 @@ async function paintedScene(v, which) {
     if (held && held.variant === 'standard' && held.scale !== inst.v3.standard) bad.push(tag + ': the standard pair at the footprint\'s scale ' + JSON.stringify({ held: held.scale, v3: inst.v3 }));
     if (v.dpr && v.dpr > 1 && held && held.variant === 'compact' && Math.abs(held.scale * v.dpr - Math.round(held.scale * v.dpr)) > 1e-6) bad.push(tag + ': the compact pair at whole device pixels per art pixel ' + JSON.stringify(held));
     if (row.overlaps) { const f = r.frames.find(overlapping); bad.push(tag + ': ' + row.overlaps + ' frames within 12 px of a protected rectangle, e.g. ' + JSON.stringify({ ov: f.ov, vis: f.vis, pl: L.footprint, state: f.state, op: f.op, seqT: f.seqT, kind: f.kind, banner: f.banner })); }
-    if (!(row.disposedAt < row.firstResult)) bad.push(tag + ': gone before the first result ' + JSON.stringify({ disposedAt: row.disposedAt, firstResult: row.firstResult }));
+    // gone before the first result is delivered: their order on one clock and the page at that moment, not two
+    // timestamps rounded differently (a portrait still up when the first result is delivered fails; Agnes 6390636882)
+    const gf = goneFirst(r);
+    row.goneFirst = gf;
+    if (!gf.ok) bad.push(tag + ': gone before the first result is delivered ' + JSON.stringify({ gone: gf.gone, first: gf.first, disposedAt: row.disposedAt, firstResult: row.firstResult }));
     if (errors.length) bad.push(tag + ': ' + errors.join('; '));
     return { row, bad };
   } finally { await ctx.close(); }
@@ -969,6 +1050,10 @@ await test('painted geometry (synthetic sample, and the rich fixture over it): e
     if (!(row.faceW >= best - 0.01) && !(larger && refused.length && refused.every((t) => /overlaps|too/.test(t.why)))) bad.push(row.view + ': the pair with the larger faces ' + JSON.stringify({ shown: [row.variant, row.scale, row.faceW], candidates: fc, fit: row.fit, tried: row.tried }));
     if (w === 2048 && !(row.variant === 'standard' && row.scale === 2)) bad.push(row.view + ': equal faces — the standard pair at 2× ' + JSON.stringify({ variant: row.variant, scale: row.scale }));
   }
+  // the order check's control: a portrait held past its end, still up when its first result is delivered, fails it
+  const late = await paintedScene({ w: 1280, h: 720, anim: 'normal', order: false, mayOmit: false, control: 'late' }, 'sample');
+  console.log('  ' + late.row.view + ': ' + JSON.stringify(late.row.goneFirst));
+  if (!(late.row.held && late.row.goneFirst && !late.row.goneFirst.ok && late.row.goneFirst.first && late.row.goneFirst.first.portrait === true)) bad.push('the order check rejects a portrait still up at its first result ' + JSON.stringify(late.row));
   report.paintedGeometry = { note: 'SYNTHETIC sample (tests/fixtures/harmony_sample) and rich fixture (tests/fixtures/harmony_rich), not the game\'s art. The sample\'s face boxes are the code busts\' (36 × 33 art px); real art uses the template\'s 50 × 52.', rows };
   if (paintedDocs) {
     const keep = { when: report.when, browser: report.browser, note: report.paintedGeometry.note, rows: rows.map((r) => ({ view: r.view, fit: r.fit, fallback: r.fallback || null, variant: r.variant, scale: r.scale, scaleV2: r.scaleV2, scaleV3: r.scaleV3, faceCss: r.faceW != null ? [+r.faceW.toFixed(1), +r.faceH.toFixed(1)] : null, footprintArt: r.footprintArt, footprintCss: r.footprintCss, footprintShare: r.footprintShare, overlaps: r.overlaps, checkedFrames: r.checkedFrames })), reduced: (report.painted || { rows: [] }).rows.filter((r) => /reduced/.test(r.view)).map((r) => ({ view: r.view, states: r.states, crossFadeMs: r.crossFadeMs, travel: r.travel, plan: r.reducedPlan })) };
