@@ -77,6 +77,26 @@ async function startScene(p, o) {
   await wait(p, 250);
 }
 const lineNow = (p) => p.evaluate(() => (document.querySelector('.dlg .main') || {}).textContent || '');
+// The dialogue box's entrance over (CC-199; Local CL-336 and CL-338; Agnes 6392257466 and 6392454018). A conversation's
+// first line slides the box in (src/styles/50_play.css: dlg-rise, or dlg-drop docked at the top; none with reduced
+// motion), started as the line is shown (src/ui/20_dialogue.js), so once the line is on screen its entrance is among the
+// box's own animations. window.__entrance(el, bound): the box visible; each of its entrance animations finished, or
+// cancelled with the box at rest (none left running on it, no offset left); the same box still visible; else a
+// failure that says why, at the bound at the latest. Already over, or none (reduced motion): at once.
+const ENTRANCE = `window.__entrance = async (el, bound) => {
+  const t0 = performance.now(), vis = (e) => !!e && e.isConnected && !!e.offsetParent && getComputedStyle(e).visibility !== 'hidden';
+  const entr = (a) => /^dlg-(rise|drop)$/.test(a.animationName || '');
+  if (!vis(el)) return { ok: false, why: 'no visible box' };
+  const anims = el.getAnimations().filter(entr), names = anims.map((a) => a.animationName);
+  const one = (a) => a.finished.then(() => 'finished', (err) => (err && err.name === 'AbortError' ? 'cancelled' : 'error'));
+  const r = await Promise.race([Promise.all(anims.map(one)), new Promise((res) => setTimeout(() => res(null), bound))]);
+  if (!r) return { ok: false, why: 'not over within ' + bound + ' ms', names, states: anims.map((a) => a.playState) };
+  const rest = !el.getAnimations().some((a) => entr(a) && a.playState === 'running') && ['none', '0px', '0px 0px'].includes(getComputedStyle(el).translate);
+  if (r.includes('error') || (r.includes('cancelled') && !rest)) return { ok: false, why: 'ended away from rest', names, r };
+  if (!vis(el)) return { ok: false, why: 'the box went away', names };
+  window.__entEl = el;
+  return { ok: true, ms: Math.round(performance.now() - t0), names, r };
+}`;
 const R = (p, sel) => p.evaluate((q) => { const e = document.querySelector(q); if (!e || !e.offsetParent) return null; const r = e.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height, x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, sel);
 const meet = (a, c) => a && c && a.l < c.r - 0.5 && c.l < a.r - 0.5 && a.t < c.b - 0.5 && c.t < a.b - 0.5;
 // the dialogue's words as drawn (each line of each text run): what Keep must never lie over. (Since the book's
@@ -159,6 +179,11 @@ await test('the Keep tab: in the tab row, clear of the text and Next; Next does 
   await startScene(p);
   const l0 = await lineNow(p);
   assert(/Aki looks at the old sign|アキ/.test(l0), 'the first line is on screen: ' + l0);
+  // the box's entrance over before anything is measured (Next moves with it: CC-199, Local CL-336 and CL-338, Agnes
+  // 6392257466)
+  await p.evaluate(ENTRANCE);
+  const ent = await p.evaluate(() => window.__entrance(document.querySelector('.dlg'), 3000));
+  assert(ent.ok, 'the box\'s entrance ended within 3 s ' + JSON.stringify(ent));
   // geometry
   const g = await p.evaluate((LINES) => {
     const q = (s) => { const r = document.querySelector(s).getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height, x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
@@ -170,9 +195,57 @@ await test('the Keep tab: in the tab row, clear of the text and Next; Next does 
   assert(g.lines.length && !coversText(g.tab, g.lines) && !meet(g.tab, g.next) && !meet(g.tab, g.ctrl), 'Keep covers neither a word of the text, the controls nor Next ' + JSON.stringify([g.tab, g.lines.slice(0, 3)]));
   assert(g.tab.w >= 44 && g.tab.h >= 44, 'the tab is a 44 px target ' + g.tab.w + 'x' + g.tab.h);
   assert(await topAt(p, g.tab.x, g.tab.y, '.dlg-keep') && await topAt(p, g.next.x, g.next.y, '.dlg .b-next'), 'nothing lies over the tab or over Next');
-  // Next is exactly where it would be without the tab
-  const without = await p.evaluate(() => { const t = document.querySelector('.dlg-keep'); t.style.display = 'none'; const r = document.querySelector('.dlg .b-next').getBoundingClientRect(); t.style.display = ''; return { l: r.left, t: r.top, w: r.width, h: r.height }; });
-  assert(Math.abs(without.l - g.next.l) < 0.5 && Math.abs(without.t - g.next.t) < 0.5 && Math.abs(without.w - g.next.w) < 0.5, 'Next does not move for the tab ' + JSON.stringify([without, g.next]));
+  // Next is exactly where it would be without the tab: with the tab and without it measured in the same frame, the box
+  // settled (as at the narrow sizes below); and the same comparison sees a tab that does move Next (a control: the tab
+  // made 160 px tall, so the row it sits in grows and pushes the sheet down)
+  const pair = (grow) => p.evaluate((grow) => {
+    const t = document.querySelector('.dlg-keep'), n = document.querySelector('.dlg .b-next'), r0 = (r) => ({ l: r.left, t: r.top, w: r.width, h: r.height });
+    // (the same box the entrance was waited on, still shown)
+    const box = document.querySelector('.dlg');
+    if (box !== window.__entEl || !box.offsetParent) return { stale: true };
+    if (grow) t.style.height = grow;
+    const withTab = r0(n.getBoundingClientRect()); t.style.display = 'none'; const without = r0(n.getBoundingClientRect()); t.style.display = ''; t.style.height = '';
+    return { withTab, without };
+  }, grow);
+  const nx = await pair(null), moved = (q) => !(Math.abs(q.without.l - q.withTab.l) < 0.5 && Math.abs(q.without.t - q.withTab.t) < 0.5 && Math.abs(q.without.w - q.withTab.w) < 0.5);
+  assert(!nx.stale, 'the box measured is the one whose entrance ended, still shown');
+  assert(!moved(nx), 'Next does not move for the tab ' + JSON.stringify(nx));
+  const ctl = await pair('160px');
+  assert(moved(ctl), 'the comparison sees a tab that does move Next (the tab made 160 px tall) ' + JSON.stringify(ctl));
+  // and with reduced motion the box has no entrance: the wait is over at once (well inside its 3 s bound)
+  {
+    const rm = await page(b, url, DESK);
+    await rm.p.evaluate(() => { RB.game.settings.reducedMotion = true; RB.game.applySettings(); });
+    await startScene(rm.p);
+    await lineNow(rm.p);
+    await rm.p.evaluate(ENTRANCE);
+    const e2 = await rm.p.evaluate(() => window.__entrance(document.querySelector('.dlg'), 3000));
+    assert(e2.ok && e2.ms < 1000 && !e2.names.length, 'with reduced motion, no entrance to wait for: over at once ' + JSON.stringify(e2));
+    // the wait itself, on boxes made for it in a page with no scene: from the bottom (dlg-rise) and docked at the top
+    // (dlg-drop) each over when its entrance ends; asked after it has ended, at once; with reduced motion, at once;
+    // cancelled mid-way (its class taken away), over with the box at rest; paused, never over: it fails at its bound
+    const c = await page(b, url, DESK);
+    await c.p.evaluate(ENTRANCE);
+    const ctl2 = await c.p.evaluate(async () => {
+      const mk = (cls) => { const d = document.createElement('div'); d.className = cls; d.style.cssText = 'position:fixed;left:0;bottom:0;width:200px;height:60px;display:block;'; document.body.appendChild(d); return d; };
+      const out = {}, wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      let d = mk('dlg dlg-in'); out.bottom = await window.__entrance(d, 3000); d.remove();
+      d = mk('dlg top dlg-in'); out.top = await window.__entrance(d, 3000); d.remove();
+      d = mk('dlg dlg-in'); await wait(500); out.late = await window.__entrance(d, 3000); d.remove();
+      document.body.classList.add('reduced-motion'); d = mk('dlg dlg-in'); out.reduced = await window.__entrance(d, 3000); d.remove(); document.body.classList.remove('reduced-motion');
+      d = mk('dlg dlg-in'); setTimeout(() => d.classList.remove('dlg-in'), 100); out.cancelled = await window.__entrance(d, 3000); d.remove();
+      d = mk('dlg dlg-in'); d.getAnimations().forEach((a) => a.pause()); out.paused = await window.__entrance(d, 1000); d.remove();
+      return out;
+    });
+    assert(ctl2.bottom.ok && ctl2.bottom.names.includes('dlg-rise') && ctl2.bottom.ms >= 200, 'the wait: from the bottom, over when dlg-rise ends ' + JSON.stringify(ctl2.bottom));
+    assert(ctl2.top.ok && ctl2.top.names.includes('dlg-drop'), 'the wait: docked at the top, over when dlg-drop ends ' + JSON.stringify(ctl2.top));
+    assert(ctl2.late.ok && ctl2.late.ms < 100, 'the wait: asked after the entrance has ended, over at once ' + JSON.stringify(ctl2.late));
+    assert(ctl2.reduced.ok && !ctl2.reduced.names.length && ctl2.reduced.ms < 100, 'the wait: reduced motion, no entrance, over at once ' + JSON.stringify(ctl2.reduced));
+    assert(ctl2.cancelled.ok && (ctl2.cancelled.r || []).includes('cancelled'), 'the wait: cancelled mid-way, over with the box at rest ' + JSON.stringify(ctl2.cancelled));
+    assert(!ctl2.paused.ok && /not over within/.test(ctl2.paused.why), 'the wait: a paused entrance never ends, and the wait fails at its bound ' + JSON.stringify(ctl2.paused));
+    await c.ctx.close();
+    await rm.ctx.close();
+  }
   await shot(p, 'dlg_keep_1280');
   const learn0 = await p.evaluate(() => JSON.stringify(RB.game.s.learn));
   // a press on Keep keeps the line and does not advance it
