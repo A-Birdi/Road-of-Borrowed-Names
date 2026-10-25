@@ -196,22 +196,40 @@ await test('the Keep tab: in the tab row, clear of the text and Next; Next does 
   assert(g.tab.w >= 44 && g.tab.h >= 44, 'the tab is a 44 px target ' + g.tab.w + 'x' + g.tab.h);
   assert(await topAt(p, g.tab.x, g.tab.y, '.dlg-keep') && await topAt(p, g.next.x, g.next.y, '.dlg .b-next'), 'nothing lies over the tab or over Next');
   // Next is exactly where it would be without the tab: with the tab and without it measured in the same frame, the box
-  // settled (as at the narrow sizes below); and the same comparison sees a tab that does move Next (a control: the tab
-  // made 160 px tall, so the row it sits in grows and pushes the sheet down)
-  const pair = (grow) => p.evaluate((grow) => {
+  // settled (as at the narrow sizes below); and the same comparison sees a tab that does move Next (a control: Keep put,
+  // for the measurement only, in the control row just after Next, where it takes room from Next's row, then put back in
+  // its own place; in the book look Keep lies on the paper over the sheet, so a taller Keep grows nothing and could not
+  // serve: CC-213, Agnes 6394400254)
+  const pair = (inRow) => p.evaluate((inRow) => {
     const t = document.querySelector('.dlg-keep'), n = document.querySelector('.dlg .b-next'), r0 = (r) => ({ l: r.left, t: r.top, w: r.width, h: r.height });
     // (the same box the entrance was waited on, still shown)
     const box = document.querySelector('.dlg');
     if (box !== window.__entEl || !box.offsetParent) return { stale: true };
-    if (grow) t.style.height = grow;
-    const withTab = r0(n.getBoundingClientRect()); t.style.display = 'none'; const without = r0(n.getBoundingClientRect()); t.style.display = ''; t.style.height = '';
-    return { withTab, without };
-  }, grow);
-  const nx = await pair(null), moved = (q) => !(Math.abs(q.without.l - q.withTab.l) < 0.5 && Math.abs(q.without.t - q.withTab.t) < 0.5 && Math.abs(q.without.w - q.withTab.w) < 0.5);
+    const home = [t.parentNode, t.nextSibling], out = {};
+    try {
+      if (inRow) n.parentNode.insertBefore(t, n.nextSibling);
+      out.withTab = r0(n.getBoundingClientRect());
+      // the room Keep takes in a row: its width, its own horizontal margins and, in the control row, the row's gap
+      const ts = getComputedStyle(t);
+      out.tab = r0(t.getBoundingClientRect());
+      out.room = parseFloat(ts.marginLeft) + parseFloat(ts.marginRight) + (inRow ? parseFloat(getComputedStyle(n.parentNode).columnGap) || 0 : 0);
+      t.style.display = 'none'; out.without = r0(n.getBoundingClientRect());
+    } finally {
+      t.style.display = '';
+      if (inRow) home[0].insertBefore(t, home[1]);
+      out.back = t.parentNode === home[0] && t.nextSibling === home[1];
+    }
+    return out;
+  }, inRow);
+  const same = (a, b) => Math.abs(a.l - b.l) < 0.5 && Math.abs(a.t - b.t) < 0.5 && Math.abs(a.w - b.w) < 0.5 && Math.abs(a.h - b.h) < 0.5;
+  const nx = await pair(false), moved = (q) => !(Math.abs(q.without.l - q.withTab.l) < 0.5 && Math.abs(q.without.t - q.withTab.t) < 0.5 && Math.abs(q.without.w - q.withTab.w) < 0.5);
   assert(!nx.stale, 'the box measured is the one whose entrance ended, still shown');
   assert(!moved(nx), 'Next does not move for the tab ' + JSON.stringify(nx));
-  const ctl = await pair('160px');
-  assert(moved(ctl), 'the comparison sees a tab that does move Next (the tab made 160 px tall) ' + JSON.stringify(ctl));
+  // (measured on Next's right edge, which stays exact if Next also gives up some width in the narrower row)
+  const ctl = await pair(true), shift = ctl.stale ? null : (ctl.without.l + ctl.without.w) - (ctl.withTab.l + ctl.withTab.w);
+  assert(!ctl.stale && moved(ctl) && ctl.withTab.l < ctl.without.l && Math.abs(shift - (ctl.tab.w + ctl.room)) < 1, 'the comparison sees a tab that does move Next (Keep in the control row after Next: Next pushed left by Keep\'s width, its margins and the row\'s gap) ' + JSON.stringify(Object.assign({ shift }, ctl)));
+  const nx2 = await pair(false);
+  assert(ctl.back && !nx2.stale && nx2.back && same(nx2.tab, nx.tab) && same(nx2.withTab, nx.withTab) && same(nx2.without, nx.without), 'Keep is back in its own place, and Keep and Next measure as before ' + JSON.stringify({ before: nx, after: nx2 }));
   // and with reduced motion the box has no entrance: the wait is over at once (well inside its 3 s bound)
   {
     const rm = await page(b, url, DESK);
