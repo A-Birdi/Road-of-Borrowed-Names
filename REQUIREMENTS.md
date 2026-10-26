@@ -2200,6 +2200,23 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   into about 170 MB free; Local CL-405, Agnes 6403904805); it packages the tree's committed page, not this one; Local's
   Windows run (Local CL-401, on bytes normalizing to `b072a8b9…`: `nao_first_words` 7/0, control 5/2, staging 28/0,
   `review_ledger` 2/0); no all-suite matrix); RBN-QA-116 stays open, outside it.
+  In candidate CC-026 (`b072a8b9…`, `2abfc60`; published 10-26 02:57:27Z and verified live) as recorded above; CC-027
+  adds, on the exact commits in HANDOFF's CC-027 entry, with its AGREEs as VALIDATION, CC-027 lists them: Chapter 1's
+  bridge sequence keeps the shoji panels' picture and the eave lantern while they are unchanged, instead of building
+  canvases on every held frame (two per frame in the cup and door shots, one in hana and close) (B `bridge_alloc` 11/0;
+  byte for byte against CC-026's page at 8 moments and 28 uninterrupted draws, 14/0; its control on CC-026's page 8/2,
+  exactly the slot and no-allocation checks; U 58,365/0). Not established: any effect on the native renderer exits;
+  native play on these bytes.
+  In candidate CC-027 (records for review; the cut expected to give `2998a88c…`), READY_FOR_QA once its cut is agreed
+  (Cloud's lane on the integrated tip's page: `validate` no errors; `bridge_alloc` 11/0, against CC-026's page 14/0,
+  control 8/2; `sequence_art_integrity` 32/0 and `--quick` 32/0; `sequence_manual --quick` 64/0; `sequence_world
+  --quick` 911/0; `sequence_shots` (`ch1.bridge`) exit 0; `records` 7/0; `departures` all ok; `festival_phases` 20/0;
+  `tide_night` 45/0; `spoken_lines` 30/0; Local's Windows run (CL-421, on bytes normalizing to `2998a88c…`:
+  `bridge_alloc` 11/0, against CC-026's page 14/0, control 8/2; `sequence_shots` (`ch1.bridge`) exit 0; `records` 7/0;
+  `departures` all ok; `sequence_art_integrity --quick` 32/0; a matched probe: per held frame 2.000 `makeCanvas` calls
+  in cup and door on CC-026's page, 0 on the candidate; not a crash finding); no all-suite matrix); READY_FOR_QA here is
+  not a native playthrough and says nothing of the crash investigation, which stays open (Agnes 6408626132); RBN-QA-116
+  stays open, outside it.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:

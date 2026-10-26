@@ -5484,6 +5484,88 @@ Yasu's story, when listening, has not begun being spoken."
     multi-kanji exam question and Agnes's だいだい case on screen, chosen and right); CC-007 fails 4 (all 々 wording).
     U whole suite 57,664/0; voice probe 0 new recordings (prompts are not voiced). Not changed: the gloss leaks
     (にひょう's 俵, だいひょう's 代表して), outside the approval.
+  - **Candidate CC-027 (records for review; the cut follows them):** to be built from this records commit: CC-026
+    (`2abfc60`; published 10-26 02:57:27Z by fast-forwarding the task branch, live and verified by Local CL-417 and
+    Agnes 6407330984) plus only the bridge-allocation change, by its exact commits `f06f690` and `bd150f2` on
+    `candidate/bridge-alloc` (`f06f690`'s parent is `2abfc60`), so `int/cc027` is `bd150f2` itself (plan CC-280, agreed
+    by Agnes 6408626132, with one factual correction taken here, and Local CL-420). The page every lane below ran on is
+    the integrated tip's own build: `index.html` sha256
+    `2998a88cfd76a40dc05d0f148bcb156912d92795199832bcf29c442df4528e22` (24,394,705 bytes; built from `f06f690` and again
+    from `bd150f2`, byte-identical, the source being unchanged between them); the records are not in the page, so the
+    cut is expected to give those bytes and is checked against them before it is committed.
+    - What it is (Agnes's source lead in `cupShot`'s `shojiPair`, 6403702619; Local's measurement on CC-025's page,
+      2.000 canvases per held frame in the cup shot, one of the art buffer's size and one of the eave lantern's, CL-408
+      and CL-409; Agnes's bounds, 6404461467; design CC-268 with CC-269's exact scale, agreed by Local CL-412 and CL-413
+      and Agnes 6405460884): `src/ui/43_sequence_kit.js` adds `RB.seqKit.last(slot, key, build)`, one entry per named
+      slot, returned while its key is unchanged and replaced otherwise, cleared by `release()` with the other caches
+      (called at `43_sequence.js` 662, 679 and 924, by inspection) and counted in `stats().lasts`. In
+      `src/ui/43a_seq_ch1.js`, `shojiPair` (the cup shot at 443 and the door shot at 757, both now passing `G.Z`) keeps
+      its picture in slot `ch1.shoji`, keyed by the buffer's width and height, `x, y, w, h`, the exact `Z` (`s()`
+      rounds, so `s(100)` alone would not fix `s(2)`, `s(9)` or `s(11)`; Local CL-412), openness and glow; while a panel
+      slides its openness changes each frame and it is rebuilt, as before; its clip and `drawImage` stay per frame.
+      `eaveLantern` (the cup, door, hana and close shots) builds its lantern through the kit's bounded `Q.small`, keyed
+      by `s(6)` and `s(15)`; its halo and flicker are still drawn every frame. A kept canvas cannot be painted over:
+      `RB.sprites.makeCanvas` makes a new canvas on every call (`src/engine/30_sprites.js` 361–366) and `pxkit.layer()`
+      a new `Layer`; the materials are a keyed registry and the noise a seeded generator per call (Local CL-418). Not a
+      crash fix and no memory claim.
+    - AGREEs: on `f06f690`'s source Agnes 6407714559 and Local CL-418, with three test REFINEs (sequences drawn without
+      a release between draws, no `makeCanvas` call at all on held frames, byte-for-byte pixels), all taken in `bd150f2`
+      (test only: `git diff f06f690 bd150f2 -- src` is empty); on the exact candidate `bd150f2` Agnes 6408070270 and
+      Local CL-421, each with Cloud's.
+    - The check, `tests/e2e/bridge_alloc.mjs` as in `bd150f2`: in Chromium on the built game, each moment drawn with
+      `RB.sequence.drawAt` at a fixed `t` on a fixed-size canvas, every comparison byte for byte over the whole RGBA
+      array. (1) A held draw equals a fresh one at 8 moments (cup/walk at k 0, 0.8 and 1; door/close at k 0, 0.75 and 1;
+      hana/lift 1; close/smile 1). (2) Across a resize, across view heights 268 → 269 at 640×480 and after a direct
+      `release()`, each draw equals a fresh one; 268 → 269 is a real scale collision (`s(100)` equal, `s(9)` not) but
+      also moves the panels, so it is not an isolated test of `Z` in the key, which rests on the source (Agnes
+      6407714559, Local CL-418), and the direct `release()` is not an observation of re-entry in the game. (3) 28 draws
+      with no release between them (the cup's door opening and back, the door shot's panels closing and back, then the
+      cup again, with held repeats), each equal to a fresh draw; with the slot's key ignored the same sequence differs
+      in 23 of the 28 (the 5 equal are the cup at k 0, 0.3 and 0.6, out and back, before its door slides), so the check
+      can fail. (4) One slot entry, none after release. (5) The panels still move. (6) 30 held frames after a warm-up
+      call `makeCanvas` not at all. (7) With `--against`, every moment and every draw of (3) equal that page's.
+    - The candidate's runs, Cloud's on Linux, one at a time, first outcomes in order. On `f06f690` (CC-278): first runs,
+      candidate 8/1, `--against` CC-026's page 10/1 and the control on CC-026's page 6/3, the one failure common to all
+      three being the first scale check as then written, with Z 1.1660 and 1.1670 (fractional view heights, about 268.18
+      and 268.41, at which the kit's static layers, keyed by the rounded height, collide first, on the old page too): a
+      test fault, fixed to the integer heights 268 and 269; these three counts are session-reported only, their raw
+      files overwritten by the reruns (Agnes 6407714559). Then candidate 9/0, `--against` 11/0 and control 7/2 (no slot;
+      per 30 held frames 30 art-buffer and 30 lantern canvases in the cup and door shots, 30 lantern ones in hana and
+      close); `sequence_shots` (`ch1.bridge`, 390×844 and 844×390) exit 0, its 33 images not reviewed by Cloud;
+      `records` 7/0; `departures` all ok; `sequence_art_integrity --quick` 32/0; U 58,365/0 (03:13Z to 03:29:56Z). On
+      `bd150f2` (CC-279), each attempt to its own log: candidate 11/0; `--against` CC-026's page (`b072a8b9…`) 14/0, all
+      8 moments and 28 draws byte-identical; control 8/2, exactly (4), no slot, and (6), `all` 60, 60, 30 and 30 per 30
+      frames in cup, door, hana and close (0 in each on the candidate); U 58,365/0 (03:45:48Z to 04:02:20Z). Then on the
+      same page (CC-280): `validate.mjs` exit 0, no errors; `sequence_art_integrity` 32/0; `sequence_manual --quick`
+      64/0; `sequence_world --quick` 911/0; `festival_phases` 20/0; `tide_night` 45/0; `spoken_lines` 30/0 (04:18:56Z to
+      04:38:01Z). Each unit run had its working directory, HEAD and 207-file inventory asserted, a 291 MB starting gate
+      and 1 s space samples with a 155 MB stop; about 31 GB was free throughout. One wrapper slip on `f06f690`: the
+      background task reported exit 1 because `setsid` returned at once and its trailing read of the run's notes came
+      too early; the run itself was unaffected.
+    - Local's Windows run: CL-421; `bd150f2` extracted, on Windows, one step at a time between Robin's games, 04:03Z to
+      13:21Z, each output under its own name, no reruns. Build and `validate` exit 0, no errors, its page `1405e871…`
+      normalizing to `2998a88c…`, equal to Cloud's; `bridge_alloc` 11/0; `--against` CC-026's page
+      (`2abfc60:index.html`, `b072a8b9…`, the live bytes) 14/0, all 8 moments and 28 draws byte-identical; the control
+      on that page 8/2, exactly no slot and `all` 60, 60, 30 and 30; `sequence_shots` (`ch1.bridge`) exit 0, 33 images;
+      `records` 7/0; `departures` all ok (26 checks, the bridge scene played to nightfall among them);
+      `sequence_art_integrity --quick` 32/0; units not rerun there (Cloud's stand). A matched supporting probe (sha256
+      `91bdd4ad…`; headless Chromium 1228, 1280×800 at DPR 1, art 640×400; each page served from loopback and identified
+      by a second no-store fetch; a 30 s hold on each of `reach`, `cup` and `door`, one forced GC at the end):
+      `makeCanvas` calls per held frame on CC-026's page 0 in `reach`, 2.000 in `cup` (256,450 px per frame) and 2.000
+      in `door` (256,308 px; the first measurement of that hold), and 0 in all three on the candidate; the renderer's
+      sampled working set in the holds 354–434 MiB with 9 drops over 20 MiB in `cup` and 373–493 MiB with 18 in `door`
+      on the old page, 338–387 MiB with 1 and 398–407 MiB with 0 on the candidate; 9,131 `makeCanvas` calls over the
+      whole run against 599 (most of the candidate's while shots were building); after the forced GC 293.3 against 280.8
+      MiB; no crash and 0 page errors on either. One sample on another machine: it says nothing about the native exits,
+      which stay unclassified, nor what the post-GC difference consists of. Local also looked at three of the
+      candidate's captures (`cup` at 1280×720 and 390×844, `door` at 1280×720): drawn as expected, no visible artefact;
+      not a side-by-side review, the pixel identity resting on the byte comparisons.
+    - Known and open, not fixed by CC-027: CC-026's open list (VALIDATION, CC-026). The kit's static layers (`cached`)
+      key on the rounded view height, so two fractional heights that round alike would share a layer; the game never
+      passes one (`RB.interlude.sheetTop` rounds and `drawAt` defaults to `Math.round(h * 0.64)`), so only a test can
+      reach it; no change proposed. Not claimed: no audio check, no all-suite matrix (none requested), no native or
+      owner acceptance, no effect on the native renderer exits; native replay stays paused until Agnes resumes it after
+      this release. Voice stays paused: nothing spoken changed.
   - **Candidate CC-026 (records for review; the cut follows them):** to be built from this records commit: CC-025
     (`0062b37`; published 10-25 19:57:21Z by fast-forwarding the task branch, live and verified by Local CL-396 and
     Agnes 6402478532) plus only RBN-QA-183, by its exact commit `5150612`, whose parent is `0062b37`, so `int/cc026` is
@@ -5494,7 +5576,7 @@ Yasu's story, when listening, has not begun being spoken."
     - What it is (Agnes 6402876474: on live CC-025, fresh Slot 7, the Japanese of Nao's second narration opened with a
       hat that neither the English nor the portrait and sprite show; proposal CC-257, Agnes's identical proposal and
       AGREE 6402904713, Local CL-397): `src/content/ch1/30_scenes_arrival.js` 255, `rw.nao_first` command index 4, loses
-      only its leading `{帽子|ぼうし} の {下|した} から 、 `; it now reads 黄土色のスカーフ。膨らんだ鞄。話しながら、目だけが 裏口の方を確かめている。 The rest of the
+      only its leading `{帽子|ぼうし} の {下|した} から 、 `; it now reads 黄土色のスカーフ。膨らんだ鞄。話しながら、目だけが裏口の方を確かめている。 The rest of the
       line, its ruby and spacing, the English ("An ochre scarf; a bulging satchel. While talking, their eyes check the
       back door."), the staging and the art are unchanged. Nao has no hat in her definition (`src/content/00_world.js`
       look and portrait: scarf, satchel, pencil; Local CL-397); the phrase dates from Chapter 1's first content. Parsed
@@ -5566,8 +5648,36 @@ Yasu's story, when listening, has not begun being spoken."
       release; CC-025's open list (VALIDATION, CC-025). Not claimed: no audio check, no all-suite matrix on these bytes
       (none requested), no native or owner acceptance (Nao's fresh run on live CC-025 is stopped at the bridge
       transition, Slot 7's 21:14 manual and 21:19 autosave kept; the six protected native saves stay untouched), no
-      publication (held until Local's bounded diagnostic had loaded and confirmed the live CC-025 page: Agnes
-      6403904805, Local CL-405; it did so at 22:07:45Z, CL-406).
+      publication (held until Local's bounded diagnostic had loaded the live CC-025 page and confirmed its identity:
+      Agnes 6403904805, Local CL-405; it did so at 22:07:45Z, CL-406, by a second no-store fetch of the same URL
+      right after the load, not the navigation's own bytes, CL-407, Agnes 6404081876).
+    - The cut and its unit runs, as they ran (recorded with CC-027's records): the cut `2abfc60` (`index.html` only,
+      `b072a8b9…`, checked equal before it was committed; Local CL-410) was pushed to `int/cc026` before a valid unit
+      run on it (CC-267). That run ran in Cloud's primary checkout (`bc1bf37`, an older tree: a `cd` grouped with the
+      backgrounded space sampler), 58,221/0 on 197 files, counting for nothing in CC-026; the tree was read, nothing
+      written into it. Its sampler (every 15 s) saw the 150 MB floor breached: 129,929,216, 107,503,616 and 148,320,256
+      bytes at 22:43:07Z, 22:43:22Z and 22:56:23Z; Cloud's earlier worktree unit runs most likely dipped below it too
+      (an inference, unsampled). Cloud also stopped its own issue watcher by a generic match before the sampler (its own
+      processes only; since then only exact owned PIDs). Agnes held the release (6404631470). Robin approved removing
+      two byte-identical duplicates of Cloud's scratch pages and clarified a standing routine no-loss cleanup authority
+      (relayed by Agnes 6406416417); they were removed (CC-271). The first exact-cut run (01:50:11Z, a 182 MB starting
+      gate) was stopped by its monitor at 02:06:49Z in `voice_review_pack` after 193 of 207 files `ok`, exit 143, the
+      floor breached again, sampled 136,368,128 bytes (CC-272): not a pass and no test failure; its temporary folder was
+      removed as routine cleanup. A read-only audit of the suite's temporary writes followed (11 of 207 files write;
+      files run in sequence, so no overlap; peak about 126 MB in `voice_review_pack`, its random audio and zip copies
+      together; a 130 MB allowance and a 291 MB gate: CC-273, Local CL-414 and CL-415, Agnes 6406909975), and two more
+      pairs were removed: CC-023's and CC-024's pages (CC-273), then a further copy each of the candidate page and
+      CC-025's page (CC-274). So six copies in three batches, 146,343,566 bytes, each checked byte-identical to a
+      retained copy and to its Git blob before removal; the receipts are as reported in CC-271, CC-273 and CC-274, the
+      raw receipts since lost (Agnes 6408626132). Kept apart: one scratch duplicate of CC-025's page removed at
+      21:36:44Z before CC-026's lane (CC-264), and the stopped test's synthetic fixtures (CC-272). The exact-cut run,
+      02:32:16Z to 02:49:58Z: 58,365/0, all 207 files, exit 0, sampled minimum 169,906,176 bytes at 02:48:53Z (1 s
+      samples; a sampled figure), its wrapper exiting 1 from its own final `grep` (CC-275). Cut AGREEs: Local CL-416 and
+      Agnes 6407201802, with Cloud's. After a container restart Cloud's raw logs, space samples and removal receipts are
+      gone; the figures stand as posted in CC-267 to CC-275 and are not recreated (CC-276, Agnes 6407201802). Published
+      10-26 02:57:27Z (a non-force fast-forward of the task branch from `0062b37`; Pages run 40261655679 success at
+      02:59:11Z); verified live by Local CL-417 (200, 24,393,376 bytes, `b072a8b9…`, `cmp`-equal to
+      `2abfc60:index.html`, live smoke with 0 page errors) and Agnes 6407330984.
   - **Candidate CC-025 (records for review; the cut follows them):** to be built from this records commit: CC-024
     (`0ab9c53`; published 10-25 16:28Z by fast-forwarding the task branch, live and verified by Local CL-389 and Agnes
     6400268327) plus only the 20-slot Inn Ledger, by its exact commits, integrated as `int/cc025`, head `06bc6c1` (plan

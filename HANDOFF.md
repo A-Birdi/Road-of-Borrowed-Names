@@ -1189,8 +1189,47 @@
       open: CC-025's list as recorded there. Not claimed: no audio check, no all-suite matrix, no native acceptance of
       these bytes. Voice stays paused: one spoken line's text changed, nothing recorded, relabelled or deleted.
       Publication held until Local's bounded diagnostic has loaded and confirmed the live CC-025 page (Agnes 6403904805;
-      Local CL-405); then it needs no further approval. Local's run loaded and confirmed the live CC-025 page
-      (`d15e2854…`) at 22:07:45Z and stays on that one page (CL-406), so that condition is met.
+      Local CL-405); then it needs no further user approval (the three-party gates still apply). Local's run loaded
+      the live CC-025 page at 22:07:45Z, its identity (`d15e2854…`) confirmed by a second no-store fetch of the same
+      URL right after the load, not the navigation's own bytes (CL-407, Agnes 6404081876), and stays on that one page
+      (CL-406), so that condition is met.
+      CC-026 PUBLISHED 10-26 02:57:27Z (the task branch fast-forwarded to `2abfc60`, a non-force push; Pages run
+      40261655679 success at 02:59:11Z) and verified live by Local CL-417 and Agnes 6407330984 (200, 24,393,376 bytes,
+      sha256 `b072a8b9…`, `cmp`-equal to `2abfc60:index.html`; Local's live smoke with 0 page errors). Its cut's unit
+      runs, kept as they ran (VALIDATION, CC-026, last item): one in the wrong tree (Cloud's primary checkout at
+      `bc1bf37`, 58,221/0, counting for nothing; CC-267); the 150 MB floor breached twice, sampled 107,503,616 bytes at
+      22:43:22Z (that run) and 136,368,128 bytes at 02:06:49Z (the first exact-cut run, stopped by its space monitor in
+      `voice_review_pack` after 193 of 207 files `ok`, exit 143; CC-272); a read-only audit of the suite's temporary
+      writes (peak about 126 MB, the review pack's audio and zip copies together) and a 291 MB starting gate (CC-273,
+      Local CL-415, Agnes 6406909975); six byte-identical duplicates of Cloud's scratch pages removed, 146,343,566 bytes
+      in three batches of two, under Robin's routine no-loss cleanup authority (relayed by Agnes 6406416417; receipts as
+      reported in CC-271, CC-273 and CC-274, the raw receipts since lost; Agnes 6408626132), kept apart from an earlier
+      duplicate of CC-025's page removed at 21:36:44Z before CC-026's lane (CC-264) and from the stopped test's own
+      synthetic fixtures (CC-272); then the exact-cut run, 58,365/0, sampled minimum 169,906,176 bytes (CC-275; its
+      wrapper's own exit 1 came from a final `grep`, not the tests). A container restart then took Cloud's raw logs,
+      space samples and removal receipts: not retained and not recreated; the figures stand as posted in CC-267 to
+      CC-275 (CC-276, Agnes 6407201802).
+      CANDIDATE CC-027 (records for review; the cut, `index.html` only, follows them and is expected to give the
+      integrated tip's page, `2998a88c…`, 24,394,705 bytes): CC-026 (`2abfc60`) plus only the bridge-allocation change
+      on `candidate/bridge-alloc`, `f06f690` (source and test) then `bd150f2` (test only), integrated as `int/cc027` =
+      `bd150f2` itself, nothing cherry-picked or merged (design CC-268 with CC-269, agreed by Local CL-412 and CL-413
+      and Agnes 6405460884; source AGREEs on `f06f690` Agnes 6407714559 and Local CL-418, with three test REFINEs;
+      AGREEs on the exact candidate `bd150f2` Agnes 6408070270 and Local CL-421; plan CC-280, agreed by Agnes
+      6408626132, with one factual correction taken here, and Local CL-420). Chapter 1's bridge sequence no longer
+      builds canvases on held frames: two per frame in the cup and door shots, the lantern's one in hana and close
+      (Local's measurement, CL-408, CL-421; CC-278): `shojiPair` (the cup and door shots) keeps its picture in one
+      `RB.seqKit.last` slot, keyed by everything its builder reads (the buffer's size, the panels' place and size, the
+      exact scale `Z`, openness and glow), rebuilt while a panel slides, as before; `eaveLantern` builds its lantern
+      once per size through `Q.small`. The pictures are unchanged: byte for byte against CC-026's page at 8 moments and
+      across 28 uninterrupted draws. Not a crash fix and no memory claim: the three native renderer exits on live CC-025
+      stay unclassified, and native replay resumes only at Agnes's word after this release. Evidence (VALIDATION,
+      CC-027): every first outcome in order; units 58,365/0 on both candidate commits; Cloud's lanes on the integrated
+      tip's page; Local's Windows lane (CL-421) on bytes normalizing to that page, with a matched probe: 2.000
+      `makeCanvas` calls per held frame in the cup and door shots on CC-026's page, 0 on the candidate (one sample on
+      another machine, not a crash finding). Known and open: CC-026's list; the kit's static layers key on the rounded
+      view height (two fractional heights that round alike would share one; the game never passes a fractional height,
+      so only a test can reach it; outside this change). Not claimed: no audio check, no all-suite matrix, no native
+      acceptance. Voice stays paused: nothing spoken changed.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
