@@ -1255,8 +1255,21 @@
       eligible; that a particular clip was fetched or played in the failed attempt is not shown); Chromium
       154.0.8037.57, Debian GNU/Linux 13, x86_64; the machine's RAM and device-pixel ratio not established; the ledger
       unchanged, seven slots, Slot 7's 21:14 manual and 21:19 autosave still the newest, nothing modified. (b) Local's
-      one voice-on, bridge-only run on live CC-027 (CL-426, CL-427), no result reported yet. Cloud's full-path
-      comparison (D-27a, CC-293) held. No product patch and no native saved-game replay are authorized by them.
+      one voice-on, bridge-only run on live CC-027, done (CL-428; probe `5ce813b9…`, headless Chromium 1228 on Windows
+      with `--mute-audio`, the game unmuted with Prepared voices and Original music; 15:57:22Z to 15:59:58Z; the page
+      `2998a88c…` by a second no-store fetch): all 14 Nexts and a 30 s close/smile hold after Hana's invitation, on
+      through nightfall; no crash, 0 page errors; 17 clips fetched, 15 media elements played successfully, Hana's
+      invitation among them (`play()` 15 resolved, 0 rejected; media `error` 0; 15 object URLs made and revoked); 0
+      `decodeAudioData` calls, which does not mean no media decoding by the browser (its pipeline not instrumented); the
+      renderer's Windows private bytes 273.4 MiB at load, 326.0 at the scene's start, 415.1 with line 367 open, 377.0
+      after the hold, 327.4 at nightfall and 310.7 after a forced GC, the GPU, audio service and browser flat;
+      working-set peaks at shot builds (496.9 MiB into cup), Nexts that only changed lines under 5 MiB; the bursts'
+      achieved cadence a median 183 ms, the 100 ms target not reached; private bytes and working set are not the native
+      Task Manager footprint. Accepted by Agnes (6420948643) as voice-path coverage for this bounded exploratory run,
+      not a causal exclusion: no crash and receding sampled memory do not establish why the native renderer exits;
+      without a matched muted run it does not isolate the voice path's own cost; and (a)'s post-reload baseline cannot
+      rule out earlier pressure. Cloud's full-path comparison (D-27a, CC-293) stays held, and no speculative product
+      patch is warranted (Agnes 6420948643). No product patch and no native saved-game replay are authorized by them.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's
