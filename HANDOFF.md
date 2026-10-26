@@ -1230,6 +1230,33 @@
       view height (two fractional heights that round alike would share one; the game never passes a fractional height,
       so only a test can reach it; outside this change). Not claimed: no audio check, no all-suite matrix, no native
       acceptance. Voice stays paused: nothing spoken changed.
+      CC-027 PUBLISHED 10-26 14:48:56Z (the task branch fast-forwarded to `cebe50f`, a non-force push; Pages run
+      40343179052 success at 14:50:50Z) and verified live by Local CL-424 (the live page changed from `b072a8b9…` at
+      14:51:03Z: 200, 24,394,705 bytes, sha256 `2998a88c…`, Last-Modified 14:50:25 GMT, `cmp`-equal to
+      `cebe50f:index.html`; the live smoke `livesmoke27`: 0 `makeCanvas` calls on 30 held frames each of cup and door,
+      the slot 1 entry and 0 after release, CC-026 and CC-025 still holding, clean boots into `rw.village` and
+      `rw.warehouse`, 0 page errors) and by Agnes 6419303064, independently, at 15:00Z.
+      Native on live CC-027, a separately bounded recovery (Agnes 6419776656, with her qualifications 6420161414 and
+      6420186071): before loading, the ledger showed all seven saves (Slots 1–6, and Slot 7's 21:14 manual and 21:19
+      autosave of 10-25), the originals not loaded or modified; one ordinary-input attempt from Slot 7's autosave, in a
+      new window after the environment cycle. Mill Echo and the h-row lesson completed, and the bridge's shot 2 → 3
+      crossfade (reach → cup), which had exited twice on CC-025, completed at 15:18:23–38Z; Tsuru's narration and the
+      Hana/Kōji reunion rendered. Separately: the last input, at 15:19:48Z, advanced from Kōji's line to Hana's
+      invitation (`!shot close smile`), and the next look, a screenshot at 15:20:01–07Z, showed Chromium "Aw, Snap!"
+      error 9, a fourth native renderer exit; the exit's time within that interval is unknown (not a functioning hold of
+      the shot). No further input, reload, retry or save; no new manual checkpoint; a newer autosave unverified; native
+      voice activity unverified; the cause unclassified, neither a game defect nor an environment fault established.
+      CC-027's allocation and pixel evidence stands; it did not prevent this exit. Kept apart from CC-025's three exits.
+      Diagnostics agreed (as refined by Agnes 6420161414): (a) Agnes's read-only recovery inspection, done (6420228978):
+      one ordinary reload to the save ledger, no slot loaded; Chromium Task Manager's displayed memory footprint at the
+      title at 15:38:22Z, game tab 194,492K, GPU process 17,216K, browser 63,076K, audio service 15,936K (a post-reload
+      baseline in the UI's units, not the crashed renderer's peak, total machine use or a causal diagnosis); the sound
+      settings as found, Music performance Original and Recorded voices selected, Mute all sound off (voice playback
+      eligible; that a particular clip was fetched or played in the failed attempt is not shown); Chromium
+      154.0.8037.57, Debian GNU/Linux 13, x86_64; the machine's RAM and device-pixel ratio not established; the ledger
+      unchanged, seven slots, Slot 7's 21:14 manual and 21:19 autosave still the newest, nothing modified. (b) Local's
+      one voice-on, bridge-only run on live CC-027 (CL-426, CL-427), no result reported yet. Cloud's full-path
+      comparison (D-27a, CC-293) held. No product patch and no native saved-game replay are authorized by them.
     - **Queued art candidates (Robin approves before push):** the coast road's west exit to Sazanami, which sits on
       open grass where the drawn road stops at the fork (src/content/sz/01_region.js adds the exit for `ed>=2`); and
       RBN-QA-006, the framing of Omi's office cutscene (the four and the desk small at the top of the frame; Omi's

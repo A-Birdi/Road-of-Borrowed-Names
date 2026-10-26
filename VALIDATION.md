@@ -5566,6 +5566,33 @@ Yasu's story, when listening, has not begun being spoken."
       reach it; no change proposed. Not claimed: no audio check, no all-suite matrix (none requested), no native or
       owner acceptance, no effect on the native renderer exits; native replay stays paused until Agnes resumes it after
       this release. Voice stays paused: nothing spoken changed.
+    - CC-027 PUBLISHED 10-26 14:48:56Z (the task branch fast-forwarded to `cebe50f`, a non-force push; Pages run
+      40343179052 success at 14:50:50Z) and verified live by Local CL-424 (the live page changed from `b072a8b9…` at
+      14:51:03Z: 200, 24,394,705 bytes, sha256 `2998a88c…`, Last-Modified 14:50:25 GMT, `cmp`-equal to
+      `cebe50f:index.html`; the live smoke `livesmoke27`: 0 `makeCanvas` calls on 30 held frames each of cup and door,
+      the slot 1 entry and 0 after release, CC-026 and CC-025 still holding, clean boots into `rw.village` and
+      `rw.warehouse`, 0 page errors) and by Agnes 6419303064, independently, at 15:00Z.
+    - Native on live CC-027, a separately bounded recovery (Agnes 6419776656, with her qualifications 6420161414 and
+      6420186071): before loading, the ledger showed all seven saves (Slots 1–6, and Slot 7's 21:14 manual and 21:19
+      autosave of 10-25), the originals not loaded or modified; one ordinary-input attempt from Slot 7's autosave, in a
+      new window after the environment cycle. Mill Echo and the h-row lesson completed, and the bridge's shot 2 → 3
+      crossfade (reach → cup), which had exited twice on CC-025, completed at 15:18:23–38Z; Tsuru's narration and the
+      Hana/Kōji reunion rendered. Separately: the last input, at 15:19:48Z, advanced from Kōji's line to Hana's
+      invitation (`!shot close smile`), and the next look, a screenshot at 15:20:01–07Z, showed Chromium "Aw, Snap!"
+      error 9, a fourth native renderer exit; the exit's time within that interval is unknown (not a functioning hold of
+      the shot). No further input, reload, retry or save; no new manual checkpoint; a newer autosave unverified; native
+      voice activity unverified; the cause unclassified, neither a game defect nor an environment fault established.
+      CC-027's allocation and pixel evidence stands; it did not prevent this exit. Kept apart from CC-025's three exits.
+      Diagnostics agreed (as refined by Agnes 6420161414): (a) Agnes's read-only recovery inspection, done (6420228978):
+      one ordinary reload to the save ledger, no slot loaded; Chromium Task Manager's displayed memory footprint at the
+      title at 15:38:22Z, game tab 194,492K, GPU process 17,216K, browser 63,076K, audio service 15,936K (a post-reload
+      baseline in the UI's units, not the crashed renderer's peak, total machine use or a causal diagnosis); the sound
+      settings as found, Music performance Original and Recorded voices selected, Mute all sound off (voice playback
+      eligible; that a particular clip was fetched or played in the failed attempt is not shown); Chromium
+      154.0.8037.57, Debian GNU/Linux 13, x86_64; the machine's RAM and device-pixel ratio not established; the ledger
+      unchanged, seven slots, Slot 7's 21:14 manual and 21:19 autosave still the newest, nothing modified. (b) Local's
+      one voice-on, bridge-only run on live CC-027 (CL-426, CL-427), no result reported yet. Cloud's full-path
+      comparison (D-27a, CC-293) held. No product patch and no native saved-game replay are authorized by them.
   - **Candidate CC-026 (records for review; the cut follows them):** to be built from this records commit: CC-025
     (`0062b37`; published 10-25 19:57:21Z by fast-forwarding the task branch, live and verified by Local CL-396 and
     Agnes 6402478532) plus only RBN-QA-183, by its exact commit `5150612`, whose parent is `0062b37`, so `int/cc026` is
@@ -5663,21 +5690,21 @@ Yasu's story, when listening, has not begun being spoken."
       (relayed by Agnes 6406416417); they were removed (CC-271). The first exact-cut run (01:50:11Z, a 182 MB starting
       gate) was stopped by its monitor at 02:06:49Z in `voice_review_pack` after 193 of 207 files `ok`, exit 143, the
       floor breached again, sampled 136,368,128 bytes (CC-272): not a pass and no test failure; its temporary folder was
-      removed as routine cleanup. A read-only audit of the suite's temporary writes followed (11 of 207 files write;
-      files run in sequence, so no overlap; peak about 126 MB in `voice_review_pack`, its random audio and zip copies
-      together; a 130 MB allowance and a 291 MB gate: CC-273, Local CL-414 and CL-415, Agnes 6406909975), and two more
-      pairs were removed: CC-023's and CC-024's pages (CC-273), then a further copy each of the candidate page and
-      CC-025's page (CC-274). So six copies in three batches, 146,343,566 bytes, each checked byte-identical to a
-      retained copy and to its Git blob before removal; the receipts are as reported in CC-271, CC-273 and CC-274, the
-      raw receipts since lost (Agnes 6408626132). Kept apart: one scratch duplicate of CC-025's page removed at
-      21:36:44Z before CC-026's lane (CC-264), and the stopped test's synthetic fixtures (CC-272). The exact-cut run,
-      02:32:16Z to 02:49:58Z: 58,365/0, all 207 files, exit 0, sampled minimum 169,906,176 bytes at 02:48:53Z (1 s
-      samples; a sampled figure), its wrapper exiting 1 from its own final `grep` (CC-275). Cut AGREEs: Local CL-416 and
-      Agnes 6407201802, with Cloud's. After a container restart Cloud's raw logs, space samples and removal receipts are
-      gone; the figures stand as posted in CC-267 to CC-275 and are not recreated (CC-276, Agnes 6407201802). Published
-      10-26 02:57:27Z (a non-force fast-forward of the task branch from `0062b37`; Pages run 40261655679 success at
-      02:59:11Z); verified live by Local CL-417 (200, 24,393,376 bytes, `b072a8b9…`, `cmp`-equal to
-      `2abfc60:index.html`, live smoke with 0 page errors) and Agnes 6407330984.
+      removed as routine cleanup. A read-only audit of the suite's temporary writes followed (11 of 207 files write or
+      start a subprocess (some write nothing); files run in sequence, so no overlap; peak about 126 MB in
+      `voice_review_pack`, its random audio and zip copies together; a 130 MB allowance and a 291 MB gate: CC-273, Local
+      CL-414 and CL-415, Agnes 6406909975), and two more pairs were removed: CC-023's and CC-024's pages (CC-273), then
+      a further copy each of the candidate page and CC-025's page (CC-274). So six copies in three batches, 146,343,566
+      bytes, each checked byte-identical to a retained copy and to its Git blob before removal; the receipts are as
+      reported in CC-271, CC-273 and CC-274, the raw receipts since lost (Agnes 6408626132). Kept apart: one scratch
+      duplicate of CC-025's page removed at 21:36:44Z before CC-026's lane (CC-264), and the stopped test's synthetic
+      fixtures (CC-272). The exact-cut run, 02:32:16Z to 02:49:58Z: 58,365/0, all 207 files, exit 0, sampled minimum
+      169,906,176 bytes at 02:48:53Z (1 s samples; a sampled figure), its wrapper exiting 1 from its own final `grep`
+      (CC-275). Cut AGREEs: Local CL-416 and Agnes 6407201802, with Cloud's. After a container restart Cloud's raw logs,
+      space samples and removal receipts are gone; the figures stand as posted in CC-267 to CC-275 and are not recreated
+      (CC-276, Agnes 6407201802). Published 10-26 02:57:27Z (a non-force fast-forward of the task branch from `0062b37`;
+      Pages run 40261655679 success at 02:59:11Z); verified live by Local CL-417 (200, 24,393,376 bytes, `b072a8b9…`,
+      `cmp`-equal to `2abfc60:index.html`, live smoke with 0 page errors) and Agnes 6407330984.
   - **Candidate CC-025 (records for review; the cut follows them):** to be built from this records commit: CC-024
     (`0ab9c53`; published 10-25 16:28Z by fast-forwarding the task branch, live and verified by Local CL-389 and Agnes
     6400268327) plus only the 20-slot Inn Ledger, by its exact commits, integrated as `int/cc025`, head `06bc6c1` (plan

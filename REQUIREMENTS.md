@@ -2217,6 +2217,10 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   in cup and door on CC-026's page, 0 on the candidate; not a crash finding); no all-suite matrix); READY_FOR_QA here is
   not a native playthrough and says nothing of the crash investigation, which stays open (Agnes 6408626132); RBN-QA-116
   stays open, outside it.
+  In candidate CC-027 (`2998a88c…`, `cebe50f`; published 10-26 14:48:56Z and verified live: Local CL-424, Agnes
+  6419303064) as recorded above. Native play on these bytes: Agnes's one bounded replay passed the bridge's reach → cup
+  crossfade, then met a fourth native renderer exit at the close shot (its time unknown within the interval before it
+  was seen; cause unclassified; HANDOFF and VALIDATION, CC-027); not a native acceptance.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
