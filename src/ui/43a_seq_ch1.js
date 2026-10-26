@@ -334,19 +334,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
     R(g, x, y, w, Math.max(1, s(2)), '#4a3020');
   }
   function eaveLantern(g, x, y, s, t, still) {
-    const lan = Q.chochin(s(6), s(15), true), fl = still ? 0.9 : 0.85 + 0.1 * Math.sin(t / 330) + 0.05 * Math.sin(t / 91);
+    // (built once per size: it was a fresh layer and canvas every frame)
+    const R0 = s(6), H0 = s(15), lan = Q.small('ch1.eave|' + R0 + '|' + H0, () => Q.chochin(R0, H0, true));
+    const fl = still ? 0.9 : 0.85 + 0.1 * Math.sin(t / 330) + 0.05 * Math.sin(t / 91);
     g.globalAlpha = fl; P().halo(g, x, y + lan.H / 2, s(30), '255,196,120', 0.22, 3); g.globalAlpha = 1;
     R(g, x, y - s(6), 1, s(6), '#2a1e18');
     g.drawImage(lan.cv, Math.round(x - lan.cx), y);
   }
-  function shojiPair(c, x, y, w, h, s, open, glow) {
+  function shojiPair(c, x, y, w, h, s, Z, open, glow) {
     // two panels: the left one slides over the right as `open` goes 0 → 1
-    const p = P(), L = p.layer(c.canvas.width, c.canvas.height), half = Math.round(w / 2);
-    const paper = p.mat(glow > 0.5 ? '#f2d8a6' : '#e2d2b4', { n: 4, at: 2 }), wood = p.mat(POST, { n: 4, at: 2 });
-    Q.shoji(L, x + half, y, w - half, h, s, paper, wood, glow);
-    Q.shoji(L, Math.round(x + half * open), y, half, h, s, paper, wood, glow);
-    L.outline();
-    c.save(); c.beginPath(); c.rect(x - s(2), y, w + s(4), h); c.clip(); c.drawImage(L.canvas(), 0, 0); c.restore();
+    // (the panels' picture is kept while nothing that changes its pixels changes: the buffer's size, the place, the
+    // exact scale Z (s() rounds, so s(100) alone does not fix s(2), s(9) or s(11)), open and glow; the key must
+    // cover whatever Q.shoji reads. While the panel slides, open changes and it is rebuilt each frame, as before)
+    const W = c.canvas.width, H = c.canvas.height;
+    const cv = Q.last('ch1.shoji', [W, H, x, y, w, h, Z, open, glow].join('|'), () => {
+      const p = P(), L = p.layer(W, H), half = Math.round(w / 2);
+      const paper = p.mat(glow > 0.5 ? '#f2d8a6' : '#e2d2b4', { n: 4, at: 2 }), wood = p.mat(POST, { n: 4, at: 2 });
+      Q.shoji(L, x + half, y, w - half, h, s, paper, wood, glow);
+      Q.shoji(L, Math.round(x + half * open), y, half, h, s, paper, wood, glow);
+      L.outline();
+      return L.canvas();
+    });
+    c.save(); c.beginPath(); c.rect(x - s(2), y, w + s(4), h); c.clip(); c.drawImage(cv, 0, 0); c.restore();
   }
 
   // ---- shot 2: his own cup, along the bridge ------------------------------------------------------------
@@ -431,7 +440,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the doorway: dark until the panel slides, then the warm room behind
       R(c, S0.dX, dy0, S0.dW, dyh, '#2a1a14');
       if (kd > 0) { c.fillStyle = 'rgba(255,190,110,' + (0.4 * kd).toFixed(2) + ')'; c.fillRect(S0.dX, dy0, S0.dW, dyh); }
-      shojiPair(c, S0.dX, dy0, S0.dW, dyh, s, 1 - kd * 0.95, 0.25);
+      shojiPair(c, S0.dX, dy0, S0.dW, dyh, s, G.Z, 1 - kd * 0.95, 0.25);
       noren(c, S0.dX - s(2), dy0 - s(4), S0.dW + s(4), s(15), s, still ? 0 : t / 900);
       eaveLantern(c, Math.round(th.x1 - s(12)), S0.wallTop + s(4), s, t, still);
       // Tsuru, far off on the path from the square, as the door opens
@@ -745,7 +754,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (fk) { c.globalAlpha = step4(1 - clamp((ks - 0.5) / 0.4, 0, 1)); c.drawImage(fk.cv, kx - fk.ax, Math.round(yG - s(2) - fk.ay)); c.globalAlpha = 1; }
       }
       // the panels sliding to meet, warm light through the paper; when shut, the two of them shadows on it
-      shojiPair(c, dX, top, dW, dh, s, 1 - ks, 1);
+      shojiPair(c, dX, top, dW, dh, s, G.Z, 1 - ks, 1);
       const fl = still ? 0.9 : 0.86 + 0.08 * Math.sin(t / 420);
       if (ks >= 1) {
         c.fillStyle = 'rgba(96,52,28,' + (0.3 * fl).toFixed(2) + ')';

@@ -12,6 +12,8 @@
  *
  *   RB.seqKit.stage(w, h, vb)                  { lay: 'wide'|'narrow'|'land', Z, s(n), cx, top, vb, w, h }
  *   RB.seqKit.cached(key, build)               a static layer (bounded; released with the sequence)
+ *   RB.seqKit.last(slot, key, build)           what a helper built last, kept while its key is unchanged (one per slot;
+ *                                              released with the sequence)
  *   RB.seqKit.figure(look, dir, key, scale, grade)   a graded road figure { cv, ax, ay, w, h }
  *   RB.seqKit.bust(who|{look}, expr, fr, grade, flip, ext, o) a graded portrait (96 × 96, transparent), or the person
  *                                              standing, ext rows to their feet (RB.portraitBody)
@@ -51,8 +53,18 @@ RB.seqKit = (function () {
     while (sprites.size > 160) sprites.delete(sprites.keys().next().value);
     return v;
   }
-  function release() { layers.clear(); sprites.clear(); }
-  const stats = () => ({ layers: layers.size, sprites: sprites.size, built: stat.built, hits: stat.hits });
+  // a last-value slot: what a helper built last, reused while every input that changes its pixels (the key) is the
+  // same; one entry per named slot, replaced when the key changes, so animated inputs never pile up entries
+  const lasts = new Map();
+  function last(slot, key, build) {
+    const v = lasts.get(slot);
+    if (v && v.key === key) return v.val;
+    const val = build();
+    lasts.set(slot, { key, val });
+    return val;
+  }
+  function release() { layers.clear(); sprites.clear(); lasts.clear(); }
+  const stats = () => ({ layers: layers.size, sprites: sprites.size, lasts: lasts.size, built: stat.built, hits: stat.hits });
 
   // ---- layout ---------------------------------------------------------------------------------------------
   // A shot keeps what matters above the dialogue sheet: vb is the sheet's top (a buffer row). The layout
@@ -381,7 +393,7 @@ RB.seqKit = (function () {
   }
 
   return {
-    R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX, floor, sleeveTo, forearm,
+    R, mk, clamp, ease, lerp, hex3, rampC, cached, small, last, release, stats, stage, grade, flipX, floor, sleeveTo, forearm,
     figure, bust, standing, lookOf, holdArms, back, hand, skinOf, clothOf, gull, dust, steam, shoji,
     bandsIn: (...a) => RB.prologueArt.kit.bandsIn(...a),
     chochin: (...a) => RB.prologueArt.kit.chochin(...a),

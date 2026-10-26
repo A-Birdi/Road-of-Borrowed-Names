@@ -81,7 +81,7 @@ let suites = [
 // the overworld figures, the audit fixes); P17's closure runs them once with `--extra`
 if (process.argv.includes('--extra')) suites = [
   ['creatures_a.mjs'], ['battle_geometry.mjs'], ['battle_invariance.mjs'], ['harmony_cutin.mjs'], ['sequence_chapters.mjs'],
-  ['sequence_chapters_56.mjs'], ['sequence_dev.mjs'], ['portrait_anim.mjs'], ['overworld_figures.mjs'], ['audit_fixes.mjs'],
+  ['sequence_chapters_56.mjs'], ['sequence_dev.mjs'], ['bridge_alloc.mjs'], ['portrait_anim.mjs'], ['overworld_figures.mjs'], ['audit_fixes.mjs'],
 ];
 // --skip=a.mjs,b.mjs leaves those scripts out; --part=k/n runs the k-th of n equal slices of what is left (a long
 // suite split across several runs, e.g. under a time limit per run)
