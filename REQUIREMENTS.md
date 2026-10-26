@@ -2221,6 +2221,11 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   6419303064) as recorded above. Native play on these bytes: Agnes's one bounded replay passed the bridge's reach → cup
   crossfade, then met a fourth native renderer exit at the close shot (its time unknown within the interval before it
   was seen; cause unclassified; HANDOFF and VALIDATION, CC-027); not a native acceptance.
+  Later (HANDOFF and VALIDATION, after `e646363`): a fifth native exit with automatic recorded dialogue playback Off,
+  after the waterwheel Next and before the h-row and the bridge, the setting then restored (Agnes 6421646528); Cloud's
+  headless, synthetic runs (D-27a a partial harness failure; D-27b complete, a coarse characterization) and a read-only
+  review established no leak and no exit cause; native play stays paused at Slot 7 (Agnes 6425757246); not a native
+  acceptance.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:

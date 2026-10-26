@@ -5606,6 +5606,76 @@ Yasu's story, when listening, has not begun being spoken."
       without a matched muted run it does not isolate the voice path's own cost; and (a)'s post-reload baseline cannot
       rule out earlier pressure. Cloud's full-path comparison (D-27a, CC-293) stays held, and no speculative product
       patch is warranted (Agnes 6420948643). No product patch and no native saved-game replay are authorized by them.
+    - After `e646363`, recorded as later facts, the paragraph above unchanged (Agnes 6422132699). (1) The fifth native
+      exit. Agnes then authorized one changed-condition native replay (6421408831): only automatic recorded dialogue
+      playback changed, its original value recorded and restored after either outcome, a reload allowed only to restore
+      it, Slots 1–6 untouched. As she reports it (6421646528): playback On reverified at 16:32:45Z and set Off at
+      16:32:54Z; one Slot 7 autosave load; Mill Echo's four knots completed and the waterwheel narration rendered; the
+      last Next, at 16:39:20Z, advanced from "Outside, the waterwheel makes one great turn" and the Notebook toast "The
+      mill's echo" appeared; a screenshot at 16:39:29Z showed "Aw, Snap!" error 9, a fifth native renderer exit, before
+      the h-row screen or the bridge; no safe manual save, no retry. One restore-only reload: playback visibly On again
+      at 16:41:03Z, no save loaded afterward; the other settings as found (Overall, Music, Effects, Voices 80/55/75/100,
+      mute off, Original music, recorded voices, own lines Silent). Task Manager's displayed footprint at the title at
+      16:33:09Z: game 202,352K, GPU 17,640K, audio 15,948K, browser 64,952K; after the exit, at 16:39:52Z: the game row
+      absent, browser 63,436K, GPU 17,708K, audio 15,944K, a spare renderer 20,776K; neither captures the exit's peak.
+      About Xfce: Debian 13, 64-bit, kernel 6.18.55, X11, 9.7 GiB memory (total, not free), llvmpipe (LLVM 19.1.7, 256
+      bits); no readily accessible exit-log viewer. Turning automatic recorded dialogue playback off did not prevent the
+      exit; that neither establishes its cause nor excludes every audio path (6421646528). The 9 s from the last Next to
+      discovery is not a verified lesson runtime, and the removed holding-frame churn was not necessary for this exit,
+      which does not exclude other allocations (Agnes 6422113240). (2) The native environment, read-only (Agnes
+      6422219814, 16:59–17:01Z): GPU status software-only with hardware acceleration disabled (canvas, compositing,
+      rasterization, video decode and encode); OpenGL, Vulkan, WebGL and WebGPU disabled; GL `(gl=disabled,angle=none)`,
+      vendor, renderer and version Disabled, GPU0 0x0000, Ozone x11, GPU-process crash count 0 (which does not mean no
+      renderer crash); a CPU Vulkan SwiftShader device listed, WebGPU blocklisted, `drmGetDevices2() has not found any
+      devices`; in chrome://version `--enable-gpu-rasterization`, `--disable-gpu`, `--disable-dev-shm-usage`,
+      `--disable-crash-reporter`, `--ozone-platform=x11`, while `--disable-software-rasterizer` is mentioned by the GPU
+      report only, kept distinct; no system monitor found, so available RAM, swap and shared memory are unknown. The
+      records publish `e646363` verified live by Local CL-433 and Agnes 6422641436 (200, 24,394,705 bytes, `2998a88c…`).
+      (3) Cloud's D-27a (CC-301 with Local CL-434, Agnes 6422641436; probe `5a8e591b…`, 17:19:55–17:28:03Z, headless
+      Chromium 153 in Cloud's container, synthetic Slot 7 state, voices off): a partial harness failure, not the agreed
+      path's coverage (Agnes 6423022827). Its process types all read "browser" (Chromium rewrites its children's command
+      lines); the battle went unanswered (the game's handwriting default against a choice-only driver): 37 Unravel
+      attempts, first reported as 38 (CC-303), the log's labels being loop iterations, and the attempted leave clicks
+      not verified (CC-306, Agnes 6423736267); the lesson's pages not seen; the bridge's lines not driven;
+      `chrome://gpu` refused headless. As measured, for what ran only: the inferred renderer's PSS peaked at 491.1 MiB,
+      the largest simultaneous total 669.7 MiB, 330.1 MiB after a forced GC; 697 weakly tracked canvases still counted
+      after it, consistent with the page keeping them and not proof of ownership (CC-305); no renderer exit, `oom_kill`
+      0 → 0 in a shared cgroup. (4) Tooling, each first outcome (Agnes 6423371208, 6423736267, 6424104108, 6424449326;
+      Local CL-437 to CL-441): (i) on a blank page, CDP's process types matched the command lines; the graphics report
+      software throughout, with GL `(gl=egl-angle,angle=swiftshader)`, unlike the native `gl=disabled`; 100 of 100
+      canvases finalized after a forced GC; registration-time pixels proved stale. (ii) The driver's dry run passed 43
+      assertions and stopped when the battle stalled about 55 s in its enemy phase, the cause not logged; a logging-only
+      rerun (`498b9ad8…`) stopped at the same point, with the Settings sheet never open, about 59 frames a second, the
+      battle's sequence idle and its "Something has changed" teach card on top, unanswered (a driver gap; the earlier,
+      unlogged stall not proven the same); the next (`239ffc9e…`) passed 161, acknowledging both teach cards (the battle
+      resumed each time) and answering See through and the Plea as the game's own choice questions with the input still
+      handwriting, then stopped at a 400 ms check during an authored 1.8 s fade; the last (`6f19b81d…`) completed, 181
+      passed and 0 failed, through nightfall, its cadence not identical to the run before. The pad's battle characters
+      differed between runs. (5) D-27b (`d27b_run.mjs` `0ceeb42d…`, Local CL-444, Agnes 6425099691; 19:16:19–19:21:45Z;
+      that path, after 30 s controls at the title and on `rw.warehouse`): accepted as a completed, bounded, coarse
+      characterization, not a crash diagnosis or a leak finding (Agnes 6425415334). 183 passed, 0 failed, 0 page errors;
+      the renderer and browser stayed up and no crash was observed; a video-capture utility started at 74 s and exited
+      at 79 s; the shared cgroup's `failcnt` and `oom_kill` stayed 0, this run's evidence only. Sampled once a second
+      (each round acquired within 26 ms), so maxima, not peaks: the renderer's PSS 250.7 MiB at the title, 218.0 on the
+      warehouse, 489.6 in the battle, 476.1 in the lesson, 591.1 in the bridge (0.5 s after the `hana` shot began) and
+      415.9 after one forced GC at the end; the largest sampling-round total 741.3 MiB, between `door` and the nightfall
+      line; no sample inside the 0.29 s waterwheel → lesson hand-off. Tracked canvases not yet finalized rose from 66 to
+      1,378, and the forced GC finalized only 1 more within 3 s; finalization counts do not identify owners. Headless
+      Chromium 153 with SwiftShader GL against the native `gl=disabled`; synthetic state, under which the village's
+      first-visit scene and a cat notice played after nightfall; D-27a and D-27b are not a matched comparison. (6) The
+      read-only review (CC-316, checked by Local CL-446, accepted by Agnes 6425757246): the close hold's 74 canvas
+      registrations came 60 in its first second and 14 over the next 29 s, not a steady 2.5 a second (as CC-315 had it);
+      the 60 plausibly fit the close shot's one-second smile-and-reach animation building pose variants into the
+      sequence kit's 160-entry cache, cleared at the sequence's end, without an allocation stack to attribute them; the
+      14 unattributed (the dialogue portrait's animator a live candidate); the title control registered 1, the other 42
+      (counted to it in CC-315) belonging to the warehouse's load; configured cache capacities, the ensemble's 128 MiB
+      music budget among them, are not measured allocations; the tracker covered created elements and `OffscreenCanvas`,
+      not workers; Local's earlier counter (CL-405 to CL-428) saw `RB.sprites.makeCanvas` only, so its burst counts were
+      partial-surface, while CC-027's verification stands (CL-445). Kept as a coincidence in timing only (CL-426,
+      CL-446): exit 4's window opens on the smile phase that holds the 60, and exits 2 and 3 came at the cup shot's
+      change. No leak and no native exit cause is established; the five exits stay unclassified. Native full-playthrough
+      progress stays blocked at the preserved Slot 7 checkpoint, and native retries are paused: isolated
+      non-reproduction is not clearance (Agnes 6425757246). No product change; voice stays paused.
   - **Candidate CC-026 (records for review; the cut follows them):** to be built from this records commit: CC-025
     (`0062b37`; published 10-25 19:57:21Z by fast-forwarding the task branch, live and verified by Local CL-396 and
     Agnes 6402478532) plus only RBN-QA-183, by its exact commit `5150612`, whose parent is `0062b37`, so `int/cc026` is
