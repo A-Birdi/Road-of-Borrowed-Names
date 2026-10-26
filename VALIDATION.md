@@ -5649,16 +5649,18 @@ Yasu's story, when listening, has not begun being spoken."
       battle's sequence idle and its "Something has changed" teach card on top, unanswered (a driver gap; the earlier,
       unlogged stall not proven the same); the next (`239ffc9e…`) passed 161, acknowledging both teach cards (the battle
       resumed each time) and answering See through and the Plea as the game's own choice questions with the input still
-      handwriting, then stopped at a 400 ms check during an authored 1.8 s fade; the last (`6f19b81d…`) completed, 181
-      passed and 0 failed, through nightfall, its cadence not identical to the run before. The pad's battle characters
-      differed between runs. (5) D-27b (`d27b_run.mjs` `0ceeb42d…`, Local CL-444, Agnes 6425099691; 19:16:19–19:21:45Z;
+      handwriting, then stopped at a 400 ms check before the fade's completion was observed (the authored 1.8 s fade a
+      source-based explanation, not a timing seen in that run); the last (`6f19b81d…`) completed, 181 passed and 0
+      failed, through nightfall, its cadence not identical to the run before. The pad's battle characters differed
+      between runs. (5) D-27b (`d27b_run.mjs` `0ceeb42d…`, Local CL-444, Agnes 6425099691; 19:16:19–19:21:45Z;
       that path, after 30 s controls at the title and on `rw.warehouse`): accepted as a completed, bounded, coarse
       characterization, not a crash diagnosis or a leak finding (Agnes 6425415334). 183 passed, 0 failed, 0 page errors;
       the renderer and browser stayed up and no crash was observed; a video-capture utility started at 74 s and exited
       at 79 s; the shared cgroup's `failcnt` and `oom_kill` stayed 0, this run's evidence only. Sampled once a second
-      (each round acquired within 26 ms), so maxima, not peaks: the renderer's PSS 250.7 MiB at the title, 218.0 on the
-      warehouse, 489.6 in the battle, 476.1 in the lesson, 591.1 in the bridge (0.5 s after the `hana` shot began) and
-      415.9 after one forced GC at the end; the largest sampling-round total 741.3 MiB, between `door` and the nightfall
+      (each process-sampling round acquired within 26 ms), so maxima, not peaks: the renderer's PSS 250.7 MiB at the
+      title, 218.0 on the warehouse, 489.6 in the battle, 476.1 in the lesson, 591.1 in the bridge (0.5 s after the
+      `hana` shot began) and 415.9 after one forced GC at the end; the largest sampling-round total 741.3 MiB, between
+      `door` and the nightfall
       line; no sample inside the 0.29 s waterwheel → lesson hand-off. Tracked canvases not yet finalized rose from 66 to
       1,378, and the forced GC finalized only 1 more within 3 s; finalization counts do not identify owners. Headless
       Chromium 153 with SwiftShader GL against the native `gl=disabled`; synthetic state, under which the village's

@@ -2224,8 +2224,8 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   Later (HANDOFF and VALIDATION, after `e646363`): a fifth native exit with automatic recorded dialogue playback Off,
   after the waterwheel Next and before the h-row and the bridge, the setting then restored (Agnes 6421646528); Cloud's
   headless, synthetic runs (D-27a a partial harness failure; D-27b complete, a coarse characterization) and a read-only
-  review established no leak and no exit cause; native play stays paused at Slot 7 (Agnes 6425757246); not a native
-  acceptance.
+  review established neither a leak nor an exit cause; native play stays paused at Slot 7 (Agnes 6425757246); not a
+  native acceptance.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
