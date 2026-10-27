@@ -37,20 +37,26 @@ export default async (t) => {
   t.eq(await autos(2), [a[1], a[2], a4].map((x) => 'auto@' + x), 'a fourth autosave removes only the oldest');
   t.ok((await recs(2)).includes('predeparture@' + pre) && (await recs(2)).includes('suspend@' + sus), 'the pre-departure and suspend points stay');
 
+  // every stored record, complete, as the session store holds it (key and full value)
+  const all = () => JSON.stringify([...mem.entries()].map(([k, v]) => [k, JSON.stringify(v)]).sort());
   // a state that cannot be copied: nothing is written or removed
-  const before = JSON.stringify(await recs(2));
+  const before = all();
   const bad = mk(30); bad.vars.big = BigInt(1);
   let e1 = null;
   try { await RB.save.writeRecovery(2, bad, 'auto'); } catch (e) { e1 = e; }
-  t.ok(e1 && JSON.stringify(await recs(2)) === before, 'a state that cannot be copied stops the write before anything changes');
+  t.ok(e1 && all() === before, 'a state that cannot be copied stops the write before anything changes: every stored record, complete, as it was');
 
   // a trim that fails after the write: the vm's own Map refuses to delete autosaves for a moment
   const del = VmMap.prototype.delete;
   let events = 0;
   RB.bus.on('save:trimError', () => { events++; });
   VmMap.prototype.delete = function (k) { if (typeof k === 'string' && k.startsWith('recovery:2:auto:')) throw new Error('cannot remove'); return del.call(this, k); };
+  const kept0 = [...mem.entries()].filter(([k]) => k.startsWith('recovery:2:') || k === 'slots:2').map(([k, v]) => [k, JSON.stringify(v)]).sort();
   let a5, e2 = null;
   try { await tick(); a5 = (await RB.save.writeRecovery(2, mk(14), 'auto')).savedAt; } catch (e) { e2 = e; } finally { VmMap.prototype.delete = del; }
+  const kept1 = [...mem.entries()].filter(([k]) => (k.startsWith('recovery:2:') || k === 'slots:2') && k !== 'recovery:2:auto:' + a5).map(([k, v]) => [k, JSON.stringify(v)]).sort();
+  t.ok(JSON.stringify(kept1) === JSON.stringify(kept0) && kept0.some(([k]) => k === 'recovery:2:predeparture') && kept0.some(([k]) => k === 'recovery:2:suspend'),
+    'the manual save, the pre-departure and suspend points and the earlier autosaves stay exactly as they were');
   const after = await autos(2);
   t.ok(!e2 && a5 && after.length === 4 && after.includes('auto@' + a5), 'a trim that fails keeps the autosave just written (four remain, truthfully): ' + after.join(' '));
   t.ok(/^Autosaved, but older autosaves could not be removed \(cannot remove\)$/.test(RB.save.status().lastError) && events === 1, 'and is reported apart from a failed autosave: ' + RB.save.status().lastError);

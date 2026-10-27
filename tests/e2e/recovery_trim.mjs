@@ -16,7 +16,9 @@ const b = await launch();
 let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) { pass++; console.log('ok   ' + m); } else { fail++; console.log('FAIL ' + m); } };
 
-// a fresh context with IndexedDB refused, a journey in slot 2 with three autosaves, the page's notices recorded
+// a fresh context with IndexedDB refused, a journey in slot 2 with its manual save, a pre-departure point, a suspend
+// point and three autosaves (the pre-departure and suspend points first, so the old order trims nothing while seeding),
+// the page's notices recorded
 async function fresh() {
   const ctx = await b.newContext({ viewport: { width: 1280, height: 800 } });
   await ctx.addInitScript(() => { Object.defineProperty(window, 'indexedDB', { get() { throw new Error('blocked'); } }); });
@@ -28,6 +30,9 @@ async function fresh() {
     await new Promise((r) => setTimeout(r, 40));
     await RB.save.writeSlot(2, s, { force: true, thumb: RB.render.thumbnail() });
     RB.save.setCurrent(2, 1);
+    await RB.save.writeRecovery(2, s, 'predeparture', RB.render.thumbnail());
+    await new Promise((r) => setTimeout(r, 5));
+    await RB.save.writeRecovery(2, s, 'suspend', RB.render.thumbnail());
     // with their thumbnails, as autosave() writes them, so a new autosave is about the size of the oldest
     for (let i = 0; i < 3; i++) { await new Promise((r) => setTimeout(r, 5)); await RB.save.writeRecovery(2, s, 'auto', RB.render.thumbnail()); }
     window.__notes = [];
@@ -39,6 +44,9 @@ async function fresh() {
 }
 const store = (p) => p.evaluate(() => { const o = {}; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); o[k] = localStorage.getItem(k); } return o; });
 const autoKeys = (o) => Object.keys(o).filter((k) => k.startsWith('rbn:recovery:2:auto:')).sort();
+// the records a failure must leave exactly as they were: the manual save, the pre-departure and suspend points, every autosave
+const kept = (o) => Object.keys(o).filter((k) => k === 'rbn:slots:2' || k.startsWith('rbn:recovery:2:')).sort().map((k) => [k, o[k]]);
+const keptOk = (before, after, extra) => { const b = kept(before), a = kept(after).filter(([k]) => !(extra || []).includes(k)); return b.length === 6 && JSON.stringify(a) === JSON.stringify(b); };
 const same = (a, z) => JSON.stringify(Object.keys(a).sort().map((k) => [k, a[k]])) === JSON.stringify(Object.keys(z).sort().map((k) => [k, z[k]]));
 // fill the store until about `room` characters (UTF-16 code units, as Chromium counts them) are left
 const fillTo = (p, room) => p.evaluate((room) => {
@@ -79,13 +87,17 @@ for (const [tag, share] of [['2 fits only after removing the oldest', 0.5], ['3 
   if (share >= 0.5) ok(room < size && room + sz.oldest > size * 1.2, tag + ': the room left (' + room + ') is short of a new autosave (~' + size + ') and would fit one once the oldest (' + sz.oldest + ') went');
   else ok(room + sz.oldest < size + grow - 1000, tag + ': the room left (' + room + ') plus the oldest (' + sz.oldest + ') is short of the new autosave (~' + (size + grow) + ')');
   const before = await store(P.p);
+  ok(before['rbn:slots:2'] && before['rbn:recovery:2:predeparture'] && before['rbn:recovery:2:suspend'] && autoKeys(before).length === 3, tag + ': the fixture holds the manual save, a pre-departure point, a suspend point and three autosaves');
   const r = await P.p.evaluate(async () => { await new Promise((res) => setTimeout(res, 5)); const rec = await RB.save.autosave('auto'); return { rec: !!rec, err: RB.save.status().lastError, notes: window.__notes.slice() }; });
   const after = await store(P.p);
   ok(!r.rec && /quota|exceeded/i.test(r.err || '') && r.notes.some((n) => /^Autosave failed/.test(n)), tag + ': the autosave fails visibly (' + r.notes.join(' | ').slice(0, 120) + ')');
-  ok(same(before, after) && autoKeys(after).length === 3, tag + ': every value in the store is byte-identical, three autosaves kept');
+  ok(same(before, after) && autoKeys(after).length === 3 && keptOk(before, after), tag + ': every value in the store is byte-identical: the manual save, the pre-departure and suspend points and the three autosaves, exactly');
   if (share < 0.5) {
-    const e = await P.p.evaluate(async () => { try { await RB.save.writeRecovery(2, RB.game.s, 'predeparture', null); return null; } catch (err) { return String(err && err.message || err); } });
-    ok(e && same(before, await store(P.p)), tag + ': a pre-departure point that does not fit removes nothing either');
+    // (it replaces the stored pre-departure point under the same key, so it is written as the game would, with its
+    // thumbnail and the grown journey: larger than the one it replaces by more than the room left)
+    const e = await P.p.evaluate(async () => { try { await RB.save.writeRecovery(2, RB.game.s, 'predeparture', RB.render.thumbnail()); return null; } catch (err) { return String(err && err.message || err); } });
+    const after2 = await store(P.p);
+    ok(e && same(before, after2) && keptOk(before, after2), tag + ': a pre-departure point that does not fit removes nothing either, and the old one stays exactly');
   }
   ok(!P.errors.length, tag + ': no page errors' + (P.errors.length ? ': ' + P.errors.slice(0, 2).join(' | ') : ''));
   await ctx.close();
@@ -94,14 +106,17 @@ for (const [tag, share] of [['2 fits only after removing the oldest', 0.5], ['3 
 // 4. a removal that fails after the write
 {
   const { ctx, P } = await fresh();
-  const before = autoKeys(await store(P.p));
+  const full0 = await store(P.p);
+  const before = autoKeys(full0);
   const r = await P.p.evaluate(async () => {
     const rm = Storage.prototype.removeItem;
     Storage.prototype.removeItem = function (k) { if (String(k).startsWith('rbn:recovery:2:auto:')) throw new Error('cannot remove'); return rm.call(this, k); };
     try { await new Promise((res) => setTimeout(res, 5)); const rec = await RB.save.autosave('auto'); return { key: rec && rec.key, err: RB.save.status().lastError, notes: window.__notes.slice() }; } finally { Storage.prototype.removeItem = rm; }
   });
-  const after = autoKeys(await store(P.p));
+  const full1 = await store(P.p);
+  const after = autoKeys(full1);
   ok(r.key && after.length === 4 && after.includes('rbn:recovery:' + r.key) && before.every((k) => after.includes(k)), '4 the new autosave is kept and four remain, truthfully');
+  ok(keptOk(full0, full1, ['rbn:recovery:' + r.key]), '4 the manual save, the pre-departure and suspend points and the three earlier autosaves are exactly as they were');
   ok(/^Autosaved, but older autosaves could not be removed/.test(r.err || '') && r.notes.some((n) => /^Autosaved, but older autosaves could not be removed: cannot remove/.test(n)) && !r.notes.some((n) => /^Autosave failed/.test(n)),
     '4 reported apart from a failed autosave: ' + r.notes.join(' | '));
   ok(!P.errors.length, '4 no page errors' + (P.errors.length ? ': ' + P.errors.slice(0, 2).join(' | ') : ''));
