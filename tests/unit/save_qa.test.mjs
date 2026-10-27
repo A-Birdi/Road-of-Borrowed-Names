@@ -5,8 +5,13 @@
 //    SHA-256 of the payload's UTF-8 bytes, and the parsed payload serialises back to the same bytes;
 //  - a file is refused for each way it can be wrong, before anything could be written: size, JSON, format, unknown
 //    field, file version, newer schema, source slot, label, checksum (before the payload is parsed), the payload's
-//    shape, each record's fields, kind, count, saved time, duplicate, size, name length, and one invalid state among
-//    valid ones; the ledger reads the same afterwards;
+//    shape, each record's fields, kind, count, saved time, duplicate, size, name length, its own schema version (Agnes
+//    6432528267: 0, -1, 0.5 ... with the file's schema valid), and one invalid state among valid ones; the ledger reads
+//    the same afterwards;
+//  - one size ceiling, 16 MiB in UTF-8, for every file (Agnes 6432528267): exactly at it passes the size check and one
+//    byte over fails it, multibyte text included; an export is run through the same check, so a slot whose file would
+//    be over it (five records, each within its own 4 MiB) is refused at export, and one just under it exports a file
+//    that check() accepts;
 //  - restore is refused outside IndexedDB, with nothing written (tests/e2e/qa_saves.mjs restores on IndexedDB).
 import { createHash } from 'node:crypto';
 import { load } from '../lib/load.mjs';
@@ -23,6 +28,8 @@ export default async (t) => {
   const RB = load(ALL, { __RB_TEST__: true, __RB_DEV_SAVES__: true, crypto: globalThis.crypto, TextEncoder });
   const qa = RB.save.qa;
   t.ok(qa && typeof qa.exportSlot === 'function' && typeof qa.check === 'function' && typeof qa.restore === 'function', 'with the gate: export, check and restore');
+  const MAX = 16 * 1024 * 1024;
+  t.eq(qa.MAX_FILE_BYTES, MAX, 'one ceiling for a whole file: 16 MiB in UTF-8 bytes');
   t.ok(RB.ui.qaSaves && typeof RB.ui.qaSaves.exportSheet === 'function' && typeof RB.ui.qaSaves.restoreSheet === 'function', 'with the gate: the two sheets');
   t.eq(await RB.save.detect(), 'session', 'the unit context saves for the session only');
   RB.game.inBattle = () => false;
@@ -74,7 +81,10 @@ export default async (t) => {
   const copy = () => JSON.parse(f.payload);
   await refuse('', /no file text/, 'no text');
   await refuse(ex.text.slice(0, -12), /not JSON/, 'a truncated file');
-  await refuse('x'.repeat(16 * 1024 * 1024 + 1), /too large/, 'a file over 16 MiB');
+  await refuse('x'.repeat(MAX + 1), /larger than 16 MiB/, 'a file over 16 MiB');
+  await refuse('x'.repeat(MAX - 2) + 'あ', /larger than 16 MiB/, 'one byte over 16 MiB in UTF-8 (16 MiB − 1 characters)');
+  await refuse('x'.repeat(MAX - 3) + 'あ', /not JSON/, 'exactly 16 MiB in UTF-8 passes the size check (and fails as JSON)');
+  await refuse('あ'.repeat(6 * 1024 * 1024), /larger than 16 MiB/, 'multibyte text over 16 MiB in UTF-8 (6 Mi characters)');
   await refuse(JSON.stringify([f]), /not a QA save file/, 'a list instead of the file');
   await refuse(outer({ format: 'rbn-qa-save' }), /not a QA save file/, 'another format');
   await refuse(outer({ extra: 1 }), /unexpected fields/, 'an unknown field');
@@ -103,10 +113,33 @@ export default async (t) => {
   { const r = copy(); r[1].state = null; await refuse(inner(r), /record 2: state missing/, 'a record without its state'); }
   { const r = copy(); r[2].state.map = 'nowhere'; await refuse(inner(r), /record 3: unknown map nowhere/, 'one invalid state among valid ones'); }
   { const r = copy(); delete r[0].state.player; await refuse(inner(r), /record 1: player missing/, 'a state without its player'); }
-  { const r = copy(); r[0].state.v = RB.SAVE_SCHEMA + 1; await refuse(inner(r), /record 1: saved by a newer version/, 'a state from a newer schema'); }
+  { const r = copy(); r[0].state.v = RB.SAVE_SCHEMA + 1; await refuse(inner(r), new RegExp('record 1: bad save schema ' + (RB.SAVE_SCHEMA + 1)), 'a state from a newer schema'); }
+  for (const v of [0, -1, 0.5, '1', null]) {
+    const r = copy(); r[2].state.v = v;
+    await refuse(inner(r), new RegExp('record 3: bad save schema ' + JSON.stringify(v).replace(/[.]/g, '\\.') + '$'), 'a state whose own schema is ' + JSON.stringify(v) + ' (the file\'s schema ' + f.saveSchema + ')');
+  }
+  { const r = copy(); delete r[1].state.v; await refuse(inner(r), /record 2: bad save schema null$/, 'a state without its schema'); }
   { const r = copy(); r[0].state.player.name = 'x'.repeat(65); await refuse(inner(r), /player name too long/, 'a player name over 64 characters'); }
   { const r = copy(); r[0].state.pad = 'x'.repeat(4 * 1024 * 1024); await refuse(inner(r), /state too large/, 'a state over 4 MiB'); }
   { const r = copy(); r[0].state.pad = 'あ'.repeat(1.5 * 1024 * 1024); await refuse(inner(r), /state too large/, 'a state over 4 MiB in UTF-8 bytes (under it in characters)'); }
+
+  // ---- the ceiling at export: five records, each within 4 MiB, are refused together; four export and check -----------
+  // (in session storage a pre-departure point is written first: there, writing one also trims the autosaves to two)
+  {
+    const pad = 'あ'.repeat(1200000); // 3,600,000 bytes in UTF-8, 1,200,000 characters
+    const big = () => { const s = mk({ id: 'qa-big', name: 'Big' }); s.pad = pad; return s; };
+    await RB.save.writeSlot(8, big());
+    for (const kind of ['predeparture', 'auto', 'auto']) { await tick(); await RB.save.writeRecovery(8, big(), kind); }
+    const four = await qa.exportSlot(8, 'four');
+    const c4 = await qa.check(four.text);
+    t.ok(JSON.parse(four.text).payload.length < 5e6 && four.fileBytes === Buffer.byteLength(four.text, 'utf8') && four.fileBytes > 14e6 && four.fileBytes <= MAX && c4.ok && c4.records.length === 4,
+      'four large records: a ' + four.fileBytes + '-byte file (under 5 Mi characters), under the ceiling, that check() accepts');
+    await tick(); await RB.save.writeRecovery(8, big(), 'auto');
+    let e = null;
+    try { await qa.exportSlot(8, 'five'); } catch (err) { e = err; }
+    t.ok(e && /cannot be exported: the file is larger than 16 MiB/.test(e.message), 'five large records (each within 4 MiB; together over 16 MiB in UTF-8, about 6 Mi characters) are refused at export: ' + (e && e.message));
+    await RB.save.del(8);
+  }
 
   // ---- restore: IndexedDB only -----------------------------------------------------------------------------------
   {

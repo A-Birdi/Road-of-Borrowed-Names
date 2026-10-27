@@ -472,7 +472,8 @@ RB.save = (function () {
   // one slot's manual save and recovery records to a checksummed file, and such a file into an EMPTY slot, on IndexedDB
   // only, in one transaction. Not a player feature, not a share code or cloud save; without the gate nothing is defined.
   const QA_FORMAT = 'road-qa-save', QA_FV = 1;
-  const QA_MAX_TEXT = 16 * 1024 * 1024, QA_MAX_STATE = 4 * 1024 * 1024, QA_MAX_NAME = 64, QA_MAX_FIELD = 80;
+  // one ceiling in UTF-8 bytes for a whole file, wherever its text comes from (an export, a chosen file, pasted text)
+  const QA_MAX_FILE = 16 * 1024 * 1024, QA_MAX_STATE = 4 * 1024 * 1024, QA_MAX_NAME = 64, QA_MAX_FIELD = 80;
   const QA_KINDS = { manual: 1, auto: AUTO_KEEP, predeparture: 1, suspend: 1 };
   const QA_ORDER = { manual: 0, auto: 1, predeparture: 2, suspend: 3 };
   const QA_KEYS = ['exportedAt', 'format', 'fv', 'gameVersion', 'label', 'payload', 'saveSchema', 'sha256', 'sourceSlot'];
@@ -507,6 +508,8 @@ RB.save = (function () {
       try { size = qaBytes(JSON.stringify(r.state)); } catch (e) { errs.push(at + ': state is not plain data'); return; }
       if (size > QA_MAX_STATE) { errs.push(at + ': state too large'); return; }
       if (r.state.player && typeof r.state.player.name === 'string' && r.state.player.name.length > QA_MAX_NAME) { errs.push(at + ': player name too long'); return; }
+      // the state's own schema, whatever the file says: a whole number from 1 to this game's
+      if (!Number.isInteger(r.state.v) || r.state.v < 1 || r.state.v > RB.SAVE_SCHEMA) { errs.push(at + ': bad save schema ' + JSON.stringify(r.state.v === undefined ? null : r.state.v)); return; }
       const c = RB.util.deepClone(r.state);
       if (RB.atlas && RB.atlas.prepare) { try { RB.atlas.prepare(c); } catch (e) { errs.push(at + ': its atlas map could not be rebuilt'); return; } }
       const v = validate(c);
@@ -523,7 +526,7 @@ RB.save = (function () {
   async function qaCheck(text) {
     const fail = (why) => ({ ok: false, errors: [why] });
     if (typeof text !== 'string' || !text.length) return fail('no file text');
-    if (text.length > QA_MAX_TEXT) return fail('the file is too large');
+    if (text.length > QA_MAX_FILE || qaBytes(text) > QA_MAX_FILE) return fail('the file is larger than 16 MiB (UTF-8)');
     let f;
     try { f = JSON.parse(text); } catch (e) { return fail('the file is not JSON (truncated?)'); }
     if (!qaPlain(f) || f.format !== QA_FORMAT) return fail('not a QA save file');
@@ -553,11 +556,14 @@ RB.save = (function () {
     for (const r of recs) out.push({ kind: r.kind, savedAt: r.savedAt, state: r.state });
     if (!out.length) throw new Error('Nothing saved there.');
     const payload = JSON.stringify(out);
-    const chk = qaRecords(JSON.parse(payload));
-    if (chk.errs.length) throw new Error('This slot cannot be exported: ' + chk.errs.join('; '));
     const sha256 = await qaHash(payload);
     const file = { format: QA_FORMAT, fv: QA_FV, gameVersion: String(RB.VERSION || ''), saveSchema: RB.SAVE_SCHEMA, exportedAt: new Date().toISOString(), sourceSlot: slot, label: String(label || '').slice(0, QA_MAX_FIELD), payload, sha256 };
-    return { text: JSON.stringify(file), sha256, payloadBytes: qaBytes(payload), previews: chk.previews };
+    const text = JSON.stringify(file);
+    // the finished file through the very check a restore makes (its size included): nothing is offered that restore
+    // would refuse
+    const chk = await qaCheck(text);
+    if (!chk.ok) throw new Error('This slot cannot be exported: ' + chk.errors.join('; '));
+    return { text, sha256, payloadBytes: qaBytes(payload), fileBytes: qaBytes(text), previews: chk.previews };
   }
   // the target slot's write lock for the restore alone (claim() would make it this tab's journey; the tab's own current
   // slot and lock stay as they were). request() settles only once the lock is released, after success or failure.
@@ -604,6 +610,6 @@ RB.save = (function () {
     loadSettings, saveSettings, claim, takeOver, releaseLock, setReadOnly, setCurrent, manualSave, autosave, suspend, dropSuspend,
     ConflictError, SLOTS, current: () => current, _mode: () => mode, skippedInBattle: () => skippedInBattle,
   };
-  if (qaGate()) api.qa = { exportSlot: qaExport, check: qaCheck, restore: qaRestore };
+  if (qaGate()) api.qa = { exportSlot: qaExport, check: qaCheck, restore: qaRestore, MAX_FILE_BYTES: QA_MAX_FILE };
   return api;
 })();

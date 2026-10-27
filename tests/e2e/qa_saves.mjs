@@ -19,6 +19,15 @@
 //  7. a failure injected at the transaction's second put: the transaction aborts and the target stays empty;
 //  8. the temporary target lock (Agnes 6432013211): while a journey is open, a restore that succeeds and one that fails
 //     each leave the caller's current slot, its read-only state and its own lock as they were, and no target lock held.
+//  9. a Check overtaken (Agnes 6432528267): Check(A) held, the text changed to B, A then resolving: A's result is
+//     dropped (no preview, no Restore) and nothing is written; a Check held while the sheet closes is dropped too; only
+//     once B itself is checked can it be restored, and what is restored is B;
+// 10. one ceiling in UTF-8 bytes (Agnes 6432528267): a slot whose file would be over 16 MiB (five records, each within
+//     4 MiB) offers no Download; a chosen file one byte over is refused before it is read, one exactly at it passes the
+//     size check;
+// 11. an Unwritten Atlas room (Local CL-459): a checkpoint standing in a generated room passes the check in a fresh
+//     profile, is stored exactly as exported (the atlas preparation ran on copies only), re-exports to the same payload
+//     hash, and then loads standing in that room.
 // Usage: node tools/build.mjs && node tests/e2e/qa_saves.mjs [filter]
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -314,6 +323,141 @@ await test('the temporary target lock: with a journey open, success and failure 
   assert(await A.p.evaluate(() => RB.game.G.playing && RB.game.G.s.player.name === 'Traveller 3'), 'the open journey changed');
   assert(!A.errors.length, 'page errors: ' + A.errors.join(' | '));
   await A.ctx.close();
+});
+
+await test('a Check overtaken by new text, or by the sheet closing: its late result is dropped; only the text checked last can be restored', async () => {
+  assert(FILE, 'needs the round trip\'s file');
+  const A = await page(b, DEV);
+  await seed(A.p, [5], ['auto'], 'Beta');
+  const B_TEXT = await A.p.evaluate(async () => { const t = (await RB.save.qa.exportSlot(5, 'beta')).text; await RB.save.del(5); return t; });
+  // every check is held until the test releases it
+  await A.p.evaluate(() => {
+    const orig = RB.save.qa.check;
+    window.__held = [];
+    RB.save.qa.check = (t) => new Promise((res) => window.__held.push(() => res(orig(t))));
+  });
+  const held = (n) => A.p.waitForFunction((n) => window.__held.length === n, n);
+  const release = () => A.p.evaluate(() => window.__held.shift()());
+  const before = await raw(A.p);
+  await openLedger(A.p, 9);
+  await manage(A.p, 9);
+  await A.p.click('.rec[data-slot="9"] [data-a=qarestore]');
+  await A.p.waitForSelector('#qa-paste');
+  // Check(A), then B typed in while A is still being checked, then A resolves
+  await A.p.fill('#qa-paste', FILE);
+  await A.p.click('[data-q=check]');
+  await held(1);
+  await A.p.fill('#qa-paste', B_TEXT);
+  await release();
+  await A.p.waitForTimeout(400);
+  let s = await A.p.evaluate(() => ({ out: document.querySelector('.folio-qasaves [data-q=out]').textContent, restore: !!document.querySelector('[data-q=restore]'), check: !document.querySelector('[data-q=check]').disabled, text: document.querySelector('#qa-paste').value.length }));
+  assert(s.out === '' && !s.restore && s.check && s.text === B_TEXT.length, 'A\'s late result was used: ' + JSON.stringify(s));
+  // a Check held while the sheet closes
+  await A.p.click('[data-q=check]');
+  await held(1);
+  await A.p.keyboard.press('Escape');
+  await A.p.waitForFunction(() => !document.querySelector('.folio-qasaves'));
+  await release();
+  await A.p.waitForTimeout(400);
+  assert(!(await A.p.evaluate(() => !!document.querySelector('.folio-qasaves, [role=alertdialog]'))), 'the closed sheet came back');
+  assert(!diff(before, await raw(A.p)).length, 'written by an obsolete check');
+  // B checked itself: then, and only then, Restore; and what is restored is B
+  await manage(A.p, 9);
+  await A.p.click('.rec[data-slot="9"] [data-a=qarestore]');
+  await A.p.waitForSelector('#qa-paste');
+  await A.p.fill('#qa-paste', B_TEXT);
+  await A.p.click('[data-q=check]');
+  await held(1);
+  assert(!(await A.p.evaluate(() => !!document.querySelector('[data-q=restore]'))), 'Restore offered before B was checked');
+  await release();
+  await A.p.waitForSelector('[data-q=restore]');
+  s = await A.p.evaluate(() => document.querySelector('.folio-qasaves [data-q=out]').textContent);
+  assert(s.includes('Beta 5') && !s.includes('Traveller 3'), 'the preview is not B\'s: ' + s.slice(0, 200));
+  await A.p.click('[data-q=restore]');
+  await A.p.waitForSelector('[role=alertdialog]');
+  await A.p.click('[role=alertdialog] .pbtn >> text="Restore"');
+  await A.p.waitForFunction(() => !document.querySelector('.folio-qasaves'));
+  const again = JSON.parse(await A.p.evaluate(async () => (await RB.save.qa.exportSlot(9, 'x')).text));
+  assert(again.payload === JSON.parse(B_TEXT).payload && again.payload !== JSON.parse(FILE).payload, 'slot 9 does not hold B');
+  assert(!A.errors.length, 'page errors: ' + A.errors.join(' | '));
+  await A.ctx.close();
+});
+
+await test('one ceiling in UTF-8 bytes: a slot whose file would be over 16 MiB offers no Download; a file one byte over is refused unread', async () => {
+  const A = await page(b, DEV);
+  const MAX = await A.p.evaluate(() => RB.save.qa.MAX_FILE_BYTES);
+  assert(MAX === 16 * 1024 * 1024, 'the ceiling is ' + MAX);
+  await A.p.evaluate(async () => {
+    const s = RB.game.debugStart('rw.village', 22, 30, { edition: RB.edition.forNew(), comp: 'nao', profile: 'E', flags: { departed: true } });
+    s.player.name = 'Big 4'; s.pad = 'あ'.repeat(1200000); // 3,600,000 bytes in UTF-8 each
+    await RB.save.writeSlot(4, s, { force: true });
+    for (const k of ['auto', 'auto', 'auto', 'predeparture']) { await new Promise((r) => setTimeout(r, 5)); await RB.save.writeRecovery(4, s, k, null); }
+    await RB.game.toTitle();
+  });
+  const before = await raw(A.p);
+  assert(Object.keys(before).filter((k) => /^(slots:4|recovery:4:)/.test(k)).length === 5, 'slot 4 does not hold five records');
+  await openLedger(A.p, 4);
+  await manage(A.p, 4);
+  await A.p.click('.rec[data-slot="4"] [data-a=qaexport]');
+  await A.p.waitForSelector('#qa-label');
+  await A.p.click('[data-q=prepare]');
+  await A.p.waitForSelector('.folio-qasaves [role=alert]', { timeout: 30000 });
+  let s = await A.p.evaluate(() => ({ alert: document.querySelector('.folio-qasaves [role=alert]').textContent, dl: !!document.querySelector('[data-q=download]'), text: !!document.querySelector('#qa-text') }));
+  assert(/cannot be exported: the file is larger than 16 MiB/.test(s.alert) && !s.dl && !s.text, 'the export: ' + JSON.stringify(s));
+  await A.p.keyboard.press('Escape');
+  await A.p.waitForFunction(() => !document.querySelector('.folio-qasaves'));
+  await manage(A.p, 5);
+  await A.p.click('.rec[data-slot="5"] [data-a=qarestore]');
+  await A.p.waitForSelector('#qa-file');
+  await A.p.setInputFiles('#qa-file', { name: 'over.json', mimeType: 'application/json', buffer: Buffer.alloc(MAX + 1, 0x78) });
+  await A.p.click('[data-q=check]');
+  await A.p.waitForSelector('.folio-qasaves [role=alert]');
+  s = await A.p.evaluate(() => ({ alert: document.querySelector('.folio-qasaves [role=alert]').textContent, restore: !!document.querySelector('[data-q=restore]') }));
+  assert(/larger than 16 MiB/.test(s.alert) && !s.restore, 'one byte over: ' + JSON.stringify(s));
+  await A.p.setInputFiles('#qa-file', { name: 'at.json', mimeType: 'application/json', buffer: Buffer.alloc(MAX, 0x78) });
+  await A.p.click('[data-q=check]');
+  await A.p.waitForSelector('.folio-qasaves [role=alert]', { timeout: 30000 });
+  s = await A.p.evaluate(() => ({ alert: document.querySelector('.folio-qasaves [role=alert]').textContent, restore: !!document.querySelector('[data-q=restore]') }));
+  assert(/not JSON/.test(s.alert) && !/larger than/.test(s.alert) && !s.restore, 'exactly at the ceiling: ' + JSON.stringify(s));
+  assert(!diff(before, await raw(A.p)).length, 'written');
+  assert(!A.errors.length, 'page errors: ' + A.errors.join(' | '));
+  await A.ctx.close();
+});
+
+await test('an Unwritten Atlas room: checked and restored in a fresh profile as exported, re-exported to the same payload hash, then loads in that room', async () => {
+  const A = await page(b, DEV);
+  const made = await A.p.evaluate(async () => {
+    const s = RB.game.debugStart('rw.hall', 5, 5, { edition: RB.edition.forNew(), comp: 'ren', profile: 'E', flags: { post: true, postgame: true } });
+    s.player.name = 'Atlas 6';
+    const run = RB.atlas.newRun(s, [], { seed: 424242 });
+    s.atlas.run = run;
+    RB.atlas.register(run);
+    const id = RB.atlas.mapId(run, 't'), sp = RB.content.maps[id].spawn.default;
+    s.map = id; s.x = sp[0]; s.y = sp[1];
+    await RB.save.writeSlot(6, s, { force: true });
+    await RB.game.toTitle();
+    return { text: (await RB.save.qa.exportSlot(6, 'atlas')).text, map: id };
+  });
+  assert(made.map.startsWith('atlas.'), 'not in an atlas room: ' + made.map);
+  assert(!A.errors.length, 'source page errors: ' + A.errors.join(' | '));
+  await A.ctx.close();
+  const f = JSON.parse(made.text), recs = JSON.parse(f.payload);
+  const B = await page(b, DEV);
+  const r = await B.p.evaluate(async ([text, slot]) => {
+    const maps0 = Object.keys(RB.content.maps).filter((k) => k.startsWith('atlas.')).length;
+    const c = await RB.save.qa.check(text);
+    const res = await RB.save.qa.restore(text, slot);
+    const again = JSON.parse((await RB.save.qa.exportSlot(slot, 'again')).text);
+    return { maps0, ok: c.ok, errors: c.errors, map: c.ok && c.previews[0].meta.place, res, payload: again.payload, sha: again.sha256 };
+  }, [made.text, 6]);
+  assert(r.maps0 === 0 && r.ok, 'the check in a fresh profile: ' + JSON.stringify({ maps0: r.maps0, errors: r.errors }));
+  const stored = JSON.parse((await raw(B.p))['slots:6']).state;
+  assert(JSON.stringify(stored) === JSON.stringify(recs[0].state) && stored.map === made.map && stored.atlas.run, 'the stored state is not the exported one');
+  assert(r.payload === f.payload && r.sha === f.sha256, 'the re-export differs: ' + r.sha + ' vs ' + f.sha256);
+  const L = await B.p.evaluate(async (slot) => { const ok = await RB.game.loadCampaign(slot, 'manual'); return { ok, map: RB.game.s.map, run: !!RB.game.s.atlas.run }; }, 6);
+  assert(L.ok && L.map === made.map && L.run, 'the load: ' + JSON.stringify(L));
+  assert(!B.errors.length, 'page errors: ' + B.errors.join(' | '));
+  await B.ctx.close();
 });
 
 console.log(`\nqa_saves: ${pass} passed, ${fail} failed`);

@@ -15,7 +15,7 @@ if (RB.save && RB.save.qa) RB.ui.qaSaves = (function () {
   const I = (n, t) => RB.ui.folio.icon(n, t);
   const QA = RB.save.qa;
   const KIND = { manual: 'Manual save', auto: 'Autosave', predeparture: 'Before departure', suspend: 'Suspend point' };
-  const MAX_FILE = 16 * 1024 * 1024;
+  const MAX_FILE = QA.MAX_FILE_BYTES; // the save module's one ceiling, in UTF-8 bytes
   const kb = (n) => (n < 1024 ? n + ' B' : (n / 1024).toFixed(n < 10240 ? 1 : 0) + ' KiB');
   const when = (ts) => { const d = new Date(ts); return isNaN(d) ? String(ts) : d.toISOString().replace('T', ' ').slice(0, 19) + ' UTC'; };
 
@@ -75,7 +75,7 @@ if (RB.save && RB.save.qa) RB.ui.qaSaves = (function () {
           text = r.text;
           sh.leaf.querySelector('#qa-label').disabled = true;
           out.innerHTML = '<h3>What the file holds</h3>' + previewHtml(r.previews) +
-            '<p class="small">Payload ' + esc(kb(r.payloadBytes)) + ' · SHA-256 <code class="qa-sha">' + esc(r.sha256) + '</code></p>' +
+            '<p class="small">Payload ' + esc(kb(r.payloadBytes)) + ' · file ' + esc(kb(r.fileBytes)) + ' (at most ' + esc(kb(MAX_FILE)) + ') · SHA-256 <code class="qa-sha">' + esc(r.sha256) + '</code></p>' +
             '<p class="small muted">Only this slot’s saves are in it: no settings, no other slot, nothing from the browser.</p>' +
             '<div class="cs-acts"><button class="pbtn primary" data-q="download">' + I('save') + '<span>Download</span></button>' +
             '<button class="pbtn" data-q="copy">' + I('copy') + '<span>Copy the text</span></button></div>' +
@@ -116,15 +116,18 @@ if (RB.save && RB.save.qa) RB.ui.qaSaves = (function () {
       '<div class="cs-acts"><button class="pbtn primary" data-q="check">' + I('look') + '<span>Check the file</span></button></div>' +
       '<div data-q="out"></div>', 'qa-restore');
     const out = sh.leaf.querySelector('[data-q=out]');
-    let checked = null;
-    // a new file or new text needs a new check before anything can be restored
-    const stale = () => { checked = null; out.innerHTML = ''; };
+    // checked: the text whose check passed, the only text Restore can use. Each check has a generation: a new file, new
+    // text, a newer check or the sheet closing makes any check still under way obsolete, and its result is dropped
+    // (Agnes 6432528267), so what is shown and what can be restored is always the text now in the sheet.
+    let checked = null, gen = 0, lastCheck = 0;
+    const stale = () => { gen++; checked = null; out.innerHTML = ''; };
     sh.leaf.querySelector('#qa-file').addEventListener('change', stale);
     sh.leaf.querySelector('#qa-paste').addEventListener('input', stale);
+    sh.done.then(() => { gen++; checked = null; });
     async function source() {
       const f = sh.leaf.querySelector('#qa-file').files[0];
       if (f) {
-        if (f.size > MAX_FILE) throw new Error('The file is too large.');
+        if (f.size > MAX_FILE) throw new Error('the file is larger than 16 MiB (UTF-8)');
         return f.text();
       }
       return sh.leaf.querySelector('#qa-paste').value;
@@ -134,11 +137,15 @@ if (RB.save && RB.save.qa) RB.ui.qaSaves = (function () {
       if (!b) return;
       const q = b.getAttribute('data-q');
       if (q === 'check') {
+        stale();
+        const my = (lastCheck = gen);
         b.disabled = true;
         try {
           const text = await source();
+          if (my !== gen) return;
           const c = await QA.check(text);
-          if (!c.ok) { checked = null; out.innerHTML = errorsHtml(c.errors); return; }
+          if (my !== gen) return;
+          if (!c.ok) { out.innerHTML = errorsHtml(c.errors); return; }
           checked = text;
           const f = c.file;
           out.innerHTML = '<h3>The file passed every check</h3>' +
@@ -146,15 +153,16 @@ if (RB.save && RB.save.qa) RB.ui.qaSaves = (function () {
             '<p class="small">SHA-256 <code class="qa-sha">' + esc(f.sha256) + '</code></p>' + previewHtml(c.previews) +
             '<div class="cs-acts"><button class="pbtn primary" data-q="restore">' + I('load') + '<span>Restore into slot ' + slot + '…</span></button></div>';
         } catch (err) {
-          checked = null;
+          if (my !== gen) return;
           out.innerHTML = errorsHtml([String((err && err.message) || err)]);
-        } finally { b.disabled = false; }
+        } finally { if (lastCheck === my) b.disabled = false; }
       } else if (q === 'restore' && checked != null) {
+        const my = gen, text = checked;
         const r = await RB.ui.confirm('Restore this file into empty slot ' + slot + '? Nothing else is changed. It loads afterwards through the ledger’s ordinary Load.', ['Restore', 'Cancel']);
-        if (r !== 0 || checked == null) return;
+        if (r !== 0 || my !== gen || checked !== text) return;
         b.disabled = true;
         try {
-          const res = await QA.restore(checked, slot);
+          const res = await QA.restore(text, slot);
           RB.ui.notice('Restored into slot ' + slot + (res.idChanged ? ' as an independent copy (its source is in this browser too).' : '.'), 'info');
           sh.finish(true);
         } catch (err) {
