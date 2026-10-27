@@ -1,6 +1,6 @@
 # Nao QA2 portable checkpoints
 
-## Current checkpoint: actual-file restore proof PENDING
+## Current checkpoint: actual-file restore proof PASSED (11/11)
 - File: `naoqa2/current.json`, unchanged supported QA export.
 - File UTF-8 bytes: 550336; SHA-256: `6e53b369f12a110a467d341350293ba02ee1a70eb9fa502caf5198fca704e06c`.
 - Payload UTF-8 bytes: 494075; SHA-256: `157666d38c3aadc21fe183096dc60ffc2dd7fe81fdaac0101af360c484f2570a`.
@@ -11,7 +11,11 @@
 - Autos (2026-10-27 UTC): 04:32:06.286 `rw.hall` (5,8), no companion; 04:35:06.124 `rw.hall` (5,6), no companion; 04:48:06.749 `rw.road` (26,9), companion nao.
 - Predeparture 04:43:09.142 UTC: `rw.hall` (3,2), companion null, provisional nao; this is the game's retained predeparture state.
 - Exactly one manual, three autos and one predeparture; no suspend.
-- Current-file integrity/privacy inspection is complete, but is NOT actual-file restore verification. Restore this exact file in a disposable empty slot, compare all five records' re-exported payload bytes/hash before Load, then separately check ordinary Load and ownership cleanup. Do not overwrite active/user saves.
+- Actual-file restore proof: Claude Local [CL-467](https://github.com/A-Birdi/Road-of-Borrowed-Names/issues/1#issuecomment-6434240536), 2026-10-27 05:05–05:06:00 UTC, reported **11/11 PASS** on this exact file from `069d87f87ffbd6a66c669f4a86007ff9f0505c60`.
+- Scope: disposable Windows headless-Chromium context on the live origin; initial IndexedDB slots empty/current slot null; restored through the published QA API into empty slot 9. Before any Load, re-export reproduced the exact payload bytes/hash across all five records, including the companion field and predeparture state. Restore retained the campaign ID, left no `rbn-slot-*` lock held and left the current slot unchanged.
+- Separate ordinary Load entered playing mode in slot 9 at `rw.road` (26,9), with flags, quests and vars identical, and normally advancing playtime (9198.9 seconds). **The post-Load check did not separately assert `comp`; companion preservation is covered by pre-Load byte equality only.**
+- The live page was first verified HTTP 200, 24418832 bytes, SHA-256 `ba1c35ecf30bc6adb61d0260c5afe28bc960db8b1398fffcaa114af68eec40fe`. Zero page errors and no other-origin requests were reported. The disposable context was closed; no active/user save or managed-browser profile was touched.
+- This is actual-file API restoration plus ordinary Load evidence, not native file-picker/UI replay. Future restorations must still use an empty disposable slot and verify re-exported payload before Load. Do not overwrite active/user saves.
 
 ## Previous checkpoint: restore proof PASSED
 The former current file is retained unchanged at `naoqa2/previous.json`. Its verified details and proof follow; that proof applies only to previous.json, not the new current.json.
