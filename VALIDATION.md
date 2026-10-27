@@ -5678,6 +5678,64 @@ Yasu's story, when listening, has not begun being spoken."
       change. No leak and no native exit cause is established; the five exits stay unclassified. Native full-playthrough
       progress stays blocked at the preserved Slot 7 checkpoint, and native retries are paused: isolated
       non-reproduction is not clearance (Agnes 6425757246). No product change; voice stays paused.
+      After `45cd624` (published 10-26 20:48:34Z), recorded as later facts, the paragraphs above unchanged. (1)
+      Corrections. `45cd624`'s commit message says its unit run "was not repeated on this wording-only descendant"; a
+      separate full run on it passed (58,365/0, 20:23:03–20:36:53Z; CC-318), and the message, written before that run,
+      stays unrewritten (CC-319; Local CL-452; Agnes 6427169595). CC-316 §5 named the ensemble's 128 MiB decoded-music
+      budget as a possible part of D-27b's +203 MiB after GC; D-27b ran with Original music, under which the ensemble is
+      not prepared (`src/audio/22_ensemble.js` 300–319), so that budget was very likely not in play; the +203 MiB's
+      make-up stays unknown (CC-320). (2) Native recovery, 10-27. Agnes found the native desktop replaced: no Chromium
+      process or window and no profile at its former location, the old profile not declared lost (6431696587,
+      6431737559). A managed HTTPS browser opened the game with an empty twenty-slot ledger, and a fresh, labelled Nao
+      campaign (NaoQA2) began there in Slot 7: not a recovery of the old Slot 7 and not evidence that the exits are
+      fixed (6431749979, 6431800544). Diagnostic routes were discussed, none run on that host: error 9 read from
+      Chromium's source as consistent with SIGKILL, a source lead, not verification (Local CL-453, CL-454; Agnes
+      6431646282); kernel counter reads (`oom_kill`, cgroup v2 memory files) informative only with a verified same host,
+      boot continuity and victim and time correlation (CC-320, CC-321). (3) The QA save backup and restore (`da13515`,
+      `0c6d602`; published 10-27 04:02:48Z, Pages 40447545214; live `ba1c35ec…`, 24,418,832 bytes: Local CL-462, Agnes
+      6433554214). Robin authorized bounded GitHub QA-save backups for restoration (relayed by Agnes 6431800544,
+      6431813219), recorded as SPECIFICATION §14's one exception and an R14.8 note: behind `?dev=saves` only, "Export
+      (QA)…" on an occupied slot and "Restore (QA)…" on an empty one in the Load ledger; without the gate nothing is
+      defined or shown. Design CC-324 to CC-326 with Local CL-457 and CL-458 and Agnes's REFINEs (6431911207,
+      6432013211); the first candidate `da13515` REFINEd (Agnes 6432528267, Local CL-459: a stale asynchronous Check,
+      each state's own schema, one UTF-8 ceiling); the revision `0c6d602` agreed exactly (Agnes 6433116563, Local
+      CL-461). Evidence as reported: Cloud's full units 58,435/0 (Linux) and `qa_saves` 10/0 among the lanes, an
+      old-sheet control failing the stale-Check test as Agnes predicted from source; Local's normalized Windows bytes
+      equal, `save_slots20` 9/9 with the CC-023 compatibility test, and full units 58,434 passed, 1 failed:
+      `music_performance`'s catalog check comparing Windows-computed trims with the Linux-built page's (12 of 116
+      differing in the last bit), 528/0 on Local's raw Windows build; not an unqualified all-pass (Agnes 6433554214).
+      Live proofs (Local, headless, disposable contexts on the live origin): synthetic 15/15 (CL-462), not proof for the
+      campaign; NaoQA2's actual files on `qa/saves`, each restored into an empty slot and re-exported to the identical
+      payload before a separate Load: `fe3683a3` 11/11 (CL-463), the rotated `069d87f8` current 11/11 (CL-467) and again
+      on `c5587ff`'s live bytes 11/11 (CL-474); Cloud's read-only `check()` of the first file agreeing (CC-331). The
+      backups are a bounded current and previous with verified actual-file restoration; they recover nothing of the
+      missing older profile (Agnes 6436529997). (4) Hana's night line (`a7fb727`; published 05:59:15Z, Pages
+      40458425426; live `ad76e805…`, 24,418,928 bytes: Local CL-471, Agnes 6435143078). Agnes found `rw.hana_rush`
+      offered at night with "it's the morning rush" (6433779782). Its first line now says "Sorry, it's a rush right
+      now." (今混んでいて), and the quest's and the orders' titles are 忙しい茶屋, "The Teahouse Rush" (CC-332, CC-333; Local
+      CL-464 to CL-466; Agnes 6433986042); ids, route, rewards and lexicon unchanged; RV-0006's real-content seam test
+      retargeted to `yn_koume`'s 今夜中, the generic check kept. Voice: the line's new key `rw.hana_rush#06cb141ec2` has no
+      recording and uses the device voice, or silence, until recording resumes; the old `#eb1057d487` recording stays
+      untouched, and the line joins the final-pass list. Evidence: Cloud's 58,447/0, `hana_rush_night` 9/0 (the scene
+      driven by the game's test player and the orders clicked separately, not an uninterrupted native journey; Agnes
+      6434221459), staging 18/0 and a published-page control failing 6 of 9; Local's normalized bytes equal and 58,447/0
+      on its raw build with an 8,192 MB heap, after a default-heap attempt aborted (exit 134 at `press.test.mjs`, 146
+      files in), which is not a result (Agnes 6435143078). A first lane script of Cloud's ran a fixture module
+      (`staging_ch12_cases.mjs`) that tests nothing; not counted (CC-334). (5) Recovery points outside IndexedDB
+      (`9876662`, `c5587ff`; published 07:27:00Z, Pages 40467185407; live `4ff397a6…`, 24,420,271 bytes: Local CL-474,
+      Agnes 6436529997). In localStorage and session-only storage, writing a pre-departure or suspend point trimmed the
+      autosaves to two, and localStorage removed the oldest before a write that could fail (CC-335; its line numbers and
+      CC-329's one too low, CC-339). Preservation-first (Agnes 6434739887, Local CL-469, CC-337): the record serialized
+      or cloned and stored first; only an autosave trims, to the newest three; a failed write removes nothing, so a
+      nearly full store may refuse a fourth autosave (the accepted trade-off); a failed trim keeps the new record, is
+      reported apart and may leave four. IndexedDB unchanged. Evidence: Cloud's 58,457/0, then 58,458/0 after Agnes's
+      test REFINE (6435591030); `recovery_trim` 19/0 and a published-page control failing 7; the browser test's first
+      two runs miscalibrated (its full-store cases not what they were named) and the revised test's first run 18/1 (an
+      undersized pre-departure attempt), kept as attempts, not results; Local's bytes equal, `save_slots20` 9/9 and
+      58,458/0. (6) Native QA, as Agnes reports it: NaoQA2 has passed the former crash stretch and the full farewell and
+      reached the Drowned Archive (The Stacks; Slot 7 saved 07:46:45Z at 5 h 29 min, with Nao) with no renderer exit.
+      That does not diagnose the five earlier exits, which stay unclassified (Agnes 6434209083, 6436529997). Voice stays
+      paused.
   - **Candidate CC-026 (records for review; the cut follows them):** to be built from this records commit: CC-025
     (`0062b37`; published 10-25 19:57:21Z by fast-forwarding the task branch, live and verified by Local CL-396 and
     Agnes 6402478532) plus only RBN-QA-183, by its exact commit `5150612`, whose parent is `0062b37`, so `int/cc026` is

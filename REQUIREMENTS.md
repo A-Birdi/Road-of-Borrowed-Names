@@ -2228,6 +2228,11 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   headless, synthetic runs (D-27a a partial harness failure; D-27b complete, a coarse characterization) and a read-only
   review established neither a leak nor an exit cause; native play stays paused at Slot 7 (Agnes 6425757246); not a
   native acceptance.
+  Later (HANDOFF and VALIDATION, after `45cd624`): the QA-only save backup and restore behind `?dev=saves` (R14.8's
+  exception; `0c6d602`), Hana's time-neutral night line (`a7fb727`) and the recovery-point trim outside IndexedDB
+  (`c5587ff`), each published and verified live; NaoQA2's actual backups restored in disposable profiles on the live
+  origin (Local CL-463, CL-467, CL-474); native QA2 has passed the former crash stretch with no renderer exit, which
+  does not establish the earlier exits' cause; not a native acceptance.
   RETESTED_BY_AGNES on CC-006 (`79e0ef32…`):
   RBN-QA-025 PASS (her original post-seal save enters the kiln; before entry the guide says "Go to The Great Kiln").
   RETESTED_BY_AGNES:
