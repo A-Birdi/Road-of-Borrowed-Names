@@ -15,10 +15,11 @@
 //      the keyboard's) under the same pointer shows the card as before;
 //   8. (synthetic: a mouse pointer cannot be cancelled on demand) the guard's lifetime: an armed guard stops the
 //      one pointerover onto a word at the press's position, once, and lets one onto the pane itself pass; a
-//      pointercancel, a move or an entry elsewhere, leaving the pane, a key or 500 ms disarms it; touch, pen and
-//      keyboard clicks never arm it;
+//      pointercancel, a move or an entry elsewhere, a pen's pointerover, leaving the pane, a key or 500 ms disarms
+//      it; touch, pen and keyboard clicks never arm it;
 //   9. touch: a tap places a tile with no card; a long press opens the card and places nothing, as before;
 //  10. the keyboard: Tab to a word opens its card, Enter on a tile places it, and Tab to a word still opens its card;
+//  11. (synthetic) the sheet disposes of an armed guard as it closes, finished or dropped by its owner;
 //  a forged sentence's pieces (build): placement and removal, as 1 and 2.
 // Usage: node tools/build.mjs && node tests/e2e/tile_hover_guard.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -203,7 +204,7 @@ async function clickAt(p, x, y) { await p.mouse.move(x, y, { steps: 4 }); await 
     return [...document.querySelectorAll('.chal .built .tile')].length;
   }, [C, type, detail]);
   // a mouse pointerover at (x, y) on whatever is there; then the card's word
-  const over = (dx, dy) => p.evaluate(([x, y]) => { const el = document.elementFromPoint(x, y); el.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, cancelable: true, composed: true, pointerId: 7, isPrimary: true, pointerType: 'mouse', clientX: x, clientY: y })); const h = document.querySelector('#overlay .help .hw'); return h ? h.firstChild.textContent : null; }, [C[0] + (dx || 0), C[1] + (dy || 0)]);
+  const over = (dx, dy, type) => p.evaluate(([x, y, type]) => { const el = document.elementFromPoint(x, y); el.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, cancelable: true, composed: true, pointerId: type === 'pen' ? 8 : 7, isPrimary: true, pointerType: type, clientX: x, clientY: y })); const h = document.querySelector('#overlay .help .hw'); return h ? h.firstChild.textContent : null; }, [C[0] + (dx || 0), C[1] + (dy || 0), type || 'mouse']);
   const on = (js) => p.evaluate(([js, C]) => { const pane = document.querySelector('.chal .pane-order'), el = document.elementFromPoint(C[0], C[1]); return new Function('pane', 'el', 'C', js)(pane, el, C); }, [js, C]);
   ok((await press('mouse', 1)) === 1 && (await under(p, C[0], C[1])).word === t1.w, '8 a mouse press and click at the centre place the tile; ' + t1.w + ' is now there');
   ok((await over()) === null, '8 armed: the pointerover at the press\'s position is stopped (no card)');
@@ -238,10 +239,48 @@ async function clickAt(p, x, y) { await p.mouse.move(x, y, { steps: 4 }); await 
   await press('mouse', 1);
   await p.waitForTimeout(600);
   ok((await over()) === t1.w, '8 after 500 ms it is disarmed');
+  // mouse, then pen (Agnes 6438144325): word help hovers for a pen, so a pen's pointerover is never stopped
+  await press('mouse', 1);
+  const pen = await over(0, 0, 'pen');
+  await hide(p);
+  ok(pen === t1.w && (await over()) === t1.w, '8 armed by a mouse, a pen\'s pointerover at the same position goes through (its card opens) and disarms it');
   for (const [type, detail, what] of [['touch', 1, 'a touch tap'], ['pen', 1, 'a pen tap'], ['', 0, 'a keyboard click']]) {
     ok((await press(type, detail)) === 1 && (await over()) === t1.w, '8 ' + what + ' never arms it: the pointerover at its position opens the card');
   }
   await done(P, '8');
+}
+
+// 11: the sheet disposes of the guard as it closes, finished (Come back later) or dropped by its owner (Agnes
+// 6438144325): an armed guard's 500 ms timer is cleared then, not left to run out (synthetic press, mouse parked away)
+for (const how of ['finished', 'dropped']) {
+  const P = await gears();
+  const p = P.p;
+  if (how === 'dropped') {
+    // the same step again, set by an owner who can take it down unanswered (RBN-QA-078's opts.own)
+    await p.evaluate(() => document.querySelector('.chal [data-a=leave]').click());
+    await p.waitForFunction(() => !document.querySelector('.chal'));
+    await p.evaluate(() => { const st = Object.assign({}, RB.content.challenges['rw.c_mill_gears'].tiers.F[0], { title: 'The jammed gears' }); RB.challenge.runStep(st, { own: (drop) => { window.__drop = drop; } }); });
+    await p.waitForSelector('.chal[data-kind=order] .tiles .tile');
+    await settle(p);
+  }
+  const [t0] = await tiles(p, POOL);
+  const r = await p.evaluate(([C, how]) => {
+    const st = window.setTimeout, ct = window.clearTimeout, set = [], cleared = [];
+    window.setTimeout = function (f, ms, ...a) { const id = st.call(window, f, ms, ...a); if (ms === 500) set.push(id); return id; };
+    window.clearTimeout = function (id) { cleared.push(id); return ct.call(window, id); };
+    try {
+      const el = document.elementFromPoint(C[0], C[1]);
+      const o = { bubbles: true, cancelable: true, composed: true, pointerId: 7, isPrimary: true, pointerType: 'mouse', clientX: C[0], clientY: C[1] };
+      el.dispatchEvent(new PointerEvent('pointerup', o));
+      el.dispatchEvent(new PointerEvent('click', Object.assign({ detail: 1, button: 0 }, o)));
+      const T = set[set.length - 1], before = cleared.includes(T);
+      if (how === 'finished') document.querySelector('.chal [data-a=leave]').click(); else window.__drop();
+      return { T: T != null, before, after: cleared.includes(T), placed: document.querySelectorAll('.chal .built .tile').length, gone: !document.querySelector('.chal') };
+    } finally { window.setTimeout = st; window.clearTimeout = ct; }
+  }, [[Math.round(t0.x + t0.wd / 2), Math.round(t0.y + t0.h / 2)], how]);
+  ok(r.T && !r.before && r.after && r.gone, '11 a sheet ' + how + ' with its guard armed (a 500 ms timer set, still pending) clears it as the sheet goes: ' + JSON.stringify(r));
+  await p.waitForTimeout(600);
+  await done(P, '11 ' + how);
 }
 
 // 9: touch

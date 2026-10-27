@@ -25,20 +25,21 @@ RB.challenge = (function () {
   // the press's own position (its pointerup's: a click's coordinates are whole pixels, the pointer's need not be; Local
   // CL-479) is stopped at the pane, before the document hears it. The browser reports the pane there first (the word
   // that was under the pointer is gone), then the word that slid in: the first passes and leaves the guard armed. Real
-  // movement, a cancelled pointer, leaving the pane, a key or 500 ms disarms it first. Keyboard, touch and pen are never
-  // armed (Agnes 6437095878; CC-343).
+  // movement, a cancelled pointer, another kind of pointer, leaving the pane, a key or 500 ms disarms it first.
+  // Keyboard, touch and pen are never armed, and only a mouse's pointerover is stopped (Agnes 6437095878, 6438144325;
+  // CC-343). The sheet disposes of it as it closes, finished or dropped by its owner.
   function hoverGuard(roots) {
-    let at = null, up = null, timer = 0;
+    let at = null, up = null, timer = 0, gone = false;
     const off = () => { at = null; clearTimeout(timer); };
     const same = (e) => !!at && Math.abs(e.clientX - at.x) <= 0.5 && Math.abs(e.clientY - at.y) <= 0.5;
     for (const r of roots) {
       r.addEventListener('pointerup', (e) => { up = e.pointerType === 'mouse' ? { x: e.clientX, y: e.clientY } : null; }, true);
       r.addEventListener('pointerover', (e) => {
         if (!at) return;
-        if (!same(e)) off();
+        if (e.pointerType !== 'mouse' || !same(e)) off();
         else if (e.target.closest && e.target.closest('.jt')) { e.stopPropagation(); off(); }
       }, true);
-      r.addEventListener('pointermove', (e) => { if (at && !same(e)) off(); }, true);
+      r.addEventListener('pointermove', (e) => { if (at && (e.pointerType !== 'mouse' || !same(e))) off(); }, true);
       r.addEventListener('pointercancel', off, true);
       r.addEventListener('keydown', () => { up = null; off(); }, true);
       r.addEventListener('pointerleave', (e) => { if (e.target === r) off(); });
@@ -48,10 +49,11 @@ RB.challenge = (function () {
         off();
         const u = up;
         up = null;
-        if (!u || !e || e.pointerType !== 'mouse' || !(e.detail >= 1)) return;
+        if (gone || !u || !e || e.pointerType !== 'mouse' || !(e.detail >= 1)) return;
         at = u;
         timer = setTimeout(off, 500);
       },
+      dispose() { gone = true; up = null; off(); },
     };
   }
   // L2 (expansion plan 05_LANGUAGE.md): what help supplied, by category, strongest kept per question:
@@ -179,6 +181,7 @@ RB.challenge = (function () {
       const res = { ok: false, firstTry: null, mistakes: 0, assisted: false, mode: null, recogMisses: 0 };
       const mine = (active = { step, helpUsed: false, help: null, why: [] });
       let over = false; // finished, or dropped by its owner (below)
+      const guards = []; // the tile panes' hover guards (hoverGuard), disposed of as the sheet closes
       // help given before the task began (a companion pointing at the response in a story battle, E19): it counts as
       // what it supplied, from the first answer
       if (opts.preHelp) { active.helpUsed = true; helpCat(opts.preHelp); helpWhy('companion'); }
@@ -350,6 +353,7 @@ RB.challenge = (function () {
             guard.arm(e);
           };
           const guard = hoverGuard([p, lineBox]);
+          guards.push(guard);
           p.addEventListener('click', click);
           lineBox.addEventListener('click', click);
           RB.learnUi.guardTaps(p);
@@ -389,6 +393,7 @@ RB.challenge = (function () {
           guard.arm(e);
         };
         const guard = hoverGuard([p, lineBox]);
+        guards.push(guard);
         p.addEventListener('click', click);
         lineBox.addEventListener('click', click);
         RB.learnUi.guardTaps(p);
@@ -693,6 +698,7 @@ RB.challenge = (function () {
         if (tabsApi) { tabsApi.destroy(); tabsApi = null; }
         if (opts.keepInk && pad) res.ink = pad.ink(); // opts.keepInk: the handwritten characters' strokes (writing desk pages)
         if (pad) { pad.destroy(); pad = null; }
+        guards.forEach((g) => g.dispose());
         RB.ui.popLayer(layer);
         RB.ui.help.hide(true);
         res.help = active ? active.help || null : null; // L2: the strongest help this question used (callers may read it)
@@ -752,6 +758,7 @@ RB.challenge = (function () {
           if (kbRO) kbRO.disconnect();
           if (tabsApi) { tabsApi.destroy(); tabsApi = null; }
           if (pad) { pad.destroy(); pad = null; }
+          guards.forEach((g) => g.dispose());
           RB.ui.popLayer(layer, { keepHelp: true });
           if (active === mine) active = null;
         });
