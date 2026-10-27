@@ -240,3 +240,11 @@ body.reduced-motion .pbtn.mg-t svg { transition: none; }
 .folio-about .about-credit .role { display: block; font-size: 0.8em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
 .folio-about .about-credit .name { display: block; font-size: 1.45em; line-height: 1.25; color: var(--ink); }
 .folio-about .leaf h3 svg { width: 1.1em; height: 1.1em; align-self: center; color: var(--ink-2); }
+
+/* the development page's QA save backup sheets (?dev=saves only; src/ui/30q_saves_dev.js) */
+.folio-qasaves .qa-text { display: block; width: 100%; box-sizing: border-box; font-family: ui-monospace, monospace; font-size: 0.8em; color: var(--ink); background: #fffaf0; border: 1px solid var(--paper-edge); border-radius: 3px; padding: 0.4em; resize: vertical; }
+.folio-qasaves .qa-text:focus-visible, .folio-qasaves input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.folio-qasaves .qa-recs { padding-left: 1.4em; }
+.folio-qasaves .qa-recs p { margin: 0.15em 0; }
+.folio-qasaves .qa-keys, .folio-qasaves .qa-sha { overflow-wrap: anywhere; font-size: 0.85em; }
+.folio-qasaves .note-slip ul { margin: 0.3em 0 0; padding-left: 1.3em; }

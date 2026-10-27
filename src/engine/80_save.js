@@ -1,7 +1,8 @@
 /* Persistence: twenty campaign slots in IndexedDB (localStorage fallback,
  * session-only as last resort), bounded recovery snapshots, schema
  * validation, revision checks and cross-tab ownership (spec §14).
- * There is deliberately no export/import of saves. */
+ * There is deliberately no export/import of saves for players; the one exception, a QA backup behind the
+ * development gate ?dev=saves (SPECIFICATION §14), is at the end. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.save = (function () {
@@ -466,9 +467,143 @@ RB.save = (function () {
     }
   }
 
-  return {
+  // ---- QA save backups (SPECIFICATION §14's one exception: Robin, 2026-10-27, via Agnes 6431800544 and 6431813219) ---
+  // Defined only behind the development gate ?dev=saves (or __RB_DEV_SAVES__ set before the scripts load, for tests):
+  // one slot's manual save and recovery records to a checksummed file, and such a file into an EMPTY slot, on IndexedDB
+  // only, in one transaction. Not a player feature, not a share code or cloud save; without the gate nothing is defined.
+  const QA_FORMAT = 'road-qa-save', QA_FV = 1;
+  const QA_MAX_TEXT = 16 * 1024 * 1024, QA_MAX_STATE = 4 * 1024 * 1024, QA_MAX_NAME = 64, QA_MAX_FIELD = 80;
+  const QA_KINDS = { manual: 1, auto: AUTO_KEEP, predeparture: 1, suspend: 1 };
+  const QA_ORDER = { manual: 0, auto: 1, predeparture: 2, suspend: 3 };
+  const QA_KEYS = ['exportedAt', 'format', 'fv', 'gameVersion', 'label', 'payload', 'saveSchema', 'sha256', 'sourceSlot'];
+  function qaGate() {
+    if (globalThis.__RB_DEV_SAVES__ === true) return true;
+    return typeof window !== 'undefined' && !!window.location && /[?&]dev=saves\b/.test(window.location.search || '');
+  }
+  const qaPlain = (o) => !!o && typeof o === 'object' && !Array.isArray(o);
+  const qaBytes = (text) => new TextEncoder().encode(text).length;
+  async function qaHash(text) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  // every record of a payload, all or nothing, before anything is claimed or written: its fields, kind and count, a
+  // finite saved time, no duplicate recovery key, bounded sizes; then the save's own checks on a copy, with the Unwritten
+  // Atlas rebuilt first as read() does (an atlas map is registered only then), and migration tried on another copy
+  function qaRecords(recs) {
+    const errs = [], previews = [], counts = {}, seen = new Set();
+    if (!Array.isArray(recs) || !recs.length || recs.length > 6) return { errs: ['the payload is not a list of 1 to 6 records'], previews };
+    recs.forEach((r, i) => {
+      const at = 'record ' + (i + 1);
+      if (!qaPlain(r) || Object.keys(r).sort().join() !== 'kind,savedAt,state') { errs.push(at + ': unexpected fields'); return; }
+      if (!Object.prototype.hasOwnProperty.call(QA_KINDS, r.kind)) { errs.push(at + ': unknown kind'); return; }
+      counts[r.kind] = (counts[r.kind] || 0) + 1;
+      if (counts[r.kind] > QA_KINDS[r.kind]) errs.push(at + ': more ' + r.kind + ' records than a slot keeps');
+      if (!Number.isInteger(r.savedAt) || r.savedAt <= 0) errs.push(at + ': saved time is not a finite whole number');
+      const key = r.kind === 'auto' ? 'auto:' + r.savedAt : r.kind;
+      if (seen.has(key)) errs.push(at + ': duplicates ' + key);
+      seen.add(key);
+      if (!qaPlain(r.state)) { errs.push(at + ': state missing'); return; }
+      let size = 0;
+      try { size = qaBytes(JSON.stringify(r.state)); } catch (e) { errs.push(at + ': state is not plain data'); return; }
+      if (size > QA_MAX_STATE) { errs.push(at + ': state too large'); return; }
+      if (r.state.player && typeof r.state.player.name === 'string' && r.state.player.name.length > QA_MAX_NAME) { errs.push(at + ': player name too long'); return; }
+      const c = RB.util.deepClone(r.state);
+      if (RB.atlas && RB.atlas.prepare) { try { RB.atlas.prepare(c); } catch (e) { errs.push(at + ': its atlas map could not be rebuilt'); return; } }
+      const v = validate(c);
+      if (v.length) { errs.push(at + ': ' + v.join('; ')); return; }
+      try { migrate(RB.util.deepClone(c)); } catch (e) { errs.push(at + ': does not migrate (' + String((e && e.message) || e) + ')'); return; }
+      const meta = metaOf(c);
+      meta.savedAt = r.savedAt;
+      previews.push({ kind: r.kind, savedAt: r.savedAt, meta, bytes: size, keys: Object.keys(r.state).map((k) => [k, qaBytes(JSON.stringify(r.state[k] === undefined ? null : r.state[k]))]) });
+    });
+    return { errs, previews };
+  }
+  // a file, checked in order: its size; the outer object; its version and schema; the checksum over the payload
+  // string's exact UTF-8 bytes (before the payload is parsed, validated or migrated); then every record (qaRecords)
+  async function qaCheck(text) {
+    const fail = (why) => ({ ok: false, errors: [why] });
+    if (typeof text !== 'string' || !text.length) return fail('no file text');
+    if (text.length > QA_MAX_TEXT) return fail('the file is too large');
+    let f;
+    try { f = JSON.parse(text); } catch (e) { return fail('the file is not JSON (truncated?)'); }
+    if (!qaPlain(f) || f.format !== QA_FORMAT) return fail('not a QA save file');
+    if (Object.keys(f).some((k) => QA_KEYS.indexOf(k) < 0)) return fail('the file has unexpected fields');
+    if (f.fv !== QA_FV) return fail('unknown file version ' + JSON.stringify(f.fv));
+    if (!Number.isInteger(f.saveSchema) || f.saveSchema < 1) return fail('bad save schema');
+    if (f.saveSchema > RB.SAVE_SCHEMA) return fail('saved by a newer version (schema ' + f.saveSchema + ')');
+    if (!Number.isInteger(f.sourceSlot) || f.sourceSlot < 1 || f.sourceSlot > SLOTS) return fail('bad source slot');
+    for (const k of ['label', 'exportedAt', 'gameVersion']) if (typeof f[k] !== 'string' || f[k].length > QA_MAX_FIELD) return fail('bad ' + k);
+    if (typeof f.payload !== 'string' || typeof f.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(f.sha256)) return fail('payload or checksum missing');
+    if ((await qaHash(f.payload)) !== f.sha256) return fail('checksum mismatch: the file was changed or cut short');
+    let recs;
+    try { recs = JSON.parse(f.payload); } catch (e) { return fail('the payload is not JSON'); }
+    const { errs, previews } = qaRecords(recs);
+    if (errs.length) return { ok: false, errors: errs };
+    return { ok: true, errors: [], file: f, records: recs, previews };
+  }
+  // one slot as stored (as copy() reads it): the manual save first, then recovery points by kind and time; key, rev,
+  // slot, meta and thumb are left out (restore derives them), and nothing else is read (no settings, no other slot)
+  async function qaExport(slot, label) {
+    if (!Number.isInteger(slot) || slot < 1 || slot > SLOTS) throw new Error('No such slot.');
+    const src = await kvGet('slots', slot);
+    const recs = (await kvAll('recovery')).filter((r) => r && r.slot === slot);
+    const out = [];
+    if (src) out.push({ kind: 'manual', savedAt: src.meta && src.meta.savedAt, state: src.state });
+    recs.sort((a, b) => (QA_ORDER[a.kind] - QA_ORDER[b.kind]) || (a.savedAt - b.savedAt));
+    for (const r of recs) out.push({ kind: r.kind, savedAt: r.savedAt, state: r.state });
+    if (!out.length) throw new Error('Nothing saved there.');
+    const payload = JSON.stringify(out);
+    const chk = qaRecords(JSON.parse(payload));
+    if (chk.errs.length) throw new Error('This slot cannot be exported: ' + chk.errs.join('; '));
+    const sha256 = await qaHash(payload);
+    const file = { format: QA_FORMAT, fv: QA_FV, gameVersion: String(RB.VERSION || ''), saveSchema: RB.SAVE_SCHEMA, exportedAt: new Date().toISOString(), sourceSlot: slot, label: String(label || '').slice(0, QA_MAX_FIELD), payload, sha256 };
+    return { text: JSON.stringify(file), sha256, payloadBytes: qaBytes(payload), previews: chk.previews };
+  }
+  // the target slot's write lock for the restore alone (claim() would make it this tab's journey; the tab's own current
+  // slot and lock stay as they were). request() settles only once the lock is released, after success or failure.
+  function qaWithLock(slot, fn) {
+    if (current.lockRelease && current.lockSlot === slot) return fn();
+    if (typeof navigator === 'undefined' || !navigator.locks) return fn();
+    return navigator.locks.request('rbn-slot-' + slot, { ifAvailable: true }, (lock) => {
+      if (!lock) throw new Error('Slot ' + slot + ' is open in another tab.');
+      return fn();
+    });
+  }
+  // a checked file into an empty slot: IndexedDB only; the slot empty (no manual save and no recovery record), checked
+  // again inside the one transaction that writes every record; any failure aborts it, so nothing is written
+  async function qaRestore(text, target) {
+    if (mode !== 'idb') throw new Error('Restore needs IndexedDB storage, and this browser is ' + (mode === 'local' ? 'using its smaller localStorage instead.' : 'session-only.'));
+    if (!Number.isInteger(target) || target < 1 || target > SLOTS) throw new Error('No such slot.');
+    const c = await qaCheck(text);
+    if (!c.ok) throw new Error('Not restored: ' + c.errors.join('; '));
+    const slotsNow = await kvAll('slots'), recsNow = await kvAll('recovery');
+    if (slotsNow.some((s) => s && s.slot === target)) throw new Error('Slot ' + target + ' is not empty.');
+    if (recsNow.some((r) => r && r.slot === target)) throw new Error('Slot ' + target + ' still has recovery points (an autosave, pre-departure or suspend point).');
+    // the campaign keeps its id unless another slot here holds it; then a fresh one, as copy() gives
+    const ids = new Set();
+    for (const r of slotsNow.concat(recsNow)) if (r && r.state) ids.add(r.state.id);
+    const states = c.records.map((r) => RB.util.deepClone(r.state));
+    const fresh = states.some((st) => ids.has(st.id)) ? RB.util.uid() : null;
+    if (fresh) states.forEach((st) => { st.id = fresh; });
+    const recs = c.records.map((r, i) => { const meta = metaOf(states[i]); meta.savedAt = r.savedAt; return { kind: r.kind, savedAt: r.savedAt, meta, state: states[i] }; });
+    await qaWithLock(target, () => tx(['slots', 'recovery'], 'readwrite', async (t) => {
+      const os = t.objectStore('slots'), rs = t.objectStore('recovery');
+      if (await reqP(os.get(target))) throw new Error('Slot ' + target + ' was filled meanwhile.');
+      if ((await reqP(rs.index('slot').getAllKeys(target))).length) throw new Error('Slot ' + target + ' has recovery points now.');
+      for (const r of recs) {
+        if (r.kind === 'manual') os.put({ slot: target, rev: 1, meta: r.meta, thumb: null, state: r.state });
+        else rs.put({ key: r.kind === 'auto' ? target + ':auto:' + r.savedAt : target + ':' + r.kind, slot: target, kind: r.kind, savedAt: r.savedAt, meta: r.meta, thumb: null, state: r.state });
+      }
+    }));
+    if (chan) chan.postMessage({ type: 'saved', slot: target, rev: 1, tab: tabId });
+    return { slot: target, kinds: recs.map((r) => r.kind), idChanged: !!fresh };
+  }
+
+  const api = {
     detect, status, requestPersist, list, read, writeSlot, writeRecovery, del, copy, validate, migrate, addMigration,
     loadSettings, saveSettings, claim, takeOver, releaseLock, setReadOnly, setCurrent, manualSave, autosave, suspend, dropSuspend,
     ConflictError, SLOTS, current: () => current, _mode: () => mode, skippedInBattle: () => skippedInBattle,
   };
+  if (qaGate()) api.qa = { exportSlot: qaExport, check: qaCheck, restore: qaRestore };
+  return api;
 })();

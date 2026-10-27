@@ -237,6 +237,8 @@ Request persistent storage where supported and appropriate, without implying tha
 
 Do not include save export, save import, cloud saves, accounts, share codes, download-save buttons, or hidden equivalents. Local slot copying is the only requested save duplication feature.
 
+Exception (Robin, 2026-10-27, relayed by Agnes 6431800544 and 6431813219): for bounded QA game-save backups to GitHub and their restoration, a development-only gate (?dev=saves) adds "Export (QA)" on occupied slots and "Restore (QA)" on empty slots in the save ledger. Without the gate nothing is shown or defined. It is not offered to players, and it is not a share code, cloud save or account. Player-facing save portability stays excluded.
+
 15. POST-STORY PLAY: THE UNWRITTEN ATLAS
 
 After the ending, unlock the Unwritten Atlas: a collection of unstable routes left behind as the world recovers. The final story resolution must remain resolved; do not reset everyone’s problems merely to justify more combat.

@@ -795,6 +795,9 @@ RB.ui.title = (function () {
       mg.push('<button class="pbtn" data-a="copy">' + I('copy') + 'Copy to another slot…</button>');
       mg.push('<button class="pbtn danger" data-a="delete">' + I('trash') + 'Delete…</button>');
     }
+    // QA save backup and restore: only on a page opened with ?dev=saves (src/ui/30q_saves_dev.js), from the Load page
+    const qa = ctx === 'load' && RB.ui.qaSaves && (s.empty || !s.corrupt);
+    if (qa) mg.push(s.empty ? '<button class="pbtn" data-a="qarestore">' + I('load') + 'Restore (QA)…</button>' : '<button class="pbtn" data-a="qaexport">' + I('save') + 'Export (QA)…</button>');
     const mid = 'mg-' + ctx + '-' + n;
     if (mg.length) acts.push('<button class="pbtn mg-t" data-a="manage" aria-expanded="false" aria-controls="' + mid + '">Manage' + I('chevdown') + '</button>');
     return '<li class="' + cls + '" data-slot="' + n + '">' +
@@ -802,7 +805,8 @@ RB.ui.title = (function () {
       '<div class="rec-main">' + kind + head + body + notes.join('') + '</div>' +
       (acts.length ? '<div class="rec-acts">' + acts.join('') + '</div>' : '') +
       (mg.length ? '<div class="manage" id="' + mid + '" role="group" aria-label="Manage slot ' + n + '" hidden><p class="mg-h">Manage slot ' + n + '</p><div class="mg-b">' + mg.join('') + '</div>' +
-        (ctx !== 'new' ? '<p class="mg-hint">Copy makes an independent duplicate. Delete also removes this slot’s autosaves.</p>' : '<p class="mg-hint">The journey saved here and its autosaves will be erased. You will be asked first.</p>') + '</div>' : '') +
+        (ctx === 'new' ? '<p class="mg-hint">The journey saved here and its autosaves will be erased. You will be asked first.</p>' : s.empty ? '' : '<p class="mg-hint">Copy makes an independent duplicate. Delete also removes this slot’s autosaves.</p>') +
+        (qa ? '<p class="mg-hint">QA backup (development only): ' + (s.empty ? 'restores a checked file into this empty slot.' : 'exports this slot to a checked file.') + '</p>' : '') + '</div>' : '') +
       '</li>';
   }
 
@@ -882,7 +886,8 @@ RB.ui.title = (function () {
       if (ctx === 'load' && list && !err && !list.some((s) => !s.empty && !s.corrupt)) top += '<p class="note-slip">No saved journeys yet. Choose New Game on the title to begin one.</p>';
       const last = ctx === 'load' && list ? newest(list) : null;
       const recs = (list || []).map((s) => record(s, ctx, cur, fromGame, last && last.slot === s.slot));
-      const foot = '<p class="ledger-foot muted small">' + N + ' local slots in ' + (info.mode === 'session' ? 'this session only' : 'this browser') + '. Copy makes an independent duplicate in another slot; deleting a slot also removes its autosaves. There is no export or cloud copy.</p>';
+      const foot = '<p class="ledger-foot muted small">' + N + ' local slots in ' + (info.mode === 'session' ? 'this session only' : 'this browser') + '. Copy makes an independent duplicate in another slot; deleting a slot also removes its autosaves. There is no export or cloud copy' +
+        (RB.ui.qaSaves ? ', apart from this development page\u2019s QA backup (?dev=saves).' : '.') + '</p>';
       if (!list) {
         fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="-1">' + top + '<p class="muted">Opening the ledger…</p></div></div>';
         return;
@@ -1019,6 +1024,9 @@ RB.ui.title = (function () {
           RB.ui.notice('Copied slot ' + slot + ' to slot ' + target + '. The two campaigns are now independent.', 'info');
           focusAfter = { slot: target, a: 'manage' };
           await refresh();
+        } else if ((a === 'qaexport' || a === 'qarestore') && RB.ui.qaSaves) {
+          const restored = await (a === 'qaexport' ? RB.ui.qaSaves.exportSheet(slot) : RB.ui.qaSaves.restoreSheet(slot));
+          if (restored) { focusAfter = { slot, a: 'load' }; await refresh(); }
         } else if (a === 'delete') {
           const r = await RB.ui.confirm('Delete slot ' + slot + '? Its manual save and autosaves will be removed. This cannot be undone.', ['Delete', 'Cancel'], { danger: true });
           if (r !== 0) return;

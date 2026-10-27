@@ -109,7 +109,9 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [i] R14.5 Validation, schema version, atomic writes, errors handled, no clearing on read failure
 - [v] R14.6 Cross-tab conflict protection
 - [i] R14.7 persist() request with honest explanation
-- [v] R14.8 No export/import/cloud/share codes
+- [v] R14.8 No export/import/cloud/share codes for players. One QA-only exception (Robin, 10-27, via Agnes 6431800544 and
+  6431813219; SPECIFICATION §14): behind ?dev=saves only, "Export (QA)" of an occupied slot and "Restore (QA)" into an empty
+  slot, on IndexedDB in one transaction; without the gate nothing is defined or shown (save_qa.test.mjs, qa_saves.mjs)
 
 ## Endgame — Unwritten Atlas [15]
 - [v] R15.1 Repeatable expeditions with branches, camp (rest or extract early), climax, extraction (atlas.check.mjs; one expedition after the ending in every matrix run; human duration estimated 13–28 min, not measured)

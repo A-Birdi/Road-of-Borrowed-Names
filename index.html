@@ -1296,6 +1296,14 @@ body.reduced-motion .pbtn.mg-t svg { transition: none; }
 .folio-about .about-credit .name { display: block; font-size: 1.45em; line-height: 1.25; color: var(--ink); }
 .folio-about .leaf h3 svg { width: 1.1em; height: 1.1em; align-self: center; color: var(--ink-2); }
 
+/* the development page's QA save backup sheets (?dev=saves only; src/ui/30q_saves_dev.js) */
+.folio-qasaves .qa-text { display: block; width: 100%; box-sizing: border-box; font-family: ui-monospace, monospace; font-size: 0.8em; color: var(--ink); background: #fffaf0; border: 1px solid var(--paper-edge); border-radius: 3px; padding: 0.4em; resize: vertical; }
+.folio-qasaves .qa-text:focus-visible, .folio-qasaves input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.folio-qasaves .qa-recs { padding-left: 1.4em; }
+.folio-qasaves .qa-recs p { margin: 0.15em 0; }
+.folio-qasaves .qa-keys, .folio-qasaves .qa-sha { overflow-wrap: anywhere; font-size: 0.85em; }
+.folio-qasaves .note-slip ul { margin: 0.3em 0 0; padding-left: 1.3em; }
+
 /* ==== src/styles/45_create.css ==== */
 /* New campaign (src/ui/40_create.js): the traveller's setup book (CW-1) —
  * a route of five stations on the cloth and, for each, a spread of two equal
@@ -63184,7 +63192,8 @@ RB.proof = (function () {
 /* Persistence: twenty campaign slots in IndexedDB (localStorage fallback,
  * session-only as last resort), bounded recovery snapshots, schema
  * validation, revision checks and cross-tab ownership (spec §14).
- * There is deliberately no export/import of saves. */
+ * There is deliberately no export/import of saves for players; the one exception, a QA backup behind the
+ * development gate ?dev=saves (SPECIFICATION §14), is at the end. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.save = (function () {
@@ -63649,11 +63658,145 @@ RB.save = (function () {
     }
   }
 
-  return {
+  // ---- QA save backups (SPECIFICATION §14's one exception: Robin, 2026-10-27, via Agnes 6431800544 and 6431813219) ---
+  // Defined only behind the development gate ?dev=saves (or __RB_DEV_SAVES__ set before the scripts load, for tests):
+  // one slot's manual save and recovery records to a checksummed file, and such a file into an EMPTY slot, on IndexedDB
+  // only, in one transaction. Not a player feature, not a share code or cloud save; without the gate nothing is defined.
+  const QA_FORMAT = 'road-qa-save', QA_FV = 1;
+  const QA_MAX_TEXT = 16 * 1024 * 1024, QA_MAX_STATE = 4 * 1024 * 1024, QA_MAX_NAME = 64, QA_MAX_FIELD = 80;
+  const QA_KINDS = { manual: 1, auto: AUTO_KEEP, predeparture: 1, suspend: 1 };
+  const QA_ORDER = { manual: 0, auto: 1, predeparture: 2, suspend: 3 };
+  const QA_KEYS = ['exportedAt', 'format', 'fv', 'gameVersion', 'label', 'payload', 'saveSchema', 'sha256', 'sourceSlot'];
+  function qaGate() {
+    if (globalThis.__RB_DEV_SAVES__ === true) return true;
+    return typeof window !== 'undefined' && !!window.location && /[?&]dev=saves\b/.test(window.location.search || '');
+  }
+  const qaPlain = (o) => !!o && typeof o === 'object' && !Array.isArray(o);
+  const qaBytes = (text) => new TextEncoder().encode(text).length;
+  async function qaHash(text) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  // every record of a payload, all or nothing, before anything is claimed or written: its fields, kind and count, a
+  // finite saved time, no duplicate recovery key, bounded sizes; then the save's own checks on a copy, with the Unwritten
+  // Atlas rebuilt first as read() does (an atlas map is registered only then), and migration tried on another copy
+  function qaRecords(recs) {
+    const errs = [], previews = [], counts = {}, seen = new Set();
+    if (!Array.isArray(recs) || !recs.length || recs.length > 6) return { errs: ['the payload is not a list of 1 to 6 records'], previews };
+    recs.forEach((r, i) => {
+      const at = 'record ' + (i + 1);
+      if (!qaPlain(r) || Object.keys(r).sort().join() !== 'kind,savedAt,state') { errs.push(at + ': unexpected fields'); return; }
+      if (!Object.prototype.hasOwnProperty.call(QA_KINDS, r.kind)) { errs.push(at + ': unknown kind'); return; }
+      counts[r.kind] = (counts[r.kind] || 0) + 1;
+      if (counts[r.kind] > QA_KINDS[r.kind]) errs.push(at + ': more ' + r.kind + ' records than a slot keeps');
+      if (!Number.isInteger(r.savedAt) || r.savedAt <= 0) errs.push(at + ': saved time is not a finite whole number');
+      const key = r.kind === 'auto' ? 'auto:' + r.savedAt : r.kind;
+      if (seen.has(key)) errs.push(at + ': duplicates ' + key);
+      seen.add(key);
+      if (!qaPlain(r.state)) { errs.push(at + ': state missing'); return; }
+      let size = 0;
+      try { size = qaBytes(JSON.stringify(r.state)); } catch (e) { errs.push(at + ': state is not plain data'); return; }
+      if (size > QA_MAX_STATE) { errs.push(at + ': state too large'); return; }
+      if (r.state.player && typeof r.state.player.name === 'string' && r.state.player.name.length > QA_MAX_NAME) { errs.push(at + ': player name too long'); return; }
+      const c = RB.util.deepClone(r.state);
+      if (RB.atlas && RB.atlas.prepare) { try { RB.atlas.prepare(c); } catch (e) { errs.push(at + ': its atlas map could not be rebuilt'); return; } }
+      const v = validate(c);
+      if (v.length) { errs.push(at + ': ' + v.join('; ')); return; }
+      try { migrate(RB.util.deepClone(c)); } catch (e) { errs.push(at + ': does not migrate (' + String((e && e.message) || e) + ')'); return; }
+      const meta = metaOf(c);
+      meta.savedAt = r.savedAt;
+      previews.push({ kind: r.kind, savedAt: r.savedAt, meta, bytes: size, keys: Object.keys(r.state).map((k) => [k, qaBytes(JSON.stringify(r.state[k] === undefined ? null : r.state[k]))]) });
+    });
+    return { errs, previews };
+  }
+  // a file, checked in order: its size; the outer object; its version and schema; the checksum over the payload
+  // string's exact UTF-8 bytes (before the payload is parsed, validated or migrated); then every record (qaRecords)
+  async function qaCheck(text) {
+    const fail = (why) => ({ ok: false, errors: [why] });
+    if (typeof text !== 'string' || !text.length) return fail('no file text');
+    if (text.length > QA_MAX_TEXT) return fail('the file is too large');
+    let f;
+    try { f = JSON.parse(text); } catch (e) { return fail('the file is not JSON (truncated?)'); }
+    if (!qaPlain(f) || f.format !== QA_FORMAT) return fail('not a QA save file');
+    if (Object.keys(f).some((k) => QA_KEYS.indexOf(k) < 0)) return fail('the file has unexpected fields');
+    if (f.fv !== QA_FV) return fail('unknown file version ' + JSON.stringify(f.fv));
+    if (!Number.isInteger(f.saveSchema) || f.saveSchema < 1) return fail('bad save schema');
+    if (f.saveSchema > RB.SAVE_SCHEMA) return fail('saved by a newer version (schema ' + f.saveSchema + ')');
+    if (!Number.isInteger(f.sourceSlot) || f.sourceSlot < 1 || f.sourceSlot > SLOTS) return fail('bad source slot');
+    for (const k of ['label', 'exportedAt', 'gameVersion']) if (typeof f[k] !== 'string' || f[k].length > QA_MAX_FIELD) return fail('bad ' + k);
+    if (typeof f.payload !== 'string' || typeof f.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(f.sha256)) return fail('payload or checksum missing');
+    if ((await qaHash(f.payload)) !== f.sha256) return fail('checksum mismatch: the file was changed or cut short');
+    let recs;
+    try { recs = JSON.parse(f.payload); } catch (e) { return fail('the payload is not JSON'); }
+    const { errs, previews } = qaRecords(recs);
+    if (errs.length) return { ok: false, errors: errs };
+    return { ok: true, errors: [], file: f, records: recs, previews };
+  }
+  // one slot as stored (as copy() reads it): the manual save first, then recovery points by kind and time; key, rev,
+  // slot, meta and thumb are left out (restore derives them), and nothing else is read (no settings, no other slot)
+  async function qaExport(slot, label) {
+    if (!Number.isInteger(slot) || slot < 1 || slot > SLOTS) throw new Error('No such slot.');
+    const src = await kvGet('slots', slot);
+    const recs = (await kvAll('recovery')).filter((r) => r && r.slot === slot);
+    const out = [];
+    if (src) out.push({ kind: 'manual', savedAt: src.meta && src.meta.savedAt, state: src.state });
+    recs.sort((a, b) => (QA_ORDER[a.kind] - QA_ORDER[b.kind]) || (a.savedAt - b.savedAt));
+    for (const r of recs) out.push({ kind: r.kind, savedAt: r.savedAt, state: r.state });
+    if (!out.length) throw new Error('Nothing saved there.');
+    const payload = JSON.stringify(out);
+    const chk = qaRecords(JSON.parse(payload));
+    if (chk.errs.length) throw new Error('This slot cannot be exported: ' + chk.errs.join('; '));
+    const sha256 = await qaHash(payload);
+    const file = { format: QA_FORMAT, fv: QA_FV, gameVersion: String(RB.VERSION || ''), saveSchema: RB.SAVE_SCHEMA, exportedAt: new Date().toISOString(), sourceSlot: slot, label: String(label || '').slice(0, QA_MAX_FIELD), payload, sha256 };
+    return { text: JSON.stringify(file), sha256, payloadBytes: qaBytes(payload), previews: chk.previews };
+  }
+  // the target slot's write lock for the restore alone (claim() would make it this tab's journey; the tab's own current
+  // slot and lock stay as they were). request() settles only once the lock is released, after success or failure.
+  function qaWithLock(slot, fn) {
+    if (current.lockRelease && current.lockSlot === slot) return fn();
+    if (typeof navigator === 'undefined' || !navigator.locks) return fn();
+    return navigator.locks.request('rbn-slot-' + slot, { ifAvailable: true }, (lock) => {
+      if (!lock) throw new Error('Slot ' + slot + ' is open in another tab.');
+      return fn();
+    });
+  }
+  // a checked file into an empty slot: IndexedDB only; the slot empty (no manual save and no recovery record), checked
+  // again inside the one transaction that writes every record; any failure aborts it, so nothing is written
+  async function qaRestore(text, target) {
+    if (mode !== 'idb') throw new Error('Restore needs IndexedDB storage, and this browser is ' + (mode === 'local' ? 'using its smaller localStorage instead.' : 'session-only.'));
+    if (!Number.isInteger(target) || target < 1 || target > SLOTS) throw new Error('No such slot.');
+    const c = await qaCheck(text);
+    if (!c.ok) throw new Error('Not restored: ' + c.errors.join('; '));
+    const slotsNow = await kvAll('slots'), recsNow = await kvAll('recovery');
+    if (slotsNow.some((s) => s && s.slot === target)) throw new Error('Slot ' + target + ' is not empty.');
+    if (recsNow.some((r) => r && r.slot === target)) throw new Error('Slot ' + target + ' still has recovery points (an autosave, pre-departure or suspend point).');
+    // the campaign keeps its id unless another slot here holds it; then a fresh one, as copy() gives
+    const ids = new Set();
+    for (const r of slotsNow.concat(recsNow)) if (r && r.state) ids.add(r.state.id);
+    const states = c.records.map((r) => RB.util.deepClone(r.state));
+    const fresh = states.some((st) => ids.has(st.id)) ? RB.util.uid() : null;
+    if (fresh) states.forEach((st) => { st.id = fresh; });
+    const recs = c.records.map((r, i) => { const meta = metaOf(states[i]); meta.savedAt = r.savedAt; return { kind: r.kind, savedAt: r.savedAt, meta, state: states[i] }; });
+    await qaWithLock(target, () => tx(['slots', 'recovery'], 'readwrite', async (t) => {
+      const os = t.objectStore('slots'), rs = t.objectStore('recovery');
+      if (await reqP(os.get(target))) throw new Error('Slot ' + target + ' was filled meanwhile.');
+      if ((await reqP(rs.index('slot').getAllKeys(target))).length) throw new Error('Slot ' + target + ' has recovery points now.');
+      for (const r of recs) {
+        if (r.kind === 'manual') os.put({ slot: target, rev: 1, meta: r.meta, thumb: null, state: r.state });
+        else rs.put({ key: r.kind === 'auto' ? target + ':auto:' + r.savedAt : target + ':' + r.kind, slot: target, kind: r.kind, savedAt: r.savedAt, meta: r.meta, thumb: null, state: r.state });
+      }
+    }));
+    if (chan) chan.postMessage({ type: 'saved', slot: target, rev: 1, tab: tabId });
+    return { slot: target, kinds: recs.map((r) => r.kind), idChanged: !!fresh };
+  }
+
+  const api = {
     detect, status, requestPersist, list, read, writeSlot, writeRecovery, del, copy, validate, migrate, addMigration,
     loadSettings, saveSettings, claim, takeOver, releaseLock, setReadOnly, setCurrent, manualSave, autosave, suspend, dropSuspend,
     ConflictError, SLOTS, current: () => current, _mode: () => mode, skippedInBattle: () => skippedInBattle,
   };
+  if (qaGate()) api.qa = { exportSlot: qaExport, check: qaCheck, restore: qaRestore };
+  return api;
 })();
 
 
@@ -72847,6 +72990,9 @@ RB.ui.title = (function () {
       mg.push('<button class="pbtn" data-a="copy">' + I('copy') + 'Copy to another slot…</button>');
       mg.push('<button class="pbtn danger" data-a="delete">' + I('trash') + 'Delete…</button>');
     }
+    // QA save backup and restore: only on a page opened with ?dev=saves (src/ui/30q_saves_dev.js), from the Load page
+    const qa = ctx === 'load' && RB.ui.qaSaves && (s.empty || !s.corrupt);
+    if (qa) mg.push(s.empty ? '<button class="pbtn" data-a="qarestore">' + I('load') + 'Restore (QA)…</button>' : '<button class="pbtn" data-a="qaexport">' + I('save') + 'Export (QA)…</button>');
     const mid = 'mg-' + ctx + '-' + n;
     if (mg.length) acts.push('<button class="pbtn mg-t" data-a="manage" aria-expanded="false" aria-controls="' + mid + '">Manage' + I('chevdown') + '</button>');
     return '<li class="' + cls + '" data-slot="' + n + '">' +
@@ -72854,7 +73000,8 @@ RB.ui.title = (function () {
       '<div class="rec-main">' + kind + head + body + notes.join('') + '</div>' +
       (acts.length ? '<div class="rec-acts">' + acts.join('') + '</div>' : '') +
       (mg.length ? '<div class="manage" id="' + mid + '" role="group" aria-label="Manage slot ' + n + '" hidden><p class="mg-h">Manage slot ' + n + '</p><div class="mg-b">' + mg.join('') + '</div>' +
-        (ctx !== 'new' ? '<p class="mg-hint">Copy makes an independent duplicate. Delete also removes this slot’s autosaves.</p>' : '<p class="mg-hint">The journey saved here and its autosaves will be erased. You will be asked first.</p>') + '</div>' : '') +
+        (ctx === 'new' ? '<p class="mg-hint">The journey saved here and its autosaves will be erased. You will be asked first.</p>' : s.empty ? '' : '<p class="mg-hint">Copy makes an independent duplicate. Delete also removes this slot’s autosaves.</p>') +
+        (qa ? '<p class="mg-hint">QA backup (development only): ' + (s.empty ? 'restores a checked file into this empty slot.' : 'exports this slot to a checked file.') + '</p>' : '') + '</div>' : '') +
       '</li>';
   }
 
@@ -72934,7 +73081,8 @@ RB.ui.title = (function () {
       if (ctx === 'load' && list && !err && !list.some((s) => !s.empty && !s.corrupt)) top += '<p class="note-slip">No saved journeys yet. Choose New Game on the title to begin one.</p>';
       const last = ctx === 'load' && list ? newest(list) : null;
       const recs = (list || []).map((s) => record(s, ctx, cur, fromGame, last && last.slot === s.slot));
-      const foot = '<p class="ledger-foot muted small">' + N + ' local slots in ' + (info.mode === 'session' ? 'this session only' : 'this browser') + '. Copy makes an independent duplicate in another slot; deleting a slot also removes its autosaves. There is no export or cloud copy.</p>';
+      const foot = '<p class="ledger-foot muted small">' + N + ' local slots in ' + (info.mode === 'session' ? 'this session only' : 'this browser') + '. Copy makes an independent duplicate in another slot; deleting a slot also removes its autosaves. There is no export or cloud copy' +
+        (RB.ui.qaSaves ? ', apart from this development page\u2019s QA backup (?dev=saves).' : '.') + '</p>';
       if (!list) {
         fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="-1">' + top + '<p class="muted">Opening the ledger…</p></div></div>';
         return;
@@ -73071,6 +73219,9 @@ RB.ui.title = (function () {
           RB.ui.notice('Copied slot ' + slot + ' to slot ' + target + '. The two campaigns are now independent.', 'info');
           focusAfter = { slot: target, a: 'manage' };
           await refresh();
+        } else if ((a === 'qaexport' || a === 'qarestore') && RB.ui.qaSaves) {
+          const restored = await (a === 'qaexport' ? RB.ui.qaSaves.exportSheet(slot) : RB.ui.qaSaves.restoreSheet(slot));
+          if (restored) { focusAfter = { slot, a: 'load' }; await refresh(); }
         } else if (a === 'delete') {
           const r = await RB.ui.confirm('Delete slot ' + slot + '? Its manual save and autosaves will be removed. This cannot be undone.', ['Delete', 'Cancel'], { danger: true });
           if (r !== 0) return;
@@ -73164,6 +73315,179 @@ RB.ui.title = (function () {
   const sky = () => ({ layout: scene.L ? (scene.L.tall ? 'tall' : 'wide') + (scene.L.side ? '/' + scene.L.side : '/centred') : null, noren: !!(scene.L && scene.L.norenBottom), door: scene.L ? (scene.L.post + scene.L.shoji) / scene.L.w : 0, moon: scene.L && scene.L.moon ? [scene.L.moon[0] / scene.L.w, scene.L.moon[1] / scene.L.h, scene.L.moon[2] / scene.L.w] : null, stars: scene.L ? scene.L.stars.length : 0, meteor: !!(scene.fx && scene.fx.m), comet: !!(scene.fx && scene.fx.cm), live: !!scene.fx });
   sky.soon = () => { if (scene.fx) { scene.fx.next = 0; scene.fx.nextComet = 0; } };
   return { show, hide, slots, drawBackdrop, roadGuide, sky };
+})();
+
+
+/* ==== src/ui/30q_saves_dev.js ==== */
+/* Development-only QA save backup and restore (SPECIFICATION §14's one exception: Robin, 2026-10-27, relayed by
+ * Agnes 6431800544 and 6431813219). Not reachable in normal play: it exists only on a page opened with ?dev=saves (or
+ * when a test set __RB_DEV_SAVES__ = true before the game loaded), where the save module defines RB.save.qa. The Inn
+ * Ledger's Load page then offers "Export (QA)…" in an occupied slot's Manage group and "Restore (QA)…" in an empty
+ * slot's. Export shows what the file holds (each record's journey, its top-level keys and sizes, the checksum) before
+ * Download or Copy. Restore takes a file or pasted text, checks all of it, shows the same preview, and writes only after
+ * its own confirmation, into that empty slot only. Not a player feature, a share code or a cloud save.
+ *
+ *   RB.ui.qaSaves.exportSheet(slot) · restoreSheet(slot) -> Promise, settled when the sheet closes (true if restored) */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+if (RB.save && RB.save.qa) RB.ui.qaSaves = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n, t) => RB.ui.folio.icon(n, t);
+  const QA = RB.save.qa;
+  const KIND = { manual: 'Manual save', auto: 'Autosave', predeparture: 'Before departure', suspend: 'Suspend point' };
+  const MAX_FILE = 16 * 1024 * 1024;
+  const kb = (n) => (n < 1024 ? n + ' B' : (n / 1024).toFixed(n < 10240 ? 1 : 0) + ' KiB');
+  const when = (ts) => { const d = new Date(ts); return isNaN(d) ? String(ts) : d.toISOString().replace('T', ' ').slice(0, 19) + ' UTC'; };
+
+  // what a file holds, record by record: the journey as the ledger would show it, then the state's top-level keys
+  function previewHtml(previews) {
+    return '<ol class="qa-recs">' + previews.map((p) => {
+      const m = p.meta || {};
+      return '<li><p><strong>' + esc(KIND[p.kind] || p.kind) + '</strong> · saved ' + esc(when(p.savedAt)) + '</p>' +
+        '<p>' + esc(m.name || '') + (m.comp ? ' &amp; ' + esc(m.comp) : '') + ' · Chapter ' + esc(String(m.chapter)) + ' · ' + esc(m.place || '') +
+        ' · ' + esc(String(Math.floor((m.playtime || 0) / 60))) + ' min played · ' + esc(kb(p.bytes)) + '</p>' +
+        '<details><summary>' + p.keys.length + ' top-level keys</summary><p class="qa-keys">' +
+        p.keys.map(([k, n]) => '<code>' + esc(k) + '</code> ' + esc(kb(n))).join(', ') + '</p></details></li>';
+    }).join('') + '</ol>';
+  }
+  function errorsHtml(errs) {
+    return '<div class="note-slip bad" role="alert">' + I('warn') + ' Not accepted. Nothing was written.<ul>' + errs.map((e) => '<li>' + esc(e) + '</li>').join('') + '</ul></div>';
+  }
+  // one sheet over the ledger; Back or Escape closes it
+  function sheet(title, meta, html, cls) {
+    let close;
+    const done = new Promise((res) => { close = res; });
+    const opener = document.activeElement;
+    let layer = null;
+    const finish = (v) => {
+      if (!layer) return;
+      RB.ui.popLayer(layer);
+      layer = null;
+      if (opener && opener.focus && opener !== document.body && document.contains(opener)) opener.focus({ preventScroll: true });
+      close(v);
+    };
+    const fr = RB.ui.folio.frame({ onClose: () => finish(false), closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet folio-qasaves ' + cls });
+    fr.setTitle(esc(title), esc(meta));
+    fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="-1">' + html + '</div></div>';
+    layer = { el: fr.scrim, name: 'qa-saves' };
+    layer.onCancel = () => finish(false);
+    RB.ui.pushLayer(layer);
+    return { fr, leaf: fr.box.querySelector('.leaf'), finish, done };
+  }
+  const intro = '<p class="note-slip warn">' + I('warn') + ' Development only (?dev=saves): a QA backup of one slot, for restoring into an empty slot. Not a player feature.</p>';
+
+  function exportSheet(slot) {
+    const sh = sheet('Export slot ' + slot + ' (QA)', 'Development only', intro +
+      '<p><label for="qa-label">Label for this backup</label><br><input type="text" id="qa-label" maxlength="80" spellcheck="false" autocomplete="off" class="autofocus"></p>' +
+      '<div class="cs-acts"><button class="pbtn primary" data-q="prepare">' + I('look') + '<span>Prepare the file</span></button></div>' +
+      '<div data-q="out"></div>', 'qa-export');
+    const out = sh.leaf.querySelector('[data-q=out]');
+    let text = null;
+    sh.leaf.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-q]');
+      if (!b) return;
+      const q = b.getAttribute('data-q');
+      if (q === 'prepare') {
+        b.disabled = true;
+        try {
+          const label = sh.leaf.querySelector('#qa-label').value.trim();
+          const r = await QA.exportSlot(slot, label);
+          text = r.text;
+          sh.leaf.querySelector('#qa-label').disabled = true;
+          out.innerHTML = '<h3>What the file holds</h3>' + previewHtml(r.previews) +
+            '<p class="small">Payload ' + esc(kb(r.payloadBytes)) + ' · SHA-256 <code class="qa-sha">' + esc(r.sha256) + '</code></p>' +
+            '<p class="small muted">Only this slot’s saves are in it: no settings, no other slot, nothing from the browser.</p>' +
+            '<div class="cs-acts"><button class="pbtn primary" data-q="download">' + I('save') + '<span>Download</span></button>' +
+            '<button class="pbtn" data-q="copy">' + I('copy') + '<span>Copy the text</span></button></div>' +
+            '<p class="small" role="status" data-q-status></p>' +
+            '<label for="qa-text" class="small">The file’s text</label><textarea id="qa-text" class="qa-text" rows="5" readonly spellcheck="false"></textarea>';
+          out.querySelector('#qa-text').value = text;
+        } catch (err) {
+          b.disabled = false;
+          out.innerHTML = errorsHtml([String((err && err.message) || err)]);
+        }
+      } else if (q === 'download' && text) {
+        const label = sh.leaf.querySelector('#qa-label').value.trim().replace(/[^A-Za-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+        a.download = 'road-qa-slot' + slot + (label ? '-' + label : '') + '.json';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+        out.querySelector('[data-q-status]').textContent = 'Download started: ' + a.download;
+      } else if (q === 'copy' && text) {
+        const st = out.querySelector('[data-q-status]'), ta = out.querySelector('#qa-text');
+        const select = () => { ta.focus(); ta.select(); st.textContent = 'The text is selected: copy it with Ctrl+C (or the menu).'; };
+        try {
+          if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('no clipboard');
+          await navigator.clipboard.writeText(text);
+          st.textContent = 'Copied the text (' + text.length + ' characters).';
+        } catch (err) { select(); }
+      }
+    });
+    return sh.done;
+  }
+
+  function restoreSheet(slot) {
+    const sh = sheet('Restore into slot ' + slot + ' (QA)', 'Development only · an empty slot only', intro +
+      '<p><label for="qa-file">A QA save file</label><br><input type="file" id="qa-file" accept=".json,application/json"></p>' +
+      '<p><label for="qa-paste">Or paste its text</label><textarea id="qa-paste" class="qa-text" rows="4" spellcheck="false" autocomplete="off"></textarea></p>' +
+      '<div class="cs-acts"><button class="pbtn primary" data-q="check">' + I('look') + '<span>Check the file</span></button></div>' +
+      '<div data-q="out"></div>', 'qa-restore');
+    const out = sh.leaf.querySelector('[data-q=out]');
+    let checked = null;
+    // a new file or new text needs a new check before anything can be restored
+    const stale = () => { checked = null; out.innerHTML = ''; };
+    sh.leaf.querySelector('#qa-file').addEventListener('change', stale);
+    sh.leaf.querySelector('#qa-paste').addEventListener('input', stale);
+    async function source() {
+      const f = sh.leaf.querySelector('#qa-file').files[0];
+      if (f) {
+        if (f.size > MAX_FILE) throw new Error('The file is too large.');
+        return f.text();
+      }
+      return sh.leaf.querySelector('#qa-paste').value;
+    }
+    sh.leaf.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-q]');
+      if (!b) return;
+      const q = b.getAttribute('data-q');
+      if (q === 'check') {
+        b.disabled = true;
+        try {
+          const text = await source();
+          const c = await QA.check(text);
+          if (!c.ok) { checked = null; out.innerHTML = errorsHtml(c.errors); return; }
+          checked = text;
+          const f = c.file;
+          out.innerHTML = '<h3>The file passed every check</h3>' +
+            '<p class="small">Label “' + esc(f.label) + '” · from slot ' + f.sourceSlot + ' · exported ' + esc(f.exportedAt) + ' · version ' + esc(f.gameVersion) + ' · schema ' + f.saveSchema + '</p>' +
+            '<p class="small">SHA-256 <code class="qa-sha">' + esc(f.sha256) + '</code></p>' + previewHtml(c.previews) +
+            '<div class="cs-acts"><button class="pbtn primary" data-q="restore">' + I('load') + '<span>Restore into slot ' + slot + '…</span></button></div>';
+        } catch (err) {
+          checked = null;
+          out.innerHTML = errorsHtml([String((err && err.message) || err)]);
+        } finally { b.disabled = false; }
+      } else if (q === 'restore' && checked != null) {
+        const r = await RB.ui.confirm('Restore this file into empty slot ' + slot + '? Nothing else is changed. It loads afterwards through the ledger’s ordinary Load.', ['Restore', 'Cancel']);
+        if (r !== 0 || checked == null) return;
+        b.disabled = true;
+        try {
+          const res = await QA.restore(checked, slot);
+          RB.ui.notice('Restored into slot ' + slot + (res.idChanged ? ' as an independent copy (its source is in this browser too).' : '.'), 'info');
+          sh.finish(true);
+        } catch (err) {
+          b.disabled = false;
+          out.insertAdjacentHTML('afterbegin', errorsHtml([String((err && err.message) || err)]));
+        }
+      }
+    });
+    return sh.done;
+  }
+
+  return { exportSheet, restoreSheet };
 })();
 
 
