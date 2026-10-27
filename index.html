@@ -143075,8 +143075,11 @@ hana: お{茶|ちゃ} 、 まだ ある わ よ 。 {二|ふた}つ {分|ぶん}
 narr: {茶碗|ちゃわん} が ふたつ 。 ひとつ は {縁|ふち} が {少|すこ}し {欠|か}けて いる 。 {長|なが}い あいだ {同|おな}じ {人|ひと} が {使|つか}って きた の だろう 。 || Two teacups. One has a small chip on the rim. The same person must have used it for years.
 
 @scene rw.teatable
-narr: {茶屋|ちゃや} の {外|そと} の {卓|たく} 。 {川|かわ} と {橋|はし} が よく {見|み}える 。 {向|む}こう{岸|ぎし} まで {届|とど}かない {橋|はし} が 。 || The table outside the teahouse has a good view of the river and the bridge. The bridge that doesn't reach the far bank.
-?(bridge_fixed) narr: {橋|はし} は {向|む}こう{岸|ぎし} まで {届|とど}いて いる 。 {朝|あさ} の {光|ひかり} が {板|いた} の {上|うえ} で {光|ひか}って いる 。 || The bridge reaches the far bank. Morning light glints on the planks.
+# (the bridge as it is: not across until it is fixed, then across, by day or on the evening before you set out, when
+# the village lanterns are lit; Agnes 6438541589, 6438761372; Local CL-483)
+?(!bridge_fixed) narr: {茶屋|ちゃや} の {外|そと} の {卓|たく} 。 {川|かわ} と {橋|はし} が よく {見|み}える 。 {向|む}こう{岸|ぎし} まで {届|とど}かない {橋|はし} が 。 || The table outside the teahouse has a good view of the river and the bridge. The bridge that doesn't reach the far bank.
+?(bridge_fixed&!rw_night) narr: {橋|はし} は {向|む}こう{岸|ぎし} まで {届|とど}いて いる 。 {朝|あさ} の {光|ひかり} が {板|いた} の {上|うえ} で {光|ひか}って いる 。 || The bridge reaches the far bank. Morning light glints on the planks.
+?(bridge_fixed&rw_night) narr: {橋|はし} は {向|む}こう{岸|ぎし} まで {届|とど}いて いる 。 {灯|あか}り が {板|いた} の {上|うえ} に {映|うつ}って いる 。 || The bridge reaches the far bank. Lantern light lies on the planks.
 
 @scene rw.tea_bed
 !if !rw_met_tsuru -> no
@@ -146760,7 +146763,9 @@ narr: その {夜|よる} 。 {桟橋|さんばし} の {先|さき} で 、 {�
 ?(comp=nao) !gesture comp strap
 ?(comp=nao) comp: {鞄|かばん} の {一番|いちばん} {底|そこ} に ある 。 {捨|す}てられない まま 。 …… あの {書記|しょき} の こと 、 {笑|わら}え ない よ な 。 || It's at the very bottom of my bag. Couldn't throw it away. …Can't exactly laugh at that clerk, can I.
 ?(comp=nao) !gesture comp avert pc
-?(comp=nao) comp[smirk]: {今|いま} の 、 {忘|わす}れて いい から 。 {明日|あした} は {北|きた} だ 。 {早|はや}く {寝|ね}ろ 。 || You can forget I said that. North tomorrow. Get some sleep.
+# (where the way on is Tetsu's ferry east, Nao says east: the journal's and Ōmi's route below; Agnes 6437885007)
+?(comp=nao&!ed>=2|comp=nao&mb2_done) comp[smirk]: {今|いま} の 、 {忘|わす}れて いい から 。 {明日|あした} は {北|きた} だ 。 {早|はや}く {寝|ね}ろ 。 || You can forget I said that. North tomorrow. Get some sleep.
+?(comp=nao&ed>=2&!mb2_done) comp[smirk]: {今|いま} の 、 {忘|わす}れて いい から 。 {明日|あした} は {東|ひがし} だ 。 {早|はや}く {寝|ね}ろ 。 || You can forget I said that. East tomorrow. Get some sleep.
 ?(comp=mio) comp: ワタル さん の こと 、 ずっと {考|かんが}えてた の 。 || I've been thinking about Wataru all evening.
 ?(comp=mio) !gesture comp lowered hold
 ?(comp=mio) comp[sad]: わたし 、 {頼|たの}まれたら {断|ことわ}れない でしょう 。 {薬|くすり} の {代金|だいきん} も 、 「{後|あと} で いい よ 」 って 、 {何人|なんにん} に も {言|い}ってる 。 || You know I can't say no when someone asks. I've told so many people "pay for the medicine later".
@@ -171062,7 +171067,8 @@ RB.script.add(`
 !look pc nao
 !look nao pc
 !gesture nao strap
-?(!ch4_done) comp: {潮硝子|しおがらす} から {歩|ある}いて きて 、 {分|わ}かった こと が ある 。 {少|すこ}し {話|はな}して いい か ？ || Walking since Saltglass, I've worked something out. Mind if I say it?
+# (it can open in Saltglass itself, on ch2_done before leaving: so it names no place; Agnes 6437885007)
+?(!ch4_done) comp: ここ まで {一緒|いっしょ} に {歩|ある}いて きて 、 {分|わ}かった こと が ある 。 {少|すこ}し {話|はな}して いい か ？ || Walking this far together, I've worked something out. Mind if I say it?
 ?(ch4_done) comp: {潮硝子|しおがらす} の {頃|ころ} から 、 {言|い}おう と {思|おも}ってた こと が ある 。 {遅|おそ}く なった けど 、 {今|いま} いい か ？ || There's something I've meant to say since Saltglass. It's late, but can I say it now?
 !choice
 * {聞|き}かせて || Go on. -> talk
@@ -208601,13 +208607,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.script.add(`
 @scene lq.letters_home
 # Staged: you open the letters from home and read them, one after the other, a letter in your hands. Nao's
-# shrug at being caught up by a courier; Ren leans in to Tsuru's hand.
+# shrug at being caught up by a courier; Ren leans in to Tsuru's hand. Either letter may come alone (a line already
+# heard of is not written about again), so neither is introduced as one of two (Agnes 6438233048).
 !set lq_letters
-narr: {道|みち} の {向|む}こう から {配達人|はいたつにん} が {走|はし}って きて 、 $name の {名前|なまえ} を {呼|よ}んだ 。 「 {葦|あし}ノ{瀬|せ} から 、 {手紙|てがみ} です よ ！ 」 || A courier comes running up the road, calling your name. "Letters from Reedwake!"
+narr: {道|みち} の {向|む}こう から {配達人|はいたつにん} が {走|はし}って きて 、 $name の {名前|なまえ} を {呼|よ}んだ 。 「 {葦|あし}ノ{瀬|せ} から 、 {手紙|てがみ} です よ ！ 」 || A courier comes running up the road, calling your name. "Post from Reedwake!"
 !if quest.lq_fare -> road
 !prop pc letter
 !gesture pc read hold
-narr: {一通|いっつう} は コウジ から 。 {不器用|ぶきよう} な {字|じ} だ 。 || One is from Kōji, in a clumsy hand.
+narr: コウジ から の {手紙|てがみ} 。 {不器用|ぶきよう} な {字|じ} だ 。 || A letter from Kōji, in a clumsy hand.
 narr: 「 おふくろ の {渡|わた}し{帳|ちょう} に 、 {払|はら}って もらってない {渡|わた}し{賃|ちん} が {一|ひと}つ ある 。 {三十年|さんじゅうねん} {前|まえ} の {嵐|あらし} の {夜|よる} の {客|きゃく} だ 。 {名前|なまえ} は {消|き}えた 。 {客|きゃく} が {置|お}いてった@置く {判子|はんこ} を {下|した} に {押|お}して おく 。 {旅|たび} の {途中|とちゅう} で {見覚|みおぼ}え が あったら 、 {教|おし}えて くれ 。 」 || "There's one fare in Mum's ferry book that was never paid — a passenger on a stormy night thirty years ago. The name's gone. I've pressed the seal they left, below. If you come across it on your travels, let me know."
 narr: {手紙|てがみ} の {下|した} に 、 {判子|はんこ} の {跡|あと} 。 「 かもめ 」 。 || At the bottom, the seal's stamp: "kamome".
 !give lq_stamp
@@ -208617,7 +208624,7 @@ narr: {手紙|てがみ} の {下|した} に 、 {判子|はんこ} の {跡|�
 !if quest.lq_road -> end
 !prop pc letter
 !gesture pc read hold
-narr: もう {一通|いっつう} は ツル から 。 {短|みじか}い {手紙|てがみ} だ 。 || The other is from Tsuru. It's short.
+narr: ツル から の {短|みじか}い {手紙|てがみ} 。 || A short letter from Tsuru.
 narr: 「 コウジ の {渡|わた}し{小屋|ごや} の {先|さき} に 、 {名前|なまえ} の ない {灯|あか}り が ある 。 ヤス は {昔|むかし} 、 その {先|さき} の {村|むら} に {住|す}んで いた そう だ 。 {大|おお}きな {柿|かき} の {木|き} の ある {村|むら} で 、 {大水|おおみず} の {後|あと} 、 {村|むら} の {者|もの} は {舟|ふね} で {川|かわ} を {下|くだ}った 。 {潮硝子|しおがらす} の {船乗|ふなの}り に でも {聞|き}いて みて おくれ 。 ツル 」 || "Past Kōji's ferry house there's a lantern with no name. Yasu says he once lived in the hamlet beyond it — a place with a great persimmon tree. After the flood its people went downriver by boat. Ask the Saltglass boatmen, would you? — Tsuru"
 !quest lq_road 1
 ?(comp=nao) !gesture comp shrug

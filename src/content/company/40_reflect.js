@@ -17,7 +17,8 @@ RB.script.add(`
 !look pc nao
 !look nao pc
 !gesture nao strap
-?(!ch4_done) comp: {潮硝子|しおがらす} から {歩|ある}いて きて 、 {分|わ}かった こと が ある 。 {少|すこ}し {話|はな}して いい か ？ || Walking since Saltglass, I've worked something out. Mind if I say it?
+# (it can open in Saltglass itself, on ch2_done before leaving: so it names no place; Agnes 6437885007)
+?(!ch4_done) comp: ここ まで {一緒|いっしょ} に {歩|ある}いて きて 、 {分|わ}かった こと が ある 。 {少|すこ}し {話|はな}して いい か ？ || Walking this far together, I've worked something out. Mind if I say it?
 ?(ch4_done) comp: {潮硝子|しおがらす} の {頃|ころ} から 、 {言|い}おう と {思|おも}ってた こと が ある 。 {遅|おそ}く なった けど 、 {今|いま} いい か ？ || There's something I've meant to say since Saltglass. It's late, but can I say it now?
 !choice
 * {聞|き}かせて || Go on. -> talk

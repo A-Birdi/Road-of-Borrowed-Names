@@ -219,7 +219,9 @@ narr: その {夜|よる} 。 {桟橋|さんばし} の {先|さき} で 、 {�
 ?(comp=nao) !gesture comp strap
 ?(comp=nao) comp: {鞄|かばん} の {一番|いちばん} {底|そこ} に ある 。 {捨|す}てられない まま 。 …… あの {書記|しょき} の こと 、 {笑|わら}え ない よ な 。 || It's at the very bottom of my bag. Couldn't throw it away. …Can't exactly laugh at that clerk, can I.
 ?(comp=nao) !gesture comp avert pc
-?(comp=nao) comp[smirk]: {今|いま} の 、 {忘|わす}れて いい から 。 {明日|あした} は {北|きた} だ 。 {早|はや}く {寝|ね}ろ 。 || You can forget I said that. North tomorrow. Get some sleep.
+# (where the way on is Tetsu's ferry east, Nao says east: the journal's and Ōmi's route below; Agnes 6437885007)
+?(comp=nao&!ed>=2|comp=nao&mb2_done) comp[smirk]: {今|いま} の 、 {忘|わす}れて いい から 。 {明日|あした} は {北|きた} だ 。 {早|はや}く {寝|ね}ろ 。 || You can forget I said that. North tomorrow. Get some sleep.
+?(comp=nao&ed>=2&!mb2_done) comp[smirk]: {今|いま} の 、 {忘|わす}れて いい から 。 {明日|あした} は {東|ひがし} だ 。 {早|はや}く {寝|ね}ろ 。 || You can forget I said that. East tomorrow. Get some sleep.
 ?(comp=mio) comp: ワタル さん の こと 、 ずっと {考|かんが}えてた の 。 || I've been thinking about Wataru all evening.
 ?(comp=mio) !gesture comp lowered hold
 ?(comp=mio) comp[sad]: わたし 、 {頼|たの}まれたら {断|ことわ}れない でしょう 。 {薬|くすり} の {代金|だいきん} も 、 「{後|あと} で いい よ 」 って 、 {何人|なんにん} に も {言|い}ってる 。 || You know I can't say no when someone asks. I've told so many people "pay for the medicine later".

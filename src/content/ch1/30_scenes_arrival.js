@@ -448,8 +448,11 @@ hana: お{茶|ちゃ} 、 まだ ある わ よ 。 {二|ふた}つ {分|ぶん}
 narr: {茶碗|ちゃわん} が ふたつ 。 ひとつ は {縁|ふち} が {少|すこ}し {欠|か}けて いる 。 {長|なが}い あいだ {同|おな}じ {人|ひと} が {使|つか}って きた の だろう 。 || Two teacups. One has a small chip on the rim. The same person must have used it for years.
 
 @scene rw.teatable
-narr: {茶屋|ちゃや} の {外|そと} の {卓|たく} 。 {川|かわ} と {橋|はし} が よく {見|み}える 。 {向|む}こう{岸|ぎし} まで {届|とど}かない {橋|はし} が 。 || The table outside the teahouse has a good view of the river and the bridge. The bridge that doesn't reach the far bank.
-?(bridge_fixed) narr: {橋|はし} は {向|む}こう{岸|ぎし} まで {届|とど}いて いる 。 {朝|あさ} の {光|ひかり} が {板|いた} の {上|うえ} で {光|ひか}って いる 。 || The bridge reaches the far bank. Morning light glints on the planks.
+# (the bridge as it is: not across until it is fixed, then across, by day or on the evening before you set out, when
+# the village lanterns are lit; Agnes 6438541589, 6438761372; Local CL-483)
+?(!bridge_fixed) narr: {茶屋|ちゃや} の {外|そと} の {卓|たく} 。 {川|かわ} と {橋|はし} が よく {見|み}える 。 {向|む}こう{岸|ぎし} まで {届|とど}かない {橋|はし} が 。 || The table outside the teahouse has a good view of the river and the bridge. The bridge that doesn't reach the far bank.
+?(bridge_fixed&!rw_night) narr: {橋|はし} は {向|む}こう{岸|ぎし} まで {届|とど}いて いる 。 {朝|あさ} の {光|ひかり} が {板|いた} の {上|うえ} で {光|ひか}って いる 。 || The bridge reaches the far bank. Morning light glints on the planks.
+?(bridge_fixed&rw_night) narr: {橋|はし} は {向|む}こう{岸|ぎし} まで {届|とど}いて いる 。 {灯|あか}り が {板|いた} の {上|うえ} に {映|うつ}って いる 。 || The bridge reaches the far bank. Lantern light lies on the planks.
 
 @scene rw.tea_bed
 !if !rw_met_tsuru -> no

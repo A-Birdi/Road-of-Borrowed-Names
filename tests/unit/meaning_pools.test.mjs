@@ -88,7 +88,10 @@ export default async (t) => {
   t.ok(withExp.length >= 50 && without.length >= 50, 'the game\'s own lines (a sample, in scene order): ' + withExp.length + ' using an exp word, ' + without.length + ' not');
   t.eq(bad3, [], 'bookmark practice: no marked option, one right answer, still no learning item');
   t.ok(JSON.stringify(RB.game.G.s) === journey, 'bookmark practice: making every one of those steps leaves the journey (its learning records included) exactly as it was');
-  t.eq([hx(same3), hx(rest3)], ['d28e4b8c93c3517d', '8e423c248e5903bd'], 'as many steps per line, each with the same word, right answer and number of options; the sampled lines without such a word exactly as before');
+  // (each sampled line's id is its place in scene order, so a line added before the 120th moves the ids after it: two
+  // continuity lines, rw.teatable's evening view and Nao's east in sg.ch2_end, moved them; every entry is otherwise as
+  // before, checked line by line against 1f86b7b; CC-346)
+  t.eq([hx(same3), hx(rest3)], ['5b69111d4e8970ee', '8e423c248e5903bd'], 'as many steps per line, each with the same word, right answer and number of options; the sampled lines without such a word exactly as before');
 
   // ---- 4.
   const wrongs = C.challenges['ko.toro_2'].tiers.F[0].options.filter((x) => !x.ok).map((x) => x.jp);
