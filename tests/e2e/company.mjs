@@ -49,7 +49,7 @@ async function start(p, map, x, y, o) {
 // the folio itself have finished (a page measured mid-opening reads as wider than it is; Agnes 6441198377, CC-347)
 const settled = (p) => p.waitForFunction(() => !document.getAnimations().some((a) => {
   const el = a.effect && a.effect.target;
-  return (a.playState === 'running' || a.playState === 'pending') && el && el.closest && el.closest('.folio') && a.effect.getComputedTiming().endTime !== Infinity;
+  return (a.playState === 'running' || a.pending) && el && el.closest && el.closest('.folio') && a.effect.getComputedTiming().endTime !== Infinity;
 }), null, { timeout: 5000 });
 const openCompany = async (p, page) => { await p.evaluate((pg) => RB.ui.menu.open(pg || 'company'), page); await p.waitForSelector('.co-page'); await settled(p); };
 const closeMenu = (p) => p.evaluate(() => RB.ui.menu.close());
