@@ -105,12 +105,25 @@ RB.ui.festival = (function () {
   }
   // !hook fest_booth <game>: a booth on the festival night or in the festival hall (the venue: no companion needed)
   RB.hooks = RB.hooks || {};
+  // The booth's scene is still running when it asks, and no activity starts on top of a scene, so the game opens once
+  // that scene has ended (RB.practiceA.afterScene, as the press and the desk do), with every check of RB.activity.launch
+  // and its refusal said in words (the safety codes as the Distractions page words them); only in the same journey on
+  // the same map, and only the latest booth's (Agnes 6446511174). A change of journey begun meanwhile cancels it too,
+  // even one that does not happen: a failed or cancelled load ends the scene but keeps the journey and its map
+  // (src/engine/90_game.js keepJourney; Agnes 6446894553)
+  const WHY = { danger: 'Not with a creature this close.', busy: 'Not just now.', none: 'Not just now.' };
+  let asked = 0;
+  if (RB.bus) RB.bus.on('campaign:changing', () => { asked++; });
   RB.hooks.fest_booth = async (a) => {
     const id = a && a[0];
     if (!F().get(id)) return;
     if (RB.test && RB.test.auto) { RB.test.log.push({ t: 'activity', kind: 'festival', game: id, skipped: 'auto' }); return; }
-    if (RB.ui.dialogue && RB.ui.dialogue.hide) RB.ui.dialogue.hide();
-    await RB.activity.launch('festival', { source: 'booth', game: id, venue: true });
+    const s = S(), map = s && s.map, n = ++asked;
+    RB.practiceA.afterScene(async () => {
+      if (n !== asked || !s || S() !== s || s.map !== map) return;
+      const r = await RB.activity.launch('festival', { source: 'booth', game: id, venue: true });
+      if (r && !r.ok && r.why && r.why !== 'The campaign changed.') RB.ui.notice(WHY[r.why] || r.why, 'info');
+    });
   };
   return { run, close, state: () => (V ? { view: V.view, mode: V.mode, left: V.left, paused: V.paused } : null) };
 })();
