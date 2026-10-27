@@ -288,15 +288,30 @@ RB.save = (function () {
         }
       });
     } else if (mode === 'local') {
-      const all = (await kvAll('recovery')).filter((r) => r.slot === slot && r.kind === 'auto').sort((a, b) => b.savedAt - a.savedAt);
-      for (const old of all.slice(AUTO_KEEP - 1)) localStorage.removeItem(LS_PREFIX + 'recovery:' + old.key);
-      localStorage.setItem(LS_PREFIX + 'recovery:' + key, JSON.stringify(rec));
+      // the fallbacks as IndexedDB (Agnes 6434739887, Local CL-469, CC-337): the record is serialized and stored first,
+      // and nothing is removed before it is; a failed write (quota included) removes nothing, so a nearly full store
+      // may refuse a fourth autosave, reported as any failed autosave. Only an autosave trims (trimAutos below).
+      const text = JSON.stringify(rec);
+      localStorage.setItem(LS_PREFIX + 'recovery:' + key, text); // throws on quota
+      if (kind === 'auto') await trimAutos(slot, async () => kvAll('recovery'), (r) => localStorage.removeItem(LS_PREFIX + 'recovery:' + r.key));
     } else {
-      const all = [...mem.entries()].filter(([k, v]) => k.startsWith('recovery:') && v.slot === slot && v.kind === 'auto').sort((a, b) => b[1].savedAt - a[1].savedAt);
-      for (const [k] of all.slice(AUTO_KEEP - 1)) mem.delete(k);
-      mem.set('recovery:' + key, RB.util.deepClone(rec));
+      const copy = RB.util.deepClone(rec);
+      mem.set('recovery:' + key, copy);
+      if (kind === 'auto') await trimAutos(slot, async () => [...mem.entries()].filter(([k]) => k.startsWith('recovery:')).map(([, v]) => v), (r) => mem.delete('recovery:' + r.key));
     }
     return rec;
+  }
+  // after an autosave is stored (localStorage, session): the slot's autosaves beyond the newest AUTO_KEEP go. A trim that
+  // fails keeps the record just saved and is reported apart from a failed autosave (lastError, save:trimError), and more
+  // than AUTO_KEEP may then remain: the write and the trim are not one transaction there, and nothing claims they are
+  async function trimAutos(slot, list, drop) {
+    try {
+      const autos = (await list()).filter((r) => r && r.slot === slot && r.kind === 'auto').sort((a, b) => b.savedAt - a.savedAt);
+      for (const old of autos.slice(AUTO_KEEP)) drop(old);
+    } catch (e) {
+      lastError = 'Autosaved, but older autosaves could not be removed (' + String((e && e.message) || e) + ')';
+      if (RB.bus) RB.bus.emit('save:trimError', { slot, error: e });
+    }
   }
 
   async function read(slot, which) {

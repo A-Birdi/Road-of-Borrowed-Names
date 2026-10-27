@@ -183,6 +183,8 @@ RB.game = (function () {
     RB.bus.on('save:takenover', () => RB.ui.notice('Another tab took over this campaign. Saving is disabled in this tab.', 'warn'));
     RB.bus.on('save:conflict', () => RB.ui.notice('This campaign was saved from another tab. Saving here may overwrite it — you will be asked first.', 'warn'));
     RB.bus.on('save:error', (d) => RB.ui.notice('Autosave failed: ' + (d.error && d.error.message), 'warn'));
+    // the new autosave is kept; only removing the oldest failed (src/engine/80_save.js trimAutos)
+    RB.bus.on('save:trimError', (d) => RB.ui.notice('Autosaved, but older autosaves could not be removed: ' + (d.error && d.error.message), 'warn'));
     G.running = true;
     requestAnimationFrame(loop);
     setBase('title');
