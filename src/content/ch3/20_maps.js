@@ -391,7 +391,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bench', x: 30, y: 2, text: { jp: '{水門|すいもん} の {横|よこ} の {長椅子|ながいす} 。 ここ から {里|さと} {全体|ぜんたい} が {見|み}える 。', en: 'A bench beside the water gate. From here you can see the whole village, and the lookout tower standing over it like a heron.' } },
     ],
     npcs: [
-      { id: 'co_asa', x: 22, y: 31, dir: 'left', wander: 1, talk: [{ if: 'post', scene: 'co.asa_post' }, { if: 'ch3_done', scene: 'co.asa_after' }, { scene: 'co.asa' }] },
+      // (her signpost quest, while it is open, is hers to finish in any chapter: Agnes 6449454299, CC-364)
+      { id: 'co_asa', x: 22, y: 31, dir: 'left', wander: 1, talk: [{ if: 'quest.co_signs=active', scene: 'co.asa' }, { if: 'post', scene: 'co.asa_post' }, { if: 'ch3_done', scene: 'co.asa_after' }, { scene: 'co.asa' }] },
       { id: 'co_ume', x: 14, y: 23, dir: 'down', wander: 1, talk: [{ if: 'post', scene: 'co.ume_post' }, { if: 'ch3_done', scene: 'co.ume_after' }, { scene: 'co.ume' }] },
       { id: 'co_tamotsu', x: 34, y: 3, dir: 'right', if: 'co_records_done&!co_upper_open', talk: 'co.tamotsu_gate' },
       { id: 'co_goat', x: 27, y: 23, dir: 'left', wander: 2, talk: 'co.goat' },

@@ -105,7 +105,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ], reward: { items: { co_ash_cup: 1 } } };
   C.quests.co_signs = { chapter: 3, title: { jp: '{段々畑|だんだんばたけ} の {道|みち}しるべ', en: 'Signposts on the Terraces' },
     stages: [
-      { jp: 'アサ の {道|みち}しるべ の {文字|もじ} が {消|き}えた 。 {段々畑|だんだんばたけ} を よく {見|み}て 、 {書|か}き{直|なお}そう 。', en: 'The names on Asa\'s terrace signposts have faded away. Look at where each arm points, and write the names back.' },
+      // (once the arms have their names back, the step is Asa's thanks: Agnes 6449454299)
+      { jp: 'アサ の {道|みち}しるべ の {文字|もじ} が {消|き}えた 。 {段々畑|だんだんばたけ} を よく {見|み}て 、 {書|か}き{直|なお}そう 。', en: 'The names on Asa\'s terrace signposts have faded away. Look at where each arm points, and write the names back.',
+        textIf: [{ if: 'co_signs_done', jp: '{道|みち}しるべ の {名前|なまえ} が {戻|もど}った 。 アサ に {伝|つた}えよう 。', en: 'The signpost’s names are back. Tell Asa.' }] },
     ], reward: { items: { co_straw_hat: 1 } } };
   C.quests.co_bell = { chapter: 3, title: { jp: '{綱|つな} の ない {鐘|かね}', en: 'The Bell Without a Rope' },
     stages: [
