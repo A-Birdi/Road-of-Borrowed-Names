@@ -1,6 +1,22 @@
-# Nao QA2 portable checkpoint
+# Nao QA2 portable checkpoints
 
-## Status
+## Current checkpoint: actual-file restore proof PENDING
+- File: `naoqa2/current.json`, unchanged supported QA export.
+- File UTF-8 bytes: 550336; SHA-256: `6e53b369f12a110a467d341350293ba02ee1a70eb9fa502caf5198fca704e06c`.
+- Payload UTF-8 bytes: 494075; SHA-256: `157666d38c3aadc21fe183096dc60ffc2dd7fe81fdaac0101af360c484f2570a`.
+- Exported at 2026-10-27T05:01:47.957Z; source slot 7; label: Nao QA2 Nao departure 2026-10-27 0449 UTC.
+- Format road-qa-save, fv 1, gameVersion 0.1.0, saveSchema 1.
+- Campaign `mvq1txabomytlq`, player Nao QA2 (courier, they), consistent across all five records.
+- Manual 2026-10-27T04:49:38.688Z: `rw.road` (26,9), playtime 9197.6599 seconds (153m18s), companion `nao`, provisional null. Flags `departed`, `comp_nao`, `ch1_done` true. Numeric state chapter remains 0; the chapter-one-complete claim is based on the flag, not numeric chapter.
+- Autos (2026-10-27 UTC): 04:32:06.286 `rw.hall` (5,8), no companion; 04:35:06.124 `rw.hall` (5,6), no companion; 04:48:06.749 `rw.road` (26,9), companion nao.
+- Predeparture 04:43:09.142 UTC: `rw.hall` (3,2), companion null, provisional nao; this is the game's retained predeparture state.
+- Exactly one manual, three autos and one predeparture; no suspend.
+- Current-file integrity/privacy inspection is complete, but is NOT actual-file restore verification. Restore this exact file in a disposable empty slot, compare all five records' re-exported payload bytes/hash before Load, then separately check ordinary Load and ownership cleanup. Do not overwrite active/user saves.
+
+## Previous checkpoint: restore proof PASSED
+The former current file is retained unchanged at `naoqa2/previous.json`. Its verified details and proof follow; that proof applies only to previous.json, not the new current.json.
+
+### Previous proof
 Actual-file restore proof: **PASSED, 11/11 checks**, reported by Claude Local in [CL-463](https://github.com/A-Birdi/Road-of-Borrowed-Names/issues/1#issuecomment-6433743697), 2026-10-27 04:25–04:26:29 UTC.
 
 The exact current.json from backup commit `fe3683a3fc1c60cdce5ffbb43b7d103d34b02788` was independently hash-checked and restored using the published QA API into empty slot 9 on the live origin in a disposable Windows headless-Chromium context (all 20 slots initially empty). Re-export before any Load reproduced the exact payload bytes and SHA-256 across all four records. A separate ordinary `RB.game.loadCampaign(9, 'manual')` check entered playing mode at `rw.village` (31,17), with flags, quests and vars identical; playtime advanced normally from 7475.1 to 7476.0 seconds.
@@ -11,8 +27,8 @@ Cloud's independent [CC-331 integrity check](https://github.com/A-Birdi/Road-of-
 
 Future restorations must still use an empty slot in a disposable isolated profile, compare re-exported payload bytes/hash before Load, then verify the loaded checkpoint. Do not overwrite the active playthrough.
 
-## Current file
-- Path: `naoqa2/current.json` (unchanged downloaded QA-only envelope)
+### Previous file
+- Path: `naoqa2/previous.json` (unchanged downloaded QA-only envelope)
 - File bytes (UTF-8): 340251
 - File SHA-256: `988893f9b93c0bc5785da8d3829087fc1e2b7ab0790baf9507249906ed9fdf63`
 - Payload bytes (UTF-8): 304687
@@ -26,12 +42,13 @@ Future restorations must still use an empty slot in a disposable isolated profil
 - Exactly one manual and three autos; no predeparture or suspend record.
 - Post-bridge Reedwake progression; companion and provisional companion are null in all four records. This is the fresh Nao QA2 campaign, not recovery of the old inaccessible Nao QA save.
 
-## Source build
+## Source build (both checkpoints)
 - Published task commit: `0c6d602c17327c9c154d4be8a83322c20cb26eb5`.
 - Live index.html: 24418832 bytes; SHA-256 `ba1c35ecf30bc6adb61d0260c5afe28bc960db8b1398fffcaa114af68eec40fe`.
 - Published build independently checked 2026-10-27 before export. Pages run 40447545214 succeeded for this commit.
 
-## Privacy and retention
-Full nested envelope/payload inspection found intended game-save data only: game progression, dialogue history, learning/practice data and the QA character. No credentials, cookies, browser profile, unrelated personal data, URLs, email addresses or file paths detected. All four records have the same campaign ID and chronological progression. This inspection is not a guarantee against every conceivable secret encoding.
 
-Keep stable current and, when a second meaningful checkpoint replaces it, previous files only. There is no previous.json yet: this is the first checkpoint. Do not add per-export copies, screenshots, browser profiles or credentials. Changes on this backup branch must not change task/Pages refs or rewrite history. Ordinary Git history retains prior committed versions; removing a current file is not history erasure.
+## Privacy and retention
+Both envelopes were recursively inspected, including all nested keys/string values and the new checkpoint's differences from the previously inspected file. Only intended game-save data was detected: game dialogue/history, progression, learning/practice data and the QA character. No credentials, cookies, browser profiles, unrelated personal data, URLs, email addresses or file paths were detected. This is not a guarantee against every conceivable secret encoding. Historical Hana wording retained in the save backlog is game dialogue, not an instruction or new content correction.
+
+Keep only these stable current and previous checkpoint files plus this manifest. Rotate only at meaningful milestones; no per-export duplicates. No task/Pages ref, product file or history rewrite is part of this backup. Ordinary Git history retains prior committed versions; file removal does not erase history.
