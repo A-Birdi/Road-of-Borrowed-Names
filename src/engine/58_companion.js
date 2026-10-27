@@ -68,14 +68,18 @@ RB.content.company = RB.content.company || {
     const m = RB.content.maps[s.map];
     return m && m.name ? { jp: m.name.jp || '', en: m.name.en || '' } : null;
   }
-  // safe rest settings that already exist: inns, the teahouse, huts, camps (never a dungeon corridor)
+  // safe rest settings that already exist: inns, the teahouse, huts, camps (never a dungeon corridor); the twelve-chapter
+  // regions' too, where the game itself offers a night's rest: Kawaya (not on the night Ichi is lost: no leisurely talk
+  // while a child is missing), and the Upper House once your room there is yours (REST_IF; Agnes 6442276500,
+  // 6442579050, 6442960189; Local CL-489; CC-349)
   const REST = {
     'rw.tea': 'tea', 'sg.inn': 'inn', 'co.inn': 'inn', 'sb.inn': 'inn', 'sb.inn_room': 'room', 'lf.inn': 'inn',
-    'sa.hut': 'hut', 'sa.camp': 'camp', 'lq.koharu_hut': 'hut',
+    'sa.hut': 'hut', 'sa.camp': 'camp', 'lq.koharu_hut': 'hut', 'mb.inn': 'inn', 'yn.kami': 'inn',
   };
+  const REST_IF = { 'mb.inn': '!mb_night', 'yn.kami': 'yn_rooms_done' };
   function restHere(s) {
     if (!s || !s.map) return null;
-    if (REST[s.map]) return { kind: REST[s.map], map: s.map };
+    if (REST[s.map] && (!REST_IF[s.map] || RB.state.test(s, REST_IF[s.map]))) return { kind: REST[s.map], map: s.map };
     const m = RB.content.maps[s.map];
     // an Atlas camp: the generated camp room carries the camp's own scene on its stump
     if (m && m.region === 'atlas' && (m.props || []).some((p) => p.scene === 'atlas.camp')) return { kind: 'camp', map: s.map, atlas: true };
