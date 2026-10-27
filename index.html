@@ -97524,6 +97524,41 @@ RB.challenge = (function () {
   let active = null; // {step, assisted}
 
   function isActive() { return !!active; }
+  // A tile pane redrawn under a still mouse (the order step, a forged sentence's pieces): the browser then reports the
+  // pointer over whichever word slid beneath it, and the document's word help (src/ui/10_ui.js) would open that word's
+  // card unasked (Agnes 6436544482; Local CL-475). After a mouse click that redraws, the one pointerover onto a word at
+  // the press's own position (its pointerup's: a click's coordinates are whole pixels, the pointer's need not be; Local
+  // CL-479) is stopped at the pane, before the document hears it. The browser reports the pane there first (the word
+  // that was under the pointer is gone), then the word that slid in: the first passes and leaves the guard armed. Real
+  // movement, a cancelled pointer, leaving the pane, a key or 500 ms disarms it first. Keyboard, touch and pen are never
+  // armed (Agnes 6437095878; CC-343).
+  function hoverGuard(roots) {
+    let at = null, up = null, timer = 0;
+    const off = () => { at = null; clearTimeout(timer); };
+    const same = (e) => !!at && Math.abs(e.clientX - at.x) <= 0.5 && Math.abs(e.clientY - at.y) <= 0.5;
+    for (const r of roots) {
+      r.addEventListener('pointerup', (e) => { up = e.pointerType === 'mouse' ? { x: e.clientX, y: e.clientY } : null; }, true);
+      r.addEventListener('pointerover', (e) => {
+        if (!at) return;
+        if (!same(e)) off();
+        else if (e.target.closest && e.target.closest('.jt')) { e.stopPropagation(); off(); }
+      }, true);
+      r.addEventListener('pointermove', (e) => { if (at && !same(e)) off(); }, true);
+      r.addEventListener('pointercancel', off, true);
+      r.addEventListener('keydown', () => { up = null; off(); }, true);
+      r.addEventListener('pointerleave', (e) => { if (e.target === r) off(); });
+    }
+    return {
+      arm(e) {
+        off();
+        const u = up;
+        up = null;
+        if (!u || !e || e.pointerType !== 'mouse' || !(e.detail >= 1)) return;
+        at = u;
+        timer = setTimeout(off, 500);
+      },
+    };
+  }
   // L2 (expansion plan 05_LANGUAGE.md): what help supplied, by category, strongest kept per question:
   // conceptual (a word explained, an English line for a production prompt) < constrain (narrows the answer:
   // suggestions, the chart, word help on a word of the answer, Translate on a comprehension question) < supplied
@@ -97817,7 +97852,9 @@ RB.challenge = (function () {
             else return;
             RB.audio && RB.audio.sfx('cursor');
             draw();
+            guard.arm(e);
           };
+          const guard = hoverGuard([p, lineBox]);
           p.addEventListener('click', click);
           lineBox.addEventListener('click', click);
           RB.learnUi.guardTaps(p);
@@ -97854,7 +97891,9 @@ RB.challenge = (function () {
           else return;
           RB.audio && RB.audio.sfx('cursor');
           draw();
+          guard.arm(e);
         };
+        const guard = hoverGuard([p, lineBox]);
         p.addEventListener('click', click);
         lineBox.addEventListener('click', click);
         RB.learnUi.guardTaps(p);
