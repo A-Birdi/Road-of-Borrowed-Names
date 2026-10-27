@@ -296,10 +296,11 @@ koji: {橋|はし} と {舟|ふね} 、 {両方|りょうほう} ある の が 
 
 @scene rw.hana_rush
 # Staged: Hana is pouring as she greets you in the rush; after the orders, she hands you a pouch of her
-# morning tea leaves across the counter.
+# morning tea leaves across the counter. (The rush is offered at any hour once Kōji is back, so her first line names no
+# time of day: Agnes 6433779782.)
 !faceplayer hana
 !gesture hana pour
-hana[smile]: いらっしゃい ！ …… ごめん なさい 、 {今|いま} {朝|あさ} の {混|こ}む {時間|じかん} で 。 コウジ が {戻|もど}った って {聞|き}いて 、 みんな {見|み}に {来|く}る の よ 。 {手伝|てつだ}って くれる ？ || Welcome! …Sorry, it's the morning rush. Everyone heard Kōji's back and came to look. Would you help?
+hana[smile]: いらっしゃい ！ …… ごめん なさい 、 {今|いま} {混|こ}んで いて 。 コウジ が {戻|もど}った って {聞|き}いて 、 みんな {見|み}に {来|く}る の よ 。 {手伝|てつだ}って くれる ？ || Welcome! …Sorry, it's a rush right now. Everyone heard Kōji's back and came to look. Would you help?
 !quest rw_teahouse start
 !choice
 * {手伝|てつだ}う || Help out. -> help

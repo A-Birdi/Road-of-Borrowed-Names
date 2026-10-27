@@ -84,7 +84,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     stages: [
       { jp: 'ヤス は {村|むら} の {始|はじ}まり を {覚|おぼ}えて いる らしい 。 {桟橋|さんばし} で {聞|き}こう 。', en: 'Old Yasu remembers how Reedwake began. Hear it on the pier.' },
     ] };
-  C.quests.rw_teahouse = { chapter: 1, title: { jp: '{朝|あさ} の {茶屋|ちゃや}', en: 'The Morning Rush' },
+  C.quests.rw_teahouse = { chapter: 1, title: { jp: '{忙|いそが}しい {茶屋|ちゃや}', en: 'The Teahouse Rush' },
     stages: [
       { jp: 'ハナ の {茶屋|ちゃや} が {忙|いそが}しい 。 {注文|ちゅうもん} を {手伝|てつだ}おう 。', en: 'Hana\'s teahouse is busy. Help take the orders.' },
     ] };
@@ -336,7 +336,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       A: { kind: 'choose', item: 'c:rw_founding_q', prompt: { en: 'What does the story suggest the village valued in keeping the ferry?' }, options: [{ en: 'The human connection a crossing can carry, not just the crossing itself.', ok: true }, { en: 'Tradition for its own sake, even when useless.', ok: false }, { en: 'Distrust of engineering after the flood.', ok: false }], explain: { en: '廃さなかった = did not abolish; 〜くれぬ is literary (= くれない).' } },
     } };
 
-  A['rw.a_orders'] = { type: 'orders', title: { jp: '{朝|あさ} の {茶屋|ちゃや}', en: 'The morning rush' },
+  A['rw.a_orders'] = { type: 'orders', title: { jp: '{忙|いそが}しい {茶屋|ちゃや}', en: 'The Teahouse Rush' },
     menu: [
       { id: 'tea', jp: 'お{茶|ちゃ}', en: 'tea' }, { id: 'rice', jp: 'おにぎり', en: 'rice ball' }, { id: 'fish', jp: '{焼|や}き{魚|ざかな}', en: 'grilled fish' },
       { id: 'soup', jp: 'みそ{汁|しる}', en: 'miso soup' }, { id: 'dango', jp: 'だんご', en: 'dumplings (dango)' },

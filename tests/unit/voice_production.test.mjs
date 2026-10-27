@@ -41,9 +41,11 @@ export default async (t) => {
   t.ok(pcs.every((e) => ['A', 'B'].includes(e.voice) && ['high', 'low'].includes(e.pitch)) && pcs.length === pcTexts.size * 4 && new Set(pcs.map((e) => e.id)).size === pcs.length,
     'the player is recorded as Voice A and Voice B, each High and Low, each variant its own id: ' + pcs.length);
   t.ok(m.entries.every((e) => e.speaker === 'pc' || e.pitch === null), 'only the player has pitch variants');
-  const hana = m.entries.find((e) => e.seams.some((s) => s.joined === '今朝' && s.means === 'いま|あさ'));
-  t.ok(!!hana, 'the 今朝 seam (RV-0006) carries the reading the line means: いま|あさ');
-  t.ok(hana && !hana.send.includes('今朝') && hana.send.includes('いまあさ'), 'and what the engine is sent never says 今朝: ' + (hana && hana.send));
+  // a word boundary the recording text would erase (RV-0006's class): Hana's {今|いま} {朝|あさ}, its first example, now
+  // names no time of day (Agnes 6433779782), so the check uses Koume's {今夜|こんや} {中|じゅう}, whose joined form reads 夜中
+  const koume = m.entries.find((e) => e.seams.some((s) => s.joined === '夜中' && s.means === 'こんや|じゅう'));
+  t.ok(!!koume, 'the 夜中 seam inside 今夜中 carries the reading the line means: こんや|じゅう');
+  t.ok(koume && !koume.send.includes('今夜中') && !koume.send.includes('夜中') && koume.send.includes('こんやじゅう'), 'and what the engine is sent never says 夜中: ' + (koume && koume.send));
   t.ok(m.entries.every((e) => e.seams.every((x) => !e.send.includes(x.kanji))) && m.entries.every((e) => e.send && !/[{}|\s]/.test(e.send)), 'no seam survives in what any engine is sent');
   t.ok(m.notRecordable.length === sum.notRecordable.lines && m.notRecordable.every((d) => /\$\w+/.test(d.jp)), 'lines with a run-time name are listed apart: ' + m.notRecordable.length);
   t.ok(sum.recordings === m.entries.length && sum.companionAttribution && !('undefined' in sum.companionAttribution), 'the summary agrees: ' + sum.recordings + ' recordings');
