@@ -13,7 +13,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       T('{芝居|しばい} の {通|とお}り の {芝居小屋|しばいごや} で 、 マンベエ に {会|あ}おう 。', 'Go to the playhouse on Playhouse Row and find Manbē: his script is losing its characters\' names.'),
       T('{芝居小屋|しばいごや} の けいこ を {手伝|てつだ}おう 。', 'Help with the rehearsal at the playhouse.'),
       T('{祭|まつ}り の {世話役|せわやく} の トミ を {手伝|てつだ}おう 。', 'Help Tomi of the festival committee get the Opening of the River ready.'),
-      T('{舞台|ぶたい} の {下|した} の {奈落|ならく} へ {下|お}りて 、 {名前|なまえ} を {取|と}り{戻|もど}そう 。', 'Go down into the Understage beneath the stage and bring the names back.'),
+      // (the Understage is found at the dress rehearsal, when you next talk to Manbē in the Playhouse: until then the
+      // Journey sends you back to him and the guide points to him; then to the lift he has lowered, until you are below.
+      // The step leaves only after the Lord of the Understage, which the guide cannot see through: Agnes 6444900108)
+      Object.assign(T('{舞台|ぶたい} の {下|した} の {奈落|ならく} へ {下|お}りて 、 {名前|なまえ} を {取|と}り{戻|もど}そう 。', 'Go down into the Understage beneath the stage and bring the names back.'), {
+        textIf: [{ if: '!mp_under_open', jp: '{芝居小屋|しばいごや} へ {戻|もど}り 、 マンベエ を {手伝|てつだ}って 、 {消|き}えた {名前|なまえ} を {取|と}り{戻|もど}そう 。', en: 'Return to the playhouse and help Manbē recover the missing names.' }],
+        atIf: [
+          { if: '!mp_under_open', at: { map: 'mp.theatre', npc: 'mp_manbe' } },
+          { if: 'mp_under_open&!mp_under_seen', at: { map: 'mp.theatre', prop: 'mp_lift', x: 9, y: 3 } },
+        ],
+      }),
       T('{川開|かわびら}き の {夜|よる} 。 {岸|きし} へ {行|い}こう 。', 'The night of the Opening of the River. Go down to the bank.'),
     ],
     reward: { flags: ['mp_main_done'] },

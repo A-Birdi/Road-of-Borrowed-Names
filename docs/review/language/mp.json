@@ -4337,6 +4337,12 @@
   "jp": "{舞台|ぶたい} の {下|した} の {奈落|ならく} へ {下|お}りて 、 {名前|なまえ} を {取|と}り{戻|もど}そう 。",
   "en": "Go down into the Understage beneath the stage and bring the names back."
  },
+ "quests:mp_main#9zhuaq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (Agnes's wording, 6444900108), the quest's other steps in mp/06_quests.js (芝居小屋 as in step 2; 手伝う as in steps 3 and 4; 取り戻す and the て-chain as in step 5's own text; 消えた as in The Missing Lead Actor's title) and the game's lexicon (芝居小屋, 戻る, 手伝う, 消える, 名前, 取り戻す); proposed in CC-354",
+  "jp": "{芝居小屋|しばいごや} へ {戻|もど}り 、 マンベエ を {手伝|てつだ}って 、 {消|き}えた {名前|なまえ} を {取|と}り{戻|もど}そう 。",
+  "en": "Return to the playhouse and help Manbē recover the missing names."
+ },
  "quests:mp_main#17w4kv6": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
