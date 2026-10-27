@@ -151,7 +151,9 @@ narr: 「{待|ま}つ」 ： {何|なに} も {言|い}わず に 、 {相手|�
 mb_sen: ただ 、 {一|ひと}つ {分|わ}からない こと が あります 。 {札|ふだ} の {消|き}え{方|かた} です 。 || There's still one thing I don't understand: how the plaques are fading.
 mb_sen: {札場|ふだば} に は 、 {町|まち} の {橋|はし} を {全部|ぜんぶ} {書|か}いた {帳面|ちょうめん} が あります 。 {番号|ばんごう} の {順|じゅん} に 。 {消|き}えて いる の は 、 {一番|いちばん} から です 。 {一番|いちばん} が {最初|さいしょ} に {消|き}えて 、 {二番|にばん} 、 {三番|さんばん} …… と 。 || The Exchange keeps a register of every bridge in the city, in order of their numbers. The names are fading from number one. One went first, then two, then three…
 mb_sen: {一番|いちばん} の {橋|はし} は 、 この {札場|ふだば} の {下|した} に あります 。 {町|まち} が まだ {沼|ぬま} だった {頃|ころ} の 、 {最初|さいしょ} の {橋|はし} 。 {帳面|ちょうめん} の {名前|なまえ} も 、 もう {読|よ}めません 。 || Bridge number one is beneath this Exchange: the first bridge, from when the city was still a marsh. Its name in the register can't be read any more either.
-?(comp=nao) comp[think]: {名前|なまえ} の {分|わ}からない {宛先|あてさき} か 。 …… そういう {手紙|てがみ} が {集|あつ}まる {場所|ばしょ} 、 さっき {郵便箱|ゆうびんばこ} に {書|か}いて あった な 。 || An address nobody can read. …There was a place for letters like that, the postbox said.
+# (Nao recalls the postbox only if you read it there; otherwise a courier's own knowledge; Agnes 6440215796, CL-486)
+?(comp=nao&seen.mb.mailbox) comp[think]: {名前|なまえ} の {分|わ}からない {宛先|あてさき} か 。 …… そういう {手紙|てがみ} が {集|あつ}まる {場所|ばしょ} 、 さっき {郵便箱|ゆうびんばこ} に {書|か}いて あった な 。 || An address nobody can read. …There was a place for letters like that, the postbox said.
+?(comp=nao&!seen.mb.mailbox) comp[think]: {名前|なまえ} の {分|わ}からない {宛先|あてさき} か 。 …… そういう {手紙|てがみ} は 、 どこ の {町|まち} でも {一|ひと}つ の {場所|ばしょ} に {集|あつ}まる 。 || An address nobody can read. …Letters like that end up in one place, in any town.
 ?(comp=mio) comp[think]: {昔|むかし} の {名前|なまえ} なら 、 {昔|むかし} の {手紙|てがみ} に {残|のこ}って いる かも しれません ね 。 || If it's an old name, maybe it survives in old letters.
 ?(comp=ren) comp[surprise]: {一番|いちばん} から {順|じゅん} に …… {名前|なまえ} の {糸|いと} を {端|はし} から {引|ひ}いて いる よう です 。 || In order from the first… as if someone's pulling the thread of names from its end.
 ?(comp=suzu) comp[think]: {一番|いちばん} {古|ふる}い {名前|なまえ} を {知|し}ってる の は 、 {一番|いちばん} {古|ふる}い {人|ひと} か 、 {一番|いちばん} {古|ふる}い {紙|かみ} ね 。 || Whoever knows the oldest name: the oldest person, or the oldest paper.
@@ -308,7 +310,9 @@ narr: {床|ゆか} の {重|おも}い {戸|と} 。 {鍵|かぎ} が かかっ�
 @scene mb.matsu_negotiate
 # Staged: Matsu at her table, arms folded; she doesn't look up; the companion beside you; the letter in your satchel.
 !faceplayer
-mb_matsu: また {来|き}た の かい 。 {下|した} に {行|い}きたい ？ {無理|むり} だ ね 。 || You again? You want to go down? Out of the question.
+# ("You again?" only if you met her before (mb.matsu_first is optional); Agnes 6440796491, CL-487)
+?(seen.mb.matsu_first) mb_matsu: また {来|き}た の かい 。 {下|した} に {行|い}きたい ？ {無理|むり} だ ね 。 || You again? You want to go down? Out of the question.
+?(!seen.mb.matsu_first) mb_matsu: {何|なん} の {用|よう} だい 。 {下|した} に {行|い}きたい ？ {無理|むり} だ ね 。 || What do you want? To go down? Out of the question.
 !encounter mb.passage
 !call mb.passage_after
 

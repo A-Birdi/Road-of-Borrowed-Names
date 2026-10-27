@@ -767,6 +767,12 @@
   "jp": "{名前|なまえ} の {分|わ}からない {宛先|あてさき} か 。 …… そういう {手紙|てがみ} が {集|あつ}まる {場所|ばしょ} 、 さっき {郵便箱|ゆうびんばこ} に {書|か}いて あった な 。",
   "en": "An address nobody can read. …There was a place for letters like that, the postbox said."
  },
+ "scene:mb.dispute_after#1hwkous": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the speaker's established speech (Nao casual, a courier's knowledge; Matsu's だい and だね, as in mb.matsu_first and the rest of her negotiation), the scene around it (Sen's next line naming the dead-letter office; the encounter mb.passage, which treats you as a stranger) and the game's lexicon (宛先, 手紙, 町, 一つ, 場所, 集まる; 何, 用, 下, 行く, 無理); wording agreed in the team's review (Agnes 6440561303, 6441198377; Local CL-486, CL-487; CC-347). First-visit continuity, 2026-10-27",
+  "jp": "{名前|なまえ} の {分|わ}からない {宛先|あてさき} か 。 …… そういう {手紙|てがみ} は 、 どこ の {町|まち} でも {一|ひと}つ の {場所|ばしょ} に {集|あつ}まる 。",
+  "en": "An address nobody can read. …Letters like that end up in one place, in any town."
+ },
  "scene:mb.dispute_after#1qgj1eo": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
@@ -1174,6 +1180,12 @@
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
   "jp": "また {来|き}た の かい 。 {下|した} に {行|い}きたい ？ {無理|むり} だ ね 。",
   "en": "You again? You want to go down? Out of the question."
+ },
+ "scene:mb.matsu_negotiate#1cktz5u": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the speaker's established speech (Nao casual, a courier's knowledge; Matsu's だい and だね, as in mb.matsu_first and the rest of her negotiation), the scene around it (Sen's next line naming the dead-letter office; the encounter mb.passage, which treats you as a stranger) and the game's lexicon (宛先, 手紙, 町, 一つ, 場所, 集まる; 何, 用, 下, 行く, 無理); wording agreed in the team's review (Agnes 6440561303, 6441198377; Local CL-486, CL-487; CC-347). First-visit continuity, 2026-10-27",
+  "jp": "{何|なん} の {用|よう} だい 。 {下|した} に {行|い}きたい ？ {無理|むり} だ ね 。",
+  "en": "What do you want? To go down? Out of the question."
  },
  "scene:mb.passage_after#ufsfqg": {
   "status": "self-reviewed",
