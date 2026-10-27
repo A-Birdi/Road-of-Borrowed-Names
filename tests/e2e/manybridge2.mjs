@@ -78,6 +78,8 @@ await test('the press: compose a notice, proof, ink / press / peel, post it; the
   // RBN-QA-021: the page is a notice, and the press says so
   const note = await p.$eval('.pr-sheet', (e) => e.textContent);
   assert(/about the notice itself/.test(note) && !/the story itself/.test(note), 'the result speaks of the notice: ' + note.slice(0, 300));
+  // the language feedback is named where it is (the proof page), never as "next time" (Agnes 6443512281)
+  assert(/For feedback on the language, use “Set the type yourself” on the proof page\./.test(note) && !/next time/.test(note), 'the result points to setting the type on the proof page: ' + note.slice(-160));
   await click(p, '.pr-sheet [data-a=close]');
   await p.waitForFunction(() => window.__done);
   // meet a reader: their reaction is said (the hook the reader's talk injection runs)

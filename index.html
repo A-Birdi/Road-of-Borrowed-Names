@@ -135900,7 +135900,7 @@ RB.ui.press = (function () {
     const readers = P().waitingAll(s);
     ui.leaf.innerHTML = '<p class="pr-intro">It is out in the world. ' + (readers.length ? readers.length + ' people have it in their hands; when you meet them, they will tell you what they thought of it.' : 'Nobody you know has read it yet.') + '</p>' +
       '<ul class="pr-readers">' + readers.map((r) => '<li>' + esc(readerName(r)) + (r.where ? '<span class="muted small"> · ' + esc(r.where.en) + '</span>' : '') + '</li>').join('') + '</ul>' +
-      '<p class="muted small">What they say is about the ' + (rec && rec.kind === 'notice' ? 'notice' : 'story') + ' itself. If you want notes on the language, set the type yourself next time.</p>';
+      '<p class="muted small">What they say is about the ' + (rec && rec.kind === 'notice' ? 'notice' : 'story') + ' itself. For feedback on the language, use “Set the type yourself” on the proof page.</p>';
     ui.foot.innerHTML = btn('again', 'Print another', { icon: 'note' }) + '<span class="spacer"></span>' + btn('close', 'Leave the press', { go: true, icon: 'done' });
     ui.focus('[data-a=close]');
     return choice(ui);
