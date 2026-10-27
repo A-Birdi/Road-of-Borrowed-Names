@@ -899,6 +899,12 @@
   "jp": "…… {声|こえ} が 、 {出|で}た 。 {役|やく} の {名前|なまえ} は まだ {白|しろ}い けど 、 {誰|だれ} を {演|えん}じる か は 、 {分|わ}かった 。",
   "en": "…My voice came out. The part's name is still blank, but I know who I'm playing now."
  },
+ "scene:mp.saku_rehearse#rjmd1z": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (agreed by Agnes 6446936604/6447420475; Local CL-502; CC-358 §2), Sakutarō's established speech (polite です/ます to you, plain in a moment to himself, as 「声 が 、 出た 。」 and his other lines in mp/21_scenes_stage.js), the restoration's own words (mp.boss_won: 白かった 所 に 、 名前 が 戻って いた; 台本) and the quest's けいこ in kana (mp/06_quests.js): before the Understage his stage name has not come back and he keeps rehearsing under his own name; after it the script has the part's name, and only now does he know whom he plays",
+  "jp": "…… {声|こえ} が 、 {出|で}た 。 {役|やく} の {名前|なまえ} は {台本|だいほん} に {戻|もど}った けど 、 {誰|だれ} を {演|えん}じる か は 、 {今|いま} {分|わ}かった 。",
+  "en": "…My voice came out. The part's name was back in the script already, but only now do I know who I'm playing."
+ },
  "scene:mp.saku_rehearse#1y7he1f": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
@@ -916,6 +922,12 @@
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
   "jp": "{芸名|げいめい} も {戻|もど}って きました 。 でも {番付|ばんづけ} に は 、 {本名|ほんみょう} も {小|ちい}さく {刷|す}って もらいました 。",
   "en": "My stage name came back too. But I had my own name printed small on the playbill as well."
+ },
+ "scene:mp.saku_after#lazrh8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (agreed by Agnes 6446936604/6447420475; Local CL-502; CC-358 §2), Sakutarō's established speech (polite です/ます to you, plain in a moment to himself, as 「声 が 、 出た 。」 and his other lines in mp/21_scenes_stage.js), the restoration's own words (mp.boss_won: 白かった 所 に 、 名前 が 戻って いた; 台本) and the quest's けいこ in kana (mp/06_quests.js): before the Understage his stage name has not come back and he keeps rehearsing under his own name; after it the script has the part's name, and only now does he know whom he plays",
+  "jp": "{芸名|げいめい} は まだ {戻|もど}りません 。 でも 、 {本名|ほんみょう} の サクタロウ で 、 けいこ を {続|つづ}けて います 。",
+  "en": "My stage name hasn't come back yet. But I'm keeping up rehearsals as Sakutarō, my own name."
  },
  "scene:mp.hayashi#1d084et": {
   "status": "self-reviewed",
