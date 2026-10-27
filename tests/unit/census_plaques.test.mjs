@@ -7,9 +7,11 @@
 //  3. each scene with the real runner: read back with the census open, the name noted once; looked at again before
 //     Sen, the new line, nothing counted again; after Sen, the plaque reads its name;
 //  4. the older census's plaque scenes are untouched by this;
-//  5. (B) the person who named the bridge is remembered, never brought in: the scene says what they once told you, no
-//     line says they arrive, pass or speak now, and the scene neither brings anyone in nor walks anyone (no !enter,
-//     !walkto or !move), so nobody can appear at the map's edge or be left standing there.
+//  5. (B) the person who named the bridge is never brought in: no line says they arrive, pass or speak now, and the
+//     scene neither brings anyone in nor walks anyone (no !enter, !walkto or !move), so nobody can appear at the map's
+//     edge or be left standing there; (Agnes 6446430005; CC-356 §2) nor does it claim you ever talked with them (you
+//     may not have): it says whose description the clue is ("Sanpei describes this bridge:"), and that person is the
+//     one the census's clue quotes.
 import { load } from '../lib/load.mjs';
 
 export default async (t) => {
@@ -69,18 +71,26 @@ export default async (t) => {
   }
   t.eq(bad, [], 'each scene: the name noted once; looked at again before Sen, the new line and nothing counted; after Sen, the name');
 
-  // ---- 5. (B: Agnes's report, Kakeru at the ink bridge, and Sanpei with him; B2: Hayashi at the curtain bridge)
-  const TOLD = { hangi: 'Sanpei once told you about this bridge.', sumi: 'The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.',
-    maku: 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge.' };
+  // ---- 5. (B: Agnes's report, Kakeru at the ink bridge, and Sanpei with him; B2: Hayashi at the curtain bridge; then
+  // Agnes 6446430005: whose description it is, not a talk you may never have had)
+  const SAYS = { hangi: 'Sanpei describes this bridge:', sumi: 'The water under the bridge is cloudy black. Kakeru the courier describes this bridge:',
+    maku: 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer describes this bridge:' };
   const NOW = /runs up|says something|goes over the bridge|calls out/;
+  const TOLD = /once told you|told you about/;
   const told = [];
-  for (const [id, line] of Object.entries(TOLD)) {
+  for (const [id, line] of Object.entries(SAYS)) {
     journey({ census: { stage: 0, done: false, t: 1 } });
     const L = await run(id);
     const cmds = C.scenes['mp.plaque_' + id].cmds;
-    told.push(id + ': ' + (L[1] === line && !L.some((l) => NOW.test(l)) && !cmds.some((c) => /^(enter|walkto|move)$/.test(c.op)) ? 'ok' : JSON.stringify({ L, ops: cmds.map((c) => c.op) })));
+    const jp = cmds.filter((c) => c.op === 'say').map((c) => c.jp);
+    // the person the clue quotes (its English opens with their name: "Sanpei: …")
+    const who = C.challenges['mb.census_' + id].tiers.E[0].ctx.en.split(':')[0];
+    const ok = L[1] === line && line.includes(who + ' ') && !L.some((l) => NOW.test(l) || TOLD.test(l))
+      && !jp.some((j) => /\{前\|まえ\} に .*\{話\|はな\}して いた/.test(j)) && jp.some((j) => /この \{橋\|はし\} の こと を こう \{話\|はな\}す 。$/.test(j))
+      && !cmds.some((c) => /^(enter|walkto|move)$/.test(c.op));
+    told.push(id + ': ' + (ok ? 'ok' : JSON.stringify({ L, who, jp, ops: cmds.map((c) => c.op) })));
   }
-  t.eq(told, ['hangi: ok', 'sumi: ok', 'maku: ok'], 'the bridge\'s namer remembered, never brought in: what they once told you, nothing said to happen now, nobody walked');
+  t.eq(told, ['hangi: ok', 'sumi: ok', 'maku: ok'], 'the bridge\'s namer never brought in and never claimed as a talk you had: whose description it is (the one the clue quotes), nothing said to happen now, nobody walked');
 
   // ---- 4.
   const older = Object.keys(C.scenes).filter((id) => /^mb\.plaque_|^mb\.firstbridge_plaque$/.test(id));

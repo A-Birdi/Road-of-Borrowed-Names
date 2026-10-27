@@ -41,7 +41,7 @@ mb_sen: お{礼|れい} に 、 {刷|す}り{場|ば} で {刷|す}った {町|�
 ?(mb_pl_hangi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: サンペイ が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。 || Sanpei once told you about this bridge.
+narr: サンペイ は 、 この {橋|はし} の こと を こう {話|はな}す 。 || Sanpei describes this bridge:
 !challenge mb.census_hangi
 !set mb_pl_hangi
 !var mp_census + 1
@@ -55,7 +55,7 @@ narr: {名前|なまえ} を {帳面|ちょうめん} に {書|か}き{留|と}�
 ?(mb_pl_sumi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {橋|はし} の {下|した} の {水|みず} が 、 {黒|くろ}く {濁|にご}って いる 。 {飛脚|ひきゃく} の カケル が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。 || The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.
+narr: {橋|はし} の {下|した} の {水|みず} が 、 {黒|くろ}く {濁|にご}って いる 。 {飛脚|ひきゃく} の カケル は 、 この {橋|はし} の こと を こう {話|はな}す 。 || The water under the bridge is cloudy black. Kakeru the courier describes this bridge:
 !challenge mb.census_sumi
 !set mb_pl_sumi
 !var mp_census + 1
@@ -69,7 +69,7 @@ narr: {名前|なまえ} を {帳面|ちょうめん} に {書|か}き{留|と}�
 ?(mb_pl_maku) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {欄干|らんかん} に 、 {大|おお}きな {布|ぬの} を {干|ほ}した {跡|あと} が ある 。 {太鼓|たいこ} の ハヤシ が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。 || The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge.
+narr: {欄干|らんかん} に 、 {大|おお}きな {布|ぬの} を {干|ほ}した {跡|あと} が ある 。 {太鼓|たいこ} の ハヤシ は 、 この {橋|はし} の こと を こう {話|はな}す 。 || The railing has the marks of a great cloth hung to dry. Hayashi the drummer describes this bridge:
 !challenge mb.census_maku
 !set mb_pl_maku
 !var mp_census + 1

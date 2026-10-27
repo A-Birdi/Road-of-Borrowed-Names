@@ -2321,11 +2321,11 @@
   "jp": "{橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。",
   "en": "The bridge's plaque is blank. Only the grain of the wood shows."
  },
- "scene:mp.plaque_hangi#1xe41wj": {
+ "scene:mp.plaque_hangi#10efi2k": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the census's clues (each bridge's name as Sanpei and Kakeru explain it, mp/15_side.js), which these lines now present as remembered, and the game's lexicon: 前 に … 話して いた is a memory of an earlier telling, never an arrival now (RBN-QA-163)",
-  "jp": "サンペイ が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。",
-  "en": "Sanpei once told you about this bridge."
+  "ref": "self-reviewed by the lead line by line against its English (Agnes's form, 6446430005: whose description the clue is, \"… describes this bridge:\"), the census's clues that follow (each bridge's name in Sanpei's, Kakeru's and Hayashi's words, mp/15_side.js), RBN-QA-163 B and B2 (nobody arrives or speaks now) and the game's lexicon: は … この 橋 の こと を こう 話す frames the quotation as theirs, with no earlier talk claimed and no one present; the person and the place's sentence unchanged; proposed in CC-356 §2",
+  "jp": "サンペイ は 、 この {橋|はし} の こと を こう {話|はな}す 。",
+  "en": "Sanpei describes this bridge:"
  },
  "scene:mp.plaque_hangi#13hhup3": {
   "status": "self-reviewed",
@@ -2351,11 +2351,11 @@
   "jp": "{橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。",
   "en": "The bridge's plaque is blank. Only the grain of the wood shows."
  },
- "scene:mp.plaque_sumi#v7i8yf": {
+ "scene:mp.plaque_sumi#1v1k69k": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the census's clues (each bridge's name as Sanpei and Kakeru explain it, mp/15_side.js), which these lines now present as remembered, and the game's lexicon: 前 に … 話して いた is a memory of an earlier telling, never an arrival now (RBN-QA-163)",
-  "jp": "{橋|はし} の {下|した} の {水|みず} が 、 {黒|くろ}く {濁|にご}って いる 。 {飛脚|ひきゃく} の カケル が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。",
-  "en": "The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge."
+  "ref": "self-reviewed by the lead line by line against its English (Agnes's form, 6446430005: whose description the clue is, \"… describes this bridge:\"), the census's clues that follow (each bridge's name in Sanpei's, Kakeru's and Hayashi's words, mp/15_side.js), RBN-QA-163 B and B2 (nobody arrives or speaks now) and the game's lexicon: は … この 橋 の こと を こう 話す frames the quotation as theirs, with no earlier talk claimed and no one present; the person and the place's sentence unchanged; proposed in CC-356 §2",
+  "jp": "{橋|はし} の {下|した} の {水|みず} が 、 {黒|くろ}く {濁|にご}って いる 。 {飛脚|ひきゃく} の カケル は 、 この {橋|はし} の こと を こう {話|はな}す 。",
+  "en": "The water under the bridge is cloudy black. Kakeru the courier describes this bridge:"
  },
  "scene:mp.plaque_sumi#13hhup3": {
   "status": "self-reviewed",
@@ -2381,11 +2381,11 @@
   "jp": "{橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。",
   "en": "The bridge's plaque is blank. Only the grain of the wood shows."
  },
- "scene:mp.plaque_maku#r7npze": {
+ "scene:mp.plaque_maku#3tendh": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the census's clue (the bridge's name as Hayashi explains it, mp/15_side.js), which this line now presents as remembered, and the game's lexicon: 前 に … 話して いた is a memory of an earlier telling, never a call from the bank now (RBN-QA-163)",
-  "jp": "{欄干|らんかん} に 、 {大|おお}きな {布|ぬの} を {干|ほ}した {跡|あと} が ある 。 {太鼓|たいこ} の ハヤシ が 、 {前|まえ} に この {橋|はし} の こと を {話|はな}して いた 。",
-  "en": "The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge."
+  "ref": "self-reviewed by the lead line by line against its English (Agnes's form, 6446430005: whose description the clue is, \"… describes this bridge:\"), the census's clues that follow (each bridge's name in Sanpei's, Kakeru's and Hayashi's words, mp/15_side.js), RBN-QA-163 B and B2 (nobody arrives or speaks now) and the game's lexicon: は … この 橋 の こと を こう 話す frames the quotation as theirs, with no earlier talk claimed and no one present; the person and the place's sentence unchanged; proposed in CC-356 §2",
+  "jp": "{欄干|らんかん} に 、 {大|おお}きな {布|ぬの} を {干|ほ}した {跡|あと} が ある 。 {太鼓|たいこ} の ハヤシ は 、 この {橋|はし} の こと を こう {話|はな}す 。",
+  "en": "The railing has the marks of a great cloth hung to dry. Hayashi the drummer describes this bridge:"
  },
  "scene:mp.plaque_maku#13hhup3": {
   "status": "self-reviewed",

@@ -5,11 +5,11 @@
 //  2. looked at again: the new line, nothing counted again;
 //  3. saved, back to the title and loaded, the census still open: the board still blank, the same line;
 //  4. once Sen has the names: the board carved, the same as an older plaque read back, and the plaque reads its name;
-//  5. (B) the namer remembered, in each of their places: Kakeru (his usual place, the guild, Playhouse Row) at the ink
-//     bridge, Sanpei (on the street before Sōbē, in the press room after) at the woodblock bridge and (B2) Hayashi (his
-//     usual place on Playhouse Row, Blockprint Row, the meeting house's corner) at the curtain bridge: the scene says
-//     what they once told you, and no figure of theirs appears, walks or is left over (the scene at its own pace, not
-//     fast-forwarded);
+//  5. (B) the namer, in each of their places: Kakeru (his usual place, the guild, Playhouse Row) at the ink bridge,
+//     Sanpei (on the street before Sōbē, in the press room after) at the woodblock bridge and (B2) Hayashi (his usual
+//     place on Playhouse Row, Blockprint Row, the meeting house's corner) at the curtain bridge: the scene says whose
+//     description the clue is, never a talk you may not have had (Agnes 6446430005; CC-356 §2), and no figure of
+//     theirs appears, walks or is left over (the scene at its own pace, not fast-forwarded);
 //  6. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/census_plaques.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -82,18 +82,18 @@ ok(b4.likeOlder && !b4.blank && r4.said.length === 1 && /^The plaque reads: "Ink
   'once Sen has the names: the board carved like an older plaque, and the plaque reads its name (' + JSON.stringify({ b4, r4 }) + ')');
 errorsAll.push(...errors); await ctx.close();
 
-// ---- 5. the namer remembered, in each of their places
+// ---- 5. the namer, in each of their places: whose description it is
 {
   const CASES = [
-    ['Kakeru, his usual place', 'mp_kakeru', 1, {}, 21, 21, 'The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.'],
-    ['Kakeru, at the guild', 'mp_kakeru', 2, {}, 21, 21, 'The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.'],
-    ['Kakeru, on Playhouse Row', 'mp_kakeru', 3, {}, 21, 21, 'The water under the bridge is cloudy black. Kakeru the courier once told you about this bridge.'],
-    ['Sanpei, on the street', 'mp_sanpei', 1, { mp_sobe_met: false }, 17, 8, 'Sanpei once told you about this bridge.'],
-    ['Sanpei, in the press room', 'mp_sanpei', 1, {}, 17, 8, 'Sanpei once told you about this bridge.'],
+    ['Kakeru, his usual place', 'mp_kakeru', 1, {}, 21, 21, 'The water under the bridge is cloudy black. Kakeru the courier describes this bridge:'],
+    ['Kakeru, at the guild', 'mp_kakeru', 2, {}, 21, 21, 'The water under the bridge is cloudy black. Kakeru the courier describes this bridge:'],
+    ['Kakeru, on Playhouse Row', 'mp_kakeru', 3, {}, 21, 21, 'The water under the bridge is cloudy black. Kakeru the courier describes this bridge:'],
+    ['Sanpei, on the street', 'mp_sanpei', 1, { mp_sobe_met: false }, 17, 8, 'Sanpei describes this bridge:'],
+    ['Sanpei, in the press room', 'mp_sanpei', 1, {}, 17, 8, 'Sanpei describes this bridge:'],
     // (B2) Hayashi at the curtain bridge, from his usual place on Playhouse Row, Blockprint Row and the meeting house's corner
-    ['Hayashi, his usual place', 'mp_hayashi', 1, {}, 23, 25, 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge.', 'mp.playhouse', 24, 24],
-    ['Hayashi, on Blockprint Row', 'mp_hayashi', 2, {}, 23, 25, 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge.', 'mp.playhouse', 24, 24],
-    ['Hayashi, by the meeting house', 'mp_hayashi', 3, {}, 23, 25, 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer once told you about this bridge.', 'mp.playhouse', 24, 24],
+    ['Hayashi, his usual place', 'mp_hayashi', 1, {}, 23, 25, 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer describes this bridge:', 'mp.playhouse', 24, 24],
+    ['Hayashi, on Blockprint Row', 'mp_hayashi', 2, {}, 23, 25, 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer describes this bridge:', 'mp.playhouse', 24, 24],
+    ['Hayashi, by the meeting house', 'mp_hayashi', 3, {}, 23, 25, 'The railing has the marks of a great cloth hung to dry. Hayashi the drummer describes this bridge:', 'mp.playhouse', 24, 24],
   ];
   const res = [];
   for (const [name, who, slot, fl, px, py, line, map, sx, sy] of CASES) {
@@ -119,11 +119,11 @@ errorsAll.push(...errors); await ctx.close();
       on = false;
       return { before, after: mine().map((n) => n.x + ',' + n.y), most, moved, said };
     }, [FLAGS, fl, who, slot, px, py, map || 'mp.blockprint', sx || 22, sy || 21]);
-    const fit = r.said[1] === line && !r.said.some((l) => /runs up|says something|goes over the bridge|calls out/.test(l)) && r.most === r.before.length && !r.moved && JSON.stringify(r.after) === JSON.stringify(r.before);
+    const fit = r.said[1] === line && !r.said.some((l) => /runs up|says something|goes over the bridge|calls out|once told you|told you about/.test(l)) && r.most === r.before.length && !r.moved && JSON.stringify(r.after) === JSON.stringify(r.before);
     res.push(name + ': ' + (fit ? 'ok' : JSON.stringify(r)));
     errorsAll.push(...e2); await c2.close();
   }
-  ok(res.every((x) => /: ok$/.test(x)), 'the namer remembered in each of their places: what they once told you; no figure of theirs appears, walks or is left over (' + res.join(' | ') + ')');
+  ok(res.every((x) => /: ok$/.test(x)), 'the namer in each of their places: whose description it is, never a talk you had; no figure of theirs appears, walks or is left over (' + res.join(' | ') + ')');
 }
 
 ok(!errorsAll.length, 'no page errors' + (errorsAll.length ? ': ' + errorsAll.slice(0, 3).join(' | ') : ''));
