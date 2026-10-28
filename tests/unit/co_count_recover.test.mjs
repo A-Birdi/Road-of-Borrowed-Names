@@ -8,7 +8,10 @@
 //  4. with the real runner, after Chapter 3 and in the postgame: Sayo (and not her festival-eve lines), Kotarō, then
 //     Nobu's slip: the quest done once, the cup once, then their ordinary talk; in Chapter 3, Sayo goes on as before;
 //  5. Kotarō at a routine place, through its own first line (the usual_talk hook): his step;
-//  6. the clay swallow not yet given: Nobu gives it first (once), then takes the slip on the next talk.
+//  6. the clay swallow not yet given: while the quest is open Nobu takes the slip first (the guide marks him), then gives
+//     the swallow on the next talk, once (CC-370 (B));
+//  7. the swallow's option otherwise as before: never offered in Chapter 3; after it, offered with the quest never taken
+//     or done, held back only while the quest is open, and never again once the swallow is owned (Agnes 6458558475).
 import { load } from '../lib/load.mjs';
 
 export default async (t) => {
@@ -119,15 +122,41 @@ export default async (t) => {
     t.ok(s.quests.co_count.stage === 2 && line.test(said[0] || '') && said.some((l) => /Sayo's message\?/.test(l)), '5 ' + label + ': its own line, then his step (' + JSON.stringify(said) + ')');
   }
 
-  // ---- 6. the clay swallow not yet given, stage 2 after Chapter 3: the swallow first (once), then the slip
+  // ---- 6. the clay swallow not yet given, stage 2 after Chapter 3: the slip first (the guide on Nobu), then the swallow
   {
+    G.reset();
     const s = journey(AFTER, q(2), { swallow: false });
+    s.follow = 'co_count';
+    const marked = G.targets('co_count', s).targets.map(where).join(', ');
     said.length = 0; toasts.length = 0;
     const first = pick(nobu, s);
     await RB.script.run(first);
-    const kept = test(s, 'keepsake.clay_swallow'), mid = s.quests.co_count.done, second = pick(nobu, s);
+    const mid = s.quests.co_count.done, keptMid = test(s, 'keepsake.clay_swallow'), second = pick(nobu, s);
     await RB.script.run(second);
-    t.ok(first === 'cs.swallow_nobu' && kept && !mid && second === 'co.nobu' && s.quests.co_count.done && (s.inv.co_ash_cup || 0) === 1 && toasts.filter((x) => x === DONE).length === 1,
-      '6 the swallow not yet given: Nobu gives it first, then takes the slip (' + JSON.stringify({ first, kept, mid, second, q: s.quests.co_count }) + ')');
+    const third = pick(nobu, s);
+    t.ok(marked === 'co.pottery:npc:co_nobu' && first === 'co.nobu' && mid && !keptMid && second === 'cs.swallow_nobu' && test(s, 'keepsake.clay_swallow') && third === 'co.nobu_after' &&
+      (s.inv.co_ash_cup || 0) === 1 && toasts.filter((x) => x === DONE).length === 1,
+    '6 the swallow not yet given: the guide marks Nobu; he takes the slip first, then gives the swallow, once (' + JSON.stringify({ marked, first, mid, second, third, q: s.quests.co_count }) + ')');
   }
+
+  // ---- 7. the swallow's option: Nobu's first talk in each state (the oil-jar news not in play)
+  const firstTalk = (flags, quest, swallow) => pick(nobu, journey(flags, quest, { swallow }));
+  const sw = [];
+  for (const [label, flags] of [['in Chapter 3', Object.assign({}, IN, { co_kiln_open: true })], ['after Chapter 3', AFTER], ['postgame', POST]]) {
+    for (const [ql, quest] of [['never taken', null], ['stage 0', q(0)], ['stage 2', q(2)], ['done', done]]) {
+      sw.push(label + ', ' + ql + ', not owned: ' + firstTalk(flags, quest, false));
+      if (flags.ch3_done) sw.push(label + ', ' + ql + ', owned: ' + firstTalk(flags, quest, true));
+    }
+  }
+  t.eq(sw, [
+    'in Chapter 3, never taken, not owned: co.nobu', 'in Chapter 3, stage 0, not owned: co.nobu', 'in Chapter 3, stage 2, not owned: co.nobu', 'in Chapter 3, done, not owned: co.nobu',
+    'after Chapter 3, never taken, not owned: cs.swallow_nobu', 'after Chapter 3, never taken, owned: co.nobu_after',
+    'after Chapter 3, stage 0, not owned: co.nobu', 'after Chapter 3, stage 0, owned: co.nobu',
+    'after Chapter 3, stage 2, not owned: co.nobu', 'after Chapter 3, stage 2, owned: co.nobu',
+    'after Chapter 3, done, not owned: cs.swallow_nobu', 'after Chapter 3, done, owned: co.nobu_after',
+    'postgame, never taken, not owned: cs.swallow_nobu', 'postgame, never taken, owned: co.nobu_post',
+    'postgame, stage 0, not owned: co.nobu', 'postgame, stage 0, owned: co.nobu',
+    'postgame, stage 2, not owned: co.nobu', 'postgame, stage 2, owned: co.nobu',
+    'postgame, done, not owned: cs.swallow_nobu', 'postgame, done, owned: co.nobu_post',
+  ], '7 the swallow: never in Chapter 3; after it, offered when the quest is never taken or done, held back only while it is open, never once owned');
 };

@@ -70,8 +70,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   wrap('sg.harbor', 'sg_tideboard', 10, 25, 'sg.tidepost', 'cs.tidepost');
   props('sg.harbor', [{ p: 'cs_tidechalk', x: 10, y: 25, if: 'sg_tide_read' }]);
   firstTalk('sg.tidehut', 'shiori', { if: 'sg_tide_low&!keepsake.shell_button&!quest.sg_main=5&!quest.sg_main=6', scene: 'cs.shell_shiori' });
-  // Cinder Orchard: Nobu, after the chapter (the kiln's steps read)
-  firstTalk('co.pottery', 'co_nobu', { if: 'co_kiln_open&ch3_done&!keepsake.clay_swallow', scene: 'cs.swallow_nobu' });
+  // Cinder Orchard: Nobu, after the chapter (the kiln's steps read); while his counting quest is open, its slip first
+  // (Agnes, Local CL-518, CC-370 (B))
+  firstTalk('co.pottery', 'co_nobu', { if: 'co_kiln_open&ch3_done&!keepsake.clay_swallow&!quest.co_count=active', scene: 'cs.swallow_nobu' });
   // Snowbell: a box of paper stars in Hoshino's house, once the log has been read (he need not be home)
   props('sb.hoshino', [{ p: 'bookpile', x: 5, y: 2, scene: 'cs.rosette_box', if: 'sb_log_solved' }]);
   // Lanternfall: Tokuji at the sluice shore, after the bell rings

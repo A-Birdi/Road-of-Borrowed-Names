@@ -4,7 +4,7 @@
 //  1. one journey, the quest at Sayo's step: Sayo on the square (her step, and none of her festival-eve lines), Kotarō
 //     on the terraces where his routine has him (its own line, then his step), Nobu at the pottery (the slip: the quest
 //     done once, the cup once); each talked to again: their ordinary after-chapter lines, nothing twice;
-//  2. the postgame, the slip's step, the clay swallow not yet given: Nobu gives the swallow first, then takes the slip;
+//  2. the postgame, the slip's step, the clay swallow not yet given: Nobu takes the slip first, then gives the swallow;
 //  3. no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/co_count_recover.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -79,8 +79,8 @@ const state = (p) => p.evaluate(() => { const s = RB.game.s; return { q: s.quest
   const a1 = await state(p);
   const L2 = await talk(p, 'co_nobu');
   const a2 = await state(p);
-  ok(L1.some((x) => /clay|swallow/i.test(x)) && a1.swallow && !a1.q.done && L2.some((x) => /Clear as day/.test(x)) && a2.q.done && a2.cup === 1 && a2.done === 1,
-    '2 the postgame, the swallow not yet given: Nobu gives it first, then takes the slip (' + JSON.stringify({ L1, a1, L2, a2 }) + ')');
+  ok(L1.some((x) => /Clear as day/.test(x)) && a1.q.done && !a1.swallow && a1.cup === 1 && L2.some((x) => /swallow/i.test(x)) && a2.swallow && a2.cup === 1 && a2.done === 1,
+    '2 the postgame, the swallow not yet given: Nobu takes the slip first, then gives the swallow (' + JSON.stringify({ L1, a1, L2, a2 }) + ')');
   errorsAll.push(...errors);
   await ctx.close();
 }
