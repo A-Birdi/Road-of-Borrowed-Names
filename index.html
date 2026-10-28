@@ -151467,7 +151467,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'co_sayo', x: 28, y: 22, dir: 'down', wander: 1, if: 'ch3_done', talk: [{ if: 'post', scene: 'co.sayo_post' }, { scene: 'co.sayo_after' }] },
       { id: 'co_kotaro', x: 27, y: 20, dir: 'left', wander: 3, if: '!ch3_done', talk: [{ scene: 'co.kotaro' }] },
       { id: 'co_kotaro', x: 13, y: 15, dir: 'up', wander: 1, if: 'ch3_done', talk: [{ if: 'post', scene: 'co.kotaro_post' }, { scene: 'co.kotaro_after' }] },
-      { id: 'co_goro', x: 12, y: 13, dir: 'down', talk: [{ if: 'post', scene: 'co.goro_post' }, { if: 'ch3_done', scene: 'co.goro_after' }, { scene: 'co.goro' }] },
+      // (his bell quest, while it is open, is his to finish in any chapter; after the restoration his own scene finishes
+      // it and takes back a leftover rope. His routine places share this list: Agnes 6457243012, CL-513, CC-367)
+      { id: 'co_goro', x: 12, y: 13, dir: 'down', talk: [{ if: 'quest.co_bell=active', scene: 'co.goro' }, { if: 'post', scene: 'co.goro_post' }, { if: 'ch3_done', scene: 'co.goro_after' }, { scene: 'co.goro' }] },
       { id: 'co_tamotsu', x: 33, y: 22, dir: 'right', wander: 1, talk: [{ if: 'post', scene: 'co.tamotsu_post' }, { if: 'ch3_done', scene: 'co.tamotsu_after' }, { scene: 'co.tamotsu' }] },
       { id: 'co_heita', x: 20, y: 10, dir: 'down', if: '!co_firebreak_cut', talk: [{ scene: 'co.heita' }] },
       { id: 'co_heita', x: 16, y: 9, dir: 'left', wander: 2, if: 'co_firebreak_cut', talk: [{ if: 'post', scene: 'co.heita_post' }, { scene: 'co.heita_after' }] },
