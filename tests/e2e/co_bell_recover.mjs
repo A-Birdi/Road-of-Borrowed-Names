@@ -47,19 +47,22 @@ async function begin(p, o) {
   }, o);
 }
 const talk = (p, id) => p.evaluate(async (id) => { window.__said = []; await RB.test.talk(id); await RB.test.idle(); return window.__said.slice(); }, id);
-// the same, watching Gorō on every frame: the staged gestures he plays (a turning gesture's facing is drawn from its
-// run, src/engine/52_staging.js: run.dir), and every tile he stands on
+// the same, recording every gesture staged on Gorō as it is cued (RB.staging.cue returns its run at once, and a turning
+// gesture's facing is drawn from that run: src/engine/52_staging.js, run.dir), so a short gesture is never missed
+// between frames (Local CL-516); and every tile he stands on, read at each cue and on every frame
 const watched = (p, id) => p.evaluate(async (id) => {
-  const n = RB.world.W.npcs.find((a) => a.id === id), runs = [], tiles = new Set();
+  const n = RB.world.W.npcs.find((a) => a.id === id), runs = [], tiles = new Set(), cue = RB.staging.cue;
   let on = true;
-  const tick = () => {
-    if (!on) return;
-    const r = n.stg && n.stg.run, k = r ? r.id + (r.dir ? ':' + r.dir : '') : null;
-    if (k && runs[runs.length - 1] !== k) runs.push(k);
-    tiles.add(n.x + ',' + n.y); requestAnimationFrame(tick);
+  RB.staging.cue = function () {
+    const before = n.stg && n.stg.run, r = cue.apply(this, arguments), run = n.stg && n.stg.run;
+    if (run && run !== before) runs.push(run.id + (run.dir ? ':' + run.dir : ''));
+    tiles.add(n.x + ',' + n.y);
+    return r;
   };
+  const tick = () => { if (!on) return; tiles.add(n.x + ',' + n.y); requestAnimationFrame(tick); };
   tick();
-  window.__said = []; await RB.test.talk(id); await RB.test.idle(); on = false;
+  try { window.__said = []; await RB.test.talk(id); await RB.test.idle(); } finally { on = false; RB.staging.cue = cue; }
+  tiles.add(n.x + ',' + n.y);
   const P = RB.world.W.player; // (the helper stands you below him where it can)
   return { said: window.__said.slice(), runs, tiles: [...tiles], home: [n.def.x, n.def.y].join(','), pc: P.x + ',' + P.y };
 }, id);
