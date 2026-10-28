@@ -38,7 +38,8 @@ co_sayo: {忙|いそが}しくて 、 コタロウ に {伝言|でんごん} を
 !gesture co_sayo point co_kotaro
 co_sayo: コタロウ に {聞|き}いて みて 。 {何|なん} て {言|い}った の か 。 || Ask Kotarō what he actually said.
 !quest co_count 1
-!goto main
+# (after the story her festival-eve lines are past: the scene ends here, CC-367 §2)
+!if !ch3_done -> main
 
 @scene co.sayo_seats
 # Staged: Sayo holds up her seating chart and points to the empty seat at the end of the glassmakers' table;

@@ -146,9 +146,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: villageProps,
     npcs: [
       { id: 'co_sayo', x: 22, y: 15, dir: 'down', wander: 2, if: '!ch3_done', talk: [{ scene: 'co.sayo' }] },
-      { id: 'co_sayo', x: 28, y: 22, dir: 'down', wander: 1, if: 'ch3_done', talk: [{ if: 'post', scene: 'co.sayo_post' }, { scene: 'co.sayo_after' }] },
+      // (Sayo and Kotarō, after the story, still take their steps of Nobu's counting quest while it is open, as Nobu
+      // finishes it: Agnes 6458259496, CL-515, CC-367 §2)
+      { id: 'co_sayo', x: 28, y: 22, dir: 'down', wander: 1, if: 'ch3_done', talk: [{ if: 'quest.co_count=0', scene: 'co.sayo' }, { if: 'post', scene: 'co.sayo_post' }, { scene: 'co.sayo_after' }] },
       { id: 'co_kotaro', x: 27, y: 20, dir: 'left', wander: 3, if: '!ch3_done', talk: [{ scene: 'co.kotaro' }] },
-      { id: 'co_kotaro', x: 13, y: 15, dir: 'up', wander: 1, if: 'ch3_done', talk: [{ if: 'post', scene: 'co.kotaro_post' }, { scene: 'co.kotaro_after' }] },
+      { id: 'co_kotaro', x: 13, y: 15, dir: 'up', wander: 1, if: 'ch3_done', talk: [{ if: 'quest.co_count=1', scene: 'co.kotaro' }, { if: 'post', scene: 'co.kotaro_post' }, { scene: 'co.kotaro_after' }] },
       // (his bell quest, while it is open, is his to finish in any chapter; after the restoration his own scene finishes
       // it and takes back a leftover rope. His routine places share this list: Agnes 6457243012, CL-513, CC-367)
       { id: 'co_goro', x: 12, y: 13, dir: 'down', talk: [{ if: 'quest.co_bell=active', scene: 'co.goro' }, { if: 'post', scene: 'co.goro_post' }, { if: 'ch3_done', scene: 'co.goro_after' }, { scene: 'co.goro' }] },
@@ -315,7 +317,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'pot', x: 1, y: 6 }, { p: 'pot', x: 9, y: 6 },
     ],
     npcs: [
-      { id: 'co_nobu', x: 4, y: 5, dir: 'down', talk: [{ if: 'post', scene: 'co.nobu_post' }, { if: 'ch3_done', scene: 'co.nobu_after' }, { scene: 'co.nobu' }] },
+      // (his counting quest, while it is open, is his to finish in any chapter: Agnes 6458259496, CL-515, CC-367 §2)
+      { id: 'co_nobu', x: 4, y: 5, dir: 'down', talk: [{ if: 'quest.co_count=active', scene: 'co.nobu' }, { if: 'post', scene: 'co.nobu_post' }, { if: 'ch3_done', scene: 'co.nobu_after' }, { scene: 'co.nobu' }] },
     ],
   });
 
