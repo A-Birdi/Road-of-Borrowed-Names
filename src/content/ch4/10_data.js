@@ -60,7 +60,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: 'アカリ から の {手紙|てがみ} が {届|とど}かない 。 {郵便|ゆうびん}{小屋|ごや} の ソウスケ に {聞|き}こう 。', en: 'Letters from Hoshino\'s daughter Akari stopped arriving. Ask Sousuke at the post shelter near the hamlet entrance.' },
       { jp: 'アカリ の {手紙|てがみ} を ホシノ に {届|とど}けよう 。', en: 'You have Akari\'s letters, in order. Bring them to Hoshino.' },
       { jp: '{吹雪|ふぶき} が {来|く}る 。 {宿|やど} へ {急|いそ}ごう 。', en: 'A snowstorm is coming. Get to the inn.' },
-      { jp: '{雪見屋|ゆきみや} で {吹雪|ふぶき} が {過|す}ぎる の を {待|ま}とう 。 {部屋|へや} は {二階|にかい} だ 。', en: 'Wait out the storm at Yukimiya. When you are ready to rest, your room is upstairs.' },
+      // (in the morning, before the key, the step is Hoshino downstairs: Agnes 6458558475, CL-519, CC-371)
+      { jp: '{雪見屋|ゆきみや} で {吹雪|ふぶき} が {過|す}ぎる の を {待|ま}とう 。 {部屋|へや} は {二階|にかい} だ 。', en: 'Wait out the storm at Yukimiya. When you are ready to rest, your room is upstairs.',
+        textIf: [{ if: 'sb_morning', jp: '{吹雪|ふぶき} が やんだ 。 {雪見屋|ゆきみや} の {一階|いっかい} で 、 ホシノ と {話|はな}そう 。', en: 'The storm has passed. Talk to Hoshino downstairs at Yukimiya.' }] },
       { jp: '{吹雪|ふぶき} が やんだ 。 {星|ほし} の {石段|いしだん} を {上|のぼ}って 、 {天文台|てんもんだい} へ {行|い}こう 。', en: 'The storm has passed. Climb the Star Stair, past Hoshino\'s house, to the observatory.',
         // where it leads, named (RBN-QA-045): the ice on the Star Stair until it is melted (its scene only sets this stage
         // again, so the derivation could not count it as the step and fell back on the dial behind it); then derived
