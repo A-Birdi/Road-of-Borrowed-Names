@@ -903,6 +903,8 @@ RB.questGuide = (function () {
       return en && en.name ? { jp: en.name.jp, en: 'the ' + en.name.en } : { jp: '{何|なに}か', en: 'something' };
     }
     if (t.kind === 'prop' && t.p) {
+      // a prop's own noun, where its type's would mislead (the guest-book table is not a workbench: Agnes 6533320027)
+      if (t.def && t.def.noun) return { jp: t.def.noun[0], en: t.def.noun[1] };
       if (PROP[t.p]) return { jp: PROP[t.p][0], en: PROP[t.p][1] };
       for (const [re, jp, en] of PROP_PREFIX) if (re.test(t.p)) return { jp, en };
     }

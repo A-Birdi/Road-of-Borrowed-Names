@@ -389,7 +389,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Sono's inn at Sakashita, built by her grandfather, the last courier
   interior('cr.saka_inn', T('The Courier\'s Inn', '{飛脚宿|ひきゃくやど}'), 11, 8, 5, 'cr.sakashita', [7, 11], {
     props: [
-      { p: 'exitmat', x: 5, y: 6 }, { p: 'counter', x: 3, y: 2, across: true }, { p: 'table', x: 8, y: 3, scene: 'cr.guestbook' },
+      // (the guest books' table: the guide calls it a table, not a workbench, as its scene does: Agnes 6533320027)
+      { p: 'exitmat', x: 5, y: 6 }, { p: 'counter', x: 3, y: 2, across: true }, { p: 'table', x: 8, y: 3, scene: 'cr.guestbook', noun: ['{机|つくえ}', 'the table'] },
       // her grandfather's spare hat and relay coat on the shelf, as the scene shows them (RBN-QA-095; it held books)
       { p: 'shelf', x: 1, y: 2, scene: 'cr.saka_shelf', o: { keep: 'courier' } }, { p: 'lantern', x: 10, y: 3, o: { lit: true } }, { p: 'bench', x: 8, y: 5 },
     ],
