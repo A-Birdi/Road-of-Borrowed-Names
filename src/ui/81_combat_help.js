@@ -45,6 +45,11 @@ RB.combatHelp = (function () {
     if (st.charged && (it.kind === 'strike' || it.kind === 'sweep')) parts.push('+2 from Gathering');
     return { n: b.per, extra: parts.length ? ' (' + parts.join(', ') + ')' : '' };
   }
+  // Something the encounter asks you to protect, still standing (a lantern, the letter): a blow at one target may be
+  // aimed at it too, so the words say so without saying which; the Japanese says which (Agnes 6535686146; Local
+  // CL-528; Cloud CC-380). Sweeps, floods and gusts reach only the two of you, and keep their words.
+  const guarding = (st) => (st.actors || []).some((a) => a.side === 'object' && a.protectable && !a.left && (a.hp == null || a.hp > 0));
+  const whom = (st) => (st.compId ? 'one of you' : 'you') + (guarding(st) ? ', or what you protect' : '');
   // A few words beside the move's name, so the telegraph reads at a glance.
   function gist(st, it) {
     const b = L().blowOf(st, it);
@@ -52,7 +57,7 @@ RB.combatHelp = (function () {
     const H = L().HEAT;
     switch (it.kind) {
       case 'strike': case 'lie': case 'mirror': case 'chill':
-        return st.compId ? n + ' to one of you' : n + ' to you';
+        return n + ' to ' + whom(st);
       case 'sweep': case 'flood': return st.compId ? n + ' to each of you' : n + ' to you';
       case 'gust': return n + ' to you, strips wards';
       case 'heat': return (st.heat || 0) >= H.max ? 'already at its hottest (' + H.max + ')' : 'rises by 1 unless cooled';
@@ -77,8 +82,8 @@ RB.combatHelp = (function () {
     const noneYet = (what) => what + ' — you don\'t know one yet.';
     let title = it.label, what = '', answer = '';
     if (k === 'strike') {
-      title = 'Strike — a blow at one of you';
-      what = duo ? 'It hits one of you for ' + b.n + b.extra + '. The Japanese says who.' : 'It hits you for ' + b.n + b.extra + '.';
+      title = 'Strike — a blow at one of you' + (guarding(st) ? ', or what you protect' : '');
+      what = guarding(st) ? 'It hits ' + whom(st) + ', for ' + b.n + b.extra + '. The Japanese says which.' : duo ? 'It hits one of you for ' + b.n + b.extra + '. The Japanese says who.' : 'It hits you for ' + b.n + b.extra + '.';
       answer = known.length ? 'Raise a ward in front of the one it is aiming at — use ' + list(known) + ': that blocks it completely.' : 'Nothing you know blocks it yet: Unravel and take the blow.';
     } else if (k === 'sweep') {
       title = duo ? 'Sweep — a group attack on both of you' : 'Sweep — a wide blow';
@@ -110,7 +115,7 @@ RB.combatHelp = (function () {
       answer = known.length ? 'Rope or light stops it: use ' + list(known) + '.' : noneYet('Rope or light stops it');
     } else if (k === 'lie') {
       title = 'False promise — a lie with a blow behind it';
-      what = 'It says something untrue; if you let it stand, it hits ' + (duo ? 'one of you' : 'you') + ' for ' + b.n + b.extra + '.';
+      what = 'It says something untrue; if you let it stand, it hits ' + whom(st) + (guarding(st) ? ',' : '') + ' for ' + b.n + b.extra + '.';
       answer = 'Choose See through (<span class="kwj" lang="ja">みぬく</span>) and say what is false: that stops the blow.' +
         (st.compId === 'suzu' ? ' With Suzu beside you, a correct Unravel also stops it.' : '');
     } else if (k === 'plea') {
@@ -127,8 +132,8 @@ RB.combatHelp = (function () {
       answer = (known.length ? 'Stone or earth banks it and cancels it: use ' + list(known) + '.' : noneYet('Stone or earth cancels it')) +
         (withTag(words, ['ward']).length ? ' A ward soaks up to 2 of it for the one it guards.' : '');
     } else if (k === 'chill') {
-      title = 'Chill — a freezing breath at one of you';
-      what = duo ? 'It hits one of you for ' + b.n + b.extra + '. The Japanese says who.' : 'It hits you for ' + b.n + b.extra + '.';
+      title = 'Chill — a freezing breath at one of you' + (guarding(st) ? ', or what you protect' : '');
+      what = guarding(st) ? 'It hits ' + whom(st) + ', for ' + b.n + b.extra + '. The Japanese says which.' : duo ? 'It hits one of you for ' + b.n + b.extra + '. The Japanese says who.' : 'It hits you for ' + b.n + b.extra + '.';
       answer = known.length ? 'Fire or warmth cancels it: use ' + list(known) + '.' : noneYet('A fire or warm word cancels it');
     } else if (k === 'silence') {
       title = 'Hush — it drains the sound away';
@@ -136,7 +141,7 @@ RB.combatHelp = (function () {
       answer = known.length ? 'A bell or a voice breaks it: use ' + list(known) + ' — that stops this and breaks any hush.' : 'You know no bell or voice word yet, so the hush can\'t block your Unravel.';
     } else if (k === 'mirror') {
       title = 'Mirror — your words, turned inside out';
-      what = 'It repeats something real but twists it, and hits ' + (duo ? 'one of you' : 'you') + ' for ' + b.n + b.extra + '.';
+      what = 'It repeats something real but twists it, and hits ' + whom(st) + (guarding(st) ? ',' : '') + ' for ' + b.n + b.extra + '.';
       const light = withTag(words, ['light']);
       answer = 'Choose See through (<span class="kwj" lang="ja">みぬく</span>) and say what it changed: that stops the blow and loosens a knot.' +
         (light.length ? ' Light also stops the blow: ' + list(light) + '.' : '');

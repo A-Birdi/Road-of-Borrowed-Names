@@ -1332,7 +1332,8 @@ RB.combat = (function () {
         if (f.who === 'comp') v.comp = Math.max(0, v.comp - f.n); else if (a) a.hp = Math.max(0, (a.hp || 0) - f.n); else if (!actorAt(f.who)) v.pc = Math.max(0, v.pc - f.n);
         sfx('party_hit');
         const hb = L().heatBonus(fo);
-        msg = (isGroup() ? 'The ' + shortEn(fi) + ' strikes ' + nm(f.who) : cap(nm(f.who)) + ' is struck') + ' (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ')' + (f.held ? ' — the salts keep them standing' : '') + '.'; break;
+        // (a participant's name opens the line with a capital; yours and your companion's stay as written: CC-380)
+        msg = (isGroup() ? 'The ' + shortEn(fi) + ' strikes ' + nm(f.who) : (actorAt(f.who) ? cap(nm(f.who)) : nm(f.who)) + ' is struck') + ' (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ')' + (f.held ? ' — the salts keep them standing' : '') + '.'; break;
       }
       case 'block': v.ward[f.who] = Math.max(0, (v.ward[f.who] || 0) - f.n); sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
       case 'heatThrough': msg = who('Its Heat pushes through the ward word: +' + f.n + ' still comes at ' + nm(f.who) + '.'); break;
