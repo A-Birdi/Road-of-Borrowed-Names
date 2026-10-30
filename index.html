@@ -116258,12 +116258,20 @@ RB.combat = (function () {
     const solo = !s.comp;
     const pool = linePool(it);
     if (!pool.length) return { jp: '', en: moveLabel(it) };
+    // a move aimed at one of the encounter's own participants (a lantern to keep lit: Agnes 6532997433, CC-376 §1)
+    const actor = actorAt(it.target);
     let cands = pool;
-    if (solo || it.target === 'both') cands = pool.filter((x) => !x.neg);
+    if (solo || it.target === 'both' || actor) cands = pool.filter((x) => !x.neg);
     if (!cands.length) cands = pool;
     const f = st.foes[i] || st.foes[0];
     if (!linePicks.has(it)) linePicks.set(it, (st.round + f.knots + (i || 0) * 3) % cands.length);
     const pick = cands[linePicks.get(it) % cands.length];
+    // named as it is, in both languages: its name goes into the line itself (a name with readings is not a plain word to
+    // fill in), the lines about the one not aimed at are left out, and there is no recording of it (voice is paused)
+    if (actor) {
+      const en = (pick.en || '').replace(/\$tgtEn/g, actor.name.en);
+      return { jp: (pick.jp || '').replace(/\$tgt\b/g, actor.name.jp), en: en && en[0].toUpperCase() + en.slice(1), vars: {}, neg: !!pick.neg, said: null };
+    }
     const nm = { pc: s.player.nameJp || s.player.name, comp: s.comp ? RB.jp.plain(RB.content.chars[s.comp].name.jp) : '' };
     const nmEn = { pc: s.player.name, comp: s.comp ? RB.content.chars[s.comp].name.en : '' };
     const tgt = it.target === 'comp' ? 'comp' : 'pc';
@@ -116483,6 +116491,15 @@ RB.combat = (function () {
   const NTH = ['', 'first', 'second', 'third', 'fourth', 'fifth'];
   function ordOf(i) { const o = st && st.foes.length > 1 ? L().order(st).find((x) => x.i === i) : null; return o || null; }
   function aimEn(a) { return a === 'pc' ? 'you' : a === 'comp' ? compName() : a === 'both' ? 'you both' : a && st.enc ? ((ENC().actorOf(st, a) || {}).name || { en: a }).en : ''; }
+  // one of the encounter's own participants by its id (a guest, a lantern to keep lit), or null: the player, the companion
+  // and both are not participants of this kind
+  function actorAt(a) {
+    if (!a || a === 'pc' || a === 'comp' || a === 'both' || !st || !st.enc) return null;
+    const x = ENC().actorOf(st, a);
+    return x && x.name ? x : null;
+  }
+  // whom a card, a move or a blow is for, in English: your companion, a participant by its own name, else you
+  const allyEn = (a, you) => (a === 'comp' ? compName() : actorAt(a) ? actorAt(a).name.en : you);
   function slipsHtml() {
     const v = V();
     const lay = RB.battleStage.lay();
@@ -116659,7 +116676,7 @@ RB.combat = (function () {
   const nWord = (n) => (n === 2 ? 'both' : n === 3 ? 'all three' : 'all ' + n);
   function reachLabel(c, r) {
     const group = isGroup(), up = L().standing(st).length;
-    const ally = (a) => (a === 'comp' ? compName() : 'you');
+    const ally = (a) => allyEn(a, 'you');
     if (c.kind === 'word' && (c.word.tags || []).indexOf('ward') >= 0) return 'on ' + ally(c.target);
     if (!group) return '';
     if (r.foes.length > 1) return 'on ' + nWord(r.foes.length) + (r.allies.length ? ' · you both' : '');
@@ -117099,10 +117116,10 @@ RB.combat = (function () {
         const r = reachFor({ getAttribute: () => String(opts.indexOf(o)) }) || { foes: [], allies: [] };
         if (o.def.id === 'join') return '';
         if (r.foes.length > 1) return 'on ' + nWord(r.foes.length);
-        if (r.foes.length === 1 && o.def.aim === 'aimed') return 'before ' + (r.allies[0] === 'comp' ? cn : 'you');
+        if (r.foes.length === 1 && o.def.aim === 'aimed') return 'before ' + allyEn(r.allies[0], 'you');
         if (r.foes.length === 1) return isGroup() ? 'on the ' + shortEn(r.foes[0]) : 'on it';
         if (r.allies.length > 1) return 'on you both';
-        if (r.allies.length === 1) return 'on ' + (r.allies[0] === 'comp' ? cn : 'you');
+        if (r.allies.length === 1) return 'on ' + allyEn(r.allies[0], 'you');
         return '';
       };
       const render = () => {
@@ -117232,7 +117249,7 @@ RB.combat = (function () {
   // telegraph, and the response (and whom it acts on) the player chose.
   function situationHtml(card) {
     const r = reachOf(card);
-    const tgt = reachLabel(card, r) || (card.target ? (card.target === 'comp' ? 'on ' + compName() : 'on you') : '');
+    const tgt = reachLabel(card, r) || (card.target ? 'on ' + allyEn(card.target, 'you') : '');
     const T = st.cur;
     const who = isGroup() && r.foes.length > 1 ? r.foes : [T];
     return '<div class="cb-situ">' + who.map((i) =>
@@ -117289,7 +117306,8 @@ RB.combat = (function () {
     const v = view;
     const fi = f.foe != null ? f.foe : v.cur;
     const fo = v.foes[fi] || v.foes[0];
-    const nm = (who) => (who === 'comp' ? RB.content.chars[s.comp].name.en : s.player.name);
+    const nm = (who) => (who === 'comp' ? RB.content.chars[s.comp].name.en : allyEn(who, s.player.name));
+    const cap = (t) => t[0].toUpperCase() + t.slice(1);
     // in a group, a line about one creature says which
     const who = (en) => (isGroup() ? 'The ' + shortEn(fi) + ': ' + en : en);
     const was = { pc: v.pc, comp: v.comp };
@@ -117316,10 +117334,12 @@ RB.combat = (function () {
       case 'warm': sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
       case 'bell': v.silenced = 0; sfx('bell'); msg = f.by ? '' : 'A clear note breaks the hush.'; break;
       case 'hit': {
-        if (f.who === 'comp') v.comp = Math.max(0, v.comp - f.n); else v.pc = Math.max(0, v.pc - f.n);
+        // only the one struck: a participant (a lantern) on its own count, none of the party's bars
+        const a = actorAt(f.who) && (v.actors || []).find((x) => x.aid === f.who);
+        if (f.who === 'comp') v.comp = Math.max(0, v.comp - f.n); else if (a) a.hp = Math.max(0, (a.hp || 0) - f.n); else if (!actorAt(f.who)) v.pc = Math.max(0, v.pc - f.n);
         sfx('party_hit');
         const hb = L().heatBonus(fo);
-        msg = (isGroup() ? 'The ' + shortEn(fi) + ' strikes ' + nm(f.who) : nm(f.who) + ' is struck') + ' (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ')' + (f.held ? ' — the salts keep them standing' : '') + '.'; break;
+        msg = (isGroup() ? 'The ' + shortEn(fi) + ' strikes ' + nm(f.who) : cap(nm(f.who)) + ' is struck') + ' (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ')' + (f.held ? ' — the salts keep them standing' : '') + '.'; break;
       }
       case 'block': v.ward[f.who] = Math.max(0, (v.ward[f.who] || 0) - f.n); sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
       case 'heatThrough': msg = who('Its Heat pushes through the ward word: +' + f.n + ' still comes at ' + nm(f.who) + '.'); break;
