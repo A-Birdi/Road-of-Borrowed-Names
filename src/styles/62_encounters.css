@@ -49,7 +49,7 @@
 .rcard .rc-new.rc-tried { background: var(--ink-3); }
 .combat-ui .rcard.pointed, .enc-sheet .rcard.pointed { box-shadow: inset 4px 0 0 var(--river), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge); }
 .rcard.tried { opacity: 0.85; }
-.ccards + .cq-more { margin-top: 6px; }
+.ccards + .cq-more, .ccards + .cq-none, .cq-more + .cq-none { margin-top: 6px; }
 
 /* the encounter screen: conversations and machines */
 .enc-sheet .leaf { padding-bottom: 12px; }

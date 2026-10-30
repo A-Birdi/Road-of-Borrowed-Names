@@ -3802,7 +3802,7 @@ body.reduced-motion .cb-badges .cb-ib { transition: none; }
 .rcard .rc-new.rc-tried { background: var(--ink-3); }
 .combat-ui .rcard.pointed, .enc-sheet .rcard.pointed { box-shadow: inset 4px 0 0 var(--river), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge); }
 .rcard.tried { opacity: 0.85; }
-.ccards + .cq-more { margin-top: 6px; }
+.ccards + .cq-more, .ccards + .cq-none, .cq-more + .cq-none { margin-top: 6px; }
 
 /* the encounter screen: conversations and machines */
 .enc-sheet .leaf { padding-bottom: 12px; }
@@ -65983,6 +65983,8 @@ RB.combatSim = (function () {
   }
   // companion actions on offer (ids), with what each would aim at
   function compChoices(st, s, card) {
+    // in a conversation, the encounter's own actions only, as the screen offers them (src/engine/97_encounter.js)
+    if (st.enc && st.enc.social && RB.encounter) return RB.encounter.companionOptions(st, s).map((o) => o.def);
     return L.compOptions(st, s, card).filter((o) => !o.locked && !o.used).map((o) => o.def);
   }
   // The choice for this round: { card, target (creature index), act (companion action id or null), actTarget }
@@ -66772,7 +66774,9 @@ RB.encounter = (function () {
     const S = st.enc.def.social;
     const a = ((S.companion || {})[st.compId] || []).find((x) => x.id === id);
     const fx = [];
-    if (!a) return fx;
+    // only while its own condition holds and, if once, not yet used: as companionOptions offers it (an ordinary move
+    // that shares an authored action's id never reaches it outside those gates: mb.dispute's nao_route; CC-376 §2)
+    if (!a || !test(st, a.when) || (a.once && (st.compUses[a.id] || 0) > 0)) return fx;
     st.compUses[id] = (st.compUses[id] || 0) + 1;
     applyEffect(st, a.effect || {}, fx);
     fx.push({ t: 'cact', who: st.compId, id, en: a.says ? a.says.en : '', jp: a.says ? a.says.jp : '' });
@@ -66917,9 +66921,16 @@ RB.encounter = (function () {
   // opens the menu; Nao still reads, Ren still wards.
   const PLAN = { heal: 'protect', salts: 'protect', ward: 'protect', share: 'protect', draw: 'protect', drawAll: 'protect', soften: 'protect', opening: 'reveal', clear: 'reveal', knot: 'press', stun: 'press', heckle: 'press', harmony: 'press' };
   const planOf = (def) => def.plan || PLAN[def.effect && def.effect.kind] || null;
+  // The companion actions the battle screen offers: in a conversation, the encounter's own authored actions only, since
+  // socialCompanion takes no other (an ordinary move there does nothing: Agnes 6532997433, CC-376 §2); otherwise the
+  // companion's moves and the encounter's own. One selection for the menu, the ranking and the plans.
+  function menuOptions(st, s, card) {
+    if (st.enc && st.enc.social) return companionOptions(st, s);
+    return L().compOptions(st, s, card).filter((o) => !o.locked).concat(companionOptions(st, s));
+  }
   // How useful each companion action is with this response queued: each tried on a copy for one exchange.
   function ranked(st, s, card, words, T) {
-    const opts = L().compOptions(st, s, card).filter((o) => !o.locked).concat(companionOptions(st, s));
+    const opts = menuOptions(st, s, card);
     // (nor in a conversation with a creature in it: the look-ahead's copy shares the encounter, and a social action
     // would be applied to the live conversation; RBN-QA-056, Local CL-082)
     if (!RB.combatSim || !st.foes.length || (st.enc && st.enc.social)) return opts.map((o) => ({ o, v: 0 }));
@@ -66933,7 +66944,7 @@ RB.encounter = (function () {
   // The menu: in content order while there are six or fewer (as the game has always shown them); beyond six, the
   // six most useful against what is telegraphed, and the rest a page away (never removed).
   function compMenu(st, s, card, words, T) {
-    const all = L().compOptions(st, s, card).filter((o) => !o.locked).concat(companionOptions(st, s));
+    const all = menuOptions(st, s, card);
     if (all.length <= 6) return { shown: all, more: [] };
     const r = ranked(st, s, card, words, T).sort((a, b) => b.v - a.v).map((x) => x.o);
     return { shown: r.slice(0, 6), more: r.slice(6) };
@@ -117075,6 +117086,7 @@ RB.combat = (function () {
       // page away; an encounter's own actions for the companion (E10) among them
       const menu = ENC().compMenu(st, s, card, words(), st.cur);
       let opts = menu.shown;
+      const social = !!(st.enc && st.enc.social);
       const cn = compName();
       const pn = s.player.name;
       tg.compTarget = st.cur;
@@ -117109,7 +117121,10 @@ RB.combat = (function () {
               (t ? '<span class="rc-tgt">' + esc(t) + '</span>' : '') +
               '<span class="rc-d">' + esc(d.desc || '') + (d.uses ? '<span class="rc-uses">' + (used ? 'Used in this encounter' : 'Once per encounter') + '</span>' : '') + '</span></button>';
           }).join('') + '</div>' +
-          (menu.more.length && opts === menu.shown ? '<button type="button" class="pbtn quiet cq-more" data-more>' + I('next') + '<span>More of ' + esc(cn) + '\'s moves (' + menu.more.length + ')</span></button>' : '');
+          (menu.more.length && opts === menu.shown ? '<button type="button" class="pbtn quiet cq-more" data-more>' + I('next') + '<span>More of ' + esc(cn) + '\'s moves (' + menu.more.length + ')</span></button>' : '') +
+          // in a conversation the companion may add nothing this time, as the conversation sheet asks
+          // (src/ui/80s_encounter.js): their own actions there are the encounter's, most of them once, and when is yours
+          (social ? '<button type="button" class="pbtn quiet cq-none" data-none>' + I('rest') + '<span>Nothing this time</span></button>' : '');
         if (focusedA != null) { const b = ui.resp.querySelector('[data-a="' + focusedA + '"]'); if (b) b.focus({ preventScroll: true }); }
         refreshMarks();
       };
@@ -117142,6 +117157,7 @@ RB.combat = (function () {
       ui.resp.onclick = (e) => {
         if (early()) return;
         if (e.target.closest('[data-back]')) { done('back'); return; }
+        if (e.target.closest('[data-none]')) { tg.hover = null; done(null); return; }
         if (e.target.closest('[data-more]')) { opts = menu.shown.concat(menu.more); render(); return; }
         const b = e.target.closest('[data-a]');
         if (b && !b.disabled) { const o = opts[+b.getAttribute('data-a')]; tg.hover = null; done({ act: o.def, target: tg.compTarget }); }

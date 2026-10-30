@@ -662,7 +662,9 @@ RB.encounter = (function () {
     const S = st.enc.def.social;
     const a = ((S.companion || {})[st.compId] || []).find((x) => x.id === id);
     const fx = [];
-    if (!a) return fx;
+    // only while its own condition holds and, if once, not yet used: as companionOptions offers it (an ordinary move
+    // that shares an authored action's id never reaches it outside those gates: mb.dispute's nao_route; CC-376 §2)
+    if (!a || !test(st, a.when) || (a.once && (st.compUses[a.id] || 0) > 0)) return fx;
     st.compUses[id] = (st.compUses[id] || 0) + 1;
     applyEffect(st, a.effect || {}, fx);
     fx.push({ t: 'cact', who: st.compId, id, en: a.says ? a.says.en : '', jp: a.says ? a.says.jp : '' });
@@ -807,9 +809,16 @@ RB.encounter = (function () {
   // opens the menu; Nao still reads, Ren still wards.
   const PLAN = { heal: 'protect', salts: 'protect', ward: 'protect', share: 'protect', draw: 'protect', drawAll: 'protect', soften: 'protect', opening: 'reveal', clear: 'reveal', knot: 'press', stun: 'press', heckle: 'press', harmony: 'press' };
   const planOf = (def) => def.plan || PLAN[def.effect && def.effect.kind] || null;
+  // The companion actions the battle screen offers: in a conversation, the encounter's own authored actions only, since
+  // socialCompanion takes no other (an ordinary move there does nothing: Agnes 6532997433, CC-376 §2); otherwise the
+  // companion's moves and the encounter's own. One selection for the menu, the ranking and the plans.
+  function menuOptions(st, s, card) {
+    if (st.enc && st.enc.social) return companionOptions(st, s);
+    return L().compOptions(st, s, card).filter((o) => !o.locked).concat(companionOptions(st, s));
+  }
   // How useful each companion action is with this response queued: each tried on a copy for one exchange.
   function ranked(st, s, card, words, T) {
-    const opts = L().compOptions(st, s, card).filter((o) => !o.locked).concat(companionOptions(st, s));
+    const opts = menuOptions(st, s, card);
     // (nor in a conversation with a creature in it: the look-ahead's copy shares the encounter, and a social action
     // would be applied to the live conversation; RBN-QA-056, Local CL-082)
     if (!RB.combatSim || !st.foes.length || (st.enc && st.enc.social)) return opts.map((o) => ({ o, v: 0 }));
@@ -823,7 +832,7 @@ RB.encounter = (function () {
   // The menu: in content order while there are six or fewer (as the game has always shown them); beyond six, the
   // six most useful against what is telegraphed, and the rest a page away (never removed).
   function compMenu(st, s, card, words, T) {
-    const all = L().compOptions(st, s, card).filter((o) => !o.locked).concat(companionOptions(st, s));
+    const all = menuOptions(st, s, card);
     if (all.length <= 6) return { shown: all, more: [] };
     const r = ranked(st, s, card, words, T).sort((a, b) => b.v - a.v).map((x) => x.o);
     return { shown: r.slice(0, 6), more: r.slice(6) };

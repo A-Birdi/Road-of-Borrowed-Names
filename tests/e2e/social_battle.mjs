@@ -14,6 +14,13 @@
 //     setup): no writing asked, played, no page errors.
 //  5. with a standing plan for the companion's turn (Protect, Reveal, Press), on the Shadow with each companion and a
 //     spot check of the other eight: each social action applied once, the understanding one step at a time.
+// The companion's turn in a conversation (Agnes 6532997433, 6533320027; Local CL-526; Cloud CC-376 §2, CC-378): it offers
+// the encounter's own action for the companion and "Nothing this time", as the conversation sheet does; a plan picks
+// nothing there, so the turn is asked. 1, 2, 4 and the plans in 5 answer "Nothing this time", so the corrections are
+// what they measure; 3 and the spot checks take the companion's own action (the first card), and check:
+//  6. all nine: the turn offers that action alone and "Nothing this time"; taken with the real button, it is applied
+//     once, and the turn is not asked again;
+//  7. on the Shadow with each plan, the action taken: applied once, asked once, the account still put right.
 // Each card is pressed on its English label: pressing the Japanese label's words is RBN-QA-057 (card_press.mjs).
 // Usage: node tools/build.mjs && node tests/e2e/social_battle.mjs
 import { serve, launch, page, companionTurn } from './lib.mjs';
@@ -48,7 +55,7 @@ const view = (p) => p.evaluate(() => {
   return { combat: !!st, phase: RB.combat.phase(), u: E && E.social ? E.social.understanding : null, used: E && E.social ? Object.keys(E.social.used) : [],
     chal: !!document.querySelector('.chal'), ccard: !!document.querySelector('.ccard'), sheet: !!document.querySelector('.csheet .pbtn'),
     cards: [...document.querySelectorAll('.rcard[data-i]')].filter((x) => !x.disabled).map((x) => ({ i: x.getAttribute('data-i'), en: ((x.querySelector('.rc-en') || {}).textContent || '').trim() })),
-    dlg: RB.ui.dialogue.isOpen(), res: window.__res, mode: RB.game.mode() };
+    dlg: RB.ui.dialogue.isOpen(), res: window.__res, mode: RB.game.mode(), cu: st ? Object.assign({}, st.compUses) : null };
 });
 // answer the open language step: wrong first when asked, then right (choice mode)
 async function answer(p, wrongFirst) {
@@ -70,15 +77,35 @@ async function answer(p, wrongFirst) {
   await p.click('.fbwrap[data-fb=ok] .fb-go');
   return wrongSeen;
 }
-// drive the encounter with the real buttons: each social action once, the gesture when offered, then Wait
+// the companion's turn in a conversation, as offered: its cards' English names and whether "Nothing this time" is there
+const compTurn = (p) => p.evaluate(() => ({ cards: [...document.querySelectorAll('.ccard')].map((c) => ((c.querySelector('.rc-en') || {}).textContent || '').trim()), none: !!document.querySelector('.cq-none[data-none]') }));
+// "Nothing this time", pressed with the real pointer (after the menu's first moments, and its first-time note)
+async function decline(p) {
+  await p.waitForTimeout(320);
+  if (await p.evaluate(() => !!document.querySelector('[data-coach-ok]'))) { await p.mouse.move(2, 2); await p.waitForTimeout(300); await p.click('[data-coach-ok]'); await p.waitForTimeout(80); }
+  const pt = await p.evaluate(() => {
+    const el = document.querySelector('.cq-none[data-none]');
+    if (!el) return null;
+    el.scrollIntoView({ block: 'nearest' });
+    const r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, top = document.elementFromPoint(x, y);
+    return top && top.closest('[data-none]') ? { x, y } : null;
+  });
+  if (!pt) throw new Error('"Nothing this time" is not there to press');
+  await p.mouse.click(pt.x, pt.y);
+  await p.waitForTimeout(120);
+}
+// drive the encounter with the real buttons: each social action once, the gesture when offered, then Wait; at the
+// companion's turn, the first card (o.comp unset) or "Nothing this time" (o.comp === 'none')
 async function drive(p, id, o = {}) {
-  const def = await p.evaluate((id) => { const d = RB.content.encounters[id]; return { actions: (d.social.actions || []).map((a) => ({ id: a.id, en: a.label.en, task: !!a.task })), gesture: d.social.gesture ? d.social.gesture.name.en : null, conclusions: (d.conclusions || []).map((c) => c.id) }; }, id);
+  const def = await p.evaluate((id) => { const d = RB.content.encounters[id]; return { actions: (d.social.actions || []).map((a) => ({ id: a.id, en: a.label.en, task: !!a.task })), gesture: d.social.gesture ? d.social.gesture.name.en : null, conclusions: (d.conclusions || []).map((c) => c.id), comp: ((d.social.companion || {})[RB.game.s.comp] || []).map((a) => ({ id: a.id, en: a.name.en })) }; }, id);
   const chosen = [], tasks = [];
   let gestured = false, downEarly = false, wrongSeen = false, lastUsed = [];
-  const us = [];
+  const us = [], menus = [];
+  let cu = null, picks = 0;
   const t0 = Date.now();
   for (let i = 0; i < 400 && Date.now() - t0 < 150000; i++) {
     const v = await view(p);
+    if (v.cu) cu = v.cu;
     if (v.used.length) { lastUsed = v.used; await p.evaluate(() => { const st = RB.combat.state(); if (st && st.enc && st.enc.social) window.__usedCounts = Object.assign({}, st.enc.social.used); }); }
     if (v.phase === 'choose' && v.u != null && us[us.length - 1] !== v.u) us.push(v.u);
     if (v.res) break;
@@ -86,7 +113,12 @@ async function drive(p, id, o = {}) {
     if (v.dlg) { await p.evaluate(() => RB.ui.dialogue.advance(true)); await p.waitForTimeout(60); continue; }
     if (v.chal) { const w = await answer(p, o.wrongFirst && !wrongSeen); wrongSeen = wrongSeen || w; continue; }
     // (the pointer moved off first: left on a keyword, its word note can cover the companion's cards)
-    if (v.ccard) { await p.mouse.move(2, 2); await p.waitForTimeout(320); await companionTurn(p).catch(() => {}); continue; }
+    if (v.ccard) {
+      await p.mouse.move(2, 2); await p.waitForTimeout(320);
+      menus.push(await compTurn(p));
+      if (o.comp === 'none') await decline(p).catch(() => {}); else await companionTurn(p).catch(() => {});
+      continue;
+    }
     if (v.sheet) { await p.evaluate(() => { const b = document.querySelector('.csheet .pbtn'); if (b) b.click(); }); await p.waitForTimeout(100); continue; }
     if (v.phase === 'choose' && v.cards.length) {
       if (await p.evaluate(() => !!document.querySelector('[data-coach-ok]'))) { await p.mouse.move(2, 2); await p.waitForTimeout(300); await p.click('[data-coach-ok]').catch(() => {}); continue; }
@@ -117,6 +149,7 @@ async function drive(p, id, o = {}) {
         await p.waitForTimeout(250);
         if (await p.evaluate(() => RB.combat.phase() !== 'choose' || !!document.querySelector('.chal, .csheet .pbtn'))) break;
       }
+      picks++;
       if (act) { chosen.push(act.id); if (act.task) tasks.push(act.id); }
       if (o.onPick) await o.onPick(pick, before);
       continue;
@@ -128,7 +161,7 @@ async function drive(p, id, o = {}) {
   const used = lastUsed;
   if (process.env.TRACE) console.log('  (' + id + ': ' + Math.round((Date.now() - t0) / 1000) + ' s)');
   const counts = await p.evaluate(() => window.__usedCounts || null);
-  return { def, chosen, tasks, gestured, downEarly, wrongSeen, steps, used, us, counts, res: end.res, end };
+  return { def, chosen, tasks, gestured, downEarly, wrongSeen, steps, used, us, counts, menus, cu, picks, res: end.res, end };
 }
 
 // 1. the Teller's Shadow from the Copying Room's own trigger
@@ -141,7 +174,7 @@ async function drive(p, id, o = {}) {
   for (let i = 0; i < 60 && !started; i++) { await p.waitForTimeout(150); const v = await view(p); if (v.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true)); started = v.combat; }
   ok(started, 'the Copying Room trigger opens the Teller\'s Shadow on the battle screen');
   const firstU = [];
-  const r = await drive(p, 'kr.shadow_gate', { wrongFirst: true, onPick: async (pick) => { firstU.push([pick.en, (await view(p)).combat]); } });
+  const r = await drive(p, 'kr.shadow_gate', { wrongFirst: true, comp: 'none', onPick: async (pick) => { firstU.push([pick.en, (await view(p)).combat]); } });
   const s = await p.evaluate(() => ({ open: !!RB.game.s.flags.kr_cave2_open, mode: RB.game.mode(), stairs: RB.world.W.map.props.some((q) => q.p === 'stairs' && (!q.if || RB.state.test(RB.game.s, q.if))) }));
   ok(r.used.length === 3 && r.steps.filter((x) => x.title === 'Say it').length >= 3 && !r.downEarly,
     'each correction gives its own question ("Say it"), is taken, and the battle stays up (' + JSON.stringify({ used: r.used, steps: r.steps.map((x) => x.title), downEarly: r.downEarly }) + ')');
@@ -165,6 +198,13 @@ for (const [id, comp] of [['kr.shadow_gate', 'ren'], ['kr.ghost_lectern', 'suzu'
   ok(!r.downEarly && r.res && r.res.result && r.used.length >= 1 && r.used.every((u) => r.chosen.includes(u)) && said >= r.used.filter((u) => r.def.actions.find((a) => a.id === u && a.task)).length,
     id + ': ' + r.used.length + ' of ' + all + ' social actions taken with the real buttons (' + said + ' questions said), gesture ' + (r.gestured ? 'chosen' : 'not offered') + '; ended ' + JSON.stringify(r.res));
   ok(!r.res || !r.res.outcome || r.def.conclusions.includes(r.res.outcome) || /^(left|settled|flee)$/.test(r.res.outcome), id + ': an authored ending (' + JSON.stringify({ outcome: r.res && r.res.outcome, authored: r.def.conclusions }) + ')');
+  // 6. the companion's turn: their own action alone, and "Nothing this time"; taken once, then not asked again
+  // (applied, unless your response on that same exchange ended the conversation: then nothing of the companion's is
+  // played, as in any battle; the Ghost at the Lectern ends on its one correction)
+  const own = r.def.comp.map((a) => a.en);
+  const endedFirst = !!(r.res && r.res.result && r.picks === 1);
+  ok(own.length === 1 && r.menus.length === 1 && r.menus[0].cards.join() === own.join() && r.menus[0].none && r.cu && (r.cu[r.def.comp[0].id] === 1 || (endedFirst && !r.cu[r.def.comp[0].id])),
+    id + ': ' + comp + '\'s turn offers ' + JSON.stringify(own[0]) + ' alone, with "Nothing this time"; taken, ' + (endedFirst ? 'and the conversation ended on that exchange' : 'it is applied once') + ', and not asked again (' + JSON.stringify({ menus: r.menus, cu: r.cu, picks: r.picks }) + ')');
   ok(!errors.length, id + ': no page errors ' + errors.slice(0, 3).join(' | '));
   await p.close();
 }
@@ -184,7 +224,7 @@ for (const [id, comp] of [['cr.courier', 'nao'], ['yn.kettle', 'suzu']]) {
   const before = await p.evaluate(() => window.__steps.length);
   if (pt) { await p.mouse.move(pt.x, pt.y); await p.waitForTimeout(150); await p.mouse.click(pt.x, pt.y); }
   let after = null;
-  for (let i = 0; i < 60; i++) { await p.waitForTimeout(150); after = await view(p); if (after.ccard) { await p.mouse.move(2, 2); await p.waitForTimeout(320); await companionTurn(p).catch(() => {}); } if (after.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true)); if (after.res || (after.phase === 'choose' && after.u === 0)) break; }
+  for (let i = 0; i < 60; i++) { await p.waitForTimeout(150); after = await view(p); if (after.ccard) { await p.mouse.move(2, 2); await decline(p).catch(() => {}); } if (after.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true)); if (after.res || (after.phase === 'choose' && after.u === 0)) break; }
   const steps = await p.evaluate((n) => window.__steps.slice(n), before);
   ok(offered && pt && !steps.length && after && (after.res || after.u === 0), id + ': the companion\'s gesture is offered, pressed, asks for no writing, and is played (understanding spent: ' + JSON.stringify({ offered, steps, u: after && after.u, res: after && after.res }) + ')');
   ok(!errors.length, id + ' gesture: no page errors ' + errors.slice(0, 3).join(' | '));
@@ -195,11 +235,25 @@ for (const [id, comp] of [['cr.courier', 'nao'], ['yn.kettle', 'suzu']]) {
 for (const [plan, comp] of [['protect', 'nao'], ['reveal', 'ren'], ['press', 'mio'], ['protect', 'suzu'], ['press', 'nao'], ['reveal', 'suzu']]) {
   const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
   await setup(p, { map: 'rw.millroad', x: 10, y: 22, comp, enc: 'kr.shadow_gate', flags: FL, plan });
-  const r = await drive(p, 'kr.shadow_gate');
+  const r = await drive(p, 'kr.shadow_gate', { comp: 'none' });
   const once = r.counts && Object.values(r.counts).every((n) => n === 1);
   const steps = r.us.every((u, i) => i === 0 || u - r.us[i - 1] <= 1);
   ok(once && steps && r.res && r.res.outcome === 'right' && r.used.length === 3, 'plan ' + plan + ' (' + comp + '): each correction applied once, the understanding one at a time, ended right (' + JSON.stringify({ counts: r.counts, us: r.us, res: r.res }) + ')');
+  const own = r.def.comp.map((a) => a.en);
+  ok(r.menus.length >= 1 && r.menus.every((m) => m.cards.join() === own.join() && m.none) && r.cu && !r.cu[r.def.comp[0].id],
+    'plan ' + plan + ' (' + comp + '): the plan picks nothing in a conversation; the turn is asked, offering ' + JSON.stringify(own.join()) + ' and "Nothing this time", each time it was declined (' + JSON.stringify({ menus: r.menus, cu: r.cu }) + ')');
   ok(!errors.length, 'plan ' + plan + ' (' + comp + '): no page errors ' + errors.slice(0, 2).join(' | '));
+  await p.close();
+}
+// 7. with each plan, the companion's own action taken (the first card): applied once, asked once, still put right
+for (const [plan, comp] of [['protect', 'nao'], ['reveal', 'ren'], ['press', 'mio'], ['protect', 'suzu']]) {
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await setup(p, { map: 'rw.millroad', x: 10, y: 22, comp, enc: 'kr.shadow_gate', flags: FL, plan });
+  const r = await drive(p, 'kr.shadow_gate');
+  const once = r.counts && Object.values(r.counts).every((n) => n === 1);
+  ok(once && r.menus.length === 1 && r.menus[0].cards.join() === r.def.comp.map((a) => a.en).join() && r.menus[0].none && r.cu && r.cu[r.def.comp[0].id] === 1 && r.res && r.res.outcome === 'right',
+    'plan ' + plan + ' (' + comp + '): ' + comp + '\'s own action taken: applied once, asked once, the account put right (' + JSON.stringify({ menus: r.menus, cu: r.cu, counts: r.counts, us: r.us, res: r.res }) + ')');
+  ok(!errors.length, 'plan ' + plan + ' (' + comp + ') taken: no page errors ' + errors.slice(0, 2).join(' | '));
   await p.close();
 }
 // and a spot check of the other eight with a plan

@@ -111,6 +111,8 @@ RB.combatSim = (function () {
   }
   // companion actions on offer (ids), with what each would aim at
   function compChoices(st, s, card) {
+    // in a conversation, the encounter's own actions only, as the screen offers them (src/engine/97_encounter.js)
+    if (st.enc && st.enc.social && RB.encounter) return RB.encounter.companionOptions(st, s).map((o) => o.def);
     return L.compOptions(st, s, card).filter((o) => !o.locked && !o.used).map((o) => o.def);
   }
   // The choice for this round: { card, target (creature index), act (companion action id or null), actTarget }

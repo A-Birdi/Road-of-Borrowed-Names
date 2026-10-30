@@ -1079,6 +1079,7 @@ RB.combat = (function () {
       // page away; an encounter's own actions for the companion (E10) among them
       const menu = ENC().compMenu(st, s, card, words(), st.cur);
       let opts = menu.shown;
+      const social = !!(st.enc && st.enc.social);
       const cn = compName();
       const pn = s.player.name;
       tg.compTarget = st.cur;
@@ -1113,7 +1114,10 @@ RB.combat = (function () {
               (t ? '<span class="rc-tgt">' + esc(t) + '</span>' : '') +
               '<span class="rc-d">' + esc(d.desc || '') + (d.uses ? '<span class="rc-uses">' + (used ? 'Used in this encounter' : 'Once per encounter') + '</span>' : '') + '</span></button>';
           }).join('') + '</div>' +
-          (menu.more.length && opts === menu.shown ? '<button type="button" class="pbtn quiet cq-more" data-more>' + I('next') + '<span>More of ' + esc(cn) + '\'s moves (' + menu.more.length + ')</span></button>' : '');
+          (menu.more.length && opts === menu.shown ? '<button type="button" class="pbtn quiet cq-more" data-more>' + I('next') + '<span>More of ' + esc(cn) + '\'s moves (' + menu.more.length + ')</span></button>' : '') +
+          // in a conversation the companion may add nothing this time, as the conversation sheet asks
+          // (src/ui/80s_encounter.js): their own actions there are the encounter's, most of them once, and when is yours
+          (social ? '<button type="button" class="pbtn quiet cq-none" data-none>' + I('rest') + '<span>Nothing this time</span></button>' : '');
         if (focusedA != null) { const b = ui.resp.querySelector('[data-a="' + focusedA + '"]'); if (b) b.focus({ preventScroll: true }); }
         refreshMarks();
       };
@@ -1146,6 +1150,7 @@ RB.combat = (function () {
       ui.resp.onclick = (e) => {
         if (early()) return;
         if (e.target.closest('[data-back]')) { done('back'); return; }
+        if (e.target.closest('[data-none]')) { tg.hover = null; done(null); return; }
         if (e.target.closest('[data-more]')) { opts = menu.shown.concat(menu.more); render(); return; }
         const b = e.target.closest('[data-a]');
         if (b && !b.disabled) { const o = opts[+b.getAttribute('data-a')]; tg.hover = null; done({ act: o.def, target: tg.compTarget }); }
