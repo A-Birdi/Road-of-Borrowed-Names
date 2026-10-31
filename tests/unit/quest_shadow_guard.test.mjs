@@ -108,8 +108,6 @@ const PENDING = 'pending triage (CC-386)';
 const LISTED = {
   'co_bell | co.village:co_tamotsu | co.tamotsu_post before co.tamotsu | stage 0,1': PENDING + '; not among CC-367 §3\'s rows, but CC-367 §1 kept his list as it is: after the restoration Gorō\'s talk does not need his rope (unconfirmed)',
   'kr_hisae | kr.lodge:kr_hisae | rt.ren_walk before kr.hisae_truth | stage 1': PENDING + '; CC-367 set it aside as Hisae\'s walk with Ren, once (unconfirmed)',
-  'kr_stamps | kr.fox:kr_iwa | kr.iwa_after before kr.iwa_done | stage 1': PENDING,
-  'kr_stamps | kr.fox:kr_iwa | kr.iwa_after before kr.iwa_thanks | stage 0': PENDING + '; Iwa\'s stage-0 row, which her stage-1 entry hid from CC-367\'s screen',
   'lf_akari | lf.clerks:akari | lf.akari_post before lf.akari_after | stage 0': PENDING + '; CC-367 set it aside: the bell moves it to stage 1 first, and her first entry takes 1 and up (unconfirmed)',
   'lf_form | lf.records:lf_hayato | lf.hayato_post before lf.hayato | stage 0,1': PENDING + '; done only if its challenge can be left mid-scene (CC-367, not checked yet)',
   'lf_nao | lf.ferry:umi | lf.umi_post before lf.nao_umi_first | stage 0': PENDING + '; CC-367 set it aside: Umi\'s first entry takes it once the bell has rung; this is the case before the bell, which an earlier screen missed (unconfirmed)',

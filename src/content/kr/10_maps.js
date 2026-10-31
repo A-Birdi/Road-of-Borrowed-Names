@@ -127,11 +127,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'kr_shozo', x: 5, y: 9, dir: 'down', talk: [{ if: 'quest.kr_fox=active', scene: 'kr.shozo_idle' }, { if: 'kr_done', scene: 'kr.shozo_after' }, { if: 'quest.kr_fox=1', scene: 'kr.shozo_fox' }, { if: 'kr_shozo_met', scene: 'kr.shozo_idle' }, { scene: 'kr.shozo_first' }] },
       { id: 'kr_hinata', x: 13, y: 18, dir: 'left', talk: [{ if: 'quest.kr_cache=done', scene: 'kr.kids_after' }, { scene: 'kr.kids_rhyme' }] },
       { id: 'kr_kai', x: 14, y: 20, dir: 'up', talk: [{ if: 'quest.kr_cache=done', scene: 'kr.kids_after' }, { scene: 'kr.kids_rhyme' }] },
+      // (while the stamp book is still to be given back or filled, she takes it first, after the chapter too: CC-391,
+      // CL-544, Agnes 6542470604)
       { id: 'kr_iwa', x: 17, y: 16, dir: 'left', if: 'kr_iwa_met', talk: [
-        { if: 'kr_done', scene: 'kr.iwa_after' },
-        { if: 'quest.kr_stamps=done', scene: 'kr.iwa_idle' },
         { if: 'kr_seal_1&kr_seal_2&kr_seal_3&quest.kr_stamps=1', scene: 'kr.iwa_done' },
         { if: 'item.kr_stampbook&quest.kr_stamps=0', scene: 'kr.iwa_thanks' },
+        { if: 'quest.kr_stamps=1', scene: 'kr.iwa_idle' },
+        { if: 'kr_done', scene: 'kr.iwa_after' },
+        { if: 'quest.kr_stamps=done', scene: 'kr.iwa_idle' },
         { scene: 'kr.iwa_idle' }] },
     ],
     exits: [
