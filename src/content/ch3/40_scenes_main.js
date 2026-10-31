@@ -216,13 +216,16 @@ co_tokiwa: {年代記|ねんだいき} は {机|つくえ} の {上|うえ} で�
 !if co_chronicle_read -> reread
 !if !co_suspect -> casual
 :main
+# The kana lesson comes here, before Tokiwa's lead-in, not at the page itself (Robin's approval of D: Agnes 6544426511,
+# 6544575390; Cloud CC-397; Local CL-553); a revisit after :later delivers the next row, as before.
+?(prof=F) narr: {読|よ}む {前|まえ} に 、 {一息|ひといき} つく 。 || Before you read, you take a breath.
+!lesson kana
 !gesture pc observe 5,3
 co_tokiwa: {年代記|ねんだいき} です 。 {開村|かいそん} から {今年|ことし} まで 、 {一年|いちねん} も {欠|か}けて いません 。 || The chronicle. From the founding to this year, not a single year missing.
 !look co_tokiwa pc
 co_tokiwa[smile]: {祭|まつ}り の {頁|ページ} なら 、 {毎年|まいとし} {十月|じゅうがつ} の ところ です 。 || The festival entries are under the tenth month of each year.
 !gesture pc observe 5,3 hold
 narr: {頁|ページ} を めくる 。 {毎年|まいとし} の {秋祭|あきまつ}り が 、 {同|おな}じ {形|かたち} で {記|しる}されて いる 。 || You turn the pages. Every autumn festival is recorded in the same pattern.
-!lesson kana
 !challenge co.c_chronicle
 !if var._res=0 -> later
 narr: {二十年前|にじゅうねんまえ} の {頁|ページ} だけ 、 {墨|すみ} が {新|あたら}しい 。 そして その {年|とし} から {毎年|まいとし} 、 「 {火事|かじ} なし 」 と {書|か}き{足|た}されて いる 。 || Only the page from twenty years ago has fresh ink. And from that year on, every entry adds: "No fire."
@@ -297,12 +300,14 @@ narr: {二十年前|にじゅうねんまえ} だけ 、 {五十二軒|ごじゅ
 # with you (he goes back to his place after the scene).
 !if co_records_done -> done
 !if quest.co_main<4 -> early
+# The kana lesson comes here, before the books are laid out and Tokiwa joins you (the same approval).
+?(prof=F) narr: {帳面|ちょうめん} を {並|なら}べる {前|まえ} に 、 {一息|ひといき} つく 。 || Before you lay the books out, you take a breath.
+!lesson kana
 !gesture pc present 9,6 prop=book
 narr: {閲覧|えつらん} の {机|つくえ} に 、 {年代記|ねんだいき} 、 {窯|かま} の {帳面|ちょうめん} 、 {植|う}え{付|つ}け{帳|ちょう} 、 {戸数|こすう} の {台帳|だいちょう} 、 {火除|ひよ}け{道|みち} の {手入|てい}れ {日誌|にっし} を {並|なら}べた 。 || On the reading table you lay out the chronicle, the kiln ledger, the planting book, the household register and the firebreak upkeep log.
 !walkto co_tokiwa 8 6 right
 !gesture co_tokiwa observe 9,6
 co_tokiwa: …… {拝見|はいけん} しましょう 。 {公平|こうへい} に 。 || …Let us look. Fairly.
-!lesson kana
 !challenge co.c_records
 !if var._res=0 -> later
 !call co.tokiwa_confront
