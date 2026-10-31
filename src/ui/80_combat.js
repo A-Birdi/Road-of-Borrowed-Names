@@ -1293,6 +1293,11 @@ RB.combat = (function () {
     void s;
     return lead + (pair ? 'No recovery was needed: you are both already steady.' : 'No recovery was needed: you are already steady.');
   }
+  // How many knots came loose on one beat, from the knots the creature had before it and after: the one count
+  // sentence of a release, true when fewer were left than freed and when a condition frees more; none, nothing said
+  // (Agnes 6543444529, 6543603576; Local CL-547, CL-548; Cloud CC-394)
+  const COUNT = ['', '', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+  const loosened = (n) => (n <= 0 ? '' : n === 1 ? 'A knot comes loose.' : (COUNT[n] || String(n)) + ' knots come loose.');
   function applyBeat(f, cue) {
     const s = RB.game.s;
     if (!view) view = snapshot(st);
@@ -1307,7 +1312,7 @@ RB.combat = (function () {
     const sfx = (n) => RB.audio && RB.audio.sfx(n);
     let msg = '';
     switch (f.t) {
-      case 'unravel': fo.knots = Math.max(0, fo.knots - (f.n || 1)); sfx('knot_untie'); msg = who(f.n > 1 ? 'Two knots come loose.' : 'A knot comes loose.'); break;
+      case 'unravel': { const had = fo.knots; fo.knots = Math.max(0, fo.knots - (f.n || 1)); sfx('knot_untie'); const said = loosened(had - fo.knots); msg = said ? who(said) : ''; break; }
       case 'ward':
         if (f.block) sealHeld = f.target; else v.ward[f.target] = (v.ward[f.target] || 0) + (f.n || 2);
         sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + (f.n && f.n !== 2 ? ' (' + f.n + ')' : '') + '.'; break;

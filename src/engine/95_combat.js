@@ -462,7 +462,7 @@ RB.combatLogic = (function () {
       RB.modifiers.act(st, card, answered, fx);
     } else if (card.kind === 'unravel' || card.kind === 'tech') {
       let n = 1;
-      if (st.openingBonus && card.kind === 'unravel') { n = 2; st.openingBonus = false; fx.push({ t: 'comp', who: 'nao', en: 'Nao saw the opening — two knots come loose.', foe: T }); }
+      if (st.openingBonus && card.kind === 'unravel') { n = 2; st.openingBonus = false; fx.push({ t: 'comp', who: 'nao', en: 'Nao saw the opening.', foe: T }); }
       if (card.kind === 'tech') n = techUnravel(st);
       // a condition can loosen a creature's knots (water on a creature of flame: E4)
       const fT = st.foes[T];
