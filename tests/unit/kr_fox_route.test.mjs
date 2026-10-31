@@ -15,7 +15,9 @@
 //  7. after the chapter with the quest open: the comparison, done; after it, his line with the board;
 //  8. done, then asked again (before and after the chapter): no second completion;
 //  9. after the chapter, never begun: only the line's second sentence, never the board;
-// 10. the guide: with Kame's story and the shrine's board in, Shōzō is next, before and after the chapter.
+// 10. the guide: with Kame's story and the shrine's board in, Shōzō is next, before and after the chapter;
+// 11. and no talk ended on an error from the runner (each one's error is kept, so a failing run says where: Agnes
+//     6541614189).
 import { load } from '../lib/load.mjs';
 
 export default async (t) => {
@@ -62,12 +64,13 @@ export default async (t) => {
     return s;
   };
   const talkScene = (s) => (shozo.talk.find((x) => !x.if || S.test(s, x.if)) || {}).scene;
+  const errors = [];
   const talk = async (s, choose = [], tell = []) => {
     said = []; offered = []; picks = choose.slice(); readings = tell.slice();
     const scene = talkScene(s);
     let error = null;
     // (an option asked for that is not there ends the talk here: the check that follows says what was offered)
-    try { await RB.script.run(scene, { npc: 'kr_shozo' }); } catch (e) { error = String(e && e.message || e); }
+    try { await RB.script.run(scene, { npc: 'kr_shozo' }); } catch (e) { error = String(e && e.message || e); errors.push(scene + ': ' + error); }
     return { scene, said: said.slice(), offered: offered.slice(), left: picks.length, error };
   };
   const REG = 'Ask to see the hamlet\'s register.', CMP = 'Compare the tellings.', LATER = 'Later.';
@@ -169,4 +172,7 @@ export default async (t) => {
     t.ok(flat(pre.ids) === flat(['kr_shozo']) && flat(post.ids) === flat(['kr_shozo']) && /^Next: Shōzō, in Fox Bridge/.test(pre.next[0] || '') && /^Next: Shōzō/.test(post.next[0] || ''),
       '10 the guide: Kame\'s story and the shrine\'s board in, Shōzō is next, before and after the chapter (' + flat({ pre, post }) + ')');
   }
+
+  // ---- 11. no talk ended on an error
+  t.ok(!errors.length, '11 no talk ended on an error from the runner (' + errors.length + ': ' + flat(errors.slice(0, 3)) + ')');
 };
