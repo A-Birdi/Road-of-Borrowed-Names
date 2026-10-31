@@ -19,16 +19,22 @@
 //  - X is shadowed at k when a shadowing option comes before any that takes it.
 // Conditions are read as the state test reads them (src/engine/05_state.js: a|b of a&b&…, with ! on a term); only X's
 // own terms are evaluated, and of the rest only the two clashes above are read: anything else is taken as able to
-// hold, so a finding can still be one that the story never reaches (the triage says which).
+// hold, so a finding can still be one that the story never reaches (the triage says which). And it can undercount:
+// an earlier branch that can hold alongside is taken to hold wherever the hidden one does, though its other terms may
+// not (fixture 9), so this screens for overlap; a quest it does not find is not cleared by it (Agnes 6542467355).
 //  1. the screen itself, on small made-up lists: a done-only entry, a one-shot, a move made directly and through
 //     !call, a list shared by routine places, an entry for one stage and not another, an open quest's own entry first,
 //     a shadow that cannot hold while the quest is open, an earlier entry that cannot hold alongside (by a denied term,
-//     by another companion) and one that can, a one-shot in one branch only, and an earlier state of the story;
+//     by another companion) and one that can, a one-shot in one branch only, an earlier state of the story, each
+//     chapter milestone a later state (Local CL-545) and a quest's own *_done flag none;
 //  2. the game's own lists: every finding is listed below, and every listed one is still found.
 import { load } from '../lib/load.mjs';
 
-// a later state of the story, named as holding (`post`, `kr_done`; `!post` is an earlier one); a one-shot (`!seen.…`)
-const LATE = /^(post|postgame|ch[1-6]_done|kr_done|mb1_done|mb2_done|yn_done|el_done|ko_done|cr_done|sa_done)$/;
+// a later state of the story, named as holding (`post`, `kr_done`; `!post` is an earlier one): the postgame, a
+// chapter's or a region's end, and the chapter milestones talk lists name (Local CL-545; a quest's own *_done flag is
+// not one); a one-shot (`!seen.…`)
+const MILESTONES = ['rw_echo_done', 'sea_trial_done', 'sg_boss_done', 'kr_vigil_done', 'kr_evening_done', 'yn_eve_done'];
+const LATE = new RegExp('^(post|postgame|ch[1-6]_done|kr_done|mb1_done|mb2_done|yn_done|el_done|ko_done|cr_done|sa_done|' + MILESTONES.join('|') + ')$');
 const ONE_SHOT = /^!(seen|keepsake)\./;
 
 // what a scene does to each quest, directly or through !call: quest id -> the set of stages it sets ('1', 'done', …)
@@ -172,6 +178,10 @@ export default async (t) => {
       fx([{ talk: [{ if: 'post&!seen.seen1|kr_done', scene: 'post' }, { scene: 'give' }] }], S, Q2), ['m:p0 | post before give | 0,1']],
     ['an earlier state of the story (!post) is not a later one',
       fx([{ talk: [{ if: '!post', scene: 'idle' }, { scene: 'give' }] }], S, Q2), []],
+    ['each chapter milestone is a later state',
+      fx(MILESTONES.map((m) => ({ talk: [{ if: m, scene: 'post' }, { scene: 'give' }] })), S, Q2), MILESTONES.map((m, i) => 'm:p' + i + ' | post before give | 0,1')],
+    ['a quest\'s own *_done flag is not',
+      fx([{ talk: [{ if: 'q_done', scene: 'post' }, { scene: 'give' }] }], S, Q2), []],
   ];
   for (const [label, c, want] of cases) t.eq(keys(c), want, '1 ' + label);
 
