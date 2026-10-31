@@ -7,8 +7,9 @@
 //     still "on you both";
 //  2. the telegraph of the move on the east lantern names it, in English and in Japanese (東 の 灯籠 with its readings),
 //     never you;
-//  3. Protect on the east lantern: its exercise slip and its queued line say "on the east lantern"; the ward is narrated
-//     for the east lantern, never for you;
+//  3. Protect on the east lantern: its exercise slip and its queued line say "on the east lantern"; the move's few words
+//     on the slip are "2 to one of you, or what you protect" (CC-380); the ward is narrated for the east lantern, never
+//     for you;
 //  4. the telegraph of the move on the west lantern names it (西 の 灯籠); left unwarded (you protect yourself), the
 //     blow is narrated as the west lantern struck, and on that beat the west lantern's own count is down by the blow
 //     while yours and Nao's are as they were, and neither of your bars dips at any point of the exchange; after it the
@@ -17,6 +18,7 @@
 //     card by its own name;
 //  6. Ren's Lamp ward, which goes before the one the moth aims at: its card says "before the east lantern", and its ward
 //     is narrated there;
+//  7. a lone moth's blow on you, with your name written in lowercase: "kei is struck", as you wrote it;
 //  no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/lantern_labels.mjs
 import { serve, launch, page, companionTurn } from './lib.mjs';
@@ -35,7 +37,8 @@ async function begin(p, o) {
     RB.game.settings.input = 'choice'; RB.game.settings.battleAnim = 'instant'; RB.game.settings.intentDisplay = 'expanded'; RB.game.settings.compPlan = 'ask';
     RB.game.applySettings();
     window.__res = null;
-    RB.game.startEncounter(o.enc, {}).then((r) => { window.__res = r || { result: null }; });
+    if (o.name) s.player.name = o.name;
+    (o.enc ? RB.game.startEncounter(o.enc, {}) : RB.game.startBattle(o.enemy, {})).then((r) => { window.__res = r || { result: null }; });
   }, [o, WORDS]);
 }
 // on to your next choice (dialogue advanced, notes closed, the companion's turn taken with its first move), or the end
@@ -118,6 +121,8 @@ const partyNow = (p) => p.evaluate(() => Object.fromEntries([...document.querySe
   const log1 = await p.evaluate(() => (document.querySelector('.clog') || {}).textContent || '');
   ok(/on the east lantern/.test(situ) && /on the east lantern/.test(queued) && !/on you\b/.test(situ + ' ' + queued),
     '3 the exercise slip and the queued line say "on the east lantern" (' + JSON.stringify({ situ: situ.slice(0, 200), queued: queued.slice(0, 160) }) + ')');
+  ok(/Strike\s*2 to one of you, or what you protect/.test(situ) && !/The Japanese says (who|which)/.test(situ),
+    '3 the move\'s few words on the slip: "2 to one of you, or what you protect", naming no target (CC-380) (' + JSON.stringify(situ.slice(0, 120)) + ')');
   ok(/(A ward rises before|The ward catches the blow meant for) the east lantern/.test(log1) && log1.indexOf('meant for ' + me.en) < 0 && log1.indexOf('rises before ' + me.en) < 0,
     '3 the ward is narrated for the east lantern, not for you (' + JSON.stringify(log1.slice(-400)) + ')');
   // 4. on to the move on the west lantern (Protect on you through the rest between; there is no Wait here), then
@@ -197,6 +202,21 @@ for (const [enc, thing] of [['fx.protect', 'the letter'], ['cr.fog_papers', 'you
   ok(lamp === 'before the east lantern' && /A ward rises before the east lantern/.test(log) && log.indexOf('rises before ' + me + ' (') < 0,
     '6 Ren\'s Lamp ward: its card says "before the east lantern", and its ward is narrated there (' + JSON.stringify({ lamp, log: log.slice(-360) }) + ')');
   ok(!errors.length, 'Ren: no page errors ' + errors.slice(0, 3).join(' | '));
+  await p.close();
+}
+
+// ---- 7. your name as you wrote it (Agnes 6535686146; CC-380): a lone moth, alone, and a player named in lowercase
+{
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await begin(p, { enemy: 'kr.wick', comp: null, name: 'kei' });
+  await toChoose(p);
+  const water = (await cardsNow(p)).find((x) => /water/i.test(x.en));
+  await pressCard(p, water);
+  await answerRight(p);
+  await toChoose(p);
+  const log = await p.evaluate(() => (document.querySelector('.clog') || {}).textContent || '');
+  ok(/kei is struck \(−\d/.test(log) && !/Kei is struck/.test(log), '7 a lone moth\'s blow on you: "kei is struck", as you wrote it (' + JSON.stringify(log.slice(-240)) + ')');
+  ok(!errors.length, 'kei: no page errors ' + errors.slice(0, 3).join(' | '));
   await p.close();
 }
 
