@@ -123,7 +123,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bench', x: 15, y: 15 },
     ],
     npcs: [
-      { id: 'kr_shozo', x: 5, y: 9, dir: 'down', talk: [{ if: 'kr_done', scene: 'kr.shozo_after' }, { if: 'quest.kr_fox=1', scene: 'kr.shozo_fox' }, { if: 'kr_shozo_met', scene: 'kr.shozo_idle' }, { scene: 'kr.shozo_first' }] },
+      // (while the tellings are still to be weighed, he offers them first, after the chapter too: CC-386, Agnes 6541203705)
+      { id: 'kr_shozo', x: 5, y: 9, dir: 'down', talk: [{ if: 'quest.kr_fox=active', scene: 'kr.shozo_idle' }, { if: 'kr_done', scene: 'kr.shozo_after' }, { if: 'quest.kr_fox=1', scene: 'kr.shozo_fox' }, { if: 'kr_shozo_met', scene: 'kr.shozo_idle' }, { scene: 'kr.shozo_first' }] },
       { id: 'kr_hinata', x: 13, y: 18, dir: 'left', talk: [{ if: 'quest.kr_cache=done', scene: 'kr.kids_after' }, { scene: 'kr.kids_rhyme' }] },
       { id: 'kr_kai', x: 14, y: 20, dir: 'up', talk: [{ if: 'quest.kr_cache=done', scene: 'kr.kids_after' }, { scene: 'kr.kids_rhyme' }] },
       { id: 'kr_iwa', x: 17, y: 16, dir: 'left', if: 'kr_iwa_met', talk: [

@@ -455,6 +455,12 @@
   "jp": "また {後|あと} で 。",
   "en": "Later."
  },
+ "scene:kr.shozo_idle:choice#f8s13x": {
+  "status": "self-reviewed",
+  "ref": "CC-388 self-review: the register choice 里 (さと) の 記録 (きろく) を 見 (み)せて もらう ('Ask to see the hamlet's register'), wording agreed by Agnes 6541203705, as the scene's own 里 の 記録 and kr.record's 里 の 古い 記録; the board-line fallback 里 (さと) の 者 (もの) が 、 夜 (よる) に 橋 (はし) を 見 (み)に 来 (く)る ん です よ is the existing line's second sentence word for word (kr/20_scenes_road.js 233 on 46eb6a5), as Agnes 6541203705 proposed",
+  "jp": "{里|さと} の {記録|きろく} を {見|み}せて もらう 。",
+  "en": "Ask to see the hamlet's register."
+ },
  "scene:kr.shozo_fox#8j905": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
@@ -508,6 +514,12 @@
   "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
   "jp": "{橋|はし} の {灯籠|とうろう} が {狐色|きつねいろ} に {光|ひか}って 、 {新|あたら}しい {板|いた} も {読|よ}める 。 {里|さと} の {者|もの} が 、 {夜|よる} に {橋|はし} を {見|み}に {来|く}る ん です よ 。",
   "en": "The bridge lantern glows fox-brown, and the new board can be read by it. People come out at night just to look at the bridge."
+ },
+ "scene:kr.shozo_after#19c0vuw": {
+  "status": "self-reviewed",
+  "ref": "CC-388 self-review: the register choice 里 (さと) の 記録 (きろく) を 見 (み)せて もらう ('Ask to see the hamlet's register'), wording agreed by Agnes 6541203705, as the scene's own 里 の 記録 and kr.record's 里 の 古い 記録; the board-line fallback 里 (さと) の 者 (もの) が 、 夜 (よる) に 橋 (はし) を 見 (み)に 来 (く)る ん です よ is the existing line's second sentence word for word (kr/20_scenes_road.js 233 on 46eb6a5), as Agnes 6541203705 proposed",
+  "jp": "{里|さと} の {者|もの} が 、 {夜|よる} に {橋|はし} を {見|み}に {来|く}る ん です よ 。",
+  "en": "People come out at night just to look at the bridge."
  },
  "scene:kr.kame#16o8gk2": {
   "status": "self-reviewed",

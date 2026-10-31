@@ -197,6 +197,8 @@ kr_shozo: {新|あたら}しい {板|いた} を {作|つく}る のに 、 ど�
 @scene kr.shozo_idle
 !faceplayer
 kr_shozo: カメ さん の {話|はなし} 、 {里|さと} の {記録|きろく} 、 {祠|ほこら} の {板|いた} 。 {三|みっ}つ と も 、 {違|ちが}う ん です よ 。 || Kame's story, the hamlet's register, the shrine's board. All three say something different.
+!if !kr_record_read -> ask
+:clues
 !if !seen.kr.kame|!seen.kr.fox_shrine|!kr_record_read -> end
 !choice
 * {話|はなし} を {比|くら}べて みる 。 || Compare the tellings. -> fox
@@ -204,6 +206,17 @@ kr_shozo: カメ さん の {話|はなし} 、 {里|さと} の {記録|きろ�
 :fox
 !call kr.shozo_fox
 :end
+!end
+# The register is kept in his house, and he brings it out when asked: nothing else ever showed it, so the comparison
+# could never be offered (Cloud CC-386, CC-387; Local CL-539, CL-540; Agnes 6541203705). Read once, then the clues are
+# checked again.
+:ask
+!choice
+* {里|さと} の {記録|きろく} を {見|み}せて もらう 。 || Ask to see the hamlet's register. -> record
+* また {後|あと} で 。 || Later. -> end
+:record
+!call kr.record
+!goto clues
 
 @scene kr.shozo_fox
 # Three Tellings of the Fox Bridge (side quest): weigh them, and the hamlet keeps the version you settle on.
@@ -230,7 +243,9 @@ kr_shozo: {板|いた} は 、 {今|いま} {塗|ぬ}って いる ところ で
 
 @scene kr.shozo_after
 !faceplayer
-kr_shozo[happy]: {橋|はし} の {灯籠|とうろう} が {狐色|きつねいろ} に {光|ひか}って 、 {新|あたら}しい {板|いた} も {読|よ}める 。 {里|さと} の {者|もの} が 、 {夜|よる} に {橋|はし} を {見|み}に {来|く}る ん です よ 。 || The bridge lantern glows fox-brown, and the new board can be read by it. People come out at night just to look at the bridge.
+# (the new board only once the tellings were weighed with him; else only the line's second sentence: Agnes 6541203705)
+?(kr_fox_board) kr_shozo[happy]: {橋|はし} の {灯籠|とうろう} が {狐色|きつねいろ} に {光|ひか}って 、 {新|あたら}しい {板|いた} も {読|よ}める 。 {里|さと} の {者|もの} が 、 {夜|よる} に {橋|はし} を {見|み}に {来|く}る ん です よ 。 || The bridge lantern glows fox-brown, and the new board can be read by it. People come out at night just to look at the bridge.
+?(!kr_fox_board) kr_shozo[happy]: {里|さと} の {者|もの} が 、 {夜|よる} に {橋|はし} を {見|み}に {来|く}る ん です よ 。 || People come out at night just to look at the bridge.
 
 @scene kr.kame
 !faceplayer
