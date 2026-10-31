@@ -65093,7 +65093,7 @@ RB.combatLogic = (function () {
         else say('Nao watches for an opening — not this time.', { foe: T, none: true });
         break;
       case 'knot':
-        if (lp.perfect && st.knots > 0) { st.knots = Math.max(0, st.knots - n); say('Nao lends a hand — another knot comes loose.', { foe: T }); fx.push({ t: 'unravel', n, foe: T, by: who }); }
+        if (lp.perfect && st.knots > 0) { st.knots = Math.max(0, st.knots - n); say('Nao lends a hand.', { foe: T }); fx.push({ t: 'unravel', n, foe: T, by: who }); }
         else say('Nao reaches in, but the knot holds.', { foe: T, none: true });
         break;
       case 'soften':

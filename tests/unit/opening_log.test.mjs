@@ -1,7 +1,8 @@
-// Nao's opening, told once (Agnes 6543444529, 6543603576; Local CL-547, CL-548, CL-549; Cloud CC-394, CC-395): an
-// Unravel with Nao's opening ready said "Nao saw the opening — two knots come loose." and then its own release beat
-// said "Two knots come loose." again, and "two" whatever came loose. The rules and their events are as they were (the
-// choreography keys on them); Nao's line now names the move, not the count, and the count is the release beat's own,
+// Nao's opening and Nao's Lend a hand, told once (Agnes 6543444529, 6543603576; Local CL-547, CL-548, CL-549; Cloud
+// CC-394, CC-395): an Unravel with Nao's opening ready said "Nao saw the opening — two knots come loose." and then its
+// own release beat said "Two knots come loose." again, and "two" whatever came loose; Lend a hand said "another knot
+// comes loose" before its own release beat said it. The rules and their events are as they were (the
+// choreography keys on them); Nao's lines now name the move, not the count, and the count is the release beat's own,
 // from what came loose (src/ui/80_combat.js; tests/e2e/opening_log.mjs). On the engine:
 //  1. a plain Unravel: one release event, n 1, and no line of Nao's; 3 knots → 2;
 //  2. the opening ready: Nao's event first ('comp', who nao, on the creature), "Nao saw the opening.", then the
@@ -11,7 +12,11 @@
 //  5. Nao's and Suzu's techniques: their own lines and releases, as before (Suzu's, in a group, a knot each for the
 //     others);
 //  6. a modifier's Unravel on two creatures, one weakened: n 2 and n 1, as before;
-//  7. no line of Nao's names a count.
+//  7. Nao's Lend a hand (Agnes 6543913898): on a clean answer, "Nao lends a hand.", then its release, n 1, by Nao, with
+//     several knots left (3 → 2) and with one (1 → 0); the support event keeps its type, id, who and creature; answered
+//     right but not first time, or with no knot left, "Nao reaches in, but the knot holds." as before, and nothing comes
+//     loose; in a group, aimed at another creature, on that one;
+//  8. no line of Nao's says that knots come loose (the release beat says it, once).
 import { load } from '../lib/load.mjs';
 
 export default async (t) => {
@@ -88,6 +93,35 @@ export default async (t) => {
     const R = L.playerAct(st, card, OK);
     t.eq([st.foes.map((f, i) => k[i] - f.knots), told(R.fx || []).map((x) => [x[0], x[2], x[3]])], [[1, 0, 2], [['unravel', 0, 1], ['unravel', 2, 2]]], '6 a modifier\'s Unravel on two, one weakened: n 1 and n 2, as before');
   }
-  // ---- 7. no line of Nao's names a count
-  t.ok(lines.length >= 4 && lines.every((l) => !/knot/i.test(l)), '7 no line of Nao\'s names a count (' + flat(lines) + ')');
+  // ---- 7. Nao's Lend a hand
+  {
+    // the support event as the screen and the choreography read it, and the release after it
+    const hand = (fx) => fx.map((f) => (f.t === 'cact' ? ['cact', f.id, f.who, f.foe, f.en, !!f.none] : [f.t, f.by || null, f.foe, f.n]));
+    const lend = (knots, res, zero) => {
+      const e = { id: 'probe', knots, pattern: ['heat', 'strike', 'rest', 'rest'] };
+      const st = L.init(e, camp('nao'), {});
+      const P = L.playerAct(st, { kind: 'word', word: W('mizu') }, res || OK, e);
+      if (zero) { st.foes[st.cur].knots = 0; st.knots = 0; }
+      const k0 = st.knots;
+      const fx = L.compAct(st, 'nao_hand', P).fx;
+      for (const f of fx) if (f.who === 'nao' && f.en) lines.push(f.en);
+      return { k0, k1: st.knots, fx: hand(fx) };
+    };
+    const HAND = 'Nao lends a hand.', HOLDS = 'Nao reaches in, but the knot holds.';
+    const many = lend(3), one = lend(1);
+    t.eq([many.k0, many.k1, many.fx], [3, 2, [['cact', 'nao_hand', 'nao', 0, HAND, false], ['unravel', 'nao', 0, 1]]], '7 Lend a hand on a clean answer, several left: "' + HAND + '", then its release, n 1, by Nao; 3 → 2');
+    t.eq([one.k0, one.k1, one.fx], [1, 0, [['cact', 'nao_hand', 'nao', 0, HAND, false], ['unravel', 'nao', 0, 1]]], '7 … one left: the same; 1 → 0');
+    const late = lend(3, { ok: true, firstTry: false, mistakes: 1 }), none = lend(3, OK, true);
+    t.eq([late.k1, late.fx, none.k1, none.fx], [3, [['cact', 'nao_hand', 'nao', 0, HOLDS, true]], 0, [['cact', 'nao_hand', 'nao', 0, HOLDS, true]]],
+      '7 answered right but not first time, or no knot left: "' + HOLDS + '" as before, and nothing comes loose');
+    const s = camp('nao');
+    const st = E.begin('fx.mods', s);
+    st.cur = 2;
+    const k = st.foes.map((f) => f.knots);
+    const P = L.playerAct(st, { kind: 'word', word: W('mizu') }, OK);
+    const fx = L.compAct(st, 'nao_hand', P).fx;
+    t.eq([st.foes.map((f, i) => k[i] - f.knots), hand(fx)], [[0, 0, 1], [['cact', 'nao_hand', 'nao', 2, HAND, false], ['unravel', 'nao', 2, 1]]], '7 in a group, aimed at the third creature: on that one only');
+  }
+  // ---- 8. no line of Nao's says that knots come loose
+  t.ok(lines.length >= 8 && lines.every((l) => !/knots? comes? loose/i.test(l)), '8 no line of Nao\'s says that knots come loose (' + flat(lines) + ')');
 };

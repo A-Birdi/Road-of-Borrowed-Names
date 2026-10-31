@@ -1,6 +1,7 @@
-// Nao's opening, told once (Agnes 6543444529, 6543603576; Local CL-547, CL-548, CL-549; Cloud CC-394, CC-395): an
-// Unravel with Nao's opening ready was logged "…Nao saw the opening — two knots come loose." and then "Two knots come
-// loose.", and "two" whatever came loose (one knot left; a weakened creature). In Chromium on the built game, the log
+// Nao's opening and Nao's Lend a hand, told once (Agnes 6543444529, 6543603576; Local CL-547, CL-548, CL-549; Cloud
+// CC-394, CC-395): an Unravel with Nao's opening ready was logged "…Nao saw the opening — two knots come loose." and
+// then "Two knots come loose.", and "two" whatever came loose (one knot left; a weakened creature); Lend a hand was
+// logged "Nao lends a hand — another knot comes loose." and then "A knot comes loose.". In Chromium on the built game, the log
 // recorded line by line as it is written:
 //  A. real exchanges with the Glass Golem and Nao (co.golem; seeded: the opening, the knots and the weakening are set
 //     in the battle state, then the Unravel card is pressed and its exercise answered right through the real screen):
@@ -14,6 +15,16 @@
 //     6. two releases in turn on one creature: "A knot comes loose." twice, 3 → 1;
 //     7. in a group (the Wick Moths), creatures with different knots: each line names its creature and counts its own
 //        (one, when two were asked and one was left; three of four);
+//  C. Nao's Lend a hand, chosen from the companion's own menu after a word (seeded: Nao's own story done, which
+//     unlocks it; Agnes 6543913898):
+//     8. answered right, several knots left: "Nao lends a hand." and exactly one count sentence, "A knot comes loose.";
+//        3 → 2; Nao's pose and thread still played;
+//     9. answered right, one knot left: the same; 1 → 0;
+//    10. answered right only at the second try: "Nao reaches in, but the knot holds." as before, no count, no thread;
+//        3 stays 3;
+//    11. in a group (the Wick Moths), aimed at the second creature: one count sentence naming a creature; that one loses
+//        a knot, the other none.
+//     (no knot left at all is the rule's case, in tests/unit/opening_log.test.mjs, and the beat's, in 5)
 //  no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/opening_log.mjs
 import { serve, launch, page, companionTurn } from './lib.mjs';
@@ -25,11 +36,12 @@ const ok = (c, m) => { if (c) { pass++; console.log('ok   ' + m); } else { fail+
 const WORDS = ['mamoru', 'mizu', 'hikari', 'kaze', 'nawa', 'ishi', 'iyasu', 'honoo', 'suzu', 'koe'];
 const SAW = 'Nao saw the opening.';
 // every count sentence in the recorded lines (a release said in words, whatever its case)
-const counts = (lines) => lines.flatMap((l) => l.match(/\b(?:a knot comes loose|(?:two|three|four|five|six|seven|eight|nine|ten|\d+) knots come loose)\./gi) || []);
+const counts = (lines) => lines.flatMap((l) => l.match(/\b(?:(?:a|another) knot comes loose|(?:two|three|four|five|six|seven|eight|nine|ten|\d+) knots come loose)\./gi) || []);
 
 async function begin(p, o) {
   await p.evaluate(([o, WORDS]) => {
     const s = RB.game.debugStart('rw.millroad', 10, 22, { comp: o.comp });
+    if (o.quests) Object.assign(s.quests, o.quests);
     s.learn.kanaKnown = 'both'; s.learn.profile = 'F'; s.learn.difficulty = 'normal';
     s.words = WORDS.slice();
     RB.game.settings.input = 'choice'; RB.game.settings.battleAnim = o.anim || 'fast'; RB.game.settings.compPlan = 'ask';
@@ -68,18 +80,27 @@ const pressCard = async (p, pick) => {
     if (await p.evaluate(() => RB.combat.phase() !== 'choose' || !!document.querySelector('.chal, .csheet .pbtn'))) return;
   }
 };
-// the open language step answered right first time, in choice mode (the option the step itself marks right)
-async function answerRight(p) {
+// the open language step answered in choice mode (the option the step itself marks right): right first time, or,
+// with wrongFirst, a wrong option first, then a retry, then the right one
+async function answerRight(p, wrongFirst) {
   await p.waitForSelector('.chal', { timeout: 15000 });
   await p.evaluate(() => { const tab = document.querySelector('.chal-tabs .ptab[data-mode="choice"]'); if (tab) tab.click(); });
   await p.waitForSelector('.chal .mc .btn');
-  await p.evaluate(() => {
+  const press = (right) => p.evaluate((right) => {
     const txt = (h) => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent.replace(/\s+/g, ' ').trim(); };
     const html = (o) => o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<span class="enline">' + RB.util.esc(o.en) + '</span>' : '');
-    const right = RB.challenge.choicesFor(window.__step).filter((o) => o.ok).map((o) => txt(html(o)));
-    const btn = [...document.querySelectorAll('.chal .mc .btn')].find((x) => right.includes(x.textContent.replace(/\s+/g, ' ').trim()));
+    const ok = RB.challenge.choicesFor(window.__step).filter((o) => o.ok).map((o) => txt(html(o)));
+    const btn = [...document.querySelectorAll('.chal .mc .btn:not([disabled])')].find((x) => ok.includes(x.textContent.replace(/\s+/g, ' ').trim()) === right);
     if (btn) btn.click();
-  });
+    return !!btn;
+  }, right);
+  if (wrongFirst) {
+    await press(false);
+    await p.waitForTimeout(200);
+    await p.evaluate(() => { const g = document.querySelector('.fbwrap:not([data-fb=ok]) [data-a=retry], .fbwrap:not([data-fb=ok]) .fb-go'); if (g) g.click(); });
+    await p.waitForTimeout(200);
+  }
+  await press(true);
   await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go', { timeout: 15000 });
   await p.click('.fbwrap[data-fb=ok] .fb-go');
 }
@@ -164,6 +185,57 @@ const beats = (p, set, evs) => p.evaluate(async ([set, evs]) => {
   ok(g.lines.length === 2 && /^The .+: A knot comes loose\.$/.test(g.lines[0]) && /^The .+: Three knots come loose\.$/.test(g.lines[1]) && g.lines[0].split(':')[0] !== g.lines[1].split(':')[0] && g.shown[1] === 0 && g.shown[0] === 1,
     '7 in a group: each line names its creature and counts its own (one, when two were asked and one was left; three of four) (' + JSON.stringify(g) + ')');
   ok(!errors.length, 'the group: no page errors ' + errors.slice(0, 3).join(' | '));
+  await p.close();
+}
+
+// ---- C. Nao's Lend a hand, through the companion's own menu
+const NAO_DONE = { lf_nao: { stage: 1, done: true, t: 1 } };
+// a word answered (right first time, or not), then Lend a hand; what the log said, each creature's knots, and what the
+// exchange's actions played
+async function lend(p, o) {
+  await p.evaluate((o) => {
+    const st = RB.combat.state();
+    (o.knots || []).forEach((k, i) => { if (k != null && st.foes[i]) st.foes[i].knots = k; });
+    st.knots = st.foes[st.cur].knots;
+    if (o.target != null) RB.combat.target(o.target);
+    RB.combat.refresh();
+    window.__lines = []; window.__t0 = RB.battleSeq.trace().length;
+  }, o);
+  const cs = await cardsNow(p);
+  const word = cs.find((c) => /water|light|wind|stone|rope/i.test(c.en)) || cs.find((c) => c.en && !/unravel/i.test(c.en));
+  await pressCard(p, word); await answerRight(p, o.wrongFirst);
+  await toChoose(p, { match: 'Lend a hand' });
+  return p.evaluate(() => {
+    const st = RB.combat.state();
+    return { knots: st ? st.foes.map((f) => f.knots) : [], lines: window.__lines.slice(), fired: RB.battleSeq.trace().slice(window.__t0).flatMap((r) => r.fired) };
+  });
+}
+const HAND = 'Nao lends a hand.', HOLDS = 'Nao reaches in, but the knot holds.';
+for (const [label, o, want] of [
+  ['8 answered right, several knots left', { knots: [3] }, { hand: 1, counts: ['A knot comes loose.'], knots: 2 }],
+  ['9 answered right, one knot left', { knots: [1] }, { hand: 1, counts: ['A knot comes loose.'], knots: 0 }],
+  ['10 answered right only at the second try', { knots: [3], wrongFirst: true }, { hand: 0, holds: 1, counts: [], knots: 3 }],
+]) {
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await begin(p, { enemy: 'co.golem', comp: 'nao', quests: NAO_DONE });
+  await toChoose(p);
+  const r = await lend(p, o);
+  const got = { hand: r.lines.filter((l) => l.endsWith(HAND)).length, holds: r.lines.filter((l) => l.endsWith(HOLDS)).length, counts: counts(r.lines), knots: r.knots.length ? r.knots[0] : 0 };
+  const thread = r.fired.includes('fx:pThread'), pose = r.fired.some((x) => /^pose:comp=/.test(x));
+  ok(got.hand === want.hand && (want.holds == null || got.holds === want.holds) && JSON.stringify(got.counts) === JSON.stringify(want.counts) && got.knots === want.knots && (want.hand ? thread && pose : !thread),
+    label + ': ' + (want.hand ? '"' + HAND + '" and exactly one count sentence; Nao\'s pose and thread played' : '"' + HOLDS + '", no count, no thread') + '; ' + o.knots[0] + ' → ' + want.knots + ' (' + JSON.stringify({ got, thread, pose, lines: r.lines }) + ')');
+  ok(!errors.length, label + ': no page errors ' + errors.slice(0, 3).join(' | '));
+  await p.close();
+}
+{
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await begin(p, { enc: 'kr.wick_ridge', comp: 'nao', quests: NAO_DONE });
+  await toChoose(p);
+  const r = await lend(p, { knots: [3, 3], target: 1 });
+  const named = r.lines.filter((l) => /^The .+: A knot comes loose\.$/.test(l));
+  ok(r.lines.filter((l) => l.endsWith(HAND)).length === 1 && counts(r.lines).length === 1 && named.length === 1 && JSON.stringify(r.knots.slice(0, 2)) === JSON.stringify([3, 2]),
+    '11 in a group, aimed at the second creature: one count sentence naming a creature; that one 3 → 2, the other 3 (' + JSON.stringify({ knots: r.knots, lines: r.lines }) + ')');
+  ok(!errors.length, 'Lend a hand in a group: no page errors ' + errors.slice(0, 3).join(' | '));
   await p.close();
 }
 
