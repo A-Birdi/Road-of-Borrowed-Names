@@ -174691,8 +174691,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const npc = (mapId, id) => ((M(mapId) || {}).npcs || []).find((n) => n.id === id);
   // the letter delivered: Heisuke, at Sakashita
   npc('cr.sakashita', 'cr_heisuke').talk.unshift({ if: 'cr_message_taken&!cr_done', scene: 'cr.deliver' });
-  // the slide cleared from above (the goat path brings you out just above it)
-  M('cr.pass1').triggers.push({ x: 22, y: 22, w: 2, h: 2, scene: 'cr.pass1_clear', if: 'cr_slide_seen&!cr_turn_cleared' });
+  // the slide cleared from above (the goat path brings you out just above it). Not while its own scene runs: "Leave
+  // it as it is" steps you back two tiles, and from x 23 the first step is still inside, which offered it again before
+  // the retreat had finished (Agnes 6552850704; Local CL-586; Cloud CC-424). A later step back in offers it again.
+  M('cr.pass1').triggers.push({ x: 22, y: 22, w: 2, h: 2, scene: 'cr.pass1_clear', if: 'cr_slide_seen&!cr_turn_cleared&!scene.cr.pass1_clear' });
   // the Pass: the view the first time (the chapter ends at Sakashita, with the letter delivered)
   M('cr.summit').onEnter = [{ scene: 'cr.summit_first', if: '!cr_summit_seen' }];
 })(RB.content);
