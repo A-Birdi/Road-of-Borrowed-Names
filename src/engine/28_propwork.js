@@ -546,7 +546,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     shadow: () => [48, 29, 48, 3, 0.3],
   });
-  // Cooking stove: a stone firebox with an iron top plate and a live fire.
+  // Cooking stove: a stone firebox with an iron top plate and a live fire. Written as unlit (o.lit === false): variant 1,
+  // a cold mouth with unburnt wood and no fire or glow, still; lit stays variant 0, drawn as before.
   const STOVE = ramp('#5e5654', 0.5, 0.4);
   function fire(g, cx, by, w, h, f, n) {
     const E = K.FIX.ember;
@@ -560,7 +561,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   art('stove', {
     box: [0, -10, 32, 44],
-    f: (t, o) => K.frame(t, 110, 4, o.still),
+    v: (o) => (o.lit === false ? 1 : 0),
+    f: (t, o) => (o.lit === false ? 0 : K.frame(t, 110, 4, o.still)),
     draw(g, M, v, f) {
       const s5 = STOVE;
       R(g, 3, 0, 26, 29, s5[2]);
@@ -571,10 +573,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ell(g, 16, -2, 8, 1.6, IR[1]); R(g, 12, -3, 8, 1, IR[4]);
       // fire mouth
       R(g, 9, 13, 14, 12, '#1c1210'); R(g, 8, 12, 16, 1, s5[4]); R(g, 9, 13, 14, 1, '#3a2418');
+      if (v === 1) {
+        // cold: grey ash, two split logs laid crosswise, nothing burning
+        const w5 = M.wood;
+        R(g, 10, 23, 12, 1, '#4a4642');
+        R(g, 10, 21, 12, 2, w5[1]); R(g, 10, 21, 12, 1, w5[2]); R(g, 21, 21, 1, 2, w5[3]);
+        R(g, 12, 18, 9, 2, w5[2]); R(g, 12, 18, 9, 1, w5[3]); R(g, 12, 18, 1, 2, w5[4]);
+        return;
+      }
       R(g, 10, 22, 12, 2, K.FIX.char[3]);
       fire(g, 16, 22, 10, 8, f, 3);
     },
-    over(g, M, v, f) { K.halo(g, 16, 19, 11, '#ff9a40', 0.1 + (f % 2) * 0.04); },
+    over(g, M, v, f) { if (v !== 1) K.halo(g, 16, 19, 11, '#ff9a40', 0.1 + (f % 2) * 0.04); },
     shadow: () => [16, 29, 15, 3, 0.34],
   });
   art('pot', {

@@ -862,10 +862,12 @@ RB.battlePlaces = (function () {
       Object.assign(rec, { shown: true, x: r.x, y: r.y, w: r.w, h: r.h, spr });
       occ.push(r);
     }
-    // real lights among them glow (indoors, or out of doors after dark)
+    // real lights among them glow (indoors, or out of doors after dark); a placement written as unlit (o.lit === false: a
+    // cold stove, a dark lantern) gives none, as in the world (src/engine/65_worldlook.js, emitters)
     if (comp.indoor || comp.night || comp.dark >= 0.35) for (const p of placed) {
       const g = p.shown && p.spr && GLOW[p.id];
       if (!g) continue;
+      if (p.it && p.it.o && p.it.o.lit === false) continue;
       out.lights.push({ x: p.x + p.w / 2, y: p.y + p.h * g[0], r: g[1], lit: p.id });
     }
     // accessories: each cluster at its home (or the next home on its row) unless an actor or the lane is there
@@ -1377,6 +1379,8 @@ RB.battlePlaces = (function () {
       landmarks: placed.filter((p) => p.kind === 'landmark').map((p) => ({ id: p.id, from: p.from, tier: p.tier, shown: !!p.shown, dimmed: !!p.dimmed, rect: r(p), dir: p.dir || null, cx: p.cx != null ? Math.round(p.cx) : null })),
       context: placed.filter((p) => p.kind === 'context').map((p) => ({ id: p.id, from: p.from, tier: p.tier, shown: !!p.shown, rect: r(p) })),
       contextSel: (cur.context || []).map((it) => it.src + ':' + it.id + '@' + it.at),
+      // the lights the place gives (each a shown real light, by its prop id), for checking what glows
+      lights: lay ? lay.lights.map((l) => ({ lit: l.lit, x: Math.round(l.x), y: Math.round(l.y), r: l.r })) : [],
       lines: (cur.lines || []).map((l) => ({ group: l.group, from: l.from })),
       accessories: (cur.accessories || []).map((a) => ({ id: a.cluster, zone: a.zone, side: a.side, variant: a.variant, home: a.home ? a.home.at : null })),
       accessoriesPlaced: placed.filter((p) => p.kind === 'accessory').map((p) => ({ id: p.id, zone: p.zone, home: p.home, spot: p.spot || null, shown: !!p.shown, rect: r(p), members: (p.members || []).map((q) => ({ ref: q.ref, rect: r(q) })) })),

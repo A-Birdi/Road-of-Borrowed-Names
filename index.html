@@ -31267,7 +31267,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     shadow: () => [48, 29, 48, 3, 0.3],
   });
-  // Cooking stove: a stone firebox with an iron top plate and a live fire.
+  // Cooking stove: a stone firebox with an iron top plate and a live fire. Written as unlit (o.lit === false): variant 1,
+  // a cold mouth with unburnt wood and no fire or glow, still; lit stays variant 0, drawn as before.
   const STOVE = ramp('#5e5654', 0.5, 0.4);
   function fire(g, cx, by, w, h, f, n) {
     const E = K.FIX.ember;
@@ -31281,7 +31282,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   art('stove', {
     box: [0, -10, 32, 44],
-    f: (t, o) => K.frame(t, 110, 4, o.still),
+    v: (o) => (o.lit === false ? 1 : 0),
+    f: (t, o) => (o.lit === false ? 0 : K.frame(t, 110, 4, o.still)),
     draw(g, M, v, f) {
       const s5 = STOVE;
       R(g, 3, 0, 26, 29, s5[2]);
@@ -31292,10 +31294,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ell(g, 16, -2, 8, 1.6, IR[1]); R(g, 12, -3, 8, 1, IR[4]);
       // fire mouth
       R(g, 9, 13, 14, 12, '#1c1210'); R(g, 8, 12, 16, 1, s5[4]); R(g, 9, 13, 14, 1, '#3a2418');
+      if (v === 1) {
+        // cold: grey ash, two split logs laid crosswise, nothing burning
+        const w5 = M.wood;
+        R(g, 10, 23, 12, 1, '#4a4642');
+        R(g, 10, 21, 12, 2, w5[1]); R(g, 10, 21, 12, 1, w5[2]); R(g, 21, 21, 1, 2, w5[3]);
+        R(g, 12, 18, 9, 2, w5[2]); R(g, 12, 18, 9, 1, w5[3]); R(g, 12, 18, 1, 2, w5[4]);
+        return;
+      }
       R(g, 10, 22, 12, 2, K.FIX.char[3]);
       fire(g, 16, 22, 10, 8, f, 3);
     },
-    over(g, M, v, f) { K.halo(g, 16, 19, 11, '#ff9a40', 0.1 + (f % 2) * 0.04); },
+    over(g, M, v, f) { if (v !== 1) K.halo(g, 16, 19, 11, '#ff9a40', 0.1 + (f % 2) * 0.04); },
     shadow: () => [16, 29, 15, 3, 0.34],
   });
   art('pot', {
@@ -103574,10 +103584,12 @@ RB.battlePlaces = (function () {
       Object.assign(rec, { shown: true, x: r.x, y: r.y, w: r.w, h: r.h, spr });
       occ.push(r);
     }
-    // real lights among them glow (indoors, or out of doors after dark)
+    // real lights among them glow (indoors, or out of doors after dark); a placement written as unlit (o.lit === false: a
+    // cold stove, a dark lantern) gives none, as in the world (src/engine/65_worldlook.js, emitters)
     if (comp.indoor || comp.night || comp.dark >= 0.35) for (const p of placed) {
       const g = p.shown && p.spr && GLOW[p.id];
       if (!g) continue;
+      if (p.it && p.it.o && p.it.o.lit === false) continue;
       out.lights.push({ x: p.x + p.w / 2, y: p.y + p.h * g[0], r: g[1], lit: p.id });
     }
     // accessories: each cluster at its home (or the next home on its row) unless an actor or the lane is there
@@ -104089,6 +104101,8 @@ RB.battlePlaces = (function () {
       landmarks: placed.filter((p) => p.kind === 'landmark').map((p) => ({ id: p.id, from: p.from, tier: p.tier, shown: !!p.shown, dimmed: !!p.dimmed, rect: r(p), dir: p.dir || null, cx: p.cx != null ? Math.round(p.cx) : null })),
       context: placed.filter((p) => p.kind === 'context').map((p) => ({ id: p.id, from: p.from, tier: p.tier, shown: !!p.shown, rect: r(p) })),
       contextSel: (cur.context || []).map((it) => it.src + ':' + it.id + '@' + it.at),
+      // the lights the place gives (each a shown real light, by its prop id), for checking what glows
+      lights: lay ? lay.lights.map((l) => ({ lit: l.lit, x: Math.round(l.x), y: Math.round(l.y), r: l.r })) : [],
       lines: (cur.lines || []).map((l) => ({ group: l.group, from: l.from })),
       accessories: (cur.accessories || []).map((a) => ({ id: a.cluster, zone: a.zone, side: a.side, variant: a.variant, home: a.home ? a.home.at : null })),
       accessoriesPlaced: placed.filter((p) => p.kind === 'accessory').map((p) => ({ id: p.id, zone: p.zone, home: p.home, spot: p.spot || null, shown: !!p.shown, rect: r(p), members: (p.members || []).map((q) => ({ ref: q.ref, rect: r(q) })) })),
@@ -157402,7 +157416,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'shelf', x: 6, y: 2, scene: 'sb.charts_cabinet' }, { p: 'shelf', x: 7, y: 2, scene: 'sb.charts_cabinet' }, { p: 'shelf', x: 8, y: 2, scene: 'sb.charts_cabinet' },
       { p: 'sb_starchart', x: 4, y: 5, scene: 'sb.charts_log' },
       { p: 'desk', x: 10, y: 4, scene: 'sb.charts_desk' },
-      { p: 'stove', x: 13, y: 2, scene: 'sb.charts_stove' },
+      // the stove cold until the flame word lights it, sprite and light both (Agnes 6545405253, 6545601642; Local CL-556,
+      // CL-557; Cloud CC-399): written as unlit, it draws its cold form and gives no light; the same scene either way
+      { p: 'stove', x: 13, y: 2, o: { lit: false }, scene: 'sb.charts_stove', if: '!sb_stove_lit' },
+      { p: 'stove', x: 13, y: 2, scene: 'sb.charts_stove', if: 'sb_stove_lit' },
       { p: 'bookpile', x: 1, y: 9 }, { p: 'chair', x: 11, y: 5 },
       { p: 'stairs', x: 14, y: 5 },
       { p: 'sb_icewall', x: 14, y: 4, if: '!sb_log_solved' }, { p: 'sb_icewall', x: 14, y: 5, o: { cracked: true }, if: '!sb_log_solved', scene: 'sb.charts_stair_locked' }, { p: 'sb_icewall', x: 14, y: 6, if: '!sb_log_solved' },

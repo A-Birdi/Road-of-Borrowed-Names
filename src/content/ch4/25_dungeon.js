@@ -128,7 +128,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'shelf', x: 6, y: 2, scene: 'sb.charts_cabinet' }, { p: 'shelf', x: 7, y: 2, scene: 'sb.charts_cabinet' }, { p: 'shelf', x: 8, y: 2, scene: 'sb.charts_cabinet' },
       { p: 'sb_starchart', x: 4, y: 5, scene: 'sb.charts_log' },
       { p: 'desk', x: 10, y: 4, scene: 'sb.charts_desk' },
-      { p: 'stove', x: 13, y: 2, scene: 'sb.charts_stove' },
+      // the stove cold until the flame word lights it, sprite and light both (Agnes 6545405253, 6545601642; Local CL-556,
+      // CL-557; Cloud CC-399): written as unlit, it draws its cold form and gives no light; the same scene either way
+      { p: 'stove', x: 13, y: 2, o: { lit: false }, scene: 'sb.charts_stove', if: '!sb_stove_lit' },
+      { p: 'stove', x: 13, y: 2, scene: 'sb.charts_stove', if: 'sb_stove_lit' },
       { p: 'bookpile', x: 1, y: 9 }, { p: 'chair', x: 11, y: 5 },
       { p: 'stairs', x: 14, y: 5 },
       { p: 'sb_icewall', x: 14, y: 4, if: '!sb_log_solved' }, { p: 'sb_icewall', x: 14, y: 5, o: { cracked: true }, if: '!sb_log_solved', scene: 'sb.charts_stair_locked' }, { p: 'sb_icewall', x: 14, y: 6, if: '!sb_log_solved' },
