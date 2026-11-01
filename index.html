@@ -205415,7 +205415,13 @@ kr_kikyo: …… {狐|きつね} が {見守|みまも}って いた 、 と い
 ?(comp=suzu) comp[laugh]: {分|わ}かる わ 。 {狐|きつね} が {出|で}る と 、 {客席|きゃくせき} が {沸|わ}く の よ 。 || I know just what she means. Bring on a fox and the house goes wild.
 !end
 :told
+# after the vigil, her own reflection on endings (kr.vigil_kikyo), not the cave still ahead (Agnes 6547835197; Cloud
+# CC-407; Local CL-565; Agnes 6548029795)
+!if kr_vigil_done -> ended
 kr_kikyo: {絵巻|えまき} の {話|はなし} 、 {洞|ほら} で {役|やく} に {立|た}つ と いい わ ね 。 || I hope the scroll's story is some use in the cave.
+!end
+:ended
+!call kr.vigil_kikyo
 
 @scene kr.kikyo_scroll
 !if kr_scroll_done -> read
