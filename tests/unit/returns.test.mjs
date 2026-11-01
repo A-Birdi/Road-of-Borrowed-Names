@@ -215,6 +215,7 @@ export default async (t) => {
     t.ok(s.flags.rt_nao_read && s.flags.rt_nao_sent && s.vars.rt_nao_to === 'hiro', 'to whom you chose');
     t.eq(talkOf(s, 'cr.kirishita', 'cr_sakichi'), 'cr.sakichi_after', 'no reply while you are still standing there');
     const due = C.maps['cr.kirishita'].onEnter.find((x) => x.scene === 'rt.nao_due');
+    RB.bus.emit('map:enter', { id: 'cr.barrier' }); // (away first, to the Barrier: tests/unit/nao_relay.test.mjs)
     t.ok(due && S.test(s, due.if), 'come again, and it is due');
     await run('rt.nao_due');
     t.eq(talkOf(s, 'cr.kirishita', 'cr_sakichi'), 'rt.nao_reply', 'and Sakichi has it');

@@ -109,9 +109,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { if: POST + '&comp=nao&!rt_nao_read', scene: 'rt.nao_sakichi' },
     { if: POST + '&comp=nao&rt_nao_due&!rt_nao_told', scene: 'rt.nao_reply' },
     { if: POST + '&comp=nao&!rt_nao_sent', scene: 'rt.nao_write' });
-  // the reply comes back while you are away: it is due once you have left Kirishita and come again
+  // the reply comes back while you are away: it is due once you have left Kirishita and come again. Away is recorded
+  // on entering anywhere but Kirishita (its inn is Kirishita) after the letter went: the arrival events also run again
+  // after every scene, which made it due as soon as it was sent (Agnes 6556347031, 6556470001; Local CL-608; Cloud
+  // CC-444, CC-445)
   const kiri = C.maps['cr.kirishita'];
-  kiri.onEnter = (kiri.onEnter || []).concat([{ scene: 'rt.nao_due', if: POST + '&rt_nao_sent&!rt_nao_due' }]);
+  kiri.onEnter = (kiri.onEnter || []).concat([{ scene: 'rt.nao_due', if: POST + '&rt_nao_sent&rt_nao_away&!rt_nao_due' }]);
+  const KIRISHITA = ['cr.kirishita', 'cr.kirishita_inn'];
+  if (RB.bus) RB.bus.on('map:enter', (e) => {
+    const s = RB.game && RB.game.s;
+    if (s && s.flags && s.flags.rt_nao_sent && !s.flags.rt_nao_due && !s.flags.rt_nao_told && e && KIRISHITA.indexOf(e.id) < 0) s.flags.rt_nao_away = true;
+  });
   const hisae = npc('kr.lodge', 'kr_hisae');
   if (hisae) hisae.talk.unshift({ if: POST + '&comp=ren&!rt_ren_walk', scene: 'rt.ren_walk' });
 
