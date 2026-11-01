@@ -121,7 +121,7 @@ async function talkToNao(p) {
   const { p, errors, requests, ctx } = await page(b, url, {});
   await at(p, 'mb.inn', 6, 7, { mb_night: true, mb_ichi_lost: true });
   let c = await company(p);
-  ok(!c.rest && !c.talk && /for a rest stop/.test(c.row || ''), '3 on the night Ichi is lost: no "Rest together", no Talk (' + c.row + ')');
+  ok(!c.rest && !c.talk && /not here: talk where you can rest/.test(c.row || ''), '3 on the night Ichi is lost: no "Rest together", no Talk (' + c.row + ')');
   await close(p);
   const night = await talkToNao(p);
   ok(!night.rest, '3 talking to Nao opens no rest menu that night (ran: ' + night.runs.join(' ') + ')');
