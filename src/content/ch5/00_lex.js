@@ -6,6 +6,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.lex.add(RB.lex.parseTable(`
 # ---- places, institutions, fiction -------------------------------------------------------
 第五章|だいごしょう|n|E|Chapter Five
+第八章|だいはっしょう|n|E|Chapter Eight
 雪鈴|ゆきすず|name|I|Yukisuzu (Snowbell, a mountain hamlet)|A place name in this story.
 ゆきすず||name|F|Yukisuzu (Snowbell), written in kana
 高瀬|たかせ|name|I|Takase (a village upstream of Lanternfall)|A place name in this story.

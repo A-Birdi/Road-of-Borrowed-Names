@@ -10,7 +10,9 @@ RB.script.add(`
 # in to the rewritten lantern and says the pun without a gesture, Suzu's showman's hands, then a glance away).
 !music co_road
 !chapter 3
-!card {第三章|だいさんしょう} ・ {灰実|はいみ}の{里|さと} || Chapter Three — Cinder Orchard
+# (the twelve-chapter edition numbers the base chapters in story order, src/engine/05a_edition.js: Agnes 6548127532; Local CL-568; Cloud CC-410)
+?(ed<2) !card {第三章|だいさんしょう} ・ {灰実|はいみ}の{里|さと} || Chapter Three — Cinder Orchard
+?(ed>=2) !card {第五章|だいごしょう} ・ {灰実|はいみ}の{里|さと} || Chapter 5 — Cinder Orchard
 !gesture pc lookroad up
 narr: {坂道|さかみち} の {両側|りょうがわ} に 、 {実|み} を つけた {柿|かき} の {木|き} が {並|なら}んで いる 。 || The road climbs between persimmon trees heavy with fruit.
 narr: {丘|おか} の {上|うえ} は {段々畑|だんだんばたけ} 。 {工房|こうぼう} の {煙突|えんとつ} から 、 {細|ほそ}い {煙|けむり} が {上|あ}がって いる 。 || Above, the hill is stepped with terraces, and thin smoke rises from workshop chimneys.

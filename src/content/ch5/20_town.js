@@ -16,7 +16,9 @@ RB.script.add(`
 !chapter 5
 !gesture pc lookroad right
 narr: {松|まつ} の {林|はやし} を {抜|ぬ}ける と 、{急|きゅう} に {谷|たに} が {開|ひら}けた 。|| The road comes out of the pines, and all at once the valley opens below you.
-!card {第五章|だいごしょう} 　{灯落|ひおち} || Chapter 5 — Lanternfall
+# (the twelve-chapter edition numbers the base chapters in story order, src/engine/05a_edition.js: Agnes 6548127532; Local CL-568; Cloud CC-410)
+?(ed<2) !card {第五章|だいごしょう} 　{灯落|ひおち} || Chapter 5 — Lanternfall
+?(ed>=2) !card {第八章|だいはっしょう} 　{灯落|ひおち} || Chapter 8 — Lanternfall
 !fade out
 !interlude lf_valley
 !fade in 600

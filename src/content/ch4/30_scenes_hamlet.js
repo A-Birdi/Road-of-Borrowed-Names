@@ -10,7 +10,9 @@ RB.script.add(`
 # showman's hands, then she points up to the village with the clear bell).
 !set sb_arrived
 !chapter 4
-!card {第四章|だいよんしょう} ・ {雪鈴|ゆきすず} || Chapter Four — Snowbell
+# (the twelve-chapter edition numbers the base chapters in story order, src/engine/05a_edition.js: Agnes 6548127532; Local CL-568; Cloud CC-410)
+?(ed<2) !card {第四章|だいよんしょう} ・ {雪鈴|ゆきすず} || Chapter Four — Snowbell
+?(ed>=2) !card {第六章|だいろくしょう} ・ {雪鈴|ゆきすず} || Chapter 6 — Snowbell
 !gesture pc exhale
 narr: {坂|さか} を {上|のぼ}る ほど 、 {空気|くうき} が {薄|うす}く なって いく 。 {雪|ゆき} が {音|おと} を {吸|す}いこんで 、 {自分|じぶん} たち の {足音|あしおと} だけ が {聞|き}こえる 。 || The higher the road climbs, the thinner the air. The snow swallows every sound but your own footsteps.
 ?(comp=nao) !gesture comp shrug

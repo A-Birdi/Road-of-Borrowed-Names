@@ -11,7 +11,9 @@ RB.script.add(`
 !set sa_arrived
 !chapter 6
 !music sa_road
-!card {第六章|だいろくしょう} 　 {静寂|しじま} の {書庫|しょこ} || Chapter Six — The Still Archive
+# (the twelve-chapter edition numbers the base chapters in story order, src/engine/05a_edition.js: Agnes 6548127532; Local CL-568; Cloud CC-410)
+?(ed<2) !card {第六章|だいろくしょう} 　 {静寂|しじま} の {書庫|しょこ} || Chapter Six — The Still Archive
+?(ed>=2) !card {第十二章|だいじゅうにしょう} 　 {静寂|しじま} の {書庫|しょこ} || Chapter 12 — The Still Archive
 !gesture pc lookroad up
 narr: {灯落|ひおち} の {上|うえ} で 、 {道|みち} は {急|きゅう} に {静|しず}か に なる 。 || Above Lanternfall, the road goes suddenly quiet.
 narr: {鳥|とり} の {声|こえ} も 、 {風|かぜ} の {音|おと} も 、 {少|すこ}し ずつ {遠|とお}く なって いく 。 || Birdsong and wind both drop away, a little at a time.

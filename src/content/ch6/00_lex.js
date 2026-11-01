@@ -5,6 +5,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.lex.add(RB.lex.parseTable(`
 静寂|しじま|n|A|stillness, silence (literary reading); here also the Hush (fictional force)|The everyday reading of 静寂 is せいじゃく; しじま is a poetic reading used in names.
 第六章|だいろくしょう|n|I|chapter six
+第十二章|だいじゅうにしょう|n|E|Chapter Twelve
 余地|よち|n|I|room, scope (for something)|迷う余地はない: there's no room to get lost.
 薄める|うすめる|v1|I|to thin, dilute
 淡い|あわい|adj-i|I|pale, faint (colour, light, feeling)
