@@ -115,7 +115,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { x: 0, y: 12, w: 1, h: 2, to: 'cr.pass3', sp: 'from_east', dir: 'left' },
       { x: 29, y: 12, w: 1, h: 2, to: 'cr.summit', sp: 'from_west', dir: 'right', if: 'cr_courier_done' },
     ],
-    triggers: [{ x: 13, y: 12, w: 4, h: 2, scene: 'cr.courier', if: '!cr_courier_done' }],
+    // not while his own scene runs: after the fade he steps you back two tiles, and from x 14–16 (and from Genta's
+    // talk) the first step was still inside, which started him again mid-retreat (Agnes 6553382240; Local CL-588,
+    // CL-590; Cloud CC-427, CC-428). The retreat can still end inside, so a later step there offers him again.
+    triggers: [{ x: 13, y: 12, w: 4, h: 2, scene: 'cr.courier', if: '!cr_courier_done&!scene.cr.courier' }],
     onEnter: [{ scene: 'cr.hut_enter', if: '!cr_hut_seen' }],
     spawn: { default: [1, 12, 'right'], from_west: [1, 12, 'right'], from_east: [28, 12, 'left'] },
   });
