@@ -386,7 +386,10 @@ hoshino: {頼|たの}み が ある 。 {天文台|てんもんだい} へ {上|
 !prop hoshino key
 !gesture hoshino handover pc
 !gesture pc receive hoshino
-hoshino: {石段|いしだん} の {氷|こおり} は 、 {昨夜|ゆうべ} の あの {字|じ} で とかせる はず だ 。 {扉|とびら} は この {鍵|かぎ} で {開|あ}く 。 {中|なか} の こと は …… デンジ に {聞|き}いた ね 。 あの {丸屋根|まるやね} を いっしょ に {建|た}てた {男|おとこ} だ 。 || The ice on the stair should melt with that word from last night. This key opens the door. As for inside… Denji told you, didn't he. He built the dome with me.
+# (before Denji has told you the night's three things, Hoshino sends you to him: Agnes 6545296917, 6545425537;
+# Local CL-554; Cloud CC-398)
+?(seen.sb.storm_denji) hoshino: {石段|いしだん} の {氷|こおり} は 、 {昨夜|ゆうべ} の あの {字|じ} で とかせる はず だ 。 {扉|とびら} は この {鍵|かぎ} で {開|あ}く 。 {中|なか} の こと は …… デンジ に {聞|き}いた ね 。 あの {丸屋根|まるやね} を いっしょ に {建|た}てた {男|おとこ} だ 。 || The ice on the stair should melt with that word from last night. This key opens the door. As for inside… Denji told you, didn't he. He built the dome with me.
+?(!seen.sb.storm_denji) hoshino: {石段|いしだん} の {氷|こおり} は 、 {昨夜|ゆうべ} の あの {字|じ} で とかせる はず だ 。 {扉|とびら} は この {鍵|かぎ} で {開|あ}く 。 {中|なか} の こと は …… デンジ に {聞|き}いて くれ 。 あの {丸屋根|まるやね} を いっしょ に {建|た}てた {男|おとこ} だ 。 || The ice on the stair should melt with that word from last night. This key opens the door. As for inside… ask Denji. He built the dome with me.
 !gesture hoshino nod pc
 hoshino: {道|みち} が {開|ひら}けたら 、 わたし も {後|あと} から {行|い}く 。 {灯|あか}り の {前|まえ} で 、 {待|ま}って いて くれ 。 || Once the way is clear, I'll follow. Wait for me at the lamp.
 ?(comp=mio) !gesture comp observe hoshino

@@ -780,7 +780,11 @@ denji: {上|うえ} の {回廊|かいろう} に は 、 {裏|うら} の {階�
 denji: {丸屋根|まるやね} へ の {蓋|ふた} は 、 {回廊|かいろう} の ハンドル で {開|あ}ける 。 {回|まわ}し{方|かた} は {壁|かべ} に {書|か}いて ある 。 {凍|こお}って いたら …… まあ 、 {読|よ}めば わかる 。 || The hatch to the dome opens with the handle in the gallery. How to turn it is written on the wall. If it's frozen… well, read it and you'll see.
 
 @scene sb.denji_morning
-denji: {行|い}く の か 。 {扉|とびら} 、 {裏|うら} の {階段|かいだん} 、 {蓋|ふた} の ハンドル 。 {昨夜|ゆうべ} {言|い}った {三|みっ}つ を {忘|わす}れる な 。 || Going, are you? The door, the back stair, the hatch handle. Don't forget the three things I told you last night.
+# (the night's three things, if they were missed at the inn: told now, and a repeat never calls them last night's:
+# Agnes 6545296917, 6545425537; Local CL-554, CL-555; Cloud CC-398)
+?(seen.sb.storm_denji&!sb_denji_catchup) denji: {行|い}く の か 。 {扉|とびら} 、 {裏|うら} の {階段|かいだん} 、 {蓋|ふた} の ハンドル 。 {昨夜|ゆうべ} {言|い}った {三|みっ}つ を {忘|わす}れる な 。 || Going, are you? The door, the back stair, the hatch handle. Don't forget the three things I told you last night.
+?(!seen.sb.storm_denji) !set sb_denji_catchup
+?(!seen.sb.storm_denji) !call sb.storm_denji
 denji: それ と 、 ホシノ を {頼|たの}む 。 あいつ は {約束|やくそく} の こと に なる と 、 {自分|じぶん} を {粗末|そまつ} に する 。 || And look after Hoshino for me. When it comes to promises, he doesn't look after himself.
 `, 'ch4/residents-denji');
 
