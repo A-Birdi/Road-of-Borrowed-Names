@@ -204495,7 +204495,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bookpile', x: 13, y: 27, if: 'kr_iwa_met&!kr_iwa_book_found', scene: 'kr.iwa_book' },
     ],
     npcs: [
-      { id: 'kr_kumazo', x: 9, y: 23, dir: 'left', talk: [{ if: 'kr_done', scene: 'kr.kumazo_after' }, { if: 'kr_cedar_cleared', scene: 'kr.kumazo_idle' }, { scene: 'kr.kumazo_first' }] },
+      // from the dawn after the vigil the steps' lanterns are lit: the bright-steps line, not the dark-lanterns one
+      // (Agnes 6547898553; Local CL-566; Cloud CC-408; Agnes 6548029795)
+      { id: 'kr_kumazo', x: 9, y: 23, dir: 'left', talk: [{ if: 'kr_done', scene: 'kr.kumazo_after' }, { if: 'kr_vigil_done&kr_cedar_cleared', scene: 'kr.kumazo_after' }, { if: 'kr_cedar_cleared', scene: 'kr.kumazo_idle' }, { scene: 'kr.kumazo_first' }] },
     ],
     foes: [
       { id: 'moss1', enemy: 'kr.moss', encounter: 'kr.moss_steps', x: 14, y: 9, patrol: 0, if: '!kr_moss1_named', bg: 'keepers' },
