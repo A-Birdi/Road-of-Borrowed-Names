@@ -155,10 +155,11 @@ export default async (t) => {
   {
     const s = fresh('nao'); quest(s, 'lf_nao', 1);
     await run('sa.epi_lf');
-    t.ok(!has(/I haven't written back/) && has(/You said you'd come back/), 'epilogue: Umi does not speak of a letter she has not received');
+    t.ok(!has(/I haven't written back|That's all I wrote/) && has(/You said you'd come back/), 'epilogue: Umi does not speak of a letter she has not received');
     const s2 = fresh('nao'); quest(s2, 'lf_nao', 'done');
     await run('sa.epi_lf');
-    t.ok(has(/I haven't written back/) && !has(/You said you'd come back/), 'epilogue: with the letter delivered, the original lines');
+    // she wrote one line back at the delivery, so not "I haven't written back" (Agnes 6555618743; Local CL-604; Cloud CC-440)
+    t.ok(has(/"I read it\." That's all I wrote\./) && !has(/I haven't written back/) && !has(/You said you'd come back/), 'epilogue: with the letter delivered, the delivered route\'s lines (what she wrote back)');
   }
 
   // ---- A Conversation We Still Owe Ourselves ------------------------------------------------------

@@ -133,7 +133,9 @@ sa_tae[surprise]: …… そう かい 。 あの {子|こ} だった の かい
 akari: $name さん ！ …… {父|ちち} と 、 {手紙|てがみ} が やり{取|と}り できる よう に なりました 。 {宛先|あてさき} が 、 ちゃんと {読|よ}める {字|じ} で {届|とど}く んです 。 || $name! …My father and I can write to each other now. The addresses arrive in writing anyone can read.
 ?(sb_hoshino_goes) !gesture akari lookroad up
 ?(sb_hoshino_goes) akari[smile]: {父|ちち} は 、 {今|いま} こっち に いる んです 。 {灯|あか}り を {人|ひと} に {頼|たの}んで 、 {山|やま} を {下|お}りて きて 。 {毎晩|まいばん} 、 {窓|まど} から {雪鈴|ゆきすず} の {方|ほう} を {見|み}て います 。 || My father's here now. He left the lamp in someone's care and came down the mountain. Every night he looks out of the window towards Snowbell.
-?(comp=nao&quest.lf_nao=done) umi: …… {返事|へんじ} は 、 まだ {書|か}いて ない 。 {書|か}く か どう か も 、 {決|き}めて ない 。 || …I haven't written back. I haven't decided whether I will.
+# the letter delivered, she has written her one line back (lf.nao_deliver: "I read it."); what is still undecided is
+# whether she forgives him (Agnes 6555618743; Local CL-604; Cloud CC-440)
+?(comp=nao&quest.lf_nao=done) umi: …… 「 {読|よ}みました 」 。 {書|か}いた の は 、 それ だけ 。 {許|ゆる}す か どう か は 、 まだ {決|き}めて ない 。 || …"I read it." That's all I wrote. I still haven't decided whether I forgive him.
 ?(comp=nao&quest.lf_nao=done) !gesture umi palm comp
 ?(comp=nao&quest.lf_nao=done) umi: {決|き}めなくて いい って 、 あんた {言|い}った よ ね 。 || You said I didn't have to decide.
 ?(comp=nao&quest.lf_nao=done) !gesture comp nod umi
