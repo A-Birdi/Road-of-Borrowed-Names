@@ -172216,14 +172216,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const D = (comp, on, when, text) => CC.thoughts.push({ comp, kind: 'recent', on: 'dec:' + on, when, text });
 
   // Saltglass: who took Wataru's confession to the harbourmaster (the scene's choice had no companion line)
+  // Wataru's own route sets both flags (sg.wataru_confront :self, then :go), so "we told" is the confession without it
+  // (Agnes 6561292860; Local CL-620; Cloud CC-458)
   D('nao', 'sg_wataru', 'sg_wataru_self', T('ワタル は {自分|じぶん} の {足|あし} で {港長|こうちょう} の {所|ところ} へ {行|い}った 。 {俺|おれ} たち は {後|うし}ろ を {歩|ある}いた だけ だ 。 それ で いい 。', 'Wataru walked to the harbourmaster on his own feet. We only walked behind him. That\'s how it should be.'));
-  D('nao', 'sg_wataru', 'sg_wataru_confessed', T('{俺|おれ} たち が {先|さき} に {話|はな}した 。 {本人|ほんにん} に {言|い}わせる {手|て} も あった けど 、 {黙|だま}って {待|ま}たせる より は いい 。', 'We spoke first. We could have made him say it himself — but it beat leaving him waiting in silence.'));
+  D('nao', 'sg_wataru', 'sg_wataru_confessed&!sg_wataru_self', T('{俺|おれ} たち が {先|さき} に {話|はな}した 。 {本人|ほんにん} に {言|い}わせる {手|て} も あった けど 、 {黙|だま}って {待|ま}たせる より は いい 。', 'We spoke first. We could have made him say it himself — but it beat leaving him waiting in silence.'));
   D('mio', 'sg_wataru', 'sg_wataru_self', T('{自分|じぶん} の {口|くち} で {言|い}えた ワタル さん は 、 {少|すこ}し {楽|らく} に なった と {思|おも}います 。 {苦|にが}い {薬|くすり} を 、 {自分|じぶん} で {飲|の}んだ ん です 。', 'Saying it in his own words must have eased Wataru a little. He took the bitter medicine himself.'));
-  D('mio', 'sg_wataru', 'sg_wataru_confessed', T('{私|わたし} たち から {伝|つた}えて 、 よかった と {思|おも}います 。 {一人|ひとり} で {言|い}わせる に は 、 {重|おも}すぎる {話|はなし} でした 。', 'I think it was right that we told them. It was too heavy a thing to make him say alone.'));
+  D('mio', 'sg_wataru', 'sg_wataru_confessed&!sg_wataru_self', T('{私|わたし} たち から {伝|つた}えて 、 よかった と {思|おも}います 。 {一人|ひとり} で {言|い}わせる に は 、 {重|おも}すぎる {話|はなし} でした 。', 'I think it was right that we told them. It was too heavy a thing to make him say alone.'));
   D('ren', 'sg_wataru', 'sg_wataru_self', T('{書|か}き{換|か}えた {本人|ほんにん} が 、 {自分|じぶん} で {訂正|ていせい} を {申|もう}し{出|で}た 。 {記録|きろく} と して は 、 {一番|いちばん} {良|よ}い {形|かたち} です 。', 'The man who altered the record asked to correct it himself. As records go, the best form there is.'));
-  D('ren', 'sg_wataru', 'sg_wataru_confessed', T('{報告|ほうこく} は {私|わたし} たち が しました 。 {訂正|ていせい} は 、 これから ワタル さん が {自分|じぶん} の {字|じ} で する でしょう 。', 'We made the report. The corrections, Wataru will make in his own hand from now on.'));
+  D('ren', 'sg_wataru', 'sg_wataru_confessed&!sg_wataru_self', T('{報告|ほうこく} は {私|わたし} たち が しました 。 {訂正|ていせい} は 、 これから ワタル さん が {自分|じぶん} の {字|じ} で する でしょう 。', 'We made the report. The corrections, Wataru will make in his own hand from now on.'));
   D('suzu', 'sg_wataru', 'sg_wataru_self', T('{自分|じぶん} で {台詞|せりふ} を {言|い}った わ ね 、 ワタル さん 。 {震|ふる}える {声|こえ} の {台詞|せりふ} は 、 よく {届|とど}く の よ 。', 'Wataru said his line himself. A line said in a shaking voice carries.'));
-  D('suzu', 'sg_wataru', 'sg_wataru_confessed', T('{台詞|せりふ} を {代|か}わり に {言|い}う の も 、 {時|とき} に は {必要|ひつよう} 。 {本人|ほんにん} が {舞台|ぶたい} に {立|た}って いれば 、 それ で いい の 。', 'Sometimes someone has to say the line for you. As long as he\'s on the stage, that\'s enough.'));
+  D('suzu', 'sg_wataru', 'sg_wataru_confessed&!sg_wataru_self', T('{台詞|せりふ} を {代|か}わり に {言|い}う の も 、 {時|とき} に は {必要|ひつよう} 。 {本人|ほんにん} が {舞台|ぶたい} に {立|た}って いれば 、 それ で いい の 。', 'Sometimes someone has to say the line for you. As long as he\'s on the stage, that\'s enough.'));
 
   // Cinder Orchard: the first line of the chronicle (the companions spoke to the outcome, not to the choice)
   D('nao', 'co_asm', 'co_asm_names', T('{名前|なまえ} から {読|よ}んだ の は 、 {正|ただ}しい {順番|じゅんばん} だ と {思|おも}う 。 {宛名|あてな} が {先|さき} 、 {中身|なかみ} は {後|あと} だ 。', 'Reading the names first was the right order, I think. Address first, contents after.'));
