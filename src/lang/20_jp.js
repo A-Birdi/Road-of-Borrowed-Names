@@ -628,6 +628,14 @@ RB.jp = (function () {
   const AFFIX_POS = new Set(['prt', 'aux', 'pref', 'suf']);
   const hira = (s) => K.toHira(s);
   const lex = () => RB.lex;
+  /* Lookup-only words: read by lookup() as a whole token, kept out of RB.lex so
+   * the vocabulary, its practice pools and their recorded wrong choices do not
+   * move. Exact surface only, as written in kana, with no author hint or gloss.
+   * おしまい is not in the standard lexicon, so it was split as お + 姉妹 and
+   * shown as "sisters" (Agnes 6547670899; Cloud CC-404; Local CL-562). */
+  const LOOKUP_ONLY = {
+    'おしまい': { w: 'おしまい', r: 'おしまい', pos: 'n', lv: 'E', m: "the end; that's all", ro: 'oshimai' },
+  };
 
   function lvRank(e) {
     return LV_ORDER[e.lv] != null ? LV_ORDER[e.lv] : 9;
@@ -881,6 +889,10 @@ RB.jp = (function () {
       return res;
     };
 
+    // 0: a lookup-only word, the whole token as written (LOOKUP_ONLY)
+    const only = !prefer && !tk.gloss && Object.prototype.hasOwnProperty.call(LOOKUP_ONLY, surface) ? LOOKUP_ONLY[surface] : null;
+    if (only && hira(only.r) === hira(rd)) return finish(only, [], []);
+
     // 1–5: the whole token as one unit (lemma hint preferred). Copula endings
     // after nouns are left to the split step so です shows as its own word.
     const whole = analyseUnit(surface, rd, prefer, { noCop: true, ctx });
@@ -987,6 +999,6 @@ RB.jp = (function () {
   return {
     PUNCT, isPunct, setVars, parse, plain, reading, render, validate,
     renderMixed, plainMixed, validateMixed, rubyize, esc,
-    deinflect, lookup, posMask, _rules: RULES, _types: T,
+    deinflect, lookup, posMask, LOOKUP_ONLY, _rules: RULES, _types: T,
   };
 })();

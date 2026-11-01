@@ -525,6 +525,34 @@ RB.ui.help = (function () {
       RB.ui.notice('Added to your field notebook.', 'info');
     } else RB.ui.notice('Already in your notebook.', 'info');
   }
+  // Older saves: word help read おしまい as お + 姉妹, so a card noted from it says "sisters" under the
+  // id w:姉妹|おしまい (Agnes 6547670899, 6547816998, 6548029795; Local CL-563; Cloud CC-405, CC-406).
+  // Only that card, exactly as the bug wrote it, is repaired: given the right id and meaning, or, when a
+  // word card for おしまい is already there, retired in place (every field kept; kind 'word-retired' and a
+  // retired note added, so no active list shows it; restoring it is kind back to retired.was and the note
+  // removed). A card that already has a retired field, or an id held by anything else, is left as it is.
+  // → { renamed, retired, left } for the cards that matched
+  const OSH = { from: 'w:姉妹|おしまい', to: 'w:おしまい|おしまい', bad: 'sisters', m: "the end; that's all" };
+  const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+  function repairNotebook(st) {
+    const out = { renamed: 0, retired: 0, left: 0 };
+    const nb = st && st.notebook;
+    if (!Array.isArray(nb)) return out;
+    const card = (n) => n && typeof n === 'object';
+    for (const n of nb) {
+      if (!card(n) || n.kind !== 'word' || n.id !== OSH.from || n.surface !== 'おしまい' || n.reading !== 'おしまい' || n.m !== OSH.bad) continue;
+      if (own(n, 'retired')) { out.left++; continue; }
+      const there = nb.find((x) => card(x) && x.id === OSH.to);
+      if (!there) { n.id = OSH.to; n.m = OSH.m; out.renamed++; continue; }
+      if (there.kind === 'word' && there.surface === 'おしまい' && there.reading === 'おしまい') {
+        n.kind = 'word-retired';
+        n.retired = { was: 'word', by: OSH.to, why: 'おしまい was read as 姉妹 (RBN word help)' };
+        out.retired++;
+      } else out.left++;
+    }
+    return out;
+  }
+  if (RB.save && RB.save.addMigration) RB.save.addMigration(repairNotebook);
   function hide(force) {
     if (cur) cur.classList.remove('active');
     cur = null;
@@ -537,7 +565,7 @@ RB.ui.help = (function () {
   // a registered line's tokens and context (src/ui/22_speech_mark.js marks the spoken word by token)
   const tokensOf = (id) => (reg.get(id) || {}).tokens || null;
   const ctxOf = (id) => (reg.get(id) || {}).ctx || null;
-  return { init, toggle, register, showFor, hide, hideIn, enabled, isOpen, tokensOf, ctxOf };
+  return { init, toggle, register, showFor, hide, hideIn, enabled, isOpen, tokensOf, ctxOf, repairNotebook };
 })();
 
 /* ---- HUD ---------------------------------------------------------------------------

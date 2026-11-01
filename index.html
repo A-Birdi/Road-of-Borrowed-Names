@@ -7819,6 +7819,14 @@ RB.jp = (function () {
   const AFFIX_POS = new Set(['prt', 'aux', 'pref', 'suf']);
   const hira = (s) => K.toHira(s);
   const lex = () => RB.lex;
+  /* Lookup-only words: read by lookup() as a whole token, kept out of RB.lex so
+   * the vocabulary, its practice pools and their recorded wrong choices do not
+   * move. Exact surface only, as written in kana, with no author hint or gloss.
+   * おしまい is not in the standard lexicon, so it was split as お + 姉妹 and
+   * shown as "sisters" (Agnes 6547670899; Cloud CC-404; Local CL-562). */
+  const LOOKUP_ONLY = {
+    'おしまい': { w: 'おしまい', r: 'おしまい', pos: 'n', lv: 'E', m: "the end; that's all", ro: 'oshimai' },
+  };
 
   function lvRank(e) {
     return LV_ORDER[e.lv] != null ? LV_ORDER[e.lv] : 9;
@@ -8072,6 +8080,10 @@ RB.jp = (function () {
       return res;
     };
 
+    // 0: a lookup-only word, the whole token as written (LOOKUP_ONLY)
+    const only = !prefer && !tk.gloss && Object.prototype.hasOwnProperty.call(LOOKUP_ONLY, surface) ? LOOKUP_ONLY[surface] : null;
+    if (only && hira(only.r) === hira(rd)) return finish(only, [], []);
+
     // 1–5: the whole token as one unit (lemma hint preferred). Copula endings
     // after nouns are left to the split step so です shows as its own word.
     const whole = analyseUnit(surface, rd, prefer, { noCop: true, ctx });
@@ -8178,7 +8190,7 @@ RB.jp = (function () {
   return {
     PUNCT, isPunct, setVars, parse, plain, reading, render, validate,
     renderMixed, plainMixed, validateMixed, rubyize, esc,
-    deinflect, lookup, posMask, _rules: RULES, _types: T,
+    deinflect, lookup, posMask, LOOKUP_ONLY, _rules: RULES, _types: T,
   };
 })();
 
@@ -69545,6 +69557,34 @@ RB.ui.help = (function () {
       RB.ui.notice('Added to your field notebook.', 'info');
     } else RB.ui.notice('Already in your notebook.', 'info');
   }
+  // Older saves: word help read おしまい as お + 姉妹, so a card noted from it says "sisters" under the
+  // id w:姉妹|おしまい (Agnes 6547670899, 6547816998, 6548029795; Local CL-563; Cloud CC-405, CC-406).
+  // Only that card, exactly as the bug wrote it, is repaired: given the right id and meaning, or, when a
+  // word card for おしまい is already there, retired in place (every field kept; kind 'word-retired' and a
+  // retired note added, so no active list shows it; restoring it is kind back to retired.was and the note
+  // removed). A card that already has a retired field, or an id held by anything else, is left as it is.
+  // → { renamed, retired, left } for the cards that matched
+  const OSH = { from: 'w:姉妹|おしまい', to: 'w:おしまい|おしまい', bad: 'sisters', m: "the end; that's all" };
+  const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+  function repairNotebook(st) {
+    const out = { renamed: 0, retired: 0, left: 0 };
+    const nb = st && st.notebook;
+    if (!Array.isArray(nb)) return out;
+    const card = (n) => n && typeof n === 'object';
+    for (const n of nb) {
+      if (!card(n) || n.kind !== 'word' || n.id !== OSH.from || n.surface !== 'おしまい' || n.reading !== 'おしまい' || n.m !== OSH.bad) continue;
+      if (own(n, 'retired')) { out.left++; continue; }
+      const there = nb.find((x) => card(x) && x.id === OSH.to);
+      if (!there) { n.id = OSH.to; n.m = OSH.m; out.renamed++; continue; }
+      if (there.kind === 'word' && there.surface === 'おしまい' && there.reading === 'おしまい') {
+        n.kind = 'word-retired';
+        n.retired = { was: 'word', by: OSH.to, why: 'おしまい was read as 姉妹 (RBN word help)' };
+        out.retired++;
+      } else out.left++;
+    }
+    return out;
+  }
+  if (RB.save && RB.save.addMigration) RB.save.addMigration(repairNotebook);
   function hide(force) {
     if (cur) cur.classList.remove('active');
     cur = null;
@@ -69557,7 +69597,7 @@ RB.ui.help = (function () {
   // a registered line's tokens and context (src/ui/22_speech_mark.js marks the spoken word by token)
   const tokensOf = (id) => (reg.get(id) || {}).tokens || null;
   const ctxOf = (id) => (reg.get(id) || {}).ctx || null;
-  return { init, toggle, register, showFor, hide, hideIn, enabled, isOpen, tokensOf, ctxOf };
+  return { init, toggle, register, showFor, hide, hideIn, enabled, isOpen, tokensOf, ctxOf, repairNotebook };
 })();
 
 /* ---- HUD ---------------------------------------------------------------------------
