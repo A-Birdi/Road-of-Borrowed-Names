@@ -885,6 +885,9 @@ RB.questGuide = (function () {
     cr_horse: ['{馬|うま}', 'the pack horse'], cr_bigcedar: ['{大杉|おおすぎ}', 'the great cedar'],
     co_seal: ['ガラス の {封|ふう}', 'the glass seal'], stairs: ['{階段|かいだん}', 'the stairs'],
     mp_lift: ['せり', 'the trap lift'],
+    // Steamhollow's footbaths (the lower town, the terraces, and Kotonoha's living-world one): named, not "something"
+    // (Local CL-600; Cloud CC-436; Agnes 6555073469)
+    yn_footbath: ['{足湯|あしゆ}', 'the footbath'],
   };
   const PROP_PREFIX = [
     [/icewall/, '{氷|こおり}', 'the ice'], [/dial/, '{仕掛|しか}け', 'the dial mechanism'], [/crank/, 'ハンドル', 'the crank'], [/lamp/, '{灯|あか}り', 'the lamp'],

@@ -2327,6 +2327,12 @@
   "jp": "{一行|いちぎょう} でも 、 {集|あつ}まったら {聞|き}かせて おくれ 。",
   "en": "Even one line: when you have it, let me hear."
  },
+ "scene:yn.bunkichi#j3s8ef": {
+  "status": "self-reviewed",
+  "ref": "CC-433 self-review (Bunkichi's wait line in The Masseur's Lost Words, agreed by Local CL-598 and Agnes 6554533740): checked against the lexicon in context (三行, 揃う, 聞く, the 〜ておくれ entry, 一行, ずつ, じゃ, 節, 乗る) and his register in the scene; it asks for all three lines and offers no partial hand-in",
+  "jp": "{三行|さんぎょう} {揃|そろ}ったら 、 {聞|き}かせて おくれ 。 {一行|いちぎょう} ずつ じゃ 、 {節|ふし} に {乗|の}らない 。",
+  "en": "When you have all three lines, let me hear them. One at a time, they won't fit the tune."
+ },
  "scene:yn.bunkichi#57rpwt": {
   "status": "self-reviewed",
   "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",

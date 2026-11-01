@@ -15,7 +15,8 @@ yn_bunkichi: {谷|たに} の {古|ふる}い {者|もの} なら 、 {一行|�
 !quest yn_masseur 0
 !end
 :wait
-yn_bunkichi: {一行|いちぎょう} でも 、 {集|あつ}まったら {聞|き}かせて おくれ 。 || Even one line: when you have it, let me hear.
+# (the song is one tune: he asks for all three lines, and takes none on its own; Agnes 6554356273, Cloud CC-433)
+yn_bunkichi: {三行|さんぎょう} {揃|そろ}ったら 、 {聞|き}かせて おくれ 。 {一行|いちぎょう} ずつ じゃ 、 {節|ふし} に {乗|の}らない 。 || When you have all three lines, let me hear them. One at a time, they won't fit the tune.
 !end
 :song
 yn_bunkichi: {三行|さんぎょう} 。 …… {順番|じゅんばん} は 、 どう だった か 。 {一緒|いっしょ} に {並|なら}べて くれる かい 。 || Three lines. …What was the order? Will you help me put them right?

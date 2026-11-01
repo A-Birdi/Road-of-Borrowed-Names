@@ -22,7 +22,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const T = (jp, en) => ({ jp, en });
   const Q = (id, title, stages) => (C.quests[id] = { chapter: 'yn', title, stages, reward: { flags: [id + '_done'] } });
   Q('yn_masseur', T('{按摩|あんま} の {忘|わす}れた {歌|うた}', 'The Masseur\'s Lost Words'), [
-    T('{按摩|あんま} の ブンキチ は 、 {師匠|ししょう} の {揉|も}み{歌|うた} の {言葉|ことば} を {忘|わす}れた 。 {覚|おぼ}えて いる {人|ひと} を {探|さが}そう 。', 'Bunkichi the masseur has lost the words of his teacher\'s massage song. Find people who remember it.'),
+    // where to look, one person at a time, in Bunkichi's order (the maid, the geta-maker, the ridge): each named is
+    // there and leads to the verse now. After the story Kihachi's geta (the keepsakes' yn.ks_kihachi) comes before his
+    // verse, and the derived guide could not see that it leads on, so it said there was nothing to do; Oshige is named
+    // only while she stands in the lobby, and her bell and egg talks come first. With only her verse missing and her
+    // away for Mio's night, derived (Agnes 6554356273, 6554439890, 6554533740; Local CL-598; Cloud CC-433).
+    Object.assign(T('{按摩|あんま} の ブンキチ は 、 {師匠|ししょう} の {揉|も}み{歌|うた} の {言葉|ことば} を {忘|わす}れた 。 {覚|おぼ}えて いる {人|ひと} を {探|さが}そう 。', 'Bunkichi the masseur has lost the words of his teacher\'s massage song. Find people who remember it.'), { atIf: [
+      { if: '!yn_verse1', at: { map: 'yn.kami', npc: 'yn_okiyo' } },
+      { if: '!yn_verse2', at: { map: 'yn.upper', npc: 'yn_kihachi' } },
+      { if: '!yn_verse3&yn_rooms_done&!yn_mio_night|!yn_verse3&yn_mio_back', at: { map: 'yn.kami', npc: 'yn_oshige' } },
+    ] }),
     T('{三|みっ}つ の {歌詞|かし} が {集|あつ}まった 。 ブンキチ に {届|とど}けよう 。', 'Three verses gathered. Take them to Bunkichi.'),
   ]);
   Q('yn_wedding', T('{婚礼|こんれい} の {予約|よやく}', 'A Wedding Party\'s Booking'), [
