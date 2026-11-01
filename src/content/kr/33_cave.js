@@ -221,7 +221,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
           ] },
       ],
     },
-    conclusions: [{ id: 'named', when: { proc: 'done' }, result: 'win', text: { en: 'The Moss Lantern, named, steps back onto its base. A small light shows in it.' }, flags: { kr_moss1_named: true } }],
+    // no text of its own: the log's done line and the creature's settle line already tell it, so it is not told a
+    // third time (Cloud CC-403; Local CL-561; Agnes 6547199277)
+    conclusions: [{ id: 'named', when: { proc: 'done' }, result: 'win', flags: { kr_moss1_named: true } }],
   };
 
   // ---- the Teller's Shadow (put the account right) -----------------------------------------------------------------
