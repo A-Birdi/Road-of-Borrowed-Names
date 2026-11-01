@@ -490,7 +490,8 @@ RB.hooks = RB.hooks || {};
     suzu: { jp: '{小道具|こどうぐ} ゲット 。 {使|つか}い{方|かた} は {任|まか}せて 。', en: 'New prop! Leave the staging to me.' },
   };
   const RELIC_REACT = {
-    tag_nao: { nao: { jp: '…… これ 、 {私|わたし} が {書|か}いた {荷札|にふだ} だ 。 {配|くば}り{損|そこ}ねた {分|ぶん} か 。', en: '…This is a tag I wrote. One of the ones I never delivered.', expr: 'surprise' } },
+    // Nao's own pronoun, as everywhere else Nao speaks (Agnes 6556292010; Local CL-607; Cloud CC-444)
+    tag_nao: { nao: { jp: '…… これ 、 {俺|おれ} が {書|か}いた {荷札|にふだ} だ 。 {配|くば}り{損|そこ}ねた {分|ぶん} か 。', en: '…This is a tag I wrote. One of the ones I never delivered.', expr: 'surprise' } },
     vial_mio: { mio: { jp: 'この ラベル 、 {私|わたし} の {字|じ} …… {昔|むかし} 、 {誰|だれ}か に あげた {瓶|びん} だ わ 。', en: 'This label is my handwriting… a bottle I gave someone years ago.', expr: 'surprise' } },
     trim_ren: { ren: { jp: '{芯切|しんき}り …… {師匠|ししょう} と {同|おな}じ {型|かた} です 。 {手|て} が {覚|おぼ}えて います 。', en: 'Wick trimmers… the same kind my master used. My hands remember them.', expr: 'think' } },
     mask_suzu: { suzu: { jp: '{代役|だいやく} の {面|めん} ！ {主役|しゅやく} が {倒|たお}れた {時|とき} の ため の やつ だ よ 。', en: 'An understudy\'s mask! For when the lead goes down.', expr: 'laugh' } },
