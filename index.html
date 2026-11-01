@@ -157829,9 +157829,13 @@ RB.script.add(`
 !gesture tetsuji countidle
 tetsuji[angry]: …… {十二|じゅうに} 。 {何度|なんど} {数|かぞ}えて も {十二|じゅうに} だ 。 || …Twelve. However many times I count, it's twelve.
 !gesture tetsuji count
-tetsuji: おれ の ヤギ は {十頭|じゅっとう} だ 。 {朝|あさ} {小屋|こや} を {開|あ}けたら 、 {十二|じゅうに} いた 。 {二頭|にとう} 、 {誰|だれ} か の が {迷|まよ}いこんで いる 。 || I own ten goats. This morning I opened the shed and there were twelve. Two of them belong to someone else and wandered in.
+# (a first talk after the storm has begun says what he found the morning before it, with no deadline left: Agnes
+# 6546145159, 6546381905; Local CL-559; Cloud CC-401)
+?(!sb_storm) tetsuji: おれ の ヤギ は {十頭|じゅっとう} だ 。 {朝|あさ} {小屋|こや} を {開|あ}けたら 、 {十二|じゅうに} いた 。 {二頭|にとう} 、 {誰|だれ} か の が {迷|まよ}いこんで いる 。 || I own ten goats. This morning I opened the shed and there were twelve. Two of them belong to someone else and wandered in.
+?(sb_storm) tetsuji: おれ の ヤギ は {十頭|じゅっとう} だ 。 {吹雪|ふぶき} の {前|まえ} の {朝|あさ} 、 {小屋|こや} を {開|あ}けたら 、 {十二|じゅうに} いた 。 {二頭|にとう} 、 {誰|だれ} か の が {迷|まよ}いこんで いる 。 || I own ten goats. The morning before the storm, I opened the shed and there were twelve. Two of them belong to someone else and wandered in.
 !gesture tetsuji folded hold
-tetsuji[angry]: {吹雪|ふぶき} の {前|まえ} に 、 {持|も}ち{主|ぬし} に {返|かえ}さない と いかん 。 だが 、 {誰|だれ} も {名乗|なの}り{出|で}ん@名乗り出る 。 {旅|たび} の {人|ひと} 、 {暇|ひま} なら {聞|き}いて まわって くれ 。 || They need returning to their owner before the storm. But no one's come forward. If you've time, travellers, ask around.
+?(!sb_storm) tetsuji[angry]: {吹雪|ふぶき} の {前|まえ} に 、 {持|も}ち{主|ぬし} に {返|かえ}さない と いかん 。 だが 、 {誰|だれ} も {名乗|なの}り{出|で}ん@名乗り出る 。 {旅|たび} の {人|ひと} 、 {暇|ひま} なら {聞|き}いて まわって くれ 。 || They need returning to their owner before the storm. But no one's come forward. If you've time, travellers, ask around.
+?(sb_storm) tetsuji[angry]: {持|も}ち{主|ぬし} に {返|かえ}さない と いかん 。 だが 、 {誰|だれ} も {名乗|なの}り{出|で}ん@名乗り出る 。 {旅|たび} の {人|ひと} 、 {暇|ひま} なら {聞|き}いて まわって くれ 。 || They need returning to their owner. But no one's come forward. If you've time, travellers, ask around.
 ?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp[smirk]: ヤギ の {迷子|まいご} {届|とど}け か 。 {配達|はいたつ} より {難|むずか}しそう だ な 。 || A lost-goat notice. Sounds harder than deliveries.
 ?(comp=suzu) !gesture comp laugh
@@ -157873,7 +157877,10 @@ tetsuji: {十二|じゅうに} 。 …… {何度|なんど} {数|かぞ}えて 
 !end
 :after
 !gesture tetsuji lookroad up
-tetsuji: {天文台|てんもんだい} の {灯|あか}り が ある と 、 {夜|よる} の {小屋|こや} が {明|あか}るい 。 {子|こ}ヤギ が {外|そと} を {見|み}たがる@見る 。 || With the observatory lamp lit, the shed's bright at night. The kids want to look outside.
+# (the kids are named only once his quest is done, as on the evening: Agnes 6546145159, 6546381905; Local CL-559;
+# Cloud CC-401)
+?(quest.sb_goats=done) tetsuji: {天文台|てんもんだい} の {灯|あか}り が ある と 、 {夜|よる} の {小屋|こや} が {明|あか}るい 。 {子|こ}ヤギ が {外|そと} を {見|み}たがる@見る 。 || With the observatory lamp lit, the shed's bright at night. The kids want to look outside.
+?(!quest.sb_goats=done) tetsuji: {天文台|てんもんだい} の {灯|あか}り が ある と 、 {夜|よる} の {小屋|こや} が {明|あか}るい 。 ヤギ が {外|そと} を {見|み}たがる@見る 。 || With the observatory lamp lit, the shed's bright at night. The goats want to look outside.
 !if quest.sb_goats=done -> end
 !if quest.sb_goats>=2 -> report
 !if quest.sb_goats -> waiting
