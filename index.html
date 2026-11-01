@@ -163125,10 +163125,12 @@ narr: {水門|すいもん} を {上|あ}げ{下|さ}げ する {車輪|しゃ�
 !gesture pc observe prop:stone_marker
 narr: {慰霊|いれい} の {碑|ひ} 。「{六月|ろくがつ} の {水|みず} に {逝|ゆ}きし {人々|ひとびと}」 。|| A memorial stone. "For those who were taken by the June waters."
 !gesture pc kneel prop:stone_marker hold
-narr: {名前|なまえ} が {刻|きざ}んで ある はず の {面|めん} は 、つるつる だ 。{最後|さいご} に {一|ひと}つ だけ 、{指|ゆび} で なぞった よう に {浅|あさ}く 「トウヤ」 。|| The face where the names should be is smooth. Only one remains at the end, shallow, as if traced by a finger: "Tōya".
+# the smooth face only before the bell; Nao's answer to the age only once the names, and the age, are back (Agnes
+# 6549722354; Local CL-574; Cloud CC-415)
+?(!lf_bell_rung) narr: {名前|なまえ} が {刻|きざ}んで ある はず の {面|めん} は 、つるつる だ 。{最後|さいご} に {一|ひと}つ だけ 、{指|ゆび} で なぞった よう に {浅|あさ}く 「トウヤ」 。|| The face where the names should be is smooth. Only one remains at the end, shallow, as if traced by a finger: "Tōya".
 ?(lf_bell_rung) narr: {今|いま} は 、{名前|なまえ} が {全部|ぜんぶ} {戻|もど}って いる 。{十二人|じゅうににん} 。{一番|いちばん} {最後|さいご} に 、「{使|つか}い トウヤ （ {十七|じゅうなな} ）」 。|| Now all the names are back. Twelve. The last one: "Tōya, messenger (17)."
-?(comp=nao) !gesture comp lowered
-?(comp=nao) comp: …… {十七|じゅうなな} か 。|| …Seventeen, huh.
+?(comp=nao&lf_bell_rung) !gesture comp lowered
+?(comp=nao&lf_bell_rung) comp: …… {十七|じゅうなな} か 。|| …Seventeen, huh.
 ?(comp=mio) !gesture comp kneel prop:flowerpot hold
 ?(comp=mio) comp[sad]: {花|はな} 、{替|か}えて おく ね 。|| I'll change the flowers.
 ?(comp=ren) !gesture comp lowered

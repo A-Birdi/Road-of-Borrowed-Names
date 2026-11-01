@@ -50,7 +50,8 @@ const CH5 = [
   { ch: 5, scene: 'lf.masaru_post', map: 'lf.bakery', at: [4, 4, 'up'], talk: 'lf_masaru', comp: 'nao', flags: LP,
     variants: [{ name: 'Kasane tried', flags: F(LP, { end_kasane_trial: true }) }, { name: 'otherwise' }], expect: { lf_masaru: ['count', 'laugh'] } },
   { ch: 5, scene: 'lf.memorial', map: 'lf.sluice', at: [10, 11, 'up'], flags: LT, expect: { pc: ['observe', 'kneel'] },
-    variants: [{ name: 'before the bell', comps: ALL4 }, { name: 'the names back', comp: 'mio', flags: LB, expect: { comp: ['kneel'] } }] },
+    variants: [{ name: 'before the bell', comps: ALL4 }, { name: 'the names back', comp: 'mio', flags: LB, expect: { comp: ['kneel'] } },
+      { name: 'the names back, Nao', comp: 'nao', flags: LB, expect: { comp: ['lowered'] } }] },
   // 22_main.js
   { ch: 5, scene: 'lf.tadashi', map: 'lf.records', at: [7, 5, 'up'], talk: 'lf_tadashi', flags: LT,
     variants: [{ name: 'the form', comps: ALL4, quests: { lf_main: 0 }, expect: { lf_tadashi: ['nod', 'present', 'stamp', 'palm'], pc: ['observe'] } },
