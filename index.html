@@ -170133,8 +170133,8 @@ sa_reader: {中庭|なかにわ} で は 、 {川|かわ} の {名前|なまえ}
 sa_reader: お{静|しず}か に 。 …… と {言|い}いたい ところ です が 、 わたし も さっき {笑|わら}って しまいました 。 {昔|むかし} の {恋文|こいぶみ} の {写|うつ}し が {出|で}て きて 。 || Quiet, please. …Is what I'd like to say, but I laughed out loud a moment ago myself. A copy of an old love letter turned up.
 
 @scene sa.b_nao1
-nao: {灯落|ひおち} で 、 ウミ に {手紙|てがみ} を {渡|わた}した だろ 。 …… {返事|へんじ} 、 {来|く}る と {思|おも}う か ？ || We gave Umi that letter in Lanternfall. …Think she'll write back?
-nao: {来|こ}なくて も いい んだ 。 {来|こ}なくて いい 。 …… そう {思|おも}える よう に なった の は 、 {最近|さいきん} だ けど 。 || It's fine if she doesn't. It's fine. …Though I only came round to thinking that recently.
+nao: {灯落|ひおち} で 、 ウミ に {手紙|てがみ} を {渡|わた}した だろ 。 …… {返事|へんじ} 、 {来|く}る と {思|おも}う か ？ || We gave Umi that letter in Lanternfall. …Think her father will answer her reply?
+nao: {来|こ}なくて も いい んだ 。 {来|こ}なくて いい 。 …… そう {思|おも}える よう に なった の は 、 {最近|さいきん} だ けど 。 || It's fine if no reply comes. It's fine. …Though I only came round to thinking that recently.
 pc: ナオ は 、 {変|か}わった ね 。 || You've changed, Nao.
 nao[smirk]: {変|か}わって ない 。 {宛名|あてな} が {読|よ}める よう に なった だけ だ 。 {自分|じぶん} の な 。 || Haven't changed. I can just read the address now. My own.
 
@@ -170214,7 +170214,9 @@ suzu[laugh]: {黒字|くろじ} だ 。 {大|だい}{黒字|くろじ} 。 …�
 `, 'ch6/scenes-side');
 
 RB.content.banter.push(
-  { comp: 'nao', map: 'sa.*', if: '!sa_met_kasane', scene: 'sa.b_nao1' },
+  // only once the letter is delivered: before that Umi was never given it, and after it her one line back already
+  // exists, so the reply still to come is her father's (Agnes 6556069393; Local CL-604, CL-606; Cloud CC-443)
+  { comp: 'nao', map: 'sa.*', if: '!sa_met_kasane&quest.lf_nao=done', scene: 'sa.b_nao1' },
   { comp: 'nao', map: 'sa.*', if: 'sa_met_kasane&!sa_hush_down', scene: 'sa.b_nao2' },
   { comp: 'nao', map: 'sa.*', if: 'seen.sa.shelf_kasane&!sa_hush_down', scene: 'sa.b_nao3' },
   { comp: 'nao', map: 'sa.*', if: 'sa_hush_down', scene: 'sa.b_nao4' },
