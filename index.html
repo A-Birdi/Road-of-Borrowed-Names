@@ -205110,6 +205110,9 @@ kr_shozo: {新|あたら}しい {板|いた} を {作|つく}る のに 、 ど�
 
 @scene kr.shozo_idle
 !faceplayer
+# once the tellings are settled, the board's own line only (kr.shozo_fox :done), not the unsettled opening and the
+# choice again (Local CL-560; Cloud CC-402; Agnes 6546934577)
+!if quest.kr_fox=done -> settled
 kr_shozo: カメ さん の {話|はなし} 、 {里|さと} の {記録|きろく} 、 {祠|ほこら} の {板|いた} 。 {三|みっ}つ と も 、 {違|ちが}う ん です よ 。 || Kame's story, the hamlet's register, the shrine's board. All three say something different.
 !if !kr_record_read -> ask
 :clues
@@ -205131,6 +205134,9 @@ kr_shozo: カメ さん の {話|はなし} 、 {里|さと} の {記録|きろ�
 :record
 !call kr.record
 !goto clues
+:settled
+!call kr.shozo_fox
+!end
 
 @scene kr.shozo_fox
 # Three Tellings of the Fox Bridge (side quest): weigh them, and the hamlet keeps the version you settle on.
