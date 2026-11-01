@@ -63378,6 +63378,21 @@ RB.save = (function () {
     if ('bookmarks' in st && !Array.isArray(st.bookmarks)) errs.push('bad bookmarks');
     return errs;
   }
+  // the ledger's readability (Agnes 6563408499, 6563687836; Local CL-621, CL-623; Cloud CC-459, CC-460): an Atlas room is
+  // registered only while its run is current, and Load rebuilds it first (RB.atlas.prepare: the room, or the Lantern
+  // Hall), so the list does not count that one "unknown map" against an Atlas save. Nothing is prepared or registered
+  // here. A run id that is not a string can stop prepare's own recovery, and an atlas record that is not an object stops
+  // migrate, so those keep the error.
+  function listErrors(st) {
+    const errs = validate(st);
+    if (!RB.atlas || typeof RB.atlas.prepare !== 'function' || !st || typeof st !== 'object') return errs;
+    if (typeof st.map !== 'string' || !st.map.startsWith('atlas.')) return errs;
+    if ('atlas' in st && (!st.atlas || typeof st.atlas !== 'object')) return errs;
+    const run = st.atlas && st.atlas.run;
+    if (run && run.id && typeof run.id !== 'string') return errs;
+    const unknown = 'unknown map ' + st.map;
+    return errs.filter((e) => e !== unknown);
+  }
   function migrate(st) {
     // Schema 1 is current. Fill any fields added since with defaults.
     const base = RB.state.newCampaign();
@@ -63430,7 +63445,8 @@ RB.save = (function () {
       const autos = rec.filter((x) => x && x.slot === i && x.kind === 'auto').sort((a, b) => b.savedAt - a.savedAt);
       const pre = rec.find((x) => x && x.slot === i && x.kind === 'predeparture');
       const sus = rec.find((x) => x && x.slot === i && x.kind === 'suspend');
-      const corrupt = r && (!r.state || validate(r.state).length > 0);
+      const errs = r && r.state ? listErrors(r.state) : null;
+      const corrupt = r && (!r.state || errs.length > 0);
       out.push({
         slot: i,
         empty: !r && !autos.length,
@@ -63438,7 +63454,7 @@ RB.save = (function () {
         thumb: r ? r.thumb : autos[0] ? autos[0].thumb : null,
         manual: !!r,
         corrupt: !!corrupt,
-        corruptWhy: corrupt ? (r.state ? validate(r.state).join('; ') : 'no data') : null,
+        corruptWhy: corrupt ? (r.state ? errs.join('; ') : 'no data') : null,
         auto: autos[0] ? { savedAt: autos[0].savedAt, meta: autos[0].meta } : null,
         autoNewer: !!(autos[0] && (!r || autos[0].savedAt > r.meta.savedAt)),
         pre: pre ? { savedAt: pre.savedAt, meta: pre.meta } : null,
