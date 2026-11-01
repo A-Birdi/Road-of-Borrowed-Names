@@ -115,11 +115,14 @@ comp[smile]: …… {久|ひさ}しぶり に 、 {出|で}て みよう かな 
 (function (C) {
   'use strict';
   const B = (comp, map, cond, scene) => C.banter.push({ comp, map, if: cond, scene });
+  // "Cinder Orchard next": from the boss until you arrive there, and in a twelve-chapter journey only once Manybridge
+  // is behind you, the split Saltglass's own lines make (Agnes 6558574216, 6558899693; Local CL-615; Cloud CC-452)
+  const NEXT_CO = 'sg_boss_done&!co_arrived&!ed>=2|sg_boss_done&!co_arrived&mb2_done';
   B('nao', 'sg.*', 'quest.sg_main<=3', 'sg.b_nao_labels');
   B('nao', 'sg.inn', null, 'sg.b_nao_exits');
-  B('nao', 'sg.harbor', '!sg_nao_isamu&quest.sg_main>=1', 'sg.b_nao_isamu');
+  B('nao', 'sg.harbor', '!sg_nao_isamu&!ch2_done&quest.sg_main>=1', 'sg.b_nao_isamu'); // (the chapter's end tells the house)
   B('nao', 'sg.da_*', null, 'sg.b_nao_archive');
-  B('nao', 'sg.*', 'sg_boss_done', 'sg.b_nao_after');
+  B('nao', 'sg.*', NEXT_CO, 'sg.b_nao_after');
   B('mio', 'sg.*', 'quest.sg_main<=3', 'sg.b_mio_labels');
   B('mio', 'sg.harbor', null, 'sg.b_mio_fish');
   B('mio', 'sg.lighthouse', 'seen.sg.genzo_grump', 'sg.b_mio_temper');
@@ -134,5 +137,5 @@ comp[smile]: …… {久|ひさ}しぶり に 、 {出|で}て みよう かな 
   B('suzu', 'sg.inn', null, 'sg.b_suzu_debt');
   B('suzu', 'sg.*', 'sg_wataru_resolved', 'sg.b_suzu_lies');
   B('suzu', 'sg.da_*', null, 'sg.b_suzu_archive');
-  B('suzu', 'sg.*', 'sg_boss_done', 'sg.b_suzu_after');
+  B('suzu', 'sg.*', NEXT_CO, 'sg.b_suzu_after');
 })(RB.content);

@@ -111,11 +111,13 @@ comp[think]: {灯落|ひおち} で は 、 {誰|だれ} も 「 いいえ 」 �
   'use strict';
   const B = (comp, scene, cond) => C.banter.push({ comp, map: 'sb.*', if: cond, scene });
   B('nao', 'sb.bn_nao1', '!sb_storm'); B('nao', 'sb.bn_nao2', 'quest.sb_goats'); B('nao', 'sb.bn_nao3', 'sb_morning&!sb_lamp_lit');
-  B('nao', 'sb.bn_nao4', 'seen.sb.path_bench'); B('nao', 'sb.bn_nao5', 'sb_lamp_lit');
+  // the bench's hope until Akari is met, and "Lanternfall next" until you arrive there (Agnes 6558734019, 6558899693;
+  // Local CL-617; Cloud CC-454)
+  B('nao', 'sb.bn_nao4', 'seen.sb.path_bench&!quest.lf_akari'); B('nao', 'sb.bn_nao5', 'sb_lamp_lit&!lf_arrived');
   B('mio', 'sb.bn_mio1', '!sb_storm'); B('mio', 'sb.bn_mio2', 'sb_morning&!sb_lamp_lit'); B('mio', 'sb.bn_mio3', 'quest.sb_snow');
   B('mio', 'sb.bn_mio4', 'sb_akari_ordered'); B('mio', 'sb.bn_mio5', 'sb_lamp_lit');
   B('ren', 'sb.bn_ren1', null); B('ren', 'sb.bn_ren2', 'quest.sb_lamp>=1'); B('ren', 'sb.bn_ren3', 'sb_dial1');
   B('ren', 'sb.bn_ren4', 'sb_ren_ushio1'); B('ren', 'sb.bn_ren5', 'sb_lamp_lit');
   B('suzu', 'sb.bn_suzu1', 'quest.sb_bell'); B('suzu', 'sb.bn_suzu2', null); B('suzu', 'sb.bn_suzu3', 'seen.sb.inn_menu');
-  B('suzu', 'sb.bn_suzu4', 'quest.sb_snow=done'); B('suzu', 'sb.bn_suzu5', 'sb_lamp_lit');
+  B('suzu', 'sb.bn_suzu4', 'quest.sb_snow=done'); B('suzu', 'sb.bn_suzu5', 'sb_lamp_lit&!lf_arrived');
 })(RB.content);

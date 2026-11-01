@@ -6,7 +6,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   const B = (comp, n, cond) => C.banter.push({ comp, map: 'co.*', if: cond, scene: 'co.b_' + comp + n });
   const early = '!co_chronicle_read', mid = 'co_chronicle_read&!co_upper_open', dungeon = 'co_upper_open&!co_kiln_done', after = 'co_kiln_done&!ch3_done', done = 'ch3_done';
-  for (const c of ['nao', 'mio', 'ren', 'suzu']) { B(c, 1, early); B(c, 2, mid); B(c, 3, dungeon); B(c, 4, after); B(c, 5, done); }
+  // Nao's and Ren's fifth look ahead to Snowbell: only until you arrive there (Agnes 6558734019, 6558899693; Local CL-617;
+  // Cloud CC-454)
+  const ahead = { nao: true, ren: true };
+  for (const c of ['nao', 'mio', 'ren', 'suzu']) { B(c, 1, early); B(c, 2, mid); B(c, 3, dungeon); B(c, 4, after); B(c, 5, ahead[c] ? done + '&!sb_arrived' : done); }
 })(RB.content);
 
 RB.script.add(`

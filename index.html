@@ -149145,11 +149145,14 @@ comp[smile]: …… {久|ひさ}しぶり に 、 {出|で}て みよう かな 
 (function (C) {
   'use strict';
   const B = (comp, map, cond, scene) => C.banter.push({ comp, map, if: cond, scene });
+  // "Cinder Orchard next": from the boss until you arrive there, and in a twelve-chapter journey only once Manybridge
+  // is behind you, the split Saltglass's own lines make (Agnes 6558574216, 6558899693; Local CL-615; Cloud CC-452)
+  const NEXT_CO = 'sg_boss_done&!co_arrived&!ed>=2|sg_boss_done&!co_arrived&mb2_done';
   B('nao', 'sg.*', 'quest.sg_main<=3', 'sg.b_nao_labels');
   B('nao', 'sg.inn', null, 'sg.b_nao_exits');
-  B('nao', 'sg.harbor', '!sg_nao_isamu&quest.sg_main>=1', 'sg.b_nao_isamu');
+  B('nao', 'sg.harbor', '!sg_nao_isamu&!ch2_done&quest.sg_main>=1', 'sg.b_nao_isamu'); // (the chapter's end tells the house)
   B('nao', 'sg.da_*', null, 'sg.b_nao_archive');
-  B('nao', 'sg.*', 'sg_boss_done', 'sg.b_nao_after');
+  B('nao', 'sg.*', NEXT_CO, 'sg.b_nao_after');
   B('mio', 'sg.*', 'quest.sg_main<=3', 'sg.b_mio_labels');
   B('mio', 'sg.harbor', null, 'sg.b_mio_fish');
   B('mio', 'sg.lighthouse', 'seen.sg.genzo_grump', 'sg.b_mio_temper');
@@ -149164,7 +149167,7 @@ comp[smile]: …… {久|ひさ}しぶり に 、 {出|で}て みよう かな 
   B('suzu', 'sg.inn', null, 'sg.b_suzu_debt');
   B('suzu', 'sg.*', 'sg_wataru_resolved', 'sg.b_suzu_lies');
   B('suzu', 'sg.da_*', null, 'sg.b_suzu_archive');
-  B('suzu', 'sg.*', 'sg_boss_done', 'sg.b_suzu_after');
+  B('suzu', 'sg.*', NEXT_CO, 'sg.b_suzu_after');
 })(RB.content);
 
 
@@ -155491,7 +155494,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   const B = (comp, n, cond) => C.banter.push({ comp, map: 'co.*', if: cond, scene: 'co.b_' + comp + n });
   const early = '!co_chronicle_read', mid = 'co_chronicle_read&!co_upper_open', dungeon = 'co_upper_open&!co_kiln_done', after = 'co_kiln_done&!ch3_done', done = 'ch3_done';
-  for (const c of ['nao', 'mio', 'ren', 'suzu']) { B(c, 1, early); B(c, 2, mid); B(c, 3, dungeon); B(c, 4, after); B(c, 5, done); }
+  // Nao's and Ren's fifth look ahead to Snowbell: only until you arrive there (Agnes 6558734019, 6558899693; Local CL-617;
+  // Cloud CC-454)
+  const ahead = { nao: true, ren: true };
+  for (const c of ['nao', 'mio', 'ren', 'suzu']) { B(c, 1, early); B(c, 2, mid); B(c, 3, dungeon); B(c, 4, after); B(c, 5, ahead[c] ? done + '&!sb_arrived' : done); }
 })(RB.content);
 
 RB.script.add(`
@@ -160091,13 +160097,15 @@ comp[think]: {灯落|ひおち} で は 、 {誰|だれ} も 「 いいえ 」 �
   'use strict';
   const B = (comp, scene, cond) => C.banter.push({ comp, map: 'sb.*', if: cond, scene });
   B('nao', 'sb.bn_nao1', '!sb_storm'); B('nao', 'sb.bn_nao2', 'quest.sb_goats'); B('nao', 'sb.bn_nao3', 'sb_morning&!sb_lamp_lit');
-  B('nao', 'sb.bn_nao4', 'seen.sb.path_bench'); B('nao', 'sb.bn_nao5', 'sb_lamp_lit');
+  // the bench's hope until Akari is met, and "Lanternfall next" until you arrive there (Agnes 6558734019, 6558899693;
+  // Local CL-617; Cloud CC-454)
+  B('nao', 'sb.bn_nao4', 'seen.sb.path_bench&!quest.lf_akari'); B('nao', 'sb.bn_nao5', 'sb_lamp_lit&!lf_arrived');
   B('mio', 'sb.bn_mio1', '!sb_storm'); B('mio', 'sb.bn_mio2', 'sb_morning&!sb_lamp_lit'); B('mio', 'sb.bn_mio3', 'quest.sb_snow');
   B('mio', 'sb.bn_mio4', 'sb_akari_ordered'); B('mio', 'sb.bn_mio5', 'sb_lamp_lit');
   B('ren', 'sb.bn_ren1', null); B('ren', 'sb.bn_ren2', 'quest.sb_lamp>=1'); B('ren', 'sb.bn_ren3', 'sb_dial1');
   B('ren', 'sb.bn_ren4', 'sb_ren_ushio1'); B('ren', 'sb.bn_ren5', 'sb_lamp_lit');
   B('suzu', 'sb.bn_suzu1', 'quest.sb_bell'); B('suzu', 'sb.bn_suzu2', null); B('suzu', 'sb.bn_suzu3', 'seen.sb.inn_menu');
-  B('suzu', 'sb.bn_suzu4', 'quest.sb_snow=done'); B('suzu', 'sb.bn_suzu5', 'sb_lamp_lit');
+  B('suzu', 'sb.bn_suzu4', 'quest.sb_snow=done'); B('suzu', 'sb.bn_suzu5', 'sb_lamp_lit&!lf_arrived');
 })(RB.content);
 
 
