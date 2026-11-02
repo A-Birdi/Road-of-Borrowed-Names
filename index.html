@@ -153828,7 +153828,9 @@ co_kotaro: {僕|ぼく} ね 、 {櫓|やぐら} の {鐘|かね} の {当番|と
 !if quest.co_bell=1 -> rope
 !if co_chronicle_read&!co_hist_goro -> hist
 !if quest.co_bell=active -> waiting
-!if seen.co.goro_first -> idle
+# Only a finished quest goes to the bell polishing: a first offer declined ("Not right now") is offered again,
+# as he promises (Agnes 6586938396; Local CL-658, CL-659; Cloud CC-511)
+!if quest.co_bell=done -> idle
 !call co.goro_first
 !end
 :idle
@@ -153885,6 +153887,7 @@ co_goro: {綱|つな} が {下|さ}がった 。 {腕|うで} が {楽|らく} �
 @scene co.goro_first
 # Staged: Gorō's nod of welcome; he looks up at the ropeless bell, then back to you rubbing his itching hands;
 # his nod for yes, a small shake of the head for "no matter".
+!if seen.co.goro_first -> ask
 !gesture co_goro nod pc
 co_goro: おう 、 {旅|たび} の {人|ひと} か 。 {櫓|やぐら} の {番|ばん} を して おる 、 ゴロウ だ 。 …… {番|ばん} と {言|い}って も 、 {鐘|かね} を {磨|みが}く だけ だ が な 。 || Ah, travellers. I'm Gorō, keeper of the lookout. …Though "keeping" it means polishing the bell and nothing more.
 !gesture co_goro lookroad 11,11
@@ -153892,6 +153895,9 @@ co_goro: この {鐘|かね} に は 、 {綱|つな} が ない 。 {昔|むか
 !look co_goro pc
 !gesture co_goro rubhands
 co_goro: {鳴|な}らさん {鐘|かね} なら 、 {綱|つな} も {要|い}らん と {皆|みな} {言|い}う 。 だが わし は 、 {綱|つな} の ない {鐘|かね} を {見|み}て おる と 、 {手|て} が むずむず する ん だ 。 || Folk say a bell nobody rings doesn't need a rope. But looking at a bell with no rope makes my hands itch.
+# Asked again after "Not right now" (the scene already seen): only his request and the same choice, with no second
+# introduction (Agnes 6586938396; Cloud CC-511; Local CL-659)
+:ask
 co_goro: {旅|たび} の {人|ひと} 、 {一|ひと}つ {頼|たの}まれて くれん か 。 {丈夫|じょうぶ} な {綱|つな} を 、 {一本|いっぽん} {探|さが}して きて ほしい 。 || Traveller, would you do me a favour? Find me one good strong rope.
 !choice
 * {探|さが}して きます 。 || I'll find one. -> yes
