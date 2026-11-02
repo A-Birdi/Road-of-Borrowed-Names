@@ -1895,12 +1895,14 @@ RB.combat = (function () {
         chain = true;
         await live(playPlayer(card, fx, before, won, reach, T, step));
         if (!won) {
-          // a creature of the group whose last knot your response freed settles now
-          for (let i = 0; i < st.foes.length; i++) if (knots0[i] > 0 && V().foes[i].knots <= 0 && !wonByComp) await live(playSettle(i));
+          // a creature of the group whose last knot your response freed settles now; not where settling is no win
+          // (settleWins: false): it stays standing, and its settle is the victory's (Local CL-633; Cloud CC-471; Agnes 6570558254)
+          const settles = !(st.enc && st.enc.def.settleWins === false);
+          for (let i = 0; i < st.foes.length; i++) if (settles && knots0[i] > 0 && V().foes[i].knots <= 0 && !wonByComp) await live(playSettle(i));
           if (cfx && cfx.length) {
             const kb = snapshot(V());
             await live(playCompanion(cact.act, cfx, wonByComp, cact.target != null ? cact.target : T));
-            if (!wonByComp) for (let i = 0; i < st.foes.length; i++) if (kb.foes[i].knots > 0 && V().foes[i].knots <= 0) await live(playSettle(i));
+            if (!wonByComp && settles) for (let i = 0; i < st.foes.length; i++) if (kb.foes[i].knots > 0 && V().foes[i].knots <= 0) await live(playSettle(i));
           }
         }
         // the moves your response and your companion's answered: shown on their badges now
