@@ -86,8 +86,11 @@ const CH3 = [
   { ch: 3, scene: 'co.kotaro', map: 'co.village', at: [26, 20, 'right'], talk: 'co_kotaro', flags: CO1, quests: Q(1),
     variants: [{ name: 'the chair', comps: ALL4, expect: { co_kotaro: ['bounce', 'point'] } }, { name: 'the bell', flags: COC, quests: Q(3) }, { name: 'after the bell', flags: F(COC, { co_bell_rung: true }), quests: Q(3), expect: { co_kotaro: ['fidget', 'nod'], pc: ['bend'] } },
       { name: 'thirty what', flags: COC, quests: F(Q(3), { co_count: 1 }), comps: ALL4, expect: { co_kotaro: ['aside', 'celebrate', 'fidget'] } }] },
+  // (idle is now the bell rung, the quest done: a first offer declined is offered again, his request only. Its variant
+  // was seen only, before the Gorō row, 25 of candidate/held-stack-1102: Agnes 6586938396; Cloud CC-511; Local CL-659)
   { ch: 3, scene: 'co.goro', map: 'co.village', at: [12, 14, 'up'], talk: 'co_goro', flags: CO1, quests: Q(1), minLines: 1,
-    variants: [{ name: 'first meeting', picks: [0] }, { name: 'idle', seen: ['co.goro_first'] }, { name: 'waiting for the rope', quests: F(Q(1), { co_bell: 0 }) },
+    variants: [{ name: 'first meeting', picks: [0] }, { name: 'idle', seen: ['co.goro_first'], flags: F(CO1, { co_bell_done: true, co_bell_rung: true }), quests: F(Q(1), { co_bell: 'done' }) },
+      { name: 'declined, asked again', seen: ['co.goro_first'], picks: [0], expect: { co_goro: ['nod'] } }, { name: 'waiting for the rope', quests: F(Q(1), { co_bell: 0 }) },
       { name: 'the night watch', flags: COC, quests: Q(3), comps: ALL4, expect: { co_goro: ['chin', 'lookroad', 'nod', 'lowered'] } }, { name: 'the night watch · later', flags: COC, quests: Q(3), fail: true },
       { name: 'the rope up', flags: COD, quests: F(Q(9), { co_bell: 0 }), items: { co_rope: 1 }, expect: { co_goro: ['lookroad', 'nod'] } }] },
   { ch: 3, scene: 'co.goro_first', map: 'co.village', at: [12, 14, 'up'], talk: 'co_goro', flags: CO1, quests: Q(1),
