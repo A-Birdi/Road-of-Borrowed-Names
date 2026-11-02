@@ -179,6 +179,9 @@ mp_saku: …… {僕|ぼく} の {芸名|げいめい} が 、 {思|おも}い{�
 ?(quest.mp_actor=done) !end
 mp_saku: {昼|ひる} の {部|ぶ} の {台詞|せりふ} から 、 お{願|ねが}い します 。 || From the afternoon show's lines, please.
 !challenge mp.rehearse_line
+# "Come back later" is not his lines found: none of his closing lines, the quest not done, and he asks again
+# (Local CL-641; Cloud CC-478; Agnes 6573166180). A rehearse_line done before (Manbē's rehearsal) does not count here.
+?(var._res=0) !end
 ?(!mp_under_done) mp_saku: …… {声|こえ} が 、 {出|で}た 。 {役|やく} の {名前|なまえ} は まだ {白|しろ}い けど 、 {誰|だれ} を {演|えん}じる か は 、 {分|わ}かった 。 || …My voice came out. The part's name is still blank, but I know who I'm playing now.
 ?(mp_under_done) mp_saku: …… {声|こえ} が 、 {出|で}た 。 {役|やく} の {名前|なまえ} は {台本|だいほん} に {戻|もど}った けど 、 {誰|だれ} を {演|えん}じる か は 、 {今|いま} {分|わ}かった 。 || …My voice came out. The part's name was back in the script already, but only now do I know who I'm playing.
 mp_saku: {芸名|げいめい} は …… {戻|もど}らなくて も 、 {舞台|ぶたい} に {立|た}ちます 。 {本名|ほんみょう} の サクタロウ で 。 || My stage name… even if it never comes back, I'll go on. As Sakutarō, my own name.
