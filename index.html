@@ -213131,14 +213131,19 @@ narr: {小|ちい}さな {舞台|ぶたい} 。 {客席|きゃくせき} に は
 ?(comp=suzu) comp: はい 、 どうも どうも ！ {今日|きょう} は いい {天気|てんき} です ね 。 だから 、 {傘|かさ} を {三本|さんぼん} {持|も}って {来|き}ました ！ || Hello, hello! Lovely weather today. So I brought three umbrellas!
 ?(comp!=suzu) mp_genta: はい 、 どうも どうも ！ {今日|きょう} は いい {天気|てんき} です ね 。 だから 、 {傘|かさ} を {三本|さんぼん} {持|も}って {来|き}ました ！ || Hello, hello! Lovely weather today. So I brought three umbrellas!
 !challenge mp.manzai_1
+# "Come back later" on any of the three is not a bit performed: no laughter, no next joke, no praise, no completion
+# (Agnes 6572919095; Local CL-642; Cloud CC-479). Genta's talk offers the comic again, as before.
+?(var._res=0) !end
 narr: {客席|きゃくせき} から 、 くすくす と {笑|わら}い{声|ごえ} 。 || A ripple of giggles from the seats.
 ?(comp=suzu) comp: わたし 、 {毎朝|まいあさ} {走|はし}って います 。 …… {夢|ゆめ} の {中|なか} で 。 || I go for a run every morning. …In my dreams.
 ?(comp!=suzu) mp_genta: {俺|おれ} 、 {毎朝|まいあさ} {走|はし}って います 。 …… {夢|ゆめ} の {中|なか} で 。 || I go for a run every morning. …In my dreams.
 !challenge mp.manzai_2
+?(var._res=0) !end
 narr: {前|まえ} の {席|せき} の {子供|こども} が 、 {手|て} を {叩|たた}いて {笑|わら}って いる 。 || A child in the front row is laughing and clapping.
 ?(comp=suzu) comp: {昨日|きのう} は ね 、 {箸|はし} を {渡|わた}って 、 {橋|はし} で ご{飯|はん} を {食|た}べました 。 || Yesterday I crossed the chopsticks and ate my rice with a bridge.
 ?(comp!=suzu) mp_genta: {昨日|きのう} は な 、 {箸|はし} を {渡|わた}って 、 {橋|はし} で ご{飯|はん} を {食|た}べました 。 || Yesterday I crossed the chopsticks and ate my rice with a bridge.
 !challenge mp.manzai_3
+?(var._res=0) !end
 narr: {客席|きゃくせき} が どっと {沸|わ}いた 。 {八百橋|やおばし} の {人|ひと} たち に は 、 {橋|はし} の {洒落|しゃれ} が よく {効|き}く 。 || The house roars. A bridge pun goes down well in Manybridge.
 ?(comp=suzu) comp[laugh]: …… ありがとう 、 {相方|あいかた} 。 {久|ひさ}しぶり に 、 {舞台|ぶたい} で {笑|わら}った わ 。 {間|ま} の {取|と}り{方|かた} 、 {悪|わる}く ない わ よ 。 || …Thank you, partner. It's been a long time since I laughed on a stage. Your timing's not bad at all.
 ?(comp=suzu) !set mp_ev_suzu_act
