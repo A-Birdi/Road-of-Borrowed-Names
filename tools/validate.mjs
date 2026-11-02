@@ -96,8 +96,9 @@ for (const id in C.scenes) {
     if (c.op === 'hook' && !(RB.hooks && RB.hooks[a[0]])) E(where(c) + ' unknown hook ' + a[0]);
     // scene direction: known actors, gestures, poses, props, targets; a walk to whole tiles
     if (['gesture', 'look', 'pose', 'walkto', 'prop'].includes(c.op) && !STAGE_ACTOR(a[0])) E(where(c) + ' !' + c.op + ': unknown actor ' + a[0]);
-    // !enter brings in a person by name (a character, never pc, comp or npc), to whole tile coordinates and a facing
-    if (c.op === 'enter' && (!C.chars[a[0]] || !/^\d+$/.test(a[1] || '') || !/^\d+$/.test(a[2] || '') || (a[3] && !/^(up|down|left|right)$/.test(a[3])) || a.length > 4)) E(where(c) + ' !enter: needs a character, whole tile coordinates and an optional facing');
+    // !enter brings in a person by name (a character, never pc, comp or npc), to whole tile coordinates and a facing,
+    // and after the facing, `here` for someone already there
+    if (c.op === 'enter' && (!C.chars[a[0]] || !/^\d+$/.test(a[1] || '') || !/^\d+$/.test(a[2] || '') || (a[3] && !/^(up|down|left|right)$/.test(a[3])) || (a[4] && a[4] !== 'here') || a.length > 5)) E(where(c) + ' !enter: needs a character, whole tile coordinates and an optional facing, then an optional here');
     if (c.op === 'gesture') {
       const g = RB.gestures && RB.gestures.get(a[1]);
       if (!g && a[1] !== '-') E(where(c) + ' !gesture: unknown gesture ' + a[1]);

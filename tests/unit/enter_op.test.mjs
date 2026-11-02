@@ -1,6 +1,8 @@
 // `!enter <who> <x> <y> <dir>` (RBN-QA-088; Agnes 6333527722 point 5): the validator takes a well-formed entrance and
 // rejects a malformed one: an unknown character, pc / comp / npc (not someone a scene brings in by name), coordinates
-// that are not whole tiles, a missing coordinate, an unknown facing, extra arguments. The validator is run as it is
+// that are not whole tiles, a missing coordinate, an unknown facing, extra arguments. After the facing, `here` (someone
+// already there; Matsu's door, Agnes 6569082815, Local CL-629, Cloud CC-466) is taken, and only there and only that
+// word. The validator is run as it is
 // run by hand (node tools/validate.mjs) on a scratch copy of the sources with these scenes added, so the real
 // sources are never touched; its other findings are the copy's own and are not judged here.
 import fs from 'node:fs';
@@ -21,6 +23,9 @@ const CASES = [
   ['zz.enter_missing', '!enter ko_nana 13', true],
   ['zz.enter_face', '!enter ko_nana 13 10 sideways', true],
   ['zz.enter_extra', '!enter ko_nana 13 10 up now', true],
+  ['zz.enter_here', '!enter ko_nana 13 10 up here', false],
+  ['zz.enter_here_noface', '!enter ko_nana 13 10 here', true],
+  ['zz.enter_here_extra', '!enter ko_nana 13 10 up here now', true],
 ];
 
 export default async (t) => {

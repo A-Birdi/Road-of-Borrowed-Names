@@ -281,8 +281,11 @@ RB.script = (function () {
         // stops the same way and never moves whoever now has the name); a walk-in still under way at its bound is left
         // to finish on its own (never snapped to its end); each entrance is recorded, with whether it reached its
         // place and if not why, and where the figure then stood (RB.test.entrances).
+        // `!enter <who> <x> <y> <dir> here`: someone the scene finds already there (waiting where you come out): set down
+        // at their place as the scene begins there, as a placement's arrive: 'here' is, not walking in from their own
+        // (opt-in; Agnes 6569082815; Local CL-629; Cloud CC-466)
         case 'enter': {
-          const who = resolveWho(a[0]), x = +a[1], y = +a[2], dir = DIRW[a[3]] ? a[3] : null;
+          const who = resolveWho(a[0]), x = +a[1], y = +a[2], dir = DIRW[a[3]] ? a[3] : null, here = a[4] === 'here';
           const fast = hidden() || RB.game.fastForward(), g0 = gen, map = RB.world.W.map, tok = RB.staging ? RB.staging.sceneToken() : 0;
           const note = (why) => {
             if (!RB.test) return;
@@ -290,7 +293,7 @@ RB.script = (function () {
             list.push({ who, scene: sc.id, map: map && map.id, to: [x, y], ok: !why, why: why || null, at: act ? [act.x, act.y] : null });
             if (list.length > 50) list.shift();
           };
-          const act = RB.world.ensureSpeaker(who, sc.id, { staged: true, at: [x, y] });
+          const act = RB.world.ensureSpeaker(who, sc.id, { staged: true, at: [x, y], here });
           if (!act) { note('not brought'); break; }
           const lost = () => {
             const W = RB.world.W;
