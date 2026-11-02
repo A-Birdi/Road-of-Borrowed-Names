@@ -103,4 +103,6 @@ export default async (t) => {
 // having gone, and brings her back; Agnes 6576022838, 6576640096; Local CL-645, CL-646; Cloud CC-482. Before it:
 // ff3e6917bd759b88. Since the Understage's row, mp.boss says settleWins: false; Agnes 6580371549; Cloud CC-484;
 // Local CL-648. Before it: 903f63151942ebad)
-const ENC_FP = '6ed4034560ef3a45', MOSS_FP = 'ca049a7ebb803fe8', OTHERS_FP = '264fb78b3eb0abd8';
+// (ENC_FP: since the Moss Lantern's own settling row, kr.moss_steps says settleWins: false; Cloud CC-486; Local CL-648,
+// CL-650. Before it: 6ed4034560ef3a45)
+const ENC_FP = '3162cea5df79d7d5', MOSS_FP = 'ca049a7ebb803fe8', OTHERS_FP = '264fb78b3eb0abd8';
