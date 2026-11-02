@@ -4,7 +4,7 @@
 // gaps and the journal as before). Now mb.boss says settleWins: false (the battle screen's own guard, which plays no
 // mid-fight settle there, is in tests/e2e/mb_bridge_settle.mjs). With synthetic campaigns only, the encounter engine
 // as the battle screen drives it:
-//  1. the census: mb.boss is the only encounter that says settleWins: false; those that say true, as before;
+//  1. the census: mb.boss says settleWins: false (and, since its own row, mp.boss); those that say true, as before;
 //  2. the knots all freed by Unravel, no span laid: no win and no conclusion, exchange after exchange; the bridge
 //     settled, so it does not act; the procedure's cards still offered; mb_bridge_named not set;
 //  3. then the three spans and the name: 'named' wins, with its flag, once;
@@ -39,7 +39,8 @@ export default async (t) => {
 
   // 1. the census
   const explicit = (v) => Object.keys(C.encounters).filter((id) => C.encounters[id].settleWins === v).sort();
-  t.eq(explicit(false), ['mb.boss'], '1 the census: mb.boss is the only encounter that says settleWins: false');
+  // (since the Understage's row, mp.boss says it too: Agnes 6580371549; Cloud CC-484; Local CL-648. Before it: mb.boss only)
+  t.eq(explicit(false), ['mb.boss', 'mp.boss'], '1 the census: mb.boss and mp.boss are the encounters that say settleWins: false');
   t.eq(explicit(true), ['cr.fog_papers', 'fx.protect', 'kr.wick_ridge', 'yn.towel'], '1 and the four that say true (a test fixture among them), as before');
 
   // 2. the knots all freed, no span laid
