@@ -62,7 +62,9 @@ yn_tokuzo: お{客|きゃく}さま の ご{希望|きぼう} を {伺|うかが
 !encounter yn.rooms
 !if var._res=0 -> later
 !set yn_rooms_done
-yn_tokuzo: {皆|みな}さま 、 {無事|ぶじ} に お{部屋|へや} へ 。 …… ありがとう ございました 。 {本当|ほんとう} に 。 || Everyone safely in their rooms. …Thank you. Truly.
+# His English names tonight's guests, as his Japanese does: the traveller's room is from tomorrow (Agnes 6553467222,
+# 6553636474; Local CL-594; Cloud CC-430)
+yn_tokuzo: {皆|みな}さま 、 {無事|ぶじ} に お{部屋|へや} へ 。 …… ありがとう ございました 。 {本当|ほんとう} に 。 || Everyone staying tonight is safely in their room. …Thank you. Truly.
 !faceplayer yn_oritsu
 yn_oritsu: {拝見|はいけん} して おりました 。 {断|ことわ}り {方|かた} が 、 {上手|じょうず} で いらっしゃる 。 || I was watching. You decline gracefully.
 yn_oritsu: {階段|かいだん} の {下|した} に 、 {小|ちい}さな {部屋|へや} が ございます 。 {狭|せま}い ところ です が 、 お{使|つか}い ください 。 {手拭|てぬぐ}い と {浴衣|ゆかた} も 、 どうぞ 。 || There is a small room under the stairs. It is cramped, but please make use of it. And a towel and a yukata, if you please.
