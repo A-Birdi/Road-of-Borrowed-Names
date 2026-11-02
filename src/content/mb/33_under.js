@@ -218,6 +218,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     lead: { enemy: 'mb.bridge', knots: 6, pattern: ['flood', 'strike', 'charge', 'rest', 'strike'] },
     rules: { wait: true, conditions: true },
     noFlee: true,
+    // the bridge is restored only by its name: its knots all freed, the naming goes on (Agnes 6570338266; Cloud CC-470,
+    // CC-471; Local CL-633)
+    settleWins: false,
     procedure: {
       id: 'mb_bridge', version: 1, restart: 'stable',
       machine: { s1: 'torn', s2: 'torn', s3: 'torn', name: 'none' },
