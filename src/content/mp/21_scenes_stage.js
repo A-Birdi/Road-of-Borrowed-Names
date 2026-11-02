@@ -43,10 +43,15 @@ mp_manbe: けいこ を {手伝|てつだ}って くれません か 。 {外|�
 narr: {舞台|ぶたい} の {上|うえ} 。 {役者|やくしゃ} たち が 、 {誰|だれ} が どこ に {立|た}つ の か {分|わ}からない まま 、 {立|た}って いる 。 || On the stage the actors stand about, not knowing who goes where.
 mp_manbe: まず は {立|た}ち{位置|いち} から 。 {台本|だいほん} の {指示|しじ} を {読|よ}んで 、 {並|なら}べて みて ください 。 || Blocking first. Read the directions in the script and set them out.
 !challenge mp.rehearse_block
+# "Come back later" on any of the three leaves the rehearsal where it was: no praise, no next task, no completion
+# (Agnes 6572551337; Local CL-640; Cloud CC-477). Manbē's talk starts it again from the blocking.
+?(var._res=0) !end
 mp_manbe: よし 、 {見|み}える ！ {次|つぎ} は {昼|ひる} の {部|ぶ} です 。 {子供|こども} の お{客|きゃく} に も {分|わ}かる {台詞|せりふ} に {直|なお}したい 。 || Yes, now we can see it! Next, the afternoon show. I want the lines put so the children understand them too.
 !challenge mp.rehearse_line
+?(var._res=0) !end
 mp_manbe: {最後|さいご} に 、 ばらばら に なった {台本|だいほん} を 、 {順番|じゅんばん} どおり に 。 || Last, the prompt-book that came apart: back in order.
 !challenge mp.rehearse_book
+?(var._res=0) !end
 narr: {役者|やくしゃ} たち が 、 {一人|ひとり} 、 また {一人|ひとり} と 、 {自分|じぶん} の {場所|ばしょ} に {立|た}つ 。 {台本|だいほん} の {白|しろ}い {所|ところ} に 、 {鉛筆|えんぴつ} の {字|じ} が {書|か}き{込|こ}まれて いく 。 || One by one the actors find their places. Pencilled names fill the white gaps in the script.
 mp_manbe: …… {動|うご}いた 。 {芝居|しばい} が 、 {動|うご}いた ！ ありがとう ！ || …It moves. The play moves again! Thank you!
 ?(comp=suzu) comp[smile]: {鉛筆|えんぴつ} で {書|か}き{込|こ}んだ {名前|なまえ} は 、 {消|き}えて も また {書|か}ける わ 。 {役者|やくしゃ} は 、 そう やって {生|い}きて きた の よ 。 || A name pencilled in can be written again if it fades. That's how actors have always lived.
