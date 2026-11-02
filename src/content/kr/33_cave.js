@@ -228,6 +228,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // third time (Cloud CC-403; Local CL-561; Agnes 6547199277)
     conclusions: [{ id: 'named', when: { proc: 'done' }, result: 'win', flags: { kr_moss1_named: true } }],
   };
+  // a save from before the row above may have won it with its knots alone: the creature's defeat stored, its name never
+  // called, so neither the Moss nor the lit lantern stands on the Cedar Steps. On load that one key goes and the Moss
+  // stands again, to be called by its name; nothing is granted, and a save already named, or never fought, is as it was
+  // (Agnes 6581849812, 6584263954; Local CL-652; Cloud CC-489)
+  if (RB.save && RB.save.addMigration) {
+    RB.save.addMigration((st) => {
+      const f = st && st.flags;
+      if (f && f['foe:kr.steps:moss1'] && !f.kr_moss1_named) delete f['foe:kr.steps:moss1'];
+    });
+  }
 
   // ---- the Teller's Shadow (put the account right) -----------------------------------------------------------------
   C.encounters['kr.shadow_gate'] = {
