@@ -678,7 +678,8 @@ RB.world = (function () {
     const spot = spotNear(W.player.x, W.player.y, o && o.at);
     if (!spot) return null;
     const a = makeActor(spot[0], spot[1], 'down', ch.look);
-    a.id = who; a.def = { id: who }; a.home = spot; a.extra = true; a.map = W.map.id;
+    // (o.here: a scene's !enter … here, someone already there: they appear at their place, as arrive: 'here' does)
+    a.id = who; a.def = o && o.here ? { id: who, arrive: 'here' } : { id: who }; a.home = spot; a.extra = true; a.map = W.map.id;
     W.extras.push(a);
     // (an entrance the scene stages on purpose, !enter, is not a speaker who was missing)
     if (RB.test && RB.test.auto && !(o && o.staged)) (RB.test.extras = RB.test.extras || []).push(who + ' @ ' + W.map.id + ' (' + (sceneId || '?') + ')');

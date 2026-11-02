@@ -42844,7 +42844,8 @@ RB.world = (function () {
     const spot = spotNear(W.player.x, W.player.y, o && o.at);
     if (!spot) return null;
     const a = makeActor(spot[0], spot[1], 'down', ch.look);
-    a.id = who; a.def = { id: who }; a.home = spot; a.extra = true; a.map = W.map.id;
+    // (o.here: a scene's !enter … here, someone already there: they appear at their place, as arrive: 'here' does)
+    a.id = who; a.def = o && o.here ? { id: who, arrive: 'here' } : { id: who }; a.home = spot; a.extra = true; a.map = W.map.id;
     W.extras.push(a);
     // (an entrance the scene stages on purpose, !enter, is not a speaker who was missing)
     if (RB.test && RB.test.auto && !(o && o.staged)) (RB.test.extras = RB.test.extras || []).push(who + ' @ ' + W.map.id + ' (' + (sceneId || '?') + ')');
@@ -56947,8 +56948,11 @@ RB.script = (function () {
         // stops the same way and never moves whoever now has the name); a walk-in still under way at its bound is left
         // to finish on its own (never snapped to its end); each entrance is recorded, with whether it reached its
         // place and if not why, and where the figure then stood (RB.test.entrances).
+        // `!enter <who> <x> <y> <dir> here`: someone the scene finds already there (waiting where you come out): set down
+        // at their place as the scene begins there, as a placement's arrive: 'here' is, not walking in from their own
+        // (opt-in; Agnes 6569082815; Local CL-629; Cloud CC-466)
         case 'enter': {
-          const who = resolveWho(a[0]), x = +a[1], y = +a[2], dir = DIRW[a[3]] ? a[3] : null;
+          const who = resolveWho(a[0]), x = +a[1], y = +a[2], dir = DIRW[a[3]] ? a[3] : null, here = a[4] === 'here';
           const fast = hidden() || RB.game.fastForward(), g0 = gen, map = RB.world.W.map, tok = RB.staging ? RB.staging.sceneToken() : 0;
           const note = (why) => {
             if (!RB.test) return;
@@ -56956,7 +56960,7 @@ RB.script = (function () {
             list.push({ who, scene: sc.id, map: map && map.id, to: [x, y], ok: !why, why: why || null, at: act ? [act.x, act.y] : null });
             if (list.length > 50) list.shift();
           };
-          const act = RB.world.ensureSpeaker(who, sc.id, { staged: true, at: [x, y] });
+          const act = RB.world.ensureSpeaker(who, sc.id, { staged: true, at: [x, y], here });
           if (!act) { note('not brought'); break; }
           const lost = () => {
             const W = RB.world.W;
@@ -210663,6 +210667,10 @@ narr: {床|ゆか} の {重|おも}い {戸|と} 。 {鍵|かぎ} が かかっ�
 ?(mb_matsu_letter) mb_matsu: {私|わたし} の {灯|あか}り を {持|も}って いき な 。 {下|した} の {休|やす}み{場|ば} に {掛|か}けて おけば 、 {帰|かえ}り{道|みち} に なる 。 || Take my lamp. Hang it at the resting place below, and it'll be your way back.
 ?(mb_matsu_letter) !set mb_matsu_lamp
 ?(mb_passage) mb_matsu: {鍵|かぎ} は {開|あ}けた 。 {水|みず} の {高|たか}さ は 、 {石板|せきばん} に {書|か}いて ある 。 {読|よ}める なら 、 {迷|まよ}わない 。 || I've unlocked it. The water heights are written on the tablets. If you can read them, you won't get lost.
+# Shown out (or timed out): out by her door to the street, where Sen is waiting, as the narration says (Agnes
+# 6569082815, 6569311618; Local CL-629; Cloud CC-466)
+?(!mb_passage) !warp mb.exchange 52 16 down
+?(!mb_passage) !enter mb_sen 52 17 up here
 ?(!mb_passage) narr: マツ は {戸|と} を {閉|し}めて しまった 。 …… {外|そと} に {出|で}る と 、 セン が {待|ま}って いた 。 || Matsu shuts her door. …Outside, Sen is waiting.
 ?(!mb_passage) mb_sen: {札場|ふだば} の {名|な} で 、 {閘門|こうもん} を {開|あ}ける {許|ゆる}し を {取|と}りました 。 マツ さん は {怒|おこ}る でしょう けど 、 {町|まち} の ため です 。 || I've got the Exchange's leave to open the lock. Matsu will be angry, but it's for the city.
 ?(!mb_passage) !set mb_passage

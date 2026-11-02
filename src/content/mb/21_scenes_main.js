@@ -321,6 +321,10 @@ narr: {床|ゆか} の {重|おも}い {戸|と} 。 {鍵|かぎ} が かかっ�
 ?(mb_matsu_letter) mb_matsu: {私|わたし} の {灯|あか}り を {持|も}って いき な 。 {下|した} の {休|やす}み{場|ば} に {掛|か}けて おけば 、 {帰|かえ}り{道|みち} に なる 。 || Take my lamp. Hang it at the resting place below, and it'll be your way back.
 ?(mb_matsu_letter) !set mb_matsu_lamp
 ?(mb_passage) mb_matsu: {鍵|かぎ} は {開|あ}けた 。 {水|みず} の {高|たか}さ は 、 {石板|せきばん} に {書|か}いて ある 。 {読|よ}める なら 、 {迷|まよ}わない 。 || I've unlocked it. The water heights are written on the tablets. If you can read them, you won't get lost.
+# Shown out (or timed out): out by her door to the street, where Sen is waiting, as the narration says (Agnes
+# 6569082815, 6569311618; Local CL-629; Cloud CC-466)
+?(!mb_passage) !warp mb.exchange 52 16 down
+?(!mb_passage) !enter mb_sen 52 17 up here
 ?(!mb_passage) narr: マツ は {戸|と} を {閉|し}めて しまった 。 …… {外|そと} に {出|で}る と 、 セン が {待|ま}って いた 。 || Matsu shuts her door. …Outside, Sen is waiting.
 ?(!mb_passage) mb_sen: {札場|ふだば} の {名|な} で 、 {閘門|こうもん} を {開|あ}ける {許|ゆる}し を {取|と}りました 。 マツ さん は {怒|おこ}る でしょう けど 、 {町|まち} の ため です 。 || I've got the Exchange's leave to open the lock. Matsu will be angry, but it's for the city.
 ?(!mb_passage) !set mb_passage
