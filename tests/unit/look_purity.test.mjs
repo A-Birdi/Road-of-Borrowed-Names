@@ -182,6 +182,9 @@ export default async (t) => {
       }
       const diff = changed(before, parts(st));
       if (diff.length) (dirty[def.id] = dirty[def.id] || new Set()).add(comp + ' r' + round + ': ' + diff.join(','));
+      // (no creature standing, the encounter not over: a creature settled where settling is no win, mb.boss; its
+      // looks above were checked, and the simulator has nothing to aim at)
+      if (!L.standing(st).length) break;
       const c = S.choose(st, words, s, { policy: 'smart' });
       if (!c || !c.card) break;
       try { E.exchange(st, { card: c.card, res: OK, comp: c.act ? { act: c.act, target: c.actTarget } : null, target: c.target }, { impl: S.core }); } catch (e) { break; }
