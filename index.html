@@ -135966,7 +135966,8 @@ RB.ui.press = (function () {
           (cur ? '<span class="pr-cur">' + line(cur, showEn) + '</span>' : '<span class="pr-cur muted">Not chosen yet</span>') +
           btn('slot', openSlot === slot ? 'Close' : cur ? 'Change' : 'Choose', { v: slot }) + '</div>';
         if (openSlot === slot) {
-          h += '<ul class="pr-opts" role="list">' + P().offered(s, slot).map((b) => '<li><button type="button" class="pr-opt' + (comp.blocks[slot] === b.id ? ' on' : '') + '" data-a="pick" data-v="' + esc(b.id) + '" aria-pressed="' + (comp.blocks[slot] === b.id) + '">' + line(b, true) + '</button></li>').join('') + '</ul>';
+          // the offers' English follows the button too, as its label says (Agnes 6571318983; Local CL-637; Cloud CC-474)
+          h += '<ul class="pr-opts" role="list">' + P().offered(s, slot).map((b) => '<li><button type="button" class="pr-opt' + (comp.blocks[slot] === b.id ? ' on' : '') + '" data-a="pick" data-v="' + esc(b.id) + '" aria-pressed="' + (comp.blocks[slot] === b.id) + '">' + line(b, showEn) + '</button></li>').join('') + '</ul>';
         }
         h += '</li>';
       }
