@@ -206691,6 +206691,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     id: 'kr.moss_steps', kind: 'procedure', name: say('{苔|こけ}{灯籠|どうろう}', 'The Moss Lantern'),
     lead: { enemy: 'kr.moss' },
     rules: { wait: true },
+    // it lets you by only when called by its name: its knots all freed, the name is still to call (Cloud CC-486; Local
+    // CL-648, CL-650; as the Nameless Bridge and the Lord of the Understage)
+    settleWins: false,
     procedure: {
       id: 'kr_moss', version: 1, restart: 'start',
       machine: { named: 'no' },
