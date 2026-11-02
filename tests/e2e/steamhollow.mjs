@@ -2,7 +2,7 @@
 // throwaway sessions (no journey saved):
 //  1. the front desk (a procedure): the rooms board shows each room's state, the guests' needs are heard as language
 //     steps, a wrong room is put right on the spot (the step stays), the man without a booking is turned away
-//     politely; done, the board shows every newcomer in a room; no bare kanji;
+//     politely; done, the board shows every newcomer in a room, and the end names the groups; no bare kanji;
 //  2. the baths: she/he go to their bath with no question; they/them are asked once (three curtains) and keep it; the
 //     comfort setting (Settings, "Bathing scenes"): Shown describes the bath, Summarised tells it in a sentence, and
 //     the conversation is the same either way;
@@ -159,7 +159,9 @@ await test('the front desk: the rooms board, the guests heard, a wrong room put 
   for (const label of ok) await play(p, label.replace(/[()]/g, '.'));
   await p.waitForSelector('.enc-end');
   const end = await p.evaluate(() => document.querySelector('.enc-end').textContent);
-  assert(/Every newcomer has a room/.test(end), 'done: ' + end.slice(0, 200));
+  // the end names the groups: the traveller's room is from tomorrow (Agnes 6553467222, 6553636474; Local CL-594; Cloud
+  // CC-430; it was "Every newcomer has a room for the night.")
+  assert(/Oshige, the four villagers and Yasuke have rooms tonight\. The traveller has booked Plum from tomorrow\./.test(end), 'done: ' + end.slice(0, 200));
   await p.click('.enc-sheet [data-ok]');
   await p.waitForFunction(() => window.__res, null, { timeout: 10000 });
   assert(await p.evaluate(() => window.__res.outcome === 'done'), 'the procedure is done');

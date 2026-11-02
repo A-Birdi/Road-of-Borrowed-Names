@@ -96,7 +96,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
           ] },
       ],
     },
-    conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'Every newcomer has a room for the night.' }, flags: { yn_rooms_all: true } }],
+    // the groups by name: the traveller's room is Plum, from tomorrow (Agnes 6553467222, 6553636474; Local CL-594;
+    // Cloud CC-430)
+    conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'Oshige, the four villagers and Yasuke have rooms tonight. The traveller has booked Plum from tomorrow.' }, flags: { yn_rooms_all: true } }],
   };
 
   // ---- Tama's recipe card: spring eggs, no timer --------------------------------------------------------------------
