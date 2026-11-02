@@ -29,7 +29,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(2, 5, 3, 15, '+');          // the west walkway
       k.rect(5, 17, 22, 3, '+');         // the south walkway
       k.rect(8, 7, 18, 9, 'd');          // the basin
-      k.rect(26, 2, 3, 3, 'w');          // the drowned stretch of the north walkway (passable once drained)
+      k.rect(26, 2, 3, 3, '+');          // the drowned stretch of the north walkway: stone under the flood, bare once drained
       k.rect(29, 2, 4, 3, '+');          // beyond it, the way down
       k.scatter('w', 10, 901, [2, 2, 24, 3], '+');
     }),
