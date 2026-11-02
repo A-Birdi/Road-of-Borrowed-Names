@@ -1402,6 +1402,7 @@ RB.combat = (function () {
       case 'gact': sfx('reveal'); if (f.act === 'unravel' && fo) fo.knots = Math.max(0, fo.knots - (f.n || 1)); msg = f.en || ''; break;
       case 'gsay': msg = f.en || ''; break;
       case 'leave': { const a = (v.actors || []).find((x) => x.aid === f.aid); if (a) a.left = true; msg = f.en || ''; break; }
+      case 'back': { const a = (v.actors || []).find((x) => x.aid === f.aid); if (a) a.left = false; msg = f.en || ''; break; }
       case 'arrive': sfx(f.none ? 'cursor' : 'enemy_intent'); msg = f.en || ''; break;
       case 'call': sfx('enemy_intent'); msg = who(f.en || 'It calls out.'); break;
       case 'prevent': sfx('reveal'); msg = f.en || ''; break;

@@ -76,7 +76,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       },
       drift: [
         { when: { all: [{ rounds: 2 }, { stance: { 'n:ryusui': 'heated' } }] }, once: true, effect: { stance: { 'n:shinobu': 'leaving' } }, says: { en: 'Ryūsui\'s voice rises. Shinobu edges toward the street, as if she might simply go.' } },
-        { when: { all: [{ rounds: 3 }, { stance: { 'n:shinobu': 'leaving' } }] }, once: true, effect: { stance: { 'n:shinobu': 'listening' } }, says: { en: 'Shinobu stops at the corner, and comes back.' } },
+        // once she has gone, she comes back and is there again, whatever changed her stance meanwhile (Wait, a companion)
+        // (Agnes 6576022838, 6576640096; Local CL-645, CL-646; Cloud CC-482)
+        { when: { all: [{ rounds: 3 }, { left: 'n:shinobu' }] }, once: true, effect: { stance: { 'n:shinobu': 'listening' }, back: 'n:shinobu' }, says: { en: 'Shinobu stops at the corner, and comes back.' } },
       ],
     },
     conclusions: [

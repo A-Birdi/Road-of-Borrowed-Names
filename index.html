@@ -66664,6 +66664,9 @@ RB.encounter = (function () {
     if (e.ward) for (const who of Object.keys(e.ward)) { st.ward[who] = (st.ward[who] || 0) + e.ward[who]; fx.push({ t: 'ward', target: who, n: e.ward[who] }); }
     if (e.hp) for (const aid of Object.keys(e.hp)) { const a = actorOf(st, aid); if (a) { a.hp = Math.max(0, Math.min(a.maxHp || 99, (a.hp || 0) + e.hp[aid])); } }
     if (e.leave) for (const aid of [].concat(e.leave)) { const a = actorOf(st, aid); if (a && !a.left) { a.left = true; fx.push({ t: 'leave', aid }); } }
+    // someone who has left, back again: only who the effect names, and only if they have left (Agnes 6576022838,
+    // 6576640096; Local CL-645, CL-646; Cloud CC-482)
+    if (e.back) for (const aid of [].concat(e.back)) { const a = actorOf(st, aid); if (a && a.left) { a.left = false; fx.push({ t: 'back', aid }); } }
     if (e.conclude) { const c = (E.def.conclusions || []).find((x) => x.id === e.conclude); if (c) { E.conclusion = c; E.outcome = c.id; } }
   }
 
@@ -117484,6 +117487,7 @@ RB.combat = (function () {
       case 'gact': sfx('reveal'); if (f.act === 'unravel' && fo) fo.knots = Math.max(0, fo.knots - (f.n || 1)); msg = f.en || ''; break;
       case 'gsay': msg = f.en || ''; break;
       case 'leave': { const a = (v.actors || []).find((x) => x.aid === f.aid); if (a) a.left = true; msg = f.en || ''; break; }
+      case 'back': { const a = (v.actors || []).find((x) => x.aid === f.aid); if (a) a.left = false; msg = f.en || ''; break; }
       case 'arrive': sfx(f.none ? 'cursor' : 'enemy_intent'); msg = f.en || ''; break;
       case 'call': sfx('enemy_intent'); msg = who(f.en || 'It calls out.'); break;
       case 'prevent': sfx('reveal'); msg = f.en || ''; break;
@@ -214907,7 +214911,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       },
       drift: [
         { when: { all: [{ rounds: 2 }, { stance: { 'n:ryusui': 'heated' } }] }, once: true, effect: { stance: { 'n:shinobu': 'leaving' } }, says: { en: 'Ryūsui\'s voice rises. Shinobu edges toward the street, as if she might simply go.' } },
-        { when: { all: [{ rounds: 3 }, { stance: { 'n:shinobu': 'leaving' } }] }, once: true, effect: { stance: { 'n:shinobu': 'listening' } }, says: { en: 'Shinobu stops at the corner, and comes back.' } },
+        // once she has gone, she comes back and is there again, whatever changed her stance meanwhile (Wait, a companion)
+        // (Agnes 6576022838, 6576640096; Local CL-645, CL-646; Cloud CC-482)
+        { when: { all: [{ rounds: 3 }, { left: 'n:shinobu' }] }, once: true, effect: { stance: { 'n:shinobu': 'listening' }, back: 'n:shinobu' }, says: { en: 'Shinobu stops at the corner, and comes back.' } },
       ],
     },
     conclusions: [

@@ -511,6 +511,9 @@ RB.encounter = (function () {
     if (e.ward) for (const who of Object.keys(e.ward)) { st.ward[who] = (st.ward[who] || 0) + e.ward[who]; fx.push({ t: 'ward', target: who, n: e.ward[who] }); }
     if (e.hp) for (const aid of Object.keys(e.hp)) { const a = actorOf(st, aid); if (a) { a.hp = Math.max(0, Math.min(a.maxHp || 99, (a.hp || 0) + e.hp[aid])); } }
     if (e.leave) for (const aid of [].concat(e.leave)) { const a = actorOf(st, aid); if (a && !a.left) { a.left = true; fx.push({ t: 'leave', aid }); } }
+    // someone who has left, back again: only who the effect names, and only if they have left (Agnes 6576022838,
+    // 6576640096; Local CL-645, CL-646; Cloud CC-482)
+    if (e.back) for (const aid of [].concat(e.back)) { const a = actorOf(st, aid); if (a && a.left) { a.left = false; fx.push({ t: 'back', aid }); } }
     if (e.conclude) { const c = (E.def.conclusions || []).find((x) => x.id === e.conclude); if (c) { E.conclusion = c; E.outcome = c.id; } }
   }
 

@@ -86,6 +86,7 @@ export function encounterRules(RB, C, { jcheck, checkStep, E }) {
       if (e.reveal) for (const c of [].concat(e.reveal)) if (!claims[c]) E(where + ': reveals unknown claim ' + c);
       if (e.stance) for (const a of Object.keys(e.stance)) { if (!aids.has(a)) E(where + ': changes the stance of ' + a + ', who is not in the encounter'); if (!STANCES.has(e.stance[a])) E(where + ': unknown stance ' + e.stance[a]); }
       if (e.conclude && !(d.conclusions || []).some((c) => c.id === e.conclude)) E(where + ': concludes with unknown ' + e.conclude);
+      if (e.back) for (const a of [].concat(e.back)) if (!aids.has(a)) E(where + ': names ' + a + ', who is not in the encounter');
     };
     const cons = d.conclusions || [];
     // a severe outcome (E17, C-11): avoidable, told shown or summarised (C-65), then reflected on with the companion
