@@ -214775,6 +214775,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     lead: { enemy: 'mp.naraku', knots: 6, pattern: ['charge', 'strike', 'flood', 'rest', 'strike'] },
     rules: { wait: true, conditions: true },
     noFlee: true,
+    // the names go back only by the roll: its knots all freed, the cues go on (Agnes 6580371549; Cloud CC-484; Local
+    // CL-648; as the Nameless Bridge, mb/33_under.js)
+    settleWins: false,
     procedure: {
       id: 'mp_naraku', version: 1, restart: 'stable',
       machine: { lift: 'down', revolve: 'east', names: 'below' },
