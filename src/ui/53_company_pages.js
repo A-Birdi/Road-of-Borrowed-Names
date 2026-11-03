@@ -183,13 +183,15 @@ RB.ui.companyPages = (function () {
       '<ol class="earlier">' + qi.stages.map((st) => '<li>' + j(st.jp) + '<div class="en">' + esc(st.en) + '</div></li>').join('') + '</ol>' +
       (qi.done ? '<p class="muted">Resolved. ' + esc(c.name.en) + '\'s way, with you beside ' + pron(comp).o + '.</p>' : '<p class="muted">Still ahead. Nothing is decided for ' + esc(c.name.en) + ' until ' + pron(comp).s + (pron(comp).s === 'they' ? ' decide' : ' decides') + ' it.</p>') + '</section>';
   }
+  // a new talk away from a rest stop: not here, and where (a night's rest is the contract, not the kind of building:
+  // Hana's Teahouse is the one teahouse that counts; Agnes 6548032279; Cloud CC-409; Local CL-567; Agnes 6548240195)
   function topicsBlock(s, c) {
     const list = K.topics(s);
     if (!list.length) return '';
     const rest = K.restHere(s);
     return '<h4>' + I('rest') + L('{休|やす}む {時|とき} の {話|はなし}', 'Talks at a rest stop') + '</h4><ul class="entries co-topics">' + list.map((x) =>
       '<li class="entry"><span class="mark">' + I(x.heard ? 'done' : 'talk') + '</span><div><div class="t">' + j(x.title.jp) + ' <span class="en">' + esc(x.title.en) + '</span></div>' +
-      '<div class="kind">' + (x.heard ? 'talked about' : rest ? 'you could talk about this now' : 'new — for a rest stop (an inn, a teahouse, a camp)') + '</div></div>' +
+      '<div class="kind">' + (x.heard ? 'talked about' : rest ? 'you could talk about this now' : 'new — not here: talk where you can rest (an inn, a hut, a camp, or Hana\'s Teahouse)') + '</div></div>' +
       (rest ? '<button class="pbtn" data-co-topic="' + esc(x.id) + '">' + L('{話|はな}す', x.heard ? 'Again' : 'Talk') + '</button>' : '<span></span>') + '</li>').join('') + '</ul>';
   }
   function supportBlock(s, comp, c) {
