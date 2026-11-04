@@ -7,7 +7,7 @@
 //  1. the lamp left: not lit, no name called, the palanquin not there, the world's own controls back;
 //  2. the departure walked onto: it asks for the lamp first, and you stay at the station;
 //  3. a save and load, the lamp again, named: lit, the name called once, the palanquin there;
-//  4. the departure walked onto: past the lamp (no asking for it);
+//  4. the departure walked onto: past the lamp (no asking for it), the plan made, and on to the first leg;
 //  no page errors (console errors included).
 // Usage: node tools/build.mjs && node tests/e2e/cr_lamp_cancel.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -81,7 +81,7 @@ const l3 = await look();
 ok(m === 'cr.oiwake' && flat(t3.runs) === flat([['cr.name1', true]]) && t3.said.filter((x) => LIT.test(x)).length === 1 && l3.lit && !l3.dark && l3.kago,
   '3 a save and load, the lamp named: lit, the name called once, the palanquin there ' + flat({ m, runs: t3.runs, l3 }));
 const d2 = await depart();
-ok(!has(d2.said, ASK), '4 the departure walked onto: past the lamp ' + flat({ said: d2.said.slice(0, 2), map: d2.map }));
+ok(!has(d2.said, ASK) && has(d2.said, /weigh what you've heard/) && d2.map === 'cr.leg1', '4 the departure walked onto: past the lamp, the plan made, and on to the first leg ' + flat({ said: d2.said.slice(0, 2), map: d2.map }));
 ok(!errors.length, 'no page errors ' + errors.slice(0, 2).join(' | '));
 await p.context().close();
 

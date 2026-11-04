@@ -14,7 +14,13 @@
 //  4. left twice, a save and load, then named: lit once;
 //  5. a result left over from another exercise changes nothing;
 //  6. each lamp's first naming, line for line as on the parent, with Ren (who calls the name) and with Nao (fingerprints
-//     taken on the parent, bab26c9); no scene ended on an error from the runner.
+//     taken on the parent, bab26c9); no scene ended on an error from the runner;
+// and Agnes's notes (6643867217): all seven generated naming scenes are guarded, but the story itself never leaves
+// Kirishita's dark (Sakichi keeps it lit, cr.arrive6); so also:
+//  7. arriving at Kirishita: its lamp lit by the arrival, no naming asked, the lit lamp and the palanquin there;
+//  8. a lamp lit in an older save without its exercise's chal: flag stays lit, with its palanquin, and asks nothing;
+//  9. Kumoi offered by another station's palanquin only once its lamp is lit and the Barrier passed.
+// (In 2 and 3 the lamp's flag and the lit lamp on the map are checked separately: flagLit and propLit.)
 import crypto from 'node:crypto';
 import { load } from '../lib/load.mjs';
 
@@ -69,7 +75,7 @@ export default async (t) => {
   // what the station's map offers now: its dark lamp, its lit lamp, its palanquin
   const props = (n) => {
     const m = C.maps[STN[n - 1]], live = (m.props || []).filter((p) => !p.if || S.test(s, p.if));
-    return { dark: live.some((p) => p.scene === 'cr.lamp' + n), lit: live.some((p) => p.scene === 'cr.lamp_lit'), kago: live.some((p) => p.scene === 'cr.ride') };
+    return { dark: live.some((p) => p.scene === 'cr.lamp' + n), propLit: live.some((p) => p.scene === 'cr.lamp_lit'), kago: live.some((p) => p.scene === 'cr.ride') };
   };
   // the palanquin from another lit station: is this one offered?
   const rideOffers = async (n) => { await run('cr.ride'); return (offered[0] || []).some((x) => x === 'To ' + NAMES[n - 1]); };
@@ -94,18 +100,18 @@ export default async (t) => {
       const other = n === 1 ? 2 : 1;
       fresh({ map: STN[n - 1], flags: Object.assign({ ['cr_lamp' + other]: true, cr_passed: true }, n <= 5 ? { ['cr_given' + n]: true } : {}) });
       await run('cr.lamp' + n, { cancel: ['cr.name' + n] });
-      const a = Object.assign({ lit: !!s.flags['cr_lamp' + n], asked: asked.slice(), called: said(LIT) }, props(n));
+      const a = Object.assign({ flagLit: !!s.flags['cr_lamp' + n], asked: asked.slice(), called: said(LIT) }, props(n));
       if (n <= 5) { await run('cr.depart' + n); a.depart = said(ASK_LAMP) && warps.length === 0; }
       a.offered = await rideOffers(n);
       left[n] = a;
       await run('cr.lamp' + n);
-      const b = Object.assign({ lit: !!s.flags['cr_lamp' + n], asked: asked.slice(), called: count(LIT) }, props(n));
+      const b = Object.assign({ flagLit: !!s.flags['cr_lamp' + n], asked: asked.slice(), called: count(LIT) }, props(n));
       if (n <= 5) { await run('cr.depart' + n); b.depart = !said(ASK_LAMP); }
       b.offered = await rideOffers(n);
       named[n] = b;
     }
-    const badL = Object.entries(left).filter(([n, a]) => a.lit || a.called || flat(a.asked) !== flat(['cr.name' + n]) || !a.dark || a.lit || a.kago || (+n <= 5 && !a.depart) || a.offered).map(([n]) => n);
-    const badN = Object.entries(named).filter(([n, b]) => !b.lit || b.called !== 1 || flat(b.asked) !== flat(['cr.name' + n]) || b.dark || !b.kago || (+n <= 5 && !b.depart) || !b.offered).map(([n]) => n);
+    const badL = Object.entries(left).filter(([n, a]) => a.flagLit || a.called || flat(a.asked) !== flat(['cr.name' + n]) || !a.dark || a.propLit || a.kago || (+n <= 5 && !a.depart) || a.offered).map(([n]) => n);
+    const badN = Object.entries(named).filter(([n, b]) => !b.flagLit || b.called !== 1 || flat(b.asked) !== flat(['cr.name' + n]) || b.dark || !b.propLit || !b.kago || (+n <= 5 && !b.depart) || !b.offered).map(([n]) => n);
     t.ok(!badL.length, '2 each lamp left: not lit, no name called, the dark lamp still there, no palanquin, the departure asks for the lamp first, not offered by the palanquin elsewhere ' + flat({ badL, left: left[1], left7: left[7] }));
     t.ok(!badN.length, '3 then each lamp named: lit, the name called once, the lit lamp, the palanquin, the departure past the lamp, offered by the palanquin elsewhere ' + flat({ badN, named: named[1], named7: named[7] }));
   }
@@ -141,6 +147,30 @@ export default async (t) => {
       got[n + ':' + comp] = fp(lines);
     }
     t.ok(fp(got) === FIRST_FP, '6 each lamp\'s first naming, line for line as on the parent, with Ren and with Nao ' + flat({ fp: fp(got) }));
+  }
+
+  // 7. arriving at Kirishita: the story's own lit lamp
+  {
+    fresh({ map: STN[5] });
+    await run('cr.arrive6');
+    const a = Object.assign({ flagLit: !!s.flags.cr_lamp6, asked: asked.slice() }, props(6));
+    t.ok(a.flagLit && a.asked.length === 0 && !a.dark && a.propLit && a.kago, '7 arriving at Kirishita: its lamp lit by the arrival, no naming asked, the lit lamp and the palanquin there ' + flat(a));
+  }
+
+  // 8. a lamp lit in an older save, without its chal: flag
+  {
+    fresh({ map: STN[1], flags: { cr_lamp2: true } });
+    const a = Object.assign({ chal: !!s.flags['chal:cr.name2'] }, props(2));
+    await run('cr.lamp_lit');
+    a.asked = asked.slice(); a.flagLit = !!s.flags.cr_lamp2;
+    t.ok(!a.chal && a.flagLit && !a.dark && a.propLit && a.kago && a.asked.length === 0, '8 a lamp lit in an older save without its chal: flag: still lit, its palanquin there, nothing asked ' + flat(a));
+  }
+
+  // 9. Kumoi by palanquin: its lamp lit and the Barrier passed
+  {
+    const offers = async (flags) => { fresh({ map: STN[0], flags: Object.assign({ cr_lamp1: true }, flags) }); return rideOffers(7); };
+    const r = { dark: await offers({}), litNotPassed: await offers({ cr_lamp7: true }), passedNotLit: await offers({ cr_passed: true }), both: await offers({ cr_lamp7: true, cr_passed: true }) };
+    t.ok(!r.dark && !r.litNotPassed && !r.passedNotLit && r.both, '9 Kumoi offered by another station\'s palanquin only once its lamp is lit and the Barrier passed ' + flat(r));
   }
 
   t.ok(!errors.length, 'no scene ended on an error from the runner ' + errors.slice(0, 3).join(' | '));

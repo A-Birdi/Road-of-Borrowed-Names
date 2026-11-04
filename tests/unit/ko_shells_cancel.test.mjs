@@ -16,7 +16,13 @@
 //  7. a result left over from another exercise changes nothing;
 //  8. saves from before: one with the telling heard is untouched; one whose sheet was left is asked the sheet again;
 //  9. the first-time path, sheet and reading done, line for line as on the parent with each companion and none
-//     (fingerprints taken on the parent, 1162db8); no scene ended on an error from the runner.
+//     (fingerprints taken on the parent, 1162db8); no scene ended on an error from the runner;
+// and the coverage Agnes asked for (6643454785; Local CL-698):
+// 10. each conch the last heard (its sheet done, its reading left), and each conch the one that reopens the reading,
+//     after a save and load: nine runs, each the reading only, the telling once;
+// 11. a sheet done with a stale sheet result of "cancel" and a stale exercise result of 0 still goes to the reading;
+// 12. after a reading left: the exhibition desk still lacks the fourth telling, no journal entry, no companion's
+//     ending; after the reading done: each once, and the desk sets out the four tellings.
 import crypto from 'node:crypto';
 import { load } from '../lib/load.mjs';
 
@@ -150,6 +156,54 @@ export default async (t) => {
       got[String(comp)] = fp(lines);
     }
     t.ok(fp(got) === FIRST_FP, '9 the first-time path, sheet and reading done, line for line as on the parent with each companion and none ' + flat({ fp: fp(got) }));
+  }
+
+  // 10. each conch the last heard, and each the one that reopens the reading
+  {
+    const ids = ['a', 'b', 'c'], bad = [];
+    for (const last of ids) {
+      const others = ids.filter((x) => x !== last);
+      fresh({ flags: { ko_shell_a: false, ko_shell_b: false, ['ko_shell_' + others[0]]: true, ['ko_shell_' + others[1]]: true } });
+      await run({ scene: 'ko.shell_' + last, cancel: ['ko.shells_read'] });
+      const left = Object.assign(st(), { sheets: sheets.length, later: said(B.later) });
+      const text = saved();
+      for (const again of ids) {
+        loadSave(text);
+        await run({ scene: 'ko.shell_' + again });
+        const r = Object.assign(st(), { sheets: sheets.length, asked: asked.slice(), names: count(B.name), comps: count(B.comp) });
+        if (!(left.sheets === 1 && left.later && !left.told && left.sorted && r.sheets === 0 && flat(r.asked) === '["ko.shells_read"]' && r.told && r.names === 1 && r.comps === 1)) bad.push(last + '>' + again);
+      }
+    }
+    t.ok(!bad.length, '10 each conch the last heard, and each the one that reopens the reading after a save and load: nine runs, the reading only, the telling once ' + flat({ bad }));
+  }
+
+  // 11. a sheet done with stale results
+  {
+    fresh({ flags: { ko_shell_c: true, 'shells_ko.s_first': true }, vars: { _shells: 'cancel', _res: 0 } });
+    await run({ scene: 'ko.shell_a' });
+    const a = Object.assign(st(), { sheets: sheets.length, asked: asked.slice(), later: said(B.later), name: said(B.name) });
+    t.ok(a.sheets === 0 && flat(a.asked) === '["ko.shells_read"]' && !a.later && a.name && a.told,
+      '11 a sheet done with a stale sheet result of "cancel" and a stale exercise result of 0: the reading, then the telling ' + flat(a));
+  }
+
+  // 12. the exhibition desk and the journal
+  {
+    const CHITOSE = /night of Chitose/, MISSING = /The conches' voices: not yet/, HANG = /Set the four tellings side by side/;
+    const journal = () => (s.journal || []).filter((j) => CHITOSE.test(j.en)).length;
+    fresh();
+    RB.hooks.tellings = async () => { RB.game.G.s.vars._tell = 'cancel'; };
+    await run({ cancel: ['ko.shells_read'] });
+    const a = { journal: journal(), comp: said(B.comp) };
+    await run({ scene: 'ko.hall_exhibit' });
+    a.missing = said(MISSING); a.hang = said(HANG);
+    await run({ scene: 'ko.shell_a' });
+    const b = { journal: journal(), comps: count(B.comp) };
+    await run({ scene: 'ko.shell_b' });
+    b.journalAfter = journal(); b.compsAfter = count(B.comp);
+    await run({ scene: 'ko.hall_exhibit' });
+    b.missing = said(MISSING); b.hang = said(HANG);
+    t.ok(a.journal === 0 && !a.comp && a.missing && !a.hang && b.journal === 1 && b.comps === 1 && b.journalAfter === 1 && b.compsAfter === 0 && !b.missing && b.hang,
+      '12 after a reading left: the desk lacks the fourth telling, no journal entry, no companion\'s ending; after the reading done: each once, and the desk sets out the four tellings ' + flat({ a, b }));
   }
 
   t.ok(!errors.length, 'no scene ended on an error from the runner ' + errors.slice(0, 3).join(' | '));
