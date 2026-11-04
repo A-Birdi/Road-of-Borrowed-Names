@@ -63,8 +63,12 @@ export default async (t) => {
   has('sa_main[8]', 'sa.gate:npc:kasane');
   has('sa_isamu[0]', 'sa.memories:prop:shelf');
   t.eq(staticOf['sg_main[0]'], ['sg.office:npc:omi'], 'the nearest stage only: sg_main[0] is Ōmi, not later steps');
-  t.ok(G.passing('lf_mio', 0) && G.passing('lf_mio', 1) && G.passing('lf_form', 0), 'stages passed within one scene are recognised');
+  t.ok(G.passing('lf_mio', 0) && G.passing('lf_mio', 1), 'stages passed within one scene are recognised');
   t.ok(!G.passing('sg_main', 0) && !G.passing('rw_labels', 1), 'stages left between scenes are not');
+  // Hayato's form (lf_form[0]) was passed within his scene until "Come back later" on the form could leave it there
+  // (Agnes 6639438614, finding 9): a stage left between scenes now, and the next step is his counter
+  t.ok(!G.passing('lf_form', 0), 'lf_form[0], which "Come back later" can leave between scenes, is not passed within one scene');
+  has('lf_form[0]', 'lf.records:npc:lf_hayato');
 
   // ---- 2. live analysis on real states ---------------------------------------------------------
   const mk = (flags, quests, extra) => {

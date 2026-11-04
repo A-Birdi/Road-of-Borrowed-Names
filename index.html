@@ -164629,6 +164629,9 @@ lf_kohei[angry]: {木|き} の {向|む}こう まで だ ！ {木|き} も {含
 narr: {二人|ふたり} は {生|い}き{生|い}き と {言|い}い{争|あらそ}って いる 。{三十年分|さんじゅうねんぶん} の {元気|げんき} が 、{顔|かお} に {戻|もど}って いる 。|| The two of them argue with real life in them. Thirty years' worth of vigour has come back into their faces.
 !quest lf_fence 3
 !challenge lf.ch_fence
+# "Come back later" is no settlement: no proposal, no rope, no persimmons, the quest not done; Kohei or Kinu brings
+# the argument back (Agnes 6639438614; Cloud CC-522; Local CL-689; Agnes 6639995441)
+?(var._res=0) !end
 !gesture pc size
 pc: {境|さかい} は {幹|みき} の {真|ま}ん{中|なか} 。{柿|かき} の {実|み} は 、{半分|はんぶん} ずつ に しては どう でしょう 。|| How about the line runs through the middle of the trunk, and the fruit is split half and half?
 !gesture lf_kohei chin
@@ -164697,9 +164700,13 @@ narr: {柿|かき} の {木|き} の {頁|ページ} に 、{新|あたら}し�
 # writers). Before the bell he looks away, unable to cross out anyone's request, and hands you his red pen; you
 # strike the line; his nod. After the bell: his firm flat hand, and he strikes it out himself; he gives you the pen
 # to keep. Later: an open hand for his senior's saying.
-!if quest.lf_form -> again
+!if quest.lf_form=done -> again
+# Asked again after "Come back later" (the quest started, not done): his request only, with no second greeting
+# (Agnes 6639438614, 6639995441; Cloud CC-522, CC-525; Local CL-689)
+!if quest.lf_form -> ask
 !gesture lf_hayato nod pc
 lf_hayato: あ 、{先|さき} ほど の 。{記録館|きろくかん} へ ようこそ 。|| Ah, it's you from earlier. Welcome to the Records Hall.
+:ask
 !gesture lf_hayato present pc prop=paper hold
 lf_hayato[worry]: …… あの 、{少|すこ}し だけ 、{見|み}て いただけません か 。この {書類|しょるい} 。|| …Um, could you possibly take a quick look at this form?
 lf_hayato: {住民|じゅうみん} の {申請書|しんせいしょ} です 。{各課|かくか} から 「この {一文|いちぶん} を {足|た}して ほしい」 と {言|い}われて 、{全部|ぜんぶ} 「かしこまりました」 と {足|た}して いったら …… 。|| It's the residents' application form. Every department asked me to add a sentence, and I said "certainly" to all of them, and added them all, and…
@@ -164715,6 +164722,8 @@ lf_hayato[sad]: {何|なに} を {言|い}って いる の か 、{誰|だれ} 
 ?(comp=suzu) comp: {脚本家|きゃくほんか} が {五人|ごにん} いる {芝居|しばい} と {同|おな}じ ね 。{最後|さいご} に は {全員|ぜんいん} {死|し}ぬ か {結婚|けっこん} する の 。|| Same as a play with five writers. By the end, everyone either dies or gets married.
 !quest lf_form start
 !challenge lf.ch_form2
+# "Come back later" is not the form read: no struck line, no red pen, the quest not done (as above)
+?(var._res=0) !end
 !quest lf_form 1
 !if lf_bell_rung -> strike
 !gesture lf_hayato aside
@@ -164855,6 +164864,9 @@ narr: {差|さ}し{出|だ}された {日誌|にっし} に は 、{毎日|ま�
 !gesture pc observe umi
 narr: {引|ひ}き{出|だ}し から 、{下書|したが}き の {紙|かみ} が {一枚|いちまい} はみ{出|だ}して いる 。|| A draft slip is poking out of her drawer.
 !challenge lf.ch_timetable
+# "Come back later" is not the log read: no answer from Umi, the step not taken; the noticeboard offers the log
+# again (Agnes 6639438614; Cloud CC-522; Local CL-689; Agnes 6639995441)
+?(var._res=0) !end
 !gesture umi fidget
 umi[worry]: …… それ は 、{私|わたし} の {字|じ} です 。{最初|さいしょ} は 、ちゃんと 「{出|で}ません」 と {書|か}いた んです 。|| …That's my handwriting. At first, I did write "will not run".
 !gesture umi lowered
@@ -164873,6 +164885,8 @@ narr: {新|あたら}しい {貼|は}り{紙|がみ} の {下|した} に 、{�
 !gesture umi present pc prop=book
 umi: {日誌|にっし} を {見|み}て ください 。{最初|さいしょ} から 、ずっと {出|で}て いない んです 。|| Look at the log. It hasn't sailed once, from the very start.
 !challenge lf.ch_timetable
+# (the same after the bell)
+?(var._res=0) !end
 !quest lf_timetable 1
 
 @scene lf.umi
