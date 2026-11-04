@@ -84,7 +84,9 @@ export default async (t) => {
   const count = (sid) => { const o = {}; for (const c of C.scenes[sid].cmds) o[c.op] = (o[c.op] || 0) + 1; return o; };
   const pick = (o, keys) => keys.map((k) => o[k] || 0);
   const K = ['say', 'set', 'note', 'quest', 'take', 'give', 'journal', 'challenge', 'lesson', 'choice', 'music', 'sfx', 'fade', 'warp', 'autosave', 'checkpoint', 'call'];
-  t.eq(pick(count('lf.bell_touch'), K), [26, 1, 1, 4, 0, 0, 0, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1], 'lf.bell_touch keeps its lines and state commands (the !shake alone became the gong shot\'s swing)');
+  // (two sets: the bell rung, and since the bell's cancel row the kana lesson's own once-only flag, lf_bell_lesson:
+  // Agnes 6639438614 finding 10, Cloud CC-525)
+  t.eq(pick(count('lf.bell_touch'), K), [26, 2, 1, 4, 0, 0, 0, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1], 'lf.bell_touch keeps its lines and state commands (the !shake alone became the gong shot\'s swing; one more set, the lesson\'s once-only flag)');
   t.eq(count('lf.bell_touch').shake || 0, 0, 'lf.bell_touch: its one !shake is now the shot\'s own action');
   t.eq(pick(count('lf.boat_to_tower'), K), [3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 1, 0, 0, 0], 'lf.boat_to_tower keeps its lines, its fades and its warp');
   t.eq(pick(count('sa.toya_read'), K), [23, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0], 'sa.toya_read keeps its lines, the folio taken once, its flag, note, quest and journal');

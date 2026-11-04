@@ -4,7 +4,9 @@
 // clicks on Next and on the replies, on every branch the scenes have:
 //   ch5.bell  lf.bell_touch: "Ring the bell" with each companion (their lines and their own gesture differ), once
 //             on the Foundations profile (the kana lesson and its practice shown over the held shot, the challenge
-//             left for later with its own "Come back later"), and "Not yet" (the scene ends; the picture goes)
+//             left for later with its own "Come back later": that is not the inscription read, so the scene ends
+//             there as "Not yet" does, the picture goes and nothing is rung; Agnes 6639438614, finding 10), and
+//             "Not yet" (the scene ends; the picture goes)
 //   ch5.boat  lf.boat_to_tower: "Row out" (the crossing lifted out of the fade, then the tower) and "Not yet"
 //   ch6.toya  sa.toya_read: with and without Tōya's bell, with each companion
 //   ch6.ren   sa.shelf_ren: Ren's open branch by "Take it back" and by "You decide"; "Leave it" and another companion
@@ -46,8 +48,8 @@ const SETUP = {
 };
 const BELL = ['bell', 'gong', 'town', 'hall'], TOYA = ['folio', 'floor', 'turned', 'bell', 'decide'], REN = ['open', 'face', 'ren'];
 const RUNS = [
-  { name: 'ch5.bell · ring · Nao · Foundations (the kana lesson and the challenge over the held shot)', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'nao', profile: 'F', live: true, choose: ['Ring the bell'], shots: BELL,
-    after: (r) => r.flags.lf_bell_rung && r.map === 'lf.sluice' && r.q.lf_main === 9 && r.mem },
+  { name: 'ch5.bell · left for later · Nao · Foundations (the kana lesson and the challenge over the held shot; the scene ends, nothing rung)', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'nao', profile: 'F', live: true, left: true, choose: [], shots: ['bell'],
+    after: (r) => !r.flags.lf_bell_rung && r.map === 'lf.bellhall' && r.q.lf_main === 8 && !r.mem && r.world },
   { name: 'ch5.bell · ring · Mio', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'mio', choose: ['Ring the bell'], shots: BELL, after: (r) => r.flags.lf_bell_rung && r.map === 'lf.sluice' && r.mem, replay: true },
   { name: 'ch5.bell · ring · Ren', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'ren', choose: ['Ring the bell'], shots: BELL, after: (r) => r.flags.lf_bell_rung && r.map === 'lf.sluice' },
   { name: 'ch5.bell · ring · Suzu', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'suzu', choose: ['Ring the bell'], shots: BELL, after: (r) => r.flags.lf_bell_rung && r.map === 'lf.sluice' },
@@ -196,7 +198,7 @@ for (const R of SHOTS_ONLY ? [] : RUNS) {
   ok(JSON.stringify(r.shots) === JSON.stringify(R.shots), R.name + ': the shots shown, in order: ' + r.shots.join(' → ') + (R.shots.length ? '' : ' (none)'));
   if (R.shots.length) {
     const defs = await p.evaluate((id) => Object.fromEntries(Object.entries(RB.sequence.get(id).shots).map(([k, v]) => [k, v.phases.map((x) => x.id)])), R.seq);
-    const missing = R.shots.filter((sh) => R.choose && R.choose[0] === 'Not yet' ? false : JSON.stringify((r.phases[sh] || []).slice().sort()) !== JSON.stringify(defs[sh].slice().sort()));
+    const missing = R.shots.filter((sh) => R.left || (R.choose && R.choose[0] === 'Not yet') ? false : JSON.stringify((r.phases[sh] || []).slice().sort()) !== JSON.stringify(defs[sh].slice().sort()));
     ok(!missing.length, R.name + ': every phase of each shot reached on its line ' + (missing.length ? JSON.stringify(missing.map((m) => [m, r.phases[m]])) : ''));
   }
   ok(R.after(r), R.name + ': the state afterwards (the world as the sequence left it) ' + JSON.stringify({ map: r.map, dark: r.dark, world: r.world, mem: r.mem, q: { lf_main: r.q.lf_main, sa_main: r.q.sa_main } }));

@@ -164437,8 +164437,18 @@ narr: {鐘|かね} の {台|だい} の {札|ふだ} 。「{灯落|ひおち} {�
 !sequence ch5.bell begin
 !shot bell
 narr: {緑|みどり} に くすんだ {大|おお}きな {鐘|かね} 。{表面|ひょうめん} に 、{文字|もじ} が {鋳|い}{込|こ}まれて いる 。|| A great bell gone green with age. Words are cast into its surface.
-!lesson kana
+# A return after the inscription was read and "Not yet" chosen goes to its meaning and the choice again, with no
+# second reading and no more kana. The kana lesson comes once, before the first reading, so a reading left by "Come
+# back later" teaches no further group when it is tried again (Agnes 6639438614, 6639995441; Cloud CC-522, CC-525;
+# Local CL-689)
+!if chal:lf.ch_bell -> read
+?(!lf_bell_lesson) !lesson kana
+!set lf_bell_lesson
 !challenge lf.ch_bell
+# "Come back later" is not the inscription read: it ends as "Not yet" does (the scene's end takes the sequence
+# down), with no meaning, no companion's line and no choice
+?(var._res=0) !end
+:read
 narr: 「この {鐘|かね} が {鳴|な}ったら 、{高|たか}い {所|ところ} へ {逃|に}げよ 。」|| "When this bell rings, flee to high ground."
 ?(comp=nao) comp: 「{逃|に}げろ」 か 。…… {町|まち} {全部|ぜんぶ} に {向|む}かって 、「ここ に いる な」 って {言|い}う {鐘|かね} だ 。|| "Run," huh. …A bell that tells a whole town "don't stay here".
 ?(comp=mio) comp: {人|ひと} を {助|たす}ける ため の 「いいえ」 。…… この {鐘|かね} は 、ずっと それ を {言|い}いたかった ん だね 。|| A "no" that exists to save people. …This bell has been wanting to say that all along.
