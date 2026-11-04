@@ -45,6 +45,9 @@ narr: ${s.jp} の {常夜灯|じょうやとう} 。 {台|だい} に {彫|ほ}�
 !if !item.cr_ledger -> later
 narr: {帳面|ちょうめん} に は 、 {下|した} から {順|じゅん} に {宿|しゅく} の {名前|なまえ} が {書|か}いて ある 。 ここ は ${s.ord} の {宿|しゅく} だ 。 || The ledger lists the stations in order from the bottom of the road. This is station ${s.n}.
 !challenge cr.name${s.n}
+# "Come back later" is not the name said: the lamp stays dark, and offers its name again (Agnes 6639438614,
+# findings 14 and 15; Cloud CC-522, CC-525; Local CL-689; Agnes 6639995441)
+?(var._res=0) !end
 !set cr_lamp${s.n}
 !sfx bell
 ?(comp=ren) comp: 「${s.jp}」 。 …… {灯|ひ} よ 、 {名|な} を {思|おも}い{出|だ}して ください 。 || "${s.en}." …Light, remember your name.
