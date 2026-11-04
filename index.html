@@ -202180,9 +202180,15 @@ narr: 「{姉|ねえ}さん が {植|う}えた の は 、 {自分|じぶん} �
 !if !ko_shell_b -> more
 !if !ko_shell_c -> more
 narr: {三|みっ}つ の {貝|かい} の {声|こえ} は 、 {同|おな}じ {夜|よる} の {話|はなし} らしい 。 {誰|だれ} が 、 {誰|だれ} に {言|い}った の だろう 。 || The three conches' voices seem to be from the same night. Who said what, to whom?
+# Once the sheet is done (it keeps its own flag, shells_ko.s_first), listening again asks only the reading (Agnes
+# 6639438614, finding 13; Cloud CC-522, CC-525; Local CL-689; Agnes 6639995441)
+!if shells_ko.s_first -> reading
 !hook shells ko.s_first
 !if var._shells=cancel -> later
+:reading
 !challenge ko.shells_read
+# "Come back later" on the reading is not the telling heard: the voices wait, as after the sheet left (as above)
+!if var._res=0 -> later
 !set ko_tell_shell
 narr: チトセ 。 {最初|さいしょ} の {葉守|はもり} に は 、 {名前|なまえ} が あった 。 || Chitose. The first keeper had a name.
 ?(comp=nao) comp: {返事|へんじ} の {来|こ}ない {手紙|てがみ} を 、 {書|か}き{続|つづ}けた {人|ひと} か 。 …… {郵便屋|ゆうびんや} と して は 、 {頭|あたま} が {下|さ}がる よ 。 || Someone who kept writing letters that never got answered. …As a courier, I take my hat off to her.
