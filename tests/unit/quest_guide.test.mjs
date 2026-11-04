@@ -63,7 +63,11 @@ export default async (t) => {
   has('sa_main[8]', 'sa.gate:npc:kasane');
   has('sa_isamu[0]', 'sa.memories:prop:shelf');
   t.eq(staticOf['sg_main[0]'], ['sg.office:npc:omi'], 'the nearest stage only: sg_main[0] is Ōmi, not later steps');
-  t.ok(G.passing('lf_mio', 0) && G.passing('lf_mio', 1), 'stages passed within one scene are recognised');
+  t.ok(G.passing('lf_mio', 0), 'stages passed within one scene are recognised');
+  // Mio's recipe (lf_mio[1]) was passed within her scene until "Come back later" on the recipe could leave it there
+  // (Agnes 6639438614; Cloud CC-527, Row C): a stage left between scenes now, with no place in the world to mark, so it
+  // is authored open, and its hint sends you to the Company page
+  t.ok(!G.passing('lf_mio', 1) && C.quests.lf_mio.stages[1].at === 'open' && !!C.quests.lf_mio.stages[1].hint, 'lf_mio[1], which "Come back later" can leave between scenes, is not passed within one scene; it is open, with a hint');
   t.ok(!G.passing('sg_main', 0) && !G.passing('rw_labels', 1), 'stages left between scenes are not');
   // Hayato's form (lf_form[0]) was passed within his scene until "Come back later" on the form could leave it there
   // (Agnes 6639438614, finding 9): a stage left between scenes now, and the next step is his counter

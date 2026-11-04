@@ -188,6 +188,13 @@ nao: じゃ 、{行|い}って くる 。{元気|げんき} で ね 。|| Right,
 # Registrar's envelope; she starts back from her own "Yes, of cour—" (the narration: a hand over her mouth); she
 # holds the recipe out for you to read with her; a shake of the head at what it does, her head goes down; she looks
 # towards the Records Hall, and her hands fidget as she asks you to come.
+# Read again from the Company page (the quest's retry, src/content/ch5/05_cast.js) after "Come back later": her
+# request only, then a choice; "Not now" ends with nothing changed. A recipe read already never runs again
+# (Agnes 6641511048; Local CL-694; Cloud CC-527).
+!if quest.lf_mio=done -> end
+!if quest.lf_mio>=2 -> end
+!var mio_retry = 0
+!if quest.lf_mio>=1 -> retry
 !walkto pc 11 15 right
 !walkto comp 12 15 left
 narr: {通|とお}り を {歩|ある}いて いる と 、{町|まち} の {人|ひと} が {次々|つぎつぎ} に ミオ に {声|こえ} を かけて くる 。|| As you walk down the avenue, townsfolk come up to Mio one after another.
@@ -215,21 +222,35 @@ comp: はい 、もちろ@もちろん …… 。|| Yes, of cour—
 narr: ミオ は 、{自分|じぶん} の {口|くち} を {押|お}さえた 。|| Mio claps a hand over her own mouth.
 comp[surprise]: …… {今|いま} の 、{私|わたし} の {声|こえ} じゃ ない 。この {町|まち} の {声|こえ} だ 。|| …That wasn't my voice. That was this town's voice.
 !quest lf_mio 1
+:recipe
 !look comp pc
 !gesture comp present pc prop=paper hold
 comp[think]: {処方|しょほう} 、{一緒|いっしょ} に {読|よ}んで くれる ？ {嫌|いや}な {予感|よかん} が する 。|| Will you read the recipe with me? I've got a bad feeling.
+!if var.mio_retry=1 -> ask
+:read
 !challenge lf.ch_recipe
+# "Come back later" is not the recipe read: step 1 stays, and the Company page offers it again
+?(var._res=0) !end
 !gesture comp shake
 comp[angry]: …… これ は 、{薬|くすり} じゃ ない 。{飲|の}んだ {人|ひと} が 「いや」 と {思|おも}う {気持|きも}ち ごと 、{消|け}して しまう もの 。{本人|ほんにん} に {黙|だま}って 。|| …This isn't medicine. It wipes out the very feeling of "no" in whoever drinks it. Without telling them.
 !gesture comp lowered
 comp[sad]: {作|つく}れない 。{作|つく}っちゃ いけない 。…… でも 、{私|わたし} 、{断|ことわ}った こと なんて 、{一度|いちど} も ない 。|| I can't make it. I mustn't. …But I've never refused anyone, not once in my life.
-!gesture comp lookroad 11,10
+# (towards the Records Hall from the avenue: on the first telling only, since the retry can be anywhere)
+?(var.mio_retry=0) !gesture comp lookroad 11,10
 comp: …… タダシ さん に 、{言|い}い に {行|い}かなきゃ 。{言|い}える か 、わからない けど 。|| …I have to go and tell Tadashi. I don't know if I can say it.
 !look comp pc
 !gesture comp fidget
 comp[shy]: {一緒|いっしょ} に {来|き}て くれる ？ {声|こえ} が {出|で}なかったら 、{背中|せなか} を {叩|たた}いて 。|| Will you come with me? If my voice won't come out, give me a pat on the back.
 !quest lf_mio 2
 !autosave
+!end
+:retry
+!var mio_retry = 1
+!goto recipe
+:ask
+!choice
+* {一緒|いっしょ} に {読|よ}む || Read it together -> read
+* {今|いま} は いい || Not now -> end
 
 @scene lf.mio_refuse
 # Staged (Chapter 5 performed interaction; Mio's personal quest): Mio steps up to the counter herself;

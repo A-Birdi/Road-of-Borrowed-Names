@@ -95,6 +95,15 @@ RB.ui.companyPages = (function () {
     const reached = q.done ? qd.stages.length : Math.min(qd.stages.length, (q.stage || 0) + 1);
     return { qid, qd, q, done: !!q.done, stages: qd.stages.slice(0, reached) };
   }
+  // a personal quest's step left for later with nowhere in the world to come back to (Mio's recipe: the quest's retry,
+  // src/content/ch5/05_cast.js): offered under the Talk heading while its own `when` holds, never once the quest is
+  // done or past that step (Agnes 6641511048; Local CL-694; Cloud CC-527)
+  function questRetry(s, comp) {
+    const qi = questInfo(s, comp);
+    const r = qi && !qi.done && qi.qd.retry;
+    if (!r || !r.scene || !RB.content.scenes[r.scene] || (r.when && !RB.state.test(s, r.when))) return null;
+    return { qid: qi.qid, stage: qi.q.stage || 0, scene: r.scene, title: r.title || qi.qd.title, quest: qi.qd.title };
+  }
   function supportActions(s, comp) {
     const acts = (RB.content.companionActions && RB.content.companionActions[comp]) || [];
     return acts.filter((a) => !a.unlock || RB.state.test(s, a.unlock));
@@ -157,12 +166,14 @@ RB.ui.companyPages = (function () {
     const rest = K.restHere(s);
     const cs = cases(s);
     const qi = questInfo(s, comp);
+    const qr = questRetry(s, comp);
     let h = '';
     if (p) {
       h += '<div class="co-pending" role="note">' + I('talk') + '<span>' + (p.quiet ? who + ' can wait — you said not now. The topic is still there when you want it.' : who + ' has something to ask you.') + '</span></div>';
     }
     h += '<h4>' + I('talk') + L('{話|はな}す', 'Talk with ' + who) + '</h4><ul class="co-acts">';
     if (here) h += actionRow('place', 'place', 'Talk about this place', 'この {場所|ばしょ} の {話|はなし}', '');
+    if (qr) h += actionRow('retry', 'side', qr.title.en, qr.title.jp, esc(qr.quest.en), ' data-co-retry="' + esc(qr.qid) + '" data-co-stage="' + qr.stage + '"');
     h += actionRow('mind', 'mind', 'Ask what\'s on ' + pron(comp).p + ' mind', '{何|なに} を {考|かんが}えて いる ?', pd ? esc(pd.en) : p ? (p.quiet ? 'the topic you put off' : 'something is waiting') : '');
     if (cs.length) h += actionRow('case', 'scroll', 'Discuss a discovered case', '{謎|なぞ} の {話|はなし} を する', cs.length > 1 ? cs.length + ' cases' : '', ' aria-expanded="' + (V.detail === 'cases') + '"');
     if (rest) h += actionRow('rest', 'rest', 'Rest together', '{一緒|いっしょ} に {休|やす}む', 'a quiet moment here');
@@ -258,6 +269,15 @@ RB.ui.companyPages = (function () {
       if (act === 'quest') { V.detail = V.detail === 'quest' ? null : 'quest'; api.render(); return; }
       if (act === 'place') { await converse(api, () => RB.script.run('co.place')); return; }
       if (act === 'rest') { await converse(api, () => RB.script.run('co.rest')); return; }
+      if (act === 'retry') {
+        // checked again at the click, on the live campaign: the same companion, the quest still at the step this button
+        // was drawn for and not done, its `when` still true and its scene there. A stale or second click runs nothing
+        // (the page, if it is still open, is drawn again); a refusal (busy, apart, danger) keeps the page and the button
+        const cur = RB.game.s, qr = cur && cur.comp === comp ? questRetry(cur, comp) : null;
+        if (!qr || qr.qid !== b.dataset.coRetry || String(qr.stage) !== b.dataset.coStage || RB.script.isRunning()) { if (RB.ui.menu.isOpen()) api.render(); return; }
+        await converse(api, () => RB.script.run(qr.scene));
+        return;
+      }
       if (act === 'speech' && RB.ui.suzuSpeech) {
         // asked in the world where a conversation can be played; otherwise the choice is made here
         if (!(await converse(api, () => RB.ui.suzuSpeech.talk()))) { await RB.ui.suzuSpeech.set(RB.ui.suzuSpeech.value() === 'kansai' ? 'standard' : 'kansai'); api.render(); }
@@ -438,5 +458,5 @@ RB.ui.companyPages = (function () {
   }
   for (const ev of ['company:changed', 'company:talk', 'map:enter', 'company:bond']) RB.bus.on(ev, () => setTimeout(hudUpdate, 0));
 
-  return { converse, recollection, hudUpdate, addSection, addRef };
+  return { converse, recollection, hudUpdate, addSection, addRef, questRetry };
 })();

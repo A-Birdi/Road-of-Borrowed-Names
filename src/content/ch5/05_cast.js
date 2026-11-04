@@ -212,9 +212,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     chapter: 5, title: { jp: '{声|こえ} に {出|だ}す 「いいえ」', en: 'A No, Out Loud' },
     stages: [
       S('{町|まち} の {人|ひと} が みんな 、ミオ に {頼|たの}み{事|ごと} を {持|も}って くる 。', 'Everyone in town has started bringing Mio their requests, and she is saying yes to all of them.'),
-      S('{登記官|とうきかん} が {町|まち} {全体|ぜんたい} の 「しずめ{薬|ぐすり}」 を {頼|たの}んだ 。ミオ と {処方|しょほう} を {読|よ}む 。', 'The Registrar has ordered a "quieting draught" for the whole town. Read the recipe with Mio.'),
+      // a recipe left by "Come back later" waits here, with no place in the world to mark: it is read again from the
+      // Company page (the quest's retry below), anywhere safe (Agnes 6641511048; Local CL-694; Cloud CC-527)
+      Object.assign(S('{登記官|とうきかん} が {町|まち} {全体|ぜんたい} の 「しずめ{薬|ぐすり}」 を {頼|たの}んだ 。ミオ と {処方|しょほう} を {読|よ}む 。', 'The Registrar has ordered a "quieting draught" for the whole town. Read the recipe with Mio.'),
+        { at: 'open', hint: { jp: 'ミオ と {読|よ}む に は 、 {道連|みちづ}れ の ページ で 「{話|はな}す」 、 それから 「{一緒|いっしょ} に {読|よ}む {処方|しょほう}」 。 {安全|あんぜん} な {所|ところ} なら 、 どこ でも いい 。', en: 'Read it with Mio on the Company page: Talk with Mio, then \'The recipe to read together\'. Anywhere safe.' } }),
       S('ミオ に は {言|い}う こと が ある 。{記録館|きろくかん} の タダシ の ところ へ {一緒|いっしょ} に {行|い}く 。', 'Mio has something to say. Go with her to Registrar Tadashi in the Records Hall.'),
     ],
+    // an optional quest retry, not an invitation (src/content/company/30_invites.js): the Company page offers it under
+    // Talk with Mio while the recipe waits (src/ui/53_company_pages.js); it takes no invitation slot, no deferral and
+    // runs only when the player chooses it
+    retry: { when: 'quest.lf_mio=1', scene: 'lf.mio_start', title: { jp: '{一緒|いっしょ} に {読|よ}む {処方|しょほう}', en: 'The recipe to read together' } },
   };
 
   // ---- fast travel -------------------------------------------------------------------------------
