@@ -11,6 +11,10 @@
 //     noticeboard again, the log done: her answer, step 1;
 //  3. the fence, after the bell, with Ren: the settlement left with Kohei: step 3, no persimmons; then Kinu, done: the
 //     settlement and the persimmons, the quest done;
+//  4. Hayato after the ending (Agnes 6641658152; Local CL-695), a synthetic test: the postgame milestone set directly,
+//     not a played ending. The form left, a save and load, then the milestone: his talk is his request only (no
+//     second greeting), left again, the form not left in his hand, the controls back; then done: the line struck, the
+//     pen once, the quest done; then his postgame line;
 //  no page errors (console errors included).
 // Usage: node tools/build.mjs && node tests/e2e/lf_side_cancel.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -77,7 +81,7 @@ const saveLoad = (p) => p.evaluate(async () => {
 });
 const has = (said, re) => said.some((x) => re.test(x));
 const B = {
-  hello: /it's you from earlier/, ask: /could you possibly take a quick look/, struck: /You draw one line|strikes the line out/, done: /approved it with "of course"/,
+  hello: /it's you from earlier/, post: /The application form is a page and a half now/, ask: /could you possibly take a quick look/, struck: /You draw one line|strikes the line out/, done: /approved it with "of course"/,
   umi: /That's my handwriting/, settle: /How about the line runs through the middle/, persimmons: /dried persimmons left from last year/,
 };
 
@@ -129,6 +133,27 @@ const B = {
   ok(flat(t2.runs) === flat([['lf.ch_fence', true]]) && has(t2.said, B.settle) && has(t2.said, B.persimmons) && s2.fence === 'done' && s2.hoshi === 1,
     '3 then Kinu, done: the settlement and the persimmons, the quest done ' + flat({ runs: t2.runs, s2 }));
   ok(!errors.length, '3 no page errors ' + errors.slice(0, 2).join(' | '));
+  await p.context().close();
+}
+
+// 4. Hayato after the ending (synthetic: the postgame milestone set directly)
+{
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await at(p, 'lf.records', 8, 6, 'mio', {}, {});
+  const t1 = await act(p, { talk: 'lf_hayato' }, ['lf.ch_form2']);
+  const m = await saveLoad(p);
+  await p.evaluate(async () => { const s = RB.game.s; s.flags.lf_bell_rung = true; s.flags.postgame = true; RB.world.refreshActors(); await RB.test.idle(); });
+  const t2 = await act(p, { talk: 'lf_hayato' }, ['lf.ch_form2']);
+  const s2 = await state(p);
+  ok(flat(t1.runs) === flat([['lf.ch_form2', false, true, 'Come back later']]) && m === 'lf.records' && !has(t2.said, B.hello) && !has(t2.said, B.post) && has(t2.said, B.ask) && !has(t2.said, B.struck) && flat(t2.runs) === flat([['lf.ch_form2', false, true, 'Come back later']]) && s2.form === 0 && s2.pen === 0 && t2.held === false && t2.modeAfter === t2.modeBefore,
+    '4 the form left, a save and load, the ending (synthetic): his request only, not his postgame line; left again: the quest still started, no pen, the form not left in his hand, the controls back ' + flat({ m, runs: t2.runs, s2, held: t2.held }));
+  const t3 = await act(p, { talk: 'lf_hayato' }, []);
+  const s3 = await state(p);
+  ok(!has(t3.said, B.hello) && has(t3.said, B.ask) && has(t3.said, B.struck) && flat(t3.runs) === flat([['lf.ch_form2', true]]) && s3.form === 'done' && s3.pen === 1 && t3.held === false,
+    '4 then done: the line struck, the pen once, the quest done ' + flat({ runs: t3.runs, s3 }));
+  const t4 = await act(p, { talk: 'lf_hayato' }, []);
+  ok(has(t4.said, B.post) && !t4.runs.length && (await state(p)).pen === 1, '4 then his postgame line, and nothing asked ' + flat({ said: t4.said.slice(0, 1) }));
+  ok(!errors.length, '4 no page errors ' + errors.slice(0, 2).join(' | '));
   await p.context().close();
 }
 

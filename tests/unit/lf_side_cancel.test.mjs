@@ -19,7 +19,11 @@
 //     cancel);
 //  7. saves finished before (the quest done without its chal: flag) are left as they are;
 //  8. the first-time success paths, line for line as before (fingerprints taken on the parent, 5c93c10), with each
-//     companion; no scene ended on an error from the runner.
+//     companion; no scene ended on an error from the runner;
+//  9. Hayato after the ending (Agnes 6641658152; Local CL-695), a synthetic test: the postgame milestone set directly,
+//     not a played ending. The form left by a cancel, a save and load, then the ending: his talk list takes the
+//     unfinished form ahead of his postgame line; his request only, left again and still offered; then done: the pen
+//     once, and after it his postgame line. A form finished before, and one never started, keep his postgame line.
 import crypto from 'node:crypto';
 import { load } from '../lib/load.mjs';
 
@@ -197,6 +201,30 @@ export default async (t) => {
       got['fence:' + comp] = fp(lines);
     }
     t.ok(fp(got) === FIRST_FP, '8 the first-time success paths, line for line as on the parent: Hayato with each companion and none, before and after the bell; Umi both ways; the fence with each companion ' + flat({ fp: fp(got), n: Object.keys(got).length }));
+  }
+
+  // 9. Hayato after the ending (synthetic: the postgame milestone set directly)
+  {
+    fresh({ map: 'lf.records', comp: 'mio' });
+    const r0 = talk('lf.records', 'lf_hayato');
+    await run(r0, { cancel: ['lf.ch_form2'] });
+    const a = { r0, quest: q('lf_form'), pen: item('lf_red_pen') };
+    loadSave(saved());
+    s.flags.lf_bell_rung = true; s.flags.postgame = true;
+    const r1 = talk('lf.records', 'lf_hayato');
+    await run(r1, { cancel: ['lf.ch_form2'] });
+    const b = { r1, hello: said(B.hayatoHello), ask: said(B.hayatoAsk), asked: asked.slice(), quest: q('lf_form'), pen: item('lf_red_pen'), struck: said(B.struck) };
+    const r2 = talk('lf.records', 'lf_hayato');
+    await run(r2);
+    const c = { r2, hello: said(B.hayatoHello), ask: said(B.hayatoAsk), quest: q('lf_form'), pen: item('lf_red_pen'), struck: said(B.struck) };
+    const r3 = talk('lf.records', 'lf_hayato');
+    fresh({ map: 'lf.records', flags: { lf_bell_rung: true, postgame: true }, quests: { lf_form: { stage: 1, done: true, t: 1 } } });
+    const legacy = talk('lf.records', 'lf_hayato');
+    fresh({ map: 'lf.records', flags: { lf_bell_rung: true, postgame: true } });
+    const never = talk('lf.records', 'lf_hayato');
+    t.ok(a.r0 === 'lf.hayato' && a.quest === 0 && a.pen === 0 && b.r1 === 'lf.hayato' && !b.hello && b.ask && flat(b.asked) === '["lf.ch_form2"]' && b.quest === 0 && b.pen === 0 && !b.struck &&
+      c.r2 === 'lf.hayato' && !c.hello && c.ask && c.quest === 'done' && c.pen === 1 && c.struck && r3 === 'lf.hayato_post' && legacy === 'lf.hayato_post' && never === 'lf.hayato_post',
+      '9 Hayato after the ending (synthetic milestone): the unfinished form ahead of his postgame line, his request only, left again and still offered, then done once; then his postgame line; finished before or never started, his postgame line ' + flat({ a, b, c, r3, legacy, never }));
   }
 
   t.ok(!errors.length, 'no scene ended on an error from the runner ' + errors.slice(0, 3).join(' | '));

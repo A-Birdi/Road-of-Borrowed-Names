@@ -281,7 +281,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'lf_tadashi', x: 7, y: 3, dir: 'down', talk: [{ if: 'comp=mio&quest.lf_mio>=2&!quest.lf_mio=done', scene: 'lf.mio_refuse' }, { if: 'post', scene: 'lf.tadashi_post' }, { if: 'lf_bell_rung', scene: 'lf.tadashi_after' }, { scene: 'lf.tadashi' }] },
-      { id: 'lf_hayato', x: 10, y: 5, dir: 'down', if: 'lf_town_intro', talk: [{ if: 'post', scene: 'lf.hayato_post' }, { if: 'quest.lf_form=done', scene: 'lf.hayato_done' }, { scene: 'lf.hayato' }] },
+      // a form left unfinished by "Come back later" is asked again after the ending too, as Kohei's and Kinu's fence is
+      // (Agnes 6641658152; Local CL-695): an active form first, then his postgame line
+      { id: 'lf_hayato', x: 10, y: 5, dir: 'down', if: 'lf_town_intro', talk: [{ if: 'quest.lf_form=active', scene: 'lf.hayato' }, { if: 'post', scene: 'lf.hayato_post' }, { if: 'quest.lf_form=done', scene: 'lf.hayato_done' }, { scene: 'lf.hayato' }] },
     ],
     exits: [
       { x: 8, y: 11, to: 'lf.town', tx: 11, ty: 11, dir: 'down' },
