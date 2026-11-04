@@ -3,10 +3,10 @@
 // back from Sakashita, Mio in the party: Otaki talked to through the world's own interact; the reading left on the
 // real exercise sheet by its own "Come back later" button (the test helper's answering switched off for it),
 // answered by the helper otherwise; a save made and loaded through the game's own save and load:
-//  1. the reading left: her opening only, no reconciliation, the book still in the bag, step 1, Tatsu still there,
-//     the world's own controls back;
-//  2. a save and load, then her talk again: the book read, the reconciliation once, the book taken, the quest done,
-//     Tatsu gone;
+//  1. the reading left: her two opening lines only, no reconciliation, no line from Mio, the book still in the bag,
+//     step 1, Tatsu still there, the world's own controls back;
+//  2. a save and load, then her talk again: the book read, the reconciliation and Mio's line once, the book taken,
+//     the quest done, Tatsu gone;
 //  3. then her usual talk, and nothing asked;
 //  no page errors (console errors included).
 // Usage: node tools/build.mjs && node tests/e2e/cr_guest_cancel.mjs
@@ -63,14 +63,17 @@ const talk = (leave) => p.evaluate(async ({ leave }) => {
 }, { leave });
 const has = (said, re) => said.some((x) => re.test(x));
 const OPEN = /The guest book! Thank goodness/, SEIBE = /The Take stays open at night/, USUAL = /Welcome to the Matsuba/;
+// the companion's line after the reconciliation (Mio's here; the unit test checks each companion's)
+const COMP = /Read what's written|Both being right|The record's back|A ledger never lies/;
 
 const t1 = await talk(['cr.guest_book']);
-ok(flat(t1.runs) === flat([['cr.guest_book', false, true, 'Come back later']]) && has(t1.said, OPEN) && !has(t1.said, SEIBE) && t1.book === 1 && t1.quest === 1 && t1.tatsu && t1.modes[1] === t1.modes[0],
-  '1 the reading left by "Come back later": her opening only, no reconciliation, the book still in the bag, step 1, Tatsu still there, the controls back ' + flat({ runs: t1.runs, book: t1.book, quest: t1.quest, tatsu: t1.tatsu, modes: t1.modes }));
+// (Agnes 6644061563: exactly her two opening lines, Mio's line absent, and the world's own mode, not only the mode before)
+ok(flat(t1.runs) === flat([['cr.guest_book', false, true, 'Come back later']]) && has(t1.said, OPEN) && t1.said.length === 2 && !has(t1.said, SEIBE) && !has(t1.said, COMP) && t1.book === 1 && t1.quest === 1 && t1.tatsu && flat(t1.modes) === '["world","world"]',
+  '1 the reading left by "Come back later": her two opening lines only, no reconciliation, no line from Mio, the book still in the bag, step 1, Tatsu still there, the world\'s controls back ' + flat({ runs: t1.runs, n: t1.said.length, book: t1.book, quest: t1.quest, tatsu: t1.tatsu, modes: t1.modes }));
 const m = await p.evaluate(async () => { await RB.test.idle(); await RB.save.manualSave(1); await RB.game.loadCampaign(1, 'manual'); await new Promise((r) => setTimeout(r, 800)); await RB.test.idle(); return RB.world.W.map.id; });
 const t2 = await talk([]);
-ok(m === 'cr.nakayama' && flat(t2.runs) === flat([['cr.guest_book', true]]) && t2.said.filter((x) => SEIBE.test(x)).length === 1 && t2.book === 0 && t2.quest === 'done' && !t2.tatsu,
-  '2 a save and load, then her talk: the book read, the reconciliation once, the book taken, the quest done, Tatsu gone ' + flat({ m, runs: t2.runs, book: t2.book, quest: t2.quest, tatsu: t2.tatsu }));
+ok(m === 'cr.nakayama' && flat(t2.runs) === flat([['cr.guest_book', true]]) && t2.said.filter((x) => SEIBE.test(x)).length === 1 && t2.said.filter((x) => COMP.test(x)).length === 1 && t2.book === 0 && t2.quest === 'done' && !t2.tatsu && t2.modes[1] === 'world',
+  '2 a save and load, then her talk: the book read, the reconciliation and Mio\'s line once, the book taken, the quest done, Tatsu gone, the world\'s controls back ' + flat({ m, runs: t2.runs, book: t2.book, quest: t2.quest, tatsu: t2.tatsu }));
 const t3 = await talk([]);
 ok(has(t3.said, USUAL) && !t3.runs.length && !has(t3.said, SEIBE), '3 then her usual talk, and nothing asked ' + flat({ said: t3.said.slice(0, 1) }));
 ok(!errors.length, 'no page errors ' + errors.slice(0, 2).join(' | '));
