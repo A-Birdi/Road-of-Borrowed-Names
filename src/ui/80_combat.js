@@ -827,6 +827,10 @@ RB.combat = (function () {
     const who = (a) => (a === 'comp' ? compName() : a === 'pc' ? 'you' : aimEn(a));
     const said = new Set(), out = [];
     let none = false;
+    // a Hush really on you, cleared by this bell or voice (the engine's `cleared`, read before its reset): said once,
+    // where the bell is; an incoming Hush it also answers is folded into the same phrase (Cloud CC-413; Agnes 6549259814)
+    let bellAt = -1;
+    const hushNext = [];
     // an authored sentence (a condition's rule, a modifier's lasting effect): said as written, with names
     const authored = (t) => { const x = String(t).replace(/\$(\d+)/g, (_, k) => nm(+k)).replace(/\.$/, ''); return x[0].toLowerCase() + x.slice(1); };
     for (const f of p.fx) {
@@ -848,6 +852,7 @@ RB.combat = (function () {
       else if (f.t === 'settle') { out.push('answers its plea, and a knot loosens'); said.add(f.foe + ':plea'); }
       else if (f.t === 'reveal') { out.push('sees through the false promise'); said.add(f.foe + ':lie'); }
       else if (f.t === 'tech') out.push('cancels its move');
+      else if (f.t === 'bell' && f.cleared && !f.by && bellAt < 0) { bellAt = out.length; out.push('breaks the Hush'); }
     }
     const up = L().standing(st);
     for (const i of up) {
@@ -855,8 +860,10 @@ RB.combat = (function () {
       const it = st.foes[i].intent;
       if (!it || c.kind === 'tech' || said.has(i + ':blow') || said.has(i + ':plea') || said.has(i + ':lie')) continue;
       if (it.kind === 'rest') continue;
+      if (bellAt >= 0 && it.kind === 'silence') { hushNext.push(i); continue; }
       out.push('answers ' + (isGroup() ? 'the ' + shortEn(i) + '\'s ' : 'its ') + moveLabel(it));
     }
+    if (hushNext.length) out[bellAt] = 'breaks the Hush, and answers ' + hushNext.map((i) => (isGroup() ? 'the ' + shortEn(i) + '\'s next one' : 'its next one')).join(' and ');
     if (!out.length) {
       // say what is missing, from the word's own tags
       const tags = (c.word && c.word.tags) || [];
@@ -1330,7 +1337,8 @@ RB.combat = (function () {
         break;
       }
       case 'warm': sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
-      case 'bell': v.silenced = 0; sfx('bell'); msg = f.by ? '' : 'A clear note breaks the hush.'; break;
+      // the line only when a Hush was really cleared (the engine's `cleared`); the sound and the reset as before
+      case 'bell': v.silenced = 0; sfx('bell'); msg = f.by || !f.cleared ? '' : 'A clear note breaks the hush.'; break;
       case 'hit': {
         // only the one struck: a participant (a lantern) on its own count, none of the party's bars
         const a = actorAt(f.who) && (v.actors || []).find((x) => x.aid === f.who);

@@ -511,7 +511,12 @@ RB.combatLogic = (function () {
       // conditions (E4): what this response does to what each creature (and the place) is, by the rule table
       if (st.rules && st.rules.conditions && RB.conditions) RB.conditions.onResponse(st, card, reached, answered, fx);
       if (tags.indexOf('warm') >= 0 || tags.indexOf('fire') >= 0) fx.push({ t: 'warm' });
-      if (tags.indexOf('bell') >= 0 || tags.indexOf('voice') >= 0) { st.silenced = 0; if (st.hushed) st.hushed = {}; fx.push({ t: 'bell' }); }
+      // a bell or a voice clears any Hush; `cleared` says whether one was really there, read before the reset, so the
+      // Here preview and the exchange log say "breaks the Hush" only then (Agnes 6549129992; Cloud CC-413; CL-572)
+      if (tags.indexOf('bell') >= 0 || tags.indexOf('voice') >= 0) {
+        const cleared = !!st.silenced || Object.keys(st.hushed || {}).length > 0;
+        st.silenced = 0; if (st.hushed) st.hushed = {}; fx.push({ t: 'bell', cleared });
+      }
       // which telegraphed moves it answers: those of the creatures it reaches (party-wide
       // protection reaches every creature's move of that kind)
       for (const i of standing(st)) {
@@ -730,7 +735,7 @@ RB.combatLogic = (function () {
           if (e.moves && f.intent && e.moves.indexOf(f.intent.kind) >= 0 && !answered[i]) { answered[i] = true; f.stunned = who; fx.push({ t: 'stun', foe: i }); }
         });
         // (Ren's raised lamps also break the Hush over you)
-        if (e.hush && st.silenced) { st.silenced = 0; fx.push({ t: 'bell', by: who }); }
+        if (e.hush && st.silenced) { st.silenced = 0; fx.push({ t: 'bell', by: who, cleared: true }); }
         say(def.say || 'The air clears.', { foe: R.foes.length === 1 ? R.foes[0] : null, foes: R.foes.slice() });
         break;
       case 'harmony':
