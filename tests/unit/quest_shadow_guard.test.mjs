@@ -114,7 +114,6 @@ const PENDING = 'pending triage (CC-386)';
 const LISTED = {
   'co_bell | co.village:co_tamotsu | co.tamotsu_post before co.tamotsu | stage 0,1': PENDING + '; not among CC-367 §3\'s rows, but CC-367 §1 kept his list as it is: after the restoration Gorō\'s talk does not need his rope (unconfirmed)',
   'kr_hisae | kr.lodge:kr_hisae | rt.ren_walk before kr.hisae_truth | stage 1': PENDING + '; CC-367 set it aside as Hisae\'s walk with Ren, once (unconfirmed)',
-  'lf_akari | lf.clerks:akari | lf.akari_post before lf.akari_after | stage 0': PENDING + '; CC-367 set it aside: the bell moves it to stage 1 first, and her first entry takes 1 and up (unconfirmed)',
   'lf_nao | lf.ferry:umi | lf.umi_post before lf.nao_umi_first | stage 0': PENDING + '; CC-367 set it aside: Umi\'s first entry takes it once the bell has rung; this is the case before the bell, which an earlier screen missed (unconfirmed)',
   'rw_boots | rw.house1:oto rw.tea:oto_r3 rw.village:oto_r2 | rw.oto_post before rw.oto_sign | stage 0,1': PENDING,
   'rw_founding | rw.village:yasu | xp.cellars_yasu before rw.yasu_first | stage 0': PENDING + '; CC-367 set it aside: Yasu\'s cellars line holds only until heard (unconfirmed)',

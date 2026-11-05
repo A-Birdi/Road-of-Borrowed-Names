@@ -321,7 +321,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'smalltable', x: 7, y: 6, if: 'lf_akari_leave&!post', scene: 'lf.akari_note', o: { on: 'paper' } },
     ],
     npcs: [
-      { id: 'akari', x: 5, y: 4, dir: 'down', if: '!lf_akari_leave|post', talk: [{ if: 'quest.lf_akari>=1&!quest.lf_akari=done', scene: 'lf.akari_letter' }, { if: 'post', scene: 'lf.akari_post' }, { if: 'quest.lf_akari=done', scene: 'lf.akari_done' }, { if: 'lf_bell_rung', scene: 'lf.akari_after' }, { if: 'lf_akari_key', scene: 'lf.akari_again' }, { if: 'quest.lf_main>=2', scene: 'lf.akari_hint' }, { scene: 'lf.akari' }] },
+      // an unfinished letter of hers comes ahead of her after-the-ending line: at step 0 after the bell, lf.akari_after
+      // (her father's letter, then her news and the second letter; Agnes 6641781747; Local CL-695; Cloud CC-525, Row A)
+      { id: 'akari', x: 5, y: 4, dir: 'down', if: '!lf_akari_leave|post', talk: [{ if: 'quest.lf_akari>=1&!quest.lf_akari=done', scene: 'lf.akari_letter' }, { if: 'quest.lf_akari=active&lf_bell_rung', scene: 'lf.akari_after' }, { if: 'post', scene: 'lf.akari_post' }, { if: 'quest.lf_akari=done', scene: 'lf.akari_done' }, { if: 'lf_bell_rung', scene: 'lf.akari_after' }, { if: 'lf_akari_key', scene: 'lf.akari_again' }, { if: 'quest.lf_main>=2', scene: 'lf.akari_hint' }, { scene: 'lf.akari' }] },
     ],
   });
 

@@ -161851,7 +161851,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'smalltable', x: 7, y: 6, if: 'lf_akari_leave&!post', scene: 'lf.akari_note', o: { on: 'paper' } },
     ],
     npcs: [
-      { id: 'akari', x: 5, y: 4, dir: 'down', if: '!lf_akari_leave|post', talk: [{ if: 'quest.lf_akari>=1&!quest.lf_akari=done', scene: 'lf.akari_letter' }, { if: 'post', scene: 'lf.akari_post' }, { if: 'quest.lf_akari=done', scene: 'lf.akari_done' }, { if: 'lf_bell_rung', scene: 'lf.akari_after' }, { if: 'lf_akari_key', scene: 'lf.akari_again' }, { if: 'quest.lf_main>=2', scene: 'lf.akari_hint' }, { scene: 'lf.akari' }] },
+      // an unfinished letter of hers comes ahead of her after-the-ending line: at step 0 after the bell, lf.akari_after
+      // (her father's letter, then her news and the second letter; Agnes 6641781747; Local CL-695; Cloud CC-525, Row A)
+      { id: 'akari', x: 5, y: 4, dir: 'down', if: '!lf_akari_leave|post', talk: [{ if: 'quest.lf_akari>=1&!quest.lf_akari=done', scene: 'lf.akari_letter' }, { if: 'quest.lf_akari=active&lf_bell_rung', scene: 'lf.akari_after' }, { if: 'post', scene: 'lf.akari_post' }, { if: 'quest.lf_akari=done', scene: 'lf.akari_done' }, { if: 'lf_bell_rung', scene: 'lf.akari_after' }, { if: 'lf_akari_key', scene: 'lf.akari_again' }, { if: 'quest.lf_main>=2', scene: 'lf.akari_hint' }, { scene: 'lf.akari' }] },
     ],
   });
 
@@ -163278,16 +163280,24 @@ RB.script.add(`
 !if quest.lf_main>=4 -> late
 !if quest.lf_main>=2 -> ledger
 !if item.lf_request_slip -> desk
+# A form left by "Come back later" (lf_main 1 is set only here, before the exercise): your request again, not his
+# welcome (Agnes 6639438614; Cloud CC-525, Row A)
+!if quest.lf_main>=1 -> form
 !gesture lf_tadashi nod pc
 lf_tadashi: {記録館|きろくかん} へ ようこそ 。{登記官|とうきかん} の タダシ で ございます 。|| Welcome to the Public Records Hall. I am Tadashi, the Registrar.
+:form
 pc: {湖|みずうみ} の {鐘楼|しょうろう} に ついて 、{調|しら}べたい の です が 。|| I'd like to look into the bell tower in the lake.
 !gesture lf_tadashi present pc prop=paper hold
 lf_tadashi: かしこまりました 。{閲覧|えつらん} を ご{希望|きぼう} の {方|かた} は 、こちら の {申請書|しんせいしょ} に ご{記入|きにゅう} ください 。|| Certainly. Those wishing to consult the records are kindly asked to complete this request form.
 !gesture pc observe 7,4
 narr: {彼|かれ} は {一枚|いちまい} の {紙|かみ} を {台|だい} に {置|お}いた 。{見事|みごと} な {字|じ} だ 。{定規|じょうぎ} で {引|ひ}いた よう に 、{少|すこ}し の {揺|ゆ}れ も ない 。|| He lays a sheet on the counter. Superb handwriting, as if ruled with a straightedge — not a single wobble.
 !quest lf_main 1
-!lesson kana
+# (the kana lesson comes once, not again on a retry)
+?(!lf_form_lesson) !lesson kana
+!set lf_form_lesson
 !challenge lf.ch_form
+# "Come back later" is not the form filled in: no slip, and his request again next time
+?(var._res=0) !end
 !gesture lf_tadashi stamp prop=stamp
 lf_tadashi[smile]: {確|たし}か に {承|うけたまわ}りました 。|| Duly received.
 !give lf_request_slip
@@ -163402,7 +163412,14 @@ akari[tired]: {今日|きょう} も {残業|ざんぎょう} を {頼|たの}�
 # that come back, a guarded hand over the overtime she cannot refuse; your companion's own answer (Nao's flat hand,
 # Mio's laugh at herself, Ren's two hands for the two ends of one road, Suzu's glance away); her hands fidget at
 # telling a visitor all this.
-!if quest.lf_akari -> end
+# Hoshino's letter is given only when you choose to (Agnes 6639438614; Cloud CC-525, CC-526; Local CL-693; Agnes
+# 6640720415): before the bell, Give her Hoshino's letter or Not now, at the first telling and at each later talk
+# while it waits; after the bell, the one informed offer is in lf.akari_letter. akari_offer: 0 fresh at each offer's
+# entry (Not now, or no offer), 1 given, 2 given and left by "Come back later" (set only in lf.akari_reply), so a
+# caller ends the talk only on 2.
+!var akari_offer = 0
+!if quest.lf_akari=done -> end
+!if quest.lf_akari -> pending
 !gesture pc observe 4,3
 narr: {机|つくえ} の {端|はし} に 、{雪|ゆき} の {色|いろ} を した {襟巻|えりまき} が {畳|たた}んで ある 。{雪鈴|ゆきすず} の {織|お}り{方|かた} だ 。|| Folded at the edge of her desk is a scarf the colour of snow, woven the Snowbell way.
 ?(ch4_done) !look pc akari
@@ -163426,12 +163443,25 @@ akari: 「{休|やす}み を ください 」 と {言|い}おう と して �
 ?(comp=suzu) !gesture comp aside
 ?(comp=suzu) comp: {帰|かえ}る {場所|ばしょ} が ある の は 、{幸|しあわ}せ な こと よ 。…… {帰|かえ}れれば 、だけど 。|| Having somewhere to go home to is a blessing. …If you can get there.
 !quest lf_akari start
-!if item.sb_reply_letter -> reply
+!if lf_bell_rung -> sorry
+!if !item.sb_reply_letter -> sorry
+!choice
+* ホシノ さん の {手紙|てがみ} を {渡|わた}す || Give her Hoshino's letter -> give
+* {今|いま} は いい || Not now -> sorry
+:sorry
 !gesture akari fidget
 akari[smile]: …… ごめんなさい 。お{客|きゃく}さま に こんな {話|はなし} 。|| …I'm sorry. Telling a visitor all this.
 !end
-:reply
+:give
+!var akari_offer = 1
 !call lf.akari_reply
+!end
+:pending
+!if lf_bell_rung -> end
+!if !item.sb_reply_letter -> end
+!choice
+* ホシノ さん の {手紙|てがみ} を {渡|わた}す || Give her Hoshino's letter -> give
+* {今|いま} は いい || Not now -> end
 
 @scene lf.akari_reply
 # Staged: you hold out Hoshino's letter; Akari's small start, and she leans in to the blank address line; once you
@@ -163446,6 +163476,9 @@ akari[surprise]: …… {父|ちち} から ？|| …From my father?
 !gesture akari observe pc
 narr: ホシノ の {封筒|ふうとう} 。{宛名|あてな} の {欄|らん} は 、{空|あ}いた まま だ 。|| Hoshino's envelope. The address line is still blank.
 !challenge lf.ch_akari_addr
+# "Come back later" is not the letter given: it stays with you, and the caller ends the talk
+?(var._res=0) !var akari_offer = 2
+?(var._res=0) !end
 !gesture pc handover akari prop=letter
 !gesture akari receive pc
 narr: {書|か}いた {字|じ} は 、{薄|うす}れ ない 。{封筒|ふうとう} は 、ちゃんと アカリ の {手|て} に {届|とど}いた 。|| The words you wrote don't fade. The envelope arrives, properly, in Akari's hands.
@@ -163459,10 +163492,10 @@ narr: 「{灯|あか}り は 、{今夜|こんや} も ついて いる よ 。{
 akari[sad]: …… {父|ちち} の {字|じ} 。{少|すこ}し {震|ふる}えてる 。|| …Father's handwriting. It shakes a little.
 !gesture akari present prop=letter hold
 akari[smile]: 「{温|あたた}かく して {寝|ね}る んだ よ 」 。…… {子供|こども} の とき と 、{同|おな}じ こと を {言|い}ってる 。|| "Keep warm when you sleep." …He's saying the same thing he said when I was little.
-?(sb_hoshino_goes) !gesture akari guard
-?(sb_hoshino_goes) akari[worry]: {会|あ}い に {来|く}る って 。…… でも 、{今|いま} の {私|わたし} じゃ 、{父|ちち} が {来|き}て も 、{一日|いちにち} も {休|やす}め ない 。{残業|ざんぎょう} を {断|ことわ}れない から 。|| He says he's coming. …But the way I am now, even if he came, I couldn't take a single day off. I can't refuse overtime.
-?(!sb_hoshino_goes) !gesture akari guard
-?(!sb_hoshino_goes) akari[worry]: {返事|へんじ} を {書|か}きたい 。{会|あ}い に {行|い}きたい 。…… でも 、「{休|やす}み を ください」 が 、{言|い}えない 。|| I want to reply. I want to go and see him. …But I can't say "please give me leave".
+?(sb_hoshino_goes&!lf_bell_rung) !gesture akari guard
+?(sb_hoshino_goes&!lf_bell_rung) akari[worry]: {会|あ}い に {来|く}る って 。…… でも 、{今|いま} の {私|わたし} じゃ 、{父|ちち} が {来|き}て も 、{一日|いちにち} も {休|やす}め ない 。{残業|ざんぎょう} を {断|ことわ}れない から 。|| He says he's coming. …But the way I am now, even if he came, I couldn't take a single day off. I can't refuse overtime.
+?(!sb_hoshino_goes&!lf_bell_rung) !gesture akari guard
+?(!sb_hoshino_goes&!lf_bell_rung) akari[worry]: {返事|へんじ} を {書|か}きたい 。{会|あ}い に {行|い}きたい 。…… でも 、「{休|やす}み を ください」 が 、{言|い}えない 。|| I want to reply. I want to go and see him. …But I can't say "please give me leave".
 ?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp[smile]: {届|とど}いた な 。{宛名|あてな} 、いい {字|じ} だった よ 。|| It got there. That was a good address you wrote.
 ?(comp=mio) !gesture comp exhale
@@ -163480,6 +163513,7 @@ akari[smile]: 「{温|あたた}かく して {寝|ね}る んだ よ 」 。…
 # her hands (Nao's shrug, Mio points to her hands, Ren's appreciative open hands, Suzu's two hands for the line and
 # the prop); "I haven't said a thing", and the key passes into your hand.
 !if !quest.lf_akari -> letters
+!if item.sb_reply_letter -> letters
 :hint
 pc: {洪水|こうずい} の {年|とし} の {台帳|だいちょう} を {写|うつ}した の は 、アカリ さん です か 。|| Was it you who copied the ledger for the flood year?
 !gesture akari guard
@@ -163492,6 +163526,8 @@ akari: {古|ふる}い {物|もの} ばかり です し 、{暗|くら}い で�
 !gesture akari present pc prop=key hold
 narr: そう {言|い}いながら 、アカリ は {真鍮|しんちゅう} の {鍵|かぎ} を 、{机|つくえ} の {上|うえ} で すっと こちら へ {滑|すべ}らせた 。|| As she says it, Akari slides a brass key across the desk towards you.
 !challenge lf.ch_akari
+# "Come back later" is not the key taken: the conversation again next time
+?(var._res=0) !end
 ?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp[smirk]: 「{行|い}かない ほう が いい」 って {言|い}いながら 、{鍵|かぎ} を {渡|わた}す 。わかりやすい じゃん 。|| "Better not go," while handing over the key. Pretty clear, really.
 ?(comp=mio) !gesture comp point akari
@@ -163510,9 +163546,15 @@ akari[smile]: …… {何|なん} の こと でしょう 。{私|わたし} は
 !end
 :letters
 !call lf.akari_letters
+!if var.akari_offer=2 -> end
 !goto hint
 
 @scene lf.akari_again
+!if !item.sb_reply_letter -> usual
+!call lf.akari_letters
+!if var.akari_offer=0 -> usual
+!end
+:usual
 akari[smile]: {地下|ちか} ？ さあ 。{私|わたし} は {何|なに} も {存|ぞん}じません 。|| The basement? I'm sure I know nothing about it.
 akari: …… {階段|かいだん} は 、{窓口|まどぐち} の {奥|おく} の {右|みぎ} です けど 。|| …The stairs are at the back of the counter, on the right. Not that I'd know.
 
@@ -163523,6 +163565,7 @@ akari: …… {階段|かいだん} は 、{窓口|まどぐち} の {奥|おく
 !end
 :start
 !call lf.akari_letters
+!if var.akari_offer=2 -> end
 !quest lf_akari 1
 !call lf.akari_letter
 
@@ -163531,6 +163574,20 @@ akari: …… {階段|かいだん} は 、{窓口|まどぐち} の {奥|おく
 # address that kept coming back, she looks away before she asks (her stronger reaction, avert); once it holds, her
 # open thanks to you; with Nao, the letter passes to the courier's hand; otherwise an open hand for the ferry's
 # route.
+# The one offer after the bell, informed: Give her Hoshino's letter, or go on without it. A second letter left by
+# "Come back later" is asked again (her request only) after the offer.
+!var akari_offer = 0
+!if !item.sb_reply_letter -> news
+!if lf_akari_got_reply -> news
+!choice
+* ホシノ さん の {手紙|てがみ} を {渡|わた}す || Give her Hoshino's letter -> give
+* ホシノ さん の {手紙|てがみ} は {渡|わた}さない で {続|つづ}ける || Go on without giving her Hoshino's letter -> news
+:give
+!var akari_offer = 1
+!call lf.akari_reply
+!if var.akari_offer=2 -> end
+:news
+!if quest.lf_akari>=2 -> ask
 !gesture akari palm pc
 akari[laugh]: {聞|き}いて ください ！ {今朝|けさ} 、{残業|ざんぎょう} を {断|ことわ}りました ！ 「お{断|ことわ}り します」 って ！|| Listen! This morning I turned down overtime! I said "I refuse"!
 !gesture akari lookroad up
@@ -163539,11 +163596,14 @@ akari: それ で 、{休|やす}み も もらいました 。|| And I got leav
 ?(lf_akari_got_reply&sb_hoshino_both) akari: {父|ちち} は {春|はる} に {来|く}る と {言|い}って います 。でも 、{私|わたし} も {今|いま} {行|い}きます 。{春|はる} に は また {来|き}て もらえば いい 。{欲張|よくば}り な {親子|おやこ} です 。|| Father says he'll come in spring. But I'm going now anyway. He can come again in spring. We're a greedy family.
 ?(lf_akari_got_reply&!sb_hoshino_goes&!sb_hoshino_both) akari: {父|ちち} は 「{急|いそ}がなくて いい」 と {書|か}いて いました 。…… だから 、{急|いそ}いで {帰|かえ}ります 。|| Father wrote "there's no need to hurry". …So I'm going to hurry home.
 ?(!lf_akari_got_reply) akari: {雪鈴|ゆきすず} へ 、{帰|かえ}ります 。{何年|なんねん} ぶり かしら 。|| I'm going home to Snowbell. It's been years.
+:ask
 !look akari pc
 !gesture akari avert pc
 akari[shy]: {先|さき} に {手紙|てがみ} を {出|だ}したい んです 。{父|ちち} を {驚|おどろ}かせたく ない ので 。…… {宛先|あてさき} 、{一緒|いっしょ} に {見|み}て いただけます か 。{何度|なんど} も {戻|もど}って きた ので 、{自信|じしん} が なくて 。|| I want to send a letter first, so I don't startle my father. …Would you check the address with me? It came back so many times I've lost my nerve.
 !quest lf_akari 2
 !challenge lf.ch_akari_addr2
+# "Come back later" is not the address checked: step 2 kept, no departure, and her request again next time
+?(var._res=0) !end
 !gesture akari thanks pc
 akari[smile]: …… {雪鈴|ゆきすず} {天文台|てんもんだい} 、ホシノ {様|さま} 。{今度|こんど} は 、ちゃんと {字|じ} が {紙|かみ} に {残|のこ}って います 。|| …Snowbell Observatory, Mr Hoshino. This time the writing is staying on the paper.
 ?(comp=nao) !gesture akari handover comp prop=letter
@@ -163631,6 +163691,8 @@ narr: {耳|みみ} を {当|あ}てる と 、{小|ちい}さな {声|こえ} �
 !gesture pc bend prop:lf_conduit
 narr: {管|くだ} の {継|つ}ぎ{目|め} に 、{真鍮|しんちゅう} の {札|ふだ} が {付|つ}いて いる 。|| At a joint in the pipe hangs a brass tag.
 !challenge lf.ch_conduit
+# "Come back later" is not the tag read: the conduit again next time
+?(var._res=0) !end
 narr: 「{上|のぼ}り 。{静寂|しじま} の {書庫|しょこ} {行|ゆ}き 。」|| "Uphill. Bound for the Still Archive."
 ?(comp=nao) !gesture comp emphatic
 ?(comp=nao) comp[angry]: …… {配達路|はいたつろ} だ 。{町|まち} の 「いや」 を 、{誰|だれ} か が {毎日|まいにち} {山|やま} へ {運|はこ}んでる 。|| …It's a delivery route. Someone's shipping this town's "no"s up the mountain every day.
@@ -163721,6 +163783,9 @@ lf_yae: その {夜|よる} 、トウヤ は {鐘楼|しょうろう} の {鍵|�
 lf_yae[closed]: トウヤ だけ が 、{戻|もど}らなかった 。|| Only Tōya didn't come back.
 lf_yae: カサネ は その あと 、{山|やま} の {上|うえ} の {書庫|しょこ} へ {上|のぼ}って 、{二度|にど} と {町|まち} へ は {下|お}りて こなかった 。|| Afterwards, Kasane went up to the Archive on the mountain, and never came down to the town again.
 !challenge lf.ch_minutes
+# "Come back later" is not the minutes read: the records music back, and the minutes again next time
+?(var._res=0) !music lf_records
+?(var._res=0) !end
 ?(comp=nao) !gesture comp strap
 ?(comp=nao) comp[closed]: …… {最後|さいご} に {話|はな}した の が 、けんか か 。{届|とど}かない まま の {言葉|ことば} って 、{一番|いちばん} {重|おも}い んだ よ 。|| …So the last thing they had was a fight. Words that never get delivered are the heaviest kind.
 ?(comp=mio) !gesture comp lowered
