@@ -2087,6 +2087,12 @@
   "jp": "{近頃|ちかごろ} は {旅人|たびびと} が {多|おお}くて 、 {番所|ばんしょ} の お{茶|ちゃ} が {足|た}りん 。",
   "en": "So many travellers these days, the office keeps running out of tea."
  },
+ "scene:cr.ujie#xea0af": {
+  "status": "self-reviewed",
+  "ref": "Editorial row 4 self-review, 2026-11-05 (Cloud CC-532; agreed in Local CL-700 and Agnes 6645340596): the Barrier narration read in its scene against Ujie's and Sumi's own lines (手形 を 拝見 いたしました, お名前 が 、 消えて おります ね; 名前 が 白い 。 また です ね), Sumi's inspection table (改め の 台, cr.sumi_table), the plain present of the chapter's narration (並んで いる, 横切って いる), the lexicon and RB.jp.validate",
+  "jp": "ウジエ が {手形|てがた} を {開|ひら}く 。 スミ の {台|だい} で {書|か}いた {名前|なまえ} が 、 {消|き}えて いる 。 {紙|かみ} は 、 また {白|しろ}い 。",
+  "en": "Ujie unfolds the papers. The names you wrote at Sumi's table have gone. The paper is blank again."
+ },
  "scene:cr.ujie#1awftkx": {
   "status": "self-reviewed",
   "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
