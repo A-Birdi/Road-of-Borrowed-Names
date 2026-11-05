@@ -2375,11 +2375,11 @@
   "jp": "ミツ さん に {渡|わた}す 。",
   "en": "Give it to Mitsu."
  },
- "scene:ko.kihei_choose:choice#1ppgenw": {
+ "scene:ko.kihei_choose:choice#12dbv6c": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
-  "jp": "{風石|かぜいし} から 、 {風|かぜ} に {乗|の}せる 。",
-  "en": "Send it on the wind, from the Wind Stone."
+  "ref": "Editorial row 3 self-review, 2026-11-05 (Cloud CC-525; the text agreed in Agnes 6640417567 and Local CL-690): Kihei's wind choice and ending read in their scene against its other choices (plain non-past: 渡す, 返す, 決めない), the map's own name (潮だまり), the island's own wind lines (風 に 乗せよう, 風 に 乗って 飛んで いく), the line they replace (past then present narration; キヘイ が 帽子 を 取って 、 見送る kept as it was), the lexicon and RB.jp.validate",
+  "jp": "{風|かぜ} に {乗|の}せて 、 {風石|かぜいし} の {方|ほう} へ {送|おく}る 。",
+  "en": "Send it on the wind, towards the Wind Stone."
  },
  "scene:ko.kihei_choose:choice#104275b": {
   "status": "self-reviewed",
@@ -2453,11 +2453,11 @@
   "jp": "{宿|やど} の ミツ さん に 、 キヘイ の {葉|は} を {届|とど}ける こと に した 。",
   "en": "Decided to take Kihei's leaf to Mitsu at the lodging house."
  },
- "scene:ko.kihei_choose#e7onjc": {
+ "scene:ko.kihei_choose#kyhfpb": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
-  "jp": "キヘイ と {二人|ふたり} で 、 {村|むら} の {風石|かぜいし} まで {歩|ある}いた 。 {石|いし} の {上|うえ} で 、 {葉|は} が {浮|う}く 。 キヘイ が {帽子|ぼうし} を {取|と}って 、 {見送|みおく}る 。",
-  "en": "You walk up to the village's Wind Stone with Kihei. On the stone the leaf lifts. Kihei takes off his cap and watches it go."
+  "ref": "Editorial row 3 self-review, 2026-11-05 (Cloud CC-525; the text agreed in Agnes 6640417567 and Local CL-690): Kihei's wind choice and ending read in their scene against its other choices (plain non-past: 渡す, 返す, 決めない), the map's own name (潮だまり), the island's own wind lines (風 に 乗せよう, 風 に 乗って 飛んで いく), the line they replace (past then present narration; キヘイ が 帽子 を 取って 、 見送る kept as it was), the lexicon and RB.jp.validate",
+  "jp": "{潮|しお}だまり で 、 {葉|は} を {風|かぜ} に {乗|の}せた 。 {葉|は} は {村|むら} の {風石|かぜいし} の {方|ほう} へ {飛|と}んで いく 。 キヘイ が {帽子|ぼうし} を {取|と}って 、 {見送|みおく}る 。",
+  "en": "At the tide pools, you give the leaf to the wind. It flies off towards the village's Wind Stone. Kihei takes off his cap and watches it go."
  },
  "scene:ko.kihei_choose#j638n2": {
   "status": "self-reviewed",

@@ -122,7 +122,7 @@ ko_kihei: {手紙|てがみ} は 、 お{前|まえ} さん に {任|まか}せ�
 :menu
 !choice
 * ミツ さん に {渡|わた}す 。 || Give it to Mitsu. -> mitsu
-* {風石|かぜいし} から 、 {風|かぜ} に {乗|の}せる 。 || Send it on the wind, from the Wind Stone. -> wind
+* {風|かぜ} に {乗|の}せて 、 {風石|かぜいし} の {方|ほう} へ {送|おく}る 。 || Send it on the wind, towards the Wind Stone. -> wind
 * キヘイ に {返|かえ}す 。 || Give it back to Kihei. -> kept
 * {今|いま} は {決|き}めない 。 || Not now. -> end
 :mitsu
@@ -152,7 +152,7 @@ narr: {波|なみ} が {引|ひ}く と 、 キヘイ の {足跡|あしあと} 
 :wind_go
 !take ko_kihei_letter
 !set ko_kihei_wind
-narr: キヘイ と {二人|ふたり} で 、 {村|むら} の {風石|かぜいし} まで {歩|ある}いた 。 {石|いし} の {上|うえ} で 、 {葉|は} が {浮|う}く 。 キヘイ が {帽子|ぼうし} を {取|と}って 、 {見送|みおく}る 。 || You walk up to the village's Wind Stone with Kihei. On the stone the leaf lifts. Kihei takes off his cap and watches it go.
+narr: {潮|しお}だまり で 、 {葉|は} を {風|かぜ} に {乗|の}せた 。 {葉|は} は {村|むら} の {風石|かぜいし} の {方|ほう} へ {飛|と}んで いく 。 キヘイ が {帽子|ぼうし} を {取|と}って 、 {見送|みおく}る 。 || At the tide pools, you give the leaf to the wind. It flies off towards the village's Wind Stone. Kihei takes off his cap and watches it go.
 ko_kihei: …… {遅|おそ}く なった な 、 ハツ 。 || …I'm late, Hatsu.
 !refresh gone
 narr: {葉|は} が {見|み}えなく なる と 、 キヘイ も いなかった 。 || When the leaf was out of sight, Kihei was gone too.

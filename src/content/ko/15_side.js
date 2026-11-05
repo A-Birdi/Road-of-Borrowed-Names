@@ -7,7 +7,7 @@
  *   ko_kihei   The Sailor's Last Letter: Kihei, a sailor's echo at the tide pools, looks for the letter he never sent.
  *              It lies on the sea cave's rock stage (low tide, Koyomi's calendar), written to Hatsu, who was Mitsu's
  *              grandmother. Three lasting ends, each shown before it is chosen (E17): Mitsu reads it; it goes on the
- *              wind from the Wind Stone; Kihei keeps it, to say it himself one day.
+ *              wind from the tide pools, towards the Wind Stone; Kihei keeps it, to say it himself one day.
  *   ko_myname  The Leaf That Is Your Name: Tokio's count turns up a leaf with the player's name in a hand they know
  *              (by background: the courier's boss, the first customer, the teacher); read who wrote it and when, then
  *              answer it on a fresh leaf from the Wind Stone. The leaf with your name is kept.
