@@ -703,9 +703,12 @@ narr: {議会堂|ぎかいどう} の ほう から 、{鈴|すず} の {音|お
 lf_yae: {静粛|せいしゅく} に ！ …… と {言|い}って も 、{誰|だれ} も {静|しず}か に しない 。ああ 、{懐|なつ}かしい 。|| Order! …Not that anyone's quieting down. Oh, how I've missed this.
 lf_masaru: {議長|ぎちょう} ！ {記録館|きろくかん} の {注文|ちゅうもん} 、{全部|ぜんぶ} {断|ことわ}って いい です か ！|| Madam Chair! May I turn down every order from the Records Hall?!
 lf_tadashi: …… どうぞ 。{私|わたし} も 、{半分|はんぶん} は {要|い}らない と {思|おも}って おりました 。|| …Please do. I too thought half of them unnecessary.
-lf_kinu: {議長|ぎちょう} 、{垣根|かきね} の {件|けん} です が ！|| Madam Chair, regarding the fence!
-!gesture lf_yae palm lf_kinu
-lf_yae: それ は {来週|らいしゅう} ！ …… {次|つぎ} 。{山|やま} の {上|うえ} の {書庫|しょこ} の こと 。|| Next week! …Next item. The Archive up the mountain.
+# The fence comes up only while it is unsettled. Once it is settled (lf_fence done), Kinu doesn't raise it,
+# and Tami goes straight to the next item.
+?(!quest.lf_fence=done) lf_kinu: {議長|ぎちょう} 、{垣根|かきね} の {件|けん} です が ！|| Madam Chair, regarding the fence!
+?(!quest.lf_fence=done) !gesture lf_yae palm lf_kinu
+?(!quest.lf_fence=done) lf_yae: それ は {来週|らいしゅう} ！ …… {次|つぎ} 。{山|やま} の {上|うえ} の {書庫|しょこ} の こと 。|| Next week! …Next item. The Archive up the mountain.
+?(quest.lf_fence=done) lf_yae: …… {次|つぎ} 。{山|やま} の {上|うえ} の {書庫|しょこ} の こと 。|| …Next item. The Archive up the mountain.
 !gesture lf_tadashi glasses
 lf_tadashi: {記録館|きろくかん} に は 、{差出人|さしだしにん} の ない {指示|しじ} が {届|とど}いて おりました 。「{記録|きろく} を {穏|おだ}やか に {整|ととの}える こと」 。{私|わたし} は 、「かしこまりました」 と しか {申|もう}せません でした 。|| The Records Hall had been receiving instructions with no sender. "Tidy the records into calm." I could say nothing but "certainly".
 !gesture lf_tadashi emphatic
