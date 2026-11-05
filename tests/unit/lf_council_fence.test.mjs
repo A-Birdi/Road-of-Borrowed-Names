@@ -167,4 +167,5 @@ export default async (t) => {
       '5 the unsettled council and Tami\'s later line, line for line as on the parent, each companion and none, both editions; settled, the same with the new line in their place; no scene error ' +
       flat({ fp: fp(got), n: Object.keys(got).length, bad: ok.filter((x) => !x.settled || !x.later), errors }));
   }
+  console.error = cerr;
 };
