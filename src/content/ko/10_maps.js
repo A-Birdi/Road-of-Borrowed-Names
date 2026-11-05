@@ -113,16 +113,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { if: 'quest.ko_main>=4&!ko_done', scene: 'ko.otoha_roots' },
         { if: 'ko_done', scene: 'ko.otoha_after' },
         { scene: 'ko.otoha_early' }] },
+      // Nami, Hamaji, Nana and Mitsu turn to their after-lines once the Gardener is done (ko_gardener_done), not only after
+      // Otoha's ending: their village lines still speak of going down under the roots (Cloud CC-523 note 2, CC-525)
       { id: 'ko_nami', x: 22, y: 10, dir: 'down', if: 'ko_otoha_met|!ch5_done', talk: [
         { if: 'post', scene: 'ko.nami_post' },
         { if: 'quest.ko_main=3&!ko_tell_nami', scene: 'ko.nami_telling' },
-        { if: 'ko_done', scene: 'ko.nami_after' },
+        { if: 'ko_done|ko_gardener_done', scene: 'ko.nami_after' },
         { if: 'ko_ch9', scene: 'ko.nami_ch9' },
         { scene: 'ko.nami_early' }] },
       { id: 'ko_hamaji', x: 10, y: 23, dir: 'right', talk: [
         { if: 'post', scene: 'ko.hamaji_post' },
         { if: 'quest.ko_main=3&!ko_tell_hamaji', scene: 'ko.hamaji_telling' },
-        { if: 'ko_done', scene: 'ko.hamaji_after' },
+        { if: 'ko_done|ko_gardener_done', scene: 'ko.hamaji_after' },
         { if: 'ko_ch9', scene: 'ko.hamaji_ch9' },
         { scene: 'ko.hamaji_early' }] },
       { id: 'ko_tokio', x: 14, y: 13, dir: 'down', talk: [
@@ -132,7 +134,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { scene: 'ko.tokio_early' }] },
       { id: 'ko_nana', x: 18, y: 19, dir: 'down', talk: [
         { if: 'post', scene: 'ko.nana_post' },
-        { if: 'ko_done', scene: 'ko.nana_after' },
+        { if: 'ko_done|ko_gardener_done', scene: 'ko.nana_after' },
         { if: 'ko_ch9', scene: 'ko.nana_ch9' },
         { scene: 'ko.nana_early' }] },
       { id: 'ko_ao', x: 28, y: 22, dir: 'left', talk: [
@@ -199,7 +201,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [
       { id: 'ko_mitsu', x: 7, y: 3, dir: 'down', talk: [
         { if: 'post', scene: 'ko.mitsu_post' },
-        { if: 'ko_done', scene: 'ko.mitsu_after' },
+        { if: 'ko_done|ko_gardener_done', scene: 'ko.mitsu_after' },
         { if: 'ko_ch9', scene: 'ko.mitsu_ch9' },
         { scene: 'ko.mitsu_early' }] },
     ],

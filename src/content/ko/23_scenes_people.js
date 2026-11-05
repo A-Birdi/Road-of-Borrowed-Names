@@ -19,7 +19,7 @@ ko_nami: {葉|は} を {届|とど}けに {陸|りく} へ {漕|こ}いで い�
 @scene ko.nami_after
 !faceplayer
 ko_nami[smile]: {葉|は} の {数|かず} が 、 {漕|こ}げる {数|かず} に {戻|もど}った 。 {腕|うで} が {喜|よろこ}んでる よ 。 || The leaves are back to as many as I can row. My arms are delighted.
-ko_nami: {陸|りく} へ {帰|かえ}る なら 、 テツ さん の {船|ふね} が {桟橋|さんばし} に いる 。 || If you're going back to the mainland, Tetsu's boat is at the jetty.
+?(ko_done) ko_nami: {陸|りく} へ {帰|かえ}る なら 、 テツ さん の {船|ふね} が {桟橋|さんばし} に いる 。 || If you're going back to the mainland, Tetsu's boat is at the jetty.
 @scene ko.nami_post
 !faceplayer
 ko_nami: {紙|かみ} みたい な {葉|は} が 、 {来|こ}なく なった 。 {北|きた} の {山|やま} で 、 {何|なに} か が {片付|かたづ}いた ん だ ね 。 …… {聞|き}かない で おく よ 。 || The paper-like leaves have stopped. Something got settled up in the northern mountains. …I won't ask.
