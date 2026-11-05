@@ -13,7 +13,9 @@
 //  4. Tami's minutes left: the records music back, nothing told, step 4; then done: told, step 5, the records music;
 //  5. each left twice, a save and load, then done: everything once; a stale result both ways;
 //  6. the first-time paths line for line as on the parent, with each companion and none (fingerprints taken on the
-//     parent, 49db870); no scene ended on an error from the runner.
+//     parent, 49db870); no scene ended on an error from the runner. Tami's two flood lines in the minutes changed in
+//     the row after editorial row 4 (her flood count: Cloud CC-539; Local CL-706): the pin moved from 3a768be81103a72d
+//     (71780f4) to FIRST_FP; with those two lines masked, MASKED_FP is the same on 71780f4 and after.
 import crypto from 'node:crypto';
 import { load } from '../lib/load.mjs';
 
@@ -163,7 +165,8 @@ export default async (t) => {
 
   // 6. the first-time paths, line for line as on the parent
   {
-    const got = {};
+    const got = {}, masked = {};
+    const mask = (ls) => ls.map((l) => (/^That night Tōya took the bell tower key/.test(l.en) || /^(Only )?Tōya didn't come back\.$/.test(l.en) ? { who: l.who, masked: true } : l));
     for (const comp of ['nao', 'mio', 'ren', 'suzu', null]) {
       fresh({ comp });
       await talk('lf.records', 'lf_tadashi'); const p1 = lines;
@@ -172,13 +175,15 @@ export default async (t) => {
       fresh({ comp, map: 'lf.council', main: 4, inv: { lf_minutes: 1 } });
       await talk(s.map, 'lf_yae'); const p3 = lines;
       got[String(comp)] = [fp(p1), fp(p2), fp(p3)];
+      masked[String(comp)] = [fp(p1), fp(p2), fp(mask(p3))];
     }
-    t.ok(fp(got) === FIRST_FP, '6 the first-time paths line for line as on the parent, with each companion and none ' + flat({ fp: fp(got) }));
+    t.ok(fp(got) === FIRST_FP && fp(masked) === MASKED_FP, '6 the first-time paths line for line as on the parent, with each companion and none ' + flat({ fp: fp(got), masked: fp(masked) }));
   }
 
   t.ok(!errors.length, 'no scene ended on an error from the runner ' + errors.slice(0, 3).join(' | '));
   console.error = cerr;
 };
 // computed on the parent (49db870): Tadashi's first visit, the conduit and Tami's minutes, each done at once, with each
-// companion and none
-const FIRST_FP = '3a768be81103a72d';
+// companion and none; recomputed after Tami's flood count (above), with MASKED_FP taken on 71780f4 and after
+const FIRST_FP = '85b55ff15fb4ce08';
+const MASKED_FP = 'f3f5364f014d46a9';

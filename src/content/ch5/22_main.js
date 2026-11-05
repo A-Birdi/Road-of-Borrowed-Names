@@ -488,7 +488,7 @@ narr: タミ は {微笑|ほほえ}んだ まま 、{少|すこ}し だけ {眉|
 
 @scene lf.yae_minutes
 # Staged: you hand Tami the minutes and she reads them aloud, slowly; her head goes down at Kasane's name and comes
-# up to tell the rest; she glances away at the quarrel in the corridor and her head goes down again at "Only Tōya
+# up to tell the rest; she glances away at the quarrel in the corridor and her head goes down again at "Tōya
 # didn't come back"; your companion's own answer (Nao's hand to the satchel strap, Mio's head down, Ren's hand to
 # the chin, Suzu's lowered head, no flourish); an open hand south to the sluice and Tokuji, and her laugh at the
 # stir in her chest.
@@ -513,9 +513,9 @@ lf_yae: {弟|おとうと} の トウヤ が 、{高瀬|たかせ} から あの
 lf_yae: {向|む}こう の {声|こえ} の {調子|ちょうし} を 、あの {子|こ} は {聞|き}いて いた 。だから {反対|はんたい} した 。|| He had heard how they said it over there. That's why he objected.
 !gesture lf_yae aside
 lf_yae: カサネ は 、{紙|かみ} に {書|か}かれた {字|じ} を {信|しん}じた 。…… {二人|ふたり} は 、{議会|ぎかい} の {廊下|ろうか} で {大|おお}げんか を した 。|| Kasane trusted the words on the paper. …The two of them had a dreadful quarrel in the council corridor.
-lf_yae: その {夜|よる} 、トウヤ は {鐘楼|しょうろう} の {鍵|かぎ} を {持|も}ち{出|だ}して 、{塔|とう} へ {走|はし}った 。{鐘|かね} は {鳴|な}った 。{下町|したまち} の {人|ひと} は みんな 、{高|たか}い {所|ところ} へ {逃|に}げた 。{私|わたし} も ね 。|| That night Tōya took the bell tower key and ran to the tower. The bell rang. Everyone in the lower quarter fled to high ground. Me included.
+lf_yae: その {夜|よる} 、トウヤ は {鐘楼|しょうろう} の {鍵|かぎ} を {持|も}ち{出|だ}して 、{塔|とう} へ {走|はし}った 。{鐘|かね} は {鳴|な}った 。{下町|したまち} の {多|おお}く の {人|ひと} が 、{高|たか}い {所|ところ} へ {逃|に}げた 。{私|わたし} も ね 。|| That night Tōya took the bell tower key and ran to the tower. The bell rang. Many people in the lower quarter fled to high ground. Me included.
 !gesture lf_yae lowered hold
-lf_yae[closed]: トウヤ だけ が 、{戻|もど}らなかった 。|| Only Tōya didn't come back.
+lf_yae[closed]: トウヤ は 、{戻|もど}らなかった 。|| Tōya didn't come back.
 lf_yae: カサネ は その あと 、{山|やま} の {上|うえ} の {書庫|しょこ} へ {上|のぼ}って 、{二度|にど} と {町|まち} へ は {下|お}りて こなかった 。|| Afterwards, Kasane went up to the Archive on the mountain, and never came down to the town again.
 !challenge lf.ch_minutes
 # "Come back later" is not the minutes read: the records music back, and the minutes again next time
@@ -695,8 +695,8 @@ narr: {議会堂|ぎかいどう} の ほう から 、{鈴|すず} の {音|お
 # favour!"; Tami's own celebration at one for and one against (her stronger reaction); she turns to you with an open
 # hand, and holds out the minutes that kept both sides; your companion's own answer (Nao's nod and a point up the
 # mountain, Mio's flat hand and a nod, Ren looks up the mountain, Suzu points up and checks her account book). Your
-# companion steps up beside you first, so the room has space for everyone who comes in. Later: her laugh at day
-# three.
+# companion steps up beside you first, so the room has space for everyone who comes in. Later: her laugh at the
+# council still sitting.
 !if ch5_done -> later
 !walkto comp 8 2 down
 !gesture lf_yae emphatic
@@ -752,8 +752,9 @@ lf_yae[sad]: …… もし カサネ に {会|あ}ったら 、{伝|つた}え�
 !end
 :later
 !gesture lf_yae laugh
-lf_yae: {議会|ぎかい} は まだ {続|つづ}いて います よ 。{三日目|みっかめ} です 。{誰|だれ} も {賛成|さんせい} しない 。{素晴|すば}らしい 。|| The council is still in session. Day three. Nobody agrees on anything. Marvellous.
-lf_yae: {山|やま} へ {行|い}く {前|まえ} に 、{町|まち} で {休|やす}んで いきなさい 。{宿|やど} も 、もう {満室|まんしつ} と {言|い}える よう に なった から 、{早|はや}め に ね 。|| Rest in town before you go up the mountain. The inn can say "full" now, so book early.
+lf_yae: {議会|ぎかい} は まだ {続|つづ}いて います よ 。{誰|だれ} も {賛成|さんせい} しない 。{素晴|すば}らしい 。|| The council is still in session. Nobody agrees on anything. Marvellous.
+?(ed<2) lf_yae: {山|やま} へ {行|い}く {前|まえ} に 、{町|まち} で {休|やす}んで いきなさい 。{宿|やど} も 、もう {満室|まんしつ} と {言|い}える よう に なった から 、{早|はや}め に ね 。|| Rest in town before you go up the mountain. The inn can say "full" now, so book early.
+?(ed>=2) lf_yae: {出発|しゅっぱつ} する {前|まえ} に 、{町|まち} で {休|やす}んで いきなさい 。{宿|やど} も 、もう {満室|まんしつ} と {言|い}える よう に なった から 、{早|はや}め に ね 。|| Rest in town before you set off. The inn can say "full" now, so book early.
 
 @scene lf.yae_post
 lf_yae: あら 、いらっしゃい 。{今日|きょう} の {議会|ぎかい} も 、{全員|ぜんいん} {反対|はんたい} で {終|お}わりました よ 。{何|なに} に {反対|はんたい} した か は 、{忘|わす}れた けど 。|| Oh, welcome. Today's council ended with everyone against. What we were against, I've forgotten.

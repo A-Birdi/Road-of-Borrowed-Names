@@ -14,10 +14,14 @@
 //  5. the unsettled council line for line as on the parent (80cc31b), with each companion and none, in both editions;
 //     the settled council is that, with the two lines replaced by the new one; Tami's later line ("The council's still
 //     going") the same either way; no scene ended on an error from the runner.
+//     Tami's later lines changed in the row after editorial row 4 (her revisit: Cloud CC-539; Local CL-706): the whole
+//     pin moved from 8d8f1d46b8e847af (71780f4) to FIRST_FP; the unsettled council's own pin, COUNCIL_FP, is the same
+//     on 71780f4 and after.
 import crypto from 'node:crypto';
 import { load } from '../lib/load.mjs';
 
-const FIRST_FP = '8d8f1d46b8e847af';
+const FIRST_FP = '7af75a0168bd3b9e';
+const COUNCIL_FP = '209640919ae505d6';
 
 export default async (t) => {
   globalThis.__RB_TEST__ = true;
@@ -163,9 +167,10 @@ export default async (t) => {
       const rl = await council();
       ok.push({ ed, comp, settled: fp(r.lines) === fp(want) && B.next.test((r.lines[iu] || {}).en), later: ul.sc === 'lf.yae_after' && fp(rl.lines) === fp(ul.lines) && count(rl.lines, B.kinu) === 0 });
     }
-    t.ok(fp(got) === FIRST_FP && ok.every((x) => x.settled && x.later) && !errors.length,
+    const councilFp = fp(Object.fromEntries(Object.entries(got).filter(([k]) => k.startsWith('council:'))));
+    t.ok(fp(got) === FIRST_FP && councilFp === COUNCIL_FP && ok.every((x) => x.settled && x.later) && !errors.length,
       '5 the unsettled council and Tami\'s later line, line for line as on the parent, each companion and none, both editions; settled, the same with the new line in their place; no scene error ' +
-      flat({ fp: fp(got), n: Object.keys(got).length, bad: ok.filter((x) => !x.settled || !x.later), errors }));
+      flat({ fp: fp(got), council: councilFp, n: Object.keys(got).length, bad: ok.filter((x) => !x.settled || !x.later), errors }));
   }
   console.error = cerr;
 };

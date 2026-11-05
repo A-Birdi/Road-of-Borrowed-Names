@@ -134,8 +134,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   nt('lf_toya', {
     title: { jp: 'トウヤ', en: 'Tōya' },
-    jp: 'カサネ の {弟|おとうと} 。{鐘|かね} を {鳴|な}らしに {塔|とう} へ {走|はし}った 。{下町|したまち} の {人|ひと} は {逃|に}げられた が 、トウヤ は {戻|もど}らなかった 。',
-    en: 'Kasane\'s younger brother, a messenger. He ran to the tower to ring the warning bell. The lower quarter got out in time; Tōya did not come back. His last conversation with Kasane was an argument about that message.',
+    jp: 'カサネ の {弟|おとうと} 。{鐘|かね} を {鳴|な}らしに {塔|とう} へ {走|はし}った 。{下町|したまち} の {多|おお}く の {人|ひと} は {逃|に}げられた が 、トウヤ は {戻|もど}らなかった 。',
+    en: 'Kasane\'s younger brother, a messenger. He ran to the tower to ring the warning bell. Many people in the lower quarter got out in time; Tōya did not come back. His last conversation with Kasane was an argument about that message.',
   });
   nt('lf_bell', {
     title: { jp: '{沈|しず}んだ {鐘|かね}', en: 'The drowned bell' },
