@@ -147,8 +147,18 @@ export default async (t) => {
     loadSave(saved());
     await talk(s.map, 'lf_yae');
     const d = Object.assign(st(), { tokuji: count(B.tokuji) });
-    t.ok(a.received === 1 && a.slip === 1 && b.slip === 1 && c.slip === 0 && c.main === 1 && d.told && d.main === 5 && d.tokuji === 1,
-      '5 left twice, a save and load, then done: everything once; a stale result of 0 before a success, and of 1 before a cancel, changes nothing ' + flat({ a, b, c, d }));
+    // the conduit, the same way (Agnes 6646720603: section 5 now covers all three)
+    fresh({ map: 'lf.stacks', main: 3, inv: { lf_stacks_key: 1 } });
+    let tags = 0;
+    await thing('lf.stacks', 'lf.conduit', { cancel: ['lf.ch_conduit'] }); tags += count(B.tag);
+    await thing('lf.stacks', 'lf.conduit', { cancel: ['lf.ch_conduit'] }); tags += count(B.tag);
+    const e0 = st();
+    loadSave(saved());
+    await thing('lf.stacks', 'lf.conduit'); tags += count(B.tag);
+    const e = Object.assign(st(), { tags, before: { seen: e0.seen, note: e0.note }, notes: (s.notebook || []).filter((x) => x.id === 'lf_conduits').length });
+    t.ok(a.received === 1 && a.slip === 1 && b.slip === 1 && c.slip === 0 && c.main === 1 && d.told && d.main === 5 && d.tokuji === 1 &&
+      !e.before.seen && !e.before.note && e.tags === 1 && e.seen && e.note && e.notes === 1,
+      '5 Tadashi, Tami and the conduit each left twice, a save and load, then done: everything once; a stale result of 0 before a success, and of 1 before a cancel, changes nothing ' + flat({ a, b, c, d, e }));
   }
 
   // 6. the first-time paths, line for line as on the parent
