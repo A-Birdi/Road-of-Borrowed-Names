@@ -159,7 +159,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       S('{古|ふる}い {議事録|ぎじろく} を {議会|ぎかい} の タミ に {見|み}せる 。', 'Show the old minutes to Councillor Tami in the Council Chamber.'),
       S('{水門|すいもん} の トクジ に 、{洪水|こうずい} の {夜|よる} の こと を {聞|き}く 。', 'Ask old Tokuji, by the sluice gates south of town, about the night of the flood.'),
       S('トクジ の {舟|ふね} で {鐘楼|しょうろう} へ {渡|わた}る 。', 'Take Tokuji\'s boat from the sluice landing out to the bell tower.'),
-      S('{水門|すいもん} の {札|ふだ} を {読|よ}み 、{鐘|かね} の {間|ま} の {水|みず} を {抜|ぬ}く 。', 'Inside the tower: read each gate plate carefully and drain the way down to the bell chamber.'),
+      // the gates are flags, not steps, and the derivation can't see past a shut one, so it showed only "wait" until
+      // gate C (Agnes 6548995370; Cloud CC-412): the plate of the first gate still shut, A, B, then C (each is read
+      // before its gate is worked); after C, the derivation finds the bell as before
+      Object.assign(S('{水門|すいもん} の {札|ふだ} を {読|よ}み 、{鐘|かね} の {間|ま} の {水|みず} を {抜|ぬ}く 。', 'Inside the tower: read each gate plate carefully and drain the way down to the bell chamber.'),
+        { atIf: [
+          { if: '!lf_gate_a', at: { map: 'lf.tower_upper', prop: 'lf_plate', x: 5, y: 2 } },
+          { if: '!lf_gate_b', at: { map: 'lf.tower_mid', prop: 'lf_plate', x: 9, y: 3 } },
+          { if: '!lf_gate_c', at: { map: 'lf.tower_low', prop: 'lf_plate', x: 3, y: 2 } },
+        ] }),
       S('{沈|しず}んだ {鐘|かね} を {鳴|な}らす 。', 'Ring the drowned bell.'),
       S('{灯落|ひおち} に {戻|もど}って 、{何|なに} が {変|か}わった か {見|み}る 。', 'Go back to Lanternfall and see what has changed. Councillor Tami is calling a meeting.'),
     ],
