@@ -1,11 +1,14 @@
 // Snowbell's abandoned game after the story (Agnes 6780860683 and 6781264736; Local CL-767, CL-768; Cloud CC-544;
-// Agnes 6803414018): once the inn's puzzle was solved, a visit after the story still opened with the board "just as it
-// was" and Yae's story of the unfinished game before its end. In Chromium on the built game, the inn's table scene run
-// as its prop runs it (pt.sb_inn_table), with the real dialogue, on a synthetic journey after the story:
+// Agnes 6803414018 and 6805563739): once the inn's puzzle was solved, a visit after the story still began with the
+// chapter 4 table line, "Someone seems to have left in the middle of a game of shogi. One piece has rolled off the
+// board.", before the two lines of its end. In Chromium on the built game, the inn's table scene (pt.sb_inn_table)
+// started directly through RB.script.run (not a walk up to the table), with the real dialogue, on a synthetic journey
+// after the story:
 //  1. solved: exactly the two lines of its end; no choice, no board; the same on a second visit;
-//  2. the same journey saved, the page reloaded and the journey Loaded: still exactly those two lines;
-//  3. unsolved: the table's own line, the opening, then the choice (finish the game, or leave it be); "Leave it be": the board goes on
-//     waiting, no board opened; "Finish the game": the puzzle's board opens;
+//  2. the same journey saved, the page reloaded and the journey loaded through RB.game.loadCampaign (not the title's
+//     Load menu): still exactly those two lines;
+//  3. unsolved: the table's own line, the opening, then the choice (finish the game, or leave it be); "Leave it be":
+//     the board goes on waiting, no board opened; "Finish the game": the puzzle's board opens;
 //  no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/shogi_table_post.mjs
 import { serve, launch, page } from './lib.mjs';
