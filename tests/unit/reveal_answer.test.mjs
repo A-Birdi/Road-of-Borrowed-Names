@@ -5,14 +5,19 @@
 //  1. the four mediation answers of Wing 9 (Yosaku and Otoku) and of Wing 10 (Soan and Kohaku), at every tier: the
 //     Japanese as its button shows it (the same rendering), readings over the kanji, no markup;
 //  2. outside the Hall, Hisae's questions on the Keepers' Road: the same;
-//  3. the field that gave the answer decides, never the characters in it: an English answer is text, escaped, also when
-//     it holds Japanese (the listening family's "kite · come") or {kanji|reading} or markup; a bilingual option still
+//  3. the field that gave the answer decides, never the characters in it: an English answer is shown as its button
+//     shows it (RB.learnUi.mixed, Agnes 6805563739 and Local CL-775: its plain text escaped, a {kanji|reading} group
+//     given its reading), also when it holds Japanese (the listening family's "kite · come"); a bilingual option still
 //     reveals its English; an empty English falls back to the Japanese, as before;
-//  4. literal markup in either field is shown as text, never made into markup;
-//  5. with no Japanese renderer (the fallback), the Japanese without its readings, escaped, never its markup;
+//  4. literal markup in either field is shown as text, never made into markup; in English an entity-encoded tag is
+//     decoded once, as on the button, and is still text; markup and quotes inside a reading group's base or reading
+//     are text; a malformed group is shown as written, as on the button;
+//  5. with no Japanese renderer (the fallback), the Japanese without its readings, escaped, never its markup; an English
+//     answer's reading group shows its base alone, no braces;
 //  6. no right option, or one with neither field: nothing, without throwing;
-//  7. every authored choose and listen step (all of RB.content): each Japanese answer shows no markup and is rendered as
-//     its button renders it; each English answer is exactly its escaped English;
+//  7. every authored choose and listen step (RB.content as this test loads it, the atlas left out): each Japanese
+//     answer shows no markup and is rendered as its button renders it; each English answer is exactly as its button
+//     renders it; the six English answers with readings (CC-550) among them, each with ruby and no braces;
 //  8. the written, ordered and forged answers are read as before (their source lines unchanged).
 // The reveal on screen (the real "I don't know", Continue, Step away and a second offer, the record kept, the grading)
 // is tests/e2e/reveal_answer.mjs.
@@ -32,6 +37,8 @@ export default async (t) => {
   const read = (h) => unesc(String(h).replace(/<rt>[\s\S]*?<\/rt>/g, '').replace(/<[^>]+>/g, '')).replace(/\s+/g, '');
   const MARKUP = /\{[^|{}]+\|[^{}]+\}/;
   const plain = (jp) => RB.jp.plain(jp).replace(/\s+/g, '');
+  // an English answer, as its button's English line renders it (src/ui/65_challenge.js, enRuby = RB.learnUi.mixed)
+  const enBtn = (en) => RB.learnUi.mixed(en);
   // the button for an option, as the choice pane draws it (src/ui/65_challenge.js, the choice tab)
   const button = (o) => o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<span class="enline">' : '');
   // a Japanese answer, shown as its button shows it
@@ -66,15 +73,17 @@ export default async (t) => {
     const L16 = C.challenges['ws.L16'].tiers.E[0];
     const okL = L16.options.find((o) => o.ok);
     const h = reveal(L16.options);
-    t.ok(L16.kind === 'listen' && okL.en === 'きて · come' && !okL.jp && h === esc(okL.en) && !/<ruby>/.test(h), '3 a listening answer in English that holds Japanese (ws.L16, E): its English as text, not rendered ' + JSON.stringify(h));
+    t.ok(L16.kind === 'listen' && okL.en === 'きて · come' && !okL.jp && h === enBtn(okL.en) && h === esc(okL.en) && !/<ruby>/.test(h), '3 a listening answer in English that holds Japanese (ws.L16, E): its English as its button shows it, text ' + JSON.stringify(h));
     const bi = C.challenges['sg.c_crates'].tiers.E[0];
     const okB = bi.options.find((o) => o.ok);
-    t.ok(okB.jp && okB.en === 'to the lighthouse' && reveal(bi.options) === esc('to the lighthouse'), '3 a bilingual option (sg.c_crates, E): still its English ' + JSON.stringify(reveal(bi.options)));
+    t.ok(okB.jp && okB.en === 'to the lighthouse' && reveal(bi.options) === enBtn('to the lighthouse'), '3 a bilingual option (sg.c_crates, E): still its English ' + JSON.stringify(reveal(bi.options)));
     const stretch = C.challenges['hall.w9.riddle'].stretchA[0];
     const okS = stretch.options.find((o) => o.ok);
-    t.ok(okS.en && !okS.jp && reveal(stretch.options) === esc(okS.en), '3 an English-only answer (the riddle stone\'s saying, hall.w9.riddle): its English ' + JSON.stringify(String(reveal(stretch.options)).slice(0, 60)));
+    t.ok(okS.en && !okS.jp && reveal(stretch.options) === enBtn(okS.en), '3 an English-only answer (the riddle stone\'s saying, hall.w9.riddle): its English ' + JSON.stringify(String(reveal(stretch.options)).slice(0, 60)));
     const withMarkup = [{ en: '{傘|かさ} を', ok: true }, { en: 'no', ok: false }];
-    t.eq(reveal(withMarkup), '{傘|かさ} を', '3 an English answer that holds {kanji|reading} is text: shown as written');
+    const hm = reveal(withMarkup);
+    t.ok(norm(hm) === norm(enBtn('{傘|かさ} を')) && /<ruby>傘<rt>かさ<\/rt><\/ruby>/.test(hm) && read(hm) === '傘を' && !/[{}|]/.test(read(hm)),
+      '3 an English answer that holds {kanji|reading}: shown as its button shows it, the reading over the kanji, no braces ' + JSON.stringify(hm));
     const empty = [{ en: '', jp: '{傘|かさ} を {返|かえ}す', ok: true }, { jp: 'いいえ', ok: false }];
     const he = reveal(empty);
     t.ok(norm(he) === norm(RB.ui.jhtml('{傘|かさ} を {返|かえ}す')) && /<ruby>/.test(he) && read(he) === '傘を返す', '3 an empty English falls back to the Japanese, rendered ' + JSON.stringify(String(he).slice(0, 80)));
@@ -84,7 +93,18 @@ export default async (t) => {
   {
     const en = '<b>bold</b> & "quoted"';
     const he = reveal([{ en, ok: true }]);
-    t.ok(he === esc(en) && !/<b>/.test(he) && unesc(he) === en, '4 English with markup: shown as text ' + JSON.stringify(he));
+    t.ok(he === enBtn(en) && he === esc(en) && !/<b>/.test(he) && unesc(he) === en, '4 English with markup: shown as text, as on its button ' + JSON.stringify(he));
+    const enc = '&lt;b&gt;x&lt;/b&gt; &amp; y', h2 = reveal([{ en: enc, ok: true }]);
+    t.ok(h2 === enBtn(enc) && !/<b>/.test(h2) && unesc(h2) === '<b>x</b> & y', '4 English with an entity-encoded tag: decoded once, as on its button, and still text ' + JSON.stringify(h2));
+    const enc2 = '&amp;lt;b&amp;gt;', h3 = reveal([{ en: enc2, ok: true }]);
+    t.ok(h3 === enBtn(enc2) && unesc(h3) === '&lt;b&gt;', '4 a double-encoded tag: decoded once only (it reads "&lt;b&gt;"), no second pass ' + JSON.stringify(h3));
+    const quotes = 'it\'s &#39;q&#39; &quot;d&quot;', h4 = reveal([{ en: quotes, ok: true }]);
+    t.ok(h4 === enBtn(quotes) && unesc(h4) === 'it\'s \'q\' "d"', '4 quotes and their entities: shown as the button shows them ' + JSON.stringify(h4));
+    const bad = 'x {<img src=x onerror=1>|"q"&} y', h5 = reveal([{ en: bad, ok: true }]);
+    t.ok(norm(h5) === norm(enBtn(bad)) && !/<img/i.test(h5) && /<ruby>&lt;img src=x onerror=1&gt;<rt>&quot;q&quot;&amp;<\/rt><\/ruby>/.test(h5),
+      '4 markup and quotes inside a reading group\'s base and reading: escaped there, no element made ' + JSON.stringify(h5));
+    const broken = ['{傘|', '{|かさ}', '{傘}', 'a {傘|かさ'].map((x) => { const h = reveal([{ en: x, ok: true }]); return { x, ok: h === enBtn(x) && !/<ruby>/.test(h) && unesc(h) === x }; });
+    t.ok(broken.every((r) => r.ok), '4 malformed groups ({傘|, {|かさ}, {傘}, an unclosed one): shown as written, as on the button ' + JSON.stringify(broken.filter((r) => !r.ok)));
     const jp = '<b>x</b> {傘|かさ} を';
     const hj = reveal([{ jp, ok: true }]);
     t.ok(!/<b>/.test(String(hj)) && /&lt;b&gt;/.test(String(hj)) && /<ruby>/.test(String(hj)), '4 Japanese with markup: shown as text, its readings still over the kanji ' + JSON.stringify(String(hj).slice(0, 160)));
@@ -100,6 +120,9 @@ export default async (t) => {
     t.ok(h != null && !/<ruby>/.test(h) && !/[{}|]/.test(read(h)) && read(h) === plain(ok.jp) && /^<span class="jline" lang="ja">/.test(h), '5 with no renderer: the Japanese without its readings, no markup ' + JSON.stringify(String(h).slice(0, 80)));
     const hb = (() => { RB.jp.render = null; try { return reveal([{ jp: '<i>x</i> {傘|かさ}', ok: true }]); } finally { RB.jp.render = keep; } })();
     t.ok(!/<i>/.test(String(hb)) && /&lt;i&gt;/.test(String(hb)), '5 and literal markup stays text there too ' + JSON.stringify(hb));
+    const omi = 'Yes — Ōmi says {売|う}った (sold)';
+    const [he, hbtn] = (() => { RB.jp.render = null; try { return [reveal([{ en: omi, ok: true }]), enBtn(omi)]; } finally { RB.jp.render = keep; } })();
+    t.ok(norm(he) === norm(hbtn) && !/<ruby>/.test(he) && read(he) === 'Yes—Ōmisays売った(sold)', '5 an English answer with a reading group, no renderer: its base alone, no braces, as on its button ' + JSON.stringify(he));
   }
 
   // ---- 6. nothing to show
@@ -118,6 +141,7 @@ export default async (t) => {
     };
     for (const k of Object.keys(C)) walk(C[k], 0);
     let jp = 0, ruby = 0, en = 0, enJp = 0;
+    const enRead = [];
     const bad = [];
     for (const st of steps) {
       const ok = st.options.find((o) => o.ok) || {};
@@ -125,7 +149,8 @@ export default async (t) => {
       if (ok.en) {
         en++;
         if (/[぀-ヿ一-鿿]/.test(ok.en)) enJp++;
-        if (h !== esc(ok.en)) bad.push('en ' + ok.en.slice(0, 40));
+        if (norm(h) !== norm(enBtn(ok.en))) bad.push('en ' + ok.en.slice(0, 40));
+        if (MARKUP.test(ok.en)) { enRead.push(ok.en); if (!/<ruby>/.test(h) || /[{}|]/.test(read(h))) bad.push('en ruby ' + ok.en.slice(0, 40)); }
       } else if (ok.jp) {
         jp++;
         if (MARKUP.test(ok.jp)) ruby++;
@@ -133,7 +158,10 @@ export default async (t) => {
       }
     }
     t.ok(steps.length > 2000 && jp > 1000 && ruby > 1000 && en > 1000 && enJp > 50 && !bad.length,
-      '7 every authored choose and listen step (' + steps.length + '): ' + jp + ' Japanese answers (' + ruby + ' with readings), each rendered with no markup; ' + en + ' English answers (' + enJp + ' holding Japanese), each its escaped English ' + JSON.stringify(bad.slice(0, 4)));
+      '7 every authored choose and listen step (' + steps.length + '): ' + jp + ' Japanese answers (' + ruby + ' with readings), each rendered with no markup; ' + en + ' English answers (' + enJp + ' holding Japanese), each as its button renders it ' + JSON.stringify(bad.slice(0, 4)));
+    const SIX = ['Very sure, on no grounds but hearsay (と {聞|き}く); you are the one who crossed it.', 'B: {開|あ}けて ある', 'No — ような{気|き}がして makes it a feeling that it was forbidden, not a rule',
+      'Alarm and urgency: she wants it done at once ({今|いま}すぐに)', '{入口|いりぐち}から: from (a place) · {抜|ぬ}けてるから: because', 'Yes — Ōmi says {売|う}った (sold)'];
+    t.eq(enRead, SIX, '7 the six English answers with readings (CC-550: the oxelder\'s lie, c_notice I, practice comparisons 3, 4, 6 and 7), each with ruby and no braces');
   }
 
   // ---- 8. the written, ordered and forged answers: their lines as before

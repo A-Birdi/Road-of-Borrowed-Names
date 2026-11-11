@@ -97776,11 +97776,12 @@ RB.challenge = (function () {
   }
   // What "I don't know" shows as the answer to a choose or listen step (RBN-QA-194): the right option's English if it
   // has any, else its Japanese, as before. The field that gave the answer decides how it is shown, never the characters
-  // in it: English is text, escaped whatever it holds; Japanese is shown as the choice itself shows it, with its readings
-  // over the kanji, never as its {kanji|reading} source.
+  // in it, and each is shown as the option's own button shows it: English through enRuby (RB.learnUi.mixed: its plain
+  // text escaped, any {kanji|reading} group given its reading; Agnes 6805563739, Local CL-775); Japanese through jhtml,
+  // with its readings over the kanji. Neither ever shows its {kanji|reading} source.
   function choiceAnswerHtml(options) {
     const o = (options || []).find((x) => x.ok) || {};
-    if (o.en) return esc(o.en);
+    if (o.en) return enRuby(o.en);
     return o.jp ? RB.ui.jhtml(o.jp) : '';
   }
   function choicesFor(step) {

@@ -7,9 +7,16 @@
 //     assisted and revealed, recorded once as assisted;
 //  2. outside the Hall, Hisae's questions (the Keepers' Road): the same;
 //  3. the field decides: a listening answer in English holding Japanese ("kite · come"), a bilingual option, an
-//     English-only answer: each its English as text; an empty English: the Japanese, rendered;
-//  4. literal markup, in English and in Japanese: shown as text, nothing made bold;
-//  5. with no Japanese renderer (the fallback): the Japanese without readings, no markup;
+//     English-only answer: each its English as its button's English line shows it; an empty English: the Japanese,
+//     rendered;
+//  4. literal markup, in English and in Japanese: shown as text, nothing made bold; English with a {kanji|reading}
+//     group: the reading over the kanji, no braces, as on its button (Agnes 6805563739, Local CL-775); an entity-
+//     encoded tag: decoded once and shown as text; markup inside a reading group: text, no element made; a malformed
+//     group: shown as written;
+//  4b. the six authored English answers with readings (CC-550), each opened as a task: as its button's English line
+//     shows it, with ruby, no braces;
+//  5. with no Japanese renderer (the fallback): the Japanese without readings, no markup; an English answer's reading
+//     group as its base alone, no braces;
 //  6. the written, ordered and forged answers: shown as before (the plain answer, the pieces in order, the reading);
 //  7. grading as before: right at once (not assisted), wrong then right (not first try), wrong then "I don't know"
 //     (not first try, assisted), each recorded once;
@@ -45,6 +52,8 @@ async function begin(p) {
       ch: (id, tier, i) => RB.tasks.prepare(pick(C.challenges[id].tiers[tier][i])),
       stretch: (id, i) => RB.tasks.prepare(pick(C.challenges[id].stretchA[i])),
       raw: (o) => RB.tasks.prepare(o),
+      // a step anywhere in the content, by its path (keys as given: 'xp.c_notice' is one key)
+      at: (path) => RB.tasks.prepare(pick(path.reduce((o, k) => o[k], C))),
     };
   });
   await p.waitForTimeout(200);
@@ -75,8 +84,9 @@ async function reveal(p) {
     const okOpt = (st && st.options || []).find((o) => o.ok) || {};
     const btns = [...document.querySelectorAll('.chal .mc .btn')];
     return {
-      text: a.textContent, read, ruby: a.querySelectorAll('ruby').length, tags: a.querySelectorAll('b, i').length,
+      text: a.textContent, read, ruby: a.querySelectorAll('ruby').length, tags: a.querySelectorAll('b, i, img').length,
       raw: /[{}|]/.test(read), sameBtn: btns.some((bn) => norm(bn.innerHTML) === norm(a.innerHTML)),
+      sameEn: btns.some((bn) => { const e = bn.querySelector('.enline'); return !!e && norm(e.innerHTML) === norm(a.innerHTML); }),
       plain: okOpt.jp ? RB.jp.plain(okOpt.jp).replace(/\s+/g, '') : null, en: okOpt.en || null, kind: st && st.kind,
       want: st ? (st.kind === 'write' ? RB.tasks.plain(st.answer) : st.kind === 'order' ? st.answer.map(RB.tasks.plain).join(' ') : st.kind === 'forge' ? st.answerReading : null) : null,
       hidden: document.querySelector('.chal [data-a=reveal]').hidden,
@@ -125,18 +135,37 @@ const rendered = (r) => r.ruby > 0 && !r.raw && r.read === r.plain && r.sameBtn 
   const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
   await begin(p);
   const one = async (how, check, m) => { await clean(p); await open(p, how); const r = await reveal(p); const o = await cont(p); ok(check(r) && assisted(o), m + ' ' + flat({ text: r.text.slice(0, 60), ruby: r.ruby, raw: r.raw, tags: r.tags, recs: o.recs.length })); };
-  await one(['ch', 'ws.L16', 'E', 0], (r) => r.kind === 'listen' && r.text === 'きて · come' && r.en === r.text && !r.ruby, '3 a listening answer in English holding Japanese (ws.L16): its English as text');
-  await one(['ch', 'sg.c_crates', 'E', 0], (r) => r.text === 'to the lighthouse' && !r.ruby, '3 a bilingual option (sg.c_crates): its English');
-  await one(['stretch', 'hall.w9.riddle', 0], (r) => r.en && r.text === r.en && !r.ruby, '3 an English-only answer (the riddle stone\'s saying): its English');
+  await one(['ch', 'ws.L16', 'E', 0], (r) => r.kind === 'listen' && r.text === 'きて · come' && r.en === r.text && !r.ruby && r.sameEn, '3 a listening answer in English holding Japanese (ws.L16): its English as text');
+  await one(['ch', 'sg.c_crates', 'E', 0], (r) => r.text === 'to the lighthouse' && !r.ruby && r.sameEn, '3 a bilingual option (sg.c_crates): its English, as its button\'s English line');
+  await one(['stretch', 'hall.w9.riddle', 0], (r) => r.en && r.text === r.en && !r.ruby && r.sameEn, '3 an English-only answer (the riddle stone\'s saying): its English, as its button\'s English line');
   await one(['raw', { kind: 'choose', item: 'v:qa194_empty', prompt: { en: 'Which?' }, options: [{ en: '', jp: '{傘|かさ} を {返|かえ}す', ok: true }, { jp: 'いいえ', ok: false }] }],
     (r) => r.ruby > 0 && !r.raw && r.read === '傘を返す' && r.sameBtn, '3 an empty English: the Japanese, rendered as its button');
   await one(['raw', { kind: 'choose', item: 'v:qa194_en_html', prompt: { en: 'Which?' }, options: [{ en: '<b>bold</b> & "quoted" {傘|かさ}', ok: true }, { en: 'no', ok: false }] }],
-    (r) => r.text === '<b>bold</b> & "quoted" {傘|かさ}' && !r.tags && !r.ruby, '4 English with markup and {kanji|reading}: shown as written, nothing made bold');
+    (r) => r.read === '<b>bold</b>&"quoted"傘' && !r.tags && r.ruby === 1 && !r.raw && r.sameEn, '4 English with markup and a {kanji|reading} group: the markup as text, nothing made bold; the reading over the kanji, no braces, as its button');
+  await one(['raw', { kind: 'choose', item: 'v:qa194_en_ent', prompt: { en: 'Which?' }, options: [{ en: '&lt;b&gt;x&lt;/b&gt; &amp; y', ok: true }, { en: 'no', ok: false }] }],
+    (r) => r.text === '<b>x</b> & y' && !r.tags && r.sameEn, '4 English with an entity-encoded tag: decoded once, shown as text, as its button');
+  await one(['raw', { kind: 'choose', item: 'v:qa194_en_rubyhtml', prompt: { en: 'Which?' }, options: [{ en: 'x {<img src=x>|"q"} y', ok: true }, { en: 'no', ok: false }] }],
+    (r) => !r.tags && r.ruby === 1 && r.read === 'x<imgsrc=x>y' && r.sameEn, '4 markup and quotes inside a reading group: text, no element made, as its button');
+  for (const bad of ['{傘|', '{|かさ}', '{傘}', 'a {傘|かさ'])
+    await one(['raw', { kind: 'choose', item: 'v:qa194_en_bad', prompt: { en: 'Which?' }, options: [{ en: bad, ok: true }, { en: 'no', ok: false }] }],
+      (r) => r.text === bad && !r.ruby && r.sameEn, '4 a malformed group (' + bad + '): shown as written, as its button');
+  // the six authored English answers with readings, each opened as a task
+  for (const path of [['enemies', 'gd.oxelder', 'intents', 'lie', 'truth', 'A'], ['challenges', 'xp.c_notice', 'tiers', 'I', 0], ['practiceB', 'compare', 3, 'q', 'A'], ['practiceB', 'compare', 4, 'q', 'A'], ['practiceB', 'compare', 6, 'q', 'I'], ['practiceB', 'compare', 7, 'q', 'F']])
+  {
+    // (the practice comparisons carry no item, so nothing is recorded for them: their own result is checked instead)
+    await clean(p); await open(p, ['at', path]);
+    const item = await p.evaluate(() => window.__item || null);
+    const r = await reveal(p); const o = await cont(p);
+    const done = item ? assisted(o) : o.res.ok && o.res.assisted && o.res.revealed && !o.res.cancelled && o.recs.length === 0;
+    ok(r.en && r.ruby > 0 && !r.raw && r.sameEn && done, '4b ' + path.join('.') + ': as its button\'s English line, the readings over the kanji, no braces; Continue: right, assisted' + (item ? ', recorded once' : ' (no item to record)') + ' ' + flat({ text: r.text.slice(0, 50), ruby: r.ruby, sameEn: r.sameEn, recs: o.recs.length }));
+  }
   await one(['raw', { kind: 'choose', item: 'v:qa194_jp_html', prompt: { en: 'Which?' }, options: [{ jp: '<b>x</b> {傘|かさ} を', ok: true }, { jp: 'いいえ', ok: false }] }],
     (r) => !r.tags && /<b>x<\/b>/.test(r.text) && r.ruby > 0 && r.sameBtn, '4 Japanese with markup: shown as text, readings over the kanji');
   // the renderer's fallback (RB.jp.render absent): the task and its answer both drawn without it
   await p.evaluate(() => { window.__keepR = RB.jp.render; RB.jp.render = null; });
   await one(['social', 'hall.w9.quarrel', 'calm', 'E'], (r) => !r.ruby && !r.raw && r.read === r.plain && r.sameBtn, '5 with no renderer: the Japanese without its readings, no markup, as its button');
+  await one(['raw', { kind: 'choose', item: 'v:qa194_en_fallback', prompt: { en: 'Which?' }, options: [{ en: 'Yes — Ōmi says {売|う}った (sold)', ok: true }, { en: 'no', ok: false }] }],
+    (r) => !r.ruby && !r.raw && r.read === 'Yes—Ōmisays売った(sold)' && r.sameEn, '5 with no renderer, an English answer with a reading group: its base alone, no braces, as its button');
   await p.evaluate(() => { RB.jp.render = window.__keepR; });
   await one(['raw', { kind: 'write', item: 'v:qa194_write', prompt: { en: 'Write the word for "umbrella".' }, answer: '{傘|かさ}', accept: ['かさ', '傘'], mode: 'reading' }],
     (r) => r.kind === 'write' && r.text === r.want && r.want && !r.ruby, '6 a written answer: its plain answer, as before');
