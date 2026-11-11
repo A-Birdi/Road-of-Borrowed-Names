@@ -35,7 +35,9 @@ RB.pets = (function () {
     },
     bird: {
       name: 'Sora', reading: 'ソラ', label: { en: 'Small bird', jp: '{小鳥|ことり}' },
-      about: { en: 'A small brown-and-cream road bird. Hops rather than walks, and never strays far from a good perch.' },
+      // colour-neutral: the same line for every look (Brown, Gray, Muted cream), each named under the bird's label
+      // (Agnes 6780684863 and 6803414018; Local CL-766; Cloud CC-544 E)
+      about: { en: 'A small road bird. Hops rather than walks, and never strays far from a good perch.' },
     },
     tanuki: {
       name: 'Ponta', reading: 'ポンタ', label: { en: 'Tanuki', jp: 'たぬき' },
