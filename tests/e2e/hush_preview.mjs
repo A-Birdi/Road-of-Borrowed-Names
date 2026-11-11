@@ -17,7 +17,12 @@
 //     clearing line;
 //  The Wick Moths (kr.wick_ridge), with Nao:
 //  6. a Hush on you and every moth's Hush coming: すず's Here clears once and names each moth it answers, in one
-//     phrase; chosen: the clearing line once;
+//     phrase; chosen: the clearing line once, and each moth named there has its own answered line, by name (Agnes
+//     6804136350; Local CL-772);
+//  7. mixed intents (Agnes 6804136350; Local CL-772): a Hush on you, the first moth about to Hush and the second about
+//     to Strike, with each moth targeted in turn by its slip: すず's Here is the same for both targets, breaking the
+//     Hush and answering only the Hushing moth's next one, by name, the Strike not claimed; chosen: the clearing line
+//     once, that moth's answered line, and the other moth's Strike landing as a Strike;
 //  no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/hush_preview.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -50,7 +55,8 @@ async function begin(p, o) {
       const st = init.apply(this, arguments), sd = o.seed;
       if (sd) {
         st.silenced = sd.silenced ? 1 : 0; st.hushed = Object.assign({}, sd.hushed || {});
-        st.foes.forEach((f) => { f.intent = Object.assign({ key: sd.intent, kind: sd.intent }, L.INTENTS[sd.intent]); });
+        // (each creature its own coming move when the seed lists them, else all the same one)
+        st.foes.forEach((f, i) => { const k = (sd.intents && sd.intents[i]) || sd.intent; f.intent = Object.assign({ key: k, kind: k }, L.INTENTS[k]); });
         if (st.foes.length === 1) st.intent = st.foes[0].intent;
       }
       return st;
@@ -145,10 +151,41 @@ for (const [label, s, pick, bellHere, voiceHere, clear, answered] of solo) {
   const named = (bell.here.match(/the [^,;]+?'s next one/g) || []).length;
   ok(sc.foes > 1 && /^Breaks the Hush, and answers the .+'s next one\.$/.test(bell.here) && (bell.here.match(/Breaks the Hush/g) || []).length === 1 && named === standing && !/answers the [^;]*'s Hush/.test(bell.here),
     '6 the Wick Moths, a Hush on you and every moth\'s Hush coming: the Hush broken once, each moth it answers named, in one phrase ' + flat({ here: bell.here, standing, named }));
+  const names = [...bell.here.matchAll(/the ([^,;]+?)'s next one/g)].map((m) => m[1]);
   const lines = await choose(p, bell, 'nao');
-  ok(n(lines, CLEAR) === 1, '6 chosen: the clearing line once ' + flat(lines));
+  const answeredBy = lines.filter((l) => ANSWERED.test(l)).map((l) => (l.match(/^The (.+?): You answered it/) || [])[1]);
+  ok(n(lines, CLEAR) === 1 && names.length === standing && answeredBy.length === names.length && names.every((nm) => answeredBy.filter((x) => x === nm).length === 1),
+    '6 chosen: the clearing line once, and an answered line for each moth named, by name ' + flat({ names, answeredBy, lines }));
   ok(!errors.length, '6 no page errors ' + errors.slice(0, 2).join(' | '));
   await p.context().close();
+}
+
+// ---- 7. mixed intents, each target
+{
+  const seen = [];
+  for (const t of [0, 1]) {
+    const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+    await begin(p, { enc: 'kr.wick_ridge', comp: 'nao', seed: { silenced: 1, intents: ['silence', 'strike'] } });
+    await toChoose(p, 'nao');
+    await p.click('.cb-foe .fs[data-foe="' + t + '"]');
+    await p.waitForTimeout(200);
+    await toChoose(p, 'nao');
+    const st = await p.evaluate(() => { const s = RB.combat.state(); return { cur: s.cur, n: s.foes.length, intents: s.foes.map((f) => f.intent && f.intent.key) }; });
+    const sc = await screen(p);
+    const bell = card(sc, /bell/i);
+    const m = bell.here.match(/^Breaks the Hush, and answers the (.+)'s next one\.$/);
+    const lines = await choose(p, bell, 'nao');
+    const answeredBy = lines.filter((l) => ANSWERED.test(l)).map((l) => (l.match(/^The (.+?): You answered it/) || [])[1]);
+    const strikes = lines.filter((l) => /^The .+ strikes /.test(l));
+    seen.push(bell.here);
+    ok(st.cur === t && st.n === 2 && st.intents[0] === 'silence' && st.intents[1] === 'strike' && m && !/Strike|strike/.test(bell.here) && (bell.here.match(/next one/g) || []).length === 1,
+      '7 target ' + t + ': a Hush on you, one moth to Hush and one to Strike: Here breaks the Hush and answers the Hushing moth alone ' + flat({ st, here: bell.here }));
+    ok(m && n(lines, CLEAR) === 1 && answeredBy.length === 1 && answeredBy[0] === m[1] && strikes.length === 1 && strikes[0].indexOf('The ' + m[1] + ' ') !== 0,
+      '7 target ' + t + ': chosen, the clearing line once, the Hushing moth answered by name, the other moth\'s Strike landing ' + flat({ answeredBy, strikes, lines }));
+    ok(!errors.length, '7 target ' + t + ': no page errors ' + errors.slice(0, 2).join(' | '));
+    await p.context().close();
+  }
+  ok(seen.length === 2 && seen[0] === seen[1], '7 the same Here for either target ' + flat(seen));
 }
 
 await b.close();
