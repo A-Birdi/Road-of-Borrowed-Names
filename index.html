@@ -68313,10 +68313,11 @@ RB.tasks = (function () {
       return {
         kind: 'write', item: 'k:' + ch, answer: ch, accept: [ch], mode: 'kana', script: kata ? 'kata' : 'hira',
         prompt: { en: 'Complete the word “' + e.m + '”: write the missing ' + (kata ? 'katakana' : 'hiragana') + ' (' + kanaHint(ch) + ').', jp: '' },
-        template: { before: word.slice(0, i), after: word.slice(i + 1) },
+        // a unit is the whole kana written (ティ, しゃ: two characters), so the word goes on after all of it (RBN-QA-198)
+        template: { before: word.slice(0, i), after: word.slice(i + ch.length) },
         word: { w: e.w, r: word, m: e.m },
         explain: { en: word + ' (' + RB.kana.romaji(word) + ') — ' + e.m + '.' + (hb ? ' ' + homophoneNote(ch) : '') },
-        single: true,
+        single: ch.length === 1,
       };
     }
     if (hb) {
