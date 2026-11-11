@@ -158906,7 +158906,10 @@ narr: {戻|もど}って きた {手紙|てがみ} の {山|やま} の {隣|と
 
 @scene sb.hoshino_after
 !if post -> end
-hoshino[smile]: {灯|あか}り の {下|した} で {書|か}いた {手紙|てがみ} だ 。 {頼|たの}んだ よ 。 {宛名|あてな} は …… {君|きみ} たち が {見|み}つけて くれる だろう 。 || That letter was written under the lamp. I'm counting on you. The address… I trust you'll find it.
+# His reminder about the letter only until it has been delivered and answered (lf_akari_letter): after that the living
+# world's reply plays once first (lf.lw_sb_akari_hoshino), and a repeat is his choice line alone (Agnes 6549868683;
+# Local CL-575; Cloud CC-416; Agnes 6549981602)
+?(!lf_akari_letter) hoshino[smile]: {灯|あか}り の {下|した} で {書|か}いた {手紙|てがみ} だ 。 {頼|たの}んだ よ 。 {宛名|あてな} は …… {君|きみ} たち が {見|み}つけて くれる だろう 。 || That letter was written under the lamp. I'm counting on you. The address… I trust you'll find it.
 ?(sb_hoshino_goes) hoshino: {春|はる} に なったら 、 わたし も {下|くだ}る 。 {灯|あか}り は カンタ と フキ さん に {任|まか}せた 。 {約束|やくそく} を {人|ひと} に {預|あず}ける の は 、 {思|おも}った より {怖|こわ}く なかった よ 。 || Come spring, I'll go down too. I've left the lamp to Kanta and Fuki. Handing a promise to someone else wasn't as frightening as I thought.
 ?(sb_hoshino_both) hoshino: {毎晩|まいばん} {灯|あか}り を ともして 、 {春|はる} に なったら {会|あ}い に {行|い}く 。 {欲張|よくば}り な {年寄|としよ}り だ ね 。 || I'll light the lamp every night, and when spring comes I'll go and see her. A greedy old man, aren't I.
 ?(sb_hoshino_stays) hoshino: {毎晩|まいばん} 、 {上|のぼ}って いる よ 。 {誰|だれ} も {見|み}て いない {夜|よる} も ね 。 {約束|やくそく} は 、 {見|み}られる ため に ある ん じゃ ない から 。 || I climb up every night. Even on nights no one's watching. A promise isn't there to be seen.
