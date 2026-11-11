@@ -26,9 +26,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   RB.script.add(`
 @scene pt.sb_inn_table
+# a game already finished, on an eligible visit, goes straight to its end, without the opening that says it was left
+# unfinished (Agnes 6780860683 and 6781264736; Local CL-767, CL-768; Cloud CC-544); every other visit is as before
+!if ed>=2&postgame&pt_tsume_sb_inn -> done
 !call sb.inn_table
 !if !ed>=2|!postgame -> end
-!if pt_tsume_sb_inn -> done
 narr: {盤|ばん} の {上|うえ} は 、 {前|まえ} に {見|み}た とき の まま だ 。 {転|ころ}がって いる {駒|こま} は 、 {金|きん} 。 || The board is just as it was when you saw it before. The piece that rolled off is a gold.
 yae: その {一局|いっきょく} ？ {冬|ふゆ} に {泊|と}まった お{客|きゃく}さん が 、 {雪|ゆき} の {止|や}んだ {朝|あさ} に {急|いそ}いで {出|で}て {行|い}った の 。 「 {次|つぎ} の {一手|いって} で {詰|つ}む 」 って {言|い}い{残|のこ}して ね 。 || That game? A guest who stayed the winter left in a hurry the morning the snow stopped. "It's mate on the next move," they said on the way out.
 yae: {誰|だれ} も {片付|かたづ}けられない の よ 。 {続|つづ}き が {気|き}に なって 。 || Nobody can bring themselves to clear it away. We all want to know how it ends.

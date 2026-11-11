@@ -61,17 +61,40 @@ export default async (t) => {
     t.ok(!sp.inCheck(g, 0) && !sp.inCheck(g, 1), 'a quiet position: nobody in check before the move');
     fresh({ edition: 1, map: 'sb.inn' });
     const before = await run('sb.inn_table');
+    const opening = lines[0] && lines[0].jp;
     t.eq(await run('pt.sb_inn_table'), before, 'in a six-chapter journey the table reads exactly as before');
     fresh({ story: true, map: 'sb.inn' });
     t.eq(await run('pt.sb_inn_table'), before, 'and during the story');
+    // the puzzle solved elsewhere (a practice board, or a record carried into this journey) changes neither
+    fresh({ edition: 1, map: 'sb.inn', flags: { pt_tsume_sb_inn: true } });
+    t.eq(await run('pt.sb_inn_table'), before, 'a six-chapter journey with the puzzle\'s flag set: exactly as before');
+    fresh({ story: true, map: 'sb.inn', flags: { pt_tsume_sb_inn: true } });
+    t.eq(await run('pt.sb_inn_table'), before, 'during the story with the flag set: exactly as before');
     fresh({ map: 'sb.inn' });
     await run('pt.sb_inn_table', { choice: 0 });
     t.ok(has(/mate on the next move/) && hooks[0] === 'pt_tsume sb_inn', 'after the story: a guest\'s last words, and the board to finish');
+    t.ok(opening && lines[0] && lines[0].jp === opening, 'after the story, unsolved: the opening first, as before');
     await run('pt.sb_inn_table', { choice: 1 });
     t.ok(!hooks.length && has(/waiting for someone/), 'or left be');
-    fresh({ map: 'sb.inn', flags: { pt_tsume_sb_inn: true } });
+    // solved, on an eligible visit: exactly the two lines of its end, nothing of the opening, no choice, no board
+    const DONE_EN = ['The gold you dropped stands in front of the king. The game is over.', 'So it really was mate in one. That guest wasn\'t lying. …I think I\'ll leave clearing it away a little longer.'];
+    const solved = fresh({ map: 'sb.inn', flags: { pt_tsume_sb_inn: true } });
+    let asks = 0;
+    const choose = RB.ui.dialogue.choose;
+    RB.ui.dialogue.choose = async () => { asks++; return 0; };
     await run('pt.sb_inn_table');
-    t.ok(!hooks.length && has(/wasn't lying/), 'once finished, the gold stands before the king');
+    t.eq(lines.map((l) => l.en), DONE_EN, 'once finished: exactly the two lines of its end, the gold before the king and Yae');
+    t.ok(!hooks.length && !asks && !lines.some((l) => /left in the middle of a game|rolled off the board/.test(l.en)), 'no stale opening, no choice, no board');
+    await run('pt.sb_inn_table');
+    t.eq(lines.map((l) => l.en), DONE_EN, 'and the same again on a second visit');
+    // the journey written and read back as a Load reads it (its text through RB.save.migrate): still the two lines
+    const back = RB.save.migrate(JSON.parse(JSON.stringify(solved)));
+    RB.game.G.s = back; RB.game.s = back;
+    await run('pt.sb_inn_table');
+    t.eq(lines.map((l) => l.en), DONE_EN, 'and after the journey is written and read back as a Load reads it');
+    await run('pt.sb_inn_table');
+    t.eq(lines.map((l) => l.en), DONE_EN, 'and again after that');
+    RB.ui.dialogue.choose = choose;
   }
 
   // ---- the hill bench ----------------------------------------------------------------------------------------------------
