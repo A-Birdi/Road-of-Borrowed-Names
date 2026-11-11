@@ -8,7 +8,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
   'use strict';
-  C.items.hall_ledger = { name: { en: 'The Hall\'s key ledger', jp: '{館|やかた} の {鍵帳|かぎちょう}' }, desc: { en: 'An old book of the lantern-keepers\' hall above the Keepers\' Road: the hundred tales it keeps, and the seal of whoever may open its door. Tsuru found it at the bottom of her teacher\'s box.' }, key: true };
+  C.items.hall_ledger = { name: { en: 'The Hall\'s key ledger', jp: '{館|やかた} の {鍵帳|かぎちょう}' }, desc: 'An old book of the lantern-keepers\' hall above the Keepers\' Road: the hundred tales it keeps, and the seal of whoever may open its door. Tsuru found it at the bottom of her teacher\'s box.', key: true };
 
   RB.script.add(`
 @scene hall.tsuru_ledger

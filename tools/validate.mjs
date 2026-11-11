@@ -5,6 +5,7 @@ import path from 'node:path';
 import { load, root } from '../tests/lib/load.mjs';
 import { expansionRules } from './expansion_rules.mjs';
 import { encounterRules } from './encounter_rules.mjs';
+import { itemDescProblem } from './item_rules.mjs';
 import { suzuInventory, checkDialect } from './suzu_inventory.mjs';
 
 const args = process.argv.slice(2);
@@ -335,7 +336,7 @@ for (const id in C.quests) (C.quests[id].stages || []).forEach((s, i) => {
     if (a.prop && !(m.props || []).some((p) => p.x === a.x && p.y === a.y)) E(w + ' at: no prop at ' + a.x + ',' + a.y + ' on ' + a.map);
   }
 });
-for (const id in C.items) { const it = C.items[id]; jen(it.name, 'item ' + id); if (!it.name || !it.name.en) E('item ' + id + ' missing name'); }
+for (const id in C.items) { const it = C.items[id]; jen(it.name, 'item ' + id); if (!it.name || !it.name.en) E('item ' + id + ' missing name'); const dp = itemDescProblem(it); if (dp) E('item ' + id + ': ' + dp); }
 for (const id in C.notes) { const n = C.notes[id]; jen(n.title, 'note ' + id); jcheck(n.jp, 'note ' + id); }
 for (const id in C.places) { const p = C.places[id]; jen(p.name, 'place ' + id); const m = compiled[p.map]; if (!C.maps[p.map]) E('place ' + id + ': unknown map ' + p.map); else if (m && m.block[p.y * m.w + p.x]) E('place ' + id + ': arrival tile blocked'); }
 for (const id in C.words) { jcheck(C.words[id].jp, 'word ' + id); jcheck(C.words[id].jpK, 'word ' + id); }

@@ -91211,13 +91211,21 @@ RB.ui.menu = (function () {
     c.imageSmoothingEnabled = false;
     c.drawImage(src, -x0, -y0);
   }
+  // an item's description as English text: a string, or (for a malformed entry) the English of an { en } object, else
+  // nothing; it never throws, so one bad entry cannot stop the Satchel (QA-211: the Hall's key ledger). tools/validate.mjs
+  // holds every registered item to a plain string (tools/item_rules.mjs).
+  function itemDesc(d) {
+    const v = d && d.desc;
+    if (typeof v === 'string') return v;
+    return v && typeof v === 'object' && typeof v.en === 'string' ? v.en : '';
+  }
   function itemDetail(x, s) {
     const d = x.d;
     const eqd = !!d.slot && EQ().isWorn(s, x.id);
     const z = d.slot && EQ().slot(d.slot);
     let h = '<div class="idetail' + (eqd ? ' worn' : '') + '"><div class="ibig">' + RB.itemArt.html(x.id, 4) + '</div><h3>' + j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</h3>' +
       (eqd ? '<p class="worn-line">' + wornChip() + '</p>' : '') +
-      '<p>' + esc(RB.script.enVars(d.desc || '')) + '</p>' +
+      '<p>' + esc(RB.script.enVars(itemDesc(d))) + '</p>' +
       (d.key ? '<p class="note-slip">' + I('key') + ' Important: it can’t be sold, used up or lost.</p>' : '');
     if (z) {
       const cur = s.equip[d.slot] && !eqd && RB.content.items[s.equip[d.slot]];
@@ -91782,7 +91790,7 @@ RB.ui.menu = (function () {
   // restyled or turned
   function refresh() { if (!layer || !fr) return; remember(); render(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, refresh, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, returnLine, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, addSection, itemDesc, restyle, refresh, isBook: () => true, isOpen: () => !!layer, chartCoast: { COAST, ISLES, coastAt, coastPath }, returnLine, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits
@@ -190636,7 +190644,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
   'use strict';
-  C.items.hall_ledger = { name: { en: 'The Hall\'s key ledger', jp: '{館|やかた} の {鍵帳|かぎちょう}' }, desc: { en: 'An old book of the lantern-keepers\' hall above the Keepers\' Road: the hundred tales it keeps, and the seal of whoever may open its door. Tsuru found it at the bottom of her teacher\'s box.' }, key: true };
+  C.items.hall_ledger = { name: { en: 'The Hall\'s key ledger', jp: '{館|やかた} の {鍵帳|かぎちょう}' }, desc: 'An old book of the lantern-keepers\' hall above the Keepers\' Road: the hundred tales it keeps, and the seal of whoever may open its door. Tsuru found it at the bottom of her teacher\'s box.', key: true };
 
   RB.script.add(`
 @scene hall.tsuru_ledger
