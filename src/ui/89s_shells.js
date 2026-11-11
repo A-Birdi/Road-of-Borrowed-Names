@@ -3,8 +3,9 @@
  *   1. Each conch's line (Japanese with its readings; the English a tap away; "Listen" when the device has a Japanese
  *      voice of its own, never needed: every line can always be read).
  *   2. For each line: who said it, and to whom (the people who were there, and the one who was not).
- *   3. "Put it together": each line placed wrongly says what it would mean said that way (often funny) and which clue
- *      points elsewhere; change it and try again. Done when every line has its speaker and listener.
+ *   3. "Put it together": each line placed wrongly says which clue points elsewhere, and, placed exactly the wrong way
+ *      its comic describes, what it would mean said that way (often funny: RB.shells.comicFits); change it and try
+ *      again. Done when every line has its speaker and listener.
  * In the test driver's automated runs every line is placed right at once (no screen). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
@@ -37,7 +38,7 @@ RB.ui.shells = (function () {
         const t = H.textAt(f, prof()), p = placed[f.id] || {}, j = judged && judged.frags[f.id];
         const chips = (role) => '<div class="sh-chips" role="radiogroup" aria-label="' + (role === 'who' ? 'Who said it?' : 'To whom?') + '">' +
           d.people.map((pp) => '<button class="sh-chip" role="radio" data-f="' + esc(f.id) + '" data-r="' + role + '" data-p="' + esc(pp.id) + '" aria-checked="' + (p[role] === pp.id) + '">' + J(pp.jp) + ' <span class="sh-en">' + esc(pp.en) + '</span></button>').join('') + '</div>';
-        const fb = j && j.done && !j.ok ? '<p class="sh-why" role="note">' + (f.comic ? esc(f.comic.en) + ' ' : '') + RB.learnUi.mixed(f.cue.en) + '</p>' : (j && j.ok ? '<p class="sh-ok">✓ ' + esc(person(f.who).en) + ' → ' + esc(person(f.to).en) + '</p>' : '');
+        const fb = j && j.done && !j.ok ? '<p class="sh-why" role="note">' + (H.comicFits(d, f, p) ? esc(f.comic.en) + ' ' : '') + RB.learnUi.mixed(f.cue.en) + '</p>' : (j && j.ok ? '<p class="sh-ok">✓ ' + esc(person(f.who).en) + ' → ' + esc(person(f.to).en) + '</p>' : '');
         return '<section class="sh-frag" data-f="' + esc(f.id) + '"><header class="sh-head"><span class="sh-shell">' + J('{法螺貝|ほらがい}') + ' ' + esc(String(f.shell).toUpperCase()) + '</span></header>' +
           '<p class="sh-text">' + J(t.jp) + '</p>' + (shownEn[f.id] ? '<p class="sh-entext">' + esc(t.en) + '</p>' : '') +
           '<p class="sh-acts"><button class="pbtn small sh-showen" data-f="' + esc(f.id) + '" aria-pressed="' + !!shownEn[f.id] + '">In English</button>' +

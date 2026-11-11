@@ -59446,7 +59446,7 @@ RB.relay = (function () {
  * listener. The rules only; the sheet is src/ui/89s_shells.js, the content RB.content.shells (src/content/ko/).
  *
  *   C.shells[id] = { id, title:{jp,en}, question:{jp,en}, people: [{ id, jp, en }],
- *     frags: [{ id, shell, text: { F:{jp,en}, E:…, I:…, A:… }, who, to, cue:{en}, comic:{en} }],
+ *     frags: [{ id, shell, text: { F:{jp,en}, E:…, I:…, A:… }, who, to, cue:{en}, comic:{en}, comicIf: { who | to } }],
  *     read: challenge id (a reference question about the same lines, at the profile's tier: the language evidence) }
  *
  * What is kept (no new save field): s.flags['shells_' + id] once every line is placed. */
@@ -59477,10 +59477,34 @@ RB.shells = (function () {
     }
     return { ok: all, frags: out };
   }
+  // A line's comic says what one particular wrong placing would mean, so it is shown for that placing only: its
+  // comicIf names the one field the comic changes (who or to) and the person it puts there, and the other field must be
+  // the line's own (Agnes 6550310863 and 6550523690; Local CL-576; Cloud CC-417). Any other wrong placing gets the clue
+  // alone. A comicIf that is missing or malformed never shows the comic (the clue alone, never a joke about a placing
+  // that was not made); tools/validate.mjs reports it by the same rule.
+  const FIELDS = ['who', 'to'];
+  function comicProblem(d, fr) {
+    if (!fr || !fr.comic) return null;
+    const c = fr.comicIf;
+    if (c == null) return 'has a comic but no comicIf';
+    if (typeof c !== 'object' || Array.isArray(c)) return 'comicIf must be an object naming who or to';
+    const keys = Object.keys(c);
+    if (keys.length !== 1) return 'comicIf must name exactly one field (who or to), not ' + (keys.length ? keys.join(', ') : 'none');
+    const k = keys[0];
+    if (!FIELDS.includes(k)) return 'comicIf names an unknown field ' + k;
+    if (!((d && d.people) || []).some((pp) => pp.id === c[k])) return 'comicIf names someone not among the people: ' + c[k];
+    if (c[k] === fr[k]) return 'comicIf names the right ' + k + ' (' + c[k] + '), not a wrong one';
+    return null;
+  }
+  function comicFits(d, fr, p) {
+    if (!fr || !fr.comic || !p || comicProblem(d, fr)) return false;
+    const k = Object.keys(fr.comicIf)[0], other = k === 'who' ? 'to' : 'who';
+    return p[k] === fr.comicIf[k] && p[other] === fr[other];
+  }
   function keep(s, id, r) { if (r.ok) s.flags['shells_' + id] = true; }
   // the automated runs: every line placed right
   function autoPlaced(d) { return Object.fromEntries(d.frags.map((fr) => [fr.id, { who: fr.who, to: fr.to }])); }
-  return { def, textAt, judge, keep, autoPlaced };
+  return { def, textAt, judge, keep, autoPlaced, comicProblem, comicFits };
 })();
 
 
@@ -136274,8 +136298,9 @@ RB.ui.relay = (function () {
  *   1. Each conch's line (Japanese with its readings; the English a tap away; "Listen" when the device has a Japanese
  *      voice of its own, never needed: every line can always be read).
  *   2. For each line: who said it, and to whom (the people who were there, and the one who was not).
- *   3. "Put it together": each line placed wrongly says what it would mean said that way (often funny) and which clue
- *      points elsewhere; change it and try again. Done when every line has its speaker and listener.
+ *   3. "Put it together": each line placed wrongly says which clue points elsewhere, and, placed exactly the wrong way
+ *      its comic describes, what it would mean said that way (often funny: RB.shells.comicFits); change it and try
+ *      again. Done when every line has its speaker and listener.
  * In the test driver's automated runs every line is placed right at once (no screen). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.ui = RB.ui || {};
@@ -136308,7 +136333,7 @@ RB.ui.shells = (function () {
         const t = H.textAt(f, prof()), p = placed[f.id] || {}, j = judged && judged.frags[f.id];
         const chips = (role) => '<div class="sh-chips" role="radiogroup" aria-label="' + (role === 'who' ? 'Who said it?' : 'To whom?') + '">' +
           d.people.map((pp) => '<button class="sh-chip" role="radio" data-f="' + esc(f.id) + '" data-r="' + role + '" data-p="' + esc(pp.id) + '" aria-checked="' + (p[role] === pp.id) + '">' + J(pp.jp) + ' <span class="sh-en">' + esc(pp.en) + '</span></button>').join('') + '</div>';
-        const fb = j && j.done && !j.ok ? '<p class="sh-why" role="note">' + (f.comic ? esc(f.comic.en) + ' ' : '') + RB.learnUi.mixed(f.cue.en) + '</p>' : (j && j.ok ? '<p class="sh-ok">✓ ' + esc(person(f.who).en) + ' → ' + esc(person(f.to).en) + '</p>' : '');
+        const fb = j && j.done && !j.ok ? '<p class="sh-why" role="note">' + (H.comicFits(d, f, p) ? esc(f.comic.en) + ' ' : '') + RB.learnUi.mixed(f.cue.en) + '</p>' : (j && j.ok ? '<p class="sh-ok">✓ ' + esc(person(f.who).en) + ' → ' + esc(person(f.to).en) + '</p>' : '');
         return '<section class="sh-frag" data-f="' + esc(f.id) + '"><header class="sh-head"><span class="sh-shell">' + J('{法螺貝|ほらがい}') + ' ' + esc(String(f.shell).toUpperCase()) + '</span></header>' +
           '<p class="sh-text">' + J(t.jp) + '</p>' + (shownEn[f.id] ? '<p class="sh-entext">' + esc(t.en) + '</p>' : '') +
           '<p class="sh-acts"><button class="pbtn small sh-showen" data-f="' + esc(f.id) + '" aria-pressed="' + !!shownEn[f.id] + '">In English</button>' +
@@ -203630,27 +203655,33 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'a1', shell: 'a', who: 'yoshi', to: 'chitose',
         text: { F: T('へんじ は 、 まだ こない の ？', 'Still no reply?'), E: T('{返事|へんじ} は 、 まだ {来|こ}ない の ？', 'Still no reply?'), A: T('{返事|へんじ} は 、 まだ {来|こ}ない の ？ もう {何年|なんねん} に なる の よ 。', 'Still no reply? How many years has it been?') },
         cue: no('Someone close asks after "the reply" in plain speech (の？). The one waiting for a reply is Chitose, and only family talks to her this plainly.'),
-        comic: no('From the old boatman to Chitose, it would sound as if he had been waiting for a love letter from her.') },
+        comic: no('From the old boatman to Chitose, it would sound as if he had been waiting for a love letter from her.'),
+        comicIf: { who: 'sendo' } },
       { id: 'a2', shell: 'a', who: 'chitose', to: 'yoshi',
         text: { F: T('こない わ 。 ふね が でなく なって から 、 いっつう も 。', 'No. Not one, since the boats stopped.'), E: T('{来|こ}ない わ 。 {船|ふね} が {出|で}なく なって から 、 {一通|いっつう} も 。', 'No. Not one, since the boats stopped.') },
         cue: no('It answers the question about the reply, in the same plain words: Chitose, to her sister.'),
-        comic: no('From the boatman, it would be a ferryman grumbling about the post he no longer carries.') },
+        comic: no('From the boatman, it would be a ferryman grumbling about the post he no longer carries.'),
+        comicIf: { who: 'sendo' } },
       { id: 'b1', shell: 'b', who: 'sendo', to: 'chitose',
         text: { F: T('おじょうさん 、 この たね を どこ に うえる ん だい 。', 'Young lady, where are you planting this seed?'), E: T('お{嬢|じょう}さん 、 この {種|たね} を どこ に {植|う}える ん だい 。', 'Young lady, where are you planting this seed?') },
         cue: no('お嬢さん is how an older man speaks to a young woman he hardly knows, and だい ends an old man\'s question. The one with the seed is Chitose.'),
-        comic: no('If Yoshi called her own sister お嬢さん, Chitose would think she had hit her head.') },
+        comic: no('If Yoshi called her own sister お嬢さん, Chitose would think she had hit her head.'),
+        comicIf: { who: 'yoshi' } },
       { id: 'b2', shell: 'b', who: 'chitose', to: 'sendo',
         text: { F: T('うみ の まんなか の いわ に 。 とどかない ことば が 、 やすめる ところ が ほしい の 。', 'On the rock in the middle of the sea. I want somewhere for words that don\'t arrive to rest.'), E: T('{海|うみ} の {真|ま}ん{中|なか} の {岩|いわ} に 。 {届|とど}かない {言葉|ことば} が 、 {休|やす}める {所|ところ} が ほしい の 。', 'On the rock in the middle of the sea. I want somewhere for words that don\'t arrive to rest.') },
         cue: no('It answers "where are you planting it": Chitose, to the boatman who will row her there.'),
-        comic: no('Said to her sister, it would be a very poetic way to ask for a lift.') },
+        comic: no('Said to her sister, it would be a very poetic way to ask for a lift.'),
+        comicIf: { to: 'yoshi' } },
       { id: 'c1', shell: 'c', who: 'yoshi', to: 'sendo',
         text: { F: T('ねえさん が うえた の は 、 じぶん の てがみ の ため じゃ ない 。 みんな の ため よ 。', 'My sister didn\'t plant it for her own letters. She planted it for everyone\'s.'), E: T('{姉|ねえ}さん が {植|う}えた の は 、 {自分|じぶん} の {手紙|てがみ} の ため じゃ ない 。 みんな の ため よ 。', 'My sister didn\'t plant it for her own letters. She planted it for everyone\'s.') },
         cue: no('姉さん: the speaker is the younger sister, explaining Chitose to someone else: the boatman, who asked where, and now hears why.'),
-        comic: no('Said by Chitose about herself, it would be the least modest thing ever said on this island.') },
+        comic: no('Said by Chitose about herself, it would be the least modest thing ever said on this island.'),
+        comicIf: { who: 'chitose' } },
       { id: 'c2', shell: 'c', who: 'chitose', to: 'ano',
         text: { F: T('…… へんじ が こなくて も 、 かいた ことば は ほんとう だった 。', '…Even with no reply, what I wrote was true.'), E: T('…… {返事|へんじ} が {来|こ}なくて も 、 {書|か}いた {言葉|ことば} は {本当|ほんとう} だった 。', '…Even with no reply, what I wrote was true.') },
         cue: no('Spoken about her own letters, and to no one in the room: to the one who never answered, far away.'),
-        comic: no('Said to the boatman, it would be a strange thing to tell a man you have only asked for a ride.') },
+        comic: no('Said to the boatman, it would be a strange thing to tell a man you have only asked for a ride.'),
+        comicIf: { to: 'sendo' } },
     ],
   };
 

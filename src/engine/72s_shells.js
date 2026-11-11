@@ -7,7 +7,7 @@
  * listener. The rules only; the sheet is src/ui/89s_shells.js, the content RB.content.shells (src/content/ko/).
  *
  *   C.shells[id] = { id, title:{jp,en}, question:{jp,en}, people: [{ id, jp, en }],
- *     frags: [{ id, shell, text: { F:{jp,en}, E:…, I:…, A:… }, who, to, cue:{en}, comic:{en} }],
+ *     frags: [{ id, shell, text: { F:{jp,en}, E:…, I:…, A:… }, who, to, cue:{en}, comic:{en}, comicIf: { who | to } }],
  *     read: challenge id (a reference question about the same lines, at the profile's tier: the language evidence) }
  *
  * What is kept (no new save field): s.flags['shells_' + id] once every line is placed. */
@@ -38,8 +38,32 @@ RB.shells = (function () {
     }
     return { ok: all, frags: out };
   }
+  // A line's comic says what one particular wrong placing would mean, so it is shown for that placing only: its
+  // comicIf names the one field the comic changes (who or to) and the person it puts there, and the other field must be
+  // the line's own (Agnes 6550310863 and 6550523690; Local CL-576; Cloud CC-417). Any other wrong placing gets the clue
+  // alone. A comicIf that is missing or malformed never shows the comic (the clue alone, never a joke about a placing
+  // that was not made); tools/validate.mjs reports it by the same rule.
+  const FIELDS = ['who', 'to'];
+  function comicProblem(d, fr) {
+    if (!fr || !fr.comic) return null;
+    const c = fr.comicIf;
+    if (c == null) return 'has a comic but no comicIf';
+    if (typeof c !== 'object' || Array.isArray(c)) return 'comicIf must be an object naming who or to';
+    const keys = Object.keys(c);
+    if (keys.length !== 1) return 'comicIf must name exactly one field (who or to), not ' + (keys.length ? keys.join(', ') : 'none');
+    const k = keys[0];
+    if (!FIELDS.includes(k)) return 'comicIf names an unknown field ' + k;
+    if (!((d && d.people) || []).some((pp) => pp.id === c[k])) return 'comicIf names someone not among the people: ' + c[k];
+    if (c[k] === fr[k]) return 'comicIf names the right ' + k + ' (' + c[k] + '), not a wrong one';
+    return null;
+  }
+  function comicFits(d, fr, p) {
+    if (!fr || !fr.comic || !p || comicProblem(d, fr)) return false;
+    const k = Object.keys(fr.comicIf)[0], other = k === 'who' ? 'to' : 'who';
+    return p[k] === fr.comicIf[k] && p[other] === fr[other];
+  }
   function keep(s, id, r) { if (r.ok) s.flags['shells_' + id] = true; }
   // the automated runs: every line placed right
   function autoPlaced(d) { return Object.fromEntries(d.frags.map((fr) => [fr.id, { who: fr.who, to: fr.to }])); }
-  return { def, textAt, judge, keep, autoPlaced };
+  return { def, textAt, judge, keep, autoPlaced, comicProblem, comicFits };
 })();

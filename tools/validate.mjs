@@ -484,7 +484,7 @@ for (const id in C.tellings || {}) {
   }
 }
 // Shell messages (P11, src/engine/72s_shells.js): every line and name, a speaker and a listener among the people, a
-// clue for a wrong placing, and a reading task that exists
+// clue for a wrong placing, a comic only with the wrong placing it describes (comicIf), and a reading task that exists
 for (const id in C.shells || {}) {
   const d = C.shells[id], w = 'shells ' + id;
   jen(d.title, w + ' title'); jen(d.question, w + ' question');
@@ -495,6 +495,8 @@ for (const id in C.shells || {}) {
     tiered(f.text, w + ' ' + f.id + ' text', jen);
     if (!pids.has(f.who) || !pids.has(f.to)) E(w + ': line ' + f.id + ' names someone not among the people');
     if (!f.cue || !f.cue.en) E(w + ': line ' + f.id + ' has no clue for a wrong placing');
+    // a comic says what one wrong placing would mean: comicIf names that placing (src/engine/72s_shells.js comicProblem)
+    const cp = RB.shells.comicProblem(d, f); if (cp) E(w + ': line ' + f.id + ' ' + cp);
   }
 }
 // A Quiet Cast: every situation's four task variants are ordinary steps (docs/practice/fishing.md)
