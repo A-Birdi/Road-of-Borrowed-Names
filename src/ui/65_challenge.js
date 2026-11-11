@@ -113,6 +113,15 @@ RB.challenge = (function () {
     try { turn = RB.learn.clock(); } catch (e) { turn = 0; }
     return RB.util.rng(RB.util.hashStr(key + '#' + turn));
   }
+  // What "I don't know" shows as the answer to a choose or listen step (RBN-QA-194): the right option's English if it
+  // has any, else its Japanese, as before. The field that gave the answer decides how it is shown, never the characters
+  // in it: English is text, escaped whatever it holds; Japanese is shown as the choice itself shows it, with its readings
+  // over the kanji, never as its {kanji|reading} source.
+  function choiceAnswerHtml(options) {
+    const o = (options || []).find((x) => x.ok) || {};
+    if (o.en) return esc(o.en);
+    return o.jp ? RB.ui.jhtml(o.jp) : '';
+  }
   function choicesFor(step) {
     // a forged sentence's first rung: its complete sentences, with their readings (L7)
     if (step.kind === 'forge') return orderRng('forge|' + (step.id || '') + '|' + step.sentences.map((o) => o.jp).join('|')).shuffle(step.sentences).map((o) => Object.assign({}, o));
@@ -634,13 +643,13 @@ RB.challenge = (function () {
         res.assisted = true;
         res.revealed = true;
         if (PH) PH.assist('reveal');
-        let ans = '';
+        let ans = '', ansHtml = null;
         if (step.kind === 'write') ans = plain(step.answer);
-        if (step.kind === 'choose' || step.kind === 'listen') ans = (step.options.find((o) => o.ok) || {}).en || (step.options.find((o) => o.ok) || {}).jp || '';
+        if (step.kind === 'choose' || step.kind === 'listen') ansHtml = choiceAnswerHtml(step.options);
         if (step.kind === 'order') ans = step.answer.map(plain).join(' ');
         if (step.kind === 'forge') ans = step.answerReading;
         revealBtn.hidden = true;
-        fb('reveal', 'The answer', '<p><span class="jp big" lang="ja">' + esc(ans) + '</span></p>' + explainHtml() + '<p class="muted small">This is recorded as assisted. Enter it to continue, or just continue.</p>');
+        fb('reveal', 'The answer', '<p><span class="jp big" lang="ja">' + (ansHtml != null ? ansHtml : esc(ans)) + '</span></p>' + explainHtml() + '<p class="muted small">This is recorded as assisted. Enter it to continue, or just continue.</p>');
         const w = wrap.querySelector('.fbwrap');
         const btn = continueBtn();
         btn.onclick = () => { res.ok = true; res.mode = res.mode || mode; finish(false); };
@@ -842,5 +851,5 @@ RB.challenge = (function () {
 
   // the question being asked (read-only; for tests that answer through the real interface)
   const current = () => (active ? active.step : null);
-  return { run, runStep, practice, active: isActive, current, noteHelp, teachCard, check, orderOk, choicesFor };
+  return { run, runStep, practice, active: isActive, current, noteHelp, teachCard, check, orderOk, choicesFor, choiceAnswerHtml };
 })();
