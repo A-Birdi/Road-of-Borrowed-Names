@@ -122,6 +122,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(20, 1, 5, 6, '+');                       // the way up, north-east
       k.rect(22, 0, 2, 1, '+');
       k.scatter('r', 4, 971, [4, 5, 22, 14], '+');
+      // the passage narrows at the middle roots (Agnes 6550658712 and 6550969828; Local CL-577, CL-578; Cloud CC-418,
+      // CC-419): the arch at (11,15) is two wide and one high, but the passage is three rows high, so rows 16-17 let you
+      // past it before the first leaf (B) had its word back, and on to the second (C). Walled after the scatter, so the
+      // scattered rocks stay where they were.
+      k.rect(11, 16, 2, 2, '#');
     }),
     props: [
       ...current(26, 20, 'ko_root_b', 'ko.root_leaf_b'),

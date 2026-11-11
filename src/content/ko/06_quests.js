@@ -35,7 +35,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       Object.assign(T('{大|おお}きな {木|き} は 、 {根|ね} から {葉|は} を {落|お}として いる 。 {根|ね} の {洞|ほら} へ {下|お}りよう 。', 'The great tree is shedding from its roots. Go down into the Root Hollows.'), { atIf: [
         { if: '!ko_root_a', at: { map: 'ko.roots1', prop: 'ko_current', x: 4, y: 10 } },
       ] }),
-      T('{潮|しお} が {満|み}ちて 、 {仲間|なかま} と {離|はな}れて しまった 。 {回|まわ}り{道|みち} を {探|さが}そう 。', 'The tide has come in between you and your companion. Find a way round.'),
+      // where it leads, in the Long Way Round (Agnes 6550658712 and 6550969828; Local CL-577, CL-578; Cloud CC-418,
+      // CC-419): the guide marks a target on the same map where it is, so before the first leaf (B) it would point west
+      // at the second (C), behind the closed roots. Until B or C, B's leaf; after B, derived as before (C's leaf); a
+      // journey that already reached C is never sent back to B. A save made west of the roots before this change, with
+      // neither done, is pointed at B across them: a known limit (its way out is C, then round by the north).
+      Object.assign(T('{潮|しお} が {満|み}ちて 、 {仲間|なかま} と {離|はな}れて しまった 。 {回|まわ}り{道|みち} を {探|さが}そう 。', 'The tide has come in between you and your companion. Find a way round.'), { atIf: [
+        { if: '!ko_root_b&!ko_root_c', at: { map: 'ko.roots3', prop: 'ko_current', x: 26, y: 20 } },
+      ] }),
       T('{根|ね} の {奥|おく} で 、 {届|とど}かぬ {言葉|ことば} の {庭守|にわもり} に {会|あ}おう 。', 'Meet the Gardener of Unsent Words, deep in the roots.'),
       T('{木|き} は {静|しず}か に なった 。 オトハ に {知|し}らせよう 。', 'The tree is quiet again. Tell Otoha.'),
     ],
