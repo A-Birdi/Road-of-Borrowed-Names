@@ -135,6 +135,9 @@ RB.questGuide = (function () {
     return IX;
   }
   function reset() { IX = null; cache.clear(); passCache.clear(); }
+  // a journey begun, loaded or left: nothing asked of the last one is kept (Local CL-711: the cache was cleared only
+  // past 40 answers, and nothing called reset)
+  if (RB.bus) RB.bus.on('campaign:changing', () => reset());
 
   // ---- conditions, three-valued -------------------------------------------------------
   const termCache = new Map();
@@ -768,11 +771,13 @@ RB.questGuide = (function () {
 
   // ---- cached live analysis ----------------------------------------------------------------------
   const cache = new Map();
+  // the flags that are set, the scenes seen and the words known, by name: counted, a swap read as the same journey (gate B's seal clears
+  // lf_east_open and sets lf_gate_b, and plate B stayed marked; CC-541 finding 1; Local CL-708, CL-711; Agnes
+  // 6650249477). Names never hold a space (a script line splits on spaces).
+  function named(o) { let out = ''; for (const k in o) if (o[k]) out += k + ' '; return out; }
   function signature(s) {
-    let f = 0;
-    for (const k in s.flags) if (s.flags[k]) f++;
-    return (s.map || '') + '|' + JSON.stringify(s.quests) + '|' + f + '|' + JSON.stringify(s.inv) + '|' + JSON.stringify(s.vars) + '|' + (s.comp || '') + (s.provisional || '') +
-      '|' + Object.keys(s.seen).length + '|' + (s.words || []).length + '|' + s.chapter + '|' + (s.learn && s.learn.profile) +
+    return (s.map || '') + '|' + JSON.stringify(s.quests) + '|' + named(s.flags) + '|' + JSON.stringify(s.inv) + '|' + JSON.stringify(s.vars) + '|' + (s.comp || '') + (s.provisional || '') +
+      '|' + named(s.seen) + '|' + (s.words || []).join(' ') + '|' + s.chapter + '|' + (s.learn && s.learn.profile) +
       // a chosen hypothesis or a requested hint can disclose a concealed step's place
       (s.discovery ? '|' + JSON.stringify(s.discovery.cases) + JSON.stringify(s.discovery.hints) : '');
   }

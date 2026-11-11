@@ -45,8 +45,9 @@ export default async (t) => {
     RB.game.s = s;
     return s;
   }
-  // the guide caches by a signature that counts flags rather than naming them (56_questguide.js), so two synthetic
-  // states with the same count on the same map would share an answer: each question here starts from a clear cache
+  // each question here starts from a clear cache (when this test was written, the guide's signature counted flags, so
+  // two synthetic states with the same count on the same map shared an answer; it names them now:
+  // tests/unit/guide_cache.test.mjs)
   const ask = (s) => {
     G.reset();
     const before = flat([s.flags, s.quests, s.inv, s.map, s.x, s.y]);
