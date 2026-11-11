@@ -5,12 +5,16 @@
 //  1. the wide (two-page) layout: the ledger shows its English description; then the Letter of introduction and the
 //     Cloud cape are each selectable at once, with their own details;
 //  2. every registered item carried at once, each selected in turn: its own name in the details, no error;
-//  3. malformed entries added for the test (an { en } object, { en: number }, a Japanese-only object, null, a number):
-//     none throws; the { en } one shows its English, the others nothing; after each, the Letter, then the cape, are
-//     still selectable without a reload; a plain description's $name is filled in, and literal markup in it is shown as
-//     text, not made into markup;
+//  3. malformed entries added for the test (an { en } object, { en: number }, a Japanese-only object, null, a number,
+//     an array, an empty and a blank string, and an { en } object with $name and markup in it): none throws; an { en }
+//     one shows its English (with $name filled in and its markup shown as text), the others nothing; after each, the
+//     Letter, then the cape, are still selectable without a reload; a plain description's $name is filled in, and
+//     literal markup in it is shown as text, not made into markup;
 //  4. the narrow (one-page) layout: every carried item's row opens with its own details, and closes again;
 //  5. the ledger after a save, a load, and a browser reload with a load: its description again, no error;
+//  6. the Hall's access and the inventory (Agnes 6804287390): the ledger as Tsuru gives it (the item and its flag), the
+//     Satchel opened and the ledger, the Letter and the cape selected: the inventory and the flags as they were; then
+//     the Shuttered Hall's door, faced and used: it opens, as the ledger lets it;
 //  no page errors throughout.
 // Usage: node tools/build.mjs && node tests/e2e/satchel_desc.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -82,7 +86,8 @@ const nameOf = (p, id) => p.evaluate((id) => RB.content.items[id].name.en, id);
   ok(ids.length > 100 && !wrong.length, '2 wide: every registered item carried (' + ids.length + '), each selected shows its own details ' + wrong.slice(0, 5).join('; '));
   ok(!errors.length, '2 no page errors ' + errors.join('; '));
 
-  const BAD = [['qa_probe_en', { en: 'Probe English.' }, 'Probe English.'], ['qa_probe_ennum', { en: 5 }, ''], ['qa_probe_jp', { jp: '{古|ふる}い {本|ほん}' }, ''], ['qa_probe_null', null, ''], ['qa_probe_num', 5, '']];
+  const BAD = [['qa_probe_en', { en: 'Probe English.' }, 'Probe English.'], ['qa_probe_ennum', { en: 5 }, ''], ['qa_probe_jp', { jp: '{古|ふる}い {本|ほん}' }, ''], ['qa_probe_null', null, ''], ['qa_probe_num', 5, ''],
+    ['qa_probe_arr', ['An old book.'], ''], ['qa_probe_empty', '', ''], ['qa_probe_blank', '   \n ', ''], ['qa_probe_envars', { en: 'Kept for $name. <b>not bold</b>' }, 'Kept for Haru. <b>not bold</b>']];
   await p.evaluate((BAD) => {
     const s = RB.game.s;
     for (const [id, desc] of BAD) { RB.content.items[id] = { name: { en: 'Probe ' + id, jp: 'テスト' }, desc }; s.inv[id] = 1; }
@@ -93,8 +98,8 @@ const nameOf = (p, id) => p.evaluate((id) => RB.content.items[id].name.en, id);
   for (const [id, , want] of BAD) {
     const r = await pick(p, id, true);
     const a = await pick(p, 'rw_letter', true), c = await pick(p, 'gd_cr_keepsake', true);
-    ok(r.box && r.name === 'Probe ' + id && (r.text || '').split(' | ')[0] === want && a.box && a.name === 'Letter of introduction' && c.box && c.name === 'Cloud cape',
-      '3 ' + id + ': ' + (want ? 'its English' : 'no description') + ', no error; then the Letter and the cape still answer ' + flat({ text: (r.text || '').split(' | ')[0], a: a.name, c: c.name }));
+    ok(r.box && r.name === 'Probe ' + id && (r.text || '').split(' | ')[0].trim() === want && !r.bold && a.box && a.name === 'Letter of introduction' && c.box && c.name === 'Cloud cape',
+      '3 ' + id + ': ' + (want ? 'its English' : 'no description') + ', nothing made bold, no error; then the Letter and the cape still answer ' + flat({ text: (r.text || '').split(' | ')[0], a: a.name, c: c.name }));
   }
   const pl = await pick(p, 'qa_probe_plain', true);
   ok(pl.box && (pl.text || '').split(' | ')[0] === 'Kept for Haru. <b>not bold</b>' && !pl.bold, '3 a plain description: $name filled in, literal markup shown as text ' + flat({ text: pl.text, bold: pl.bold }));
@@ -146,6 +151,48 @@ const nameOf = (p, id) => p.evaluate((id) => RB.content.items[id].name.en, id);
   const d = await pick(p, 'rw_letter', true);
   ok(c.box && LEDGER.test(c.text) && d.box && d.name === 'Letter of introduction', '5 after a browser reload and a load: the ledger, then the Letter ' + flat({ c: c.name, d: d.name }));
   ok(!errors.length, '5 no page errors ' + errors.join('; '));
+  await p.context().close();
+}
+
+// ---- 6. the Hall's access and the inventory, after the Satchel ------------------------------------------------------------
+{
+  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await p.evaluate(() => {
+    const s = RB.game.debugStart('kr.hall', 14, 11, { edition: RB.edition.forNew(), comp: 'ren', profile: 'E', dir: 'up' });
+    s.player.name = 'Haru';
+    for (const f of ['departed', 'ch1_done', 'ch2_done', 'mb1_done', 'mb2_done', 'ch3_done', 'ch4_done', 'kr_done', 'ch5_done', 'ko_done', 'cr_done', 'yn_done', 'ch6_done', 'postgame', 'hall_ledger']) s.flags[f] = true;
+    for (const id of ['hall_ledger', 'rw_letter', 'gd_cr_keepsake']) s.inv[id] = 1;
+    RB.game.settings.reducedMotion = true; RB.game.settings.textSpeed = 'instant'; RB.game.applySettings();
+  });
+  await p.waitForTimeout(300);
+  const notNow = () => p.evaluate(() => { const bt = [...document.querySelectorAll('.confirm-scrim button')].find((x) => /Not now/.test(x.textContent)); if (bt) bt.click(); return !!bt; });
+  const drain = async () => {
+    for (let i = 0; i < 300; i++) {
+      await notNow();
+      const st = await p.evaluate(() => ({ run: RB.script.isRunning(), dlg: RB.ui.dialogue.isOpen(), ch: !!document.querySelector('.choices:not(.hidden) button.choice'), conf: !!document.querySelector('.confirm-scrim') }));
+      if (!st.run && !st.dlg && !st.conf) break;
+      if (st.ch) await p.click('.choices:not(.hidden) button.choice >> nth=0');
+      else if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));
+      await p.waitForTimeout(50);
+    }
+    await p.waitForTimeout(200);
+  };
+  await drain();
+  const snap = () => p.evaluate(() => JSON.stringify({ inv: RB.game.s.inv, flags: RB.game.s.flags }));
+  const before = await snap();
+  await openSatchel(p);
+  const L = await pick(p, 'hall_ledger', true), A = await pick(p, 'rw_letter', true), K = await pick(p, 'gd_cr_keepsake', true);
+  await p.evaluate(() => RB.ui.menu.close());
+  await p.waitForTimeout(200);
+  const after = await snap();
+  ok(L.box && LEDGER.test(L.text) && A.name === 'Letter of introduction' && K.name === 'Cloud cape' && after === before, '6 the ledger, the Letter and the cape selected: the inventory and the flags exactly as they were ' + flat({ same: after === before }));
+  const door0 = await p.evaluate(() => ({ open: !!RB.game.s.flags.lw_kr_hall_open, map: RB.game.s.map }));
+  await p.evaluate(() => { RB.world.W.player.dir = 'up'; RB.world.interact(); });
+  await p.waitForTimeout(200);
+  await drain();
+  const door1 = await p.evaluate(() => ({ open: !!RB.game.s.flags.lw_kr_hall_open, map: RB.game.s.map, inv: RB.game.s.inv.hall_ledger }));
+  ok(!door0.open && door1.open && door1.inv === 1, '6 then the Shuttered Hall\'s door, faced and used: it opens, as the ledger lets it; the ledger still carried ' + flat({ door0, door1 }));
+  ok(!errors.length, '6 no page errors ' + errors.join('; '));
   await p.context().close();
 }
 

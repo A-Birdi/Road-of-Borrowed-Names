@@ -3,8 +3,10 @@
 // selecting the key threw, so the Satchel's details stayed blank and its buttons stopped answering. Now:
 //  1. the ledger's description is a plain English string (no Japanese, no voice key);
 //  2. the content rule tools/validate.mjs applies to every registered item (tools/item_rules.mjs): a description, when
-//     present, is a plain string with something in it; null, a number, an object (an { en } one too), an array, an
-//     empty or blank string are each an error, and the message names the item; no description at all is fine;
+//     present, is a plain string with something in it; undefined written out, null, a number, an object (an { en } one
+//     too), an array, an empty or blank string are each an error, and the message names the item; a description left
+//     out is fine (Agnes 6804287390: undefined written out is not left out); the items are loaded as validate.mjs loads
+//     them (with the atlas: Local CL-773);
 //  3. the Satchel's guard (RB.ui.menu.itemDesc): a string as it is; a malformed { en: string } gives that English; any
 //     other shape gives nothing; it never throws, and what it gives goes through enVars ($name filled in) without
 //     throwing either. Keepsakes keep their own { en } descriptions and renderer, untouched.
@@ -15,7 +17,7 @@ import { itemDescProblem } from '../../tools/item_rules.mjs';
 
 export default async (t) => {
   globalThis.__RB_TEST__ = true;
-  const RB = load(['core', 'lang', 'recog', 'audio', 'engine', 'learn', 'ui', 'content'], { __RB_TEST__: true });
+  const RB = load(['core', 'lang', 'recog', 'audio', 'engine', 'learn', 'ui', 'content', 'atlas'], { __RB_TEST__: true });
   const C = RB.content;
   const s = RB.state.newCampaign({ edition: 2 }); s.player.name = 'Haru'; s.player.nameJp = 'ハル';
   RB.game.G.s = s; RB.game.s = s;
@@ -26,18 +28,18 @@ export default async (t) => {
   t.ok(L.name && L.name.en === 'The Hall\'s key ledger' && L.name.jp === '{館|やかた} の {鍵帳|かぎちょう}', '1 its name as before');
 
   // ---- 2. the content rule
-  const bad = [['null', null], ['a number', 5], ['an { en } object', { en: 'An old book.' }], ['an { en: number }', { en: 5 }], ['a Japanese-only object', { jp: '{古|ふる}い {本|ほん}' }], ['an array', ['An old book.']], ['an empty string', ''], ['a blank string', '   \n ']];
+  const bad = [['undefined written out', undefined], ['null', null], ['a number', 5], ['an { en } object', { en: 'An old book.' }], ['an { en: number }', { en: 5 }], ['a Japanese-only object', { jp: '{古|ふる}い {本|ほん}' }], ['an array', ['An old book.']], ['an empty string', ''], ['a blank string', '   \n ']];
   for (const [what, desc] of bad) {
     const p = itemDescProblem({ name: { en: 'Probe' }, desc });
     t.ok(typeof p === 'string' && p.length > 0, '2 ' + what + ' is an error');
   }
-  t.eq([itemDescProblem({ name: { en: 'Probe' } }), itemDescProblem({ name: { en: 'Probe' }, desc: undefined }), itemDescProblem({ name: { en: 'Probe' }, desc: 'A plain line, for $name.' })], [null, null, null], '2 no description, or a plain string, passes');
+  t.eq([itemDescProblem({ name: { en: 'Probe' } }), itemDescProblem({ name: { en: 'Probe' }, desc: 'A plain line, for $name.' })], [null, null], '2 a description left out, or a plain string, passes');
   // the rule as tools/validate.mjs words it, naming the item
   const msgs = [];
   const E = (m) => msgs.push(m);
   const check = (id, it) => { const dp = itemDescProblem(it); if (dp) E('item ' + id + ': ' + dp); };
-  check('probe_obj', { desc: { en: 'x' } }); check('probe_ok', { desc: 'x' });
-  t.ok(msgs.length === 1 && msgs[0].indexOf('item probe_obj: ') === 0, '2 the message names the item');
+  check('probe_obj', { desc: { en: 'x' } }); check('probe_ok', { desc: 'x' }); check('probe_undef', { desc: undefined }); check('probe_left_out', {});
+  t.eq(msgs, ['item probe_obj: desc must be a plain string, not object', 'item probe_undef: desc must be a plain string, not undefined'], '2 the messages name the item: an { en } object, and undefined written out; the plain one and the one left out pass');
   const fails = Object.keys(C.items).filter((id) => itemDescProblem(C.items[id]));
   t.eq(fails, [], '2 every registered item passes (' + Object.keys(C.items).length + ' items)');
   const src = (await import('node:fs')).readFileSync(new URL('../../tools/validate.mjs', import.meta.url), 'utf8');
