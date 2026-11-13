@@ -10,7 +10,8 @@
 //     hearth asks nothing more;
 //  3. the journey changed while the hearth's choice is open, and while the question is open: the choice is taken down;
 //     the question, answered after the change, records nothing in the journey loaded meanwhile; no reflection, no
-//     autosave, no variable written there; and the challenge runner on its own, the same way;
+//     autosave, no variable written there; and the challenge runner on its own, the same way, its result not usable
+//     (the learning record kept out of the journey loaded is tests/e2e/challenge_owner.mjs);
 //  4. Wing 2: put off in the flow (the notice), then answered at the scroll with the right choice (the reflection); the
 //     hearth on another journey of it, answered there with the right choice (the reflection, one autosave);
 //  5. Suzu speaking Kansai-ben: the hearth, "Come back later" (no reflection), then the answer revealed: her reflection
@@ -162,8 +163,8 @@ await p.click('.title [data-a=continue]');
 await p.waitForFunction(() => RB.game.s && RB.game.s.player && RB.game.s.player.name === 'Tale One', null, { timeout: 15000 });
 await wait(800);
 await p.evaluate(() => window.__settings());
-got = await p.evaluate(() => ({ name: RB.game.s.player.name, flag: RB.game.s.flags['chal:hall.w1.story_q'], pending: window.__pending('w1'), banked: !!RB.hall.peek(RB.game.s, 'w1').trials.t1 }));
-ok(got.flag === true && !got.pending && got.banked, '2 the title\'s Continue loads the latest record: the answer kept ' + JSON.stringify(got));
+got = await p.evaluate((line) => ({ name: RB.game.s.player.name, flag: RB.game.s.flags['chal:hall.w1.story_q'], pending: window.__pending('w1'), banked: !!RB.hall.peek(RB.game.s, 'w1').trials.t1, history: (RB.game.s.backlog || []).some((e) => e.en === line) }), renLine);
+ok(got.flag === true && !got.pending && got.banked && got.history, '2 the title\'s Continue loads the latest record: the answer kept, and Ren\'s reflection in the History ' + JSON.stringify(got));
 await p.evaluate(() => { window.__saves = []; window.__run('hall.hearth_w1'); });
 st = await play({ confirm: 'notnow' });
 ok(st.done === true && !(await p.evaluate(() => window.__chal.length)), '2 after the load, the hearth asks nothing more');
@@ -211,9 +212,10 @@ got = await p.evaluate(async () => {
   await new Promise((r) => setTimeout(r, 400));
   const c = [...document.querySelectorAll('.chal .fbwrap button')].find((x) => /Continue/.test(x.textContent)); if (c) c.click();
   await new Promise((r) => setTimeout(r, 800));
-  return { open, answered: !!(window.__q && window.__q.ok), name: RB.game.s.player.name, flag: !!RB.game.s.flags['chal:hall.w1.story_q'] };
+  return { open, result: window.__q, name: RB.game.s.player.name, flag: !!RB.game.s.flags['chal:hall.w1.story_q'] };
 });
-ok(got.open && got.answered && got.name === 'Tale Two' && !got.flag, '3 the challenge runner: a question answered after another journey is loaded records nothing in that journey ' + JSON.stringify(got));
+ok(got.open && got.result && got.result.ok === false && got.result.stale === true && got.name === 'Tale Two' && !got.flag,
+  '3 the challenge runner: a question answered after another journey is loaded records nothing in that journey, and its result is not usable (ok false, stale; CC-571) ' + JSON.stringify(got));
 
 // ---- 4. Wing 2 (the kit's scene), Nao ------------------------------------------------------------------------------
 await p.evaluate(async () => { await window.__mk(4, 'w2', { comp: 'nao', name: 'Tale Four' }); });

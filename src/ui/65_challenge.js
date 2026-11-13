@@ -185,6 +185,9 @@ RB.challenge = (function () {
     if (step && step.kind === 'forge' && RB.forge) step = RB.forge.prepare(step);
     if (RB.test && RB.test.auto) return Promise.resolve(RB.test.solveStep(step, 'step ' + (step.title || step.item)));
     return new Promise((resolve) => {
+      // the journey this sheet was opened in: if another is loaded while it is up, finishing it writes nothing and its
+      // result is not usable (CC-571; Agnes 6850477309, Local CL-796)
+      const owner = RB.game.s;
       const st = RB.game.settings;
       let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : step.kind === 'order' ? 'order' : step.kind === 'forge' ? (opts.mode || RB.forge.startRung(st, RB.game.s && RB.game.s.learn.profile)) : 'choice';
       if (step.kind === 'write' && !MODES.some((m) => m.id === mode)) mode = 'hand';
@@ -702,6 +705,8 @@ RB.challenge = (function () {
       function finish(cancelled) {
         if (over) return;
         over = true;
+        const stale = RB.game.s !== owner;
+        if (stale) cancelled = true;
         if (PH) PH.finish(cancelled, res);
         if (vv) { vv.removeEventListener('resize', syncVV); vv.removeEventListener('scroll', syncVV); }
         if (kbRO) kbRO.disconnect();
@@ -714,6 +719,7 @@ RB.challenge = (function () {
         res.help = active ? active.help || null : null; // L2: the strongest help this question used (callers may read it)
         active = null;
         res.cancelled = cancelled;
+        if (stale) { res.ok = false; res.stale = true; resolve(res); return; }
         if (!cancelled && step.item && !opts.noRecord) {
           RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag, kind: step.kind,
             // the evidence log (L1): what was actually shown and supplied (src/learn/40_evidence.js)
@@ -792,25 +798,31 @@ RB.challenge = (function () {
       RB.game.s.flags['chal:' + id] = true;
       return { ok: true };
     }
-    // the answer belongs to the journey it was asked in: if another journey is loaded while the sheet is open, its
-    // record of an answer (chal:<id>) is not written into that one (CC-569; Agnes 6848355918)
+    // everything the challenge does belongs to the journey it was asked in: if another journey is loaded while it is
+    // open, it stops there (no later step, no _forge, no chal:<id>) and its result is not usable (CC-569, CC-571;
+    // Agnes 6848355918, 6850477309; Local CL-796)
     const asked = RB.game.s;
+    const STALE = { ok: false, cancelled: true, stale: true };
+    const gone = () => RB.game.s !== asked;
     RB.game.pushMode('challenge');
     try {
       if (ch.intro) await RB.ui.card(ch.intro.jp || '', ch.intro.en || '');
+      if (gone()) return STALE;
       const steps = given || RB.tasks.stepsOf(ch);
       const results = [];
       for (let i = 0; i < steps.length; i++) {
         const step = steps[i];
         step.title = step.title || (ch.title ? ch.title.en + (steps.length > 1 ? ' (' + (i + 1) + '/' + steps.length + ')' : '') : '');
         if (step.teach && !RB.learn.introduced([].concat(step.item)[0])) await teachCard(step.teach);
+        if (gone()) return STALE;
         const r = await runStep(step, { ctxTag: tag, cancelLabel: 'Come back later' });
+        if (r.stale || gone()) return STALE;
         if (r.cancelled) return { ok: false, cancelled: true };
         // a forged sentence changes the scene by what was said (L7): its reply's result, for the scene to read
-        if (step.kind === 'forge' && RB.forge) { const o = RB.forge.outcome(step, r); RB.game.s.vars._forge = o && o.result ? o.result : 0; }
+        if (step.kind === 'forge' && RB.forge) { const o = RB.forge.outcome(step, r); asked.vars._forge = o && o.result ? o.result : 0; }
         results.push(r);
       }
-      if (asked && RB.game.s === asked) asked.flags['chal:' + id] = true;
+      if (asked) asked.flags['chal:' + id] = true;
       return { ok: true, results };
     } finally {
       RB.game.popMode('challenge');
