@@ -92,7 +92,7 @@ hall_gensuke: ヨサク さん の {所|ところ} の {布|ぬの} は 、 {都
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {戸|と} の {隙間|すきま} から {雪|ゆき} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || Snow blows in through the door, and the pictures slip out of order.']),
     task: 'hall.w9.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w9.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {知|し}らない {家|いえ} の {戸|と} を {叩|たた}く {時|とき} は 、 ああ いう {頼|たの}み{方|かた} に なる 。 {配達|はいたつ} でも そう だ 。 || Knocking on a stranger\'s door, that\'s how you ask. Same on a delivery.',
       '?(comp=mio) comp: {一|ひと}つ だけ の お{願|ねが}い 。 {守|まも}る の は 、 {簡単|かんたん} な よう で {難|むずか}しい の よ ね 。 || Just one request. Keeping it sounds easy, and isn\'t.',
       '?(comp=ren) comp: {覗|のぞ}かないで ください 。 …… {灯|ひ} も {同|おな}じ です 。 {覗|のぞ}き{込|こ}む と 、 {消|き}えて しまう {物|もの} が あります 。 || "Please don\'t look." …Lamps are the same. Some lights go out if you peer into them.',

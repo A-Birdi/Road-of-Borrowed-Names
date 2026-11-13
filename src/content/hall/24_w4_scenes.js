@@ -80,7 +80,7 @@ hall_gosaku: {来年|らいねん} の {梅雨|つゆ} も 、 {傘|かさ} を 
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {雨漏|あまも}り の {雫|しずく} が {絵巻|えまき} に {落|お}ちて 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A drip from the leaking roof falls on the scroll, and the pictures slip out of order.']),
     task: 'hall.w4.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w4.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {返|かえ}す つもり で も 、 {返|かえ}せない こと は ある 。 {配達|はいたつ} も 、 {同|おな}じ だ 。 || You can mean to bring something back and still not manage it. Deliveries are the same.',
       '?(comp=mio) comp: {傘|かさ} に は 、 ゴサク さん の {事情|じじょう} が {分|わ}からなかった の ね 。 …… {待|ま}つ {方|ほう} も 、 つらい わ 。 || The umbrella couldn\'t know what had happened to Gosaku. …Waiting is hard too.',
       '?(comp=ren) comp: {約束|やくそく} は 、 {守|まも}る つもり が あって も 、 {川|かわ} に {流|なが}される こと が あります 。 || Even a promise you mean to keep can be washed away by a river.',

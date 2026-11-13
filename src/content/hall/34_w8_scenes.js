@@ -82,7 +82,7 @@ hall_omatsu: {帳面|ちょうめん} に は 、 {見|み}た こと と {聞|�
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {戸|と} の {隙間|すきま} から {雪|ゆき} {風|かぜ} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A snowy draught blows in through the door, and the pictures slip out of order.']),
     task: 'hall.w8.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w8.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {一人|ひとり} の {話|はなし} だけ を {信|しん}じる と 、 {間違|まちが}える 。 {三人|さんにん} {分|ぶん} を {並|なら}べて 、 {初|はじ}めて {見|み}える 。 || Believe one account alone and you go wrong. Lay all three side by side, and it shows.',
       '?(comp=mio) comp: {影|かげ} を {見|み}た {人|ひと} 、 {足音|あしおと} を {聞|き}いた {人|ひと} 、 {狐|きつね} だ と {思|おも}った {人|ひと} 。 {同|おな}じ {夜|よる} でも 、 {見|み}えて いた もの が {違|ちが}う のね 。 || One saw a shadow, one heard footsteps, one thought it was a fox. The same night, and each saw something different.',
       '?(comp=ren) comp: {狐|きつね} の {話|はなし} が 、 {一番|いちばん} {大|おお}きな {声|こえ} でした ね 。 {一番|いちばん} {確|たし}か で は ない のに 。 || The fox story was the loudest, wasn\'t it. Though it was the least certain.',

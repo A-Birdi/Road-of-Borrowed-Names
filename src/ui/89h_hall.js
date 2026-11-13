@@ -10,7 +10,8 @@
  *   - when the page is hidden in a wing, outside a battle, the place is kept as a suspend point (the same record).
  *   - the scenes' hooks: hall_card <w> (_res 1 go in, 2 go back to the held floor, 0 not now), hall_enter <w> [held],
  *     hall_trial <w> <t> (_res 1 when that finished the wing), hall_challenge <id> (Grow: a level up, as stretch),
- *     hall_return (the return lantern at a floor's entry), hall_station <id>. */
+ *     hall_return (the return lantern at a floor's entry), hall_station <id>, hall_tale <w> (the hearth's offer of the
+ *     question after the tale: _res 1 answer it now, 0 not now). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.ui.hall = (function () {
@@ -187,8 +188,34 @@ RB.ui.hall = (function () {
     const msgs = ['A lantern is lit: ' + (tr.title ? tr.title.en : 'a trial') + '.'];
     if (r.reprieve) msgs.push('A reprieve earned: you may leave with this floor kept exactly as it is.');
     if (r.floorCleared && !r.wingDone) msgs.push('The floor is cleared: its trials count now, and stay counted.');
+    // the question after the tale put off ("Come back later"): where it can be answered, read after the trial counts
+    if (t === H().taleTrial(w) && H().talePending(s, w)) {
+      const pk = H().peek(s, w);
+      msgs.push(pk && pk.trials[t] ? 'You can answer the question later at this wing\'s hearth.'
+        : 'You can answer the question later at this scroll. Once this floor is counted, you can also answer it at this wing\'s hearth.');
+    }
     RB.ui.notice(msgs.join(' '), 'info');
     if (r.wingDone && RB.stampBook) RB.stampBook.settle(s);
+  };
+  // the wing's hearth (CC-569; Agnes 6848355918): the question after the tale, still open once its floor is counted.
+  // Two choices, both reversible; Back/Escape is the last one, "Not now". "Answer it now" (_res 1) has the scroll's own
+  // scene ask it, routed by _tale (the wing's number; cleared there before the question). The choice belongs to the
+  // journey it was asked in: if the journey changes meanwhile it is taken down unanswered, and nothing is written.
+  RB.hooks.hall_tale = async (a) => {
+    const s = S(), w = a && a[0], t = H().taleTrial(w), r = H().peek(s, w);
+    s.vars._res = 0;
+    if (!t || !H().talePending(s, w) || !(r && r.trials[t])) return;
+    let k = 1;
+    if (!(RB.test && RB.test.auto)) {
+      let drop = null, off = null;
+      if (RB.bus) off = RB.bus.on('campaign:changing', () => { if (off) off(); if (drop) drop(); });
+      try {
+        k = await RB.ui.confirm('The question after the tale is still open.', ['Answer it now', 'Not now'], { own: (d) => { drop = d; } });
+      } finally { if (off) off(); }
+    }
+    if (RB.game.s !== s || k !== 0) return;
+    s.vars._tale = +w.slice(1);
+    s.vars._res = 1;
   };
   RB.hooks.hall_challenge = async (a) => {
     const s = S(), id = a && a[0], ch = RB.content.challenges[id], v = H().visitOf(s);

@@ -65,6 +65,7 @@ narr: {辻|つじ} の {灯籠|とうろう} が 、 {四|よっ}つ の {道|�
 
 # ---- t1: the story room ------------------------------------------------------------------------------------------
 @scene hall.w1.t1
+${C.hallKit.taleRoute('w1')}
 !if hall.w1.t1 -> done
 narr: {小屋|こや} の {奥|おく} に 、 {絵巻|えまき} が {掛|か}けて ある 。 {四|よっ}つ の {絵|え} に 、 {一|ひと}つ の {話|はなし} 。 || At the back of the shelter hangs a picture scroll: one tale in four pictures.
 ?(${EF}) narr: 「 むかし 、 やま の つじ に 、 とうろう が ひとつ たって いた 。 」 || "Long ago, a single lamp stood at a crossroads in the hills."
@@ -79,20 +80,18 @@ narr: {風|かぜ} が {吹|ふ}いて 、 {絵|え} の {順番|じゅんばん
 !hook hall_challenge hall.w1.story
 !if var._res=0 -> later
 narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.
-!challenge hall.w1.story_q
+${C.hallKit.taleAsk('w1')}
 ?(comp=nao) comp: {二度|にど} {聞|き}け 、 か 。 {届|とど}け{先|さき} を {確|たし}かめる の と {同|おな}じ だ 。 || Ask twice. Same as checking an address before you deliver.
 ?(comp=mio) comp: {聞|き}き{返|かえ}す の って 、 {恥|は}ずかしい と {思|おも}って た 。 …… {違|ちが}う のね 。 || I used to think asking again was embarrassing. …It isn't, is it.
 ?(comp=ren) comp: {師匠|ししょう} も 、 {同|おな}じ こと を {言|い}って いました 。 「 {聞|き}こえない 、 と {言|い}える {人|ひと} は 、 {迷|まよ}わない 」 。 || My teacher said the same: "Someone who can say 'I didn't hear' never gets lost."
 ?(comp=suzu) comp: {台詞|せりふ} も {同|おな}じ よ 。 {聞|き}こえなかったら 、 {聞|き}き{返|かえ}す 。 {黙|だま}って {演|や}る の が 、 {一番|いちばん} {危|あぶ}ない 。 || Same with lines. If you didn't catch it, ask. Carrying on in silence is the riskiest thing.
-!set xp_hall_w1_f0_t1
-!hook hall_trial w1 t1
-!refresh
-!end
+${C.hallKit.taleCredit('w1', 0, 't1')}
 :later
 narr: {絵|え} は 、 {後|あと} で {並|なら}べ{直|なお}せる 。 || You can put the pictures in order later.
 !end
 :done
 narr: {絵巻|えまき} は 、 {元|もと} の {順番|じゅんばん} で {掛|か}かって いる 。 || The scroll hangs in its proper order.
+${C.hallKit.taleAgain('w1')}
 
 # ---- t2: the signpost and the traveller --------------------------------------------------------------------------
 @scene hall.w1.t2_sign

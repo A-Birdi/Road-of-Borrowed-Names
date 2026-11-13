@@ -87,7 +87,7 @@ hall_shino: {鳴|な}った 。 …… {私|わたし} の {鐘|かね} が 、 
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + FT[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: ジンベエ が {寝返|ねがえ}り を {打|う}つ と 、 {絵巻|えまき} が {揺|ゆ}れて 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || Jinbei turns over in his sleep; the scroll sways, and the pictures slip out of order.']),
     task: 'hall.w3.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w3.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {毎朝|まいあさ} {同|おな}じ {時間|じかん} に 、 {同|おな}じ こと を する 。 {一番|いちばん} {難|むずか}しい {仕事|しごと} だ よ 。 || The same thing at the same time, every morning. That\'s the hardest job there is.',
       '?(comp=mio) comp: {病気|びょうき} の {人|ひと} の {代|か}わり に 、 {孫|まご} が {行|い}く の ね 。 …… {怖|こわ}くて も 、 {行|い}く の よ ね 。 || The grandchild goes in the sick one\'s place. …Scared or not, you go.',
       '?(comp=ren) comp: {鐘|かね} が {鳴|な}る と 、 {村|むら} が {起|お}きる 。 {灯|ひ} を {点|つ}ける と 、 {道|みち} が {見|み}える 。 {同|おな}じ です ね 。 || The bell rings and the village wakes; the lamp is lit and the road shows. The same thing.',

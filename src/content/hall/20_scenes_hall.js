@@ -95,6 +95,14 @@ narr: {紙|かみ} の {戸|と} は {冷|つめ}たい 。 {向|む}こう に 
 narr: {囲炉裏|いろり} に {手|て} を かざす 。 {灰|はい} の {下|した} に 、 まだ {火|ひ} が {残|のこ}って いる 。 || You hold your hands over the hearth. Under the ash, the fire is still alive.
 ${H ? `!checkpoint ${H.map} ${H.x} ${H.y} ${H.dir}` : ''}
 !autosave progress
+# the question after the tale, still open once its floor is counted (hall_tale; CC-569): asked by the scroll's own
+# scene, and saved once it is answered and its reflection said
+!if !hall.${w}.tale -> end
+!hook hall_tale ${w}
+!if var._res=0 -> end
+!call hall.${w}.t1
+!if hall.${w}.tale -> end
+!autosave progress
 
 @scene hall.lantern_${w}
 !if hall.${w} -> lit

@@ -61,7 +61,7 @@ narr: {盃|さかずき} が 、 {台|だい} の {上|うえ} で {光|ひか}�
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {雨|あめ} の しずく が {落|お}ちて 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || Raindrops fall on it, and the pictures slip out of order.']),
     task: 'hall.w2.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w2.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {傘|かさ} {一本|いっぽん} で 、 {栗|くり} {一籠|ひとかご} か 。 {貸|か}し{借|か}り の {帳尻|ちょうじり} が 、 {合|あ}う {話|はなし} だ な 。 || One umbrella, one basket of chestnuts. A tale where the accounts balance.',
       '?(comp=mio) comp: {戸|と} を {閉|し}めない で 、 {傘|かさ} を {貸|か}す 。 …… {私|わたし} も 、 そういう {人|ひと} で いたい 。 || Not shutting the door: lending the umbrella. …That\'s the kind of person I want to be.',
       '?(comp=ren) comp: お{礼|れい} を {置|お}いて {行|い}く の は 、 {顔|かお} を {見|み}せない {礼儀|れいぎ} です 。 {狐|きつね} らしい です ね 。 || Leaving the thanks and going: a courtesy that doesn\'t show its face. Very like a fox.',

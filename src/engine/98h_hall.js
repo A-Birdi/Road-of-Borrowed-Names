@@ -126,6 +126,21 @@ RB.hall = (function () {
   const litCount = (s) => ORDER.filter((w) => wingDone(s, w)).length;
   const doneCount = (s, w) => (W[w] ? W[w].trials.filter((t) => peek(s, w) && peek(s, w).trials[t.id]).length : 0);
 
+  // the question after the tale (hall.<w>.story_q, optional), asked once the scroll's pictures are in order (CC-568,
+  // CC-569; Agnes 6848355918). Answered: the challenge's own record of an answer, assisted or revealed included
+  // (chal:<id>; "Come back later" sets nothing). Pending: the story trial's credit is earned (this visit's, banked, or
+  // a held floor's) and the question is not answered. Nothing is stored for it, and reading it makes no record.
+  const taleTrial = (w) => { const t = W[w] && W[w].trials.find((x) => x.kind === 'story'); return t ? t.id : null; };
+  const taleAnswered = (s, w) => !!(s && s.flags && s.flags['chal:hall.' + w + '.story_q']);
+  function taleCredit(s, w) {
+    const t = taleTrial(w), v = visitOf(s), r = peek(s, w);
+    if (!t) return false;
+    if (v && v.wing === w && v.done && v.done[t]) return true;
+    if (r && r.trials && r.trials[t]) return true;
+    return !!(r && r.held && r.held.done && r.held.done[t]);
+  }
+  const talePending = (s, w) => !!(s && taleCredit(s, w) && !taleAnswered(s, w));
+
   // a trial done in this visit; the floor counts once every trial on it is done (then it stays done)
   function markTrial(s, w, t) {
     const v = visitOf(s), tr = trialOf(w, t);
@@ -267,6 +282,7 @@ RB.hall = (function () {
   // ---- conditions: hall.<…> ------------------------------------------------------------------------------------------
   //   hall.ledger · hall.lit (wings relit, with a comparison) · hall.visit · hall.w1 (done) · hall.w1.lit · hall.w1.t3
   //   · hall.w1.f0.clear · hall.w1.pat=1 · hall.w1.route=grow · hall.w1.held · hall.w1.count (trials counted)
+  //   · hall.w1.tale (the question after the tale is pending)
   if (RB.state && RB.state.addTerm) RB.state.addTerm('hall', (s, rest, op, val, num, cmp) => {
     const p = rest.split('.');
     if (p[0] === 'ledger') return !!(s.flags && s.flags.hall_ledger);
@@ -283,6 +299,7 @@ RB.hall = (function () {
       case 'route': return cmp(choice(s, w).route, op || '=', val);
       case 'count': return op ? cmp(doneCount(s, w), op, num(val)) : doneCount(s, w) > 0;
       case 'practice': { const v = visitOf(s); return !!(v && v.wing === w && v.practice); }
+      case 'tale': return talePending(s, w);
       default:
         if (/^t\d+$/.test(p[1])) return trialDone(s, w, p[1]);
         if (/^f\d+$/.test(p[1]) && p[2] === 'clear') return floorClear(s, w, +p[1].slice(1));
@@ -295,6 +312,6 @@ RB.hall = (function () {
   return {
     wing, get, list, manifest, trialOf, wingOfMap, mechanism, rec, wrec, peek, visitOf, inEdition, choice, setChoice, tactics,
     trialDone, floorClear, floorTrials, wingDone, litCount, doneCount, markTrial, resetFloor, patternOf, enter, retreat,
-    arrived, note, noteOf, watchAnswers, xid, ROUTES, TACTICS,
+    arrived, note, noteOf, watchAnswers, xid, ROUTES, TACTICS, taleTrial, taleAnswered, taleCredit, talePending,
   };
 })();

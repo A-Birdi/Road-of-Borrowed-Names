@@ -67743,6 +67743,21 @@ RB.hall = (function () {
   const litCount = (s) => ORDER.filter((w) => wingDone(s, w)).length;
   const doneCount = (s, w) => (W[w] ? W[w].trials.filter((t) => peek(s, w) && peek(s, w).trials[t.id]).length : 0);
 
+  // the question after the tale (hall.<w>.story_q, optional), asked once the scroll's pictures are in order (CC-568,
+  // CC-569; Agnes 6848355918). Answered: the challenge's own record of an answer, assisted or revealed included
+  // (chal:<id>; "Come back later" sets nothing). Pending: the story trial's credit is earned (this visit's, banked, or
+  // a held floor's) and the question is not answered. Nothing is stored for it, and reading it makes no record.
+  const taleTrial = (w) => { const t = W[w] && W[w].trials.find((x) => x.kind === 'story'); return t ? t.id : null; };
+  const taleAnswered = (s, w) => !!(s && s.flags && s.flags['chal:hall.' + w + '.story_q']);
+  function taleCredit(s, w) {
+    const t = taleTrial(w), v = visitOf(s), r = peek(s, w);
+    if (!t) return false;
+    if (v && v.wing === w && v.done && v.done[t]) return true;
+    if (r && r.trials && r.trials[t]) return true;
+    return !!(r && r.held && r.held.done && r.held.done[t]);
+  }
+  const talePending = (s, w) => !!(s && taleCredit(s, w) && !taleAnswered(s, w));
+
   // a trial done in this visit; the floor counts once every trial on it is done (then it stays done)
   function markTrial(s, w, t) {
     const v = visitOf(s), tr = trialOf(w, t);
@@ -67884,6 +67899,7 @@ RB.hall = (function () {
   // ---- conditions: hall.<…> ------------------------------------------------------------------------------------------
   //   hall.ledger · hall.lit (wings relit, with a comparison) · hall.visit · hall.w1 (done) · hall.w1.lit · hall.w1.t3
   //   · hall.w1.f0.clear · hall.w1.pat=1 · hall.w1.route=grow · hall.w1.held · hall.w1.count (trials counted)
+  //   · hall.w1.tale (the question after the tale is pending)
   if (RB.state && RB.state.addTerm) RB.state.addTerm('hall', (s, rest, op, val, num, cmp) => {
     const p = rest.split('.');
     if (p[0] === 'ledger') return !!(s.flags && s.flags.hall_ledger);
@@ -67900,6 +67916,7 @@ RB.hall = (function () {
       case 'route': return cmp(choice(s, w).route, op || '=', val);
       case 'count': return op ? cmp(doneCount(s, w), op, num(val)) : doneCount(s, w) > 0;
       case 'practice': { const v = visitOf(s); return !!(v && v.wing === w && v.practice); }
+      case 'tale': return talePending(s, w);
       default:
         if (/^t\d+$/.test(p[1])) return trialDone(s, w, p[1]);
         if (/^f\d+$/.test(p[1]) && p[2] === 'clear') return floorClear(s, w, +p[1].slice(1));
@@ -67912,7 +67929,7 @@ RB.hall = (function () {
   return {
     wing, get, list, manifest, trialOf, wingOfMap, mechanism, rec, wrec, peek, visitOf, inEdition, choice, setChoice, tactics,
     trialDone, floorClear, floorTrials, wingDone, litCount, doneCount, markTrial, resetFloor, patternOf, enter, retreat,
-    arrived, note, noteOf, watchAnswers, xid, ROUTES, TACTICS,
+    arrived, note, noteOf, watchAnswers, xid, ROUTES, TACTICS, taleTrial, taleAnswered, taleCredit, talePending,
   };
 })();
 
@@ -98557,6 +98574,9 @@ RB.challenge = (function () {
       RB.game.s.flags['chal:' + id] = true;
       return { ok: true };
     }
+    // the answer belongs to the journey it was asked in: if another journey is loaded while the sheet is open, its
+    // record of an answer (chal:<id>) is not written into that one (CC-569; Agnes 6848355918)
+    const asked = RB.game.s;
     RB.game.pushMode('challenge');
     try {
       if (ch.intro) await RB.ui.card(ch.intro.jp || '', ch.intro.en || '');
@@ -98572,7 +98592,7 @@ RB.challenge = (function () {
         if (step.kind === 'forge' && RB.forge) { const o = RB.forge.outcome(step, r); RB.game.s.vars._forge = o && o.result ? o.result : 0; }
         results.push(r);
       }
-      RB.game.s.flags['chal:' + id] = true;
+      if (asked && RB.game.s === asked) asked.flags['chal:' + id] = true;
       return { ok: true, results };
     } finally {
       RB.game.popMode('challenge');
@@ -135694,7 +135714,8 @@ RB.ui.stage = (function () {
  *   - when the page is hidden in a wing, outside a battle, the place is kept as a suspend point (the same record).
  *   - the scenes' hooks: hall_card <w> (_res 1 go in, 2 go back to the held floor, 0 not now), hall_enter <w> [held],
  *     hall_trial <w> <t> (_res 1 when that finished the wing), hall_challenge <id> (Grow: a level up, as stretch),
- *     hall_return (the return lantern at a floor's entry), hall_station <id>. */
+ *     hall_return (the return lantern at a floor's entry), hall_station <id>, hall_tale <w> (the hearth's offer of the
+ *     question after the tale: _res 1 answer it now, 0 not now). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.ui.hall = (function () {
@@ -135871,8 +135892,34 @@ RB.ui.hall = (function () {
     const msgs = ['A lantern is lit: ' + (tr.title ? tr.title.en : 'a trial') + '.'];
     if (r.reprieve) msgs.push('A reprieve earned: you may leave with this floor kept exactly as it is.');
     if (r.floorCleared && !r.wingDone) msgs.push('The floor is cleared: its trials count now, and stay counted.');
+    // the question after the tale put off ("Come back later"): where it can be answered, read after the trial counts
+    if (t === H().taleTrial(w) && H().talePending(s, w)) {
+      const pk = H().peek(s, w);
+      msgs.push(pk && pk.trials[t] ? 'You can answer the question later at this wing\'s hearth.'
+        : 'You can answer the question later at this scroll. Once this floor is counted, you can also answer it at this wing\'s hearth.');
+    }
     RB.ui.notice(msgs.join(' '), 'info');
     if (r.wingDone && RB.stampBook) RB.stampBook.settle(s);
+  };
+  // the wing's hearth (CC-569; Agnes 6848355918): the question after the tale, still open once its floor is counted.
+  // Two choices, both reversible; Back/Escape is the last one, "Not now". "Answer it now" (_res 1) has the scroll's own
+  // scene ask it, routed by _tale (the wing's number; cleared there before the question). The choice belongs to the
+  // journey it was asked in: if the journey changes meanwhile it is taken down unanswered, and nothing is written.
+  RB.hooks.hall_tale = async (a) => {
+    const s = S(), w = a && a[0], t = H().taleTrial(w), r = H().peek(s, w);
+    s.vars._res = 0;
+    if (!t || !H().talePending(s, w) || !(r && r.trials[t])) return;
+    let k = 1;
+    if (!(RB.test && RB.test.auto)) {
+      let drop = null, off = null;
+      if (RB.bus) off = RB.bus.on('campaign:changing', () => { if (off) off(); if (drop) drop(); });
+      try {
+        k = await RB.ui.confirm('The question after the tale is still open.', ['Answer it now', 'Not now'], { own: (d) => { drop = d; } });
+      } finally { if (off) off(); }
+    }
+    if (RB.game.s !== s || k !== 0) return;
+    s.vars._tale = +w.slice(1);
+    s.vars._res = 1;
   };
   RB.hooks.hall_challenge = async (a) => {
     const s = S(), id = a && a[0], ch = RB.content.challenges[id], v = H().visitOf(s);
@@ -188520,7 +188567,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
  *   K.mark(w, k, t)                 the lines that count a trial (its flag, hall_trial, refresh)
  *   K.taskTrial(o)                  the body of a trial that is a language task: o = { w, k, t, done (line),
  *                                   intro (lines), task (challenge id, or { 0: id, 1: id } by pattern), after
- *                                   (lines when it is answered), later (line when it is put off) }; the wing writes
+ *                                   (lines when it is answered), later (line when it is put off), reflect (the
+ *                                   scroll's trial only: the reflection on the question after the tale) }; the wing writes
  *                                   the `@scene <id>` line itself, so that every scene's source line can be found
  *                                   (tools/scene_manifest.mjs)
  * Lines are the scene language's own (`narr: jp || en`, `?(cond) …`). */
@@ -188550,10 +188598,27 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return L;
   };
   K.mark = (w, k, t) => '!set xp_hall_' + w + '_f' + k + '_' + t + '\n!hook hall_trial ' + w + ' ' + t + '\n!refresh';
+  // the question after the tale (hall.<w>.story_q, optional), asked once the scroll's pictures are in order (CC-568,
+  // CC-569; Agnes 6848355918). Answered (assisted or revealed included): the companion's reflection. Put off ("Come
+  // back later"): no reflection. Either way the trial's credit follows, but only if it is not already earned (the
+  // scroll again later, or the hearth), so nothing is credited twice. The scroll asks again while the question is
+  // pending (hall.<w>.tale); so does the wing's hearth (hall_tale), through this same scene so that the reflection's
+  // lines keep their scene and their keys: it sets _tale to the wing's number, which is read only outside a visit
+  // while the question is pending, and cleared before the question is asked.
+  //   K.taleRoute(w) the scene's first lines · K.taleAsk(w) the question · K.taleCredit(w, k, t) after the reflection
+  //   · K.taleAgain(w) after the scroll's "done" line
+  K.taleRoute = (w) => '!if var._tale=' + w.slice(1) + ' -> tale_route\n:tale_top';
+  K.taleAsk = (w) => ':tale_ask\n!challenge hall.' + w + '.story_q\n!if var._res=0 -> tale_put_off';
+  K.taleCredit = (w, k, t) => ':tale_put_off\n!if hall.' + w + '.' + t + ' -> tale_end\n' + K.mark(w, k, t) + '\n:tale_end\n!end';
+  K.taleAgain = (w) => '!if hall.' + w + '.tale -> tale_ask\n!end\n:tale_route\n!var _tale = 0\n!if !hall.visit&hall.' + w + '.tale -> tale_ask\n!goto tale_top';
   K.taskTrial = (o) => {
     const { w, k, t } = o;
     const task = typeof o.task === 'string' ? '!hook hall_challenge ' + o.task + '\n' :
       '!if hall.' + w + '.pat=1 -> p1\n!hook hall_challenge ' + o.task[0] + '\n!goto asked\n:p1\n!hook hall_challenge ' + o.task[1] + '\n:asked\n';
+    // the scroll's trial: the question after the tale, then o.reflect (the reflection on an answer)
+    if (o.reflect) return '\n' + K.taleRoute(w) + '\n!if hall.' + w + '.' + t + ' -> done\n' + (o.intro || []).join('\n') + '\n' + task +
+      '!if var._res=0 -> later\n' + (o.after || []).join('\n') + '\n' + K.taleAsk(w) + '\n' + o.reflect.join('\n') + '\n' + K.taleCredit(w, k, t) +
+      '\n:later\n' + o.later + '\n!end\n:done\n' + o.done + '\n' + K.taleAgain(w) + '\n';
     return '\n!if hall.' + w + '.' + t + ' -> done\n' + (o.intro || []).join('\n') + '\n' + task +
       '!if var._res=0 -> later\n' + (o.after || []).join('\n') + '\n' + K.mark(w, k, t) + '\n!end\n:later\n' + o.later + '\n!end\n:done\n' + o.done + '\n';
   };
@@ -190873,6 +190938,14 @@ narr: {紙|かみ} の {戸|と} は {冷|つめ}たい 。 {向|む}こう に 
 narr: {囲炉裏|いろり} に {手|て} を かざす 。 {灰|はい} の {下|した} に 、 まだ {火|ひ} が {残|のこ}って いる 。 || You hold your hands over the hearth. Under the ash, the fire is still alive.
 ${H ? `!checkpoint ${H.map} ${H.x} ${H.y} ${H.dir}` : ''}
 !autosave progress
+# the question after the tale, still open once its floor is counted (hall_tale; CC-569): asked by the scroll's own
+# scene, and saved once it is answered and its reflection said
+!if !hall.${w}.tale -> end
+!hook hall_tale ${w}
+!if var._res=0 -> end
+!call hall.${w}.t1
+!if hall.${w}.tale -> end
+!autosave progress
 
 @scene hall.lantern_${w}
 !if hall.${w} -> lit
@@ -190954,6 +191027,7 @@ narr: {辻|つじ} の {灯籠|とうろう} が 、 {四|よっ}つ の {道|�
 
 # ---- t1: the story room ------------------------------------------------------------------------------------------
 @scene hall.w1.t1
+${C.hallKit.taleRoute('w1')}
 !if hall.w1.t1 -> done
 narr: {小屋|こや} の {奥|おく} に 、 {絵巻|えまき} が {掛|か}けて ある 。 {四|よっ}つ の {絵|え} に 、 {一|ひと}つ の {話|はなし} 。 || At the back of the shelter hangs a picture scroll: one tale in four pictures.
 ?(${EF}) narr: 「 むかし 、 やま の つじ に 、 とうろう が ひとつ たって いた 。 」 || "Long ago, a single lamp stood at a crossroads in the hills."
@@ -190968,20 +191042,18 @@ narr: {風|かぜ} が {吹|ふ}いて 、 {絵|え} の {順番|じゅんばん
 !hook hall_challenge hall.w1.story
 !if var._res=0 -> later
 narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.
-!challenge hall.w1.story_q
+${C.hallKit.taleAsk('w1')}
 ?(comp=nao) comp: {二度|にど} {聞|き}け 、 か 。 {届|とど}け{先|さき} を {確|たし}かめる の と {同|おな}じ だ 。 || Ask twice. Same as checking an address before you deliver.
 ?(comp=mio) comp: {聞|き}き{返|かえ}す の って 、 {恥|は}ずかしい と {思|おも}って た 。 …… {違|ちが}う のね 。 || I used to think asking again was embarrassing. …It isn't, is it.
 ?(comp=ren) comp: {師匠|ししょう} も 、 {同|おな}じ こと を {言|い}って いました 。 「 {聞|き}こえない 、 と {言|い}える {人|ひと} は 、 {迷|まよ}わない 」 。 || My teacher said the same: "Someone who can say 'I didn't hear' never gets lost."
 ?(comp=suzu) comp: {台詞|せりふ} も {同|おな}じ よ 。 {聞|き}こえなかったら 、 {聞|き}き{返|かえ}す 。 {黙|だま}って {演|や}る の が 、 {一番|いちばん} {危|あぶ}ない 。 || Same with lines. If you didn't catch it, ask. Carrying on in silence is the riskiest thing.
-!set xp_hall_w1_f0_t1
-!hook hall_trial w1 t1
-!refresh
-!end
+${C.hallKit.taleCredit('w1', 0, 't1')}
 :later
 narr: {絵|え} は 、 {後|あと} で {並|なら}べ{直|なお}せる 。 || You can put the pictures in order later.
 !end
 :done
 narr: {絵巻|えまき} は 、 {元|もと} の {順番|じゅんばん} で {掛|か}かって いる 。 || The scroll hangs in its proper order.
+${C.hallKit.taleAgain('w1')}
 
 # ---- t2: the signpost and the traveller --------------------------------------------------------------------------
 @scene hall.w1.t2_sign
@@ -191336,7 +191408,7 @@ narr: {盃|さかずき} が 、 {台|だい} の {上|うえ} で {光|ひか}�
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {雨|あめ} の しずく が {落|お}ちて 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || Raindrops fall on it, and the pictures slip out of order.']),
     task: 'hall.w2.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w2.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {傘|かさ} {一本|いっぽん} で 、 {栗|くり} {一籠|ひとかご} か 。 {貸|か}し{借|か}り の {帳尻|ちょうじり} が 、 {合|あ}う {話|はなし} だ な 。 || One umbrella, one basket of chestnuts. A tale where the accounts balance.',
       '?(comp=mio) comp: {戸|と} を {閉|し}めない で 、 {傘|かさ} を {貸|か}す 。 …… {私|わたし} も 、 そういう {人|ひと} で いたい 。 || Not shutting the door: lending the umbrella. …That\'s the kind of person I want to be.',
       '?(comp=ren) comp: お{礼|れい} を {置|お}いて {行|い}く の は 、 {顔|かお} を {見|み}せない {礼儀|れいぎ} です 。 {狐|きつね} らしい です ね 。 || Leaving the thanks and going: a courtesy that doesn\'t show its face. Very like a fox.',
@@ -191779,7 +191851,7 @@ hall_shino: {鳴|な}った 。 …… {私|わたし} の {鐘|かね} が 、 
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + FT[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: ジンベエ が {寝返|ねがえ}り を {打|う}つ と 、 {絵巻|えまき} が {揺|ゆ}れて 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || Jinbei turns over in his sleep; the scroll sways, and the pictures slip out of order.']),
     task: 'hall.w3.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w3.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {毎朝|まいあさ} {同|おな}じ {時間|じかん} に 、 {同|おな}じ こと を する 。 {一番|いちばん} {難|むずか}しい {仕事|しごと} だ よ 。 || The same thing at the same time, every morning. That\'s the hardest job there is.',
       '?(comp=mio) comp: {病気|びょうき} の {人|ひと} の {代|か}わり に 、 {孫|まご} が {行|い}く の ね 。 …… {怖|こわ}くて も 、 {行|い}く の よ ね 。 || The grandchild goes in the sick one\'s place. …Scared or not, you go.',
       '?(comp=ren) comp: {鐘|かね} が {鳴|な}る と 、 {村|むら} が {起|お}きる 。 {灯|ひ} を {点|つ}ける と 、 {道|みち} が {見|み}える 。 {同|おな}じ です ね 。 || The bell rings and the village wakes; the lamp is lit and the road shows. The same thing.',
@@ -192268,7 +192340,7 @@ hall_gosaku: {来年|らいねん} の {梅雨|つゆ} も 、 {傘|かさ} を 
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {雨漏|あまも}り の {雫|しずく} が {絵巻|えまき} に {落|お}ちて 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A drip from the leaking roof falls on the scroll, and the pictures slip out of order.']),
     task: 'hall.w4.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w4.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {返|かえ}す つもり で も 、 {返|かえ}せない こと は ある 。 {配達|はいたつ} も 、 {同|おな}じ だ 。 || You can mean to bring something back and still not manage it. Deliveries are the same.',
       '?(comp=mio) comp: {傘|かさ} に は 、 ゴサク さん の {事情|じじょう} が {分|わ}からなかった の ね 。 …… {待|ま}つ {方|ほう} も 、 つらい わ 。 || The umbrella couldn\'t know what had happened to Gosaku. …Waiting is hard too.',
       '?(comp=ren) comp: {約束|やくそく} は 、 {守|まも}る つもり が あって も 、 {川|かわ} に {流|なが}される こと が あります 。 || Even a promise you mean to keep can be washed away by a river.',
@@ -192734,7 +192806,7 @@ hall_kero: {水|みず} が {澄|す}んだ 。 {広|ひろ}い {海|うみ} は
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {乾|かわ}いた {風|かぜ} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A dry wind blows in, and the pictures slip out of order.']),
     task: 'hall.w5.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w5.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {誰|だれ} の せい か で {揉|も}める {家|いえ} は 、 {配達先|はいたつさき} に も よく ある 。 {大抵|たいてい} 、 {両方|りょうほう} {少|すこ}し ずつ だ 。 || Houses fighting over whose fault it is: I\'ve delivered to plenty. Usually it\'s a bit of both.',
       '?(comp=mio) comp: {誰|だれ} も {蛙|かえる} に は {聞|き}かなかった の ね 。 {一番|いちばん} {近|ちか}く に いた のに 。 || Nobody asked the frog. Even though it was closest of all.',
       '?(comp=ren) comp: {理由|りゆう} を {探|さが}す {時|とき} 、 {人|ひと} は {遠|とお}く を {見|み}がち です 。 {答|こた}え は 、 {足元|あしもと} の {井戸|いど} の {底|そこ} に ある こと も 。 || When looking for a reason, people look far away. Sometimes the answer is right under their feet, at the bottom of a well.',
@@ -193623,7 +193695,7 @@ hall_ibuki: {灯籠|とうろう} の {決|き}まり は 、 {柱|はしら} �
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {峠|とうげ} の {風|かぜ} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A gust off the pass blows in, and the pictures slip out of order.']),
     task: 'hall.w6.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w6.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {決|き}まり が {増|ふ}えた {数|かず} だけ 、 {困|こま}った {人|ひと} が {来|き}た ん だ 。 {悪|わる}い こと じゃ ない 。 || Every rule added is someone in trouble who came by. That\'s no bad thing.',
       '?(comp=mio) comp: 「 ただし 」 の {一|ひと}つ {一|ひと}つ に 、 {誰|だれ} か の {雨|あめ} の {日|ひ} が ある のね 。 || Behind every "however" there\'s somebody\'s rainy day.',
       '?(comp=ren) comp: {書|か}かれて いない {決|き}まり が 、 {一番|いちばん} {大事|だいじ} な こと も あります 。 || Sometimes the most important rule is the unwritten one.',
@@ -194505,7 +194577,7 @@ hall_owan: {台所|だいどころ} の {覚|おぼ}え{書|が}き は 、 お�
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {障子|しょうじ} の {隙間|すきま} から {雪|ゆき} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || Snow blows in through a gap in the paper door, and the pictures slip out of order.']),
     task: 'hall.w7.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w7.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {何|なに} も {取|と}らず に {帰|かえ}った {人|ひと} の ところ へ 、 {向|む}こう から {届|とど}いた 。 {一番|いちばん} {確|たし}か な {配達|はいたつ} だ な 。 || It reached the one who took nothing, all on its own. The surest delivery there is.',
       '?(comp=mio) comp: {誰|だれ} が {椀|わん} を {流|なが}した の か 、 {話|はなし} は {言|い}わない のね 。 {言|い}わなくて も 、 {分|わ}かる けど 。 || The tale never says who sent the bowl down the river. Not that it needs to.',
       '?(comp=ren) comp: {欲|ほ}しがらない {人|ひと} に だけ 、 {家|いえ} は {与|あた}える 。 {灯|ひ} も 、 {少|すこ}し {似|に}て います 。 || The house gives only to those who don\'t grasp. Light is a little like that.',
@@ -195339,7 +195411,7 @@ hall_omatsu: {帳面|ちょうめん} に は 、 {見|み}た こと と {聞|�
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {戸|と} の {隙間|すきま} から {雪|ゆき} {風|かぜ} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A snowy draught blows in through the door, and the pictures slip out of order.']),
     task: 'hall.w8.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w8.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {一人|ひとり} の {話|はなし} だけ を {信|しん}じる と 、 {間違|まちが}える 。 {三人|さんにん} {分|ぶん} を {並|なら}べて 、 {初|はじ}めて {見|み}える 。 || Believe one account alone and you go wrong. Lay all three side by side, and it shows.',
       '?(comp=mio) comp: {影|かげ} を {見|み}た {人|ひと} 、 {足音|あしおと} を {聞|き}いた {人|ひと} 、 {狐|きつね} だ と {思|おも}った {人|ひと} 。 {同|おな}じ {夜|よる} でも 、 {見|み}えて いた もの が {違|ちが}う のね 。 || One saw a shadow, one heard footsteps, one thought it was a fox. The same night, and each saw something different.',
       '?(comp=ren) comp: {狐|きつね} の {話|はなし} が 、 {一番|いちばん} {大|おお}きな {声|こえ} でした ね 。 {一番|いちばん} {確|たし}か で は ない のに 。 || The fox story was the loudest, wasn\'t it. Though it was the least certain.',
@@ -196208,7 +196280,7 @@ hall_gensuke: ヨサク さん の {所|ところ} の {布|ぬの} は 、 {都
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {戸|と} の {隙間|すきま} から {雪|ゆき} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || Snow blows in through the door, and the pictures slip out of order.']),
     task: 'hall.w9.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w9.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {知|し}らない {家|いえ} の {戸|と} を {叩|たた}く {時|とき} は 、 ああ いう {頼|たの}み{方|かた} に なる 。 {配達|はいたつ} でも そう だ 。 || Knocking on a stranger\'s door, that\'s how you ask. Same on a delivery.',
       '?(comp=mio) comp: {一|ひと}つ だけ の お{願|ねが}い 。 {守|まも}る の は 、 {簡単|かんたん} な よう で {難|むずか}しい の よ ね 。 || Just one request. Keeping it sounds easy, and isn\'t.',
       '?(comp=ren) comp: {覗|のぞ}かないで ください 。 …… {灯|ひ} も {同|おな}じ です 。 {覗|のぞ}き{込|こ}む と 、 {消|き}えて しまう {物|もの} が あります 。 || "Please don\'t look." …Lamps are the same. Some lights go out if you peer into them.',
@@ -197163,7 +197235,7 @@ hall_kohaku: {九十九|きゅうじゅうきゅう} まで は 、 {師匠|し�
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {風|かぜ} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A wind blows in, and the pictures slip out of order.']),
     task: 'hall.w10.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w10.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {自分|じぶん} の {話|はなし} を {人|ひと} の {話|はなし} みたい に {読|よ}む の 、 {変|へん} な {感|かん}じ だ な 。 || Funny, reading your own story like it\'s someone else\'s.',
       '?(comp=mio) comp: {四|よっ}つ の {絵|え} じゃ 、 {全然|ぜんぜん} {足|た}りない わ ね 。 {大事|だいじ} な こと が もっと あった もの 。 || Four pictures are nowhere near enough. So much more happened that mattered.',
       '?(comp=ren) comp: {絵|え} の {中|なか} の {旅人|たびびと} 、 {道|みち} に {迷|まよ}って いない です ね 。 {私|わたし} と {違|ちが}って 。 || The traveller in the pictures never gets lost. Unlike me.',

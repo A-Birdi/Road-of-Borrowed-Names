@@ -74,7 +74,7 @@ hall_owan: {台所|だいどころ} の {覚|おぼ}え{書|が}き は 、 お�
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {障子|しょうじ} の {隙間|すきま} から {雪|ゆき} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || Snow blows in through a gap in the paper door, and the pictures slip out of order.']),
     task: 'hall.w7.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w7.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {何|なに} も {取|と}らず に {帰|かえ}った {人|ひと} の ところ へ 、 {向|む}こう から {届|とど}いた 。 {一番|いちばん} {確|たし}か な {配達|はいたつ} だ な 。 || It reached the one who took nothing, all on its own. The surest delivery there is.',
       '?(comp=mio) comp: {誰|だれ} が {椀|わん} を {流|なが}した の か 、 {話|はなし} は {言|い}わない のね 。 {言|い}わなくて も 、 {分|わ}かる けど 。 || The tale never says who sent the bowl down the river. Not that it needs to.',
       '?(comp=ren) comp: {欲|ほ}しがらない {人|ひと} に だけ 、 {家|いえ} は {与|あた}える 。 {灯|ひ} も 、 {少|すこ}し {似|に}て います 。 || The house gives only to those who don\'t grasp. Light is a little like that.',

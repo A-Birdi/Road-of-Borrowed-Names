@@ -792,6 +792,9 @@ RB.challenge = (function () {
       RB.game.s.flags['chal:' + id] = true;
       return { ok: true };
     }
+    // the answer belongs to the journey it was asked in: if another journey is loaded while the sheet is open, its
+    // record of an answer (chal:<id>) is not written into that one (CC-569; Agnes 6848355918)
+    const asked = RB.game.s;
     RB.game.pushMode('challenge');
     try {
       if (ch.intro) await RB.ui.card(ch.intro.jp || '', ch.intro.en || '');
@@ -807,7 +810,7 @@ RB.challenge = (function () {
         if (step.kind === 'forge' && RB.forge) { const o = RB.forge.outcome(step, r); RB.game.s.vars._forge = o && o.result ? o.result : 0; }
         results.push(r);
       }
-      RB.game.s.flags['chal:' + id] = true;
+      if (asked && RB.game.s === asked) asked.flags['chal:' + id] = true;
       return { ok: true, results };
     } finally {
       RB.game.popMode('challenge');

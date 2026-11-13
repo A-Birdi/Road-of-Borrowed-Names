@@ -81,7 +81,7 @@ hall_kohaku: {九十九|きゅうじゅうきゅう} まで は 、 {師匠|し�
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {風|かぜ} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A wind blows in, and the pictures slip out of order.']),
     task: 'hall.w10.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w10.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {自分|じぶん} の {話|はなし} を {人|ひと} の {話|はなし} みたい に {読|よ}む の 、 {変|へん} な {感|かん}じ だ な 。 || Funny, reading your own story like it\'s someone else\'s.',
       '?(comp=mio) comp: {四|よっ}つ の {絵|え} じゃ 、 {全然|ぜんぜん} {足|た}りない わ ね 。 {大事|だいじ} な こと が もっと あった もの 。 || Four pictures are nowhere near enough. So much more happened that mattered.',
       '?(comp=ren) comp: {絵|え} の {中|なか} の {旅人|たびびと} 、 {道|みち} に {迷|まよ}って いない です ね 。 {私|わたし} と {違|ちが}って 。 || The traveller in the pictures never gets lost. Unlike me.',

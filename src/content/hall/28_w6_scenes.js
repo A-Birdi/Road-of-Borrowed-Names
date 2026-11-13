@@ -84,7 +84,7 @@ hall_ibuki: {灯籠|とうろう} の {決|き}まり は 、 {柱|はしら} �
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {峠|とうげ} の {風|かぜ} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A gust off the pass blows in, and the pictures slip out of order.']),
     task: 'hall.w6.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w6.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {決|き}まり が {増|ふ}えた {数|かず} だけ 、 {困|こま}った {人|ひと} が {来|き}た ん だ 。 {悪|わる}い こと じゃ ない 。 || Every rule added is someone in trouble who came by. That\'s no bad thing.',
       '?(comp=mio) comp: 「 ただし 」 の {一|ひと}つ {一|ひと}つ に 、 {誰|だれ} か の {雨|あめ} の {日|ひ} が ある のね 。 || Behind every "however" there\'s somebody\'s rainy day.',
       '?(comp=ren) comp: {書|か}かれて いない {決|き}まり が 、 {一番|いちばん} {大事|だいじ} な こと も あります 。 || Sometimes the most important rule is the unwritten one.',

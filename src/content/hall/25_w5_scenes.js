@@ -68,7 +68,7 @@ hall_kero: {水|みず} が {澄|す}んだ 。 {広|ひろ}い {海|うみ} は
       .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
       ['narr: {乾|かわ}いた {風|かぜ} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A dry wind blows in, and the pictures slip out of order.']),
     task: 'hall.w5.story',
-    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w5.story_q',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.'], reflect: [
       '?(comp=nao) comp: {誰|だれ} の せい か で {揉|も}める {家|いえ} は 、 {配達先|はいたつさき} に も よく ある 。 {大抵|たいてい} 、 {両方|りょうほう} {少|すこ}し ずつ だ 。 || Houses fighting over whose fault it is: I\'ve delivered to plenty. Usually it\'s a bit of both.',
       '?(comp=mio) comp: {誰|だれ} も {蛙|かえる} に は {聞|き}かなかった の ね 。 {一番|いちばん} {近|ちか}く に いた のに 。 || Nobody asked the frog. Even though it was closest of all.',
       '?(comp=ren) comp: {理由|りゆう} を {探|さが}す {時|とき} 、 {人|ひと} は {遠|とお}く を {見|み}がち です 。 {答|こた}え は 、 {足元|あしもと} の {井戸|いど} の {底|そこ} に ある こと も 。 || When looking for a reason, people look far away. Sometimes the answer is right under their feet, at the bottom of a well.',
