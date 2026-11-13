@@ -25988,7 +25988,7 @@ RB.state = (function () {
       .some((conj) => conj.split('&').every((t) => term(s, t)));
   }
   // test()'s answer when the condition reads only the heads above (each a plain read of the journey); null when it
-  // names a head another system registered (some build the record they read: fish, slot). For looking ahead without
+  // names a head another system registered (some build the record they read, as fish does). For looking ahead without
   // touching anything (src/audio/52_voicebank.js): a null there means "not known now".
   const BUILT = new Set(['comp', 'prov', 'party', 'quest', 'item', 'var', 'prof', 'ch', 'word', 'seen', 'post', 'bg']);
   function peek(s, cond) {
@@ -45286,10 +45286,17 @@ RB.town = (function () {
     if (!isObj(R.towns[id])) R.towns[id] = { tick: 0, slots: {}, leftAt: null, flags: {}, rests: R.rests };
     return R.towns[id];
   }
+  // A resident's slot, read without making the town's record: a town with no record reads as a new empty one would
+  // (slot 1), and a record there is read as it is, so asking, the quest guide's included, leaves the journey as it was
+  // (CC-541 finding 2; Cloud CC-559; Agnes 6807565638). Records are made by entering and leaving a town and by its
+  // routine (beforeEnter, tick), as before.
   function slotOf(s, person) {
     for (const id in towns()) {
       const T = towns()[id];
-      if (T.residents && T.residents[person]) { const t = townRec(s, id); return t.slots[person] || 1; }
+      if (T.residents && T.residents[person]) {
+        const t = isObj(s.world) && isObj(s.world.towns) ? s.world.towns[id] : null;
+        return isObj(t) ? t.slots[person] || 1 : 1;
+      }
     }
     return 1;
   }
@@ -45570,7 +45577,9 @@ RB.town = (function () {
   }
   // the event standing on a road now ({ road, id, ev } or null): chosen on arrival, not yet seen through
   function eventHere(s, roadId) {
-    const r = rec(s).roads[roadId], D = (C().roadEvents || {})[roadId];
+    // read without filling in the world record (as slotOf): no record, no event. The record is made and changed on
+    // arrival, on leaving the road and when the event is seen through (beforeEnter, roadEventAt, roadDone), as before
+    const r = isObj(s.world) && isObj(s.world.roads) ? s.world.roads[roadId] : null, D = (C().roadEvents || {})[roadId];
     if (!r || !r.here || r.here.done || !D) return null;
     const ev = [D.unique].concat(D.variants || []).find((e) => e && e.id === r.here.id);
     return ev ? { road: roadId, id: ev.id, ev } : null;
@@ -47208,12 +47217,37 @@ RB.questGuide = (function () {
     st[key] = above(base);
     return above(base);
   }
+  // The journey's world record (src/engine/53_town.js): copied whole, once per question, and shared by the copies that
+  // question makes. The copy is the question's own: nothing in it is the live journey's. Nothing the guide follows
+  // writes to it (no command it simulates touches the world record, and the town's condition reads make no record),
+  // so every path of a question reads the same world. Before this, a copy shared the live journey's record (CC-541
+  // finding 2; Local CL-708; Agnes 6650249477, 6807565638).
+  const worlds = new WeakSet();
+  function deep(v) {
+    if (!v || typeof v !== 'object') return v;
+    if (Array.isArray(v)) return v.map(deep);
+    const o = {};
+    for (const k of Object.keys(v)) o[k] = deep(v[k]);
+    return o;
+  }
+  function worldOf(w) {
+    if (!w || typeof w !== 'object' || worlds.has(w)) return w;
+    let c = looking ? snaps.get(w) : null;
+    if (!c) {
+      c = deep(w);
+      worlds.add(c);
+      if (looking) snaps.set(w, c);
+    }
+    return c;
+  }
   function cloneSt(st) {
     const quests = {};
     for (const k in st.quests) quests[k] = Object.assign({}, st.quests[k]);
     return Object.assign({}, st, {
       flags: branch(st, 'flags'), vars: Object.assign({}, st.vars), inv: Object.assign({}, st.inv),
       quests, seen: branch(st, 'seen'), words: (st.words || []).slice(), touched: new Set(st.touched || []),
+      // a simulated !give marks the Satchel's "new" (RB.state.give): the copy's own marks, never the journey's
+      newItems: Object.assign({}, st.newItems), world: worldOf(st.world),
     });
   }
   function qval(st, id) { const q = st.quests[id]; return q ? (q.done ? 999 : q.stage) : -1; }

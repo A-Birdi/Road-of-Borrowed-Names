@@ -297,12 +297,37 @@ RB.questGuide = (function () {
     st[key] = above(base);
     return above(base);
   }
+  // The journey's world record (src/engine/53_town.js): copied whole, once per question, and shared by the copies that
+  // question makes. The copy is the question's own: nothing in it is the live journey's. Nothing the guide follows
+  // writes to it (no command it simulates touches the world record, and the town's condition reads make no record),
+  // so every path of a question reads the same world. Before this, a copy shared the live journey's record (CC-541
+  // finding 2; Local CL-708; Agnes 6650249477, 6807565638).
+  const worlds = new WeakSet();
+  function deep(v) {
+    if (!v || typeof v !== 'object') return v;
+    if (Array.isArray(v)) return v.map(deep);
+    const o = {};
+    for (const k of Object.keys(v)) o[k] = deep(v[k]);
+    return o;
+  }
+  function worldOf(w) {
+    if (!w || typeof w !== 'object' || worlds.has(w)) return w;
+    let c = looking ? snaps.get(w) : null;
+    if (!c) {
+      c = deep(w);
+      worlds.add(c);
+      if (looking) snaps.set(w, c);
+    }
+    return c;
+  }
   function cloneSt(st) {
     const quests = {};
     for (const k in st.quests) quests[k] = Object.assign({}, st.quests[k]);
     return Object.assign({}, st, {
       flags: branch(st, 'flags'), vars: Object.assign({}, st.vars), inv: Object.assign({}, st.inv),
       quests, seen: branch(st, 'seen'), words: (st.words || []).slice(), touched: new Set(st.touched || []),
+      // a simulated !give marks the Satchel's "new" (RB.state.give): the copy's own marks, never the journey's
+      newItems: Object.assign({}, st.newItems), world: worldOf(st.world),
     });
   }
   function qval(st, id) { const q = st.quests[id]; return q ? (q.done ? 999 : q.stage) : -1; }

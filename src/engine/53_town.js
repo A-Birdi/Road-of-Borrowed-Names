@@ -53,10 +53,17 @@ RB.town = (function () {
     if (!isObj(R.towns[id])) R.towns[id] = { tick: 0, slots: {}, leftAt: null, flags: {}, rests: R.rests };
     return R.towns[id];
   }
+  // A resident's slot, read without making the town's record: a town with no record reads as a new empty one would
+  // (slot 1), and a record there is read as it is, so asking, the quest guide's included, leaves the journey as it was
+  // (CC-541 finding 2; Cloud CC-559; Agnes 6807565638). Records are made by entering and leaving a town and by its
+  // routine (beforeEnter, tick), as before.
   function slotOf(s, person) {
     for (const id in towns()) {
       const T = towns()[id];
-      if (T.residents && T.residents[person]) { const t = townRec(s, id); return t.slots[person] || 1; }
+      if (T.residents && T.residents[person]) {
+        const t = isObj(s.world) && isObj(s.world.towns) ? s.world.towns[id] : null;
+        return isObj(t) ? t.slots[person] || 1 : 1;
+      }
     }
     return 1;
   }
@@ -337,7 +344,9 @@ RB.town = (function () {
   }
   // the event standing on a road now ({ road, id, ev } or null): chosen on arrival, not yet seen through
   function eventHere(s, roadId) {
-    const r = rec(s).roads[roadId], D = (C().roadEvents || {})[roadId];
+    // read without filling in the world record (as slotOf): no record, no event. The record is made and changed on
+    // arrival, on leaving the road and when the event is seen through (beforeEnter, roadEventAt, roadDone), as before
+    const r = isObj(s.world) && isObj(s.world.roads) ? s.world.roads[roadId] : null, D = (C().roadEvents || {})[roadId];
     if (!r || !r.here || r.here.done || !D) return null;
     const ev = [D.unique].concat(D.variants || []).find((e) => e && e.id === r.here.id);
     return ev ? { road: roadId, id: ev.id, ev } : null;

@@ -194,7 +194,7 @@ RB.state = (function () {
       .some((conj) => conj.split('&').every((t) => term(s, t)));
   }
   // test()'s answer when the condition reads only the heads above (each a plain read of the journey); null when it
-  // names a head another system registered (some build the record they read: fish, slot). For looking ahead without
+  // names a head another system registered (some build the record they read, as fish does). For looking ahead without
   // touching anything (src/audio/52_voicebank.js): a null there means "not known now".
   const BUILT = new Set(['comp', 'prov', 'party', 'quest', 'item', 'var', 'prof', 'ch', 'word', 'seen', 'post', 'bg']);
   function peek(s, cond) {
