@@ -147,36 +147,58 @@ RB.encScreen = (function () {
     const s = RB.game.s;
     const st = E().begin(def, s);
     if (RB.test && RB.test.auto) return { result: RB.test.encounter(def, opts), outcome: st.enc.outcome };
-    RB.game.pushMode('encounter');
+    // This sitting belongs to the journey it began in (Agnes 6856629013; Local CL-806; Cloud CC-576). When another
+    // journey is loaded, or a load is only attempted, it is abandoned as an open battle is: its sheet, its confirm and
+    // its question come down unanswered, nothing more of it is decided or written (no finish, no callback), and none
+    // of its waits returns, so whoever started it does not go on either. What it had already done stays done.
+    const me = { st, fr: null, gone: false, drops: new Set(), off: null };
+    const NEVER = new Promise(() => {});
+    const live = (p) => Promise.resolve(p).then((v) => (me.gone ? NEVER : v), (e) => (me.gone ? NEVER : Promise.reject(e)));
+    // a confirm or a question of this sitting, which it can take down unanswered (their own `own`)
+    const own = (mk) => { let d = null; const p = mk((x) => { d = x; me.drops.add(x); }); return live(p).then((v) => { me.drops.delete(d); return v; }); };
+    RB.game.pushMode('encounter', me);
     const fr = RB.learnUi.sheet({ cls: 'enc-sheet', title: RB.ui.jhtml(def.name.jp || '') + ' ' + esc(def.name.en), headBtn: { html: I('back') + '<span>Step away</span>', attrs: { 'data-away': '' } } });
     const lay = { el: fr.scrim, name: 'encounter' };
     RB.learnUi.guardTaps(fr.leaf);
     const log = [];
-    cur = { st, fr };
+    me.fr = fr;
+    cur = me;
+    if (RB.bus) me.off = RB.bus.on('campaign:changing', () => {
+      if (me.gone) return;
+      me.gone = true;
+      if (me.off) { me.off(); me.off = null; }
+      for (const d of [...me.drops]) d();
+      me.drops.clear();
+      fr.el.onclick = null;
+      if (RB.ui.spoken) RB.ui.spoken.stop();
+      RB.ui.popLayer(lay);
+      RB.game.popMode('encounter', me);
+      if (cur === me) cur = null;
+    });
     const say = (f, who) => { if (f && (f.en || f.jp)) log.push({ who: who || '', jp: f.jp || '', en: f.en || '', none: !!f.none }); };
     let result = null;
     try {
       RB.ui.pushLayer(lay);
       while (!st.over) {
-        const pick = await choose(st, fr, log);
+        const pick = await live(choose(st, fr, log));
         if (pick === 'away') {
           // these words and the footer's hold for every procedure: how far a wrong step goes back depends on its restart
           // ('start' or 'stable'), and stepping away keeps where it stands unless the procedure says keep: false (RBN-QA-112)
-          const r = await RB.ui.confirm(st.enc.proc ? (st.enc.def.procedure.keep === false ? 'Step away? Next time, this starts again from the beginning.' : 'Step away? It stays as you leave it; you can come back whenever you like.') : 'Step away from this? Nothing is lost.', ['Step away', 'Stay']);
+          const r = await own((o) => RB.ui.confirm(st.enc.proc ? (st.enc.def.procedure.keep === false ? 'Step away? Next time, this starts again from the beginning.' : 'Step away? It stays as you leave it; you can come back whenever you like.') : 'Step away from this? Nothing is lost.', ['Step away', 'Stay'], { own: o }));
           if (r === 0) { result = 'flee'; break; }
           continue;
         }
         let card = pick;
         if (card.kind === 'wait') {
-          const r = await RB.ui.confirm('Wait: say nothing this time, and let the others speak.', ['Wait', 'Choose again']);
+          const r = await own((o) => RB.ui.confirm('Wait: say nothing this time, and let the others speak.', ['Wait', 'Choose again'], { own: o }));
           if (r !== 0) continue;
         }
         const step = stepFor(st, card);
-        const res = step ? await RB.challenge.runStep(step, { allowCancel: true, cancelLabel: 'Choose something else', ctxTag: 'encounter:' + def.id }) : { ok: true, firstTry: true, mistakes: 0 };
+        const res = step ? await own((o) => RB.challenge.runStep(step, { allowCancel: true, cancelLabel: 'Choose something else', ctxTag: 'encounter:' + def.id, own: o })) : { ok: true, firstTry: true, mistakes: 0 };
         if (res.cancelled) continue;
         // what you meant, before a lasting or procedural consequence (E7, E17): a misread never commits
         if (card.means && (card.lasting || card.kind === 'proc' || card.kind === 'resolve')) {
-          const r = await RB.ui.confirm(card.means.en, ['Yes, do it', 'Choose again']);
+          const r = await own((o) => RB.ui.confirm(card.means.en, ['Yes, do it', 'Choose again'], { own: o }));
           if (r !== 0) continue;
         }
         // your companion's own move, in their own voice (E8, E10)
@@ -184,7 +206,7 @@ RB.encScreen = (function () {
         const opts2 = E().companionOptions(st, s);
         if (opts2.length) {
           const names = opts2.map((o) => o.def.name.en);
-          const r = await RB.ui.confirm(compName(st) + ' could add something:', names.concat(['Nothing this time']));
+          const r = await own((o) => RB.ui.confirm(compName(st) + ' could add something:', names.concat(['Nothing this time']), { own: o }));
           if (r >= 0 && r < opts2.length) comp = { act: opts2[r].def.id };
         }
         const ev = E().exchange(st, { card, res, comp }, {});
@@ -195,18 +217,22 @@ RB.encScreen = (function () {
         RB.audio && RB.audio.sfx(ev.fx.some((f) => f.none) ? 'cursor' : 'reveal');
       }
       if (!result) result = st.over;
-      if (E().conclusionText(st.enc.conclusion, RB.game.settings) && result !== 'flee') await conclusion(st, fr, log);
+      if (E().conclusionText(st.enc.conclusion, RB.game.settings) && result !== 'flee') await live(conclusion(st, fr, log));
     } finally {
-      try {
-        const fin = E().finishEncounter(st, s, result);
-        if (fin && fin.flags) for (const k in fin.flags) s.flags[k] = fin.flags[k];
-        cur && (cur.fin = fin);
-        if (opts.encounterDone) opts.encounterDone(st.enc.outcome, fin);
-      } catch (err) { console.error('encounter finish', err); }
-      if (RB.ui.spoken) RB.ui.spoken.stop();
-      RB.ui.popLayer(lay);
-      RB.game.popMode('encounter');
-      cur = null;
+      // (an abandoned sitting never gets here: its waits never return; this guard is only for safety)
+      if (!me.gone) {
+        if (me.off) { me.off(); me.off = null; }
+        try {
+          const fin = E().finishEncounter(st, s, result);
+          if (fin && fin.flags) for (const k in fin.flags) s.flags[k] = fin.flags[k];
+          me.fin = fin;
+          if (opts.encounterDone) opts.encounterDone(st.enc.outcome, fin);
+        } catch (err) { console.error('encounter finish', err); }
+        if (RB.ui.spoken) RB.ui.spoken.stop();
+        RB.ui.popLayer(lay);
+        RB.game.popMode('encounter', me);
+        if (cur === me) cur = null;
+      }
     }
     return { result, outcome: st.enc.outcome };
   }
