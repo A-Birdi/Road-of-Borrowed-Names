@@ -3,8 +3,9 @@
 // (never a real save). Every sheet is driven by real clicks; the encounter is the fixture fx.dispute (a conversation
 // with questions, a lasting choice, the companion's offer, Wait, and endings) and, for a procedure, fx.sluice.
 //  1. controls, in one journey: Step away resolves 'flee' (and, from a scene, ends it); "Choose something else" on a
-//     question offers the choices again; a procedure stepped away from keeps its position; an encounter played to its
-//     end shows its conclusion, records its outcome and resolves, and the scene that started it goes on (_res, _enc);
+//     question offers the choices again; a procedure moved past its first step, then stepped away from, keeps that
+//     position; an encounter played to its end from a scene shows its conclusion, and the scene goes on (_enc names
+//     it) (its lasting records are not checked here);
 //  2. another journey loaded (another slot, then the same slot) at each of its seven waits: the choices, the Step away
 //     confirm, the Wait confirm, the question, the what-you-meant confirm, the companion's offer, the conclusion. Each
 //     time: no encounter sheet, choice card, confirm or question is left; RB.encScreen.current() is null; the encounter's promise
@@ -13,15 +14,25 @@
 //     pressed; the old journey in memory is exactly as it was at the interruption (no finish); its saved record is
 //     unchanged. Compared fields, here and below: learn, meter, flags, vars, backlog, enc, notebook, inv;
 //  3. at the question: untouched, after "I don't know" was pressed but before Continue, and after the right answer but
-//     before Continue (what the answer already recorded stays; nothing more is written);
+//     before Continue, given as the right answer, not revealed (what the answer already recorded stays; nothing more is
+//     written);
 //  4. after an abandonment: a new encounter opens and runs in the journey loaded, and a battle starts there; an old
 //     control pressed while a newer encounter is open leaves that encounter, its mode and RB.encScreen.current() alone;
-//  5. a load after an encounter finished normally does nothing more to it;
+//  5. a load after an encounter finished normally (by Step away) does nothing more to it;
 //  6. a load that does not happen: the save cannot be read; "Cancel" when the save is open in another tab; the old
 //     edition's offer declined (that last one stood in for: RB.edition.isOld and RB.ui.ngplus.fromOld). Started from a
-//     scene and without one, and once after a question was answered: the same journey stays, the encounter is gone,
-//     the mode is the world's, and the journey is exactly as it was at the interruption (what was done before stays);
-//  7. no page errors.
+//     scene and without one (the old edition's only without one), and once after a question was answered (the right
+//     answer, or revealed when none is offered): the same journey stays, the encounter is gone, the mode is the
+//     world's (walking and input are not tested), and the journey is exactly as it was at the interruption (what was
+//     done before stays). No failed load is tried with a procedure part done;
+//  7. no page errors;
+//  8. a wait already settled when the sitting is abandoned (Agnes 6858562955): its own control pressed, and
+//     campaign:changing emitted in the next microtask, before the encounter's code resumes: the choices (no Wait
+//     confirm opens), the Step away confirm from a scene (no flee returned, no _res or _enc), the companion's offer (no
+//     exchange), the conclusion from a scene (nothing returned), and a stand-in confirm that rejects (nothing thrown);
+//     and a newer encounter started in that same microtask, so that the old continuation would run over it: it has
+//     the only sheet, no confirm of the old one's appears, and it steps away normally. These events are emitted
+//     directly, without a load.
 // Not compared: playtime, and the load's own bookkeeping outside the named fields. Usage: node tools/build.mjs && node
 // tests/e2e/encounter_owner.mjs   (RB_PAGE=<file> for another page)
 import { serve, launch, page } from './lib.mjs';
@@ -60,7 +71,7 @@ await p.evaluate(async () => {
   window.__start = (how, id) => {
     window.__res = 'pending';
     if (how === 'scene') RB.script.run('zz.enc_scene');
-    else RB.game.startEncounter(id || 'fx.dispute', {}).then((v) => { window.__res = v; });
+    else RB.game.startEncounter(id || 'fx.dispute', {}).then((v) => { window.__res = v; }, (e) => { window.__res = 'rejected: ' + (e && e.message); });
   };
   window.__st = () => ({ sheet: !!document.querySelector('.enc-sheet'), cards: document.querySelectorAll('.rcard').length, conf: [...document.querySelectorAll('.confirm-scrim .q')].map((x) => x.textContent), chal: !!document.querySelector('.chal'), end: !!document.querySelector('.enc-end') });
   const card = (re) => [...document.querySelectorAll('.enc-sheet .rcard:not([disabled])')].find((x) => re.test((x.querySelector('.rc-en') || x).textContent));
@@ -93,7 +104,7 @@ await p.evaluate(async () => {
     else if (at === 'question' || at === 'q-reveal' || at === 'q-right') {
       card(/calm down/).click(); await sleep(600);
       if (at === 'q-reveal') await answer('reveal');
-      if (at === 'q-right') await answer('right');
+      if (at === 'q-right') window.__ansHow = await answer('right');
     } else if (at === 'companion') {
       card(/calm down/).click(); await sleep(600); await answer('reveal'); await cont();
     } else if (at === 'means') {
@@ -149,17 +160,22 @@ const st = () => p.evaluate(() => window.__st());
   await p.evaluate(() => window.__start('direct', 'fx.sluice'));
   const r = await p.evaluate(async () => {
     await window.__sleep(500);
-    const c = [...document.querySelectorAll('.enc-sheet .rcard:not([disabled])')][0]; c.click(); await window.__sleep(600);
-    if (document.querySelector('.chal')) { await window.__answer('right'); await window.__cont(); }
-    const yes = window.__confirmBtn(/Yes, do it/); if (yes) { yes.click(); await window.__sleep(500); }
-    const step = RB.encScreen.current() && RB.encScreen.current().st.enc.proc ? RB.encScreen.current().st.enc.proc.step : null;
+    // actions tried in turn until the procedure has moved past its first step
+    const stepNow = () => (RB.encScreen.current() && RB.encScreen.current().st.enc.proc ? RB.encScreen.current().st.enc.proc.step : null);
+    for (let k = 0; k < 8 && !(stepNow() > 0); k++) {
+      const cs = [...document.querySelectorAll('.enc-sheet .rcard:not([disabled])')].filter((x) => !/Unravel|Wait/.test((x.querySelector('.rc-en') || x).textContent));
+      const c = cs[k % Math.max(1, cs.length)]; if (!c) break; c.click(); await window.__sleep(600);
+      if (document.querySelector('.chal')) { await window.__answer('right'); await window.__cont(); }
+      const yes = window.__confirmBtn(/Yes, do it/); if (yes) { yes.click(); await window.__sleep(500); }
+    }
+    const step = stepNow();
     document.querySelector('.enc-sheet [data-away]').click(); await window.__sleep(300);
     window.__confirmBtn(/^Step away$/).click(); await window.__sleep(600);
     // kept under the procedure's own id
     const procs = (RB.game.s.enc && RB.game.s.enc.proc) || {}, ids = Object.keys(procs);
     return { step, ids, kept: ids.length === 1 ? procs[ids[0]].step : null, res: window.__res };
   });
-  ok(r.res && r.res.result === 'flee' && r.kept != null && r.kept === r.step, '1 one journey: a procedure stepped away from keeps its position ' + flat(r));
+  ok(r.res && r.res.result === 'flee' && r.step > 0 && r.kept === r.step, '1 one journey: a procedure moved past its first step, then stepped away from, keeps that position ' + flat(r));
 }
 {
   await p.evaluate(() => window.__load(1));
@@ -174,7 +190,9 @@ const st = () => p.evaluate(() => window.__st());
 async function staleCase(name, o) {
   await p.evaluate(() => window.__load(1));
   await p.evaluate((how) => window.__start(how), o.how || 'direct');
+  await p.evaluate(() => { window.__ansHow = null; });
   const at = await p.evaluate((at) => window.__to(at), o.at);
+  const how = await p.evaluate(() => window.__ansHow);
   const savedA = await p.evaluate(() => window.__saved(1));
   await p.evaluate(() => { window.__old = RB.game.s; window.__oldAt = window.__snapOf(window.__old); });
   await p.evaluate((slot) => window.__load(slot), o.into);
@@ -186,7 +204,7 @@ async function staleCase(name, o) {
   const r = await p.evaluate(() => ({ st: window.__st(), res: window.__res, cur: RB.encScreen.current(), modes: window.__modes(), oldSame: window.__snapOf(window.__old) === window.__oldAt, after: RB.game.s.vars.zz_after, r: RB.game.s.vars._res }));
   const savedA2 = await p.evaluate(() => window.__saved(1));
   const gone = (x) => !x.sheet && !x.cards && !x.conf.length && !x.chal;
-  const good = o.check(at) && gone(left.st) && left.cur === null && !left.modes.includes('encounter') && gone(r.st) && r.res === 'pending' && r.cur === null && !r.modes.includes('encounter')
+  const good = o.check(at) && (!o.right || how === 'right') && gone(left.st) && left.cur === null && !left.modes.includes('encounter') && gone(r.st) && r.res === 'pending' && r.cur === null && !r.modes.includes('encounter')
     && before === after && r.oldSame && savedA === savedA2 && r.after === undefined && r.r === undefined;
   ok(good, '2 ' + name + ' (into ' + into + '): nothing left on screen or as a mode; current() null; not resolved; the journey loaded unchanged, also after ' + pressed + ' old controls were pressed; the old journey as at the interruption; its saved record unchanged '
     + flat({ at, left, r, same: before === after, savedSame: savedA === savedA2 }));
@@ -206,7 +224,7 @@ for (const [name, at, check] of AT) {
 }
 await staleCase('from a scene, at the choices, another slot loaded (the scene does not go on)', { how: 'scene', at: 'choices', into: 2, check: (s) => s.sheet });
 await staleCase('3 the question after "I don\'t know", before Continue, another slot loaded', { at: 'q-reveal', into: 2, check: (s) => s.chal });
-await staleCase('3 the question after the right answer, before Continue, the same slot loaded again', { at: 'q-right', into: 1, check: (s) => s.chal });
+await staleCase('3 the question after the right answer (given as the right answer, not "I don\'t know"), before Continue, the same slot loaded again', { at: 'q-right', into: 1, check: (s) => s.chal, right: true });
 
 // ---- 4. after an abandonment ----------------------------------------------------------------------------------------
 {
@@ -288,6 +306,72 @@ await failedCase('a save that cannot be read, started without a scene, at the St
 await failedCase('"Cancel" when the save is open in another tab, from a scene, at the question', { kind: 'busy', how: 'scene', at: 'question' });
 await failedCase('"Cancel" when the save is open in another tab, started without a scene, after a question answered', { kind: 'busy', how: 'direct', at: 'question', answered: true });
 await failedCase('the old edition\'s offer declined (stood in for), started without a scene, at the choices', { kind: 'old', how: 'direct', at: 'choices' });
+
+// ---- 8. a wait already settled when the sitting is abandoned (Agnes 6858562955) ------------------------------------
+// The wait is settled by its own control, and campaign:changing is emitted in the very next microtask: after live() has
+// looked, before the encounter's own code resumes. The event is emitted directly (as a load would first emit it), so
+// the journey stays the same object, as in a load that fails. A stand-in confirm gives the rejection.
+async function readyCase(name, o) {
+  await p.evaluate(() => window.__load(1));
+  await p.evaluate((how) => window.__start(how), o.how || 'direct');
+  await p.evaluate((at) => window.__to(at), o.at);
+  await p.evaluate(() => {
+    const c = RB.encScreen.current();
+    window.__stBefore = c ? JSON.stringify({ round: c.st.round, tried: c.st.enc.tried, lines: (c.st.enc.lines || []).length }) : null;
+    window.__stObj = c ? c.st : null;
+    window.__sBefore = window.__snapOf(RB.game.s);
+  });
+  await p.evaluate(async (press) => {
+    const emit = () => Promise.resolve().then(() => RB.bus.emit('campaign:changing', { to: 'load', slot: 0 }));
+    if (press === 'wait-card') { window.__cardFor(/^\s*Wait/).click(); emit(); }
+    else if (press === 'step-away') { window.__confirmBtn(/^Step away$/).click(); emit(); }
+    else if (press === 'nothing') { window.__confirmBtn(/Nothing this time/).click(); emit(); }
+    else if (press === 'continue') { document.querySelector('.enc-sheet [data-ok]').click(); emit(); }
+    else if (press === 'reject') {
+      const real = RB.ui.confirm;
+      RB.ui.confirm = () => new Promise((res, rej) => { window.__rej = rej; });
+      window.__cardFor(/^\s*Wait/).click(); await window.__sleep(300);
+      RB.ui.confirm = real;
+      window.__rej(new Error('stand-in')); emit();
+    }
+  }, o.press);
+  await wait(1000);
+  const r = await p.evaluate(() => ({ st: window.__st(), res: window.__res, cur: RB.encScreen.current(), modes: window.__modes(),
+    exchange: window.__stObj ? JSON.stringify({ round: window.__stObj.round, tried: window.__stObj.enc.tried, lines: (window.__stObj.enc.lines || []).length }) !== window.__stBefore : null,
+    same: window.__snapOf(RB.game.s) === window.__sBefore, res2: RB.game.s.vars._res, enc2: RB.game.s.vars._enc }));
+  const good = !r.st.sheet && !r.st.cards && !r.st.conf.length && !r.st.chal && r.res === 'pending' && r.cur === null && !r.modes.includes('encounter') && r.exchange === false && r.same && r.res2 === undefined && r.enc2 === undefined;
+  ok(good, '8 ' + name + ': no new sheet, no exchange, no result returned or thrown, nothing written ' + flat(r));
+}
+await readyCase('the choices: the Wait card pressed (no Wait confirm opens)', { at: 'choices', press: 'wait-card' });
+await readyCase('the Step away confirm: "Step away" pressed, from a scene (no flee returned; no _res, _enc)', { how: 'scene', at: 'away', press: 'step-away' });
+await readyCase('the companion\'s offer: "Nothing this time" pressed (no exchange)', { at: 'companion', press: 'nothing' });
+await readyCase('the conclusion: Continue pressed, from a scene (nothing returned; no _res, _enc)', { how: 'scene', at: 'conclusion', press: 'continue' });
+await readyCase('a confirm that rejects (a stand-in), the rejection already accepted (nothing thrown)', { at: 'choices', press: 'reject' });
+{
+  // a newer encounter already open when the old sitting's settled wait would resume: the old sitting's Wait card is
+  // pressed, and in the next microtask campaign:changing is emitted and a newer encounter started, so the old
+  // continuation (if it ran) would run over the newer one
+  await p.evaluate(() => window.__load(1));
+  await p.evaluate(() => window.__start('direct'));
+  await p.evaluate(() => window.__to('choices'));
+  const r = await p.evaluate(async () => {
+    const old = RB.encScreen.current();
+    window.__res2 = 'pending';
+    window.__cardFor(/^\s*Wait/).click();
+    Promise.resolve().then(() => {
+      RB.bus.emit('campaign:changing', { to: 'load', slot: 0 });
+      RB.game.startEncounter('fx.dispute', {}).then((v) => { window.__res2 = v; }, (e) => { window.__res2 = 'rejected: ' + (e && e.message); });
+    });
+    await window.__sleep(1200);
+    const c = RB.encScreen.current();
+    const keep = { sheets: document.querySelectorAll('.enc-sheet').length, conf: window.__st().conf, cur: !!c && c !== old, enc: window.__modes().filter((m) => m === 'encounter').length };
+    document.querySelector('.enc-sheet [data-away]').click(); await window.__sleep(300);
+    window.__confirmBtn(/^Step away$/).click(); await window.__sleep(600);
+    return { keep, res2: window.__res2, old: window.__res, after: { sheets: document.querySelectorAll('.enc-sheet').length, conf: window.__st().conf, cur: RB.encScreen.current(), modes: window.__modes() } };
+  });
+  ok(r.keep.sheets === 1 && !r.keep.conf.length && r.keep.cur && r.keep.enc === 1 && r.res2 && r.res2.result === 'flee' && r.old === 'pending' && r.after.sheets === 0 && !r.after.conf.length && r.after.cur === null && !r.after.modes.includes('encounter'),
+    '8 a newer encounter open when the old sitting\'s settled wait would resume: one sheet (the newer one), no confirm of the old one\'s, current() the newer one, one encounter mode; the newer one steps away normally and leaves nothing behind; the old one still pending ' + flat(r));
+}
 
 ok(!errors.length, '7 no page errors' + (errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''));
 await ctx.close(); await b.close(); srv.close();

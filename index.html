@@ -118586,24 +118586,29 @@ RB.encScreen = (function () {
       RB.ui.pushLayer(lay);
       while (!st.over) {
         const pick = await live(choose(st, fr, log));
+        if (me.gone) await NEVER;
         if (pick === 'away') {
           // these words and the footer's hold for every procedure: how far a wrong step goes back depends on its restart
           // ('start' or 'stable'), and stepping away keeps where it stands unless the procedure says keep: false (RBN-QA-112)
           const r = await own((o) => RB.ui.confirm(st.enc.proc ? (st.enc.def.procedure.keep === false ? 'Step away? Next time, this starts again from the beginning.' : 'Step away? It stays as you leave it; you can come back whenever you like.') : 'Step away from this? Nothing is lost.', ['Step away', 'Stay'], { own: o }));
+          if (me.gone) await NEVER;
           if (r === 0) { result = 'flee'; break; }
           continue;
         }
         let card = pick;
         if (card.kind === 'wait') {
           const r = await own((o) => RB.ui.confirm('Wait: say nothing this time, and let the others speak.', ['Wait', 'Choose again'], { own: o }));
+          if (me.gone) await NEVER;
           if (r !== 0) continue;
         }
         const step = stepFor(st, card);
         const res = step ? await own((o) => RB.challenge.runStep(step, { allowCancel: true, cancelLabel: 'Choose something else', ctxTag: 'encounter:' + def.id, own: o })) : { ok: true, firstTry: true, mistakes: 0 };
+        if (me.gone) await NEVER;
         if (res.cancelled) continue;
         // what you meant, before a lasting or procedural consequence (E7, E17): a misread never commits
         if (card.means && (card.lasting || card.kind === 'proc' || card.kind === 'resolve')) {
           const r = await own((o) => RB.ui.confirm(card.means.en, ['Yes, do it', 'Choose again'], { own: o }));
+          if (me.gone) await NEVER;
           if (r !== 0) continue;
         }
         // your companion's own move, in their own voice (E8, E10)
@@ -118612,6 +118617,7 @@ RB.encScreen = (function () {
         if (opts2.length) {
           const names = opts2.map((o) => o.def.name.en);
           const r = await own((o) => RB.ui.confirm(compName(st) + ' could add something:', names.concat(['Nothing this time']), { own: o }));
+          if (me.gone) await NEVER;
           if (r >= 0 && r < opts2.length) comp = { act: opts2[r].def.id };
         }
         const ev = E().exchange(st, { card, res, comp }, {});
@@ -118622,9 +118628,12 @@ RB.encScreen = (function () {
         RB.audio && RB.audio.sfx(ev.fx.some((f) => f.none) ? 'cursor' : 'reveal');
       }
       if (!result) result = st.over;
-      if (E().conclusionText(st.enc.conclusion, RB.game.settings) && result !== 'flee') await live(conclusion(st, fr, log));
+      if (E().conclusionText(st.enc.conclusion, RB.game.settings) && result !== 'flee') { await live(conclusion(st, fr, log)); if (me.gone) await NEVER; }
     } finally {
-      // (an abandoned sitting never gets here: its waits never return; this guard is only for safety)
+      // a wait that had already settled when the sitting was abandoned resumes one step after live() looked, so the check
+      // is repeated where each wait resumes (above) and here, where a late rejection would otherwise reach the caller:
+      // an abandoned sitting stays pending, neither returning nor throwing (Agnes 6858562955)
+      if (me.gone) await NEVER;
       if (!me.gone) {
         if (me.off) { me.off(); me.off = null; }
         try {
