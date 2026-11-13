@@ -116,7 +116,9 @@ RB.tasks = (function () {
     return {
       kind: 'write', item: 'k:' + ch, answer: ch, accept: [ch], mode: 'kana', script: kata ? 'kata' : 'hira',
       prompt: { en: 'Write the ' + (kata ? 'katakana' : 'hiragana') + ' for “' + rom + '”.' },
-      explain: { en: ch + ' is read ' + rom + '.' }, single: true,
+      // a unit is the whole kana written (ティ, しゃ: two characters), here as in a word (RBN-QA-198; Agnes 6805563739,
+      // Local CL-775): only a one-character kana is single
+      explain: { en: ch + ' is read ' + rom + '.' }, single: ch.length === 1,
     };
   }
   // "in hiragana", "in katakana", "in hiragana or in kanji" … for a lexicon entry's recall task
@@ -236,9 +238,19 @@ RB.tasks = (function () {
   }
 
   // Adapt an authored step to the player's profile and knowledge.
+  // A kana task that asks one taught unit whole: its one item (a string) is exactly k: and the whole answer, read as
+  // the adaptation below reads it (plain), and that unit is taught. The yōon lessons teach きゃ as a unit and never ゃ
+  // alone, so the adaptation would cut it down to き with ゃ supplied, every time; it is asked as taught instead. Only
+  // that: not an answer merely known, not a unit inside a longer answer, not an item list, not a reading step
+  // (RBN-QA-198; Cloud CC-556; Agnes 6806661624).
+  function taughtUnit(step) {
+    if (step.mode !== 'kana' || typeof step.item !== 'string') return false;
+    const ans = plain(step.answer);
+    return step.item === 'k:' + ans && RB.learn.kanaKnown(ans);
+  }
   function prepare(step) {
     step = clone(step);
-    if (step.kind === 'write' && profile() === 'F' && RB.learn.taughtKana() && (step.mode === 'kana' || step.mode === 'reading') && !step.single) {
+    if (step.kind === 'write' && profile() === 'F' && RB.learn.taughtKana() && (step.mode === 'kana' || step.mode === 'reading') && !step.single && !taughtUnit(step)) {
       const ans = plain(step.answer);
       const chars = Array.from(ans);
       const knownIdx = chars.map((c, i) => (RB.kana.isKana(c) && RB.learn.kanaKnown(c) ? i : -1)).filter((i) => i >= 0);

@@ -5,10 +5,12 @@
 //     after the blank, not single, the unit itself the answer and the item;
 //  2. every one-character kana with a word, as before: before + kana + after is the word, single;
 //  3. Foundations: a unit asked in a word is asked whole after the level's own adaptation (every kana of the word is
-//     known, so nothing is blanked further); with the unit's small kana not yet taught there is no word, and the bare
-//     task is as before (single); with both scripts known, nothing changes;
+//     known, so nothing is blanked further); with the unit taught whole but its small kana not taught alone there is no
+//     word, and the bare unit is asked whole, not single (Agnes 6806661624; tests/unit/kana_taught_units.test.mjs); with
+//     both scripts known, nothing changes;
 //  4. grading: テ for ティ and フ for ファ are wrong, the unit right; テイ for ティ is recorded as it is (not right);
-//  5. the bare task (no word) is untouched by this row: still single, for one character or two (reported, not changed).
+//  5. the bare task (no word): not single for a two-character unit, single for one character (the bare-kana row,
+//     Agnes 6805563739 (a) and 6806661624; Local CL-775; this test first pinned it as single).
 import { load } from '../lib/load.mjs';
 
 export default async (t) => {
@@ -67,7 +69,8 @@ export default async (t) => {
   t.ok(f2.answer === 'しゃ' && f2.item === 'k:しゃ' && f2.template && f2.template.before === '' && f2.template.after === 'みせん', '3 Foundations, hiragana: しゃ asked whole in しゃみせん ' + JSON.stringify({ a: f2.answer, tpl: f2.template }));
   journey({ profile: 'F', known: 'kata', taught: ['パ', 'ー', 'テ', 'ティ'] });
   const f3 = RB.tasks.prepare(RB.tasks.kanaStep('ティ'));
-  t.ok(!f3.template && f3.single === true && f3.answer === 'ティ', '3 Foundations, the small ィ not yet taught: no word, the bare task as before (single)');
+  t.ok(!f3.template && f3.single === false && f3.answer === 'ティ' && f3.item === 'k:ティ' && !f3.fullAnswer && !f3.exposure,
+    '3 Foundations, ティ taught whole and the small ィ not taught alone: no word, the bare unit asked whole (not single, credited to ティ)');
   journey({ profile: 'F', known: 'both' });
   const f4 = RB.tasks.prepare(RB.tasks.kanaStep('ファ'));
   t.ok(f4.answer === 'ファ' && f4.template && f4.template.after === '', '3 Foundations, both scripts known: ファ in ソファ, whole ' + JSON.stringify(f4.template));
@@ -82,5 +85,5 @@ export default async (t) => {
   t.log('テ for ティ: ' + JSON.stringify((r1.feedback || []).map((f) => f.en)));
 
   // ---- 5. the bare task: not this row's (still single, one character or two)
-  t.eq(['ティ', 'しゃ', 'テ'].map((ch) => RB.tasks.kanaStep(ch, { bare: true }).single), [true, true, true], '5 the bare task is untouched here: single for ティ, しゃ and テ alike');
+  t.eq(['ティ', 'しゃ', 'テ'].map((ch) => RB.tasks.kanaStep(ch, { bare: true }).single), [false, false, true], '5 the bare task: not single for ティ and しゃ, single for テ');
 };
