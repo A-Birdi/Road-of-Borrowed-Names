@@ -32,6 +32,21 @@ const PARENT = {
   'src/ui/30_title.js': 'a14e4179264f2eee', 'src/ui/66c_records.js': '0ffde28d06a4921f', 'src/ui/40_create.js': 'dae1561041a79331',
 };
 
+// the later caller row's own lines in the Atlas run (a step stops once another journey is loaded: Agnes 6853081234,
+// Local CL-801, Cloud CC-574), all of them added lines: taken out, the run is its parent again
+const CALLER = new Set([
+  '  // A step belongs to the journey it is asked in (Agnes 6853081234; Local CL-801; Cloud CC-574): if another journey is',
+  '  // loaded while its teaching card or its question is up, it ends here, unusable, before the question opens or the',
+  "  // run's counts change; the four places that ask stop on it without a word. Teaching done before the card stays.",
+  '  const STALE = () => ({ ok: false, cancelled: true, stale: true });',
+  '    const owner = S();',
+  '    if (S() !== owner) return STALE();',
+  '    if (res.stale || S() !== owner) return STALE();',
+  '    if (res.stale) return;',
+  '    // finished after another journey is loaded: no more lines, and no battle over that journey',
+]);
+const lessCaller = (s) => s.split('\n').filter((l) => !CALLER.has(l)).join('\n');
+
 function storage() {
   const m = new Map();
   return {
@@ -52,8 +67,8 @@ export default async (t) => {
       .replace("        corruptWhy: corrupt ? (r.state ? errs.join('; ') : 'no data') : null,\n", "        corruptWhy: corrupt ? (r.state ? validate(r.state).join('; ') : 'no data') : null,\n");
     t.ok(back !== save && fp(back) === PARENT['src/engine/80_save.js'] && (save.match(/listErrors\(/g) || []).length === 2,
       'the save file is its parent plus listErrors and the two lines of list() that use it (corrupt and its reason from one list)');
-    const same = Object.keys(PARENT).filter((f) => f !== 'src/engine/80_save.js' && fp(src(f)) === PARENT[f]);
-    t.eq(same.length, 5, 'the Atlas generator and run, the title, the travel volume and the New Game+ offer are as on the parent');
+    const same = Object.keys(PARENT).filter((f) => f !== 'src/engine/80_save.js' && fp(f === 'src/atlas/50_run.js' ? lessCaller(src(f)) : src(f)) === PARENT[f]);
+    t.eq(same.length, 5, 'the Atlas generator and run (the run less the later caller row\'s added lines), the title, the travel volume and the New Game+ offer are as on the parent');
   }
 
   const LS = storage();

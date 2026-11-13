@@ -164,9 +164,15 @@ RB.hooks = RB.hooks || {};
   }
 
   // ---- running a language step ------------------------------------------------------------------
+  // A step belongs to the journey it is asked in (Agnes 6853081234; Local CL-801; Cloud CC-574): if another journey is
+  // loaded while its teaching card or its question is up, it ends here, unusable, before the question opens or the
+  // run's counts change; the four places that ask stop on it without a word. Teaching done before the card stays.
+  const STALE = () => ({ ok: false, cancelled: true, stale: true });
   async function runStep(step, title) {
     if (!step) return { ok: true, assisted: true, skipped: true };
+    const owner = S();
     if (step.teachFirst && step.topicItem && !dbg.autoSteps) await teachItem(step.topicItem);
+    if (S() !== owner) return STALE();
     const st = RB.tasks.prepare(step);
     if (title) st.title = title;
     if (dbg.autoSteps) {
@@ -176,6 +182,7 @@ RB.hooks = RB.hooks || {};
     }
     RB.ui.dialogue.hide();
     const res = await RB.challenge.runStep(st, { ctxTag: 'atlas', cancelLabel: 'Step back for now' });
+    if (res.stale || S() !== owner) return STALE();
     const run = runOf();
     if (run && !res.cancelled) {
       run.stats.steps++;
@@ -275,6 +282,7 @@ RB.hooks = RB.hooks || {};
     const step = RB.atlasCommissions.landmarkStep(run, key, r.room.pattern, s.learn.profile);
     await say('narr', NARR.surveyCompare);
     const res = await runStep(step, 'Verify a landmark');
+    if (res.stale) return;
     if (res.cancelled) { await compSay(COMP_LATER); return; }
     s.flags[FLAG('survey_' + key)] = true;
     run.survey = run.survey || { marks: {} };
@@ -365,6 +373,7 @@ RB.hooks = RB.hooks || {};
     }
     await say('narr', OBJ_INTRO[o.type] || OBJ_INTRO.inscription);
     const res = await runStep(step, { inscription: 'Restore the inscription', promise: 'Read the loose promise', sign: 'Mend the road sign', lanterns: 'Light the lantern' }[o.type]);
+    if (res.stale) return;
     if (res.cancelled) { await compSay(COMP_LATER); return; }
     RB.audio && RB.audio.sfx(o.type === 'lanterns' ? 'lantern' : 'reveal');
     if (o.type === 'lanterns') {
@@ -410,6 +419,7 @@ RB.hooks = RB.hooks || {};
     if (!run.objs[okey][P]) run.objs[okey][P] = AT.objectiveSteps({ type: 'name', seed: (run.seed ^ U.hashStr(okey)) >>> 0 }, run, P, { name: npc.name })[0];
     await say('narr', NARR.unmoored);
     const res = await runStep(run.objs[okey][P], 'Answer the unmoored name');
+    if (res.stale) return;
     if (res.cancelled) { await compSay(COMP_LATER); return; }
     s.flags[fk] = true;
     if (run.names.indexOf(npc.name) < 0) run.names.push(npc.name);
@@ -648,6 +658,8 @@ RB.hooks = RB.hooks || {};
     if (!run.objs.legend[P]) run.objs.legend[P] = AT.objectiveSteps({ type: 'legend', seed: (run.seed ^ 0xabc) >>> 0 }, run, P, { boss })[0];
     await say('narr', NARR.legendFirst);
     const res = await runStep(run.objs.legend[P], 'Read the guardian\'s legend');
+    // finished after another journey is loaded: no more lines, and no battle over that journey
+    if (res.stale) return;
     if (!res.cancelled && res.firstTry !== false) {
       run.bonusKnots += 1;
       await say('narr', NARR.legendUnderstood);

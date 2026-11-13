@@ -197,14 +197,19 @@ RB.lessons = (function () {
       RB.game.pushMode('challenge');
       try {
         await showGroup(g);
+        // another journey loaded while the sheet was up: the lesson was this journey's, so nothing is written to
+        // either one and no practice follows (Agnes 6852801783, 6853081234; Local CL-799; Cloud CC-574)
+        if (RB.game.s !== s) return;
         const cs = groupChars(g);
         cs.forEach((c) => { s.learn.taught[c.ch] = true; RB.learn.markIntroduced('k:' + c.ch); });
         s.learn.kanaGroup = ng.i + 1;
-        // one gentle practice pass over the new characters
+        // one gentle practice pass over the new characters; "Skip practice" moves on to the next one, but a step
+        // finished after another journey is loaded ends the pass
         for (const c of RB.util.rng(ng.i + 3).shuffle(cs).slice(0, Math.min(3, cs.length))) {
           const step = RB.tasks.kanaStep(c.ch, { bare: Math.random() < 0.5 });
           step.title = 'New kana practice';
-          await RB.challenge.runStep(step, { allowCancel: true, cancelLabel: 'Skip practice' });
+          const r = await RB.challenge.runStep(step, { allowCancel: true, cancelLabel: 'Skip practice' });
+          if ((r && r.stale) || RB.game.s !== s) break;
         }
       } finally {
         RB.game.popMode('challenge');
@@ -224,7 +229,8 @@ RB.lessons = (function () {
       words, doneLabel: 'On to the task',
     };
     RB.game.pushMode('challenge');
-    try { await showGroup(g); mark(); } finally { RB.game.popMode('challenge'); }
+    // marked only in the journey that asked, and only if it is still the one loaded (as in run above)
+    try { await showGroup(g); if (RB.game.s === s) mark(); } finally { RB.game.popMode('challenge'); }
   }
   // Teach every remaining group at once (used when a player switches to Foundations mid-game).
   function teachAll(s) {
