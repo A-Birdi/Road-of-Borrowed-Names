@@ -188,14 +188,22 @@ export default async (t) => {
   }
   // R6
   {
-    const got = {};
+    const got = {}, leaf = {};
     for (const ed of [1, 2]) for (const comp of ['nao', 'mio', 'ren', 'suzu', null]) {
       fresh({ ed, comp, main: 7, flags: { lf_bell_rung: true, lf_after_town: true } });
       const r = await tami();
-      got[ed + ':' + comp] = fp({ lines: r.lines, main: { stage: s.quests.lf_main.stage, done: s.quests.lf_main.done }, ch5: !!s.flags.ch5_done, inv: s.inv, travel: s.travel || {} });
+      leaf[ed + ':' + comp] = Object.prototype.hasOwnProperty.call(s.inv, 'ko_leaf_lf') ? s.inv.ko_leaf_lf : 'absent';
+      // The one entry that differs from the parent: the call's quiet give of Kotonoha's leaf (edition 2), which the
+      // parent read as a count of NaN (written as null) and now gives as one (RB.state.itemArgs; Cloud CC-561, CC-566).
+      // The fingerprint keeps the parent's value for it; the check after it pins the new one.
+      const inv = s.inv.ko_leaf_lf === 1 ? Object.assign({}, s.inv, { ko_leaf_lf: NaN }) : s.inv;
+      got[ed + ':' + comp] = fp({ lines: r.lines, main: { stage: s.quests.lf_main.stage, done: s.quests.lf_main.done }, ch5: !!s.flags.ch5_done, inv, travel: s.travel || {} });
     }
     t.ok(fp(got) === FP_FIRST && !errors.length, 'R6 the first meeting, the letter and the rewards, line for line and state for state as on the parent, both editions, each companion and none; no scene error ' +
       flat({ fp: fp(got), n: Object.keys(got).length, errors }));
+    const want = {};
+    for (const ed of [1, 2]) for (const comp of ['nao', 'mio', 'ren', 'suzu', null]) want[ed + ':' + comp] = ed === 2 ? 1 : 'absent';
+    t.eq(leaf, want, 'R6 the call\'s quiet leaf: held as one in edition 2 (the parent held NaN, saved as null), not given in edition 1');
   }
   console.error = cerr;
 };

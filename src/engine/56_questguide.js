@@ -409,8 +409,9 @@ RB.questGuide = (function () {
             touch(st, 'var:' + name);
             break;
           }
-          case 'give': RB.state.give(st, a[0], a[1] ? +a[1] : 1); touch(st, 'item:' + a[0]); break;
-          case 'take': RB.state.take(st, a[0], a[1] ? +a[1] : 1); touch(st, 'item:' + a[0]); break;
+          // read as the script runner reads them (RB.state.itemArgs; CC-561): one that does nothing there does nothing here
+          case 'give': { const g = RB.state.itemArgs(a); if (g.ok) { RB.state.give(st, a[0], g.n); touch(st, 'item:' + a[0]); } break; }
+          case 'take': { const g = RB.state.itemArgs(a); if (g.ok) { RB.state.take(st, a[0], g.n); touch(st, 'item:' + a[0]); } break; }
           case 'word': a.forEach((w) => { if (!st.words.includes(w)) st.words.push(w); touch(st, 'word:' + w); }); break;
           case 'quest': {
             const before = qval(st, a[0]);

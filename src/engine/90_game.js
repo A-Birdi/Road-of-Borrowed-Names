@@ -2,6 +2,10 @@
  * battles, companion recruitment/departure, and the campaign lifecycle. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
+// On load, a quiet give's count saved as null (`!give <item> quiet` read `quiet` as the count) is repaired, for the
+// three items it touched (RB.state.repairQuietGives; Cloud CC-561, CC-562; Agnes 6807667580)
+if (RB.save && RB.save.addMigration && RB.state && RB.state.repairQuietGives) RB.save.addMigration((st) => RB.state.repairQuietGives(st));
+
 RB.game = (function () {
   'use strict';
   const G = {

@@ -335,13 +335,22 @@ RB.script = (function () {
           break;
         }
         case 'give': {
-          RB.state.give(s, a[0], a[1] ? +a[1] : 1);
+          // its arguments as the guide reads them (RB.state.itemArgs): one that is not a count or `quiet` does nothing
+          const g = RB.state.itemArgs(a);
+          if (!g.ok) { console.warn('give ' + a[0] + ': not a count or quiet: ' + g.bad.join(' ') + ' (' + sc.id + ' line ' + c.line + ')'); break; }
+          RB.state.give(s, a[0], g.n);
           const it = RB.content.items[a[0]];
-          // one slip with the item's icon, and its one sound (LI-3: no second sound after it); a quiet gift says nothing
-          if (it && !c.args.includes('quiet')) await RB.ui.toast({ kind: 'item', id: a[0], n: a[1] ? +a[1] : 1, note: RB.equip.note(it) });
+          // one slip with the item's icon and the count given, and its one sound (LI-3: no second sound after it); a
+          // quiet gift says nothing
+          if (it && !g.quiet) await RB.ui.toast({ kind: 'item', id: a[0], n: g.n, note: RB.equip.note(it) });
           break;
         }
-        case 'take': RB.state.take(s, a[0], a[1] ? +a[1] : 1); break;
+        case 'take': {
+          const g = RB.state.itemArgs(a);
+          if (!g.ok) { console.warn('take ' + a[0] + ': not a count or quiet: ' + g.bad.join(' ') + ' (' + sc.id + ' line ' + c.line + ')'); break; }
+          RB.state.take(s, a[0], g.n);
+          break;
+        }
         case 'word': {
           for (const w of a) {
             if (s.words.indexOf(w) < 0) {

@@ -219,6 +219,45 @@ RB.state = (function () {
     // guide's simulated states and other copies never are)
     if ((n == null || n > 0) && RB.discovery && RB.discovery.fromItem && RB.game && RB.game.s === s) RB.discovery.fromItem(s, id);
   }
+  // A give or take's arguments after the item, read the same way by the script runner and the quest guide's
+  // simulator: `quiet` (no slip and no sound), and a count, an argument that reads as a finite number (as `+a` always
+  // read it), at most one; with no count, one. Anything else (an unknown word, a second count, a count that is not
+  // finite) makes the command one that does nothing: no item given or taken, no "new" mark, no slip, and nothing for the
+  // guide to follow; the validator names its scene and line. `!give rw_letter quiet` read `quiet` as the count (NaN), so
+  // the letter was never held as one and Tsuru's take failed (CC-541; Local CL-707, CL-711; Cloud CC-561, CC-562;
+  // Agnes 6650249477, 6807667580).
+  function itemArgs(args) {
+    let n = null, quiet = false;
+    const bad = [];
+    for (const a of (args || []).slice(1)) {
+      if (a === 'quiet') quiet = true;
+      else if (n == null && typeof a === 'string' && a.trim() !== '' && Number.isFinite(+a)) n = +a;
+      else bad.push(a);
+    }
+    return { ok: !bad.length, n: n == null ? 1 : n, quiet, bad };
+  }
+  // On load: a count a quiet give saved as null (or, in a running journey, NaN), repaired for the three items those
+  // gives touched and nothing else. Only an own entry that is exactly null or NaN is repaired (an absent entry, zero, any
+  // other number, a string, an object, a boolean, undefined and Infinity are left as they are); every other item and
+  // field is untouched, and no give is made (no "new" mark, no keepsake record). From what the journey shows, and
+  // idempotent: a conservative recovery of the corrupt entry, not a reconstruction of every count lost (Agnes
+  // 6807667580; Local CL-710, CL-711; Cloud CC-561, CC-562).
+  const QUIET_REPAIR = {
+    ko_leaf_lf: (s) => (s.flags && s.flags.ko_ret_lf ? 0 : 1), // ko.sent_lf takes the leaf and sets ko_ret_lf straight after
+    rw_letter: (s) => (s.flags && s.flags.rw_met_tsuru ? 0 : 1), // Tsuru's first scene takes it, then sets rw_met_tsuru
+    rw_tea_leaves: () => 1, // the quiet give's one (once the plain give has run the count is a number: left as it is)
+  };
+  function repairQuietGives(s) {
+    if (!s || !s.inv || typeof s.inv !== 'object') return s;
+    for (const id in QUIET_REPAIR) {
+      if (!Object.prototype.hasOwnProperty.call(s.inv, id)) continue;
+      const v = s.inv[id];
+      if (!(v === null || (typeof v === 'number' && Number.isNaN(v)))) continue;
+      const n = QUIET_REPAIR[id](s);
+      if (n > 0) s.inv[id] = n; else delete s.inv[id];
+    }
+    return s;
+  }
   function take(s, id, n) {
     const item = RB.content.items[id];
     n = n == null ? 1 : n;
@@ -276,5 +315,5 @@ RB.state = (function () {
     s.awarded[id] = Date.now();
     return true;
   }
-  return { newCampaign, test, peek, give, take, setQuest, autoQuests, pronouns, once, addTerm, PROF_ORDER };
+  return { newCampaign, test, peek, give, take, itemArgs, repairQuietGives, setQuest, autoQuests, pronouns, once, addTerm, PROF_ORDER };
 })();

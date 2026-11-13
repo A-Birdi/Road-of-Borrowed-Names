@@ -9,12 +9,25 @@ import { dirname, join } from 'node:path';
 
 const DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'fixtures', 'campaign');
 const NEW = ['edition', 'records', 'rng', 'chapterKey'];
+// The one entry loading changes in these journeys, named file by file: Kotonoha's leaf, which the arrival's quiet give
+// saved as null (`!give ko_leaf_lf quiet` read `quiet` as the count), is the one leaf held again in the four that never
+// sent it home (RB.state.repairQuietGives; Agnes 6807667580; Cloud CC-561, CC-562). The expected journey is this
+// fixture with that entry set to 1 by hand, not the migration's own output; nothing else is excused.
+const LEAF_NULL = ['F-ren-ch5_done.json', 'F-ren-cr_done.json', 'F-ren-ko_done.json', 'F-ren-yn_done.json'];
+const expected = (f, st) => {
+  if (!LEAF_NULL.includes(f)) return st;
+  const e = JSON.parse(JSON.stringify(st));
+  e.inv.ko_leaf_lf = 1;
+  return e;
+};
 
 export default async (t) => {
   const RB = load(['core', 'lang', 'recog', 'engine', 'learn', 'ui', 'content', 'atlas'], { __RB_TEST__: true });
   const E = RB.edition;
   const files = readdirSync(DIR).filter((f) => f.endsWith('.json')).sort();
   t.ok(files.length >= 3, 'the campaign fixtures are present (' + files.length + ')');
+  const leafNull = files.filter((f) => { const st = JSON.parse(readFileSync(join(DIR, f), 'utf8')); return Object.prototype.hasOwnProperty.call(st.inv, 'ko_leaf_lf') && st.inv.ko_leaf_lf === null && !st.flags.ko_ret_lf; });
+  t.eq(leafNull, LEAF_NULL, 'the journeys holding the leaf as null and never sending it home are exactly the four named');
   for (const f of files) {
     const saved = JSON.parse(readFileSync(join(DIR, f), 'utf8'));
     const old = JSON.parse(JSON.stringify(saved));
@@ -25,8 +38,8 @@ export default async (t) => {
     t.ok(m.edition === 1 && m.records && m.records.found && m.rng && m.rng.n, f + ': it loads as the six-chapter edition with empty records');
     const back = JSON.parse(JSON.stringify(m));
     for (const k of NEW) delete back[k];
-    const was = JSON.parse(before);
-    for (const k of Object.keys(was)) t.eq(JSON.stringify(back[k]), JSON.stringify(was[k]), f + ': ' + k + ' is exactly as it was');
+    const was = expected(f, JSON.parse(before));
+    for (const k of Object.keys(was)) t.eq(JSON.stringify(back[k]), JSON.stringify(was[k]), f + ': ' + k + ' is exactly as it was' + (LEAF_NULL.includes(f) && k === 'inv' ? ' (the leaf\'s null count now the one leaf)' : ''));
     t.eq(E.number(m), was.chapter, f + ': it still shows as Chapter ' + was.chapter);
     E._ship(false);
     t.ok(!E.isOld(m), f + ': before the edition shipped it was an ordinary save');
@@ -38,7 +51,7 @@ export default async (t) => {
     const fresh = RB.state.newCampaign();
     for (const k of added) t.eq(JSON.stringify(cur[k]), JSON.stringify(fresh[k]), f + ': ' + k + ', added since it was written, is added empty');
     for (const k of added) delete cur[k];
-    t.eq(JSON.stringify(cur), JSON.stringify(saved), f + ': everything it held loads unchanged');
+    t.eq(JSON.stringify(cur), JSON.stringify(expected(f, saved)), f + ': everything it held loads unchanged' + (LEAF_NULL.includes(f) ? ' (but the leaf\'s null count, now the one leaf)' : ''));
     // once the edition ships (A04), an edition-1 save is shown as such; a finished one begins New Game+ (C-54, K9)
     E._ship(true);
     try {

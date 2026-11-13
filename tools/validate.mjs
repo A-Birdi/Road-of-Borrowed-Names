@@ -82,7 +82,12 @@ for (const id in C.scenes) {
     if (c.op === 'choice') for (const o of c.opts) { jcheck(o.jp, where(c)); if (!o.en) E(where(c) + ' choice without English'); }
     if (c.op === 'card' || c.op === 'journal' || c.op === 'toast') jcheck(c.jp, where(c));
     if (c.op === 'call') ref(a[0], where(c));
-    if (c.op === 'give' || c.op === 'take') { if (!C.items[a[0]]) E(where(c) + ' unknown item ' + a[0]); }
+    if (c.op === 'give' || c.op === 'take') {
+      if (!C.items[a[0]]) E(where(c) + ' unknown item ' + a[0]);
+      // after the item, only a count and `quiet` (RB.state.itemArgs; CC-561)
+      const bad = RB.state.itemArgs(a).bad;
+      if (bad.length) E(where(c) + ' ' + c.op + ' ' + a[0] + ': not a count or quiet: ' + bad.join(' '));
+    }
     if (c.op === 'word') for (const w of a) if (!C.words[w]) E(where(c) + ' unknown word ' + w);
     if (c.op === 'note') for (const n of a) if (!C.notes[n]) E(where(c) + ' unknown note ' + n);
     if (c.op === 'quest') { if (!C.quests[a[0]]) E(where(c) + ' unknown quest ' + a[0]); else if (a[1] && a[1] !== 'done' && a[1] !== 'start' && !(C.quests[a[0]].stages || [])[+a[1]]) E(where(c) + ' quest ' + a[0] + ' has no stage ' + a[1]); }
