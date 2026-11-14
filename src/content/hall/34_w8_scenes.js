@@ -294,11 +294,13 @@ narr: ${ROAD[r][0]} 。 {雪|ゆき} が {静|しず}か に {降|ふ}って い
   const WHO = { tosuke: ['トウスケ', 'Tōsuke'], gonroku: ['ゴンロク', 'Gonroku'], saki: ['サキ', 'Saki'], hisa: ['ヒサ', 'Hisa'] };
   const PRINT = { boots: ['{大|おお}きな {藁|わら} の {長靴|ながぐつ} の {跡|あと}', 'the prints of big straw boots'], geta: ['{下駄|げた} の {歯|は} の {跡|あと}', 'the marks of geta teeth'], sandals: ['{小|ちい}さな {草鞋|わらじ} の {跡|あと}', 'the prints of small straw sandals'], zori: ['{草履|ぞうり} の {跡|あと}', 'the prints of zōri'] };
   const PRINTK = { 0: { pr1: 'boots', pr2: 'geta', pr3: 'sandals', pr4: 'zori' }, 1: { pr1: 'zori', pr2: 'sandals', pr3: 'boots', pr4: 'geta' } };
+  // each version's English keeps what its Japanese says: seen, reported, inferred, expected or certain, with a source only
+  // where the Japanese names one (Batch 3 Row 1: Cloud CC-589, Local CL-822, Agnes 6874584737)
   const EVID = {
-    tosuke: ['トウスケ さん は 、 わら の ながぐつ を はいて いた 。 サキ が みた 。', 'トウスケ さん は {藁|わら} の {長靴|ながぐつ} を {履|は}いて いた 。 サキ が {見|み}た そう だ 。', '{今朝|けさ} 、 トウスケ さん が {藁|わら} の {長靴|ながぐつ} を {履|は}いて いる の を 、 サキ が {見|み}た と の こと 。', 'Tōsuke was wearing straw boots: Saki saw him.'],
-    gonroku: ['ゴンロク さん は 、 げた を はいて いる らしい 。 ろうか で おと が した 。', 'ゴンロク さん は {下駄|げた} を {履|は}いて いる らしい 。 {廊下|ろうか} で カラコロ と {音|おと} が した 。', '{廊下|ろうか} で カラコロ と {下駄|げた} の {音|おと} が した から 、 ゴンロク さん は {下駄|げた} の よう だ 。', 'Gonroku seems to wear geta: they clattered in the corridor.'],
-    saki: ['サキ は 、 ぞうり で ゆき かき を した 。', 'サキ は 、 {草履|ぞうり} で {雪|ゆき} かき を した そう だ 。', 'おかみ さん の {話|はなし} で は 、 サキ は {草履|ぞうり} の まま {雪|ゆき} かき を した と の こと 。', 'Saki cleared the snow in zōri, the landlady says.'],
-    hisa: ['こども の わらじ は 、 ちいさい はず 。', '{子供|こども} の {草鞋|わらじ} は 、 {小|ちい}さい はず だ 。', 'ヒサ は まだ {子供|こども} だ から 、 {草鞋|わらじ} の {跡|あと} は {小|ちい}さい に {違|ちが}いない 。', 'A child\'s straw sandals should leave small prints.'],
+    tosuke: ['トウスケ さん は 、 わら の ながぐつ を はいて いた 。 サキ が みた 。', 'トウスケ さん は {藁|わら} の {長靴|ながぐつ} を {履|は}いて いた 。 サキ が {見|み}た そう だ 。', '{今朝|けさ} 、 トウスケ さん が {藁|わら} の {長靴|ながぐつ} を {履|は}いて いる の を 、 サキ が {見|み}た と の こと 。', ['Tōsuke was wearing straw boots: Saki saw him.', 'Tōsuke was wearing straw boots. Saki is said to have seen him.', 'This morning, Saki is reported to have seen Tōsuke wearing straw boots.']],
+    gonroku: ['ゴンロク さん は 、 げた を はいて いる らしい 。 ろうか で おと が した 。', 'ゴンロク さん は {下駄|げた} を {履|は}いて いる らしい 。 {廊下|ろうか} で カラコロ と {音|おと} が した 。', '{廊下|ろうか} で カラコロ と {下駄|げた} の {音|おと} が した から 、 ゴンロク さん は {下駄|げた} の よう だ 。', ['Gonroku seems to be wearing geta. There was a sound in the corridor.', 'Gonroku seems to be wearing geta. There was a clip-clop in the corridor.', 'Geta went clip-clop in the corridor, so it seems Gonroku is in geta.']],
+    saki: ['サキ は 、 ぞうり で ゆき かき を した 。', 'サキ は 、 {草履|ぞうり} で {雪|ゆき} かき を した そう だ 。', 'おかみ さん の {話|はなし} で は 、 サキ は {草履|ぞうり} の まま {雪|ゆき} かき を した と の こと 。', ['Saki cleared the snow in zōri.', 'Saki is said to have cleared the snow in zōri.', 'According to the landlady, Saki cleared the snow still in zōri.']],
+    hisa: ['こども の わらじ は 、 ちいさい はず 。', '{子供|こども} の {草鞋|わらじ} は 、 {小|ちい}さい はず だ 。', 'ヒサ は まだ {子供|こども} だ から 、 {草鞋|わらじ} の {跡|あと} は {小|ちい}さい に {違|ちが}いない 。', ['A child\'s straw sandals should be small.', 'A child\'s straw sandals should be small.', 'Hisa is still a child, so the straw-sandal prints must be small.']],
   };
   const HOLDN = (w) => 'xp_hall_w8_f2_hold_' + w, NAMED = (w) => 'xp_hall_w8_f2_named_' + w, PRN = (pr) => 'xp_hall_w8_f2_print_' + pr;
   const PRS = ['pr1', 'pr2', 'pr3', 'pr4'];
@@ -306,7 +308,7 @@ narr: ${ROAD[r][0]} 。 {雪|ゆき} が {静|しず}か に {降|ふ}って い
 @scene hall.w8.t8_board
 narr: {座敷|ざしき} の {板|いた} に 、 {皆|みな} の {履|は}き{物|もの} に ついて の {話|はなし} が {貼|は}って ある 。 || On the board in the morning room, notes on everyone's footwear are pinned up.
 `;
-  for (const w of Object.keys(EVID)) out += LVN3((t, i) => `?(${L[t]}) narr: 「 ${EVID[w][i]} 」 || "${EVID[w][3]}"\n`);
+  for (const w of Object.keys(EVID)) out += LVN3((t, i) => `?(${L[t]}) narr: 「 ${EVID[w][i]} 」 || "${EVID[w][3][i]}"\n`);
   out += `?(comp&!hall.w8.t8&comp!=ren) comp: {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いこう 。 || Let's set each name tag by the prints that match.
 ?(comp=ren&!hall.w8.t8) comp: {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いきましょう 。 || Let's set each name tag by the prints that match.
 `;

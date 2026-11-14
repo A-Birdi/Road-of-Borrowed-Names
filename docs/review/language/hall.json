@@ -3705,19 +3705,19 @@
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
   "jp": "「 {和尚|おしょう}さん を {起|お}こす {前|まえ} に 、 {薪|まき} を {運|はこ}ぶ 。 {水|みず} を {汲|く}んで から 、 {灯籠|とうろう} に {火|ひ} を {入|い}れる 。 {灯籠|とうろう} に {火|ひ} を {入|い}れた {後|あと} で 、 {薪|まき} を {運|はこ}ぶ 。 」",
-  "en": "\"First draw water; then light the stone lantern; then carry the firewood; last, wake the priest.\""
+  "en": "\"Before waking the priest, carry the firewood. After drawing water, light the stone lantern. After lighting the stone lantern, carry the firewood.\""
  },
  "scene:hall.w3.t2_note#1pggw1x": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
   "jp": "「 {和尚|おしょう}さん を {起|お}こす の は 、 {薪|まき} を {運|はこ}び{終|お}えて から 。 {灯籠|とうろう} の {火|ひ} は 、 {水|みず} を {汲|く}んで から で ない と {入|い}れない 。 {薪|まき} は 、 {灯籠|とうろう} が {明|あか}るい うち に {運|はこ}ぶ 。 」",
-  "en": "\"First draw water; then light the stone lantern; then carry the firewood; last, wake the priest.\""
+  "en": "\"Waking the priest comes after the firewood has all been carried. The stone lantern is not lit until the water has been drawn. The firewood is carried while the lantern is still bright.\""
  },
  "scene:hall.w3.t2_note#1fiwlum": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
   "jp": "「 {水|みず} を {汲|く}み{次第|しだい} 、 {灯籠|とうろう} に {火|ひ} を {入|い}れる こと 。 {薪|まき} は 、 {灯籠|とうろう} の {明|あ}かり を {頼|たよ}り に {運|はこ}ぶ 。 {和尚|おしょう}さん を {起|お}こす の は 、 {万事|ばんじ} {整|ととの}えて から 。 」",
-  "en": "\"First draw water; then light the stone lantern; then carry the firewood; last, wake the priest.\""
+  "en": "\"As soon as the water is drawn, the stone lantern is to be lit. The firewood is carried by the lantern's light. Waking the priest comes once everything is in order.\""
  },
  "scene:hall.w3.t2_note#lohcqe": {
   "status": "self-reviewed",
@@ -3729,19 +3729,19 @@
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
   "jp": "「 {薪|まき} を {運|はこ}ぶ の は 、 {最後|さいご} 。 {灯籠|とうろう} に {火|ひ} を {入|い}れて から 、 {水|みず} を {汲|く}む 。 {水|みず} を {汲|く}んだ {後|あと} で 、 {和尚|おしょう}さん を {起|お}こす 。 」",
-  "en": "\"First light the stone lantern; then draw water; then wake the priest; last, carry the firewood.\""
+  "en": "\"Carrying the firewood comes last. After lighting the stone lantern, draw water. After drawing water, wake the priest.\""
  },
  "scene:hall.w3.t2_note#12vc2mi": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
   "jp": "「 {薪|まき} を {運|はこ}ぶ の は 、 {他|ほか} の こと が {全部|ぜんぶ} {済|す}んで から 。 {水|みず} は 、 {灯籠|とうろう} に {火|ひ} が {入|はい}って から {汲|く}む 。 {和尚|おしょう}さん は 、 {水|みず} を {汲|く}み{終|お}わった ところ で {起|お}こす 。 」",
-  "en": "\"First light the stone lantern; then draw water; then wake the priest; last, carry the firewood.\""
+  "en": "\"Carrying the firewood comes once everything else is done. The water is drawn after the stone lantern is lit. The priest is woken the moment the water has all been drawn.\""
  },
  "scene:hall.w3.t2_note#4kay2l": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
   "jp": "「 {灯籠|とうろう} に {火|ひ} を {入|い}れ{次第|しだい} 、 {水|みず} を {汲|く}む こと 。 {和尚|おしょう}さん は 、 {水|みず} の {支度|したく} が {済|す}み{次第|しだい} {起|お}こす 。 {薪|まき} は 、 {和尚|おしょう}さん が {起|お}きて から で よい 。 」",
-  "en": "\"First light the stone lantern; then draw water; then wake the priest; last, carry the firewood.\""
+  "en": "\"As soon as the stone lantern is lit, the water is to be drawn. The priest is woken as soon as the water is ready. The firewood can wait until the priest is up.\""
  },
  "scene:hall.w3.t2_note#wkhicx": {
   "status": "self-reviewed",
@@ -12441,49 +12441,49 @@
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
   "jp": "「 くし と ふえ が 、 くら に しまって ある 。 くし の ほう を 、 ぶつだん に おいて ほしい 。 」",
-  "en": "\"A comb and a flute are put away in the storehouse; one of them is to go before the family altar.\""
+  "en": "\"A comb and a flute are put away in the storehouse. I'd like the comb set before the family altar.\""
  },
  "scene:hall.w7.t6#z7sml9": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
   "jp": "「 {櫛|くし} と {笛|ふえ} が 、 {蔵|くら} に しまって ある 。 {櫛|くし} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。 」",
-  "en": "\"A comb and a flute are put away in the storehouse; one of them is to go before the family altar.\""
+  "en": "\"A comb and a flute are put away in the storehouse. I'd like the comb offered at the family altar.\""
  },
  "scene:hall.w7.t6#2lny24": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
   "jp": "「 {櫛|くし} と {笛|ふえ} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。 」",
-  "en": "\"A comb and a flute are put away in the storehouse; one of them is to go before the family altar.\""
+  "en": "\"A comb and a flute are put away in the storehouse. I'd like the one written first offered at the family altar.\""
  },
  "scene:hall.w7.t6#1atlpzj": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
   "jp": "「 {櫛|くし} と {笛|ふえ} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。 」",
-  "en": "\"A comb and a flute are put away in the storehouse; one of them is to go before the family altar.\""
+  "en": "\"The comb and the flute are laid away in the storehouse. I'd like the former offered at the family altar.\""
  },
  "scene:hall.w7.t6#17abvvb": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
   "jp": "「 ふえ と くし が 、 くら に しまって ある 。 ふえ の ほう を 、 ぶつだん に おいて ほしい 。 」",
-  "en": "\"A flute and a comb are put away in the storehouse; one of them is to go before the family altar.\""
+  "en": "\"A flute and a comb are put away in the storehouse. I'd like the flute set before the family altar.\""
  },
  "scene:hall.w7.t6#1pda8ii": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
   "jp": "「 {笛|ふえ} と {櫛|くし} が 、 {蔵|くら} に しまって ある 。 {笛|ふえ} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。 」",
-  "en": "\"A flute and a comb are put away in the storehouse; one of them is to go before the family altar.\""
+  "en": "\"A flute and a comb are put away in the storehouse. I'd like the flute offered at the family altar.\""
  },
  "scene:hall.w7.t6#1btiaku": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
   "jp": "「 {笛|ふえ} と {櫛|くし} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。 」",
-  "en": "\"A flute and a comb are put away in the storehouse; one of them is to go before the family altar.\""
+  "en": "\"A flute and a comb are put away in the storehouse. I'd like the one written first offered at the family altar.\""
  },
  "scene:hall.w7.t6#1kb18i9": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 7 (The House That Remembers): self-reviewed against the lexicon, grammar notes (こ・そ・あ by where a thing is and by what the listener knows, の for \"the one\", leaving out what is understood, 例の, 前者・後者), the counterexample stones checked one wrong saying per level and pattern, each note against the one thing it means (a decoy fits none), the memo's steps against the props in both patterns, each bowl request against the bowls left and the one asked for before it, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a hook's after-line naming both patterns' things (→ the pattern's own); a quotation inside a card's quotation (→ 『』); the stones' instruction without its verb (→ と ある); an English line that read \"That\" or \"that\" (→ are or sore); the grammar points of wings 6 and 7 with kanji outside furigana in their titles and notes (→ ruby); いって らっしゃい split (→ joined, as in the lexicon); the neighbour first called Jūzō, a person in another chapter (→ Magoroku); Owan never names themself (the house leaves its own name out). Self-review, not native review.",
   "jp": "「 {笛|ふえ} と {櫛|くし} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。 」",
-  "en": "\"A flute and a comb are put away in the storehouse; one of them is to go before the family altar.\""
+  "en": "\"The flute and the comb are laid away in the storehouse. I'd like the former offered at the family altar.\""
  },
  "scene:hall.w7.t6#14r22fs": {
   "status": "self-reviewed",
@@ -14841,67 +14841,67 @@
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 トウスケ さん は {藁|わら} の {長靴|ながぐつ} を {履|は}いて いた 。 サキ が {見|み}た そう だ 。 」",
-  "en": "\"Tōsuke was wearing straw boots: Saki saw him.\""
+  "en": "\"Tōsuke was wearing straw boots. Saki is said to have seen him.\""
  },
  "scene:hall.w8.t8_board#10bnlyo": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 {今朝|けさ} 、 トウスケ さん が {藁|わら} の {長靴|ながぐつ} を {履|は}いて いる の を 、 サキ が {見|み}た と の こと 。 」",
-  "en": "\"Tōsuke was wearing straw boots: Saki saw him.\""
+  "en": "\"This morning, Saki is reported to have seen Tōsuke wearing straw boots.\""
  },
  "scene:hall.w8.t8_board#11m39hj": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 ゴンロク さん は 、 げた を はいて いる らしい 。 ろうか で おと が した 。 」",
-  "en": "\"Gonroku seems to wear geta: they clattered in the corridor.\""
+  "en": "\"Gonroku seems to be wearing geta. There was a sound in the corridor.\""
  },
  "scene:hall.w8.t8_board#1psr876": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 ゴンロク さん は {下駄|げた} を {履|は}いて いる らしい 。 {廊下|ろうか} で カラコロ と {音|おと} が した 。 」",
-  "en": "\"Gonroku seems to wear geta: they clattered in the corridor.\""
+  "en": "\"Gonroku seems to be wearing geta. There was a clip-clop in the corridor.\""
  },
  "scene:hall.w8.t8_board#u828ms": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 {廊下|ろうか} で カラコロ と {下駄|げた} の {音|おと} が した から 、 ゴンロク さん は {下駄|げた} の よう だ 。 」",
-  "en": "\"Gonroku seems to wear geta: they clattered in the corridor.\""
+  "en": "\"Geta went clip-clop in the corridor, so it seems Gonroku is in geta.\""
  },
  "scene:hall.w8.t8_board#1zmjt2": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 サキ は 、 ぞうり で ゆき かき を した 。 」",
-  "en": "\"Saki cleared the snow in zōri, the landlady says.\""
+  "en": "\"Saki cleared the snow in zōri.\""
  },
  "scene:hall.w8.t8_board#9jnzhv": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 サキ は 、 {草履|ぞうり} で {雪|ゆき} かき を した そう だ 。 」",
-  "en": "\"Saki cleared the snow in zōri, the landlady says.\""
+  "en": "\"Saki is said to have cleared the snow in zōri.\""
  },
  "scene:hall.w8.t8_board#14pnq1p": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 おかみ さん の {話|はなし} で は 、 サキ は {草履|ぞうり} の まま {雪|ゆき} かき を した と の こと 。 」",
-  "en": "\"Saki cleared the snow in zōri, the landlady says.\""
+  "en": "\"According to the landlady, Saki cleared the snow still in zōri.\""
  },
  "scene:hall.w8.t8_board#5podm5": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 こども の わらじ は 、 ちいさい はず 。 」",
-  "en": "\"A child's straw sandals should leave small prints.\""
+  "en": "\"A child's straw sandals should be small.\""
  },
  "scene:hall.w8.t8_board#1h3n83l": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 {子供|こども} の {草鞋|わらじ} は 、 {小|ちい}さい はず だ 。 」",
-  "en": "\"A child's straw sandals should leave small prints.\""
+  "en": "\"A child's straw sandals should be small.\""
  },
  "scene:hall.w8.t8_board#1efyjl4": {
   "status": "self-reviewed",
   "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
   "jp": "「 ヒサ は まだ {子供|こども} だ から 、 {草鞋|わらじ} の {跡|あと} は {小|ちい}さい に {違|ちが}いない 。 」",
-  "en": "\"A child's straw sandals should leave small prints.\""
+  "en": "\"Hisa is still a child, so the straw-sandal prints must be small.\""
  },
  "scene:hall.w8.t8_board#dwmt18": {
   "status": "self-reviewed",

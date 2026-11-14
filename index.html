@@ -191951,23 +191951,25 @@ hall_shino: {鳴|な}った 。 …… {私|わたし} の {鐘|かね} が 、 
 
   // ---- t2: Jinbei's note, done in the order it means ---------------------------------------------------------------------
   const ORDER = { 0: ['water', 'lamp', 'wood', 'priest'], 1: ['lamp', 'water', 'priest', 'wood'] };
+  // each version's English follows its own Japanese, in its order and its relations, never the solved order (Batch 3
+  // Row 1: Cloud CC-589, Local CL-822, Agnes 6874584737)
   const NOTE = {
     0: { F: 'まず 、 みず を くむ 。 つぎ に 、 とうろう に ひ を いれる 。 それから 、 まき を はこぶ 。 さいご に 、 おしょうさん を おこす 。',
       E: '{和尚|おしょう}さん を {起|お}こす {前|まえ} に 、 {薪|まき} を {運|はこ}ぶ 。 {水|みず} を {汲|く}んで から 、 {灯籠|とうろう} に {火|ひ} を {入|い}れる 。 {灯籠|とうろう} に {火|ひ} を {入|い}れた {後|あと} で 、 {薪|まき} を {運|はこ}ぶ 。',
       I: '{和尚|おしょう}さん を {起|お}こす の は 、 {薪|まき} を {運|はこ}び{終|お}えて から 。 {灯籠|とうろう} の {火|ひ} は 、 {水|みず} を {汲|く}んで から で ない と {入|い}れない 。 {薪|まき} は 、 {灯籠|とうろう} が {明|あか}るい うち に {運|はこ}ぶ 。',
       A: '{水|みず} を {汲|く}み{次第|しだい} 、 {灯籠|とうろう} に {火|ひ} を {入|い}れる こと 。 {薪|まき} は 、 {灯籠|とうろう} の {明|あ}かり を {頼|たよ}り に {運|はこ}ぶ 。 {和尚|おしょう}さん を {起|お}こす の は 、 {万事|ばんじ} {整|ととの}えて から 。',
-      en: 'First draw water; then light the stone lantern; then carry the firewood; last, wake the priest.' },
+      en: { F: 'First draw water; then light the stone lantern; then carry the firewood; last, wake the priest.', E: 'Before waking the priest, carry the firewood. After drawing water, light the stone lantern. After lighting the stone lantern, carry the firewood.', I: 'Waking the priest comes after the firewood has all been carried. The stone lantern is not lit until the water has been drawn. The firewood is carried while the lantern is still bright.', A: 'As soon as the water is drawn, the stone lantern is to be lit. The firewood is carried by the lantern\'s light. Waking the priest comes once everything is in order.' } },
     1: { F: 'まず 、 とうろう に ひ を いれる 。 つぎ に 、 みず を くむ 。 それから 、 おしょうさん を おこす 。 さいご に 、 まき を はこぶ 。',
       E: '{薪|まき} を {運|はこ}ぶ の は 、 {最後|さいご} 。 {灯籠|とうろう} に {火|ひ} を {入|い}れて から 、 {水|みず} を {汲|く}む 。 {水|みず} を {汲|く}んだ {後|あと} で 、 {和尚|おしょう}さん を {起|お}こす 。',
       I: '{薪|まき} を {運|はこ}ぶ の は 、 {他|ほか} の こと が {全部|ぜんぶ} {済|す}んで から 。 {水|みず} は 、 {灯籠|とうろう} に {火|ひ} が {入|はい}って から {汲|く}む 。 {和尚|おしょう}さん は 、 {水|みず} を {汲|く}み{終|お}わった ところ で {起|お}こす 。',
       A: '{灯籠|とうろう} に {火|ひ} を {入|い}れ{次第|しだい} 、 {水|みず} を {汲|く}む こと 。 {和尚|おしょう}さん は 、 {水|みず} の {支度|したく} が {済|す}み{次第|しだい} {起|お}こす 。 {薪|まき} は 、 {和尚|おしょう}さん が {起|お}きて から で よい 。',
-      en: 'First light the stone lantern; then draw water; then wake the priest; last, carry the firewood.' },
+      en: { F: 'First light the stone lantern; then draw water; then wake the priest; last, carry the firewood.', E: 'Carrying the firewood comes last. After lighting the stone lantern, draw water. After drawing water, wake the priest.', I: 'Carrying the firewood comes once everything else is done. The water is drawn after the stone lantern is lit. The priest is woken the moment the water has all been drawn.', A: 'As soon as the stone lantern is lit, the water is to be drawn. The priest is woken as soon as the water is ready. The firewood can wait until the priest is up.' } },
   };
   out += `
 @scene hall.w3.t2_note
 narr: {道|みち} の {札|ふだ} に 、 ジンベエ の {書|か}き{置|お}き が {貼|は}って ある 。 {震|ふる}える {字|じ} だ 。 || Jinbei's note is pinned to the board by the path, in a shaking hand.
 `;
-  for (const p of [0, 1]) for (const tier of ['F', 'E', 'I', 'A']) out += `?(${both(L[tier], 'hall.w3.pat=' + p)}) narr: 「 ${NOTE[p][tier]} 」 || "${NOTE[p].en}"\n`;
+  for (const p of [0, 1]) for (const tier of ['F', 'E', 'I', 'A']) out += `?(${both(L[tier], 'hall.w3.pat=' + p)}) narr: 「 ${NOTE[p][tier]} 」 || "${NOTE[p].en[tier]}"\n`;
   out += `?(comp&!hall.w3.t2&comp!=ren) comp: {書|か}いて ある {順|じゅん} と 、 やる {順|じゅん} は 、 {違|ちが}う かも しれない 。 {前|まえ} と {後|あと} を よく {見|み}よう 。 || The order it's written in may not be the order to do it in. Watch for before and after.\n?(comp=ren&!hall.w3.t2) comp: {書|か}いて ある {順|じゅん} と 、 やる {順|じゅん} は 、 {違|ちが}う かも しれません 。 {前|まえ} と {後|あと} を よく {見|み}ましょう 。 || The order it's written in may not be the order to do it in. Watch for before and after.\n`;
   const CH = {
     water: ['{井戸|いど}', 'the well', '{水|みず} を {汲|く}んだ 。 {桶|おけ} が {冷|つめ}たい 。', 'You draw a bucket of water. The pail is cold.'],
@@ -194828,9 +194830,11 @@ ${K.mark(W, 1, 't5')}
 `;
 
   // ---- t6: the letter in the storehouse and the keepsake it means (in your companion's hands; alone, Owan reads it) --------
+  // each version's English says what its Japanese says: the keepsake named at F and E, the one written first at I, the
+  // former at A (Batch 3 Row 1: Cloud CC-589, Local CL-822, Agnes 6874584737)
   const TOLD = {
-    0: { F: 'くし と ふえ が 、 くら に しまって ある 。 くし の ほう を 、 ぶつだん に おいて ほしい 。', E: '{櫛|くし} と {笛|ふえ} が 、 {蔵|くら} に しまって ある 。 {櫛|くし} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', I: '{櫛|くし} と {笛|ふえ} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', A: '{櫛|くし} と {笛|ふえ} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: 'A comb and a flute are put away in the storehouse; one of them is to go before the family altar.' },
-    1: { F: 'ふえ と くし が 、 くら に しまって ある 。 ふえ の ほう を 、 ぶつだん に おいて ほしい 。', E: '{笛|ふえ} と {櫛|くし} が 、 {蔵|くら} に しまって ある 。 {笛|ふえ} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', I: '{笛|ふえ} と {櫛|くし} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', A: '{笛|ふえ} と {櫛|くし} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: 'A flute and a comb are put away in the storehouse; one of them is to go before the family altar.' },
+    0: { F: 'くし と ふえ が 、 くら に しまって ある 。 くし の ほう を 、 ぶつだん に おいて ほしい 。', E: '{櫛|くし} と {笛|ふえ} が 、 {蔵|くら} に しまって ある 。 {櫛|くし} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', I: '{櫛|くし} と {笛|ふえ} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', A: '{櫛|くし} と {笛|ふえ} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: { F: 'A comb and a flute are put away in the storehouse. I\'d like the comb set before the family altar.', E: 'A comb and a flute are put away in the storehouse. I\'d like the comb offered at the family altar.', I: 'A comb and a flute are put away in the storehouse. I\'d like the one written first offered at the family altar.', A: 'The comb and the flute are laid away in the storehouse. I\'d like the former offered at the family altar.' } },
+    1: { F: 'ふえ と くし が 、 くら に しまって ある 。 ふえ の ほう を 、 ぶつだん に おいて ほしい 。', E: '{笛|ふえ} と {櫛|くし} が 、 {蔵|くら} に しまって ある 。 {笛|ふえ} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', I: '{笛|ふえ} と {櫛|くし} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', A: '{笛|ふえ} と {櫛|くし} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: { F: 'A flute and a comb are put away in the storehouse. I\'d like the flute set before the family altar.', E: 'A flute and a comb are put away in the storehouse. I\'d like the flute offered at the family altar.', I: 'A flute and a comb are put away in the storehouse. I\'d like the one written first offered at the family altar.', A: 'The flute and the comb are laid away in the storehouse. I\'d like the former offered at the family altar.' } },
   };
   out += `
 @scene hall.w7.t6
@@ -194847,7 +194851,7 @@ narr: {蔵|くら} の {机|つくえ} に 、 お{父|とう}さん の {手紙
 !set xp_hall_w7_f1_asked
 :told
 `;
-  out += LV((p, t) => `?(${both(L[t], 'hall.w7.pat=' + p)}) narr: 「 ${TOLD[p][t]} 」 || "${TOLD[p].en}"\n`);
+  out += LV((p, t) => `?(${both(L[t], 'hall.w7.pat=' + p)}) narr: 「 ${TOLD[p][t]} 」 || "${TOLD[p].en[t]}"\n`);
   out += `!end
 :later
 narr: {手紙|てがみ} を {机|つくえ} に {戻|もど}した 。 || You put the letter back on the desk.
@@ -195719,11 +195723,13 @@ narr: ${ROAD[r][0]} 。 {雪|ゆき} が {静|しず}か に {降|ふ}って い
   const WHO = { tosuke: ['トウスケ', 'Tōsuke'], gonroku: ['ゴンロク', 'Gonroku'], saki: ['サキ', 'Saki'], hisa: ['ヒサ', 'Hisa'] };
   const PRINT = { boots: ['{大|おお}きな {藁|わら} の {長靴|ながぐつ} の {跡|あと}', 'the prints of big straw boots'], geta: ['{下駄|げた} の {歯|は} の {跡|あと}', 'the marks of geta teeth'], sandals: ['{小|ちい}さな {草鞋|わらじ} の {跡|あと}', 'the prints of small straw sandals'], zori: ['{草履|ぞうり} の {跡|あと}', 'the prints of zōri'] };
   const PRINTK = { 0: { pr1: 'boots', pr2: 'geta', pr3: 'sandals', pr4: 'zori' }, 1: { pr1: 'zori', pr2: 'sandals', pr3: 'boots', pr4: 'geta' } };
+  // each version's English keeps what its Japanese says: seen, reported, inferred, expected or certain, with a source only
+  // where the Japanese names one (Batch 3 Row 1: Cloud CC-589, Local CL-822, Agnes 6874584737)
   const EVID = {
-    tosuke: ['トウスケ さん は 、 わら の ながぐつ を はいて いた 。 サキ が みた 。', 'トウスケ さん は {藁|わら} の {長靴|ながぐつ} を {履|は}いて いた 。 サキ が {見|み}た そう だ 。', '{今朝|けさ} 、 トウスケ さん が {藁|わら} の {長靴|ながぐつ} を {履|は}いて いる の を 、 サキ が {見|み}た と の こと 。', 'Tōsuke was wearing straw boots: Saki saw him.'],
-    gonroku: ['ゴンロク さん は 、 げた を はいて いる らしい 。 ろうか で おと が した 。', 'ゴンロク さん は {下駄|げた} を {履|は}いて いる らしい 。 {廊下|ろうか} で カラコロ と {音|おと} が した 。', '{廊下|ろうか} で カラコロ と {下駄|げた} の {音|おと} が した から 、 ゴンロク さん は {下駄|げた} の よう だ 。', 'Gonroku seems to wear geta: they clattered in the corridor.'],
-    saki: ['サキ は 、 ぞうり で ゆき かき を した 。', 'サキ は 、 {草履|ぞうり} で {雪|ゆき} かき を した そう だ 。', 'おかみ さん の {話|はなし} で は 、 サキ は {草履|ぞうり} の まま {雪|ゆき} かき を した と の こと 。', 'Saki cleared the snow in zōri, the landlady says.'],
-    hisa: ['こども の わらじ は 、 ちいさい はず 。', '{子供|こども} の {草鞋|わらじ} は 、 {小|ちい}さい はず だ 。', 'ヒサ は まだ {子供|こども} だ から 、 {草鞋|わらじ} の {跡|あと} は {小|ちい}さい に {違|ちが}いない 。', 'A child\'s straw sandals should leave small prints.'],
+    tosuke: ['トウスケ さん は 、 わら の ながぐつ を はいて いた 。 サキ が みた 。', 'トウスケ さん は {藁|わら} の {長靴|ながぐつ} を {履|は}いて いた 。 サキ が {見|み}た そう だ 。', '{今朝|けさ} 、 トウスケ さん が {藁|わら} の {長靴|ながぐつ} を {履|は}いて いる の を 、 サキ が {見|み}た と の こと 。', ['Tōsuke was wearing straw boots: Saki saw him.', 'Tōsuke was wearing straw boots. Saki is said to have seen him.', 'This morning, Saki is reported to have seen Tōsuke wearing straw boots.']],
+    gonroku: ['ゴンロク さん は 、 げた を はいて いる らしい 。 ろうか で おと が した 。', 'ゴンロク さん は {下駄|げた} を {履|は}いて いる らしい 。 {廊下|ろうか} で カラコロ と {音|おと} が した 。', '{廊下|ろうか} で カラコロ と {下駄|げた} の {音|おと} が した から 、 ゴンロク さん は {下駄|げた} の よう だ 。', ['Gonroku seems to be wearing geta. There was a sound in the corridor.', 'Gonroku seems to be wearing geta. There was a clip-clop in the corridor.', 'Geta went clip-clop in the corridor, so it seems Gonroku is in geta.']],
+    saki: ['サキ は 、 ぞうり で ゆき かき を した 。', 'サキ は 、 {草履|ぞうり} で {雪|ゆき} かき を した そう だ 。', 'おかみ さん の {話|はなし} で は 、 サキ は {草履|ぞうり} の まま {雪|ゆき} かき を した と の こと 。', ['Saki cleared the snow in zōri.', 'Saki is said to have cleared the snow in zōri.', 'According to the landlady, Saki cleared the snow still in zōri.']],
+    hisa: ['こども の わらじ は 、 ちいさい はず 。', '{子供|こども} の {草鞋|わらじ} は 、 {小|ちい}さい はず だ 。', 'ヒサ は まだ {子供|こども} だ から 、 {草鞋|わらじ} の {跡|あと} は {小|ちい}さい に {違|ちが}いない 。', ['A child\'s straw sandals should be small.', 'A child\'s straw sandals should be small.', 'Hisa is still a child, so the straw-sandal prints must be small.']],
   };
   const HOLDN = (w) => 'xp_hall_w8_f2_hold_' + w, NAMED = (w) => 'xp_hall_w8_f2_named_' + w, PRN = (pr) => 'xp_hall_w8_f2_print_' + pr;
   const PRS = ['pr1', 'pr2', 'pr3', 'pr4'];
@@ -195731,7 +195737,7 @@ narr: ${ROAD[r][0]} 。 {雪|ゆき} が {静|しず}か に {降|ふ}って い
 @scene hall.w8.t8_board
 narr: {座敷|ざしき} の {板|いた} に 、 {皆|みな} の {履|は}き{物|もの} に ついて の {話|はなし} が {貼|は}って ある 。 || On the board in the morning room, notes on everyone's footwear are pinned up.
 `;
-  for (const w of Object.keys(EVID)) out += LVN3((t, i) => `?(${L[t]}) narr: 「 ${EVID[w][i]} 」 || "${EVID[w][3]}"\n`);
+  for (const w of Object.keys(EVID)) out += LVN3((t, i) => `?(${L[t]}) narr: 「 ${EVID[w][i]} 」 || "${EVID[w][3][i]}"\n`);
   out += `?(comp&!hall.w8.t8&comp!=ren) comp: {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いこう 。 || Let's set each name tag by the prints that match.
 ?(comp=ren&!hall.w8.t8) comp: {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いきましょう 。 || Let's set each name tag by the prints that match.
 `;

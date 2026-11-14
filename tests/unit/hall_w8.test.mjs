@@ -141,7 +141,7 @@ export default async (t) => {
     t.ok(!encs.length && has(/too soon to write/) && has(/Nobody yet knows whose prints/) && has(/still glaring/), 'the record waits: the prints first, and Saki and Gonroku' + tag);
     // t8: the footprints
     await run('hall.w8.t8_board');
-    t.ok(has(/Saki saw him/) && has(/clattered in the corridor/), 'the evidence board read' + tag);
+    t.ok(has(/Saki is said to have seen him/) && has(/clip-clop in the corridor/), 'the evidence board read (its E versions\' own English: Batch 3 Row 1)' + tag);
     const wrongPr = ['pr1', 'pr2', 'pr3', 'pr4'].find((pr) => PRINTK[pat][pr] !== WEAR.hisa);
     await run('hall.w8.tag_hisa'); await run('hall.w8.' + wrongPr);
     t.ok(has(/don't match what the board says/) && !s.flags['xp_hall_w8_f2_print_' + wrongPr], 'a name by the wrong prints is not set down' + tag);

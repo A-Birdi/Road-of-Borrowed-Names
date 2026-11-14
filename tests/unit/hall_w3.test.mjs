@@ -96,7 +96,7 @@ export default async (t) => {
     await run('hall.w3.jinbei');
     t.ok(has(/order it says, not the order it's written/), 'Jinbei says the note means an order of its own' + tag);
     await run('hall.w3.t2_note');
-    t.ok(has(pat ? /First light the stone lantern/ : /First draw water/), 'the note read' + tag);
+    t.ok(has(pat ? /^"Carrying the firewood comes last\./ : /^"Before waking the priest, carry the firewood\./), 'the note read (its E version\'s own English: Batch 3 Row 1)' + tag);
     await run('hall.w3.c_' + ORDER[pat][0]);
     await run('hall.w3.c_' + ORDER[pat][2]);
     t.ok(has(/Not that yet/) && !s.flags['xp_hall_w3_f0_did_' + ORDER[pat][0]] && !H.trialDone(s, 'w3', 't2'), 'out of order: everything starts again (nothing else happens)' + tag);

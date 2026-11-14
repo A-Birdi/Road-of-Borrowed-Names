@@ -231,9 +231,11 @@ ${K.mark(W, 1, 't5')}
 `;
 
   // ---- t6: the letter in the storehouse and the keepsake it means (in your companion's hands; alone, Owan reads it) --------
+  // each version's English says what its Japanese says: the keepsake named at F and E, the one written first at I, the
+  // former at A (Batch 3 Row 1: Cloud CC-589, Local CL-822, Agnes 6874584737)
   const TOLD = {
-    0: { F: 'くし と ふえ が 、 くら に しまって ある 。 くし の ほう を 、 ぶつだん に おいて ほしい 。', E: '{櫛|くし} と {笛|ふえ} が 、 {蔵|くら} に しまって ある 。 {櫛|くし} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', I: '{櫛|くし} と {笛|ふえ} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', A: '{櫛|くし} と {笛|ふえ} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: 'A comb and a flute are put away in the storehouse; one of them is to go before the family altar.' },
-    1: { F: 'ふえ と くし が 、 くら に しまって ある 。 ふえ の ほう を 、 ぶつだん に おいて ほしい 。', E: '{笛|ふえ} と {櫛|くし} が 、 {蔵|くら} に しまって ある 。 {笛|ふえ} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', I: '{笛|ふえ} と {櫛|くし} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', A: '{笛|ふえ} と {櫛|くし} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: 'A flute and a comb are put away in the storehouse; one of them is to go before the family altar.' },
+    0: { F: 'くし と ふえ が 、 くら に しまって ある 。 くし の ほう を 、 ぶつだん に おいて ほしい 。', E: '{櫛|くし} と {笛|ふえ} が 、 {蔵|くら} に しまって ある 。 {櫛|くし} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', I: '{櫛|くし} と {笛|ふえ} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', A: '{櫛|くし} と {笛|ふえ} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: { F: 'A comb and a flute are put away in the storehouse. I\'d like the comb set before the family altar.', E: 'A comb and a flute are put away in the storehouse. I\'d like the comb offered at the family altar.', I: 'A comb and a flute are put away in the storehouse. I\'d like the one written first offered at the family altar.', A: 'The comb and the flute are laid away in the storehouse. I\'d like the former offered at the family altar.' } },
+    1: { F: 'ふえ と くし が 、 くら に しまって ある 。 ふえ の ほう を 、 ぶつだん に おいて ほしい 。', E: '{笛|ふえ} と {櫛|くし} が 、 {蔵|くら} に しまって ある 。 {笛|ふえ} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', I: '{笛|ふえ} と {櫛|くし} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', A: '{笛|ふえ} と {櫛|くし} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: { F: 'A flute and a comb are put away in the storehouse. I\'d like the flute set before the family altar.', E: 'A flute and a comb are put away in the storehouse. I\'d like the flute offered at the family altar.', I: 'A flute and a comb are put away in the storehouse. I\'d like the one written first offered at the family altar.', A: 'The flute and the comb are laid away in the storehouse. I\'d like the former offered at the family altar.' } },
   };
   out += `
 @scene hall.w7.t6
@@ -250,7 +252,7 @@ narr: {蔵|くら} の {机|つくえ} に 、 お{父|とう}さん の {手紙
 !set xp_hall_w7_f1_asked
 :told
 `;
-  out += LV((p, t) => `?(${both(L[t], 'hall.w7.pat=' + p)}) narr: 「 ${TOLD[p][t]} 」 || "${TOLD[p].en}"\n`);
+  out += LV((p, t) => `?(${both(L[t], 'hall.w7.pat=' + p)}) narr: 「 ${TOLD[p][t]} 」 || "${TOLD[p].en[t]}"\n`);
   out += `!end
 :later
 narr: {手紙|てがみ} を {机|つくえ} に {戻|もど}した 。 || You put the letter back on the desk.

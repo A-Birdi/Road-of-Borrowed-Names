@@ -97,23 +97,25 @@ hall_shino: {鳴|な}った 。 …… {私|わたし} の {鐘|かね} が 、 
 
   // ---- t2: Jinbei's note, done in the order it means ---------------------------------------------------------------------
   const ORDER = { 0: ['water', 'lamp', 'wood', 'priest'], 1: ['lamp', 'water', 'priest', 'wood'] };
+  // each version's English follows its own Japanese, in its order and its relations, never the solved order (Batch 3
+  // Row 1: Cloud CC-589, Local CL-822, Agnes 6874584737)
   const NOTE = {
     0: { F: 'まず 、 みず を くむ 。 つぎ に 、 とうろう に ひ を いれる 。 それから 、 まき を はこぶ 。 さいご に 、 おしょうさん を おこす 。',
       E: '{和尚|おしょう}さん を {起|お}こす {前|まえ} に 、 {薪|まき} を {運|はこ}ぶ 。 {水|みず} を {汲|く}んで から 、 {灯籠|とうろう} に {火|ひ} を {入|い}れる 。 {灯籠|とうろう} に {火|ひ} を {入|い}れた {後|あと} で 、 {薪|まき} を {運|はこ}ぶ 。',
       I: '{和尚|おしょう}さん を {起|お}こす の は 、 {薪|まき} を {運|はこ}び{終|お}えて から 。 {灯籠|とうろう} の {火|ひ} は 、 {水|みず} を {汲|く}んで から で ない と {入|い}れない 。 {薪|まき} は 、 {灯籠|とうろう} が {明|あか}るい うち に {運|はこ}ぶ 。',
       A: '{水|みず} を {汲|く}み{次第|しだい} 、 {灯籠|とうろう} に {火|ひ} を {入|い}れる こと 。 {薪|まき} は 、 {灯籠|とうろう} の {明|あ}かり を {頼|たよ}り に {運|はこ}ぶ 。 {和尚|おしょう}さん を {起|お}こす の は 、 {万事|ばんじ} {整|ととの}えて から 。',
-      en: 'First draw water; then light the stone lantern; then carry the firewood; last, wake the priest.' },
+      en: { F: 'First draw water; then light the stone lantern; then carry the firewood; last, wake the priest.', E: 'Before waking the priest, carry the firewood. After drawing water, light the stone lantern. After lighting the stone lantern, carry the firewood.', I: 'Waking the priest comes after the firewood has all been carried. The stone lantern is not lit until the water has been drawn. The firewood is carried while the lantern is still bright.', A: 'As soon as the water is drawn, the stone lantern is to be lit. The firewood is carried by the lantern\'s light. Waking the priest comes once everything is in order.' } },
     1: { F: 'まず 、 とうろう に ひ を いれる 。 つぎ に 、 みず を くむ 。 それから 、 おしょうさん を おこす 。 さいご に 、 まき を はこぶ 。',
       E: '{薪|まき} を {運|はこ}ぶ の は 、 {最後|さいご} 。 {灯籠|とうろう} に {火|ひ} を {入|い}れて から 、 {水|みず} を {汲|く}む 。 {水|みず} を {汲|く}んだ {後|あと} で 、 {和尚|おしょう}さん を {起|お}こす 。',
       I: '{薪|まき} を {運|はこ}ぶ の は 、 {他|ほか} の こと が {全部|ぜんぶ} {済|す}んで から 。 {水|みず} は 、 {灯籠|とうろう} に {火|ひ} が {入|はい}って から {汲|く}む 。 {和尚|おしょう}さん は 、 {水|みず} を {汲|く}み{終|お}わった ところ で {起|お}こす 。',
       A: '{灯籠|とうろう} に {火|ひ} を {入|い}れ{次第|しだい} 、 {水|みず} を {汲|く}む こと 。 {和尚|おしょう}さん は 、 {水|みず} の {支度|したく} が {済|す}み{次第|しだい} {起|お}こす 。 {薪|まき} は 、 {和尚|おしょう}さん が {起|お}きて から で よい 。',
-      en: 'First light the stone lantern; then draw water; then wake the priest; last, carry the firewood.' },
+      en: { F: 'First light the stone lantern; then draw water; then wake the priest; last, carry the firewood.', E: 'Carrying the firewood comes last. After lighting the stone lantern, draw water. After drawing water, wake the priest.', I: 'Carrying the firewood comes once everything else is done. The water is drawn after the stone lantern is lit. The priest is woken the moment the water has all been drawn.', A: 'As soon as the stone lantern is lit, the water is to be drawn. The priest is woken as soon as the water is ready. The firewood can wait until the priest is up.' } },
   };
   out += `
 @scene hall.w3.t2_note
 narr: {道|みち} の {札|ふだ} に 、 ジンベエ の {書|か}き{置|お}き が {貼|は}って ある 。 {震|ふる}える {字|じ} だ 。 || Jinbei's note is pinned to the board by the path, in a shaking hand.
 `;
-  for (const p of [0, 1]) for (const tier of ['F', 'E', 'I', 'A']) out += `?(${both(L[tier], 'hall.w3.pat=' + p)}) narr: 「 ${NOTE[p][tier]} 」 || "${NOTE[p].en}"\n`;
+  for (const p of [0, 1]) for (const tier of ['F', 'E', 'I', 'A']) out += `?(${both(L[tier], 'hall.w3.pat=' + p)}) narr: 「 ${NOTE[p][tier]} 」 || "${NOTE[p].en[tier]}"\n`;
   out += `?(comp&!hall.w3.t2&comp!=ren) comp: {書|か}いて ある {順|じゅん} と 、 やる {順|じゅん} は 、 {違|ちが}う かも しれない 。 {前|まえ} と {後|あと} を よく {見|み}よう 。 || The order it's written in may not be the order to do it in. Watch for before and after.\n?(comp=ren&!hall.w3.t2) comp: {書|か}いて ある {順|じゅん} と 、 やる {順|じゅん} は 、 {違|ちが}う かも しれません 。 {前|まえ} と {後|あと} を よく {見|み}ましょう 。 || The order it's written in may not be the order to do it in. Watch for before and after.\n`;
   const CH = {
     water: ['{井戸|いど}', 'the well', '{水|みず} を {汲|く}んだ 。 {桶|おけ} が {冷|つめ}たい 。', 'You draw a bucket of water. The pail is cold.'],

@@ -136,7 +136,7 @@ export default async (t) => {
     await run('hall.w7.m_' + KEEP[pat]);
     t.ok(!H.trialDone(s, 'w7', 't6') && has(/Have it read first/), 'before the letter is read, a keepsake is a guess' + tag);
     await run('hall.w7.t6');
-    t.ok(asked[0] === 'hall.w7.ask' && s.flags.xp_hall_w7_f1_asked && lines.some((l) => l.who === 'mio') && has(/one of them is to go before the family altar/), 'you ask; Mio reads the letter' + tag);
+    t.ok(asked[0] === 'hall.w7.ask' && s.flags.xp_hall_w7_f1_asked && lines.some((l) => l.who === 'mio') && has(new RegExp('I\'d like the ' + KEEP[pat] + ' offered at the family altar')), 'you ask; Mio reads the letter (its E version\'s own English: Batch 3 Row 1)' + tag);
     await run('hall.w7.m_mirror');
     t.ok(!H.trialDone(s, 'w7', 't6') && has(/doesn't seem to mean this one/) && has(/say what the letter said again/), 'the mirror: not what the letter means, and an offer to say it again' + tag);
     await run('hall.w7.m_' + KEEP[1 - pat]);
