@@ -135791,7 +135791,9 @@ RB.ui.hall = (function () {
       'Resolve carries from encounter to encounter in a wing (what mistakes cost always comes back).',
       'A floor\'s trials count once every trial on it is done; from then on they stay done.',
       'Defeat starts the current floor again; earlier floors stay done.',
-      'You can leave at any time outside a battle: the floor you were on starts again next time.',
+      // (Agnes 6870214603; Local CL-820; Cloud CC-586): what leaving without a reprieve does, as the sheet, the return
+      // lantern and the notice say it once a floor is counted or the tale is finished
+      'You can leave at any time outside a battle. If you leave without using a reprieve, an uncounted floor starts again; counted floors stay done. For a finished tale, leaving without a reprieve means the next walk starts from the first floor.',
       'Some trials earn a reprieve: leave with the floor kept exactly as it is.',
       'You can suspend anywhere outside a battle and resume exactly there.',
       'Every creature is in plain sight. Help is always there, and nothing gets harder after a mistake.',
