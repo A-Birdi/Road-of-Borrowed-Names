@@ -9,9 +9,9 @@
 //     nothing; the tile no longer blocks) and the other three as before; Wing 1, that plaque says only "A stone plaque.",
 //     the other three their saying;
 //  3. Suspend from the Hall's sheet, then loading the slot: the same;
-//  4. leaving (no reprieve), going in again (the next floor, the first counted), and walking back down (a world-entry
-//     call, not the stairs): every card is back with its saying, and the trial is still done ("The carving asks nothing
-//     more.");
+//  4. leaving (no reprieve) and going in again: the next entry is floor 1, the first floor not yet counted. Then a
+//     helper-only revisit of floor 0 (a world-entry call; a player has no way back down, as Hall floors have only up
+//     exits): every card is back with its saying, and the trial is still done ("The carving asks nothing more.");
 //  no page errors.
 // Usage: node tools/build.mjs && node tests/e2e/hall_wrong_card.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -136,7 +136,7 @@ for (const w of ['w4', 'w1']) for (const pat of [0, 1]) {
   const g2 = await gone(p, w);
   const again = await cards(p, w);
   ok(title && flat(g2) === flat(g) && flat(again.map((c) => [c.blocked, c.said])) === flat(after.map((c) => [c.blocked, c.said])), '3 suspended, then loaded: the same' + tag + ' ' + flat({ title, g2 }));
-  // 4. leaving, going in again, walking back down
+  // 4. leaving, going in again (floor 1), then a helper-only revisit of floor 0 (a player has no way down)
   await p.evaluate(async () => { await RB.ui.hall.leave(false); });
   await settle(p);
   await p.evaluate(async (w) => { await RB.ui.hall.goIn(w); }, w);
@@ -147,7 +147,7 @@ for (const w of ['w4', 'w1']) for (const pat of [0, 1]) {
   const back = await cards(p, w);
   const done = await scene(p, 'hall.' + w + '.t3');
   ok(next.floor === 1 && !(await gone(p, w)).length && back.every((c, i) => full(c, w) && c.blocked === before[i].blocked) && done.some((l) => /asks nothing more/.test(l.en)),
-    '4 left, in again (the next floor), walked back down: every card back with its saying, the trial still done' + tag + ' ' + flat({ next, back: back.map((c) => c.said.length), done: done.map((l) => l.en) }));
+    '4 left, in again (floor 1, the first not yet counted); floor 0 revisited by a helper only (a player has no way down): every card back with its saying, the trial still done' + tag + ' ' + flat({ next, back: back.map((c) => c.said.length), done: done.map((l) => l.en) }));
   ok(errors.length === 0, 'no page errors' + tag + ': ' + errors.join(' | '));
   await p.close();
 }

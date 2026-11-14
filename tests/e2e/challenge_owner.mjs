@@ -23,7 +23,7 @@ const Q = 'hall.w1.story_q', ITEM = 'v:聞く', TWO = 'sg.c_tidetable', FORGE = 
 
 await p.evaluate(async () => {
   RB.test.disable();
-  const DONE = { departed: true, ch1_done: true, ch2_done: true, mb1_done: true, mb2_done: true, ch3_done: true, ch4_done: true, kr_done: true, ch5_done: true, ko_done: true, cr_done: true, yn_done: true, postgame: true, ch6_done: true, hall_ledger: true };
+  const DONE = { departed: true, ch1_done: true, ch2_done: true, mb1_done: true, mb2_done: true, ch3_done: true, ch4_done: true, kr_done: true, ch5_done: true, ko_done: true, cr_done: true, yn_done: true, postgame: true, ch6_done: true, hall_ledger: true, ngp_offered: true };
   const mk = (name) => { const s = RB.game.debugStart('hall.foyer', 7, 6, { edition: 2, comp: 'ren', flags: DONE, dir: 'up' }); s.learn.profile = 'E'; s.learn.kanaKnown = 'both'; s.player.name = name; return s; };
   await RB.save.writeSlot(1, mk('Owner A'), { force: true });
   await RB.save.writeSlot(2, mk('Owner B'), { force: true });
