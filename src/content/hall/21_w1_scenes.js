@@ -25,6 +25,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       A: ['Go north through the crossroads and you come out at the pass.', 'Past the first lantern, the sky opens out.', 'Reach the village entrance and please call out.', 'Cross the river and the wind turns cold.'] },
   };
 
+  // Which plaque's words fade: the one the trial just passed has wrong, by the floor's pattern and the level it was asked
+  // at (the plaques' own conditions, EFF with both() on every alternative, as their scenes below read them). Set as the
+  // trial passes, just before the line says so, so that a later change of level cannot move it; under the floor's own
+  // prefix, so that leaving, a defeat or the floor's reset brings the words back. While it is set the plaque stays and
+  // shows only its name (Batch 3 Row 3: Cloud CC-591, Local CL-824, Agnes 6874584737).
+  const GONE = (i) => 'xp_hall_w1_f0_t3_gone' + (i + 1);
+  const goneIf = [0, 1, 2, 3].map((i) => [0, 1].flatMap((p) => ['F', 'E', 'I', 'A'].filter((tier) => C.hallW1Plaques[p][tier][i][1] === 1).map((tier) => both(EFF[tier], 'hall.w1.pat=' + p))).join('|'));
+  const faded = [0, 1, 2, 3].filter((i) => goneIf[i]);
+  const FADE = [...faded.map((i) => `!if ${goneIf[i]} -> gone${i + 1}`), '!goto faded', ...faded.flatMap((i) => [`:gone${i + 1}`, `!set ${GONE(i)}`, '!goto faded']), ':faded'].join('\n');
+
   let out = `
 @scene hall.w1.f1_first
 !set hall_w1_f1_seen
@@ -133,6 +143,7 @@ narr: {石|いし} に {刻|きざ}んで ある 。 「 {四|よっ}つ の {�
 !hook hall_challenge hall.w1.counter1
 :after
 !if var._res=0 -> later
+${FADE}
 narr: {決|き}まり を {破|やぶ}った {札|ふだ} の {字|じ} が 、 {薄|うす}く {消|き}えて いった 。 || The words on the plaque that broke the rule fade away.
 ?(comp&comp!=ren) comp: {正|ただ}しい {三|みっ}つ が ある から 、 {違|ちが}う {一|ひと}つ が {分|わ}かる ん だ ね 。 || It's because three are right that the odd one shows.
 ?(comp=ren) comp: {正|ただ}しい {三|みっ}つ が ある から 、 {違|ちが}う {一|ひと}つ が {分|わ}かる ん です ね 。 || It's because three are right that the odd one shows.
@@ -155,7 +166,7 @@ narr: {石|いし} の {札|ふだ} 。 || A stone plaque.
 `;
     for (const pat of [0, 1]) for (const tier of ['F', 'E', 'I', 'A']) {
       const row = C.hallW1Plaques[pat][tier][i];
-      out += `?(${both(EFF[tier], 'hall.w1.pat=' + pat)}) narr: 「 ${row[0]} 」 || "${PLAQUE_EN[pat][tier][i]}"\n`;
+      out += `?(${both(both(EFF[tier], 'hall.w1.pat=' + pat), '!' + GONE(i))}) narr: 「 ${row[0]} 」 || "${PLAQUE_EN[pat][tier][i]}"\n`;
     }
   }
   out += `

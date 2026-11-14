@@ -54,9 +54,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { p: 'lantern', x: ITEMS.lamp[0], y: ITEMS.lamp[1], scene: 'hall.w4.i_lamp', if: '!xp_hall_w4_f0_gave_lamp', light: 26, o: { lit: true } },
         { p: 'crate', x: ITEMS.sandals[0], y: ITEMS.sandals[1], scene: 'hall.w4.i_sandals', if: '!xp_hall_w4_f0_gave_sandals' },
         ...K.andon(22, 7, W, 't2'),
-        // the peddler's cards, and the stone that asks
-        { p: 'signblank', x: 5, y: 3, scene: 'hall.w4.card1' }, { p: 'signblank', x: 7, y: 3, scene: 'hall.w4.card2' },
-        { p: 'signblank', x: 9, y: 3, scene: 'hall.w4.card3' }, { p: 'signblank', x: 11, y: 3, scene: 'hall.w4.card4' },
+        // the peddler's cards, and the stone that asks; the wrong card gone once the trial is passed, as its line says ("The
+        // wrong card melts away in the rain": hall/24_w4_scenes.js sets which; Batch 3 Row 3)
+        ...[5, 7, 9, 11].map((x, i) => ({ p: 'signblank', x, y: 3, scene: 'hall.w4.card' + (i + 1), if: '!xp_hall_w4_f0_t3_gone' + (i + 1) })),
         { p: 'stone_marker', x: 13, y: 3, scene: 'hall.w4.t3' }, ...K.andon(14, 2, W, 't3'),
         K.lit(15, 10), K.lit(19, 10), K.lit(15, 14),
       ]),

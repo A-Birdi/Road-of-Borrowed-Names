@@ -189389,9 +189389,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { p: 'lantern', x: ITEMS.lamp[0], y: ITEMS.lamp[1], scene: 'hall.w4.i_lamp', if: '!xp_hall_w4_f0_gave_lamp', light: 26, o: { lit: true } },
         { p: 'crate', x: ITEMS.sandals[0], y: ITEMS.sandals[1], scene: 'hall.w4.i_sandals', if: '!xp_hall_w4_f0_gave_sandals' },
         ...K.andon(22, 7, W, 't2'),
-        // the peddler's cards, and the stone that asks
-        { p: 'signblank', x: 5, y: 3, scene: 'hall.w4.card1' }, { p: 'signblank', x: 7, y: 3, scene: 'hall.w4.card2' },
-        { p: 'signblank', x: 9, y: 3, scene: 'hall.w4.card3' }, { p: 'signblank', x: 11, y: 3, scene: 'hall.w4.card4' },
+        // the peddler's cards, and the stone that asks; the wrong card gone once the trial is passed, as its line says ("The
+        // wrong card melts away in the rain": hall/24_w4_scenes.js sets which; Batch 3 Row 3)
+        ...[5, 7, 9, 11].map((x, i) => ({ p: 'signblank', x, y: 3, scene: 'hall.w4.card' + (i + 1), if: '!xp_hall_w4_f0_t3_gone' + (i + 1) })),
         { p: 'stone_marker', x: 13, y: 3, scene: 'hall.w4.t3' }, ...K.andon(14, 2, W, 't3'),
         K.lit(15, 10), K.lit(19, 10), K.lit(15, 14),
       ]),
@@ -191077,6 +191077,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       A: ['Go north through the crossroads and you come out at the pass.', 'Past the first lantern, the sky opens out.', 'Reach the village entrance and please call out.', 'Cross the river and the wind turns cold.'] },
   };
 
+  // Which plaque's words fade: the one the trial just passed has wrong, by the floor's pattern and the level it was asked
+  // at (the plaques' own conditions, EFF with both() on every alternative, as their scenes below read them). Set as the
+  // trial passes, just before the line says so, so that a later change of level cannot move it; under the floor's own
+  // prefix, so that leaving, a defeat or the floor's reset brings the words back. While it is set the plaque stays and
+  // shows only its name (Batch 3 Row 3: Cloud CC-591, Local CL-824, Agnes 6874584737).
+  const GONE = (i) => 'xp_hall_w1_f0_t3_gone' + (i + 1);
+  const goneIf = [0, 1, 2, 3].map((i) => [0, 1].flatMap((p) => ['F', 'E', 'I', 'A'].filter((tier) => C.hallW1Plaques[p][tier][i][1] === 1).map((tier) => both(EFF[tier], 'hall.w1.pat=' + p))).join('|'));
+  const faded = [0, 1, 2, 3].filter((i) => goneIf[i]);
+  const FADE = [...faded.map((i) => `!if ${goneIf[i]} -> gone${i + 1}`), '!goto faded', ...faded.flatMap((i) => [`:gone${i + 1}`, `!set ${GONE(i)}`, '!goto faded']), ':faded'].join('\n');
+
   let out = `
 @scene hall.w1.f1_first
 !set hall_w1_f1_seen
@@ -191185,6 +191195,7 @@ narr: {石|いし} に {刻|きざ}んで ある 。 「 {四|よっ}つ の {�
 !hook hall_challenge hall.w1.counter1
 :after
 !if var._res=0 -> later
+${FADE}
 narr: {決|き}まり を {破|やぶ}った {札|ふだ} の {字|じ} が 、 {薄|うす}く {消|き}えて いった 。 || The words on the plaque that broke the rule fade away.
 ?(comp&comp!=ren) comp: {正|ただ}しい {三|みっ}つ が ある から 、 {違|ちが}う {一|ひと}つ が {分|わ}かる ん だ ね 。 || It's because three are right that the odd one shows.
 ?(comp=ren) comp: {正|ただ}しい {三|みっ}つ が ある から 、 {違|ちが}う {一|ひと}つ が {分|わ}かる ん です ね 。 || It's because three are right that the odd one shows.
@@ -191207,7 +191218,7 @@ narr: {石|いし} の {札|ふだ} 。 || A stone plaque.
 `;
     for (const pat of [0, 1]) for (const tier of ['F', 'E', 'I', 'A']) {
       const row = C.hallW1Plaques[pat][tier][i];
-      out += `?(${both(EFF[tier], 'hall.w1.pat=' + pat)}) narr: 「 ${row[0]} 」 || "${PLAQUE_EN[pat][tier][i]}"\n`;
+      out += `?(${both(both(EFF[tier], 'hall.w1.pat=' + pat), '!' + GONE(i))}) narr: 「 ${row[0]} 」 || "${PLAQUE_EN[pat][tier][i]}"\n`;
     }
   }
   out += `
@@ -192526,10 +192537,19 @@ ${id}: ありがとう 。 {大事|だいじ} に {使|つか}います 。 || T
       I: ['I intend to come next year too.', 'I thought I would apologise.', 'I intend "let\'s return" the umbrella.', 'I intend not to go.'],
       A: ['Could you explain?', 'Could you wait a moment?', 'May I (humbly) look?', 'May I "honourably look"?'] },
   };
+  // Which card melts away: the one the trial just passed has wrong, by the floor's pattern and the level it was asked at
+  // (the cards' own conditions, as their scenes below read them). Set as the trial passes, just before the line says so,
+  // so that a later change of level cannot move it; under the floor's own prefix, so that leaving, a defeat or the floor's
+  // reset brings the card back. Its prop is gone with it (hall/13_w4_maps.js); the other three stay to be read (Batch 3
+  // Row 3: Cloud CC-591, Local CL-824, Agnes 6874584737; Wing 2's way, hall/22_w2_scenes.js).
+  const GONE = (i) => 'xp_hall_w4_f0_t3_gone' + (i + 1);
+  const goneIf = [0, 1, 2, 3].map((i) => [0, 1].flatMap((p) => ['F', 'E', 'I', 'A'].filter((tier) => C.hallW4Cards[p][tier][i][1] === 1).map((tier) => both(L[tier], 'hall.w4.pat=' + p))).join('|'));
+  const melted = [0, 1, 2, 3].filter((i) => goneIf[i]);
+  const melt = [...melted.map((i) => `!if ${goneIf[i]} -> gone${i + 1}`), '!goto melted', ...melted.flatMap((i) => [`:gone${i + 1}`, `!set ${GONE(i)}`, '!goto melted']), ':melted'];
   out += '\n@scene hall.w4.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {行商人|ぎょうしょうにん} の {心得|こころえ} を {刻|きざ}んだ {石|いし} 。 「 {四|よん} {枚|まい} の {札|ふだ} の うち 、 {一枚|いちまい} だけ が {間違|まちが}って いる 。 」 || A stone carved with the peddler\'s rules of trade: "Of the four cards, one alone is wrong."'],
     task: { 0: 'hall.w4.counter0', 1: 'hall.w4.counter1' },
-    after: ['narr: {間違|まちが}った {札|ふだ} が 、 {雨|あめ} に {溶|と}けて {消|き}えた 。 || The wrong card melts away in the rain.', '?(comp&comp!=ren) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に ならない から ね 。 || Ask the wrong way and there\'s no trade at all.', '?(comp=ren) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に なりません から ね 。 || Ask the wrong way and there\'s no trade at all.'],
+    after: [...melt, 'narr: {間違|まちが}った {札|ふだ} が 、 {雨|あめ} に {溶|と}けて {消|き}えた 。 || The wrong card melts away in the rain.', '?(comp&comp!=ren) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に ならない から ね 。 || Ask the wrong way and there\'s no trade at all.', '?(comp=ren) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に なりません から ね 。 || Ask the wrong way and there\'s no trade at all.'],
     later: 'narr: {札|ふだ} を {一枚|いちまい} ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the cards one by one, then come back.',
     done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
   for (let i = 0; i < 4; i++) {

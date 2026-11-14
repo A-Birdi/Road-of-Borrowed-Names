@@ -174,10 +174,19 @@ ${id}: ありがとう 。 {大事|だいじ} に {使|つか}います 。 || T
       I: ['I intend to come next year too.', 'I thought I would apologise.', 'I intend "let\'s return" the umbrella.', 'I intend not to go.'],
       A: ['Could you explain?', 'Could you wait a moment?', 'May I (humbly) look?', 'May I "honourably look"?'] },
   };
+  // Which card melts away: the one the trial just passed has wrong, by the floor's pattern and the level it was asked at
+  // (the cards' own conditions, as their scenes below read them). Set as the trial passes, just before the line says so,
+  // so that a later change of level cannot move it; under the floor's own prefix, so that leaving, a defeat or the floor's
+  // reset brings the card back. Its prop is gone with it (hall/13_w4_maps.js); the other three stay to be read (Batch 3
+  // Row 3: Cloud CC-591, Local CL-824, Agnes 6874584737; Wing 2's way, hall/22_w2_scenes.js).
+  const GONE = (i) => 'xp_hall_w4_f0_t3_gone' + (i + 1);
+  const goneIf = [0, 1, 2, 3].map((i) => [0, 1].flatMap((p) => ['F', 'E', 'I', 'A'].filter((tier) => C.hallW4Cards[p][tier][i][1] === 1).map((tier) => both(L[tier], 'hall.w4.pat=' + p))).join('|'));
+  const melted = [0, 1, 2, 3].filter((i) => goneIf[i]);
+  const melt = [...melted.map((i) => `!if ${goneIf[i]} -> gone${i + 1}`), '!goto melted', ...melted.flatMap((i) => [`:gone${i + 1}`, `!set ${GONE(i)}`, '!goto melted']), ':melted'];
   out += '\n@scene hall.w4.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
     intro: ['narr: {行商人|ぎょうしょうにん} の {心得|こころえ} を {刻|きざ}んだ {石|いし} 。 「 {四|よん} {枚|まい} の {札|ふだ} の うち 、 {一枚|いちまい} だけ が {間違|まちが}って いる 。 」 || A stone carved with the peddler\'s rules of trade: "Of the four cards, one alone is wrong."'],
     task: { 0: 'hall.w4.counter0', 1: 'hall.w4.counter1' },
-    after: ['narr: {間違|まちが}った {札|ふだ} が 、 {雨|あめ} に {溶|と}けて {消|き}えた 。 || The wrong card melts away in the rain.', '?(comp&comp!=ren) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に ならない から ね 。 || Ask the wrong way and there\'s no trade at all.', '?(comp=ren) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に なりません から ね 。 || Ask the wrong way and there\'s no trade at all.'],
+    after: [...melt, 'narr: {間違|まちが}った {札|ふだ} が 、 {雨|あめ} に {溶|と}けて {消|き}えた 。 || The wrong card melts away in the rain.', '?(comp&comp!=ren) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に ならない から ね 。 || Ask the wrong way and there\'s no trade at all.', '?(comp=ren) comp: {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に なりません から ね 。 || Ask the wrong way and there\'s no trade at all.'],
     later: 'narr: {札|ふだ} を {一枚|いちまい} ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the cards one by one, then come back.',
     done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
   for (let i = 0; i < 4; i++) {
