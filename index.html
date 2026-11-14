@@ -189841,10 +189841,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- t5: stray paper lanterns in the mist (conditions) ----------------------------------------------------------------
   C.encounters = C.encounters || {};
-  const LANTERN = { enemy: 'yn.chochin', name: say('{辻|つじ} の {提灯|ちょうちん}', 'Crossroads lantern'), conditions: ['paper', 'airborne'], knots: 2, music: 'battle_atlas' };
+  // the lanterns are Steamhollow's creature, but its settle line is Steamhollow's street (yn/33_creatures.js); here the
+  // Hall's own scene (21_w1_scenes.js, t5) says where they come to rest, so these lanterns settle without a line
+  // (CL-741/742, Agnes 6757191548; CC-581): settle: null, laid over the species, takes it away here only, and records nothing new
+  const LANTERN = { enemy: 'yn.chochin', name: say('{辻|つじ} の {提灯|ちょうちん}', 'Crossroads lantern'), conditions: ['paper', 'airborne'], knots: 2, music: 'battle_atlas', settle: null };
   C.encounters['hall.w1.lanterns'] = {
     id: 'hall.w1.lanterns', kind: 'battle', name: say('{霧|きり} の {提灯|ちょうちん}', 'Lanterns in the mist'),
-    lead: { enemy: 'yn.chochin', name: say('{辻|つじ} の {提灯|ちょうちん}', 'Crossroads lantern'), conditions: ['paper', 'airborne'], knots: 3, music: 'battle_atlas' },
+    lead: { enemy: 'yn.chochin', name: say('{辻|つじ} の {提灯|ちょうちん}', 'Crossroads lantern'), conditions: ['paper', 'airborne'], knots: 3, music: 'battle_atlas', settle: null },
     group: { normal: [LANTERN], hard: [LANTERN, LANTERN] },
     rules: { wait: true, conditions: true }, field: ['mist'],
   };
