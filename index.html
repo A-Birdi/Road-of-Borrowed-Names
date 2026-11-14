@@ -135762,7 +135762,7 @@ RB.ui.stage = (function () {
  *     route, Consolidate or Grow, with what Grow introduces; the tactical setting), changed only here at the hearth;
  *     Go in, Go back to where you left off (a held floor) or Not now.
  *   - a chip on the map while in a wing: the wing, the trials counted, a reprieve earned; it opens the sheet below.
- *   - the sheet: leave the Hall (this floor starts again next time; earlier floors and wings stay), leave keeping
+ *   - the sheet: leave the Hall (a floor not yet counted starts again next time; counted floors and other wings stay), leave keeping
  *     this floor (a reprieve), suspend (close the game here and resume exactly here), or stay.
  *   - when the page is hidden in a wing, outside a battle, the place is kept as a suspend point (the same record).
  *   - the scenes' hooks: hall_card <w> (_res 1 go in, 2 go back to the held floor, 0 not now), hall_enter <w> [held],
@@ -135863,17 +135863,39 @@ RB.ui.hall = (function () {
     await RB.game.transition(at.map, at.x, at.y, at.dir, { inScript: true });
     if (!at.held) await RB.save.autosave('auto');
   }
+  // what leaving without a reprieve does, as the sheet, the return lantern and the notice say it (CL-739 (2), CL-740;
+  // CC-581; Agnes 6868287302's wording): the floor you are on, not yet counted, starts again (the old wording, kept);
+  // a counted one stays counted, and the next ordinary entry is the first floor not yet counted (enter); once the tale
+  // is complete (just now, by its last floor, or before this walk through it again) the next walk starts from the
+  // first floor. Read from the record and the visit as they stand; the reprieve's own words are separate and unchanged.
+  function leaveState(s, v) {
+    if (H().wingDone(s, v.wing)) return 'complete';
+    const r = H().peek(s, v.wing);
+    return !v.practice && r && r.floors && r.floors[v.floor] ? 'counted' : 'open';
+  }
+  const LEAVE = {
+    counted: 'This floor stays counted. If you leave without a reprieve, next time you\'ll start on the first floor not yet counted.',
+    complete: 'Every floor is counted: the tale is complete. If you leave without a reprieve, the next walk starts from the first floor.',
+  };
+  const LEFT = {
+    open: 'You leave the Hall. The floor you were on starts again next time; earlier floors stay done.',
+    counted: 'You leave the Hall. This floor stays counted; next time you\'ll start on the first floor not yet counted.',
+    complete: 'You leave the Hall. The tale stays complete; the next walk starts from the first floor.',
+  };
+  const leaveClause = (s, v, open) => LEAVE[leaveState(s, v)] || open;
   async function leave(keep) {
     const s = S();
     const v = H().visitOf(s);
     if (!v) return;
+    // worked out before retreat ends the visit
+    const said = keep ? 'You leave the Hall with the reprieve: the floor will be exactly as you left it.' : LEFT[leaveState(s, v)];
     const hearth = H().retreat(s, { keep: !!keep });
     if (hearth) {
       s.checkpoint = { map: hearth.map, x: hearth.x, y: hearth.y, dir: hearth.dir || 'down' };
       await RB.game.transition(hearth.map, hearth.x, hearth.y, hearth.dir || 'down', { inScript: true });
       await RB.save.autosave('auto');
     }
-    RB.ui.notice(keep ? 'You leave the Hall with the reprieve: the floor will be exactly as you left it.' : 'You leave the Hall. The floor you were on starts again next time; earlier floors stay done.', 'info');
+    RB.ui.notice(said, 'info');
   }
   async function suspend() {
     const s = S();
@@ -135888,7 +135910,7 @@ RB.ui.hall = (function () {
     if (!v || RB.game.inBattle()) return;
     const d = H().get(v.wing);
     const opts = ['Leave the Hall', v.reprieve > 0 ? 'Use the reprieve: leave, keeping this floor' : null, 'Suspend: close the game here', 'Stay'].filter(Boolean);
-    const text = d.title.en + ': ' + H().doneCount(s, v.wing) + ' of ' + d.trials.length + ' trials counted' + (v.practice ? ' (walking the tale again: nothing changes your records)' : '') + '. Leaving now starts this floor again next time; earlier floors stay done.' + (v.reprieve > 0 ? ' You have earned a reprieve.' : '');
+    const text = d.title.en + ': ' + H().doneCount(s, v.wing) + ' of ' + d.trials.length + ' trials counted' + (v.practice ? ' (walking the tale again: nothing changes your records)' : '') + '. ' + leaveClause(s, v, 'Leaving now starts this floor again next time; earlier floors stay done.') + (v.reprieve > 0 ? ' You have earned a reprieve.' : '');
     const k = await RB.ui.confirm(text, opts);
     const pickd = opts[k];
     if (pickd === 'Leave the Hall') await leave(false);
@@ -135989,7 +136011,7 @@ RB.ui.hall = (function () {
     const s = S(), v = H().visitOf(s);
     if (!v) return;
     const opts = ['Return to the hearth', v.reprieve > 0 ? 'Return keeping this floor (the reprieve)' : null, 'Stay'].filter(Boolean);
-    const k = RB.test && RB.test.auto ? opts.length - 1 : await RB.ui.confirm('The return lantern. Going back now starts this floor again next time; earlier floors stay done.' + (v.reprieve > 0 ? ' With your reprieve, the floor can be kept exactly as it is.' : ''), opts);
+    const k = RB.test && RB.test.auto ? opts.length - 1 : await RB.ui.confirm('The return lantern. ' + leaveClause(s, v, 'Going back now starts this floor again next time; earlier floors stay done.') + (v.reprieve > 0 ? ' With your reprieve, the floor can be kept exactly as it is.' : ''), opts);
     if (opts[k] === 'Return to the hearth') await leave(false);
     else if (opts[k] && opts[k].indexOf('keeping') >= 0) await leave(true);
   };
