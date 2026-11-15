@@ -212,7 +212,13 @@ async function feedback(p) {
 export async function press(p, dir) {
   await gate(p);
   await p.keyboard.down(DIRK[dir]); await sleep(p, 50); await p.keyboard.up(DIRK[dir]);
-  for (let i = 0; i < 40; i++) { await sleep(p, 60); if (await p.evaluate(() => !RB.world.W.player.mv)) break; }
+  // wait for the release itself: once the game sees no direction held and no move is under way, this press can
+  // start no further step, so any step it caused is counted here and not taken for a turn
+  for (const t0 = Date.now(); ;) {
+    await sleep(p, 60);
+    if (await p.evaluate(() => RB.input.dir() === null && !RB.world.W.player.mv)) break;
+    if (Date.now() - t0 >= 3000) throw new Error('3 s after the ' + dir + ' key was released, the game still sees a direction held or a move under way: ' + JSON.stringify(await where(p)));
+  }
   await sleep(p, 80);
   return where(p);
 }
@@ -246,7 +252,7 @@ export async function walkTo(p, tx, ty) {
       if (after.x === before.x && after.y === before.y) { clear = false; break; } // someone in the way: route again
     }
     const w = await where(p);
-    if (clear || (w.x === tx && w.y === ty)) return w;
+    if (w.x === tx && w.y === ty) return w;
   }
   throw new Error('could not reach ' + tx + ',' + ty);
 }
