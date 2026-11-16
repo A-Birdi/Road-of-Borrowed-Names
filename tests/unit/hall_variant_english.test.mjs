@@ -167,5 +167,8 @@ const AGREED = {
 // CC-625, CC-626; Agnes 6927046186; Local CL-871), lq.fare_pay gains one command, your step aside to (5,7) on the route
 // through Koji (?(scene.lq.fare_pay_koji) !walkto pc 5 7 up), a new scene lq.fare_pay_koji only calls it, and five
 // later scenes of the same file (lq.fare_gull, lq.fare_tamae_after, lq.fare_koji_after, lq.chigusa_after,
-// lq.chigusa_post) shift line numbers only. Before it: 563a61695b5507f9)
-const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '39bc0e2ce9cf1251', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
+// lq.chigusa_post) shift line numbers only. Before it: 563a61695b5507f9. Since Koji's look at the coins (Cloud CC-627;
+// Agnes 6930123788; Local CL-873), lq.fare_pay gains one more command (!look koji lq_chigusa, after Chigusa's walk to
+// (4,6)), and six later scenes of the same file (the five above and lq.fare_pay_koji) shift line numbers only. Before
+// it: 39bc0e2ce9cf1251)
+const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '2afdc3f5a2eb863f', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';

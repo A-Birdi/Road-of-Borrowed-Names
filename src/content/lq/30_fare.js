@@ -282,6 +282,7 @@ lq_chigusa[think]: …… {始|はじ}める よ 。 || …Let's begin.
 ?(scene.lq.fare_pay_koji) !walkto pc 5 7 up
 !pose lq_chigusa stiff
 !walkto lq_chigusa 4 6 right
+!look koji lq_chigusa
 !prop lq_chigusa coins
 !gesture lq_chigusa present koji hold
 narr: チグサ は {立|た}ち{上|あ}がって 、 コウジ の {前|まえ} に {小銭|こぜに} を {並|なら}べた 。 {三十年|さんじゅうねん} {前|まえ} の {渡|わた}し{賃|ちん} と 、 {同|おな}じ {額|がく} だ 。 || Chigusa stands and lays coins in front of Kōji — the same sum as a fare thirty years ago.

@@ -14,16 +14,19 @@
 // four companions, and with none:
 //  5. you stay where you spoke from until she rises; at the coins, the book and the seal you are on (5,7) facing up
 //     (Chigusa on (4,6) facing him, Kōji on (5,6), your companion on (3,7)); on Chigusa's own route you are never
-//     moved. Kōji at the coins still faces the side you spoke to him from (he turned to you; nothing in the scene
-//     turns him before the book): from (5,5) and (6,6) that is now an empty tile. At the book he faces her (kojiFaces
-//     and kojiSees below);
+//     moved. Kōji faces her (left) from the coins to the book, on every route and from every side: `!look koji
+//     lq_chigusa` right after her walk to (4,6) turns him from the side you spoke from (CC-627; Agnes 6930123788; Akashi
+//     CL-873), so every line from the coins line to "Kōji takes the coins and opens the fare book", her apology among
+//     them, has him facing left; at the book he faces her too (kojiFaces and kojiSees below);
 //  6. no two figures on one tile at any point the test looks (each line, and every 100 ms between lines), and not one
 //     walk falls back, yours included;
 //  7. after the scene: the quest step and lq_fare_paid, the world again, and a step of input moves you that way;
 //  8. saved there and loaded again (in the same session, and once with the game opened afresh): you are back on the
 //     tile and facing you ended on, with both scenes recorded as seen on Kōji's route (lq.fare_pay_koji only there);
 //  9. Skip seen taken at "Let's begin." (the scene seen before), so the walks are placements: the same end, on Kōji's
-//     route from his four sides and on Chigusa's from her west.
+//     route from his four sides and on Chigusa's from her west. If a line stays up after Skip, the driver presses Next
+//     itself (after about 20 looks): each such press is counted, printed, and checked to be none (Agnes 6929429475,
+//     6930123788), so a run Skip did not carry through on its own fails rather than being helped along quietly.
 // Usage: node tools/build.mjs && node tests/e2e/fare_pay_staging.mjs   (EVIDENCE=<dir> also saves frames;
 // RB_PAGE=<file> runs it against another build in the tree's root, e.g. the parent's page as a control)
 import path from 'node:path';
@@ -69,7 +72,7 @@ async function run(e, comp, o) {
   const before = await look();
   await p.evaluate(() => RB.world.interact());
   const beats = [], shared = [];
-  let shot = 0, skipped = false, held = 0;
+  let shot = 0, skipped = false, held = 0, assists = 0;
   for (let i = 0; i < 400; i++) {
     const st = await p.evaluate(() => { const d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); const k = document.querySelector('.dlg .b-skip'); return { d: d ? (d.who || '') + ': ' + String(d.en || '').slice(0, 160) : null, run: RB.script.isRunning(), mode: RB.game.mode(), skip: !!(k && k.offsetParent && !k.classList.contains('hidden')) }; });
     const now = await look();
@@ -84,7 +87,7 @@ async function run(e, comp, o) {
         if (o.skip && !skipped && /Let's begin/.test(st.d) && st.skip) { skipped = true; await p.evaluate(() => document.querySelector('.dlg .b-skip').click()); await p.waitForTimeout(100); continue; }
         // (one press per line: a press while the same line is still up would be carried into the next)
         if (!skipped) await p.click('.dlg .b-next').catch(() => {});
-      } else if (skipped && ++held > 20) { held = 0; await p.click('.dlg .b-next').catch(() => {}); }
+      } else if (skipped && ++held > 20) { held = 0; assists++; await p.click('.dlg .b-next').catch(() => {}); }
       await p.waitForTimeout(skipped ? 50 : 150);
       continue;
     }
@@ -94,7 +97,7 @@ async function run(e, comp, o) {
   await p.waitForTimeout(800);
   const after = await p.evaluate(() => ({ quest: RB.game.s.quests.lq_fare, paid: !!RB.game.s.flags.lq_fare_paid, mode: RB.game.mode(), run: RB.script.isRunning(), ff: RB.game.fastForward() }));
   const end = await look();
-  return { p, before, beats, shared, skipped, after, end, errors };
+  return { p, before, beats, shared, skipped, assists, after, end, errors };
 }
 
 // a step of input: towards a free tile beside you (not a wall, a figure or the door), the key pressed briefly as a
@@ -122,15 +125,15 @@ const where = (p) => p.evaluate(() => { const s = RB.game.s, pl = RB.world.W.pla
 
 // compAt: where your companion stands when you walked up to that tile (the one way in, or in from the door or the
 // room), as tests/e2e/staging_runner.mjs sets it: with a wall behind you, the follow rule alone puts them on your own
-// tile. kojiFaces: the way Kōji faces at the coins, and kojiSees what is there. He turns to you when you speak to him,
-// and nothing turns him to Chigusa until the book (`!look koji lq_chigusa`): so on his route he still faces the side
-// you spoke from, the same direction as on 315b770. The same direction is not the same picture: from (5,5) and (6,6)
-// you have stepped to (5,7), so he faces the tile you left, empty (Agnes 6928616034); the screen itself is compared
-// apart from this test (CC-626). On Chigusa's route he faces her
+// tile. kojiFaces: the way Kōji faces at the coins and her apology, and kojiSees what is there. He turns to you when you
+// speak to him; `!look koji lq_chigusa` right after her walk to (4,6) turns him to her (CC-627; Agnes 6930123788; Akashi
+// CL-873), so on every route he faces her, left. Before that line (723e0f0) he still faced the side you spoke from: from
+// (5,5) and (6,6), the tile you had left, empty, and from (5,7), you. From (5,7) he now attends to her, not to you, for
+// the coin exchange: a change of composition accepted as such (Agnes 6930123788), not a return to 315b770
 const CHIGUSA = [{ route: 'chigusa', name: 'west', x: 5, y: 4, dir: 'right', kojiFaces: 'left', kojiSees: 'her' }, { route: 'chigusa', name: 'east', x: 7, y: 4, dir: 'left', compAt: [7, 3, 'down'], kojiFaces: 'left', kojiSees: 'her' }, { route: 'chigusa', name: 'above', x: 6, y: 3, dir: 'down', compAt: [5, 3, 'right'], kojiFaces: 'left', kojiSees: 'her' }];
-const KOJI = [{ route: 'koji', name: 'koji-west', x: 4, y: 6, dir: 'right', compAt: [4, 7, 'up'], kojiFaces: 'left', kojiSees: 'her, on the tile you spoke from' }, { route: 'koji', name: 'koji-above', x: 5, y: 5, dir: 'down', kojiFaces: 'up', kojiSees: 'the tile you spoke from, now empty' }, { route: 'koji', name: 'koji-below', x: 5, y: 7, dir: 'up', compAt: [4, 7, 'right'], kojiFaces: 'down', kojiSees: 'you, still there' }, { route: 'koji', name: 'koji-east', x: 6, y: 6, dir: 'left', compAt: [6, 7, 'up'], kojiFaces: 'right', kojiSees: 'the tile you spoke from, now empty' }];
+const KOJI = [{ route: 'koji', name: 'koji-west', x: 4, y: 6, dir: 'right', compAt: [4, 7, 'up'], kojiFaces: 'left', kojiSees: 'her, on the tile you spoke from' }, { route: 'koji', name: 'koji-above', x: 5, y: 5, dir: 'down', kojiFaces: 'left', kojiSees: 'her, not the tile you spoke from' }, { route: 'koji', name: 'koji-below', x: 5, y: 7, dir: 'up', compAt: [4, 7, 'right'], kojiFaces: 'left', kojiSees: 'her, not you below him' }, { route: 'koji', name: 'koji-east', x: 6, y: 6, dir: 'left', compAt: [6, 7, 'up'], kojiFaces: 'left', kojiSees: 'her, not the tile you spoke from' }];
 const COMPS = ['suzu', 'nao', 'mio', 'ren'];
-const RUNS = [];
+const RUNS = [], SKIP_ASSISTS = [];
 for (const e of CHIGUSA.concat(KOJI)) for (const comp of COMPS) RUNS.push({ e, comp });
 // no companion (set up directly: the scene's companion lines and walk are guarded ?(comp))
 RUNS.push({ e: KOJI[0], comp: null }, { e: CHIGUSA[0], comp: null });
@@ -142,14 +145,20 @@ for (const { e, comp, skip } of RUNS) {
   const koji = e.route === 'koji', start = [e.x, e.y].join(), mark = koji ? '5,7' : start;
   const at = (re) => r.beats.find((x) => re.test(x.d));
   const since = at(/sitting here since morning/), begin = at(/Let's begin/), coins = at(/lays (the )?coins|coins in front/i), book = at(/Write your name/), seal = at(/the pledge/i);
+  const sorry = at(/truly sorry/), from = r.beats.indexOf(coins), upto = r.beats.findIndex((x) => /opens the fare book/.test(x.d));
+  const between = from >= 0 && upto >= from ? r.beats.slice(from, upto + 1) : [];
   ok(r.before.chigusa && r.before.chigusa.rest === 'sit' && r.before.chigusa.at.join() === '6,4' && r.before.pc.join() === start, tag + ': before you talk she sits at the small table, and you are where you spoke from (' + J({ c: r.before.chigusa, pc: r.before.pc }) + ')');
   if (skip) {
     ok(r.skipped, tag + ': Skip seen offered at "Let\'s begin." and taken');
+    ok(r.assists === 0, tag + ': Skip seen carried the scene through by itself: the driver pressed Next ' + r.assists + ' time(s)');
+    SKIP_ASSISTS.push(e.name + ' ' + r.assists);
     ok(begin && begin.pc.join() === start, tag + ': until then you stay where you spoke from (' + J(begin && begin.pc) + ')');
   } else {
     ok(since && since.chigusa.at.join() === '6,4' && since.chigusa.rest === 'sit' && !since.chigusa.pose && since.pc.join() === start, tag + ': still seated for "sitting here since morning", and you not yet moved (' + J(since && { c: since.chigusa, pc: since.pc }) + ')');
     ok(coins && coins.chigusa.at.join() === '4,6' && coins.chigusa.dir === 'right' && coins.chigusa.pose === 'stiff' && coins.koji.at.join() === '5,6' && coins.koji.dir === e.kojiFaces && coins.fallbacks === r.before.fallbacks, tag + ': at the coins she stands beside Kōji, facing him, the walk made; he faces ' + e.kojiFaces + ', towards ' + e.kojiSees + ' (' + J(coins && { c: coins.chigusa, k: coins.koji, fb: coins.fallbacks - r.before.fallbacks }) + ')');
     ok(coins && coins.chigusa.held === 'coins', tag + ': the coins in her hands');
+    ok(sorry && sorry.koji.dir === e.kojiFaces && sorry.koji.at.join() === '5,6', tag + ': at her apology he still faces ' + e.kojiFaces + ', towards ' + e.kojiSees + ' (' + J(sorry && sorry.koji) + ')');
+    ok(between.length === 6 && between.every((x) => x.koji.dir === 'left'), tag + ': he faces her, left, at each of the 6 lines from the coins line to "opens the fare book" (' + J(between.map((x) => x.koji.dir)) + ')');
     ok(coins && coins.pc.join() === mark && (!koji || coins.pcDir === 'up'), tag + (koji ? ': you stand aside on (5,7), facing up to Kōji' : ': you are not moved') + ' (' + J(coins && { pc: coins.pc, dir: coins.pcDir }) + ')');
     ok(book && book.koji.held === 'book' && book.koji.dir === 'left' && book.koji.at.join() === '5,6' && book.chigusa.at.join() === '4,6' && book.pc.join() === mark, tag + ': the fare book in his hands, held out to her, facing her, and you still at ' + mark + ' (' + J(book && { k: book.koji, c: book.chigusa.at, pc: book.pc }) + ')');
     ok(seal && (seal.chigusa.held === 'stamp' || seal.koji.held === 'stamp') && seal.pc.join() === mark, tag + ': the seal passes between them (' + J(seal && { c: seal.chigusa.held, k: seal.koji.held, pc: seal.pc }) + ')');
@@ -185,5 +194,6 @@ for (const { e, comp, skip } of RUNS) {
   ok(!r.errors.length, tag + ': no page errors ' + r.errors.slice(0, 2).join(' | '));
   await p.close();
 }
+console.log('Skip seen, presses of Next by the driver per run: ' + SKIP_ASSISTS.join(', '));
 console.log(`\nfare_pay_staging: ${pass} passed, ${fail} failed`);
 await b.close(); srv.close(); process.exit(fail ? 1 : 0);

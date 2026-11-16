@@ -5,8 +5,11 @@
 //  1. the wiring: Kōji's step-4 talk names the wrapper, on the same condition as before; Chigusa's own talk still
 //     runs lq.fare_pay; no other map, scene or condition names the wrapper, and nothing reads seen.lq.fare_pay_koji;
 //  2. the wrapper is one command, the call;
-//  3. lq.fare_pay has one walk of yours, guarded by the route, between "Let's begin." and Chigusa standing; every
-//     other command of it is exactly 315b770's (compared by hash, line numbers aside: the commands carry Japanese);
+//  3. lq.fare_pay has one walk of yours, guarded by the route, between "Let's begin." and Chigusa standing, and one
+//     unguarded `!look koji lq_chigusa` right after her walk to (4,6), before the coins, so Kōji faces her for the coin
+//     exchange whichever side you spoke from (CC-627; Agnes 6930123788; Akashi CL-873); the look before the book and
+//     the turn to you after the seal stay; every other command of it is exactly 315b770's (compared by hash, line
+//     numbers aside: the commands carry Japanese);
 //  4. the route term is false outside a run of the wrapper;
 //  5. the quest guide answers exactly as 315b770 does (CL-871's parity check): the whole answer for lq_fare at step 4,
 //     its targets and its nudges, from the teahouse and from the village, compared by hash (it carries the scenes'
@@ -51,7 +54,14 @@ export default async (t) => {
   const i = mine.length === 1 ? mine[0][1] : -1, prev = cm[i - 1] || {}, next = cm.slice(i + 1, i + 3);
   t.ok(i > 0 && prev.op === 'say' && prev.who === 'lq_chigusa' && /Let's begin/.test(prev.en || ''), 'it comes after Chigusa\'s "Let\'s begin." (' + JSON.stringify({ op: prev.op, who: prev.who, en: String(prev.en || '').replace(/[^\x20-\x7e]/g, '') }) + ')');
   t.eq(next.map((c) => [c.op, c.args, c.if]), [['pose', ['lq_chigusa', 'stiff'], null], ['walkto', ['lq_chigusa', '4', '6', 'right'], null]], 'and just before she stands and walks to her mark (4,6)');
-  const rest = cm.filter((c) => !(c.op === 'walkto' && c.args[0] === 'pc')).map((c) => { const o = Object.assign({}, c); delete o.line; return o; });
+  // the look at the coins (CC-627): right after her walk to (4,6), before the coin prop, on every route
+  const isW = (c) => c && c.op === 'walkto' && JSON.stringify(c.args) === JSON.stringify(['lq_chigusa', '4', '6', 'right']);
+  const looks = cm.map((c, j) => [c, j]).filter(([c]) => c.op === 'look' && c.args[0] === 'koji');
+  const early = looks.filter(([, j]) => isW(cm[j - 1]));
+  t.eq(early.map(([c, j]) => [c.args, c.if, cm[j + 1] && cm[j + 1].op, cm[j + 1] && cm[j + 1].args]), [[['koji', 'lq_chigusa'], null, 'prop', ['lq_chigusa', 'coins']]], 'one unguarded look of Kōji\'s at Chigusa right after her walk to (4,6), just before the coins');
+  t.eq(looks.map(([c, j]) => [c.args, c.if, j > i]), [[['koji', 'lq_chigusa'], null, true], [['koji', 'lq_chigusa'], null, true], [['koji', 'pc'], null, true]], 'his looks, in order: at her for the coins, at her again for the book, at you after the seal');
+  const coinLook = early.length === 1 ? early[0][0] : null;
+  const rest = cm.filter((c) => !(c.op === 'walkto' && c.args[0] === 'pc') && c !== coinLook).map((c) => { const o = Object.assign({}, c); delete o.line; return o; });
   t.eq([rest.length, sha(rest)], [52, PARENT_FARE_PAY], 'every other command of lq.fare_pay is exactly 315b770\'s (52, line numbers aside)');
 
   // 4. the route term outside a run
