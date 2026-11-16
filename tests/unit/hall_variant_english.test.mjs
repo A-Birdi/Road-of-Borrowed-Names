@@ -163,5 +163,7 @@ const AGREED = {
 };
 // (SCENES_FP: since Batch 3 Row 3, Wings 1 and 4's wrong card (Cloud CC-591; Local CL-824; Agnes 6874584737), six
 // scenes change (hall.w1.t3, hall.w1.plaque1-4, hall.w4.t3) and 47 other Wing 1 and Wing 4 scenes shift line numbers only;
-// hall_wrong_card pins every other scene. Before it: 0cb0194b0636eee0)
-const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '563a61695b5507f9', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
+// hall_wrong_card pins every other scene. Before it: 0cb0194b0636eee0. Since QA-191, the tower plates (Cloud CC-610;
+// Agnes 6913897483; Local CL-848), lf.plate_a, lf.plate_b and lf.plate_c each gain one command, a cancel guard after the
+// reading challenge, and 18 later scenes of the same file shift line numbers only. Before it: 563a61695b5507f9)
+const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '4c1556e19d2b80b2', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
