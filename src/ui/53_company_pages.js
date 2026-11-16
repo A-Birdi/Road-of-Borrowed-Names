@@ -212,12 +212,20 @@ RB.ui.companyPages = (function () {
         '<div class="muted small">' + esc(a.desc || '') + '</div><div class="kind">aims at ' + esc(AIM[a.aim] || a.aim) + (a.uses ? ' · ' + a.uses + ' per encounter' : ' · every round') + '</div></div></li>').join('') + '</ul>' +
       '<p class="muted small">These come from the journey itself. The bond between you never changes them.</p>';
   }
+  // who someone is, before or apart from the bond: portrait, name and role, nothing to do with them
+  function idHead(c) {
+    return '<div class="co-id"><canvas class="co-portrait" width="96" height="96" role="img" aria-label="' + esc('Portrait of ' + c.name.en) + '"></canvas>' +
+      '<div class="co-name"><h3>' + j(c.name.jp) + ' <span class="en">' + esc(c.name.en) + '</span></h3><p class="muted">' + L(c.role ? c.role.jp : '', c.role ? c.role.en : '') + '</p></div></div>';
+  }
   function before(s) {
+    // a companion away from you (RB.ui.company.away): who they are, and where, in the same neutral form; no bond, no first
+    // words, no actions, topics or support (Agnes 6552577628, 6912326373; Cloud CC-608)
+    const aw = RB.ui.company.away(s);
+    if (aw) return idHead(aw.c) + '<p class="co-away">' + esc(aw.page) + '</p>';
     const prov = chr(s.provisional);
     if (!prov) return '<p class="muted">No one travels with you yet. In the Lantern Hall you can ask someone to come along.</p>';
     const b = CC.bios[s.provisional] || {};
-    return '<div class="co-id"><canvas class="co-portrait" width="96" height="96" role="img" aria-label="' + esc('Portrait of ' + prov.name.en) + '"></canvas>' +
-      '<div class="co-name"><h3>' + j(prov.name.jp) + ' <span class="en">' + esc(prov.name.en) + '</span></h3><p class="muted">' + L(prov.role ? prov.role.jp : '', prov.role ? prov.role.en : '') + '</p></div></div>' +
+    return idHead(prov) +
       '<p>' + esc(prov.name.en) + ' is travelling with you for now. Nothing is decided until you set out together — the lantern will carry two names, and you can still change your mind before the door.</p>' +
       (b.first ? saidNow(b.first, 'first', s.provisional) : '');
   }
@@ -225,9 +233,12 @@ RB.ui.companyPages = (function () {
     const s = api.s, V = api.view;
     const comp = s.comp, c = chr(comp);
     if (!c) {
+      // a detail belongs to an active companion: with none, none stays open, so a phone's Back closes the folio at once
+      V.detail = null;
       A.innerHTML = before(s);
       const cv = A.querySelector('.co-portrait');
-      if (cv && s.provisional) RB.portraits.draw(cv, s.provisional, 'neutral');
+      const aw = RB.ui.company.away(s), who = aw ? aw.id : s.provisional;
+      if (cv && who) RB.portraits.draw(cv, who, 'neutral');
       return;
     }
     const idHtml = identity(s, comp, c);

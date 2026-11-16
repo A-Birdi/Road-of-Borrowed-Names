@@ -27,6 +27,26 @@ RB.ui.company = (function () {
   function addPage(def) { PAGES[def.id] = def; }
 
   const chr = (id) => (id && RB.content.chars[id]) || null;
+  // A companion away from you (`!hook comp_away <why>`, src/engine/58s_surety.js: the surety at the Mist Barrier, a night
+  // apart, a quarrel): who is away and why, for display only. Only while no companion is active, and only for one of the
+  // four companions with a character entry; anything else claims no absence. An unknown reason gets the neutral words
+  // and names no place. Nothing here writes the journey (Agnes 6552476316, 6552577628, 6912326373; Local CL-582, CL-846;
+  // Cloud CC-422, CC-608).
+  const COMPANIONS = ['nao', 'mio', 'ren', 'suzu'];
+  const AWAY = {
+    surety: { sum: 'waiting at the Mist Barrier while you fetch Shizu\'s guarantee from Kumoi',
+      page: (n) => n + ' is waiting at the Mist Barrier while you go up to Kumoi for the letter of guarantee from Shizu, the headwoman. Until you\'re back together, you travel and fight alone.' },
+    night: { sum: 'apart tonight', page: (n) => n + ' is spending tonight apart from you. Until you\'re back together, you travel and fight alone.' },
+    other: { sum: 'away for now', page: (n) => n + ' is away for now. Until you\'re back together, you travel and fight alone.' },
+  };
+  function away(s) {
+    if (!s || s.comp) return null;
+    const id = s.vars && s.vars._away;
+    if (typeof id !== 'string' || COMPANIONS.indexOf(id) < 0 || !chr(id)) return null;
+    const why = s.vars._away_why, c = chr(id);
+    const words = why === 'surety' ? AWAY.surety : why === 'night' ? AWAY.night : AWAY.other;
+    return { id, c, sum: words.sum, page: words.page(c.name.en) };
+  }
   // the species label and name of the active pet (RB.pets draws it once it exists)
   function petLine(s) {
     const c = s.company || {};
@@ -37,9 +57,10 @@ RB.ui.company = (function () {
   }
   // the paired summary at the top: who is travelling (never a third party slot)
   function summary(s) {
-    const comp = chr(s.comp), prov = !s.comp && chr(s.provisional);
+    const comp = chr(s.comp), aw = away(s), prov = !s.comp && !aw && chr(s.provisional);
     const pl = petLine(s);
     const who = comp ? '<b>' + esc(comp.name.en) + '</b> <span class="muted">' + esc(comp.role ? comp.role.en : '') + '</span>'
+      : aw ? '<b>' + esc(aw.c.name.en) + '</b> <span class="muted">' + esc(aw.sum) + '</span>'
       : prov ? '<b>' + esc(prov.name.en) + '</b> <span class="muted">travelling with you for now; not yet decided</span>'
         : '<span class="muted">No one has joined you yet.</span>';
     const pet = pl ? '<b>' + esc(pl.name) + '</b> <span class="muted">' + esc(pl.label.en || '') + '</span>' : '<span class="muted">No pet</span>';
@@ -51,7 +72,7 @@ RB.ui.company = (function () {
       '<button class="subbtn" data-cp="' + id + '" aria-pressed="' + (cur === id) + '">' + I(PAGES[id].icon || 'companion') + esc(PAGES[id].en) + '</button>').join('') + '</div>';
   }
   function defaultPage(s) {
-    if (s.comp || s.provisional) return 'companion';
+    if (s.comp || away(s) || s.provisional) return 'companion';
     return s.company && s.company.pet ? 'pet' : 'companion';
   }
   function render(A, B, two, api) {
@@ -100,5 +121,5 @@ RB.ui.company = (function () {
     A.innerHTML = m.length ? '<ol class="entries">' + m.map((x) => '<li class="entry"><div><div class="t">' + esc(x.title ? x.title.en : x.id) + '</div></div></li>').join('') + '</ol>'
       : '<p class="muted">Moments you share on the road will be kept here.</p>';
   } });
-  return { addPage, render, back, summary, pages: PAGES };
+  return { addPage, render, back, summary, away, pages: PAGES };
 })();
