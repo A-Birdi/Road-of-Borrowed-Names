@@ -213,4 +213,6 @@ export default async (t) => {
   console.error = cerr;
 };
 
-const OTHER_SCENES_FP = '7569a2b138a8a75f', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'a63755ae3cdd9259', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
+// (OTHER_MAPS_FP: since QA-208, Sanpei's talk order (Cloud CC-610; Agnes 6913897483; Local CL-848), the press room's
+// Sanpei has the Ghostwriter's testimony before the broadsheet; no other map changes. Before it: a63755ae3cdd9259)
+const OTHER_SCENES_FP = '7569a2b138a8a75f', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'cc67a9f9732d5f1a', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';

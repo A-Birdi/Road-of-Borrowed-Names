@@ -222697,8 +222697,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   } };
 
   // ---- Manybridge's broadsheet --------------------------------------------------------------------------------------------------
+  // the broadsheet comes after the Ghostwriter's testimony where Sanpei has it (src/content/mp/24_scenes_side.js), so a
+  // journey that reaches the ending with that quest still open can hear it, and Ryusui's meeting stays reachable
+  // (QA-208; Cloud CC-610; Agnes 6913897483; Local CL-848); without that entry, at the front as before
   const sanpei = npc('mp.pressroom', 'mp_sanpei');
-  if (sanpei) sanpei.talk.unshift({ if: POST, scene: 'rt.sanpei_last' });
+  if (sanpei) {
+    const at = sanpei.talk.findIndex((t) => t.scene === 'mp.ghost_sanpei');
+    sanpei.talk.splice(at + 1, 0, { if: POST, scene: 'rt.sanpei_last' });
+  }
   C.challenges['rt.headline'] = { title: T('The last edition', '{最後|さいご} の {瓦版|かわらばん}'), tiers: {
     F: [ch({ item: 'g:v_ta', ctx: { jp: 'やおばし の かわらばん 、 きょう で おわり 。 あした から は 、 わかい ひと が つくる 。', en: '' }, prompt: T('What is the news?'),
       options: [e('Today is the broadsheet\'s last edition; young people will make it from tomorrow.', 1), e('The broadsheet starts today.', 0, 'きょう で おわり: it ends today.')] })],
