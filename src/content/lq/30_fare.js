@@ -277,6 +277,9 @@ koji: {座|すわ}ってる だけ で 、 {茶|ちゃ} も {飲|の}まない �
 !gesture hana laugh
 hana[smile]: {薄|うす}い って {顔|かお} を された の 。 {失礼|しつれい} しちゃう わ 。 || She made a face as if it were weak. How rude.
 lq_chigusa[think]: …… {始|はじ}める よ 。 || …Let's begin.
+# on the route through Koji (lq.fare_pay_koji), you step aside to (5,7) facing him as Chigusa rises,
+# so her mark at (4,6) is free whichever side of him you spoke from (CC-625; Agnes 6927046186)
+?(scene.lq.fare_pay_koji) !walkto pc 5 7 up
 !pose lq_chigusa stiff
 !walkto lq_chigusa 4 6 right
 !prop lq_chigusa coins
@@ -391,4 +394,9 @@ lq_chigusa[smile]: …… {湯呑|ゆの}み を {一|ひと}つ {減|へ}らし
 !faceplayer
 lq_chigusa: {下|した} から {上|のぼ}って くる {人|ひと} が {増|ふ}えた よ 。 {名前|なまえ} の {戻|もど}った {道|みち} は 、 {人|ひと} を {呼|よ}ぶ ん だ ね 。 || More people come up from below these days. A road that has its name back calls people to it.
 lq_chigusa: {春|はる} に なったら 、 {一度|いちど} {葦|あし}ノ{瀬|せ} の {舟|ふね} に {乗|の}り に {行|い}く 。 {今度|こんど} は {客|きゃく} と して ね 。 || Come spring I'll go and ride the Reedwake ferry once. As an ordinary passenger, this time.
+
+@scene lq.fare_pay_koji
+# the fare repaid when you speak to Koji first: the same scene, called from here so it can tell the route
+# (it steps you aside to (5,7) as Chigusa rises; CC-625, Agnes 6927046186)
+!call lq.fare_pay
 `, 'lq/30_fare');

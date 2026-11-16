@@ -213,4 +213,8 @@ export default async (t) => {
   console.error = cerr;
 };
 
-const OTHER_SCENES_FP = '7569a2b138a8a75f', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'a63755ae3cdd9259', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
+// (OTHER_SCENES_FP, OTHER_MAPS_FP: since the fare repaid at the teahouse (Cloud CC-625, CC-626; Agnes 6927046186; Local
+// CL-871), lq.fare_pay gains one command, your step aside to (5,7) on the route through Koji, and a new scene
+// lq.fare_pay_koji only calls it; on rw.tea, Koji's step-4 talk names lq.fare_pay_koji instead of lq.fare_pay; no other
+// scene or map changes. Before it: 7569a2b138a8a75f, a63755ae3cdd9259)
+const OTHER_SCENES_FP = '2cca47d073e1f49e', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = '756563f6074f2ac4', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
