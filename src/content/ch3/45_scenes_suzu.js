@@ -208,6 +208,7 @@ suzu: {今|いま} {言|い}って も 、 {火事|かじ} ごと {頭|あたま
 !music companion_suzu
 suzu[closed]: …… {入|はい}る {前|まえ} に 、 {一|ひと}つ だけ {手伝|てつだ}って 。 {最初|さいしょ} の {一言|ひとこと} 。 {台詞|せりふ} は {得意|とくい} な の 。 {本当|ほんとう} の {台詞|せりふ} {以外|いがい} は 。 || …Before we go in, help me with one thing. The first line. I'm good with lines. Just not true ones.
 !challenge co.c_suzu
+?(var._res=0) !end
 narr: {工房|こうぼう} の {炉|ろ} が 、 {低|ひく}く {唸|うな}って いる 。 ヒロ は {吹|ふ}き{竿|ざお} の {先|さき} で 、 {橙色|だいだいいろ} の ガラス を {回|まわ}して いた 。 || The furnace hums low. Hiro is turning a gather of orange glass on the end of his blowpipe.
 hiro: {悪|わる}い 。 {今|いま} {手|て} が {離|はな}せない 。 {話|はなし} なら 、 そこ で 。 || Sorry. Can't put this down. If you want to talk, go ahead.
 suzu[smile]: {大丈夫|だいじょうぶ} 。 {手|て} は {止|と}めない で 。 その {方|ほう} が 、 {私|わたし} も {言|い}い やすい 。 || That's fine. Don't stop. It's easier for me that way too.
