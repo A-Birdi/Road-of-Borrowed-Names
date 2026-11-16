@@ -11,7 +11,8 @@
 //    voiceschanged event, as one Windows host did (about 100 ms; CL-859): a model of that host, not a guarantee of
 //    any browser's timing.
 // Speaking stays inside the page: speechSynthesis.speak and cancel, and SpeechSynthesisUtterance, are replaced by
-// stand-ins, so nothing a test does reaches the host's speech engine; what was spoken is recorded.
+// stand-ins, so nothing a test does reaches the host's speech engine; what was spoken is recorded. The page's own start
+// and end handlers are called each in its own task, uncaught, and recorded with their returns (see speak below).
 // window.__voiceFixture says what was installed and what happened: applied (false where the browser has no speech
 // synthesis to replace: a lane must then fail, not pass), the kind, each ask's answer, whether the late list is ready
 // (set after its voiceschanged has been dispatched, so its listeners have run), the host engine's own voiceschanged
@@ -30,7 +31,7 @@ export const FIXTURE_VOICES = [
 
 function install(cfg) {
   const G = window;
-  const fx = (G.__voiceFixture = { kind: cfg.kind, applied: false, asks: 0, answers: [], listed: cfg.kind !== 'present-late', ready: cfg.kind !== 'present-late', events: 0, hostEvents: 0, spoken: [], cancels: 0 });
+  const fx = (G.__voiceFixture = { kind: cfg.kind, applied: false, asks: 0, answers: [], listed: cfg.kind !== 'present-late', ready: cfg.kind !== 'present-late', events: 0, hostEvents: 0, spoken: [], cancels: 0, callbacks: [], speechDone: 0 });
   const s = G.speechSynthesis;
   if (!s || typeof s.getVoices !== 'function' || typeof G.SpeechSynthesisUtterance !== 'function') return;
   const hostVoices = s.getVoices.bind(s);
@@ -63,7 +64,15 @@ function install(cfg) {
     configurable: true,
     value: (u) => {
       fx.spoken.push(u ? u.text : null);
-      setTimeout(() => { try { if (u && u.onstart) u.onstart({ utterance: u }); if (u && u.onend) u.onend({ utterance: u }); } catch (e) { /* the page's own error */ } }, 0);
+      // the page's own start and end handlers, each in its own task as a real engine fires its events, and nothing
+      // catches them: an error in one is the page's own uncaught error (Playwright's pageerror, which tests/e2e/lib.mjs's
+      // page() collects) and doesn't stop the other. callbacks records each call and then its return, so a handler that
+      // threw has no 'returned' entry; speechDone is counted in a task after both (Agnes 6921972297, 6922668177; CL-862,
+      // CL-863)
+      const fire = (name) => { const f = u && u[name]; if (typeof f !== 'function') return; fx.callbacks.push(name); f.call(u, { utterance: u }); fx.callbacks.push(name + ' returned'); };
+      setTimeout(() => fire('onstart'), 0);
+      setTimeout(() => fire('onend'), 0);
+      setTimeout(() => { fx.speechDone++; }, 0);
     },
   });
   Object.defineProperty(s, 'cancel', { configurable: true, value: () => { fx.cancels++; } });

@@ -143,11 +143,18 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
   const dv = await p.evaluate(() => ({ list: [...document.querySelectorAll('.folio-settings #vsel option')].map((o) => o.textContent), auto: !!document.querySelector('.folio-settings [data-voiceauto]') }));
   assert(dv.list.join(' | ') === 'Fixture Japanese A | Fixture Japanese B, with the long name some systems give a voice' && dv.auto,
     'the device\'s voice is offered by name (the two local Japanese voices, in order; the online and English ones left out), with its own switch for speaking lines: ' + JSON.stringify(dv));
-  assert(voice.hl && voice.visible && voice.head === 'Highlight each word as it is spoken' && voice.notBulb && !voice.bulbHere && voice.on, 'the spoken-word highlight is its own setting, shown without a device voice, on a different tab from Word help: ' + JSON.stringify(voice));
+  assert(voice.hl && voice.visible && voice.head === 'Highlight each word as it is spoken' && voice.notBulb && !voice.bulbHere && voice.on, 'the spoken-word highlight is its own setting, shown with a device voice, on a different tab from Word help: ' + JSON.stringify(voice));
   assert(!fx.spoken.length, 'nothing was spoken while the page was drawn: ' + JSON.stringify(fx.spoken));
   // the game's speech reaches the fixture's stand-in, never the host's engine
   const said = await p.evaluate(async () => { const r = RB.voice.speak('fixture line'); await new Promise((res) => setTimeout(res, 50)); return { r, spoken: window.__voiceFixture.spoken.slice() }; });
   assert(said.r === true && said.spoken.length === 1 && said.spoken[0] === 'fixture line', 'a line the game speaks goes to the fixture\'s stand-in: ' + JSON.stringify(said));
+  // the game's own start and end handlers for that line each ran to its end, with no page error: wait for the fixture's
+  // sign that both have run (no fixed sleep), then read its record and the page's errors; a wait that runs out fails this
+  // assertion too (Agnes 6921972297, 6922668177; CL-862, CL-863)
+  const done = await p.waitForFunction(() => window.__voiceFixture.speechDone >= 1, null, { timeout: 5000 }).then(() => true, () => false);
+  const heard = await p.evaluate(() => ({ speechDone: window.__voiceFixture.speechDone, callbacks: window.__voiceFixture.callbacks.slice() }));
+  assert(done && heard.speechDone === 1 && heard.callbacks.join(' | ') === 'onstart | onstart returned | onend | onend returned' && !errors.length,
+    'the game\'s start and end handlers for that line each ran to its end, with no page error: ' + JSON.stringify(Object.assign({ done }, heard)) + ' ' + errors.join('; '));
   // and the fixture is installed again on a reload, through the host's own voice listing
   await p.reload(); await p.waitForFunction(() => window.__RB_READY__ === true);
   const host = await hostListing(p);
