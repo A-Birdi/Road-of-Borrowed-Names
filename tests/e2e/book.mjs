@@ -16,11 +16,19 @@
 //    who travels is in the running head, and Suzu's speech (asking and choosing) is one group (Robin, 2026-10-09);
 //  - the Journey's "Next" says one destination once (UI-A06);
 //  - the dialogue strip keeps its speaker and its manual Next (UI-A13);
-//  - the book's type: each role in its embedded face, nothing fetched (UI-A11).
+//  - the book's type: each role in its embedded face, nothing fetched (UI-A11);
+//  - the controls with the device's Japanese voices decided here, not by the host (tests/e2e/device_voices.mjs; CC-617,
+//    CL-859, Agnes 6920360412): the classic comparison with none ('absent'); with two from the start ('present') the
+//    classic controls exactly, besides the Say buttons of the spoken lines, and with "No voice" chosen exactly the classic
+//    ones; with a voice the browser lists only after the first ask ('present-late', a model of one host) the pages
+//    opened meanwhile hold the classic controls and nothing but Say buttons besides, whichever of them the list reached,
+//    and once it is listed, reopening a page with spoken lines offers its Say button. The recordings are off throughout
+//    (tests/e2e/lib.mjs page()) and nothing is spoken to the host's engine.
 // Usage: node tests/e2e/book.mjs
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
+import { voiceContext, voiceState, voicesReady } from './device_voices.mjs';
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -87,7 +95,7 @@ await test('the book is the Ledger for everyone: a new profile, and a record tha
 
 await test('the book offers exactly the classic folio\'s controls and actions (Journey, Company), as recorded before it was retired', async () => {
   const classic = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/book_parity_classic.json'), 'utf8'));
-  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
+  const { p, errors, ctx } = await page(b, url, { context: await voiceContext(b, 'absent', { viewport: { width: 1440, height: 900 } }) });
   await p.evaluate(FIXTURE, 'book');
   const book = {};
   for (const w of ['journal', 'companion', 'memories', 'pet']) { await open(p, w); await p.waitForTimeout(150); book[w] = await p.evaluate(ACTIONS); }
@@ -100,6 +108,52 @@ await test('the book offers exactly the classic folio\'s controls and actions (J
     assert(classic[w].words === book[w].words, w + ': word-help targets ' + classic[w].words + ' vs ' + book[w].words);
     assert(classic[w].list.length > 5, w + ': controls read: ' + classic[w].list.length);
   }
+  const fx = await voiceState(p);
+  assert(fx.applied && fx.kind === 'absent' && fx.localJa === 0 && !fx.vbConfigured && !fx.vbActive, 'the voice fixture (absent) was in place, the recordings off: ' + JSON.stringify(fx));
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+// the same four pages with a device voice: the classic controls exactly, once the lines' Say buttons are set aside
+const SAY = 'button|data-say-voice=|';
+const PAGES = ['journal', 'companion', 'memories', 'pet'];
+const readPages = async (p, pages) => { const out = {}; for (const w of pages) { await open(p, w); await p.waitForTimeout(150); out[w] = await p.evaluate(ACTIONS); } return out; };
+const besideSay = (classic, book, w) => ({ rest: book[w].list.filter((x) => x !== SAY).join('\n') === classic[w].list.join('\n'), say: book[w].list.filter((x) => x === SAY).length,
+  missing: classic[w].list.filter((x) => !book[w].list.includes(x)).length, other: book[w].list.filter((x) => x !== SAY && !classic[w].list.includes(x)), words: book[w].words === classic[w].words });
+
+await test('with a Japanese voice on the device (voice fixture: present): the classic controls exactly, and beside the spoken lines their Say buttons; with "No voice", exactly the classic controls', async () => {
+  const classic = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/book_parity_classic.json'), 'utf8'));
+  const { p, errors, ctx } = await page(b, url, { context: await voiceContext(b, 'present', { viewport: { width: 1440, height: 900 } }) });
+  await p.evaluate(FIXTURE, 'book');
+  const book = await readPages(p, PAGES);
+  const r = Object.fromEntries(PAGES.map((w) => [w, besideSay(classic, book, w)]));
+  for (const w of PAGES) assert(r[w].rest && r[w].words, w + ': with a device voice, the classic controls exactly besides Say buttons: ' + JSON.stringify(r[w]).slice(0, 400));
+  assert(r.companion.say >= 1 && r.memories.say >= 1 && !r.journal.say && !r.pet.say, 'Say buttons beside the spoken lines of Company and Shared memories, none on the journal or the pet\'s page: ' + JSON.stringify(PAGES.map((w) => r[w].say)));
+  const fx = await voiceState(p);
+  assert(fx.applied && fx.kind === 'present' && fx.localJa === 2 && fx.networkJa === 1 && !fx.spoken.length && !fx.vbConfigured && !fx.vbActive, 'the voice fixture (present) was in place, the recordings off, nothing spoken: ' + JSON.stringify(fx));
+  // "No voice" chosen: nothing would be spoken, so no page offers a Say button
+  await p.evaluate(() => { RB.game.settings.voice = Object.assign({}, RB.game.settings.voice, { mode: 'none' }); });
+  const none = await readPages(p, PAGES);
+  for (const w of PAGES) assert(none[w].list.join('\n') === classic[w].list.join('\n') && none[w].words === classic[w].words, w + ': with "No voice" chosen, exactly the classic controls: ' + JSON.stringify(besideSay(classic, none, w)).slice(0, 400));
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+await test('with a device voice the browser lists only after the first ask (voice fixture: present-late, a model of one host): the pages opened meanwhile keep the classic controls and add nothing but Say buttons; once listed, reopening offers them', async () => {
+  const classic = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/book_parity_classic.json'), 'utf8'));
+  const { p, errors, ctx } = await page(b, url, { context: await voiceContext(b, 'present-late', { viewport: { width: 1440, height: 900 } }) });
+  await p.evaluate(FIXTURE, 'book');
+  const book = await readPages(p, PAGES);
+  // whichever pages the list reached in time, none loses a classic control or gains anything else (an open page
+  // that does not gain its button when the list arrives is not asserted either way: CL-859, Agnes 6920360412)
+  for (const w of PAGES) { const r = besideSay(classic, book, w); assert(r.rest && r.words, w + ': opened while the voices were being listed, the classic controls exactly besides any Say buttons: ' + JSON.stringify(r).slice(0, 400)); }
+  await voicesReady(p);
+  const fx = await voiceState(p);
+  assert(fx.applied && fx.kind === 'present-late' && fx.answers[0] === 0 && fx.events === 1 && fx.localJa === 2 && fx.networkJa === 1 && !fx.spoken.length,
+    'the first ask found no voice; the list came after it with one voiceschanged: two local Japanese voices, one online; nothing spoken: ' + JSON.stringify(fx));
+  const again = await readPages(p, ['companion', 'memories']);
+  const ra = Object.fromEntries(['companion', 'memories'].map((w) => [w, besideSay(classic, again, w)]));
+  assert(ra.companion.rest && ra.companion.say >= 1 && ra.memories.rest && ra.memories.say >= 1, 'reopened once the voices are listed, Company and Shared memories offer their Say buttons, with the classic controls: ' + JSON.stringify(ra).slice(0, 400));
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
