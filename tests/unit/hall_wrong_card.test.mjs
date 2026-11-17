@@ -213,4 +213,6 @@ export default async (t) => {
   console.error = cerr;
 };
 
-const OTHER_SCENES_FP = '7569a2b138a8a75f', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'a63755ae3cdd9259', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
+// (OTHER_SCENES_FP: since the Ren-shelf recovery (Local CL-890; Cloud CC-645; Agnes 6945102589), sa.shelf_ren gains two
+// commands, its guarded jumps at its head; no other scene changes. Before it: 7569a2b138a8a75f)
+const OTHER_SCENES_FP = '5cdd88effc8a0278', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'a63755ae3cdd9259', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';

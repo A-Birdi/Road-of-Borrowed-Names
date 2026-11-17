@@ -20,6 +20,7 @@ let suites = [
   ['postgame_quests.mjs'], ['census_plaques.mjs'], ['ink_water.mjs'],
   full ? ['story_ch5.mjs'] : ['story_ch5.mjs', 'A', 'suzu'],
   ...(full ? [0, 1, 2, 3, 4].map((i) => ['story_ch6.mjs', String(i)]) : [['story_ch6.mjs', '2']]),
+  ['ren_shelf_recovery.mjs'], // Ren's shelf after a save made partway through it: the rest of the chosen branch replays (played, saved and loaded)
   ['atlas.check.mjs'],
   // the Hall of a Hundred Tales (P15): the card with its furigana, the chip, the sheet, the reprieve, suspend and resume
   ['hall.mjs'], ['hall_stairs.mjs'], ['hall_story_passages.mjs'], ['hall_gifts.mjs'], ['hall_trays.mjs'], ['hall_card_gone.mjs'], ['postgame.mjs'],
