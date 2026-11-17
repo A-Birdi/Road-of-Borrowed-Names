@@ -652,11 +652,23 @@ RB.staging = (function () {
     if (sc && !sc.moved.has(a)) sc.moved.set(a, { from: [a.x, a.y, a.dir], stay: !!o.stay });
     else if (sc && o.stay) sc.moved.get(a).stay = true;
     S(a).look = null;
-    if (a.route) { const e = a.route[a.route.length - 1] || [a.x, a.y]; a.x = e[0]; a.y = e[1]; a.fx = a.x; a.fy = a.y; a.route = null; a.alpha = 1; a.fadeIn = false; }
+    // (someone still walking in is set where their walk-in was going, its step under way ended there, as a scripted
+    // move takes over from a walk-in (50_world.js scriptMove): nothing is left to land them back on the way in)
+    if (a.route) { const e = a.route[a.route.length - 1] || [a.x, a.y]; a.x = e[0]; a.y = e[1]; a.fx = a.x; a.fy = a.y; a.mv = null; a.route = null; a.alpha = 1; a.fadeIn = false; }
     if (sc) sc.reserved.set(a, x + ',' + y);
     st.stats.walks++;
+    // (a step already under way finishes on its own tile before the walk is planned, so a plan never starts from the
+    // tile being left (CC-629, CL-876; Agnes 6933304922); bounded: a figure still moving at the bound, or a walk whose
+    // scene, map or figure has gone meanwhile, does not walk: no step, no placement, no facing, no sync, no success)
+    let settled = true;
+    if (a.mv && !(o.now || RB.game.fastForward())) {
+      const t0 = now(), tok = sc ? sc.token : 0;
+      while (a.mv && now() - t0 < 1000) await new Promise((r) => setTimeout(r, 16));
+      settled = !a.mv && present(a, map0) && (!sc || (st.scene === sc && st.scene.token === tok));
+    }
     let ok = false;
-    if (a.x === x && a.y === y) ok = true;
+    if (!settled) ok = false;
+    else if (!a.mv && a.x === x && a.y === y) ok = true;
     else if (o.now || RB.game.fastForward()) {
       // in the dark of a fade (or skipping a seen scene): set them there, if the place is free (`cross` and `party`
       // play no part here: the destination is checked as always, and your companion rejoins you at the scene's end)
@@ -672,8 +684,8 @@ RB.staging = (function () {
       }
       if (path) ok = await walkPath(a, path, sc ? sc.token : 0, o.max || 4000, o.cross || o.party ? { cross: !!o.cross, party: !!o.party } : undefined);
     }
-    // (the walk's map or figure gone meanwhile: no success, and nothing more set on anyone)
-    const kept = present(a, map0);
+    // (not settled, or the walk's map or figure gone meanwhile: no success, and nothing more set on anyone)
+    const kept = settled && present(a, map0);
     if (!kept) ok = false;
     if (!ok) st.stats.walkFallbacks++;
     if (sc && sc.reserved.get(a) === x + ',' + y && !ok) sc.reserved.delete(a);
