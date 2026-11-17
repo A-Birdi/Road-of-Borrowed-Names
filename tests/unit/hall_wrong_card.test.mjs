@@ -221,5 +221,7 @@ export default async (t) => {
 // (4,6)); no other scene or map changes (OTHER_MAPS_FP stays). Before it: 2cca47d073e1f49e. Since the fare's two staging
 // walks (Cloud CC-644; Agnes 6946332830; Local CL-895), lq.fare_pay gains two commands (Oto's step west on Chigusa's
 // route when he is in the room, slot.oto=3&departed, CC-649, Agnes 6948894795; and your companion's door walk tried
-// again on Koji's route); no other scene or map changes. Before it: 19c0d58c7bfbebbc)
-const OTHER_SCENES_FP = 'acf91046f825cbed', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = '756563f6074f2ac4', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
+// again on Koji's route); no other scene or map changes. Before it: 19c0d58c7bfbebbc. Since the fare's departure
+// ordering (Cloud CC-652; Agnes 6952032829; Local CL-903), lq.fare_pay's last command is `!refresh gone`; no other scene
+// or map changes. Before it: acf91046f825cbed)
+const OTHER_SCENES_FP = 'e6e118b040ff1e8b', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = '756563f6074f2ac4', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';

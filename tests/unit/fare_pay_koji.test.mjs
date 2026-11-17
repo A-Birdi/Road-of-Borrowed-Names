@@ -20,6 +20,9 @@
 //     first command, before your companion's door walk; and your companion's door walk tried again on the route through
 //     K~ji, straight after your step aside and before Chigusa stands; each exactly once, and nothing else of the scene
 //     changed (3 sets them aside, with the two of yours and K~ji's above).
+//  7. the scene's end (CC-652; Agnes 6952032829): `!autosave`, then `!refresh gone`, its only refresh, as its last two
+//     commands: the scene waits for Chigusa's departure before it ends, so your companion's rejoin after it never
+//     crosses her way out (3 compares the refresh as 315b770's bare `!refresh`).
 // The browser half (each side, each companion, Skip seen, save and load) is tests/e2e/fare_pay_staging.mjs; the two
 // walks and the end of the scene are tests/e2e/fare_pay_two_walks.mjs.
 import { createHash } from 'node:crypto';
@@ -70,7 +73,10 @@ export default async (t) => {
   t.eq(looks.map(([c, j]) => [c.args, c.if, j > i]), [[['koji', 'lq_chigusa'], null, true], [['koji', 'lq_chigusa'], null, true], [['koji', 'pc'], null, true]], 'his looks, in order: at her for the coins, at her again for the book, at you after the seal');
   const coinLook = early.length === 1 ? early[0][0] : null;
   const isOto = (c) => c && c.op === 'walkto' && c.args[0] === 'oto';
-  const rest = cm.filter((c) => !(c.op === 'walkto' && c.args[0] === 'pc') && c !== coinLook && !isOto(c) && !isRetry(c)).map((c) => { const o = Object.assign({}, c); delete o.line; return o; });
+  // (the scene's last command waits for her departure, CC-652: `!refresh gone`; 315b770 had the bare `!refresh`, so the
+  // comparison reads it as that; 7 checks it)
+  const isGone = (c) => c && c.op === 'refresh' && JSON.stringify(c.args) === JSON.stringify(['gone']);
+  const rest = cm.filter((c) => !(c.op === 'walkto' && c.args[0] === 'pc') && c !== coinLook && !isOto(c) && !isRetry(c)).map((c) => { const o = Object.assign({}, c); delete o.line; if (isGone(c)) o.args = []; return o; });
   t.eq([rest.length, sha(rest)], [52, PARENT_FARE_PAY], 'every other command of lq.fare_pay is exactly 315b770\'s (52, line numbers aside)');
 
   // 4. the route term outside a run
@@ -100,5 +106,11 @@ export default async (t) => {
     t.eq(retries.map(([c, j]) => [j - i, c.args]), [[1, ['comp', '3', '7', 'right']]], "your companion's door walk tried again once, on the route through K~ji, straight after your step aside to (5,7)");
     const walks = cm.filter((c) => c.op === 'walkto').map((c) => [c.args[0], c.if]);
     t.eq(walks, [['oto', '!scene.lq.fare_pay_koji&slot.oto=3&departed'], ['comp', 'comp'], ['pc', 'scene.lq.fare_pay_koji'], ['comp', 'comp&scene.lq.fare_pay_koji'], ['lq_chigusa', null]], 'the scene\'s walks, in order: Oto, your companion, you (K~ji\'s route), your companion again (K~ji\'s route), Chigusa');
+  }
+  // 7. the scene's end (CC-652; Agnes 6952032829)
+  {
+    const refreshes = cm.map((c, j) => [c, j]).filter(([c]) => c.op === 'refresh');
+    t.eq(refreshes.map(([c, j]) => [j, c.args, c.if]), [[cm.length - 1, ['gone'], null]], 'the scene\'s only refresh is its last command, `!refresh gone` (no bound given: the default), unguarded');
+    t.eq([cm[cm.length - 2] && cm[cm.length - 2].op, cm[cm.length - 2] && cm[cm.length - 2].args], ['autosave', []], 'straight after the scene\'s `!autosave`, as before (the save is still written before she leaves)');
   }
 };

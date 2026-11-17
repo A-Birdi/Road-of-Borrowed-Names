@@ -173,5 +173,7 @@ const AGREED = {
 // it: 39bc0e2ce9cf1251. Since the fare's two staging walks (Cloud CC-644; Agnes 6946332830; Local CL-895), lq.fare_pay
 // gains two commands (Oto's step west on Chigusa's route when he is in the room, slot.oto=3&departed, CC-649, Agnes
 // 6948894795; and your companion's door walk tried again on Koji's route), and the same six later scenes shift line
-// numbers only. Before it: 2afdc3f5a2eb863f)
-const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '6027c6decc2769a3', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
+// numbers only. Before it: 2afdc3f5a2eb863f. Since the fare's departure ordering (Cloud CC-652; Agnes 6952032829; Local
+// CL-903), lq.fare_pay's last command is `!refresh gone`, and the one comment line above it moves that command and the
+// same six later scenes down a line. Before it: 6027c6decc2769a3)
+const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '5baedde3868d114c', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
