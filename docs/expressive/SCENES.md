@@ -1169,7 +1169,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `sa.b_mio4` | src/content/ch6/54_scenes_side.js:174 | banter | 2 | mio×2 |  | banter sa.* mio [sa_hush_down] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
 | `sa.b_ren1` | src/content/ch6/54_scenes_side.js:178 | banter | 2 | ren×2 |  | banter sa.* ren [!sa_met_kasane] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
 | `sa.b_ren2` | src/content/ch6/54_scenes_side.js:182 | banter | 4 | ren×3 pc |  | banter sa.* ren [seen.sa.stacks_enter&!sa_hush_down] |  | Quiet (H) | travel banter, 4 lines: attentive posture and facing only |
-| `sa.b_ren3` | src/content/ch6/54_scenes_side.js:188 | banter | 3 | ren×3 |  | banter sa.* ren [sa_ushio_found&!sa_hush_down] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
+| `sa.b_ren3` | src/content/ch6/54_scenes_side.js:188 | banter | 3 | ren×3 |  | banter sa.* ren [sa_ushio_found&seen.sa.kasane_meet&!sa_hush_down] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
 | `sa.b_ren4` | src/content/ch6/54_scenes_side.js:193 | banter | 4 | ren×3 pc |  | banter sa.* ren [sa_hush_down] |  | Quiet (H) | travel banter, 4 lines: attentive posture and facing only |
 | `sa.b_suzu1` | src/content/ch6/54_scenes_side.js:199 | banter | 3 | suzu×3 |  | banter sa.* suzu [!sa_met_kasane] |  | Quiet (H) | travel banter, 3 lines: attentive posture and facing only |
 | `sa.b_suzu2` | src/content/ch6/54_scenes_side.js:204 | banter | 2 | suzu×2 |  | banter sa.* suzu [sa_met_kasane&!sa_hush_down] |  | Quiet (H) | travel banter, 2 lines: attentive posture and facing only |
