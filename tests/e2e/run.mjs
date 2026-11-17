@@ -32,6 +32,7 @@ let suites = [
   // companionship: Company › Companion and Shared memories, invitations, reflections, rest (addendum §6–9, §19)
   ['company.mjs'],
   ['company_pets.mjs'],
+  ['ren_banter_meet.mjs'], // QA-206: Ren's gravestone banter waits until the meeting with Kasane is finished, played and saved
   ['dialect_kansai.mjs'], // Suzu's optional Kansai-ben: the choice, Settings, Company › Suzu, word help, saves (docs/dialect/suzu_kansai.md)
   ['addendum_integration.mjs'],
   // overworld actors: idle life in each chapter, Wataru and Omi (both routes x 4 companions), one performed
