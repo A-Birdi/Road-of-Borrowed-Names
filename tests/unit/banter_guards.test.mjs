@@ -21,6 +21,10 @@
 //  6. a save's round trip keeps each answer;
 //  every talk went to the banter list (after the story, its ending conversation already had); no scene ended on an
 //  error from the runner.
+// QA-206 (Agnes 6943588129; Local CL-887; Cloud CC-640) changes one more registration, Ren's Archive banter about the
+// gravestone (sa.b_ren3), to wait until the meeting with Kasane is finished: in 5 it is set aside from "every other"
+// (recomputed on its parent, 315b770: the 99 others were 976ebcbab2bdb628; without sa.b_ren3, 98, e09fc3b8c59dabbb) and
+// checked by itself, its registration as agreed and its lines and keys as before (ef2daeb6957bad47, on 315b770).
 import crypto from 'node:crypto';
 import { load } from '../lib/load.mjs';
 
@@ -52,7 +56,8 @@ export default async (t) => {
   const settle = async () => { for (let i = 0; i < 50 && RB.script.isRunning(); i++) await new Promise((r) => setTimeout(r, 10)); };
 
   // before this change (computed on its parent): the other registrations, and these eight scenes' lines and keys
-  const OTHERS_N = 99, OTHERS_FP = '976ebcbab2bdb628', LINES_FP = '19c6e12951cf0b65';
+  const OTHERS_N = 98, OTHERS_FP = 'e09fc3b8c59dabbb', LINES_FP = '19c6e12951cf0b65';
+  const REN3 = { scene: 'sa.b_ren3', row: ['ren', 'sa.*', 'sa_ushio_found&seen.sa.kasane_meet&!sa_hush_down', 'sa.b_ren3'], lines: 'ef2daeb6957bad47' };
   const AGREED = {
     'sg.b_nao_after': 'sg_boss_done&!co_arrived&!ed>=2|sg_boss_done&!co_arrived&mb2_done',
     'sg.b_suzu_after': 'sg_boss_done&!co_arrived&!ed>=2|sg_boss_done&!co_arrived&mb2_done',
@@ -160,9 +165,12 @@ export default async (t) => {
   }
 
   // 5. every other registration, and these scenes' lines and keys
-  const others = C.banter.filter((b) => !AGREED[b.scene]).map((b) => [b.comp, b.map || null, b.if || null, b.scene]);
-  const lines = Object.keys(AGREED).sort().map((sc) => C.scenes[sc].cmds.filter((c) => c.op === 'say').map((c) => [c.who || null, c.expr || null, keyOf(sc, c.jp), c.en, c.if || null]));
+  const others = C.banter.filter((b) => !AGREED[b.scene] && b.scene !== REN3.scene).map((b) => [b.comp, b.map || null, b.if || null, b.scene]);
+  const sayRows = (sc) => C.scenes[sc].cmds.filter((c) => c.op === 'say').map((c) => [c.who || null, c.expr || null, keyOf(sc, c.jp), c.en, c.if || null]);
+  const lines = Object.keys(AGREED).sort().map(sayRows);
   t.ok(others.length === OTHERS_N && fp(others) === OTHERS_FP && fp(lines) === LINES_FP, '5 every other banter\'s registration, and these eight scenes\' lines and keys, as before ' + flat({ n: others.length, others: fp(others), lines: fp(lines) }));
+  const ren3 = C.banter.filter((b) => b.scene === REN3.scene).map((b) => [b.comp, b.map || null, b.if || null, b.scene]);
+  t.ok(ren3.length === 1 && flat(ren3[0]) === flat(REN3.row) && fp(sayRows(REN3.scene)) === REN3.lines, '5 sa.b_ren3 (QA-206): one registration, offered once the meeting with Kasane is finished; its lines and keys as before ' + flat({ ren3, lines: fp(sayRows(REN3.scene)) }));
 
   // 6. a save's round trip
   {
