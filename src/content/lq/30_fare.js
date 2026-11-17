@@ -269,6 +269,9 @@ narr: {屋台|やたい} に {札|ふだ} が {下|さ}がって いる 。 「 
 # her name; he hands her the seal (the pledge), she laughs at the pun, and looks west towards the sea she
 # will take it to; Hana nods her off. Your companion (by the door, off your tile and off hers) answers in
 # their own way (Nao's nod, Mio leans to look at the book, Ren's glasses, Suzu's small celebration).
+# on Chigusa's route, Oto, when he is in the room (on his teahouse place (4,4): slot.oto=3&departed), steps one tile
+# west first, so he and you do not close her way down to her mark (CC-644, CC-649; Agnes 6946332830, 6948894795)
+?(!scene.lq.fare_pay_koji&slot.oto=3&departed) !walkto oto 3 4 down
 ?(comp) !walkto comp 3 7 right
 !faceplayer lq_chigusa
 lq_chigusa: …… {来|き}た ね 。 {手紙|てがみ} は {先|さき} に {着|つ}いてた 。 {朝|あさ} から ずっと 、 ここ に {座|すわ}ってる 。 || …You came. My letter got here first. I've been sitting here since morning.
@@ -280,6 +283,9 @@ lq_chigusa[think]: …… {始|はじ}める よ 。 || …Let's begin.
 # on the route through Koji (lq.fare_pay_koji), you step aside to (5,7) facing him as Chigusa rises,
 # so her mark at (4,6) is free whichever side of him you spoke from (CC-625; Agnes 6927046186)
 ?(scene.lq.fare_pay_koji) !walkto pc 5 7 up
+# and on that route your companion's walk to the door is tried again once you have stepped aside (no step if they
+# are there already), so they are off her way through (4,5) (CC-644; Agnes 6946332830)
+?(comp&scene.lq.fare_pay_koji) !walkto comp 3 7 right
 !pose lq_chigusa stiff
 !walkto lq_chigusa 4 6 right
 !look koji lq_chigusa

@@ -170,5 +170,8 @@ const AGREED = {
 // lq.chigusa_post) shift line numbers only. Before it: 563a61695b5507f9. Since Koji's look at the coins (Cloud CC-627;
 // Agnes 6930123788; Local CL-873), lq.fare_pay gains one more command (!look koji lq_chigusa, after Chigusa's walk to
 // (4,6)), and six later scenes of the same file (the five above and lq.fare_pay_koji) shift line numbers only. Before
-// it: 39bc0e2ce9cf1251)
-const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '2afdc3f5a2eb863f', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
+// it: 39bc0e2ce9cf1251. Since the fare's two staging walks (Cloud CC-644; Agnes 6946332830; Local CL-895), lq.fare_pay
+// gains two commands (Oto's step west on Chigusa's route when he is in the room, slot.oto=3&departed, CC-649, Agnes
+// 6948894795; and your companion's door walk tried again on Koji's route), and the same six later scenes shift line
+// numbers only. Before it: 2afdc3f5a2eb863f)
+const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '6027c6decc2769a3', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';

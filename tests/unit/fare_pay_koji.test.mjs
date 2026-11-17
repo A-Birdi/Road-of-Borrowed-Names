@@ -15,7 +15,13 @@
 //     its targets and its nudges, from the teahouse and from the village, compared by hash (it carries the scenes'
 //     Japanese), and read in English: one authored target, Chigusa at her table (6,4) on rw.tea, talked to for
 //     lq.fare_pay. The guide follows the wrapper's call; it never points you at Kōji for this.
-// The browser half (each side, each companion, Skip seen, save and load) is tests/e2e/fare_pay_staging.mjs.
+//  6. the two staging walks of CC-644 (Agnes 6946332830): Oto's one step west, on Chigusa's route only and only when he
+//     is there (slot.oto=3&departed, his teahouse figure's own condition; CC-649, Agnes 6948894795), as the scene's
+//     first command, before your companion's door walk; and your companion's door walk tried again on the route through
+//     K~ji, straight after your step aside and before Chigusa stands; each exactly once, and nothing else of the scene
+//     changed (3 sets them aside, with the two of yours and K~ji's above).
+// The browser half (each side, each companion, Skip seen, save and load) is tests/e2e/fare_pay_staging.mjs; the two
+// walks and the end of the scene are tests/e2e/fare_pay_two_walks.mjs.
 import { createHash } from 'node:crypto';
 import { load } from '../lib/load.mjs';
 
@@ -39,7 +45,7 @@ export default async (t) => {
   const maps = Object.entries(C.maps).filter(([, m]) => JSON.stringify(m).includes('fare_pay_koji')).map(([id]) => id);
   t.eq([maps, JSON.stringify(tea).split('fare_pay_koji').length - 1], [['rw.tea'], 1], 'no other map, and nothing else on rw.tea, names the wrapper');
   const naming = Object.values(SC).filter((sc) => sc.cmds.some((c) => JSON.stringify([c.args, c.if, c.expr]).includes('fare_pay_koji'))).map((sc) => sc.id).sort();
-  t.eq(naming, ['lq.fare_pay'], 'of all ' + Object.keys(SC).length + ' scenes, only lq.fare_pay names the wrapper (its one guarded line)');
+  t.eq(naming, ['lq.fare_pay'], 'of all ' + Object.keys(SC).length + ' scenes, only lq.fare_pay names the wrapper (its guarded lines)');
   const seenReaders = Object.values(SC).filter((sc) => sc.cmds.some((c) => JSON.stringify(c).includes('seen.lq.fare_pay_koji'))).map((sc) => sc.id);
   t.eq([seenReaders, Object.values(C.maps).filter((m) => JSON.stringify(m).includes('seen.lq.fare_pay_koji')).length], [[], 0], 'nothing reads seen.lq.fare_pay_koji (the one entry the wrapper adds to a save)');
 
@@ -51,7 +57,9 @@ export default async (t) => {
   const cm = SC['lq.fare_pay'].cmds;
   const mine = cm.map((c, i) => [c, i]).filter(([c]) => c.op === 'walkto' && c.args[0] === 'pc');
   t.eq(mine.map(([c]) => [c.args, c.if]), [[['pc', '5', '7', 'up'], 'scene.lq.fare_pay_koji']], 'lq.fare_pay has one walk of yours: to (5,7), facing up, on the route through Kōji only');
-  const i = mine.length === 1 ? mine[0][1] : -1, prev = cm[i - 1] || {}, next = cm.slice(i + 1, i + 3);
+  // (your companion's door walk tried again, CC-644, comes straight after it and is set aside here; 6 checks it)
+  const isRetry = (c) => c && c.op === 'walkto' && c.args[0] === 'comp' && c.if === 'comp&scene.lq.fare_pay_koji';
+  const i = mine.length === 1 ? mine[0][1] : -1, prev = cm[i - 1] || {}, next = cm.slice(i + 1).filter((c) => !isRetry(c)).slice(0, 2);
   t.ok(i > 0 && prev.op === 'say' && prev.who === 'lq_chigusa' && /Let's begin/.test(prev.en || ''), 'it comes after Chigusa\'s "Let\'s begin." (' + JSON.stringify({ op: prev.op, who: prev.who, en: String(prev.en || '').replace(/[^\x20-\x7e]/g, '') }) + ')');
   t.eq(next.map((c) => [c.op, c.args, c.if]), [['pose', ['lq_chigusa', 'stiff'], null], ['walkto', ['lq_chigusa', '4', '6', 'right'], null]], 'and just before she stands and walks to her mark (4,6)');
   // the look at the coins (CC-627): right after her walk to (4,6), before the coin prop, on every route
@@ -61,7 +69,8 @@ export default async (t) => {
   t.eq(early.map(([c, j]) => [c.args, c.if, cm[j + 1] && cm[j + 1].op, cm[j + 1] && cm[j + 1].args]), [[['koji', 'lq_chigusa'], null, 'prop', ['lq_chigusa', 'coins']]], 'one unguarded look of Kōji\'s at Chigusa right after her walk to (4,6), just before the coins');
   t.eq(looks.map(([c, j]) => [c.args, c.if, j > i]), [[['koji', 'lq_chigusa'], null, true], [['koji', 'lq_chigusa'], null, true], [['koji', 'pc'], null, true]], 'his looks, in order: at her for the coins, at her again for the book, at you after the seal');
   const coinLook = early.length === 1 ? early[0][0] : null;
-  const rest = cm.filter((c) => !(c.op === 'walkto' && c.args[0] === 'pc') && c !== coinLook).map((c) => { const o = Object.assign({}, c); delete o.line; return o; });
+  const isOto = (c) => c && c.op === 'walkto' && c.args[0] === 'oto';
+  const rest = cm.filter((c) => !(c.op === 'walkto' && c.args[0] === 'pc') && c !== coinLook && !isOto(c) && !isRetry(c)).map((c) => { const o = Object.assign({}, c); delete o.line; return o; });
   t.eq([rest.length, sha(rest)], [52, PARENT_FARE_PAY], 'every other command of lq.fare_pay is exactly 315b770\'s (52, line numbers aside)');
 
   // 4. the route term outside a run
@@ -82,4 +91,14 @@ export default async (t) => {
     t.eq(one && { stage: tg.stage, how: tg.how, kind: one.kind, map: one.map, id: one.id, at: [one.x, one.y], opts: one.opts }, { stage: 4, how: 'authored', kind: 'npc', map: 'rw.tea', id: 'lq_chigusa', at: [6, 4], opts: [{ scene: 'lq.fare_pay' }] }, name + ': the guide names one place, Chigusa at her table, talked to for lq.fare_pay');
   }
   t.eq(sha(out), PARENT_GUIDE, 'the guide\'s whole answer at step 4 (targets and nudges, both places) is exactly 315b770\'s');
+  // 6. the two staging walks of CC-644 (Agnes 6946332830)
+  {
+    const otos = cm.map((c, j) => [c, j]).filter(([c]) => c.op === 'walkto' && c.args[0] === 'oto');
+    t.eq(otos.map(([c, j]) => [j, c.args, c.if]), [[0, ['oto', '3', '4', 'down'], '!scene.lq.fare_pay_koji&slot.oto=3&departed']], "Oto's one step west to (3,4), facing down, on Chigusa's route only and only when he is in the room (slot.oto=3&departed), is the scene's first command");
+    t.eq([cm[1] && cm[1].op, cm[1] && cm[1].args, cm[1] && cm[1].if], ['walkto', ['comp', '3', '7', 'right'], 'comp'], "and your companion's walk to the door comes next, as before");
+    const retries = cm.map((c, j) => [c, j]).filter(([c]) => isRetry(c));
+    t.eq(retries.map(([c, j]) => [j - i, c.args]), [[1, ['comp', '3', '7', 'right']]], "your companion's door walk tried again once, on the route through K~ji, straight after your step aside to (5,7)");
+    const walks = cm.filter((c) => c.op === 'walkto').map((c) => [c.args[0], c.if]);
+    t.eq(walks, [['oto', '!scene.lq.fare_pay_koji&slot.oto=3&departed'], ['comp', 'comp'], ['pc', 'scene.lq.fare_pay_koji'], ['comp', 'comp&scene.lq.fare_pay_koji'], ['lq_chigusa', null]], 'the scene\'s walks, in order: Oto, your companion, you (K~ji\'s route), your companion again (K~ji\'s route), Chigusa');
+  }
 };

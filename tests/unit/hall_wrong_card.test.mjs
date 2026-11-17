@@ -218,5 +218,8 @@ export default async (t) => {
 // lq.fare_pay_koji only calls it; on rw.tea, Koji's step-4 talk names lq.fare_pay_koji instead of lq.fare_pay; no other
 // scene or map changes. Before it: 7569a2b138a8a75f, a63755ae3cdd9259. Since Koji's look at the coins (Cloud CC-627;
 // Agnes 6930123788; Local CL-873), lq.fare_pay gains one more command (!look koji lq_chigusa, after Chigusa's walk to
-// (4,6)); no other scene or map changes (OTHER_MAPS_FP stays). Before it: 2cca47d073e1f49e)
-const OTHER_SCENES_FP = '19c0d58c7bfbebbc', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = '756563f6074f2ac4', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
+// (4,6)); no other scene or map changes (OTHER_MAPS_FP stays). Before it: 2cca47d073e1f49e. Since the fare's two staging
+// walks (Cloud CC-644; Agnes 6946332830; Local CL-895), lq.fare_pay gains two commands (Oto's step west on Chigusa's
+// route when he is in the room, slot.oto=3&departed, CC-649, Agnes 6948894795; and your companion's door walk tried
+// again on Koji's route); no other scene or map changes. Before it: 19c0d58c7bfbebbc)
+const OTHER_SCENES_FP = 'acf91046f825cbed', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = '756563f6074f2ac4', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
