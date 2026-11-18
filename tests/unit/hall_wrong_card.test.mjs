@@ -215,4 +215,9 @@ export default async (t) => {
 
 // (OTHER_SCENES_FP: since QA-186, Suzu's first words (Cloud CC-610; Agnes 6913897483; Local CL-848), co.suzu_truth gains
 // one command, its cancel guard after the first-line challenge; no other scene changes. Before it: 7569a2b138a8a75f)
-const OTHER_SCENES_FP = 'c8a27d026b1cf4a1', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'a63755ae3cdd9259', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
+// (OTHER_SCENES_FP: since QA-191, the tower plates (Cloud CC-610; Agnes 6913897483; Local CL-848), lf.plate_a, lf.plate_b
+// and lf.plate_c each gain one command, a cancel guard after the reading challenge; no other scene changes. Before it:
+// 7569a2b138a8a75f)
+// (In the combined review candidate (Cloud CC-655; Agnes 6967831133), QA-191 (1199a9a) is merged onto the inputs named
+// above; before that merge: OTHER_SCENES_FP c8a27d026b1cf4a1, OTHER_MAPS_FP a63755ae3cdd9259)
+const OTHER_SCENES_FP = '792c01ef37a71c2d', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'a63755ae3cdd9259', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';

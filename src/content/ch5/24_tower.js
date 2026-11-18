@@ -58,6 +58,7 @@ narr: {最後|さいご} の {頁|ページ} 。{同|おな}じ {急|いそ}い�
 narr: {青銅|せいどう} の {札|ふだ} に 、{水門|すいもん} の {使|つか}い{方|かた} が {刻|きざ}んで ある 。|| A bronze plate, engraved with instructions for the gates.
 !if lf_plate_a_read -> text
 !challenge lf.ch_gate1
+?(var._res=0) !end
 !set lf_plate_a_read
 :text
 narr: 「{上|うえ} の {水門|すいもん} を {閉|し}めない と 、{下|した} の {水門|すいもん} は {開|ひら}かない 。」|| "Unless the upper gate is closed, the lower gate will not open."
@@ -166,6 +167,7 @@ narr: {屋根裏|やねうら} へ {続|つづ}く {縄|なわ}ばしご 。|| A
 narr: {二枚目|にまいめ} の {青銅|せいどう} の {札|ふだ} 。{文字|もじ} が {多|おお}い 。|| The second bronze plate. More writing on this one.
 !if lf_plate_b_read -> text
 !challenge lf.ch_gate2
+?(var._res=0) !end
 !set lf_plate_b_read
 :text
 narr: 「{東|ひがし} の {扉|とびら} を {開|あ}けない と 、{西|にし} の {栓|せん} は {抜|ぬ}けない 。」|| "Unless the east door is open, the west plug cannot be pulled."
@@ -338,6 +340,7 @@ narr: {壁|かべ} の {向|む}こう から 、{大|おお}きな {鐘|かね}
 narr: {三枚目|さんまいめ} の {札|ふだ} 。|| The third plate.
 !if lf_plate_c_read -> text
 !challenge lf.ch_gate3
+?(var._res=0) !end
 !set lf_plate_c_read
 :text
 narr: 「{南|みなみ} の {栓|せん} を {抜|ぬ}く まで 、{北|きた} の {栓|せん} に {触|さわ}って は いけない 。」|| "Until the south plug is pulled, the north plug must not be touched."

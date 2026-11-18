@@ -166,5 +166,9 @@ const AGREED = {
 // hall_wrong_card pins every other scene. Before it: 0cb0194b0636eee0. Since QA-186, Suzu's first words (Cloud CC-610;
 // Agnes 6913897483; Local CL-848), co.suzu_truth gains one command, its cancel guard after the first-line challenge, and
 // three later scenes of the same file (co.fest_suzu_c, co.suzu_c_after, co.suzu_c_post) shift line numbers only. Before
-// it: 563a61695b5507f9)
-const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '56af2f45a438040d', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
+// it: 563a61695b5507f9. Since QA-191, the tower plates (Cloud CC-610; Agnes 6913897483; Local CL-848), lf.plate_a,
+// lf.plate_b and lf.plate_c each gain one command, a cancel guard after the reading challenge, and 18 later scenes of
+// the same file shift line numbers only. Before it: 563a61695b5507f9. In the combined review candidate (Cloud CC-655;
+// Agnes 6967831133), QA-191 (1199a9a) is merged onto the inputs named before it; before that merge: SCENES_FP
+// 56af2f45a438040d.)
+const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '0edf5a407de2bc30', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
