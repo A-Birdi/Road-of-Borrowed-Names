@@ -12,7 +12,10 @@
  *             server (normal IndexedDB); includes real page-reload persistence
  *   --inline  page.setContent, session-only storage — NOT a persistence test
  * The legacy fixture is a synthetic campaign saved by the pre-hotfix build
- * (development test data only; the game has no save import/export).
+ * (development test data only; the game has no save import/export). A load
+ * must keep its legacy fields exactly as saved, except one documented repair
+ * in that known fixture (see LEGACY_FIELDS below); a fixture given with
+ * --fixture is expected exactly as saved.
  * World visibility is asserted by world sprites being drawn AND the canvas
  * pixels differing from the title backdrop, not only by state/music.
  */
@@ -29,10 +32,23 @@ const htmlPath = path.resolve(opt('--html', path.join(root, 'index.html')));
 const inline = args.includes('--inline');
 const origin = args.includes('--origin');
 const mode = inline ? 'inline-session-only' : origin ? 'http-origin' : 'file-navigation';
-const fixture = JSON.parse(await fs.readFile(opt('--fixture', path.join(root, 'tests/fixtures/shift_load_legacy.json')), 'utf8'));
+// the known legacy fixture, unless another is given with --fixture
+const KNOWN_FIXTURE = path.join(root, 'tests/fixtures/shift_load_legacy.json');
+const fixturePath = path.resolve(opt('--fixture', KNOWN_FIXTURE));
+const knownFixture = fixturePath === KNOWN_FIXTURE;
+const fixture = JSON.parse(await fs.readFile(fixturePath, 'utf8'));
 // The legacy fields are what this checks; the journey is marked with the edition this build's journeys have, so it
 // loads (a six-chapter save is offered New Game+ instead since C-84, which tests/e2e/old_saves.mjs checks)
 if (fixture.edition == null || fixture.edition < 2) fixture.edition = 2;
+// What a load must leave of the legacy fields: each exactly as saved, except one documented repair in the known
+// fixture. Its letter was saved with the quiet give's broken count (inv rw_letter: null), and this journey has not met
+// Tsuru (no rw_met_tsuru flag), so loading repairs the count to 1 (433ae92: RB.state.repairQuietGives and
+// QUIET_REPAIR.rw_letter in src/engine/05_state.js, registered as a save migration in src/engine/90_game.js;
+// tests/unit/quiet_give.test.mjs, "the letter not yet given to Tsuru"). The repaired value is written out here, not
+// computed by the game's own repair, and only for the known fixture as saved (CL-857, CC-616, Agnes 6919365300).
+const LEGACY_FIELDS = ['player', 'flags', 'inv', 'quests', 'learn', 'map', 'comp'];
+const KNOWN_SAVED_INV = { rw_letter: null }, KNOWN_LOADED_INV = { rw_letter: 1 };
+const expectedAfterLoad = (k) => (knownFixture && k === 'inv' ? KNOWN_LOADED_INV : fixture[k]);
 const html = await fs.readFile(htmlPath, 'utf8');
 
 // stable origin: one server for the whole run (same port → same IndexedDB origin across reloads)
@@ -178,9 +194,17 @@ try {
     await checkLive(); await page.evaluate(() => window.__restoreDirection()); await checkLive();
   });
   await test('Manual Load shows world and preserves old-build campaign data', async () => {
+    // the documented repair is written for the known fixture as saved: if that fixture changes, the expectation is stale
+    if (knownFixture) assert.deepEqual(fixture.inv, KNOWN_SAVED_INV, 'the known legacy fixture\'s inventory is not the one its documented repair is written for: ' + JSON.stringify(fixture.inv));
     await spyWorld(); await load(); await checkWorldVisible();
     const state = await page.evaluate(() => ({ player: RB.game.s.player, flags: RB.game.s.flags, inv: RB.game.s.inv, quests: RB.game.s.quests, learn: RB.game.s.learn, map: RB.game.s.map, comp: RB.game.s.comp }));
-    for (const k of Object.keys(state)) assert.deepEqual(state[k], fixture[k], `changed legacy field ${k}`);
+    // all seven compared before the check fails; each difference is named with what was expected and what loaded
+    const diffs = [];
+    for (const k of LEGACY_FIELDS) {
+      try { assert.deepEqual(state[k], expectedAfterLoad(k)); }
+      catch (e) { diffs.push(k + ': expected ' + JSON.stringify(expectedAfterLoad(k)) + ', loaded ' + JSON.stringify(state[k])); }
+    }
+    if (diffs.length) throw new Error('changed legacy field' + (diffs.length > 1 ? 's ' : ' ') + diffs.join('; ') + ' (the C, Escape and live checks after this comparison were not reached)');
     await page.keyboard.press('KeyC'); assert.notEqual(await page.evaluate(() => RB.game.mode()), 'world'); await page.keyboard.press('Escape'); await checkLive();
   });
   await test('Continue from title restores a visible world', async () => { await spyWorld(); await load('continue'); await checkWorldVisible(); await checkLive(); });
