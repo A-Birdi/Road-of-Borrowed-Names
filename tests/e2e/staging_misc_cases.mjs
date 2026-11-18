@@ -43,8 +43,14 @@ const FARE = [
       { name: 'from Fusa · Koharuno named', quests: { lq_fare: 3 }, flags: F(C4, { lq_road_open: true }), comp: 'ren', expect: { lq_chigusa: ['listen'] } },
       { name: 'she writes it herself', quests: { lq_fare: 2 }, comp: 'mio', fail: true },
       { name: 'the road already open', quests: { lq_fare: 3 }, flags: F(C4, { ch4_done: true }), comp: 'suzu' }] }),
-  M({ scene: 'lq.fare_pay', map: 'rw.tea', at: [4, 6, 'right'], talk: 'koji', flags: F(C5, { lq_fare_found: true, lq_ally1: true }), quests: { lq_fare: 4 }, items: { lq_stamp: 1 }, minLines: 15,
-    variants: [{ name: 'Kōji asked', comps: ALL4 }, { name: 'Chigusa asked', comp: 'mio', talk: 'lq_chigusa', at: [5, 4, 'right'] }, { name: 'Chigusa asked from her side', comp: 'nao', talk: 'lq_chigusa', at: [7, 4, 'left'] }],
+  // speaking to Kōji first: his talk runs lq.fare_pay_koji, which calls lq.fare_pay and steps you aside to (5,7) as Chigusa
+  // rises (CC-625, Agnes 6927046186); speaking to Chigusa runs lq.fare_pay itself. Two cases, each under the scene its
+  // talk really runs, with the same expectations as the one case they were
+  M({ scene: 'lq.fare_pay_koji', map: 'rw.tea', at: [4, 6, 'right'], talk: 'koji', flags: F(C5, { lq_fare_found: true, lq_ally1: true }), quests: { lq_fare: 4 }, items: { lq_stamp: 1 }, minLines: 15,
+    variants: [{ name: 'Kōji asked', comps: ALL4 }],
+    expect: { lq_chigusa: ['present', 'bow', 'handover', 'write', 'receive', 'laugh'], koji: ['sip', 'present', 'handover'], hana: ['laugh', 'nod'] } }),
+  M({ scene: 'lq.fare_pay', map: 'rw.tea', at: [5, 4, 'right'], talk: 'lq_chigusa', flags: F(C5, { lq_fare_found: true, lq_ally1: true }), quests: { lq_fare: 4 }, items: { lq_stamp: 1 }, minLines: 15,
+    variants: [{ name: 'Chigusa asked', comp: 'mio', talk: 'lq_chigusa', at: [5, 4, 'right'] }, { name: 'Chigusa asked from her side', comp: 'nao', talk: 'lq_chigusa', at: [7, 4, 'left'] }],
     expect: { lq_chigusa: ['present', 'bow', 'handover', 'write', 'receive', 'laugh'], koji: ['sip', 'present', 'handover'], hana: ['laugh', 'nod'] } }),
   M({ scene: 'lq.fare_gull', map: 'sg.inn', at: [9, 5, 'up'], talk: 'tamae', flags: F(SE, { lq_fare_found: true, lq_ally1: true, lq_fare_paid: true }), quests: { lq_fare: 5 }, items: { lq_stamp: 1 }, minLines: 10,
     variants: [{ name: 'Tamae asked', comps: ALL4 }, { name: 'Chigusa asked', comp: 'suzu', talk: 'lq_chigusa', at: [7, 4, 'left'] }],

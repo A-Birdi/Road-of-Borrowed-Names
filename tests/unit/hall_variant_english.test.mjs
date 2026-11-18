@@ -174,5 +174,18 @@ const AGREED = {
 // two commands, its guarded jumps at its head, and the eight later scenes of the same file (sa.study_enter to
 // sa.shortcut_open) shift line numbers only. Before it: 563a61695b5507f9. In the combined review candidate (Cloud
 // CC-655; Agnes 6967831133), the Ren-shelf recovery (ebcbe68) is merged onto the inputs named before it; before that
-// merge: SCENES_FP 0edf5a407de2bc30.)
-const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '0f9ca489f602019d', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
+// merge: SCENES_FP 0edf5a407de2bc30.. Since the fare repaid at the teahouse (Cloud CC-625, CC-626; Agnes 6927046186;
+// Local CL-871), lq.fare_pay gains one command, your step aside to (5,7) on the route through Koji
+// (?(scene.lq.fare_pay_koji) !walkto pc 5 7 up), a new scene lq.fare_pay_koji only calls it, and five later scenes of
+// the same file (lq.fare_gull, lq.fare_tamae_after, lq.fare_koji_after, lq.chigusa_after, lq.chigusa_post) shift line
+// numbers only. Before it: 563a61695b5507f9. Since Koji's look at the coins (Cloud CC-627; Agnes 6930123788; Local
+// CL-873), lq.fare_pay gains one more command (!look koji lq_chigusa, after Chigusa's walk to (4,6)), and six later
+// scenes of the same file (the five above and lq.fare_pay_koji) shift line numbers only. Before it: 39bc0e2ce9cf1251.
+// Since the fare's two staging walks (Cloud CC-644; Agnes 6946332830; Local CL-895), lq.fare_pay gains two commands
+// (Oto's step west on Chigusa's route when he is in the room, slot.oto=3&departed, CC-649, Agnes 6948894795; and your
+// companion's door walk tried again on Koji's route), and the same six later scenes shift line numbers only. Before it:
+// 2afdc3f5a2eb863f. Since the fare's departure ordering (Cloud CC-652; Agnes 6952032829; Local CL-903), lq.fare_pay's
+// last command is `!refresh gone`, and the one comment line above it moves that command and the same six later scenes
+// down a line. Before it: 6027c6decc2769a3. In the combined review candidate (Cloud CC-655; Agnes 6967831133), the fare
+// chain (6d5c386) is merged onto the inputs named before it; before that merge: SCENES_FP 0f9ca489f602019d.)
+const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = 'd8043fae97de732a', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';

@@ -269,6 +269,9 @@ narr: {屋台|やたい} に {札|ふだ} が {下|さ}がって いる 。 「 
 # her name; he hands her the seal (the pledge), she laughs at the pun, and looks west towards the sea she
 # will take it to; Hana nods her off. Your companion (by the door, off your tile and off hers) answers in
 # their own way (Nao's nod, Mio leans to look at the book, Ren's glasses, Suzu's small celebration).
+# on Chigusa's route, Oto, when he is in the room (on his teahouse place (4,4): slot.oto=3&departed), steps one tile
+# west first, so he and you do not close her way down to her mark (CC-644, CC-649; Agnes 6946332830, 6948894795)
+?(!scene.lq.fare_pay_koji&slot.oto=3&departed) !walkto oto 3 4 down
 ?(comp) !walkto comp 3 7 right
 !faceplayer lq_chigusa
 lq_chigusa: …… {来|き}た ね 。 {手紙|てがみ} は {先|さき} に {着|つ}いてた 。 {朝|あさ} から ずっと 、 ここ に {座|すわ}ってる 。 || …You came. My letter got here first. I've been sitting here since morning.
@@ -277,8 +280,15 @@ koji: {座|すわ}ってる だけ で 、 {茶|ちゃ} も {飲|の}まない �
 !gesture hana laugh
 hana[smile]: {薄|うす}い って {顔|かお} を された の 。 {失礼|しつれい} しちゃう わ 。 || She made a face as if it were weak. How rude.
 lq_chigusa[think]: …… {始|はじ}める よ 。 || …Let's begin.
+# on the route through Koji (lq.fare_pay_koji), you step aside to (5,7) facing him as Chigusa rises,
+# so her mark at (4,6) is free whichever side of him you spoke from (CC-625; Agnes 6927046186)
+?(scene.lq.fare_pay_koji) !walkto pc 5 7 up
+# and on that route your companion's walk to the door is tried again once you have stepped aside (no step if they
+# are there already), so they are off her way through (4,5) (CC-644; Agnes 6946332830)
+?(comp&scene.lq.fare_pay_koji) !walkto comp 3 7 right
 !pose lq_chigusa stiff
 !walkto lq_chigusa 4 6 right
+!look koji lq_chigusa
 !prop lq_chigusa coins
 !gesture lq_chigusa present koji hold
 narr: チグサ は {立|た}ち{上|あ}がって 、 コウジ の {前|まえ} に {小銭|こぜに} を {並|なら}べた 。 {三十年|さんじゅうねん} {前|まえ} の {渡|わた}し{賃|ちん} と 、 {同|おな}じ {額|がく} だ 。 || Chigusa stands and lays coins in front of Kōji — the same sum as a fare thirty years ago.
@@ -320,7 +330,8 @@ hana: また {寄|よ}って ね 。 {次|つぎ} は {濃|こ}い の を い�
 ?(comp=suzu) !gesture comp celebrate
 ?(comp=suzu) comp[laugh]: {帳尻|ちょうじり} が {合|あ}った ！ {三十年|さんじゅうねん} {越|ご}し の {決算|けっさん} だ よ 。 || The books balance! A reckoning thirty years in the making.
 !autosave
-!refresh
+# the scene ends once she is out of the door (at once if skipping): no rejoin crosses her (CC-652; Agnes 6952032829)
+!refresh gone
 
 @scene lq.fare_gull
 # Staged: Tamae's small celebration as she tells you; Chigusa hides a laugh behind her hand, then goes round
@@ -391,4 +402,9 @@ lq_chigusa[smile]: …… {湯呑|ゆの}み を {一|ひと}つ {減|へ}らし
 !faceplayer
 lq_chigusa: {下|した} から {上|のぼ}って くる {人|ひと} が {増|ふ}えた よ 。 {名前|なまえ} の {戻|もど}った {道|みち} は 、 {人|ひと} を {呼|よ}ぶ ん だ ね 。 || More people come up from below these days. A road that has its name back calls people to it.
 lq_chigusa: {春|はる} に なったら 、 {一度|いちど} {葦|あし}ノ{瀬|せ} の {舟|ふね} に {乗|の}り に {行|い}く 。 {今度|こんど} は {客|きゃく} と して ね 。 || Come spring I'll go and ride the Reedwake ferry once. As an ordinary passenger, this time.
+
+@scene lq.fare_pay_koji
+# the fare repaid when you speak to Koji first: the same scene, called from here so it can tell the route
+# (it steps you aside to (5,7) as Chigusa rises; CC-625, Agnes 6927046186)
+!call lq.fare_pay
 `, 'lq/30_fare');

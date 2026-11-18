@@ -126,7 +126,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   addProps('rw.ferry', [{ p: 'bookpile', x: 6, y: 2, scene: 'lq.fare_book' }]);
   // Kōji at the teahouse; Chigusa comes here to pay
   talkFirst('rw.tea', 'koji', [
-    { if: 'quest.lq_fare=4&lq_fare_found&ch4_done&!lq_fare_paid', scene: 'lq.fare_pay' },
+    { if: 'quest.lq_fare=4&lq_fare_found&ch4_done&!lq_fare_paid', scene: 'lq.fare_pay_koji' },
     { if: '!quest.lq_fare', scene: 'lq.fare_koji' },
     { if: 'quest.lq_fare=0', scene: 'lq.fare_koji_wait' },
     { if: 'quest.lq_fare=done&!seen.lq.fare_koji_after', scene: 'lq.fare_koji_after' },
