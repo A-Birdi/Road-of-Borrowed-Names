@@ -41,7 +41,10 @@ export default async (t) => {
   const ID = 'sa.shelf_ren';
   const TOOK = 'sa_ren_took&!seen.sa.shelf_ren&comp=ren', LEFT = 'sa_ren_left&!seen.sa.shelf_ren&comp=ren';
   // on the parent (315b770): the scene without the two jumps; every other scene; the shelf's lines and keys; each run of 6
-  const PARENT = { scene: '5e714171197ec611', others: [3177, 'b83fde7fb7adb657'], lines: '333c808efcf2ceb5', runs: '549de0c7ba474fe2' };
+  // (In the combined review candidate (Cloud CC-655; Agnes 6967831133), the shelf is merged with inputs that change
+  // other scenes: QA-186 one, QA-191 three and the fare chain two, one of them its new scene lq.fare_pay_koji. So
+  // "every other scene" here is as those inputs leave it; on 315b770: others [3177, 'b83fde7fb7adb657'].)
+  const PARENT = { scene: '5e714171197ec611', others: [3178, '90b92b447a47d86d'], lines: '333c808efcf2ceb5', runs: '549de0c7ba474fe2' };
 
   // ---- the runner, with the screen stood in for (as tests/unit/cr_lamp_cancel.test.mjs) ----------------------------
   let out;
