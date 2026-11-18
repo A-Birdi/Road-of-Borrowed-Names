@@ -220,4 +220,8 @@ export default async (t) => {
 // 7569a2b138a8a75f)
 // (In the combined review candidate (Cloud CC-655; Agnes 6967831133), QA-191 (1199a9a) is merged onto the inputs named
 // above; before that merge: OTHER_SCENES_FP c8a27d026b1cf4a1, OTHER_MAPS_FP a63755ae3cdd9259)
-const OTHER_SCENES_FP = '792c01ef37a71c2d', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'a63755ae3cdd9259', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
+// (OTHER_MAPS_FP: since QA-208, Sanpei's talk order (Cloud CC-610; Agnes 6913897483; Local CL-848), the press room's
+// Sanpei has the Ghostwriter's testimony before the broadsheet; no other map changes. Before it: a63755ae3cdd9259)
+// (In the combined review candidate (Cloud CC-655; Agnes 6967831133), QA-208 (cd87b78) is merged onto the inputs named
+// above; before that merge: OTHER_SCENES_FP 792c01ef37a71c2d, OTHER_MAPS_FP a63755ae3cdd9259)
+const OTHER_SCENES_FP = '792c01ef37a71c2d', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'cc67a9f9732d5f1a', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
