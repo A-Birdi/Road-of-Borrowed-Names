@@ -17,9 +17,12 @@ let suites = [
   ['travel_rules.mjs'], // quick travel: open air yes; buildings, dungeons, story locks and conversations say why not
   full ? ['story_ch1.mjs'] : ['story_ch1.mjs', 'F', 'mio'],
   full ? ['story_ch3.mjs'] : ['story_ch3.mjs', 'E', 'nao'], ['side_ch3.mjs'], ['cinder_clue_order.mjs'], ['kiln_door.mjs'], ['shino_thanks.mjs'], ['kana_homophones.mjs'],
+  ['co_suzu_cancel.mjs'], // QA-186: Suzu's first words in the Glass Workshop: "Come back later" is not the truth told (played, saved and loaded)
   full ? ['story_ch4.mjs'] : ['story_ch4.mjs', 'I', 'ren', 'go'],
   ['postgame_quests.mjs'], ['census_plaques.mjs'], ['ink_water.mjs'],
+  ['sanpei_order.mjs'], // QA-208: after the ending, Sanpei's testimony comes before the broadsheet (played, saved and loaded)
   full ? ['story_ch5.mjs'] : ['story_ch5.mjs', 'A', 'suzu'],
+  ['lf_plate_cancel.mjs'], // QA-191: the bell tower's three gate plates: "Come back later" is not the plate read (played, saved and loaded)
   ...(full ? [0, 1, 2, 3, 4].map((i) => ['story_ch6.mjs', String(i)]) : [['story_ch6.mjs', '2']]),
   ['ren_shelf_recovery.mjs'], // Ren's shelf after a save made partway through it: the rest of the chosen branch replays (played, saved and loaded)
   ['atlas.check.mjs'],
@@ -36,6 +39,7 @@ let suites = [
   ['company_pets.mjs'],
   ['ren_face_bio.mjs'], // QA-207: Ren's Company biography once the teacher's face is taken back, played and saved
   ['ren_banter_meet.mjs'], // QA-206: Ren's gravestone banter waits until the meeting with Kasane is finished, played and saved
+  ['company_away_page.mjs'], // B1: the Company panel while a companion is away: who waits and where, and no companion controls
   ['dialect_kansai.mjs'], // Suzu's optional Kansai-ben: the choice, Settings, Company › Suzu, word help, saves (docs/dialect/suzu_kansai.md)
   ['addendum_integration.mjs'],
   // overworld actors: idle life in each chapter, Wataru and Omi (both routes x 4 companions), one performed
