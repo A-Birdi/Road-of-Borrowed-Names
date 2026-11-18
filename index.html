@@ -170748,7 +170748,7 @@ RB.content.banter.push(
   { comp: 'mio', map: 'sa.*', if: 'sa_hush_down', scene: 'sa.b_mio4' },
   { comp: 'ren', map: 'sa.*', if: '!sa_met_kasane', scene: 'sa.b_ren1' },
   { comp: 'ren', map: 'sa.*', if: 'seen.sa.stacks_enter&!sa_hush_down', scene: 'sa.b_ren2' },
-  { comp: 'ren', map: 'sa.*', if: 'sa_ushio_found&!sa_hush_down', scene: 'sa.b_ren3' },
+  { comp: 'ren', map: 'sa.*', if: 'sa_ushio_found&seen.sa.kasane_meet&!sa_hush_down', scene: 'sa.b_ren3' },
   { comp: 'ren', map: 'sa.*', if: 'sa_hush_down', scene: 'sa.b_ren4' },
   { comp: 'suzu', map: 'sa.*', if: '!sa_met_kasane', scene: 'sa.b_suzu1' },
   { comp: 'suzu', map: 'sa.*', if: 'sa_met_kasane&!sa_hush_down', scene: 'sa.b_suzu2' },
