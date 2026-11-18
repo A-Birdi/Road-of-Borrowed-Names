@@ -224,4 +224,8 @@ export default async (t) => {
 // Sanpei has the Ghostwriter's testimony before the broadsheet; no other map changes. Before it: a63755ae3cdd9259)
 // (In the combined review candidate (Cloud CC-655; Agnes 6967831133), QA-208 (cd87b78) is merged onto the inputs named
 // above; before that merge: OTHER_SCENES_FP 792c01ef37a71c2d, OTHER_MAPS_FP a63755ae3cdd9259)
-const OTHER_SCENES_FP = '792c01ef37a71c2d', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'cc67a9f9732d5f1a', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';
+// (OTHER_SCENES_FP: since the Ren-shelf recovery (Local CL-890; Cloud CC-645; Agnes 6945102589), sa.shelf_ren gains two
+// commands, its guarded jumps at its head; no other scene changes. Before it: 7569a2b138a8a75f)
+// (In the combined review candidate (Cloud CC-655; Agnes 6967831133), the Ren-shelf recovery (ebcbe68) is merged onto
+// the inputs named above; before that merge: OTHER_SCENES_FP 792c01ef37a71c2d, OTHER_MAPS_FP cc67a9f9732d5f1a)
+const OTHER_SCENES_FP = 'eac098ccde564ce9', CHANGED_SAYS_FP = 'eebd903b1a4f355d', OTHER_MAPS_FP = 'cc67a9f9732d5f1a', W4F1_PROPS_FP = '1fb835ae2c9be57d', KEYS_FP = '44673e626955133f';

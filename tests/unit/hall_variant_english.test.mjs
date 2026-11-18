@@ -170,5 +170,9 @@ const AGREED = {
 // lf.plate_b and lf.plate_c each gain one command, a cancel guard after the reading challenge, and 18 later scenes of
 // the same file shift line numbers only. Before it: 563a61695b5507f9. In the combined review candidate (Cloud CC-655;
 // Agnes 6967831133), QA-191 (1199a9a) is merged onto the inputs named before it; before that merge: SCENES_FP
-// 56af2f45a438040d.)
-const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '0edf5a407de2bc30', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
+// 56af2f45a438040d.. Since the Ren-shelf recovery (Local CL-890; Cloud CC-645; Agnes 6945102589), sa.shelf_ren gains
+// two commands, its guarded jumps at its head, and the eight later scenes of the same file (sa.study_enter to
+// sa.shortcut_open) shift line numbers only. Before it: 563a61695b5507f9. In the combined review candidate (Cloud
+// CC-655; Agnes 6967831133), the Ren-shelf recovery (ebcbe68) is merged onto the inputs named before it; before that
+// merge: SCENES_FP 0edf5a407de2bc30.)
+const STATE_JP_FP = '0dc747c37adecee0', SCENES_FP = '0f9ca489f602019d', KEYS_FP = '18d9ee20c3b758b4', LEDGER_ROW_FP = 'baf8ca434a0f7679', LEDGER_OTHERS_FP = '9853b694d39846d5';
