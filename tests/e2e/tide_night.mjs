@@ -4,15 +4,25 @@
 // In Chromium on the built game, from the real trigger (the calendar stone in the tide pools, the ring whole, the next
 // spring tide read; the language tasks are stand-ins that pass, not under test here):
 //  1. read slowly: the first line under `point`, the wind's line and every line after it under `rise`, each shot's
-//     action over and held while you read; every line of the scene in order, your companion's own; then the pictures
-//     gone, the quest done once, ko_tide_night set, and the world exactly as before (the map, everyone's place, your
-//     companion beside you, the daylight);
-//  2. Reduce motion: the same lines and shots, each shot's picture held at once;
+//     action over and held (on a frame drawn after the line was first seen) while you read; every line of the scene in
+//     order, your companion's own; then the pictures gone, the quest done once, ko_tide_night set, and the world
+//     exactly as before (the map, everyone's place, your companion beside you, the daylight);
+//  2. Reduce motion: the same lines and shots; each shot's action is at its end the moment its line is seen, while the
+//     entrance dissolve keeps its own lifecycle: before a line is read the lane waits, with a bound, for its entrance to
+//     have completed on a frame drawn after the line was first seen (with no press used up meanwhile), then one press
+//     moves on. (This used to read 300 ms after first sight, shorter than the 350 ms entrance, and the read could land
+//     before the sequence's first frame had been drawn: CC-661; Agnes 6979545044; CL-914/915; CC-662.)
 //  2b. the rising leaves, by their pixels (the world canvas, outside the far water's band where the moon's glints come
 //     and go): the drawing held at the end of the lift is the same picture 1.5 s later; "Replay shot" (R) brings the
 //     leaves back down to the flat and lifts them again, and the picture it settles to is the same held picture; with
 //     Reduce motion the held picture is there at once and is that same composition; and the drawing itself, for one
 //     moment of the lift, is the same however long the shot has been up (time in the shot is not what moves them);
+//  2c. Reduce motion, a press during the first picture's entrance: made from an animation-frame observer through the
+//     dialogue's own advance() (the lane's usual press, not a physical key event) on the first frame that has drawn the
+//     sequence, it only completes the dissolve (one press used up, the same line, the beats unchanged, the action at its
+//     end); then, the entrance drawn complete, one press moves on and the scene completes once. Line 1 only: line 2's
+//     entrance starts at the press that moves on, not at a frame, so a late frame can end it before any observer sees it
+//     (the sequence unit test covers that state on a fake clock);
 //  3. the scene seen before (played once in this campaign) and passed over with the sequence's own "Skip scene": it
 //     asks nothing, runs through, the pictures gone, the quest done once, ko_tide_night set, the world as before;
 //  4. a resize in the middle (to an upright phone and back): the sequence goes on, its focus above the sheet;
@@ -56,22 +66,54 @@ const world = (p) => p.evaluate(() => {
     npcs: W.npcs.map((n) => n.id + '@' + n.x + ',' + n.y).sort().join(' '), tint: JSON.stringify((W.map.def.ambient || {}).tint || null),
     night: !!(RB.render.nightNow && RB.render.nightNow()), quest: s.quests.ko_tide ? (s.quests.ko_tide.done ? 'done' : s.quests.ko_tide.stage) : null, flag: !!s.flags.ko_tide_night };
 });
-const seqNow = () => { const q = RB.sequence.state(); return q ? { id: q.id, shot: q.shot, state: q.state } : null; };
+const seqNow = () => { const q = RB.sequence.state(); return q ? { id: q.id, shot: q.shot, state: q.state, drawn: q.drawn, k: q.k, beats: q.beats } : null; };
+// a page call that does not answer within ms gives fb instead (the failure paths' reads, so a page that has stopped
+// answering still ends in an explicit FAIL)
+const bounded = (pr, ms, fb) => { let tm; return Promise.race([pr, new Promise((res) => { tm = setTimeout(() => res(fb), ms); })]).finally(() => clearTimeout(tm)); };
+// the sequence, the line shown and the presses used up, read in one evaluate (the readiness wait's report)
+const snapNow = () => { const q = RB.sequence.state(), d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown();
+  return { seq: q ? { id: q.id, shot: q.shot, state: q.state, drawn: q.drawn, k: q.k, beats: q.beats } : null,
+    line: d ? (d.who || '') + ': ' + String(d.en || '').slice(0, 50) : null, absorbed: RB.sequence.stats().absorbed, t: Math.round(performance.now()) }; };
+// Reduce motion's readiness (Agnes 6979545044; CL-914/915; CC-662): wait, polling every animation frame and for at most
+// `ms`, until the same shot is `holding` on a frame drawn after the line was first seen (`drawn` > d1), the same line is
+// shown and no press has been used up. It never presses. A bare `holding` before the sequence's first frame (`drawn` 0)
+// cannot satisfy it: once that frame has run, line 1 is `entering` until a later frame's tick completes it.
+async function ready(p, x, ms = 4000) {
+  const t0 = Date.now();
+  const ok = await p.waitForFunction((x) => {
+    const q = RB.sequence.state(), d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown();
+    const line = d ? (d.who || '') + ': ' + String(d.en || '').slice(0, 50) : null;
+    return !!(q && q.id === 'ko.tide_night' && q.shot === x.shot && q.state === 'holding' && q.drawn > x.d1 && line === x.key && RB.sequence.stats().absorbed === x.a1);
+  }, x, { polling: 'raf', timeout: ms }).then(() => true, () => false);
+  const snap = await bounded(p.evaluate(snapNow).catch((e) => ({ error: String(e) })), 2000, { error: 'no answer within 2 s' });
+  return { ok, ms: Date.now() - t0, snap };
+}
 // the scene from the stone, every line read for readMs; the sequence state at each line (on first sight and as read).
 // A press while a shot's action is still playing finishes the action and leaves the line (the sequence system's rule),
 // so a line still shown 500 ms after a press is pressed again; the presses are counted per line.
-async function play(p, readMs, during) {
-  await p.evaluate(() => RB.world.interact());
+// opt.ready (Reduce motion): each line of the night is read once its entrance has completed on a drawn frame (ready()),
+// not after readMs; if that does not come within the bound, nothing is pressed through: play stops and returns `stuck`
+// with the last snapshot, and the caller fails and closes the page. opt.started: the scene is already running.
+async function play(p, readMs, during, opt = {}) {
+  if (!opt.started) await p.evaluate(() => RB.world.interact());
   const lines = [];
   for (let i = 0; i < 600; i++) {
-    const st = await p.evaluate((sq) => ({ d: RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(), run: RB.script.isRunning(), seq: (0, eval)('(' + sq + ')')() }), seqNow.toString());
+    // (the presses used up are read only in readiness mode; the timed mode's poll is otherwise as it was)
+    const st = await p.evaluate(([sq, rd]) => ({ d: RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(), run: RB.script.isRunning(), seq: (0, eval)('(' + sq + ')')(), ab: rd ? RB.sequence.stats().absorbed : null }), [seqNow.toString(), !!opt.ready]);
     if (st.d) {
       const key = (st.d.who || '') + ': ' + String(st.d.en || '').slice(0, 50);
       if (!lines.length || lines[lines.length - 1].d !== key) {
         lines.push({ d: key, who: st.d.who, seq: st.seq });
         if (during) { const stop = await during(lines.length - 1, lines[lines.length - 1]); if (stop) return { lines, stopped: true }; }
-        await p.waitForTimeout(readMs);
-        lines[lines.length - 1].after = await p.evaluate((sq) => (0, eval)('(' + sq + ')')(), seqNow.toString());
+        const L = lines[lines.length - 1];
+        if (opt.ready && L.seq && L.seq.id === 'ko.tide_night') {
+          L.ready = await ready(p, { shot: L.seq.shot, d1: L.seq.drawn, key, a1: st.ab });
+          L.after = (L.ready.snap && L.ready.snap.seq) || null;
+          if (!L.ready.ok) return { lines, stuck: L.ready };
+        } else {
+          await p.waitForTimeout(readMs);
+          lines[lines.length - 1].after = await p.evaluate((sq) => (0, eval)('(' + sq + ')')(), seqNow.toString());
+        }
         await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance());
         lines[lines.length - 1].presses = 1; lines[lines.length - 1].at = Date.now();
       } else if (Date.now() - lines[lines.length - 1].at > 500) {
@@ -99,12 +141,21 @@ for (const [comp, reduce] of [['mio', false], ['nao', false], ['ren', false], ['
   const { p, errors } = await page(b, url);
   await setup(p, { comp, reduce });
   const before = await world(p);
-  const r = await play(p, reduce ? 300 : 2700);
+  const r = reduce ? await play(p, 0, null, { ready: true }) : await play(p, 2700);
   const after = await world(p);
   const tag = comp + (reduce ? ', Reduce motion' : ', read slowly');
   const sh = expectShots(r);
   ok(sh.ok && r.lines.length >= 4, tag + ': the first line under the point at night, the wind\'s line and every line after it under the rising leaves (' + JSON.stringify(r.lines.map((l) => [l.d.slice(0, 24), shotOf(l)])) + ')');
-  ok(r.lines.every((l) => !l.after || (l.after.id === 'ko.tide_night' && l.after.state === 'holding')), tag + ': each shot\'s action over and held while the line is read (' + JSON.stringify(r.lines.map((l) => l.after && l.after.state)) + ')');
+  if (!reduce) {
+    ok(r.lines.every((l) => !l.after || (l.after.id === 'ko.tide_night' && l.after.state === 'holding' && l.seq && l.after.drawn > l.seq.drawn)), tag + ': each shot\'s action over and held, on a frame drawn after the line was first seen, while the line is read (' + JSON.stringify(r.lines.map((l) => l.after && [l.after.state, l.seq && l.seq.drawn, l.after.drawn])) + ')');
+  } else {
+    // Reduce motion, two contracts in place of the one 300 ms read (which could land before the sequence's first frame,
+    // CC-661): the action is at its end the moment the line is seen; and the line is read only once its entrance has
+    // completed on a frame drawn after that, within the bound, with no press used up
+    const tl = r.lines.filter((l) => l.seq && l.seq.id === 'ko.tide_night');
+    ok(tl.length > 0 && tl.every((l) => l.seq.k === 1), tag + ': each shot\'s action is at its end the moment its line is seen (' + JSON.stringify(tl.map((l) => l.seq.k)) + ')');
+    ok(!r.stuck && tl.length >= 4 && tl.every((l) => l.ready && l.ready.ok), tag + ': before each line is read, its entrance has completed on a frame drawn after the line was first seen, within 4 s, with no press used up (' + JSON.stringify(tl.map((l) => ({ first: [l.seq.state, l.seq.drawn], ready: l.ready && l.ready.snap && l.ready.snap.seq && [l.ready.snap.seq.state, l.ready.snap.seq.drawn], ms: l.ready && l.ready.ms }))) + (r.stuck ? '; stopped, nothing pressed through, last: ' + JSON.stringify(r.stuck.snap) : '') + ')');
+  }
   ok(r.lines.length === 4 && r.lines[2].who === 'ko_koyomi' && r.lines[3].who === comp, tag + ': Koyomi\'s line, then your companion\'s own (' + JSON.stringify(r.lines.map((l) => l.who)) + ')');
   ok(r.lines.every((l) => l.presses === 1), tag + ': each line read after its picture has settled goes on with one press (' + JSON.stringify(r.lines.map((l) => l.presses)) + ')');
   const q = await p.evaluate(() => ({ seq: RB.sequence.state(), quests: window.__quests.slice() }));
@@ -182,6 +233,77 @@ ok(heldPics['full motion'] && heldPics['Reduce motion'] && heldPics['full motion
     return out;
   });
   ok(d['0.3'] === 0 && d['1'] === 0 && d.lift > 0, 'the drawing at one moment of the lift is the same picture whether the shot has been up 3 s or a minute; the lift itself moves the leaves (' + JSON.stringify(d) + ')');
+  errorsAll.push(...errors); await p.close();
+}
+
+// ---- 2c. Reduce motion: a press during the first picture's entrance (Agnes 6979545044; CL-914/915; CC-662) ---------
+// The press is made by a page-side animation-frame observer through the dialogue's own advance() (the lane's usual press
+// everywhere; not a physical key event), on the first frame that has drawn the sequence. Line 1's entrance starts on
+// that frame (setFrom, then draw) and can end only at a later frame's tick or on a press; while the sequence holds the
+// render override only the game loop draws and ticks the live player (prewarm draws only when no override is set,
+// 60_render.js 853-855; CL-915), and the check and the press run in one callback, so the press always meets the
+// entrance still under way, whichever order the observer and the loop run in. A press that moves on shows the next line
+// only in a later microtask, so "the same line, the beats unchanged" is read again at the next frame. Line 1 only: line
+// 2's entrance starts at the press that moves on, not at a frame, and a frame 350 ms late ends it in its own tick before
+// any observer could see it (the sequence unit test covers that state on a fake clock).
+{
+  const { p, errors } = await page(b, url);
+  await setup(p, { comp: 'mio', reduce: true });
+  const before = await world(p);
+  await p.evaluate(() => {
+    const look = () => { const q = RB.sequence.state(); return q ? { id: q.id, shot: q.shot, state: q.state, drawn: q.drawn, k: q.k, beats: q.beats } : null; };
+    const lineNow = () => { const d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); return d ? (d.who || '') + ': ' + String(d.en || '').slice(0, 50) : null; };
+    const used = () => RB.sequence.stats().absorbed;
+    const O = (window.__obs = { seen: [], done: false, out: null });
+    let raf = 0, timer = 0;
+    const finish = (out) => { if (O.done) return; O.done = true; O.out = out; cancelAnimationFrame(raf); clearTimeout(timer); };
+    O.cancel = () => finish({ cancelled: true, last: look(), line: lineNow(), seen: O.seen.slice() });
+    const step = () => {
+      if (O.done) return;
+      const q = look(), line = lineNow();
+      O.seen.push(q ? q.drawn : null); // [1]: after the loop's first frame; [0, 1]: before it, pressing on the next
+      if (q && q.id === 'ko.tide_night' && q.shot === 'point' && q.drawn >= 1 && line) {
+        const a0 = used();
+        RB.ui.dialogue.advance();
+        const post = look(), a1 = used();
+        raf = requestAnimationFrame(() => finish({ pre: q, line, a0, post, a1, next: look(), line2: lineNow(), a2: used(), seen: O.seen.slice() }));
+        return;
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    timer = setTimeout(() => finish({ timeout: true, last: look(), line: lineNow(), seen: O.seen.slice() }), 3000);
+    RB.world.interact();
+  });
+  const got = await p.waitForFunction(() => window.__obs && window.__obs.done, null, { timeout: 5000 }).then(() => true, () => false);
+  if (!got) await bounded(p.evaluate(() => window.__obs && window.__obs.cancel()).catch(() => {}), 2000);
+  const X = await bounded(p.evaluate(() => window.__obs && window.__obs.out).catch(() => null), 2000, null);
+  const b1 = !!(got && X && X.pre && X.pre.id === 'ko.tide_night' && X.pre.shot === 'point' && X.pre.state === 'entering' && X.pre.drawn >= 1);
+  ok(b1, 'Reduce motion, a press during the first picture\'s entrance: the press met the entrance already drawn and still under way (' + JSON.stringify(got ? { pre: X && X.pre, seen: X && X.seen, timeout: X && X.timeout, last: X && X.last } : { observer: 'no result within 5 s', out: X }) + ')');
+  const b2 = !!(b1 && X.a1 === X.a0 + 1 && X.post && X.post.state === 'holding' && X.post.k === 1 && X.next && X.line2 === X.line && X.next.beats === X.pre.beats && X.a2 === X.a1);
+  ok(b2, 'the press only completed the entrance: one press used up, the picture held with its action at its end; at the next frame the same line, the beats unchanged, no other press used up (' + (b1 ? JSON.stringify({ used: [X.a0, X.a1, X.a2], post: X.post, next: X.next, sameLine: X.line2 === X.line }) : 'not reached: the press above did not meet a drawn entrance') + ')');
+  let r3 = null;
+  if (b2) {
+    const rd = await ready(p, { shot: 'point', d1: X.post.drawn, key: X.line, a1: X.a1 });
+    let moved = false, a3 = null;
+    if (rd.ok) {
+      await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance());
+      moved = await p.waitForFunction((k) => { const d = RB.ui.dialogue.isOpen() && RB.ui.dialogue.shown(); const line = d ? (d.who || '') + ': ' + String(d.en || '').slice(0, 50) : null; return !!line && line !== k; }, X.line, { timeout: 4000 }).then(() => true, () => false);
+      a3 = await p.evaluate(() => RB.sequence.stats().absorbed);
+    }
+    r3 = { ready: rd.ok, ms: rd.ms, snap: rd.snap, moved, used: a3 };
+  }
+  const b3 = !!(r3 && r3.ready && r3.moved && r3.used === X.a1);
+  ok(b3, 'then, the entrance drawn complete, one press moves the line on and uses nothing up (' + (r3 ? JSON.stringify(r3) : 'not reached') + ')');
+  let r4 = null, after = null, q4 = null;
+  if (b3) {
+    r4 = await play(p, 0, null, { ready: true, started: true });
+    after = await world(p); q4 = await p.evaluate(() => ({ seq: RB.sequence.state(), quests: window.__quests.slice() }));
+  }
+  const b4 = !!(r4 && !r4.stuck && r4.lines.length === 3 && r4.lines.every((l) => l.presses === 1 && l.ready && l.ready.ok) && !q4.seq && after.quest === 'done' && after.flag && q4.quests.length === 1
+    && after.map === before.map && after.npcs === before.npcs && after.tint === before.tint && after.night === before.night && JSON.stringify(after.pc) === JSON.stringify(before.pc) && after.comp && Math.abs(after.comp[0] - after.pc[0]) + Math.abs(after.comp[1] - after.pc[1]) <= 1);
+  ok(b4, 'and the scene goes on to its end: each later line read once its entrance is drawn complete, one press each, the quest done once, ko_tide_night set, the world as before (' + (r4 ? JSON.stringify({ lines: r4.lines.map((l) => [shotOf(l), l.presses, !!(l.ready && l.ready.ok)]), stuck: r4.stuck ? r4.stuck.snap : null, quest: after.quest, flag: after.flag, toasts: q4.quests.length }) : 'not reached') + ')');
+  await bounded(p.evaluate(() => window.__obs && window.__obs.cancel()).catch(() => {}), 2000);
   errorsAll.push(...errors); await p.close();
 }
 
