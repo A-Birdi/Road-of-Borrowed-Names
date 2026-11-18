@@ -8,15 +8,22 @@
 //      chosen one in ink, the others pencilled), an on/off setting is a tick box, a level a ruled line; the music
 //      performance's options have their drawn icons; the changes apply and are kept;
 //   2. Sound: why no line may be spoken (no recorded voices yet), and the spoken-word highlight as its own setting,
-//      shown with no Japanese voice on the device (headless Chromium has none), apart from Word help;
+//      shown with no Japanese voice on the device, apart from Word help;
+//   2b. the same with a Japanese voice on the device: the same explanation and highlight, the device's two local
+//      Japanese voices offered (the online one and the English one left out), and its own switch for speaking lines;
 //   3. phone 390×844 at the largest text: six tabs in one row, one page, nothing wider than the screen;
 //   4. a new journey through the title and the setup book (CW-1): its Summary ("Before you set out") is the last look,
 //      with no review after it; its More journey settings opens this book over it, with what shapes ordinary play; a
 //      change there (the Japanese level, the music's volume, Suzu's speech) is the new journey's, applied when it
 //      begins; 4b. a New Game+ journey keeps the review, which begins the story when the player sets out;
+//   3b. the Sound page on that phone at the largest text with a device voice (its long name): nothing wider than it;
 //   5. reduced motion: the circle is not drawn in.
+// The device's Japanese voices are decided here, not by the host (tests/e2e/device_voices.mjs; CC-617, Agnes
+// 6920360412): every lane has none ('absent') except 2b and 3b ('present'); the recordings are off in every lane
+// (tests/e2e/lib.mjs page()), and nothing is spoken to the host's engine.
 // Usage: node tests/e2e/settings_review.mjs
 import { serve, launch, page, settled } from './lib.mjs';
+import { voiceContext, voiceState, hostListing } from './device_voices.mjs';
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -28,7 +35,7 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
 
 // ---- 1, 2: the book at a desk -----------------------------------------------------------------------------------
 {
-  const { p, errors, requests } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const { p, errors, requests } = await page(b, url, { context: await voiceContext(b, 'absent', { viewport: { width: 1280, height: 800 } }) });
   await p.evaluate(() => { RB.game.debugStart('rw.village', 22, 30, { comp: 'suzu' }); });
   await wait(p, 600);
   await p.evaluate(() => RB.ui.menu.open('journey'));
@@ -88,7 +95,8 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
     return { voices: RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices().length : -1, note: /No recorded voices yet/.test(leaf.textContent) && /being recorded/.test(leaf.textContent) && [...leaf.querySelectorAll('input[data-set="mode"][data-obj="voice"]')].map((i) => i.value).join() === 'prepared,device,none',
       hl: !!hl, visible: !!(hl && hl.closest('.sx-tick').offsetParent), head: f && f.querySelector('.sx-h').textContent, notBulb: !!(f && !f.querySelector('[data-sw="lightbulb"]')), bulbHere: !!leaf.querySelector('[data-sw="lightbulb"]'), on: hl && hl.checked };
   });
-  assert(voice.voices === 0 && voice.note, 'Sound says why no line is spoken (no recorded voices yet, none on this device) and offers who speaks: ' + JSON.stringify(voice));
+  assert(voice.note, 'Sound says why no line is spoken (no recorded voices yet) and offers who speaks: ' + JSON.stringify(voice));
+  assert(voice.voices === 0, 'with no Japanese voice on this device (voice fixture: absent): ' + JSON.stringify(voice));
   assert(voice.hl && voice.visible && voice.head === 'Highlight each word as it is spoken' && voice.notBulb && !voice.bulbHere && voice.on, 'the spoken-word highlight is its own setting, shown without a device voice, on a different tab from Word help: ' + JSON.stringify(voice));
   await p.click('label.switch:has([data-voicehl])');
   await wait(p, 300);
@@ -100,13 +108,66 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
   await wait(p, 300);
   const kept = await p.evaluate(async () => { const s = await RB.save.loadSettings(); return { speed: s.textSpeed, music: s.vol.music, hl: s.voice.highlight, menu: RB.ui.menu.isOpen(), open: RB.ui.settings.isOpen() }; });
   assert(kept.speed === 'fast' && kept.music === 0.3 && kept.hl === true && kept.menu && !kept.open, 'Back returns to the Ledger; the changes were saved: ' + JSON.stringify(kept));
+  // the fixture held: the host was asked for its own list and given time to announce it; the game still has none
+  const host = await hostListing(p);
+  const fx = await voiceState(p);
+  assert(fx.applied && fx.kind === 'absent' && fx.localJa === 0 && fx.networkJa === 0 && !fx.names.length && !fx.vbConfigured && !fx.vbActive && !fx.spoken.length,
+    'the voice fixture (absent) held after the host listed its own voices (' + host.hostCount + ' here, ' + host.hostEvents + ' voiceschanged): ' + JSON.stringify(fx));
+  assert(!errors.length && !requests.length, 'no page errors, nothing fetched: ' + errors.concat(requests).join('; '));
+  await p.context().close();
+}
+
+// ---- 2b: the Sound page with a Japanese voice on the device (voice fixture: present) ---------------------------
+{
+  const { p, errors, requests } = await page(b, url, { context: await voiceContext(b, 'present', { viewport: { width: 1280, height: 800 } }) });
+  await p.evaluate(() => { RB.game.debugStart('rw.village', 22, 30, { comp: 'suzu' }); });
+  await wait(p, 600);
+  await p.evaluate(() => RB.ui.menu.open('journey'));
+  await wait(p, 400);
+  await p.click('.folio [data-util="settings"]');
+  await p.waitForSelector('.folio-settings .ptab');
+  await wait(p, 300);
+  await sel(p, 'audio');
+  const voice = await p.evaluate(() => {
+    const leaf = document.querySelector('.folio-settings .spread');
+    const hl = document.querySelector('[data-voicehl]');
+    const f = hl && hl.closest('.sx-field');
+    return { voices: RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices().length : -1, note: /No recorded voices yet/.test(leaf.textContent) && /being recorded/.test(leaf.textContent) && [...leaf.querySelectorAll('input[data-set="mode"][data-obj="voice"]')].map((i) => i.value).join() === 'prepared,device,none',
+      hl: !!hl, visible: !!(hl && hl.closest('.sx-tick').offsetParent), head: f && f.querySelector('.sx-h').textContent, notBulb: !!(f && !f.querySelector('[data-sw="lightbulb"]')), bulbHere: !!leaf.querySelector('[data-sw="lightbulb"]'), on: hl && hl.checked };
+  });
+  const fx = await voiceState(p);
+  assert(fx.applied && fx.kind === 'present' && fx.localJa === 2 && fx.networkJa === 1 && !fx.vbConfigured && !fx.vbActive,
+    'the voice fixture is in place: two local Japanese voices, one online, the recordings off: ' + JSON.stringify(fx));
+  assert(voice.note, 'with a device voice, Sound still says why a line may not be spoken (no recorded voices yet) and offers who speaks: ' + JSON.stringify(voice));
+  assert(voice.voices === 2, 'and counts the device\'s two local Japanese voices: ' + JSON.stringify(voice));
+  const dv = await p.evaluate(() => ({ list: [...document.querySelectorAll('.folio-settings #vsel option')].map((o) => o.textContent), auto: !!document.querySelector('.folio-settings [data-voiceauto]') }));
+  assert(dv.list.join(' | ') === 'Fixture Japanese A | Fixture Japanese B, with the long name some systems give a voice' && dv.auto,
+    'the device\'s voice is offered by name (the two local Japanese voices, in order; the online and English ones left out), with its own switch for speaking lines: ' + JSON.stringify(dv));
+  assert(voice.hl && voice.visible && voice.head === 'Highlight each word as it is spoken' && voice.notBulb && !voice.bulbHere && voice.on, 'the spoken-word highlight is its own setting, shown with a device voice, on a different tab from Word help: ' + JSON.stringify(voice));
+  assert(!fx.spoken.length, 'nothing was spoken while the page was drawn: ' + JSON.stringify(fx.spoken));
+  // the game's speech reaches the fixture's stand-in, never the host's engine
+  const said = await p.evaluate(async () => { const r = RB.voice.speak('fixture line'); await new Promise((res) => setTimeout(res, 50)); return { r, spoken: window.__voiceFixture.spoken.slice() }; });
+  assert(said.r === true && said.spoken.length === 1 && said.spoken[0] === 'fixture line', 'a line the game speaks goes to the fixture\'s stand-in: ' + JSON.stringify(said));
+  // the game's own start and end handlers for that line each ran to its end, with no page error: wait for the fixture's
+  // sign that both have run (no fixed sleep), then read its record and the page's errors; a wait that runs out fails this
+  // assertion too (Agnes 6921972297, 6922668177; CL-862, CL-863)
+  const done = await p.waitForFunction(() => window.__voiceFixture.speechDone >= 1, null, { timeout: 5000 }).then(() => true, () => false);
+  const heard = await p.evaluate(() => ({ speechDone: window.__voiceFixture.speechDone, callbacks: window.__voiceFixture.callbacks.slice() }));
+  assert(done && heard.speechDone === 1 && heard.callbacks.join(' | ') === 'onstart | onstart returned | onend | onend returned' && !errors.length,
+    'the game\'s start and end handlers for that line each ran to its end, with no page error: ' + JSON.stringify(Object.assign({ done }, heard)) + ' ' + errors.join('; '));
+  // and the fixture is installed again on a reload, through the host's own voice listing
+  await p.reload(); await p.waitForFunction(() => window.__RB_READY__ === true);
+  const host = await hostListing(p);
+  const fx2 = await voiceState(p);
+  assert(fx2.applied && fx2.kind === 'present' && fx2.localJa === 2 && fx2.networkJa === 1 && !fx2.spoken.length,
+    'after a reload the fixture is in place again (' + host.hostCount + ' host voices here, ' + host.hostEvents + ' voiceschanged): ' + JSON.stringify(fx2));
   assert(!errors.length && !requests.length, 'no page errors, nothing fetched: ' + errors.concat(requests).join('; '));
   await p.context().close();
 }
 
 // ---- 3: a phone at the largest text ----------------------------------------------------------------------------
 {
-  const { p, errors } = await page(b, url, { viewport: { width: 390, height: 844 }, mobile: true, touch: true });
+  const { p, errors } = await page(b, url, { context: await voiceContext(b, 'absent', { viewport: { width: 390, height: 844 }, mobile: true, touch: true }) });
   await p.evaluate(() => { RB.game.debugStart('rw.village', 22, 30, { comp: 'mio' }); RB.ui.settings.open(); });
   await wait(p, 600);
   const row = await p.evaluate(() => { const w = document.querySelector('.folio-settings .tabrail-wrap'); const ts = [...w.querySelectorAll('.ptab')].map((x) => x.getBoundingClientRect()); return { over: w.classList.contains('overflowing'), top: Math.max(...ts.map((r) => r.top)) - Math.min(...ts.map((r) => r.top)), right: Math.max(...ts.map((r) => r.right)) }; });
@@ -118,13 +179,35 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
     const o = await p.evaluate(() => { const L = document.querySelector('.folio-settings .spread > .leaf'); const wide = [...L.querySelectorAll('.sx-field, .sx-opt, .sx-tick, .sx-slider, .sx-mix')].filter((e) => e.getBoundingClientRect().right > L.getBoundingClientRect().right + 1).length; return { page: document.documentElement.scrollWidth <= innerWidth, leaf: L.scrollWidth <= L.clientWidth + 1, wide, one: !document.querySelector('.folio-settings .spread.two') }; });
     assert(o.page && o.leaf && !o.wide && o.one, 'phone, largest text, ' + id + ': one page, nothing wider than it: ' + JSON.stringify(o));
   }
+  const fx = await voiceState(p);
+  assert(fx.applied && fx.kind === 'absent' && fx.localJa === 0, 'the voice fixture (absent) was in place: ' + JSON.stringify(fx));
+  assert(!errors.length, 'no page errors: ' + errors.join('; '));
+  await p.context().close();
+}
+
+// ---- 3b: the Sound page on that phone at the largest text, with a device voice (voice fixture: present) ---------
+{
+  const { p, errors } = await page(b, url, { context: await voiceContext(b, 'present', { viewport: { width: 390, height: 844 }, mobile: true, touch: true }) });
+  await p.evaluate(() => { RB.game.debugStart('rw.village', 22, 30, { comp: 'mio' }); RB.ui.settings.open(); });
+  await wait(p, 600);
+  await p.evaluate(() => { RB.game.settings.textScale = 1.5; RB.game.applySettings(); });
+  for (const id of ['audio']) {
+    await p.evaluate((id) => RB.ui.settings.tab(id), id);
+    await wait(p, 200);
+    const o = await p.evaluate(() => { const L = document.querySelector('.folio-settings .spread > .leaf'); const wide = [...L.querySelectorAll('.sx-field, .sx-opt, .sx-tick, .sx-slider, .sx-mix')].filter((e) => e.getBoundingClientRect().right > L.getBoundingClientRect().right + 1).length; return { page: document.documentElement.scrollWidth <= innerWidth, leaf: L.scrollWidth <= L.clientWidth + 1, wide, one: !document.querySelector('.folio-settings .spread.two') }; });
+    assert(o.page && o.leaf && !o.wide && o.one, 'phone, largest text, ' + id + ': one page, nothing wider than it: ' + JSON.stringify(o));
+  }
+  const sv = await p.evaluate(() => { const L = document.querySelector('.folio-settings .spread > .leaf'), s = document.querySelector('.folio-settings #vsel'); return s ? { names: [...s.options].map((o) => o.textContent), right: Math.round(s.getBoundingClientRect().right), leaf: Math.round(L.getBoundingClientRect().right) } : null; });
+  assert(sv && sv.names.length === 2 && sv.right <= sv.leaf, 'the device\'s voice, its long name included, fits the page: ' + JSON.stringify(sv));
+  const fx = await voiceState(p);
+  assert(fx.applied && fx.kind === 'present' && fx.localJa === 2 && !fx.spoken.length, 'the voice fixture (present) was in place; nothing spoken: ' + JSON.stringify(fx));
   assert(!errors.length, 'no page errors: ' + errors.join('; '));
   await p.context().close();
 }
 
 // ---- 4: a new journey: its Summary ("Before you set out", CW-1) and the Settings book over it ----------------------
 {
-  const { p, errors, requests } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const { p, errors, requests } = await page(b, url, { context: await voiceContext(b, 'absent', { viewport: { width: 1280, height: 800 } }) });
   await p.click('text=New Game');
   await p.click('.slot[data-slot="1"] [data-a=start]');
   await p.click('text=Skip prologue');
@@ -180,13 +263,15 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
     auto: await (async () => { const r = await RB.save.read(1, 'auto').catch(() => null); return r && r.state && r.state.learn.profile; })() }));
   assert(s.level === 'A' && s.name === 'Kit' && s.music === 0.25 && s.saved === 0.25 && s.suzu === 'kansai', 'Begin: the journey begins with the level chosen in the editor, the volume and Suzu\'s speech kept: ' + JSON.stringify(s));
   assert(s.auto === 'A' && (s.mode === 'dialogue' || s.mode === 'world') && s.map === 'rw.road', 'the first autosave has it, and the story has begun: ' + JSON.stringify(s));
+  const fx = await voiceState(p);
+  assert(fx.applied && fx.kind === 'absent' && fx.localJa === 0, 'the voice fixture (absent) was in place: ' + JSON.stringify(fx));
   assert(!errors.length && !requests.length, 'no page errors, nothing fetched: ' + errors.concat(requests).join('; '));
   await p.context().close();
 }
 
 // ---- 4b: New Game+ keeps its review ("Before you set out" in the Settings book, ST-1b) ------------------------------
 {
-  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const { p, errors } = await page(b, url, { context: await voiceContext(b, 'absent', { viewport: { width: 1280, height: 800 } }) });
   await p.evaluate(async () => {
     const s = RB.state.newCampaign({ profile: 'I', edition: RB.edition.forNew() });
     s.player.name = 'Veteran'; s.comp = 'ren'; s.flags.postgame = true; s.map = 'rw.village'; s.x = 22; s.y = 30;
@@ -205,19 +290,23 @@ const sel = async (p, id) => { await p.click('.folio-settings .ptab[data-id="' +
   await p.click('.folio-review [data-review-go]');
   await p.waitForFunction(() => RB.game.G.playing === true, null, { timeout: 15000 });
   assert(await p.evaluate(() => RB.game.s.ngplus === 1 && RB.game.s.player.name === 'Veteran'), 'Set out begins the New Game+ journey');
+  const fx = await voiceState(p);
+  assert(fx.applied && fx.kind === 'absent' && fx.localJa === 0, 'the voice fixture (absent) was in place after the reload: ' + JSON.stringify(fx));
   assert(!errors.length, 'no page errors: ' + errors.join('; '));
   await p.context().close();
 }
 
 // ---- 5: reduced motion ----------------------------------------------------------------------------------------
 {
-  const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const { p, errors } = await page(b, url, { context: await voiceContext(b, 'absent', { viewport: { width: 1280, height: 800 } }) });
   await p.evaluate(() => { RB.game.debugStart('rw.village', 22, 30, {}); RB.game.settings.reducedMotion = true; RB.game.applySettings(); RB.ui.settings.open('play'); });
   await wait(p, 500);
   await p.click('label.opt:has(input[data-set="battleAnim"][value="fast"])');
   await wait(p, 250);
   const a = await p.evaluate(() => ({ set: RB.game.settings.battleAnim, anims: document.querySelector('input[data-set="battleAnim"][value="fast"]').closest('.sx-opt').querySelector('.sx-ring').getAnimations().length, tab: RB.ui.settings.current() }));
   assert(a.set === 'fast' && a.anims === 0 && a.tab === 'play', 'reduced motion: the choice applies, nothing is drawn in; open(\'play\') opened Play: ' + JSON.stringify(a));
+  const fx = await voiceState(p);
+  assert(fx.applied && fx.kind === 'absent' && fx.localJa === 0, 'the voice fixture (absent) was in place: ' + JSON.stringify(fx));
   assert(!errors.length, 'no page errors: ' + errors.join('; '));
   await p.context().close();
 }
